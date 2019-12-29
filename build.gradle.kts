@@ -5,6 +5,7 @@ plugins {
 group = "com.avito"
 version = "1"
 
+val compileSdkVersion: String by project
 val kotlinVersion: String by project
 val junit5Version: String by project
 val junit5PlatformVersion: String by project
@@ -33,9 +34,11 @@ allprojects {
             }
 
             withType<Test> {
+                @Suppress("UnstableApiUsage")
                 useJUnitPlatform()
 
                 systemProperty("kotlinVersion", kotlinVersion)
+                systemProperty("compileSdkVersion", compileSdkVersion)
             }
         }
 
