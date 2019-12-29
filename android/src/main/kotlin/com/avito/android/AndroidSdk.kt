@@ -70,21 +70,38 @@ class AndroidSdk(
 
     val androidJar: File
         get() {
-            val file = File(androidHome.dir, "platforms/android-$compileSdkVersion/android.jar")
+            val file = File(platformDir, "android.jar")
             require(file.exists()) {
-                """========= ERROR =========
-                    Android SDK tools are not found in ${file.path}
-                    Please install it or update.
-                """.trimIndent()
+                sdkNotFoundMessage(file.path)
             }
             return file
         }
+
+    val platformSourceProperties: File
+        get() {
+            val file = File(platformDir, "source.properties")
+            require(file.exists()) {
+                sdkNotFoundMessage(file.path)
+            }
+            return file
+        }
+
+    private val platformDir: File
+        get() = File(androidHome.dir, "platforms/android-$compileSdkVersion")
 
     override fun getApkSha1(apk: ExistingFile): Try<String> = apkSigner.getApkSha1(apk)
 
     override fun getPackageName(apk: File): Try<String> = aapt.getPackageName(apk)
 
     fun getBundleSha1(aab: ExistingFile): Try<String> = keytool.getJarSha1(aab)
+
+    private fun sdkNotFoundMessage(message: String): String {
+        return """========= ERROR =========
+                  Android SDK tools are not found.
+                  Please install it or update.
+                  $message
+                """.trimIndent()
+    }
 }
 
 /**

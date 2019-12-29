@@ -1,5 +1,6 @@
 plugins {
     id("kotlin")
+    `maven-publish`
 }
 
 val kotlinVersion: String by project
@@ -18,4 +19,12 @@ dependencies {
 
     testImplementation("io.kotlintest:kotlintest:2.0.7")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }

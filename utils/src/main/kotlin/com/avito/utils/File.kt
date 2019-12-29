@@ -1,6 +1,7 @@
 package com.avito.utils
 
 import java.io.File
+import java.util.Properties
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -35,3 +36,13 @@ fun File?.hasFileContent(): Boolean {
     if (this == null) return false
     return this.exists() && this.isFile && this.length() > 0
 }
+
+fun File.loadProperties(): Properties {
+    val properties = Properties()
+    this.bufferedReader().use { reader ->
+        properties.load(reader)
+    }
+    return properties
+}
+
+fun loadProperties(path: String): Properties = File(path).loadProperties()

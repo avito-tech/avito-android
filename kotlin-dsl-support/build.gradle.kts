@@ -1,6 +1,7 @@
 plugins {
     id("java-gradle-plugin")
     id("kotlin")
+    `maven-publish`
 }
 
 val kotlinVersion: String by project
@@ -17,6 +18,15 @@ gradlePlugin {
         create("test") {
             id = "com.avito.test"
             implementationClass = "com.avito.kotlin.dsl.TestPlugin"
+        }
+    }
+    isAutomatedPublishing = false
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
         }
     }
 }

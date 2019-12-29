@@ -5,15 +5,17 @@ include(":kotlin-dsl-support")
 include(":test-project")
 include(":android")
 
-val kotlinVersion: String by settings
-
 pluginManagement {
 
     repositories {
         jcenter()
+        @Suppress("UnstableApiUsage")
         gradlePluginPortal()
         google()
     }
+
+    val kotlinVersion: String by settings
+
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("org.jetbrains.kotlin")) {

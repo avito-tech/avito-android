@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-test-fixtures")
+    `maven-publish`
 }
 
 val kotlinVersion: String by project
@@ -20,4 +21,12 @@ dependencies {
 
     testImplementation("com.google.truth:truth:$truthVersion")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlin2Version")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }
