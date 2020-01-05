@@ -2,6 +2,8 @@ rootProject.name = "android"
 
 include(":utils")
 include(":kotlin-dsl-support")
+include(":okhttp")
+include(":test-okhttp")
 include(":test-project")
 include(":android")
 
