@@ -1,6 +1,7 @@
 rootProject.name = "android"
 
 include(":utils")
+include(":git")
 include(":kotlin-dsl-support")
 include(":test-project")
 include(":android")
