@@ -3,13 +3,12 @@ plugins {
     `maven-publish`
 }
 
+val projectVersion: String by project
 val compileSdkVersion: String by project
 val kotlinVersion: String by project
 val junit5Version: String by project
 val junit5PlatformVersion: String by project
 val truthVersion: String by project
-
-val projectVersion = "1-test-8"
 
 allprojects {
     repositories {
