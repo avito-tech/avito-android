@@ -11,6 +11,7 @@ include(":okhttp")
 include(":trace-event")
 include(":test-okhttp")
 include(":test-project")
+include(":impact")
 include(":android")
 include(":time")
 
