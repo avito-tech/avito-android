@@ -1,7 +1,5 @@
 package com.avito.utils
 
-import com.avito.utils.BuildFailer
-
 class FakeBuildFailer : BuildFailer {
 
     var lastReason: String? = null

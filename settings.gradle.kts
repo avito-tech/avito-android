@@ -4,6 +4,7 @@ include(":utils")
 include(":kotlin-dsl-support")
 include(":test-project")
 include(":android")
+include(":time")
 
 pluginManagement {
 
