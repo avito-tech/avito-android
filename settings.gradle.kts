@@ -2,9 +2,11 @@ rootProject.name = "android"
 
 enableFeaturePreview("GRADLE_METADATA")
 
+include(":logging")
 include(":utils")
 include(":git")
 include(":kotlin-dsl-support")
+include(":sentry")
 include(":okhttp")
 include(":test-okhttp")
 include(":test-project")
