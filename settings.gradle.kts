@@ -1,5 +1,7 @@
 rootProject.name = "android"
 
+enableFeaturePreview("GRADLE_METADATA")
+
 include(":utils")
 include(":git")
 include(":kotlin-dsl-support")

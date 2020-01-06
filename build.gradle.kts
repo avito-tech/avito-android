@@ -1,9 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm")
     `maven-publish`
 }
 
 val projectVersion: String by project
+val javaVersion: String by project
 val compileSdkVersion: String by project
 val kotlinVersion: String by project
 val junit5Version: String by project
@@ -51,24 +52,19 @@ subprojects {
     }
 
     plugins.withId("kotlin") {
-        java {
-            @Suppress("UnstableApiUsage")
-            withSourcesJar()
-        }
 
         this@subprojects.tasks {
 
             compileKotlin {
-                kotlinOptions.jvmTarget = "1.8"
-
                 kotlinOptions {
+                    jvmTarget = javaVersion
                     allWarningsAsErrors = true
                     freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
                 }
             }
 
             compileTestKotlin {
-                kotlinOptions.jvmTarget = "1.8"
+                kotlinOptions.jvmTarget = javaVersion
             }
 
             withType<Test> {
@@ -104,6 +100,6 @@ subprojects {
 tasks {
     wrapper {
         distributionType = Wrapper.DistributionType.BIN
-        gradleVersion = "6.0.1"
+        gradleVersion = project.properties["gradleVersion"] as String
     }
 }

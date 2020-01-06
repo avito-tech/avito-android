@@ -1,5 +1,6 @@
 plugins {
     id("kotlin")
+    `maven-publish`
 }
 
 val kotlinVersion: String by project
@@ -15,4 +16,19 @@ dependencies {
 
     testImplementation("io.kotlintest:kotlintest:2.0.7")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+}
+
+//todo withSourcesJar 6.0 gradle
+val sourcesTask = tasks.create<Jar>("sourceJar") {
+    classifier = "sources"
+    from(sourceSets.main.get().allJava)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(sourcesTask)
+        }
+    }
 }
