@@ -6,6 +6,7 @@ include(":okhttp")
 include(":test-okhttp")
 include(":test-project")
 include(":android")
+include(":time")
 
 pluginManagement {
 
