@@ -2,6 +2,7 @@ rootProject.name = "android"
 
 enableFeaturePreview("GRADLE_METADATA")
 
+include(":bitbucket")
 include(":logging")
 include(":utils")
 include(":git")
