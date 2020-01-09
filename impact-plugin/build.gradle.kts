@@ -1,4 +1,5 @@
 plugins {
+    id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
 }
@@ -9,6 +10,7 @@ val mockitoKotlinVersion: String by project
 
 dependencies {
     implementation(gradleApi())
+    implementation(project(":impact"))
     implementation(project(":utils"))
     implementation(project(":logging"))
     implementation(project(":android"))
@@ -24,17 +26,11 @@ dependencies {
     testImplementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
 }
 
-//todo withSourcesJar 6.0 gradle
-val sourcesTask = tasks.create<Jar>("sourceJar") {
-    classifier = "sources"
-    from(sourceSets.main.get().allJava)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            artifact(sourcesTask)
+gradlePlugin {
+    plugins {
+        create("com.avito.android.impact") {
+            id = "com.avito.android.impact"
+            implementationClass = "com.avito.impact.plugin.ImpactAnalysisPlugin"
         }
     }
 }

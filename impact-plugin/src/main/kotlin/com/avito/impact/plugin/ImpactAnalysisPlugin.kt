@@ -12,7 +12,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
-
 class ImpactAnalysisPlugin : Plugin<Project> {
 
     override fun apply(rootProject: Project) {
@@ -50,5 +49,4 @@ class ImpactAnalysisPlugin : Plugin<Project> {
             description = "Print modified projects to files. For testing purposes only"
         }
     }
-
 }
