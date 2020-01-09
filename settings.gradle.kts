@@ -17,6 +17,7 @@ include(":test-okhttp")
 include(":test-project")
 include(":impact")
 include(":android")
+include(":build-properties")
 include(":time")
 
 pluginManagement {
