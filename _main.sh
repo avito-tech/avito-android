@@ -46,6 +46,9 @@ docker run --rm \
     --env BINTRAY_USER="$BINTRAY_USER" \
     --env BINTRAY_API_KEY="$BINTRAY_API_KEY" \
     --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
+    --env ARTIFACTORY_URL="$ARTIFACTORY_URL" \
+    --env ARTIFACTORY_USER="$ARTIFACTORY_USER" \
+    --env ARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" \
     dsvoronin/android-builder \
     bash -c "git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
              git config --global user.name 'builder';
