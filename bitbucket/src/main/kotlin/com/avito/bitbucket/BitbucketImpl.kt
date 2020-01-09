@@ -11,10 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 class BitbucketImpl(
-    baseUrl: String,
-    private val projectKey: String,
-    private val repositorySlug: String,
-    credentials: AtlassianCredentials,
+    private val config: BitbucketConfig,
     private val pullRequestId: Int?,
     private val logger: CILogger
 ) : Bitbucket {
@@ -26,10 +23,10 @@ class BitbucketImpl(
     private val insightAnnotationsServerLimitPerReport = 1000
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(HttpUrl.get(baseUrl))
+        .baseUrl(HttpUrl.get(config.baseUrl))
         .client(
             OkHttpClient.Builder()
-                .authenticator(BasicAuthenticator(credentials.user, credentials.password))
+                .authenticator(BasicAuthenticator(config.credentials.user, config.credentials.password))
                 .build()
         )
         .addConverterFactory(GsonConverterFactory.create())
@@ -40,12 +37,18 @@ class BitbucketImpl(
 
     override fun addComment(comment: String) {
         val pullRequestId = this.pullRequestId ?: return
-        bitbucketApi.addComment(projectKey, repositorySlug, pullRequestId, Comment(comment)).execute()
+        bitbucketApi.addComment(config.projectKey, config.repositorySlug, pullRequestId, Comment(comment)).execute()
     }
 
     override fun createCommentWithTask(comment: String, task: String) {
         val pullRequestId = this.pullRequestId ?: return
-        val commentResponse = bitbucketApi.addComment(projectKey, repositorySlug, pullRequestId, Comment(comment)).execute().body()!!
+        val commentResponse =
+            bitbucketApi.addComment(
+                config.projectKey,
+                config.repositorySlug,
+                pullRequestId,
+                Comment(comment)
+            ).execute().body()!!
         bitbucketApi.addTask(
             Task(
                 anchor = Anchor(id = commentResponse.id),
@@ -88,8 +91,8 @@ class BitbucketImpl(
                 val filteredIssues = issuesList.filter { changedFiles.contains(it.path) }
 
                 insightsApi.createReport(
-                    projectKey = projectKey,
-                    repositorySlug = repositorySlug,
+                    projectKey = config.projectKey,
+                    repositorySlug = config.repositorySlug,
                     commitId = sourceCommitHash,
                     insightKey = key,
                     insightReportCreateRequest = InsightReportCreateRequest(
@@ -102,14 +105,14 @@ class BitbucketImpl(
                     .execute()
                     .handleError(link = link)
 
-                insightsApi.deleteAll(projectKey, repositorySlug, sourceCommitHash, key)
+                insightsApi.deleteAll(config.projectKey, config.repositorySlug, sourceCommitHash, key)
                     .execute()
                     .handleError()
 
                 if (filteredIssues.isNotEmpty()) {
                     insightsApi.addAnnotations(
-                        projectKey,
-                        repositorySlug,
+                        config.projectKey,
+                        config.repositorySlug,
                         sourceCommitHash,
                         key,
                         AnnotationsBulkCreateRequest(filteredIssues.take(insightAnnotationsServerLimitPerReport))
@@ -128,8 +131,8 @@ class BitbucketImpl(
         data: List<InsightData>
     ) = Try {
         insightsApi.createReport(
-            projectKey = projectKey,
-            repositorySlug = repositorySlug,
+            projectKey = config.projectKey,
+            repositorySlug = config.repositorySlug,
             commitId = sourceCommitHash,
             insightKey = key,
             insightReportCreateRequest = InsightReportCreateRequest(

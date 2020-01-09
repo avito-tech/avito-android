@@ -11,20 +11,22 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
 val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    val enabled = project.getBooleanProperty("avito.stats.enabled", false)
-
     val logger = project.ciLogger
-    val host = project.getMandatoryStringProperty("avito.stats.host")
-    val fallbackHost = project.getMandatoryStringProperty("avito.stats.fallbackHost")
-    val port = project.getMandatoryIntProperty("avito.stats.port")
-    val namespace = project.getMandatoryStringProperty("avito.stats.namespace")
 
     Providers.of<StatsDSender>(StatsDSender.Impl(
-        suppress = !enabled,
-        host = host,
-        fallbackHost = fallbackHost,
-        port = port,
-        namespace = namespace,
+        config = config(project),
         logger = { message, error -> if (error != null) logger.info(message, error) else logger.debug(message) }
     ))
 }
+
+val Project.statsdConfig: Provider<StatsDConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
+    Providers.of(config(project))
+}
+
+private fun config(project: Project): StatsDConfig = StatsDConfig(
+    isEnabled = project.getBooleanProperty("avito.stats.enabled", false),
+    host = project.getMandatoryStringProperty("avito.stats.host"),
+    fallbackHost = project.getMandatoryStringProperty("avito.stats.fallbackHost"),
+    port = project.getMandatoryIntProperty("avito.stats.port"),
+    namespace = project.getMandatoryStringProperty("avito.stats.namespace")
+)

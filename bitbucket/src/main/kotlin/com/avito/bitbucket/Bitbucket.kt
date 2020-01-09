@@ -42,12 +42,13 @@ interface Bitbucket {
 
     companion object {
         fun create(
-            baseUrl: String,
-            projectKey: String,
-            repositorySlug: String,
-            credentials: AtlassianCredentials,
-            logger: CILogger,
-            pullRequestId: Int?
-        ): Bitbucket = BitbucketImpl(baseUrl, projectKey, repositorySlug, credentials, pullRequestId, logger)
+            bitbucketConfig: BitbucketConfig,
+            pullRequestId: Int?,
+            logger: CILogger
+        ): Bitbucket = BitbucketImpl(
+            config = bitbucketConfig,
+            pullRequestId = pullRequestId,
+            logger = logger
+        )
     }
 }
