@@ -1,5 +1,8 @@
-package com.avito.impact.util
+package com.avito.impact.plugin
 
+import com.avito.impact.util.AndroidManifest
+import com.avito.impact.util.AndroidProject
+import com.avito.impact.util.R
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator
