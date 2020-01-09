@@ -13,23 +13,19 @@ interface StatsDSender {
     fun send(prefix: String = "", metric: StatsMetric)
 
     class Impl(
-        suppress: Boolean,
-        host: String,
-        fallbackHost: String,
-        port: Int,
-        private val namespace: String,
+        private val config: StatsDConfig,
         private val logger: (String, Throwable?) -> Unit
     ) : StatsDSender {
 
         private val client: StatsDClient by lazy {
-            if (suppress) {
+            if (!config.isEnabled) {
                 NoOpStatsDClient()
             } else {
                 try {
-                    NonBlockingStatsDClient(namespace, host, port, errorHandler)
+                    NonBlockingStatsDClient(config.namespace, config.host, config.port, errorHandler)
                 } catch (err: Exception) {
                     try {
-                        NonBlockingStatsDClient(namespace, fallbackHost, port, errorHandler)
+                        NonBlockingStatsDClient(config.namespace, config.fallbackHost, config.port, errorHandler)
                     } catch (err: Exception) {
                         errorHandler.handle(err)
                         NoOpStatsDClient()
@@ -50,7 +46,7 @@ interface StatsDSender {
                 is CountMetric -> client.count(path, metric.value)
                 is GaugeMetric -> client.gauge(path, metric.value)
             } as Unit
-            logger.invoke("statsd:${metric.type}:$namespace.$path:${metric.value}", null)
+            logger.invoke("statsd:${metric.type}:${config.namespace}.$path:${metric.value}", null)
         }
 
         private val errorHandler = StatsDClientErrorHandler {
@@ -58,4 +54,3 @@ interface StatsDSender {
         }
     }
 }
-

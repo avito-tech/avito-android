@@ -4,7 +4,7 @@ import com.avito.android.isAndroidApp
 import com.avito.android.withAndroidApp
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.atlassianCredentials
-import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.bitbucket.bitbucketConfig
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
@@ -28,14 +28,13 @@ open class LintReportPlugin : Plugin<Project> {
             val atlassianCredentials = app.atlassianCredentials
             if (atlassianCredentials.isPresent) {
                 bitbucket.set(
-                    Bitbucket.create(
-                        baseUrl = app.getMandatoryStringProperty("avito.bitbucket.url"),
-                        projectKey = app.getMandatoryStringProperty("avito.bitbucket.projectKey"),
-                        repositorySlug = app.getMandatoryStringProperty("avito.bitbucket.repositorySlug"),
-                        credentials = atlassianCredentials.get(),
-                        logger = app.ciLogger,
-                        pullRequestId = null
-                    )
+                    project.bitbucketConfig.map { config ->
+                        Bitbucket.create(
+                            bitbucketConfig = config,
+                            logger = app.ciLogger,
+                            pullRequestId = null
+                        )
+                    }
                 )
             }
 

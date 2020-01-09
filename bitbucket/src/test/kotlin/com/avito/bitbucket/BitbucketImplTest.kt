@@ -86,10 +86,12 @@ internal class BitbucketImplTest {
     }
 
     private fun createBitbucket(): Bitbucket = Bitbucket.create(
-        baseUrl = mockWebServer.url("/").toString(),
-        projectKey = "project",
-        repositorySlug = "X",
-        credentials = AtlassianCredentials("", ""),
+        bitbucketConfig = BitbucketConfig(
+            baseUrl = mockWebServer.url("/").toString(),
+            projectKey = "project",
+            repositorySlug = "X",
+            credentials = AtlassianCredentials("", "")
+        ),
         pullRequestId = null,
         logger = CILogger.allToStdout
     )
