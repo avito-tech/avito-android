@@ -49,6 +49,9 @@ docker run --rm \
     --env ARTIFACTORY_URL="$ARTIFACTORY_URL" \
     --env ARTIFACTORY_USER="$ARTIFACTORY_USER" \
     --env ARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" \
+    --env SLACK_TEST_WORKSPACE="$SLACK_TEST_WORKSPACE" \
+    --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
+    --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
     dsvoronin/android-builder \
     bash -c "git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
              git config --global user.name 'builder';
