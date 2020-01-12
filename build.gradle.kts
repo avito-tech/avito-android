@@ -104,4 +104,12 @@ tasks {
         distributionType = Wrapper.DistributionType.BIN
         gradleVersion = project.properties["gradleVersion"] as String
     }
+    register("setupGitHooks", Exec::class) {
+        commandLine("git")
+        args("config", "core.hooksPath", ".git_hooks")
+    }
 }
+
+val initialTasks = project.gradle.startParameter.taskNames
+val newTasks = initialTasks + listOf("setupGitHooks")
+project.gradle.startParameter.setTaskNames(newTasks)
