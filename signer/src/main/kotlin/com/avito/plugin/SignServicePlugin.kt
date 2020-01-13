@@ -41,8 +41,8 @@ import java.io.File
  *
  *          buildType                         String токен сервиса             sha1 от подписи для проверки перед отправкой
  *
- *   apk(android.buildTypes.release, project.properties.get("avitoSignToken"), "da39a3ee5e6b4b0d3255bfef95601890afd80709")
- *   bundle(android.buildTypes.release, project.properties.get("avitoSignBundleToken"), "da39a3ee5e6b4b0d3255bfef95601890afd80709")
+ *   apk(android.buildTypes.release, project.properties.get("avitoSignToken"), "<sha1 checksum>")
+ *   bundle(android.buildTypes.release, project.properties.get("avitoSignBundleToken"), "<sha1 checksum>")
  * }
  * ```
  * [SignExtension]
