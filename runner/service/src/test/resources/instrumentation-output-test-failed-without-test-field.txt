@@ -1,0 +1,28 @@
+WARNING: linker: libdvm.so has text relocations. This is wasting memory and is a security risk. Please fix.
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.avito.android.feature.advert.publish.verticals.AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees:
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: test=dataSet5
+INSTRUMENTATION_STATUS: class=com.avito.android.feature.advert.publish.verticals.AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+Error in dataSet5(com.avito.android.feature.advert.publish.verticals.AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees):
+androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: (is descendant of a: (with id: com.avito.android.dev:id/input_view and has child: with string from resource id: <2131755562>[phone] value: Телефон) and with id: 2131296759 and используйте контейнер InputView, в качестве матчера)
+
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 70,416
+There was 1 failure:
+1) dataSet5(com.avito.android.feature.advert.publish.verticals.AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees)
+androidx.test.espresso.NoMatchingViewException: No views in hierarchy found matching: (is descendant of a: (with id: com.avito.android.dev:id/input_view and has child: with string from resource id: <2131755562>[phone] value: Телефон) and with id: 2131296759 and используйте контейнер InputView, в качестве матчера)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1
