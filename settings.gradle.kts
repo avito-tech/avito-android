@@ -30,6 +30,7 @@ include(":runner:client")
 include(":runner:service")
 include(":runner:shared")
 include(":runner:shared-test")
+include(":enforce-repos")
 
 pluginManagement {
 
