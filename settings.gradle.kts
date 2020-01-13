@@ -23,6 +23,7 @@ include(":test-okhttp")
 include(":test-project")
 include(":impact")
 include(":impact-plugin")
+include(":signer")
 include(":build-metrics")
 include(":build-checks")
 include(":android")
@@ -32,6 +33,7 @@ include(":runner:client")
 include(":runner:service")
 include(":runner:shared")
 include(":runner:shared-test")
+include(":enforce-repos")
 
 pluginManagement {
 
