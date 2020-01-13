@@ -25,6 +25,10 @@ include(":build-checks")
 include(":android")
 include(":build-properties")
 include(":time")
+include(":runner:client")
+include(":runner:service")
+include(":runner:shared")
+include(":runner:shared-test")
 
 pluginManagement {
 
