@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -33,6 +35,24 @@ subprojects {
 
     plugins.withType<MavenPublishPlugin> {
         extensions.getByType<PublishingExtension>().run {
+
+            //todo withSourcesJar 6.0 gradle
+            val sourcesTask = tasks.create<Jar>("sourceJar") {
+                classifier = "sources"
+                from(sourceSets.main.get().allJava)
+            }
+
+            publications {
+                create<MavenPublication>("maven") {
+                    from(components["java"])
+                    // вложенные модули будут представлены как dir-subdir-module
+                    artifactId = path.removePrefix(":").replace(':', '-')
+                }
+
+                withType<MavenPublication> {
+                    artifact(sourcesTask)
+                }
+            }
 
             repositories {
                 maven {
@@ -132,7 +152,7 @@ tasks {
     }
 }
 
-project.gradle.startParameter.run { setTaskNames(taskNames + installGitHooksTask.name) }
+project.gradle.startParameter.run { setTaskNames(taskNames + ":${installGitHooksTask.name}") }
 
 fun <T> NamedDomainObjectCollection<T>.namedOrNull(name: String): NamedDomainObjectProvider<T>? {
     return try {
@@ -141,3 +161,9 @@ fun <T> NamedDomainObjectCollection<T>.namedOrNull(name: String): NamedDomainObj
         null
     }
 }
+
+val Project.sourceSets: SourceSetContainer
+    get() = (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
+
+val SourceSetContainer.main: NamedDomainObjectProvider<SourceSet>
+    get() = named<SourceSet>("main")

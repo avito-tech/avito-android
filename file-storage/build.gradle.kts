@@ -20,18 +20,3 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
 }
-
-//todo withSourcesJar 6.0 gradle
-val sourcesTask = tasks.create<Jar>("sourceJar") {
-    classifier = "sources"
-    from(sourceSets.main.get().allJava)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            artifact(sourcesTask)
-        }
-    }
-}
