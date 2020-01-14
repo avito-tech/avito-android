@@ -28,7 +28,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("com.avito.android.impact") {
+        create("impact") {
             id = "com.avito.android.impact"
             implementationClass = "com.avito.impact.plugin.ImpactAnalysisPlugin"
         }

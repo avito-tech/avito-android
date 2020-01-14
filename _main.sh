@@ -56,4 +56,4 @@ docker run --rm \
     bash -c "git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
              git config --global user.name 'builder';
              git config --global user.email 'builder@avito.ru';
-             ./gradlew $@"
+             ./gradlew $@ --info --stacktrace"

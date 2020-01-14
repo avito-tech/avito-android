@@ -21,6 +21,7 @@ dependencies {
     testImplementation(project(":test-project"))
     testImplementation(testFixtures(project(":time")))
 
+    testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
     testFixturesImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
 }
 
