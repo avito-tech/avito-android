@@ -1,5 +1,6 @@
 package com.avito.android.plugin
 
+import com.avito.android.withAndroidModule
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -16,20 +17,22 @@ import java.io.File
 class RoomConfigPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val archPersistence = target.getMandatoryStringProperty("archPersistence")
+        val archPersistence = target.getMandatoryStringProperty("archPersistenceVersion")
 
-        target.dependencies.add("implementation", "androidx.room:room-runtime:$archPersistence")
-        target.dependencies.add("implementation", "androidx.room:room-rxjava2:$archPersistence")
+        target.withAndroidModule {
 
-        target.dependencies.add("kapt", "androidx.room:room-compiler:$archPersistence")
+            target.dependencies.add("implementation", "androidx.room:room-runtime:$archPersistence")
+            target.dependencies.add("implementation", "androidx.room:room-rxjava2:$archPersistence")
 
-        target.dependencies.add("testImplementation", "androidx.room:room-testing:$archPersistence")
+            target.dependencies.add("kapt", "androidx.room:room-compiler:$archPersistence")
 
-        target.extensions.getByType<KaptExtension>().run {
-            arguments {
-                arg("room.schemaLocation", File(target.projectDir, "room-schemas").absolutePath)
+            target.dependencies.add("testImplementation", "androidx.room:room-testing:$archPersistence")
+
+            target.extensions.getByType<KaptExtension>().run {
+                arguments {
+                    arg("room.schemaLocation", File(target.projectDir, "room-schemas").absolutePath)
+                }
             }
         }
     }
-
 }
