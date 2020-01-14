@@ -43,10 +43,13 @@ subprojects {
             }
 
             publications {
-                create<MavenPublication>("maven") {
-                    from(components["java"])
-                    // вложенные модули будут представлены как dir-subdir-module
-                    artifactId = path.removePrefix(":").replace(':', '-')
+                //todo ненадежная проверка, завязана на порядок
+                if (!plugins.hasPlugin("java-gradle-plugin")) {
+                    create<MavenPublication>("maven") {
+                        from(components["java"])
+                        // вложенные модули будут представлены как dir-subdir-module
+                        artifactId = path.removePrefix(":").replace(':', '-')
+                    }
                 }
 
                 withType<MavenPublication> {
