@@ -16,38 +16,6 @@ import java.util.UUID
 internal class PropertyExtensionsKtTest {
 
     @Test
-    fun `optional file input - transforms for nonexistent file to null - if skipIfNotExists used`(@TempDir tempDir: File) {
-        TestProjectGenerator(
-            modules = listOf(
-                KotlinModule(
-                    name = "app",
-                    plugins = listOf("com.avito.test")
-                )
-            )
-        ).generateIn(tempDir)
-
-        gradlew(tempDir, "app:consumer", "-PuseSkipIfNotExists=true")
-            .assertThat()
-            .buildSuccessful()
-    }
-
-    @Test
-    fun `optional file input - fails with error for nonexistent file`(@TempDir tempDir: File) {
-        TestProjectGenerator(
-            modules = listOf(
-                KotlinModule(
-                    name = "app",
-                    plugins = listOf("com.avito.test")
-                )
-            )
-        ).generateIn(tempDir)
-
-        gradlew(tempDir, "app:consumer", expectFailure = true)
-            .assertThat()
-            .buildFailed("specified for property 'inputFile' does not exist")
-    }
-
-    @Test
     fun `late initialization - lazy project property`() {
         val project = childProject()
 
