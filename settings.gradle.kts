@@ -1,4 +1,4 @@
-rootProject.name = "android"
+rootProject.name = "avito-android"
 
 enableFeaturePreview("GRADLE_METADATA")
 

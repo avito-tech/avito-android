@@ -27,18 +27,3 @@ dependencies {
     testImplementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunit5Version")
 }
-
-//todo withSourcesJar 6.0 gradle
-val sourcesTask = tasks.create<Jar>("sourceJar") {
-    classifier = "sources"
-    from(sourceSets.main.get().allJava)
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            artifact(sourcesTask)
-        }
-    }
-}
