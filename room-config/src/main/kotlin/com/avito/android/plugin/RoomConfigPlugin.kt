@@ -20,13 +20,15 @@ class RoomConfigPlugin : Plugin<Project> {
         val archPersistence = target.getMandatoryStringProperty("archPersistenceVersion")
 
         target.withAndroidModule {
-
             target.dependencies.add("implementation", "androidx.room:room-runtime:$archPersistence")
             target.dependencies.add("implementation", "androidx.room:room-rxjava2:$archPersistence")
 
-            target.dependencies.add("kapt", "androidx.room:room-compiler:$archPersistence")
-
             target.dependencies.add("testImplementation", "androidx.room:room-testing:$archPersistence")
+        }
+
+        target.plugins.withId("kotlin-kapt") {
+
+            target.dependencies.add("kapt", "androidx.room:room-compiler:$archPersistence")
 
             target.extensions.getByType<KaptExtension>().run {
                 arguments {
