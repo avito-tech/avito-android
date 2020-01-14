@@ -30,10 +30,9 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("com.avito.android.lint-report") {
+        create("lintReport") {
             id = "com.avito.android.lint-report"
             implementationClass = "com.avito.android.lint.LintReportPlugin"
         }
     }
 }
-

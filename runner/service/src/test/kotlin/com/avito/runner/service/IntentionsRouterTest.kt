@@ -5,10 +5,12 @@ import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@UseExperimental(ExperimentalCoroutinesApi::class)
 class IntentionsRouterTest {
 
     private lateinit var router: IntentionsRouter

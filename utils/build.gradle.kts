@@ -21,6 +21,8 @@ dependencies {
 
     testImplementation("com.google.truth:truth:$truthVersion")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlin2Version")
+
+    testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
 }
 
 //todo withSourcesJar 6.0 gradle

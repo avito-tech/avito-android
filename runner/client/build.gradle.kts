@@ -23,6 +23,7 @@ dependencies {
 
     testImplementation(project(":test-project"))
     testImplementation(project(":runner:shared-test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     testImplementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunit5Version")
 }

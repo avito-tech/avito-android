@@ -1,6 +1,7 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    kotlin("jvm")
-    `maven-publish`
+    `kotlin-dsl` apply false
 }
 
 val projectVersion: String by project
@@ -12,21 +13,28 @@ val junit5Version: String by project
 val junit5PlatformVersion: String by project
 val truthVersion: String by project
 
-allprojects {
+val publishToBintrayTask = tasks.register<Task>("publishToBintray") {
+    group = "publication"
+}
+
+val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
+    group = "publication"
+}
+
+subprojects {
+
     repositories {
         jcenter()
         google()
     }
-}
-
-subprojects {
 
     group = "com.avito.android"
     version = projectVersion
 
     plugins.withType<MavenPublishPlugin> {
         extensions.getByType<PublishingExtension>().run {
-            this.repositories {
+
+            repositories {
                 maven {
                     name = "bintray"
                     val bintrayUsername = "avito-tech"
@@ -49,23 +57,34 @@ subprojects {
                     }
                 }
             }
+
+            afterEvaluate {
+                publications {
+                    namedOrNull("maven")?.let {
+                        val publicationTask = tasks.named("publishMavenPublicationToBintrayRepository")
+                        publishToBintrayTask.configure { dependsOn(publicationTask) }
+                        publishToArtifactoryTask.configure { dependsOn(publicationTask) }
+                    }
+
+                    namedOrNull("pluginMaven")?.let {
+                        val publicationTask = tasks.named("publishPluginMavenPublicationToBintrayRepository")
+                        publishToBintrayTask.configure { dependsOn(publicationTask) }
+                        publishToArtifactoryTask.configure { dependsOn(publicationTask) }
+                    }
+                }
+            }
         }
     }
 
     plugins.withId("kotlin") {
-
         this@subprojects.tasks {
 
-            compileKotlin {
+            withType<KotlinCompile> {
                 kotlinOptions {
                     jvmTarget = javaVersion
                     allWarningsAsErrors = true
                     freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
                 }
-            }
-
-            compileTestKotlin {
-                kotlinOptions.jvmTarget = javaVersion
             }
 
             withType<Test> {
@@ -79,14 +98,14 @@ subprojects {
         }
 
         dependencies {
-            testImplementation("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
+            "testImplementation"("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
 
-            testRuntimeOnly("org.junit.platform:junit-platform-runner:$junit5PlatformVersion")
-            testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junit5PlatformVersion")
-            testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
+            "testRuntimeOnly"("org.junit.platform:junit-platform-runner:$junit5PlatformVersion")
+            "testRuntimeOnly"("org.junit.platform:junit-platform-launcher:$junit5PlatformVersion")
+            "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
 
-            testImplementation(gradleTestKit())
-            testImplementation("com.google.truth:truth:$truthVersion")
+            "testImplementation"(gradleTestKit())
+            "testImplementation"("com.google.truth:truth:$truthVersion")
         }
     }
 
@@ -99,17 +118,26 @@ subprojects {
     }
 }
 
+val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
+    group = "Build Setup"
+    description = "Install local repository git hooks"
+    commandLine("git")
+    args("config", "core.hooksPath", ".git_hooks")
+}
+
 tasks {
     wrapper {
         distributionType = Wrapper.DistributionType.BIN
         gradleVersion = project.properties["gradleVersion"] as String
     }
-    register("setupGitHooks", Exec::class) {
-        commandLine("git")
-        args("config", "core.hooksPath", ".git_hooks")
-    }
 }
 
-val initialTasks = project.gradle.startParameter.taskNames
-val newTasks = initialTasks + listOf("setupGitHooks")
-project.gradle.startParameter.setTaskNames(newTasks)
+project.gradle.startParameter.run { setTaskNames(taskNames + installGitHooksTask.name) }
+
+fun <T> NamedDomainObjectCollection<T>.namedOrNull(name: String): NamedDomainObjectProvider<T>? {
+    return try {
+        named(name)
+    } catch (e: UnknownDomainObjectException) {
+        null
+    }
+}
