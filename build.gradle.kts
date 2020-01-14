@@ -81,15 +81,13 @@ subprojects {
             afterEvaluate {
                 publications {
                     namedOrNull("maven")?.let {
-                        val publicationTask = tasks.named("publishMavenPublicationToBintrayRepository")
-                        publishToBintrayTask.configure { dependsOn(publicationTask) }
-                        publishToArtifactoryTask.configure { dependsOn(publicationTask) }
+                        publishToBintrayTask.configure { dependsOn(tasks.named("publishMavenPublicationToBintrayRepository")) }
+                        publishToArtifactoryTask.configure { dependsOn(tasks.named("publishMavenPublicationToArtifactoryRepository")) }
                     }
 
                     namedOrNull("pluginMaven")?.let {
-                        val publicationTask = tasks.named("publishPluginMavenPublicationToBintrayRepository")
-                        publishToBintrayTask.configure { dependsOn(publicationTask) }
-                        publishToArtifactoryTask.configure { dependsOn(publicationTask) }
+                        publishToBintrayTask.configure { dependsOn(tasks.named("publishPluginMavenPublicationToBintrayRepository")) }
+                        publishToArtifactoryTask.configure { dependsOn(tasks.named("publishPluginMavenPublicationToArtifactoryRepository")) }
                     }
                 }
             }
