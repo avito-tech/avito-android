@@ -50,8 +50,17 @@ subprojects {
                 }
 
                 withType<MavenPublication> {
-                    artifact(sourcesTask)
+                    if (!name.contains("pluginmarker", ignoreCase = true)) {
+                        artifact(sourcesTask)
+                    }
                 }
+            }
+
+            publishToBintrayTask.configure {
+                dependsOn(tasks.named("publishAllPublicationsToBintrayRepository"))
+            }
+            publishToArtifactoryTask.configure {
+                dependsOn(tasks.named("publishAllPublicationsToArtifactoryRepository"))
             }
 
             repositories {
@@ -74,20 +83,6 @@ subprojects {
                     credentials {
                         username = System.getenv("ARTIFACTORY_USER")
                         password = System.getenv("ARTIFACTORY_PASSWORD")
-                    }
-                }
-            }
-
-            afterEvaluate {
-                publications {
-                    namedOrNull("maven")?.let {
-                        publishToBintrayTask.configure { dependsOn(tasks.named("publishMavenPublicationToBintrayRepository")) }
-                        publishToArtifactoryTask.configure { dependsOn(tasks.named("publishMavenPublicationToArtifactoryRepository")) }
-                    }
-
-                    namedOrNull("pluginMaven")?.let {
-                        publishToBintrayTask.configure { dependsOn(tasks.named("publishPluginMavenPublicationToBintrayRepository")) }
-                        publishToArtifactoryTask.configure { dependsOn(tasks.named("publishPluginMavenPublicationToArtifactoryRepository")) }
                     }
                 }
             }
