@@ -15,11 +15,11 @@ class RobolectricPlugin : Plugin<Project> {
 
         val androidXTestVersion = target.getMandatoryStringProperty("androidXTestVersion")
 
-        target.dependencies.add("testImplementation", "androidx.test:core:$androidXTestVersion")
-        target.dependencies.add("testImplementation", target.project(":test:utils:robolectric")) //todo open source
-
         target.withAndroidModule { extension ->
             extension.testOptions.unitTests.isIncludeAndroidResources = true
+
+            target.dependencies.add("testImplementation", "androidx.test:core:$androidXTestVersion")
+            target.dependencies.add("testImplementation", target.project(":test:utils:robolectric")) //todo open source
         }
     }
 }

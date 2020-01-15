@@ -43,15 +43,27 @@ subprojects {
             }
 
             publications {
-                create<MavenPublication>("maven") {
-                    from(components["java"])
-                    // вложенные модули будут представлены как dir-subdir-module
-                    artifactId = path.removePrefix(":").replace(':', '-')
+                //todo ненадежная проверка, завязана на порядок
+                if (!plugins.hasPlugin("java-gradle-plugin")) {
+                    create<MavenPublication>("maven") {
+                        from(components["java"])
+                        // вложенные модули будут представлены как dir-subdir-module
+                        artifactId = path.removePrefix(":").replace(':', '-')
+                    }
                 }
 
                 withType<MavenPublication> {
-                    artifact(sourcesTask)
+                    if (!name.contains("pluginmarker", ignoreCase = true)) {
+                        artifact(sourcesTask)
+                    }
                 }
+            }
+
+            publishToBintrayTask.configure {
+                dependsOn(tasks.named("publishAllPublicationsToBintrayRepository"))
+            }
+            publishToArtifactoryTask.configure {
+                dependsOn(tasks.named("publishAllPublicationsToArtifactoryRepository"))
             }
 
             repositories {
@@ -74,22 +86,6 @@ subprojects {
                     credentials {
                         username = System.getenv("ARTIFACTORY_USER")
                         password = System.getenv("ARTIFACTORY_PASSWORD")
-                    }
-                }
-            }
-
-            afterEvaluate {
-                publications {
-                    namedOrNull("maven")?.let {
-                        val publicationTask = tasks.named("publishMavenPublicationToBintrayRepository")
-                        publishToBintrayTask.configure { dependsOn(publicationTask) }
-                        publishToArtifactoryTask.configure { dependsOn(publicationTask) }
-                    }
-
-                    namedOrNull("pluginMaven")?.let {
-                        val publicationTask = tasks.named("publishPluginMavenPublicationToBintrayRepository")
-                        publishToBintrayTask.configure { dependsOn(publicationTask) }
-                        publishToArtifactoryTask.configure { dependsOn(publicationTask) }
                     }
                 }
             }
