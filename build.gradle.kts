@@ -31,7 +31,7 @@ subprojects {
     }
 
     group = "com.avito.android"
-    version = projectVersion
+    version = System.getenv("PROJECT_VERSION") ?: projectVersion
 
     plugins.withType<MavenPublishPlugin> {
         extensions.getByType<PublishingExtension>().run {
