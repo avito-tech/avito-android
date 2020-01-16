@@ -9,11 +9,10 @@ import okhttp3.Request
 import okhttp3.RequestBody
 
 internal class JsonRpcRequestProvider(
-    host: String,
+    private val host: String,
     private val httpClient: OkHttpClient,
     private val gson: Gson
 ) {
-    private val hostWithoutSlash = if (host.endsWith("/")) host.dropLast(1) else host
 
     private val jsonMime = "application/json"
 
@@ -24,7 +23,7 @@ internal class JsonRpcRequestProvider(
     private inline fun <reified Response : Any> internalRequest(request: Any): Response {
         val response = httpClient.newCall(
             Request.Builder()
-                .url(hostWithoutSlash)
+                .url(host.removeSuffix("/"))
                 .header("Accept", jsonMime)
                 .header("Content-Type", jsonMime)
                 .post(RequestBody.create(MediaType.get(jsonMime), gson.toJson(request)))
