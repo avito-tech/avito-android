@@ -25,36 +25,49 @@ class SignServicePluginTest {
         mockWebServer.shutdown()
     }
 
-    @BeforeEach
-    fun setup() {
-        TestProjectGenerator(
-            modules = listOf(
-                AndroidAppModule(
-                    "app",
-                    versionCode = "100",
-                    versionName = "22.1",
-                    plugins = listOf("com.avito.android.signer"),
-                    buildGradleExtra = """
-                         signService {
-                            host = "${mockWebServer.url("/")}"
-                            apk(android.buildTypes.release, project.properties.get("signToken"))
-                            bundle(android.buildTypes.release, project.properties.get("signToken"))
-                         }
-                    """.trimIndent()
-                )
-            )
-        ).generateIn(testProjectDir)
+    @Test
+    fun `plugin apply - fails - configuration without host`() {
+        generateTestProject(signServiceExtension = """
+             signService {
+                // host
+                apk(android.buildTypes.release, "signToken")
+                bundle(android.buildTypes.release, "signToken")
+             }
+        """.trimIndent())
+
+        val result = ciRun(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            dryRun = true,
+            expectFailure = true
+        )
+
+        result.assertThat().buildFailed("host")
     }
 
     @Test
-    fun `plugin apply fails - without required params - when sign tasks in graph (on ci)`() {
-        val result = ciRun(testProjectDir, ":app:signApkViaServiceRelease", expectFailure = true)
+    fun `apk signing fails - without required params - when sign tasks in graph (on ci)`() {
+        generateTestProject()
+
+        val result = ciRun(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            expectFailure = true
+        )
+
         result.assertThat().buildFailed("can't sign")
     }
 
     @Test
-    fun `plugin applied - without required params - with allowSkip`() {
-        val result = gradlew(testProjectDir, ":app:signApkViaServiceRelease", "-Pavito.signer.allowSkip=true")
+    fun `apk signing skipped - without required params - with allowSkip`() {
+        generateTestProject()
+
+        val result = gradlew(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            "-Pavito.signer.allowSkip=true"
+        )
+
         result.assertThat().buildSuccessful()
     }
 
@@ -65,7 +78,7 @@ class SignServicePluginTest {
      */
     @Test
     fun `bundle path check`() {
-
+        generateTestProject()
         mockWebServer.enqueue(MockResponse().setResponseCode(200))
 
         val result = gradlew(
@@ -83,12 +96,40 @@ class SignServicePluginTest {
     }
 
     @Test
-    fun `sign apk task - runs after package`() {
-        val result = gradlew(testProjectDir, ":app:signApkViaServiceRelease", dryRun = true)
+    fun `apk signing task - runs after packaging`() {
+        generateTestProject()
+
+        val result = gradlew(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            dryRun = true
+        )
 
         result.assertThat().tasksShouldBeTriggered(
             ":app:packageRelease",
             ":app:signApkViaServiceRelease"
         ).inOrder()
     }
+
+    private fun generateTestProject(signServiceExtension: String = defaultExtension) {
+        TestProjectGenerator(
+            modules = listOf(
+                AndroidAppModule(
+                    "app",
+                    versionCode = "100",
+                    versionName = "22.1",
+                    plugins = listOf("com.avito.android.signer"),
+                    buildGradleExtra = signServiceExtension
+                )
+            )
+        ).generateIn(testProjectDir)
+    }
+
+    private val defaultExtension = """
+         signService {
+            host = "${mockWebServer.url("/")}"
+            apk(android.buildTypes.release, project.properties.get("signToken"))
+            bundle(android.buildTypes.release, project.properties.get("signToken"))
+         }
+    """.trimIndent()
 }

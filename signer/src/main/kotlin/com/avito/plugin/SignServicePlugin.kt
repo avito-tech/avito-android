@@ -72,7 +72,16 @@ class SignServicePlugin : Plugin<Project> {
             return
         }
 
-        val allowSkipSigning: Boolean = target.getBooleanProperty("avito.signer.allowSkip")
+        //todo explain why do we have multiple options to skip signing
+        // disableSignService (avito.signer.disable) + avito.signer.allowSkip
+        // Is it feasible to have only one?
+        val skipSigning: Boolean = target.getBooleanProperty("avito.signer.allowSkip")
+
+        target.afterEvaluate {
+            if (!skipSigning) {
+                require(!signExtension.host.isNullOrBlank()) { "signer host must be set" }
+            }
+        }
 
         val registeredBuildTypes = mutableMapOf<String, String>()
 
@@ -84,7 +93,7 @@ class SignServicePlugin : Plugin<Project> {
                     tasks = target.tasks,
                     variant = variant,
                     taskName = signApkTaskName(variant.name),
-                    serviceHost = signExtension.host,
+                    serviceUrl = signExtension.host.orEmpty(),
                     archiveProvider = variant.apkFileProvider(),
                     providingTask = variant.packageApplicationProvider,
                     signTokensMap = signExtension.apkSignTokens
@@ -94,7 +103,7 @@ class SignServicePlugin : Plugin<Project> {
                     tasks = target.tasks,
                     variant = variant,
                     taskName = signBundleTaskName(variant.name),
-                    serviceHost = signExtension.host,
+                    serviceUrl = signExtension.host.orEmpty(),
                     archiveProvider = variant.bundleFileProvider(),
                     providingTask = target.tasks.bundleTaskProvider(variant),
                     signTokensMap = signExtension.bundleSignTokens
@@ -104,7 +113,7 @@ class SignServicePlugin : Plugin<Project> {
             }
         }
 
-        if (!allowSkipSigning) {
+        if (!skipSigning) {
             target.gradle.taskGraph.whenReady(closureOf<TaskExecutionGraph> {
                 failOnMissingToken(
                     projectPath = target.path,
@@ -121,7 +130,7 @@ class SignServicePlugin : Plugin<Project> {
         tasks: TaskContainer,
         variant: ApplicationVariant,
         taskName: String,
-        serviceHost: String,
+        serviceUrl: String,
         archiveProvider: Provider<File>,
         providingTask: TaskProvider<*>,
         signTokensMap: Map<String, String?>
@@ -144,7 +153,7 @@ class SignServicePlugin : Plugin<Project> {
             unsignedFileProperty.set(archiveFile)
             signedFileProperty.set(archiveFile)
 
-            host.set(serviceHost)
+            this.serviceUrl.set(serviceUrl)
             tokenProperty.set(token)
 
             onlyIf { isSignNeeded }

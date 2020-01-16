@@ -19,7 +19,7 @@ abstract class SignTask @Inject constructor(objects: ObjectFactory) : DefaultTas
     val tokenProperty = objects.property<String>()
 
     @Input
-    val host = objects.property<String>()
+    val serviceUrl = objects.property<String>()
 
     @InputFile
     val unsignedFileProperty: RegularFileProperty = objects.fileProperty()
@@ -32,12 +32,10 @@ abstract class SignTask @Inject constructor(objects: ObjectFactory) : DefaultTas
         val unsignedFile = unsignedFileProperty.get().asFile
         val signedFile = signedFileProperty.get().asFile
 
-        val host = host.get()
-
-        require(!host.isNullOrBlank()) { "signer host must be set" }
+        val serviceUrl: String = serviceUrl.get()
 
         val signResult = SignViaServiceAction(
-            host = host,
+            serviceUrl = serviceUrl,
             token = tokenProperty.get(),
             unsignedFile = unsignedFile,
             signedFile = signedFile,
