@@ -23,6 +23,10 @@ val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
     group = "publication"
 }
 
+val finalProjectVersion: String = System.getenv("PROJECT_VERSION").let { env ->
+    if (env.isNullOrBlank()) projectVersion else env
+}
+
 subprojects {
 
     repositories {
@@ -31,7 +35,7 @@ subprojects {
     }
 
     group = "com.avito.android"
-    version = System.getenv("PROJECT_VERSION") ?: projectVersion
+    version = finalProjectVersion
 
     plugins.withType<MavenPublishPlugin> {
         extensions.getByType<PublishingExtension>().run {
