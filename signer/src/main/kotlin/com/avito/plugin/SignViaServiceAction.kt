@@ -17,7 +17,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 internal class SignViaServiceAction(
-    private val host: String,
+    private val serviceUrl: String,
     private val token: String,
     private val unsignedFile: File,
     private val signedFile: File,
@@ -79,7 +79,7 @@ internal class SignViaServiceAction(
             )
             .build()
 
-        val hostWithoutSlash = if (host.endsWith("/")) host.dropLast(1) else host
+        val hostWithoutSlash = serviceUrl.removeSuffix("/")
 
         return Request.Builder()
             .url(hostWithoutSlash + apiPath)
