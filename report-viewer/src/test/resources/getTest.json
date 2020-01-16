@@ -1,0 +1,90 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "id": "5da3b5d7e5b6f00001ebeb09",
+    "run_id": "5da3b3fee5b6f00001ebe451",
+    "test_case_id": "95326",
+    "test_name": "com.avito.android.test.geo.advert.publish.GeneralItem_IsPublished_WhenUsingNewGeo_95326::dataSet3",
+    "data_set_number": 3,
+    "environment": "functional-24",
+    "run_test_result": [
+      {
+        "status": 1,
+        "report": {
+          "test_case_id": "95326",
+          "test_class": "com.avito.android.test.geo.advert.publish.GeneralItem_IsPublished_WhenUsingNewGeo_95326",
+          "test_name": "dataSet3#3",
+          "data_set_number": "3",
+          "data_set": {
+            "address": "Майкоп, Ленина 9",
+            "position": "lat/lng: (44.603481015661046,40.10108906775713)"
+          },
+          "description": "Подача объявления в категории General с новым гео (версия 1.1). Вместо полей \"Город\" и \"Район\"/\"Метро\" пользователь видит единое поле \"Адрес\".\n            На карточке объявления точный адрес не отображается.\n            АБ-тест: для версии приложения 24 и ниже \"/user/abtest?filter=ABTest%5CGeo%5CNewGeoApps\",\n            для версии приложения 25+ \"/user/abtest?filter=ABTest%5CGeo%5CNewGeoAppsImprovedClients\". ",
+          "group_list": [
+            "geo"
+          ],
+          "start_time": 1571009927,
+          "end_time": 1571010006,
+          "precondition_step_list": [
+            {
+              "number": 0,
+              "title": "\n                1. Авторизоваться\n                2. Перейти на подачу объявления в General\n                3. Дойти до экрана контактных данных.\"",
+              "entry_list": [
+                {
+                  "comment": "HTTP POST: https://test.ru/integration/tests/users/abtest/setcontrol    200",
+                  "file_address": "/static/m/2019-10-13/23-38/5da3b588f29fa4000b55d34b.HTML",
+                  "timestamp": 1571009927,
+                  "type": "HTML"
+                }
+              ],
+              "timestamp": 1571009937
+            }
+          ],
+          "test_case_step_list": [
+            {
+              "number": 0,
+              "title": "\n            Заполнить поле \"Адрес\" согласно Dataset.\n            Завершить подачу объявления.",
+              "entry_list": [
+                {
+                  "timestamp": 1571009984,
+                  "title": "performing ViewAction: Check descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)",
+                  "type": "comment"
+                }
+              ],
+              "timestamp": 1571009984
+            },
+            {
+              "number": 1,
+              "title": "Тапнуть на адрес.",
+              "entry_list": [
+                {
+                  "timestamp": 1571010002,
+                  "title": "scroll to on AppCompatTextView(id=advert_address;text=Республика Адыгея, Майкоп, ул. Ленина, 9)",
+                  "type": "comment"
+                }
+              ],
+              "timestamp": 1571010002
+            }
+          ]
+        },
+        "console": {
+          "stdout": "",
+          "stderr": ""
+        },
+        "prepared_data": {
+          "e2e": true,
+          "features": [
+            "advert",
+            "publish"
+          ],
+          "run_duration": 79,
+          "tc_build": "10507574"
+        }
+      }
+    ],
+    "last_status": 1,
+    "last_conclusion": null,
+    "conclusions": []
+  },
+  "id": 1
+}

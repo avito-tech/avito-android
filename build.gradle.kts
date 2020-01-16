@@ -99,7 +99,8 @@ subprojects {
                 kotlinOptions {
                     jvmTarget = javaVersion
                     allWarningsAsErrors = true
-                    freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
+                    freeCompilerArgs =
+                        freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental" + "-XXLanguage:+InlineClasses"
                 }
             }
 

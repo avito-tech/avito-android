@@ -1,0 +1,75 @@
+{
+    "jsonrpc": "2.0",
+    "result": [
+        {
+            "id": "5c8032d5ccdf780001c49577",
+            "test_case_id": "",
+            "test_name": "ru.domofond.features.RemoteToggleMonitorTest::check_remote_toggle",
+            "data_set_number": -1,
+            "environment": "API24",
+            "status": 1,
+            "last_status": 1,
+            "prepared_data": [
+                {
+                    "run_duration": 9,
+                    "tc_build": "6149836"
+                }
+            ],
+            "description": "",
+            "group_list": [
+                "FunctionalTests"
+            ],
+            "run_info": null,
+            "attempts_count": 3,
+            "last_conclusion": null,
+            "success_count": 3
+        },
+        {
+            "id": "5c8032db0c8c1800017072ca",
+            "test_case_id": "",
+            "test_name": "ru.domofond.test.advert.AdvertTest::advert_screen_opened___sent_ViewItemEvent_LogEvent",
+            "data_set_number": -1,
+            "environment": "API24",
+            "status": 1,
+            "last_status": 1,
+            "prepared_data": [
+                {
+                    "run_duration": 6,
+                    "tc_build": "6149836"
+                }
+            ],
+            "description": "",
+            "group_list": [
+                "ComponentTests"
+            ],
+            "run_info": null,
+            "attempts_count": 3,
+            "last_conclusion": null,
+            "success_count": 3
+        },
+        {
+            "id": "5c8032e20c8c1800017072d2",
+            "test_case_id": "",
+            "test_name": "ru.domofond.test.advert.AdvertTest::advert_screen_opened___when_share_clicked___correct_url",
+            "data_set_number": -1,
+            "environment": "API24",
+            "status": 1,
+            "last_status": 1,
+            "prepared_data": [
+                {
+                    "run_duration": 6,
+                    "tc_build": "6149836"
+                }
+            ],
+            "description": "",
+            "group_list": [
+                "ComponentTests"
+            ],
+            "run_info": null,
+            "attempts_count": 3,
+            "last_conclusion": null,
+            "success_count": 3
+        }
+    ],
+    "id": 1
+}
