@@ -5,9 +5,10 @@ import com.avito.report.model.Team
 import okhttp3.HttpUrl
 
 class FakeReportViewer(
-    var byReportCoordinatesUrl: HttpUrl = HttpUrl.parse("http://localhost/")!!,
-    var byReportIdUrl: HttpUrl = HttpUrl.parse("http://localhost/")!!,
-    var byTestIdUrl: HttpUrl = HttpUrl.parse("http://localhost/")!!
+    private val reportViewerUrl: String = "http://localhost/",
+    var byReportCoordinatesUrl: HttpUrl = HttpUrl.parse(reportViewerUrl)!!,
+    var byReportIdUrl: HttpUrl = HttpUrl.parse(reportViewerUrl)!!,
+    var byTestIdUrl: HttpUrl = HttpUrl.parse(reportViewerUrl)!!
 ) : ReportViewer {
 
     override fun generateReportUrl(
