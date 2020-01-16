@@ -1,6 +1,8 @@
 package com.avito.slack.model
 
-data class SlackChannel(val name: String) {
+import java.io.Serializable
+
+data class SlackChannel(val name: String) : Serializable {
 
     init {
         require(name.startsWith("#") || name.startsWith("@")) { "Channel name should start with # or @" }
