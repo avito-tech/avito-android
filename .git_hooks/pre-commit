@@ -1,19 +1,17 @@
 #!/usr/bin/env bash
 
-#TODO регексп захватывает все пекеджи в диффе
-exit 0;
-
 set -e
 set -o pipefail
 
 # grep returns exit code 1 in case of no matches. It's easier to check it in place due to pipe
 
 INTERNAL_URLS=$(git diff --cached --no-color --no-prefix --unified=0 \
-    | { egrep --only-matching "[a-zA_Z0-9_\-\.]+avito\.ru" || test $? = 1; } \
-    | { egrep --invert-match "links\.k\.avito\.ru" || test $? = 1; } )
+    | { grep -E --only-matching "[[:alnum:]_\-\.]+\.avito\.ru\b" || test $? = 1; } \
+    | { grep -E --invert-match "links\.k\.avito\.ru" || test $? = 1; } )
 
 if [ -n "${INTERNAL_URLS}" ]; then
     echo "=== pre-commit git hook has been failed ==="
-    echo "Found forbidden internal links:\n${INTERNAL_URLS}"
+    echo "Found forbidden internal links:"
+    echo "${INTERNAL_URLS}"
     exit 1
 fi
