@@ -1,0 +1,85 @@
+{
+    "file": [
+        {
+            "name": "apk",
+            "fullName": "test/stability-suite/build/outputs/apk",
+            "modificationTime": "20190204T175741+0300"
+        },
+        {
+            "name": "debug",
+            "fullName": "test/stability-suite/build/outputs/apk/debug",
+            "modificationTime": "20190204T175741+0300"
+        },
+        {
+            "name": "release",
+            "fullName": "test/stability-suite/build/outputs/apk/release",
+            "modificationTime": "20190204T175741+0300"
+        },
+        {
+            "name": "avito-48.0-(270)-debug.apk",
+            "fullName": "avito/build/outputs/apk/debug/avito-48.0-(270)-debug.apk",
+            "size": 35412239,
+            "modificationTime": "20190204T175728+0300"
+        },
+        {
+            "name": "avito-48.0-(270)-debug-androidTest.apk",
+            "fullName": "avito/build/outputs/apk/androidTest/debug/avito-48.0-(270)-debug-androidTest.apk",
+            "size": 35412239,
+            "modificationTime": "20190204T175728+0300"
+        },
+        {
+            "name": "avito-48.0-(270)-experimental.apk",
+            "fullName": "avito/build/outputs/apk/experimental/avito-48.0-(270)-experimental.apk",
+            "size": 24589879,
+            "modificationTime": "20190204T175729+0300"
+        },
+        {
+            "name": "avito-48.0-(270)-release.apk",
+            "fullName": "avito/build/outputs/apk/release/avito-48.0-(270)-release.apk",
+            "size": 24578135,
+            "modificationTime": "20190204T175729+0300"
+        },
+        {
+            "name": "avito-48.0-(270)-staging.apk",
+            "fullName": "avito/build/outputs/apk/staging/avito-48.0-(270)-staging.apk",
+            "size": 26511177,
+            "modificationTime": "20190204T175729+0300"
+        },
+        {
+            "name": "avito-48.0-(270).aab",
+            "fullName": "avito/build/outputs/bundle/release/avito-48.0-(270).aab",
+            "size": 29668204,
+            "modificationTime": "20190204T175730+0300"
+        },
+        {
+            "name": "mapping.txt",
+            "fullName": "avito/build/outputs/mapping/experimental/mapping.txt",
+            "size": 45688464,
+            "modificationTime": "20190204T175730+0300"
+        },
+        {
+            "name": "mapping.txt",
+            "fullName": "avito/build/outputs/mapping/release/mapping.txt",
+            "size": 45687853,
+            "modificationTime": "20190204T175730+0300"
+        },
+        {
+            "name": "mapping.txt",
+            "fullName": "avito/build/outputs/mapping/staging/mapping.txt",
+            "size": 46705734,
+            "modificationTime": "20190204T175731+0300"
+        },
+        {
+            "name": "api.json",
+            "fullName": "avito/build/reports/api.json",
+            "size": 21235,
+            "modificationTime": "20190204T175741+0300"
+        },
+        {
+            "name": "feature_toggles.json",
+            "fullName": "avito/build/reports/feature_toggles.json",
+            "size": 24762,
+            "modificationTime": "20190204T175741+0300"
+        }
+    ]
+}
