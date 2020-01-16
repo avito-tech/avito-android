@@ -75,7 +75,7 @@ internal class EnvironmentInfoImpl(private val project: Project, private val git
     private fun hostname(): String {
         return InetAddress.getLocalHost().hostName
             .substringBefore(".local")
-            .substringBefore(".msk.avito.ru")
+            .substringBefore(".msk.a")
     }
 
 }

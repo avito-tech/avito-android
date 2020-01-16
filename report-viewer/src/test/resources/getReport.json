@@ -1,0 +1,52 @@
+{
+    "jsonrpc": "2.0",
+    "result": {
+        "id": "5c8032d5ccdf780001c49576",
+        "plan_slug": "AvitoAndroid",
+        "job_slug": "FunctionalTests",
+        "run_id": "6eca18536e7287be34472a14e8c0bd04256ae60a.AvitoAndroid_Build",
+        "triggered_by": "",
+        "created": 1551905493,
+        "prepared_data": {
+            "duration": 63393,
+            "ended": "2019-03-07T05:15:16.629Z",
+            "stats": [
+                {
+                    "count": 2,
+                    "status": 2
+                },
+                {
+                    "count": 52,
+                    "status": 3
+                },
+                {
+                    "count": 737,
+                    "status": 1
+                }
+            ],
+            "test_info": {
+                "count": 791,
+                "error_count": 52,
+                "fail_count": 2,
+                "success_count": 737
+            }
+        },
+        "report_data": {
+            "build": 6147486,
+            "build_id_set": [
+                "6147486",
+                "6150516",
+                "6149645",
+                "6149836",
+                "6150036"
+            ],
+            "tags": [
+                "buildBranch:develop",
+                "buildCommit:6eca18536e7287be34472a14e8c0bd04256ae60a"
+            ],
+            "testsBranch": "master"
+        },
+        "is_finished": true
+    },
+    "id": 1
+}

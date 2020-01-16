@@ -30,7 +30,7 @@ val Project.buildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { pro
             "has 'ci' gradle property with true value"
         )
         isRunInMainframer() -> BuildEnvironment.Mainframer(
-            "hostName is android-builder.msk.avito.ru or android-builder"
+            "hostName is android-builder"
         )
         isRunFromIDE(project) -> BuildEnvironment.IDE(
             "has 'android.injected.invoked.from.ide' start parameter"
@@ -57,7 +57,7 @@ fun isRunInGradleTestKit(): Boolean =
 private fun isRunInMainframer(): Boolean {
     val hostName = InetAddress.getLocalHost().hostName
 
-    return hostName == "android-builder.msk.avito.ru" || hostName == "android-builder"
+    return hostName.startsWith("android-builder")
 }
 
 private fun isRunInCI(project: Project): Boolean =
