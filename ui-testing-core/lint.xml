@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="InvalidPackage" severity="ignore">
+        <ignore regexp="junit.*jar" />
+        <ignore regexp="okio" />
+        <ignore regexp="retrofit" />
+    </issue>
+
+    <!--We update libraries when thinking that they need to be updated,
+    not right after their release. So, it is definitely informal level.-->
+    <issue id="GradleDependency" severity="informational" />
+
+</lint>

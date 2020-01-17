@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 rootProject.name = "avito-android"
 
 enableFeaturePreview("GRADLE_METADATA")
@@ -16,6 +18,7 @@ include(":kotlin-config")
 include(":test-summary")
 include(":file-storage")
 include(":sentry")
+include(":ui-testing-core")
 include(":ui-test-bytecode-analyzer")
 include(":instrumentation-impact-analysis")
 include(":prosector")
@@ -54,18 +57,22 @@ include(":enforce-repos")
 pluginManagement {
 
     repositories {
-        jcenter()
-        @Suppress("UnstableApiUsage")
         gradlePluginPortal()
         google()
     }
 
     val kotlinVersion: String by settings
+    val androidGradlePluginVersion: String by settings
 
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id.startsWith("org.jetbrains.kotlin")) {
-                useVersion(kotlinVersion)
+            val pluginId = requested.id.id
+            when {
+                pluginId.startsWith("com.android.") ->
+                    useModule("com.android.tools.build:gradle:$androidGradlePluginVersion")
+
+                pluginId.startsWith("org.jetbrains.kotlin.") ->
+                    useVersion(kotlinVersion)
             }
         }
     }
