@@ -15,6 +15,6 @@ dependencies {
     implementation(project(":sentry"))
     implementation(project(":kotlin-dsl-support"))
 
-    testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+    testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     testFixturesImplementation(project(":utils"))
 }
