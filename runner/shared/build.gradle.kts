@@ -8,6 +8,6 @@ val rxjava1Version: String by project
 
 dependencies {
     compileOnly(gradleApi())
-    implementation("io.reactivex:rxjava:${rxjava1Version}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+    implementation("io.reactivex:rxjava:$rxjava1Version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }

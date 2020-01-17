@@ -22,8 +22,8 @@ dependencies {
     implementation(project(":statsd"))
     implementation(project(":kotlin-dsl-support"))
     implementation(project(":ui-test-bytecode-analyzer"))
-    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinHtmlVersion")
     implementation("org.apache.bcel:bcel:$bcelVersion")
 

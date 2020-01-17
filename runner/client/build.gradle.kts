@@ -16,14 +16,14 @@ dependencies {
     compile(project(":runner:service"))
 
     implementation(project(":trace-event"))
-    implementation("org.funktionale:funktionale-try:${funktionaleVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
 
     testImplementation(project(":test-project"))
     testImplementation(project(":runner:shared-test"))
-    testImplementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     testImplementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunit5Version")
 }

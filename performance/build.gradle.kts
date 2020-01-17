@@ -26,11 +26,11 @@ dependencies {
     implementation(project(":statsd"))
     implementation(project(":git"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.teamcity:teamcity-rest-client:${teamcityRestClientVersion}")
+    implementation("org.jetbrains.teamcity:teamcity-rest-client:$teamcityRestClientVersion")
     implementation("com.timgroup:java-statsd-client:$statsdVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
-    implementation("com.github.seratch:jslack:${jslackVersion}")
+    implementation("com.github.seratch:jslack:$jslackVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
 
     testImplementation(project(":test-project"))

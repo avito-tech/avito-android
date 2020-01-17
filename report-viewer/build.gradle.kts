@@ -23,7 +23,7 @@ dependencies {
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
 
-    compile("org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}")
+    compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     compile("com.squareup.okhttp3:okhttp:$okhttpVersion")
     compile("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
     compile("org.jetbrains.teamcity:teamcity-rest-client:$teamcityRestClientVersion")
@@ -35,5 +35,5 @@ dependencies {
     testImplementation("com.jayway.jsonpath:json-path-assert:$jsonPathVersion")
 
     testFixturesImplementation(project(":test-okhttp"))
-    testFixturesImplementation("org.funktionale:funktionale-try:${funktionaleVersion}")
+    testFixturesImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
 }
