@@ -10,8 +10,9 @@ import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.PrecisionDescriber
 import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.ViewActions.actionWithAssertions
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast
+import com.avito.android.test.espresso.RelativeCoordinatesProvider
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 
 class ClickAction(
     private val event: Event,
@@ -21,25 +22,20 @@ class ClickAction(
 
     override fun getDescription(): String = event.description()
 
-    override fun getConstraints(): Matcher<View> = isDisplayingAtLeast(90)
+    override fun getConstraints(): Matcher<View> = Matchers.allOf(
+// TODO enable after fix ViewCoordinatesNotOverlappedMatcher        ViewCoordinatesNotOverlappedMatcher(coordinatesProvider)
+    )
 
     override fun perform(uiController: UiController, view: View) {
         val rootView = view.rootView
-        val rootViewAbsoluteCoordinates = IntArray(2)
-        rootView.getLocationOnScreen(rootViewAbsoluteCoordinates)
-
-        val absoluteCoordinates = coordinatesProvider.calculateCoordinates(view)
-        val relativeCoordinates = FloatArray(2).apply {
-            set(0, absoluteCoordinates[0] - rootViewAbsoluteCoordinates[0])
-            set(1, absoluteCoordinates[1] - rootViewAbsoluteCoordinates[1])
-        }
         val precision = precisionDescriber.describePrecision()
+        val coordinates = coordinatesProvider.calculateCoordinates(view)
 
         event.perform(
             uiController = uiController,
             view = view,
             rootView = rootView,
-            coordinates = relativeCoordinates,
+            coordinates = coordinates,
             precision = precision
         )
     }
@@ -135,7 +131,7 @@ class ClickAction(
 
 internal fun inProcessClickAction(coordinatesProvider: CoordinatesProvider): ViewAction = actionWithAssertions(
     ClickAction(
-        coordinatesProvider = coordinatesProvider,
+        coordinatesProvider = RelativeCoordinatesProvider(coordinatesProvider),
         precisionDescriber = Press.FINGER,
         event = ClickAction.Event.ClickEvent
     )
@@ -143,7 +139,7 @@ internal fun inProcessClickAction(coordinatesProvider: CoordinatesProvider): Vie
 
 internal fun inProcessLongClickAction(): ViewAction = actionWithAssertions(
     ClickAction(
-        coordinatesProvider = GeneralLocation.VISIBLE_CENTER,
+        coordinatesProvider = RelativeCoordinatesProvider(GeneralLocation.VISIBLE_CENTER),
         precisionDescriber = Press.FINGER,
         event = ClickAction.Event.LongClickEvent
     )

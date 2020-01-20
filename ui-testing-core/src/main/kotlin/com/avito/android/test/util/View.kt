@@ -1,8 +1,35 @@
 package com.avito.android.test.util
 
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
+import androidx.test.espresso.util.TreeIterables
+
+internal fun View.getAboveVisibleViews(): List<View> {
+    return TreeIterables.breadthFirstViewTraversal(this.rootView)
+        .dropWhile { it != this }
+        .drop(1)
+        .filter { it.visibility == View.VISIBLE }
+}
+
+internal fun canHandleClick(view: View?): Boolean {
+    val parent: ViewParent? = view?.parent
+    return when {
+        view == null -> false
+        view.isClickable -> true
+        parent != null && parent is View -> canHandleClick(parent)
+        else -> false
+    }
+}
+
+internal fun View.getRect(): Rect {
+    val coordinates = intArrayOf(0, 0)
+    getLocationOnScreen(coordinates)
+    val x = coordinates[0]
+    val y = coordinates[1]
+    return Rect(x, y, x + width, y + height)
+}
 
 internal fun <T> View.findViewsInParent(
     viewType: Class<T>
