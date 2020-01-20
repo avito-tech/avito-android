@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    `maven-publish`
 }
 
 val kotlinVersion: String by project
