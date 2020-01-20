@@ -1,9 +1,11 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `kotlin-dsl` apply false
+    id("com.android.application") apply false
 }
 
 val projectVersion: String by project
@@ -37,18 +39,42 @@ subprojects {
     group = "com.avito.android"
     version = finalProjectVersion
 
+    val sourcesTaskName = "sourceJar"
+
+    plugins.withType<LibraryPlugin> {
+        extension.sourceSets {
+            named("main").configure { java.srcDir("src/main/kotlin") }
+            named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
+            named("test").configure { java.srcDir("src/test/kotlin") }
+        }
+
+        tasks.named<Jar>(sourcesTaskName).configure {
+            classifier = "sources"
+            from(this@withType.extension.sourceSets["main"].java.srcDirs)
+        }
+    }
+
+    plugins.withId("digital.wup.android-maven-publish") {
+        tasks.create<Jar>(sourcesTaskName)
+
+        //todo remove afterEvaluate if possible
+        afterEvaluate {
+            extensions.getByType<PublishingExtension>().run {
+                publications {
+                    create<MavenPublication>("mavenAar") {
+                        from(components["android"])
+                    }
+                }
+            }
+        }
+    }
+
     plugins.withType<MavenPublishPlugin> {
         extensions.getByType<PublishingExtension>().run {
 
-            //todo withSourcesJar 6.0 gradle
-            val sourcesTask = tasks.create<Jar>("sourceJar") {
-                classifier = "sources"
-                from(sourceSets.main.get().allJava)
-            }
-
             publications {
                 //todo ненадежная проверка, завязана на порядок
-                if (!plugins.hasPlugin("java-gradle-plugin")) {
+                if (plugins.hasPlugin("kotlin") && !plugins.hasPlugin("java-gradle-plugin")) {
                     create<MavenPublication>("maven") {
                         from(components["java"])
                         // вложенные модули будут представлены как dir-subdir-module
@@ -58,7 +84,7 @@ subprojects {
 
                 withType<MavenPublication> {
                     if (!name.contains("pluginmarker", ignoreCase = true)) {
-                        artifact(sourcesTask)
+                        artifact(tasks.named(sourcesTaskName).get())
                     }
                 }
             }
@@ -97,6 +123,13 @@ subprojects {
     }
 
     plugins.withId("kotlin") {
+
+        //todo withSourcesJar 6.0 gradle
+        tasks.create<Jar>(sourcesTaskName) {
+            classifier = "sources"
+            from(sourceSets.main.get().allJava)
+        }
+
         this@subprojects.tasks {
 
             withType<KotlinCompile> {
@@ -146,11 +179,9 @@ val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
     args("config", "core.hooksPath", ".git_hooks")
 }
 
-tasks {
-    wrapper {
-        distributionType = Wrapper.DistributionType.BIN
-        gradleVersion = project.properties["gradleVersion"] as String
-    }
+tasks.named<Wrapper>("wrapper") {
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = project.properties["gradleVersion"] as String
 }
 
 project.gradle.startParameter.run { setTaskNames(taskNames + ":${installGitHooksTask.name}") }
@@ -162,6 +193,7 @@ fun <T> NamedDomainObjectCollection<T>.namedOrNull(name: String): NamedDomainObj
         null
     }
 }
+
 
 val Project.sourceSets: SourceSetContainer
     get() = (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
