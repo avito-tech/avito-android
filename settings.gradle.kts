@@ -65,6 +65,10 @@ pluginManagement {
     val kotlinVersion: String by settings
     val androidGradlePluginVersion: String by settings
 
+    plugins {
+        id("digital.wup.android-maven-publish") version "3.6.3"
+    }
+
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id

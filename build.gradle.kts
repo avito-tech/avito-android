@@ -42,15 +42,30 @@ subprojects {
     val sourcesTaskName = "sourceJar"
 
     plugins.withType<LibraryPlugin> {
-        tasks.create<Jar>(sourcesTaskName) {
-            classifier = "sources"
-            from(this@withType.extension.sourceSets["main"].java.srcDirs)
-        }
-
         extension.sourceSets {
             named("main").configure { java.srcDir("src/main/kotlin") }
             named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
             named("test").configure { java.srcDir("src/test/kotlin") }
+        }
+
+        tasks.named<Jar>(sourcesTaskName).configure {
+            classifier = "sources"
+            from(this@withType.extension.sourceSets["main"].java.srcDirs)
+        }
+    }
+
+    plugins.withId("digital.wup.android-maven-publish") {
+        tasks.create<Jar>(sourcesTaskName)
+
+        //todo remove afterEvaluate if possible
+        afterEvaluate {
+            extensions.getByType<PublishingExtension>().run {
+                publications {
+                    create<MavenPublication>("mavenAar") {
+                        from(components["android"])
+                    }
+                }
+            }
         }
     }
 
@@ -59,7 +74,7 @@ subprojects {
 
             publications {
                 //todo ненадежная проверка, завязана на порядок
-                if (!plugins.hasPlugin("java-gradle-plugin") && !plugins.hasPlugin("kotlin-android")) {
+                if (plugins.hasPlugin("kotlin") && !plugins.hasPlugin("java-gradle-plugin")) {
                     create<MavenPublication>("maven") {
                         from(components["java"])
                         // вложенные модули будут представлены как dir-subdir-module
@@ -164,11 +179,9 @@ val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
     args("config", "core.hooksPath", ".git_hooks")
 }
 
-tasks {
-    wrapper {
-        distributionType = Wrapper.DistributionType.BIN
-        gradleVersion = project.properties["gradleVersion"] as String
-    }
+tasks.named<Wrapper>("wrapper") {
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = project.properties["gradleVersion"] as String
 }
 
 project.gradle.startParameter.run { setTaskNames(taskNames + ":${installGitHooksTask.name}") }
