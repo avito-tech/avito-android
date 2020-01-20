@@ -1,0 +1,39 @@
+package com.avito.ci.steps
+
+import com.avito.utils.logging.ciLogger
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
+import java.io.File
+
+@Suppress("UnstableApiUsage")
+abstract class CopyArtifactsTask : DefaultTask() {
+
+    @Input
+    val sourceDir: DirectoryProperty = project.objects.directoryProperty()
+
+    @Input
+    val destinationDir: DirectoryProperty = project.objects.directoryProperty()
+
+    @InputFiles
+    val entries: Property<FileCollection> = project.objects.property()
+
+    @TaskAction
+    fun doAction() {
+        entries.get().forEach { entry ->
+            if (entry.exists()) {
+                val relativeEntryPath = entry.relativeTo(sourceDir.get().asFile).path
+                val destination = File(destinationDir.get().asFile, relativeEntryPath)
+                project.ciLogger.info("Copying ${entry.path} to ${destination}")
+                entry.copyTo(destination, overwrite = true) // TODO: убрать перезапись после MBS-5491
+            } else {
+                project.ciLogger.info("Can't copy ${entry.path} it does not exist")
+            }
+        }
+    }
+}
