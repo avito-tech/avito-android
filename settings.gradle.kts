@@ -56,6 +56,7 @@ include(":runner:service")
 include(":runner:shared")
 include(":runner:shared-test")
 include(":enforce-repos")
+include(":test-annotations")
 
 pluginManagement {
 
