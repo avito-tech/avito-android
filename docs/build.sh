@@ -4,11 +4,11 @@
 
 set -euf -o pipefail
 
-cd wiki/
+cd docs/
 
-docker build --tag android/wiki/local .
+docker build --tag android/docs/local .
 
-HOST=http://localhost:1313/
+HOST=http://localhost:1313/avito-android
 
 function openBrowser {
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
@@ -28,11 +28,10 @@ openBrowser
 # You can find them in .dockerignore
 
 docker run --rm \
-        --volume "$(pwd)"/content:/app/content \
-        --volume "$(pwd)"/layouts:/app/layouts \
-        --volume "$(pwd)"/themes:/app/themes \
+        --volume "$(pwd)":/app \
+        -w="/app" \
         -p 1313:1313 \
         --entrypoint hugo \
-        android/wiki/local:latest \
-        server --minify --theme book --bind 0.0.0.0
+        android/docs/local:latest \
+        server --cleanDestinationDir --minify --theme book --bind 0.0.0.0
 

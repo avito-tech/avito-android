@@ -5,4 +5,4 @@ type: docs
 
 # Intro
 
-TODO
+Content will be added soon. Stay tuned.

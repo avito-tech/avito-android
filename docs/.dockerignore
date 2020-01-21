@@ -4,7 +4,6 @@
 .idea/
 *.iml
 build.sh
-build_local.sh
 publish.sh
 
 # Generated files
