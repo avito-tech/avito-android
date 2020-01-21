@@ -1,0 +1,15 @@
+# Irrelevant files
+.DS_Store
+.gitignore
+.idea/
+*.iml
+build.sh
+build_local.sh
+publish.sh
+
+# Generated files
+assets/js/bundle.js
+node_modules/
+public/
+resources/_gen/
+static/
