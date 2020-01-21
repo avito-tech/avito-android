@@ -50,12 +50,14 @@ include(":android")
 include(":cicd")
 include(":build-properties")
 include(":qapps")
+include(":ownership")
 include(":time")
 include(":runner:client")
 include(":runner:service")
 include(":runner:shared")
 include(":runner:shared-test")
 include(":enforce-repos")
+include(":feature-toggle-report")
 
 pluginManagement {
 
