@@ -13,6 +13,8 @@ FROM ubuntu:18.04
 
 RUN apt-get update \
     && apt-get -y install --no-install-recommends \
+        git \
+        openssh-client \
         curl \
         ca-certificates \
     && apt-get clean \
@@ -24,7 +26,3 @@ RUN curl -LJ -o hugo.deb https://github.com/gohugoio/hugo/releases/download/v${H
     && apt install ./hugo.deb \
     && rm hugo.deb \
     && hugo version
-
-COPY . /app
-
-WORKDIR /app

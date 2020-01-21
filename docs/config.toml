@@ -6,6 +6,7 @@ title = "Avito Android"
 languageCode = "ru-ru"
 DefaultContentLanguage = "ru"
 theme = "book"
+publishDir = "../public"
 
 [markup.tableOfContents]
 # First level is used only as page title
@@ -15,5 +16,5 @@ endLevel = 4
 [params]
 BookMenuBundle = "/menu"
 BookRepo = "https://github.com/avito-tech/avito-android"
-BookEditPath = "tree/develop/wiki"
+BookEditPath = "tree/develop/docs/content"
 BookSearch = true

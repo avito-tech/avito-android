@@ -21,6 +21,7 @@ class TestProjectGenerator(
     override val name: String = "test-project",
     override val plugins: List<String> = emptyList(),
     override val buildGradleExtra: String = "",
+    //TODO: don't share complex default values in common test fixtures. Plugin must define them implicitly!
     override val modules: List<Module> = listOf(
         AndroidAppModule(appA, dependencies = "implementation project(':$sharedModule')"),
         AndroidAppModule(appB, dependencies = "implementation project(':$sharedModule')"),

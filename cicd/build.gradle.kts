@@ -11,7 +11,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation(project(":android"))
     implementation(project(":impact"))
-    implementation(project(":docs"))
+    implementation(project(":docs-deployer"))
     implementation(project(":kotlin-dsl-support"))
     implementation(project(":utils"))
     implementation(project(":logging"))
