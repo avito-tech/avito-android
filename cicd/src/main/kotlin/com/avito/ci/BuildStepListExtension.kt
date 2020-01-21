@@ -1,22 +1,7 @@
 package com.avito.ci
 
-import com.avito.ci.steps.ArtifactsConfiguration
-import com.avito.ci.steps.BuildStep
-import com.avito.ci.steps.CompileUiTests
-import com.avito.ci.steps.ConfigurationCheck
-import com.avito.ci.steps.DeployStep
-import com.avito.ci.steps.DocsCheckStep
-import com.avito.ci.steps.DocsDeployStep
+import com.avito.ci.steps.*
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
-import com.avito.ci.steps.LintCheck
-import com.avito.ci.steps.PerformanceTestCheck
-import com.avito.ci.steps.UiTestCheck
-import com.avito.ci.steps.UnitTestCheck
-import com.avito.ci.steps.UploadBuildResult
-import com.avito.ci.steps.UploadToArtifactory
-import com.avito.ci.steps.UploadToProsector
-import com.avito.ci.steps.UploadToQapps
-import com.avito.ci.steps.VerifyArtifactsStep
 import groovy.lang.Closure
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -41,6 +26,10 @@ open class BuildStepListExtension(private val name: String, objects: ObjectFacto
 
     fun performanceTests(closure: Closure<PerformanceTestCheck>) {
         configureAndAdd(PerformanceTestCheck(name), closure)
+    }
+
+    fun screenshotTests(closure: Closure<ScreenshotTestCheck>) {
+        configureAndAdd(ScreenshotTestCheck(name), closure)
     }
 
     fun compileUiTests(closure: Closure<CompileUiTests>) {

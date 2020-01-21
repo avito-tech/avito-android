@@ -61,7 +61,8 @@ private val annotationsToKindMap = mapOf(
     "com.avito.android.test.annotations.InstrumentationUnitTest" to Kind.INTEGRATION,
     "com.avito.android.test.annotations.ManualTest" to Kind.MANUAL,
     "com.avito.android.test.annotations.PerformanceFunctionalTest" to Kind.E2E,
-    "com.avito.android.test.annotations.PerformanceComponentTest" to Kind.UI_COMPONENT
+    "com.avito.android.test.annotations.PerformanceComponentTest" to Kind.UI_COMPONENT,
+    "com.avito.android.test.annotations.ScreenshotTest" to Kind.UI_COMPONENT
 )
 
 private fun determineKind(annotations: List<AnnotationData>): Kind =

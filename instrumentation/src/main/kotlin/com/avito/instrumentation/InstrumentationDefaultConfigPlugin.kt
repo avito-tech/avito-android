@@ -31,7 +31,8 @@ object TestsFilter {
         "com.avito.android.test.annotations.ComponentTest",
         "com.avito.android.test.annotations.InstrumentationUnitTest",
         "com.avito.android.test.annotations.PublishTest",
-        "com.avito.android.test.annotations.MessengerTest"
+        "com.avito.android.test.annotations.MessengerTest",
+        "com.avito.android.test.annotations.ScreenshotTest"
     )
 
     val ui = uiNoE2e + "com.avito.android.test.annotations.FunctionalTest"
