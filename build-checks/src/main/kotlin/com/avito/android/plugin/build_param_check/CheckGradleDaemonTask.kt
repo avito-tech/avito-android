@@ -9,6 +9,9 @@ import java.util.Properties
 
 abstract class CheckGradleDaemonTask : DefaultTask() {
 
+    private val Project.buildSrcDir: File
+        get() = File(project.rootDir, "buildSrc")
+
     @TaskAction
     fun check() {
         checkSameVersions()
@@ -16,10 +19,18 @@ abstract class CheckGradleDaemonTask : DefaultTask() {
     }
 
     private fun checkSameVersions() {
-        val rootProperties = readProperties(File(project.rootDir, "gradle/wrapper/gradle-wrapper.properties"))
-        val buildSrcProperties = readProperties(File(project.buildSrcDir, "gradle/wrapper/gradle-wrapper.properties"))
+        val buildSrcWrapperPropertiesFile = File(project.buildSrcDir, "gradle/wrapper/gradle-wrapper.properties")
 
-        assertSameProperty("distributionUrl", rootProperties, buildSrcProperties) {
+        if (!buildSrcWrapperPropertiesFile.exists()) {
+            logger.info("No buildSrc in project, no check needed")
+            return
+        }
+
+        val rootProperties = readProperties(File(project.rootDir, "gradle/wrapper/gradle-wrapper.properties"))
+
+        val buildSrcWrapperProperties = readProperties(buildSrcWrapperPropertiesFile)
+
+        assertSameProperty("distributionUrl", rootProperties, buildSrcWrapperProperties) {
             "Different distributions of Gradle in root project and buildSrc " +
                 "which may cause two daemons to be spawned when running buildSrc separately (e.g. inside that directory). " +
                 "Use the same distribution for both builds."
@@ -27,10 +38,16 @@ abstract class CheckGradleDaemonTask : DefaultTask() {
     }
 
     private fun checkSameDaemonArgs() {
+        val buildSrcPropertiesFile = File(project.buildSrcDir, "gradle.properties")
+
+        if (!buildSrcPropertiesFile.exists()) {
+            logger.info("No buildSrc in project, no check needed")
+            return
+        }
+
         val rootProperties = readProperties(File(project.rootDir, "gradle.properties"))
 
-        //todo случай когда нет buildSrc
-        val buildSrcProperties = readProperties(File(project.buildSrcDir, "gradle.properties"))
+        val buildSrcProperties = readProperties(buildSrcPropertiesFile)
 
         assertSameProperty("org.gradle.jvmargs", rootProperties, buildSrcProperties) {
             "gradle.properties and buildSrc/gradle.properties have different org.gradle.jvmargs " +
@@ -46,9 +63,6 @@ abstract class CheckGradleDaemonTask : DefaultTask() {
             throw GradleException(error())
         }
     }
-
-    private val Project.buildSrcDir: File
-        get() = File(project.rootDir, "buildSrc")
 
     private fun readProperties(propertiesFile: File) = Properties().apply {
         propertiesFile.inputStream().use { input ->
