@@ -1,0 +1,10 @@
+{{ if not (.Page.Scratch.Get "mermaid") }}
+<!-- Include mermaid only first time -->
+<!-- <script src="{{ "mermaid.min.js" | relURL }}"></script> We don't want to store such files in repo -->
+<script src="https://unpkg.com/mermaid@8.4.4/dist/mermaid.min.js" type="text/javascript" async></script>
+{{ .Page.Scratch.Set "mermaid" true }}
+{{ end }}
+
+<p class="mermaid{{ with .Get "class" }} {{ . }}{{ end }}">
+  {{ .Inner }}
+</p>

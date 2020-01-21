@@ -1,0 +1,19 @@
+# https://gohugo.io/getting-started/configuration/
+
+baseURL = "https://avito-tech.github.io/avito-android"
+title = "Avito Android"
+# TODO: add english variant
+languageCode = "ru-ru"
+DefaultContentLanguage = "ru"
+theme = "book"
+
+[markup.tableOfContents]
+# First level is used only as page title
+startLevel = 2
+endLevel = 4
+
+[params]
+BookMenuBundle = "/menu"
+BookRepo = "https://github.com/avito-tech/avito-android"
+BookEditPath = "tree/develop/wiki"
+BookSearch = true

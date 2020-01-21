@@ -1,0 +1,7 @@
+# Configuration file for markdownlint
+# https://github.com/markdownlint/markdownlint/blob/master/docs/configuration.md
+
+# YAML block in header for hugo
+ignore_front_matter true
+
+style "markdownlint.rb"
