@@ -7,7 +7,6 @@ import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.DocsCheckStep
 import com.avito.ci.steps.DocsDeployStep
-import com.avito.ci.steps.ScreenshotTestCheck
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.PerformanceTestCheck
@@ -42,10 +41,6 @@ open class BuildStepListExtension(private val name: String, objects: ObjectFacto
 
     fun performanceTests(closure: Closure<PerformanceTestCheck>) {
         configureAndAdd(PerformanceTestCheck(name), closure)
-    }
-
-    fun screenshotTests(closure: Closure<ScreenshotTestCheck>) {
-        configureAndAdd(ScreenshotTestCheck(name), closure)
     }
 
     fun compileUiTests(closure: Closure<CompileUiTests>) {
