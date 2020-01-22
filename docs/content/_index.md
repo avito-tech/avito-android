@@ -1,8 +1,12 @@
 ---
-title: Intro
+title: Введение
 type: docs
 ---
 
-# Intro
+# Android в Avito
 
-Content will be added soon. Stay tuned.
+[Как начать работу с проектом]({{< ref "/contributing/HowToStart.md" >}})
+
+## Поддержка
+
+Канал в slack: [#android-dev](http://links.k.avito.ru/slackandroiddev)

@@ -2,4 +2,61 @@
 headless: true
 ---
 
-- [Root]({{< ref "/" >}})
+- [Введение]({{< ref "/" >}})
+- [Ценности]({{< ref "/Values.md" >}})
+- [Тех радар]({{< ref "/tech_radar/TechRadar.md" >}})
+
+- Contributing
+    - [How to start]({{< ref "/contributing/HowToStart.md" >}})
+    - [Документация]({{< ref "/contributing/Docs.md" >}})
+    - [Code Review]({{< ref "/contributing/CodeReview.md" >}})
+    - [Code Style]({{< ref "/contributing/CodeStyle.md" >}})
+    - [Feature Toggles]({{< ref "/contributing/FeatureToggles.md" >}})
+- IDE
+    - [Конфигурации]({{< ref "/ide/Configurations.md" >}})
+    - [Шаблоны]({{< ref "/ide/Templates.md" >}})
+    - [Ускорение]({{< ref "/ide/Speedup.md" >}})
+    - [Бенчмарки]({{< ref "/ide/Benchmarking.md" >}})
+- Сборка
+    - [Запуск]({{< ref "/ide/Configurations.md" >}})
+    - [Типы сборки]({{< ref "/assemble/BuildTypes.md" >}})
+    - [Зависимости]({{< ref "/assemble/Dependencies.md" >}})
+    - [Минимизация]({{< ref "/assemble/Minimization.md" >}})
+    - [Бенчмарки]({{< ref "/assemble/Benchmarks.md" >}})
+    - [Профилирование]({{< ref "/assemble/Profiling.md" >}})
+    - [Метрики]({{< ref "/assemble/BuildMetrics.md" >}})
+    - [Mirakle]({{< ref "/assemble/Mirakle.md" >}})
+    - [Troubleshooting]({{< ref "/assemble/Troubleshooting.md" >}})
+- Architecture
+    - [Dagger]({{< ref "/architecture/Dagger.md" >}})
+    - [Модули]({{< ref "/architecture/Modules.md" >}})
+- API
+- [Аналитика]({{< ref "/analytics/Analytics.md" >}})
+    - [Statsd]({{< ref "/analytics/Statsd.md" >}})
+- Тестирование
+    - [Test framework]({{< ref "/test/TestFramework.md" >}})
+    - [Ручное]({{< ref "/test/Manual.md" >}})
+    - [Запуск тестов]({{< ref "/test/Run.md" >}})
+    - [Юнит тесты]({{< ref "/test/UnitTesting.md" >}})
+    - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
+    - [Кастомный запуск]({{< ref "/test/DynamicConfig.md" >}})
+    - [Помощь]({{<ref "/test/Support.md" >}})
+- [Design System](http://links.k.avito.ru/ff)
+- Performance
+    - [Аналитика]({{< ref "/performance/Analytics.md" >}})
+- Проверки
+    - [Android lint]({{< ref "/checks/AndroidLint.md" >}})
+- CI
+    - [Требования]({{< ref "/ci/CIValues.md" >}})
+    - [CI Gradle Plugin]({{< ref "/ci/CIGradlePlugin.md" >}})
+    - [Custom Gradle Plugins]({{< ref "/ci/CustomGradlePlugins.md" >}})
+    - [Impact analysis]({{< ref "/ci/ImpactAnalysis.md" >}})
+    - [Containers]({{< ref "/ci/Containers.md" >}})
+- CD
+    - [Релиз]({{< ref "/cd/Release.md" >}})
+    - [Артефакты сборки]({{< ref "/cd/Artifacts.md" >}})
+    - [QApps]({{< ref "/cd/QApps.md" >}})
+- [Infrastructure (Github project)]({{< ref "/Infrastructure.md" >}})
+
+- [Архитектура]({{< ref "/ArchitectureGuidelines.md" >}})
+- [Внешние библиотеки]({{< ref "/ExternalLibraryChangeProcess.md" >}})
