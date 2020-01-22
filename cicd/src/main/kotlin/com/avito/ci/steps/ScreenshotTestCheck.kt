@@ -14,7 +14,7 @@ open class ScreenshotTestCheck(context: String) : SuppressibleBuildStep(context)
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         val checkTask = project.tasks.register<Task>("${context}ScreenshotTest") {
-            group = "cd"
+            group = "ci"
             description = "Run screenshot tests"
 
             val instrumentationTask = project.tasks.instrumentationTask(configuration)
