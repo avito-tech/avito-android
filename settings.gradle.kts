@@ -59,6 +59,8 @@ include(":runner:shared-test")
 include(":enforce-repos")
 include(":test-annotations")
 include(":feature-toggle-report")
+include(":websocket-reporter")
+include(":resource-manager-exceptions")
 
 pluginManagement {
 
