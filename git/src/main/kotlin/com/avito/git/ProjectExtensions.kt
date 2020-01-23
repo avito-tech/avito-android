@@ -23,6 +23,7 @@ fun Project.gitState(logger: (String) -> Unit = {}): Provider<GitState> = lazyPr
             }
         }
     } else {
+        logger("build environment not CI, git state not defined")
         Providers.notDefined()
     }
 }

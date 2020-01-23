@@ -35,7 +35,7 @@ internal class EnvironmentInfoImpl(private val project: Project, private val git
             (userName() == "teamcity") || (gitUserEmail == "teamcity") -> Environment.CI // we want ci metrics even if "-Pci=false" in CI
             buildEnvironment is BuildEnvironment.Local || buildEnvironment is BuildEnvironment.IDE -> Environment.Local
             buildEnvironment is BuildEnvironment.CI -> Environment.CI
-            buildEnvironment is BuildEnvironment.Mainframer -> Environment.Mainframer
+            buildEnvironment is BuildEnvironment.Mirkale -> Environment.Mainframer
             else -> Environment.Unknown
         }
     }
@@ -60,7 +60,7 @@ internal class EnvironmentInfoImpl(private val project: Project, private val git
         }
     }
 
-    private val hasGit: Boolean = (project.buildEnvironment !is BuildEnvironment.Mainframer)
+    private val hasGit: Boolean = (project.buildEnvironment !is BuildEnvironment.Mirkale)
 
     override val commit: String? by lazy {
         if (hasGit) {

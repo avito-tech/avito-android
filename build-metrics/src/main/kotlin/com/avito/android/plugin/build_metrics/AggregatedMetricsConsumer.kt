@@ -109,7 +109,7 @@ internal class AggregatedMetricsConsumer(
     }
 
     private fun trackTasksMetrics(buildResult: BuildResult, profile: BuildProfile) {
-        if (env is BuildEnvironment.Mainframer) return // contains only upload and download tasks
+        if (env is BuildEnvironment.Mirkale) return // contains only upload and download tasks
 
         val tasks = profile.getProjects()
             .flatMap { it.getTasks() }

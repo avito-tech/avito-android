@@ -148,6 +148,13 @@ subprojects {
                 systemProperty("kotlinVersion", kotlinVersion)
                 systemProperty("compileSdkVersion", compileSdkVersion)
                 systemProperty("buildToolsVersion", buildToolsVersion)
+
+                /**
+                 * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
+                 * используется в :test-project
+                 */
+                systemProperty("isInvokedFromIde",
+                    gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null)
             }
         }
 

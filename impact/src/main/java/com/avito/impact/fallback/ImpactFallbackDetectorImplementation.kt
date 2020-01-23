@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.findByType
 
+@Suppress("UnstableApiUsage")
 class ImpactFallbackDetectorImplementation(
     private val configuration: ImpactAnalysisExtension,
     private val project: Project,
