@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="InvalidPackage" severity="ignore">
+        <ignore regexp="junit.*jar" />
+    </issue>
+
+    <!-- https://github.com/JakeWharton/timber/issues/242 -->
+    <issue id="ObsoleteLintCustomCheck">
+        <ignore regexp="timber.lint" />
+    </issue>
+</lint>
