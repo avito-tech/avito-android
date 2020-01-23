@@ -11,17 +11,28 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import java.util.concurrent.Executors
 
+private const val xSourceValue = "android_ui_tests"
+
 internal interface FileStorageClient {
 
     @POST("/file/addBinary")
+    @Headers(
+        "X-Source: $xSourceValue"
+    )
     fun upload(@Header("X-Extension") extension: String, @Body content: String): Call<String>
 
     @POST("/file/addBinary")
-    @Headers("X-Extension: png")
+    @Headers(
+        "X-Extension: png",
+        "X-Source: $xSourceValue"
+    )
     fun uploadPng(@Body content: RequestBody): Call<String>
 
     @POST("/file/addBinary")
-    @Headers("X-Extension: mp4")
+    @Headers(
+        "X-Extension: mp4",
+        "X-Source: $xSourceValue"
+    )
     fun uploadMp4(@Body content: RequestBody): Call<String>
 
     companion object {
