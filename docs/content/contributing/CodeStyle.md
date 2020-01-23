@@ -35,11 +35,12 @@ type: docs
 Причиной может быть к примеру обновление версии.
 
 Выставить настройки близкие к автоматическим можно так:
+
 - `Preferences -> Editor -> Code Style` установить **Hard wrap - 120**
 - `Preferences -> Editor -> Code Style -> Kotlin`
- - `Set From -> Predefined Style -> Kotlin Style Guide`
- - `Imports -> Use single name import` в обоих опциях 
- - `Imports -> Packages to Use Imports with * - удалить все` 
+    - `Set From -> Predefined Style -> Kotlin Style Guide`
+    - `Imports -> Use single name import` в обоих опциях 
+    - `Imports -> Packages to Use Imports with * - удалить все` 
 
 ### Проверки в CI
 
