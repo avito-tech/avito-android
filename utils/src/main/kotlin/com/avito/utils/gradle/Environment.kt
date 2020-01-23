@@ -3,7 +3,6 @@ package com.avito.utils.gradle
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
 import org.gradle.api.Project
-import java.net.InetAddress
 
 /**
  * @param reason Причина почему было выбрано то или иное окружение
@@ -14,7 +13,7 @@ sealed class BuildEnvironment(
 ) {
     class Local(reason: String) : BuildEnvironment(reason)
     class GradleTestKit(reason: String) : BuildEnvironment(reason)
-    class Mainframer(reason: String) : BuildEnvironment(reason)
+    class Mirkale(reason: String) : BuildEnvironment(reason)
     class IDE(reason: String) : BuildEnvironment(reason)
     class CI(reason: String) : BuildEnvironment(reason)
 
@@ -25,12 +24,12 @@ sealed class BuildEnvironment(
 fun buildEnvironment(project: Project): BuildEnvironment = project.buildEnvironment
 
 val Project.buildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    when {
+    val result = when {
         isRunInCI(project) -> BuildEnvironment.CI(
             "has 'ci' gradle property with true value"
         )
-        isRunInMainframer() -> BuildEnvironment.Mainframer(
-            "hostName is android-builder"
+        isRunViaMirakle(project) -> BuildEnvironment.Mirkale(
+            "has 'mirakle.build.on.remote' property"
         )
         isRunFromIDE(project) -> BuildEnvironment.IDE(
             "has 'android.injected.invoked.from.ide' start parameter"
@@ -45,6 +44,7 @@ val Project.buildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { pro
             "nothing else matched"
         )
     }
+    result
 }
 
 fun isRunFromGradleTestKit(project: Project): Boolean {
@@ -54,10 +54,8 @@ fun isRunFromGradleTestKit(project: Project): Boolean {
 fun isRunInGradleTestKit(): Boolean =
     System.getProperty("isTest", "false") == "true"
 
-private fun isRunInMainframer(): Boolean {
-    val hostName = InetAddress.getLocalHost().hostName
-
-    return hostName.startsWith("android-builder")
+private fun isRunViaMirakle(project: Project): Boolean {
+    return project.hasProperty("mirakle.build.on.remote")
 }
 
 private fun isRunInCI(project: Project): Boolean =

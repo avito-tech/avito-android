@@ -12,7 +12,7 @@ sealed class IsAnalysisNeededResult {
     class Skip(val reason: String) : IsAnalysisNeededResult()
 }
 
-@VisibleForTesting
+@Suppress("UnstableApiUsage")
 fun isAnalysisNeeded(
     config: ImpactAnalysisExtension,
     gitState: Provider<GitState>
