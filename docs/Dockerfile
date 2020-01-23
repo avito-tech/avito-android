@@ -1,10 +1,9 @@
-# TODO: MBS-7349
-#FROM ruby:2.5.1
-# mdl - https://github.com/markdownlint/markdownlint
-#RUN gem install mdl -v 0.8.0
-#COPY . /docs
-#WORKDIR /docs
-#RUN mdl /docs/content
+FROM ruby:2.6.5-alpine3.11
+# mdl: https://github.com/markdownlint/markdownlint
+RUN gem install mdl -v 0.8.0
+COPY . /docs
+WORKDIR /docs
+RUN mdl /docs/content
 
 
 # TODO: Use alpine

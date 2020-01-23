@@ -156,12 +156,14 @@ TODO: разобрать по модулям
 `./gradlew publishToBintray`
 
 Должны быть доступны env:
+
 - `BINTRAY_USER`
 - `BINTRAY_API_KEY`
 
 `./gradlew publishToArtifactory`
 
 Должны быть доступны env:
+
 - `ARTIFACTORY_URL`
 - `ARTIFACTORY_USER`
 - `ARTIFACTORY_PASSWORD`
