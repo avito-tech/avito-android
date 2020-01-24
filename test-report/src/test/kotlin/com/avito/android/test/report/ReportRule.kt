@@ -17,6 +17,8 @@ import com.avito.time.TimeProvider
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import io.sentry.SentryClient
+import io.sentry.SentryClientFactory
 import okhttp3.OkHttpClient
 import okhttp3.mock.MockInterceptor
 
@@ -45,11 +47,11 @@ internal class ReportRule(
         runId = testRunCoordinates.runId,
         deviceName = deviceName,
         isLocalRun = true,
-        sentryDsn = "", // TODO required?
-        remoteStorageEndpoint = "https://stub.ru", // TODO required?
-        reportApiHost = "", // TODO required?
-        reportFallbackUrl = "", // TODO required
-        reportResultEndpoint = "", // TODO required
+        sentry = SentryClientFactory.sentryClient(), // TODO required?
+        fileStorageUrl = "https://stub.ru", // TODO required?
+        reportApiUrl = "", // TODO required?
+        reportApiFallbackUrl = "", // TODO required
+        reportViewerUrl = "", // TODO required
         onDeviceCacheDirectory = lazy { error("nope") },
         httpClient = OkHttpClient.Builder()
             .apply {

@@ -48,6 +48,12 @@ class InstrumentationParamsBuildingTest {
 
                          instrumentation {
                              output = project.file("outputs").path
+                             reportApiUrl = "stub"
+                             reportApiFallbackUrl = "stub"
+                             reportViewerUrl = "stub"
+                             sentryDsn = "stub"
+                             slackToken = "stub"
+                             fileStorageUrl = "stub"
 
                              instrumentationParams = [
                                  "jobSlug": "FunctionalTests",
@@ -169,7 +175,13 @@ class InstrumentationParamsBuildingTest {
                     "runId" to RunId(
                         commitHash = commit,
                         buildTypeId = buildType
-                    ).toString()
+                    ).toString(),
+                    "reportApiUrl" to "stub",
+                    "reportApiFallbackUrl" to "stub",
+                    "reportViewerUrl" to "stub",
+                    "sentryDsn" to "stub",
+                    "slackToken" to "stub",
+                    "fileStorageUrl" to "stub"
                 )
             )
     }
@@ -208,7 +220,13 @@ class InstrumentationParamsBuildingTest {
                     "runId" to RunId(
                         commitHash = commit,
                         buildTypeId = buildType
-                    ).toString()
+                    ).toString(),
+                    "reportApiUrl" to "stub",
+                    "reportApiFallbackUrl" to "stub",
+                    "reportViewerUrl" to "stub",
+                    "sentryDsn" to "stub",
+                    "slackToken" to "stub",
+                    "fileStorageUrl" to "stub"
                 )
             )
     }
@@ -250,7 +268,13 @@ class InstrumentationParamsBuildingTest {
                     "runId" to RunId(
                         commitHash = commit,
                         buildTypeId = buildType
-                    ).toString()
+                    ).toString(),
+                    "reportApiUrl" to "stub",
+                    "reportApiFallbackUrl" to "stub",
+                    "reportViewerUrl" to "stub",
+                    "sentryDsn" to "stub",
+                    "slackToken" to "stub",
+                    "fileStorageUrl" to "stub"
                 )
             )
     }

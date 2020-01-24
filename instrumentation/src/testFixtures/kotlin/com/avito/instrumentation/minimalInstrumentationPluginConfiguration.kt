@@ -12,13 +12,19 @@ android {
 
 instrumentation {
     output = project.file("outputs").path
-
+    reportApiUrl = "stub"
+    reportApiFallbackUrl = "stub"
+    reportViewerUrl = "stub"
+    sentryDsn = "stub"
+    slackToken = "stub"
+    fileStorageUrl = "stub"
+    
     instrumentationParams = [
-        "planSlug": "plan",
-        "jobSlug" : "job",
-        "runId"   : "1234"
+    "planSlug": "plan",
+    "jobSlug" : "job",
+    "runId"   : "1234"
     ]
-
+    
     configurations {
         functional {
         }

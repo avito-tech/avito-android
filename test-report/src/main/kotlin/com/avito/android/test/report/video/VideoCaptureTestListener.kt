@@ -16,7 +16,7 @@ class VideoCaptureTestListener(
     videoFeatureValue: VideoFeatureValue,
     onDeviceCacheDirectory: Lazy<File>,
     httpClient: OkHttpClient,
-    remoteStorageEndpoint: String,
+    fileStorageUrl: String,
     private val shouldRecord: Boolean,
     private val logger: (String, Throwable?) -> Unit = { msg, error -> Log.d(LOG_TAG, msg, error) },
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
@@ -26,7 +26,7 @@ class VideoCaptureTestListener(
     private val remoteStorage: RemoteStorage = RemoteStorage.create(
         logger = logger,
         httpClient = httpClient,
-        endpoint = remoteStorageEndpoint
+        endpoint = fileStorageUrl
     )
 
     private var savedIncident: Incident? = null

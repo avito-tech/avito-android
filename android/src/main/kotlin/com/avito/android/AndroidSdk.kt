@@ -126,7 +126,7 @@ fun androidHomeFromLocalPropertiesFallback(): String {
 
     val rootDir = System.getProperty("rootDir")
     val userDir = System.getProperty("user.dir")
-
+    // TODO it works incorrect after migration to github
     val avitoAndroidRoot = if (!rootDir.isNullOrBlank()) {
         // пытаемся прокинуть gradle project.rootDir
         rootDir.substringBefore("buildSrc")
@@ -138,7 +138,7 @@ fun androidHomeFromLocalPropertiesFallback(): String {
     }
 
     return androidHomeFromLocalProperties(File("$avitoAndroidRoot/local.properties"))
-        ?: error("Can't resolve android sdk: env ANDROID_HOME and local.properties not available")
+        ?: error("Can't resolve android sdk: env ANDROID_HOME and $avitoAndroidRoot/local.properties not available")
 }
 
 private fun androidHomeFromLocalProperties(

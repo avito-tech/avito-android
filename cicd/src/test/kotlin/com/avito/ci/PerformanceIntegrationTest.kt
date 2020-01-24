@@ -90,6 +90,13 @@ class PerformanceIntegrationTest {
                 testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
             }
             instrumentation {
+            reportApiUrl = "stub"
+             reportApiFallbackUrl = "stub"
+             reportViewerUrl = "stub"
+             registry = "stub"
+             sentryDsn = "stub"
+             slackToken = "stub"
+             fileStorageUrl = "stub"
                 instrumentationParams = [
                     "deviceName"    : "regress",
                     "jobSlug"       : "regress"

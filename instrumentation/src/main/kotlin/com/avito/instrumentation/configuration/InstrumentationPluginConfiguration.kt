@@ -61,6 +61,14 @@ class InstrumentationPluginConfiguration internal constructor(
                 val instrumentationParameters = InstrumentationParameters()
                     .applyParameters(baseExtension.defaultConfig.testInstrumentationRunnerArguments)
                     .applyParameters(runIdOverride)
+                    .applyParameters(mapOf(
+                        "reportApiUrl" to configuration.reportApiUrl,
+                        "reportApiFallbackUrl" to configuration.reportApiFallbackUrl,
+                        "reportViewerUrl" to configuration.reportViewerUrl,
+                        "sentryDsn" to configuration.sentryDsn,
+                        "slackToken" to configuration.slackToken,
+                        "fileStorageUrl" to configuration.fileStorageUrl
+                    ))
                     .applyParameters(configuration.instrumentationParams)
 
                 action(
@@ -92,6 +100,10 @@ class InstrumentationPluginConfiguration internal constructor(
         var reportApiFallbackUrl: String = ""
         var reportViewerUrl: String = ""
         var registry: String = ""
+        var sentryDsn: String = ""
+        var slackToken: String = ""
+        var fileStorageUrl = ""
+
 
         var unitToChannelMap: Map<String, String> = emptyMap()
 
@@ -119,6 +131,24 @@ class InstrumentationPluginConfiguration internal constructor(
             require(configurations.isNotEmpty()) { "instrumentation plugin applied without configurations" }
             configurations.forEach {
                 it.validate()
+            }
+            require(reportApiFallbackUrl.isNotEmpty()) {
+                "reportApiFallbackUrl must be initialized"
+            }
+            require(reportViewerUrl.isNotEmpty()) {
+                "reportViewerUrl must be initialized"
+            }
+            require(reportApiUrl.isNotEmpty()) {
+                "reportApiUrl must be initialized"
+            }
+            require(sentryDsn.isNotEmpty()) {
+                "sentryDsn must be initialized"
+            }
+            require(slackToken.isNotEmpty()) {
+                "slackToken must be initialized"
+            }
+            require(fileStorageUrl.isNotEmpty()) {
+                "fileStorageUrl must be initialized"
             }
         }
     }
