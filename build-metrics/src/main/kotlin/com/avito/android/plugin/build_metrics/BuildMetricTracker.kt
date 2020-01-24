@@ -7,6 +7,7 @@ import com.avito.android.stats.graphiteSeries
 import org.gradle.BuildResult
 import org.gradle.api.provider.Provider
 
+@Suppress("UnstableApiUsage")
 class BuildMetricTracker(
     private val env: Provider<EnvironmentInfo>,
     private val sender: Provider<StatsDSender>
@@ -38,5 +39,4 @@ class BuildMetricTracker(
     private val node by lazy {
         env.get().node?.take(32) ?: "unknown"
     }
-
 }
