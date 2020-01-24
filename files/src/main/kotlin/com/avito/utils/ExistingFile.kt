@@ -4,7 +4,8 @@ import java.io.File
 
 // Способ перенести ответственность за проверки существования файла на клиента и отразить это в API
 
-fun File.toExisting(): ExistingFile = ExistingFile.Impl(this)
+fun File.toExisting(): ExistingFile =
+    ExistingFile.Impl(this)
 
 interface ExistingFile {
 
@@ -50,9 +51,11 @@ interface ExistingDirectory {
                 return field
             }
 
-        override operator fun plus(path: String): ExistingDirectory = Impl(File(dir, path))
+        override operator fun plus(path: String): ExistingDirectory =
+            Impl(File(dir, path))
 
-        override fun file(name: String): ExistingFile = ExistingFile.Impl(this, name)
+        override fun file(name: String): ExistingFile =
+            ExistingFile.Impl(this, name)
 
         override fun toString(): String = dir.toString()
     }
@@ -62,8 +65,10 @@ interface ExistingDirectory {
         override val dir: File
             get() = TODO("not implemented")
 
-        override fun plus(path: String): ExistingDirectory = Stub
+        override fun plus(path: String): ExistingDirectory =
+            Stub
 
-        override fun file(name: String): ExistingFile = ExistingFile.Stub
+        override fun file(name: String): ExistingFile =
+            ExistingFile.Stub
     }
 }

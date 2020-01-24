@@ -3,12 +3,13 @@ package com.avito.android
 import com.avito.utils.ExistingDirectory
 import com.avito.utils.ExistingFile
 import com.avito.utils.ProcessRunner
-import com.avito.utils.hasContent
 import org.funktionale.tries.Try
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import java.io.File
 import java.util.Properties
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Используется для доступа к ресурсам SDK(executables, чтение параметров) из build-скриптов
@@ -150,4 +151,17 @@ private fun androidHomeFromLocalProperties(
         logger.invoke("Can't resolve androidHome from local.properties")
         null
     }
+}
+/**
+ * у gradle специфичные toString() из property
+ */
+@UseExperimental(ExperimentalContracts::class)
+private fun String?.hasContent(): Boolean {
+    contract {
+        returns(true) implies (this@hasContent != null)
+    }
+
+    if (isNullOrBlank()) return false
+    if (this == "null") return false
+    return true
 }
