@@ -24,6 +24,9 @@ dependencies {
     implementation("com.timgroup:java-statsd-client:$statsdVersion")
     implementation("io.sentry:sentry:$sentryVersion")
 
+    //for test
+    implementation(project(":module-type"))
+
     testImplementation(project(":test-project"))
 }
 

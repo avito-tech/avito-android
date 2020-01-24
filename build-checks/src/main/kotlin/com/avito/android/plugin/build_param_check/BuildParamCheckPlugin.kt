@@ -7,9 +7,9 @@ import com.avito.android.sentry.sentry
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getBooleanProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -18,9 +18,8 @@ import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.invocation.Gradle
 import org.gradle.kotlin.dsl.register
 import org.gradle.tooling.BuildException
-import java.lang.management.ManagementFactory
 
-@Suppress("unused", "RemoveCurlyBracesFromTemplate")
+@Suppress("unused", "RemoveCurlyBracesFromTemplate", "UnstableApiUsage")
 open class BuildParamCheckPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -183,6 +182,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                         }
                     }
                     .onFailure {
+                        it.printStackTrace()
                         val checkerName = checker.javaClass.simpleName
                         tracker.track(CountMetric("configuration.mismatch.failed.$checkerName"))
                         sentry.get().sendException(ParamMismatchFailure(it))
@@ -193,7 +193,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
 
     private fun printBuildEnvironment(project: Project) {
         val isBuildCachingEnabled = project.gradle.startParameter.isBuildCacheEnabled
-        val minSdk: Int = project.property("minSdk").toString().toInt()
+        val minSdk = project.getOptionalStringProperty("minSdk")
         val kaptBuildCache: Boolean = project.getBooleanProperty("kaptBuildCache")
         val kaptMapDiagnosticLocations = project.getBooleanProperty("kaptMapDiagnosticLocations")
         val javaIncrementalCompilation = project.getBooleanProperty("javaIncrementalCompilation")
@@ -205,36 +205,23 @@ ${startParametersDescription(project.gradle)}
 java=${javaInfo()}
 JAVA_HOME=${System.getenv("JAVA_HOME")}
 ANDROID_HOME=${project.androidSdk.androidHome}
-PID=${getPid(project.ciLogger)}
 org.gradle.caching=$isBuildCachingEnabled
-android.enableD8=${project.property("android.enableD8")}
-android.enableR8=${project.property("android.enableR8")}
-android.enableR8.fullMode=${project.property("android.enableR8.fullMode")}
-android.builder.sdkDownload=${project.property("android.builder.sdkDownload")}
+android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
+android.enableR8=${project.getOptionalStringProperty("android.enableR8")}
+android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}
+android.builder.sdkDownload=${project.getOptionalStringProperty("android.builder.sdkDownload")}
 kotlin.version=${System.getProperty("kotlinVersion")}
-kotlin.incremental=${project.property("kotlin.incremental")}
+kotlin.incremental=${project.getOptionalStringProperty("kotlin.incremental")}
 minSdk=$minSdk
-preDexLibrariesEnabled=${project.property("preDexLibrariesEnabled")}
+preDexLibrariesEnabled=${project.getOptionalStringProperty("preDexLibrariesEnabled")}
 kaptBuildCache=$kaptBuildCache
-kapt.use.worker.api=${project.property("kapt.use.worker.api")}
-kapt.incremental.apt=${project.property("kapt.incremental.apt")}
-kapt.include.compile.classpath=${project.property("kapt.include.compile.classpath")}
+kapt.use.worker.api=${project.getOptionalStringProperty("kapt.use.worker.api")}
+kapt.incremental.apt=${project.getOptionalStringProperty("kapt.incremental.apt")}
+kapt.include.compile.classpath=${project.getOptionalStringProperty("kapt.include.compile.classpath")}
 kaptMapDiagnosticLocations=$kaptMapDiagnosticLocations
 javaIncrementalCompilation=$javaIncrementalCompilation
 ------------------------"""
         )
-    }
-
-    /**
-     * from https://stackoverflow.com/a/7690178/981330
-     */
-    private fun getPid(ciLogger: CILogger): String {
-        return try {
-            ManagementFactory.getRuntimeMXBean().name.substringBefore('@')
-        } catch (e: Throwable) {
-            ciLogger.critical("Can't get pid", e)
-            ""
-        }
     }
 
     private fun buildTracker(project: Project): BuildMetricTracker {
