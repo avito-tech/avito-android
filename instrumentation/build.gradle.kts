@@ -34,11 +34,9 @@ dependencies {
     implementation(project(":bitbucket"))
     implementation(project(":file-storage"))
     implementation(project(":sentry"))
+    implementation(project(":kubernetes"))
     implementation(project(":upload-cd-build-result"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("com.fkorotkov:kubernetes-dsl:1.2.1")
-    // TODO: describe reasons why don't we use an official client https://github.com/kubernetes-client/java
-    implementation("io.fabric8:kubernetes-client:4.6.3")
     implementation("org.smali:dexlib2:2.3")
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
