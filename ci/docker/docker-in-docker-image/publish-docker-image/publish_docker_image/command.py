@@ -16,7 +16,7 @@ class Command:
         config_file_path = Command._check_configuration(directory)
 
         with open(config_file_path, 'r') as config_file:
-            config = yaml.load(config_file)
+            config = yaml.load(config_file, Loader=yaml.SafeLoader)
             docker_registry = config['registry']
             if docker_registry == 'DOCKER_REGISTRY':
                 docker_registry = os.getenv('DOCKER_REGISTRY', '___MISSED_DOCKER_REGISTRY_ENV___')
@@ -31,7 +31,7 @@ class Command:
         config_file_path = Command._check_configuration(directory)
 
         with open(config_file_path, 'r') as config_file:
-            config = yaml.load(config_file)
+            config = yaml.load(config_file, Loader=yaml.SafeLoader)
             docker_registry = config['registry']
             if docker_registry == 'DOCKER_REGISTRY':
                 docker_registry = os.getenv('DOCKER_REGISTRY', '___MISSED_DOCKER_REGISTRY_ENV___')
