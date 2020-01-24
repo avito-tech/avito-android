@@ -1,4 +1,4 @@
-pyyaml==3.12
+pyyaml==5.1
 fire==0.1.0
 testinfra==3.0.5
 pytest==4.6.3
