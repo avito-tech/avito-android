@@ -24,6 +24,7 @@ dependencies {
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
 
     compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    compile("org.funktionale:funktionale-try:$funktionaleVersion")
     compile("com.squareup.okhttp3:okhttp:$okhttpVersion")
     compile("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
     compile("org.jetbrains.teamcity:teamcity-rest-client:$teamcityRestClientVersion")

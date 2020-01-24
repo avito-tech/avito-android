@@ -27,6 +27,8 @@ dependencies {
     implementation(project(":report-viewer"))
     implementation(project(":kotlin-dsl-support"))
     implementation(project(":git"))
+    implementation(project(":process"))
+    implementation(project(":files"))
     implementation(project(":slack"))
     implementation(project(":time"))
     implementation(project(":bitbucket"))

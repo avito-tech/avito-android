@@ -4,6 +4,7 @@ plugins {
 }
 
 val kotlinVersion: String by project
+val funktionaleVersion: String by project
 val okhttpVersion: String by project
 val retrofitVersion: String by project
 
@@ -11,6 +12,7 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":kotlin-dsl-support"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
 

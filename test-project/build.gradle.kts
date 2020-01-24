@@ -11,6 +11,7 @@ dependencies {
     api("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     implementation("com.google.truth:truth:$truthVersion")
 
+    implementation(project(":process"))
     implementation(project(":utils"))
     implementation(project(":android"))
     implementation(gradleTestKit())

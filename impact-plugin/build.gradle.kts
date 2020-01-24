@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":impact"))
     implementation(project(":utils"))
     implementation(project(":logging"))
+    implementation(project(":files"))
     implementation(project(":android"))
     implementation(project(":git"))
     implementation(project(":kotlin-dsl-support"))
