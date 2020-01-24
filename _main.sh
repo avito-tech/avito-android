@@ -2,6 +2,8 @@
 
 set -e
 
+source $(dirname $0)/ci/_environment.sh
+
 # shellcheck disable=SC2086
 USER_ID=$(id -u ${USER})
 GRADLE_HOME_DIR=$HOME/.gradle
@@ -34,6 +36,8 @@ GRADLE_WRAPPER_DIR=$HOME/.gradle/wrapper
 
 clearDockerContainers
 clearGradleLockFiles
+
+# TODO: Use IMAGE_ANDROID_BUILDER image from public registry
 
 docker run --rm \
     --volume "$(pwd)":/app \
