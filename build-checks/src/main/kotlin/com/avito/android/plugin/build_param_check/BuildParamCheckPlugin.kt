@@ -182,7 +182,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                         }
                     }
                     .onFailure {
-                        it.printStackTrace()
+                        project.logger.error("[$pluginName] can't check project", it)
                         val checkerName = checker.javaClass.simpleName
                         tracker.track(CountMetric("configuration.mismatch.failed.$checkerName"))
                         sentry.get().sendException(ParamMismatchFailure(it))
@@ -234,3 +234,5 @@ javaIncrementalCompilation=$javaIncrementalCompilation
     private fun startParametersDescription(gradle: Gradle): String =
         gradle.startParameter.toString().replace(',', '\n')
 }
+
+private const val pluginName = "BuildParamCheckPlugin"

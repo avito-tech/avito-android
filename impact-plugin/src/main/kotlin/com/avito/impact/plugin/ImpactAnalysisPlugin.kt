@@ -50,4 +50,4 @@ class ImpactAnalysisPlugin : Plugin<Project> {
     }
 }
 
-const val pluginName = "ImpactAnalysisPlugin"
+private const val pluginName = "ImpactAnalysisPlugin"
