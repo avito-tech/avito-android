@@ -3,5 +3,6 @@
 *.iml
 build/
 local.properties
+.pytest_cache
 # hugo generated files
 public/

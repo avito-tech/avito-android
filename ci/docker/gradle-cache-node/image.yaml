@@ -1,0 +1,2 @@
+registry: DOCKER_REGISTRY
+image: android/gradle-cache-node

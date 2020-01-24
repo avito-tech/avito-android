@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+export GEBCN_CONTAINER=1
+set -- java -Xmx10g -XX:MaxDirectMemorySize=512m $JAVA_OPTS -jar build-cache-node.jar --data-dir /data "$@"
+exec "$@"/bin
