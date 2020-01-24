@@ -6,22 +6,18 @@ WORKDIR /docs
 RUN mdl /docs/content
 
 
-# TODO: Use alpine
-# Requirements: the latest version of hugo
-FROM ubuntu:18.04
+FROM alpine:3.11
 
-RUN apt-get update \
-    && apt-get -y install --no-install-recommends \
-        git \
-        openssh-client \
-        curl \
-        ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# libc libraries are used to overcome https://github.com/gohugoio/hugo/issues/3382 😕
+RUN apk update \
+    && apk add --update libc6-compat libstdc++
 
-ARG HUGO_VERSION=0.62.2
+ARG HUGO_VERSION=0.63.1
 
-RUN curl -LJ -o hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.deb \
-    && apt install ./hugo.deb \
-    && rm hugo.deb \
+RUN mkdir -p /tmp/hugo
+ADD https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz /tmp/hugo
+RUN tar xzf /tmp/hugo/*.tar.gz -C /tmp/hugo/ \
+    && mv /tmp/hugo/hugo /usr/local/bin/ \
+    && rm -rf /tmp/hugo \
+    && rm /var/cache/apk/* \
     && hugo version
