@@ -62,6 +62,7 @@ include(":websocket-reporter")
 include(":resource-manager-exceptions")
 include(":junit-utils")
 include(":mockito-utils")
+include(":test-report")
 
 pluginManagement {
 
