@@ -41,6 +41,19 @@ fun Project.getMandatoryIntProperty(name: String): Int =
 fun Project.getBooleanProperty(name: String, default: Boolean = false): Boolean =
     getOptionalStringProperty(name)?.toBoolean() ?: default
 
+@JvmOverloads
+fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Float? {
+    return if (hasProperty(name)) {
+        try {
+            property(name)?.toString()?.toFloat() ?: default
+        } catch (e: NumberFormatException) {
+            default
+        }
+    } else {
+        default
+    }
+}
+
 fun Project.isRoot() = (project == project.rootProject)
 
 object ProjectProperty {

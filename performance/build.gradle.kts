@@ -20,6 +20,8 @@ dependencies {
     implementation(project(":bitbucket"))
     implementation(project(":kotlin-dsl-support"))
     implementation(project(":utils"))
+    implementation(project(":process"))
+    implementation(project(":files"))
     implementation(project(":logging"))
     implementation(project(":instrumentation"))
     implementation(project(":teamcity"))

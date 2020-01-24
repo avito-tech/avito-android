@@ -2,7 +2,6 @@ package com.avito.android
 
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
-import com.avito.utils.gradle.addPreBuildTasks
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create

@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":cicd"))
     implementation(project(":impact"))
     implementation(project(":module-type"))
+    implementation(project(":pre-build"))
     implementation(project(":utils"))
     implementation(project(":kotlin-dsl-support"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")

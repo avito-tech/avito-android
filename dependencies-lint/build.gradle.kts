@@ -11,6 +11,7 @@ val mockitoKotlinVersion: String by project
 dependencies {
     implementation(project(":cicd"))
     implementation(project(":impact"))
+    implementation(project(":files"))
     implementation(project(":utils"))
     implementation(project(":android"))
     implementation(project(":kotlin-dsl-support"))

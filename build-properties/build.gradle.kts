@@ -11,6 +11,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
 
+    implementation(project(":pre-build"))
     implementation(project(":utils"))
     implementation(project(":logging"))
     implementation(project(":kotlin-dsl-support"))

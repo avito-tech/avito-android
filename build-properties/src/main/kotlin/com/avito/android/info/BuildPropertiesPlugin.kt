@@ -1,6 +1,6 @@
 package com.avito.android.info
 
-import com.avito.utils.gradle.addPreBuildTasksIfApplication
+import com.avito.android.addPreBuildTasksIfApplication
 import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin

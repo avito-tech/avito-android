@@ -54,6 +54,7 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunit5Version")
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
 
+    testFixturesImplementation(project(":kubernetes"))
     testFixturesImplementation(project(":utils"))
     testFixturesImplementation(project(":test-project"))
     testFixturesImplementation(project(":bitbucket"))

@@ -5,9 +5,9 @@ package com.avito.instrumentation.impact
 import com.avito.android.isAndroid
 import com.avito.impact.BytecodeResolver
 import com.avito.impact.ModifiedProjectsFinder
+import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.gradle.isRoot
 import com.google.gson.GsonBuilder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
