@@ -13,6 +13,7 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":files"))
     implementation(project(":process"))
+    implementation(project(":kotlin-dsl-support"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 

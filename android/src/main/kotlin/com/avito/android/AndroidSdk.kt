@@ -152,9 +152,7 @@ private fun androidHomeFromLocalProperties(
         null
     }
 }
-/**
- * у gradle специфичные toString() из property
- */
+
 @UseExperimental(ExperimentalContracts::class)
 private fun String?.hasContent(): Boolean {
     contract {
