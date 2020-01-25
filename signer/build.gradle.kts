@@ -5,6 +5,7 @@ plugins {
 }
 
 val kotlinVersion: String by project
+val funktionaleVersion: String by project
 val androidGradlePluginVersion: String by project
 val okhttpVersion: String by project
 
@@ -14,8 +15,10 @@ dependencies {
     implementation(project(":logging"))
     implementation(project(":okhttp"))
     implementation(project(":android"))
+    implementation(project(":files"))
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")

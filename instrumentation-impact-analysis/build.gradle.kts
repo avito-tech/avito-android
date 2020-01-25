@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":git"))
     implementation(project(":utils"))
     implementation(project(":logging"))
+    implementation(project(":files"))
     implementation(project(":sentry"))
     implementation(project(":statsd"))
     implementation(project(":kotlin-dsl-support"))

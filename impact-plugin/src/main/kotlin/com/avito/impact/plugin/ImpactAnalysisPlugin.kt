@@ -5,7 +5,7 @@ import com.avito.impact.changes.newChangesDetector
 import com.avito.impact.configuration.InternalModule
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.impactFallbackDetector
-import com.avito.utils.gradle.isRoot
+import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project

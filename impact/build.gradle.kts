@@ -4,12 +4,14 @@ plugins {
 }
 
 val kotlinVersion: String by project
+val funktionaleVersion: String by project
 val antPatternMatcherVersion: String by project
 val mockitoKotlinVersion: String by project
 
 dependencies {
     implementation(gradleApi())
     implementation(project(":utils"))
+    implementation(project(":process"))
     implementation(project(":logging"))
     implementation(project(":android"))
     implementation(project(":git"))
@@ -17,6 +19,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("io.github.azagniotov:ant-style-path-matcher:$antPatternMatcherVersion")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 
     testImplementation(project(":test-project"))
     testImplementation(testFixtures(project(":logging")))

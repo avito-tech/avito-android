@@ -1,39 +1,6 @@
-package com.avito.utils.gradle
+package com.avito.android
 
 import org.gradle.api.Project
-
-@JvmOverloads
-fun Project.getStringProperty(name: String, default: String? = null): String? {
-    return if (hasProperty(name)) {
-        property(name)?.toString() ?: default
-    } else {
-        default
-    }
-}
-
-@JvmOverloads
-fun Project.getBooleanProperty(name: String, default: Boolean = false): Boolean {
-    return if (hasProperty(name)) {
-        property(name)?.toString()?.toBoolean() ?: default
-    } else {
-        default
-    }
-}
-
-@JvmOverloads
-fun Project.getFloatProperty(name: String, default: Float? = null): Float? {
-    return if (hasProperty(name)) {
-        try {
-            property(name)?.toString()?.toFloat() ?: default
-        } catch (e: NumberFormatException) {
-            default
-        }
-    } else {
-        default
-    }
-}
-
-fun Project.isRoot() = (project == project.rootProject)
 
 /**
  * @param task The dependency for build (task provider or path)

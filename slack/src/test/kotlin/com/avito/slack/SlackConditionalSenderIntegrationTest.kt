@@ -11,9 +11,11 @@ import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
+    //todo хреново что для локального запуска нужно здесь ENV задавать
     private val testChannel = SlackChannel(requireNotNull(System.getenv("SLACK_TEST_CHANNEL")))
     private val testToken = requireNotNull(System.getenv("SLACK_TEST_TOKEN"))
-    private val slackClient: SlackClient = SlackClient.Impl(testToken, requireNotNull(System.getenv("SLACK_TEST_WORKSPACE")))
+    private val slackClient: SlackClient =
+        SlackClient.Impl(testToken, requireNotNull(System.getenv("SLACK_TEST_WORKSPACE")))
     private val logger: CILogger = CILogger.allToStdout
 
     @Test

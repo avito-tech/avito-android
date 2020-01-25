@@ -9,7 +9,6 @@ import com.avito.android.stats.graphiteSeriesElement
 import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.gradle.isBuildAction
 import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.TaskExecutionOutcome.EXECUTED
@@ -26,6 +25,9 @@ internal class AggregatedMetricsConsumer(
     private val log = project.logger
     private val env = project.buildEnvironment
     private val androidApps: MutableList<String> = CopyOnWriteArrayList()
+
+    private val BuildResult.isBuildAction
+        get() = action == "Build"
 
     init {
         check(project.isRoot())
@@ -173,10 +175,12 @@ internal class AggregatedMetricsConsumer(
     @Suppress("unused")
     private fun dump(task: TaskExecution) {
         val state = task.internalState
-        log.debug("TaskExecution: ${task.path}, " +
-            "didWork:${state.didWork}, " +
-            "actionable:${state.isActionable}, " +
-            "outcome:${state.outcome}")
+        log.debug(
+            "TaskExecution: ${task.path}, " +
+                "didWork:${state.didWork}, " +
+                "actionable:${state.isActionable}, " +
+                "outcome:${state.outcome}"
+        )
     }
 
 }

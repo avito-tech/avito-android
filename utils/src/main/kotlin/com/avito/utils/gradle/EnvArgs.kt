@@ -4,10 +4,13 @@ package com.avito.utils.gradle
 
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
+import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.getOptionalFloatProperty
 import org.gradle.api.Project
 import java.io.Serializable
 
+// Used in build.gradle's of avito
 val Project.envArgs by ProjectProperty.lazy<EnvArgs>(scope = ROOT_PROJECT) { project ->
     if (project.buildEnvironment is BuildEnvironment.CI) EnvArgs.Impl(project) else EnvArgs.Stub
 }
@@ -59,7 +62,7 @@ interface EnvArgs {
             project.getBooleanProperty("avito.tests.disableRerunOnTargetBranch", default = false)
 
         override val testDownsamplingFactor: Float? =
-            project.getFloatProperty("avito.tests.downsamplingFactor", default = null)
+            project.getOptionalFloatProperty("avito.tests.downsamplingFactor", default = null)
     }
 
     object Stub : EnvArgs, Serializable {

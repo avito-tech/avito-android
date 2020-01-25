@@ -5,6 +5,7 @@ plugins {
 }
 
 val kotlinVersion: String by project
+val funktionaleVersion: String by project
 val androidGradlePluginVersion: String by project
 
 dependencies {
@@ -16,6 +17,7 @@ dependencies {
     implementation(project(":impact"))
     implementation(project(":trace-event"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
 
     testImplementation(project(":git"))

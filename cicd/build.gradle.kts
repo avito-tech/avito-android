@@ -6,9 +6,11 @@ plugins {
 
 val kotlinVersion: String by project
 val okhttpVersion: String by project
+val funktionaleVersion: String by project
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation(project(":android"))
     implementation(project(":impact"))
     implementation(project(":impact-plugin"))
@@ -17,6 +19,7 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":logging"))
     implementation(project(":signer"))
+    implementation(project(":files"))
     implementation(project(":lint-report"))
     implementation(project(":instrumentation"))
     implementation(project(":artifactory"))

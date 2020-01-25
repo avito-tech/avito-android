@@ -201,7 +201,6 @@ fun <T> NamedDomainObjectCollection<T>.namedOrNull(name: String): NamedDomainObj
     }
 }
 
-
 val Project.sourceSets: SourceSetContainer
     get() = (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
 
