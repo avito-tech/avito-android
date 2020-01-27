@@ -72,16 +72,32 @@ include(":test-inhouse-runner")
 
 pluginManagement {
 
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
-
+    val artifactoryUrl: String by settings
     val kotlinVersion: String by settings
     val androidGradlePluginVersion: String by settings
+    val infraVersion: String by settings
+
+    repositories {
+        maven {
+            name = "Local Artifactory"
+            setUrl("$artifactoryUrl/libs-release-local")
+            content {
+                includeGroupByRegex("com\\.avito\\.android\\..*")
+            }
+        }
+        gradlePluginPortal()
+        google()
+        mavenLocal {
+            content {
+                includeGroupByRegex("com\\.avito\\.android\\..*")
+            }
+        }
+    }
 
     plugins {
         id("digital.wup.android-maven-publish") version "3.6.3"
+        id("kotlin") version kotlinVersion
+        id("kotlin-android") version kotlinVersion
     }
 
     resolutionStrategy {
@@ -93,6 +109,9 @@ pluginManagement {
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
                     useVersion(kotlinVersion)
+
+                pluginId.startsWith("com.avito.android") ->
+                    useVersion(infraVersion)
             }
         }
     }

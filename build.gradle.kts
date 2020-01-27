@@ -5,10 +5,11 @@ import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `kotlin-dsl` apply false
+    id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
 }
 
+val artifactoryUrl: String by project
 val projectVersion: String by project
 val buildToolsVersion: String by project
 val javaVersion: String by project
@@ -120,8 +121,7 @@ subprojects {
 
                 maven {
                     name = "artifactory"
-                    val artifactoryUrl = System.getenv("ARTIFACTORY_URL")
-                    setUrl(artifactoryUrl)
+                    setUrl("$artifactoryUrl/libs-release-local")
                     credentials {
                         username = System.getenv("ARTIFACTORY_USER")
                         password = System.getenv("ARTIFACTORY_PASSWORD")

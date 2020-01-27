@@ -1,6 +1,15 @@
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+import com.avito.kotlin.dsl.getMandatoryStringProperty
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("com.avito.android.instrumentation-tests")
 }
 
 val kotlinVersion: String by project
@@ -18,6 +27,11 @@ val minSdk = requireNotNull(project.properties["minSdkVersion"]).toString()
 android {
     buildToolsVersion(buildTools)
     compileSdkVersion(compileSdk)
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
     defaultConfig {
         minSdkVersion(minSdk)
@@ -49,90 +63,88 @@ dependencies {
     implementation("com.google.android.material:material:$androidXVersion")
 
     androidTestImplementation(project(":test-inhouse-runner")) { isTransitive = false }
-    androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     androidTestImplementation(project(":test-report")) { isTransitive = false }
     androidTestImplementation(project(":ui-testing-core"))
     androidTestImplementation("io.sentry:sentry:$sentryVersion")
     androidTestImplementation("com.google.truth:truth:$truthVersion")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
 }
 
-tasks.getByName("build").dependsOn("$path:assembleAndroidTest")
+tasks.getByName("build").dependsOn("$path:instrumentationUi")
 
-//instrumentation {
-//
-//    reportApiUrl = project.properties.get("avito.report.url")
-//    reportApiFallbackUrl = project.properties.get("avito.report.fallbackUrl")
-//    reportViewerUrl = project.properties.get("avito.report.viewerUrl")
-//    registry = project.properties.get("avito.registry")
-//
-//    output = project.rootProject.file("outputs/$project.name/instrumentation").path
-//
-//    logcatTags = [
-//            "TestAppRunner:*",
-//            "InHouseInstrumentationTestRunner:*",
-//            "ActivityManager:*",
-//            "ReportTestListener:*",
-//            "StorageJsonTransport:*",
-//            "TestReport:*",
-//            "VideoCaptureListener:*",
-//            "TestRunner:*",
-//            "SystemDialogsManager:*",
-//            "*:E"
-//    ]
-//
-//    instrumentationParams = [
-//            "videoRecording": "failed",
-//            "jobSlug"       : "FrameworkTests"
-//    ]
-//
-//    configurations {
-//        ui {
-//
-//            tryToReRunOnTargetBranch = false
-//            reportSkippedTests = true
-//            rerunFailedTests = true
-//            reportFlakyTests = true
-//
-//            targets {
-//                api22 {
-//                    deviceName = "API22"
-//
-//                    scheduling {
-//                        quota {
-//                            retryCount = 1
-//                            minimumSuccessCount = 1
-//                        }
-//
-//                        testsCountBasedReservation {
-//                            device = Emulator22.INSTANCE
-//                            maximum = 50
-//                            minimum = 2
-//                            testsPerEmulator = 3
-//                        }
-//                    }
-//                }
-//
-//                api27 {
-//                    deviceName = "API27"
-//
-//                    scheduling {
-//                        quota {
-//                            retryCount = 1
-//                            minimumSuccessCount = 1
-//                        }
-//
-//                        testsCountBasedReservation {
-//                            device = Emulator27.INSTANCE
-//                            maximum = 50
-//                            minimum = 2
-//                            testsPerEmulator = 3
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
+
+    reportApiUrl = project.getMandatoryStringProperty("avito.report.url")
+    reportApiFallbackUrl = project.getMandatoryStringProperty("avito.report.fallbackUrl")
+    reportViewerUrl = project.getMandatoryStringProperty("avito.report.viewerUrl")
+    registry = project.getMandatoryStringProperty("avito.registry")
+    sentryDsn = project.getMandatoryStringProperty("avito.instrumentaion.sentry.dsn")
+    slackToken = project.getMandatoryStringProperty("avito.slack.token")
+    fileStorageUrl = project.getMandatoryStringProperty("avito.fileStorage.url")
+
+    output = project.rootProject.file("outputs/${project.name}/instrumentation").path
+
+    logcatTags = setOf(
+        "UITestRunner:*",
+        "ActivityManager:*",
+        "ReportTestListener:*",
+        "StorageJsonTransport:*",
+        "TestReport:*",
+        "VideoCaptureListener:*",
+        "TestRunner:*",
+        "SystemDialogsManager:*",
+        "ito.android.de:*", //по этому тэгу система пишет логи об использовании hidden/restricted api https://developer.android.com/distribute/best-practices/develop/restrictions-non-sdk-interfaces
+        "*:E"
+    )
+
+    instrumentationParams = mapOf(
+        "videoRecording" to "failed",
+        "jobSlug" to "FunctionalTests"
+    )
+
+    configurationsContainer.register("ui") {
+        tryToReRunOnTargetBranch = false
+        reportSkippedTests = true
+        rerunFailedTests = true
+        reportFlakyTests = true
+
+        targetsContainer.register("api22") {
+            deviceName = "API22"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = Emulator22
+                    maximum = 50
+                    minimum = 2
+                    testsPerEmulator = 3
+                }
+            }
+        }
+
+        targetsContainer.register("api27") {
+            deviceName = "API27"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = Emulator27
+                    maximum = 50
+                    minimum = 2
+                    testsPerEmulator = 3
+                }
+            }
+        }
+    }
+}
 
 configurations.all {
     if (name.contains("AndroidTestRuntimeClasspath")) {
@@ -141,19 +153,3 @@ configurations.all {
         }
     }
 }
-
-//builds {
-//    fastCheck {
-//        uiTests {
-//            configurations = ["ui"]
-//            suppressFailures = false
-//        }
-//    }
-//
-//    fullCheck {
-//        uiTests {
-//            configurations = ["ui"]
-//            suppressFailures = true
-//        }
-//    }
-//}
