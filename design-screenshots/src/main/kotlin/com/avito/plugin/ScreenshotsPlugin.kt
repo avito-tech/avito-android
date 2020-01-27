@@ -8,17 +8,13 @@ import org.gradle.kotlin.dsl.register
 class ScreenshotsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.withAndroidApp { appExtension ->
-            appExtension.applicationVariants.all { applicationVariant ->
-                project.tasks.register<PullScreenshotsTask>("recordScreenshots") {
-                    group = "design"
-                    description = "Create and pull screenshots from device"
-                }
-                project.tasks.register<ClearScreenshotsTask>("clearScreenshots") {
-                    group = "design"
-                    description = "Clear screenshots on device"
-                }
-            }
+        project.tasks.register<PullScreenshotsTask>("recordScreenshots") {
+            group = "design"
+            description = "Create and pull screenshots from device"
+        }
+        project.tasks.register<ClearScreenshotsTask>("clearScreenshots") {
+            group = "design"
+            description = "Clear screenshots on device"
         }
     }
 }
