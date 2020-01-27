@@ -5,7 +5,7 @@ import com.avito.runner.service.worker.device.adb.AdbDevice
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.logging.CILogger
 
-internal fun getCurrentDevice(ciLogger: CILogger): AdbDevice? {
+internal fun getCurrentDevice(ciLogger: CILogger): AdbDevice {
     val adbDevicesManager = AdbDevicesManager(StdOutLogger())
     adbDevicesManager.connectedDevices().let { set ->
         return when (set.size) {
@@ -16,7 +16,7 @@ internal fun getCurrentDevice(ciLogger: CILogger): AdbDevice? {
             }
             1 -> {
                 ciLogger.info("One device found, gonna start pulling")
-                set.first() as? AdbDevice
+                set.first() as AdbDevice
             }
             else -> {
                 val exception =
