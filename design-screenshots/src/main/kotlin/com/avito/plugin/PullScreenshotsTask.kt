@@ -20,7 +20,7 @@ open class PullScreenshotsTask : DefaultTask() {
 
     @TaskAction
     fun pullScreenshots() {
-        val applicationId = variant?.applicationId
+        val applicationId = variant!!.applicationId
         val currentDevice = getCurrentDevice(ciLogger)
         val referencePath =
             Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
