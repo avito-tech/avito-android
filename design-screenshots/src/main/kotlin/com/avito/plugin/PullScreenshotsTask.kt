@@ -2,6 +2,8 @@ package com.avito.plugin
 
 import com.android.build.gradle.api.ApplicationVariant
 import com.avito.runner.ProcessNotification
+import com.avito.runner.logging.StdOutLogger
+import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.logging.CILogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -22,7 +24,8 @@ open class PullScreenshotsTask : DefaultTask() {
     @TaskAction
     fun pullScreenshots() {
         val applicationId = variant.get().applicationId
-        val currentDevice = getCurrentDevice(ciLogger)
+        val adbDevicesManager = AdbDevicesManager(StdOutLogger())
+        val currentDevice = getDevice(adbDevicesManager, AdbDeviceResolverLocal(ciLogger))
         val referencePath =
             Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
