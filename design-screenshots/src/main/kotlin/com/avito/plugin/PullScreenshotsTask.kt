@@ -21,33 +21,30 @@ open class PullScreenshotsTask : DefaultTask() {
     @TaskAction
     fun pullScreenshots() {
         val applicationId = variant?.applicationId
-        if (applicationId != null) {
-            val currentDevice = getCurrentDevice(ciLogger)
-            val referencePath =
-                Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
-            val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
-            currentDevice.list(remotePath.toString()).onSuccess { result ->
-                if (result is ProcessNotification.Exit) {
-                    result.output.lines().firstOrNull { it.trim().isNotEmpty() }
-                        ?.let { directory ->
-                            if (directory.trim().isNotEmpty()) {
-                                referencePath.toFile().mkdirs()
-                                val remoteEmulatorPath = remotePath.resolve(directory)
-                                currentDevice.pull(
-                                    from = remoteEmulatorPath,
-                                    to = referencePath
-                                )
-                            }
+        val currentDevice = getCurrentDevice(ciLogger)
+        val referencePath =
+            Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
+        val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
+        currentDevice.list(remotePath.toString()).onSuccess { result ->
+            if (result is ProcessNotification.Exit) {
+                result.output.lines().firstOrNull { it.trim().isNotEmpty() }
+                    ?.let { directory ->
+                        if (directory.trim().isNotEmpty()) {
+                            referencePath.toFile().mkdirs()
+                            val remoteEmulatorPath = remotePath.resolve(directory)
+                            currentDevice.pull(
+                                from = remoteEmulatorPath,
+                                to = referencePath
+                            )
                         }
-                }
-                ciLogger.info("Screenshots are pulled to $referencePath")
-                clearOutputFiles()
-            }.onFailure {
-                ciLogger.info("Cannot list screenshot directory")
+                    }
             }
-        } else {
-            ciLogger.info("Cannot get applicationId")
+            ciLogger.info("Screenshots are pulled to $referencePath")
+            clearOutputFiles()
+        }.onFailure {
+            ciLogger.info("Cannot list screenshot directory")
         }
+
     }
 
     private fun clearOutputFiles() {

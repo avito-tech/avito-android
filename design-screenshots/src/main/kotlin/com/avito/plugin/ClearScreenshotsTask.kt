@@ -19,20 +19,17 @@ open class ClearScreenshotsTask : DefaultTask() {
 
     @TaskAction
     fun clearScreenshots() {
-        val applicationId = variant?.applicationId
-        if (applicationId == null) {
-            val currentDevice = getCurrentDevice(ciLogger)
-            val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
-            currentDevice.clearDirectory(remotePath).onSuccess {
-                ciLogger.info("Screenshot directory is cleared up")
-            }.onFailure {
-                ciLogger.info("Cannot list screenshot directory")
-            }
-            clearOutputFiles()
-        } else {
-            ciLogger.info("Cannot get applicationId")
+        val applicationId = variant!!.applicationId
+        val currentDevice = getCurrentDevice(ciLogger)
+        val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
+        currentDevice.clearDirectory(remotePath).onSuccess {
+            ciLogger.info("Screenshot directory is cleared up")
+        }.onFailure {
+            ciLogger.info("Cannot list screenshot directory")
         }
+        clearOutputFiles()
     }
+
 
     private fun clearOutputFiles() {
         File(project.rootDir.path).listFiles()?.forEach { file ->
