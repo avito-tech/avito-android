@@ -17,12 +17,11 @@ open class ClearScreenshotsTask : DefaultTask() {
     val ciLogger = CILogger.allToStdout
 
     @TaskAction
-    fun pullScreenshots() {
+    fun clearScreenshots() {
         val applicationId = variant?.testVariant?.applicationId ?: return
         val currentDevice = getCurrentDevice(ciLogger) ?: return
-        val referencePath = Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
-        currentDevice.clearDirectory(remotePath).onSuccess { result ->
+        currentDevice.clearDirectory(remotePath).onSuccess {
             ciLogger.info("Screenshot directory is cleared up")
         }.onFailure {
             ciLogger.info("Cannot list screenshot directory")
