@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -40,6 +41,14 @@ subprojects {
     version = finalProjectVersion
 
     val sourcesTaskName = "sourceJar"
+
+    plugins.withType<AppPlugin> {
+        extension.sourceSets {
+            named("main").configure { java.srcDir("src/main/kotlin") }
+            named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
+            named("test").configure { java.srcDir("src/test/kotlin") }
+        }
+    }
 
     plugins.withType<LibraryPlugin> {
         extension.sourceSets {
