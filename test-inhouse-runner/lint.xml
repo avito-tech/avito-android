@@ -1,0 +1,10 @@
+<lint>
+    <!-- Disable the given check in this project -->
+    <issue id="InvalidPackage">
+        <ignore regexp="bytebuddy" />
+        <ignore regexp="sentry" />
+        <ignore regexp="bouncycastle" />
+        <ignore regexp="org.jetbrains.teamcity" />
+    </issue>
+
+</lint>

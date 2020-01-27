@@ -67,6 +67,7 @@ include(":resource-manager-exceptions")
 include(":junit-utils")
 include(":mockito-utils")
 include(":test-report")
+include(":test-inhouse-runner")
 
 pluginManagement {
 

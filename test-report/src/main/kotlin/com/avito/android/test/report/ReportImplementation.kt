@@ -35,7 +35,6 @@ import com.avito.time.TimeProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.sentry.SentryClient
-import io.sentry.SentryClientFactory
 import okhttp3.OkHttpClient
 import java.io.File
 
@@ -55,12 +54,11 @@ class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
     httpClient: OkHttpClient,
     isLocalRun: Boolean,
-    sentryDsn: String,
-    remoteStorageEndpoint: String,
-    reportApiHost: String,
-    reportFallbackUrl: String,
-    reportResultEndpoint: String,
-    override val sentry: SentryClient = SentryClientFactory.sentryClient(sentryDsn),
+    fileStorageUrl: String,
+    reportApiUrl: String,
+    reportApiFallbackUrl: String,
+    reportViewerUrl: String,
+    override val sentry: SentryClient,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
     private val logger: (String, Throwable?) -> Unit = { msg, error ->
@@ -80,9 +78,9 @@ class ReportImplementation(
     private val transport: List<Transport> = if (isLocalRun) {
         listOf(
             LocalRunTransport(
-                reportApiHost = reportApiHost,
-                reportFallbackUrl = reportFallbackUrl,
-                reportResultEndpoint = reportResultEndpoint,
+                reportApiHost = reportApiUrl,
+                reportFallbackUrl = reportApiFallbackUrl,
+                reportResultEndpoint = reportViewerUrl,
                 reportCoordinates = testRunCoordinates,
                 deviceName = DeviceName(deviceName),
                 logger = logger
@@ -102,7 +100,7 @@ class ReportImplementation(
     private val remoteStorage: RemoteStorage = RemoteStorage.create(
         logger = logger,
         httpClient = httpClient,
-        endpoint = remoteStorageEndpoint
+        endpoint = fileStorageUrl
     )
 
     private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(

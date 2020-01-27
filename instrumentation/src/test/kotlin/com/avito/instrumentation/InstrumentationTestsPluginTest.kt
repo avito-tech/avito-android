@@ -28,6 +28,12 @@ class InstrumentationTestsPluginTest {
 
                             instrumentation {
                                 output = project.file("outputs").path
+                                reportApiUrl = "stub"
+                                reportApiFallbackUrl = "stub"
+                                reportViewerUrl = "stub"
+                                sentryDsn = "stub"
+                                slackToken = "stub"
+                                fileStorageUrl = "stub"
 
                                 instrumentationParams = [
                                     "jobSlug": "FunctionalTests"

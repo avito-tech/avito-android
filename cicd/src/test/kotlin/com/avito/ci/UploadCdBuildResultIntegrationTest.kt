@@ -59,9 +59,6 @@ class UploadCdBuildResultIntegrationTest {
                                 bundle(android.buildTypes.release, "no_matter")
                                 host("https://signer/")
                             }
-                            instrumentation {
-                                reportViewerUrl="$reportsApiUrl"
-                            }
                             builds {
                                 release {
                                     uiTests { configurations "$uiTestConfigurationName" }
@@ -322,6 +319,11 @@ class UploadCdBuildResultIntegrationTest {
                 testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
             }
             instrumentation {
+                reportViewerUrl="$reportsApiUrl"
+                 reportApiFallbackUrl = "stub"
+                 sentryDsn = "stub"
+                 slackToken = "stub"
+                 fileStorageUrl = "stub"
                 reportApiUrl = "$mockUrl"
                 instrumentationParams = [
                     "deviceName"    : "regress",
