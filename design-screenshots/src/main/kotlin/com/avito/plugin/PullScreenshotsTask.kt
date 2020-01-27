@@ -7,20 +7,21 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.nio.file.Paths
 
 open class PullScreenshotsTask : DefaultTask() {
 
-    @Internal
-    var variant: ApplicationVariant? = null
-
     @Input
+    val variant = project.objects.property<ApplicationVariant>()
+
+    @Internal
     val ciLogger = CILogger.allToStdout
 
     @TaskAction
     fun pullScreenshots() {
-        val applicationId = variant!!.applicationId
+        val applicationId = variant.get().applicationId
         val currentDevice = getCurrentDevice(ciLogger)
         val referencePath =
             Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")

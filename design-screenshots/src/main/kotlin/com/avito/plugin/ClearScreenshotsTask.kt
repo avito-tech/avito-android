@@ -6,20 +6,21 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.nio.file.Paths
 
 open class ClearScreenshotsTask : DefaultTask() {
 
-    @Internal
-    var variant: ApplicationVariant? = null
-
     @Input
+    val variant = project.objects.property<ApplicationVariant>()
+
+    @Internal
     val ciLogger = CILogger.allToStdout
 
     @TaskAction
     fun clearScreenshots() {
-        val applicationId = variant!!.applicationId
+        val applicationId = variant.get().applicationId
         val currentDevice = getCurrentDevice(ciLogger)
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
         currentDevice.clearDirectory(remotePath).onSuccess {
