@@ -181,7 +181,8 @@ class InstrumentationParamsBuildingTest {
                     "reportViewerUrl" to "stub",
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
-                    "fileStorageUrl" to "stub"
+                    "fileStorageUrl" to "stub",
+                    "inHouse" to ""
                 )
             )
     }
@@ -226,7 +227,8 @@ class InstrumentationParamsBuildingTest {
                     "reportViewerUrl" to "stub",
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
-                    "fileStorageUrl" to "stub"
+                    "fileStorageUrl" to "stub",
+                    "inHouse" to ""
                 )
             )
     }
@@ -274,7 +276,8 @@ class InstrumentationParamsBuildingTest {
                     "reportViewerUrl" to "stub",
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
-                    "fileStorageUrl" to "stub"
+                    "fileStorageUrl" to "stub",
+                    "inHouse" to ""
                 )
             )
     }

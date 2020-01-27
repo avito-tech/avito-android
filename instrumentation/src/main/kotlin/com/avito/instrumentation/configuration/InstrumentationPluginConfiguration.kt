@@ -70,6 +70,10 @@ class InstrumentationPluginConfiguration internal constructor(
                         "fileStorageUrl" to configuration.fileStorageUrl
                     ))
                     .applyParameters(configuration.instrumentationParams)
+                    .applyParameters(mapOf(
+                        // info for InHouseRunner testRunEnvironment creation
+                        "inHouse" to ""
+                    ))
 
                 action(
                     Data(

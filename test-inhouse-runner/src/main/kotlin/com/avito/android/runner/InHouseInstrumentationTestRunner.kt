@@ -110,9 +110,9 @@ abstract class InHouseInstrumentationTestRunner() :
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 
     private fun injectTestMetadata(arguments: Bundle) {
-        val isRealRun = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
-        if (isRealRun) {
-            metadataToBundleInjector.inject(arguments)
+        when(TestRunEnvironment.Environment.getEnvironment(BundleArgsProvider(arguments))) {
+            TestRunEnvironment.Environment.IN_HOUSE -> metadataToBundleInjector.inject(arguments)
+            TestRunEnvironment.Environment.ORCHESTRATOR -> { /*do nothing*/}
         }
     }
 
