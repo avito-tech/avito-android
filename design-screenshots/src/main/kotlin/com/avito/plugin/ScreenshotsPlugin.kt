@@ -15,6 +15,11 @@ class ScreenshotsPlugin : Plugin<Project> {
                     variant = applicationVariant
                     description = "Create and pull screenshots from device"
                 }
+                project.tasks.register<ClearScreenshotsTask>("clearScreenshots") {
+                    group = "design"
+                    variant = applicationVariant
+                    description = "Clear screenshots on device"
+                }
             }
         }
     }

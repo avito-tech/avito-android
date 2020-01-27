@@ -1,7 +1,6 @@
 package com.avito.plugin
 
 import com.android.build.gradle.api.ApplicationVariant
-import com.avito.runner.ProcessNotification
 import com.avito.utils.logging.CILogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
@@ -9,7 +8,7 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.nio.file.Paths
 
-open class PullScreenshotsTask : DefaultTask() {
+open class ClearScreenshotsTask : DefaultTask() {
 
     @Internal
     var variant: ApplicationVariant? = null
@@ -23,24 +22,12 @@ open class PullScreenshotsTask : DefaultTask() {
         val currentDevice = getCurrentDevice(ciLogger) ?: return
         val referencePath = Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
-        currentDevice.list(remotePath.toString()).onSuccess { result ->
-            if (result is ProcessNotification.Exit) {
-                result.output.lines().firstOrNull { it.trim().isNotEmpty() }?.let { directory ->
-                    if (directory.trim().isNotEmpty()) {
-                        referencePath.toFile().mkdirs()
-                        val remoteEmulatorPath = remotePath.resolve(directory)
-                        currentDevice.pull(
-                            from = remoteEmulatorPath,
-                            to = referencePath
-                        )
-                    }
-                }
-            }
-            ciLogger.info("Screenshots are pulled to $referencePath")
-            clearOutputFiles()
+        currentDevice.clearDirectory(remotePath).onSuccess { result ->
+            ciLogger.info("Screenshot directory is cleared up")
         }.onFailure {
             ciLogger.info("Cannot list screenshot directory")
         }
+        clearOutputFiles()
     }
 
     private fun clearOutputFiles() {
