@@ -182,7 +182,7 @@ class InstrumentationParamsBuildingTest {
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
                     "fileStorageUrl" to "stub",
-                    "inHouse" to ""
+                    "inHouse" to "true"
                 )
             )
     }
@@ -228,7 +228,7 @@ class InstrumentationParamsBuildingTest {
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
                     "fileStorageUrl" to "stub",
-                    "inHouse" to ""
+                    "inHouse" to "true"
                 )
             )
     }
@@ -277,7 +277,7 @@ class InstrumentationParamsBuildingTest {
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
                     "fileStorageUrl" to "stub",
-                    "inHouse" to ""
+                    "inHouse" to "true"
                 )
             )
     }
