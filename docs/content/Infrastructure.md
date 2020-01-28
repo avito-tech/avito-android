@@ -170,8 +170,3 @@ TODO: разобрать по модулям
 
 Версию можно указать с помощью:\
 env `PROJECT_VERSION` или gradle property `projectVersion`
-
-### Типичные ошибки
-
- - New Gradle Sync is not supported due to containing Kotlin modules
-https://stackoverflow.com/questions/54201216/android-studio-3-3-new-gradle-sync-is-not-supported-due-to-containing-kotlin-mo/
