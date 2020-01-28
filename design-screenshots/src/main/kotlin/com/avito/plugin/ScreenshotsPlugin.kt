@@ -12,8 +12,13 @@ class ScreenshotsPlugin : Plugin<Project> {
             appExtension.applicationVariants.all { applicationVariant ->
                 project.tasks.register<PullScreenshotsTask>("recordScreenshots") {
                     group = "design"
-                    variant = applicationVariant
+                    variant.set(applicationVariant)
                     description = "Create and pull screenshots from device"
+                }
+                project.tasks.register<ClearScreenshotsTask>("clearScreenshots") {
+                    group = "design"
+                    variant.set(applicationVariant)
+                    description = "Clear screenshots on device"
                 }
             }
         }
