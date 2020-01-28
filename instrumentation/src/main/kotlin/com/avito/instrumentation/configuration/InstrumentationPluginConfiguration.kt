@@ -72,7 +72,7 @@ class InstrumentationPluginConfiguration internal constructor(
                     .applyParameters(configuration.instrumentationParams)
                     .applyParameters(mapOf(
                         // info for InHouseRunner testRunEnvironment creation
-                        "inHouse" to ""
+                        "inHouse" to "true"
                     ))
 
                 action(
@@ -107,7 +107,6 @@ class InstrumentationPluginConfiguration internal constructor(
         var sentryDsn: String = ""
         var slackToken: String = ""
         var fileStorageUrl = ""
-
 
         var unitToChannelMap: Map<String, String> = emptyMap()
 
