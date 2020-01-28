@@ -32,6 +32,8 @@ class CoroutinesSlackBulkSender(
     private val ticker = kotlinx.coroutines.channels.ticker(delayMillis = 1500L, initialDelayMillis = 0L)
 
     init {
+        //todo use Flow
+        @Suppress("DEPRECATION")
         val tickedQueue = requestQueue.zip(ticker) { request, _ -> request }
         GlobalScope.launch {
             for (request in tickedQueue) {

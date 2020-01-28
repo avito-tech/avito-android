@@ -1,13 +1,15 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `kotlin-dsl` apply false
+    id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
 }
 
+val artifactoryUrl: String by project
 val projectVersion: String by project
 val buildToolsVersion: String by project
 val javaVersion: String by project
@@ -40,6 +42,14 @@ subprojects {
     version = finalProjectVersion
 
     val sourcesTaskName = "sourceJar"
+
+    plugins.withType<AppPlugin> {
+        extension.sourceSets {
+            named("main").configure { java.srcDir("src/main/kotlin") }
+            named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
+            named("test").configure { java.srcDir("src/test/kotlin") }
+        }
+    }
 
     plugins.withType<LibraryPlugin> {
         extension.sourceSets {
@@ -111,8 +121,7 @@ subprojects {
 
                 maven {
                     name = "artifactory"
-                    val artifactoryUrl = System.getenv("ARTIFACTORY_URL")
-                    setUrl(artifactoryUrl)
+                    setUrl("$artifactoryUrl/libs-release-local")
                     credentials {
                         username = System.getenv("ARTIFACTORY_USER")
                         password = System.getenv("ARTIFACTORY_PASSWORD")
