@@ -113,32 +113,20 @@ class AndroidSdk(
  * Все равно остается вариант при котором тесты не заработают:
  * local.properties первый раз генерируется во время открытия проекта avito-android в Android Studio
  * и не хранится под version control, поэтому если у разработчика не установлена ANDROID_HOME и он открывает
- * напрямую проект buildSrc в любой IDE, его ждет ошибка про "no sdk found"
+ * напрямую проект в любой IDE, его ждет ошибка про "no sdk found"
  *
  * @return path до Android Sdk если получилось найти таким способом
  */
 fun androidHomeFromLocalPropertiesFallback(): String {
-    // не имеет смысла использовать fallback если переменная доступна
     val env = System.getenv("ANDROID_HOME")
     if (!env.isNullOrBlank()) {
         return env
     }
 
     val rootDir = System.getProperty("rootDir")
-    val userDir = System.getProperty("user.dir")
-    // TODO it works incorrect after migration to github
-    val avitoAndroidRoot = if (!rootDir.isNullOrBlank()) {
-        // пытаемся прокинуть gradle project.rootDir
-        rootDir.substringBefore("buildSrc")
-    } else if (!userDir.isNullOrBlank()) {
-        // IDE прокидывает сюда Working directory
-        userDir.substringBefore("buildSrc")
-    } else {
-        null
-    }
 
-    return androidHomeFromLocalProperties(File("$avitoAndroidRoot/local.properties"))
-        ?: error("Can't resolve android sdk: env ANDROID_HOME and $avitoAndroidRoot/local.properties not available")
+    return androidHomeFromLocalProperties(File("$rootDir/local.properties"))
+        ?: error("Can't resolve android sdk: env ANDROID_HOME and $rootDir/local.properties is not available")
 }
 
 private fun androidHomeFromLocalProperties(
