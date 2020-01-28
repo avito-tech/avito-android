@@ -1,4 +1,4 @@
-package com.avito.ci
+package com.avito.ci.step
 
 import com.avito.android.plugin.artifactory.artifactoryAppBackupTaskName
 import com.avito.android.plugin.artifactory.artifactoryPasswordParameterName

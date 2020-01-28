@@ -1,4 +1,4 @@
-package com.avito.ci
+package com.avito.ci.step
 
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
@@ -93,6 +93,6 @@ class SignerIntegrationTest {
 
     private fun fullCheck(expectFailure: Boolean = true): TestResult =
         ciRun(projectDir, "app:fullCheck", "--info", expectFailure = expectFailure)
-}
 
-private const val SYNC_BRANCH = "develop"
+    private val SYNC_BRANCH = "develop"
+}
