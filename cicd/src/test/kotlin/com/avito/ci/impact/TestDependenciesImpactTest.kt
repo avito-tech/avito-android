@@ -1,5 +1,7 @@
-package com.avito.ci
+package com.avito.ci.impact
 
+import com.avito.ci.assertMarkedModules
+import com.avito.ci.detectChangedModules
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.EmptyModule
@@ -15,7 +17,8 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class TestDependencies {
+// TODO: explain the difference between this test and ImpactAnalysisTest. It tends to mix and duplicate cases
+class TestDependenciesImpactTest {
 
     private lateinit var projectDir: File
 

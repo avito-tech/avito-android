@@ -1,5 +1,8 @@
-package com.avito.ci
+package com.avito.ci.impact
 
+import com.avito.ci.KOTLIN_SOURCE_SET
+import com.avito.ci.assertMarkedModules
+import com.avito.ci.detectChangedModules
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator

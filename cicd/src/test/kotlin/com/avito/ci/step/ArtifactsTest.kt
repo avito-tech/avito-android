@@ -1,4 +1,4 @@
-package com.avito.ci
+package com.avito.ci.step
 
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
@@ -41,6 +41,7 @@ internal class ArtifactsTest {
             )
         ).generateIn(tempDir)
 
-        gradlew(tempDir, "appA:help", expectFailure = true).assertThat().buildFailed("already registered")
+        gradlew(tempDir, "appA:help", expectFailure = true).assertThat()
+            .buildFailed("already registered")
     }
 }
