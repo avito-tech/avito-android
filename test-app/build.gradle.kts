@@ -5,6 +5,7 @@ import com.avito.instrumentation.configuration.target.scheduling.reservation.Tes
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 
 plugins {
     id("com.android.application")
@@ -74,13 +75,14 @@ tasks.getByName("build").dependsOn("$path:instrumentationUi")
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 
-    reportApiUrl = project.getMandatoryStringProperty("avito.report.url")
-    reportApiFallbackUrl = project.getMandatoryStringProperty("avito.report.fallbackUrl")
-    reportViewerUrl = project.getMandatoryStringProperty("avito.report.viewerUrl")
-    registry = project.getMandatoryStringProperty("avito.registry")
-    sentryDsn = project.getMandatoryStringProperty("avito.instrumentaion.sentry.dsn")
-    slackToken = project.getMandatoryStringProperty("avito.slack.token")
-    fileStorageUrl = project.getMandatoryStringProperty("avito.fileStorage.url")
+    //todo make these params optional features in plugin
+    reportApiUrl = project.getOptionalStringProperty("avito.report.url") ?: "http://stub"
+    reportApiFallbackUrl = project.getOptionalStringProperty("avito.report.fallbackUrl") ?: "http://stub"
+    reportViewerUrl = project.getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
+    registry = project.getOptionalStringProperty("avito.registry") ?: "registry"
+    sentryDsn = project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "stub"
+    slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
+    fileStorageUrl = project.getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
 
     output = project.rootProject.file("outputs/${project.name}/instrumentation").path
 
