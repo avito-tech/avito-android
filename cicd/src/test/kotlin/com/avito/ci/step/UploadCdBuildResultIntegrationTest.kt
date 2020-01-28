@@ -1,10 +1,11 @@
-package com.avito.ci
+package com.avito.ci.step
 
 import com.avito.android.plugin.artifactory.setFakeMavenMetadataBody
 import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
 import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
+import com.avito.ci.bodyContains
 import com.avito.git.Git
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
@@ -22,6 +23,7 @@ import java.io.File
 import java.nio.file.Path
 
 class UploadCdBuildResultIntegrationTest {
+
     private lateinit var projectDir: File
     private val server = MockWebServer()
     private val mockUrl = server.url("")

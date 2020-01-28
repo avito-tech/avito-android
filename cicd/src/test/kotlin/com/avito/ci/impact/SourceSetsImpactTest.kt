@@ -1,5 +1,7 @@
-package com.avito.ci
+package com.avito.ci.impact
 
+import com.avito.ci.assertMarkedModules
+import com.avito.ci.detectChangedModules
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator
@@ -17,7 +19,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class SourceSets {
+class SourceSetsImpactTest {
 
     private lateinit var projectDir: File
 
