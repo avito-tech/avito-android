@@ -10,6 +10,7 @@ import com.avito.performance.stats.StatsApi
 import com.avito.performance.stats.comparison.ComparedTest
 import com.avito.report.ReportsApi
 import com.avito.report.model.PerformanceTest
+import com.avito.utils.getStackTraceString
 import com.avito.utils.logging.CILogger
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -74,30 +75,46 @@ open class PerformanceCompareAction(
 
                 PerformanceWriter().write(comparisonList, params.comparison)
 
-                report1(comparisonList)
+                report(comparisonList)
 
             } else {
                 logger.info("Previous performance test does not exist!")
             }
         } catch (e: Throwable) {
             logger.critical("PerformanceCompareTask error", e)
+            with(
+                SlackSender.Impl(
+                    buildUrl = params.buildUrl,
+                    slackConfig = params.slackConfig
+                )
+            ) {
+                sendToSlack(
+                    listOf(
+                        "PerformanceCompareTask error",
+                        e.getStackTraceString()
+                    )
+                    , ATTACHMENT_COLOR_RED
+                )
+            }
         }
     }
 
-    private fun report1(comparisonList: List<ComparedTest.Comparison>) {
+    private fun report(comparisonList: List<ComparedTest.Comparison>) {
         PerformanceTestReporter(reports).reportSuccess(comparisonList)
 
         with(
             PerformanceTestStatsdSender(
                 PerformanceMetricSender.Impl(
                     statsSender,
-                    buildUrl = params.buildUrl,
                     bitbucket = Bitbucket.create(
                         bitbucketConfig = params.bitbucketConfig,
                         logger = logger,
                         pullRequestId = params.pullRequestId
                     ),
-                    slackConfig = params.slackConfig
+                    slackSender = SlackSender.Impl(
+                        buildUrl = params.buildUrl,
+                        slackConfig = params.slackConfig
+                    )
                 )
             )
         ) {
