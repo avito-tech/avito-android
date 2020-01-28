@@ -177,6 +177,10 @@ subprojects {
             "testFixturesImplementation"("com.google.truth:truth:$truthVersion")
         }
     }
+
+    tasks.withType(Test::class.java) {
+        systemProperty("rootDir", "${project.rootDir}")
+    }
 }
 
 val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
