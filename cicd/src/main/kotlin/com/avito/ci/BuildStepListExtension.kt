@@ -84,11 +84,14 @@ open class BuildStepListExtension(private val name: String, objects: ObjectFacto
     }
 
     fun artifacts(closure: Closure<ArtifactsConfiguration>) {
-        steps.add(VerifyArtifactsStep(name, artifactsConfig))
+        val step = VerifyArtifactsStep(name, artifactsConfig)
+        steps.add(step)
 
         closure.delegate = artifactsConfig
         closure.resolveStrategy = Closure.DELEGATE_FIRST
         closure.call()
+
+        step.useImpactAnalysis = this.useImpactAnalysis
     }
 
     private fun <T : BuildStep> configureAndAdd(step: T, configure: Closure<T>) {

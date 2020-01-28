@@ -8,8 +8,6 @@ import org.gradle.api.tasks.TaskProvider
 
 class DocsDeployStep(context: String) : BuildStep(context) {
 
-    override val scope: Scope = Scope.ROOT_PROJECT
-
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         rootTask.dependsOn(project.tasks.docsDeployTask())
     }

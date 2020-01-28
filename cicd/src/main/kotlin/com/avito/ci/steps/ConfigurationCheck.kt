@@ -10,10 +10,8 @@ import org.gradle.api.tasks.TaskProvider
 class ConfigurationCheck(context: String) : SuppressibleBuildStep(context),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
-    override val scope: Scope = Scope.ROOT_PROJECT
-
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
-        if (suppressFailures) return
+        if (suppressFailures) return // TODO: run anyway, but don't fail
 
         // TODO: configure externally
         val testsModule = project.rootProject.findProject("build-script-test")

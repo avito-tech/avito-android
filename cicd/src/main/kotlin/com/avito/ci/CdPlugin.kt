@@ -1,7 +1,5 @@
 package com.avito.ci
 
-import com.avito.ci.steps.BuildStep.Scope
-import com.avito.impact.configuration.internalModule
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
@@ -54,17 +52,8 @@ class CdPlugin : Plugin<Project> {
     }
 
     private fun registerTask(project: Project, buildSteps: BuildStepListExtension, rootTask: TaskProvider<Task>) {
-        // TODO: Move heavy check from configuration to execution phase (onlyIf)
-        val runApplicationChecks by lazy { !buildSteps.useImpactAnalysis || project.internalModule.isModified() }
-
         buildSteps.steps.get().forEach { step ->
-            val useStep = when (step.scope) {
-                Scope.APPLICATION -> runApplicationChecks
-                Scope.ROOT_PROJECT -> true
-            }
-            if (useStep) {
-                step.registerTask(project, rootTask)
-            }
+            step.registerTask(project, rootTask)
         }
     }
 }

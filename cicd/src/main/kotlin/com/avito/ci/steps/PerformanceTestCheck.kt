@@ -1,6 +1,7 @@
 package com.avito.ci.steps
 
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.instrumentationTask
 import com.avito.performance.measurePerformanceTask
 import org.gradle.api.Project
@@ -14,6 +15,8 @@ open class PerformanceTestCheck(context: String) : SuppressibleBuildStep(context
     var configuration: String = ""
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
+        if (useImpactAnalysis && !project.internalModule.isModified()) return
+
         val checkTask = project.tasks.register<Task>("${context}PerformanceTest") {
             group = "cd"
             description = "Run performance tests"

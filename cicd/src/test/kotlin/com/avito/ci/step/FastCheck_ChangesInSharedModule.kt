@@ -27,24 +27,44 @@ class FastCheck_ChangesInSharedModule {
         projectDir = tempDir.toFile()
 
         generateProjectWithImpactAnalysis(projectDir)
-
-        with(projectDir) {
-            git("checkout -b $targetBranch")
-
-            git("checkout -b $sourceBranch $targetBranch")
-            file("${TestProjectGenerator.sharedModule}/src/main/kotlin/SomeClass.kt").mutate()
-            commit()
-        }
     }
 
     @Test
-    fun `fastCheck triggers all applications build tasks`() {
+    fun `fastCheck runs all applications build tasks - changed implementation in dependent module`() {
+        mutateFile("${TestProjectGenerator.sharedModule}/src/main/kotlin/SomeClass.kt")
+
         val result = runTask("fastCheck")
 
         result.assertAffectedModules(
             "packageDebug",
-            setOf(":${TestProjectGenerator.appA}", ":${TestProjectGenerator.appB}")
+            expectedModules = setOf(":${TestProjectGenerator.appA}", ":${TestProjectGenerator.appB}")
         )
+    }
+
+    @Test
+    fun `fastCheck runs only unit tests - changed unit test in dependent module`() {
+        mutateFile("${TestProjectGenerator.sharedModule}/src/test/kotlin/SomeClass.kt")
+
+        val result = runTask("fastCheck")
+
+        result.assertAffectedModules(
+            "packageDebug",
+            expectedModules = emptySet()
+        )
+        result.assertAffectedModules(
+            "test",
+            expectedModules = setOf(":${TestProjectGenerator.sharedModule}")
+        )
+    }
+
+    private fun mutateFile(path: String) {
+        with(projectDir) {
+            git("checkout -b $targetBranch")
+
+            git("checkout -b $sourceBranch $targetBranch")
+            file(path).mutate()
+            commit()
+        }
     }
 
     private fun runTask(taskName: String): TestResult =

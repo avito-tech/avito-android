@@ -1,6 +1,7 @@
 package com.avito.ci.steps
 
 import com.avito.ci.VerifyOutputsTask
+import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.plugin.signedApkTaskProvider
 import com.avito.plugin.signedBundleTaskProvider
@@ -17,9 +18,11 @@ import java.io.File
 open class VerifyArtifactsStep(
     context: String,
     private val artifactsConfig: ArtifactsConfiguration
-) : BuildStep(context) {
+) : BuildStep(context),
+    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
+        if (useImpactAnalysis && !project.internalModule.isModified()) return
 
         rootTask.configure { task ->
             artifactsConfig.outputs.forEach { (_, output) ->
@@ -41,8 +44,7 @@ open class VerifyArtifactsStep(
 
         val copyTask = project.tasks.register<CopyArtifactsTask>("${context}CopyArtifacts") {
             group = "cd"
-            description =
-                "Copies all defined release artifacts to outputs directory"
+            description = "Copies all defined release artifacts to outputs directory"
 
             sourceDir.set(project.rootDir)
             destinationDir.set(File("${project.rootProject.rootDir}/outputs"))
@@ -50,6 +52,7 @@ open class VerifyArtifactsStep(
 
             project.gradle.buildFinished { buildResult ->
                 val isCopyScheduled = buildResult.gradle?.isTaskScheduled(this) ?: false
+                // TODO: consider skipped state (--dry-run)
                 val copyFinished = this.didWork
                 if (isCopyScheduled && !copyFinished) {
                     project.ciLogger.info("Artifacts copying was scheduled but didn't run. Start it now")
@@ -62,8 +65,7 @@ open class VerifyArtifactsStep(
 
         val verifyOutputsTask = project.tasks.register<VerifyOutputsTask>(verifyTaskName(context)) {
             group = "cd"
-            description =
-                "Checks that all defined release artifacts are present"
+            description = "Checks that all defined release artifacts are present"
             config = artifactsConfig
             checkSignatures = artifactsConfig.failOnSignatureError
             dependsOn(copyTask)

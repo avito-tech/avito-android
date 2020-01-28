@@ -19,6 +19,7 @@ class LintCheck(context: String) : SuppressibleBuildStep(context),
             "Lint check can be applied only to android application modules"
         }
         if (project.buildEnvironment !is BuildEnvironment.CI) return
+        if (useImpactAnalysis && !project.internalModule.isModified()) return
 
         project.pluginManager.withPlugin("com.avito.android.lint-report") {
 
