@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -43,21 +44,17 @@ subprojects {
 
     val sourcesTaskName = "sourceJar"
 
-    plugins.withType<AppPlugin> {
-        extension.sourceSets {
-            named("main").configure { java.srcDir("src/main/kotlin") }
-            named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
-            named("test").configure { java.srcDir("src/test/kotlin") }
+    plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded {
+        configure<BaseExtension> {
+            sourceSets {
+                named("main").configure { java.srcDir("src/main/kotlin") }
+                named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
+                named("test").configure { java.srcDir("src/test/kotlin") }
+            }
         }
     }
 
     plugins.withType<LibraryPlugin> {
-        extension.sourceSets {
-            named("main").configure { java.srcDir("src/main/kotlin") }
-            named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
-            named("test").configure { java.srcDir("src/test/kotlin") }
-        }
-
         tasks.named<Jar>(sourcesTaskName).configure {
             classifier = "sources"
             from(this@withType.extension.sourceSets["main"].java.srcDirs)
@@ -131,6 +128,19 @@ subprojects {
         }
     }
 
+    plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper> {
+        this@subprojects.tasks {
+            withType<KotlinCompile> {
+                kotlinOptions {
+                    jvmTarget = javaVersion
+                    allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
+                    freeCompilerArgs =
+                        freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental" + "-XXLanguage:+InlineClasses"
+                }
+            }
+        }
+    }
+
     plugins.withId("kotlin") {
 
         //todo withSourcesJar 6.0 gradle
@@ -140,16 +150,6 @@ subprojects {
         }
 
         this@subprojects.tasks {
-
-            withType<KotlinCompile> {
-                kotlinOptions {
-                    jvmTarget = javaVersion
-                    allWarningsAsErrors = true
-                    freeCompilerArgs =
-                        freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental" + "-XXLanguage:+InlineClasses"
-                }
-            }
-
             withType<Test> {
                 @Suppress("UnstableApiUsage")
                 useJUnitPlatform()
@@ -185,6 +185,10 @@ subprojects {
             "testFixturesImplementation"("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
             "testFixturesImplementation"("com.google.truth:truth:$truthVersion")
         }
+    }
+
+    tasks.withType(Test::class.java) {
+        systemProperty("rootDir", "${project.rootDir}")
     }
 }
 
