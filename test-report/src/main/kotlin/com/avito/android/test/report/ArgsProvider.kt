@@ -35,7 +35,9 @@ class BundleArgsProvider(
     override fun getMandatoryArgument(name: String): String {
         val result: String? = bundle.getString(name)
         if (result == null || result.isBlank()) {
-            throw ReporterException("$name is a mandatory argument; available keys=${bundle.keySet()}")
+            throw ReporterException(
+                "$name is a mandatory argument; available keys=${bundle.keySet().joinToString(separator = ", ")}"
+            )
         } else {
             return result
         }
