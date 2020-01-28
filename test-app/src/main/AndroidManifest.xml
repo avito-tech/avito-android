@@ -1,0 +1,40 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.avito.android.ui">
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <activity android:name=".VisibilityActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".DistantViewOnScrollActivity" />
+        <activity android:name=".OverflowMenuActivity" />
+        <activity android:name=".SwipeRefreshActivity" />
+        <activity android:name=".IdenticalCellsRecyclerActivity" />
+        <activity android:name=".ButtonsOverRecyclerActivity" />
+        <activity android:name=".ButtonsOverRecyclerWithCollapsingToolbarActivity" />
+        <activity android:name=".DrawableActivity" />
+        <activity android:name=".TextElementActivity" />
+        <activity android:name=".RecyclerAsLayoutActivity" />
+        <activity android:name=".LongRecyclerActivity" />
+        <activity android:name=".RecyclerInRecyclerActivity" />
+        <activity android:name=".AppBarActivity" />
+        <activity android:name=".TabLayoutActivity" />
+        <activity android:name=".EditTextActivity" />
+        <activity android:name=".ButtonsActivity" />
+        <activity android:name=".MovingButtonActivity" />
+        <activity android:name=".SnackbarActivity" />
+        <activity android:name=".PageObjectActivity" />
+        <activity android:name=".RecyclerWithLongItemsActivity" />
+        <activity android:name=".StatefulRecyclerViewAdapterActivity" />
+        <activity android:name=".ViewPagerActivity" />
+        <activity android:name=".RecyclerDescendantLevelsActivity" />
+    </application>
+</manifest>

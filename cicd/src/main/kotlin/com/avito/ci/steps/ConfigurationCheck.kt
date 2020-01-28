@@ -15,6 +15,7 @@ class ConfigurationCheck(context: String) : SuppressibleBuildStep(context),
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         if (suppressFailures) return
 
+        // TODO: configure externally
         val testsModule = project.rootProject.findProject("build-script-test")
         if (testsModule == null) {
             project.ciLogger.debug("Project configuration tests not found")

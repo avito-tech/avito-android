@@ -16,6 +16,9 @@ val mockitoJunit5Version: String by project
 val okhttpVersion: String by project
 
 dependencies {
+    api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+
     implementation(project(":instrumentation-impact-analysis"))
     implementation(project(":runner:client"))
     implementation(project(":utils"))
@@ -36,10 +39,8 @@ dependencies {
     implementation(project(":sentry"))
     implementation(project(":kubernetes"))
     implementation(project(":upload-cd-build-result"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.smali:dexlib2:2.3")
     implementation("com.google.code.gson:gson:$gsonVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("org.jetbrains.teamcity:teamcity-rest-client:$teamcityRestClientVersion")
     implementation("org.apache.commons:commons-text:1.6")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")

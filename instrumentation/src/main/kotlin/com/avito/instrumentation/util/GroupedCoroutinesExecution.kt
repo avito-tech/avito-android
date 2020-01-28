@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.selects.select
+import java.util.concurrent.CancellationException
 
 internal class GroupedCoroutinesExecution {
 
@@ -58,6 +59,7 @@ internal class GroupedCoroutinesExecution {
                 if (activeBlockingCoroutines.isEmpty()) {
                     activeCoroutines.forEach {
                         it.job.cancel()
+                        Unit
                     }
                     break
                 }

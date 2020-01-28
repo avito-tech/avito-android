@@ -51,6 +51,10 @@ class KubernetesReservationClient(
 
     private var state: State = State.Idling
 
+    init {
+        require(buildId.isNotBlank()) { "buildId is blank, client can't distinguish reservations" }
+    }
+
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
         serialsChannel: SendChannel<String>
@@ -88,6 +92,8 @@ class KubernetesReservationClient(
 
         state = State.Reserving(channel = podsChannel)
 
+        //todo use Flow
+        @Suppress("DEPRECATION")
         podsChannel
             .filter { it.status.phase == POD_STATUS_RUNNING }
             .distinctBy { it.metadata.name }
@@ -208,16 +214,16 @@ class KubernetesReservationClient(
     }
 
     private fun getPodDescription(podName: String?): String {
-        try {
+        return try {
             val actualPod = kubernetesClient.pods().withName(podName).get()
-            return if (actualPod != null) {
+            if (actualPod != null) {
                 "[podStatus=${actualPod.status}]"
             } else {
                 "pod doesn't exist"
             }
         } catch (e: Exception) {
             logger.info("Can't get pod info", e)
-            return "Error when get pod description, ${e.message}"
+            "Error when get pod description, ${e.message}"
         }
     }
 
