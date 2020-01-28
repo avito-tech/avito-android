@@ -6,7 +6,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import java.io.File
 
 
-fun generateProjectWithImpactAnalysis(rootDir: File) {
+internal fun generateProjectWithImpactAnalysis(rootDir: File) {
     TestProjectGenerator(
         plugins = listOf("com.avito.android.impact"),
         modules = listOf(
