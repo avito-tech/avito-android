@@ -51,7 +51,6 @@ docker run --rm \
     --env BINTRAY_API_KEY="$BINTRAY_API_KEY" \
     --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
     --env PROJECT_VERSION="$PROJECT_VERSION" \
-    --env ARTIFACTORY_URL="$ARTIFACTORY_URL" \
     --env ARTIFACTORY_USER="$ARTIFACTORY_USER" \
     --env ARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" \
     --env SLACK_TEST_WORKSPACE="$SLACK_TEST_WORKSPACE" \
@@ -61,4 +60,32 @@ docker run --rm \
     bash -c "git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
              git config --global user.name 'builder';
              git config --global user.email 'builder@avito.ru';
-             ./gradlew $@ --info --stacktrace"
+             ./gradlew $@ --info --stacktrace \\
+             -PartifactoryUrl=$ARTIFACTORY_URL \\
+             -Pci=true \\
+             -PteamcityUrl \\
+             -PteamcityBuildType \\
+             -PbuildNumber \\
+             -PteamcityBuildId=$BUILD_ID \\
+             -PslackToken=$AVITO_SLACK_TOKEN \\
+             -Pavito.slack.token=$AVITO_SLACK_TOKEN \\
+             -Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL \\
+             -PgitBranch \\
+             -Pavito.repo.ssh.url \\
+             -Pavito.report.url=$AVITO_REPORT_URL \\
+             -Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL \\
+             -Pavito.report.viewerUrl=$AVITO_REPORT_VIEWER_URL \\
+             -Pavito.registry=$AVITO_REGISTRY \\
+             -Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL \\
+             -Pavito.bitbucket.url=$AVITO_BITBUCKET_URL \\
+             -Pavito.bitbucket.projectKey=AG \\
+             -Pavito.bitbucket.repositorySlug=avito-github \\
+             -PatlassianUser=test \\
+             -PatlassianPassword=test \\
+             -Pavito.stats.host=$AVITO_STATS_HOST \\
+             -Pavito.stats.fallbackHost=$AVITO_STATS_FALLBACK_HOST \\
+             -Pavito.stats.port=$AVITO_STATS_PORT \\
+             -Pavito.stats.namespace=$AVITO_STATS_NAMESPACE \\
+             -PkubernetesToken=$KUBERNETES_TOKEN \\
+             -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
+             -PkubernetesUrl=$KUBERNETES_URL"

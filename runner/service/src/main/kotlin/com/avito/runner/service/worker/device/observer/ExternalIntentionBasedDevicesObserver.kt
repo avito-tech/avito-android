@@ -16,6 +16,8 @@ class ExternalIntentionBasedDevicesObserver(
     private val logger: Logger
 ) : DevicesObserver {
 
+    //todo use Flow
+    @Suppress("DEPRECATION")
     override suspend fun observeDevices(): ReceiveChannel<Device> =
         externalIntentionOfSerials
             .map { intentionSerial ->
