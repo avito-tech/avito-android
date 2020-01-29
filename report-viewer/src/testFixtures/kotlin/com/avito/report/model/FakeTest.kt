@@ -12,6 +12,7 @@ fun TestStaticDataPackage.Companion.createStubInstance(
     externalId: String? = null,
     features: List<String> = emptyList(),
     tagIds: List<Int> = emptyList(),
+    featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
     kind: Kind = Kind.E2E
@@ -24,6 +25,7 @@ fun TestStaticDataPackage.Companion.createStubInstance(
     externalId = externalId,
     features = features,
     tagIds = tagIds,
+    featureIds = featureIds,
     priority = priority,
     behavior = behavior,
     kind = kind
@@ -59,6 +61,7 @@ fun AndroidTest.Skipped.Companion.createStubInstance(
     externalId: String? = null,
     features: List<String> = emptyList(),
     tagIds: List<Int> = emptyList(),
+    featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
     kind: Kind = Kind.E2E,
@@ -73,6 +76,7 @@ fun AndroidTest.Skipped.Companion.createStubInstance(
         externalId = externalId,
         features = features,
         tagIds = tagIds,
+        featureIds = featureIds,
         priority = priority,
         behavior = behavior,
         kind = kind
@@ -92,6 +96,7 @@ fun AndroidTest.Lost.Companion.createStubInstance(
     externalId: String? = null,
     features: List<String> = emptyList(),
     tagIds: List<Int> = emptyList(),
+    featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
     kind: Kind = Kind.E2E,
@@ -107,6 +112,7 @@ fun AndroidTest.Lost.Companion.createStubInstance(
         externalId = externalId,
         features = features,
         tagIds = tagIds,
+        featureIds = featureIds,
         priority = priority,
         behavior = behavior,
         kind = kind

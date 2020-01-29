@@ -12,6 +12,7 @@ internal data class PreparedData(
     @SerializedName("testcase") val testCase: TestCase?,
     @SerializedName("features") val features: List<String>?,
     @SerializedName("tag_id") val tagId: List<Int>?,
+    @SerializedName("feature_id") val featureIds: List<Int>?,
     @SerializedName("priority_id") val priorityId: Int?,
     @SerializedName("behavior_id") val behaviorId: Int?,
     @SerializedName("e2e") val e2e: Boolean?

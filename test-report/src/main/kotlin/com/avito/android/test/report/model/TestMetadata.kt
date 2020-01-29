@@ -19,5 +19,6 @@ data class TestMetadata(
     val behavior: TestCaseBehavior?,
     val features: List<String>,
     val externalId: String?,
+    val featureIds: List<Int>,
     val tagIds: List<Int>
 ) : Serializable

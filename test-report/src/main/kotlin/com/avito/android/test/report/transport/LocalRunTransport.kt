@@ -53,6 +53,7 @@ class LocalRunTransport(
                 dataSetNumber = state.testMetadata.dataSetNumber,
                 externalId = state.testMetadata.externalId,
                 tagIds = state.testMetadata.tagIds,
+                featureIds = state.testMetadata.featureIds,
                 priority = state.testMetadata.priority,
                 behavior = state.testMetadata.behavior,
                 kind = state.testMetadata.kind,
