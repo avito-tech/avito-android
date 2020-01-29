@@ -5,9 +5,6 @@ import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.TimeMetric
 import com.avito.bitbucket.Bitbucket
 import com.avito.performance.stats.comparison.ComparedTest
-import com.github.seratch.jslack.Slack
-import com.github.seratch.jslack.api.model.Attachment
-import com.github.seratch.jslack.api.webhook.Payload
 
 internal interface PerformanceMetricSender {
 
@@ -22,9 +19,8 @@ internal interface PerformanceMetricSender {
     class Impl(
         private val sender: StatsDSender,
         private val graphiteKey: String = "undefined",
-        private val buildUrl: String? = null,
         private val bitbucket: Bitbucket,
-        private val slackConfig: SlackConfig
+        private val slackSender: SlackSender
     ) : PerformanceMetricSender {
 
         private val prefix = "ci.performance.fps-metrics"
@@ -48,7 +44,7 @@ internal interface PerformanceMetricSender {
                         "$prefix.result.failure",
                         CountMetric(key)
                     )
-                    sendToSlack(
+                    report(
                         mutableListOf("*$key* has failed. \n").apply { addAll(buildMessage(this@with)) },
                         ATTACHMENT_COLOR_RED
                     )
@@ -58,7 +54,7 @@ internal interface PerformanceMetricSender {
             test.performedMuchBetterThanUsual()
                 .takeIf { it.isNotEmpty() }
                 ?.let {
-                    sendToSlack(
+                    report(
                         mutableListOf("*$key* has performed outstanding results. \n").apply { addAll(buildMessage(it)) },
                         ATTACHMENT_COLOR_GREEN
                     )
@@ -91,28 +87,8 @@ internal interface PerformanceMetricSender {
             }
         }
 
-        private fun sendToSlack(messages: List<String>, color: String) {
-            @Suppress("DEPRECATION")
-            Slack.getInstance().send(
-                slackConfig.hookUrl,
-                Payload.builder()
-                    .channel(slackConfig.channel)
-                    .text("Build: $buildUrl")
-                    .apply {
-                        attachments(
-                            messages.map {
-                                Attachment.builder()
-                                    .color(color)
-                                    .text(it)
-                                    .build()
-                            }.toList()
-
-                        )
-                    }
-                    .username(slackConfig.username)
-                    .iconEmoji(slackConfig.avatar)
-                    .build()
-            )
+        private fun report(messages: List<String>, color: String) {
+            slackSender.sendToSlack(messages, color)
             sender.send(
                 "$prefix.pr-notification-sent",
                 CountMetric("failure")
@@ -121,5 +97,5 @@ internal interface PerformanceMetricSender {
     }
 }
 
-private const val ATTACHMENT_COLOR_RED = "A30200"
-private const val ATTACHMENT_COLOR_GREEN = "00a230"
+internal const val ATTACHMENT_COLOR_RED = "A30200"
+internal const val ATTACHMENT_COLOR_GREEN = "00a230"

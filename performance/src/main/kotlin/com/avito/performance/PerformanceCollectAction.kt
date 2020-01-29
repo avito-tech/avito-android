@@ -6,6 +6,7 @@ import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.BitbucketConfig
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
+import com.avito.utils.getStackTraceString
 import com.avito.utils.logging.CILogger
 import java.io.File
 import java.io.Serializable
@@ -59,19 +60,35 @@ class PerformanceCollectAction(
             PerformanceTestStatsdSender(
                 PerformanceMetricSender.Impl(
                     statsSender, params.graphiteKey,
-                    buildUrl = params.buildUrl,
                     bitbucket = Bitbucket.create(
                         bitbucketConfig = params.bitbucketConfig,
                         logger = logger,
                         pullRequestId = params.pullRequestId
                     ),
-                    slackConfig = params.slackConfig
+                    slackSender = SlackSender.Impl(
+                        buildUrl = params.buildUrl,
+                        slackConfig = params.slackConfig
+                    )
                 )
             ).sendSample(
                 performanceResults
             )
         } catch (e: Throwable) {
             logger.critical("PerformanceCollectTask error", e)
+            with(
+                SlackSender.Impl(
+                    buildUrl = params.buildUrl,
+                    slackConfig = params.slackConfig
+                )
+            ) {
+                sendToSlack(
+                    listOf(
+                        "PerformanceCollectTask error",
+                        e.getStackTraceString()
+                    )
+                    , ATTACHMENT_COLOR_RED
+                )
+            }
         }
     }
 }

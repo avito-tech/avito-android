@@ -2,7 +2,6 @@ package com.avito.performance
 
 import com.avito.performance.stats.comparison.ComparedTest
 import com.avito.report.ReportsApi
-import java.lang.IllegalStateException
 import kotlin.math.abs
 
 internal class PerformanceTestReporter(
@@ -110,7 +109,7 @@ internal fun ComparedTest.Comparison.failed() =
         .filter {
             val metric = getMetric(it.key)
             if (metric == null) {
-                throw IllegalStateException("Metric ${it.key} should be presented in enum!")
+                false
             } else {
                 val greaterThanExpected = it.greaterThanExpected(metric)
                 val lessThanExpected = it.lessThanExpected(metric)
@@ -130,7 +129,7 @@ internal fun ComparedTest.Comparison.performedMuchBetterThanUsual() =
         .filter {
             val metric = getMetric(it.key)
             if (metric == null) {
-                throw IllegalStateException("Metric ${it.key} should be presented in enum!")
+                false
             } else {
                 val greaterThanExpected = it.greaterThanExpected(metric)
                 val lessThanExpected = it.lessThanExpected(metric)

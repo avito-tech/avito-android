@@ -12,6 +12,7 @@ headless: true
     - [Code Review]({{< ref "/contributing/CodeReview.md" >}})
     - [Code Style]({{< ref "/contributing/CodeStyle.md" >}})
     - [Feature Toggles]({{< ref "/contributing/FeatureToggles.md" >}})
+    - [Known Issues]({{< ref "/contributing/KnownIssues.md" >}})
 - IDE
     - [Конфигурации]({{< ref "/ide/Configurations.md" >}})
     - [Шаблоны]({{< ref "/ide/Templates.md" >}})
