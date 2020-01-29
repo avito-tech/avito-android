@@ -23,6 +23,7 @@ fun SimpleRunTest.Companion.createStubInstance(
     dataSetNumber: Int? = null,
     features: List<String> = emptyList(),
     tagIds: List<Int> = emptyList(),
+    featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
     kind: Kind = Kind.E2E
@@ -48,6 +49,7 @@ fun SimpleRunTest.Companion.createStubInstance(
     dataSetNumber = dataSetNumber,
     features = features,
     tagIds = tagIds,
+    featureIds = featureIds,
     priority = priority,
     behavior = behavior,
     kind = kind
