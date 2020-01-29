@@ -29,13 +29,6 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
 }
 
-configurations.all {
-    resolutionStrategy {
-        //slack client тянет 4.x версию
-        force("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    }
-}
-
 gradlePlugin {
     plugins {
         create("qapps") {
