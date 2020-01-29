@@ -17,6 +17,7 @@ sealed class AndroidTest : TestStaticData {
         override val dataSetNumber: Int?,
         override val externalId: String?,
         override val features: List<String>,
+        override val featureIds: List<Int>,
         override val tagIds: List<Int>,
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
@@ -42,6 +43,7 @@ sealed class AndroidTest : TestStaticData {
                 dataSetNumber = testStaticData.dataSetNumber,
                 externalId = testStaticData.externalId,
                 features = testStaticData.features,
+                featureIds = testStaticData.featureIds,
                 tagIds = testStaticData.tagIds,
                 priority = testStaticData.priority,
                 behavior = testStaticData.behavior,
@@ -81,6 +83,7 @@ sealed class AndroidTest : TestStaticData {
         override val dataSetNumber: Int?,
         override val externalId: String?,
         override val features: List<String>,
+        override val featureIds: List<Int>,
         override val tagIds: List<Int>,
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
@@ -105,6 +108,7 @@ sealed class AndroidTest : TestStaticData {
                 dataSetNumber = testStaticData.dataSetNumber,
                 externalId = testStaticData.externalId,
                 features = testStaticData.features,
+                featureIds = testStaticData.featureIds,
                 tagIds = testStaticData.tagIds,
                 priority = testStaticData.priority,
                 behavior = testStaticData.behavior,
@@ -148,6 +152,7 @@ sealed class AndroidTest : TestStaticData {
         override val dataSetNumber: Int?,
         override val externalId: String?,
         override val features: List<String>,
+        override val featureIds: List<Int>,
         override val tagIds: List<Int>,
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
@@ -172,6 +177,7 @@ sealed class AndroidTest : TestStaticData {
                 dataSetNumber = testStaticData.dataSetNumber,
                 externalId = testStaticData.externalId,
                 features = testStaticData.features,
+                featureIds = testStaticData.featureIds,
                 tagIds = testStaticData.tagIds,
                 priority = testStaticData.priority,
                 behavior = testStaticData.behavior,
@@ -247,6 +253,7 @@ interface TestStaticData {
     val dataSetNumber: Int?
     val externalId: String?
     val features: List<String>
+    val featureIds: List<Int>
     val tagIds: List<Int>
     val priority: TestCasePriority?
     val behavior: TestCaseBehavior?
@@ -261,6 +268,7 @@ data class TestStaticDataPackage(
     override val dataSetNumber: Int?,
     override val externalId: String?,
     override val features: List<String>,
+    override val featureIds: List<Int>,
     override val tagIds: List<Int>,
     override val priority: TestCasePriority?,
     override val behavior: TestCaseBehavior?,
@@ -277,6 +285,7 @@ data class TestStaticDataPackage(
             dataSetNumber = simpleRunTest.dataSetNumber,
             externalId = simpleRunTest.externalId,
             features = simpleRunTest.features,
+            featureIds = simpleRunTest.featureIds,
             tagIds = simpleRunTest.tagIds,
             priority = simpleRunTest.priority,
             behavior = simpleRunTest.behavior,
