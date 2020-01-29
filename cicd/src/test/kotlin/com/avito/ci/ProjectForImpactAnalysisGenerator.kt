@@ -32,6 +32,8 @@ internal fun generateProjectWithImpactAnalysis(rootDir: File) {
                             }
                             builds {
                                 fastCheck {
+                                    useImpactAnalysis = true
+                                    unitTests {}
                                     artifacts {
                                         apk("debugApk", BuildVariant.DEBUG, "com.appA", "${'$'}{project.buildDir}/outputs/apk/debug/appA-debug.apk") {}
                                     }
@@ -61,6 +63,8 @@ internal fun generateProjectWithImpactAnalysis(rootDir: File) {
                             }                            
                             builds {
                                 fastCheck {
+                                    useImpactAnalysis = true
+                                    unitTests {}
                                     artifacts {
                                         apk("debugApk", BuildVariant.DEBUG, "com.appA", "${'$'}{project.buildDir}/outputs/apk/debug/appA-debug.apk") {}
                                     }

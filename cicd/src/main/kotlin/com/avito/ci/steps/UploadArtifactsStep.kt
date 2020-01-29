@@ -1,5 +1,6 @@
 package com.avito.ci.steps
 
+import com.avito.impact.configuration.internalModule
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
@@ -8,9 +9,13 @@ import org.gradle.api.tasks.TaskProvider
 abstract class UploadArtifactsStep(
     context: String,
     private val artifactsConfiguration: ArtifactsConfiguration
-) : BuildStep(context), ArtifactAware by ArtifactAware.Impl() {
+) : BuildStep(context),
+    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
+    ArtifactAware by ArtifactAware.Impl() {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
+        if (useImpactAnalysis && !project.internalModule.isModified()) return
+
         provideTask(project, artifactsConfiguration.outputs.filterKeys { artifacts.contains(it) })
             .forEach { uploadTask ->
                 rootTask.configure { it.finalizedBy(uploadTask) }

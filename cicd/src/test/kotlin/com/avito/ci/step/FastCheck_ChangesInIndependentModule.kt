@@ -41,7 +41,7 @@ class FastCheck_ChangesInIndependentModule {
     fun `fastCheck does not build modules`() {
         val result = runTask("fastCheck")
 
-        result.assertAffectedModules("packageDebug", emptySet())
+        result.assertAffectedModules("packageDebug", expectedModules = emptySet())
     }
 
     private fun runTask(taskName: String): TestResult =
