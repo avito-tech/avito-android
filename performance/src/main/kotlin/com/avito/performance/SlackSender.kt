@@ -18,7 +18,6 @@ interface SlackSender {
             Slack.getInstance().send(
                 slackConfig.hookUrl,
                 Payload.builder()
-                    .channel(slackConfig.channel)
                     .text("Build: $buildUrl")
                     .apply {
                         attachments(
@@ -31,8 +30,6 @@ interface SlackSender {
 
                         )
                     }
-                    .username(slackConfig.username)
-                    .iconEmoji(slackConfig.avatar)
                     .build()
             )
         }
