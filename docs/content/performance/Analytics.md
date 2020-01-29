@@ -546,7 +546,7 @@ fun bindScreenTransferRecovery(recovery: ScreenTransferRecovery.Impl): ScreenTra
 
 Пример с экрана `RatingPublish`
 
-![Пример](/image/rating_publish.png)
+![Пример](/docs/static/image/rating_publish.png)
 
 В панели Steps можно увидеть:
 
