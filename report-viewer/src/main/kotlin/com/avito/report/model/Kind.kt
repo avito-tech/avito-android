@@ -5,10 +5,17 @@ enum class Kind(val tmsId: String) {
     UI_COMPONENT("ui-component"),
     INTEGRATION("integration"),
     E2E("e2e"),
+
+    /**
+     * see TestManagementSystem doc
+     */
+    UI_COMPONENT_STUB("ui-component-stub"),
+    E2E_STUB("e2e-stub"),
     MANUAL("manual"),
 
     /**
-     * выступает как NULL OBJECT, на случай если встретится старый отчет в котором kind не выставлено значение
+     * 'null object'
+     * for backward compatibility and unexpected cases
      */
     UNKNOWN("unknown");
 
