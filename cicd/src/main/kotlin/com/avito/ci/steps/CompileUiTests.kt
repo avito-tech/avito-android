@@ -1,6 +1,7 @@
 package com.avito.ci.steps
 
 import com.avito.android.withAndroidModule
+import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.withType
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -11,6 +12,8 @@ class CompileUiTests(context: String) : SuppressibleBuildStep(context),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
+        if (useImpactAnalysis && !project.internalModule.isModified()) return
+
         project.withAndroidModule {
             project.tasks.withType<AbstractCompile>().forEach { compileTask ->
                 val isForDebugBuild = compileTask.name.contains("debug", ignoreCase = true)

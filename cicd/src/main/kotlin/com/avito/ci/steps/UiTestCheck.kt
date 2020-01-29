@@ -1,6 +1,7 @@
 package com.avito.ci.steps
 
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.InstrumentationTestsTask
 import com.avito.kotlin.dsl.typedNamedOrNull
 import org.gradle.api.Project
@@ -23,6 +24,8 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
     }
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
+        if (useImpactAnalysis && !project.internalModule.isModified()) return
+
         val checkTask = project.tasks.register<Task>("${context}InstrumentationTest") {
             group = "cd"
             description = "Run all instrumentation tests needed for release"

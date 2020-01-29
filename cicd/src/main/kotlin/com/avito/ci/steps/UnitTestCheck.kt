@@ -27,7 +27,7 @@ open class UnitTestCheck(context: String) : BuildStep(context),
                 .toSet()
                 .asSequence()
                 .map { dependency -> dependency.module.project }
-                .filter { dependency -> !useImpactAnalysis || dependency.internalModule.implementationConfiguration.isModified }
+                .filter { dependency -> !useImpactAnalysis || dependency.internalModule.testConfiguration.isModified }
                 .mapNotNull { dependency -> dependency.tasks.namedOrNull("test") }
                 .forEach { moduleTestTask -> allTestTask.dependsOn(moduleTestTask) }
         }

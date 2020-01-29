@@ -43,8 +43,8 @@ fun gradlew(
             .withArguments(finalArgs)
             .withPluginClasspath()
             /**
-             * WARNING! как-то неправильно модифицирует classpath, что вызывает падение тасок в Android Gradle Plugin
-             * см. MBS-5462
+             * WARNING! it breaks classpath and causes failures in AGP's tasks
+             * see. MBS-5462
              * https://github.com/gradle/gradle/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+withDebug
              */
             .withDebug(false)
