@@ -40,6 +40,7 @@ headless: true
     - [Test Management System]({{< ref "/test/TestManagementSystem.md" >}})
     - [Запуск тестов]({{< ref "/test/Run.md" >}})
     - [Юнит тесты]({{< ref "/test/UnitTesting.md" >}})
+    - [Скриншотные тесты]({{< ref "/test/ScreenshotTesting.md" >}})
     - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
     - [Кастомный запуск]({{< ref "/test/DynamicConfig.md" >}})
     - [Помощь]({{<ref "/test/Support.md" >}})
