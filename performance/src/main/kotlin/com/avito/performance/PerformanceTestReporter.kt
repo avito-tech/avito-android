@@ -109,7 +109,7 @@ internal fun ComparedTest.Comparison.failed() =
         .filter {
             val metric = getMetric(it.key)
             if (metric == null) {
-                true
+                false
             } else {
                 val greaterThanExpected = it.greaterThanExpected(metric)
                 val lessThanExpected = it.lessThanExpected(metric)
@@ -129,7 +129,7 @@ internal fun ComparedTest.Comparison.performedMuchBetterThanUsual() =
         .filter {
             val metric = getMetric(it.key)
             if (metric == null) {
-                true
+                false
             } else {
                 val greaterThanExpected = it.greaterThanExpected(metric)
                 val lessThanExpected = it.lessThanExpected(metric)
