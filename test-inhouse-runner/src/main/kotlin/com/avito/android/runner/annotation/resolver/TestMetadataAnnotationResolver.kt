@@ -7,6 +7,7 @@ import com.avito.android.test.annotations.DataSetNumber
 import com.avito.android.test.annotations.Description
 import com.avito.android.test.annotations.ExternalId
 import com.avito.android.test.annotations.Feature
+import com.avito.android.test.annotations.FeatureId
 import com.avito.android.test.annotations.FunctionalTest
 import com.avito.android.test.annotations.InstrumentationUnitTest
 import com.avito.android.test.annotations.ManualTest
@@ -45,6 +46,7 @@ class TestMetadataAnnotationResolver(
             ManualTest::class.java,
             InstrumentationUnitTest::class.java,
             CaseId::class.java,
+            FeatureId::class.java,
             Description::class.java,
             DataSetNumber::class.java,
             Priority::class.java,
@@ -94,6 +96,7 @@ class TestMetadataAnnotationResolver(
         val testMethod: Method? = method
         var externalId: String? = null
         var tagIds: List<Int> = emptyList()
+        var featureIds: List<Int> = emptyList()
 
         annotationsExtractingResult
             .forEach { annotation ->
@@ -155,6 +158,9 @@ class TestMetadataAnnotationResolver(
                     is ExternalId -> {
                         externalId = annotation.value
                     }
+                    is FeatureId -> {
+                        featureIds = annotation.value.toList()
+                    }
                     is TagId -> {
                         tagIds = annotation.value.toList()
                     }
@@ -175,6 +181,7 @@ class TestMetadataAnnotationResolver(
                 methodName = testMethod?.name,
                 packageParserResult = testPackageParser.parse(testClass.`package`?.name),
                 externalId = externalId,
+                featureIds = featureIds,
                 tagIds = tagIds
             )
         )

@@ -41,6 +41,10 @@ internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStatic
         .find { it.name == TAG_ID_NAME }
         ?.getIntArrayValue(TAG_ID_VALUE_KEY) ?: emptyList(),
 
+    featureIds = testInApk.annotations
+        .find { it.name == FEATURE_ID_NAME }
+        ?.getIntArrayValue(FEATURE_ID_VALUE_KEY) ?: emptyList(),
+
     priority = testInApk.annotations
         .find { it.name == Priority::class.java.name }
         ?.getEnumValue("priority")?.let { TestCasePriority.fromName(it) },
@@ -70,6 +74,8 @@ private fun determineKind(annotations: List<AnnotationData>): Kind =
         ?.let { annotationsToKindMap[it.name] }
         ?: Kind.UNKNOWN
 
+// todo use real classes
+
 private const val DESCRIPTION_NAME = "com.avito.android.test.annotations.Description"
 private const val DESCRIPTION_VALUE_KEY = "value"
 
@@ -87,3 +93,6 @@ private const val FEATURES_VALUE_KEY = "value"
 
 private const val TAG_ID_NAME = "com.avito.android.test.annotations.TagId"
 private const val TAG_ID_VALUE_KEY = "value"
+
+private const val FEATURE_ID_NAME = "com.avito.android.test.annotations.FeatureId"
+private const val FEATURE_ID_VALUE_KEY = "value"

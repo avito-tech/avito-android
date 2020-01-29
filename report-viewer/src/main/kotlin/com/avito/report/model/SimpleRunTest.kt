@@ -38,6 +38,7 @@ data class SimpleRunTest(
     val description: String?,
     val dataSetNumber: Int?,
     val features: List<String>,
+    val featureIds: List<Int>,
     val tagIds: List<Int>,
     val priority: TestCasePriority?,
     val behavior: TestCaseBehavior?,

@@ -178,6 +178,7 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
             }
         }
         if (test.tagIds.isNotEmpty()) preparedData["tag_id"] = test.tagIds
+        if (test.featureIds.isNotEmpty()) preparedData["feature_id"] = test.featureIds
         if (test.features.isNotEmpty()) preparedData["features"] = test.features
 
         val priority = test.priority

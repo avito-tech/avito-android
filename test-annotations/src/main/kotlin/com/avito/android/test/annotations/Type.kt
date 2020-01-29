@@ -1,12 +1,11 @@
 package com.avito.android.test.annotations
 
-@Suppress("DEPRECATION")
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-@Deprecated("Replaced by Kind")
+@Deprecated("Use Kind")
 annotation class Type(val type: TestCaseType)
 
-@Deprecated("Replaced by Kind")
+@Deprecated("Use Kind")
 enum class TestCaseType {
     E2E_UI,
     COMPONENT_UI,
