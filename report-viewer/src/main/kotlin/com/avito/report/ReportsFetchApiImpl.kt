@@ -198,6 +198,7 @@ internal class ReportsFetchApiImpl(
                     dataSetNumber = getDataSetNumber(listResult),
                     features = listResult.preparedData?.lastOrNull()?.features ?: emptyList(),
                     tagIds = listResult.preparedData?.lastOrNull()?.tagId ?: emptyList(),
+                    featureIds = listResult.preparedData?.lastOrNull()?.featureIds ?: emptyList(),
                     priority = getPriority(listResult),
                     behavior = getBehavior(listResult),
                     kind = listResult.kind?.let { Kind.fromTmdId(it) } ?: Kind.UNKNOWN

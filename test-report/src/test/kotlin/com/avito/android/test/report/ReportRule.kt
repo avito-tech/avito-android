@@ -99,6 +99,7 @@ internal class ReportRule(
         ),
         externalId: String? = null,
         tagIds: List<Int> = emptyList(),
+        featureIds: List<Int> = emptyList(),
         featuresFromAnnotation: List<String> = emptyList(),
         featuresFromPackage: List<String> = emptyList(),
         priority: TestCasePriority? = null,
@@ -118,6 +119,7 @@ internal class ReportRule(
                 features = featuresFromPackage + featuresFromAnnotation,
                 externalId = externalId,
                 tagIds = tagIds,
+                featureIds = featureIds,
                 kind = kind
             )
         )

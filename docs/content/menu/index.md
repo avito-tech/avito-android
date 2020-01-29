@@ -37,6 +37,7 @@ headless: true
 - Тестирование
     - [Test framework]({{< ref "/test/TestFramework.md" >}})
     - [Ручное]({{< ref "/test/Manual.md" >}})
+    - [Test Management System]({{< ref "/test/TestManagementSystem.md" >}})
     - [Запуск тестов]({{< ref "/test/Run.md" >}})
     - [Юнит тесты]({{< ref "/test/UnitTesting.md" >}})
     - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
