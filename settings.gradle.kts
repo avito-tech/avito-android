@@ -65,12 +65,15 @@ include(":resource-manager-exceptions")
 include(":junit-utils")
 include(":mockito-utils")
 
-//Android modules
-include(":ui-testing-maps")
-include(":ui-testing-core")
-include(":test-report")
-include(":test-inhouse-runner")
-include(":test-app")
+// see gradle.properties flag explanation
+val syncAndroidModules: String by settings
+if (syncAndroidModules.toBoolean()) {
+    include(":ui-testing-maps")
+    include(":ui-testing-core")
+    include(":test-report")
+    include(":test-inhouse-runner")
+    include(":test-app")
+}
 
 pluginManagement {
 
