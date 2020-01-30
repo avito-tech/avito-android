@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Based on https://gohugo.io/hosting-and-deployment/hosting-on-github/
 
-set -euf -o pipefail
+set -euf -o
 
 git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 git config --global user.name "$GITHUB_GIT_USER_NAME";
@@ -23,7 +23,7 @@ git worktree add -B gh-pages public origin/gh-pages
 
 echo "Generating site..."
 cd docs/
-# Don't cleanDestinationDir to preserve .git inside worktree
+# WARNING: Don't cleanDestinationDir to preserve .git inside worktree
 hugo --minify --theme book
 cd ..
 

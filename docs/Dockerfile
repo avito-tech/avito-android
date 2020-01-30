@@ -8,16 +8,20 @@ RUN mdl /docs/content
 
 FROM alpine:3.11
 
-# libc libraries are used to overcome https://github.com/gohugoio/hugo/issues/3382 😕
 RUN apk update \
-    && apk add --update libc6-compat libstdc++
+    && apk add --update \
+    git \
+    curl \
+    openssh-client \
+    ca-certificates \
+    # libc libraries are used to overcome https://github.com/gohugoio/hugo/issues/3382 😕
+    libc6-compat libstdc++
 
-ARG HUGO_VERSION=0.63.1
+ARG HUGO_VERSION=0.63.2
 
-RUN mkdir -p /tmp/hugo
-ADD https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz /tmp/hugo
-RUN tar xzf /tmp/hugo/*.tar.gz -C /tmp/hugo/ \
-    && mv /tmp/hugo/hugo /usr/local/bin/ \
+RUN curl -L https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz --output /tmp/hugo.tar.gz \
+    && tar xzf /tmp/hugo.tar.gz -C /tmp/ \
+    && mv /tmp/hugo /usr/local/bin/ \
     && rm -rf /tmp/hugo \
     && rm /var/cache/apk/* \
     && hugo version
