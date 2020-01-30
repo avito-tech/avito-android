@@ -10,10 +10,7 @@ import java.io.Serializable
 
 //todo use :slack module
 data class SlackConfig(
-    val hookUrl: String,
-    val channel: String,
-    val username: String,
-    val avatar: String
+    val hookUrl: String
 ) : Serializable
 
 
@@ -22,10 +19,7 @@ val Project.slackConfig: Provider<SlackConfig>
         Providers.of(
             extensions.getByType<PerformanceExtension>().let { extension ->
                 SlackConfig(
-                    hookUrl = extension.slackHookUrl,
-                    channel = extension.slackChannel,
-                    username = extension.slackUsername,
-                    avatar = extension.slackAvatar
+                    hookUrl = extension.slackHookUrl
                 )
             }
         )

@@ -11,7 +11,4 @@ open class PerformanceExtension {
     lateinit var statsUrl: String
 
     lateinit var slackHookUrl: String
-    lateinit var slackChannel: String
-    var slackUsername: String = "Android Performance"
-    var slackAvatar: String = ":mayudin"
 }
