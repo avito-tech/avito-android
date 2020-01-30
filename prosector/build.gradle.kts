@@ -26,7 +26,6 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
 }
 
-
 gradlePlugin {
     plugins {
         create("prosector") {
