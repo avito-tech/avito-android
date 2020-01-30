@@ -2,8 +2,6 @@
 
 rootProject.name = "avito-android"
 
-enableFeaturePreview("GRADLE_METADATA")
-
 include(":subprojects:gradle:artifactory")
 include(":subprojects:gradle:build-checks")
 include(":subprojects:gradle:build-metrics")
