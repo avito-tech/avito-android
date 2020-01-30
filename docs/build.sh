@@ -33,5 +33,5 @@ docker run --rm \
         -p 1313:1313 \
         --entrypoint hugo \
         android/docs/local:latest \
-        server --cleanDestinationDir --minify --theme book --bind 0.0.0.0
+        server --cleanDestinationDir --i18n-warnings --minify --theme book --bind 0.0.0.0
 

@@ -6,6 +6,8 @@ title = "Avito Android"
 languageCode = "ru-ru"
 DefaultContentLanguage = "ru"
 theme = "book"
+# WARNING: publishDir outside the project breaks i18n
+# TODO: use default "public" and copy to gh-pages root MBS-6415
 publishDir = "../public"
 
 [markup.tableOfContents]

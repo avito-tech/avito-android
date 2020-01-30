@@ -2,7 +2,7 @@
 
 # Build and publish documentation to github pages
 # Prerequisites:
-# - valid ssh key to access: https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
+# - Valid ssh key to access: https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
 # - export GITHUB_GIT_USER_NAME
 # - export GITHUB_GIT_USER_EMAIL
 
