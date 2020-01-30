@@ -10,7 +10,7 @@ interface AdbDeviceHandler {
 
 internal class AdbDeviceHandlerLocal(val ciLogger: CILogger) : AdbDeviceHandler {
     override fun resolve(eitherDevice: Either<Exception, AdbDevice>): AdbDevice {
-        if (eitherDevice.isLeft()) {
+        if (eitherDevice.isRight()) {
             ciLogger.info("One device found, gonna start pulling")
             return eitherDevice.right().get()
         } else {
