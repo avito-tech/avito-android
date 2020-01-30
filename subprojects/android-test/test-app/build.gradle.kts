@@ -4,7 +4,6 @@ import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConf
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
-import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 
 plugins {
@@ -17,6 +16,10 @@ val androidXVersion: String by project
 val sentryVersion: String by project
 val truthVersion: String by project
 val okhttpVersion: String by project
+val junitVersion: String by project
+val funktionaleVersion: String by project
+val gsonVersion: String by project
+val kotsonVersion: String by project
 
 //todo cleaner way to get these properties
 val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toString()
@@ -61,9 +64,21 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:$androidXVersion")
     implementation("com.google.android.material:material:$androidXVersion")
 
+    androidTestImplementation("junit:junit:$junitVersion")
     androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner")) { isTransitive = false }
     androidTestImplementation(project(":subprojects:android-test:test-report")) { isTransitive = false }
+    androidTestImplementation(project(":subprojects:android-test:junit-utils")) { isTransitive = false }
+    androidTestImplementation(project(":subprojects:android-test:test-annotations"))
+    androidTestImplementation(project(":subprojects:common:report-viewer")) { isTransitive = false }
+    androidTestImplementation(project(":subprojects:common:file-storage"))
+    androidTestImplementation(project(":subprojects:common:okhttp"))
+    androidTestImplementation(project(":subprojects:common:time"))
     androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
+    androidTestImplementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
+    androidTestImplementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
+    androidTestImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    androidTestImplementation("com.google.code.gson:gson:$gsonVersion")
+    androidTestImplementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
     androidTestImplementation("io.sentry:sentry:$sentryVersion")
     androidTestImplementation("com.google.truth:truth:$truthVersion")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")

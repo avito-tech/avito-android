@@ -66,11 +66,12 @@ docker run --rm \
              -PteamcityUrl \\
              -PteamcityBuildType \\
              -PbuildNumber \\
+             -PgitBranch=$BUILD_BRANCH \\
+             -PbuildCommit=$BUILD_COMMIT \\
              -PteamcityBuildId=$BUILD_ID \\
              -PslackToken=$AVITO_SLACK_TOKEN \\
              -Pavito.slack.token=$AVITO_SLACK_TOKEN \\
              -Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL \\
-             -PgitBranch \\
              -Pavito.repo.ssh.url \\
              -Pavito.report.url=$AVITO_REPORT_URL \\
              -Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL \\
