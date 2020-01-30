@@ -23,6 +23,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
@@ -113,7 +114,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val registry = objects.property<String>()
 
     @Internal
-    val unitToChannelMapping = objects.property<Map<Team, SlackChannel>>()
+    val unitToChannelMapping = objects.mapProperty<Team, SlackChannel>()
 
     @OutputDirectory
     val output: DirectoryProperty = objects.directoryProperty()
