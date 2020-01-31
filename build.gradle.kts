@@ -134,8 +134,7 @@ subprojects {
                 kotlinOptions {
                     jvmTarget = javaVersion
                     allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
-                    freeCompilerArgs =
-                        freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental" + "-XXLanguage:+InlineClasses"
+                    freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
                 }
             }
         }
