@@ -10,22 +10,22 @@ git config --global user.email "$GITHUB_GIT_USER_EMAIL";
 mkdir -p "${HOME}"/.ssh
 
 removeGhPagesWorktree() {
-    rm -rf public
+    rm -rf gh-pages-generated
     git worktree prune
-    rm -rf .git/worktrees/public/
+    rm -rf .git/worktrees/gh-pages-generated/
 }
 
 echo "Delete old worktree..."
 removeGhPagesWorktree
 
-echo "Check out gh-pages branch into public/ directory..."
-git worktree add -B gh-pages public origin/gh-pages
+echo "Check out gh-pages branch into temporary directory..."
+git worktree add -B gh-pages gh-pages-generated origin/gh-pages
 
 echo "Generate site..."
 hugo --cleanDestinationDir --minify --theme book --source docs
 
 echo "Update gh-pages branch..."
-cd public
+cd gh-pages-generated
 
 echo "Remove previously generated files..."
 git rm -r -- *
