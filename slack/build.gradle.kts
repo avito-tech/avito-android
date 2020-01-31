@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":utils:"))
     implementation(project(":logging"))
     implementation(project(":time"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.github.seratch:jslack:$jslackVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")

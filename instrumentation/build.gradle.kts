@@ -5,7 +5,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val gsonVersion: String by project
 val kotlinCoroutinesVersion: String by project
 val teamcityRestClientVersion: String by project
@@ -16,7 +15,6 @@ val mockitoJunit5Version: String by project
 val okhttpVersion: String by project
 
 dependencies {
-    api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 
     implementation(project(":instrumentation-impact-analysis"))

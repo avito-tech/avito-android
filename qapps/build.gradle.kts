@@ -4,7 +4,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val funktionaleVersion: String by project
 val androidGradlePluginVersion: String by project
 val retrofitVersion: String by project
@@ -18,7 +17,6 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":git"))
     implementation(project(":logging"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")

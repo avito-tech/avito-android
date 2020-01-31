@@ -4,7 +4,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val kotlinCoroutinesVersion: String by project
 
 dependencies {
@@ -14,7 +13,6 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":logging"))
     implementation(project(":slack"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 
     testImplementation(project(":test-project"))

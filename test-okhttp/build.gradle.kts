@@ -11,7 +11,6 @@ dependencies {
     api("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
     implementation("com.google.truth:truth:$truthVersion")
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 
     testImplementation("io.kotlintest:kotlintest:2.0.7")

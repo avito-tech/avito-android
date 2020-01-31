@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":kotlin-dsl-support"))
     implementation(project(":impact-plugin"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
     testImplementation(project(":test-project"))
 }

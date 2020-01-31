@@ -12,7 +12,6 @@ dependencies {
     //todo жирная зависимость ради единственного Commandline.translateCommandline(source)
     implementation(gradleApi())
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 
     testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")

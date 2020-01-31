@@ -4,7 +4,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val funktionaleVersion: String by project
 val androidGradlePluginVersion: String by project
 val mockitoKotlinVersion: String by project
@@ -13,7 +12,6 @@ val mockitoJunit5Version: String by project
 dependencies {
     implementation(project(":process"))
     implementation(project(":kotlin-dsl-support"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
 

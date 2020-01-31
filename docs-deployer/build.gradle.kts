@@ -4,7 +4,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val funktionaleVersion: String by project
 
 dependencies {
@@ -13,7 +12,6 @@ dependencies {
     implementation(project(":docker"))
     implementation(project(":kubernetes"))
     implementation(project(":sentry"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 }
 
