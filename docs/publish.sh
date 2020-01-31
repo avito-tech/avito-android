@@ -10,7 +10,7 @@ set -euf -o pipefail
 
 if [ "$(git status -s)" ]
 then
-    echo "The working directory is dirty. Please commit any pending changes. TODO: fail"
+    echo "The working directory is dirty. Please commit pending changes"
     exit 1;
 fi
 
