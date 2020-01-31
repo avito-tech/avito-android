@@ -13,6 +13,7 @@ RUN apk update \
     git \
     curl \
     openssh-client \
+    sudo \
     ca-certificates \
     # libc libraries are used to overcome https://github.com/gohugoio/hugo/issues/3382 😕
     libc6-compat libstdc++
@@ -25,3 +26,6 @@ RUN curl -L https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/
     && rm -rf /tmp/hugo \
     && rm /var/cache/apk/* \
     && hugo version
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

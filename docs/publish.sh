@@ -14,9 +14,7 @@ then
     exit 1;
 fi
 
-cd docs/
-docker build --tag android/docs/local .
-cd ..
+docker build --tag android/docs/local docs
 
 docker run --rm \
         --volume "$(pwd)":/app \
@@ -25,8 +23,8 @@ docker run --rm \
         --env "GITHUB_GIT_USER_NAME=${GITHUB_GIT_USER_NAME}" \
         --env "GITHUB_GIT_USER_EMAIL=${GITHUB_GIT_USER_EMAIL}" \
         -w="/app" \
-        --entrypoint docs/publish_entrypoint.sh \
-        android/docs/local:latest
+        android/docs/local:latest \
+        sh -c "docs/publish_entrypoint.sh"
 
 # TODO: simulate the same user in image
 echo "Fix broken from docker permissions in .git"
