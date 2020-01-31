@@ -84,8 +84,9 @@ subprojects {
                 if (plugins.hasPlugin("kotlin") && !plugins.hasPlugin("java-gradle-plugin")) {
                     create<MavenPublication>("maven") {
                         from(components["java"])
-                        // вложенные модули будут представлены как dir-subdir-module
-                        artifactId = path.removePrefix(":").replace(':', '-')
+                        afterEvaluate {
+                            artifactId = this@subprojects.getOptionalExtra("artifact-id") ?: this@subprojects.name
+                        }
                     }
                 }
 
@@ -224,3 +225,11 @@ val Project.sourceSets: SourceSetContainer
 
 val SourceSetContainer.main: NamedDomainObjectProvider<SourceSet>
     get() = named<SourceSet>("main")
+
+fun Project.getOptionalExtra(key: String): String? {
+    return if (extra.has(key)) {
+        (extra[key] as? String)?.let { if (it.isBlank()) null else it }
+    } else {
+        null
+    }
+}

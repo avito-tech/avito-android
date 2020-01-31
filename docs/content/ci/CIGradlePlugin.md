@@ -95,7 +95,7 @@ release {
 
 #### Custom steps
 
-По необходимости добавляем свои шаги, наследуясь от `com.avito.ci.steps.BuildStep`
+По необходимости добавляем свои шаги, наследуясь от `BuildStep`
 
 ### Artifacts
 
