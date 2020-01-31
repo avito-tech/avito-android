@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":android"))
     implementation(gradleTestKit())
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 

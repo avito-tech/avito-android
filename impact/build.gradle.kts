@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":android"))
     implementation(project(":git"))
     implementation(project(":kotlin-dsl-support"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("io.github.azagniotov:ant-style-path-matcher:$antPatternMatcherVersion")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")

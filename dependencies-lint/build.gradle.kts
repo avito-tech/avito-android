@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":android"))
     implementation(project(":kotlin-dsl-support"))
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.ow2.asm:asm:7.1")

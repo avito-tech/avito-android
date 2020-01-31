@@ -5,8 +5,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
-
 //todo cleaner way to get these properties
 val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toString()
 val compileSdk = requireNotNull(project.properties["compileSdkVersion"]).toString().toInt()
@@ -26,6 +24,4 @@ android {
 dependencies {
     api(project(":ui-testing-core"))
     api("com.google.android.gms:play-services-maps:17.0.0")
-
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }

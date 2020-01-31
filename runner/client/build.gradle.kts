@@ -17,7 +17,6 @@ dependencies {
 
     implementation(project(":trace-event"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
 

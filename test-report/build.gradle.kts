@@ -59,7 +59,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("androidx.test.uiautomator:uiautomator:$androidXUiautomatorVersion")
     implementation("com.jakewharton.timber:timber:$timberVersion")

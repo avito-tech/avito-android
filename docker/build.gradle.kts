@@ -10,7 +10,6 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":kotlin-dsl-support"))
     implementation(project(":utils"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     // TODO: Use https://github.com/docker-java/docker-java

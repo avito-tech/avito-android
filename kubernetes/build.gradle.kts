@@ -13,5 +13,4 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 
     implementation(gradleApi())
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }

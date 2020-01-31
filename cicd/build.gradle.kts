@@ -4,12 +4,10 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val okhttpVersion: String by project
 val funktionaleVersion: String by project
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation(project(":android"))
     implementation(project(":impact"))

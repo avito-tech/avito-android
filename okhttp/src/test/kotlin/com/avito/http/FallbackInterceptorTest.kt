@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 internal class FallbackInterceptorTest {
 
     private val mockDispatcher = MockDispatcher()
-    private val server: MockWebServer = MockWebServer().apply { setDispatcher(mockDispatcher) }
+    private val server: MockWebServer = MockWebServer().apply { dispatcher = mockDispatcher }
 
     private val doFallbackOnThisResponseCode = 503
 

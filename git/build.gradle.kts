@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":kotlin-dsl-support"))
     implementation(project(":process"))
     implementation(project(":utils")) // project.buildEnvironment only
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 
     testImplementation(project(":test-project"))

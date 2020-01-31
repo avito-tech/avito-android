@@ -4,11 +4,9 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val androidGradlePluginVersion: String by project
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
 
     implementation(project(":pre-build"))

@@ -4,8 +4,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
-
 dependencies {
     implementation(project(":cicd"))
     implementation(project(":impact"))
@@ -13,7 +11,6 @@ dependencies {
     implementation(project(":pre-build"))
     implementation(project(":utils"))
     implementation(project(":kotlin-dsl-support"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
     testImplementation(project(":test-project"))
 }

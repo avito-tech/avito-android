@@ -4,12 +4,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
-
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-}
-
 gradlePlugin {
     plugins {
         create("enforceRepos") {
