@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class RetryWithFallbackTest {
 
     private val mockDispatcher = MockDispatcher()
-    private val server = MockWebServer().apply { setDispatcher(mockDispatcher) }
+    private val server = MockWebServer().apply { dispatcher = mockDispatcher }
 
     @Test
     fun `retry with fallback`() {
