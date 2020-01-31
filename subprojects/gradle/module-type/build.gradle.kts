@@ -21,7 +21,7 @@ gradlePlugin {
     plugins {
         create("moduleTypes") {
             id = "com.avito.android.module-types"
-            implementationClass = "ModuleTypesPlugin"
+            implementationClass = "com.avito.android.ModuleTypesPlugin"
         }
     }
 }

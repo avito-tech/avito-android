@@ -26,7 +26,7 @@ gradlePlugin {
     plugins {
         create("buildMetrics") {
             id = "com.avito.android.build-metrics"
-            implementationClass = "BuildMetricsPlugin"
+            implementationClass = "com.avito.android.plugin.build_metrics.BuildMetricsPlugin"
         }
     }
 }

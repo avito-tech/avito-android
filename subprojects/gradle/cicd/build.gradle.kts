@@ -46,7 +46,7 @@ gradlePlugin {
     plugins {
         create("cicd") {
             id = "com.avito.android.cd"
-            implementationClass = "CdPlugin"
+            implementationClass = "com.avito.ci.CdPlugin"
         }
     }
 }

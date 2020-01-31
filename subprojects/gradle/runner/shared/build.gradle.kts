@@ -3,6 +3,8 @@ plugins {
     `maven-publish`
 }
 
+extra["artifact-id"] = "runner-shared"
+
 val rxjava1Version: String by project
 
 dependencies {

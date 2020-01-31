@@ -57,7 +57,7 @@ class ModuleTypesRules {
                                 dependencies = "${case.dependentModuleDependencyType.configuration} project(':dependent_test_module')",
                                 buildGradleExtra = if (case.featureModuleType != IMPLEMENTATION) """
                                 module {
-                                    type ModuleType.${case.featureModuleType.name}
+                                    type com.avito.android.ModuleType.${case.featureModuleType.name}
                                 }
                                 """.trimIndent() else ""
                             ),
@@ -66,7 +66,7 @@ class ModuleTypesRules {
                                 plugins = listOf("com.avito.android.module-types"),
                                 buildGradleExtra = if (case.dependentModuleType != IMPLEMENTATION) """
                                 module {
-                                    type ModuleType.${case.dependentModuleType.name}
+                                    type com.avito.android.ModuleType.${case.dependentModuleType.name}
                                 }
                                 """.trimIndent() else ""
                             )

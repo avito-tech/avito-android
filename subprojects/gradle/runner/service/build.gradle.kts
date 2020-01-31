@@ -3,6 +3,8 @@ plugins {
     `maven-publish`
 }
 
+extra["artifact-id"] = "runner-service"
+
 val kotlinVersion: String by project
 val kotlinCoroutinesVersion: String by project
 val funktionaleVersion: String by project

@@ -44,9 +44,9 @@ class TestDependenciesImpactTest {
                 AndroidLibModule("utils"),
                 EmptyModule(
                     "test", modules = listOf(
-                    AndroidLibModule("unit"),
-                    AndroidLibModule("ui")
-                )
+                        AndroidLibModule("unit"),
+                        AndroidLibModule("ui")
+                    )
                 )
             )
         ).generateIn(projectDir)
@@ -87,9 +87,9 @@ class TestDependenciesImpactTest {
 
         result.assertMarkedModules(
             projectDir,
-            implementation = setOf(":subprojects:gradle:utils", ":feature", ":app"),
-            unitTests = setOf(":subprojects:gradle:utils", ":feature", ":app"),
-            androidTests = setOf(":subprojects:gradle:utils", ":feature", ":app")
+            implementation = setOf(":utils", ":feature", ":app"),
+            unitTests = setOf(":utils", ":feature", ":app"),
+            androidTests = setOf(":utils", ":feature", ":app")
         )
     }
 

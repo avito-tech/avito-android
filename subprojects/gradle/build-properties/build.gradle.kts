@@ -21,7 +21,7 @@ gradlePlugin {
     plugins {
         create("buildProperties") {
             id = "com.avito.android.build-properties"
-            implementationClass = "BuildPropertiesPlugin"
+            implementationClass = "com.avito.android.info.BuildPropertiesPlugin"
         }
     }
 }

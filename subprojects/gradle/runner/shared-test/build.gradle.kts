@@ -3,6 +3,8 @@ plugins {
     `maven-publish`
 }
 
+extra["artifact-id"] = "runner-shared-test"
+
 val kotlinCoroutinesVersion: String by project
 val funktionaleVersion: String by project
 val junit5Version: String by project

@@ -19,7 +19,7 @@ gradlePlugin {
     plugins {
         create("docsDeployPlugin") {
             id = "com.avito.android.docs"
-            implementationClass = "DocsPlugin"
+            implementationClass = "com.avito.android.plugin.DocsPlugin"
         }
     }
 }

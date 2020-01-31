@@ -28,7 +28,7 @@ gradlePlugin {
     plugins {
         create("dependenciesLintPlugin") {
             id = "com.avito.android.dependencies-lint"
-            implementationClass = "DependenciesLintPlugin"
+            implementationClass = "com.avito.android.lint.DependenciesLintPlugin"
         }
     }
 }

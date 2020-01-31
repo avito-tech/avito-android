@@ -8,7 +8,7 @@ gradlePlugin {
     plugins {
         create("enforceRepos") {
             id = "com.avito.android.enforce-repos"
-            implementationClass = "EnforceReposPlugin"
+            implementationClass = "com.avito.android.plugin.EnforceReposPlugin"
         }
     }
 }
