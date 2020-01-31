@@ -4,7 +4,7 @@ headless: true
 
 - [Введение]({{< ref "/" >}})
 - [Ценности]({{< ref "/Values.md" >}})
-- [Тех радар]({{< ref "/tech_radar/TechRadar.md" >}})
+- [Tech radar]({{< ref "/tech_radar/TechRadar.md" >}})
 
 - Contributing
     - [How to start]({{< ref "/contributing/HowToStart.md" >}})

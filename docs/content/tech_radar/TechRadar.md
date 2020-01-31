@@ -1,50 +1,40 @@
 ---
-title: Тех радар
+title: Technology radar
 type: docs
 ---
 
-# Tech radar
+# Technology radar
 
-Это список технологий и практик, по каждой из которой описано:
+Technology radar is a list of technologies and practices that are described in the same manner:
 
-- Статус и рекомендации по использованию
-- Накопленные знания, ограничения, причины почему выбрали или отказались
+- An overall status and recommendations for usage
+- Limitations
+- Reasons for choosing or declining
 
-Оригинал: https://www.thoughtworks.com/radar
+Original: https://www.thoughtworks.com/radar
 
 ## FAQ
 
-### Какие вопросы помогает решить тех радар?
+### What questions does tech radar help to solve?
 
-- По каким критериям выбрана технология Х?
-- Что именно должно измениться, чтобы мы пересмотрели выбор этой технологии?
-- Хочу затащить Х, как мне проверить и сравнить с Y, по каким критериям?
-- Помню что пробовали Х, почему отказались? Как пойму что можно пересмотреть?
+- By what criteria is technology selected or declined?
+- What should happen to reconsider the choice?
+- I want to use X. How can I compare it against Y?
 
-### Нужно проводить через радар все технологии?
+### Do I have to use tech radar for all technologies?
 
-Нет, только дорогие, которые влиюят на весь проект и не сможем заменить за адекватное время. 
+The harder to replace a technology, the more pragmatic we want to be.\
+It's needless for something that can be replaced in a week or two.
 
-### Рекомендации тех радара являются обязательными?
+### Is it mandatory or only recommendations?
 
-Мы верим в то, что коллективные решения и взвешенные компромиссы работают лучше. 
-Но взгляды людей и команд могут не совпадать. 
-Поэтому хотим чтобы процесс помогал сгладить конфликты.\
-Никому не хочется работать в проекте с зоопарком разных подходов и легаси технологий и зависимостей, которые затащили ради интереса и перестали поддерживать.
+Tech radar helps to avoid a [tragedy of the commons](https://en.wikipedia.org/wiki/Tragedy_of_the_commons).\
+We all may have different opinions but we are in the same boat.\
+Tech radar can't solve any conflict by itself. It only helps to share our knowledge and decisions.
 
-В радаре есть статусы, к которым предъявляем разные требования.\
-Сначала пробуем технологию с меньшими рисками, взвешенно внедряем дальше или отказываемся.\
-Можно думать о радаре как о способе синхронизации.
+In order to mitigate risks it has different statuses with different requirements.
 
-### Почему не используем тех радар компании?
+### Why don't we use Avito's tech radar?
 
-> Удобно же смотреть все технологии компании на одном радаре. Зачем отдельно?
-
-Причины теже, почему не нравится Confluence.\
-Чтобы документация работала и не протухала, ее нужно максимально встроить в ежедневную работу.\
-Отдельный репозиторий усложняет: про него надо помнить, отдельно подписываться на изменения, делать отдельный PR.\
-Чем проще, тем выше шанс что это будет работать.
-
-## Технологии и практики
-
-Напиши в #android-dev что именно тебе хотелось бы здесь видеть.
+Stand-alone tech radar makes sense when you have dozens of services and repositories with the same common technologies.\
+In our case, such tech radar tends to become outdated. It's easier to track changes and keep it up to date together with a product.

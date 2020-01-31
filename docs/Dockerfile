@@ -1,4 +1,4 @@
-FROM ruby:2.6.5-alpine3.11
+FROM ruby:2.6.5-alpine3.11 AS linter
 # mdl: https://github.com/markdownlint/markdownlint
 RUN gem install mdl -v 0.8.0
 COPY . /docs
