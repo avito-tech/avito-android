@@ -13,7 +13,6 @@ plugins {
     id("com.avito.android.instrumentation-tests")
 }
 
-val kotlinVersion: String by project
 val androidXVersion: String by project
 val sentryVersion: String by project
 val truthVersion: String by project
@@ -57,7 +56,6 @@ android {
 
 dependencies {
     implementation("com.google.android.gms:play-services-maps:17.0.0")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
     implementation("androidx.appcompat:appcompat:$androidXVersion")
     implementation("androidx.recyclerview:recyclerview:$androidXVersion")

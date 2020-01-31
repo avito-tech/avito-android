@@ -3,13 +3,11 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val funktionaleVersion: String by project
 val okhttpVersion: String by project
 val retrofitVersion: String by project
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
 
     testImplementation(project(":test-okhttp"))

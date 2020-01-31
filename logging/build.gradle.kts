@@ -9,7 +9,6 @@ val jslackVersion: String by project
 
 dependencies {
     implementation(gradleApi())
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("com.github.seratch:jslack:$jslackVersion")
     implementation(project(":utils"))
     implementation(project(":sentry"))

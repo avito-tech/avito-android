@@ -21,7 +21,6 @@ dependencies {
     implementation(project(":statsd"))
     implementation(project(":kotlin-dsl-support"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
     implementation("com.timgroup:java-statsd-client:$statsdVersion")

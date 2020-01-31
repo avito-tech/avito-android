@@ -16,7 +16,6 @@ dependencies {
     compileOnly(gradleApi())
     implementation(project(":runner:shared"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("com.android.tools.ddms:ddmlib:$androidToolsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("io.reactivex:rxjava:$rxjava1Version")

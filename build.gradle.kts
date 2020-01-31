@@ -129,13 +129,19 @@ subprojects {
     }
 
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper> {
-        this@subprojects.tasks {
-            withType<KotlinCompile> {
-                kotlinOptions {
-                    jvmTarget = javaVersion
-                    allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
-                    freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
+        this@subprojects.run {
+            tasks {
+                withType<KotlinCompile> {
+                    kotlinOptions {
+                        jvmTarget = javaVersion
+                        allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
+                        freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
+                    }
                 }
+            }
+
+            dependencies {
+                "implementation"("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             }
         }
     }

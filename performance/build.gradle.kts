@@ -4,7 +4,6 @@ plugins {
     `maven-publish`
 }
 
-val kotlinVersion: String by project
 val teamcityRestClientVersion: String by project
 val statsdVersion: String by project
 val gsonVersion: String by project
@@ -27,7 +26,6 @@ dependencies {
     implementation(project(":teamcity"))
     implementation(project(":statsd"))
     implementation(project(":git"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.teamcity:teamcity-rest-client:$teamcityRestClientVersion")
     implementation("com.timgroup:java-statsd-client:$statsdVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
