@@ -15,7 +15,7 @@ import java.nio.file.Paths
 open class ClearScreenshotsTask : DefaultTask() {
 
     @Input
-    var variant = project.objects.property<ApplicationVariant>()
+    val variant = project.objects.property<ApplicationVariant>()
 
     @Internal
     val ciLogger = CILogger.allToStdout
