@@ -8,7 +8,7 @@ val funktionaleVersion: String by project
 val androidGradlePluginVersion: String by project
 
 dependencies {
-    implementation(project(":subprojects:common:sentry"))
+    implementation(project(":subprojects:gradle:sentry-config"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))

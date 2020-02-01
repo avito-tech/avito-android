@@ -16,15 +16,13 @@ dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:impact"))
     implementation(project(":subprojects:gradle:build-metrics"))
-    implementation(project(":subprojects:common:sentry"))
+    implementation(project(":subprojects:gradle:sentry-config"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
-    implementation("com.timgroup:java-statsd-client:$statsdVersion")
-    implementation("io.sentry:sentry:$sentryVersion")
 
     //for test
     implementation(project(":subprojects:gradle:module-type"))

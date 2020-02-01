@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:docker"))
     implementation(project(":subprojects:gradle:kubernetes"))
-    implementation(project(":subprojects:common:sentry"))
+    implementation(project(":subprojects:gradle:sentry-config"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 }
 
