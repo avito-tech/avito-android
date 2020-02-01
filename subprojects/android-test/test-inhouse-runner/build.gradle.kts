@@ -31,18 +31,16 @@ android {
 
 val okhttpVersion: String by project
 val truthVersion: String by project
-val funktionaleVersion: String by project
 val androidXTestVersion: String by project
-val retrofitVersion: String by project
-val androidXUiautomatorVersion: String by project
-val timberVersion: String by project
-val mockitoKotlinVersion: String by project
-val bouncyCastleVersion: String by project
-val arrowVersion: String by project
 val kotlinPoetVersion: String by project
 val kotlinCompileTestingVersion: String by project
+val gsonVersion: String by project
 
 dependencies {
+    implementation(project(":subprojects:common:sentry"))
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:statsd"))
+    implementation(project(":subprojects:common:report-viewer"))
     implementation(project(":subprojects:android-test:junit-utils"))
     implementation(project(":subprojects:android-test:mockito-utils"))
     implementation(project(":subprojects:android-test:test-report"))
@@ -50,23 +48,12 @@ dependencies {
     implementation(project(":subprojects:android-test:ui-testing-core"))
     implementation(project(":subprojects:android-test:ui-testing-maps"))
     implementation(project(":subprojects:android-test:mockito-utils"))
-    implementation(project(":subprojects:common:sentry"))
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:common:statsd"))
-    implementation(project(":subprojects:common:report-viewer"))
     implementation("androidx.test:runner:$androidXTestVersion")
-    implementation("com.jakewharton.timber:timber:$timberVersion")
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.google.truth:truth:$truthVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
     implementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    implementation("com.squareup.okhttp3:okhttp-tls:$okhttpVersion")
-    implementation("org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion")
-    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
-    implementation("org.funktionale:funktionale-either:$funktionaleVersion")
-    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
-    implementation("androidx.test.uiautomator:uiautomator:$androidXUiautomatorVersion")
-    implementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
+    implementation("com.google.code.gson:gson:$gsonVersion")
+
     testImplementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestingVersion")
 }

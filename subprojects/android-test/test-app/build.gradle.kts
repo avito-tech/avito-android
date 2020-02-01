@@ -65,8 +65,8 @@ dependencies {
     implementation("com.google.android.material:material:$androidXVersion")
 
     androidTestImplementation("junit:junit:$junitVersion")
-    androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner")) { isTransitive = false }
-    androidTestImplementation(project(":subprojects:android-test:test-report")) { isTransitive = false }
+    androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
+    androidTestImplementation(project(":subprojects:android-test:test-report"))
     androidTestImplementation(project(":subprojects:android-test:junit-utils"))
     androidTestImplementation(project(":subprojects:android-test:test-annotations"))
     androidTestImplementation(project(":subprojects:common:report-viewer"))
