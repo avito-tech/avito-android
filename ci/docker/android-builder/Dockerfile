@@ -36,6 +36,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV PYTHONUNBUFFERED 1
 
 # --------------- Gradle Profiler -----------------
+# TODO: update
 ARG PROFILER_VERSION=0.9.1
 
 # Install gradle-profiler

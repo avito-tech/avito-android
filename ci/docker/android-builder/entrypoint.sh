@@ -4,7 +4,6 @@ set -e
 
 # https://denibertovic.com/posts/handling-permissions-with-docker-volumes/
 
-# Добавляем локального юзера
 USER_ID=${LOCAL_USER_ID:-9001}
 BUILD_USER=build_user
 

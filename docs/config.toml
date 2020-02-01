@@ -2,13 +2,12 @@
 
 baseURL = "https://avito-tech.github.io/avito-android"
 title = "Avito Android"
-# TODO: add english variant
+# TODO: use english as default
 languageCode = "ru-ru"
 DefaultContentLanguage = "ru"
 theme = "book"
 # WARNING: publishDir outside the project breaks i18n
-# TODO: use default "public" and copy to gh-pages root MBS-6415
-publishDir = "../public"
+publishDir = "public"
 
 [markup.tableOfContents]
 # First level is used only as page title

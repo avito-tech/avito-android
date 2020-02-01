@@ -4,7 +4,8 @@
 
 set -euf -o pipefail
 
-cd docs/
+DOCS_DIR=$(dirname "$0")
+cd "$DOCS_DIR"
 
 docker build --tag android/docs/local .
 
@@ -31,7 +32,5 @@ docker run --rm \
         --volume "$(pwd)":/app \
         -w="/app" \
         -p 1313:1313 \
-        --entrypoint hugo \
         android/docs/local:latest \
-        server --cleanDestinationDir --i18n-warnings --minify --theme book --bind 0.0.0.0
-
+        sh -c "hugo server --cleanDestinationDir --i18n-warnings --minify --theme book --bind 0.0.0.0"
