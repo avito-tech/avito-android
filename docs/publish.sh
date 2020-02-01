@@ -21,14 +21,11 @@ docker build --tag android/docs/local docs
 
 docker run --rm \
         --volume "$(pwd)":/app \
-        --volume "$HOME/.ssh":/root/.ssh \
+        --volume "$HOME/.ssh":/user/.ssh \
         --volume "${SSH_AUTH_SOCK:-/dev/null}":/tmp/ssh_auth_sock \
+        --env "LOCAL_USER_ID=$(id -u)" \
         --env "GITHUB_GIT_USER_NAME=${GITHUB_GIT_USER_NAME}" \
         --env "GITHUB_GIT_USER_EMAIL=${GITHUB_GIT_USER_EMAIL}" \
         -w="/app" \
         android/docs/local:latest \
-        sh -c "docs/publish_entrypoint.sh"
-
-# TODO: simulate the same user in image
-echo "Fix broken from docker permissions in .git"
-sudo chown -R "$(whoami)" .git/
+        sh -c "docs/_publish_internal.sh"
