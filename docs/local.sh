@@ -4,7 +4,8 @@
 
 set -euf -o pipefail
 
-cd docs/
+DOCS_DIR=$(dirname "$0")
+cd "$DOCS_DIR"
 
 docker build --tag android/docs/local .
 

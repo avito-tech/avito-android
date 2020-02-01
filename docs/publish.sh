@@ -14,6 +14,9 @@ then
     exit 1;
 fi
 
+DOCS_DIR=$(dirname "$0")
+cd "${DOCS_DIR}/.."
+
 docker build --tag android/docs/local docs
 
 docker run --rm \
