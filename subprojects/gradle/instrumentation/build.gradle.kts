@@ -46,7 +46,6 @@ dependencies {
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
 
-
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:gradle:logging")))
     testImplementation(testFixtures(project(":subprojects:gradle:slack")))
@@ -64,6 +63,7 @@ dependencies {
     testFixturesImplementation(project(":subprojects:common:statsd"))
     testFixturesImplementation(project(":subprojects:common:report-viewer"))
     testFixturesImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
+    testFixturesImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
 }
 
 gradlePlugin {
