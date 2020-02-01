@@ -69,7 +69,7 @@ dependencies {
     androidTestImplementation(project(":subprojects:android-test:test-report")) { isTransitive = false }
     androidTestImplementation(project(":subprojects:android-test:junit-utils")) { isTransitive = false }
     androidTestImplementation(project(":subprojects:android-test:test-annotations"))
-    androidTestImplementation(project(":subprojects:common:report-viewer")) { isTransitive = false }
+    androidTestImplementation(project(":subprojects:common:report-viewer"))
     androidTestImplementation(project(":subprojects:common:file-storage"))
     androidTestImplementation(project(":subprojects:common:okhttp"))
     androidTestImplementation(project(":subprojects:common:time"))
