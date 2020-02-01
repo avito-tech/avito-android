@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package com.avito.android.stats
 
 import com.avito.kotlin.dsl.ProjectProperty
@@ -23,10 +25,11 @@ val Project.statsdConfig: Provider<StatsDConfig> by ProjectProperty.lazy(scope =
     Providers.of(config(project))
 }
 
-private fun config(project: Project): StatsDConfig = StatsDConfig(
-    isEnabled = project.getBooleanProperty("avito.stats.enabled", false),
-    host = project.getMandatoryStringProperty("avito.stats.host"),
-    fallbackHost = project.getMandatoryStringProperty("avito.stats.fallbackHost"),
-    port = project.getMandatoryIntProperty("avito.stats.port"),
-    namespace = project.getMandatoryStringProperty("avito.stats.namespace")
-)
+private fun config(project: Project): StatsDConfig =
+    StatsDConfig(
+        isEnabled = project.getBooleanProperty("avito.stats.enabled", false),
+        host = project.getMandatoryStringProperty("avito.stats.host"),
+        fallbackHost = project.getMandatoryStringProperty("avito.stats.fallbackHost"),
+        port = project.getMandatoryIntProperty("avito.stats.port"),
+        namespace = project.getMandatoryStringProperty("avito.stats.namespace")
+    )

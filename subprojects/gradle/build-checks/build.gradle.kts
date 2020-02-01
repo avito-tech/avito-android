@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":subprojects:gradle:build-metrics"))
     implementation(project(":subprojects:common:sentry"))
     implementation(project(":subprojects:gradle:files"))
-    implementation(project(":subprojects:common:statsd"))
+    implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")

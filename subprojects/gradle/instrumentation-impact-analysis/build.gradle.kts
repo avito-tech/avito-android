@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:common:sentry"))
-    implementation(project(":subprojects:common:statsd"))
+    implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:ui-test-bytecode-analyzer"))
     implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")

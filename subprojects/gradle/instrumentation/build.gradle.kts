@@ -9,6 +9,7 @@ val gsonVersion: String by project
 val kotlinCoroutinesVersion: String by project
 val teamcityRestClientVersion: String by project
 val retrofitVersion: String by project
+val funktionaleVersion: String by project
 val kotsonVersion: String by project
 val mockitoKotlinVersion: String by project
 val mockitoJunit5Version: String by project
@@ -23,7 +24,7 @@ dependencies {
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:teamcity"))
-    implementation(project(":subprojects:common:statsd"))
+    implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:test-summary"))
     implementation(project(":subprojects:common:report-viewer"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
@@ -43,6 +44,8 @@ dependencies {
     implementation("org.apache.commons:commons-text:1.6")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
+    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
+
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:gradle:logging")))
