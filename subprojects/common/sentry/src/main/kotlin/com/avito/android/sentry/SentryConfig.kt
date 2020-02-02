@@ -1,12 +1,9 @@
 package com.avito.android.sentry
 
-import com.avito.kotlin.dsl.getBooleanProperty
-import com.avito.kotlin.dsl.getMandatoryStringProperty
 import io.sentry.SentryClient
 import io.sentry.SentryClientFactory
 import io.sentry.connection.NoopConnection
 import io.sentry.context.ThreadLocalContextManager
-import org.gradle.api.Project
 import java.io.Serializable
 
 fun sentryClient(config: SentryConfig): SentryClient {
@@ -41,27 +38,4 @@ sealed class SentryConfig : Serializable {
         val release: String,
         val tags: Map<String, String>
     ) : SentryConfig()
-
-    companion object {
-
-        fun from(project: Project): SentryConfig {
-            return if (project.getBooleanProperty("avito.sentry.enabled")) {
-                val info = project.environmentInfo().get()
-                val tags = mutableMapOf<String, String>()
-                tags["ide"] = info.isInvokedFromIde().toString()
-                info.teamcityBuildId()?.also { id ->
-                    tags["build_id"] = id
-                }
-                Enabled(
-                    dsn = project.getMandatoryStringProperty("avito.sentry.dsn"),
-                    environment = info.environment.publicName,
-                    serverName = info.node ?: "unknown",
-                    release = info.commit ?: "unknown",
-                    tags = tags
-                )
-            } else {
-                Disabled
-            }
-        }
-    }
 }

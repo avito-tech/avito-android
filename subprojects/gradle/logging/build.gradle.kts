@@ -11,7 +11,7 @@ dependencies {
     implementation(gradleApi())
     implementation("com.github.seratch:jslack:$jslackVersion")
     implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:common:sentry"))
+    implementation(project(":subprojects:gradle:sentry-config"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
 
     testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")

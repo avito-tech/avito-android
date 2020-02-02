@@ -1,6 +1,6 @@
 package com.avito.utils.logging
 
-import com.avito.android.sentry.SentryConfig
+import com.avito.android.sentry.sentryConfig
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
@@ -52,9 +52,9 @@ private fun defaultCILogger(
         formatter = AppendPrefixFormatter(prefix = name),
         destination = StdoutDestination
     )
-    val sentryConfig = SentryConfig.from(project)
+    val sentryConfig = project.sentryConfig
     val sentryHandler = CILoggingHandlerImplementation(
-        destination = SentryDestination(sentryConfig)
+        destination = SentryDestination(sentryConfig.get())
     )
 
     val logger = CILogger(

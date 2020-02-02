@@ -9,10 +9,10 @@ val junitVersion: String by project
 val truthVersion: String by project
 
 dependencies {
-    compile("junit:junit:$junitVersion")
-    compile("com.google.truth:truth:$truthVersion")
-    compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    compile("org.hamcrest:hamcrest-library:$hamcrestVersion")
+    implementation("junit:junit:$junitVersion")
+    implementation("com.google.truth:truth:$truthVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 }

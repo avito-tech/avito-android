@@ -6,18 +6,8 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 
-/**
- * Use [Project.environmentInfo] to gain instance
- */
-interface EnvironmentInfo {
-    val node: String?
-    val environment: Environment
-    val commit: String?
-    fun teamcityBuildId(): String?
-    fun isInvokedFromIde(): Boolean
-}
-
-internal class EnvironmentInfoImpl(private val project: Project, private val git: Git) : EnvironmentInfo {
+internal class EnvironmentInfoImpl(private val project: Project, private val git: Git) :
+    EnvironmentInfo {
 
     override val node: String? by lazy {
         when (environment) {
@@ -69,14 +59,4 @@ internal class EnvironmentInfoImpl(private val project: Project, private val git
     }
 
     override fun isInvokedFromIde() = project.hasProperty("android.injected.invoked.from.ide")
-}
-
-/**
- * @param publicName это название используется в graphite событиях
- */
-sealed class Environment(val publicName: String) {
-    object Local : Environment("local")
-    object Mirakle : Environment("mirakle")
-    object CI : Environment("ci")
-    object Unknown : Environment("_")
 }
