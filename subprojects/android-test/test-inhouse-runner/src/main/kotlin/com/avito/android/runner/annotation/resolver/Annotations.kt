@@ -7,7 +7,8 @@ object Annotations {
 
     /**
      * Get unique (by annotation class) list of runtime retained annotations from (class + method).filter(subset)
-     * Method annotations have priority over class annotations. For example, if you have class with method like that:
+     * Method annotations have priority over class annotations.
+     * For example, if you have class with method like that:
      *
      * @Annotation1
      * @Annotation2("class")
@@ -41,12 +42,11 @@ object Annotations {
             ?: emptyList()
         val classAnnotations = aClass
             .annotations
-            ?.map {
+            .map {
                 UniqueByClassCollectionItemWrapper<Annotation>(
                     it
                 )
             }
-            ?: emptyList()
 
         return methodAnnotations.toSet().plus(classAnnotations)
             .map { it.value }

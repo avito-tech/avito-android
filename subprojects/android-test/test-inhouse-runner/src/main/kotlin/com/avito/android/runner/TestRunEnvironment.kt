@@ -37,7 +37,11 @@ sealed class TestRunEnvironment {
      *
      * @link https://developer.android.com/training/testing/junit-runner#using-android-test-orchestrator
      */
-    object OrchestratorFakeRunEnvironment : TestRunEnvironment()
+    object OrchestratorFakeRunEnvironment : TestRunEnvironment() {
+        override fun toString(): String {
+            return this::class.java.simpleName
+        }
+    }
 
     data class InitError(val error: String) : TestRunEnvironment()
 

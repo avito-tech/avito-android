@@ -1,6 +1,5 @@
 package com.avito.android.runner.annotation.resolver
 
-import com.test.fixtures.ClassWithAnnotation
 import com.test.fixtures.TestAnnotation1
 import com.test.fixtures.TestAnnotation2
 import com.test.fixtures.TestAnnotation3
@@ -78,5 +77,15 @@ class AnnotationsTest {
             (annotations[0] as TestAnnotation3).value,
             Matchers.`is`("method")
         )
+    }
+}
+
+@TestAnnotation1
+@TestAnnotation2
+@TestAnnotation3("class")
+private class ClassWithAnnotation {
+
+    @TestAnnotation3("method")
+    fun method() {
     }
 }

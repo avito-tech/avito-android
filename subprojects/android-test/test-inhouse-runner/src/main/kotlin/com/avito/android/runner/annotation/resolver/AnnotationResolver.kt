@@ -1,7 +1,7 @@
 package com.avito.android.runner.annotation.resolver
 
 /**
- * Used to extract annotation value from test method or class
+ * Extracts annotation value from test method or class
  *
  * see InHouseInstrumentationTestRunner.parseTestAnnotations
  */

@@ -8,16 +8,6 @@ class ClassWithMethod {
     fun method() {}
 }
 
-@TestAnnotation1
-@TestAnnotation2
-@TestAnnotation3("class")
-class ClassWithAnnotation {
-
-    @TestAnnotation3("method")
-    fun method() {
-    }
-}
-
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class TestAnnotation1

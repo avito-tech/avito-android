@@ -3,7 +3,7 @@ package com.avito.android.runner.annotation.resolver
 import java.lang.reflect.Method
 
 /**
- * Work with string representation of methods of class: class#method
+ * Parser for string representation of methods of class: class#method
  */
 object MethodStringRepresentation {
 

@@ -12,7 +12,7 @@ import com.tschuchort.compiletesting.SourceFile
 import org.junit.Rule
 import org.junit.Test
 
-internal class ComponentResolverTest {
+class ComponentResolverTest {
 
     @Test
     fun `resolver - resolves mock web server type - for test with MockApiRule`() {
@@ -37,6 +37,8 @@ internal class ComponentResolverTest {
             )
             .build()
 
+        // TODO: explain why don't we use simple fixtures and build classes on the fly
+        //  It's harder to understand and maintain.
         val aClass = compile(file)
 
         assertThat(NetworkingResolver().resolver(aClass)).isEqualTo(
