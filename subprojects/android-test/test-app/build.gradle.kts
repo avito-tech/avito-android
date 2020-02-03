@@ -30,9 +30,18 @@ android {
         versionCode = 1
         testInstrumentationRunner = "com.avito.android.ui.test.TestAppRunner"
 
+        // TODO: protect from blank values
+        // TODO: get rid of unnecessary values
+        // TODO: describe in docs that they are updated in IDE configuration only after sync!
         testInstrumentationRunnerArguments(
             mapOf(
                 "planSlug" to "AndroidTestApp",
+                "slackToken" to "STUB",
+                "sentryDsn" to "http://stub-project@stub-host/0",
+                "fileStorageUrl" to "https://stub",
+                "reportApiUrl" to "https://stub",
+                "reportApiFallbackUrl" to "https://stub",
+                "reportViewerUrl" to "https://stub",
                 "unnecessaryUrl" to "https://localhost"
             )
         )

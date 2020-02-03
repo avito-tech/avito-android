@@ -36,7 +36,7 @@ class BundleArgsProvider(
         val result: String? = bundle.getString(name)
         if (result == null || result.isBlank()) {
             throw ReporterException(
-                "$name is a mandatory argument; available keys=${bundle.keySet().joinToString(separator = ", ")}"
+                "$name is a mandatory argument; all values=${bundle}"
             )
         } else {
             return result
