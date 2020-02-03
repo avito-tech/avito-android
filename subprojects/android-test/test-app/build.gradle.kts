@@ -70,6 +70,17 @@ android {
 
     testBuildType = "staging"
 
+    /**
+     * Disable all buildTypes except testing
+     * to avoid confusing errors in IDE if wrong build variant is selected
+     */
+    variantFilter {
+        if (name != testBuildType) {
+            setIgnore(true)
+            logger.debug("Build variant $name is omitted for module: $path")
+        }
+    }
+
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
@@ -91,6 +102,7 @@ dependencies {
     androidTestImplementation(project(":subprojects:common:okhttp"))
     androidTestImplementation(project(":subprojects:common:time"))
     androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
+
     androidTestImplementation("junit:junit:$junitVersion")
     androidTestImplementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     androidTestImplementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")

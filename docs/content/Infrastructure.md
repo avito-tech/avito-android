@@ -1,172 +1,128 @@
 ---
-title: Infrastructure publication
+title: Infrastructure project
 type: docs
 ---
 
-# Avito Android Infrastructure
+# Avito android infrastructure on github
+
+Monorepo of all tooling to continuously test and deliver apps to users
+
+## Project structure
+
+Root directory consists of:
+
+- `ci/` and `/*.sh` - we follow [IaC](https://en.wikipedia.org/wiki/Infrastructure_as_code) principle whenever possible, 
+you can see docker images we use to abstract configuration of apps building and testing, as well as testing github project itself.
+- `docs/` - documentation you see right now and code to deploy it automatically. [Documentation of how we do documentation]({{< ref "/contributing/Docs.md" >}})
+- `subprojects/` - all kotlin source code lives here
+
+### Subprojects
+
+Tooling has three separate groups:
+
+- `android-test` - code that goes in androidTestImplementation configuration and runs on emulators
+- `gradle` - gradle plugins and buildscript dependencies
+- `common` - modules shared between android-test and gradle
+
+#### Gradle modules
+
+- `:android` - android gradle plugin extensions, and android sdk wrapper // todo separate
+- `:artifactory` - gradle plugin to back up build artifacts in [artifactory](https://jfrog.com/artifactory/)
+- `:bitbucket` - bitbucket server client to deliver checks results right into pull request context
+via [code insights](https://www.atlassian.com/blog/bitbucket/bitbucket-server-code-insights) and comments
+- `:build-checks` - gradle plugin to early detection of build problems
+- `:build-metrics` - gradle plugin for gathering build metrics and deliver it to [grafana](https://grafana.com/)
+- `:build-properties` - gradle plugin to deliver custom build parameters to android assets
+- [`:cicd`]({{< ref "/ci/CIGradlePlugin.md" >}})
+- `:dependencies-lint` - gradle plugin to detect unused gradle dependencies
+- `:design-screenshots` - gradle plugin, extended tasks to support screenshot testing on top of our `:instrumentation` plugin
+- `:docker` - docker client to work with docker daemon from gradle
+- `:docs-deployer` - gradle plugin to automate documentation deployment (was used to deploy internally //todo remove)
+- `:enforce-repos` - gradle plugin to configure dependencies repositories for internal project
+- `:feature-toggle-report` - gradle plugin to extract feature toggles values from code and report it as build artifact
+- `:files` - utils to work with files and directories
+- `:git` - git client to work within gradle
+- `:impact`, `:impact-plugin` - gradle plugin to search parts of the project we can avoid testing based on diff. 
+See [impact analysis]({{< ref "/ci/ImpactAnalysis.md" >}})
+- `:instrumentation` - gradle plugin to set up and run instrumentation tests on android
+- `:instrumentation-impact-analysis`, `:ui-test-bytecode-analyser` - gradle plugin to search ui tests we can avoid based on `impact-plugin` analysis
+- `:kotlin-config` - gradle plugin to configure kotlin tasks for internal project
+- `:kotlin-dsl-support` - gradle api extensions //todo rename
+- `:kubernetes` - kubernetes credentials config extension
+- `:lint-report` - gradle plugin merging lint reports from different modules
+- `:logging` - custom logger to serialize for gradle workers //todo no longer a problem, remove
+- `:module-type` - gradle plugin to prevent modules go to wrong configurations (android-test module as an app's implementation dependency for example) 
+- `:ownership` - gradle plugin to prevent dependency on other team's private modules
+- `:performance` - gradle plugin, extended tasks to support performance testing on top of our `:instrumentation` plugin
+- `:pre-build` - extensions to add tasks to the early stages of build
+- `:process` - utils to execute external commands from gradle
+- `:prosector` - gradle plugin and client for security service
+- `:qapps` - gradle plugin to deliver apps to internal distribution service, see [QApps]({{< ref "/cd/QApps.md" >}})
+- `:robolectric-config`- gradle plugin to configure [robolectrtic](http://robolectric.org/) for internal project
+- `:room-config` - gradle plugin to configure [room](https://developer.android.com/topic/libraries/architecture/room) for internal project
+- `:runner:client`, `:runner:service`, `:runner:shared`, `:runner:shared-test` - instrumentation tests runner
+- `:sentry-config` - [sentry](https://sentry.io/) client config extension
+- `:signer` - gradle plugin for internal app signer
+- `:slack` - [slack](https://slack.com/) client to work within gradle plugins
+- `:statsd-config` - [statsd](https://github.com/statsd/statsd) client config extension
+- `:teamcity` - wrapper for [teamcity](https://www.jetbrains.com/ru-ru/teamcity/) [client](https://github.com/JetBrains/teamcity-rest-client)
+and [service messages]((https://www.jetbrains.com/help/teamcity/build-script-interaction-with-teamcity.html#BuildScriptInteractionwithTeamCity-ServiceMessages))
+- `:test-project` - [Gradle Test Kit](https://docs.gradle.org/current/userguide/test_kit.html) project generator and utilities
+- `:test-summary` - test suite summary writer
+- `:trace-event` - client for [trace event format](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview)
+- `:upload-cd-build-result` - client for internal "Apps release dashboard" service
+- `:upload-to-googleplay` - wrapper for google publishing api
+- `:utils` - //todo remove 
+
+#### Android-test modules
+
+- `:junit-utils` - //todo move to common
+- `:mockito-utils` - //todo move to common
+- `:resource-manager-exceptions` - //todo remove
+- `:test-annotations` - annotations to supply meta information for reports and [test management system]({{< ref "/test/TestManagementSystem.md" >}})
+- `:test-app` - app we are using to test `:ui-testing-` libraries
+- `:test-inhouse-runner` - custom [android junit runner](https://developer.android.com/reference/android/support/test/runner/AndroidJUnitRunner.html)
+- `:test-report` - client to gather test runtime information for reporting
+- `:ui-testing-core` - main ui testing library, based on [espresso](https://developer.android.com/training/testing/espresso)
+- `:ui-testing-maps` - addon for main library to test google maps scenarios
+- `:websocket-reporter` - client to gather websocket info for reporting
+
+#### Common modules
+
+- `:file-storage` - client for internal file storage client, used to store screenshots, videos and other binary stuff
+- `:okhttp` - okhttp extensions
+- `:sentry` - [sentry]((https://sentry.io/)) client
+- `:statsd` - [statsd]((https://github.com/statsd/statsd)) client
+- `:test-okhttp` - wrapper for [okhttpmockwebserver](https://github.com/square/okhttp/tree/master/mockwebserver)
+- `:time` - simple time api 
+
+## Publishing
+
+1. [Bintray](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
+1. [Inhouse artifactory](http://links.k.avito.ru/androidArtifactory) to check staging version in integration with internal repo
+
+### Teamcity
+
+[Internal project](http://links.k.avito.ru/androidTeamcity)
 
-Open source инфраструктурная часть android проектов Avito.
-
-## Структура проекта
-
-`:android` 
-
-Набор расширений над android gradle plugin и над android sdk (TODO разделить на два модуля)
-
-`:bitbucket`
-
-Клиент для публикации деталей проверок на CI в открытый PullRequest на Bitbucket Server.
-
-`:build-checks`
-
-Gradle plugin для раннего обнаружения проблем в параметрах сборки
-
-`:build-metrics`
-
-Gradle plugin для сбора и отправки метрик сборки (стэк: statsd, graphite, grafana)
-
-`:build-properties`
-
-Gradle plugin для доставки параметров окружения в ассеты сборки android проекта
-
-`/ci/docker/android-builder`
-
-Docker образ для сборки самого проекта Avito Android Infrastructure
-
-`:docker`
-
-Клиент для работы с docker
-
-`:enforce-repos`
-
-Gradle plugin для настройки используемых репозиториев зависимостей
-
-`:file-storage`
-
-Клиент для in-house сервиса хранения бинарных файлов (пример: для скриншотов и видео в отчетах тестов)
-
-`:git`
-
-Обертка для работы с git в gradle
-
-`:impact`, `:impact-plugin`
-
-Gradle Plugin для поиска задетых изменениями модулей относительно target ветки\
-[см. Импакт Анализ]({{< ref "/ci/ImpactAnalysis.md" >}})
-
-`:instrumentation-impact-analysis`, `:ui-test-bytecode-analyser`
-
-Gradle plugin и вспомогательный модуль для поиска связи изменений найденных при помощи `impact-plugin` и UI тестов 
-
-`:kotlin-config`
-
-Gradle plugin для настройки всех kotlin модулей в проектах android-приложениях
-
-`:kotlin-dsl-support`
-
-Расширения, в основном скопированные из kotlin-dsl (но также несколько своих).\
-Нужны для сохранения API в gradle скриптах, т.к. из-за нестабильности kotlin-dsl мы то пользуемся, то отказываемся от него
-
-`:lint-report`
-
-Gradle plugin, который склеивает lint репорты из разных модулей для отображения на одной странице
-
-`:logging`
-
-Кастомный логгер для использования внутри gradle worker'ов, т.к. gradle logger не сериализуется и имеет ссылку на project(todo: уже не актуально)
-
-`:okhttp`
-
-Расширения над okhttp, которыми активно пользуемся как в плагинах так и в android приложении
-
-`:robolectric-config`
-
-Gradle plugin для настройки всех модулей в проектах android-приложениях, которые используют robolectric
-
-`:room-config`
-
-Gradle plugin для настройки всех модулей в проектах android-приложениях, которые используют room
-
-`:runner:client`, `:runner:service`, `:runner:shared`, `:runner:shared-test`
-
-Кастомный раннер для instrumentation тестов
-
-`:sentry`
-
-Клиент для отправки ошибок инфраструктуры и тестов в Sentry
-
-`:signer`
-
-Gradle Plugin для делегирования подписи apk/bundle inhouse сервису
-
-`:slack`
-
-Клиент для удобной публикации нотификаций в slack
-
-`:statsd`
-
-Клиент для отправки метрик через statsd
-
-`:teamcity`
-
-Клиент для работы с Teacmity: обертка для [REST API](https://github.com/JetBrains/teamcity-rest-client) 
-и [service messages](https://www.jetbrains.com/help/teamcity/build-script-interaction-with-teamcity.html#BuildScriptInteractionwithTeamCity-ServiceMessages)
-
-`:test-okhttp` 
-
-Утилиты для тестирования при помощи [okhttpmockwebserver](https://github.com/square/okhttp/tree/master/mockwebserver)
-
-`:test-project`
-
-Утилиты для тестирования при помощи [Gradle Test Kit](https://docs.gradle.org/current/userguide/test_kit.html)
-
-`:time`
-
-API для работы со временем в плагинах и android приложении
-
-`:trace-event`
-
-Клиент для работы с trace event format
-
-- [Specification](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/preview)
-- [Trace-Viewer](https://github.com/catapult-project/catapult/tree/master/tracing)
-
-`:utils`
-
-TODO: разобрать по модулям
-
-## Публикация модулей инфраструктуры
-
-Настроены два типа публикации: 
-1. [Bintray](https://bintray.com/avito-tech/maven/avito-android), которая миррорится в jcenter
-2. И публикация в [inhouse artifactory](http://links.k.avito.ru/androidArtifactory) для проверки неопубликованной версии в интеграции с проектом
-
-### Публикация из Teamcity
-
-В [проекте](http://links.k.avito.ru/androidTeamcity) настроены две соответствующие конфигурации.
-
-Публикация в bintray осуществляется вручную\
-Используется `./publish.sh`
-
-В Artifactory дается возможность указать версию при публикации\
-Используется `./publish_local.sh`
+Bintray publish uses: `./publish.sh`
+Artifactory publish uses: `./publish_local.sh`
 
 ### Gradle
 
 `./gradlew publishToBintray`
 
-Должны быть доступны env:
+environmental argument should be set:
 
 - `BINTRAY_USER`
 - `BINTRAY_API_KEY`
 
 `./gradlew publishToArtifactory`
 
-Должны быть доступны env:
+environmental argument should be set:
 
 - `ARTIFACTORY_URL`
 - `ARTIFACTORY_USER`
 - `ARTIFACTORY_PASSWORD`
 
-Версию можно указать с помощью:\
-env `PROJECT_VERSION` или gradle property `projectVersion`
+To specify a version, use `PROJECT_VERSION` env or `projectVersion` gradle property 
