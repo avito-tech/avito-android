@@ -6,4 +6,4 @@ local.properties
 .pytest_cache
 # hugo generated files
 public/
-*.DS_Store
+.DS_Store
