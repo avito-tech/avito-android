@@ -7,6 +7,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.net.HttpURLConnection
@@ -31,7 +32,7 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
     val slackHook = project.objects.property<String>()
 
     @Input
-    val developersToTeam = project.objects.property<Map<DeveloperEmail, Team>>()
+    val developersToTeam = project.objects.mapProperty<DeveloperEmail, Team>()
 
     @Suppress("unused")
     @TaskAction
@@ -125,7 +126,9 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
         val togglesText = StringBuilder()
         toggles.forEach {
 
-            togglesText.append("> Since:$tabEscaped*${it.changeDate.format(formatter)}*$tabEscaped${it.toggleName}$newLineEscaped")
+            togglesText.append(
+                "> Since:$tabEscaped*${it.changeDate.format(formatter)}*$tabEscaped${it.toggleName}$newLineEscaped"
+            )
         }
         return togglesText
     }
