@@ -21,7 +21,7 @@ docker build --tag android/docs/local docs
 
 docker run --rm \
         --volume "$(pwd)":/app \
-        --volume "$HOME/.ssh":/user/.ssh \
+        --volume "$HOME/.ssh":/home/user/.ssh \
         --volume "${SSH_AUTH_SOCK:-/dev/null}":/tmp/ssh_auth_sock \
         --env "LOCAL_USER_ID=$(id -u)" \
         --env "GITHUB_GIT_USER_NAME=${GITHUB_GIT_USER_NAME}" \
