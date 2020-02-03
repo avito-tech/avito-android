@@ -1,3 +1,4 @@
+import com.android.build.gradle.ProguardFiles.ProguardFile
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
@@ -10,6 +11,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("com.avito.android.instrumentation-tests")
+    id("com.slack.keeper")
 }
 
 val androidXVersion: String by project
@@ -52,6 +54,22 @@ android {
         )
     }
 
+    buildTypes {
+        register("staging") {
+
+            initWith(named("debug").get())
+
+            setMatchingFallbacks("debug")
+
+            isMinifyEnabled = true
+            isShrinkResources = false
+
+            proguardFiles(getDefaultProguardFile(ProguardFile.DONT_OPTIMIZE.fileName), "proguard-rules.pro")
+        }
+    }
+
+    testBuildType = "staging"
+
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
@@ -64,7 +82,6 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:$androidXVersion")
     implementation("com.google.android.material:material:$androidXVersion")
 
-    androidTestImplementation("junit:junit:$junitVersion")
     androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
     androidTestImplementation(project(":subprojects:android-test:test-report"))
     androidTestImplementation(project(":subprojects:android-test:junit-utils"))
@@ -74,6 +91,7 @@ dependencies {
     androidTestImplementation(project(":subprojects:common:okhttp"))
     androidTestImplementation(project(":subprojects:common:time"))
     androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
+    androidTestImplementation("junit:junit:$junitVersion")
     androidTestImplementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     androidTestImplementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
     androidTestImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
