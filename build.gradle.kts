@@ -19,6 +19,10 @@ val kotlinVersion: String by project
 val junit5Version: String by project
 val junit5PlatformVersion: String by project
 val truthVersion: String by project
+val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toString()
+val compileSdk = requireNotNull(project.properties["compileSdkVersion"]).toString().toInt()
+val targetSdk = requireNotNull(project.properties["targetSdkVersion"]).toString()
+val minSdk = requireNotNull(project.properties["minSdkVersion"]).toString()
 
 val publishToBintrayTask = tasks.register<Task>("publishToBintray") {
     group = "publication"
@@ -50,6 +54,25 @@ subprojects {
                 named("main").configure { java.srcDir("src/main/kotlin") }
                 named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
                 named("test").configure { java.srcDir("src/test/kotlin") }
+            }
+
+            buildToolsVersion(buildTools)
+            compileSdkVersion(compileSdk)
+
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_1_8
+                targetCompatibility = JavaVersion.VERSION_1_8
+            }
+
+            defaultConfig {
+                minSdkVersion(minSdk)
+                targetSdkVersion(targetSdk)
+            }
+
+            lintOptions {
+                isAbortOnError = false
+                isWarningsAsErrors = true
+                textReport = true
             }
         }
     }
