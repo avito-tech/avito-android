@@ -228,7 +228,8 @@ val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
 }
 
 tasks.withType<Wrapper> {
-    distributionType = Wrapper.DistributionType.BIN
+    //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
+    distributionType = Wrapper.DistributionType.ALL
     gradleVersion = project.properties["gradleVersion"] as String
 }
 
