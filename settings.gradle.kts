@@ -84,6 +84,11 @@ pluginManagement {
     val infraVersion: String by settings
 
     repositories {
+        mavenLocal {
+            content {
+                includeGroupByRegex("com\\.avito\\.android\\..*")
+            }
+        }
         maven {
             name = "Local Artifactory"
             setUrl("$artifactoryUrl/libs-release-local")
@@ -93,11 +98,6 @@ pluginManagement {
         }
         gradlePluginPortal()
         google()
-        mavenLocal {
-            content {
-                includeGroupByRegex("com\\.avito\\.android\\..*")
-            }
-        }
     }
 
     plugins {

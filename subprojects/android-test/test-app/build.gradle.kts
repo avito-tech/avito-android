@@ -90,11 +90,11 @@ dependencies {
     androidTestImplementation(project(":subprojects:android-test:test-report"))
     androidTestImplementation(project(":subprojects:android-test:junit-utils"))
     androidTestImplementation(project(":subprojects:android-test:test-annotations"))
+    androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
     androidTestImplementation(project(":subprojects:common:report-viewer"))
     androidTestImplementation(project(":subprojects:common:file-storage"))
     androidTestImplementation(project(":subprojects:common:okhttp"))
     androidTestImplementation(project(":subprojects:common:time"))
-    androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
 
     androidTestImplementation("junit:junit:$junitVersion")
     androidTestImplementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
