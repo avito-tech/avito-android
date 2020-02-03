@@ -14,7 +14,7 @@ class AnnotationResolversBasedMetadataInjector(
     override fun inject(instrumentationArguments: Bundle) {
         val fullyQualifiedTestName = instrumentationArguments.getString("class")
 
-        if (fullyQualifiedTestName == null || fullyQualifiedTestName.isBlank()) {
+        if (fullyQualifiedTestName.isNullOrBlank()) {
             throw RuntimeException("Test name not found in instrumentation arguments")
         }
 

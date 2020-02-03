@@ -29,7 +29,7 @@ import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
 
-abstract class InHouseInstrumentationTestRunner() :
+abstract class InHouseInstrumentationTestRunner :
     AndroidJUnitRunner(),
     ReportProvider,
     PerformanceProvider,
@@ -130,7 +130,7 @@ abstract class InHouseInstrumentationTestRunner() :
         instrumentationArguments = arguments
         injectTestMetadata(arguments)
 
-        Log.d(tag, testRunEnvironment.toString())
+        Log.d(tag, "TestRunEnvironment: $testRunEnvironment")
 
         testRunEnvironment.executeIfRealRun {
             initApplicationCrashHandling()
@@ -149,9 +149,9 @@ abstract class InHouseInstrumentationTestRunner() :
         testRunEnvironment.executeIfRealRun {
             Espresso.setFailureHandler(ReportFriendlyFailureHandler(targetContext))
             initUITestConfig()
-        }
 
-        DeviceSettingsChecker(targetContext).check()
+            DeviceSettingsChecker(targetContext).check()
+        }
     }
 
     override fun onStart() {
