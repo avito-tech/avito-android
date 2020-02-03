@@ -96,7 +96,7 @@ and [service messages]((https://www.jetbrains.com/help/teamcity/build-script-int
 - `:test-okhttp` - wrapper for [okhttpmockwebserver](https://github.com/square/okhttp/tree/master/mockwebserver)
 - `:time` - simple time api 
 
-## Publication
+## Publishing
 
 1. [Bintray](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
 1. [Inhouse artifactory](http://links.k.avito.ru/androidArtifactory) to check staging version in integration with internal repo

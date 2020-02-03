@@ -5,7 +5,7 @@ type: docs
 
 # Android in Avito
 
-Multiple projects lives in two repositories:
+Multiple projects live in two repositories:
 
 - avito-android (internal, closed source) - monorepo of all apps and shared libraries
 - avito-android infrastructure on github - monorepo of all tooling to continuously test and deliver apps to users
