@@ -23,25 +23,9 @@ val funktionaleVersion: String by project
 val gsonVersion: String by project
 val kotsonVersion: String by project
 
-//todo cleaner way to get these properties
-val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toString()
-val compileSdk = requireNotNull(project.properties["compileSdkVersion"]).toString().toInt()
-val targetSdk = requireNotNull(project.properties["targetSdkVersion"]).toString()
-val minSdk = requireNotNull(project.properties["minSdkVersion"]).toString()
-
 android {
-    buildToolsVersion(buildTools)
-    compileSdkVersion(compileSdk)
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
 
     defaultConfig {
-        minSdkVersion(minSdk)
-        targetSdkVersion(targetSdk)
-
         versionName = "1.0"
         versionCode = 1
         testInstrumentationRunner = "com.avito.android.ui.test.TestAppRunner"

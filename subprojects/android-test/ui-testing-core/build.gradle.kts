@@ -11,22 +11,6 @@ val androidXVersion: String by project
 val hamcrestVersion: String by project
 val junitVersion: String by project
 
-//todo cleaner way to get these properties
-val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toString()
-val compileSdk = requireNotNull(project.properties["compileSdkVersion"]).toString().toInt()
-val targetSdk = requireNotNull(project.properties["targetSdkVersion"]).toString()
-val minSdk = requireNotNull(project.properties["minSdkVersion"]).toString()
-
-android {
-    buildToolsVersion(buildTools)
-    compileSdkVersion(compileSdk)
-
-    defaultConfig {
-        minSdkVersion(minSdk)
-        targetSdkVersion(targetSdk)
-    }
-}
-
 dependencies {
     api("androidx.test:core:$androidXTestVersion")
     api("androidx.test.espresso:espresso-core:$espressoVersion")

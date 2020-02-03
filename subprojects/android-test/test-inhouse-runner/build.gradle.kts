@@ -5,30 +5,6 @@ plugins {
     id("digital.wup.android-maven-publish")
 }
 
-//todo cleaner way to get these properties
-val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toString()
-val compileSdk = requireNotNull(project.properties["compileSdkVersion"]).toString().toInt()
-val targetSdk = requireNotNull(project.properties["targetSdkVersion"]).toString()
-val minSdk = requireNotNull(project.properties["minSdkVersion"]).toString()
-
-android {
-    buildToolsVersion(buildTools)
-    compileSdkVersion(compileSdk)
-
-    defaultConfig {
-        minSdkVersion(minSdk)
-        targetSdkVersion(targetSdk)
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-}
-
 val okhttpVersion: String by project
 val truthVersion: String by project
 val androidXTestVersion: String by project
