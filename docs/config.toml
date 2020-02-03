@@ -1,4 +1,8 @@
-# https://gohugo.io/getting-started/configuration/
+# Configuration: https://gohugo.io/getting-started/configuration/
+# Theme: https://themes.gohugo.io/hugo-book/
+
+# Always put it on the top of the configuration file, otherwise it won't work
+googleAnalytics = "UA-157613383-1"
 
 baseURL = "https://avito-tech.github.io/avito-android"
 title = "Avito Android"
