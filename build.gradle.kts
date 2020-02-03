@@ -46,7 +46,7 @@ subprojects {
     group = "com.avito.android"
     version = finalProjectVersion
 
-    val sourcesTaskName = "sourceJar"
+    val sourcesTaskName = "sourcesJar"
 
     plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded {
         configure<BaseExtension> {
@@ -79,7 +79,7 @@ subprojects {
 
     plugins.withType<LibraryPlugin> {
         tasks.named<Jar>(sourcesTaskName).configure {
-            classifier = "sources"
+            archiveClassifier.set("sources")
             from(this@withType.extension.sourceSets["main"].java.srcDirs)
         }
     }
@@ -120,13 +120,6 @@ subprojects {
                 }
             }
 
-            publishToBintrayTask.configure {
-                dependsOn(tasks.named("publishAllPublicationsToBintrayRepository"))
-            }
-            publishToArtifactoryTask.configure {
-                dependsOn(tasks.named("publishAllPublicationsToArtifactoryRepository"))
-            }
-
             repositories {
                 maven {
                     name = "bintray"
@@ -150,6 +143,14 @@ subprojects {
                 }
             }
         }
+
+        publishToBintrayTask.configure {
+            dependsOn(tasks.named("publishAllPublicationsToBintrayRepository"))
+        }
+
+        publishToArtifactoryTask.configure {
+            dependsOn(tasks.named("publishAllPublicationsToArtifactoryRepository"))
+        }
     }
 
     plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper> {
@@ -172,10 +173,8 @@ subprojects {
 
     plugins.withId("kotlin") {
 
-        //todo withSourcesJar 6.0 gradle
-        tasks.create<Jar>(sourcesTaskName) {
-            classifier = "sources"
-            from(sourceSets.main.get().allJava)
+        extensions.getByType<JavaPluginExtension>().run {
+            withSourcesJar()
         }
 
         this@subprojects.tasks {
@@ -216,7 +215,7 @@ subprojects {
         }
     }
 
-    tasks.withType(Test::class.java) {
+    tasks.withType<Test> {
         systemProperty("rootDir", "${project.rootDir}")
     }
 }
@@ -228,20 +227,12 @@ val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
     args("config", "core.hooksPath", ".git_hooks")
 }
 
-tasks.named<Wrapper>("wrapper") {
+tasks.withType<Wrapper> {
     distributionType = Wrapper.DistributionType.BIN
     gradleVersion = project.properties["gradleVersion"] as String
 }
 
 project.gradle.startParameter.run { setTaskNames(taskNames + ":${installGitHooksTask.name}") }
-
-fun <T> NamedDomainObjectCollection<T>.namedOrNull(name: String): NamedDomainObjectProvider<T>? {
-    return try {
-        named(name)
-    } catch (e: UnknownDomainObjectException) {
-        null
-    }
-}
 
 val Project.sourceSets: SourceSetContainer
     get() = (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
