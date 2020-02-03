@@ -163,34 +163,24 @@ class KubernetesReservationClient(
                             )
 
                             logger.info("Saving emulator logs for pod: $podName with serial: $serial...")
-                            retry(
-                                retriesCount = 3,
-                                delaySeconds = 1,
-                                block = {
-                                    val podLogs = kubernetesClient.pods().withName(podName).log
-                                    logger.info("Emulators logs saved for pod: $podName with serial: $serial")
+                            try {
+                                val podLogs = kubernetesClient.pods().withName(podName).log
+                                logger.info("Emulators logs saved for pod: $podName with serial: $serial")
 
-                                    logger.info("Saving logcat for pod: $podName with serial: $serial...")
-                                    emulatorsLogsReporter.reportEmulatorLogs(
-                                        emulatorName = serial,
-                                        log = podLogs
-                                    )
-                                    logger.info("Logcat saved for pod: $podName with serial: $serial")
-                                },
-                                attemptFailedHandler = { attempt, throwable ->
-                                    logger.info(
-                                        message = "Attempt to get logs from emulator failed; attempt=$attempt; pod=$podName; container serial=$serial",
-                                        error = throwable
-                                    )
-                                },
-                                actionFailedHandler = { throwable ->
-                                    val podDescription = getPodDescription(podName)
-                                    logger.critical(
-                                        "Get logs from emulator failed; pod=$podName; podDescription=$podDescription; container serial=$serial",
-                                        RuntimeException(podDescription, throwable)
-                                    )
-                                }
-                            )
+                                logger.info("Saving logcat for pod: $podName with serial: $serial...")
+                                emulatorsLogsReporter.reportEmulatorLogs(
+                                    emulatorName = serial,
+                                    log = podLogs
+                                )
+                                logger.info("Logcat saved for pod: $podName with serial: $serial")
+                            } catch (throwable: Throwable) {
+                                // TODO must be fixed after adding affinity to POD
+                                val podDescription = getPodDescription(podName)
+                                logger.critical(
+                                    "Get logs from emulator failed; pod=$podName; podDescription=$podDescription; container serial=$serial",
+                                    RuntimeException(podDescription, throwable)
+                                )
+                            }
 
                             logger.info("Disconnecting device: $serial")
                             device.disconnect().fold(
