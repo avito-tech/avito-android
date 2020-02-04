@@ -55,7 +55,7 @@ android {
             setMatchingFallbacks("debug")
 
             isMinifyEnabled = true
-            isShrinkResources = false
+            isShrinkResources = true
 
             proguardFiles(getDefaultProguardFile(ProguardFile.DONT_OPTIMIZE.fileName), "proguard-rules.pro")
         }

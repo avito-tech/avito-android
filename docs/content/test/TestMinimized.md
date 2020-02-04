@@ -24,3 +24,30 @@ However we could miss some bugs, because debug(not release) sources included, so
 ## Sample
 
 You can check configuration in `:test-app` module.
+
+## If you still have problems 
+
+Keeper can't do all the work here, so if you still can't run test, check these:
+
+### Dynamically referenced resources
+
+You can see in `PageObjectTest`, that we referenced `R.layout.page_object_1`, dynamically creating layout.\
+These layouts referenced nowhere in app code, so if `shrinkResources` enabled you will face strange error:
+
+```text
+error inflating class x
+Caused by: java.lang.ClassNotFoundException: Didn't find class "android.view.x" on path: DexPathList
+```
+
+What it really hides, `R.layout.page_object_1` got shrinked to:
+
+```xml
+<x />
+```
+
+If this is your case, add these resources to `res/raw/keep.xml` like this:
+
+```xml
+<resources xmlns:tools="http://schemas.android.com/tools"
+           tools:keep="@layout/page_object*"/>
+```
