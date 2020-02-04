@@ -76,14 +76,12 @@ class InProcessClickButtonsTest {
     }
 
     @Test
-    @Ignore
     fun button_with_overlapped_click_coordinates_by_non_clickable_element_can_clicked() {
-        Screen.buttons.overlappedByClickable.click()
+        Screen.buttons.overlappedByNonClickable.click()
     }
 
     @Test(expected = UITestFrameworkPerformException::class)
-    @Ignore
     fun button_with_overlapped_click_coordinates_by_clickable_element_cant_clicked() {
-        Screen.buttons.overlappedByNonClickable.click()
+        Screen.buttons.overlappedByClickable.click()
     }
 }

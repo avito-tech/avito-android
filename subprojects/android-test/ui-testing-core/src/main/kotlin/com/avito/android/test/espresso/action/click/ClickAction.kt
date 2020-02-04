@@ -11,6 +11,7 @@ import androidx.test.espresso.action.PrecisionDescriber
 import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.ViewActions.actionWithAssertions
 import com.avito.android.test.espresso.RelativeCoordinatesProvider
+import com.avito.android.test.matcher.ViewCoordinatesNotOverlappedMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
@@ -23,7 +24,7 @@ class ClickAction(
     override fun getDescription(): String = event.description()
 
     override fun getConstraints(): Matcher<View> = Matchers.allOf(
-// TODO enable after fix ViewCoordinatesNotOverlappedMatcher        ViewCoordinatesNotOverlappedMatcher(coordinatesProvider)
+        ViewCoordinatesNotOverlappedMatcher(coordinatesProvider)
     )
 
     override fun perform(uiController: UiController, view: View) {

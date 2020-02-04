@@ -127,7 +127,7 @@
             android:id="@+id/overlapped_by_non_clickable_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Overlapped by non clickable can't click" />
+            android:text="Overlapped by non clickable can click" />
 
         <View
             android:layout_width="1dp"

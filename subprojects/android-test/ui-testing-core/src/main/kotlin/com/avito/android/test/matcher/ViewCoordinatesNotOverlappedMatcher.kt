@@ -19,10 +19,20 @@ class ViewCoordinatesNotOverlappedMatcher(
     override fun matchesSafely(item: View): Boolean {
         val (x, y) = coordinatesProvider.calculateCoordinates(item)
         val overlappingView = item.getAboveVisibleViews()
+            .filter { view -> view.isClickableOnLevelBefore(item) }
             .firstOrNull { view ->
                 RectF(view.getRect()).contains(x, y)
             }
 
         return overlappingView == null
+    }
+
+    private fun View.isClickableOnLevelBefore(target: View): Boolean {
+        val parent = parent
+        return when {
+            isClickable -> true
+            parent is View && parent != target && parent != target.parent -> parent.isClickableOnLevelBefore(target)
+            else -> false
+        }
     }
 }
