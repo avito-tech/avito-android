@@ -78,21 +78,20 @@ subprojects {
     }
 
     plugins.withType<LibraryPlugin> {
-        tasks.named<Jar>(sourcesTaskName).configure {
+        tasks.register<Jar>(sourcesTaskName).configure {
             archiveClassifier.set("sources")
             from(this@withType.extension.sourceSets["main"].java.srcDirs)
         }
     }
 
     plugins.withId("digital.wup.android-maven-publish") {
-        tasks.create<Jar>(sourcesTaskName)
-
         //todo remove afterEvaluate if possible
         afterEvaluate {
             extensions.getByType<PublishingExtension>().run {
                 publications {
                     create<MavenPublication>("mavenAar") {
                         from(components["android"])
+                        artifact(tasks.named(sourcesTaskName).get())
                     }
                 }
             }
@@ -103,19 +102,13 @@ subprojects {
         extensions.getByType<PublishingExtension>().run {
 
             publications {
-                //todo ненадежная проверка, завязана на порядок
+                //todo should not depend on ordering
                 if (plugins.hasPlugin("kotlin") && !plugins.hasPlugin("java-gradle-plugin")) {
                     create<MavenPublication>("maven") {
                         from(components["java"])
                         afterEvaluate {
                             artifactId = this@subprojects.getOptionalExtra("artifact-id") ?: this@subprojects.name
                         }
-                    }
-                }
-
-                withType<MavenPublication> {
-                    if (!name.contains("pluginmarker", ignoreCase = true)) {
-                        artifact(tasks.named(sourcesTaskName).get())
                     }
                 }
             }
@@ -188,7 +181,7 @@ subprojects {
 
                 /**
                  * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
-                 * используется в :test-project
+                 * используется в `:test-project`
                  */
                 systemProperty("isInvokedFromIde",
                     gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null)
