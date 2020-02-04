@@ -2,6 +2,6 @@
 
 set -e
 
-source $(dirname $0)/_main.sh build
+source $(dirname $0)/_main.sh "build publishToMavenLocal"
 
 docs/check.sh
