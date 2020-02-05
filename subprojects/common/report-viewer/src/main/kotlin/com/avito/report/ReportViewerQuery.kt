@@ -9,7 +9,8 @@ import java.util.Base64
 
 class ReportViewerQuery {
 
-    private val encoder = Base64.getEncoder()
+    //todo use a universal encoder (android / jvm)
+    private val encoder by lazy { Base64.getEncoder() }
 
     /**
      * пример ответа: {"filter":{"error":1,"fail":1,"groups":["messenger"],"other":1}}

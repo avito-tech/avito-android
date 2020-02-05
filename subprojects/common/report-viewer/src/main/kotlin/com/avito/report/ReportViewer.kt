@@ -21,9 +21,11 @@ interface ReportViewer {
     fun generateSingleTestRunUrl(testRunId: String): HttpUrl
 
     class Impl(
-        private val host: String,
+        host: String,
         private val reportViewerQuery: ReportViewerQuery = ReportViewerQuery()
     ) : ReportViewer {
+
+        private val host = host.removeSuffix("/")
 
         override fun generateReportUrl(
             reportCoordinates: ReportCoordinates,
