@@ -23,7 +23,7 @@ class AnnotationResolversBasedMetadataInjector(
             when (val switchResolution = annotationResolver.resolve(fullyQualifiedTestName)) {
                 is TestMetadataResolver.Resolution.ReplaceString -> {
                     instrumentationArguments.putString(
-                        annotationResolver.key,
+                        annotationResolver.key, //TODO: protect against accidental collision in keys
                         switchResolution.replacement
                     )
                 }

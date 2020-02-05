@@ -123,13 +123,15 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     /**
-     * Нельзя крешить в этом методе, иначе мы не сможем доставить ошибку до репорта
+     * WARNING: Can't crash in this method.
+     * Otherwise we can't pass an error to the report
      */
     @SuppressLint("LogNotTimber")
     override fun onCreate(arguments: Bundle) {
         instrumentationArguments = arguments
         injectTestMetadata(arguments)
 
+        Log.d(tag, "Instrumentation arguments: $instrumentationArguments")
         Log.d(tag, "TestRunEnvironment: $testRunEnvironment")
 
         testRunEnvironment.executeIfRealRun {
