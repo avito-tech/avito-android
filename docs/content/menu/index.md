@@ -2,13 +2,12 @@
 headless: true
 ---
 
-- [Введение]({{< ref "/" >}})
-- [Ценности]({{< ref "/Values.md" >}})
+- [Introduction]({{< ref "/" >}})
 - [Tech radar]({{< ref "/tech_radar/TechRadar.md" >}})
 
 - Contributing
     - [How to start]({{< ref "/contributing/HowToStart.md" >}})
-    - [Документация]({{< ref "/contributing/Docs.md" >}})
+    - [Documentation]({{< ref "/contributing/Docs.md" >}})
     - [Code Review]({{< ref "/contributing/CodeReview.md" >}})
     - [Code Style]({{< ref "/contributing/CodeStyle.md" >}})
     - [Feature Toggles]({{< ref "/contributing/FeatureToggles.md" >}})
@@ -62,5 +61,4 @@ headless: true
     - [QApps]({{< ref "/cd/QApps.md" >}})
 - [Infrastructure (Github project)]({{< ref "/Infrastructure.md" >}})
 
-- [Архитектура]({{< ref "/ArchitectureGuidelines.md" >}})
 - [Внешние библиотеки]({{< ref "/ExternalLibraryChangeProcess.md" >}})

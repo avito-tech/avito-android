@@ -1,9 +1,9 @@
 ---
-title: Работа с документацией
+title: Documentation
 type: docs
 ---
 
-# Документация
+# Documentation
 
 ## Подходы
 
@@ -304,11 +304,15 @@ Markdown content
 
 ## How to
 
-### Как посмотреть локально?
+### Run locally
 
-Запусти `docs/local.sh`
+Run: `docs/local.sh`\
+It will open documentation at `localhost:1313`. You can edit content on the fly.
 
-Документация будет доступна по `localhost:1313` и обновляться при редактировании.
+### Publish changes
+
+Run manually after changes: `docs/publish.sh`\
+Auto-publish: MBS-7514.
 
 ### Как обновить hugo?
 
@@ -339,16 +343,3 @@ Markdown content
 - Отображаются диаграммы (mermaid)
 
 [Hugo troubleshooting](https://gohugo.io/troubleshooting/faq/)
-
-## Развертывание в CI
-
-Обновляем документацию на каждый новый коммит в develop.\
-Смотри реализацию в gradle plugin `com.avito.android.docs`
-
-### Task :checkDocs
-
-Проверяет на пулл реквесте связанность внутренних ссылок по документации.
-
-### Task :deployDocs
-
-Выкладывает обновленную документацию в kubernetes после мерджа пулл-реквестов.

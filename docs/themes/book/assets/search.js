@@ -10,12 +10,32 @@
   input.addEventListener('focus', init);
   input.addEventListener('keyup', search);
 
+  document.addEventListener('keypress', focusSearchFieldOnKeyPress);
+
+  function focusSearchFieldOnKeyPress(e) {
+    if (input === document.activeElement) {
+      return;
+    }
+
+    const characterPressed = String.fromCharCode(e.charCode);
+    if (!isHotkey(characterPressed)) {
+      return;
+    }
+
+    input.focus();
+    e.preventDefault();
+  }
+
+  function isHotkey(character) {
+    const dataHotkeys = input.getAttribute('data-hotkeys') || '';
+    return dataHotkeys.indexOf(character) >= 0;
+  }
+
   function init() {
     input.removeEventListener('focus', init); // init once
     input.required = true;
 
-    //loadScript('{{ "flexsearch.min.js" | relURL }}'); We don't want to store such files in repo
-    loadScript('https://unpkg.com/flexsearch@0.6.30/dist/flexsearch.min.js');
+    loadScript('{{ "flexsearch.min.js" | relURL }}');
     loadScript('{{ $searchData.RelPermalink }}', function() {
       input.required = false;
       search();
