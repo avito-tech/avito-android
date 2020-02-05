@@ -2,6 +2,7 @@ package com.avito.android.test.report.transport
 
 import android.os.Looper
 import com.avito.android.test.report.ReportState
+import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.DeviceName
@@ -13,12 +14,11 @@ import com.avito.report.model.TestStaticDataPackage
 class LocalRunTransport(
     reportApiHost: String,
     reportFallbackUrl: String,
-    private val reportResultEndpoint: String,
+    reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val deviceName: DeviceName,
     private val logger: (String, Throwable?) -> Unit,
     private val reportsApi: ReportsApi = ReportsApi.create(
-        //todo пробросить параметром
         host = reportApiHost,
         fallbackUrl = reportFallbackUrl,
         logger = logger
@@ -26,6 +26,8 @@ class LocalRunTransport(
 ) : Transport, PreTransportMappers {
 
     private val localBuildId: String? = null
+
+    private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl)
 
     override fun send(state: ReportState.Initialized.Started) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -75,28 +77,23 @@ class LocalRunTransport(
                         startTime = state.startTime,
                         endTime = state.endTime
                     ),
-                    //для локального запуска смотрим в logcat
+                    //local runs already has logcat in place
                     stdout = "",
                     stderr = ""
                 )
             )
 
-            logger("Report sent $result", null)
             logger(
-                "Report link for test ${testName.name}: $reportResultEndpoint/${result.get()}",
+                "Report link for test ${testName.name}: ${reportViewer.generateSingleTestRunUrl(result.get())}",
                 null
             )
 
             if (reportCoordinates.runId.contains("local", ignoreCase = true)) {
-                //todo как-то на девайсе отобразить что ссылка на отчет ждет вас в logcat
+                //todo find a way to display info in user context, it's a secret knowledge about logcat line
             }
 
         } catch (e: Exception) {
             logger("Report send failed", e)
         }
-    }
-
-    companion object {
-        const val TAG = "TestWarehouseReporter"
     }
 }
