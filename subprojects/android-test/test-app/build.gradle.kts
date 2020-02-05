@@ -22,6 +22,7 @@ val junitVersion: String by project
 val funktionaleVersion: String by project
 val gsonVersion: String by project
 val kotsonVersion: String by project
+val r8Version: String by project
 
 android {
 
@@ -80,6 +81,8 @@ android {
 }
 
 dependencies {
+    keeperR8("com.android.tools:r8:$r8Version")
+
     implementation("com.google.android.gms:play-services-maps:17.0.0")
 
     implementation("androidx.appcompat:appcompat:$androidXVersion")

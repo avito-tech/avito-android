@@ -5,6 +5,17 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+buildscript {
+    val r8Version: String by project
+
+    repositories {
+        maven { setUrl("http://storage.googleapis.com/r8-releases/raw") }
+    }
+    dependencies {
+        classpath("com.android.tools:r8:$r8Version")
+    }
+}
+
 plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
