@@ -66,7 +66,7 @@ internal class ReportRule(
             LocalRunTransport(
                 reportApiHost = "", // TODO required?
                 reportFallbackUrl = "", // TODO required
-                reportResultEndpoint = "", // TODO required
+                reportViewerUrl = "", // TODO required
                 reportCoordinates = testRunCoordinates,
                 deviceName = DeviceName(deviceName),
                 logger = logger

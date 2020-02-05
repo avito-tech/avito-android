@@ -80,7 +80,7 @@ class ReportImplementation(
             LocalRunTransport(
                 reportApiHost = reportApiUrl,
                 reportFallbackUrl = reportApiFallbackUrl,
-                reportResultEndpoint = reportViewerUrl,
+                reportViewerUrl = reportViewerUrl,
                 reportCoordinates = testRunCoordinates,
                 deviceName = DeviceName(deviceName),
                 logger = logger
