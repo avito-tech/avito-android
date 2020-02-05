@@ -78,7 +78,7 @@ if (syncAndroidModules.toBoolean()) {
 
 pluginManagement {
 
-    val artifactoryUrl: String by settings
+    val artifactoryUrl: String? by settings
     val kotlinVersion: String by settings
     val androidGradlePluginVersion: String by settings
     val infraVersion: String by settings
@@ -89,11 +89,13 @@ pluginManagement {
                 includeGroupByRegex("com\\.avito\\.android\\..*")
             }
         }
-        maven {
-            name = "Local Artifactory"
-            setUrl("$artifactoryUrl/libs-release-local")
-            content {
-                includeGroupByRegex("com\\.avito\\.android\\..*")
+        if (!artifactoryUrl.isNullOrBlank()) {
+            maven {
+                name = "Local Artifactory"
+                setUrl("$artifactoryUrl/libs-release-local")
+                content {
+                    includeGroupByRegex("com\\.avito\\.android\\..*")
+                }
             }
         }
         gradlePluginPortal()

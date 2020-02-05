@@ -3,6 +3,7 @@
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -21,7 +22,7 @@ plugins {
     id("com.android.application") apply false
 }
 
-val artifactoryUrl: String by project
+val artifactoryUrl: String? by project
 val projectVersion: String by project
 val buildToolsVersion: String by project
 val javaVersion: String by project
@@ -109,12 +110,18 @@ subprojects {
         }
     }
 
+    plugins.withType<JavaGradlePluginPlugin> {
+        extensions.getByType<GradlePluginDevelopmentExtension>().run {
+            isAutomatedPublishing = false
+        }
+    }
+
     plugins.withType<MavenPublishPlugin> {
         extensions.getByType<PublishingExtension>().run {
 
             publications {
                 //todo should not depend on ordering
-                if (plugins.hasPlugin("kotlin") && !plugins.hasPlugin("java-gradle-plugin")) {
+                if (plugins.hasPlugin("kotlin")) {
                     create<MavenPublication>("maven") {
                         from(components["java"])
                         afterEvaluate {
@@ -137,12 +144,14 @@ subprojects {
                     }
                 }
 
-                maven {
-                    name = "artifactory"
-                    setUrl("$artifactoryUrl/libs-release-local")
-                    credentials {
-                        username = System.getenv("ARTIFACTORY_USER")
-                        password = System.getenv("ARTIFACTORY_PASSWORD")
+                if (!artifactoryUrl.isNullOrBlank()) {
+                    maven {
+                        name = "artifactory"
+                        setUrl("$artifactoryUrl/libs-release-local")
+                        credentials {
+                            username = System.getenv("ARTIFACTORY_USER")
+                            password = System.getenv("ARTIFACTORY_PASSWORD")
+                        }
                     }
                 }
             }
@@ -152,12 +161,14 @@ subprojects {
             dependsOn(tasks.named("publishAllPublicationsToBintrayRepository"))
         }
 
-        publishToArtifactoryTask.configure {
-            dependsOn(tasks.named("publishAllPublicationsToArtifactoryRepository"))
+        if (!artifactoryUrl.isNullOrBlank()) {
+            publishToArtifactoryTask.configure {
+                dependsOn(tasks.named("publishAllPublicationsToArtifactoryRepository"))
+            }
         }
     }
 
-    plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper> {
+    plugins.withType<KotlinBasePluginWrapper> {
         this@subprojects.run {
             tasks {
                 withType<KotlinCompile> {
