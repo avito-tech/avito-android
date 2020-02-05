@@ -3,7 +3,6 @@ headless: true
 ---
 
 - [Introduction]({{< ref "/" >}})
-- [Ценности]({{< ref "/Values.md" >}})
 - [Tech radar]({{< ref "/tech_radar/TechRadar.md" >}})
 
 - Contributing
@@ -62,5 +61,4 @@ headless: true
     - [QApps]({{< ref "/cd/QApps.md" >}})
 - [Infrastructure (Github project)]({{< ref "/Infrastructure.md" >}})
 
-- [Архитектура]({{< ref "/ArchitectureGuidelines.md" >}})
 - [Внешние библиотеки]({{< ref "/ExternalLibraryChangeProcess.md" >}})
