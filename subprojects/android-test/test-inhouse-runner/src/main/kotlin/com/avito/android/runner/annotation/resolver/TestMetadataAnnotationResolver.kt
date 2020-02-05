@@ -33,8 +33,6 @@ class TestMetadataAnnotationResolver(
     override val key: String = TEST_METADATA_KEY
 
     override fun resolve(test: String): TestMetadataResolver.Resolution {
-        val methodResolution = MethodStringRepresentation.parseString(test)
-
         val subset = arrayOf(
             FunctionalTest::class.java,
             PerformanceFunctionalTest::class.java,
@@ -58,6 +56,7 @@ class TestMetadataAnnotationResolver(
 
         var testClass: Class<*>? = null
         var method: Method? = null
+        val methodResolution = MethodStringRepresentation.parseString(test)
 
         val annotationsExtractingResult = when (methodResolution) {
 
