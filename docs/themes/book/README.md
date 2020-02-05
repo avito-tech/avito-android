@@ -1,6 +1,6 @@
 # Hugo Book Theme
 
-[![Hugo](https://img.shields.io/badge/hugo-0.56-blue.svg)](https://gohugo.io)
+[![Hugo](https://img.shields.io/badge/hugo-0.60-blue.svg)](https://gohugo.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ### [Hugo](https://gohugo.io) documentation theme as simple as plain book
@@ -22,13 +22,13 @@
 - Light and Mobile-Friendly
 - Multi-language support
 - Customisable
-- Designed to not interfere with other layouts
 - Zero initial configuration
 - Handy shortcodes
+- Optional support for Disqus
 
 ## Requirements
 
-- Hugo 0.56 or higher
+- Hugo 0.60 or higher
 - Hugo extended version, read more [here](https://gohugo.io/news/0.48-relnotes/)
 
 ## Installation
@@ -118,6 +118,10 @@ You can also see `yaml` example [here](https://github.com/alex-shpak/hugo-book/b
 # Always put it on the top of the configuration file, otherwise it won't work
 googleAnalytics = "UA-XXXXXXXXX-X"
 
+# (Optional) If you provide a Disqus shortname, comments will be enabled on
+# all pages.
+disqusShortname = "my-site"
+
 # (Optional) Set this to true if you use capital letters in file names
 disablePathToLower = true
 
@@ -130,10 +134,10 @@ enableGitInfo = true
 disableKinds = ['taxonomy', 'taxonomyTerm']
   
 [params]
-  # (Optional, default 6) Set how many table of contents levels to be showed on page.
-  # Use false to hide ToC, note that 0 will default to 6 (https://gohugo.io/functions/default/)
-  # You can also specify this parameter per page in front matter
-  BookToC = 3
+  # (Optional, default true) Controls table of contents visibility on right side of pages.
+  # Start and end levels can be controlled with markup.tableOfContents setting.
+  # You can also specify this parameter per page in front matter.
+  BookToC = true
   
   # (Optional, default none) Set the path to a logo for the book. If the logo is
   # /static/logo.png then the path would be 'logo.png'
@@ -163,7 +167,14 @@ disableKinds = ['taxonomy', 'taxonomyTerm']
   
   # (Optional, default true) Enables search function with flexsearch,
   # Index is built on fly, therefore it might slowdown your website.
+  # Configuration for indexing can be adjusted in i18n folder per language.
   BookSearch = true
+
+  # (Optional, default true) Enables comments template on pages
+  # By default partals/docs/comments.html includes Disqus template
+  # See https://gohugo.io/content-management/comments/#configure-disqus
+  # Can be overwritten by same param in page frontmatter
+  BookComments = true
 ```
 
 ### Multi-Language Support
@@ -189,8 +200,11 @@ bookCollapseSection = true
 # (Optional) Set true to hide page or section from side menu (if BookMenuBundle not set)
 bookHidden = true
 
-# (Optional) Set how many levels of ToC to show. use 'false' to hide ToC completely
-bookToC = 3
+# (Optional) Set 'false' to hide ToC from page
+bookToC = true
+
+# (Optional) If you have enabled BookComments for the site, you can disable it for specific pages.
+bookComments = true
 ```
 
 ### Partials
@@ -315,6 +329,12 @@ x = \begin{cases}
 \end{cases}
 {{< /katex >}}
 ```
+
+## Versioning
+
+Theme follows simple incremental versioning. e.g. `v1`, `v2` and so on. There might be breaking changes between versions.
+
+If you want lower maintenance use one of released versions. If you want to live on the edge of changes you can use `master` branch and update your website when needed.
 
 ## Contributing
 

@@ -2,13 +2,13 @@
 headless: true
 ---
 
-- [Введение]({{< ref "/" >}})
+- [Introduction]({{< ref "/" >}})
 - [Ценности]({{< ref "/Values.md" >}})
 - [Tech radar]({{< ref "/tech_radar/TechRadar.md" >}})
 
 - Contributing
     - [How to start]({{< ref "/contributing/HowToStart.md" >}})
-    - [Документация]({{< ref "/contributing/Docs.md" >}})
+    - [Documentation]({{< ref "/contributing/Docs.md" >}})
     - [Code Review]({{< ref "/contributing/CodeReview.md" >}})
     - [Code Style]({{< ref "/contributing/CodeStyle.md" >}})
     - [Feature Toggles]({{< ref "/contributing/FeatureToggles.md" >}})
