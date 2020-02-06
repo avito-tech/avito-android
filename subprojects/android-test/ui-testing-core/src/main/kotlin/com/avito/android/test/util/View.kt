@@ -4,13 +4,15 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.util.TreeIterables
 
 internal fun View.getAboveVisibleViews(): List<View> {
+    val isVisible = ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
     return TreeIterables.breadthFirstViewTraversal(this.rootView)
         .dropWhile { it != this }
         .drop(1)
-        .filter { it.visibility == View.VISIBLE }
+        .filter { isVisible.matches(it) }
 }
 
 internal fun canHandleClick(view: View?): Boolean {
