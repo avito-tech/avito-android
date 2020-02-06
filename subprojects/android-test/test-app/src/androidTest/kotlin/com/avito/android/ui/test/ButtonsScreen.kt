@@ -33,4 +33,5 @@ class ButtonsScreen : PageObject(), Screen {
 
     val overlappedByClickable = element<ViewElement>(withId(R.id.overlapped_by_clickable_button))
     val overlappedByNonClickable = element<ViewElement>(withId(R.id.overlapped_by_non_clickable_button))
+    val deeperButton = element<ViewElement>(withId(R.id.deeper_button))
 }

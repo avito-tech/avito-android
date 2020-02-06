@@ -4,7 +4,6 @@ import com.avito.android.runner.UITestFrameworkPerformException
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.util.ClicksTypeRule
 import com.avito.android.ui.ButtonsActivity
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -78,6 +77,11 @@ class InProcessClickButtonsTest {
     @Test
     fun button_with_overlapped_click_coordinates_by_non_clickable_element_can_clicked() {
         Screen.buttons.overlappedByNonClickable.click()
+    }
+
+    @Test
+    fun button_can_be_overlapped_only_by_deeper_views() {
+        Screen.buttons.deeperButton.click()
     }
 
     @Test(expected = UITestFrameworkPerformException::class)

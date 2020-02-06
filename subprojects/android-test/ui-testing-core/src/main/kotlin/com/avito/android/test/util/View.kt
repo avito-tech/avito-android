@@ -9,7 +9,7 @@ import androidx.test.espresso.util.TreeIterables
 
 internal fun View.getAboveVisibleViews(): List<View> {
     val isVisible = ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
-    return TreeIterables.breadthFirstViewTraversal(this.rootView)
+    return TreeIterables.depthFirstViewTraversal(this.rootView)
         .dropWhile { it != this }
         .drop(1)
         .filter { isVisible.matches(it) }

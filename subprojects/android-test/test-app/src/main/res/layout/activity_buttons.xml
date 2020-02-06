@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_buttons_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:ignore="HardcodedText">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/activity_buttons_root"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:ignore="HardcodedText">
 
     <Button
         android:id="@+id/button_enabled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enabled" />
+        android:text="Enabled"/>
 
     <TextView
         android:id="@+id/button_enabled_clicked_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Clicked"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/button_enabled_long_clicked_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Long clicked"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/button_disabled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="Disabled" />
+        android:text="Disabled"/>
 
     <Button
         android:id="@+id/button_non_clickable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Non clickable" />
+        android:text="Non clickable"/>
 
     <Button
         android:id="@+id/button_non_long_clickable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Non long-clickable" />
+        android:text="Non long-clickable"/>
 
     <TextView
         android:id="@+id/button_non_long_clickable_clicked_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Clicked"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/clickable_container"
@@ -65,14 +65,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:text="Non clickable inside clickable" />
+            android:text="Non clickable inside clickable"/>
 
         <TextView
             android:id="@+id/clickable_container_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Clicked"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </LinearLayout>
 
@@ -89,14 +89,14 @@
             android:layout_height="wrap_content"
             android:clickable="false"
             android:longClickable="false"
-            android:text="Non long-clickable inside long-clickable" />
+            android:text="Non long-clickable inside long-clickable"/>
 
         <TextView
             android:id="@+id/long_clickable_container_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Long-clicked"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </LinearLayout>
 
@@ -108,14 +108,14 @@
             android:id="@+id/overlapped_by_clickable_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Overlapped by clickable can't click" />
+            android:text="Overlapped by clickable can't click"/>
 
         <Button
             android:layout_width="1dp"
             android:layout_height="1dp"
             android:layout_gravity="center"
             android:background="@color/black"
-            android:text="Overlapping" />
+            android:text="Overlapping"/>
 
     </FrameLayout>
 
@@ -127,14 +127,35 @@
             android:id="@+id/overlapped_by_non_clickable_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Overlapped by non clickable can click" />
+            android:text="Overlapped by non clickable can click"/>
 
         <View
             android:layout_width="1dp"
             android:layout_height="1dp"
             android:layout_gravity="center"
             android:background="@color/black"
-            android:clickable="false" />
+            android:clickable="false"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Shallow view"/>
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/deeper_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Deeper button"/>
 
     </FrameLayout>
 
