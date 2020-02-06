@@ -58,7 +58,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
 
-            proguardFiles(getDefaultProguardFile(ProguardFile.DONT_OPTIMIZE.fileName), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile(ProguardFile.OPTIMIZE.fileName), "proguard-rules.pro")
         }
     }
 
@@ -88,6 +88,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:$androidXVersion")
     implementation("androidx.recyclerview:recyclerview:$androidXVersion")
     implementation("com.google.android.material:material:$androidXVersion")
+    implementation(project(":subprojects:android-test:mediator"))
 
     androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
     androidTestImplementation(project(":subprojects:android-test:test-report"))
@@ -108,6 +109,8 @@ dependencies {
     androidTestImplementation("io.sentry:sentry:$sentryVersion")
     androidTestImplementation("com.google.truth:truth:$truthVersion")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
+    androidTestImplementation(project(":subprojects:android-test:synth-test-module"))
+
 }
 
 tasks.getByName("build").dependsOn("$path:instrumentationUi")
