@@ -50,9 +50,11 @@ If this is your case, add these resources to `res/raw/keep.xml` like this:
            tools:keep="@layout/page_object*"/>
 ```
 
-### Try latest stable version of R8
+### X already has a mapping
 
-Some issues probably solved in new version of r8. For example: ["already has a mapping" one](https://issuetracker.google.com/issues/122924648)
+[Issue #122924648](https://issuetracker.google.com/issues/122924648) - Solved in a 1.6.x
+
+Some issues could be solved in a new version of r8, you should consider upgrading before hacking further.
 
 By default, r8 bundled with android gradle plugin, but you can override it.
 
@@ -87,3 +89,18 @@ dependencies {
 ```
 
 {{< /hint >}}
+
+### Still NoSuchMethodError 
+
+Take a look at module `:subprojects:android-test:keep-for-testing` for additional keep annotations.\
+It's a workaround described here: [Issue #143419092](https://issuetracker.google.com/issues/143419092#comment4)
+
+You still need to add proguard rules as pointed in annotation classes comments.
+
+> Why not package proguard rules?
+
+In this case rules goes into all variants, and you only want tested one.
+
+> Why not use original @Keep?
+
+Just to distinguish an intent, it's for testing and only in tested variant

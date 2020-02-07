@@ -65,8 +65,7 @@ include(":subprojects:android-test:websocket-reporter")
 include(":subprojects:android-test:mockito-utils")
 include(":subprojects:android-test:junit-utils")
 include(":subprojects:android-test:test-annotations")
-include(":subprojects:android-test:synth-test-module")
-include(":subprojects:android-test:mediator")
+include(":subprojects:android-test:keep-for-testing")
 
 // see gradle.properties flag explanation
 val syncAndroidModules: String by settings
