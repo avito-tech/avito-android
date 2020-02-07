@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -25,6 +26,7 @@ gradlePlugin {
         create("featureTogglesReport") {
             id = "com.avito.android.feature-toggles"
             implementationClass = "com.avito.android.plugin.FeatureTogglesPlugin"
+            displayName = "Feature-toggle reporter"
         }
     }
 }

@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -36,6 +37,7 @@ gradlePlugin {
         create("buildChecks") {
             id = "com.avito.android.buildchecks"
             implementationClass = "com.avito.android.plugin.build_param_check.BuildParamCheckPlugin"
+            displayName = "Build checks"
         }
     }
 }

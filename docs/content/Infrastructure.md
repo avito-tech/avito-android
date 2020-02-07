@@ -110,12 +110,17 @@ Artifactory publish uses: `./publish_local.sh`
 
 ### Gradle
 
-`./gradlew publishToBintray`
+`./gradlew publishRelease`
 
 environmental argument should be set:
 
 - `BINTRAY_USER`
 - `BINTRAY_API_KEY`
+
+gradle properties should be set:
+
+- `gradle.publish.key`
+- `gradle.publish.secret`
 
 `./gradlew publishToArtifactory`
 

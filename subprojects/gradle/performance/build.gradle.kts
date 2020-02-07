@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -49,6 +50,7 @@ gradlePlugin {
         create("com.avito.android.performance") {
             id = "com.avito.android.performance"
             implementationClass = "com.avito.performance.PerformancePlugin"
+            displayName = "Performance testing"
         }
     }
 }

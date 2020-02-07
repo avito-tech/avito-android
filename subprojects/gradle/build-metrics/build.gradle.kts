@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -28,6 +29,7 @@ gradlePlugin {
         create("buildMetrics") {
             id = "com.avito.android.build-metrics"
             implementationClass = "com.avito.android.plugin.build_metrics.BuildMetricsPlugin"
+            displayName = "Build metrics"
         }
     }
 }

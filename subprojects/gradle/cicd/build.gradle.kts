@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -22,7 +23,7 @@ dependencies {
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:lint-report"))
     implementation(project(":subprojects:gradle:instrumentation"))
-    implementation(project(":subprojects:gradle:artifactory"))
+    implementation(project(":subprojects:gradle:artifactory-app-backup"))
     implementation(project(":subprojects:gradle:performance"))
     implementation(project(":subprojects:gradle:qapps"))
     implementation(project(":subprojects:gradle:teamcity"))
@@ -33,7 +34,7 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:gradle:artifactory")))
+    testImplementation(testFixtures(project(":subprojects:gradle:artifactory-app-backup")))
 }
 
 configurations.all {
@@ -48,6 +49,7 @@ gradlePlugin {
         create("cicd") {
             id = "com.avito.android.cd"
             implementationClass = "com.avito.ci.CdPlugin"
+            displayName = "CI/CD"
         }
     }
 }

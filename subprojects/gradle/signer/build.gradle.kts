@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -32,6 +33,7 @@ gradlePlugin {
         create("signer") {
             id = "com.avito.android.signer"
             implementationClass = "com.avito.plugin.SignServicePlugin"
+            displayName = "Signer"
         }
     }
 }

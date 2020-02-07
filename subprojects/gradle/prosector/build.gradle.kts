@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -29,6 +30,7 @@ gradlePlugin {
         create("prosector") {
             id = "com.avito.android.prosector"
             implementationClass = "ProsectorPlugin"
+            displayName = "Prosector"
         }
     }
 }

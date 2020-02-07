@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -34,6 +35,7 @@ gradlePlugin {
         create("lintReport") {
             id = "com.avito.android.lint-report"
             implementationClass = "com.avito.android.lint.LintReportPlugin"
+            displayName = "Lint reports merge"
         }
     }
 }

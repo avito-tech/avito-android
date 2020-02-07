@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -21,6 +22,7 @@ gradlePlugin {
         create("codeOwnershipPlugin") {
             id = "com.avito.android.code-ownership"
             implementationClass = "com.avito.android.CodeOwnershipPlugin"
+            displayName = "Ownership"
         }
     }
 }

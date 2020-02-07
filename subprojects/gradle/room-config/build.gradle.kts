@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -20,6 +21,7 @@ gradlePlugin {
         create("roomConfig") {
             id = "com.avito.android.room-config"
             implementationClass = "com.avito.android.plugin.RoomConfigPlugin"
+            displayName = "Room config"
         }
     }
 }

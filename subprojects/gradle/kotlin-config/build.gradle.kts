@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -18,6 +19,7 @@ gradlePlugin {
         create("kotlinRootConfig") {
             id = "com.avito.android.kotlin-root"
             implementationClass = "com.avito.android.plugin.KotlinRootConfigPlugin"
+            displayName = "Kotlin config"
         }
     }
 }

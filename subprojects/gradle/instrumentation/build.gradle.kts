@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     id("java-test-fixtures")
     `maven-publish`
@@ -72,11 +73,13 @@ gradlePlugin {
         create("functionalTests") {
             id = "com.avito.android.instrumentation-tests"
             implementationClass = "com.avito.instrumentation.InstrumentationTestsPlugin"
+            displayName = "Instrumentation tests"
         }
 
         create("defaultConfig") {
             id = "com.avito.android.instrumentation-tests-default-config"
             implementationClass = "com.avito.instrumentation.InstrumentationDefaultConfigPlugin"
+            displayName = "Instrumentation tests default configuration"
         }
     }
 }

@@ -3,6 +3,8 @@
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryPlugin
+import com.gradle.publish.PluginBundleExtension
+import com.gradle.publish.PublishPlugin
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
 import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
@@ -24,6 +26,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
+    id("com.gradle.plugin-publish") version "0.10.1" apply false
 }
 
 val artifactoryUrl: String? by project
@@ -44,6 +47,8 @@ val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
     group = "publication"
 }
 
+val publishReleaseTaskName = "publishRelease"
+
 val finalProjectVersion: String = System.getenv("PROJECT_VERSION").let { env ->
     if (env.isNullOrBlank()) projectVersion else env
 }
@@ -57,6 +62,10 @@ subprojects {
 
     group = "com.avito.android"
     version = finalProjectVersion
+
+    tasks.register(publishReleaseTaskName) {
+        group = "publication"
+    }
 
     val sourcesTaskName = "sourcesJar"
 
@@ -115,9 +124,16 @@ subprojects {
         }
     }
 
-    plugins.withType<JavaGradlePluginPlugin> {
-        extensions.getByType<GradlePluginDevelopmentExtension>().run {
-            isAutomatedPublishing = false
+    plugins.withType<PublishPlugin> {
+        extensions.getByType<PluginBundleExtension>().run {
+            website = "https://avito-tech.github.io/avito-android"
+            vcsUrl = "https://github.com/avito-tech/avito-android"
+            description = "Avito Android Plugin"
+            tags = setOf("android", "tooling", "avito")
+        }
+
+        tasks.named(publishReleaseTaskName).configure {
+            dependsOn("publishPlugins")
         }
     }
 
@@ -137,7 +153,10 @@ subprojects {
                     }
 
                     afterEvaluate {
-                        configureBintray(publicationName)
+                        //todo should not depend on ordering
+                        if (!plugins.hasPlugin("java-gradle-plugin")) {
+                            configureBintray(publicationName)
+                        }
                     }
                 }
             }
@@ -279,9 +298,7 @@ fun Project.configureBintray(vararg publications: String) {
         })
     }
 
-    tasks.register("publishToBintray") {
-        group = "publication"
-
+    tasks.named(publishReleaseTaskName).configure {
         dependsOn(tasks.named("bintrayUpload"))
     }
 }

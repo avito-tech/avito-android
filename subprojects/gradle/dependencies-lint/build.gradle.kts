@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -30,6 +31,7 @@ gradlePlugin {
         create("dependenciesLintPlugin") {
             id = "com.avito.android.dependencies-lint"
             implementationClass = "com.avito.android.lint.DependenciesLintPlugin"
+            displayName = "Dependencies lint"
         }
     }
 }

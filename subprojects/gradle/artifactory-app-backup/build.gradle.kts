@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("java-test-fixtures")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -26,6 +27,7 @@ gradlePlugin {
         create("artifactory") {
             id = "com.avito.android.artifactory-app-backup"
             implementationClass = "com.avito.android.plugin.artifactory.ArtifactoryAppBackupPlugin"
+            displayName = "Artifactory backup"
         }
     }
 }

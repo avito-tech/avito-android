@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -21,6 +22,7 @@ gradlePlugin {
         create("docsDeployPlugin") {
             id = "com.avito.android.docs"
             implementationClass = "com.avito.android.plugin.DocsPlugin"
+            displayName = "Docs deployer"
         }
     }
 }

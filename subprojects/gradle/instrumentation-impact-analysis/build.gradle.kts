@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -39,6 +40,7 @@ gradlePlugin {
         create("instrumentationImpactAnalysis") {
             id = "com.avito.android.instrumentation-test-impact-analysis"
             implementationClass = "com.avito.instrumentation.impact.InstrumentationTestImpactAnalysisPlugin"
+            displayName = "Instrumentation tests impact analysis"
         }
     }
 }

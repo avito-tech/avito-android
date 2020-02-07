@@ -2,7 +2,7 @@
 
 rootProject.name = "avito-android"
 
-include(":subprojects:gradle:artifactory")
+include(":subprojects:gradle:artifactory-app-backup")
 include(":subprojects:gradle:build-checks")
 include(":subprojects:gradle:build-metrics")
 include(":subprojects:gradle:build-properties")

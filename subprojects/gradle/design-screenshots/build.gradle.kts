@@ -1,5 +1,6 @@
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -24,6 +25,7 @@ gradlePlugin {
         create("designScreenshots") {
             id = "com.avito.android.design-screenshots"
             implementationClass = "com.avito.plugin.ScreenshotsPlugin"
+            displayName = "Screenshot testing"
         }
     }
 }
