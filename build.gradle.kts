@@ -3,8 +3,6 @@
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryPlugin
-import com.gradle.publish.PluginBundleExtension
-import com.gradle.publish.PublishPlugin
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
 import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
@@ -26,7 +24,6 @@ plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
-    id("com.gradle.plugin-publish") version "0.10.1" apply false
 }
 
 val artifactoryUrl: String? by project
@@ -124,19 +121,6 @@ subprojects {
         }
     }
 
-    plugins.withType<PublishPlugin> {
-        extensions.getByType<PluginBundleExtension>().run {
-            website = "https://avito-tech.github.io/avito-android"
-            vcsUrl = "https://github.com/avito-tech/avito-android"
-            description = "Avito Android Plugin"
-            tags = setOf("android", "tooling", "avito")
-        }
-
-        tasks.named(publishReleaseTaskName).configure {
-            dependsOn("publishPlugins")
-        }
-    }
-
     plugins.withType<MavenPublishPlugin> {
         extensions.getByType<PublishingExtension>().run {
 
@@ -153,10 +137,7 @@ subprojects {
                     }
 
                     afterEvaluate {
-                        //todo should not depend on ordering
-                        if (!plugins.hasPlugin("java-gradle-plugin")) {
-                            configureBintray(publicationName)
-                        }
+                        configureBintray(publicationName)
                     }
                 }
             }

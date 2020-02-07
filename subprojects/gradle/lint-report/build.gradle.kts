@@ -1,7 +1,6 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
-    id("com.gradle.plugin-publish")
     `maven-publish`
     id("com.jfrog.bintray")
 }
