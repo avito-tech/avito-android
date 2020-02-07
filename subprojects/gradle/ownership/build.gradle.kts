@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:cicd"))
+    implementation(project(":subprojects:gradle:cd"))
     implementation(project(":subprojects:gradle:impact"))
     implementation(project(":subprojects:gradle:module-type"))
     implementation(project(":subprojects:gradle:pre-build"))

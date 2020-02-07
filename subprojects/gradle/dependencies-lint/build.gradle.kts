@@ -11,7 +11,7 @@ val androidGradlePluginVersion: String by project
 val mockitoKotlinVersion: String by project
 
 dependencies {
-    implementation(project(":subprojects:gradle:cicd"))
+    implementation(project(":subprojects:gradle:cd"))
     implementation(project(":subprojects:gradle:impact"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:utils"))
