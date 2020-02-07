@@ -14,7 +14,7 @@ dependencies {
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:impact-plugin"))
+    implementation(project(":subprojects:gradle:impact"))
     implementation(project(":subprojects:gradle:docs"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:utils"))

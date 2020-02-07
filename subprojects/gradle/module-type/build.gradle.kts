@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:impact-plugin"))
+    implementation(project(":subprojects:gradle:impact"))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
 
     testImplementation(project(":subprojects:gradle:test-project"))
