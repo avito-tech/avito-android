@@ -9,10 +9,12 @@ import androidx.test.espresso.util.TreeIterables
 
 internal fun View.getAboveVisibleViews(): List<View> {
     val isVisible = ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
+    val rect = Rect()
     return TreeIterables.depthFirstViewTraversal(this.rootView)
         .dropWhile { it != this }
         .drop(1)
         .filter { isVisible.matches(it) }
+        .filter { it.getGlobalVisibleRect(rect) }
 }
 
 internal fun canHandleClick(view: View?): Boolean {
