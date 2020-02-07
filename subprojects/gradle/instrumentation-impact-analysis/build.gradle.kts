@@ -27,10 +27,10 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinHtmlVersion")
     implementation("org.apache.bcel:bcel:$bcelVersion")
+    implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
 
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation("com.google.code.gson:gson:$gsonVersion")
-    testImplementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
 }
 
 gradlePlugin {
