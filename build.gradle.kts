@@ -136,7 +136,9 @@ subprojects {
                         }
                     }
 
-                    configureBintray(publicationName)
+                    afterEvaluate {
+                        configureBintray(publicationName)
+                    }
                 }
             }
 
@@ -265,7 +267,7 @@ fun Project.configureBintray(vararg publications: String) {
         setPublications(*publications)
 
         dryRun = false
-        publish = false
+        publish = true
         pkg(closureOf<PackageConfig> {
             repo = "maven"
             userOrg = "avito-tech"
