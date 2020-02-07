@@ -9,8 +9,16 @@ import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConf
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.reservation.request.Device.Emulator
-import com.avito.instrumentation.reservation.request.Device.Emulator.*
-import com.avito.kotlin.dsl.*
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator23
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator24
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator24Cores2
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+import com.avito.kotlin.dsl.getBooleanProperty
+import com.avito.kotlin.dsl.getMandatoryIntProperty
+import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.getOptionalIntProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
@@ -95,44 +103,44 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
 
                 configurationsContainer.register(
                     "ui",
-                    registerUiConfig(TestsFilter.ui, hasE2eTests = true)
+                    registerUiConfig(com.avito.instrumentation.TestsFilter.ui, hasE2eTests = true)
                 )
                 configurationsContainer.register(
                     "uiNoE2e",
-                    registerUiConfig(TestsFilter.uiNoE2e, hasE2eTests = false)
+                    registerUiConfig(com.avito.instrumentation.TestsFilter.uiNoE2e, hasE2eTests = false)
                 )
 
                 configurationsContainer.register(
                     "newUi",
-                    registerNewUiConfig(TestsFilter.ui)
+                    registerNewUiConfig(com.avito.instrumentation.TestsFilter.ui)
                 )
                 configurationsContainer.register(
                     "newUiNoE2e",
-                    registerNewUiConfig(TestsFilter.uiNoE2e)
+                    registerNewUiConfig(com.avito.instrumentation.TestsFilter.uiNoE2e)
                 )
 
                 configurationsContainer.register(
                     "allUi",
-                    registerAllUI(TestsFilter.regression)
+                    registerAllUI(com.avito.instrumentation.TestsFilter.regression)
                 )
                 configurationsContainer.register(
                     "allUiNoE2e",
-                    registerAllUI(TestsFilter.regressionNoE2e)
+                    registerAllUI(com.avito.instrumentation.TestsFilter.regressionNoE2e)
                 )
 
                 configurationsContainer.register(
                     "regression",
-                    registerRegressionConfig(TestsFilter.regression)
+                    registerRegressionConfig(com.avito.instrumentation.TestsFilter.regression)
                 )
                 configurationsContainer.register(
                     "regressionNoE2e",
-                    registerRegressionConfig(TestsFilter.regressionNoE2e)
+                    registerRegressionConfig(com.avito.instrumentation.TestsFilter.regressionNoE2e)
                 )
 
                 //todo перенести в performance модуль?
                 configurationsContainer.register(
                     "performance", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance,
+                        annotatedWith = com.avito.instrumentation.TestsFilter.performance,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -141,7 +149,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 configurationsContainer.register(
                     "performanceNoE2e",
                     registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performanceNoE2e,
+                        annotatedWith = com.avito.instrumentation.TestsFilter.performanceNoE2e,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -149,7 +157,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "performanceMde", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance,
+                        annotatedWith = com.avito.instrumentation.TestsFilter.performance,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.MDE
