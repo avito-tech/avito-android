@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:common:sentry"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:bitbucket"))

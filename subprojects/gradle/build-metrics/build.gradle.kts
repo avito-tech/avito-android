@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:trace-event"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")

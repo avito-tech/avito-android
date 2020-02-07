@@ -14,7 +14,7 @@ val kotsonVersion: String by project
 
 dependencies {
     implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:impact-plugin"))
     implementation(project(":subprojects:gradle:teamcity"))
     implementation(project(":subprojects:gradle:git"))

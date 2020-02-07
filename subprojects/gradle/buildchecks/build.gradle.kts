@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:build-metrics"))
     implementation(project(":subprojects:gradle:sentry-config"))
     implementation(project(":subprojects:gradle:files"))

@@ -12,7 +12,7 @@ val mockitoKotlinVersion: String by project
 
 dependencies {
     implementation(project(":subprojects:gradle:cd"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:android"))

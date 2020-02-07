@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     implementation(project(":subprojects:gradle:cd"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:module-type"))
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:utils"))
