@@ -27,7 +27,7 @@ dependencies {
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
 
     //for test
-    implementation(project(":subprojects:gradle:module-type"))
+    implementation(project(":subprojects:gradle:module-types"))
 
     testImplementation(project(":subprojects:gradle:test-project"))
 }

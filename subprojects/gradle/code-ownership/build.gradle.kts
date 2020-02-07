@@ -9,7 +9,7 @@ plugins {
 dependencies {
     implementation(project(":subprojects:gradle:cd"))
     implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:module-type"))
+    implementation(project(":subprojects:gradle:module-types"))
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))

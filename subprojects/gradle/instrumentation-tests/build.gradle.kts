@@ -20,7 +20,7 @@ val okhttpVersion: String by project
 dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 
-    implementation(project(":subprojects:gradle:instrumentation-impact-analysis"))
+    implementation(project(":subprojects:gradle:instrumentation-test-impact-analysis"))
     implementation(project(":subprojects:gradle:runner:client"))
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
