@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":subprojects:gradle:signer"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:lint-report"))
-    implementation(project(":subprojects:gradle:instrumentation"))
+    implementation(project(":subprojects:gradle:instrumentation-tests"))
     implementation(project(":subprojects:gradle:artifactory-app-backup"))
     implementation(project(":subprojects:gradle:performance"))
     implementation(project(":subprojects:gradle:qapps"))

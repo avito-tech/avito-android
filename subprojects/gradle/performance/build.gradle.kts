@@ -26,7 +26,7 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:instrumentation"))
+    implementation(project(":subprojects:gradle:instrumentation-tests"))
     implementation(project(":subprojects:gradle:teamcity"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:git"))
