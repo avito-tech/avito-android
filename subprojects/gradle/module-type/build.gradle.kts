@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     id("java-gradle-plugin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val kotlinVersion: String by project

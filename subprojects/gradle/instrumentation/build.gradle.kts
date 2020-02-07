@@ -3,6 +3,7 @@ plugins {
     id("kotlin")
     id("java-test-fixtures")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val gsonVersion: String by project

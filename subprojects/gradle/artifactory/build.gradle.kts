@@ -3,6 +3,7 @@ plugins {
     id("java-gradle-plugin")
     id("java-test-fixtures")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val androidGradlePluginVersion: String by project

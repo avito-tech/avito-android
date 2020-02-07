@@ -3,6 +3,9 @@
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryPlugin
+import com.jfrog.bintray.gradle.BintrayExtension
+import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
+import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -20,6 +23,7 @@ buildscript {
 plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
+    id("com.jfrog.bintray") version "1.8.4" apply false
 }
 
 val artifactoryUrl: String? by project
@@ -35,10 +39,6 @@ val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toStrin
 val compileSdk = requireNotNull(project.properties["compileSdkVersion"]).toString().toInt()
 val targetSdk = requireNotNull(project.properties["targetSdkVersion"]).toString()
 val minSdk = requireNotNull(project.properties["minSdkVersion"]).toString()
-
-val publishToBintrayTask = tasks.register<Task>("publishToBintray") {
-    group = "publication"
-}
 
 val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
     group = "publication"
@@ -99,14 +99,19 @@ subprojects {
     plugins.withId("digital.wup.android-maven-publish") {
         //todo remove afterEvaluate if possible
         afterEvaluate {
+
+            val publicationName = "mavenAar"
+
             extensions.getByType<PublishingExtension>().run {
                 publications {
-                    create<MavenPublication>("mavenAar") {
+                    create<MavenPublication>(publicationName) {
                         from(components["android"])
                         artifact(tasks.named(sourcesTaskName).get())
                     }
                 }
             }
+
+            configureBintray(publicationName)
         }
     }
 
@@ -122,28 +127,20 @@ subprojects {
             publications {
                 //todo should not depend on ordering
                 if (plugins.hasPlugin("kotlin")) {
-                    create<MavenPublication>("maven") {
+                    val publicationName = "maven"
+
+                    create<MavenPublication>(publicationName) {
                         from(components["java"])
                         afterEvaluate {
                             artifactId = this@subprojects.getOptionalExtra("artifact-id") ?: this@subprojects.name
                         }
                     }
+
+                    configureBintray(publicationName)
                 }
             }
 
             repositories {
-                maven {
-                    name = "bintray"
-                    val bintrayUsername = "avito-tech"
-                    val bintrayRepoName = "maven"
-                    val bintrayPackageName = "avito-android"
-                    setUrl("https://api.bintray.com/maven/$bintrayUsername/$bintrayRepoName/$bintrayPackageName/;publish=0")
-                    credentials {
-                        username = System.getenv("BINTRAY_USER")
-                        password = System.getenv("BINTRAY_API_KEY")
-                    }
-                }
-
                 if (!artifactoryUrl.isNullOrBlank()) {
                     maven {
                         name = "artifactory"
@@ -155,10 +152,6 @@ subprojects {
                     }
                 }
             }
-        }
-
-        publishToBintrayTask.configure {
-            dependsOn(tasks.named("publishAllPublicationsToBintrayRepository"))
         }
 
         if (!artifactoryUrl.isNullOrBlank()) {
@@ -261,5 +254,32 @@ fun Project.getOptionalExtra(key: String): String? {
         (extra[key] as? String)?.let { if (it.isBlank()) null else it }
     } else {
         null
+    }
+}
+
+fun Project.configureBintray(vararg publications: String) {
+    extensions.findByType<BintrayExtension>()?.run {
+        user = System.getenv("BINTRAY_USER")
+        key = System.getenv("BINTRAY_API_KEY")
+
+        setPublications(*publications)
+
+        dryRun = false
+        publish = false
+        pkg(closureOf<PackageConfig> {
+            repo = "maven"
+            userOrg = "avito-tech"
+            name = "avito-android"
+
+            version(closureOf<VersionConfig> {
+                name = finalProjectVersion
+            })
+        })
+    }
+
+    tasks.register("publishToBintray") {
+        group = "publication"
+
+        dependsOn(tasks.named("bintrayUpload"))
     }
 }

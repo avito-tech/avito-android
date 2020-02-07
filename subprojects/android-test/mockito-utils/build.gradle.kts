@@ -1,6 +1,7 @@
 plugins {
     id("kotlin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val hamcrestVersion: String by project
