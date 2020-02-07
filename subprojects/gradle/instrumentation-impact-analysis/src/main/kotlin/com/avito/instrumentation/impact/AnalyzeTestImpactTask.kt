@@ -10,9 +10,11 @@ import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Test
 import com.avito.utils.logging.ciLogger
 import com.avito.utils.rewriteNewLineList
-import com.google.gson.Gson
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.GsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -25,22 +27,20 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @Suppress("UnstableApiUsage")
-abstract class AnalyzeTestImpact @Inject constructor(
+abstract class AnalyzeTestImpactTask @Inject constructor(
     config: InstrumentationTestImpactAnalysisExtension,
-    private val finder: ModifiedProjectsFinder,
-    private val gson: Gson
+    private val finder: ModifiedProjectsFinder
 ) : DefaultTask() {
 
     @InputFile
-    val bytecodeAnalyzeSummaryJson = project.objects.fileProperty()
+    val bytecodeAnalyzeSummaryJson: RegularFileProperty = project.objects.fileProperty()
 
     @Optional
     @Input
     val packageFilter: Property<String> = config.packageFilter
 
     @Internal
-    val impactSummaryFile: Provider<RegularFile> =
-        config.output.file("impact-summary.json")
+    val impactSummaryFile: Provider<RegularFile> = config.output.file("impact-summary.json")
 
     /**
      * test code has been added
@@ -60,11 +60,10 @@ abstract class AnalyzeTestImpact @Inject constructor(
     @Suppress("unused")
     @TaskAction
     fun findAffectedTasks() {
+        val gson = GsonBuilder().setPrettyPrinting().create()
+
         val impactSummary = AnalyzeTestImpactAction(
-            bytecodeAnalyzeSummary = gson.fromJson(
-                bytecodeAnalyzeSummaryJson.get().asFile.reader(),
-                BytecodeAnalyzeSummary::class.java // TODO add kotson?
-            ),
+            bytecodeAnalyzeSummary = gson.fromJson(bytecodeAnalyzeSummaryJson.get().asFile.reader()),
             targetModule = AndroidProject(project),
             packageFilter = packageFilter.orNull,
             finder = finder,

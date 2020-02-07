@@ -1,6 +1,6 @@
 package com.avito.instrumentation.configuration
 
-import com.avito.instrumentation.impact.AnalyzeTestImpact
+import com.avito.instrumentation.impact.AnalyzeTestImpactTask
 import com.avito.instrumentation.impact.analyzeTestImpactTask
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
@@ -13,16 +13,16 @@ sealed class ImpactAnalysisPolicy : Serializable {
 
     sealed class On : ImpactAnalysisPolicy() {
 
-        abstract fun getArtifact(task: AnalyzeTestImpact): Provider<RegularFile>
+        abstract fun getArtifact(task: AnalyzeTestImpactTask): Provider<RegularFile>
 
-        fun getTask(project: Project): TaskProvider<AnalyzeTestImpact> = project.tasks.analyzeTestImpactTask()
+        fun getTask(project: Project): TaskProvider<AnalyzeTestImpactTask> = project.tasks.analyzeTestImpactTask()
 
         object RunAffectedTests : On() {
-            override fun getArtifact(task: AnalyzeTestImpact): Provider<RegularFile> = task.testsToRunFile
+            override fun getArtifact(task: AnalyzeTestImpactTask): Provider<RegularFile> = task.testsToRunFile
         }
 
         object RunNewTests : On() {
-            override fun getArtifact(task: AnalyzeTestImpact): Provider<RegularFile> = task.addedTestsFile
+            override fun getArtifact(task: AnalyzeTestImpactTask): Provider<RegularFile> = task.addedTestsFile
         }
     }
 

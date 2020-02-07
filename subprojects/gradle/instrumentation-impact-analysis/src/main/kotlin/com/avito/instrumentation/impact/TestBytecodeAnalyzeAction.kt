@@ -26,10 +26,10 @@ import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.RootId
 import com.avito.impact.util.Screen
 import com.avito.impact.util.Test
-import com.avito.instrumentation.impact.InstrumentationTestImpactAnalysisPlugin.Companion.gson
 import com.avito.instrumentation.impact.model.AffectedTest
 import com.avito.instrumentation.impact.model.AffectionType
 import com.avito.utils.logging.CILogger
+import com.google.gson.GsonBuilder
 import org.apache.bcel.classfile.JavaClass
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
@@ -43,6 +43,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
+@Suppress("UnstableApiUsage")
 abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.Params> {
 
     private val ciLogger: CILogger
@@ -124,6 +125,9 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 targetClasses = invocationGraphResult.targetClasses
             )
         )
+
+        val gson = GsonBuilder().setPrettyPrinting().create()
+
         JsonFileReporter(
             path = byteCodeAnalyzeSummary.get().asFile,
             gson = gson
@@ -142,8 +146,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject> =
             @Suppress("DEPRECATION")
             finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(
-                reportType = ReportType.ANDROID_TESTS
-            )
+                    reportType = ReportType.ANDROID_TESTS
+                )
                 .asSequence()
                 .filter { it.project.isAndroid() }
                 .map { AndroidProject(it.project).debug.manifest.getPackage() to it }
