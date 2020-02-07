@@ -2,23 +2,14 @@ package com.avito.instrumentation.impact
 
 import com.avito.impact.BytecodeResolver
 import com.avito.impact.ModifiedProjectsFinder
-import com.avito.impact.util.RootId
-import com.avito.impact.util.Screen
-import com.avito.impact.util.Test
-import com.avito.instrumentation.impact.model.AffectedTest
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
-
-internal data class BytecodeAnalyzeSummary(
-    val testsByScreen: Map<Screen, Set<Test>>,
-    val testsAffectedByDependentOnUserChangedCode: Set<AffectedTest>,
-    val testsModifiedByUser: Set<AffectedTest>,
-    val rootIdByScreen: Map<Screen, RootId>
-)
 
 @Suppress("UnstableApiUsage")
 abstract class TestBytecodeAnalyzeTask @Inject constructor(
@@ -29,9 +20,8 @@ abstract class TestBytecodeAnalyzeTask @Inject constructor(
 ) : DefaultTask() {
 
     @OutputFile
-    val byteCodeAnalyzeSummary = config.output.file("bytecode-analyze-summary.json")
+    val byteCodeAnalyzeSummary: Provider<RegularFile> = config.output.file("bytecode-analyze-summary.json")
 
-    @Suppress("unused")
     @TaskAction
     fun analyze() {
         workerExecutor.noIsolation().submit(TestBytecodeAnalyzeAction::class.java) { params ->
