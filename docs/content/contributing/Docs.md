@@ -5,36 +5,69 @@ type: docs
 
 # Documentation
 
-## Подходы
+_If the documentation is not good enough, people will not use what you do._
 
-Каким бы хорошим не был продукт, если у него плохая документация, им мало кто будет пользоваться.
+## Style guide
 
-### Простой и понятный язык
+### Write simply and to the point
 
-Текст должен помогать читателю решить задачу. Для этого он должен быть простым и понятным.    
-В этом поможет книга [Пиши, сокращай](https://book.glvrd.ru/). 
-Посмотри примеры на сайте, сравни сам что понятнее.    
-После знакомства с книгой уже не сможешь развидеть плохие тексты.
+Documentation is intended to solve problems. Thus, it has to be simple and clear.\
+We can recommend several definitive guides on writing in general:
 
-[glvrd.ru](https://glvrd.ru/) - автоматический поиск грубых ошибок.
+- The Elements of Style - William Strunk Jr.
+- [Пиши, сокращай](https://book.glvrd.ru/) ([glvrd.ru](https://glvrd.ru/) - online checker)
 
-### Формат под задачу
+Extra materials about technical writing:
 
-Не бывает универсальной документации.\
-Адаптируем под уровень знаний читателя и для решаемой проблемы:
+- [Jetbrains - Как писать полезные технические тексты](https://youtu.be/8SPq-9kS69M)
+- [Microsoft Writing Style Guide](https://docs.microsoft.com/en-us/style-guide/welcome/)
+- [GitLab documentaion styleguide](https://docs.gitlab.com/ee/development/documentation/styleguide.html)
+- [What nobody tells you about documentation](https://www.divio.com/blog/documentation/)
 
-|                        | Только учусь  | Уже знаком    |
+
+### Use appropriate format for the problem
+
+There is no universal documentation. 
+It needs to be structured around problem and a level of knowledge:
+
+|                        | Studying      | Working       |
 | ---------------------- |:-------------:|:-------------:|
-| Практические шаги      | Tutorial      | How-to guide  |
-| Теоретическое знание   | Explanation   | Reference     |
+| Practical steps        | Tutorial      | How-to guide  |
+| Theoretical knowledge  | Explanation   | Reference     |
+
+It's ok to mix some types in one page:
+
+```text
+# Managing X
+
+Here goes short _explanation_ of X for new users.
+You can reference here to a detailed information.  
+If I know this topic, I will skip it easily.
+
+## Create a new X
+
+1. Do ... <-- Short how-to guide
+1. ...
+
+## Move files to X
+
+Select ...
+```
+
+{{< columns >}}
 
 #### Tutorial
 
-Метафора: обучаем ребенка готовить.
+Analogy: teaching a child how to cook
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Parents_and_their_kids_cook_healthy_and_tasty_meals_150321-A-ZT122-171.jpg/1599px-Parents_and_their_kids_cook_healthy_and_tasty_meals_150321-A-ZT122-171.jpg)
 
-Именование: "Getting started"
+Naming: 
+
+- Getting started with X
+- Writing your first test
+
+---
 
 - Ориентация на обучение.
 - Полезно для новых пользователей.
@@ -44,20 +77,22 @@ type: docs
 
 - Простые и понятные
 - Повторяемые и надежные, всегда работают
-- Дают немедленную обратную связь
+- Дают регулярную позитивную обратную связь
 - Минимум теории и объяснений, не грузят лишним
+
+<--->
 
 #### How-to guide
 
-Метафора: рецепт приготовления блюда
+Analogy: a recipe
 
 ![](https://media.defense.gov/2019/Jun/10/2002142660/780/780/0/190605-F-FR885-023.JPG)
 
-Именование:
+Naming:
 
-- "Как запустить тест в CI?" - 👍
-- "Запуск теста в CI" - 👎
-- "Тест в CI" - 👎
+- How to run tests in CI - 👍
+- Running tests - 👎
+- Tests in CI - 👎
 
 ---
 
@@ -71,9 +106,26 @@ type: docs
 - Шаги более гибкие
 - Описание не обязано быть полным, только то что нужно для проблемы.
 
+{{< /columns >}}
+
+{{< columns >}}
+
+#### Explanation
+
+Analogy: an overview article
+
+Naming: "Testing infrastructure in CI"
+
+- Ориентация на понимание, не решает конкретных практических задач.\
+Это самый свободный формат описания.
+- Описывает концепции, поясняет контекст и историю развития
+- Дает альтернативные подходы и мнения, поясняет мотивацию
+
+<--->
+
 #### Reference
 
-Метафора: статья в энциклопедии
+Analogy: an article in Wikipedia
 
 ![](https://upload.wikimedia.org/wikipedia/commons/2/29/Anoplogaster_cornuta_skeletal_system-en.svg)
 
@@ -84,36 +136,19 @@ type: docs
 - Описывает детали в точности как они работают.
 - Объясняет ситуацию как есть, не уходит в дискуссии, мнения, инструкции. Такие отвлечения мешают понять как работает.
 
-#### Explanation
+{{< /columns >}}
 
-Метафора: дискуссия
-
-Именование: "Тестирование инфраструктуры и CI"
-
-- Ориентация на понимание, не решает конкретных практических задач.\
-Это самый свободный формат описания.
-- Описывает концепции, поясняет контекст и историю развития
-- Дает альтернативные подходы и мнения, поясняет мотивацию
-
-
-Подробнее про форматы: [What nobody tells you about documentation](https://www.divio.com/blog/documentation/)
-
-
-### Примеры
-
-- [GitLab documentaion styleguide](https://docs.gitlab.com/ee/development/documentation/styleguide.html)
-
-## Содержимое
+## Structure
 
 Вся документация состоит из набора [markdown файлов]((https://daringfireball.net/projects/markdown/syntax)).\
 Используем генератор статических сайтов [Hugo](https://gohugo.io/) (тема - [Book](https://themes.gohugo.io/hugo-book/)).\
 Для проверки стиля - [markdownlint](https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md#rules)    
 
-### Боковое меню
+### Menu on the left
 
 Меню редактируется в `docs/content/menu/index.md`
 
-### Ссылки на документацию
+### Links
 
 Абсолютная ссылка: `{{</* ref "/Name.md" */>}}`, где путь относителен директории `content/`.   
 Относительная ссылка: `{{</* relref "Name.md" */>}}`.   
@@ -121,7 +156,7 @@ Anchor: `{{</* ref "/Name.md#header" */>}}`.
 
 Подробнее: [cross references](https://gohugo.io/content-management/cross-references/)
 
-### Ссылки на внутренние ресурсы
+### Internal links
 
 Документация публичная, поэтому в ней ней не должно быть прямых ссылок на внутренние сервисы (issue tracker, CI, ...).\
 Чтобы не терять эту информацию, используй links.k.avito.ru для редиректа.
@@ -133,12 +168,12 @@ Anchor: `{{</* ref "/Name.md#header" */>}}`.
 
 Чтобы посмотреть статистику по ссылке, добавь к ней `+`.
 
-### Сниппеты
+### Shortcuts
 
 Кастомные сниппеты для отображения того, что не поддерживает markdown.\
 Их несложно создавать. Напиши, если тебе не хватает какого-то типа контента.
 
-#### Диаграммы
+#### Diagrams
 
 Для диаграм используем [Mermaid](https://mermaid-js.github.io/mermaid/#/), описываем их в текстовом виде:
 
@@ -163,7 +198,7 @@ stateDiagram
     B --> [*]
 {{</mermaid>}}
 
-#### Подсказки / Алерты
+#### Hints
 
 ```tpl
 {{</* hint [info|warning|danger] */>}}
@@ -177,7 +212,7 @@ Lorem markdownum insigne. Olympo signis Delphis!
 Lorem markdownum insigne. Olympo signis Delphis!
 {{< /hint >}}
 
-### Кнопки
+### Buttons
 
 ```tpl
 {{</* button relref="/" */>}}Home{{</* /button */>}}
@@ -187,7 +222,7 @@ Lorem markdownum insigne. Olympo signis Delphis!
 {{< button relref="/" >}}Home{{< /button >}}
 {{< button href="http://repo/CONTRIBUTING.md" >}}Contribute{{< /button >}}
 
-#### Вкладки
+#### Tabs
 
 ```tpl
 {{</* tabs "Unique ID" */>}}
@@ -203,7 +238,7 @@ Lorem markdownum insigne. Olympo signis Delphis!
 {{< tab "Windows" >}} Windows Content {{< /tab >}}
 {{< /tabs >}}
 
-#### Столбцы
+#### Columns
 
 ```tpl
 {{</* columns */>}}
@@ -220,7 +255,7 @@ Right Content
 {{< /columns >}}
 
 
-#### Раскрывающаяся панель
+#### Expand
 
 ```tpl
 {{</* expand "Title" */>}}
@@ -232,7 +267,7 @@ Markdown content
 Markdown content
 {{< /expand >}}
 
-### Формулы
+### Math
 
 [KaTeX](https://katex.org/)
 
@@ -248,7 +283,7 @@ Markdown content
 {{< /katex >}}
 
 
-### Картинки
+### Images
 
 Попробуй сначала выразить текстом и диаграммами. 
 Картинки и скриншоты дороже поддерживать в актуальном состоянии.\
@@ -256,7 +291,7 @@ Markdown content
 На крайний случай, в репозиторий в `docs/static` ( [Static files](https://gohugo.io/content-management/static-files/) )
 Для более гибкого отображения картинок используй [shortcode](https://gohugo.io/content-management/shortcodes/#figure)
 
-### Списки
+### Lists
 
 #### Нумерованный или ненумерованный
 
@@ -297,24 +332,26 @@ Markdown content
 
 - Для `DI` используем `Dagger` 👎
 
-### Заголовки
+## Changing documentation
 
-- Используем только один заголовок h1 как заголовок страницы. 
-Он не отображается в оглавлении.
-
-## How to
-
-### Run locally
+### How to check locally
 
 Run: `docs/local.sh`\
 It will open documentation at `localhost:1313`. You can edit content on the fly.
 
-### Publish changes
+Checklist for changes besides the content:
+
+- Search
+- Shortcodes: mermaid, ...
+
+[Hugo troubleshooting](https://gohugo.io/troubleshooting/faq/)
+
+### Publishing changes
 
 Run manually after changes: `docs/publish.sh`\
 Auto-publish: MBS-7514.
 
-### Как обновить hugo?
+### How to update hugo
 
 1. Обнови версию hugo в Dockerfile
 1. Обнови другие файлы
@@ -322,24 +359,10 @@ Auto-publish: MBS-7514.
     - Сгенерируй новый сайт: `hugo new site template`
     - Сравни директорию `docs` со сгенерированным пустым сайтом
 
-### Как обновить тему?
+### How to update theme
 
 Скачай новую версию темы и подмени существующие файлы.\
 Мы кастомизировали тему, проверь что не потеряем эти изменения:
 - Удалили примеры (book/exampleSite) и статику для них (book/images/)
 - Удалили js файлы для shortcode (book/static/*.js), потому что они могут весить мегабайты. 
 Загружаем из unpkg.com.
-
-### Как проверить изменения инфраструктуры?
-
-Если затронул что-то кроме md файлов в content/, то проверь вручную.
-
-Запусти локально: `docs/local.sh`
-
-Чеклист проверки:
-- Страница обновляется при изменении контента
-- Поиск находит страницы, ссылки открываются
-- Работают кастомные shortcode:
-- Отображаются диаграммы (mermaid)
-
-[Hugo troubleshooting](https://gohugo.io/troubleshooting/faq/)
