@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     id("java-gradle-plugin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val funktionaleVersion: String by project
@@ -13,7 +14,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:trace-event"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
@@ -27,6 +28,7 @@ gradlePlugin {
         create("buildMetrics") {
             id = "com.avito.android.build-metrics"
             implementationClass = "com.avito.android.plugin.build_metrics.BuildMetricsPlugin"
+            displayName = "Build metrics"
         }
     }
 }

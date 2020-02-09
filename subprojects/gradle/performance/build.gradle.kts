@@ -2,6 +2,7 @@ plugins {
     id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val teamcityRestClientVersion: String by project
@@ -24,7 +25,7 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:instrumentation"))
+    implementation(project(":subprojects:gradle:instrumentation-tests"))
     implementation(project(":subprojects:gradle:teamcity"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:git"))
@@ -48,6 +49,7 @@ gradlePlugin {
         create("com.avito.android.performance") {
             id = "com.avito.android.performance"
             implementationClass = "com.avito.performance.PerformancePlugin"
+            displayName = "Performance testing"
         }
     }
 }

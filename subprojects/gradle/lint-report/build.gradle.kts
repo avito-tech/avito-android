@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     id("java-gradle-plugin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val funktionaleVersion: String by project
@@ -19,7 +20,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:common:sentry"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:bitbucket"))
@@ -33,6 +34,7 @@ gradlePlugin {
         create("lintReport") {
             id = "com.avito.android.lint-report"
             implementationClass = "com.avito.android.lint.LintReportPlugin"
+            displayName = "Lint reports merge"
         }
     }
 }

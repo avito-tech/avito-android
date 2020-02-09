@@ -2,6 +2,7 @@ plugins {
     id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val funktionaleVersion: String by project
@@ -31,6 +32,7 @@ gradlePlugin {
         create("signer") {
             id = "com.avito.android.signer"
             implementationClass = "com.avito.plugin.SignServicePlugin"
+            displayName = "Signer"
         }
     }
 }

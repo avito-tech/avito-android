@@ -2,6 +2,7 @@ plugins {
     id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val androidGradlePluginVersion: String by project
@@ -28,6 +29,7 @@ gradlePlugin {
         create("prosector") {
             id = "com.avito.android.prosector"
             implementationClass = "ProsectorPlugin"
+            displayName = "Prosector"
         }
     }
 }

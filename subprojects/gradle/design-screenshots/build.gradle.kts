@@ -2,6 +2,7 @@ plugins {
     id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val funktionaleVersion: String by project
@@ -23,6 +24,7 @@ gradlePlugin {
         create("designScreenshots") {
             id = "com.avito.android.design-screenshots"
             implementationClass = "com.avito.plugin.ScreenshotsPlugin"
+            displayName = "Screenshot testing"
         }
     }
 }

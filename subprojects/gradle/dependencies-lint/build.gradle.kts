@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     id("java-gradle-plugin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val kotlinVersion: String by project
@@ -9,8 +10,8 @@ val androidGradlePluginVersion: String by project
 val mockitoKotlinVersion: String by project
 
 dependencies {
-    implementation(project(":subprojects:gradle:cicd"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":subprojects:gradle:cd"))
+    implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:android"))
@@ -29,6 +30,7 @@ gradlePlugin {
         create("dependenciesLintPlugin") {
             id = "com.avito.android.dependencies-lint"
             implementationClass = "com.avito.android.lint.DependenciesLintPlugin"
+            displayName = "Dependencies lint"
         }
     }
 }

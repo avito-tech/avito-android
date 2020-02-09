@@ -2,6 +2,7 @@ plugins {
     id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val funktionaleVersion: String by project
@@ -32,6 +33,7 @@ gradlePlugin {
         create("qapps") {
             id = "com.avito.android.qapps"
             implementationClass = "com.avito.plugin.QAppsPlugin"
+            displayName = "QApps"
         }
     }
 }
