@@ -31,7 +31,7 @@ All source code lives in `subprojects/`:
 
 More details - [project structure]({{< ref "/Infrastructure.md" >}})
 
-Besides that modules you will see:
+Besides these modules you will find:
 
 - `ci/` and `/*.sh` - we follow [IaC](https://en.wikipedia.org/wiki/Infrastructure_as_code) principle whenever possible. 
 You can see docker images we use to abstract configuration of apps building and testing, as well as testing github project itself.
