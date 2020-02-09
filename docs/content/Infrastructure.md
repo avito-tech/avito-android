@@ -14,38 +14,38 @@ Monorepo of all tooling to continuously test and deliver apps to users
 Gradle plugins and buildscript dependencies.
 
 - `:android` - android gradle plugin extensions, and android sdk wrapper // todo separate
-- `:artifactory` - gradle plugin to back up build artifacts in [artifactory](https://jfrog.com/artifactory/)
+- `:artifactory-app-backup` - gradle plugin to back up build artifacts in [artifactory](https://jfrog.com/artifactory/)
 - `:bitbucket` - bitbucket server client to deliver checks results right into pull request context
 via [code insights](https://www.atlassian.com/blog/bitbucket/bitbucket-server-code-insights) and comments
-- `:build-checks` - gradle plugin to early detection of build problems
 - `:build-metrics` - gradle plugin for gathering build metrics and deliver it to [grafana](https://grafana.com/)
 - `:build-properties` - gradle plugin to deliver custom build parameters to android assets
-- [`:cicd`]({{< ref "/ci/CIGradlePlugin.md" >}})
+- `:buildchecks` - gradle plugin to early detection of build problems
+- [`:cd`]({{< ref "/ci/CIGradlePlugin.md" >}})
 - `:dependencies-lint` - gradle plugin to detect unused gradle dependencies
 - `:design-screenshots` - gradle plugin, extended tasks to support screenshot testing on top of our `:instrumentation` plugin
 - `:docker` - docker client to work with docker daemon from gradle
-- `:docs-deployer` - gradle plugin to automate documentation deployment (was used to deploy internally //todo remove)
+- `:docs` - gradle plugin to automate documentation deployment (was used to deploy internally //todo remove)
 - `:enforce-repos` - gradle plugin to configure dependencies repositories for internal project
-- `:feature-toggle-report` - gradle plugin to extract feature toggles values from code and report it as build artifact
+- `:feature-toggles` - gradle plugin to extract feature toggles values from code and report it as build artifact
 - `:files` - utils to work with files and directories
 - `:git` - git client to work within gradle
-- `:impact`, `:impact-plugin` - gradle plugin to search parts of the project we can avoid testing based on diff. 
+- `:impact`, `:impact-shared` - gradle plugin to search parts of the project we can avoid testing based on diff. 
 See [impact analysis]({{< ref "/ci/ImpactAnalysis.md" >}})
-- `:instrumentation` - gradle plugin to set up and run instrumentation tests on android
-- `:instrumentation-impact-analysis`, `:ui-test-bytecode-analyser` - gradle plugin to search ui tests we can avoid based on `impact-plugin` analysis
-- `:kotlin-config` - gradle plugin to configure kotlin tasks for internal project
+- `:instrumentation-tests` - gradle plugin to set up and run instrumentation tests on android
+- `:instrumentation-test-impact-analysis`, `:ui-test-bytecode-analyser` - gradle plugin to search ui tests we can avoid based on `impact-plugin` analysis
+- `:kotlin-root` - gradle plugin to configure kotlin tasks for internal project
 - `:kotlin-dsl-support` - gradle api extensions //todo rename
 - `:kubernetes` - kubernetes credentials config extension
 - `:lint-report` - gradle plugin merging lint reports from different modules
 - `:logging` - custom logger to serialize for gradle workers //todo no longer a problem, remove
-- `:module-type` - gradle plugin to prevent modules go to wrong configurations (android-test module as an app's implementation dependency for example) 
-- `:ownership` - gradle plugin to prevent dependency on other team's private modules
+- `:module-types` - gradle plugin to prevent modules go to wrong configurations (android-test module as an app's implementation dependency for example) 
+- `:code-ownership` - gradle plugin to prevent dependency on other team's private modules
 - `:performance` - gradle plugin, extended tasks to support performance testing on top of our `:instrumentation` plugin
 - `:pre-build` - extensions to add tasks to the early stages of build
 - `:process` - utils to execute external commands from gradle
 - `:prosector` - gradle plugin and client for security service
 - `:qapps` - gradle plugin to deliver apps to internal distribution service, see [QApps]({{< ref "/cd/QApps.md" >}})
-- `:robolectric-config`- gradle plugin to configure [robolectrtic](http://robolectric.org/) for internal project
+- `:robolectric`- gradle plugin to configure [robolectrtic](http://robolectric.org/) for internal project
 - `:room-config` - gradle plugin to configure [room](https://developer.android.com/topic/libraries/architecture/room) for internal project
 - `:runner:client`, `:runner:service`, `:runner:shared`, `:runner:shared-test` - instrumentation tests runner
 - `:sentry-config` - [sentry](https://sentry.io/) client config extension
