@@ -134,36 +134,23 @@ Shared modules between android-test and gradle.
 
 ## Publishing
 
-1. [Bintray](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
-1. [Inhouse artifactory](http://links.k.avito.ru/androidArtifactory) to check staging version in integration with internal repo
+### Release to jcenter
 
-### Teamcity
+[Bintray project](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
 
-[Internal project](http://links.k.avito.ru/androidTeamcity)
+1. Make sure new project version specified in develop head
+1. Manually run [Teamcity configuration](http://links.k.avito.ru/releaseAvitoTools)
 
-Bintray publish uses: `./publish.sh`
-Artifactory publish uses: `./publish_local.sh`
+### Local integration tests with avito
 
-### Gradle
+1. Choose project version that will not clash with released ones
+1. Run `./gradlew publishToMavenLocal -PprojectVersion=<Your test version>`
+1. Run integration tests of your choice in avito with specified test version
 
-`./gradlew publishRelease`
+### CI integration tests with avito
 
-environmental argument should be set:
+1. Run [Teamcity configuration](http://links.k.avito.ru/fastCheckIntegration). You can also change build branch if you need to test unmerged code.
+1. Pull request checks of avito would run against generated version of tools project.
 
-- `BINTRAY_USER`
-- `BINTRAY_API_KEY`
-
-gradle properties should be set:
-
-- `gradle.publish.key`
-- `gradle.publish.secret`
-
-`./gradlew publishToArtifactory`
-
-environmental argument should be set:
-
-- `ARTIFACTORY_URL`
-- `ARTIFACTORY_USER`
-- `ARTIFACTORY_PASSWORD`
-
-To specify a version, use `PROJECT_VERSION` env or `projectVersion` gradle property 
+To re-check this changes locally you need to find android tools version in build parameters. Look for `integrationVersion`.\
+Also, to resolve this version you have to provide `artifactoryUrl` gradle property.
