@@ -27,6 +27,7 @@ import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
+import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.google.gson.Gson
@@ -50,6 +51,22 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
+    private val testReportLogger: Logger = object : Logger {
+        override fun debug(msg: String) {
+            Log.d("TestReport", msg)
+        }
+
+        override fun exception(msg: String, error: Throwable) {
+            Log.e("TestReport", msg, error)
+        }
+
+        override fun critical(msg: String, error: Throwable) {
+            Log.e("TestReport", msg, error)
+            sentry.sendException(error)
+        }
+
+    }
+
     override val performanceTestReporter = PerformanceTestReporter()
 
     override val report: Report by lazy {
@@ -58,12 +75,6 @@ abstract class InHouseInstrumentationTestRunner :
         val transport: List<Transport> = when {
             isLocalRun -> {
                 if (runEnvironment.reportConfig != null) {
-                    val logger: (String, Throwable?) -> Unit = { msg, error ->
-                        Log.d(TAG, msg, error)
-                        if (error != null) {
-                            sentry.sendException(error)
-                        }
-                    }
                     listOf(
                         LocalRunTransport(
                             reportApiHost = runEnvironment.reportConfig.reportApiUrl,
@@ -71,7 +82,7 @@ abstract class InHouseInstrumentationTestRunner :
                             reportViewerUrl = runEnvironment.reportConfig.reportViewerUrl,
                             reportCoordinates = runEnvironment.testRunCoordinates,
                             deviceName = DeviceName(runEnvironment.deviceName),
-                            logger = logger
+                            logger = testReportLogger
                         )
                     )
                 } else {
@@ -93,7 +104,8 @@ abstract class InHouseInstrumentationTestRunner :
             httpClient = reportHttpClient,
             onIncident = { testIssuesMonitor.onFailure(it) },
             performanceTestReporter = performanceTestReporter,
-            transport = transport
+            transport = transport,
+            logger = testReportLogger
         )
     }
 

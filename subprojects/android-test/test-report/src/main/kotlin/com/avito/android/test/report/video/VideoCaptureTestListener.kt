@@ -6,6 +6,7 @@ import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
+import com.avito.logger.Logger
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
 import okhttp3.OkHttpClient
@@ -18,10 +19,24 @@ class VideoCaptureTestListener(
     httpClient: OkHttpClient,
     fileStorageUrl: String,
     private val shouldRecord: Boolean,
-    private val logger: (String, Throwable?) -> Unit = { msg, error -> Log.d(LOG_TAG, msg, error) },
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
     private val videoCapturer: VideoCapturer = VideoCapturerImplementation(onDeviceCacheDirectory)
 ) : TestLifecycleListener {
+
+    private val logger: Logger = object : Logger {
+        override fun debug(msg: String) {
+            Log.d(LOG_TAG, msg)
+        }
+
+        override fun exception(msg: String, error: Throwable) {
+            Log.d(LOG_TAG, msg, error)
+        }
+
+        override fun critical(msg: String, error: Throwable) {
+            Log.d(LOG_TAG, msg, error)
+        }
+
+    }
 
     private val remoteStorage: RemoteStorage = RemoteStorage.create(
         logger = logger,
@@ -33,11 +48,11 @@ class VideoCaptureTestListener(
 
     override fun beforeTestStart(state: ReportState.Initialized.Started) {
         if (videoFeature.videoRecordingEnabled(shouldRecord)) {
-            logger("Video recording feature enabled. Recording starting", null)
+            logger.debug("Video recording feature enabled. Recording starting")
             videoCapturer.start()
-            logger("Video recording feature enabled. Recording started", null)
+            logger.debug("Video recording feature enabled. Recording started")
         } else {
-            logger("Video recording feature disabled. Recording hasn't started", null)
+            logger.debug("Video recording feature disabled. Recording hasn't started")
         }
     }
 
@@ -47,9 +62,9 @@ class VideoCaptureTestListener(
 
     override fun afterTestStop(state: ReportState.Initialized.Started) {
         if (videoFeature.videoUploadingEnabled(shouldRecord, savedIncident)) {
-            logger("Video uploading enabled. Recording stopping...", null)
+            logger.debug("Video uploading enabled. Recording stopping...")
             val videoFile = videoCapturer.stop()
-            logger("Video uploading enabled. Recording stopped", null)
+            logger.debug("Video uploading enabled. Recording stopped")
 
             if (videoFile != null) {
                 val video = remoteStorage.upload(
@@ -58,18 +73,17 @@ class VideoCaptureTestListener(
                     ),
                     comment = "video"
                 )
-                logger("Video uploading enabled. Video uploaded", null)
+                logger.debug("Video uploading enabled. Video uploaded")
 
                 waitUploads(state = state, video = video)
             } else {
-                logger(
-                    "Video uploading enabled. Filed to upload video for ${state.testMetadata.className}.${state.testMetadata.methodName}",
-                    null
+                logger.debug(
+                    "Video uploading enabled. Filed to upload video for ${state.testMetadata.className}.${state.testMetadata.methodName}"
                 )
             }
         } else {
             videoCapturer.abort()
-            logger("Video uploading disabled. Video recording process aborted", null)
+            logger.debug("Video uploading disabled. Video recording process aborted")
         }
     }
 

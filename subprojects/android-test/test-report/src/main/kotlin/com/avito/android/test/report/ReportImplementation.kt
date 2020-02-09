@@ -20,20 +20,14 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotUploader
-import com.avito.android.test.report.transport.ExternalStorageTransport
-import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.android.test.report.transport.Transport
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.report.model.DeviceName
+import com.avito.logger.Logger
 import com.avito.report.model.Entry
-import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Incident
-import com.avito.report.model.ReportCoordinates
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import io.sentry.SentryClient
 import okhttp3.OkHttpClient
 import java.io.File
@@ -54,13 +48,7 @@ class ReportImplementation(
     override val sentry: SentryClient,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
-    // TODO create Logger Interface
-    private val logger: (String, Throwable?) -> Unit = { msg, error ->
-        Log.d(TAG, msg, error)
-        if (error != null) {
-            sentry.sendException(error)
-        }
-    },
+    private val logger: Logger,
     private val transport: List<Transport>
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
@@ -217,9 +205,9 @@ class ReportImplementation(
                 currentState.endTime = timeProvider.nowInSeconds()
                 afterTestStop(this)
             }
-            Log.d(TAG, "Start waiting for uploads inside reportTestCase")
+            logger.debug("Start waiting for uploads inside reportTestCase")
             waitUploads(currentState)
-            Log.d(TAG, "Waiting for uploads inside reportTestCase completed")
+            logger.debug("Waiting for uploads inside reportTestCase completed")
 
             currentState.apply {
                 /**
@@ -352,7 +340,7 @@ class ReportImplementation(
                         futureUploads.add(screenshotFuture)
                     }
                 } catch (t: Throwable) {
-                    logger("Failed to update step with captured screenshot", t)
+                    logger.critical("Failed to update step with captured screenshot", t)
                     return@methodExecutionTracing null
                 }
             }
@@ -508,11 +496,9 @@ $content
     }
 
     private fun <T> methodExecutionTracing(name: String, action: () -> T): T {
-        Log.d(TAG, "Method: $name execution started")
+        logger.debug("Method: $name execution started")
         val result = action()
-        Log.d(TAG, "Method: $name execution completed")
+        logger.debug("Method: $name execution completed")
         return result
     }
 }
-
-const val TAG = "TestReport"

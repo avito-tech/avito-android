@@ -3,6 +3,7 @@ package com.avito.instrumentation
 import com.avito.cd.CdBuildResult
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.report.Report
+import com.avito.logger.Logger
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
@@ -25,7 +26,19 @@ internal class GetTestResultsAction(
         reportsApi = ReportsApi.create(
             host = reportApiUrl,
             fallbackUrl = reportApiFallbackUrl,
-            logger = { message, error -> ciLogger.debug(message, error) }
+            logger = object : Logger {
+                override fun debug(msg: String) {
+                    ciLogger.debug(msg)
+                }
+
+                override fun exception(msg: String, error: Throwable) {
+                    ciLogger.debug(msg, error)
+                }
+
+                override fun critical(msg: String, error: Throwable) {
+                    ciLogger.debug(msg, error)
+                }
+            }
         ),
         logger = ciLogger,
         reportCoordinates = reportCoordinates,

@@ -1,5 +1,6 @@
 package com.avito.http
 
+import com.avito.logger.Logger
 import com.avito.test.http.MockDispatcher
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -29,7 +30,22 @@ class RetryWithFallbackTest {
                 RetryInterceptor(
                     allowedMethods = listOf("POST"),
                     allowedCodes = listOf(503),
-                    logger = { _, _ -> })
+                    logger = object : Logger {
+                        override fun debug(msg: String) {
+                            println(msg)
+                        }
+
+                        override fun exception(msg: String, error: Throwable) {
+                            println(msg)
+                            error.printStackTrace()
+
+                        }
+
+                        override fun critical(msg: String, error: Throwable) {
+                            println(msg)
+                            error.printStackTrace()
+                        }
+                    })
             )
             addInterceptor(
                 FallbackInterceptor(
