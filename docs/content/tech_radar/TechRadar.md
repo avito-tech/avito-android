@@ -13,11 +13,19 @@ Technology radar is a list of technologies and practices that are described in t
 
 Original: https://www.thoughtworks.com/radar
 
+## The radar
+
+- [Gradle - buildSrc]({{< relref "buildSrc.md" >}})
+
+[Template]({{< relref "Template.md" >}})
+
 ## FAQ
+
+[Detailed FAQ](https://www.thoughtworks.com/radar/faq)
 
 ### What questions does tech radar help to solve?
 
-- By what criteria is technology selected or declined?
+- What criteria is technology selected or declined by?
 - What should happen to reconsider the choice?
 - I want to use X. How can I compare it against Y?
 
