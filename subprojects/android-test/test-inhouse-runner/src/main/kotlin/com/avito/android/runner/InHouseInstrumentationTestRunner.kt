@@ -21,9 +21,16 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.TestType
 import com.avito.android.test.report.performance.PerformanceProvider
 import com.avito.android.test.report.performance.PerformanceTestReporter
+import com.avito.android.test.report.transport.ExternalStorageTransport
+import com.avito.android.test.report.transport.LocalRunTransport
+import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
+import com.avito.report.model.DeviceName
+import com.avito.report.model.EntryTypeAdapterFactory
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
@@ -47,22 +54,46 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val report: Report by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+        val isLocalRun = runEnvironment.teamcityBuildId <= 0
+        val transport: List<Transport> = when {
+            isLocalRun -> {
+                if (runEnvironment.reportConfig != null) {
+                    val logger: (String, Throwable?) -> Unit = { msg, error ->
+                        Log.d(TAG, msg, error)
+                        if (error != null) {
+                            sentry.sendException(error)
+                        }
+                    }
+                    listOf(
+                        LocalRunTransport(
+                            reportApiHost = runEnvironment.reportConfig.reportApiUrl,
+                            reportFallbackUrl = runEnvironment.reportConfig.reportApiFallbackUrl,
+                            reportViewerUrl = runEnvironment.reportConfig.reportViewerUrl,
+                            reportCoordinates = runEnvironment.testRunCoordinates,
+                            deviceName = DeviceName(runEnvironment.deviceName),
+                            logger = logger
+                        )
+                    )
+                } else {
+                    emptyList()
+                }
+            }
+            else -> {
+                val gson: Gson = GsonBuilder()
+                    .registerTypeAdapterFactory(EntryTypeAdapterFactory())
+                    .create()
+                listOf(ExternalStorageTransport(gson))
+            }
+        }
 
         ReportImplementation(
-            planSlug = runEnvironment.planSlug,
-            jobSlug = runEnvironment.jobSlug,
-            runId = runEnvironment.runId,
-            deviceName = runEnvironment.deviceName,
-            isLocalRun = runEnvironment.teamcityBuildId <= 0,
             sentry = sentry,
             fileStorageUrl = runEnvironment.fileStorageUrl,
-            reportApiUrl = runEnvironment.reportApiUrl,
-            reportApiFallbackUrl = runEnvironment.reportApiFallbackUrl,
-            reportViewerUrl = runEnvironment.reportViewerUrl,
             onDeviceCacheDirectory = runEnvironment.outputDirectory,
             httpClient = reportHttpClient,
             onIncident = { testIssuesMonitor.onFailure(it) },
-            performanceTestReporter = performanceTestReporter
+            performanceTestReporter = performanceTestReporter,
+            transport = transport
         )
     }
 

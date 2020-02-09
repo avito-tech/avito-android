@@ -27,6 +27,7 @@ import okhttp3.mock.MockInterceptor
  *                       чтобы посмотреть как оно отображается
  */
 internal class ReportRule(
+    // todo useless because report urls are empty
     val sendRealReport: Boolean = false,
     val mockTimeProvider: TimeProvider = mock(),
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
@@ -42,16 +43,8 @@ internal class ReportRule(
     ),
     private val deviceName: String = "android-test",
     private val report: Report = ReportImplementation(
-        planSlug = testRunCoordinates.planSlug,
-        jobSlug = testRunCoordinates.jobSlug,
-        runId = testRunCoordinates.runId,
-        deviceName = deviceName,
-        isLocalRun = true,
         sentry = SentryClientFactory.sentryClient(), // TODO required?
         fileStorageUrl = "https://stub.ru", // TODO required?
-        reportApiUrl = "", // TODO required?
-        reportApiFallbackUrl = "", // TODO required
-        reportViewerUrl = "", // TODO required
         onDeviceCacheDirectory = lazy { error("nope") },
         httpClient = OkHttpClient.Builder()
             .apply {

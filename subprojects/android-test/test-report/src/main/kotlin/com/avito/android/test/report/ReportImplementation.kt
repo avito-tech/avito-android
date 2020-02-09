@@ -47,48 +47,21 @@ import java.io.File
 @Suppress("FoldInitializerAndIfToElvis")
 @SuppressLint("LogNotTimber")
 class ReportImplementation(
-    planSlug: String,
-    jobSlug: String,
-    runId: String,
-    deviceName: String,
     onDeviceCacheDirectory: Lazy<File>,
     httpClient: OkHttpClient,
-    isLocalRun: Boolean,
     fileStorageUrl: String,
-    reportApiUrl: String,
-    reportApiFallbackUrl: String,
-    reportViewerUrl: String,
+    // TODO hide sentry
     override val sentry: SentryClient,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
+    // TODO create Logger Interface
     private val logger: (String, Throwable?) -> Unit = { msg, error ->
         Log.d(TAG, msg, error)
         if (error != null) {
             sentry.sendException(error)
         }
     },
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-        .create(),
-    private val testRunCoordinates: ReportCoordinates = ReportCoordinates(
-        planSlug = planSlug,
-        jobSlug = jobSlug,
-        runId = runId
-    ),
-    private val transport: List<Transport> = if (isLocalRun) {
-        listOf(
-            LocalRunTransport(
-                reportApiHost = reportApiUrl,
-                reportFallbackUrl = reportApiFallbackUrl,
-                reportViewerUrl = reportViewerUrl,
-                reportCoordinates = testRunCoordinates,
-                deviceName = DeviceName(deviceName),
-                logger = logger
-            )
-        )
-    } else {
-        listOf(ExternalStorageTransport(gson))
-    }
+    private val transport: List<Transport>
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
@@ -244,10 +217,9 @@ class ReportImplementation(
                 currentState.endTime = timeProvider.nowInSeconds()
                 afterTestStop(this)
             }
-
-            logger("Start waiting for uploads inside reportTestCase", null)
+            Log.d(TAG, "Start waiting for uploads inside reportTestCase")
             waitUploads(currentState)
-            logger("Waiting for uploads inside reportTestCase completed", null)
+            Log.d(TAG, "Waiting for uploads inside reportTestCase completed")
 
             currentState.apply {
                 /**
@@ -536,11 +508,11 @@ $content
     }
 
     private fun <T> methodExecutionTracing(name: String, action: () -> T): T {
-        logger("Method: $name execution started", null)
+        Log.d(TAG, "Method: $name execution started")
         val result = action()
-        logger("Method: $name execution completed", null)
+        Log.d(TAG, "Method: $name execution completed")
         return result
     }
 }
 
-private const val TAG = "TestReport"
+const val TAG = "TestReport"
