@@ -261,6 +261,8 @@ fun Project.getOptionalExtra(key: String): String? {
 
 fun Project.configureBintray(vararg publications: String) {
     extensions.findByType<BintrayExtension>()?.run {
+
+        //todo fail fast with meaningful error message
         user = System.getenv("BINTRAY_USER")
         key = System.getenv("BINTRAY_API_KEY")
 
