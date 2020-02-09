@@ -7,24 +7,11 @@ type: docs
 
 Monorepo of all tooling to continuously test and deliver apps to users
 
-## Project structure
+## Modules
 
-Root directory consists of:
+### Gradle modules
 
-- `ci/` and `/*.sh` - we follow [IaC](https://en.wikipedia.org/wiki/Infrastructure_as_code) principle whenever possible, 
-you can see docker images we use to abstract configuration of apps building and testing, as well as testing github project itself.
-- `docs/` - documentation you see right now and code to deploy it automatically. [Documentation of how we do documentation]({{< ref "/contributing/Docs.md" >}})
-- `subprojects/` - all kotlin source code lives here
-
-### Subprojects
-
-Tooling has three separate groups:
-
-- `android-test` - code that goes in androidTestImplementation configuration and runs on emulators
-- `gradle` - gradle plugins and buildscript dependencies
-- `common` - modules shared between android-test and gradle
-
-#### Gradle modules
+Gradle plugins and buildscript dependencies.
 
 - `:android` - android gradle plugin extensions, and android sdk wrapper // todo separate
 - `:artifactory` - gradle plugin to back up build artifacts in [artifactory](https://jfrog.com/artifactory/)
@@ -74,7 +61,9 @@ and [service messages]((https://www.jetbrains.com/help/teamcity/build-script-int
 - `:upload-to-googleplay` - wrapper for google publishing api
 - `:utils` - //todo remove 
 
-#### Android-test modules
+### Android-test modules
+
+Code that goes in androidTestImplementation configuration and runs on emulators.
 
 - `:junit-utils` - //todo move to common
 - `:mockito-utils` - //todo move to common
@@ -87,7 +76,9 @@ and [service messages]((https://www.jetbrains.com/help/teamcity/build-script-int
 - `:ui-testing-maps` - addon for main library to test google maps scenarios
 - `:websocket-reporter` - client to gather websocket info for reporting
 
-#### Common modules
+### Common modules
+
+Shared modules between android-test and gradle.
 
 - `:file-storage` - client for internal file storage client, used to store screenshots, videos and other binary stuff
 - `:okhttp` - okhttp extensions
