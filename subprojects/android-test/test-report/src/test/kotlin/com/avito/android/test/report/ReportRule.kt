@@ -10,6 +10,7 @@ import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.filestorage.RemoteStorage
+import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Kind
 import com.avito.report.model.ReportCoordinates
@@ -32,9 +33,21 @@ internal class ReportRule(
     val mockTimeProvider: TimeProvider = mock(),
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
-    private val logger: (String, Throwable?) -> Unit = { message, exception ->
-        println(message)
-        exception?.printStackTrace()
+    private val logger: Logger = object: Logger {
+        override fun debug(msg: String) {
+            println(msg)
+        }
+
+        override fun exception(msg: String, error: Throwable) {
+            println(msg)
+            error.printStackTrace()
+        }
+
+        override fun critical(msg: String, error: Throwable) {
+            println(msg)
+            error.printStackTrace()
+        }
+
     },
     private val testRunCoordinates: ReportCoordinates = ReportCoordinates(
         planSlug = "android-test",
