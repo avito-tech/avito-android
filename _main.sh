@@ -75,7 +75,7 @@ GRADLE_ARGS="--info --stacktrace \\
 # TODO: Use IMAGE_ANDROID_BUILDER image from public registry
 
 function runInBuilder() {
-    COMMANDS=$*
+    COMMANDS=$@
 
     docker run --rm \
     --volume "$(pwd)":/app \
