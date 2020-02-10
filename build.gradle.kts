@@ -60,8 +60,21 @@ subprojects {
     group = "com.avito.android"
     version = finalProjectVersion
 
+    /**
+     * https://www.jetbrains.com/help/teamcity/build-script-interaction-with-teamcity.html#BuildScriptInteractionwithTeamCity-ReportingBuildNumber
+     */
+    val teamcityPrintVersionTask = tasks.register("teamcityPrintReleasedVersion") {
+        group = "publication"
+        description = "Prints teamcity service message to display released version as build number"
+
+        doLast {
+            logger.lifecycle("##teamcity[buildNumber '$finalProjectVersion']")
+        }
+    }
+
     tasks.register(publishReleaseTaskName) {
         group = "publication"
+        finalizedBy(teamcityPrintVersionTask)
     }
 
     val sourcesTaskName = "sourcesJar"
