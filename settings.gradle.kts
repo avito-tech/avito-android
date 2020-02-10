@@ -89,7 +89,7 @@ pluginManagement {
     repositories {
         mavenLocal {
             content {
-                includeGroupByRegex("com\\.avito\\.android\\..*")
+                includeGroupByRegex("com\\.avito\\.android\\.*")
             }
         }
         if (!artifactoryUrl.isNullOrBlank()) {
@@ -97,8 +97,13 @@ pluginManagement {
                 name = "Local Artifactory"
                 setUrl("$artifactoryUrl/libs-release-local")
                 content {
-                    includeGroupByRegex("com\\.avito\\.android\\..*")
+                    includeGroupByRegex("com\\.avito\\.android\\.*")
                 }
+            }
+        }
+        jcenter {
+            content {
+                includeGroupByRegex("com\\.avito\\.android\\.*")
             }
         }
         gradlePluginPortal()
