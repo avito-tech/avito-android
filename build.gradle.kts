@@ -50,6 +50,13 @@ val finalProjectVersion: String = System.getenv("PROJECT_VERSION").let { env ->
     if (env.isNullOrBlank()) projectVersion else env
 }
 
+tasks.register("publishLocal") {
+    group = "publishing"
+
+    doLast {
+    }
+}
+
 subprojects {
 
     repositories {
