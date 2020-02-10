@@ -74,7 +74,8 @@ GRADLE_ARGS="--info --stacktrace \\
 
 # TODO: Use IMAGE_ANDROID_BUILDER image from public registry
 
-docker run --rm \
+function runInBuilder() {
+    docker run --rm \
     --volume "$(pwd)":/app \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
@@ -93,3 +94,4 @@ docker run --rm \
     --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
     dsvoronin/android-builder \
     bash -c "$@"
+}
