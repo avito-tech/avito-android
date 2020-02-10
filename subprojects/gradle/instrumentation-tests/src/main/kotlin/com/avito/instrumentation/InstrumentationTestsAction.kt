@@ -24,6 +24,7 @@ import com.avito.instrumentation.scheduling.TestsScheduler
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.check.AllChecks
 import com.avito.instrumentation.suite.model.TestWithTarget
+import com.avito.logger.Logger
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
@@ -51,7 +52,20 @@ class InstrumentationTestsAction(
     private val reportsApi: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,
-        logger = { message, error -> logger.debug(message, error) }
+        logger = object : Logger {
+            override fun debug(msg: String) {
+                logger.debug(msg)
+            }
+
+            override fun exception(msg: String, error: Throwable) {
+                logger.debug(msg, error)
+            }
+
+            override fun critical(msg: String, error: Throwable) {
+                logger.debug(msg, error)
+            }
+        }
+
     ),
     private val reportCoordinates: ReportCoordinates = params.instrumentationConfiguration.instrumentationParams.reportCoordinates(),
     private val targetReportCoordinates: ReportCoordinates = reportCoordinates.copy(

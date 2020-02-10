@@ -60,6 +60,7 @@ include(":subprojects:common:test-okhttp")
 include(":subprojects:common:report-viewer")
 include(":subprojects:common:sentry")
 include(":subprojects:common:statsd")
+include(":subprojects:common:logger")
 
 include(":subprojects:android-test:resource-manager-exceptions")
 include(":subprojects:android-test:websocket-reporter")
