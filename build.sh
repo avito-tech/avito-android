@@ -10,3 +10,4 @@ runInBuilder "${GIT_COMMANDS}
     ./gradlew :subprojects:android-test:test-app:instrumentationUi ${GRADLE_ARGS} -PinfraVersion=${TEMP_PROJECT_VERSION}"
 
 docs/check.sh
+ci/check_onboarding.sh
