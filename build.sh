@@ -5,3 +5,4 @@ set -e
 source $(dirname $0)/_main.sh "build publishToMavenLocal"
 
 docs/check.sh
+ci/check_onboarding.sh
