@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.logger.Logger
 import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.internal.getHttpClient
 import com.avito.report.model.CreateResult
@@ -59,7 +60,7 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
         fun create(
             host: String,
             fallbackUrl: String,
-            logger: (String, Throwable?) -> Unit,
+            logger: Logger,
             verboseHttp: Boolean = false
         ): ReportsApi {
 

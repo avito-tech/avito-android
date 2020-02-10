@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     id("java-test-fixtures")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val gsonVersion: String by project
@@ -12,6 +13,7 @@ val funktionaleVersion: String by project
 
 dependencies {
     implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:logger"))
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
@@ -23,6 +25,7 @@ dependencies {
     testImplementation("com.jayway.jsonpath:json-path-assert:$jsonPathVersion")
 
     testFixturesImplementation(project(":subprojects:common:test-okhttp"))
+    testFixturesImplementation(project(":subprojects:common:logger"))
     testFixturesImplementation("com.google.code.gson:gson:$gsonVersion")
     testFixturesImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
 }

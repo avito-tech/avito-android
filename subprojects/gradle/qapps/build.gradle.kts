@@ -2,6 +2,7 @@ plugins {
     id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val funktionaleVersion: String by project
@@ -17,6 +18,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:logging"))
+    implementation(project(":subprojects:common:logger"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
@@ -32,6 +34,7 @@ gradlePlugin {
         create("qapps") {
             id = "com.avito.android.qapps"
             implementationClass = "com.avito.plugin.QAppsPlugin"
+            displayName = "QApps"
         }
     }
 }

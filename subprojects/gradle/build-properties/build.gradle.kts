@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     id("java-gradle-plugin")
     `maven-publish`
+    id("com.jfrog.bintray")
 }
 
 val androidGradlePluginVersion: String by project
@@ -22,6 +23,7 @@ gradlePlugin {
         create("buildProperties") {
             id = "com.avito.android.build-properties"
             implementationClass = "com.avito.android.info.BuildPropertiesPlugin"
+            displayName = "Build properties"
         }
     }
 }
