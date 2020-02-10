@@ -43,6 +43,7 @@ headless: true
     - [Test minimized]({{< ref "/test/TestMinimized.md" >}})
     - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
     - [Кастомный запуск]({{< ref "/test/DynamicConfig.md" >}})
+    - [Кастомный клик]({{< ref "/test/InProcessClick.md" >}})
     - [Помощь]({{<ref "/test/Support.md" >}})
 - [Design System](http://links.k.avito.ru/ff)
 - Performance

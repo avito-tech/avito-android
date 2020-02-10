@@ -69,20 +69,7 @@ object UITestConfig {
         }
 
         /**
-         * Use clicks and long clicks implementation without IPC.
-         *
-         * Advantages:
-         *  - Can click on moving objects (espresso has problems with clicking on moving objects, because
-         *    it takes some time to touch after coordinates calculating).
-         *  - Doesn't have "misinterpret clicks as long clicks" problem.
-         *
-         * Disadvantages:
-         *  - MBS-7042: Can click through any system elements on the screen. It applies clicks directly on root
-         *    view of our application. Because of it, crash or permission dialogs can be ignored by
-         *    tests.
-         *  - Can click through separate decor view of our application. Sometimes we have multiple
-         *    decor view in application (for example, when we have toolbar overflow menu). And that
-         *    kind of click implementation can click through it.
+         * [Documentation](https://avito-tech.github.io/avito-android/test/inprocessclick/)
          */
         object InProcessClick : ClickType()
     }
