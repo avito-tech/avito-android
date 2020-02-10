@@ -1,6 +1,5 @@
 package com.avito.report
 
-import com.avito.logger.Logger
 import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.internal.getHttpClient
 import com.avito.report.model.HistoryListResult
@@ -17,7 +16,7 @@ interface ReportsHistoryApi {
         fun create(
             host: String,
             fallbackUrl: String,
-            logger: Logger,
+            logger: (String, Throwable?) -> Unit,
             verboseHttp: Boolean = false,
             gson: Gson = GsonBuilder().create()
         ): ReportsHistoryApi {

@@ -18,7 +18,6 @@ val truthVersion: String by project
 
 dependencies {
     implementation(project(":subprojects:common:report-viewer"))
-    implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:bitbucket"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))

@@ -1,6 +1,5 @@
 package com.avito.report
 
-import com.avito.logger.Logger
 import com.avito.test.gradle.fileFromJarResources
 import com.avito.test.http.MockDispatcher
 import com.google.common.truth.Truth
@@ -18,19 +17,7 @@ internal class ReportsFetchApiImplTest {
     private val fetchApi: ReportsFetchApi = ReportsApi.create(
         host = mockWebServer.url("/").toString(),
         fallbackUrl = "",
-        logger = object : Logger {
-            override fun debug(msg: String) {
-                // empty
-            }
-
-            override fun exception(msg: String, error: Throwable) {
-                // empty
-            }
-
-            override fun critical(msg: String, error: Throwable) {
-                // empty
-            }
-        }
+        logger = { _, _ -> }
     )
 
     @Test

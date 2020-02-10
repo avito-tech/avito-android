@@ -2,7 +2,6 @@ package com.avito.report
 
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.logger.Logger
 import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.internal.model.ConclusionStatus
 import com.avito.report.internal.model.ListResult
@@ -31,7 +30,7 @@ import org.funktionale.tries.Try
 internal class ReportsFetchApiImpl(
     private val requestProvider: JsonRpcRequestProvider,
     private val gson: Gson,
-    private val logger: Logger
+    private val logger: (String, Throwable?) -> Unit
 ) : ReportsFetchApi {
 
     override fun getReportsList(
@@ -233,7 +232,7 @@ internal class ReportsFetchApiImpl(
                     val verdict = reportModel.preparedData?.lastOrNull()?.verdict
                     if (verdict.isNullOrBlank()) {
                         //todo fallback
-                        logger.debug("Can't get verdict for test: $reportModel")
+                        logger.invoke("Can't get verdict for test: $reportModel", null)
                         Status.Failure(
                             "Can't get verdict",
                             reportModel.lastErrorHash ?: "hash unavailable"
@@ -252,15 +251,15 @@ internal class ReportsFetchApiImpl(
     private fun determineStability(reportModel: ListResult): Stability {
         return when {
             reportModel.attemptsCount == null || reportModel.successCount == null -> {
-                logger.debug("should not be here $reportModel")
+                logger.invoke("should not be here $reportModel", null)
                 Stability.Stable
             }
             reportModel.attemptsCount < 1 -> {
-                logger.debug("test without attempts? $reportModel")
+                logger.invoke("test without attempts? $reportModel", null)
                 Stability.Failing(reportModel.attemptsCount) // на самом деле не совсем, репортим эту ситуацию как невероятную
             }
             reportModel.successCount > reportModel.attemptsCount -> {
-                logger.debug("success count > attempts count?? $reportModel")
+                logger.invoke("success count > attempts count?? $reportModel", null)
                 Stability.Stable // на самом деле не совсем, репортим эту ситуацию как невероятную
             }
             reportModel.successCount == 0 -> Stability.Failing(reportModel.attemptsCount)
@@ -271,7 +270,7 @@ internal class ReportsFetchApiImpl(
                 reportModel.successCount
             )
             else -> {
-                logger.debug("should not be here $reportModel")
+                logger.invoke("should not be here $reportModel", null)
                 Stability.Stable
             }
         }
