@@ -290,17 +290,9 @@ data class AdbDevice(
             .asTests()
             .timeout(
                 timeoutMinutes,
-                TimeUnit.MINUTES,
-                Observable.just(
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = test.className,
-                        name = test.methodName,
-                        result = TestCaseRun.Result.Failed(
-                            "Timeout"
-                        ),
-                        timestampStartedMilliseconds = started,
-                        timestampCompletedMilliseconds = started + TimeUnit.MINUTES.toMillis(timeoutMinutes)
-                    )
+                TimeUnit.MILLISECONDS,
+                Observable.error(
+                    RuntimeException()
                 )
             )
             .first()
