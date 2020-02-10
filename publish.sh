@@ -2,4 +2,4 @@
 
 source $(dirname $0)/_main.sh
 
-runInBuilder "${GIT_COMMANDS} ./gradlew publishRelease ${GRADLE_ARGS}"
+runInBuilder "./gradlew publishRelease ${GRADLE_ARGS}"

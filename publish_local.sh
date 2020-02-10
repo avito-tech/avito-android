@@ -2,4 +2,4 @@
 
 source $(dirname $0)/_main.sh
 
-runInBuilder "${GIT_COMMANDS} ./gradlew publishToArtifactory ${GRADLE_ARGS}"
+runInBuilder "$./gradlew publishToArtifactory ${GRADLE_ARGS}"

@@ -93,5 +93,5 @@ function runInBuilder() {
     --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
     --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
     dsvoronin/android-builder \
-    bash -c "$@"
+    bash -c "${GIT_COMMANDS} $@"
 }
