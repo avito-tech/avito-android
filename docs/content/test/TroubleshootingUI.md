@@ -5,62 +5,45 @@ type: docs
 
 # Troubleshooting
 
-## Известные баги тестового фреймворка
+## Known issues
 
-- [Jira Filter](http://links.k.avito.ru/Dg)
-- Автофокус камеры зависает на 22 API (https://issuetracker.google.com/issues/139438163)
+All known bugs: [jira filter (internal)](http://links.k.avito.ru/Dg)
+
+### Camera auto-focus hangs up on 22 API
+
+[#139438163](https://issuetracker.google.com/issues/139438163)\
+There is no workaround. Skip test on this API level.
+
+### Error in local run: "Test framework quit unexpectedly"
+
+Usually it indicates a problem in test runner, see logcat for errors.\
+In some cases test can run without problems. Use a [local test report]({{<relref "/ReportViewer.md" >}})
 
 ## Как понять почему упал тест?
 
-### Teamcity
+Посмотри в TeamCity, в тесте краткая выжимка о причинах падения и ссылка на отчет в [Report Viewer]({{<relref "/ReportViewer.md" >}})
 
-Для начала можно посмотреть в TeamCity, открыв тест можно увидеть краткую выжимку о причинах падения
-
-Есть краткая причина падения не информативна - это повод [написать нам]({{<ref "/test/Support.md" >}}).
-
-### Report Viewer
-
-Используем отчеты в [Report Viewer](http://links.k.avito.ru/cfxRp7KAg), которые содержат:
-
-- **Видео** с эмулятора
-    - Только для упавших тестов
-    - Только для API 23+. На меньших версиях технологии не позволяют записывать надежно
-- **Скриншоты:** до и после каждого шага, во время падения
-- **Трейс ошибки**: цепочка событий которая привела к ошибке
-- **Logcat** для упавших тестов
-- **HTTP** запросы и ответы во время шагов
-- **Логи запросов к ресурсам**: Resource Manager, AB/test, Integration API, phones
-- **Логи действий тестового фреймворка**
-
-### Report Viewer локально
-
-При запуске теста локально, ссылка на Report Viewer тоже формируется и доступна в logcat, ищите по фильтру: `rv.k`.
-
-### Layout Inspector
-
-<br> *Layout inspector использует adb поэтому мы не можем получить состояние экрана в дебажном запуске.* \
-<br> __Как получить экран во время прогона теста?__
-1. Добавить в нужное место `Thread.sleep()`.
-2. Запустить тест без дебага и дождаться пока исполнение попадет в `Thread.sleep()`
-3. Задампить состояние экрана через Layout Inspector
-
-## Что делать если тест flaky?
+## How to deal with flaky test
 
 ### 1. Убедись что тест действительно флакует
 
-В первую очередь смотрим [статистику]({{< ref "#где-посмотреть-статистику-по-стабильности-тестов" >}})
+Посмотри [статистику стабильности теста]({{< ref "#где-посмотреть-статистику-по-стабильности-тестов" >}})
 
-Можно запустить [динамическую конфигурацию]({{< ref "/test/DynamicConfig.md" >}}), указав тест и несколько прогонов сразу.
-
-Обратите внимание на все возможности которые есть в [приложенном отчете]({{< ref "/test/TroubleshootingUI.md" >}}).
-
-Запуск также полезно использовать чтобы убедится, что изменения помогли побороться с нестабильным поведением.
+Для проверки запускай тест в несколько прогонов в [динамической конфигурации]({{< ref "/test/DynamicConfig.md" >}}).
 
 ### 2. Отлаживай в IDE
 
 В Android Studio должен из коробки работать debug на конкретном тесте.
 
 https://developer.android.com/studio/debug
+
+#### Layout Inspector
+
+<br> *Layout inspector использует adb поэтому мы не можем получить состояние экрана в дебажном запуске.* \
+<br> __Как получить экран во время прогона теста?__
+1. Добавить в нужное место `Thread.sleep()`.
+2. Запустить тест без дебага и дождаться пока исполнение попадет в `Thread.sleep()`
+3. Задампить состояние экрана через Layout Inspector
 
 ### 3. Если не удалось найти причину
 
@@ -76,7 +59,7 @@ https://developer.android.com/studio/debug
 
 ## Где посмотреть статистику по стабильности тестов?
 
-- [Общая статистика по тестам](http://links.k.avito.ru/FR)
-- [История нестабильности теста](http://links.k.avito.ru/5W)
+- [Общая статистика по тестам (internal)](http://links.k.avito.ru/FR)
+- [История нестабильности теста (internal)](http://links.k.avito.ru/5W)
 
 Обратите внимание на параметры фильтрации.
