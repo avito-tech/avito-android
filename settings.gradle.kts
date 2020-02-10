@@ -127,7 +127,7 @@ pluginManagement {
                     useVersion(kotlinVersion)
 
                 pluginId.startsWith("com.avito.android") ->
-                    useVersion(infraVersion)
+                    useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.1.0")
