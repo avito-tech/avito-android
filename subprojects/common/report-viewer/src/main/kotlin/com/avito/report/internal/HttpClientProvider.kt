@@ -2,15 +2,16 @@ package com.avito.report.internal
 
 import com.avito.http.FallbackInterceptor
 import com.avito.http.RetryInterceptor
+import com.avito.logger.Logger
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import java.util.concurrent.TimeUnit
 
-internal fun getHttpClient(verbose: Boolean, fallbackUrl: String, logger: (String, Throwable?) -> Unit): OkHttpClient =
+internal fun getHttpClient(verbose: Boolean, fallbackUrl: String, logger: Logger): OkHttpClient =
     OkHttpClient.Builder()
         .readTimeout(60, TimeUnit.SECONDS)
-        .addInterceptor(RetryInterceptor(logger = { message, error -> logger.invoke(message, error) }))
+        .addInterceptor(RetryInterceptor(logger = logger))
         .addInterceptor(
             FallbackInterceptor(
                 fallbackRequest = { request ->
@@ -18,11 +19,11 @@ internal fun getHttpClient(verbose: Boolean, fallbackUrl: String, logger: (Strin
                         .url(fallbackUrl)
                         .build()
                 },
-                onFallback = { logger.invoke("Fallback to ingress", null) })
+                onFallback = { logger.debug("Fallback to ingress") })
         )
         .apply {
             addInterceptor(
-                HttpLoggingInterceptor { logger.invoke(it, null) }
+                HttpLoggingInterceptor { logger.debug(it) }
                     .setLevel(if (verbose) Level.BODY else Level.BASIC)
             )
         }
