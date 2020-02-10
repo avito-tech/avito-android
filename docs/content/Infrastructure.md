@@ -11,6 +11,8 @@ Monorepo of all tooling to continuously test and deliver apps to users
 
 ### Gradle plugins
 
+To use plugins in your project:
+
 `build.gradle`
 
 ```groovy
@@ -141,16 +143,16 @@ Shared modules between android-test and gradle.
 1. Make sure new project version specified in develop head
 1. Manually run [Teamcity configuration](http://links.k.avito.ru/releaseAvitoTools)
 
-### Local integration tests with avito
+### Local integration tests against avito
 
-1. Choose project version that will not clash with released ones
+1. Choose project version that will not clash with released ones (example: `2020.2.4-<yourname>-1`)
 1. Run `./gradlew publishToMavenLocal -PprojectVersion=<Your test version>`
 1. Run integration tests of your choice in avito with specified test version
 
-### CI integration tests with avito
+### CI integration tests against avito
 
 1. Run [Teamcity configuration](http://links.k.avito.ru/fastCheckIntegration). You can also change build branch if you need to test unmerged code.
 1. Pull request checks of avito would run against generated version of tools project.
 
-To re-check this changes locally you need to find android tools version in build parameters. Look for `integrationVersion`.\
+To re-check these changes locally you need to find android tools version in build parameters. Look for `integrationVersion`.\
 Also, to resolve this version you have to provide `artifactoryUrl` gradle property.

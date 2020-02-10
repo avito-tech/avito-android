@@ -9,11 +9,18 @@ import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
 import com.avito.android.test.report.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
+import com.avito.report.model.ReportCoordinates
 import okhttp3.HttpUrl
 import java.io.File
 import java.util.UUID
 
 sealed class TestRunEnvironment {
+
+    data class ReportConfig(
+        val reportApiUrl: String,
+        val reportApiFallbackUrl: String,
+        val reportViewerUrl: String
+    )
 
     fun asRunEnvironmentOrThrow(): RunEnvironment {
         if (this !is RunEnvironment) {
@@ -49,10 +56,7 @@ sealed class TestRunEnvironment {
         val isImitation: Boolean,
 
         val deviceId: String,
-        val planSlug: String,
-        val jobSlug: String,
         val deviceName: String,
-        val runId: String,
         val teamcityBuildId: Int,
 
         val buildBranch: String,
@@ -78,9 +82,8 @@ sealed class TestRunEnvironment {
         val outputDirectory: Lazy<File>,
         val sentryDsn: String,
         val fileStorageUrl: String,
-        val reportApiUrl: String,
-        val reportApiFallbackUrl: String,
-        val reportViewerUrl: String
+        val reportConfig: ReportConfig?,
+        val testRunCoordinates: ReportCoordinates
     ) : TestRunEnvironment()
 }
 
@@ -96,14 +99,27 @@ fun provideEnvironment(
     return when (isFakeOrchestratorRun) {
         true -> TestRunEnvironment.OrchestratorFakeRunEnvironment
         false -> try {
+            val coordinates = ReportCoordinates(
+                planSlug = argumentsProvider.getMandatoryArgument("planSlug"),
+                jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
+                runId = argumentsProvider.getMandatoryArgument("runId")
+            )
+            // todo move to instrumentation plugin
+            val isReportEnabled = (argumentsProvider.getOptionalArgument("avito.report.enabled") ?: "true").toBoolean()
+            val reportConfig = if (isReportEnabled) {
+                TestRunEnvironment.ReportConfig(
+                    reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
+                    reportApiFallbackUrl = argumentsProvider.getMandatoryArgument("reportApiFallbackUrl"),
+                    reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl")
+                )
+            } else {
+                null
+            }
             TestRunEnvironment.RunEnvironment(
                 isImitation = argumentsProvider.getOptionalArgument("imitation") == "true",
                 deviceId = argumentsProvider.getOptionalArgument("deviceId")
                     ?: UUID.randomUUID().toString(),
-                planSlug = argumentsProvider.getMandatoryArgument("planSlug"),
-                jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
                 deviceName = argumentsProvider.getMandatoryArgument("deviceName"),
-                runId = argumentsProvider.getMandatoryArgument("runId"),
                 teamcityBuildId = argumentsProvider.getMandatoryArgument("teamcityBuildId").toInt(),
                 buildBranch = argumentsProvider.getMandatoryArgument("buildBranch"),
                 buildCommit = argumentsProvider.getMandatoryArgument("buildCommit"),
@@ -128,9 +144,8 @@ fun provideEnvironment(
                 slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
                 sentryDsn = argumentsProvider.getMandatoryArgument("sentryDsn"),
                 fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
-                reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
-                reportApiFallbackUrl = argumentsProvider.getMandatoryArgument("reportApiFallbackUrl"),
-                reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl")
+                testRunCoordinates = coordinates,
+                reportConfig = reportConfig
             )
         } catch (e: Throwable) {
             TestRunEnvironment.InitError(e.message ?: "Unknown error")
