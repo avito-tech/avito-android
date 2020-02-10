@@ -109,8 +109,6 @@ dependencies {
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
 }
 
-tasks.getByName("build").dependsOn("$path:instrumentationUi")
-
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 
     //todo make these params optional features in plugin

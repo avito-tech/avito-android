@@ -11,8 +11,6 @@ echo "Starting with UID : $USER_ID"
 groupadd --gid "${USER_ID}" ${BUILD_USER}
 useradd --shell /bin/bash --uid "${USER_ID}" --gid "${USER_ID}" --comment "User for container" --create-home ${BUILD_USER}
 
-setfacl -m user:$BUILD_USER:rw /var/run/docker.sock
-
 mkdir -p "${GRADLE_USER_HOME}"
 
 # были проблемы, когда создавал git при первом обращении
