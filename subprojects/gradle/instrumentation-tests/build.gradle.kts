@@ -75,11 +75,5 @@ gradlePlugin {
             implementationClass = "com.avito.instrumentation.InstrumentationTestsPlugin"
             displayName = "Instrumentation tests"
         }
-
-        create("defaultConfig") {
-            id = "com.avito.android.instrumentation-tests-default-config"
-            implementationClass = "com.avito.instrumentation.InstrumentationDefaultConfigPlugin"
-            displayName = "Instrumentation tests default configuration"
-        }
     }
 }
