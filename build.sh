@@ -4,9 +4,8 @@ set -e
 
 TEMP_PROJECT_VERSION="temp-version"
 
-source $(dirname $0)/_main.sh "build publishToMavenLocal -PprojectVersion=${TEMP_PROJECT_VERSION}"
-source $(dirname $0)/_main.sh ":subprojects:android-test:instrumentationUi -PinfraVersion=${TEMP_PROJECT_VERSION}"
-
-# todo push new infraVersion on release
+source $(dirname $0)/_main.sh "${GIT_COMMANDS}
+    ./gradlew build publishToMavenLocal ${GRADLE_ARGS} -PprojectVersion=${TEMP_PROJECT_VERSION};
+    :subprojects:android-test:instrumentationUi -PinfraVersion=${TEMP_PROJECT_VERSION}"
 
 docs/check.sh

@@ -37,30 +37,11 @@ GRADLE_WRAPPER_DIR=$HOME/.gradle/wrapper
 clearDockerContainers
 clearGradleLockFiles
 
-# TODO: Use IMAGE_ANDROID_BUILDER image from public registry
+GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
+            git config --global user.name 'builder';
+            git config --global user.email 'builder@avito.ru';"
 
-docker run --rm \
-    --volume "$(pwd)":/app \
-    --volume /var/run/docker.sock:/var/run/docker.sock \
-    --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
-    --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
-    --workdir /app \
-    --env GRADLE_USER_HOME=/gradle \
-    --env LOCAL_USER_ID="$USER_ID" \
-    --env BINTRAY_USER="$BINTRAY_USER" \
-    --env BINTRAY_API_KEY="$BINTRAY_API_KEY" \
-    --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
-    --env PROJECT_VERSION="$PROJECT_VERSION" \
-    --env ARTIFACTORY_USER="$ARTIFACTORY_USER" \
-    --env ARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" \
-    --env SLACK_TEST_WORKSPACE="$SLACK_TEST_WORKSPACE" \
-    --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
-    --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
-    dsvoronin/android-builder \
-    bash -c "git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
-             git config --global user.name 'builder';
-             git config --global user.email 'builder@avito.ru';
-             ./gradlew $@ --info --stacktrace \\
+GRADLE_ARGS="--info --stacktrace \\
              -PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pci=true \\
              -PteamcityUrl \\
@@ -90,3 +71,25 @@ docker run --rm \
              -PkubernetesToken=$KUBERNETES_TOKEN \\
              -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
              -PkubernetesUrl=$KUBERNETES_URL"
+
+# TODO: Use IMAGE_ANDROID_BUILDER image from public registry
+
+docker run --rm \
+    --volume "$(pwd)":/app \
+    --volume /var/run/docker.sock:/var/run/docker.sock \
+    --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
+    --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
+    --workdir /app \
+    --env GRADLE_USER_HOME=/gradle \
+    --env LOCAL_USER_ID="$USER_ID" \
+    --env BINTRAY_USER="$BINTRAY_USER" \
+    --env BINTRAY_API_KEY="$BINTRAY_API_KEY" \
+    --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
+    --env PROJECT_VERSION="$PROJECT_VERSION" \
+    --env ARTIFACTORY_USER="$ARTIFACTORY_USER" \
+    --env ARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" \
+    --env SLACK_TEST_WORKSPACE="$SLACK_TEST_WORKSPACE" \
+    --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
+    --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
+    dsvoronin/android-builder \
+    bash -c "$@"
