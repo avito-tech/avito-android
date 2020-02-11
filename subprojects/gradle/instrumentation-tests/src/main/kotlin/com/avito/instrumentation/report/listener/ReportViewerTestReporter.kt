@@ -5,7 +5,6 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorage.Request
 import com.avito.filestorage.RemoteStorage.Result
 import com.avito.instrumentation.report.Report
-import com.avito.logger.Logger
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.TestRuntimeData
@@ -36,17 +35,11 @@ class ReportViewerTestReporter(
     private val remoteStorage: RemoteStorage =
         RemoteStorage.create(
             endpoint = fileStorageUrl,
-            logger = object : Logger {
-                override fun debug(msg: String) {
-                    logger.info(msg)
-                }
-
-                override fun exception(msg: String, error: Throwable) {
-                    logger.critical(msg, error)
-                }
-
-                override fun critical(msg: String, error: Throwable) {
-                    logger.critical(msg, error)
+            logger = { message: String, error: Throwable? ->
+                if (error != null) {
+                    logger.critical(message, error)
+                } else {
+                    logger.info(message)
                 }
             })
     // todo переместить ближе к DeviceWorker

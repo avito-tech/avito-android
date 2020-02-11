@@ -115,6 +115,12 @@ subprojects {
         }
     }
 
+    plugins.withType<JavaGradlePluginPlugin> {
+        extensions.getByType<GradlePluginDevelopmentExtension>().run {
+            isAutomatedPublishing = false
+        }
+    }
+
     plugins.withId("digital.wup.android-maven-publish") {
         //todo remove afterEvaluate if possible
         afterEvaluate {
