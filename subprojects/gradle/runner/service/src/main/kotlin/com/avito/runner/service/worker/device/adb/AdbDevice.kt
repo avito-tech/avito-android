@@ -4,8 +4,8 @@ import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
 import com.avito.runner.ProcessNotification
+import com.avito.runner.CommandLineExecutor
 import com.avito.runner.logging.Logger
-import com.avito.runner.process
 import com.avito.runner.retry
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -30,7 +30,8 @@ data class AdbDevice(
     override val id: String,
     override val online: Boolean,
     private val adb: String,
-    private val logger: Logger
+    private val logger: Logger,
+    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl()
 ) : Device {
 
     override val api: Int by lazy {
@@ -290,9 +291,17 @@ data class AdbDevice(
             .asTests()
             .timeout(
                 timeoutMinutes,
-                TimeUnit.MILLISECONDS,
-                Observable.error(
-                    RuntimeException()
+                TimeUnit.MINUTES,
+                Observable.just(
+                    InstrumentationTestCaseRun.CompletedTestCaseRun(
+                        className = test.className,
+                        name = test.methodName,
+                        result = TestCaseRun.Result.Failed(
+                            "Timeout"
+                        ),
+                        timestampStartedMilliseconds = started,
+                        timestampCompletedMilliseconds = started + TimeUnit.MINUTES.toMillis(timeoutMinutes)
+                    )
                 )
             )
             .first()
@@ -365,7 +374,7 @@ data class AdbDevice(
         timeoutSeconds = timeoutSeconds
     )
 
-    fun executeBlockingCommand(
+    private fun executeBlockingCommand(
         command: List<String>,
         timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
     ): ProcessNotification.Exit = executeCommand(
@@ -395,9 +404,10 @@ data class AdbDevice(
         command: List<String>,
         redirectOutputTo: File? = null
     ): Observable<ProcessNotification> =
-        process(
-            commandAndArgs = listOf(adb, "-s", id) + command,
-            redirectOutputTo = redirectOutputTo
+        commandLine.executeProcess(
+            command = adb,
+            args = listOf("-s", id) + command,
+            output = redirectOutputTo
         )
 
     override fun log(message: String) {
