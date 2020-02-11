@@ -4,14 +4,13 @@ headless: true
 
 - [Introduction]({{< ref "/" >}})
 - [Tech radar]({{< ref "/tech_radar/TechRadar.md" >}})
-
+- [Known Issues]({{< ref "/KnownIssues.md" >}})
 - Contributing
     - [How to start]({{< ref "/contributing/HowToStart.md" >}})
     - [Documentation]({{< ref "/contributing/Docs.md" >}})
     - [Code Review]({{< ref "/contributing/CodeReview.md" >}})
     - [Code Style]({{< ref "/contributing/CodeStyle.md" >}})
     - [Feature Toggles]({{< ref "/contributing/FeatureToggles.md" >}})
-    - [Known Issues]({{< ref "/contributing/KnownIssues.md" >}})
 - IDE
     - [Конфигурации]({{< ref "/ide/Configurations.md" >}})
     - [Шаблоны]({{< ref "/ide/Templates.md" >}})
@@ -41,6 +40,7 @@ headless: true
     - [Юнит тесты]({{< ref "/test/UnitTesting.md" >}})
     - [Скриншотные тесты]({{< ref "/test/ScreenshotTesting.md" >}})
     - [Test minimized]({{< ref "/test/TestMinimized.md" >}})
+    - [Report Viewer]({{< ref "/test/ReportViewer.md" >}})
     - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
     - [Кастомный запуск]({{< ref "/test/DynamicConfig.md" >}})
     - [Помощь]({{<ref "/test/Support.md" >}})
