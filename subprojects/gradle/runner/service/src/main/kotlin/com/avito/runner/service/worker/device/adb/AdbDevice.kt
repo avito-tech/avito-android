@@ -11,6 +11,7 @@ import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.adb.instrumentation.asTests
 import com.avito.runner.service.worker.device.adb.instrumentation.readInstrumentationOutput
@@ -72,35 +73,29 @@ data class AdbDevice(
     }
 
     override fun runIsolatedTest(
-        test: TestCase,
-        testPackageName: String,
-        targetPackageName: String,
-        testRunnerClass: String,
-        listener: TestListener?,
-        instrumentationArguments: Map<String, String>,
+        action: InstrumentationTestRunAction,
         outputDir: File,
-        timeoutMinutes: Long,
-        executionNumber: Int
+        listener: TestListener?
     ): DeviceTestCaseRun {
 
         listener?.started(
             device = this,
-            targetPackage = targetPackageName,
-            test = test,
-            executionNumber = executionNumber
+            targetPackage = action.targetPackage,
+            test = action.test,
+            executionNumber = action.executionNumber
         )
 
-        val finalInstrumentationArguments = instrumentationArguments.plus(
-            "class" to "${test.className}#${test.methodName}"
+        val finalInstrumentationArguments = action.instrumentationParams.plus(
+            "class" to "${action.test.className}#${action.test.methodName}"
         )
 
         return runTest(
-            test = test,
-            testPackageName = testPackageName,
-            testRunnerClass = testRunnerClass,
+            test = action.test,
+            testPackageName = action.testPackage,
+            testRunnerClass = action.testRunner,
             instrumentationArguments = finalInstrumentationArguments,
             outputDir = outputDir,
-            timeoutMinutes = timeoutMinutes
+            timeoutMinutes = action.timeoutMinutes
         )
             .map {
                 when (it) {
@@ -110,7 +105,7 @@ data class AdbDevice(
                                 test = TestCase(
                                     className = it.className,
                                     methodName = it.name,
-                                    deviceName = test.deviceName
+                                    deviceName = action.test.deviceName
                                 ),
                                 result = it.result,
                                 timestampStartedMilliseconds = it.timestampStartedMilliseconds,
@@ -122,7 +117,7 @@ data class AdbDevice(
                     is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
-                                test = test,
+                                test = action.test,
                                 result = TestCaseRun.Result.Failed(
                                     stacktrace = it.message
                                 ),
@@ -138,10 +133,10 @@ data class AdbDevice(
                 listener?.finished(
                     device = this,
                     test = testCaseRun.test,
-                    targetPackage = targetPackageName,
+                    targetPackage = action.targetPackage,
                     result = testCaseRun.result,
                     durationMilliseconds = testCaseRun.durationMilliseconds,
-                    executionNumber = executionNumber
+                    executionNumber = action.executionNumber
                 )
             }
             .toBlocking()

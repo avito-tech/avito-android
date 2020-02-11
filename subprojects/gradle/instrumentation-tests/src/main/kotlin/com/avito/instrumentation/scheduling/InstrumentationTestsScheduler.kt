@@ -52,7 +52,7 @@ class InstrumentationTestsScheduler(
             finalTargetBranchState: Try<List<SimpleRunTest>>?
         ) = when {
             !params.instrumentationConfiguration.tryToReRunOnTargetBranch -> {
-                logger.info("Rerun on source branch disabled")
+                logger.info("Rerun on target branch disabled")
                 initialTestsResult to null
             }
             initialTestsResult is Try.Failure -> {

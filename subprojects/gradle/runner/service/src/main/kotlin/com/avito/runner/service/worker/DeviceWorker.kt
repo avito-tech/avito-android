@@ -4,8 +4,8 @@ import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.Action
 import com.avito.runner.service.model.intention.ActionResult
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
@@ -107,35 +107,27 @@ class DeviceWorker(
         return Try.Success(intentionState)
     }
 
-    private fun executeAction(action: Action): DeviceTestCaseRun =
-        when (action) {
-            is Action.InstrumentationTestRunAction -> try {
-                device.runIsolatedTest(
-                    test = action.test,
-                    testPackageName = action.testPackage,
-                    targetPackageName = action.targetPackage,
-                    testRunnerClass = action.testRunner,
-                    listener = listener,
-                    instrumentationArguments = action.instrumentationParams,
-                    outputDir = outputDirectory,
-                    timeoutMinutes = action.timeoutMinutes,
-                    executionNumber = action.executionNumber
-                )
-            } catch (t: Throwable) {
-                val now = System.currentTimeMillis()
+    private fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun =
+        try {
+            device.runIsolatedTest(
+                action = action,
+                outputDir = outputDirectory,
+                listener = listener
+            )
+        } catch (t: Throwable) {
+            val now = System.currentTimeMillis()
 
-                DeviceTestCaseRun(
-                    testCaseRun = TestCaseRun(
-                        test = action.test,
-                        result = TestCaseRun.Result.Failed(
-                            stacktrace = "Infrastructure error: ${t.message}"
-                        ),
-                        timestampStartedMilliseconds = now,
-                        timestampCompletedMilliseconds = now
+            DeviceTestCaseRun(
+                testCaseRun = TestCaseRun(
+                    test = action.test,
+                    result = TestCaseRun.Result.Failed(
+                        stacktrace = "Infrastructure error: ${t.message}"
                     ),
-                    device = device.getData()
-                )
-            }
+                    timestampStartedMilliseconds = now,
+                    timestampCompletedMilliseconds = now
+                ),
+                device = device.getData()
+            )
         }
 
     private fun clearStatePackages(): Try<Any> = Try {
