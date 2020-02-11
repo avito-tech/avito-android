@@ -37,7 +37,6 @@ dependencies {
     implementation(project(":subprojects:gradle:bitbucket"))
     implementation(project(":subprojects:common:file-storage"))
     implementation(project(":subprojects:common:sentry"))
-    implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:gradle:kubernetes"))
     implementation(project(":subprojects:gradle:upload-cd-build-result"))
     implementation("org.smali:dexlib2:2.3")
@@ -74,12 +73,6 @@ gradlePlugin {
             id = "com.avito.android.instrumentation-tests"
             implementationClass = "com.avito.instrumentation.InstrumentationTestsPlugin"
             displayName = "Instrumentation tests"
-        }
-
-        create("defaultConfig") {
-            id = "com.avito.android.instrumentation-tests-default-config"
-            implementationClass = "com.avito.instrumentation.InstrumentationDefaultConfigPlugin"
-            displayName = "Instrumentation tests default configuration"
         }
     }
 }

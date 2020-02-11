@@ -60,8 +60,21 @@ subprojects {
     group = "com.avito.android"
     version = finalProjectVersion
 
+    /**
+     * https://www.jetbrains.com/help/teamcity/build-script-interaction-with-teamcity.html#BuildScriptInteractionwithTeamCity-ReportingBuildNumber
+     */
+    val teamcityPrintVersionTask = tasks.register("teamcityPrintReleasedVersion") {
+        group = "publication"
+        description = "Prints teamcity service message to display released version as build number"
+
+        doLast {
+            logger.lifecycle("##teamcity[buildNumber '$finalProjectVersion']")
+        }
+    }
+
     tasks.register(publishReleaseTaskName) {
         group = "publication"
+        finalizedBy(teamcityPrintVersionTask)
     }
 
     val sourcesTaskName = "sourcesJar"
@@ -99,6 +112,12 @@ subprojects {
         tasks.register<Jar>(sourcesTaskName).configure {
             archiveClassifier.set("sources")
             from(this@withType.extension.sourceSets["main"].java.srcDirs)
+        }
+    }
+
+    plugins.withType<JavaGradlePluginPlugin> {
+        extensions.getByType<GradlePluginDevelopmentExtension>().run {
+            isAutomatedPublishing = false
         }
     }
 
@@ -261,6 +280,8 @@ fun Project.getOptionalExtra(key: String): String? {
 
 fun Project.configureBintray(vararg publications: String) {
     extensions.findByType<BintrayExtension>()?.run {
+
+        //todo fail fast with meaningful error message
         user = System.getenv("BINTRAY_USER")
         key = System.getenv("BINTRAY_API_KEY")
 

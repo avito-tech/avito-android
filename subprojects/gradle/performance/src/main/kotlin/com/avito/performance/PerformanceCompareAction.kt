@@ -5,7 +5,6 @@ import com.avito.android.stats.StatsDSender
 import com.avito.bitbucket.AtlassianCredentials
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.BitbucketConfig
-import com.avito.logger.Logger
 import com.avito.performance.stats.Stats
 import com.avito.performance.stats.StatsApi
 import com.avito.performance.stats.comparison.ComparedTest
@@ -25,19 +24,7 @@ open class PerformanceCompareAction(
     private val reports: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,
-        logger = object: Logger {
-            override fun debug(msg: String) {
-                logger.debug(msg)
-            }
-
-            override fun exception(msg: String, error: Throwable) {
-                logger.debug(msg, error)
-            }
-
-            override fun critical(msg: String, error: Throwable) {
-                logger.debug(msg, error)
-            }
-        }
+        logger = { message, error -> logger.debug(message, error) }
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(
         config = params.statsdConfig,

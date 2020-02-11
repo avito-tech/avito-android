@@ -7,3 +7,4 @@ local.properties
 # hugo generated files
 public/
 .DS_Store
+outputs/

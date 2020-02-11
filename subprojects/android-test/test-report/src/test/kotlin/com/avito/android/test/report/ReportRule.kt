@@ -10,7 +10,6 @@ import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Kind
 import com.avito.report.model.ReportCoordinates
@@ -28,26 +27,13 @@ import okhttp3.mock.MockInterceptor
  *                       чтобы посмотреть как оно отображается
  */
 internal class ReportRule(
-    // todo useless because report urls are empty
     val sendRealReport: Boolean = false,
     val mockTimeProvider: TimeProvider = mock(),
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
-    private val logger: Logger = object: Logger {
-        override fun debug(msg: String) {
-            println(msg)
-        }
-
-        override fun exception(msg: String, error: Throwable) {
-            println(msg)
-            error.printStackTrace()
-        }
-
-        override fun critical(msg: String, error: Throwable) {
-            println(msg)
-            error.printStackTrace()
-        }
-
+    private val logger: (String, Throwable?) -> Unit = { message, exception ->
+        println(message)
+        exception?.printStackTrace()
     },
     private val testRunCoordinates: ReportCoordinates = ReportCoordinates(
         planSlug = "android-test",
@@ -56,8 +42,16 @@ internal class ReportRule(
     ),
     private val deviceName: String = "android-test",
     private val report: Report = ReportImplementation(
+        planSlug = testRunCoordinates.planSlug,
+        jobSlug = testRunCoordinates.jobSlug,
+        runId = testRunCoordinates.runId,
+        deviceName = deviceName,
+        isLocalRun = true,
         sentry = SentryClientFactory.sentryClient(), // TODO required?
         fileStorageUrl = "https://stub.ru", // TODO required?
+        reportApiUrl = "", // TODO required?
+        reportApiFallbackUrl = "", // TODO required
+        reportViewerUrl = "", // TODO required
         onDeviceCacheDirectory = lazy { error("nope") },
         httpClient = OkHttpClient.Builder()
             .apply {

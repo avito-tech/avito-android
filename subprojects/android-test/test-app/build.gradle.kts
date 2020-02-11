@@ -39,10 +39,11 @@ android {
                 "planSlug" to "AndroidTestApp",
                 "slackToken" to "STUB",
                 "sentryDsn" to "http://stub-project@stub-host/0",
-                "fileStorageUrl" to "https://file-storage-stub",
-                "unnecessaryUrl" to "https://localhost",
-                // todo move to instrumentation plugin
-                "avito.report.enabled" to "false"
+                "fileStorageUrl" to "https://stub",
+                "reportApiUrl" to "https://stub",
+                "reportApiFallbackUrl" to "https://stub",
+                "reportViewerUrl" to "https://stub",
+                "unnecessaryUrl" to "https://localhost"
             )
         )
     }
@@ -108,8 +109,6 @@ dependencies {
     androidTestImplementation("com.google.truth:truth:$truthVersion")
     androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
 }
-
-tasks.getByName("build").dependsOn("$path:instrumentationUi")
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 

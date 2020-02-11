@@ -60,7 +60,6 @@ include(":subprojects:common:test-okhttp")
 include(":subprojects:common:report-viewer")
 include(":subprojects:common:sentry")
 include(":subprojects:common:statsd")
-include(":subprojects:common:logger")
 
 include(":subprojects:android-test:resource-manager-exceptions")
 include(":subprojects:android-test:websocket-reporter")
@@ -89,7 +88,7 @@ pluginManagement {
     repositories {
         mavenLocal {
             content {
-                includeGroupByRegex("com\\.avito\\.android\\..*")
+                includeGroupByRegex("com\\.avito\\.android\\.*")
             }
         }
         if (!artifactoryUrl.isNullOrBlank()) {
@@ -97,8 +96,13 @@ pluginManagement {
                 name = "Local Artifactory"
                 setUrl("$artifactoryUrl/libs-release-local")
                 content {
-                    includeGroupByRegex("com\\.avito\\.android\\..*")
+                    includeGroupByRegex("com\\.avito\\.android\\.*")
                 }
+            }
+        }
+        jcenter {
+            content {
+                includeGroupByRegex("com\\.avito\\.android\\.*")
             }
         }
         gradlePluginPortal()
@@ -122,7 +126,7 @@ pluginManagement {
                     useVersion(kotlinVersion)
 
                 pluginId.startsWith("com.avito.android") ->
-                    useVersion(infraVersion)
+                    useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.1.0")

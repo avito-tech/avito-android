@@ -1,6 +1,5 @@
 package com.avito.filestorage
 
-import com.avito.logger.Logger
 import okhttp3.HttpUrl
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -12,7 +11,7 @@ interface RemoteStorage {
 
         fun create(
             endpoint: String,
-            logger: Logger,
+            logger: (String, Throwable?) -> Unit,
             httpClient: OkHttpClient = OkHttpClient()
         ): RemoteStorage = HttpRemoteStorage(
             endpoint = requireNotNull(HttpUrl.parse(endpoint)) ,

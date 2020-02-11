@@ -1,6 +1,5 @@
 package com.avito.http
 
-import com.avito.logger.Logger
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -102,21 +101,9 @@ internal class RetryInterceptorTest {
                 RetryInterceptor(
                     retries = maxAttempts,
                     delayMs = 1,
-                    logger = object : Logger {
-                        override fun debug(msg: String) {
-                            println(msg)
-                        }
-
-                        override fun exception(msg: String, error: Throwable) {
-                            println(msg)
-                            error.printStackTrace()
-
-                        }
-
-                        override fun critical(msg: String, error: Throwable) {
-                            println(msg)
-                            error.printStackTrace()
-                        }
+                    logger = { message, error ->
+                        println(message)
+                        error?.printStackTrace()
                     },
                     allowedMethods = listOf("GET", "POST"),
                     useIncreasingDelay = false
