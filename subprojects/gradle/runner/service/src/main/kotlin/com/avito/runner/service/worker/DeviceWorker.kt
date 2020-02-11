@@ -23,7 +23,7 @@ class DeviceWorker(
     private val messagesChannel: Channel<DeviceWorkerMessage>,
     private val device: Device,
     private val outputDirectory: File,
-    private val listener: TestListener?
+    private val listener: TestListener
 ) {
 
     private val scope = CoroutineScope(

@@ -75,10 +75,10 @@ data class AdbDevice(
     override fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File,
-        listener: TestListener?
+        listener: TestListener
     ): DeviceTestCaseRun {
 
-        listener?.started(
+        listener.started(
             device = this,
             targetPackage = action.targetPackage,
             test = action.test,
@@ -130,7 +130,7 @@ data class AdbDevice(
                 }
             }
             .doOnSuccess { (testCaseRun) ->
-                listener?.finished(
+                listener.finished(
                     device = this,
                     test = testCaseRun.test,
                     targetPackage = action.targetPackage,

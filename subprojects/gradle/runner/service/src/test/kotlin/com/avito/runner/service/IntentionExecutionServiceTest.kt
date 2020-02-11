@@ -6,6 +6,7 @@ import com.avito.runner.service.model.intention.ActionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.observer.DevicesObserver
+import com.avito.runner.test.EmptyListener
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
@@ -242,6 +243,7 @@ class IntentionExecutionServiceTest {
         outputDirectory = File(""),
         logger = StdOutLogger(),
         devicesObserver = devicesObserver,
-        intentionsRouter = intentionsRouter
+        intentionsRouter = intentionsRouter,
+        listener = EmptyListener
     )
 }

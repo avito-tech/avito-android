@@ -58,7 +58,7 @@ class MockDevice(
     override fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File,
-        listener: TestListener?
+        listener: TestListener
     ): DeviceTestCaseRun {
         if (runTestsResultsQueue.isEmpty()) {
             throw IllegalArgumentException(

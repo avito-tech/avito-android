@@ -6,6 +6,7 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.test.EmptyListener
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
@@ -196,6 +197,6 @@ class DeviceWorkerTest {
             messagesChannel = results,
             device = device,
             outputDirectory = File(""),
-            listener = null
+            listener = EmptyListener
         )
 }

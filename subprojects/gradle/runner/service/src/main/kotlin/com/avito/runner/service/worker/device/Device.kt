@@ -18,7 +18,7 @@ interface Device {
     fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File,
-        listener: TestListener?
+        listener: TestListener
     ): DeviceTestCaseRun
 
     fun clearPackage(name: String): Try<Any>
