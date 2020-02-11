@@ -26,7 +26,6 @@ dependencies {
     implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:common:file-storage"))
     implementation(project(":subprojects:common:report-viewer"))
-    implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:android-test:test-annotations"))
     implementation(project(":subprojects:android-test:ui-testing-core"))
     implementation(project(":subprojects:android-test:resource-manager-exceptions"))

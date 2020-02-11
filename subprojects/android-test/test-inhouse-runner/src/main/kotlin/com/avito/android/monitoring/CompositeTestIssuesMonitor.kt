@@ -74,6 +74,6 @@ class CompositeTestIssuesMonitor(
             .withTag("buildBranch", testRunEnvironment.buildBranch)
             .withTag("deviceId", testRunEnvironment.deviceId)
             .withTag("deviceName", testRunEnvironment.deviceName)
-            .withTag("runId", testRunEnvironment.testRunCoordinates.runId)
+            .withTag("runId", testRunEnvironment.runId)
     }
 }

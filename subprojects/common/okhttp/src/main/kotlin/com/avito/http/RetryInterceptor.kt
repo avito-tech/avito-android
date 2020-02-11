@@ -1,6 +1,5 @@
 package com.avito.http
 
-import com.avito.logger.Logger
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -22,7 +21,7 @@ class RetryInterceptor(
     ),
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,
-    private val logger: Logger,
+    private val logger: (message: String, error: Throwable?) -> Unit,
     private val onSuccess: (Response) -> Unit = {},
     private val onFailure: (Response) -> Unit = {}
 ) : Interceptor {
@@ -43,10 +42,10 @@ class RetryInterceptor(
             try {
                 prepareForRetry(response)
                 response = chain.proceed(request)
-                logger.debug("Try: $tryCount. Response: $response")
+                logger("Try: $tryCount. Response: $response", null)
             } catch (exception: IOException) {
                 error = exception
-                logger.critical("Try: $tryCount. Failed to execute request. Error: ${error.message}", exception)
+                logger("Try: $tryCount. Failed to execute request. Error: ${error.message}", error)
             }
 
             if (response != null) {

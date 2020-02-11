@@ -1,6 +1,5 @@
 package com.avito.report
 
-import com.avito.logger.Logger
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.gradle.fileFromJarResources
@@ -25,20 +24,9 @@ internal class ReportsApiTest {
         reportsApi = ReportsApi.create(
             host = host,
             fallbackUrl = "",
-            logger = object : Logger {
-                override fun debug(msg: String) {
-                    println(msg)
-                }
-
-                override fun exception(msg: String, error: Throwable) {
-                    println(msg)
-                    error.printStackTrace()
-                }
-
-                override fun critical(msg: String, error: Throwable) {
-                    println(msg)
-                    error.printStackTrace()
-                }
+            logger = { message, error ->
+                println(message)
+                error?.printStackTrace()
             }
         )
     }

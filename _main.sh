@@ -75,6 +75,8 @@ GRADLE_ARGS="--info --stacktrace \\
 # TODO: Use IMAGE_ANDROID_BUILDER image from public registry
 
 function runInBuilder() {
+    COMMANDS=$@
+
     docker run --rm \
     --volume "$(pwd)":/app \
     --volume /var/run/docker.sock:/var/run/docker.sock \
@@ -93,5 +95,5 @@ function runInBuilder() {
     --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
     --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
     dsvoronin/android-builder \
-    bash -c "${GIT_COMMANDS} $@"
+    bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }

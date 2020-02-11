@@ -18,7 +18,6 @@ dependencies {
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:common:statsd"))
     implementation(project(":subprojects:common:report-viewer"))
-    implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:android-test:junit-utils"))
     implementation(project(":subprojects:android-test:mockito-utils"))
     implementation(project(":subprojects:android-test:test-report"))
