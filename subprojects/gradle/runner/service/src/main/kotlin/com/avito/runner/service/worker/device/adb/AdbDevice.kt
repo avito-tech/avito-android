@@ -19,6 +19,7 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
+import com.avito.utils.getStackTraceString
 import org.funktionale.tries.Try
 import rx.Observable
 import rx.Single
@@ -120,6 +121,22 @@ data class AdbDevice(
                                 test = action.test,
                                 result = TestCaseRun.Result.Failed(
                                     stacktrace = it.message
+                                ),
+                                timestampStartedMilliseconds = System.currentTimeMillis(),
+                                timestampCompletedMilliseconds = System.currentTimeMillis()
+                            ),
+                            device = this.getData()
+                        )
+                    }
+                    is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
+                        DeviceTestCaseRun(
+                            testCaseRun = TestCaseRun(
+                                test = action.test,
+                                result = TestCaseRun.Result.Failed(
+                                    stacktrace = """
+                                        ${it.message}
+                                        ${it.throwable.getStackTraceString()}
+                                    """.trimIndent()
                                 ),
                                 timestampStartedMilliseconds = System.currentTimeMillis(),
                                 timestampCompletedMilliseconds = System.currentTimeMillis()

@@ -13,5 +13,7 @@ sealed class InstrumentationTestCaseRun {
         val durationMilliseconds: Long = timestampCompletedMilliseconds - timestampStartedMilliseconds
     }
 
+    data class FailedOnInstrumentationParsing(val message: String, val throwable: Throwable) : InstrumentationTestCaseRun()
+
     data class FailedOnStartTestCaseRun(val message: String) : InstrumentationTestCaseRun()
 }

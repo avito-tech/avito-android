@@ -15,7 +15,8 @@ fun Observable<ProcessNotification.Output>.readInstrumentationOutput(): Observab
     return map { it.line }
         .map { it.trim() }
         // `INSTRUMENTATION_CODE: -1` is last line printed by instrumentation, even if 0 tests were run.
-        .takeUntil { it.startsWith("INSTRUMENTATION_CODE") }
+        // if invalid command last line starts with Error:
+        .takeUntil { it.startsWith("INSTRUMENTATION_CODE") || it.startsWith("Error:")}
         .scan(Result()) { previousResult, newLine ->
             val buffer = when (previousResult.readyForProcessing) {
                 true -> newLine
@@ -23,7 +24,7 @@ fun Observable<ProcessNotification.Output>.readInstrumentationOutput(): Observab
             }
 
             val isEntryEnd =
-                newLine.startsWith("INSTRUMENTATION_STATUS_CODE") || newLine.startsWith("INSTRUMENTATION_CODE")
+                newLine.startsWith("INSTRUMENTATION_STATUS_CODE") || newLine.startsWith("INSTRUMENTATION_CODE") || newLine.startsWith("Error:")
 
             Result(buffer = buffer, readyForProcessing = isEntryEnd)
         }
@@ -124,6 +125,12 @@ fun Observable<InstrumentationEntry>.asTests(): Observable<InstrumentationTestCa
         }
         .filter { it.tests.isNotEmpty() }
         .flatMap { Observable.from(it.tests) }
+        .onErrorReturn { throwable ->
+            InstrumentationTestCaseRun.FailedOnInstrumentationParsing(
+                message = "Failed while parsing instrumentation",
+                throwable = throwable
+            )
+        }
 }
 
 private fun List<InstrumentationTestEntry>.findTests(): List<InstrumentationTestCaseRun> {

@@ -9,6 +9,7 @@ import com.avito.runner.service.worker.device.adb.instrumentation.readInstrument
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.runner.test.Is
 import com.avito.test.gradle.fileFromJarResources
+import com.google.common.truth.Truth
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import rx.Observable
@@ -882,6 +883,24 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                 )
             )
         )
+    }
+
+    @Test
+    fun `read invalid instrumentation output - emits error`() {
+        val outputWithFailedTest =
+            fileFromJarResources<InstrumentationTest>("instrumentation-output-invalid-command.txt")
+
+        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+
+        val entries = subscriber.onNextEvents.eraseDuration()
+        Truth.assertThat(entries)
+            .hasSize(1)
+
+        Truth.assertThat(entries[0])
+            .isInstanceOf(InstrumentationTestCaseRun.FailedOnInstrumentationParsing::class.java)
+
+        Truth.assertThat(subscriber.onErrorEvents)
+            .isEmpty()
     }
 
     private fun <T> Observable<T>.subscribeAndWait() = TestSubscriber<T>()
