@@ -7,13 +7,13 @@ type: docs
 
 [Официальная документация](https://developer.android.com/studio/build/shrink-code#shrink-code)
 
-В проекте используется R8 ([задача](http://links.k.avito.ru/MBS6221) на включение "full mode")
+В проекте используется R8 ([задача (internal)](http://links.k.avito.ru/MBS6221) на включение "full mode")
 
 Параметры для сборки задаются в корневом `gradle.properties`
 
 В каких типах сборки включена минимизация: [Типы сборки]({{< relref "BuildTypes.md" >}})
 
-[Story "Защита от ошибок минификации кода"](http://links.k.avito.ru/MBS6605) 
+[Story "Защита от ошибок минификации кода" (internal)](http://links.k.avito.ru/MBS6605) 
 
 ## Конфигурация
 
@@ -24,7 +24,7 @@ type: docs
 - `<app>/proguard/**/*.pro` конфигурации разбитые по папкам-типам-сборки, а затем отдельным файлам зависимостям.
 Собираются в `build.gradle` при помощи своей функции `proguardFromDir()`
 
-Посмотреть результирующий конфиг сейчас негде, [есть задача](http://links.k.avito.ru/MBS7105) на добавление его в артефакты
+Посмотреть результирующий конфиг сейчас негде, [есть задача (internal)](http://links.k.avito.ru/MBS7105) на добавление его в артефакты
 
 ## Тестирование
 
