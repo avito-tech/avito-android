@@ -3,8 +3,8 @@ package com.avito.runner.service.worker.device.adb
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
-import com.avito.runner.ProcessNotification
 import com.avito.runner.CommandLineExecutor
+import com.avito.runner.ProcessNotification
 import com.avito.runner.logging.Logger
 import com.avito.runner.retry
 import com.avito.runner.service.listener.TestListener
@@ -13,8 +13,7 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
-import com.avito.runner.service.worker.device.adb.instrumentation.asTests
-import com.avito.runner.service.worker.device.adb.instrumentation.readInstrumentationOutput
+import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
@@ -33,7 +32,8 @@ data class AdbDevice(
     override val online: Boolean,
     private val adb: String,
     private val logger: Logger,
-    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl()
+    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
+    private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
 ) : Device {
 
     override val api: Int by lazy {
@@ -287,7 +287,7 @@ data class AdbDevice(
         val logsDir = File(File(outputDir, "logs"), id).apply { mkdirs() }
         val started = System.currentTimeMillis()
 
-        return executeShellCommand(
+        val output = executeShellCommand(
             command = listOf(
                 "am",
                 "instrument",
@@ -297,10 +297,10 @@ data class AdbDevice(
                 "$testPackageName/$testRunnerClass"
             ),
             redirectOutputTo = File(logsDir, "instrumentation-${test.className}#${test.methodName}.txt")
-        )
-            .ofType(ProcessNotification.Output::class.java)
-            .readInstrumentationOutput()
-            .asTests()
+        ).ofType(ProcessNotification.Output::class.java)
+
+        return instrumentationParser
+            .parse(output)
             .timeout(
                 timeoutMinutes,
                 TimeUnit.MINUTES,
