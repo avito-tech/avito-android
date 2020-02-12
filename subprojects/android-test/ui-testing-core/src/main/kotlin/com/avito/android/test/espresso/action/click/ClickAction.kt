@@ -22,9 +22,7 @@ class ClickAction(
 
     override fun getDescription(): String = event.description()
 
-    override fun getConstraints(): Matcher<View> = Matchers.allOf(
-// TODO enable after fix ViewCoordinatesNotOverlappedMatcher        ViewCoordinatesNotOverlappedMatcher(coordinatesProvider)
-    )
+    override fun getConstraints(): Matcher<View> = Matchers.allOf()
 
     override fun perform(uiController: UiController, view: View) {
         val rootView = view.rootView
