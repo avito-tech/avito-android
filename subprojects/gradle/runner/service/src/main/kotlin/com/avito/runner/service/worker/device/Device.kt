@@ -1,6 +1,5 @@
 package com.avito.runner.service.worker.device
 
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.model.DeviceInstallation
@@ -17,8 +16,7 @@ interface Device {
 
     fun runIsolatedTest(
         action: InstrumentationTestRunAction,
-        outputDir: File,
-        listener: TestListener
+        outputDir: File
     ): DeviceTestCaseRun
 
     fun clearPackage(name: String): Try<Any>

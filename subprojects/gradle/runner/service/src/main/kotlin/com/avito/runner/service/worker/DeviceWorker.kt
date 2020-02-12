@@ -107,12 +107,17 @@ class DeviceWorker(
         return Try.Success(intentionState)
     }
 
-    private fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun =
-        try {
+    private fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun {
+        val deviceTestCaseRun = try {
+            listener.started(
+                device = device,
+                targetPackage = action.targetPackage,
+                test = action.test,
+                executionNumber = action.executionNumber
+            )
             device.runIsolatedTest(
                 action = action,
-                outputDir = outputDirectory,
-                listener = listener
+                outputDir = outputDirectory
             )
         } catch (t: Throwable) {
             val now = System.currentTimeMillis()
@@ -129,6 +134,18 @@ class DeviceWorker(
                 device = device.getData()
             )
         }
+
+        listener.finished(
+            device = device,
+            test = action.test,
+            targetPackage = action.targetPackage,
+            result = deviceTestCaseRun.testCaseRun.result,
+            durationMilliseconds = deviceTestCaseRun.testCaseRun.durationMilliseconds,
+            executionNumber = action.executionNumber
+        )
+
+        return deviceTestCaseRun
+    }
 
     private fun clearStatePackages(): Try<Any> = Try {
         device.log("Clearing packages")

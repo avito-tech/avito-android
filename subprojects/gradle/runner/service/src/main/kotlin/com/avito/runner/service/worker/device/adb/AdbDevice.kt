@@ -7,7 +7,6 @@ import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.logging.Logger
 import com.avito.runner.retry
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
@@ -75,16 +74,8 @@ data class AdbDevice(
 
     override fun runIsolatedTest(
         action: InstrumentationTestRunAction,
-        outputDir: File,
-        listener: TestListener
+        outputDir: File
     ): DeviceTestCaseRun {
-
-        listener.started(
-            device = this,
-            targetPackage = action.targetPackage,
-            test = action.test,
-            executionNumber = action.executionNumber
-        )
 
         val finalInstrumentationArguments = action.instrumentationParams.plus(
             "class" to "${action.test.className}#${action.test.methodName}"
@@ -145,16 +136,6 @@ data class AdbDevice(
                         )
                     }
                 }
-            }
-            .doOnSuccess { (testCaseRun) ->
-                listener.finished(
-                    device = this,
-                    test = testCaseRun.test,
-                    targetPackage = action.targetPackage,
-                    result = testCaseRun.result,
-                    durationMilliseconds = testCaseRun.durationMilliseconds,
-                    executionNumber = action.executionNumber
-                )
             }
             .toBlocking()
             .value()
