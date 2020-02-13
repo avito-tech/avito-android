@@ -58,7 +58,8 @@ class DeviceWorker(
                 )
 
             } catch (t: Throwable) {
-                device.log("Something went wrong during intention executing: ${t.message}")
+                // means device worker is die. TODO release device
+                device.notifyError("Error during $intention processing", t)
 
                 messagesChannel.send(
                     DeviceWorkerMessage.WorkerFailed(
