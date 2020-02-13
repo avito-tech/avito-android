@@ -17,9 +17,13 @@ We work around these problems by using [keeper](https://slackhq.github.io/keeper
 
 Our build types: [link]({{< ref "/assemble/BuildTypes.md" >}})
 
-We chose `staging` as a type to test against for now, it is based on debug, but with minimization and resource shrinking enabled.\
-Staging build type used as main type for [manual testing]({{< ref "/test/Manual.md" >}}), as it offers all debug options.\
-However we could miss some bugs, because debug(not release) sources included, so we should reconsider and introduce 4th type in the future.
+Android gradle plugin uses `testBuildType` property to determine which build type to test.
+
+We chose `stagingAutoTest` as a type to test against in CI environment.\
+However local builds defaults to `debug` type for faster test writing cycle.
+
+Developer who wants to reproduce test problem specific to CI locally, should temporary change `<appname>.testBuildType` property
+to `stagingAutoTest` in `~/.gradle/gradle.properties`.
 
 ## Sample
 
