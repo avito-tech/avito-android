@@ -32,7 +32,7 @@ internal class TestRunResultDeterminerTest {
                         )
                     )
                 ),
-                lostTestsResult = LostTestsDeterminer.Result.AllTestsReported
+                notReportedTests = HasNotReportedTestsDeterminer.Result.AllTestsReported
             )
 
         assertThat(result).isInstanceOf(TestRunResult.OK::class.java)
@@ -45,7 +45,7 @@ internal class TestRunResultDeterminerTest {
                 runResult = Try.Success(
                     listOf()
                 ),
-                lostTestsResult = LostTestsDeterminer.Result.AllTestsReported
+                notReportedTests = HasNotReportedTestsDeterminer.Result.AllTestsReported
             )
 
         assertThat(result).isInstanceOf(TestRunResult.OK::class.java)
@@ -71,7 +71,7 @@ internal class TestRunResultDeterminerTest {
                         )
                     )
                 ),
-                lostTestsResult = LostTestsDeterminer.Result.AllTestsReported
+                notReportedTests = HasNotReportedTestsDeterminer.Result.AllTestsReported
             )
 
         assertThat(result).isInstanceOf(TestRunResult.OK::class.java)
@@ -98,7 +98,7 @@ internal class TestRunResultDeterminerTest {
                         )
                     )
                 ),
-                lostTestsResult = LostTestsDeterminer.Result.AllTestsReported
+                notReportedTests = HasNotReportedTestsDeterminer.Result.AllTestsReported
             )
 
         assertThat(result).isInstanceOf(TestRunResult.Failure::class.java)
@@ -116,7 +116,7 @@ internal class TestRunResultDeterminerTest {
                         )
                     )
                 ),
-                lostTestsResult = LostTestsDeterminer.Result.ThereWereLostTests(
+                notReportedTests = HasNotReportedTestsDeterminer.Result.HasNotReportedTests(
                     lostTests = listOf(
                         AndroidTest.Lost.createStubInstance(
                             name = "com.Test.test1",
@@ -141,7 +141,7 @@ internal class TestRunResultDeterminerTest {
                         )
                     )
                 ),
-                lostTestsResult = LostTestsDeterminer.Result.FailedToGetLostTests(
+                notReportedTests = HasNotReportedTestsDeterminer.Result.FailedToDetermine(
                     exception = RuntimeException()
                 )
             )

@@ -8,8 +8,7 @@ import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.JUnitReportWriter
-import com.avito.instrumentation.report.LostTestsDeterminer
-import com.avito.instrumentation.report.LostTestsDeterminerImplementation
+import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.SendStatisticsAction
 import com.avito.instrumentation.report.TestRunResultDeterminer
@@ -122,7 +121,7 @@ class InstrumentationTestsAction(
     private val reportViewer: ReportViewer = ReportViewer.Impl(params.reportViewerUrl),
     private val buildFailer: BuildFailer = BuildFailer.RealFailer(),
     private val jUnitReportWriter: JUnitReportWriter = JUnitReportWriter(reportViewer),
-    private val lostTestsDeterminer: LostTestsDeterminer = LostTestsDeterminerImplementation(),
+    private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val testRunResultDeterminer: TestRunResultDeterminer = TestRunResultDeterminerImplementation(
         suppressFailure = params.suppressFailure,
         suppressGroups = params.instrumentationConfiguration.suppressGroups
@@ -175,18 +174,18 @@ class InstrumentationTestsAction(
                 )
             }
 
-        val lostTests = lostTestsDeterminer.determine(
+        val notReportedTestResult = hasNotReportedTestsDeterminer.determine(
             runResult = testsExecutionResults.initialTestsResult,
-            initialTestsToRun = initialTestSuite.map { it.test }
+            allTests = initialTestSuite.map { it.test }
         )
 
-        if (lostTests is LostTestsDeterminer.Result.ThereWereLostTests) {
-            sourceReport.sendLostTests(lostTests = lostTests.lostTests)
+        if (notReportedTestResult is HasNotReportedTestsDeterminer.Result.HasNotReportedTests) {
+            sourceReport.sendLostTests(lostTests = notReportedTestResult.lostTests)
         }
 
         val testRunResult = testRunResultDeterminer.determine(
             runResult = testsExecutionResults.testResultsAfterBranchReruns,
-            lostTestsResult = lostTests
+            notReportedTests = notReportedTestResult
         )
 
         if (testRunResult is HasData) {

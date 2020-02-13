@@ -56,7 +56,7 @@ class InstrumentationTestsScheduler(
                 initialTestsResult to null
             }
             initialTestsResult is Try.Failure -> {
-                logger.info("Rerun on source branch cancelled: Can't get rerun on target results")
+                logger.info("Initial run on source branch cancelled: Can't get rerun on target results")
                 initialTestsResult to null
             }
             else -> {

@@ -11,7 +11,7 @@ interface TestRunResultDeterminer {
 
     fun determine(
         runResult: Try<List<SimpleRunTest>>,
-        lostTestsResult: LostTestsDeterminer.Result
+        notReportedTests: HasNotReportedTestsDeterminer.Result
     ): TestRunResult
 }
 
@@ -22,13 +22,13 @@ class TestRunResultDeterminerImplementation(
 
     override fun determine(
         runResult: Try<List<SimpleRunTest>>,
-        lostTestsResult: LostTestsDeterminer.Result
+        notReportedTests: HasNotReportedTestsDeterminer.Result
     ): TestRunResult {
 
-        when (lostTestsResult) {
-            is LostTestsDeterminer.Result.FailedToGetLostTests -> {
+        when (notReportedTests) {
+            is HasNotReportedTestsDeterminer.Result.FailedToDetermine -> {
                 return Failure.InfrastructureFailure(
-                    reason = "Failed to determine missed tests because: ${lostTestsResult.exception}"
+                    reason = "Failed to determine missed tests because: ${notReportedTests.exception}"
                 )
             }
         }
