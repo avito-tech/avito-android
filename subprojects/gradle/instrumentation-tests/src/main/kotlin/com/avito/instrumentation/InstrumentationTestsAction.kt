@@ -11,8 +11,7 @@ import com.avito.instrumentation.report.JUnitReportWriter
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.SendStatisticsAction
-import com.avito.instrumentation.report.TestRunResultDeterminer
-import com.avito.instrumentation.report.TestRunResultDeterminerImplementation
+import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.listener.ReportViewerTestReporter
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.scheduling.InstrumentationTestsScheduler
@@ -122,7 +121,7 @@ class InstrumentationTestsAction(
     private val buildFailer: BuildFailer = BuildFailer.RealFailer(),
     private val jUnitReportWriter: JUnitReportWriter = JUnitReportWriter(reportViewer),
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
-    private val testRunResultDeterminer: TestRunResultDeterminer = TestRunResultDeterminerImplementation(
+    private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
         suppressFailure = params.suppressFailure,
         suppressGroups = params.instrumentationConfiguration.suppressGroups
     ),
@@ -174,31 +173,30 @@ class InstrumentationTestsAction(
                 )
             }
 
-        val notReportedTestResult = hasNotReportedTestsDeterminer.determine(
-            runResult = testsExecutionResults.initialTestsResult,
-            allTests = initialTestSuite.map { it.test }
-        )
-
-        if (notReportedTestResult is HasNotReportedTestsDeterminer.Result.HasNotReportedTests) {
-            sourceReport.sendLostTests(lostTests = notReportedTestResult.lostTests)
-        }
-
-        val testRunResult = testRunResultDeterminer.determine(
-            runResult = testsExecutionResults.testResultsAfterBranchReruns,
-            notReportedTests = notReportedTestResult
-        )
-
-        if (testRunResult is HasData) {
-            jUnitReportWriter.write(
-                reportCoordinates = reportCoordinates,
-                testData = testRunResult.testData,
-                destination = junitFile(params.outputDir)
+        val testRunResult = TestRunResult(
+            reportedTests = testsExecutionResults.initialTestsResult.getOrElse { emptyList() },
+            failed = hasFailedTestDeterminer.determine(
+                runResult = testsExecutionResults.testResultsAfterBranchReruns
+            ),
+            notReported = hasNotReportedTestsDeterminer.determine(
+                runResult = testsExecutionResults.initialTestsResult,
+                allTests = initialTestSuite.map { it.test }
             )
+        )
+
+        if (testRunResult.notReported is HasNotReportedTestsDeterminer.Result.HasNotReportedTests) {
+            sourceReport.sendLostTests(lostTests = testRunResult.notReported.lostTests)
         }
+
+        jUnitReportWriter.write(
+            reportCoordinates = reportCoordinates,
+            testRunResult = testRunResult,
+            destination = junitFile(params.outputDir)
+        )
 
         val reportViewerUrl = reportViewer.generateReportUrl(
             reportCoordinates,
-            onlyFailures = testRunResult !is TestRunResult.OK
+            onlyFailures = testRunResult.failed !is HasFailedTestDeterminer.Result.NoFailed
         )
 
         writeReportViewerLinkFile(
@@ -226,11 +224,13 @@ class InstrumentationTestsAction(
         } else {
             logger.critical("Cannot find report id for $reportCoordinates. Skip statistic sending")
         }
-
-        when (testRunResult) {
-            is TestRunResult.OK -> logger.info("Tests are ok!")
-            is TestRunResult.Suppressed -> logger.info(testRunResult.reason)
-            is TestRunResult.Failure -> buildFailer.failBuild(testRunResult.reason)
+        val verdict = testRunResult.verdict
+        when (verdict) {
+            is TestRunResult.Verdict.Success -> logger.info(verdict.message)
+            is TestRunResult.Verdict.Failed -> buildFailer.failBuild(
+                verdict.message,
+                verdict.throwable
+            )
         }
     }
 

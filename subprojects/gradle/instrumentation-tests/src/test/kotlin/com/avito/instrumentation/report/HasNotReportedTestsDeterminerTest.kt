@@ -63,6 +63,6 @@ internal class HasNotReportedTestsDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf<HasNotReportedTestsDeterminer.Result.FailedToDetermine>()
+        assertThat(result).isInstanceOf<HasNotReportedTestsDeterminer.Result.DetermineError>()
     }
 }

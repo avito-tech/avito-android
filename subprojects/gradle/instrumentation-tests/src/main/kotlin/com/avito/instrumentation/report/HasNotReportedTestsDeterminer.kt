@@ -14,9 +14,17 @@ interface HasNotReportedTestsDeterminer {
     ): Result
 
     sealed class Result {
+
+        open val lostTests
+            get() = emptyList<AndroidTest.Lost>()
+
         object AllTestsReported : Result()
-        data class HasNotReportedTests(val lostTests: List<AndroidTest.Lost>) : Result()
-        data class FailedToDetermine(val exception: Throwable) : Result()
+
+        data class HasNotReportedTests(
+            override val lostTests: List<AndroidTest.Lost>
+        ) : Result()
+
+        data class DetermineError(val exception: Throwable) : Result()
     }
 
     class Impl : HasNotReportedTestsDeterminer {
@@ -48,7 +56,7 @@ interface HasNotReportedTestsDeterminer {
                         Result.HasNotReportedTests(lostTests = notReportedTests)
                     }
                 },
-                { exception -> Result.FailedToDetermine(exception = exception) }
+                { exception -> Result.DetermineError(exception = exception) }
             )
     }
 
