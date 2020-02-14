@@ -2,7 +2,7 @@ package com.avito.runner.test.mock
 
 import com.avito.runner.service.IntentionExecutionService
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.ActionResult
+import com.avito.runner.service.model.intention.InstrumentationTestRunActionResult
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.test.generateDeviceTestCaseRun
@@ -36,7 +36,7 @@ class MockIntentionExecutionService(
                 results.send(
                     IntentionResult(
                         intention = intention,
-                        actionResult = ActionResult.InstrumentationTestRunActionResult(
+                        actionResult = InstrumentationTestRunActionResult(
                             testCaseRun = generateDeviceTestCaseRun(
                                 testCaseRun = generateTestCaseRun(
                                     result = testIntentionExecutionResultsQueue.poll()

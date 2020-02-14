@@ -4,8 +4,8 @@ import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.ActionResult
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
+import com.avito.runner.service.model.intention.InstrumentationTestRunActionResult
 import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
@@ -50,7 +50,7 @@ class DeviceWorker(
                     DeviceWorkerMessage.Result(
                         intentionResult = IntentionResult(
                             intention = intention,
-                            actionResult = ActionResult.InstrumentationTestRunActionResult(
+                            actionResult = InstrumentationTestRunActionResult(
                                 testCaseRun = result
                             )
                         )

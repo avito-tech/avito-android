@@ -15,9 +15,6 @@ data class InstrumentationTestRunAction(
     override fun toString(): String = "Run ${test.testName} test"
 }
 
-sealed class ActionResult {
-
-    data class InstrumentationTestRunActionResult(
-        val testCaseRun: DeviceTestCaseRun
-    ) : ActionResult()
-}
+data class InstrumentationTestRunActionResult(
+    val testCaseRun: DeviceTestCaseRun
+)

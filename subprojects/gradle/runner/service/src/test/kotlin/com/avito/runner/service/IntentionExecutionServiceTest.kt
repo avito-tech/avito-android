@@ -2,7 +2,7 @@ package com.avito.runner.service
 
 import com.avito.runner.logging.StdOutLogger
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.ActionResult
+import com.avito.runner.service.model.intention.InstrumentationTestRunActionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.observer.DevicesObserver
@@ -112,8 +112,7 @@ class IntentionExecutionServiceTest {
                 .that(
                     results
                         .map {
-                            (it.actionResult as ActionResult.InstrumentationTestRunActionResult)
-                                .testCaseRun.testCaseRun.result
+                            it.actionResult.testCaseRun.testCaseRun.result
                         }
                 )
                 .isEqualTo(intentions.map { TestCaseRun.Result.Passed })
@@ -229,8 +228,7 @@ class IntentionExecutionServiceTest {
                 .that(
                     results
                         .map {
-                            (it.actionResult as ActionResult.InstrumentationTestRunActionResult)
-                                .testCaseRun.testCaseRun.result
+                            it.actionResult.testCaseRun.testCaseRun.result
                         }
                 )
                 .isEqualTo(intentions.map { TestCaseRun.Result.Passed })
