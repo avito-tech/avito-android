@@ -6,7 +6,7 @@ import com.avito.runner.scheduler.runner.scheduler.retry.SchedulingBasedRetryMan
 import com.avito.runner.scheduler.util.generateTestRunRequest
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.Action
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.test.generateDeviceTestCaseRun
 import com.avito.runner.test.generateTestCaseRun
 import com.google.common.truth.Truth.assertWithMessage
@@ -352,9 +352,9 @@ class TestExecutionStateTest {
             .hasSize(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(Action.InstrumentationTestRunAction::class.java)
+            .isInstanceOf(InstrumentationTestRunAction::class.java)
         assertWithMessage("Should be 1")
-            .that((verdict.intentions[0].action as Action.InstrumentationTestRunAction).executionNumber)
+            .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(1)
     }
 
@@ -392,9 +392,9 @@ class TestExecutionStateTest {
             .hasSize(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(Action.InstrumentationTestRunAction::class.java)
+            .isInstanceOf(InstrumentationTestRunAction::class.java)
         assertWithMessage("Should be 2")
-            .that((verdict.intentions[0].action as Action.InstrumentationTestRunAction).executionNumber)
+            .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(2)
     }
 
@@ -419,15 +419,15 @@ class TestExecutionStateTest {
             .hasSize(2)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(Action.InstrumentationTestRunAction::class.java)
+            .isInstanceOf(InstrumentationTestRunAction::class.java)
         assertWithMessage("Should be 1")
-            .that((verdict.intentions[0].action as Action.InstrumentationTestRunAction).executionNumber)
+            .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[1].action)
-            .isInstanceOf(Action.InstrumentationTestRunAction::class.java)
+            .isInstanceOf(InstrumentationTestRunAction::class.java)
         assertWithMessage("Should be 2")
-            .that((verdict.intentions[1].action as Action.InstrumentationTestRunAction).executionNumber)
+            .that(verdict.intentions[1].action.executionNumber)
             .isEqualTo(2)
     }
 
@@ -467,9 +467,9 @@ class TestExecutionStateTest {
             .hasSize(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(Action.InstrumentationTestRunAction::class.java)
+            .isInstanceOf(InstrumentationTestRunAction::class.java)
         assertWithMessage("Should be 5")
-            .that((verdict.intentions[0].action as Action.InstrumentationTestRunAction).executionNumber)
+            .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(5)
     }
 

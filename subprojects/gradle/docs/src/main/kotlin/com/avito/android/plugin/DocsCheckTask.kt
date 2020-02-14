@@ -22,7 +22,7 @@ abstract class DocsCheckTask @Inject constructor(objects: ObjectFactory) : Defau
 
         docker.build(docsDirectory.get().asFile).fold(
             { logger.lifecycle("Docs image tested: OK!") },
-            { buildFailer.failBuild(it.message ?: "no message") }
+            { buildFailer.failBuild("Failed on docs check", it) }
         )
     }
 }
