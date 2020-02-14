@@ -18,7 +18,7 @@ RUN apk update \
     # libc libraries are used to overcome https://github.com/gohugoio/hugo/issues/3382 😕
     libc6-compat libstdc++
 
-ARG HUGO_VERSION=0.64.0
+ARG HUGO_VERSION=0.64.1
 
 RUN curl -L https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz --output /tmp/hugo.tar.gz \
     && tar xzf /tmp/hugo.tar.gz -C /tmp/ \
