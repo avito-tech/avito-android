@@ -1,20 +1,24 @@
 package com.avito.runner.service.worker.device.adb
 
+import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.logging.Logger
-import com.avito.runner.process
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DevicesManager
 
 class AdbDevicesManager(
-    private val logger: Logger
+    private val logger: Logger,
+    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl()
 ) : DevicesManager {
 
     private val androidHome: String by lazy { System.getenv("ANDROID_HOME") }
     private val adb: String by lazy { "$androidHome/platform-tools/adb" }
 
     override fun connectedDevices(): Set<Device> =
-        process(listOf(adb, "devices"))
+        commandLine.executeProcess(
+            command = adb,
+            args = listOf("devices")
+        )
             .ofType(ProcessNotification.Exit::class.java)
             .map { it.output }
             .map {

@@ -4,11 +4,11 @@ import com.avito.runner.ProcessNotification
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry
-import com.avito.runner.service.worker.device.adb.instrumentation.asTests
-import com.avito.runner.service.worker.device.adb.instrumentation.readInstrumentationOutput
+import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.runner.test.Is
 import com.avito.test.gradle.fileFromJarResources
+import com.google.common.truth.Truth
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import rx.Observable
@@ -21,11 +21,17 @@ import java.util.concurrent.TimeUnit
 
 class InstrumentationTest {
 
+    private val instrumentationParser = InstrumentationTestCaseRunParser.Impl()
+
     @Test
     fun `read instrumentation output - emits expected entries - with failed test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-failed-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -208,7 +214,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - completes stream - with failed test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-failed-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertCompleted()
     }
@@ -217,7 +227,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - does not emit error - with failed test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-failed-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertNoErrors()
     }
@@ -226,7 +240,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - emits expected tests - with failed test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-failed-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val tests: List<InstrumentationTestCaseRun> = subscriber.onNextEvents.eraseDuration()
 
@@ -310,7 +328,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - emits only result entry - with 0 tests`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-0-tests.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -330,7 +352,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - completes stream - with 0 tests`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-0-tests.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertCompleted()
     }
@@ -339,7 +365,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - does not emit error - with 0 tests`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-0-tests.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertNoErrors()
     }
@@ -348,7 +378,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - does not emit error - with 0 tests`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-0-tests.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertNoErrors()
     }
@@ -357,7 +391,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - completes stream - with 0 tests`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-0-tests.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertCompleted()
     }
@@ -366,7 +404,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - does not emit any test - with 0 tests`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-0-tests.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertNoValues()
     }
@@ -375,7 +417,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - emits expected entries - unordered output`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-unordered-output.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -461,7 +507,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - completes stream - unordered output`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-unordered-output.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertCompleted()
     }
@@ -470,7 +520,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - does not emit error - unordered output`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-unordered-output.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertNoErrors()
     }
@@ -479,7 +533,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - emits expected tests - unordered output`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-unordered-output.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val tests = subscriber.onNextEvents.eraseDuration()
         assertThat(
@@ -516,7 +574,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - completes stream - unordered output`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-unordered-output.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertCompleted()
     }
@@ -525,7 +587,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - does not emit error - unordered output`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-unordered-output.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertNoErrors()
     }
@@ -534,7 +600,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - emits expected entries - ignored test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-ignored-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -598,7 +668,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - completes stream - ignored test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-ignored-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertCompleted()
     }
@@ -607,7 +681,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output - does not emit error - ignored test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-ignored-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         subscriber.assertNoErrors()
     }
@@ -616,7 +694,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     fun `read instrumentation output as tests - emits expected tests - ignored test`() {
         val outputWithFailedTest = fileFromJarResources<InstrumentationTest>("instrumentation-output-ignored-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
         assertThat(
@@ -647,7 +729,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-crashed-process.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -680,7 +766,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-crashed-process.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
         assertThat(
@@ -704,7 +794,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-crashed-process-before-test-ran.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -726,7 +820,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-crashed-process-before-test-ran.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
         assertThat(
@@ -746,7 +844,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-crashed-process-before-test-ran-after-completed-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -790,7 +892,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-crashed-process-before-test-ran-after-completed-test.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
         assertThat(
@@ -817,7 +923,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-test-failed-without-test-field.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).subscribeAndWait()
+        val subscriber = instrumentationParser
+            .readInstrumentationOutput(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
         assertThat(
@@ -863,7 +973,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         val outputWithFailedTest =
             fileFromJarResources<InstrumentationTest>("instrumentation-output-test-failed-without-test-field.txt")
 
-        val subscriber = readInstrumentationOutput(outputWithFailedTest).asTests().subscribeAndWait()
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
         assertThat(
@@ -882,6 +996,28 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                 )
             )
         )
+    }
+
+    @Test
+    fun `read invalid instrumentation output - emits error`() {
+        val outputWithFailedTest =
+            fileFromJarResources<InstrumentationTest>("instrumentation-output-invalid-command.txt")
+
+        val subscriber = instrumentationParser
+            .parse(
+                getInstrumentationOutput(outputWithFailedTest)
+            )
+            .subscribeAndWait()
+
+        val entries = subscriber.onNextEvents.eraseDuration()
+        Truth.assertThat(entries)
+            .hasSize(1)
+
+        Truth.assertThat(entries[0])
+            .isInstanceOf(InstrumentationTestCaseRun.FailedOnInstrumentationParsing::class.java)
+
+        Truth.assertThat(subscriber.onErrorEvents)
+            .isEmpty()
     }
 
     private fun <T> Observable<T>.subscribeAndWait() = TestSubscriber<T>()
@@ -913,7 +1049,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
         }
     }
 
-    private fun readInstrumentationOutput(output: File): Observable<InstrumentationEntry> {
+    private fun getInstrumentationOutput(output: File): Observable<ProcessNotification.Output> {
         val readFile: Observable<ProcessNotification.Output> = Observable.unsafeCreate {
             val reader = BufferedReader(
                 FileReader(output)
@@ -930,6 +1066,6 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             it.onCompleted()
         }
 
-        return readFile.readInstrumentationOutput()
+        return readFile
     }
 }

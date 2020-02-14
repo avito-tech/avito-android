@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.instrumentation.TestRunResult
 import com.avito.report.ReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -14,17 +15,16 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
 
     fun write(
         reportCoordinates: ReportCoordinates,
-        testData: List<SimpleRunTest>,
+        testRunResult: TestRunResult,
         destination: File
     ) {
-        val testCountOverall = testData.size
-        val testCountSuccess = testData.filter { it.status is Status.Success || it.status is Status.Manual }.size
-        val testCountFailures = testData.filter { it.status is Status.Failure || it.status is Status.Lost }.size
-        val testCountSkipped = testData.filter { it.status is Status.Skipped }.size
+        val testCountOverall = testRunResult.testCount()
+        val testCountSuccess = testRunResult.successCount()
+        val testCountFailures = testRunResult.failureCount()
+        val testCountErrors = testRunResult.notReportedCount()
+        val testCountSkipped = testRunResult.skippedCount()
 
-        require(testCountOverall == testCountSuccess + testCountFailures + testCountSkipped)
-
-        val testsDuration: Int = testData.sumBy { it.lastAttemptDurationInSeconds }
+        require(testCountOverall == testCountSuccess + testCountFailures + testCountSkipped + testCountErrors)
 
         val xml = buildString(testCountOverall * estimatedTestRecordSize) {
             appendln("""<?xml version="1.0" encoding="UTF-8"?>""")
@@ -33,13 +33,14 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
             append("""name="${reportCoordinates.planSlug}_${reportCoordinates.jobSlug}" """)
             append("""tests="$testCountOverall" """)
             append("""failures="$testCountFailures" """)
+            append("""errors="$testCountErrors" """)
             append("""skipped="$testCountSkipped" """)
-            append("""time="$testsDuration" """)
+            append("""time="${testRunResult.testsDuration}" """)
             appendln(">")
 
             appendln("<properties/>")
 
-            testData.forEach { test ->
+            testRunResult.reportedTests.forEach { test ->
                 append("<testcase ")
                 append("""classname="${test.className}" """)
                 append("""name="${test.methodName}" """)
@@ -69,15 +70,31 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
                         appendln("</failure>")
                     }
                     test.status is Status.Lost -> {
-                        appendln("<failure>")
+                        appendln("<error>")
                         appendln("LOST (no info in report)")
                         appendln("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
-                        appendln("</failure>")
+                        appendln("</error>")
                     }
                 }
 
                 appendln("</testcase>")
             }
+
+            testRunResult.notReported.lostTests.forEach { test ->
+                append("<testcase ")
+                append("""classname="${test.name.className}" """)
+                append("""name="${test.name.methodName}" """)
+                append("""caseId="${test.testCaseId}" """)
+                append("""time="unknown"""")
+                appendln(">")
+
+                appendln("<error>")
+                appendln("Not reported")
+                appendln("</error>")
+
+                appendln("</testcase>")
+            }
+
 
             appendln("</testsuite>")
         }

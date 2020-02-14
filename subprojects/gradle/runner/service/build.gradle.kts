@@ -18,6 +18,7 @@ val truthVersion: String by project
 dependencies {
     compileOnly(gradleApi())
     implementation(project(":subprojects:gradle:runner:shared"))
+    implementation(project(":subprojects:gradle:utils"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.ddms:ddmlib:$androidToolsVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")

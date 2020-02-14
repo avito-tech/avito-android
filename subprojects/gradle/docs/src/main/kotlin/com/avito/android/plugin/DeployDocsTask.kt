@@ -73,7 +73,7 @@ abstract class DeployDocsTask @Inject constructor(objects: ObjectFactory) : Defa
                 },
                 { exception ->
                     project.sentry.orNull?.sendException(exception)
-                        ?: project.buildFailer.failBuild(exception.message ?: "no message")
+                        ?: project.buildFailer.failBuild(exception.message ?: "no message", exception)
                 })
     }
 

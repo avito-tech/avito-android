@@ -29,7 +29,7 @@ class IntentionExecutionServiceImplementation(
     private val logger: Logger,
     private val devicesObserver: DevicesObserver,
     private val intentionsRouter: IntentionsRouter = IntentionsRouter(),
-    private val listener: TestListener? = null
+    private val listener: TestListener
 ) : IntentionExecutionService {
 
     private val intentions: Channel<Intention> =
