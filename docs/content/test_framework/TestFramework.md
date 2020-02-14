@@ -1,20 +1,9 @@
 ---
-title: Тестовый фреймворк
+title: Test framework
 type: docs
 ---
 
-# Тестовый фреймворк
-
-## PageObject
-
-[PageObject - Martin Fowler](https://martinfowler.com/bliki/PageObject.html)
-
-## Interaction Context
-
-TODO: move to advanced section
-
-Внутреннее состояние PO. 
-Используем чтобы отразить иерархию View, унаследовать проверки.
+# Test framework
 
 ## ViewElement
 
@@ -182,30 +171,5 @@ class PublishParamsScreen(val title: String? = null) : PageObject(), Screen {
         title.checks.withText(title)
     }
     ...
-}
-```
-
-## How to test
-
-### Network
-
-TBD
-
-### Analytics
-
-Проверяем что событие доставлено до транспорта (Analytics) с нужными параметрами.\
-Не нужно тестировать сам транспорт.
-
-```kotlin
-@get:Rule
-val analytics = AnalyticsRule()
-
- @Test
-fun screen_shown___ShowSearchMapEvent_should_be_sent() {
-    screenRule.start()
-
-    Screen.mapScreen.checks.isOpened()
-
-    analytics.checks.assertEventTracked<ShowSearchMapEvent>()
 }
 ```
