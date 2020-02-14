@@ -46,7 +46,7 @@ abstract class SignTask @Inject constructor(objects: ObjectFactory) : DefaultTas
 
         signResult.fold(
             { logger.info("signed successfully: ${signedFile.path}") },
-            { buildFailer.failBuild("Can't sign: ${signedFile.path}; ${it.message}") }
+            { buildFailer.failBuild("Can't sign: ${signedFile.path};", it) }
         )
     }
 }

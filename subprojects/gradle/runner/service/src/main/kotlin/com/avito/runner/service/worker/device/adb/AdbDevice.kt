@@ -3,21 +3,21 @@ package com.avito.runner.service.worker.device.adb
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
+import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.logging.Logger
-import com.avito.runner.process
 import com.avito.runner.retry
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
-import com.avito.runner.service.worker.device.adb.instrumentation.asTests
-import com.avito.runner.service.worker.device.adb.instrumentation.readInstrumentationOutput
+import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
+import com.avito.utils.getStackTraceString
 import org.funktionale.tries.Try
 import rx.Observable
 import rx.Single
@@ -30,7 +30,9 @@ data class AdbDevice(
     override val id: String,
     override val online: Boolean,
     private val adb: String,
-    private val logger: Logger
+    private val logger: Logger,
+    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
+    private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
 ) : Device {
 
     override val api: Int by lazy {
@@ -71,35 +73,21 @@ data class AdbDevice(
     }
 
     override fun runIsolatedTest(
-        test: TestCase,
-        testPackageName: String,
-        targetPackageName: String,
-        testRunnerClass: String,
-        listener: TestListener?,
-        instrumentationArguments: Map<String, String>,
-        outputDir: File,
-        timeoutMinutes: Long,
-        executionNumber: Int
+        action: InstrumentationTestRunAction,
+        outputDir: File
     ): DeviceTestCaseRun {
 
-        listener?.started(
-            device = this,
-            targetPackage = targetPackageName,
-            test = test,
-            executionNumber = executionNumber
-        )
-
-        val finalInstrumentationArguments = instrumentationArguments.plus(
-            "class" to "${test.className}#${test.methodName}"
+        val finalInstrumentationArguments = action.instrumentationParams.plus(
+            "class" to "${action.test.className}#${action.test.methodName}"
         )
 
         return runTest(
-            test = test,
-            testPackageName = testPackageName,
-            testRunnerClass = testRunnerClass,
+            test = action.test,
+            testPackageName = action.testPackage,
+            testRunnerClass = action.testRunner,
             instrumentationArguments = finalInstrumentationArguments,
             outputDir = outputDir,
-            timeoutMinutes = timeoutMinutes
+            timeoutMinutes = action.timeoutMinutes
         )
             .map {
                 when (it) {
@@ -109,7 +97,7 @@ data class AdbDevice(
                                 test = TestCase(
                                     className = it.className,
                                     methodName = it.name,
-                                    deviceName = test.deviceName
+                                    deviceName = action.test.deviceName
                                 ),
                                 result = it.result,
                                 timestampStartedMilliseconds = it.timestampStartedMilliseconds,
@@ -121,7 +109,7 @@ data class AdbDevice(
                     is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
-                                test = test,
+                                test = action.test,
                                 result = TestCaseRun.Result.Failed(
                                     stacktrace = it.message
                                 ),
@@ -131,17 +119,23 @@ data class AdbDevice(
                             device = this.getData()
                         )
                     }
+                    is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
+                        DeviceTestCaseRun(
+                            testCaseRun = TestCaseRun(
+                                test = action.test,
+                                result = TestCaseRun.Result.Failed(
+                                    stacktrace = """
+                                        ${it.message}
+                                        ${it.throwable.getStackTraceString()}
+                                    """.trimIndent()
+                                ),
+                                timestampStartedMilliseconds = System.currentTimeMillis(),
+                                timestampCompletedMilliseconds = System.currentTimeMillis()
+                            ),
+                            device = this.getData()
+                        )
+                    }
                 }
-            }
-            .doOnSuccess { (testCaseRun) ->
-                listener?.finished(
-                    device = this,
-                    test = testCaseRun.test,
-                    targetPackage = targetPackageName,
-                    result = testCaseRun.result,
-                    durationMilliseconds = testCaseRun.durationMilliseconds,
-                    executionNumber = executionNumber
-                )
             }
             .toBlocking()
             .value()
@@ -274,7 +268,7 @@ data class AdbDevice(
         val logsDir = File(File(outputDir, "logs"), id).apply { mkdirs() }
         val started = System.currentTimeMillis()
 
-        return executeShellCommand(
+        val output = executeShellCommand(
             command = listOf(
                 "am",
                 "instrument",
@@ -284,10 +278,10 @@ data class AdbDevice(
                 "$testPackageName/$testRunnerClass"
             ),
             redirectOutputTo = File(logsDir, "instrumentation-${test.className}#${test.methodName}.txt")
-        )
-            .ofType(ProcessNotification.Output::class.java)
-            .readInstrumentationOutput()
-            .asTests()
+        ).ofType(ProcessNotification.Output::class.java)
+
+        return instrumentationParser
+            .parse(output)
             .timeout(
                 timeoutMinutes,
                 TimeUnit.MINUTES,
@@ -373,7 +367,7 @@ data class AdbDevice(
         timeoutSeconds = timeoutSeconds
     )
 
-    fun executeBlockingCommand(
+    private fun executeBlockingCommand(
         command: List<String>,
         timeoutSeconds: Long = DEFAULT_COMMAND_TIMEOUT_SECONDS
     ): ProcessNotification.Exit = executeCommand(
@@ -403,9 +397,10 @@ data class AdbDevice(
         command: List<String>,
         redirectOutputTo: File? = null
     ): Observable<ProcessNotification> =
-        process(
-            commandAndArgs = listOf(adb, "-s", id) + command,
-            redirectOutputTo = redirectOutputTo
+        commandLine.executeProcess(
+            command = adb,
+            args = listOf("-s", id) + command,
+            output = redirectOutputTo
         )
 
     override fun log(message: String) {

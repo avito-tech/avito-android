@@ -4,8 +4,8 @@ import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.Action
-import com.avito.runner.service.model.intention.ActionResult
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
+import com.avito.runner.service.model.intention.InstrumentationTestRunActionResult
 import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
@@ -23,7 +23,7 @@ class DeviceWorker(
     private val messagesChannel: Channel<DeviceWorkerMessage>,
     private val device: Device,
     private val outputDirectory: File,
-    private val listener: TestListener?
+    private val listener: TestListener
 ) {
 
     private val scope = CoroutineScope(
@@ -50,7 +50,7 @@ class DeviceWorker(
                     DeviceWorkerMessage.Result(
                         intentionResult = IntentionResult(
                             intention = intention,
-                            actionResult = ActionResult.InstrumentationTestRunActionResult(
+                            actionResult = InstrumentationTestRunActionResult(
                                 testCaseRun = result
                             )
                         )
@@ -58,7 +58,8 @@ class DeviceWorker(
                 )
 
             } catch (t: Throwable) {
-                device.log("Something went wrong during intention executing: ${t.message}")
+                // means device worker is die. TODO release device
+                device.notifyError("Error during $intention processing", t)
 
                 messagesChannel.send(
                     DeviceWorkerMessage.WorkerFailed(
@@ -107,36 +108,45 @@ class DeviceWorker(
         return Try.Success(intentionState)
     }
 
-    private fun executeAction(action: Action): DeviceTestCaseRun =
-        when (action) {
-            is Action.InstrumentationTestRunAction -> try {
-                device.runIsolatedTest(
-                    test = action.test,
-                    testPackageName = action.testPackage,
-                    targetPackageName = action.targetPackage,
-                    testRunnerClass = action.testRunner,
-                    listener = listener,
-                    instrumentationArguments = action.instrumentationParams,
-                    outputDir = outputDirectory,
-                    timeoutMinutes = action.timeoutMinutes,
-                    executionNumber = action.executionNumber
-                )
-            } catch (t: Throwable) {
-                val now = System.currentTimeMillis()
+    private fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun {
+        val deviceTestCaseRun = try {
+            listener.started(
+                device = device,
+                targetPackage = action.targetPackage,
+                test = action.test,
+                executionNumber = action.executionNumber
+            )
+            device.runIsolatedTest(
+                action = action,
+                outputDir = outputDirectory
+            )
+        } catch (t: Throwable) {
+            val now = System.currentTimeMillis()
 
-                DeviceTestCaseRun(
-                    testCaseRun = TestCaseRun(
-                        test = action.test,
-                        result = TestCaseRun.Result.Failed(
-                            stacktrace = "Infrastructure error: ${t.message}"
-                        ),
-                        timestampStartedMilliseconds = now,
-                        timestampCompletedMilliseconds = now
+            DeviceTestCaseRun(
+                testCaseRun = TestCaseRun(
+                    test = action.test,
+                    result = TestCaseRun.Result.Failed(
+                        stacktrace = "Infrastructure error: ${t.message}"
                     ),
-                    device = device.getData()
-                )
-            }
+                    timestampStartedMilliseconds = now,
+                    timestampCompletedMilliseconds = now
+                ),
+                device = device.getData()
+            )
         }
+
+        listener.finished(
+            device = device,
+            test = action.test,
+            targetPackage = action.targetPackage,
+            result = deviceTestCaseRun.testCaseRun.result,
+            durationMilliseconds = deviceTestCaseRun.testCaseRun.durationMilliseconds,
+            executionNumber = action.executionNumber
+        )
+
+        return deviceTestCaseRun
+    }
 
     private fun clearStatePackages(): Try<Any> = Try {
         device.log("Clearing packages")

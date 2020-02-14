@@ -3,7 +3,7 @@ package com.avito.runner.scheduler.runner.scheduler
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.scheduler.retry.RetryManager
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.intention.Action
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
 
@@ -87,7 +87,7 @@ class TestExecutionStateImplementation(
                     )
                 )
             ),
-            action = Action.InstrumentationTestRunAction(
+            action = InstrumentationTestRunAction(
                 test = request.testCase,
                 testPackage = request.testPackage,
                 targetPackage = request.applicationPackage,

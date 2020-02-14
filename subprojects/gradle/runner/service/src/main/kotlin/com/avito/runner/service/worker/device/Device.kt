@@ -1,8 +1,7 @@
 package com.avito.runner.service.worker.device
 
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCase
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.model.DeviceInstallation
 import org.funktionale.tries.Try
 import java.io.File
@@ -16,15 +15,8 @@ interface Device {
     fun installApplication(application: String): DeviceInstallation
 
     fun runIsolatedTest(
-        test: TestCase,
-        testPackageName: String,
-        targetPackageName: String,
-        testRunnerClass: String,
-        listener: TestListener?,
-        instrumentationArguments: Map<String, String>,
-        outputDir: File,
-        timeoutMinutes: Long,
-        executionNumber: Int
+        action: InstrumentationTestRunAction,
+        outputDir: File
     ): DeviceTestCaseRun
 
     fun clearPackage(name: String): Try<Any>

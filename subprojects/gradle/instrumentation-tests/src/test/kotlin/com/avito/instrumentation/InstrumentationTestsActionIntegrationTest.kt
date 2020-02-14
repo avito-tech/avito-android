@@ -86,7 +86,7 @@ internal class InstrumentationTestsActionIntegrationTest {
     }
 
     @Test
-    fun `inconsistent test run - missing tests reported as lost`() {
+    fun `inconsistent test run - missing tests reported as lost and failed build`() {
         val configuration = InstrumentationConfiguration.Data.createStubInstance(
             rerunFailedTests = false,
             targets = listOf(
@@ -140,8 +140,8 @@ internal class InstrumentationTestsActionIntegrationTest {
             )
         )
 
-        assertWithMessage("inconsistent test run should not fail build").that(buildFailer.lastReason)
-            .isNull()
+        assertWithMessage("inconsistent test run should fail build").that(buildFailer.lastReason)
+            .isNotNull()
         assertWithMessage("we should be notified about inconsistency").that(logger.criticalHandler.lastMessage)
             .isEqualTo("There were lost tests:\ncom.Test.test2 (api22)")
     }

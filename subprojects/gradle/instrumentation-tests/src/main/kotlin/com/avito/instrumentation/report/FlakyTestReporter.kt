@@ -36,6 +36,10 @@ class FlakyTestReporter(
 
             val topBadTests = determineBadTests(info)
 
+            if(topBadTests.isEmpty()) {
+                return@Try
+            }
+
             val slackMessage = sendMessage(
                 badTests = topBadTests,
                 channel = summaryChannel,

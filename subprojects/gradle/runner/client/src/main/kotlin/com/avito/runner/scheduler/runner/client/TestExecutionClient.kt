@@ -4,7 +4,6 @@ import com.avito.runner.scheduler.runner.client.model.ClientTestRunRequest
 import com.avito.runner.scheduler.runner.client.model.ClientTestRunResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionState
 import com.avito.runner.service.IntentionExecutionService
-import com.avito.runner.service.model.intention.ActionResult
 import com.avito.runner.service.model.intention.Intention
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
@@ -29,20 +28,16 @@ class TestExecutionClient {
 
         GlobalScope.launch {
             for (serviceResult in executionServiceCommunication.results) {
-                when (serviceResult.actionResult) {
-                    is ActionResult.InstrumentationTestRunActionResult -> {
-                        val sourceState: TestExecutionState = statesMapping[serviceResult.intention]
-                            ?: throw RuntimeException("State for intention ${serviceResult.intention} not found in mapping")
+                val sourceState: TestExecutionState = statesMapping[serviceResult.intention]
+                    ?: throw RuntimeException("State for intention ${serviceResult.intention} not found in mapping")
 
-                        results.send(
-                            ClientTestRunResult(
-                                state = sourceState,
-                                incomingTestCaseRun = (serviceResult.actionResult as ActionResult.InstrumentationTestRunActionResult)
-                                    .testCaseRun
-                            )
-                        )
-                    }
-                }
+                results.send(
+                    ClientTestRunResult(
+                        state = sourceState,
+                        incomingTestCaseRun = serviceResult.actionResult
+                            .testCaseRun
+                    )
+                )
             }
         }
 

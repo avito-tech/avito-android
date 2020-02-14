@@ -1,22 +1,21 @@
 package com.avito.utils
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-
-val Task.buildFailer: BuildFailer
-    get() = BuildFailer.RealFailer()
 
 val Project.buildFailer: BuildFailer
     get() = BuildFailer.RealFailer()
 
 interface BuildFailer {
 
-    fun failBuild(reason: String)
+    fun failBuild(
+        message: String,
+        cause: Throwable
+    )
 
     class RealFailer : BuildFailer {
 
-        override fun failBuild(reason: String) {
-            error(reason)
+        override fun failBuild(message: String, cause: Throwable) {
+            throw IllegalStateException(message, cause)
         }
     }
 }

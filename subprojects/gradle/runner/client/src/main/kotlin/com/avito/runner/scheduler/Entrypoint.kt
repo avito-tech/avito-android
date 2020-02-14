@@ -1,7 +1,5 @@
 package com.avito.runner.scheduler
 
-import com.avito.runner.exit.Exit
-import com.avito.runner.exit.ExitManager
 import com.avito.runner.logging.Logger
 import com.avito.runner.millisecondsToHumanReadableTime
 import com.avito.runner.scheduler.report.Reporter
@@ -15,8 +13,6 @@ internal class Entrypoint(
     private val testRunner: TestRunner,
     private val summaryReportMaker: SummaryReportMaker,
     private val reporter: Reporter,
-    private val exitManager: ExitManager,
-    private val failOnFailedTests: Boolean,
     private val logger: Logger
 ) {
 
@@ -50,11 +46,5 @@ internal class Entrypoint(
                 "mismatched = ${summary.mismatched}, " +
                 "ignored = ${summary.ignoredCount}."
         )
-
-        when {
-            summary.mismatched > 0 -> if (failOnFailedTests) {
-                exitManager.exit(Exit.ThereWereFailedTests)
-            }
-        }
     }
 }
