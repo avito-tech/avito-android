@@ -15,7 +15,7 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.device.observer.DevicesObserver
-import com.avito.runner.test.EmptyListener
+import com.avito.runner.test.NoOpListener
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.mock.MockDevicesObserver
@@ -850,7 +850,7 @@ class RunnerIntegrationTest {
 
     private fun provideRunner(
         observer: DevicesObserver,
-        testListener: TestListener = EmptyListener,
+        testListener: TestListener = NoOpListener,
         logger: Logger = StdOutLogger(),
         outputDirectory: File = File("")
     ): TestRunner {

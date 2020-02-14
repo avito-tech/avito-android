@@ -2,11 +2,10 @@ package com.avito.runner.service
 
 import com.avito.runner.logging.StdOutLogger
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.InstrumentationTestRunActionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.observer.DevicesObserver
-import com.avito.runner.test.EmptyListener
+import com.avito.runner.test.NoOpListener
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
@@ -242,6 +241,6 @@ class IntentionExecutionServiceTest {
         logger = StdOutLogger(),
         devicesObserver = devicesObserver,
         intentionsRouter = intentionsRouter,
-        listener = EmptyListener
+        listener = NoOpListener
     )
 }
