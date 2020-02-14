@@ -1,7 +1,6 @@
 package com.avito.android.ui.test
 
 import android.view.View
-import com.avito.android.runner.UITestFrameworkException
 import com.avito.android.ui.R
 import com.avito.android.ui.VisibilityActivity
 import org.junit.Rule
@@ -30,7 +29,6 @@ class VisibilityTest {
         rule.runOnUiThread {
             rule.activity.findViewById<View>(R.id.text).visibility = View.INVISIBLE
         }
-        exception.expect(UITestFrameworkException::class.java)
         exception.expectMessage(
             "'view has effective visibility=VISIBLE' " +
                     "doesn't match the selected view."

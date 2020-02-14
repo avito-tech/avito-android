@@ -90,24 +90,25 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                         cause = e
                     )
                 }
-                e.message.isNullOrEmpty() ->
-                    //not much we can do here
-                    throw UITestFrameworkException(
-                        message = "Нет сообщения об ошибке",
-                        cause = e
-                    )
+                e is AssertionFailedError -> {
+                    throw AssertionFailedError(e.normalizedMessage())
+                }
                 else -> {
-                    var failureMessage: String = e.message!!
-
-                    normalizers.forEach { failureMessage = it.normalize(failureMessage) }
-
                     throw UITestFrameworkException(
-                        message = failureMessage,
+                        message = e.normalizedMessage(),
                         cause = e
                     )
                 }
             }
         }
+    }
+
+    fun Throwable.normalizedMessage(): String {
+        var failureMessage: String = this.message ?: return "No message"
+
+        normalizers.forEach { failureMessage = it.normalize(failureMessage) }
+
+        return failureMessage
     }
 
     private inline fun <reified T : Throwable> Throwable.isCausedBy(matcher: (error: T) -> Boolean): Boolean {

@@ -268,13 +268,6 @@ abstract class InHouseInstrumentationTestRunner :
             }
 
             onWaiterRetry = { }
-
-            /**
-             * Большинство ексепшенов от espresso оборачивается в UITestFrameworkException
-             */
-            waiterAllowedExceptions = waiterAllowedExceptions.plus(
-                UITestFrameworkException::class.java
-            )
         }
     }
 
