@@ -1,23 +1,26 @@
 ---
-title: In process click
+title: Internals
 type: docs
 ---
 
-# In process click
+# Internals
 
-It is click without inter-process communication.
+## Custom click
 
-## Motivation to write custom click
+It is a click without inter-process communication.
 
-Espresso click use inter-process communication. It leads to problems:
+### Motivation to write custom click
+
+Espresso click uses inter-process communication. It leads to problems:
+
 - Flaky clicks on moving views. Because click takes some time to touch after coordinates calculating.
 - "misinterpret clicks as long clicks"
 
-## Implementation details
+### Implementation details
 
-Click happens via dispatch touch event on root view
+Click happens via dispatch touch event on root view.
 
-### Known issues
+#### Known issues
 
 - Can click through any system elements on the screen. It applies clicks directly on root
  view of our application. Because of it, crash or permission dialogs can be ignored by
@@ -27,7 +30,7 @@ Click happens via dispatch touch event on root view
  kind of click implementation can click through it.
 - Overlapped view can't handle click. We can't realize when view is overlapped. Because of that clicks on overlapped views don't work and don't throw errors.
 
-#### Overlapped view click details
+##### Overlapped view click details
 
 We tried to validate that click happens. \
 We were able to check that clicked view wasn't overlapped, but faced scenario when user clicked on container and expected it to delegate click handling to child.

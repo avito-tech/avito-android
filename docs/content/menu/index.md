@@ -32,8 +32,7 @@ headless: true
 - API
 - [Аналитика]({{< ref "/analytics/Analytics.md" >}})
     - [Statsd]({{< ref "/analytics/Statsd.md" >}})
-- Тестирование
-    - [Test framework]({{< ref "/test/TestFramework.md" >}})
+- Testing
     - [Ручное]({{< ref "/test/Manual.md" >}})
     - [Test Management System]({{< ref "/test/TestManagementSystem.md" >}})
     - [Запуск тестов]({{< ref "/test/Run.md" >}})
@@ -43,8 +42,10 @@ headless: true
     - [Report Viewer]({{< ref "/test/ReportViewer.md" >}})
     - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
     - [Кастомный запуск]({{< ref "/test/DynamicConfig.md" >}})
-    - [Кастомный клик]({{< ref "/test/InProcessClick.md" >}})
     - [Помощь]({{<ref "/test/Support.md" >}})
+- [Test framework]({{< ref "/test_framework/TestFramework.md" >}})
+    - [Mocking]({{< ref "/test_framework/Mocking.md" >}})
+    - [Internals]({{< ref "/test_framework/Internals.md" >}})
 - [Design System](http://links.k.avito.ru/ff)
 - Performance
     - [Аналитика]({{< ref "/performance/Analytics.md" >}})
