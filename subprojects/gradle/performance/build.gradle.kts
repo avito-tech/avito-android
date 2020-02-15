@@ -34,7 +34,7 @@ dependencies {
     implementation("com.timgroup:java-statsd-client:$statsdVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
-    implementation("com.github.seratch:jslack:$jslackVersion")
+    implementation("com.github.seratch:jslack-api-client:$jslackVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
@@ -43,6 +43,12 @@ dependencies {
     testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlin2Version")
     testImplementation("com.google.truth:truth:$truthVersion")
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("com.squareup.okhttp3:okhttp:$okhttpVersion")
+    }
 }
 
 gradlePlugin {
