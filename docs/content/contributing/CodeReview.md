@@ -198,5 +198,5 @@ _Мотивация:_ предоставить рецензентам весь �
 
 ## Материалы по теме
 
-- Как подписаться на изменения в модулях? [Code Ownership Plugin](http://links.k.avito.ru/cfxnYPKAg)
+- Как подписаться на изменения в модулях? [Code Ownership Plugin (internal)](http://links.k.avito.ru/cfxnYPKAg)
 - Рекомендации Google: [How to do a code review](https://google.github.io/eng-practices/review/reviewer/)

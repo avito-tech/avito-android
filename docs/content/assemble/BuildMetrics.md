@@ -23,7 +23,7 @@ type: docs
 - Аргументы запуска - какую задачу запускали
 - Модуль
 
-## Dashboards
+## Dashboards (internal)
 
 - [Время сборки](http://links.k.avito.ru/0n)
     - Общее время сборки

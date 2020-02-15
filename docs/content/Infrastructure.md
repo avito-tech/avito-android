@@ -141,7 +141,7 @@ Shared modules between android-test and gradle.
 [Bintray project](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
 
 1. Make sure new project version specified in develop head
-1. Manually run [Teamcity configuration](http://links.k.avito.ru/releaseAvitoTools)
+1. Manually run [Teamcity configuration (internal)](http://links.k.avito.ru/releaseAvitoTools)
 
 ### Local integration tests against avito
 
@@ -151,7 +151,7 @@ Shared modules between android-test and gradle.
 
 ### CI integration tests against avito
 
-1. Run [Teamcity configuration](http://links.k.avito.ru/fastCheckIntegration). You can also change build branch if you need to test unmerged code.
+1. Run [Teamcity configuration (internal)](http://links.k.avito.ru/fastCheckIntegration). You can also change build branch if you need to test unmerged code.
 1. Pull request checks of avito would run against generated version of tools project.
 
 To re-check these changes locally you need to find android tools version in build parameters. Look for `integrationVersion`.\

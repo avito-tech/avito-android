@@ -18,7 +18,7 @@ type: docs
 
 Если что-то не понятно, здесь тебе помогут:
 
-- [#gradle](http://links.k.avito.ru/slackgradle)
+- [#gradle (internal)](http://links.k.avito.ru/slackgradle)
 - [gradle-community.slack.com](gradle-community.slack.com)
 
 ## Работа с плагинами в IDE

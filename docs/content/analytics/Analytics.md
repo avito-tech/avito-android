@@ -7,7 +7,7 @@ type: docs
 
 Для сбора данных используем собственные транспорты:
 
-- [Clickstream](http://links.k.avito.ru/HF)
+- [Clickstream (internal)](http://links.k.avito.ru/HF)
 - [Statsd]({{< relref "/Statsd.md" >}})
 
 Поверх транспорта есть готовые обертки под конкретные задачи:

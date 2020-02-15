@@ -13,8 +13,12 @@ theme = "book"
 # WARNING: publishDir outside the project breaks i18n
 publishDir = "public"
 
+# Disable needless kinds (https://gohugo.io/templates/section-templates/#page-kinds):
+# - We use explicit menu instead of section tree
+disableKinds = ["section"]
+
 [markup.tableOfContents]
-# First level is used only as page title
+# First level is used only as a page title
 startLevel = 2
 endLevel = 4
 

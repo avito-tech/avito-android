@@ -5,7 +5,7 @@ type: docs
 
 # Сборки в контейнерах
 
-[Avito Docker documentation](http://links.k.avito.ru/cfxOMToAQ)
+[Avito Docker documentation (internal)](http://links.k.avito.ru/cfxOMToAQ)
 
 Все образы расположены в `ci/docker`.
 
@@ -31,7 +31,7 @@ cd ci/docker
 - Убедись что образ отрабатывает корректно при локальном использовании.  
 Прогони хотя-бы `ci/local_check.sh`. 
 
-- Собери образ на ветке в teamcity конфигурации [Build android-builder](http://links.k.avito.ru/tmctAvitoAndroidBuilder)  
+- Собери образ на ветке в teamcity конфигурации [Build android-builder (internal)](http://links.k.avito.ru/tmctAvitoAndroidBuilder)  
 В этом проекте зашита авторизация для доступа к registry.
 - Обнови тег в `_main.sh`
 - Запушь изменение в ветку.
@@ -50,7 +50,7 @@ cd ci/docker
 
 Если меняем контракт с окружением, то вносим правки поэтапно, чтобы прошлая версия образа могла собрать новую.
 
-[Build docker-in-docker](http://links.k.avito.ru/tmctAvitoAndroidDockerInDocker)
+[Build docker-in-docker (internal)](http://links.k.avito.ru/tmctAvitoAndroidDockerInDocker)
 
 ## Android emulator
 
@@ -86,7 +86,7 @@ adb shell "settings put secure long_press_timeout 1500"
 
 См. все настройки в `android-emulator/hardware` и `android-emulator/prepare_snapshot.sh`
 
-[Задача на автоматизацию](http://links.k.avito.ru/MBS7122)
+[Задача на автоматизацию (internal)](http://links.k.avito.ru/MBS7122)
 {{< /tab >}}
 {{< tab "Linux" >}} 
 
@@ -142,7 +142,7 @@ adb connect localhost:5555
 {{< tabs "update emulator" >}}
 {{< tab "CI" >}}
 
-1. Собери образ на ветке в teamcity конфигурации [Build android-emulator](http://links.k.avito.ru/tmctAvitoAndroidEmulatorImageBuilder).  
+1. Собери образ на ветке в teamcity конфигурации [Build android-emulator (internal)](http://links.k.avito.ru/tmctAvitoAndroidEmulatorImageBuilder).  
 Теги новых образов будут в файле в артефактах сборки.
 1. Обнови теги в Devices.kt
 1. Запушь изменение в ветку.
