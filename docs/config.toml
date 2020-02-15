@@ -18,7 +18,7 @@ publishDir = "public"
 disableKinds = ["section"]
 
 [markup.tableOfContents]
-# First level is used only as page title
+# First level is used only as a page title
 startLevel = 2
 endLevel = 4
 

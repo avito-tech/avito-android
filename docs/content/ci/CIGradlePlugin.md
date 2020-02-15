@@ -58,7 +58,7 @@ fastCheck {
 - `docsCheck` - запустить проверки документации
 - `uploadToQapps` - загрузить указанные артефакты в QApps
 - `uploadToArtifactory` - загрузить указанные артефакты в Artifactory
-- `uploadToProsector` - загрузить указанные артефакты в [Prosector](http://links.k.avito.ru/cfxrREPBQ)
+- `uploadToProsector` - загрузить указанные артефакты в [Prosector (internal)](http://links.k.avito.ru/cfxrREPBQ)
 - `uploadBuildResult` - загрузить указанные артефакты в сервис релизов
 - `deploy` - загрузить указанные артефакты в google play
 - `artifacts` - зарегистрировать артефакты в качестве результатов билда.\

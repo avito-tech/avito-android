@@ -5,6 +5,7 @@ headless: true
 - [Introduction]({{< ref "/" >}})
 - [Tech radar]({{< ref "/tech_radar/TechRadar.md" >}})
 - [Known Issues]({{< ref "/KnownIssues.md" >}})
+- [Contacts]({{< ref "/Contacts.md" >}})
 - Contributing
     - [How to start]({{< ref "/contributing/HowToStart.md" >}})
     - [Documentation]({{< ref "/contributing/Docs.md" >}})
@@ -42,7 +43,6 @@ headless: true
     - [Report Viewer]({{< ref "/test/ReportViewer.md" >}})
     - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
     - [Кастомный запуск]({{< ref "/test/DynamicConfig.md" >}})
-    - [Помощь]({{<ref "/test/Support.md" >}})
 - [Test framework]({{< ref "/test_framework/TestFramework.md" >}})
     - [Mocking]({{< ref "/test_framework/Mocking.md" >}})
     - [Internals]({{< ref "/test_framework/Internals.md" >}})

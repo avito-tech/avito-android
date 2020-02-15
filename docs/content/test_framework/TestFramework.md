@@ -141,7 +141,7 @@ assertion("""Перешли на экран ...""") {
 override val checks: ScreenChecks = StrictScreenChecks(this)
 ```
 
-Включим это по умолчанию в [MBS-7204](http://links.k.avito.ru/MBS7204) 
+Включим это по умолчанию в MBS-7204 (internal) 
 
 - Создавать вложенные элементы с помощью фабричной функции `element`:
 
