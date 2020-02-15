@@ -33,4 +33,4 @@ docker run --rm \
         -w="/app" \
         -p 1313:1313 \
         android/docs/local:latest \
-        sh -c "hugo server --cleanDestinationDir --i18n-warnings --minify --theme book --bind 0.0.0.0"
+        sh -c "hugo server --cleanDestinationDir --i18n-warnings --minify --bind 0.0.0.0 --baseURL http://localhost:1313/avito-android"
