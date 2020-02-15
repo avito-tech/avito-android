@@ -113,6 +113,7 @@ pluginManagement {
         id("digital.wup.android-maven-publish") version "3.6.3"
         id("kotlin") version kotlinVersion
         id("kotlin-android") version kotlinVersion
+        id("nebula.integtest") version "7.0.7"
     }
 
     resolutionStrategy {
