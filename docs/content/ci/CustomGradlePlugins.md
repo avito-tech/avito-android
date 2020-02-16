@@ -26,7 +26,7 @@ type: docs
 1. Предпочтительно использовать IntelliJ IDEA
 1. Import project
 1. Согласись использовать gradle wrapper
-1. Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner
+1. **Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**
     1. Delegate IDE build/run actions to gradle (check)
     1. Run tests using : Gradle Test Runner
     
@@ -85,7 +85,7 @@ open class MyPlugin : Plugin<Project> {
 Часто нужно править плагин совместно с ./ci/
 
 Чтобы работать одновременно со всем этим кодом, к уже открытому проекту
-добавь модуль ci: File > New > Module from existing sources > путь до папки ci > ok > ok
+добавь модуль ci: **File > New > Module from existing sources > путь до папки ci > ok > ok**
 
 ## Интеграция плагина в CI
 

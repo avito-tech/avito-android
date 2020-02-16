@@ -49,7 +49,7 @@ Here's Mirakle ...
 - Проверь **кастомные системные параметры сборки** в `~/.gradle/gradle.properties`   
 Они не переносятся на удаленную машину. Выбираем один из вариантов:
     - Добавь в аналогичный файл на android-builder
-    - Добавь аргументами `-Pname=value` в _Preferences | Build, Execution, Deployment | Compiler | Command-line Options_   
+    - Добавь аргументами `-Pname=value` в **Preferences > Build, Execution, Deployment > Compiler > Command-line Options**   
     NB: про такие настройки легко забыть, по возможности избегай их. 
 
 В следующие разы нужно только включать `./mirakle.py --enable`

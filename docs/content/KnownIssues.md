@@ -8,6 +8,6 @@ type: docs
 
 ## New Gradle Sync is not supported due to containing Kotlin modules
 
-Disable _Settings | Experimental | Only sync the active variant_
+Disable **Settings > Experimental > Only sync the active variant**
 
 https://stackoverflow.com/questions/54201216/android-studio-3-3-new-gradle-sync-is-not-supported-due-to-containing-kotlin-mo/

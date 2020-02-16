@@ -21,7 +21,7 @@ Extra materials about technical writing:
 
 - [Jetbrains - Как писать полезные технические тексты](https://youtu.be/8SPq-9kS69M)
 - [Microsoft Writing Style Guide](https://docs.microsoft.com/en-us/style-guide/welcome/)
-- [GitLab documentaion styleguide](https://docs.gitlab.com/ee/development/documentation/styleguide.html)
+- [GitLab documentation styleguide](https://docs.gitlab.com/ee/development/documentation/styleguide.html)
 - [What nobody tells you about documentation](https://www.divio.com/blog/documentation/)
 
 
@@ -313,6 +313,14 @@ Markdown content
 ```
 
 {{< /columns >}}
+
+## Language
+
+### Interaction with UI
+
+- Use bold text for describing menu items and `>` as separator\
+Open **Preferences > Build, Execution, Deployment > Debugger**
+- Use exact words as shown in UI 
 
 ### Выделение терминов
 

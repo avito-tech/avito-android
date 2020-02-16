@@ -5,7 +5,7 @@ type: docs
 
 # How to start
 
-## Минимальные требования
+## Minimal requirements
 
 - 16Gb RAM
 - Linux/OSX/Windows
@@ -31,7 +31,7 @@ type: docs
 
 ### Обнови Kotlin плагин до последней версии
 
-_Preferences | Languages & Frameworks | Kotlin_
+**Preferences > Languages & Frameworks > Kotlin**
 
 ### Подключи необходимые плагины
 
