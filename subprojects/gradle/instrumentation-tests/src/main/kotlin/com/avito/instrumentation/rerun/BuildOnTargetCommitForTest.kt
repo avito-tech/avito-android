@@ -120,7 +120,7 @@ class BuildOnTargetCommitForTest(
                 { exception ->
                     val message = buildLogMessage("failed", startTime)
                     logger.critical(message, exception)
-                    buildFailer.failBuild(message)
+                    buildFailer.failBuild(message, exception)
                 }
             )
     }

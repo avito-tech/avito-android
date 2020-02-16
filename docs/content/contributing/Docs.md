@@ -337,9 +337,10 @@ Markdown content
 ### How to check locally
 
 Run: `docs/local.sh`\
-It will open documentation at `localhost:1313`. You can edit content on the fly.
+It will open documentation at `localhost:1313`.\
+You can edit markdown files in the `content/` on the fly. Changes out of this directory usually require a restart.  
 
-Checklist for changes besides the content:
+Checklist for changes:
 
 - Search
 - Shortcodes: mermaid, ...

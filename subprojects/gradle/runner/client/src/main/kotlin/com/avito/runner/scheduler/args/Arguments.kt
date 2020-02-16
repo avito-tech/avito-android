@@ -11,7 +11,6 @@ data class Arguments(
     val requests: List<TestRunRequest>,
     val devices: Channel<Serial>,
     val logger: Logger,
-    val failOnFailedTests: Boolean,
     val listener: TestLifecycleListener? = null
 )
 

@@ -29,8 +29,8 @@ sequenceDiagram
     - Проверь есть ли уже ключ ([checking for existing SSH keys](https://help.github.com/en/enterprise/2.15/user/articles/checking-for-existing-ssh-keys)) 
     или [сгенерируй новый](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html).    
     Нужен ключ без пароля, потому что из mirakle (Gradle) его некуда вводить.
-    - Добавь свой публичный ssh ключ - [инструкция](http://links.k.avito.ru/QP)
-    - Запроси в [Service Desk](http://links.k.avito.ru/I8) доступ по ssh на host android-builder 
+    - Добавь свой публичный ssh ключ - [инструкция (internal)](http://links.k.avito.ru/QP)
+    - Запроси в [Service Desk (internal)](http://links.k.avito.ru/I8) доступ по ssh на host android-builder 
 - Включи mirakle: `./mirakle.py --enable`   
 Если локальный пользователь отличается: `./mirakle.py --enable --username <username>`
 - Проверь работу, запусти любую задачу: `./gradlew help`   

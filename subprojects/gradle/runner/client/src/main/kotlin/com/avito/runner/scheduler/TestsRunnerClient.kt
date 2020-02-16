@@ -1,6 +1,5 @@
 package com.avito.runner.scheduler
 
-import com.avito.runner.exit.GradleExitManager
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.listener.ArtifactsTestListener
 import com.avito.runner.scheduler.listener.LogListener
@@ -19,7 +18,6 @@ import com.avito.runner.service.worker.device.observer.ExternalIntentionBasedDev
 class TestsRunnerClient {
 
     fun run(arguments: Arguments) {
-        val exitManager = GradleExitManager()
 
         val testRunner = TestRunnerImplementation(
             scheduler = TestExecutionScheduler(
@@ -33,7 +31,6 @@ class TestsRunnerClient {
                         logger = arguments.logger
                     ),
                     externalIntentionOfSerials = arguments.devices,
-                    exitManager = exitManager,
                     logger = arguments.logger
                 ),
                 logger = arguments.logger,
@@ -53,9 +50,7 @@ class TestsRunnerClient {
                     )
                 )
             ),
-            exitManager = exitManager,
-            logger = arguments.logger,
-            failOnFailedTests = arguments.failOnFailedTests
+            logger = arguments.logger
         ).also {
             it.run(
                 requests = arguments.requests

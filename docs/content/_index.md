@@ -38,12 +38,10 @@ You can see docker images we use to abstract configuration of apps building and 
 - `docs/` - documentation you see right now and code to deploy it automatically.\
 [How we document]({{< ref "/contributing/Docs.md" >}})
 {{< hint warning>}}
-You could see links to private resources that are not available for non-employees (links.k.avito.ru).\
+You could see links to "internal" resources that are not available for non-employees (links.k.avito.ru).\
 It has been done on purpose to have single documentation and show the whole picture.
 {{< /hint >}}
 
 ## Closed source internal repository
 
 - [How to start]({{< ref "/contributing/HowToStart.md" >}})
-
-Single slack channel for any android related stuff: [#android-dev](http://links.k.avito.ru/slackandroiddev)

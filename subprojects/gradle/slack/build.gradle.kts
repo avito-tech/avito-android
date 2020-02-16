@@ -3,6 +3,7 @@ plugins {
     id("java-test-fixtures")
     `maven-publish`
     id("com.jfrog.bintray")
+    id("nebula.integtest")
 }
 
 val kotlinVersion: String by project

@@ -3,7 +3,7 @@ package com.avito.runner.test
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.service.model.intention.Action
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
@@ -20,7 +20,7 @@ fun generateInstalledApplicationLayer(
 
 fun generateIntention(
     state: State,
-    action: Action
+    action: InstrumentationTestRunAction
 ): Intention =
     Intention(
         state = state,
@@ -35,8 +35,8 @@ fun generateInstrumentationTestAction(
     instrumentationParams: Map<String, String> = emptyMap(),
     timeoutMinutes: Long = randomLong(),
     executionNumber: Int = randomInt()
-): Action.InstrumentationTestRunAction =
-    Action.InstrumentationTestRunAction(
+): InstrumentationTestRunAction =
+    InstrumentationTestRunAction(
         test = test,
         testRunner = testRunner,
         targetPackage = targetPackage,

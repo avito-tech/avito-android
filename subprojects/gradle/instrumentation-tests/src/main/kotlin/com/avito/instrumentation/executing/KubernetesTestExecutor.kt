@@ -111,7 +111,6 @@ class KubernetesTestExecutor(
             val runnerArguments = Arguments(
                 outputDirectory = outputFolder(output),
                 devices = devices,
-                failOnFailedTests = false,
                 logger = object : Logger {
                     override fun notify(message: String, error: Throwable?) {
                         logger.critical(message, error)

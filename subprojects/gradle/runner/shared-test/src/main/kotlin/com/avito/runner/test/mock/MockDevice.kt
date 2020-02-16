@@ -1,10 +1,9 @@
 package com.avito.runner.test.mock
 
 import com.avito.runner.logging.Logger
-import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
-import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
@@ -56,15 +55,8 @@ class MockDevice(
     }
 
     override fun runIsolatedTest(
-        test: TestCase,
-        testPackageName: String,
-        targetPackageName: String,
-        testRunnerClass: String,
-        listener: TestListener?,
-        instrumentationArguments: Map<String, String>,
-        outputDir: File,
-        timeoutMinutes: Long,
-        executionNumber: Int
+        action: InstrumentationTestRunAction,
+        outputDir: File
     ): DeviceTestCaseRun {
         if (runTestsResultsQueue.isEmpty()) {
             throw IllegalArgumentException(
@@ -76,7 +68,7 @@ class MockDevice(
 
         return DeviceTestCaseRun(
             testCaseRun = TestCaseRun(
-                test = test,
+                test = action.test,
                 result = result,
                 timestampStartedMilliseconds = 0,
                 timestampCompletedMilliseconds = 0

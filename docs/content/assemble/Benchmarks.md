@@ -51,7 +51,7 @@ gradle-profiler --benchmark \
 
 Измеряем сценарии из `ci/profiler/benchmarks.scenarios`. 
 
-Запускаем в develop в конфигурации [Profiler build](http://links.k.avito.ru/tmctAvitoAndroidProfiler). 
+Запускаем в develop в конфигурации [Profiler build (internal)](http://links.k.avito.ru/tmctAvitoAndroidProfiler). 
 Собираем только пару раз в день, потому что на каждый коммит не хватает железа. 
 
-[Dashboard](http://links.k.avito.ru/Fa) с этими сценариями.
+[Dashboard (internal)](http://links.k.avito.ru/Fa) с этими сценариями.

@@ -8,11 +8,11 @@ import com.google.common.truth.isInstanceOf
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 
-internal class LostTestsDeterminerTest {
+internal class HasNotReportedTestsDeterminerTest {
 
     @Test
     fun `determine - AllTestsReported - when all tests found in report`() {
-        val result = LostTestsDeterminerImplementation()
+        val result = HasNotReportedTestsDeterminer.Impl()
             .determine(
                 runResult = Try.Success(
                     listOf(
@@ -21,19 +21,19 @@ internal class LostTestsDeterminerTest {
                         SimpleRunTest.createStubInstance(name = "com.Test.test3", deviceName = "api22")
                     )
                 ),
-                initialTestsToRun = listOf(
+                allTests = listOf(
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test1", deviceName = "api22"),
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test2", deviceName = "api22"),
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test3", deviceName = "api22")
                 )
             )
 
-        assertThat(result).isInstanceOf<LostTestsDeterminer.Result.AllTestsReported>()
+        assertThat(result).isInstanceOf<HasNotReportedTestsDeterminer.Result.AllTestsReported>()
     }
 
     @Test
     fun `determine - ThereWereMissedTests - when not all tests found in report`() {
-        val result = LostTestsDeterminerImplementation()
+        val result = HasNotReportedTestsDeterminer.Impl()
             .determine(
                 runResult = Try.Success(
                     listOf(
@@ -41,28 +41,28 @@ internal class LostTestsDeterminerTest {
                         SimpleRunTest.createStubInstance(name = "com.Test.test3", deviceName = "api22")
                     )
                 ),
-                initialTestsToRun = listOf(
+                allTests = listOf(
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test1", deviceName = "api22"),
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test2", deviceName = "api22"),
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test3", deviceName = "api22")
                 )
             )
 
-        assertThat(result).isInstanceOf<LostTestsDeterminer.Result.ThereWereLostTests>()
+        assertThat(result).isInstanceOf<HasNotReportedTestsDeterminer.Result.HasNotReportedTests>()
     }
 
     @Test
     fun `determine - FailedToGetMissedTests - when failed to get tests from report`() {
-        val result = LostTestsDeterminerImplementation()
+        val result = HasNotReportedTestsDeterminer.Impl()
             .determine(
                 runResult = Try.Failure(RuntimeException()),
-                initialTestsToRun = listOf(
+                allTests = listOf(
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test1", deviceName = "api22"),
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test2", deviceName = "api22"),
                     TestStaticDataPackage.createStubInstance(name = "com.Test.test3", deviceName = "api22")
                 )
             )
 
-        assertThat(result).isInstanceOf<LostTestsDeterminer.Result.FailedToGetLostTests>()
+        assertThat(result).isInstanceOf<HasNotReportedTestsDeterminer.Result.DetermineError>()
     }
 }
