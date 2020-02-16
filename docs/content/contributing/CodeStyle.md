@@ -45,7 +45,7 @@ type: docs
 ### Проверки в CI
 
 В данный момент соответствия code style проверяются вручную на [Code Review]({{< ref "/contributing/CodeReview.md" >}})
-([Задача на автоматизацию](http://links.k.avito.ru/MBS6991)).
+(Задача на автоматизацию - MBS-6991 (internal)).
 
 
 ## Code guidelines
