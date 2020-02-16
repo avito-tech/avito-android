@@ -17,8 +17,8 @@ open class PerformanceTestCheck(context: String) : SuppressibleBuildStep(context
     var enabled = true
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
-        if (useImpactAnalysis && !project.internalModule.isModified()) return
         if (!enabled) return
+        if (useImpactAnalysis && !project.internalModule.isModified()) return
 
         val checkTask = project.tasks.register<Task>("${context}PerformanceTest") {
             group = "cd"
