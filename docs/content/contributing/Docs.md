@@ -168,17 +168,13 @@ Anchor: `{{</* ref "/Name.md#header" */>}}`.
 
 Чтобы посмотреть статистику по ссылке, добавь к ней `+`.
 
-### Shortcuts
+### Diagrams
 
-Кастомные сниппеты для отображения того, что не поддерживает markdown.\
-Их несложно создавать. Напиши, если тебе не хватает какого-то типа контента.
+Diagrams is a preferable way for schemes and processes.\
+They are cheaper in maintenance. Text is the source of truth.\
+You don't need an original image and can edit it in a text editor.
 
-#### Diagrams
-
-Для диаграм используем [Mermaid](https://mermaid-js.github.io/mermaid/#/), описываем их в текстовом виде:
-
-- Содержимое читается без отрисовки картинки
-- Для редактирования не нужны никакие программы
+Use [mermaid](https://mermaid-js.github.io/mermaid/#/) shortcode:
 
 [Live editor](https://mermaid-js.github.io/mermaid-live-editor/)
 
@@ -198,7 +194,16 @@ stateDiagram
     B --> [*]
 {{</mermaid>}}
 
-#### Hints
+### Images
+
+Images are good for illustrating an explanation.\
+Use any public file storage for them. For example, a Github CDN:
+
+![](https://user-images.githubusercontent.com/499192/57450172-1a955f80-725e-11e9-9fed-267179bdab15.gif)
+
+There is a html [figure](https://gohugo.io/content-management/shortcodes/#figure) element for more control. 
+
+### Hints
 
 ```tpl
 {{</* hint [info|warning|danger] */>}}
@@ -222,7 +227,7 @@ Lorem markdownum insigne. Olympo signis Delphis!
 {{< button relref="/" >}}Home{{< /button >}}
 {{< button href="http://repo/CONTRIBUTING.md" >}}Contribute{{< /button >}}
 
-#### Tabs
+### Tabs
 
 ```tpl
 {{</* tabs "Unique ID" */>}}
@@ -238,7 +243,7 @@ Lorem markdownum insigne. Olympo signis Delphis!
 {{< tab "Windows" >}} Windows Content {{< /tab >}}
 {{< /tabs >}}
 
-#### Columns
+### Columns
 
 ```tpl
 {{</* columns */>}}
@@ -255,7 +260,7 @@ Right Content
 {{< /columns >}}
 
 
-#### Expand
+### Expand
 
 ```tpl
 {{</* expand "Title" */>}}
@@ -281,15 +286,6 @@ Markdown content
 {{< katex >}}
 \overline{a \lor b} = \overline{a} \land \overline{b}
 {{< /katex >}}
-
-
-### Images
-
-Попробуй сначала выразить текстом и диаграммами. 
-Картинки и скриншоты дороже поддерживать в актуальном состоянии.\
-Загружаем картинки в любой публичный image storage.\
-На крайний случай, в репозиторий в `docs/static` ( [Static files](https://gohugo.io/content-management/static-files/) )
-Для более гибкого отображения картинок используй [shortcode](https://gohugo.io/content-management/shortcodes/#figure)
 
 ### Lists
 
