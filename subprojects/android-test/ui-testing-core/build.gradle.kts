@@ -11,6 +11,7 @@ val espressoVersion: String by project
 val androidXVersion: String by project
 val hamcrestVersion: String by project
 val junitVersion: String by project
+val mockitoKotlinVersion: String by project
 
 dependencies {
     api("androidx.test:core:$androidXTestVersion")
@@ -24,8 +25,10 @@ dependencies {
     api("androidx.appcompat:appcompat:$androidXVersion")
     api("androidx.recyclerview:recyclerview:$androidXVersion")
     api("com.google.android.material:material:$androidXVersion")
+    api("com.google.android.gms:play-services-base:17.0.0")
 
     implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
+    compile("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion") { exclude(group = "org.jetbrains.kotlin") }
     implementation("junit:junit:$junitVersion")
     implementation("me.weishu:free_reflection:2.2.0")
 }

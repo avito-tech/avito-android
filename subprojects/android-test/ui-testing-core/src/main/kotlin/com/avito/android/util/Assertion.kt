@@ -10,6 +10,7 @@ fun <T> waitForAssertion(
     action: () -> T
 ): T = waitFor(
     timeoutMs = timeoutMilliseconds,
+    frequencyMs = frequencyMilliseconds,
     allowedExceptions = setOf(AssertionError::class.java),
     action = action
 )

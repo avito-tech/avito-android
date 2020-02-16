@@ -20,7 +20,6 @@ dependencies {
     implementation(project(":subprojects:common:report-viewer"))
     implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:android-test:junit-utils"))
-    implementation(project(":subprojects:android-test:mockito-utils"))
     implementation(project(":subprojects:android-test:test-report"))
     implementation(project(":subprojects:android-test:test-annotations"))
     implementation(project(":subprojects:android-test:ui-testing-core"))
