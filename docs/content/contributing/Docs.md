@@ -69,16 +69,21 @@ Naming:
 
 ---
 
-- Ориентация на обучение.
-- Полезно для новых пользователей.
-- Дает практическое понимание вместо теоретического знания. Показывает скорее _как_, а не _что_.
+- Assist newcomers to get started
+- Is learning-oriented
+- Shows _how_ to do in form of a lesson
 
-Приводит к конкретной цели через серию шагов:
+The tutorial declares a goal in the beginning. 
+After it guides by a series of steps. Each step is:
 
-- Простые и понятные
-- Повторяемые и надежные, всегда работают
-- Дают регулярную позитивную обратную связь
-- Минимум теории и объяснений, не грузят лишним
+- Easy to follow
+- Robust and reliable
+- Gives a positive feedback by an immediate result
+- Has as minimum theory as possible
+
+Examples:
+
+- [Creating Web Applications with Flask](https://www.jetbrains.com/help/pycharm/creating-web-application-with-flask.html)
 
 <--->
 
