@@ -103,7 +103,7 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroupByRegex("com\\.avito\\.android\\.*")
+                includeModuleByRegex("com\\.avito\\.android", ".*")
             }
         }
         exclusiveContent {
