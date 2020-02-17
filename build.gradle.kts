@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     val r8Version: String by project
-
-    repositories {
-        maven { setUrl("http://storage.googleapis.com/r8-releases/raw") }
-    }
     dependencies {
         classpath("com.android.tools:r8:$r8Version")
     }
@@ -54,7 +50,16 @@ subprojects {
 
     repositories {
         jcenter()
-        google()
+        exclusiveContent {
+            forRepository {
+                google()
+            }
+            filter {
+                includeGroupByRegex("com\\.android\\.tools\\..*")
+                includeGroupByRegex("com\\.google\\.android\\..*")
+                includeGroupByRegex("androidx\\..*")
+            }
+        }
     }
 
     group = "com.avito.android"
