@@ -140,8 +140,12 @@ Shared modules between android-test and gradle.
 
 [Bintray project](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
 
+1. Make sure integration tests passed via `CI integration tests against avito`
 1. Make sure new project version specified in develop head
 1. Manually run [Teamcity configuration (internal)](http://links.k.avito.ru/releaseAvitoTools)
+1. Use new version in `avito`
+1. Create PR with new `infraVersion`
+1. Create release on [releases page](https://github.com/avito-tech/avito-android/releases) 
 
 ### Local integration tests against avito
 

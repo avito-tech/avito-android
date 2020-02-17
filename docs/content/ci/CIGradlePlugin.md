@@ -51,6 +51,19 @@ fastCheck {
 - `configuration` - проверить конфигурацию проекта, модуль `build-script-test`
 - `uiTests` - запустить ui тесты модуля
 - `performanceTests` - запустить перформанс тесты модуля
+
+```groovy
+    fastCheck {
+        performanceTests {
+          configuration = "configuration name"
+          enabled = true // true by default
+        }
+    }
+```
+
+enabled - запускать ли шаг. \
+configuration - имя performance конфигурации, которая объявленна в instrumentation plugin
+
 - `compileUiTests` - скомпилировать androidTest модуля
 - `unitTests` - запустить юнит тесты модуля и всех его зависимостей
 - `lint` - запустить android lint по настройкам в модуле
