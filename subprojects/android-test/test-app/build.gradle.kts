@@ -39,11 +39,10 @@ android {
                 "planSlug" to "AndroidTestApp",
                 "slackToken" to "STUB",
                 "sentryDsn" to "http://stub-project@stub-host/0",
-                "fileStorageUrl" to "https://stub",
-                "reportApiUrl" to "https://stub",
-                "reportApiFallbackUrl" to "https://stub",
-                "reportViewerUrl" to "https://stub",
-                "unnecessaryUrl" to "https://localhost"
+                "fileStorageUrl" to "https://file-storage-stub",
+                "unnecessaryUrl" to "https://localhost",
+                // todo move to instrumentation plugin
+                "avito.report.enabled" to "false"
             )
         )
     }

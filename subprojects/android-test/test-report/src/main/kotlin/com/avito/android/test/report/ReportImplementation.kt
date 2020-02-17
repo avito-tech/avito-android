@@ -20,20 +20,14 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotUploader
-import com.avito.android.test.report.transport.ExternalStorageTransport
-import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.android.test.report.transport.Transport
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.report.model.DeviceName
+import com.avito.logger.Logger
 import com.avito.report.model.Entry
-import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Incident
-import com.avito.report.model.ReportCoordinates
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import io.sentry.SentryClient
 import okhttp3.OkHttpClient
 import java.io.File
@@ -47,48 +41,15 @@ import java.io.File
 @Suppress("FoldInitializerAndIfToElvis")
 @SuppressLint("LogNotTimber")
 class ReportImplementation(
-    planSlug: String,
-    jobSlug: String,
-    runId: String,
-    deviceName: String,
     onDeviceCacheDirectory: Lazy<File>,
     httpClient: OkHttpClient,
-    isLocalRun: Boolean,
     fileStorageUrl: String,
-    reportApiUrl: String,
-    reportApiFallbackUrl: String,
-    reportViewerUrl: String,
+    // TODO hide sentry
     override val sentry: SentryClient,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
-    private val logger: (String, Throwable?) -> Unit = { msg, error ->
-        Log.d(TAG, msg, error)
-        if (error != null) {
-            sentry.sendException(error)
-        }
-    },
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-        .create(),
-    private val testRunCoordinates: ReportCoordinates = ReportCoordinates(
-        planSlug = planSlug,
-        jobSlug = jobSlug,
-        runId = runId
-    ),
-    private val transport: List<Transport> = if (isLocalRun) {
-        listOf(
-            LocalRunTransport(
-                reportApiHost = reportApiUrl,
-                reportFallbackUrl = reportApiFallbackUrl,
-                reportViewerUrl = reportViewerUrl,
-                reportCoordinates = testRunCoordinates,
-                deviceName = DeviceName(deviceName),
-                logger = logger
-            )
-        )
-    } else {
-        listOf(ExternalStorageTransport(gson))
-    }
+    private val logger: Logger,
+    private val transport: List<Transport>
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
@@ -244,10 +205,9 @@ class ReportImplementation(
                 currentState.endTime = timeProvider.nowInSeconds()
                 afterTestStop(this)
             }
-
-            logger("Start waiting for uploads inside reportTestCase", null)
+            logger.debug("Start waiting for uploads inside reportTestCase")
             waitUploads(currentState)
-            logger("Waiting for uploads inside reportTestCase completed", null)
+            logger.debug("Waiting for uploads inside reportTestCase completed")
 
             currentState.apply {
                 /**
@@ -380,7 +340,7 @@ class ReportImplementation(
                         futureUploads.add(screenshotFuture)
                     }
                 } catch (t: Throwable) {
-                    logger("Failed to update step with captured screenshot", t)
+                    logger.critical("Failed to update step with captured screenshot", t)
                     return@methodExecutionTracing null
                 }
             }
@@ -536,11 +496,9 @@ $content
     }
 
     private fun <T> methodExecutionTracing(name: String, action: () -> T): T {
-        logger("Method: $name execution started", null)
+        logger.debug("Method: $name execution started")
         val result = action()
-        logger("Method: $name execution completed", null)
+        logger.debug("Method: $name execution completed")
         return result
     }
 }
-
-private const val TAG = "TestReport"
