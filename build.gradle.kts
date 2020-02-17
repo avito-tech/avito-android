@@ -55,9 +55,20 @@ subprojects {
                 google()
             }
             filter {
-                includeGroupByRegex("com\\.android\\.tools\\..*")
-                includeGroupByRegex("com\\.google\\.android\\..*")
+                includeModuleByRegex("com\\.android.*", "(?!r8).*")
+                includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "R8 releases"
+                    setUrl("http://storage.googleapis.com/r8-releases/raw")
+                }
+            }
+            filter {
+                includeModule("com.android.tools", "r8")
             }
         }
     }
