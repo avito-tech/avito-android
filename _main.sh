@@ -6,8 +6,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 source "$DIR"/ci/_environment.sh
 
-# shellcheck disable=SC2086
-USER_ID=$(id -u ${USER})
+USER_ID=$(id -u "$USER")
 GRADLE_HOME_DIR=$HOME/.gradle
 GRADLE_CACHE_DIR=$GRADLE_HOME_DIR/caches
 GRADLE_WRAPPER_DIR=$GRADLE_HOME_DIR/wrapper
@@ -32,9 +31,6 @@ function clearDockerContainers() {
         docker container rm --force ${containers}
     fi
 }
-
-GRADLE_CACHE_DIR=$HOME/.gradle/caches
-GRADLE_WRAPPER_DIR=$HOME/.gradle/wrapper
 
 GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
             git config --global user.name 'builder';
