@@ -8,6 +8,7 @@ RUN \
     git \
     gcc \
     rpl \
+    rsync \
     openssh-client \
     build-essential \
     ca-certificates \

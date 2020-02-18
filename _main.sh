@@ -11,19 +11,7 @@ GRADLE_HOME_DIR=$HOME/.gradle
 GRADLE_CACHE_DIR=$GRADLE_HOME_DIR/caches
 GRADLE_WRAPPER_DIR=$GRADLE_HOME_DIR/wrapper
 
-# Warning. Hack!
-# Мы можем удалять эти локи, т.к. гарантированно никакие другие процессы не используют этот шаренный кеш на начало новой сборки
-# см. clearDockerContainers
-# То что лок файлы остаются от предыдущих сборок, означает что мы где-то неправильно останавливаем процесс
-# '|| true' необходим для свеже-поднятых агентов, где еще не создана папка с кешами
-function clearGradleLockFiles() {
-    echo "Removing Gradle lock files"
-    find "${GRADLE_HOME_DIR}" \( -name "*.lock" -o -name "*.lck" \) -delete || true
-}
-
-# По-разным причинам работа контейнера при прошлой сборке может не завершиться
-# Здесь мы перестраховываемся и останавливаем все работающие контейнеры
-# Перед сборкой не должно быть других контейнеров в любом случае
+# todo move to daemon
 function clearDockerContainers() {
     local containers=$(docker container ls -aq)
     if [[ ! -z "$containers" ]]; then
@@ -32,11 +20,30 @@ function clearDockerContainers() {
     fi
 }
 
+# https://docs.gradle.org/6.2/userguide/dependency_resolution.html#sub:ephemeral-ci-cache
+MARKER_FILE="$GRADLE_CACHE_DIR"/marker.avito
+MOUNT_OPTIONS=""
+# in container
+GRADLE_RO_DEP_CACHE_DEST=/gradle/readonlydepcache
+function resolveDependenciesCacheOptions() {
+    if [ ! -f "$MARKER_FILE" ]; then
+        echo "[Gradle] Marker file not found. Mounting writeable dependencies cache."
+        MOUNT_OPTIONS+="--volume ${GRADLE_CACHE_DIR}:/gradle/caches "
+        MOUNT_OPTIONS+="--volume ${GRADLE_HOME_DIR}/readonlydepcache:$GRADLE_RO_DEP_CACHE_DEST "
+        MOUNT_OPTIONS+="--env GRADLE_RO_DEP_CACHE_DEST=$GRADLE_RO_DEP_CACHE_DEST "
+    else
+        echo "[Gradle] Marker file found. Mounting pre-populated read-only dependencies cache."
+        MOUNT_OPTIONS+="--env GRADLE_RO_DEP_CACHE=$GRADLE_RO_DEP_CACHE_DEST "
+        MOUNT_OPTIONS+="--volume ${GRADLE_HOME_DIR}/readonlydepcache:$GRADLE_RO_DEP_CACHE_DEST:ro"
+    fi
+}
+
 GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
 
 GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL "
+GRADLE_ARGS+="--stacktrace "
 GRADLE_ARGS+="-Pci=true "
 GRADLE_ARGS+="-PteamcityUrl "
 GRADLE_ARGS+="-PteamcityBuildType "
@@ -73,13 +80,11 @@ function runInBuilder() {
     COMMANDS=$@
 
     clearDockerContainers
-    clearGradleLockFiles
+    resolveDependenciesCacheOptions
 
-    docker run --rm \
+    docker run -t --rm \
         --volume "$(pwd)":/app \
         --volume /var/run/docker.sock:/var/run/docker.sock \
-        --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
-        --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
         --workdir /app \
         --env GRADLE_USER_HOME=/gradle \
         --env LOCAL_USER_ID="$USER_ID" \
@@ -92,6 +97,7 @@ function runInBuilder() {
         --env SLACK_TEST_WORKSPACE="$SLACK_TEST_WORKSPACE" \
         --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
         --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
+        $MOUNT_OPTIONS \
         dsvoronin/android-builder \
         bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }

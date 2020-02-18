@@ -5,7 +5,7 @@ set -e
 # shellcheck disable=SC2086
 USER_ID=$(id -u ${USER})
 
-docker run --rm \
+docker run -t --rm \
     --volume "$(pwd)":/app \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     --workdir /app \

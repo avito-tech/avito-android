@@ -3,6 +3,7 @@
 set -e
 
 source $(dirname $0)/_main.sh
+
 TEMP_PROJECT_VERSION="temp-version"
 
 # `tasks` triggers full tasks graph resolving, checking for possible misconfigurations
