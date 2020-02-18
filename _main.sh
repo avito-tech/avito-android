@@ -2,7 +2,9 @@
 
 set -e
 
-source $(dirname $0)/ci/_environment.sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+source "$DIR"/ci/_environment.sh
 
 # shellcheck disable=SC2086
 USER_ID=$(id -u ${USER})
