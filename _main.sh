@@ -47,6 +47,7 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
 
 GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL "
 GRADLE_ARGS+="--stacktrace "
+GRADLE_ARGS+="--console=plain "
 GRADLE_ARGS+="-Pci=true "
 GRADLE_ARGS+="-PteamcityUrl "
 GRADLE_ARGS+="-PteamcityBuildType "
