@@ -36,9 +36,6 @@ function clearDockerContainers() {
 GRADLE_CACHE_DIR=$HOME/.gradle/caches
 GRADLE_WRAPPER_DIR=$HOME/.gradle/wrapper
 
-clearDockerContainers
-clearGradleLockFiles
-
 GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
@@ -78,6 +75,9 @@ GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL \\
 
 function runInBuilder() {
     COMMANDS=$@
+
+    clearDockerContainers
+    clearGradleLockFiles
 
     docker run --rm \
     --volume "$(pwd)":/app \
