@@ -43,35 +43,35 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
 
-GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
-             -Pci=true \\
-             -PteamcityUrl \\
-             -PteamcityBuildType \\
-             -PbuildNumber \\
-             -PgitBranch=$BUILD_BRANCH \\
-             -PbuildCommit=$BUILD_COMMIT \\
-             -PteamcityBuildId=$BUILD_ID \\
-             -PslackToken=$AVITO_SLACK_TOKEN \\
-             -Pavito.slack.token=$AVITO_SLACK_TOKEN \\
-             -Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL \\
-             -Pavito.repo.ssh.url \\
-             -Pavito.report.url=$AVITO_REPORT_URL \\
-             -Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL \\
-             -Pavito.report.viewerUrl=$AVITO_REPORT_VIEWER_URL \\
-             -Pavito.registry=$AVITO_REGISTRY \\
-             -Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL \\
-             -Pavito.bitbucket.url=$AVITO_BITBUCKET_URL \\
-             -Pavito.bitbucket.projectKey=AG \\
-             -Pavito.bitbucket.repositorySlug=avito-github \\
-             -PatlassianUser=test \\
-             -PatlassianPassword=test \\
-             -Pavito.stats.host=$AVITO_STATS_HOST \\
-             -Pavito.stats.fallbackHost=$AVITO_STATS_FALLBACK_HOST \\
-             -Pavito.stats.port=$AVITO_STATS_PORT \\
-             -Pavito.stats.namespace=$AVITO_STATS_NAMESPACE \\
-             -PkubernetesToken=$KUBERNETES_TOKEN \\
-             -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
-             -PkubernetesUrl=$KUBERNETES_URL \\
+GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL "
+GRADLE_ARGS+="-Pci=true "
+GRADLE_ARGS+="-PteamcityUrl "
+GRADLE_ARGS+="-PteamcityBuildType "
+GRADLE_ARGS+="-PbuildNumber "
+GRADLE_ARGS+="-PgitBranch=$BUILD_BRANCH "
+GRADLE_ARGS+="-PbuildCommit=$BUILD_COMMIT "
+GRADLE_ARGS+="-PteamcityBuildId=$BUILD_ID "
+GRADLE_ARGS+="-PslackToken=$AVITO_SLACK_TOKEN "
+GRADLE_ARGS+="-Pavito.slack.token=$AVITO_SLACK_TOKEN "
+GRADLE_ARGS+="-Pavito.instrumentaion.sentry.dsn=$AVITO_SENTRY_URL "
+GRADLE_ARGS+="-Pavito.repo.ssh.url "
+GRADLE_ARGS+="-Pavito.report.url=$AVITO_REPORT_URL "
+GRADLE_ARGS+="-Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL "
+GRADLE_ARGS+="-Pavito.report.viewerUrl=$AVITO_REPORT_VIEWER_URL "
+GRADLE_ARGS+="-Pavito.registry=$AVITO_REGISTRY "
+GRADLE_ARGS+="-Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL "
+GRADLE_ARGS+="-Pavito.bitbucket.url=$AVITO_BITBUCKET_URL "
+GRADLE_ARGS+="-Pavito.bitbucket.projectKey=AG "
+GRADLE_ARGS+="-Pavito.bitbucket.repositorySlug=avito-github "
+GRADLE_ARGS+="-PatlassianUser=test "
+GRADLE_ARGS+="-PatlassianPassword=test "
+GRADLE_ARGS+="-Pavito.stats.host=$AVITO_STATS_HOST "
+GRADLE_ARGS+="-Pavito.stats.fallbackHost=$AVITO_STATS_FALLBACK_HOST "
+GRADLE_ARGS+="-Pavito.stats.port=$AVITO_STATS_PORT "
+GRADLE_ARGS+="-Pavito.stats.namespace=$AVITO_STATS_NAMESPACE "
+GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
+GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
+GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL \\
              -Pavito.bitbucket.enabled=true"
 
 # TODO: Use IMAGE_ANDROID_BUILDER image from public registry
