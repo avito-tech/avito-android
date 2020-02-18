@@ -6,7 +6,10 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 source "$DIR"/ci/_environment.sh
 
-USER_ID=$(id -u "$USER")
+# don't use quotes here, it will break command
+# shellcheck disable=SC2086
+USER_ID=$(id -u $USER)
+
 GRADLE_HOME_DIR=$HOME/.gradle
 GRADLE_CACHE_DIR=$GRADLE_HOME_DIR/caches
 GRADLE_WRAPPER_DIR=$GRADLE_HOME_DIR/wrapper
