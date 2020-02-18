@@ -29,8 +29,9 @@ class SlackConditionalSender(
                 },
                 { throwable ->
                     logger.info(
-                        "[Slack] Previous message not found, posting new one in channel=${message.channel}; " +
-                            "message=${SlackStringFormat.ellipsize(string = message.text, limit = 50)}", throwable
+                        message = "[Slack] Previous message not found, posting new one in channel=${message.channel}; " +
+                            "message=${SlackStringFormat.ellipsize(string = message.text, limit = 50)}",
+                        error = throwable
                     )
                     slackClient.sendMessage(message)
                 }
