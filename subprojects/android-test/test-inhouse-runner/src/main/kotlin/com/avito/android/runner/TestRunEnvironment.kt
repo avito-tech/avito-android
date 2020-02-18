@@ -84,7 +84,12 @@ sealed class TestRunEnvironment {
         val fileStorageUrl: String,
         val reportConfig: ReportConfig?,
         val testRunCoordinates: ReportCoordinates
-    ) : TestRunEnvironment()
+    ) : TestRunEnvironment() {
+
+        @Deprecated("since 2020.2.8", ReplaceWith("testRunCoordinates.runId"))
+        val runId: String
+            get() = testRunCoordinates.runId
+    }
 }
 
 fun provideEnvironment(
