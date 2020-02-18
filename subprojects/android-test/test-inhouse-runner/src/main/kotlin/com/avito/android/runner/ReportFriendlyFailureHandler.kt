@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.test.espresso.AppNotIdleException
 import androidx.test.espresso.FailureHandler
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.base.DefaultFailureHandler
 import junit.framework.AssertionFailedError
@@ -76,6 +77,8 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                         cause = e
                     )
                 }
+                // Handle expected errors from UITestConfig.waiterAllowedExceptions
+                // TODO: make this contract explicit
                 e is PerformException -> {
 
                     // RecyclerView descendant checks implemented via ViewActions (gross)
@@ -83,7 +86,7 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                         throw AssertionFailedError("Не прошла проверка: ${e.actionDescription}")
                     }
 
-                    // rethrow same exception but with bare minimum of useful info
+                    // rethrow exception but with bare minimum of useful info
                     throw UITestFrameworkPerformException(
                         actionDescription = e.actionDescription,
                         viewDescription = minimizeViewDescription(e.viewDescription),
@@ -92,6 +95,9 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                 }
                 e is AssertionFailedError -> {
                     throw AssertionFailedError(e.normalizedMessage())
+                }
+                e is NoMatchingViewException -> {
+                    throw e
                 }
                 else -> {
                     throw UITestFrameworkException(
@@ -103,7 +109,7 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
         }
     }
 
-    fun Throwable.normalizedMessage(): String {
+    private fun Throwable.normalizedMessage(): String {
         var failureMessage: String = this.message ?: return "No message"
 
         normalizers.forEach { failureMessage = it.normalize(failureMessage) }

@@ -41,8 +41,7 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
 
-GRADLE_ARGS="--info --stacktrace \\
-             -PartifactoryUrl=$ARTIFACTORY_URL \\
+GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pci=true \\
              -PteamcityUrl \\
              -PteamcityBuildType \\

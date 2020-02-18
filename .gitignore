@@ -8,3 +8,4 @@ local.properties
 public/
 .DS_Store
 outputs/
+gh-pages-generated/

@@ -212,10 +212,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     @SuppressLint("LogNotTimber")
-    override fun onException(
-        obj: Any?,
-        e: Throwable
-    ): Boolean {
+    override fun onException(obj: Any?, e: Throwable): Boolean {
         Log.e(tag, "Application crash captured by onException handler inside instrumentation", e)
 
         testRunEnvironment.executeIfRealRun {
