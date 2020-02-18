@@ -40,17 +40,21 @@ open class TargetConfiguration(val name: String) : Serializable {
             }
     }
 
-    fun data(parentInstrumentationParameters: InstrumentationParameters) = Data(
-        name = name,
-        reservation = scheduling.data().reservation,
-        rerunReservation = rerunScheduling?.data()?.reservation ?: scheduling.data().reservation,
-        deviceName = deviceName,
-        instrumentationParams = parentInstrumentationParameters
-            .applyParameters(instrumentationParams)
-            .applyParameters(
-                mapOf("deviceName" to deviceName)
-            )
-    )
+    fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
+        require(deviceName.isNotBlank())
+
+        return Data(
+            name = name,
+            reservation = scheduling.data().reservation,
+            rerunReservation = rerunScheduling?.data()?.reservation ?: scheduling.data().reservation,
+            deviceName = deviceName,
+            instrumentationParams = parentInstrumentationParameters
+                .applyParameters(instrumentationParams)
+                .applyParameters(
+                    mapOf("deviceName" to deviceName)
+                )
+        )
+    }
 
     fun validate() {
         scheduling

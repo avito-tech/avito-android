@@ -66,6 +66,8 @@ open class InstrumentationConfiguration(val name: String) {
     }
 
     fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
+        require(kubernetesNamespace.isNotBlank())
+
         val mergedInstrumentationParameters: InstrumentationParameters = parentInstrumentationParameters
             .applyParameters(instrumentationParams)
 
