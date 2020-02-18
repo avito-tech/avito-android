@@ -1,5 +1,6 @@
 package com.avito.filestorage
 
+import com.avito.logger.Logger
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl
@@ -13,7 +14,7 @@ class HttpRemoteStorage(
     private val endpoint: HttpUrl,
     httpClient: OkHttpClient,
     private val timeSource: TimeProvider = DefaultTimeProvider(),
-    private val logger: (String, Throwable?) -> Unit
+    private val logger: Logger
 ) : RemoteStorage {
 
     private val storageClient: FileStorageClient =
@@ -56,7 +57,7 @@ class HttpRemoteStorage(
         }
             .enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
-                    logUploadingError(uploadRequest)
+                    logger.critical(getUploadRequestErrorMessage(uploadRequest), t)
 
                     deleteUploadedFile(
                         uploadRequest = uploadRequest,
@@ -82,13 +83,10 @@ class HttpRemoteStorage(
                             uploadRequest = uploadRequest
                         )
                     } else {
-                        logUploadingError(
-                            uploadRequest = uploadRequest,
-                            body = response.body()
-                        )
-
+                        val exception = RuntimeException("Uploading failed with response: ${response.body()}")
+                        logger.critical(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
                         RemoteStorage.Result.Error(
-                            t = RuntimeException("Uploading failed with response: ${response.body()}")
+                            t = exception
                         )
                     }
 
@@ -120,17 +118,15 @@ class HttpRemoteStorage(
     ) {
         when (uploadRequest) {
             is RemoteStorage.Request.FileRequest ->
-                logger(
+                logger.debug(
                     "RemoteStorage: Uploading file: ${uploadRequest.file.absolutePath} " +
-                        "with size: ${uploadRequest.file.length()} bytes",
-                    null
+                        "with size: ${uploadRequest.file.length()} bytes"
                 )
 
             is RemoteStorage.Request.ContentRequest ->
-                logger(
+                logger.debug(
                     "RemoteStorage: Uploading content with size: ${uploadRequest.content.length} " +
-                        "with extension: ${uploadRequest.extension}",
-                    null
+                        "with extension: ${uploadRequest.extension}"
                 )
         }
     }
@@ -141,39 +137,28 @@ class HttpRemoteStorage(
     ) {
         when (uploadRequest) {
             is RemoteStorage.Request.FileRequest ->
-                logger(
-                    "RemoteStorage: File: ${uploadRequest.file.absolutePath} uploaded to url: $url",
-                    null
+                logger.debug(
+                    "RemoteStorage: File: ${uploadRequest.file.absolutePath} uploaded to url: $url"
                 )
 
             is RemoteStorage.Request.ContentRequest ->
-                logger(
-                    "RemoteStorage: Content with size: ${uploadRequest.content.length} uploaded to url: $url",
-                    null
+                logger.debug(
+                    "RemoteStorage: Content with size: ${uploadRequest.content.length} uploaded to url: $url"
                 )
         }
     }
 
-    private fun logUploadingError(
+    private fun getUploadRequestErrorMessage(
         uploadRequest: RemoteStorage.Request,
-        t: Throwable? = null,
         body: String? = null
-    ) {
+    ) =
         when (uploadRequest) {
             is RemoteStorage.Request.FileRequest ->
-                logger(
-                    "RemoteStorage: Filed to upload file: ${uploadRequest.file.absolutePath}" +
-                        if (body != null) " with body: $body" else "",
-                    t
-                )
-
+                "RemoteStorage: Filed to upload file: ${uploadRequest.file.absolutePath}" +
+                    if (body != null) " with body: $body" else ""
             is RemoteStorage.Request.ContentRequest ->
-                logger(
-                    "RemoteStorage: Filed to upload content with size: ${uploadRequest.content.length} " +
-                        "as ${uploadRequest.extension}" +
-                        if (body != null) " with body: $body" else "",
-                    t
-                )
+                "RemoteStorage: Filed to upload content with size: ${uploadRequest.content.length} " +
+                    "as ${uploadRequest.extension}" +
+                    if (body != null) " with body: $body" else ""
         }
-    }
 }

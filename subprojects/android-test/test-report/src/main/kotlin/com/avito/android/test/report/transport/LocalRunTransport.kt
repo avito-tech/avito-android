@@ -2,6 +2,7 @@ package com.avito.android.test.report.transport
 
 import android.os.Looper
 import com.avito.android.test.report.ReportState
+import com.avito.logger.Logger
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
@@ -17,7 +18,7 @@ class LocalRunTransport(
     reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val deviceName: DeviceName,
-    private val logger: (String, Throwable?) -> Unit,
+    private val logger: Logger,
     private val reportsApi: ReportsApi = ReportsApi.create(
         host = reportApiHost,
         fallbackUrl = reportFallbackUrl,
@@ -83,9 +84,8 @@ class LocalRunTransport(
                 )
             )
 
-            logger(
-                "Report link for test ${testName.name}: ${reportViewer.generateSingleTestRunUrl(result.get())}",
-                null
+            logger.debug(
+                "Report link for test ${testName.name}: ${reportViewer.generateSingleTestRunUrl(result.get())}"
             )
 
             if (reportCoordinates.runId.contains("local", ignoreCase = true)) {
@@ -93,7 +93,7 @@ class LocalRunTransport(
             }
 
         } catch (e: Exception) {
-            logger("Report send failed", e)
+            logger.critical("Report send failed", e)
         }
     }
 }

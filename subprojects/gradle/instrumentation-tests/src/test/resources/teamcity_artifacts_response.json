@@ -28,12 +28,6 @@
             "modificationTime": "20190204T175728+0300"
         },
         {
-            "name": "avito-48.0-(270)-experimental.apk",
-            "fullName": "avito/build/outputs/apk/experimental/avito-48.0-(270)-experimental.apk",
-            "size": 24589879,
-            "modificationTime": "20190204T175729+0300"
-        },
-        {
             "name": "avito-48.0-(270)-release.apk",
             "fullName": "avito/build/outputs/apk/release/avito-48.0-(270)-release.apk",
             "size": 24578135,
@@ -49,12 +43,6 @@
             "name": "avito-48.0-(270).aab",
             "fullName": "avito/build/outputs/bundle/release/avito-48.0-(270).aab",
             "size": 29668204,
-            "modificationTime": "20190204T175730+0300"
-        },
-        {
-            "name": "mapping.txt",
-            "fullName": "avito/build/outputs/mapping/experimental/mapping.txt",
-            "size": 45688464,
             "modificationTime": "20190204T175730+0300"
         },
         {

@@ -18,6 +18,7 @@ val truthVersion: String by project
 
 dependencies {
     implementation(project(":subprojects:common:report-viewer"))
+    implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:bitbucket"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
@@ -33,7 +34,10 @@ dependencies {
     implementation("com.timgroup:java-statsd-client:$statsdVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
-    implementation("com.github.seratch:jslack:$jslackVersion")
+    implementation("com.github.seratch:jslack-api-client:$jslackVersion") {
+        exclude(group = "com.squareup.okhttp3")
+    }
+    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")

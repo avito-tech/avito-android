@@ -1,5 +1,6 @@
 package com.avito.http
 
+import com.avito.logger.Logger
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -9,7 +10,7 @@ import java.util.concurrent.TimeUnit
  * See also:
  * - [okhttp3.internal.http.RetryAndFollowUpInterceptor]
  */
-class RetryInterceptor(
+class RetryInterceptor constructor(
     private val retries: Int = 5,
     private val allowedMethods: List<String> = listOf("GET"),
     private val allowedCodes: List<Int> = listOf(
@@ -21,10 +22,49 @@ class RetryInterceptor(
     ),
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,
-    private val logger: (message: String, error: Throwable?) -> Unit,
+    private val logger: Logger,
     private val onSuccess: (Response) -> Unit = {},
     private val onFailure: (Response) -> Unit = {}
 ) : Interceptor {
+
+    @Deprecated("since 2020.2.8")
+    constructor(
+        retries: Int = 5,
+        allowedMethods: List<String> = listOf("GET"),
+        allowedCodes: List<Int> = listOf(
+            408, // client timeout
+            500, // internal error
+            502, // bad gateway
+            503, // unavailable
+            504  // gateway timeout
+        ),
+        delayMs: Long = TimeUnit.SECONDS.toMillis(1),
+        useIncreasingDelay: Boolean = true,
+        logger: (String, Throwable?) -> Unit,
+        onSuccess: (Response) -> Unit = {},
+        onFailure: (Response) -> Unit = {}
+    ) : this(
+        retries = retries,
+        allowedMethods = allowedMethods,
+        allowedCodes = allowedCodes,
+        delayMs = delayMs,
+        useIncreasingDelay = useIncreasingDelay,
+        logger = object : Logger {
+            override fun debug(msg: String) {
+                logger.invoke(msg, null)
+            }
+
+            override fun exception(msg: String, error: Throwable) {
+                logger.invoke(msg, error)
+            }
+
+            override fun critical(msg: String, error: Throwable) {
+                logger.invoke(msg, error)
+            }
+        },
+        onFailure = onFailure,
+        onSuccess = onSuccess
+    )
 
     init {
         require(retries >= 1)
@@ -42,10 +82,10 @@ class RetryInterceptor(
             try {
                 prepareForRetry(response)
                 response = chain.proceed(request)
-                logger("Try: $tryCount. Response: $response", null)
+                logger.debug("Try: $tryCount. Response: $response")
             } catch (exception: IOException) {
                 error = exception
-                logger("Try: $tryCount. Failed to execute request. Error: ${error.message}", error)
+                logger.critical("Try: $tryCount. Failed to execute request. Error: ${error.message}", exception)
             }
 
             if (response != null) {

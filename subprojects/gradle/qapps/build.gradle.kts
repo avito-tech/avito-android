@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:logging"))
+    implementation(project(":subprojects:common:logger"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
     implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
