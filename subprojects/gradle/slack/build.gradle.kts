@@ -17,7 +17,10 @@ dependencies {
     implementation(project(":subprojects:gradle:logging"))
     implementation(project(":subprojects:common:time"))
     implementation("org.funktionale:funktionale-try:$funktionaleVersion")
-    implementation("com.github.seratch:jslack-api-client:$jslackVersion")
+    implementation("com.github.seratch:jslack-api-client:$jslackVersion") {
+        exclude(group = "com.squareup.okhttp3")
+    }
+    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 
     testImplementation(project(":subprojects:gradle:test-project"))
@@ -25,10 +28,4 @@ dependencies {
 
     testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     testFixturesImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    }
 }
