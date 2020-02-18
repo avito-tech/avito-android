@@ -87,33 +87,60 @@ pluginManagement {
     val infraVersion: String by settings
 
     repositories {
-        mavenLocal {
-            content {
-                includeGroupByRegex("com\\.avito\\.android\\.*")
+        exclusiveContent {
+            forRepository {
+                mavenLocal()
             }
-        }
-        if (!artifactoryUrl.isNullOrBlank()) {
-            maven {
-                name = "Local Artifactory"
-                setUrl("$artifactoryUrl/libs-release-local")
-                content {
-                    includeGroupByRegex("com\\.avito\\.android\\.*")
+            forRepository {
+                jcenter()
+            }
+            if (!artifactoryUrl.isNullOrBlank()) {
+                forRepository {
+                    maven {
+                        name = "Local Artifactory"
+                        setUrl("$artifactoryUrl/libs-release-local")
+                    }
                 }
             }
-        }
-        jcenter {
-            content {
-                includeGroupByRegex("com\\.avito\\.android\\.*")
+            filter {
+                includeModuleByRegex("com\\.avito\\.android", ".*")
             }
         }
-        gradlePluginPortal()
-        google()
+        exclusiveContent {
+            forRepository {
+                gradlePluginPortal()
+            }
+            filter {
+                includeGroup("org.jetbrains.kotlin.jvm")
+                includeGroup("com.jfrog.bintray")
+                includeGroup("com.slack.keeper")
+                includeGroup("digital.wup.android-maven-publish")
+                includeGroup("nebula.integtest")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                google()
+            }
+            filter {
+                includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "R8 releases"
+                    setUrl("http://storage.googleapis.com/r8-releases/raw")
+                }
+            }
+            filter {
+                includeModule("com.android.tools", "r8")
+            }
+        }
     }
 
     plugins {
         id("digital.wup.android-maven-publish") version "3.6.3"
-        id("kotlin") version kotlinVersion
-        id("kotlin-android") version kotlinVersion
         id("nebula.integtest") version "7.0.7"
     }
 
