@@ -78,7 +78,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withAndroidApp { appExtension ->
 
-            project.tasks.register<Task>("preInstrumentation") {
+            project.tasks.register<Task>(preInstrumentationTaskName) {
                 // this task is used to run anything in parallel with instrumentation
                 // https://issuetracker.google.com/issues/145235363
                 group = ciTaskGroup

@@ -29,9 +29,9 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
 
         val checkTask = project.tasks.register<Task>("${context}InstrumentationTest") {
             group = "cd"
-            description = "Run all instrumentation tests needed for release"
+            description = "Run all instrumentation tests needed for $context"
 
-            val preInstrumentationTask = project.tasks.named("preInstrumentation")
+            val preInstrumentationTask = project.tasks.preInstrumentationTask()
 
             dependsOn(preInstrumentationTask)
 

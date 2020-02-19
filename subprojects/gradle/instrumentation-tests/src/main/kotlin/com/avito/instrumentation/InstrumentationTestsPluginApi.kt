@@ -17,12 +17,16 @@ internal fun instrumentationTaskName(configuration: String): String =
 internal fun preInstrumentationTaskName(configuration: String): String =
     "preInstrumentation${configuration.capitalize()}"
 
+internal const val preInstrumentationTaskName: String = "preInstrumentation"
+
 //todo доступен только afterEvaluate и то ненадежно MBS-6926
 fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
     typedNamed(instrumentationTaskName(configuration))
 
 fun TaskContainer.preInstrumentationTask(configuration: String): TaskProvider<Task> =
     typedNamed(preInstrumentationTaskName(configuration))
+
+fun TaskContainer.preInstrumentationTask(): TaskProvider<Task> = named(preInstrumentationTaskName)
 
 fun TaskContainer.instrumentationTask(
     configuration: String,
