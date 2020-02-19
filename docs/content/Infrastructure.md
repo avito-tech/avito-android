@@ -138,7 +138,8 @@ Shared modules between android-test and gradle.
 
 ### Versioning
 
-[projectVersion](https://github.com/avito-tech/avito-android/blob/develop/gradle.properties#L13) is version for future release. `projectVersion` in commit means in what release version commit will appear.
+[projectVersion](https://github.com/avito-tech/avito-android/blob/develop/gradle.properties#L13) 
+is version for future release. `projectVersion` in commit means in what release version commit will appear.
 
 ### Release to jcenter
 
