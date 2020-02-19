@@ -7,11 +7,11 @@ import com.avito.bitbucket.BitbucketConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.TestExecutorFactory
-import com.avito.instrumentation.report.JUnitReportWriter
+import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.report.JUnitReportWriter
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.SendStatisticsAction
-import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.listener.ReportViewerTestReporter
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.scheduling.InstrumentationTestsScheduler
@@ -65,7 +65,8 @@ class InstrumentationTestsAction(
         }
 
     ),
-    private val reportCoordinates: ReportCoordinates = params.instrumentationConfiguration.instrumentationParams.reportCoordinates(),
+    private val reportCoordinates: ReportCoordinates = params.instrumentationConfiguration.instrumentationParams
+        .reportCoordinates(),
     private val targetReportCoordinates: ReportCoordinates = reportCoordinates.copy(
         jobSlug = "${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG"
     ),
@@ -172,18 +173,18 @@ class InstrumentationTestsAction(
                 testSignatureCheck = AllChecks()
             ) { previousRun }
 
-        val buildOnTargetCommit = BuildOnTargetCommitForTest.fromParams(params)
+        val buildOnTargetCommitResult = BuildOnTargetCommitForTest.fromParams(params)
 
         val testsExecutionResults: TestsScheduler.Result =
             if (params.instrumentationConfiguration.performanceType != null) {
                 performanceTestsScheduler.schedule(
                     initialTestsSuite = initialTestSuite,
-                    buildOnTargetCommit = buildOnTargetCommit
+                    buildOnTargetCommitResult = buildOnTargetCommitResult
                 )
             } else {
                 instrumentationTestsScheduler.schedule(
                     initialTestsSuite = initialTestSuite,
-                    buildOnTargetCommit = buildOnTargetCommit
+                    buildOnTargetCommitResult = buildOnTargetCommitResult
                 )
             }
 
