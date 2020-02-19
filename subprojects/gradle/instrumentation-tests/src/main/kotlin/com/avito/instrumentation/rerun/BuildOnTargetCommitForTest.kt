@@ -98,7 +98,8 @@ class BuildOnTargetCommitForTest(
                     workingDirectory = params.tempDir,
                     tasks = listOf(
                         "$appPath:assemble${params.variant.capitalize()}",
-                        "$appPath:assembleAndroidTest"
+                        "$appPath:assembleAndroidTest",
+                        "nonexistentTask" //todo remove
                     ),
                     buildScan = params.buildScan,
                     jvmArgs = "-Xmx8g",
