@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit
 
 data class AdbDevice(
     override val id: String,
+    override val model: String,
     override val online: Boolean,
     private val adb: String,
     private val logger: Logger,

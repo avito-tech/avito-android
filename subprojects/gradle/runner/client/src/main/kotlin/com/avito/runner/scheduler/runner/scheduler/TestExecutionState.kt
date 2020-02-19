@@ -77,6 +77,7 @@ class TestExecutionStateImplementation(
             state = State(
                 layers = listOf(
                     State.Layer.ApiLevel(api = request.configuration.api),
+                    State.Layer.Model(model = request.configuration.model),
                     State.Layer.InstalledApplication(
                         applicationPath = request.application,
                         applicationPackage = request.applicationPackage

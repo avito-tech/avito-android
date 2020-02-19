@@ -35,5 +35,8 @@ class LogListener : TestListener {
             "Test $status in ${durationMilliseconds.millisecondsToHumanReadableTime()}: " +
                 "${test.className}.${test.methodName}"
         )
+        if (result is TestCaseRun.Result.Failed) {
+            device.log(result.stacktrace)
+        }
     }
 }

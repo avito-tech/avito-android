@@ -2,11 +2,16 @@ package com.avito.runner.service.model.intention
 
 data class State(
     val layers: List<Layer>,
-    val digest: String = layers.hashCode().toString()
+    val digest: String = layers.hashCode().toString() //layers order matter
 ) {
+
     sealed class Layer {
         data class ApiLevel(val api: Int) : Layer() {
             override fun toString(): String = "Api level = $api"
+        }
+
+        data class Model(val model: String) : Layer() {
+            override fun toString(): String = "Model = $model"
         }
 
         data class InstalledApplication(

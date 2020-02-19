@@ -10,6 +10,7 @@ import java.nio.file.Path
 interface Device {
     val id: String
     val online: Boolean
+    val model: String
     val api: Int
 
     fun installApplication(application: String): DeviceInstallation
