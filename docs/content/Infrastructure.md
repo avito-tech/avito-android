@@ -139,7 +139,7 @@ Shared modules between android-test and gradle.
 ### Versioning
 
 [projectVersion](https://github.com/avito-tech/avito-android/blob/develop/gradle.properties#L13) 
-is version for future release. `projectVersion` in commit means in what release version commit will appear.
+is version for future release.
 
 ### Release to jcenter
 
@@ -149,7 +149,7 @@ is version for future release. `projectVersion` in commit means in what release 
 1. Make sure new project version specified in develop head
 1. Manually run [Teamcity configuration (internal)](http://links.k.avito.ru/releaseAvitoTools)
 1. Use new version in `avito`
-1. Create PR with new `infraVersion` and new `projectVersion`
+1. Create PR with `infraVersion` equally released version and bumped `projectVersion`
 1. Create release on [releases page](https://github.com/avito-tech/avito-android/releases) 
 
 ### Local integration tests against avito
