@@ -15,7 +15,7 @@ type: docs
 
 Важно чтобы в настройках запуск был делегирован Gradle:
 
-`Preferences > Build, Exceution, Deployment > Build Tools > Gradle`
+**Preferences > Build, Execution, Deployment > Build Tools > Gradle**
 
 {{< tabs "robolectric" >}}
 {{< tab "AS 3.6+" >}}

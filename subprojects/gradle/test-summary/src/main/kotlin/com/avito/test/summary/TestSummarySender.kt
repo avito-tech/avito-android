@@ -35,8 +35,8 @@ class TestSummarySenderImplementation(
     private val reportCoordinates: ReportCoordinates,
     private val globalSummaryChannel: SlackChannel = summaryChannel,
     private val unitToChannelMapping: Map<Team, SlackChannel>,
-    private val mentionOnFailures: Set<Team> = setOf(Team("buyer-x")),
-    private val reserveSlackChannel: SlackChannel = SlackChannel("#speed-testing-team")
+    private val mentionOnFailures: Set<Team> = setOf(Team("buyer-x")), //todo move to config
+    private val reserveSlackChannel: SlackChannel = SlackChannel("#speed-testing-team") //todo move to config
 ) : TestSummarySender {
 
     private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewer)
@@ -56,11 +56,11 @@ class TestSummarySenderImplementation(
         ),
         logger = logger
     )
-    private val slackBulkSender: SlackBulkSender =
-        CoroutinesSlackBulkSender(
-            sender = slackConditionalSender, // todo запрашивали опциональность этого (слать в любом случае для некоторых юнитов)
-            logger = { s, throwable -> logger.critical(s, throwable) }
-        )
+    private val slackBulkSender: SlackBulkSender = CoroutinesSlackBulkSender(
+        sender = slackConditionalSender,
+        logger = { s, throwable -> logger.critical(s, throwable) }
+    )
+
     private val slackEmojiProvider = SlackEmojiProvider()
 
     override fun send(suite: CrossDeviceSuite, reportId: String) {
