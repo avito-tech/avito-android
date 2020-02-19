@@ -31,8 +31,8 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
             group = "cd"
             description = "Run all instrumentation tests needed for $context"
 
+            // see LintWorkerApiWorkaround.md
             val preInstrumentationTask = project.tasks.preInstrumentationTask()
-
             dependsOn(preInstrumentationTask)
 
             configurations.forEach { configuration ->

@@ -78,9 +78,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withAndroidApp { appExtension ->
 
+            // see LintWorkerApiWorkaround.md
             project.tasks.register<Task>(preInstrumentationTaskName) {
-                // this task is used to run anything in parallel with instrumentation
-                // https://issuetracker.google.com/issues/145235363
                 group = ciTaskGroup
                 description = "Executed when all inputs of all instrumentation tasks in the module are ready"
 
@@ -153,6 +152,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 logger.info("[InstrConfig:${instrumentationConfiguration.name}] will depend on buildOnTargetBranch because: ${useArtifactsFromTargetBranch.reason}")
                             }
 
+                            // see LintWorkerApiWorkaround.md
                             project.tasks.register<Task>(
                                 preInstrumentationTaskName(instrumentationConfiguration.name)
                             ) {
