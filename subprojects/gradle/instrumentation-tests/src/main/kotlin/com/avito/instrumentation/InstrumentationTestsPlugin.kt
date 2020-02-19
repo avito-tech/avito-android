@@ -125,11 +125,13 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             val configurationOutputFolder =
                                 File(configurationData.output, instrumentationConfiguration.name)
 
+                            val runner = appExtension.defaultConfig.testInstrumentationRunner
+                            require(runner.isNotBlank())
                             val runFunctionalTestsParameters =
                                 ExecutionParameters(
                                     applicationPackageName = testedVariant.applicationId,
                                     applicationTestPackageName = testVariant.applicationId,
-                                    testRunner = appExtension.defaultConfig.testInstrumentationRunner,
+                                    testRunner = runner,
                                     namespace = instrumentationConfiguration.kubernetesNamespace,
                                     logcatTags = configurationData.logcatTags
                                 )
