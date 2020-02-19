@@ -26,6 +26,21 @@ val analytics = AnalyticsRule()
 analytics.checks.assertEventTracked<ShowSearchEvent>()
 ```
 
+### Mocking location
+
+`LocationRule` serves for mocking location in tests.
+
+```kotlin
+@get:Rule
+val locationRule = LocationRule()
+
+locationRule.setLocation(getTestLocation())
+```
+
+**KEEP IN MIND** that above rule does not mock location for the whole device but rather replace the best known location
+in `BaseGeoProvider`. That is technically possible that device location providers would give better location that was mocked. 
+To avoid that mock location with high accuracy. 
+
 ## Writing custom mocks for tests
 
 Different tests need different mocks. We have to adapt an application state for these requirements.\
