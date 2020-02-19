@@ -137,7 +137,6 @@ open class PerformancePlugin : Plugin<Project> {
                                 group = TASK_GROUP
                                 description = "Compare performance reports"
                                 comparison.set(File(extension.output, "comparison.json"))
-                                previousTests.set(project.optionalIfNotExists(previousTestsFile))
                                 currentTests.set(performanceResultsFile)
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)

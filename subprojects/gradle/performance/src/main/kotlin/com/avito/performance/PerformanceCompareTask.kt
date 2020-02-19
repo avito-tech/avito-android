@@ -27,24 +27,24 @@ abstract class PerformanceCompareTask @Inject constructor(
 ) : DefaultTask() {
 
     @Optional
-    @get:InputFile
-    internal val previousTests: RegularFileProperty = objects.fileProperty()
+    @InputFile
+    val previousTests: RegularFileProperty = objects.fileProperty()
 
     //todo support @Optional
-    @get:InputFile
-    internal val currentTests: RegularFileProperty = objects.fileProperty()
+    @InputFile
+    val currentTests: RegularFileProperty = objects.fileProperty()
 
-    @get:Internal
-    internal val reportApiUrl = objects.property<String>()
+    @Internal
+    val reportApiUrl = objects.property<String>()
 
-    @get:Internal
-    internal val reportApiFallbackUrl = objects.property<String>()
+    @Internal
+    val reportApiFallbackUrl = objects.property<String>()
 
-    @get:Internal
-    internal val statsUrl = objects.property<String>()
+    @Internal
+    val statsUrl = objects.property<String>()
 
-    @get:OutputFile
-    internal val comparison: RegularFileProperty = objects.fileProperty()
+    @OutputFile
+    val comparison: RegularFileProperty = objects.fileProperty()
 
     @TaskAction
     fun action() {
