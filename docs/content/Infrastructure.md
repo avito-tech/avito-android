@@ -155,8 +155,18 @@ Shared modules between android-test and gradle.
 
 ### CI integration tests against avito
 
-1. Run [Teamcity configuration (internal)](http://links.k.avito.ru/fastCheckIntegration). You can also change build branch if you need to test unmerged code.
-1. Pull request checks of avito would run against generated version of tools project.
+1. Run [Teamcity configuration (internal)](http://links.k.avito.ru/fastCheck) to check pull request builds. 
+1. And/or [This one](http://links.k.avito.ru/fullCheck) to check full set of checks.
+1. You don't need to be bothered about versions here, checks of avito would run against generated version of tools project.
 
-To re-check these changes locally you need to find android tools version in build parameters. Look for `integrationVersion`.\
-Also, to resolve this version you have to provide `artifactoryUrl` gradle property.
+{{< hint info>}}
+You can also change build branch if you need to test unmerged code.
+But be careful, Teamcity is tricky about this one:
+ 
+- By default build will use develop from github agains develop from avito
+- If you pick a different branch of avito, it will run against develop on github
+- If you pick a different branch of github, it will run against develop on avito
+- (UNTESTED) To build both projects of special branch, they should have the same name
+
+{{< /hint >}}
+
