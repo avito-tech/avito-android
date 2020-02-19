@@ -12,7 +12,7 @@ type: docs
 
 По умолчанию IDE выделяет мало, чтобы суметь запуститься на слабой машине.
 
-_Help | Edit custom VM Options_
+**Help > Edit custom VM Options**
 
 ```none
 -Xmx4g
@@ -20,7 +20,7 @@ _Help | Edit custom VM Options_
 
 Слишком много не нужно. Чтобы посмотреть реальное потребление памяти:
 
-_Appearance & Behavior | Appearance | Show memory indicator_
+**Appearance & Behavior > Appearance > Show memory indicator**
 
 
 ## Включи удаленную сборку 
@@ -44,14 +44,9 @@ sync...
 
 ## Отключи излишние действия во время синхронизации
 
-- _Preferences | Experimental | Skip source generation on Gradle sync_
-- _Preferences | Experimental | Skip download of sources and javadoc on Gradle sync_
-- _Preferences | Experimental | Gradle | Only sync the active variant_
-
-
-## Отключи автоматическую синхронизацию проекта
-
-_Preferences | Build, Execution, Deployment | Compiler | Sync project with Gradle before building_
+- **Preferences > Experimental > Skip source generation on Gradle sync**
+- **Preferences > Experimental > Skip download of sources and javadoc on Gradle sync**
+- **Preferences > Build, Execution, Deployment > Compiler > Sync project with Gradle before building**
 
 
 ## Проверь что Gradle и Kotlin не запускают несколько демонов
@@ -86,7 +81,7 @@ _Preferences | Build, Execution, Deployment | Compiler | Sync project with Gradl
 
 OSX
 
-Добавь в исключения Spotlight: _System preferences | Spotlight | Privacy_
+Добавь в исключения Spotlight: **System preferences > Spotlight > Privacy**
 
 - Директории с android проектами (обязательно)
 - Android SDK
@@ -106,7 +101,7 @@ tip: показать скрытые директории в Finder: _Cmd + Shif
 Проект большой и в нем много сгенерированных файлов, что нагружает IDE.
 Чтобы немного помочь, скрой файлы, которые никогда не нужны:
  
-_Preferences | Editor | File Types | Ignore Files and Folders_
+**Preferences > Editor > File Types > Ignore Files and Folders**
 
 Недостатки:
 
@@ -138,4 +133,4 @@ A light class is a representation of a Kotlin class as the Java PSI, allowing In
 
 Отключает инспекции и подсветку синтаксиса
 
-_File | Power Save Mode_
+**File > Power Save Mode**
