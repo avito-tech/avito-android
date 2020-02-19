@@ -12,6 +12,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
@@ -25,9 +26,11 @@ abstract class PerformanceCompareTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
+    @Optional
     @get:InputFile
     internal val previousTests: RegularFileProperty = objects.fileProperty()
 
+    //todo support @Optional
     @get:InputFile
     internal val currentTests: RegularFileProperty = objects.fileProperty()
 
@@ -53,7 +56,7 @@ abstract class PerformanceCompareTask @Inject constructor(
             workerConfiguration.isolationMode = IsolationMode.NONE
             workerConfiguration.setParams(
                 PerformanceCompareAction.Params(
-                    previousTests = previousTests.asFile.get(),
+                    previousTests = previousTests.orNull?.asFile,
                     currentTests = currentTests.asFile.get(),
                     comparison = comparison.asFile.get(),
                     buildUrl = project.envArgs.buildUrl,
