@@ -2,6 +2,7 @@ package com.avito.android.test.report.screenshot
 
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
+import com.avito.logger.Logger
 import java.io.File
 
 interface ScreenshotUploader {
@@ -13,7 +14,7 @@ interface ScreenshotUploader {
     class Impl(
         private val remoteStorage: RemoteStorage,
         private val screenshotCapturer: ScreenshotCapturer,
-        private val logger: (String, Throwable?) -> Unit
+        private val logger: Logger
     ) : ScreenshotUploader {
 
         override fun makeAndUploadScreenshot(comment: String): FutureValue<RemoteStorage.Result>? {
@@ -22,7 +23,7 @@ interface ScreenshotUploader {
             val screenshot: File = try {
                 screenshotCapturer.captureToFile()
             } catch (e: IllegalStateException) {
-                logger("Unable to make screenshot: ${e.message}", null)
+                logger.exception("Unable to make screenshot: ${e.message}", e)
                 return null
             }
 

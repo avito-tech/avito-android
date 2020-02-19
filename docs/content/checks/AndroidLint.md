@@ -3,7 +3,7 @@ title: Android Lint
 type: docs
 ---
 
-# Lint
+# Android Lint
 
 https://developer.android.com/studio/write/lint
 
@@ -28,15 +28,11 @@ https://developer.android.com/studio/write/lint
     - Приложения (android application)
     - Всего репозитория. Отключит проверку во всех модулях.
 
-## Кастомные проверки
+## Custom lint checks
 
-Все кастомные проверки лежат в модуле `lint-checks`.
+All customs android lint checks are in `lint-checks` (internal) module.
 
-### Как написать свою проверку?
+### Writing a custom lint check
 
-- KotlinConf 2017 - Kotlin Static Analysis with Android Lint by Tor Norbye: 
-[video](https://youtu.be/p8yX5-lPS6o), 
-[presentation](https://docs.google.com/presentation/d/1Sr-6E3Tk1lBguUob0GigqSEsfN-04qS56Whj0UEr0AE/edit#slide=id.g29100eff00_2_156)
+- [Static Analysis with Android Lint by Tor Norbye (mDevCamp 2019)](https://slideslive.com/38916502) 
 - [Sample project](https://github.com/googlesamples/android-custom-lint-rules)
-
-Отлично покрываются тестами, но если нужна отладка, то используем общий подход - [debugging]({{< ref "/ci/CustomGradlePlugins.md#debugging" >}})

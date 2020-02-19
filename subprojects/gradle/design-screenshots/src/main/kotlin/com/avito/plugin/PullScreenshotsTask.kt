@@ -23,7 +23,7 @@ open class PullScreenshotsTask : DefaultTask() {
 
     @TaskAction
     fun pullScreenshots() {
-        val applicationId = variant.get().applicationId
+        val applicationId = variant.get().testVariant.applicationId
         val adbDevicesManager = AdbDevicesManager(StdOutLogger())
         val adbDeviceHandler =  AdbDeviceHandlerLocal(ciLogger)
         val deviceSearch = DeviceSearchLocal(adbDevicesManager)

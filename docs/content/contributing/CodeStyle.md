@@ -12,7 +12,7 @@ type: docs
 За настройку code style отвечает [editor config](https://editorconfig.org/). 
 А точнее [плагин для IDE](https://plugins.jetbrains.com/plugin/7294-editorconfig/).
 
-Нужно убедиться, что плагин установлен и включен (Preferences > Plugins > Installed > search: EditorConfig)
+Нужно убедиться, что плагин установлен и включен (**Preferences > Plugins > Installed > search: EditorConfig**)
 
 После этого все настройки авто-формата должны применяться по порядку:
 1. EditorConfig настройка на уровне папки

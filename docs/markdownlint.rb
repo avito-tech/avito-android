@@ -48,6 +48,10 @@ exclude_rule 'MD033'
 # Rationale: false-positive on auto-links
 exclude_rule 'MD034'
 
+# MD036 - Emphasis used instead of a header
+# Rationale: false-positive on UI-elements description **Menu > Settings**
+exclude_rule 'MD036'
+
 # MD041 First line in file should be a top level header
 # Rationale: false-positive on headless pages (e.g. menu index)
 exclude_rule 'MD041'

@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.logger.Logger
 import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.internal.model.ConclusionStatus
 import com.avito.report.internal.model.CreateResponse
@@ -17,7 +18,7 @@ import org.funktionale.tries.Try
 
 internal class ReportsApiImpl(
     private val gson: Gson,
-    private val logger: (String, Throwable?) -> Unit,
+    private val logger: Logger,
     private val requestProvider: JsonRpcRequestProvider
 ) : ReportsApi,
     ReportsAddApi by ReportsAddApiImpl(requestProvider),

@@ -28,12 +28,12 @@ type: docs
 - Проверь версию IDE и Kotlin плагина. 
 Возможно они слишком старые или наоборот, alpha/beta версии.
 - Добавь `--stacktrace` чтобы увидеть детали ошибки:\
-_Settings > Build, Execution, Deployment > Compiler > Command-line Options:_
+**Settings > Build, Execution, Deployment > Compiler > Command-line Options:**_
 - Проверь что не включен offline mode на вкладке Gradle
 - Возможно ошибка в .iml, .idea/ файлах:
-    - `./clean.py --all` или _File > Re-Import Gradle project_
-    - _File > Invalidate Caches / Restart_
-- Посмотри логи _Help > Show log in Finder_
+    - `./clean.py --all` или **File > Re-Import Gradle project**
+    - **File > Invalidate Caches / Restart**
+- Посмотри логи **Help > Show log in Finder**
 
 ### Если причина в Mirakle
 

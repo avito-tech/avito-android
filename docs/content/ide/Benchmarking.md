@@ -10,7 +10,7 @@ type: docs
 ## Как попробовать?
 
 1. Установи плагин
-1. Запусти Help > Diagnostic > Execute Performance Scrip from File\
+1. Запусти **Help > Diagnostic > Execute Performance Scrip from File**\
 Выбери готовый сценарий из /benchmarks/ide
 
 ## Как проверить гипотезу и измерить разницу?

@@ -2,7 +2,9 @@
 
 set -e
 
-source $(dirname $0)/ci/_environment.sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+source "$DIR"/ci/_environment.sh
 
 # shellcheck disable=SC2086
 USER_ID=$(id -u ${USER})
@@ -41,8 +43,7 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
             git config --global user.name 'builder';
             git config --global user.email 'builder@avito.ru';"
 
-GRADLE_ARGS="--info --stacktrace \\
-             -PartifactoryUrl=$ARTIFACTORY_URL \\
+GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pci=true \\
              -PteamcityUrl \\
              -PteamcityBuildType \\
