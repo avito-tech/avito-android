@@ -7,17 +7,25 @@ data class InstrumentationParameters(
     val initialParameters: Map<String, String> = emptyMap()
 ) : Map<String, String> by initialParameters, Serializable {
 
+    init {
+        validateParameters(initialParameters)
+    }
+
     fun applyParameters(newParameters: Map<String, String>): InstrumentationParameters {
-        newParameters.forEach { key, value ->
-            require(key.isNotBlank() && value.isNotBlank()) {
-                "pair key=$key, value=$value has blank string"
-            }
-        }
+        validateParameters(newParameters)
         return InstrumentationParameters(
             HashMap(this).apply {
                 putAll(newParameters)
             }
         )
+    }
+
+    private fun validateParameters(parameters: Map<String, String>) {
+        parameters.forEach { (key, value) ->
+            require(key.isNotBlank() && value.isNotBlank()) {
+                "pair key=$key, value=$value has blank string"
+            }
+        }
     }
 
     fun reportCoordinates(): ReportCoordinates = ReportCoordinates(

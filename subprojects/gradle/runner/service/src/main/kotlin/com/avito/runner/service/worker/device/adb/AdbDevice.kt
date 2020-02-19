@@ -273,7 +273,7 @@ data class AdbDevice(
                 "am",
                 "instrument",
                 "-w", // wait for instrumentation to finish before returning.  Required for test runners.
-                "-r", // raw mode need for parsing
+                "-r", // raw mode is necessary for parsing
                 instrumentationArguments.formatInstrumentationOptions(),
                 "$testPackageName/$testRunnerClass"
             ),

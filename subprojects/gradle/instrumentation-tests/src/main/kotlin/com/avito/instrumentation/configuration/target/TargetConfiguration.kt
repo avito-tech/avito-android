@@ -41,7 +41,6 @@ open class TargetConfiguration(val name: String) : Serializable {
     }
 
     fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
-        require(deviceName.isNotBlank())
 
         return Data(
             name = name,
@@ -57,12 +56,9 @@ open class TargetConfiguration(val name: String) : Serializable {
     }
 
     fun validate() {
-        scheduling
         scheduling.validate()
-
         rerunScheduling?.validate()
-
-        deviceName
+        require(deviceName.isNotBlank())
     }
 
     data class Data(
