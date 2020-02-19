@@ -40,6 +40,9 @@ abstract class BuildOnTargetCommitForTestTask @Inject constructor(
     @Input
     val repoSshUrl = objects.property<String>()
 
+    @Input
+    val shouldFailBuild = objects.property<Boolean>()
+
     @Internal
     val tempDir: DirectoryProperty = objects.directoryProperty()
 
@@ -64,6 +67,7 @@ abstract class BuildOnTargetCommitForTestTask @Inject constructor(
                 workerConfiguration.isolationMode = IsolationMode.NONE
                 workerConfiguration.setParams(
                     BuildOnTargetCommitForTest.Params(
+                        shouldFailBuild = shouldFailBuild.get(),
                         logger = ciLogger,
                         gitAccess = GitAccess.SshAccess(repoSshUrl.get()),
                         tempDir = tempDir.asFile.get(),

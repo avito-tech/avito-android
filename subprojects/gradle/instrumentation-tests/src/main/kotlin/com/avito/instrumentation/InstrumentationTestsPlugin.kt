@@ -17,6 +17,7 @@ import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTestTask
+import com.avito.instrumentation.rerun.RunOnTargetBranchCondition
 import com.avito.instrumentation.test.DumpConfigurationTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
@@ -29,6 +30,7 @@ import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
@@ -44,7 +46,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val env = project.envArgs
         val pluginConfiguration = InstrumentationPluginConfiguration(project)
-        val gitState = project.gitState { project.ciLogger.info(it) }
+        val logger = project.ciLogger
+        val gitState = project.gitState { logger.info(it) }
 
         applyTestTasks(
             project = project,
@@ -60,7 +63,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         }
 
         if (project.buildEnvironment !is BuildEnvironment.CI) {
-            project.ciLogger.info("Instrumentation plugin disabled due to non CI environment")
+            logger.info("Instrumentation plugin disabled due to non CI environment")
             return
         }
 
@@ -75,10 +78,15 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withAndroidApp { appExtension ->
 
-            val preInstrumentationTask = project.tasks.register("preInstrumentation") {
+            project.tasks.register<Task>("preInstrumentation") {
                 // this task is used to run anything in parallel with instrumentation
                 // https://issuetracker.google.com/issues/145235363
-                it.description = "Executed when all inputs of all instrumentation tasks in the module are ready"
+                group = ciTaskGroup
+                description = "Executed when all inputs of all instrumentation tasks in the module are ready"
+
+                doLast {
+                    Thread.sleep(500)
+                }
             }
 
             appExtension.testVariants.all { testVariant: TestVariant ->
@@ -94,6 +102,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                         val versionName = project.getMandatoryStringProperty("${project.name}.versionName")
                         val versionCode = project.getMandatoryIntProperty("${project.name}.versionCode")
 
+                        this.shouldFailBuild.set(false) //todo should be configurable outside
                         this.appPath.set(project.path)
                         this.testedVariant.set(variant)
                         this.targetCommit.set(targetBranch.map { it.commit })
@@ -120,6 +129,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 pluginConfiguration.withData { configurationData ->
                     configurationData.configurations.forEach { instrumentationConfiguration ->
 
+                        logger.info("[InstrConfig:${instrumentationConfiguration.name}] Creating...")
+
                         testVariant.withArtifacts { testVariantPackageTask, testedVariantPackageTask ->
 
                             val configurationOutputFolder =
@@ -127,27 +138,34 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                             val runner = appExtension.defaultConfig.testInstrumentationRunner
                             require(runner.isNotBlank())
-                            val runFunctionalTestsParameters =
-                                ExecutionParameters(
-                                    applicationPackageName = testedVariant.applicationId,
-                                    applicationTestPackageName = testVariant.applicationId,
-                                    testRunner = runner,
-                                    namespace = instrumentationConfiguration.kubernetesNamespace,
-                                    logcatTags = configurationData.logcatTags
-                                )
+                            val runFunctionalTestsParameters = ExecutionParameters(
+                                applicationPackageName = testedVariant.applicationId,
+                                applicationTestPackageName = testVariant.applicationId,
+                                testRunner = runner,
+                                namespace = instrumentationConfiguration.kubernetesNamespace,
+                                logcatTags = configurationData.logcatTags
+                            )
 
-                            val useArtifactsFromTargetBranch = instrumentationConfiguration.tryToReRunOnTargetBranch
-                                || instrumentationConfiguration.performanceType != null
+                            val useArtifactsFromTargetBranch =
+                                RunOnTargetBranchCondition.evaluate(instrumentationConfiguration)
 
-                            preInstrumentationTask.configure {
-                                it.dependsOn(testedVariantPackageTask, testVariantPackageTask)
-                                if (useArtifactsFromTargetBranch) {
-                                    it.dependsOn(buildOnTargetCommitTask)
+                            if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
+                                logger.info("[InstrConfig:${instrumentationConfiguration.name}] will depend on buildOnTargetBranch because: ${useArtifactsFromTargetBranch.reason}")
+                            }
+
+                            project.tasks.register<Task>(
+                                preInstrumentationTaskName(instrumentationConfiguration.name)
+                            ) {
+                                group = ciTaskGroup
+
+                                dependsOn(testedVariantPackageTask, testVariantPackageTask)
+
+                                if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
+                                    dependsOn(buildOnTargetCommitTask)
                                 }
-                                when (instrumentationConfiguration.impactAnalysisPolicy) {
-                                    is ImpactAnalysisPolicy.On -> {
-                                        it.dependsOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project))
-                                    }
+
+                                if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
+                                    dependsOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project))
                                 }
                             }
 
@@ -165,7 +183,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                     testApplication.set(dependentTask.getApkFile())
                                 }
 
-                                if (useArtifactsFromTargetBranch) {
+                                if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
                                     dependencyOn(buildOnTargetCommitTask) { dependentTask ->
                                         apkOnTargetCommit.set(dependentTask.mainApk.optionalIfNotExists())
                                         testApkOnTargetCommit.set(dependentTask.testApk.optionalIfNotExists())

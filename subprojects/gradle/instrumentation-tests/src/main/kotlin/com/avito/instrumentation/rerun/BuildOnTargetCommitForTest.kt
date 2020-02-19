@@ -56,6 +56,7 @@ class BuildOnTargetCommitForTest(
     }
 
     data class Params(
+        val shouldFailBuild: Boolean,
         val gitAccess: GitAccess,
         val logger: CILogger,
         val tempDir: File,
@@ -124,7 +125,9 @@ class BuildOnTargetCommitForTest(
                 { exception ->
                     val message = buildLogMessage("failed", startTime)
                     logger.critical(message, exception)
-                    buildFailer.failBuild(message, exception)
+                    if (params.shouldFailBuild) {
+                        buildFailer.failBuild(message, exception)
+                    }
                 }
             )
     }

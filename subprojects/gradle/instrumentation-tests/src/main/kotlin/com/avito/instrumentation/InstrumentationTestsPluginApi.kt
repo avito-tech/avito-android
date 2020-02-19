@@ -3,6 +3,7 @@ package com.avito.instrumentation
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
 import com.avito.kotlin.dsl.typedNamed
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.findByType
@@ -10,11 +11,18 @@ import org.gradle.kotlin.dsl.withType
 
 //API для использования другими плагинами
 
-internal fun instrumentationTaskName(configuration: String): String = "instrumentation${configuration.capitalize()}"
+internal fun instrumentationTaskName(configuration: String): String =
+    "instrumentation${configuration.capitalize()}"
+
+internal fun preInstrumentationTaskName(configuration: String): String =
+    "preInstrumentation${configuration.capitalize()}"
 
 //todo доступен только afterEvaluate и то ненадежно MBS-6926
 fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
     typedNamed(instrumentationTaskName(configuration))
+
+fun TaskContainer.preInstrumentationTask(configuration: String): TaskProvider<Task> =
+    typedNamed(preInstrumentationTaskName(configuration))
 
 fun TaskContainer.instrumentationTask(
     configuration: String,

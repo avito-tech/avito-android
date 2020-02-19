@@ -3,6 +3,7 @@ package com.avito.ci.steps
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.InstrumentationTestsTask
+import com.avito.instrumentation.preInstrumentationTask
 import com.avito.kotlin.dsl.typedNamedOrNull
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -30,7 +31,9 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
             group = "cd"
             description = "Run all instrumentation tests needed for release"
 
-            dependsOn("preInstrumentation") // TODO: hide this task in instrumentation plugin
+            val preInstrumentationTask = project.tasks.named("preInstrumentation")
+
+            dependsOn(preInstrumentationTask)
 
             configurations.forEach { configuration ->
                 val taskName = "instrumentation${configuration.capitalize()}"
@@ -41,7 +44,7 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
                     }
 
                 // it is safe to call get() here because task instrumentationXXX must be ready here
-                // TODO: can we do it in configure block anyway?
+                // TODO: can we do it in "configure" block anyway?
                 uiTestTask.get().also { task ->
                     task.suppressFailure.set(this@UiTestCheck.suppressFailures)
                     task.sendStatistics.set(this@UiTestCheck.sendStatistics)
@@ -51,6 +54,10 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
                 }
 
                 dependsOn(uiTestTask)
+
+                preInstrumentationTask.get().also {
+                    dependsOn(project.tasks.preInstrumentationTask(configuration))
+                }
             }
         }
 
