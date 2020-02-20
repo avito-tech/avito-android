@@ -21,6 +21,10 @@ class BuildOnTargetCommitForTest(
     private val nestedGradleRunner: NestedGradleRunner
 ) : Runnable {
 
+    /**
+     * used in worker api call in [BuildOnTargetCommitForTestTask]
+     */
+    @Suppress("unused")
     @Inject
     constructor(params: Params) : this(
         params = params,
@@ -29,21 +33,21 @@ class BuildOnTargetCommitForTest(
         nestedGradleRunner = ConnectorNestedGradleRunner(params.logger)
     )
 
-    sealed class RunOnTargetCommitResolution {
+    sealed class Result {
         data class OK(
             val mainApk: File,
             val testApk: File
-        ) : RunOnTargetCommitResolution()
+        ) : Result()
 
-        object ApksUnavailable : RunOnTargetCommitResolution()
+        object ApksUnavailable : Result()
     }
 
     companion object {
-        fun fromParams(params: InstrumentationTestsAction.Params): RunOnTargetCommitResolution {
+        fun fromParams(params: InstrumentationTestsAction.Params): Result {
             return if (!params.apkOnTargetCommit.hasFileContent() || !params.testApkOnTargetCommit.hasFileContent()) {
-                RunOnTargetCommitResolution.ApksUnavailable
+                Result.ApksUnavailable
             } else {
-                RunOnTargetCommitResolution.OK(
+                Result.OK(
                     mainApk = params.apkOnTargetCommit,
                     testApk = params.testApkOnTargetCommit
                 )
@@ -52,6 +56,7 @@ class BuildOnTargetCommitForTest(
     }
 
     data class Params(
+        val shouldFailBuild: Boolean,
         val gitAccess: GitAccess,
         val logger: CILogger,
         val tempDir: File,
@@ -120,7 +125,9 @@ class BuildOnTargetCommitForTest(
                 { exception ->
                     val message = buildLogMessage("failed", startTime)
                     logger.critical(message, exception)
-                    buildFailer.failBuild(message, exception)
+                    if (params.shouldFailBuild) {
+                        buildFailer.failBuild(message, exception)
+                    }
                 }
             )
     }

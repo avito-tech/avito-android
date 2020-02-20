@@ -6,6 +6,8 @@ import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.instrumentationTask
 import com.avito.instrumentation.withInstrumentationTests
+import com.avito.kotlin.dsl.fileProperty
+import com.avito.kotlin.dsl.toOptional
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
@@ -126,18 +128,20 @@ open class PerformancePlugin : Plugin<Project> {
                                 dependsOn(performanceCollectProvider)
                             }
 
+                        val previousTestsFile = project.fileProperty(
+                            File(
+                                extension.output,
+                                previousPerformanceTestResultName
+                            )
+                        )
+
                         val performanceCompareProvider =
                             project.tasks.register<PerformanceCompareTask>("compare${performanceConfig.name.capitalize()}") {
                                 group = TASK_GROUP
                                 description = "Compare performance reports"
                                 comparison.set(File(extension.output, "comparison.json"))
-                                previousTests.set(
-                                    File(
-                                        extension.output,
-                                        previousPerformanceTestResultName
-                                    )
-                                )
                                 currentTests.set(performanceResultsFile)
+                                previousTests.set(previousTestsFile.toOptional())
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
                                 statsUrl.set(extension.statsUrl)

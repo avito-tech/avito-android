@@ -10,7 +10,7 @@ interface TestsScheduler {
 
     fun schedule(
         initialTestsSuite: List<TestWithTarget>,
-        buildOnTargetCommit: BuildOnTargetCommitForTest.RunOnTargetCommitResolution
+        buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): Result
 
     data class Result(

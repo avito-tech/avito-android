@@ -28,7 +28,7 @@ openBrowser
 # Otherwise it'll crash hugo due to missing files.
 # You can find them in .dockerignore
 
-docker run --rm \
+docker run -t --rm \
         --volume "$(pwd)":/app \
         -w="/app" \
         -p 1313:1313 \
