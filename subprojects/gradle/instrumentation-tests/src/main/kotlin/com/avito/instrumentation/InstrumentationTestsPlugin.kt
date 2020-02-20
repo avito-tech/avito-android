@@ -23,7 +23,7 @@ import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.kotlin.dsl.optionalIfNotExists
+import com.avito.kotlin.dsl.toOptional
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
@@ -185,8 +185,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
                                     dependencyOn(buildOnTargetCommitTask) { dependentTask ->
-                                        apkOnTargetCommit.set(dependentTask.mainApk.optionalIfNotExists())
-                                        testApkOnTargetCommit.set(dependentTask.testApk.optionalIfNotExists())
+                                        apkOnTargetCommit.set(dependentTask.mainApk.toOptional())
+                                        testApkOnTargetCommit.set(dependentTask.testApk.toOptional())
                                     }
                                 }
 

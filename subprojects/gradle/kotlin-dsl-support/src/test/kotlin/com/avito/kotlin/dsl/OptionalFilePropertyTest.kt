@@ -51,7 +51,7 @@ internal class OptionalFilePropertyTest {
         }
 
         val task = project.tasks.register<OptimisticTestTask>("testTask") {
-            someOptionalFile.set(project.optionalIfNotExists(file))
+            someOptionalFile.set(project.fileProperty(file).toOptional())
         }
 
         task.get().doStuff()
@@ -75,7 +75,7 @@ internal class OptionalFilePropertyTest {
         val nonExistentFile = File("x.txt")
 
         val task = project.tasks.register<PessimisticTestTask>("testTask") {
-            someOptionalFile.set(project.optionalIfNotExists(nonExistentFile))
+            someOptionalFile.set(project.fileProperty(nonExistentFile).toOptional())
         }
 
         task.get().doStuff()

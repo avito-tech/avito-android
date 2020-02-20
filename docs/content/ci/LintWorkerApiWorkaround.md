@@ -37,5 +37,5 @@ Good tasks will report finish time bigger than actual in that case, it's a [know
 
 ## Implementation
 
-We introduced `preInstrumentation` task for ui-tests, that depends on same tasks as instrumentation one's,
+We have introduced `preInstrumentation` task for ui-tests, that depends on same tasks as instrumentation one's,
 but doing nothing other than `mustRunAfter` point to lint task, moving it next to ui-tests.
