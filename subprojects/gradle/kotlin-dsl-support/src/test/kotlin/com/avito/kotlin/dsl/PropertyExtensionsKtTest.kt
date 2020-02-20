@@ -1,16 +1,11 @@
 package com.avito.kotlin.dsl
 
-import com.avito.test.gradle.KotlinModule
-import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import java.io.File
 import java.util.UUID
 
 internal class PropertyExtensionsKtTest {
