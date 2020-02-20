@@ -1,6 +1,6 @@
 package com.avito.android.ui.test
 
-import com.avito.android.runner.UITestFrameworkException
+import androidx.test.espresso.NoMatchingViewException
 import com.avito.android.ui.PageObjectActivity
 import com.avito.android.ui.R
 import org.junit.Rule
@@ -33,8 +33,7 @@ class PageObjectTest {
     fun element__notFound__byDefaultMatcherWithWrongCustom() {
         rule.launchActivity(PageObjectActivity.intent(R.layout.page_object_1))
 
-        exception.expect(UITestFrameworkException::class.java)
-        exception.expectMessage("Не найдена view")
+        exception.expect(NoMatchingViewException::class.java)
 
         screen().textViewWithWrongText.checks.isDisplayed()
     }
@@ -43,8 +42,7 @@ class PageObjectTest {
     fun element__notFound__byDefaultMatcherInTheWrongParent() {
         rule.launchActivity(PageObjectActivity.intent(R.layout.page_object_2)) // twin
 
-        exception.expect(UITestFrameworkException::class.java)
-        exception.expectMessage("Не найдена view")
+        exception.expect(NoMatchingViewException::class.java)
 
         screen().textView.checks.isDisplayed()
     }

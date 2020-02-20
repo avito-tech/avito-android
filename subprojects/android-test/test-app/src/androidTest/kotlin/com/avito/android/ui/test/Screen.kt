@@ -1,5 +1,7 @@
 package com.avito.android.ui.test
 
+import com.avito.android.ui.test.retry.RetryScreen
+
 object Screen {
 
     val distantViewOnScroll: DistantViewOnScrollScreen
@@ -16,6 +18,9 @@ object Screen {
 
     val textsElements: TextElementsScreen
         get() = TextElementsScreen()
+
+    val retry: RetryScreen
+        get() = RetryScreen()
 
     val buttons: ButtonsScreen
         get() = ButtonsScreen()
