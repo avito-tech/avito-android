@@ -27,13 +27,19 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         if (useImpactAnalysis && !project.internalModule.isModified()) return
 
+        // see LintWorkerApiWorkaround.md
+        val preInstrumentationTask = project.tasks.preInstrumentationTask()
+
+        configurations.forEach { configuration ->
+            preInstrumentationTask.configure {
+                it.logger.lifecycle("setting dependency between preInstrumentation tasks of configuration $configuration")
+                it.dependsOn(project.tasks.preInstrumentationTask(configuration))
+            }
+        }
+
         val checkTask = project.tasks.register<Task>("${context}InstrumentationTest") {
             group = "cd"
             description = "Run all instrumentation tests needed for $context"
-
-            // see LintWorkerApiWorkaround.md
-            val preInstrumentationTask = project.tasks.preInstrumentationTask()
-            dependsOn(preInstrumentationTask)
 
             configurations.forEach { configuration ->
                 val taskName = "instrumentation${configuration.capitalize()}"
@@ -54,10 +60,7 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
                 }
 
                 dependsOn(uiTestTask)
-
-                preInstrumentationTask.get().also {
-                    dependsOn(project.tasks.preInstrumentationTask(configuration))
-                }
+                dependsOn(preInstrumentationTask)
             }
         }
 

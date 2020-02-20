@@ -19,6 +19,7 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTestTask
 import com.avito.instrumentation.rerun.RunOnTargetBranchCondition
 import com.avito.instrumentation.test.DumpConfigurationTask
+import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
@@ -76,16 +77,16 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             }
         }
 
+
+
         project.withAndroidApp { appExtension ->
 
             // see LintWorkerApiWorkaround.md
-            project.tasks.register<Task>(preInstrumentationTaskName) {
+            project.tasks.register<DelayTask>(preInstrumentationTaskName) {
                 group = ciTaskGroup
                 description = "Executed when all inputs of all instrumentation tasks in the module are ready"
 
-                doLast {
-                    Thread.sleep(500)
-                }
+                delayMillis.set(500L)
             }
 
             appExtension.testVariants.all { testVariant: TestVariant ->
