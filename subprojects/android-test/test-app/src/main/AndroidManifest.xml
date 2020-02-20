@@ -28,6 +28,7 @@
         <activity android:name=".AppBarActivity" />
         <activity android:name=".TabLayoutActivity" />
         <activity android:name=".EditTextActivity" />
+        <activity android:name=".RetryActivity" />
         <activity android:name=".ButtonsActivity" />
         <activity android:name=".MovingButtonActivity" />
         <activity android:name=".SnackbarActivity" />
