@@ -6,16 +6,26 @@ import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
-    //todo хреново что для локального запуска нужно здесь ENV задавать
-    private val testChannel = SlackChannel(requireNotNull(System.getenv("SLACK_TEST_CHANNEL")))
-    private val testToken = requireNotNull(System.getenv("SLACK_TEST_TOKEN"))
-    private val slackClient: SlackClient =
-        SlackClient.Impl(testToken, requireNotNull(System.getenv("SLACK_TEST_WORKSPACE")))
+    private val testChannel by lazy {
+        System.getenv("SLACK_TEST_CHANNEL").assumeNotNullOrBlank().let { SlackChannel(it) }
+    }
+
+    private val testToken by lazy {
+        System.getenv("SLACK_TEST_TOKEN").assumeNotNullOrBlank()
+    }
+
+    private val slackClient: SlackClient by lazy {
+        System.getenv("SLACK_TEST_WORKSPACE").assumeNotNullOrBlank().let { workspace ->
+            SlackClient.Impl(testToken, workspace)
+        }
+    }
+
     private val logger: CILogger = CILogger.allToStdout
 
     @Test
@@ -87,4 +97,9 @@ internal class SlackConditionalSenderIntegrationTest {
             emoji = ":crazy-robot:"
         )
     ).onFailure { it.printStackTrace() }
+
+    private fun String?.assumeNotNullOrBlank(): String {
+        Assumptions.assumeFalse { isNullOrBlank() }
+        return this!!
+    }
 }
