@@ -132,18 +132,13 @@ open class PerformancePlugin : Plugin<Project> {
                             previousPerformanceTestResultName
                         )
 
-                        val previousTestsFileProperty = project.optionalIfNotExists(previousTestsFile)
-
                         val performanceCompareProvider =
                             project.tasks.register<PerformanceCompareTask>("compare${performanceConfig.name.capitalize()}") {
                                 group = TASK_GROUP
                                 description = "Compare performance reports"
-
-                                project.ciLogger.info("XXXX previousTestsFileProperty=${previousTestsFileProperty.orNull?.asFile?.readText()}")
-
                                 comparison.set(File(extension.output, "comparison.json"))
                                 currentTests.set(performanceResultsFile)
-                                previousTests.set(previousTestsFileProperty)
+                                previousTests.set(project.optionalIfNotExists(previousTestsFile))
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
                                 statsUrl.set(extension.statsUrl)
