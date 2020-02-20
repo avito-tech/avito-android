@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.test.espresso.AppNotIdleException
 import androidx.test.espresso.FailureHandler
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.base.DefaultFailureHandler
 import junit.framework.AssertionFailedError
@@ -76,6 +77,8 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                         cause = e
                     )
                 }
+                // Handle expected errors from UITestConfig.waiterAllowedExceptions
+                // TODO: make this contract explicit
                 e is PerformException -> {
 
                     // RecyclerView descendant checks implemented via ViewActions (gross)
@@ -83,31 +86,35 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                         throw AssertionFailedError("Не прошла проверка: ${e.actionDescription}")
                     }
 
-                    // rethrow same exception but with bare minimum of useful info
+                    // rethrow exception but with bare minimum of useful info
                     throw UITestFrameworkPerformException(
                         actionDescription = e.actionDescription,
                         viewDescription = minimizeViewDescription(e.viewDescription),
                         cause = e
                     )
                 }
-                e.message.isNullOrEmpty() ->
-                    //not much we can do here
-                    throw UITestFrameworkException(
-                        message = "Нет сообщения об ошибке",
-                        cause = e
-                    )
+                e is AssertionFailedError -> {
+                    throw AssertionFailedError(e.normalizedMessage())
+                }
+                e is NoMatchingViewException -> {
+                    throw e
+                }
                 else -> {
-                    var failureMessage: String = e.message!!
-
-                    normalizers.forEach { failureMessage = it.normalize(failureMessage) }
-
                     throw UITestFrameworkException(
-                        message = failureMessage,
+                        message = e.normalizedMessage(),
                         cause = e
                     )
                 }
             }
         }
+    }
+
+    private fun Throwable.normalizedMessage(): String {
+        var failureMessage: String = this.message ?: return "No message"
+
+        normalizers.forEach { failureMessage = it.normalize(failureMessage) }
+
+        return failureMessage
     }
 
     private inline fun <reified T : Throwable> Throwable.isCausedBy(matcher: (error: T) -> Boolean): Boolean {
