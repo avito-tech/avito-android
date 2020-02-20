@@ -81,7 +81,7 @@ internal abstract class DefaultArtifactoryAppBackupExtension @Inject constructor
             }
 
             require(backup.type.isNotEmpty()) {
-                "name can't be empty"
+                "type can't be empty"
             }
 
             require(backup.version.isNotEmpty()) {

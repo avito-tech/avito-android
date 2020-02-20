@@ -13,6 +13,7 @@ import okhttp3.RequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 //TODO internal?
@@ -24,7 +25,8 @@ abstract class UploadCdBuildResultTask
     private val uiTestConfiguration: String,
     private val user: String,
     private val password: String,
-    private val output: CdBuildConfig.OutputDescriptor
+    private val output: CdBuildConfig.OutputDescriptor,
+    private val suppressErrors: Boolean
 ) : DefaultTask() {
 
     init {
@@ -33,7 +35,7 @@ abstract class UploadCdBuildResultTask
         }
     }
 
-    private val sendBuildOutput by lazy {
+    private val uploadAction by lazy {
         UploadCdBuildResultTaskAction(
             gson = Providers.gson,
             client = Providers.client(
@@ -42,14 +44,15 @@ abstract class UploadCdBuildResultTask
                 logger = HttpLoggingInterceptor.Logger { message ->
                     project.ciLogger.info(message)
                 }
-            )
+            ),
+            suppressErrors = suppressErrors
         )
     }
 
     @TaskAction
     fun sendCdBuildResult() {
         val gitState = project.gitState { project.ciLogger.info(it) }
-        sendBuildOutput.send(
+        uploadAction.send(
             buildOutput = project.buildOutput.get(),
             cdBuildConfig = project.cdBuildConfig.get(),
             versionCode = project.androidAppExtension.defaultConfig.versionCode.toString(),
@@ -62,7 +65,8 @@ abstract class UploadCdBuildResultTask
 
 internal class UploadCdBuildResultTaskAction(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
+    private val suppressErrors: Boolean
 ) {
     fun send(
         buildOutput: BuildOutput,
@@ -94,6 +98,9 @@ internal class UploadCdBuildResultTaskAction(
             .put(RequestBody.create(MediaType.get("application/json"), cdBuildResultRaw))
             .build()
 
-        client.newCall(request).execute()
+        val response = client.newCall(request).execute()
+        if (!suppressErrors && !response.isSuccessful) {
+            throw RuntimeException("Upload build result failed: ${response.code()} ${response.body().toString()}")
+        }
     }
 }
