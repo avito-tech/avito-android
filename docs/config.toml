@@ -6,9 +6,8 @@ googleAnalytics = "UA-157613383-1"
 
 baseURL = "https://avito-tech.github.io/avito-android"
 title = "Avito Android"
-# TODO: use english as default
-languageCode = "ru-ru"
-DefaultContentLanguage = "ru"
+languageCode = "en-us"
+DefaultContentLanguage = "en"
 theme = "book"
 # WARNING: publishDir outside the project breaks i18n
 publishDir = "public"

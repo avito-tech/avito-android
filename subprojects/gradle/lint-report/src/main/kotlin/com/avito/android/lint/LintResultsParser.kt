@@ -82,7 +82,6 @@ internal class LintResultsParser(
                 if (event.isEndElement) {
                     val endElement = event.asEndElement()
                     if (endElement.name.localPart == "issue") {
-                        println("GO AGAIN")
                         issues.add(
                             LintIssue(
                                 message = issue!!.message,

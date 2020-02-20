@@ -476,7 +476,7 @@ DaggerSettingsComponent.factory()
 
 Компонент отображается красным, как будто его нет.
 
-- Проверь что файлы kapt не добавлены в исключения: _Preferences > Editor > File Types > Ignore Files and Folders_
+- Проверь что файлы kapt не добавлены в исключения: **Preferences > Editor > File Types > Ignore Files and Folders**
 
 ### Dagger: error.NonExistentClass cannot be provided / converted
 

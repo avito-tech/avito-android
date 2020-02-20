@@ -21,7 +21,7 @@ Extra materials about technical writing:
 
 - [Jetbrains - Как писать полезные технические тексты](https://youtu.be/8SPq-9kS69M)
 - [Microsoft Writing Style Guide](https://docs.microsoft.com/en-us/style-guide/welcome/)
-- [GitLab documentaion styleguide](https://docs.gitlab.com/ee/development/documentation/styleguide.html)
+- [GitLab documentation styleguide](https://docs.gitlab.com/ee/development/documentation/styleguide.html)
 - [What nobody tells you about documentation](https://www.divio.com/blog/documentation/)
 
 
@@ -69,16 +69,21 @@ Naming:
 
 ---
 
-- Ориентация на обучение.
-- Полезно для новых пользователей.
-- Дает практическое понимание вместо теоретического знания. Показывает скорее _как_, а не _что_.
+- Assist newcomers to get started
+- Is learning-oriented
+- Shows _how_ to do in form of a lesson
 
-Приводит к конкретной цели через серию шагов:
+The tutorial declares a goal in the beginning. 
+After it guides by a series of steps. Each step is:
 
-- Простые и понятные
-- Повторяемые и надежные, всегда работают
-- Дают регулярную позитивную обратную связь
-- Минимум теории и объяснений, не грузят лишним
+- Easy to follow
+- Robust and reliable
+- Gives a positive feedback by an immediate result
+- Has as minimum theory as possible
+
+Examples:
+
+- [Creating Web Applications with Flask](https://www.jetbrains.com/help/pycharm/creating-web-application-with-flask.html)
 
 <--->
 
@@ -168,17 +173,13 @@ Anchor: `{{</* ref "/Name.md#header" */>}}`.
 
 Чтобы посмотреть статистику по ссылке, добавь к ней `+`.
 
-### Shortcuts
+### Diagrams
 
-Кастомные сниппеты для отображения того, что не поддерживает markdown.\
-Их несложно создавать. Напиши, если тебе не хватает какого-то типа контента.
+Diagrams is a preferable way for schemes and processes.\
+They are cheaper in maintenance. Text is the source of truth.\
+You don't need an original image and can edit it in a text editor.
 
-#### Diagrams
-
-Для диаграм используем [Mermaid](https://mermaid-js.github.io/mermaid/#/), описываем их в текстовом виде:
-
-- Содержимое читается без отрисовки картинки
-- Для редактирования не нужны никакие программы
+Use [mermaid](https://mermaid-js.github.io/mermaid/#/) shortcode:
 
 [Live editor](https://mermaid-js.github.io/mermaid-live-editor/)
 
@@ -198,7 +199,16 @@ stateDiagram
     B --> [*]
 {{</mermaid>}}
 
-#### Hints
+### Images
+
+Images are good for illustrating an explanation.\
+Use any public file storage for them. For example, a Github CDN:
+
+![](https://user-images.githubusercontent.com/499192/57450172-1a955f80-725e-11e9-9fed-267179bdab15.gif)
+
+There is a html [figure](https://gohugo.io/content-management/shortcodes/#figure) element for more control. 
+
+### Hints
 
 ```tpl
 {{</* hint [info|warning|danger] */>}}
@@ -222,7 +232,7 @@ Lorem markdownum insigne. Olympo signis Delphis!
 {{< button relref="/" >}}Home{{< /button >}}
 {{< button href="http://repo/CONTRIBUTING.md" >}}Contribute{{< /button >}}
 
-#### Tabs
+### Tabs
 
 ```tpl
 {{</* tabs "Unique ID" */>}}
@@ -238,7 +248,7 @@ Lorem markdownum insigne. Olympo signis Delphis!
 {{< tab "Windows" >}} Windows Content {{< /tab >}}
 {{< /tabs >}}
 
-#### Columns
+### Columns
 
 ```tpl
 {{</* columns */>}}
@@ -255,7 +265,7 @@ Right Content
 {{< /columns >}}
 
 
-#### Expand
+### Expand
 
 ```tpl
 {{</* expand "Title" */>}}
@@ -281,15 +291,6 @@ Markdown content
 {{< katex >}}
 \overline{a \lor b} = \overline{a} \land \overline{b}
 {{< /katex >}}
-
-
-### Images
-
-Попробуй сначала выразить текстом и диаграммами. 
-Картинки и скриншоты дороже поддерживать в актуальном состоянии.\
-Загружаем картинки в любой публичный image storage.\
-На крайний случай, в репозиторий в `docs/static` ( [Static files](https://gohugo.io/content-management/static-files/) )
-Для более гибкого отображения картинок используй [shortcode](https://gohugo.io/content-management/shortcodes/#figure)
 
 ### Lists
 
@@ -317,6 +318,14 @@ Markdown content
 ```
 
 {{< /columns >}}
+
+## Language
+
+### Interaction with UI
+
+- Use bold text for describing menu items and `>` as separator\
+Open **Preferences > Build, Execution, Deployment > Debugger**
+- Use exact words as shown in UI 
 
 ### Выделение терминов
 

@@ -13,7 +13,7 @@ It's a default and convenient way for organizing custom plugins and tasks:
 
 ## Pros
 
-No versions. It works as implicitly included build.
+No binary versions and releases. It works as implicitly included build.
 
 ## Cons
 

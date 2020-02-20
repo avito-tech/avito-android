@@ -62,10 +62,12 @@ open class InstrumentationConfiguration(val name: String) {
     }
 
     fun validate() {
+        require(kubernetesNamespace.isNotBlank())
         targets.forEach { it.validate() }
     }
 
     fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
+
         val mergedInstrumentationParameters: InstrumentationParameters = parentInstrumentationParameters
             .applyParameters(instrumentationParams)
 

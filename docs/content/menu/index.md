@@ -49,7 +49,7 @@ headless: true
 - [Design System](http://links.k.avito.ru/ff)
 - Performance
     - [Аналитика]({{< ref "/performance/Analytics.md" >}})
-- Проверки
+- Checks
     - [Android lint]({{< ref "/checks/AndroidLint.md" >}})
 - CI
     - [Требования]({{< ref "/ci/CIValues.md" >}})
