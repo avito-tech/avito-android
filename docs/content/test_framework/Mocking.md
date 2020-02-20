@@ -39,7 +39,18 @@ locationRule.setLocation(getTestLocation())
 
 **KEEP IN MIND** that above rule does not mock location for the whole device but rather replace the best known location
 in `BaseGeoProvider`. That is technically possible that device location providers would give better location that was mocked. 
-To avoid that mock location with high accuracy. 
+To avoid that mock location with high accuracy.
+
+### Mocking User-Agent
+
+It is possible to mock User-Agent for test suite or for specific test with `@UserAgent` annotation. Here's an example:
+
+```kotlin
+@UserAgent("AVITO 59.0 (Android 8.1.0; ru)")
+class MyAwesomeTests {}
+```
+
+This annotation is available in all types of tests but make sense the mostly for functional tests.
 
 ## Writing custom mocks for tests
 
