@@ -50,7 +50,7 @@ It is possible to mock User-Agent for test suite or for specific test with `@Use
 class MyAwesomeTests {}
 ```
 
-This annotation is available in all types of tests but make sense the mostly for functional tests.
+This annotation is available in all types of tests but make sense mostly for functional tests.
 
 ## Writing custom mocks for tests
 
