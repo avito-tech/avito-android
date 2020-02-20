@@ -9,7 +9,7 @@ import org.gradle.workers.WorkerConfiguration
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
-class DelayAction(private val millis: Long) : Runnable {
+class DelayAction @Inject constructor(private val millis: Long) : Runnable {
 
     override fun run() {
         Thread.sleep(millis)
