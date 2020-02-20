@@ -16,7 +16,9 @@ class DelayAction(private val millis: Long) : Runnable {
     }
 }
 
-class DelayTask @Inject constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
+abstract class DelayTask @Inject constructor(
+    private val workerExecutor: WorkerExecutor
+) : DefaultTask() {
 
     @Internal
     val delayMillis = project.objects.property<Long>()
