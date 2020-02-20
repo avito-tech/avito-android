@@ -102,6 +102,6 @@ function runInBuilder() {
         --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
         --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
         $MOUNT_OPTIONS \
-        dsvoronin/android-builder \
+        avitotech/android-builder:2193a0d87515 \
         bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }
