@@ -43,6 +43,7 @@ headless: true
     - [Report Viewer]({{< ref "/test/ReportViewer.md" >}})
     - [Troubleshooting]({{< ref "/test/TroubleshootingUI.md" >}})
     - [Кастомный запуск]({{< ref "/test/DynamicConfig.md" >}})
+    - [Work Manager Testing]({{< ref "/test/WorkManager.md" >}})
 - [Test framework]({{< ref "/test_framework/TestFramework.md" >}})
     - [Mocking]({{< ref "/test_framework/Mocking.md" >}})
     - [Internals]({{< ref "/test_framework/Internals.md" >}})
