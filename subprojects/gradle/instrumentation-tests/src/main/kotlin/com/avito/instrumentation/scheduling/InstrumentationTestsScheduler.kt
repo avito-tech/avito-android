@@ -33,7 +33,7 @@ class InstrumentationTestsScheduler(
 
     override fun schedule(
         initialTestsSuite: List<TestWithTarget>,
-        buildOnTargetCommit: BuildOnTargetCommitForTest.RunOnTargetCommitResolution
+        buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): TestsScheduler.Result {
         val flakyTestInfo = FlakyTestInfo()
 
@@ -70,7 +70,7 @@ class InstrumentationTestsScheduler(
 
                     sourceReportState = rerunOnTargetAndMergeWithSourceBranch(
                         currentReportState = sourceReportState,
-                        buildOnTargetCommit = buildOnTargetCommit,
+                        buildOnTargetCommit = buildOnTargetCommitResult,
                         targetReportCoordinates = targetReportCoordinates,
                         rerunAttempt = attempt,
                         targetReport = targetReport
@@ -106,7 +106,7 @@ class InstrumentationTestsScheduler(
      */
     private fun rerunOnTargetAndMergeWithSourceBranch(
         currentReportState: Try<List<SimpleRunTest>>,
-        buildOnTargetCommit: BuildOnTargetCommitForTest.RunOnTargetCommitResolution,
+        buildOnTargetCommit: BuildOnTargetCommitForTest.Result,
         targetReportCoordinates: ReportCoordinates,
         targetReport: Report,
         rerunAttempt: Int
@@ -116,13 +116,13 @@ class InstrumentationTestsScheduler(
                 logger.info("Rerun on target branch cancelled: Can't get current report state")
                 currentReportState
             }
-            buildOnTargetCommit is BuildOnTargetCommitForTest.RunOnTargetCommitResolution.ApksUnavailable -> {
+            buildOnTargetCommit is BuildOnTargetCommitForTest.Result.ApksUnavailable -> {
                 logger.info("Rerun on target branch cancelled: target apks unavailable")
                 currentReportState
             }
             else -> {
                 // cast is not smart enough
-                buildOnTargetCommit as BuildOnTargetCommitForTest.RunOnTargetCommitResolution.OK
+                buildOnTargetCommit as BuildOnTargetCommitForTest.Result.OK
                 val currentState = currentReportState.get()
 
                 val testsToRunOnTarget: List<TestWithTarget> = testSuiteProvider.getFailedOnlySuite(

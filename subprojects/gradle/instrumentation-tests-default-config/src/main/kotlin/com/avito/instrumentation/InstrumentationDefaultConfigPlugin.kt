@@ -104,44 +104,44 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
 
                 configurationsContainer.register(
                     "ui",
-                    registerUiConfig(com.avito.instrumentation.TestsFilter.ui, hasE2eTests = true)
+                    registerUiConfig(TestsFilter.ui, hasE2eTests = true)
                 )
                 configurationsContainer.register(
                     "uiNoE2e",
-                    registerUiConfig(com.avito.instrumentation.TestsFilter.uiNoE2e, hasE2eTests = false)
+                    registerUiConfig(TestsFilter.uiNoE2e, hasE2eTests = false)
                 )
 
                 configurationsContainer.register(
                     "newUi",
-                    registerNewUiConfig(com.avito.instrumentation.TestsFilter.ui)
+                    registerNewUiConfig(TestsFilter.ui)
                 )
                 configurationsContainer.register(
                     "newUiNoE2e",
-                    registerNewUiConfig(com.avito.instrumentation.TestsFilter.uiNoE2e)
+                    registerNewUiConfig(TestsFilter.uiNoE2e)
                 )
 
                 configurationsContainer.register(
                     "allUi",
-                    registerAllUI(com.avito.instrumentation.TestsFilter.regression)
+                    registerAllUI(TestsFilter.regression)
                 )
                 configurationsContainer.register(
                     "allUiNoE2e",
-                    registerAllUI(com.avito.instrumentation.TestsFilter.regressionNoE2e)
+                    registerAllUI(TestsFilter.regressionNoE2e)
                 )
 
                 configurationsContainer.register(
                     "regression",
-                    registerRegressionConfig(com.avito.instrumentation.TestsFilter.regression)
+                    registerRegressionConfig(TestsFilter.regression)
                 )
                 configurationsContainer.register(
                     "regressionNoE2e",
-                    registerRegressionConfig(com.avito.instrumentation.TestsFilter.regressionNoE2e)
+                    registerRegressionConfig(TestsFilter.regressionNoE2e)
                 )
 
                 //todo перенести в performance модуль?
                 configurationsContainer.register(
                     "performance", registerPerformanceConfig(
-                        annotatedWith = com.avito.instrumentation.TestsFilter.performance,
+                        annotatedWith = TestsFilter.performance,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -150,7 +150,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 configurationsContainer.register(
                     "performanceNoE2e",
                     registerPerformanceConfig(
-                        annotatedWith = com.avito.instrumentation.TestsFilter.performanceNoE2e,
+                        annotatedWith = TestsFilter.performanceNoE2e,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -158,7 +158,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "performanceMde", registerPerformanceConfig(
-                        annotatedWith = com.avito.instrumentation.TestsFilter.performance,
+                        annotatedWith = TestsFilter.performance,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.MDE

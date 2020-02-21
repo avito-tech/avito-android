@@ -13,7 +13,7 @@ internal class FakeTestsScheduler(
 
     override fun schedule(
         initialTestsSuite: List<TestWithTarget>,
-        buildOnTargetCommit: BuildOnTargetCommitForTest.RunOnTargetCommitResolution
+        buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): TestsScheduler.Result {
         if (scheduleResultsQueue.isEmpty()) {
             throw IllegalArgumentException(

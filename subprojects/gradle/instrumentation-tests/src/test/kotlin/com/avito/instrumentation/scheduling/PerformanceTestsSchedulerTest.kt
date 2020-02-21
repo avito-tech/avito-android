@@ -61,7 +61,7 @@ internal class PerformanceTestsSchedulerTest {
 
         val result = scheduler.schedule(
             initialTestsSuite = listOf(),
-            buildOnTargetCommit = BuildOnTargetCommitForTest.RunOnTargetCommitResolution.ApksUnavailable
+            buildOnTargetCommitResult = BuildOnTargetCommitForTest.Result.ApksUnavailable
         )
 
         assertWithMessage("initialTestsResult is values from tests runner")
@@ -100,7 +100,7 @@ internal class PerformanceTestsSchedulerTest {
 
         val result = scheduler.schedule(
             initialTestsSuite = listOf(),
-            buildOnTargetCommit = BuildOnTargetCommitForTest.RunOnTargetCommitResolution.OK(
+            buildOnTargetCommitResult = BuildOnTargetCommitForTest.Result.OK(
                 mainApk = targetApk,
                 testApk = targetTestApk
             )

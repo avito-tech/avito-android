@@ -145,8 +145,8 @@ is version for future release.
 
 [Bintray project](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
 
-1. Make sure integration tests passed via `CI integration tests against avito`
-1. Make sure new project version specified in develop head
+1. Checkout branch with name equally to `projectVersion`
+1. Make sure integration tests on release branch passed via `CI integration tests against avito`
 1. Manually run [Teamcity configuration (internal)](http://links.k.avito.ru/releaseAvitoTools)
 1. Use new version in `avito`
 1. Create PR with `infraVersion` equally released version and bumped `projectVersion`

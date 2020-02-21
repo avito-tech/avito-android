@@ -31,6 +31,8 @@ open class SendPerformanceMdeAction(
         companion object
     }
 
+    //used in workers api submit
+    @Suppress("unused")
     @Inject
     constructor(params: Params) : this(params, params.logger)
 

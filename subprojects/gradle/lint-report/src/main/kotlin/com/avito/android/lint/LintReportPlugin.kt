@@ -60,10 +60,8 @@ open class LintReportPlugin : Plugin<Project> {
             appExtension.testVariants.all { _ ->
 
                 app.lintTask().configure {
-                    // Hack to defer lint in parallel with instrumentation tasks
-                    // Android lint works without Gradle Worker API and blocks assembling the app
-                    // https://issuetracker.google.com/issues/145235363
-                    // https://github.com/gradle/gradle/issues/8630#issuecomment-488161594
+
+                    // see LintWorkerApiWorkaround.md
                     it.mustRunAfter("preInstrumentation")
                 }
             }

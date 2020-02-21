@@ -1,6 +1,8 @@
 package com.avito.kotlin.dsl
 
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFileProperty
+import java.io.File
 import kotlin.reflect.KProperty
 
 fun Project.getOptionalStringProperty(name: String): String? {
@@ -53,6 +55,9 @@ fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Floa
         default
     }
 }
+
+@Suppress("UnstableApiUsage")
+fun Project.fileProperty(file: File): RegularFileProperty = objects.fileProperty().apply { set { file } }
 
 fun Project.isRoot() = (project == project.rootProject)
 
