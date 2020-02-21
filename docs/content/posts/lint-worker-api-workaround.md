@@ -27,14 +27,14 @@ Tasks report finish time later than actual: [gradle #8630](https://github.com/gr
 
 {{<mermaid>}}
 gantt
-	title Lint blocks instrumentation to start
-	dateFormat      YYYY-MM-DD
-	axisFormat      %j
-	section         project
-	package         :package, 1000-01-01, 11d
-	lint            :lint, 1000-01-02, 10d
-	instrumentation :after lint package, 10d
-{{</mermaid>}}				
+  title Lint blocks instrumentation to start
+  dateFormat      YYYY-MM-DD
+  axisFormat      %j
+  section         project
+  package         :package, 1000-01-01, 11d
+  lint            :lint,    1000-01-02, 10d
+  instrumentation :after lint package,  10d
+{{</mermaid>}}
 
 ## Solution
 
@@ -48,13 +48,13 @@ Let's take a look only on final application module tasks:
 
 {{<mermaid>}}
 gantt
-	title Lint runs in parallel with instrumentation
-	dateFormat      YYYY-MM-DD
-	axisFormat      %j
-	section         project
-	package         :package, 1000-01-01, 3d
-	instrumentation :after package, 11d
-	lint            :lint, 1000-01-05, 10d
+  title Lint runs in parallel with instrumentation
+  dateFormat      YYYY-MM-DD
+  axisFormat      %j
+  section         project
+  package         :package, 1000-01-01, 3d
+  instrumentation :after package, 11d
+  lint            :lint, 1000-01-05, 10d
 {{</mermaid>}}
 
 ## Implementation
