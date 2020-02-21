@@ -65,9 +65,11 @@ fun generateDeviceData(
 )
 
 fun generateDeviceConfiguration(
-    api: Int = randomInt()
+    api: Int = randomInt(),
+    model: String = randomString()
 ): DeviceConfiguration = DeviceConfiguration(
-    api = api
+    api = api,
+    model = model
 )
 
 fun generateTestCase(

@@ -169,7 +169,8 @@ class DeviceWorker(
     private fun Device.state(): State =
         State(
             layers = listOf(
-                State.Layer.ApiLevel(api = api)
+                State.Layer.ApiLevel(api = api),
+                State.Layer.Model(model = model)
             )
         )
 }

@@ -80,7 +80,11 @@ class KubernetesReservationClient(
                         emulator = reservation.device,
                         deploymentName = deploymentName
                     )
-                    is Device.Phone -> throw RuntimeException("Unsupported right now")
+                    is Device.Phone -> createDeviceDeployment(
+                        count = reservation.count,
+                        phone = reservation.device,
+                        deploymentName = deploymentName
+                    )
                 }
                 logger.info("Deployment created: $deploymentName")
 
@@ -225,6 +229,91 @@ class KubernetesReservationClient(
         } catch (t: Throwable) {
             logger.critical("Delete deployment $deploymentName", t)
         }
+    }
+
+    private suspend fun createDeviceDeployment(
+        count: Int,
+        phone: Device.Phone,
+        deploymentName: String,
+        kubernetesNodeName : String = "avi-training06" //temporary node, remove later
+    ): Deployment {
+        val deploymentMatchLabels = mapOf(
+            "app" to "device"
+        )
+        val deploymentSpecificationsMatchLabels = deploymentMatchLabels
+            .plus("deploymentName" to deploymentName)
+
+        val deployment = newDeployment {
+            apiVersion = "extensions/v1beta1"
+            metadata {
+                name = deploymentName
+                labels = deploymentMatchLabels
+                finalizers = listOf(
+                    // Remove all dependencies (replicas) in foreground after removing deployment
+                    "foregroundDeletion"
+                )
+            }
+            spec {
+                replicas = count
+
+                selector {
+                    matchLabels = deploymentSpecificationsMatchLabels
+                }
+
+                template {
+                    metadata {
+                        labels = deploymentSpecificationsMatchLabels
+                    }
+
+                    spec {
+                        containers = listOf(
+                            newContainer {
+                                name = phone.name.kubernetesName()
+                                image = "$registry/${phone.proxyImage}"
+
+                                securityContext {
+                                    privileged = true
+                                }
+                                resources {
+                                    limits = mapOf(
+                                        "android/device" to Quantity("1")
+                                    )
+                                    requests = mapOf(
+                                        "android/device" to Quantity("1")
+                                    )
+                                }
+
+
+                            }
+                        )
+                        dnsPolicy = "ClusterFirst"
+                        nodeName = kubernetesNodeName
+                        tolerations = listOf(
+                            newToleration {
+                                operator = "Exists"
+                                effect = "NoSchedule"
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        kubernetesClient.apps().deployments().create(deployment)
+
+        val isDeploymentDone = waitForCondition(
+            logger = { logger.info(it) },
+            conditionName = "Deployment $deploymentName deployed"
+        ) {
+            podsFromDeployment(
+                deploymentName = deploymentName
+            ).size == count
+        }
+        if (!isDeploymentDone) {
+            val error = RuntimeException("Something went wrong during deploying deployment: $deploymentName")
+            logger.critical(error.message.orEmpty())
+            throw error
+        }
+        return deployment
     }
 
     private suspend fun createEmulatorsDeployment(

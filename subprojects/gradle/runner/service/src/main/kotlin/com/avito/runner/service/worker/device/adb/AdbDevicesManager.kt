@@ -17,7 +17,7 @@ class AdbDevicesManager(
     override fun connectedDevices(): Set<Device> =
         commandLine.executeProcess(
             command = adb,
-            args = listOf("devices")
+            args = listOf("devices", "-l")
         )
             .ofType(ProcessNotification.Exit::class.java)
             .map { it.output }
@@ -36,26 +36,16 @@ class AdbDevicesManager(
                 shouldRetry
             }
             .map { output ->
-                output
-                    .substringAfter("List of devices attached")
-                    .split(System.lineSeparator())
-                    .asSequence()
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                    .filter { it.contains("online") || it.contains("device") }
-                    .map {
+                AdbDeviceParser().parse(output)
+                    .map { params ->
                         AdbDevice(
-                            id = it.substringBefore("\t"),
-                            online = when {
-                                it.contains("offline", ignoreCase = true) -> false
-                                it.contains("device", ignoreCase = true) -> true
-                                else -> throw IllegalStateException("Unknown devicesManager output for device: $it")
-                            },
+                            id = params.id,
+                            model = params.model,
+                            online = params.online,
                             adb = adb,
                             logger = logger
                         ) as Device
-                    }
-                    .toSet()
+                    }.toSet()
             }
             .doOnError { logger.log("Error during getting connectedAdbDevices, error = $it") }
             .toSingle()

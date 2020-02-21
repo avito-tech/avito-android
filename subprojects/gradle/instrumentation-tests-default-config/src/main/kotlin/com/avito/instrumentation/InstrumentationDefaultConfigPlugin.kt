@@ -8,6 +8,7 @@ import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfi
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Device.Emulator
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator23
@@ -183,7 +184,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                     }
 
                     reservation = testBasedReservation(
-                        emulator = emulator,
+                        device = emulator,
                         min = 2,
                         max = 130
                     )
@@ -196,7 +197,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                     }
 
                     reservation = testBasedReservation(
-                        emulator = emulator,
+                        device = emulator,
                         min = 2,
                         max = 130
                     )
@@ -241,7 +242,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 }
 
                 reservation = testBasedReservation(
-                    emulator = Emulator24Cores2,
+                    device = Emulator24Cores2,
                     min = 12,
                     max = 42,
                     testsPerEmulator = 1
@@ -263,7 +264,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                     }
 
                     reservation = testBasedReservation(
-                        emulator = emulator,
+                        device = emulator,
                         min = 2,
                         max = 30
                     )
@@ -298,7 +299,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                     }
 
                     reservation = testBasedReservation(
-                        emulator = emulator,
+                        device = emulator,
                         min = 16,
                         max = 36
                     )
@@ -328,21 +329,21 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
 
         config.prefixFilter = dynamicPrefixFilter
 
-        fun NamedDomainObjectContainer<TargetConfiguration>.registerDynamic(emulator: Emulator) =
+        fun NamedDomainObjectContainer<TargetConfiguration>.registerDynamic(device: Device) =
             register(
-                emulator.name,
-                dynamicTarget(emulator, isConfigEnabled(emulator.api), retryCountValue)
+                device.name,
+                dynamicTarget(device, isConfigEnabled(device.api), retryCountValue)
             )
 
         EmulatorSet.full.forEach { config.targetsContainer.registerDynamic(it) }
     }
 
     private fun dynamicTarget(
-        emulator: Emulator,
+        device: Device,
         isEnabled: Boolean,
         retryCountValue: Int
     ) = Action<TargetConfiguration> { target ->
-        target.deviceName = "functional-${emulator.api}"
+        target.deviceName = "functional-${device.api}"
 
         target.enabled = isEnabled
 
@@ -354,7 +355,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             }
 
             reservation = testBasedReservation(
-                emulator = emulator,
+                device = device,
                 min = 2,
                 max = 25
             )
@@ -390,13 +391,13 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
     }
 
     private fun testBasedReservation(
-        emulator: Emulator,
+        device: Device,
         min: Int,
         max: Int,
         testsPerEmulator: Int = 12
     ): TestsBasedDevicesReservationConfiguration {
         return TestsBasedDevicesReservationConfiguration().apply {
-            device = emulator
+            this.device = device
             maximum = max
             minimum = min
             this.testsPerEmulator = testsPerEmulator

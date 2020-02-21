@@ -37,6 +37,7 @@ class IntentionExecutionServiceTest {
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
+                    State.Layer.Model(model = "model"),
                     State.Layer.ApiLevel(api = 22),
                     generateInstalledApplicationLayer(),
                     generateInstalledApplicationLayer()
@@ -130,6 +131,7 @@ class IntentionExecutionServiceTest {
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
+                    State.Layer.Model(model = "model"),
                     State.Layer.ApiLevel(api = 22),
                     generateInstalledApplicationLayer(),
                     generateInstalledApplicationLayer()

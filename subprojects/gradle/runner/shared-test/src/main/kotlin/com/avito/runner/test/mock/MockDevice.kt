@@ -23,7 +23,8 @@ class MockDevice(
     runTestsResults: List<MockActionResult<TestCaseRun.Result>> = emptyList(),
     clearPackageResults: List<MockActionResult<Try<Any>>> = emptyList(),
     override val online: Boolean = true,
-    override val api: Int = 22
+    override val api: Int = 22,
+    override val model: String = "model"
 ) : Device {
 
     private val installApplicationResultsQueue: Queue<MockActionResult<Any>> =

@@ -91,7 +91,8 @@ class KubernetesTestExecutor(
                             deviceName = targetTestRun.target.deviceName
                         ),
                         configuration = DeviceConfiguration(
-                            api = reservation.device.api
+                            api = reservation.device.api,
+                            model = reservation.device.model
                         ),
                         scheduling = TestRunRequest.Scheduling(
                             retryCount = quota.retryCount,
