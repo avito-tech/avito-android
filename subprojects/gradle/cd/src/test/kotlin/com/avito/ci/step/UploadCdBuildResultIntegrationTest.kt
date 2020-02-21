@@ -26,7 +26,7 @@ class UploadCdBuildResultIntegrationTest {
 
     private lateinit var projectDir: File
     private val server = MockWebServer()
-    private val mockUrl = server.url("")
+    private val mockUrl = server.url("").toString().removeSuffix("/")
     private val uiTestConfigurationName = "regress"
     private val reportId = "123"
     private val versionName = "11"
@@ -97,7 +97,7 @@ class UploadCdBuildResultIntegrationTest {
             "project": "$nupokatiProject",
             "release_version": "$releaseVersion",
             "output_descriptor": {
-                "path": "$mockUrl$outputPath",
+                "path": "$mockUrl/$outputPath",
                 "skip_upload": false
             },
             "deployments": [
@@ -150,7 +150,9 @@ class UploadCdBuildResultIntegrationTest {
         projectDir.file("/app/build/reports/mapping.txt").writeText("1")
 
         val cdBuildResultRequest = dispatcher.captureRequest {
-            method.contains("PUT") && path == "/$outputPath" && getHeader("Content-Type").startsWith("application/json")
+            method.contains("PUT")
+                && path == "/$outputPath"
+                && getHeader("Content-Type").startsWith("application/json")
         }
 
         dispatcher.mockResponse(
@@ -209,7 +211,7 @@ class UploadCdBuildResultIntegrationTest {
             "project": "avito_test",
             "release_version": "$releaseVersion",
             "output_descriptor": {
-                "path": "$mockUrl$outputPath",
+                "path": "$mockUrl/$outputPath",
                 "skip_upload": true
             },
             "deployments": [

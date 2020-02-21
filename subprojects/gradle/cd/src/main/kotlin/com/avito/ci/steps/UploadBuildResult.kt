@@ -30,7 +30,8 @@ class UploadBuildResult(context: String) : SuppressibleBuildStep(context) {
                     uiTestConfiguration,
                     project.artifactoryUser,
                     project.artifactoryPassword,
-                    project.cdBuildConfig.get().outputDescriptor
+                    project.cdBuildConfig.get().outputDescriptor,
+                    suppressFailures
                 )
             ) {
                 group = "cd"

@@ -25,7 +25,7 @@ open class PerformanceCompareAction(
     private val reports: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,
-        logger = object: Logger {
+        logger = object : Logger {
             override fun debug(msg: String) {
                 logger.debug(msg)
             }
@@ -57,7 +57,7 @@ open class PerformanceCompareAction(
         val reportApiUrl: String,
         val reportApiFallbackUrl: String,
         val enablePrPerformanceReporting: Boolean,
-        val previousTests: File,
+        val previousTests: File?,
         val currentTests: File,
         val comparison: File,
         val pullRequestId: Int?,
@@ -71,6 +71,8 @@ open class PerformanceCompareAction(
         companion object
     }
 
+    //used in workers api submit
+    @Suppress("unused")
     @Inject
     constructor(params: Params) : this(params, params.logger)
 
@@ -79,7 +81,7 @@ open class PerformanceCompareAction(
             val previousTestsFile = params.previousTests
             val currentTestsFile = params.currentTests
 
-            if (previousTestsFile.exists() && previousTestsFile.length() > 0) {
+            if (previousTestsFile != null) {
 
                 val runnedTests = Gson().fromJson<List<PerformanceTest>>(currentTestsFile.readText())
                 val previousTests = Gson().fromJson<List<PerformanceTest>>(previousTestsFile.readText())

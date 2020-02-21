@@ -32,7 +32,7 @@ internal class PerformanceTestsScheduler(
 
     override fun schedule(
         initialTestsSuite: List<TestWithTarget>,
-        buildOnTargetCommit: BuildOnTargetCommitForTest.RunOnTargetCommitResolution
+        buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): TestsScheduler.Result {
         val flakyTestInfo = FlakyTestInfo()
 
@@ -54,14 +54,14 @@ internal class PerformanceTestsScheduler(
         }
 
         // TODO: почему здесь неявно пропускаем отсутствие сборки? fail-fast?
-        if (buildOnTargetCommit is BuildOnTargetCommitForTest.RunOnTargetCommitResolution.OK) {
+        if (buildOnTargetCommitResult is BuildOnTargetCommitForTest.Result.OK) {
             testResultsAfterBranchRerunsFuture = group.launch {
                 val testsToRun: List<TestWithTarget> =
-                    testSuiteProvider.getInitialTestSuite(buildOnTargetCommit.testApk, params) { previousRun }
+                    testSuiteProvider.getInitialTestSuite(buildOnTargetCommitResult.testApk, params) { previousRun }
 
                 val testResultsAfterBranchReruns = testsRunner.runTests(
-                    mainApk = buildOnTargetCommit.mainApk,
-                    testApk = buildOnTargetCommit.testApk,
+                    mainApk = buildOnTargetCommitResult.mainApk,
+                    testApk = buildOnTargetCommitResult.testApk,
                     runType = TestExecutor.RunType.Run(id = "runOnTarget"),
                     reportCoordinates = targetReportCoordinates,
                     testsToRun = testsToRun,

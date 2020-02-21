@@ -3,6 +3,7 @@ package com.avito.ci.steps
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.InstrumentationTestsTask
+import com.avito.instrumentation.preInstrumentationTask
 import com.avito.kotlin.dsl.typedNamedOrNull
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -26,11 +27,19 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         if (useImpactAnalysis && !project.internalModule.isModified()) return
 
+        // see LintWorkerApiWorkaround.md
+        val preInstrumentationTask = project.tasks.preInstrumentationTask()
+
+        configurations.forEach { configuration ->
+            preInstrumentationTask.configure {
+                it.logger.lifecycle("setting dependency between preInstrumentation tasks of configuration $configuration")
+                it.dependsOn(project.tasks.preInstrumentationTask(configuration))
+            }
+        }
+
         val checkTask = project.tasks.register<Task>("${context}InstrumentationTest") {
             group = "cd"
-            description = "Run all instrumentation tests needed for release"
-
-            dependsOn("preInstrumentation") // TODO: hide this task in instrumentation plugin
+            description = "Run all instrumentation tests needed for $context"
 
             configurations.forEach { configuration ->
                 val taskName = "instrumentation${configuration.capitalize()}"
@@ -41,7 +50,7 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
                     }
 
                 // it is safe to call get() here because task instrumentationXXX must be ready here
-                // TODO: can we do it in configure block anyway?
+                // TODO: can we do it in "configure" block anyway?
                 uiTestTask.get().also { task ->
                     task.suppressFailure.set(this@UiTestCheck.suppressFailures)
                     task.sendStatistics.set(this@UiTestCheck.sendStatistics)
@@ -51,6 +60,7 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
                 }
 
                 dependsOn(uiTestTask)
+                dependsOn(preInstrumentationTask)
             }
         }
 

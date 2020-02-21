@@ -12,6 +12,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
@@ -25,23 +26,25 @@ abstract class PerformanceCompareTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
-    @get:InputFile
-    internal val previousTests: RegularFileProperty = objects.fileProperty()
+    @Optional
+    @InputFile
+    val previousTests: RegularFileProperty = objects.fileProperty()
 
-    @get:InputFile
-    internal val currentTests: RegularFileProperty = objects.fileProperty()
+    //todo support @Optional
+    @InputFile
+    val currentTests: RegularFileProperty = objects.fileProperty()
 
-    @get:Internal
-    internal val reportApiUrl = objects.property<String>()
+    @Internal
+    val reportApiUrl = objects.property<String>()
 
-    @get:Internal
-    internal val reportApiFallbackUrl = objects.property<String>()
+    @Internal
+    val reportApiFallbackUrl = objects.property<String>()
 
-    @get:Internal
-    internal val statsUrl = objects.property<String>()
+    @Internal
+    val statsUrl = objects.property<String>()
 
-    @get:OutputFile
-    internal val comparison: RegularFileProperty = objects.fileProperty()
+    @OutputFile
+    val comparison: RegularFileProperty = objects.fileProperty()
 
     @TaskAction
     fun action() {
@@ -53,7 +56,7 @@ abstract class PerformanceCompareTask @Inject constructor(
             workerConfiguration.isolationMode = IsolationMode.NONE
             workerConfiguration.setParams(
                 PerformanceCompareAction.Params(
-                    previousTests = previousTests.asFile.get(),
+                    previousTests = previousTests.orNull?.asFile,
                     currentTests = currentTests.asFile.get(),
                     comparison = comparison.asFile.get(),
                     buildUrl = project.envArgs.buildUrl,

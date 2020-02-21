@@ -57,6 +57,7 @@ headless: true
     - [Custom Gradle Plugins]({{< ref "/ci/CustomGradlePlugins.md" >}})
     - [Impact analysis]({{< ref "/ci/ImpactAnalysis.md" >}})
     - [Containers]({{< ref "/ci/Containers.md" >}})
+    - [Lint workers API workaround]({{< ref "/ci/LintWorkerApiWorkaround.md">}})
 - CD
     - [Релиз]({{< ref "/cd/Release.md" >}})
     - [Артефакты сборки]({{< ref "/cd/Artifacts.md" >}})

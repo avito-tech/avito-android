@@ -62,7 +62,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
     private fun applyMavenPublishPlugin(project: Project) {
         project.plugins.apply(MavenPublishPlugin::class.java)
         val publishing = project.extensions.getByType<PublishingExtension>()
-        val artifactoryUrl = project.getMandatoryStringProperty("artifactoryUrl")
+        val artifactoryUrl = project.getMandatoryStringProperty("artifactoryUrl").removeSuffix("/")
         val backupUrl = URI.create("$artifactoryUrl/apps-release-local/")
         publishing.repositories.maven { repo ->
             repo.name = artifactoryRepositoryName
