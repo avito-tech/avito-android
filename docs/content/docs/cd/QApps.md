@@ -39,7 +39,7 @@ type: docs
 ## Known issues
 
 **Длится до 1 часа**, запускает все тесты.\
-Чтобы ускорить, закомментируй лишние [шаги]({{< ref "/ci/CIGradlePlugin.md#steps" >}}) в `fullCheck` конфиге в `build.gradle` приложений.\
+Чтобы ускорить, закомментируй лишние [шаги]({{< ref "/docs/ci/CIGradlePlugin.md#steps" >}}) в `fullCheck` конфиге в `build.gradle` приложений.\
 Задача на более быстрый способ: [MBS-7340](http://links.k.avito.ru/MBS7340)
 {{< /tab >}}
 {{< /tabs >}}

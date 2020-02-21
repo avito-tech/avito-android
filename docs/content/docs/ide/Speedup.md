@@ -25,7 +25,7 @@ type: docs
 
 ## Включи удаленную сборку 
 
-[Mirakle]({{< ref "/assemble/Mirakle.md" >}})
+[Mirakle]({{< ref "/docs/assemble/Mirakle.md" >}})
 
 
 ## Оставь только необходимые приложения

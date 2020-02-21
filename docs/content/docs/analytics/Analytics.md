@@ -12,4 +12,4 @@ type: docs
 
 Поверх транспорта есть готовые обертки под конкретные задачи:
 
-- [Performance аналитика]({{< ref "/performance/Analytics.md" >}})
+- [Performance аналитика]({{< ref "/docs/performance/Analytics.md" >}})

@@ -44,7 +44,7 @@ type: docs
 
 ### Проверки в CI
 
-В данный момент соответствия code style проверяются вручную на [Code Review]({{< ref "/contributing/CodeReview.md" >}})
+В данный момент соответствия code style проверяются вручную на [Code Review]({{< ref "/docs/contributing/CodeReview.md" >}})
 (Задача на автоматизацию - MBS-6991 (internal)).
 
 
