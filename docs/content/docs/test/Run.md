@@ -7,7 +7,7 @@ type: docs
 
 ## IDE
 
-Обрати внимание на [кастомные конфигурации]({{< ref "/ide/Configurations.md" >}})
+Обрати внимание на [кастомные конфигурации]({{< ref "/docs/ide/Configurations.md" >}})
 
 ### Robolectric
 

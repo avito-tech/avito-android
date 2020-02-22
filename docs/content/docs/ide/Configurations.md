@@ -15,7 +15,7 @@ type: docs
 - `avitoInstall`: собирает и устанавливает Авито, но не запускает автоматически приложение.\
 Нужна из-за бага ["Default activity not found"](https://issuetracker.google.com/issues/139859267).
 
-- `localCheck`: проверка всех этапов компиляции с учетом [импакт анализа]({{< ref "/ci/ImpactAnalysis.md" >}})
+- `localCheck`: проверка всех этапов компиляции с учетом [импакт анализа]({{< ref "/docs/ci/ImpactAnalysis.md" >}})
 
 ## Как расшарить конфигурацию?
 

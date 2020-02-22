@@ -5,7 +5,7 @@ type: docs
 
 # Testing minimized build
 
-About minimization: [link]({{< ref "/assemble/Minimization.md" >}})
+About minimization: [link]({{< ref "/docs/assemble/Minimization.md" >}})
 
 We want to run our ui tests against build as close as possible to production one.\
 It's quite a challenging task, mostly because of [tooling problems](https://issuetracker.google.com/issues/126429384)\
@@ -15,9 +15,9 @@ We work around these problems by using [keeper](https://slackhq.github.io/keeper
 
 ## Build type
 
-Our build types: [link]({{< ref "/assemble/BuildTypes.md" >}})
+Our build types: [link]({{< ref "/docs/assemble/BuildTypes.md" >}})
 
-Android gradle plugin uses `testBuildType` property to determine which build type to test.
+Android Gradle plugin uses `testBuildType` property to determine which build type to test.
 
 We chose `stagingAutoTest` as a type to test against in CI environment.\
 However local builds defaults to `debug` type for faster test writing cycle.
@@ -60,7 +60,7 @@ If this is your case, add these resources to `res/raw/keep.xml` like this:
 
 Some issues could be solved in a new version of r8, you should consider upgrading before hacking further.
 
-By default, r8 bundled with android gradle plugin, but you can override it.
+By default, r8 bundled with android Gradle plugin, but you can override it.
 
 ```kotlin
 buildscript {
@@ -70,7 +70,7 @@ buildscript {
         maven { setUrl("http://storage.googleapis.com/r8-releases/raw") }
     }
     dependencies {
-        classpath("com.android.tools:r8:$r8Version") // < it should be added before android gradle plugin
+        classpath("com.android.tools:r8:$r8Version") // < it should be added before android Gradle plugin
     }
 }
 ```

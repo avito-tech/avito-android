@@ -42,7 +42,7 @@ sh file-sizes.sh
 - Убедиться что поменялось только то, что нужно.
 - Обязательно добавить `@aodanilov` и `@poignatov` в PR
 - (Опционально) удалить папку /design-app/src/androidTest/assets/screenshots
-- Выставить [нужный эмулятор]({{< ref "/ci/Containers.md" >}}) локально
+- Выставить [нужный эмулятор]({{< ref "/docs/ci/Containers.md" >}}) локально
 
     **Примечание:** просто создать эмулятор не выйдет, так как эмулятор на CI обладает кастомными характеристиками, 
     поэтому нужно взять характеристики для 27 API из [/ci/docker/android-emulator/hardware](https://github.com/avito-tech/avito-android/tree/develop/ci/docker/android-emulator/hardware)

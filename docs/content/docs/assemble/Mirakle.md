@@ -58,7 +58,7 @@ Here's Mirakle ...
 
 `./mirakle.py --disable`
 
-Чтобы отключить только для текущей сборки, добавь в аргументы gradle `-x mirakle`   
+Чтобы отключить только для текущей сборки, добавь в аргументы Gradle `-x mirakle`   
 Полное удаление настроек: `/mirakle.py --wipe`
 
 ## Troubleshooting

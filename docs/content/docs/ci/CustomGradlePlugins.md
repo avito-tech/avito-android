@@ -5,7 +5,7 @@ type: docs
 
 # Custom Gradle plugins
 
-Вся логика CI расположена в in-house gradle плагинах. 
+Вся логика CI расположена в in-house Gradle плагинах. 
 Для тестирования корневого проекта смотри модуль `build-script-test`.
 
 ## How to start
@@ -25,9 +25,9 @@ type: docs
 
 1. Предпочтительно использовать IntelliJ IDEA
 1. Import project
-1. Согласись использовать gradle wrapper
+1. Согласись использовать Gradle wrapper
 1. **Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**
-    1. Delegate IDE build/run actions to gradle (check)
+    1. Delegate IDE build/run actions to Gradle (check)
     1. Run tests using : Gradle Test Runner
     
 Теперь можно запускать тесты по иконкам run
@@ -42,7 +42,7 @@ Known issues:
 Для отладки плагина:
 
 - Добавь в IDE конфигурацию Remote для запуска, как для обычного java проекта.
-- Запускай gradle из корня репозитория с параметрами `-Dorg.gradle.debug=true --no-daemon`
+- Запускай Gradle из корня репозитория с параметрами `-Dorg.gradle.debug=true --no-daemon`
 
 Debugger работает не только в нашем коде, остановиться можно и в AGP или Gradle.
 
@@ -89,7 +89,7 @@ open class MyPlugin : Plugin<Project> {
 
 ## Интеграция плагина в CI
 
-[CI Gradle Plugin]({{< ref "/ci/CIGradlePlugin.md" >}})
+[CI Gradle Plugin]({{< ref "/docs/ci/CIGradlePlugin.md" >}})
 
 ## Дополнительные материалы
 

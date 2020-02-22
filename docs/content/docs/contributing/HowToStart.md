@@ -35,8 +35,8 @@ type: docs
 
 ### Подключи необходимые плагины
 
-- Editorconfig - для [code style]({{< ref "/contributing/CodeStyle.md" >}})
+- Editorconfig - для [code style]({{< ref "/docs/contributing/CodeStyle.md" >}})
 
 ### Включи оптимизации в IDE
 
-[Ускорение IDE]({{< ref "/ide/Speedup.md" >}})
+[Ускорение IDE]({{< ref "/docs/ide/Speedup.md" >}})

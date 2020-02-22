@@ -23,6 +23,15 @@ and we rely on it to test and ship our apps.
 
 TBD
 
+## Why do we do open source?
+   
+- To get more feedback. We need outside perspective
+- To make the code easier to change through reusing
+- To share knowledge and solutions and make Android development better
+- To understand better through explanation
+- To supplement our presentations and articles by real production code
+- To make it easier to provide reproducible samples for bugs in external libraries
+
 ## Special thanks to:
 
 - [Dmitriy Merkuriev](https://github.com/dimorinny), [Nikolay Nesterov](https://github.com/nesterov-n), [Nikolay Chameev](https://github.com/lukaville) for being a part of the team for a long time, and creating a lot of features you see in the project.
