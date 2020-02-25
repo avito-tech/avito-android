@@ -14,9 +14,9 @@ internal interface ComparedTest {
         val currentSampleIs: State,
         val statistic: Double,
         val pValue: Double,
-        //current-previous
-        val meanDiff: Double,
-        val threshold: Double
+        val meanDiff: Double, //current-previous
+        val threshold: Double,
+        val thresholdStatic: Double //overrides threshold for particular tests in mongo
     )
 
     enum class State {

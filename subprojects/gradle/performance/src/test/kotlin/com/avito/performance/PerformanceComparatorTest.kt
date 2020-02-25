@@ -37,14 +37,14 @@ internal class PerformanceComparatorTest {
         Assertions.assertTrue(outputFile.exists()) { "current-runs.txt should exist!" }
 
         Truth.assertThat(outputFile.readText()).contains(
-            ("""[{"testName":"testname0\"","id":"0","series":{"testname0\"_fps":{"significance":0.0,
-                |"currentSampleIs":"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0}}},
-                |{"testName":"testname1\"","id":"1","series":{"testname1\"_fps":{"significance":0.0,
-                |"currentSampleIs":"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0}}},
-                |{"testName":"testname2\"","id":"2","series":{"testname2\"_fps":{"significance":0.0,
-                |"currentSampleIs":"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0}}},
-                |{"testName":"testname3\"","id":"3","series":{"testname3\"_fps":{"significance":0.0,
-                |"currentSampleIs":"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0}}}]"""
+            ("""[{"testName":"testname0\"","id":"0","series":{"testname0\"_fps":{"significance":0.0,"currentSampleIs":
+                |"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0,"thresholdStatic":0.0}}},
+                |{"testName":"testname1\"","id":"1","series":{"testname1\"_fps":{"significance":0.0,"currentSampleIs":
+                |"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0,"thresholdStatic":0.0}}},
+                |{"testName":"testname2\"","id":"2","series":{"testname2\"_fps":{"significance":0.0,"currentSampleIs":
+                |"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0,"thresholdStatic":0.0}}},
+                |{"testName":"testname3\"","id":"3","series":{"testname3\"_fps":{"significance":0.0,"currentSampleIs":
+                |"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0,"thresholdStatic":0.0}}}]"""
                 .trimMargin())
                 .trimIndent()
                 .replace("\n", "")
@@ -61,10 +61,10 @@ internal class PerformanceComparatorTest {
         Assertions.assertTrue(outputFile.exists()) { "current-runs.txt should exist" }
 
         Truth.assertThat(outputFile.readText()).contains(
-            ("""[{"testName":"testname0\"","id":"0","series":{"testname0\"_fps":{"significance":0.0,
-                |"currentSampleIs":"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0}}},
-                |{"testName":"testname1\"","id":"1","series":{"testname1\"_fps":{"significance":0.0,
-                |"currentSampleIs":"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0}}}]"""
+            ("""[{"testName":"testname0\"","id":"0","series":{"testname0\"_fps":{"significance":0.0,"currentSampleIs"
+                |:"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0,"thresholdStatic":0.0}}},
+                |{"testName":"testname1\"","id":"1","series":{"testname1\"_fps":{"significance":0.0,"currentSampleIs":
+                |"same","statistic":0.0,"pValue":1.0,"meanDiff":2.0,"threshold":100.0,"thresholdStatic":0.0}}}]"""
                 .trimMargin())
                 .trimIndent()
                 .replace("\n", "")
@@ -112,7 +112,8 @@ internal class PerformanceComparatorTest {
                                 0.0,
                                 1.0,
                                 2.0,
-                                threshold = 100.0
+                                threshold = 100.0,
+                                thresholdStatic = 0.0
                             )
                         }.toMap()
                     )
