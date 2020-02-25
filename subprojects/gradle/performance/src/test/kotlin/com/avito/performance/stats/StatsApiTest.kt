@@ -48,7 +48,8 @@ internal class StatsApiTest {
                             statistic = 0.0,
                             pValue = 0.2,
                             meanDiff = 2.0,
-                            threshold = 100.0
+                            threshold = 100.0,
+                            thresholdStatic = 0.0
                         )
                     )
                 )
