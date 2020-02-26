@@ -78,7 +78,7 @@ class ImpactFallbackDetectorImplementation(
     companion object {
 
         fun from(project: Project): ImpactFallbackDetector {
-            require(project.isRoot())
+            require(project.isRoot()) { "Project ${project.path} must be root" }
 
             val configuration: ImpactAnalysisExtension = requireNotNull(project.extensions.findByType())
 

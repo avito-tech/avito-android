@@ -9,7 +9,7 @@ open class TestsBasedDevicesReservationConfiguration : DeviceReservationConfigur
     override fun validate() {
         super.validate()
 
-        require(maximum != null)
-        require(testsPerEmulator != null)
+        requireNotNull(maximum)
+        requireNotNull(testsPerEmulator)
     }
 }

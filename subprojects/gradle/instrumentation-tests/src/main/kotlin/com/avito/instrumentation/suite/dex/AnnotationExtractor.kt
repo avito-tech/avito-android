@@ -38,7 +38,7 @@ data class AnnotationData(
 class AnnotationType(val type: String) {
 
     init {
-        require(type.endsWith(';'))
+        require(type.endsWith(';')) { "Invalid type definition: $type" }
     }
 }
 

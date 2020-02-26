@@ -79,7 +79,7 @@ class SignServicePlugin : Plugin<Project> {
 
         target.afterEvaluate {
             if (!skipSigning) {
-                require(!signExtension.host.isNullOrBlank()) { "signer host must be set" }
+                require(!signExtension.host.isNullOrBlank()) { "signService.host must be set" }
             }
         }
 

@@ -17,8 +17,8 @@ interface ExistingFile {
 
         override val file = file
             get() {
-                require(field.exists()) { "${field.path} should exist" }
-                require(field.isFile) { "${field.path} should be a file" }
+                require(field.exists()) { "${field.path} must exists" }
+                require(field.isFile) { "${field.path} must be a file" }
                 return field
             }
 
@@ -46,8 +46,8 @@ interface ExistingDirectory {
 
         override val dir = dir
             get() {
-                require(field.exists()) { "${field.path} should exist" }
-                require(field.isDirectory) { "${field.path} should be a directory" }
+                require(field.exists()) { "${field.path} must exists" }
+                require(field.isDirectory) { "${field.path} must be a directory" }
                 return field
             }
 

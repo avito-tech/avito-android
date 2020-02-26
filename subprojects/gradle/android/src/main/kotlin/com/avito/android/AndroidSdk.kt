@@ -40,7 +40,7 @@ class AndroidSdk(
     private val buildToolsVersion: String
         get() {
             val value = System.getProperty("buildToolsVersion")
-            require(value.hasContent()) { "buildToolsVersion property should be set" }
+            require(value.hasContent()) { "buildToolsVersion env must be set" }
             return value
         }
 
