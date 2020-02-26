@@ -9,7 +9,7 @@ data class ChangedFile(
 ) {
 
     init {
-        require(file.startsWith(rootDir))
+        require(file.startsWith(rootDir)) { "File $file must be within $rootDir" }
     }
 
     val relativePath: String = file.toRelativeString(rootDir)

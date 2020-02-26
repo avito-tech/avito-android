@@ -37,10 +37,10 @@ private class DefaultBackupBuilder(
     init {
         artifacts.all { artifact ->
             require(artifact.id.isNotEmpty()) {
-                "id can't be empty"
+                "artifact.id can't be empty"
             }
             require(artifact.path.isNotEmpty()) {
-                "path can't be empty"
+                "artifact.path can't be empty"
             }
         }
     }
@@ -77,15 +77,15 @@ internal abstract class DefaultArtifactoryAppBackupExtension @Inject constructor
     init {
         backups.all { backup ->
             require(backup.name.isNotEmpty()) {
-                "name can't be empty"
+                "backup.name can't be empty"
             }
 
             require(backup.type.isNotEmpty()) {
-                "type can't be empty"
+                "backup.type can't be empty"
             }
 
             require(backup.version.isNotEmpty()) {
-                "version can't be empty"
+                "backup.version can't be empty"
             }
         }
     }

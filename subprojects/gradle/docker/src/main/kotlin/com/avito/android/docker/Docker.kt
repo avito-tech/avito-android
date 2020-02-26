@@ -71,8 +71,8 @@ interface Docker {
         }
 
         private fun createDockerAuthToken(login: String, password: String): String {
-            require(login.isNotBlank()) { "login should not be blank" }
-            require(password.isNotBlank()) { "password should not be blank" }
+            require(login.isNotBlank()) { "docker login must be non-blank" }
+            require(password.isNotBlank()) { "docker password must be non-blank" }
             val json = "{\"username\": \"$login\", \"password\":\"$password\"}"
             return Base64.getEncoder().encodeToString(json.toByteArray())
         }
