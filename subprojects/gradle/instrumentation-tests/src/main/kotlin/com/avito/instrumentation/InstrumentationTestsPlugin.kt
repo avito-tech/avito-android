@@ -137,7 +137,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 File(configurationData.output, instrumentationConfiguration.name)
 
                             val runner = appExtension.defaultConfig.testInstrumentationRunner
-                            require(runner.isNotBlank())
+                            require(runner.isNotBlank()) { "testInstrumentationRunner must be set" }
                             val runFunctionalTestsParameters = ExecutionParameters(
                                 applicationPackageName = testedVariant.applicationId,
                                 applicationTestPackageName = testVariant.applicationId,

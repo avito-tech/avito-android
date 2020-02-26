@@ -62,7 +62,7 @@ open class InstrumentationConfiguration(val name: String) {
     }
 
     fun validate() {
-        require(kubernetesNamespace.isNotBlank())
+        require(kubernetesNamespace.isNotBlank()) { "kubernetesNamespace must be set" }
         targets.forEach { it.validate() }
     }
 

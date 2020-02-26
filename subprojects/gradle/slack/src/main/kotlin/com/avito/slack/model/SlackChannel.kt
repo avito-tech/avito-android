@@ -5,7 +5,9 @@ import java.io.Serializable
 data class SlackChannel(val name: String) : Serializable {
 
     init {
-        require(name.startsWith("#") || name.startsWith("@")) { "Channel name should start with # or @" }
+        require(name.startsWith("#") || name.startsWith("@")) {
+            "Channel name must starts with # or @"
+        }
     }
 }
 

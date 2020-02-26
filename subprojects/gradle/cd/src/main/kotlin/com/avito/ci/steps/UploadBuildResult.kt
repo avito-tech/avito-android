@@ -21,8 +21,9 @@ class UploadBuildResult(context: String) : SuppressibleBuildStep(context) {
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         if (project.isCdBuildConfigPresent) {
             val uiTestConfiguration = uiTestConfiguration
+            // TODO: can we validate a contract without cd build config?
             require(!uiTestConfiguration.isNullOrBlank()) {
-                "You must set uiTestConfiguration"
+                "uploadBuildResult.uiTestConfiguration parameter must be set"
             }
             val uploadCdBuildResult = project.tasks.register<UploadCdBuildResultTask>(
                 name = uploadCdBuildResultTaskName,
