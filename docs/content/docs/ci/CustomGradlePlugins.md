@@ -60,6 +60,11 @@ Debugger работает не только в нашем коде, остано
 
 ## Best practices
 
+### Fail-fast contract
+
+Each plugin should check preconditions _as early as possible_. 
+If some parameter is missing or has invalid value, the plugin should fail and explain the reason.
+
 ### Feature toggles
 
 Плагин может сломаться и заблокировать всем работу с проектом. 
