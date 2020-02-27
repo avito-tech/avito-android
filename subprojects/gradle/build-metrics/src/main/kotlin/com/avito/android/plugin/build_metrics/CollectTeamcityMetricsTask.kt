@@ -21,8 +21,6 @@ abstract class CollectTeamcityMetricsTask @Inject constructor(
 
     @TaskAction
     fun action() {
-        require(!buildId.orNull.isNullOrBlank()) { "teamcity buildId property must be set" }
-
         @Suppress("UnstableApiUsage")
         workerExecutor.noIsolation().submit(CollectTeamcityMetricsWorkerAction::class.java) { parameters ->
             parameters.getBuildId().set(buildId)

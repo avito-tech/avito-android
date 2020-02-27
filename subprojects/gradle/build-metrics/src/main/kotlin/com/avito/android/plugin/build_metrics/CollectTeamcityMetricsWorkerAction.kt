@@ -21,6 +21,7 @@ abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
     }
 
     override fun execute() {
+        require(!parameters.getBuildId().orNull.isNullOrBlank()) { "teamcity buildId property must be set" }
         val logger = parameters.getLogger().get()
         val statsd: StatsDSender = StatsDSender.Impl(parameters.getStatsdConfig().get()) { msg, _ ->
             logger.info(msg)
