@@ -46,7 +46,83 @@ Known issues:
 
 Debugger работает не только в нашем коде, остановиться можно и в AGP или Gradle.
 
-## Тестирование
+## Testing Gradle plugins
+
+### Isolating business-logic for unit-tests
+
+You can isolate most of the logic from Gradle. Thus, it can be covered easily by unit-tests.
+
+```kotlin
+abstract class FeatureTask @Inject constructor(
+    private val workerExecutor: WorkerExecutor
+) : DefaultTask() {
+
+    @TaskAction
+    fun action() {
+        val apiConfig = ... // get from the project
+        workerExecutor.noIsolation().submit(FeatureWorkerAction::class.java) { parameters ->
+            parameters.getIntegrationApiConfig().set(apiConfig)
+        }
+    }
+}
+
+// This wrapper is needed only for Worker API
+// It can be started in another process. Thus, it has to prepare dependencies for the real work.
+
+abstract class FeatureWorkerAction : WorkAction<Parameters> {
+
+    interface Parameters : WorkParameters {
+        fun getIntegrationApiConfig(): Property<IntegrationApiConfig>
+    }
+
+    override fun execute() {
+        val api = IntegrationApiConfig.Impl(parameters.getIntegrationApiConfig().get())
+        val action = FeatureAction(
+            integrationApi = api
+        )
+        action.execute()
+    }
+}
+
+// This class is responsible for the real work.
+// The less it knows about Gradle, the better.
+
+class FeatureAction(
+    private val integrationApi: IntegrationApi
+) {
+    fun execute() {
+        // Do the real work here
+    }
+}
+
+// Now you can use simple mocks to test the action.
+@Test
+fun test() {
+    val integrationApi = mock<IntegrationApi>()
+    whenever(integrationApi.foo).thenReturn(bar())
+    
+    val action = FeatureAction(integrationApi) <-- No Gradle abstractions here
+    action.execute()
+    
+    assertThat(...)
+}
+```
+
+### Integration tests
+
+For simple cases you can create dummy instance of Project by [ProjectBuilder](https://docs.gradle.org/current/javadoc/org/gradle/testfixtures/ProjectBuilder.html)
+
+```kotlin
+val project = ProjectBuilder.builder().build()
+
+val task = project.tasks.register<TestTask>("testTask") {}
+
+task.get().doStuff()
+```
+
+When you need to run a real build, use [Gradle Test Kit](https://docs.gradle.org/current/userguide/test_kit.html).\
+See ready utilities in `:test-project` module.
+
 
 ### Запуск тестов из консоли
 
