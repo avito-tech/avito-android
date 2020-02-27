@@ -1,17 +1,11 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.android.stats.FakeStatsdSender
-import com.avito.android.stats.StatsDConfig
 import com.avito.teamcity.TeamcityApi
-import com.avito.teamcity.TeamcityCredentials
-import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import org.gradle.api.internal.provider.DefaultProperty
-import org.gradle.api.internal.provider.Providers
-import org.gradle.api.provider.Property
 import org.jetbrains.teamcity.rest.Build
 import org.jetbrains.teamcity.rest.BuildConfigurationId
 import org.jetbrains.teamcity.rest.BuildId
@@ -46,18 +40,7 @@ class CollectTeamcityMetricsActionTest {
 
         whenever(teamcity.getBuild(buildId)).thenReturn(build)
 
-        val action = object : CollectTeamcityMetricsAction() {
-
-            override val teamcity = teamcity
-            override val statsd = statsd
-
-            override fun getParameters() = object : Parameters {
-                override fun getBuildId() = property(buildId)
-                override fun getTeamcityCredentials() = property(mock<TeamcityCredentials>())
-                override fun getStatsdConfig() = property(mock<StatsDConfig>())
-                override fun getLogger() = property(CILogger.allToStdout)
-            }
-        }
+        val action = CollectTeamcityMetricsAction(buildId, teamcity, statsd)
         action.execute()
 
         assertWithMessage("Send a metric about one build")
@@ -74,6 +57,3 @@ class CollectTeamcityMetricsActionTest {
     private val buildId = "BUILD_ID"
 
 }
-
-private inline fun <reified T : Any> property(value: T): Property<T> =
-    DefaultProperty(T::class.java).value(Providers.of(value))
