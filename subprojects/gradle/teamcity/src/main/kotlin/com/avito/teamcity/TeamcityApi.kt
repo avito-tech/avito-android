@@ -51,6 +51,9 @@ interface TeamcityApi {
         onlySuccess: Boolean = false
     ): Sequence<String>
 
+    fun getBuild(buildId: String): Build
+
+    @Deprecated("Use getBuild instead")
     fun getBuildNumber(buildId: String): String?
 
     fun getPreviousBuildOnCommit(
@@ -152,6 +155,8 @@ interface TeamcityApi {
             onlySuccess: Boolean
         ): Sequence<String> =
             getLastBuilds(buildType, commit, branchSpec, limit, onlySuccess).map { build -> build.id.stringId }
+
+        override fun getBuild(buildId: String): Build = teamCityInstance.build(BuildId(buildId))
 
         override fun getBuildNumber(buildId: String): String? = teamCityInstance.build(BuildId(buildId)).buildNumber
 

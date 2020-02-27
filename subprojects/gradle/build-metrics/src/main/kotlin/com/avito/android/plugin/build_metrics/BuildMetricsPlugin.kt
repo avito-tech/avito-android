@@ -34,6 +34,7 @@ open class BuildMetricsPlugin : Plugin<Project> {
             SentryConsumer(project),
             buildTraceConsumer(project)
         ))
+        project.tasks.register("collectTeamcityMetrics", CollectTeamcityMetricsTask::class.java)
     }
 
     private fun aggregatedConsumer(project: Project): MetricsConsumer {
