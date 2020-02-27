@@ -45,19 +45,17 @@ fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true)
     }
 }
 
-fun Project.getOptionalIntProperty(name: String): Int? =
-    try {
-        getOptionalStringProperty(name, nullIfBlank = true)?.toInt()
-    } catch (e: NumberFormatException) {
-        null
-    }
+fun Project.getOptionalIntProperty(name: String): Int? = try {
+    getOptionalStringProperty(name)?.toInt()
+} catch (e: NumberFormatException) {
+    null
+}
 
-fun Project.getOptionalIntProperty(name: String, default: Int): Int =
-    try {
-        getOptionalStringProperty(name, nullIfBlank = true)?.toInt() ?: default
-    } catch (e: NumberFormatException) {
-        default
-    }
+fun Project.getOptionalIntProperty(name: String, default: Int): Int = try {
+    getOptionalStringProperty(name)?.toInt() ?: default
+} catch (e: NumberFormatException) {
+    default
+}
 
 fun Project.getMandatoryIntProperty(name: String): Int =
     getOptionalIntProperty(name) ?: throw RuntimeException("Parameter: $name is required (must be digit)")
