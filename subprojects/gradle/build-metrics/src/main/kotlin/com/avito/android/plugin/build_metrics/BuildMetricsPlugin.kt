@@ -5,6 +5,7 @@ import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
@@ -37,7 +38,7 @@ open class BuildMetricsPlugin : Plugin<Project> {
             buildTraceConsumer(project)
         ))
         project.tasks.register<CollectTeamcityMetricsTask>("collectTeamcityMetrics") {
-            buildId.set(project.getMandatoryStringProperty("avito.build.metrics.teamcityBuildId"))
+            buildId.set(project.getOptionalStringProperty("avito.build.metrics.teamcityBuildId"))
         }
     }
 
