@@ -9,7 +9,7 @@ fun PackageAndroidArtifact.getApkFile(): File {
     }
 
     return File(
-        outputDirectory.path,
+        outputDirectory.get().asFile,
         apkNames.first()
     )
 }

@@ -1,7 +1,7 @@
 package com.avito.impact.configuration
 
 import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.internal.tasks.SourceSetsTask
+import com.avito.android.androidBaseExtension
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.util.Equality
 import org.funktionale.tries.Try
@@ -39,7 +39,7 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
     fun sourceSets(): Set<File> {
         val sourcesTaskRaw = project.tasks.findByPath("sourceSets") ?: return setOf(project.projectDir)
 
-        return (sourcesTaskRaw as SourceSetsTask).config
+        return project.androidBaseExtension
             .sourceSets
             .filter { containsSources(it) }
             .flatMap { it.java.srcDirs }
