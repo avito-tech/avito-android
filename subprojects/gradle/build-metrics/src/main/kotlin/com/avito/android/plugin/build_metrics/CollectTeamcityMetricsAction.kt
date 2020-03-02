@@ -1,7 +1,7 @@
 package com.avito.android.plugin.build_metrics
 
-import com.avito.android.stats.StatsDSender
-import com.avito.android.stats.TimeMetric
+import com.avito.android.graphite.GraphiteMetric
+import com.avito.android.graphite.GraphiteSender
 import com.avito.android.stats.graphiteSeries
 import com.avito.android.stats.graphiteSeriesElement
 import com.avito.teamcity.TeamcityApi
@@ -12,7 +12,7 @@ import java.time.Duration
 class CollectTeamcityMetricsAction(
     val buildId: String,
     private val teamcityApi: TeamcityApi,
-    private val statsd: StatsDSender
+    private val graphite: GraphiteSender
 ) {
 
     fun execute() {
@@ -26,7 +26,7 @@ class CollectTeamcityMetricsAction(
         val buildStatus = graphiteSeriesElement(build.status?.name ?: "unknown")
         val duration = Duration.between(build.startDateTime, build.finishDateTime)
 
-        // we use a redundant structure only for compatibility reasons
+        // We use a redundant structure only for compatibility reasons
         val path = "ci.builds.teamcity.duration" +
             ".build_type_id.${buildTypeId}" +
             ".id.${buildId}" +
@@ -34,6 +34,6 @@ class CollectTeamcityMetricsAction(
             ".state._" +
             ".status.${buildStatus}" +
             "._._._._"
-        statsd.send(metric = TimeMetric(path, duration.toMillis()))
+        graphite.send(GraphiteMetric(path, duration.seconds.toString(), build.startDateTime!!.toEpochSecond()))
     }
 }
