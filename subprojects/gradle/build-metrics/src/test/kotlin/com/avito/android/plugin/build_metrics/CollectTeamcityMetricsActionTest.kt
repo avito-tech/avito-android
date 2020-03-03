@@ -1,6 +1,6 @@
 package com.avito.android.plugin.build_metrics
 
-import com.avito.android.stats.FakeStatsdSender
+import com.avito.android.graphite.FakeGraphiteSender
 import com.avito.teamcity.TeamcityApi
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -23,13 +23,13 @@ class CollectTeamcityMetricsActionTest {
     @Test
     fun `send build metric`() {
         val teamcity: TeamcityApi = mock()
-        val statsd = FakeStatsdSender()
+        val graphite = FakeGraphiteSender()
 
         val build: Build = mock()
         whenever(build.id).thenReturn(BuildId(buildId))
         val startDate = ZonedDateTime.of(
-            LocalDateTime.of(2020, Month.JANUARY, 1, 0, 0),
-            ZoneId.systemDefault()
+            LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0),
+            ZoneId.of("UTC")
         )
         val endDate = startDate.plusSeconds(90)
         whenever(build.buildConfigurationId).thenReturn(BuildConfigurationId("BUILD_TYPE"))
@@ -40,18 +40,18 @@ class CollectTeamcityMetricsActionTest {
 
         whenever(teamcity.getBuild(buildId)).thenReturn(build)
 
-        val action = CollectTeamcityMetricsAction(buildId, teamcity, statsd)
+        val action = CollectTeamcityMetricsAction(buildId, teamcity, graphite)
         action.execute()
 
         assertWithMessage("Send a metric about one build")
-            .that(statsd.metrics).hasSize(1)
+            .that(graphite.metrics).hasSize(1)
 
-        assertThat(statsd.paths.first()).isEmpty()
-        val metric = statsd.metrics.first()
+        val metric = graphite.metrics.first()
         assertThat(metric.path).isEqualTo(
             "ci.builds.teamcity.duration.build_type_id.BUILD_TYPE.id.BUILD_ID.agent._.state._.status.SUCCESS._._._._"
         )
-        assertThat(metric.value).isEqualTo(90_000)
+        assertThat(metric.value).isEqualTo("90")
+        assertThat(metric.timestamp).isEqualTo(0)
     }
 
     private val buildId = "BUILD_ID"

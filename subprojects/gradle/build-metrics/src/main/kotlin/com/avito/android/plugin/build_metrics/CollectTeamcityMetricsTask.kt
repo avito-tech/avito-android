@@ -1,6 +1,6 @@
 package com.avito.android.plugin.build_metrics
 
-import com.avito.android.stats.statsdConfig
+import com.avito.android.graphite.graphiteConfig
 import com.avito.teamcity.teamcityCredentials
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
@@ -25,7 +25,7 @@ abstract class CollectTeamcityMetricsTask @Inject constructor(
         workerExecutor.noIsolation().submit(CollectTeamcityMetricsWorkerAction::class.java) { parameters ->
             parameters.getBuildId().set(buildId)
             parameters.getLogger().set(project.ciLogger)
-            parameters.getStatsdConfig().set(project.statsdConfig)
+            parameters.getGraphiteConfig().set(project.graphiteConfig)
             parameters.getTeamcityCredentials().set(project.teamcityCredentials)
         }
     }

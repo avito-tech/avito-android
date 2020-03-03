@@ -13,6 +13,7 @@ val mockitoJunit5Version: String by project
 
 dependencies {
     implementation(project(":subprojects:gradle:sentry-config"))
+    implementation(project(":subprojects:gradle:graphite-config"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
@@ -27,6 +28,7 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunit5Version")
     testImplementation(project(":subprojects:gradle:git"))
     testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(testFixtures(project(":subprojects:common:graphite")))
     testImplementation(testFixtures(project(":subprojects:common:statsd")))
 }
 
