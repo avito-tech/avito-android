@@ -1,5 +1,6 @@
 package com.avito.android.graphite
 
+import com.avito.logger.Logger
 import java.io.DataOutputStream
 import java.net.Socket
 
@@ -13,37 +14,43 @@ interface GraphiteSender {
 
     class Impl(
         private val config: GraphiteConfig,
-        private val logger: (String, Throwable?) -> Unit
+        private val logger: Logger
     ) : GraphiteSender {
 
         override fun send(metric: GraphiteMetric) {
-            val metricName = if (config.namespace.isEmpty()) {
-                metric.path
-            } else {
-                config.namespace.removeSuffix(".") + "." + metric.path
-            }
-
-            send(metricName, metric.value, metric.timestamp)
-        }
-
-        private fun send(path: String, value: String, timestamp: Long) {
-            // https://graphite.readthedocs.io/en/latest/feeding-carbon.html#the-plaintext-protocol
-            val message = "$path $value $timestamp\n"
-
-            logger.invoke("graphite: $message", null)
-
             if (!config.isEnabled) return
 
+            val message = graphiteMessage(config, metric)
+            send(message)
+        }
+
+        private fun send(message: String) {
             try {
                 socket().use { socket ->
                     val dos = DataOutputStream(socket.getOutputStream())
                     dos.writeBytes(message)
                 }
+                logger.debug("$LOG_TAG: $message")
             } catch (e: Exception) {
-                logger("graphite error: $message", e)
+                logger.exception("$LOG_TAG: $message", e)
             }
         }
 
+        /**
+         * Returns graphite message in plaintext protocol
+         * (https://graphite.readthedocs.io/en/latest/feeding-carbon.html#the-plaintext-protocol)
+         */
+        private fun graphiteMessage(config: GraphiteConfig, metric: GraphiteMetric): String {
+            val metricName = if (config.namespace.isEmpty()) {
+                metric.path
+            } else {
+                config.namespace.removeSuffix(".") + "." + metric.path
+            }
+            return "$metricName ${metric.value} ${metric.timestamp}\n"
+        }
+
         private fun socket(): Socket = Socket(config.host, config.port)
+
+        private val LOG_TAG = "graphite"
     }
 }

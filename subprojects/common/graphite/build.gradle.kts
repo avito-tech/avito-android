@@ -8,5 +8,7 @@ plugins {
 val kotlinVersion: String by project
 
 dependencies {
+    api(project(":subprojects:common:logger"))
+
     testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }
