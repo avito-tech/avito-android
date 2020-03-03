@@ -8,6 +8,7 @@ import com.avito.android.test.annotations.Description
 import com.avito.android.test.annotations.ExternalId
 import com.avito.android.test.annotations.Feature
 import com.avito.android.test.annotations.FeatureId
+import com.avito.android.test.annotations.Flaky
 import com.avito.android.test.annotations.FunctionalTest
 import com.avito.android.test.annotations.InstrumentationUnitTest
 import com.avito.android.test.annotations.ManualTest
@@ -23,6 +24,7 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.TestPackageParser
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.TestType
+import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import java.lang.reflect.Method
 
@@ -51,7 +53,8 @@ class TestMetadataAnnotationResolver(
             Behavior::class.java,
             Feature::class.java,
             ExternalId::class.java,
-            TagId::class.java
+            TagId::class.java,
+            Flaky::class.java
         )
 
         var testClass: Class<*>? = null
@@ -96,6 +99,7 @@ class TestMetadataAnnotationResolver(
         var externalId: String? = null
         var tagIds: List<Int> = emptyList()
         var featureIds: List<Int> = emptyList()
+        var flakiness: Flakiness = Flakiness.Stable
 
         annotationsExtractingResult
             .forEach { annotation ->
@@ -163,6 +167,9 @@ class TestMetadataAnnotationResolver(
                     is TagId -> {
                         tagIds = annotation.value.toList()
                     }
+                    is Flaky -> {
+                        flakiness = Flakiness.Flaky(annotation.reason)
+                    }
                 }
             }
 
@@ -181,7 +188,8 @@ class TestMetadataAnnotationResolver(
                 packageParserResult = testPackageParser.parse(testClass.`package`?.name),
                 externalId = externalId,
                 featureIds = featureIds,
-                tagIds = tagIds
+                tagIds = tagIds,
+                flakiness = flakiness
             )
         )
     }

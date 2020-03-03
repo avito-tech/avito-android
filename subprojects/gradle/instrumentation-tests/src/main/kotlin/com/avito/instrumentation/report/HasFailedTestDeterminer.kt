@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 import org.funktionale.tries.Try
 
@@ -49,6 +50,9 @@ interface HasFailedTestDeterminer {
                             return "Suppressed all by grops: $groups"
                         }
                     }
+                    object SuppressedByFlakiness : Reason() {
+                        override fun toString(): String = "Suppressed all @Flaky tests"
+                    }
                 }
             }
         }
@@ -56,6 +60,7 @@ interface HasFailedTestDeterminer {
 
     class Impl(
         private val suppressFailure: Boolean,
+        private val suppressFlaky: Boolean,
         private val suppressGroups: List<String>
     ) : HasFailedTestDeterminer {
 
@@ -77,6 +82,15 @@ interface HasFailedTestDeterminer {
                                         suppressed = Result.Failed.Suppressed(
                                             tests = failedTests,
                                             reason = Result.Failed.Suppressed.Reason.SuppressedAll
+                                        )
+                                    )
+                                }
+                                suppressFlaky -> {
+                                    Result.Failed(
+                                        failed = failedTests,
+                                        suppressed = Result.Failed.Suppressed(
+                                            tests = failedTests.filter { it.flakiness is Flakiness.Flaky },
+                                            reason = Result.Failed.Suppressed.Reason.SuppressedByFlakiness
                                         )
                                     )
                                 }

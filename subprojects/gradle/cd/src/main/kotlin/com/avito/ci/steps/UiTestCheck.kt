@@ -16,6 +16,11 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
     var configurations = mutableListOf<String>()
 
     /**
+     * Whether skip results of tests marked with @Flaky or not
+     */
+    var suppressFlaky: Boolean = false
+
+    /**
      * нам пока нужна отправка только по запуску на всех устройствах
      */
     var sendStatistics: Boolean = false
@@ -53,6 +58,7 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
                 // TODO: can we do it in "configure" block anyway?
                 uiTestTask.get().also { task ->
                     task.suppressFailure.set(this@UiTestCheck.suppressFailures)
+                    task.suppressFlaky.set(this@UiTestCheck.suppressFlaky)
                     task.sendStatistics.set(this@UiTestCheck.sendStatistics)
 
                     // TODO: how to switch off impact analysis?

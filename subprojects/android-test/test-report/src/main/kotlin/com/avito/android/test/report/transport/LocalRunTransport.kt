@@ -60,6 +60,7 @@ class LocalRunTransport(
                 priority = state.testMetadata.priority,
                 behavior = state.testMetadata.behavior,
                 kind = state.testMetadata.kind,
+                flakiness = state.testMetadata.flakiness,
                 features = combineFeatures(state.testMetadata)
             )
 

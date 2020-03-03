@@ -15,6 +15,7 @@ import com.avito.report.model.CrossDeviceRunTest
 import com.avito.report.model.CrossDeviceStatus
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.FailureOnDevice
+import com.avito.report.model.Flakiness
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.Kind
 import com.avito.report.model.PerformanceTest
@@ -202,7 +203,8 @@ internal class ReportsFetchApiImpl(
                     featureIds = listResult.preparedData?.lastOrNull()?.featureIds ?: emptyList(),
                     priority = getPriority(listResult),
                     behavior = getBehavior(listResult),
-                    kind = listResult.kind?.let { Kind.fromTmdId(it) } ?: Kind.UNKNOWN
+                    kind = listResult.kind?.let { Kind.fromTmdId(it) } ?: Kind.UNKNOWN,
+                    flakiness = getFlakiness(listResult)
                 )
             } ?: emptyList()
         }
@@ -316,6 +318,14 @@ internal class ReportsFetchApiImpl(
             null
         }
     }
+
+    private fun getFlakiness(listResult: ListResult) = listResult.preparedData?.lastOrNull()?.let {
+        if (it.isFlaky == true) {
+            Flakiness.Flaky(it.flakyReason ?: "")
+        } else {
+            Flakiness.Stable
+        }
+    } ?: Flakiness.Stable
 
     private fun convert(performanceAttempts: List<Map<String, Double>>): Map<String, List<Double>> {
         return performanceAttempts.flatMap { it.entries }

@@ -22,6 +22,7 @@ sealed class AndroidTest : TestStaticData {
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
         override val kind: Kind,
+        override val flakiness: Flakiness,
         val startTime: Long,
         val lastSignalTime: Long,
         val stdout: String,
@@ -48,6 +49,7 @@ sealed class AndroidTest : TestStaticData {
                 priority = testStaticData.priority,
                 behavior = testStaticData.behavior,
                 kind = testStaticData.kind,
+                flakiness = testStaticData.flakiness,
                 startTime = startTime,
                 lastSignalTime = lastSignalTime,
                 stdout = stdout,
@@ -88,6 +90,7 @@ sealed class AndroidTest : TestStaticData {
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
         override val kind: Kind,
+        override val flakiness: Flakiness,
         val skipReason: String,
         val reportTime: Long
     ) : AndroidTest() {
@@ -113,6 +116,7 @@ sealed class AndroidTest : TestStaticData {
                 priority = testStaticData.priority,
                 behavior = testStaticData.behavior,
                 kind = testStaticData.kind,
+                flakiness = testStaticData.flakiness,
                 skipReason = skipReason,
                 reportTime = reportTime
             )
@@ -159,6 +163,7 @@ sealed class AndroidTest : TestStaticData {
         override val kind: Kind,
         override val startTime: Long,
         override val endTime: Long,
+        override val flakiness: Flakiness,
         val stdout: String,
         val stderr: String
     ) : AndroidTest(), TestRuntimeData {
@@ -190,6 +195,7 @@ sealed class AndroidTest : TestStaticData {
                 steps = testRuntimeData.steps,
                 startTime = testRuntimeData.startTime,
                 endTime = testRuntimeData.endTime,
+                flakiness = testStaticData.flakiness,
                 stdout = stdout,
                 stderr = stderr
             )
@@ -258,6 +264,7 @@ interface TestStaticData {
     val priority: TestCasePriority?
     val behavior: TestCaseBehavior?
     val kind: Kind
+    val flakiness: Flakiness
 }
 
 data class TestStaticDataPackage(
@@ -272,7 +279,8 @@ data class TestStaticDataPackage(
     override val tagIds: List<Int>,
     override val priority: TestCasePriority?,
     override val behavior: TestCaseBehavior?,
-    override val kind: Kind
+    override val kind: Kind,
+    override val flakiness: Flakiness
 ) : TestStaticData {
 
     companion object {
@@ -289,7 +297,8 @@ data class TestStaticDataPackage(
             tagIds = simpleRunTest.tagIds,
             priority = simpleRunTest.priority,
             behavior = simpleRunTest.behavior,
-            kind = simpleRunTest.kind
+            kind = simpleRunTest.kind,
+            flakiness = simpleRunTest.flakiness
         )
     }
 
