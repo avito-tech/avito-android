@@ -138,8 +138,7 @@ class InstrumentationTestsAction(
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
         suppressFailure = params.suppressFailure,
-        suppressFlaky = params.suppressFlaky,
-        suppressGroups = params.instrumentationConfiguration.suppressGroups
+        suppressFlaky = params.suppressFlaky
     ),
     private val slackClient: SlackClient = SlackClient.Impl(params.slackToken, workspace = "avito"),
     private val bitbucket: Bitbucket = Bitbucket.create(

@@ -8,7 +8,6 @@ import com.avito.instrumentation.configuration.target.TargetConfiguration
 fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name: String = "name",
     performanceType: InstrumentationConfiguration.PerformanceType? = null,
-    suppressGroups: List<String> = emptyList(),
     instrumentationParams: InstrumentationParameters = InstrumentationParameters(),
     tryToReRunOnTargetBranch: Boolean = false,
     rerunFailedTests: Boolean = false,
@@ -23,7 +22,6 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
 ): InstrumentationConfiguration.Data = InstrumentationConfiguration.Data(
     name = name,
     performanceType = performanceType,
-    suppressGroups = suppressGroups,
     instrumentationParams = instrumentationParams,
     prefixFilter = prefixFilter,
     tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
