@@ -123,22 +123,20 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
-        val failed = result as HasFailedTestDeterminer.Result.Failed
+        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.FailedWithSuppressed::class.java)
+        val failed = result as HasFailedTestDeterminer.Result.FailedWithSuppressed
         assertThat(failed.suppressed.tests).hasSize(1)
         assertThat(failed.suppressed.tests[0].name).isEqualTo("com.Test.test2")
         assertThat(failed.suppressed.reason).isInstanceOf(
-            HasFailedTestDeterminer.Result.Failed.Suppressed.Reason.SuppressedByFlakiness::class.java
+            HasFailedTestDeterminer.Result.FailedWithSuppressed.Suppressed.Reason.SuppressedByFlakiness::class.java
         )
     }
 
     private fun createImpl(
         suppressFailure: Boolean = false,
-        suppressFlaky: Boolean = false,
-        suppressGroups: List<String> = emptyList()
+        suppressFlaky: Boolean = false
     ) = HasFailedTestDeterminer.Impl(
         suppressFailure = suppressFailure,
-        suppressFlaky = suppressFlaky,
-        suppressGroups = suppressGroups
+        suppressFlaky = suppressFlaky
     )
 }

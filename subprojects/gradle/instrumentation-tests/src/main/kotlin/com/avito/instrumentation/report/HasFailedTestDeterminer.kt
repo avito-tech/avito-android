@@ -21,16 +21,19 @@ interface HasFailedTestDeterminer {
         object NoFailed : Result()
 
         data class Failed(
+            val failed: List<SimpleRunTest>
+        ) : Result() {
+
+            override fun count(): Int = failed.size
+
+        }
+
+        data class FailedWithSuppressed(
             val failed: List<SimpleRunTest>,
             val suppressed: Suppressed
         ) : Result() {
 
             override fun count(): Int = failed.size
-
-            val notSuppressed = failed.minus(suppressed.tests)
-
-            val notSuppressedCount = notSuppressed.size
-
 
             data class Suppressed(
                 val tests: List<SimpleRunTest>,
@@ -43,13 +46,7 @@ interface HasFailedTestDeterminer {
                             return "Suppressed all by flag in build.gradle"
                         }
                     }
-                    data class SuppressedByGroups(
-                        val groups: List<String>
-                    ) : Reason() {
-                        override fun toString(): String {
-                            return "Suppressed all by grops: $groups"
-                        }
-                    }
+
                     object SuppressedByFlakiness : Reason() {
                         override fun toString(): String = "Suppressed all @Flaky tests"
                     }
@@ -60,8 +57,7 @@ interface HasFailedTestDeterminer {
 
     class Impl(
         private val suppressFailure: Boolean,
-        private val suppressFlaky: Boolean,
-        private val suppressGroups: List<String>
+        private val suppressFlaky: Boolean
     ) : HasFailedTestDeterminer {
 
         override fun determine(
@@ -77,36 +73,24 @@ interface HasFailedTestDeterminer {
                         hasFailedTests -> {
                             when {
                                 suppressFailure -> {
-                                    Result.Failed(
+                                    Result.FailedWithSuppressed(
                                         failed = failedTests,
-                                        suppressed = Result.Failed.Suppressed(
+                                        suppressed = Result.FailedWithSuppressed.Suppressed(
                                             tests = failedTests,
-                                            reason = Result.Failed.Suppressed.Reason.SuppressedAll
+                                            reason = Result.FailedWithSuppressed.Suppressed.Reason.SuppressedAll
                                         )
                                     )
                                 }
                                 suppressFlaky -> {
-                                    Result.Failed(
+                                    Result.FailedWithSuppressed(
                                         failed = failedTests,
-                                        suppressed = Result.Failed.Suppressed(
+                                        suppressed = Result.FailedWithSuppressed.Suppressed(
                                             tests = failedTests.filter { it.flakiness is Flakiness.Flaky },
-                                            reason = Result.Failed.Suppressed.Reason.SuppressedByFlakiness
+                                            reason = Result.FailedWithSuppressed.Suppressed.Reason.SuppressedByFlakiness
                                         )
                                     )
                                 }
-                                else -> {
-                                    val suppressed = failedTests
-                                        .filter { isSuppressedByGroup(it.groupList, suppressGroups) }
-                                    Result.Failed(
-                                        failed = failedTests,
-                                        suppressed = Result.Failed.Suppressed(
-                                            tests = suppressed,
-                                            reason = Result.Failed.Suppressed.Reason.SuppressedByGroups(
-                                                groups = suppressGroups
-                                            )
-                                        )
-                                    )
-                                }
+                                else -> Result.Failed(failed = failedTests)
                             }
                         }
                         else -> Result.NoFailed
@@ -116,10 +100,6 @@ interface HasFailedTestDeterminer {
                     Result.DetermineError(exception)
                 }
             )
-        }
-
-        private fun isSuppressedByGroup(groupList: List<String>, suppressGroups: List<String>): Boolean {
-            return groupList.intersect(suppressGroups).isNotEmpty()
         }
     }
 }
