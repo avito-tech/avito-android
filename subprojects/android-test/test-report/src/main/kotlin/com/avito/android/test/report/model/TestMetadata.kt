@@ -3,6 +3,7 @@ package com.avito.android.test.report.model
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.TestPackageParser
+import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import java.io.Serializable
 
@@ -20,5 +21,6 @@ data class TestMetadata(
     val features: List<String>,
     val externalId: String?,
     val featureIds: List<Int>,
-    val tagIds: List<Int>
+    val tagIds: List<Int>,
+    val flakiness: Flakiness
 ) : Serializable

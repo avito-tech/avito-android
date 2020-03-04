@@ -7,6 +7,7 @@ import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.internal.model.TestStatus
 import com.avito.report.model.AndroidTest
+import com.avito.report.model.Flakiness
 import com.avito.report.model.Incident
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Status
@@ -198,6 +199,16 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
 
         if (!buildId.isNullOrBlank()) {
             reportData["build_id_set"] = mapOf("\$fillSet" to listOf(buildId))
+        }
+
+        when (val flakiness = test.flakiness) {
+            is Flakiness.Flaky -> {
+                preparedData["is_flaky"] = true
+                preparedData["flaky_reason"] = flakiness.reason
+            }
+            is Flakiness.Stable -> {
+                preparedData["is_flaky"] = false
+            }
         }
 
         val params = mutableMapOf(

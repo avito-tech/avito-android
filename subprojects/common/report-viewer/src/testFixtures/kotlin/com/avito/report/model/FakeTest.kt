@@ -15,7 +15,8 @@ fun TestStaticDataPackage.Companion.createStubInstance(
     featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
-    kind: Kind = Kind.E2E
+    kind: Kind = Kind.E2E,
+    flakiness: Flakiness = Flakiness.Stable
 ) = TestStaticDataPackage(
     name = TestName(name),
     device = DeviceName(deviceName),
@@ -28,7 +29,8 @@ fun TestStaticDataPackage.Companion.createStubInstance(
     featureIds = featureIds,
     priority = priority,
     behavior = behavior,
-    kind = kind
+    kind = kind,
+    flakiness = flakiness
 )
 
 fun TestRuntimeDataPackage.Companion.createStubInstance(
@@ -65,6 +67,7 @@ fun AndroidTest.Skipped.Companion.createStubInstance(
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
     kind: Kind = Kind.E2E,
+    flakiness: Flakiness = Flakiness.Stable,
     skipReason: String = "просто потомучто"
 ): AndroidTest.Skipped = fromTestMetadata(
     TestStaticDataPackage(
@@ -79,7 +82,8 @@ fun AndroidTest.Skipped.Companion.createStubInstance(
         featureIds = featureIds,
         priority = priority,
         behavior = behavior,
-        kind = kind
+        kind = kind,
+        flakiness = flakiness
     ),
     skipReason = skipReason,
     reportTime = reportTime
@@ -100,6 +104,7 @@ fun AndroidTest.Lost.Companion.createStubInstance(
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
     kind: Kind = Kind.E2E,
+    flakiness: Flakiness = Flakiness.Stable,
     stdout: String = "",
     stderr: String = ""
 ): AndroidTest.Lost = fromTestMetadata(
@@ -115,7 +120,8 @@ fun AndroidTest.Lost.Companion.createStubInstance(
         featureIds = featureIds,
         priority = priority,
         behavior = behavior,
-        kind = kind
+        kind = kind,
+        flakiness = flakiness
     ),
     startTime = startTime,
     lastSignalTime = lastSignalTime,

@@ -138,6 +138,7 @@ class InstrumentationTestsAction(
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
         suppressFailure = params.suppressFailure,
+        suppressFlaky = params.suppressFlaky,
         suppressGroups = params.instrumentationConfiguration.suppressGroups
     ),
     private val slackClient: SlackClient = SlackClient.Impl(params.slackToken, workspace = "avito"),
@@ -317,6 +318,7 @@ class InstrumentationTestsAction(
         val projectName: String,
         val testedVariantName: String,
         val suppressFailure: Boolean,
+        val suppressFlaky: Boolean,
         val impactAnalysisResult: File?,
         val logger: CILogger,
         val outputDir: File, //todo валидация на соответствие teamcity конфигу

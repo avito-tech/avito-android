@@ -15,5 +15,7 @@ internal data class PreparedData(
     @SerializedName("feature_id") val featureIds: List<Int>?,
     @SerializedName("priority_id") val priorityId: Int?,
     @SerializedName("behavior_id") val behaviorId: Int?,
-    @SerializedName("e2e") val e2e: Boolean?
+    @SerializedName("e2e") val e2e: Boolean?,
+    @SerializedName("is_flaky") val isFlaky: Boolean?,
+    @SerializedName("flaky_reason") val flakyReason: String?
 )
