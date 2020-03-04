@@ -44,6 +44,7 @@ headless: true
     - [Troubleshooting]({{< ref "/docs/test/TroubleshootingUI.md" >}})
     - [Кастомный запуск]({{< ref "/docs/test/DynamicConfig.md" >}})
     - [Work Manager Testing]({{< ref "/docs/test/WorkManager.md" >}})
+    - [Flaky Tests]({{< ref "/docs/test/FlakyTests.md" >}})
 - [Test framework]({{< ref "/docs/test_framework/TestFramework.md" >}})
     - [Mocking]({{< ref "/docs/test_framework/Mocking.md" >}})
     - [Internals]({{< ref "/docs/test_framework/Internals.md" >}})
