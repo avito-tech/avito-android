@@ -11,14 +11,10 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
 open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
-    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
+    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
+    FlakyAwareBuildStep by FlakyAwareBuildStep.Impl() {
 
     var configurations = mutableListOf<String>()
-
-    /**
-     * Whether skip results of tests marked with @Flaky or not
-     */
-    var suppressFlaky: Boolean = false
 
     /**
      * нам пока нужна отправка только по запуску на всех устройствах
