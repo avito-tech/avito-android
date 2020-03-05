@@ -23,7 +23,7 @@ class AndroidProjectTest {
 
     @BeforeEach
     fun setup(@TempDir tempDir: File) {
-        this.tempDir = tempDir
+        this.tempDir = File("test")
     }
 
     @Test
