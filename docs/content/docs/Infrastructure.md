@@ -136,42 +136,41 @@ Shared modules between android-test and gradle.
 
 ## Publishing
 
-### Versioning
+### Publishing a new release
 
-[projectVersion](https://github.com/avito-tech/avito-android/blob/develop/gradle.properties#L13) 
-is version for future release.
+All releases are published to [bintray](https://bintray.com/avito-tech/maven/avito-android).
 
-### Release to jcenter
-
-[Bintray project](https://bintray.com/avito-tech/maven/avito-android), mirroring to jcenter
-
-1. Checkout branch with name equally to `projectVersion`
-1. Make sure integration tests on release branch passed via `CI integration tests against avito`
-1. Manually run [Teamcity configuration (internal)](http://links.k.avito.ru/releaseAvitoTools)
-1. Use new version in `avito`
-1. Create PR with `infraVersion` equally released version and bumped `projectVersion`
-1. Create release on [releases page](https://github.com/avito-tech/avito-android/releases) 
+1. Checkout a release branch with a name equals to `projectVersion`. For example, `2020.3.1`.\
+This branch must be persistent. It will be used for automation.
+1. Make sure integration tests on release branch passed full integration checks [CI integration tests against avito]({{<relref "#ci-integration-tests-against-avito">}})
+1. Manually run [Github publish configuration (internal)](http://links.k.avito.ru/releaseAvitoTools)
+1. Make a PR to internal avito repository with the new version of infrastructure
+1. Checkout a new branch and make a PR to github repository:
+    - Use the new version in `infraVersion` property
+    - Bump up a `projectVersion` property to the next version
+1. Create a new [release](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository) against the release branch.\
+You can use a draft release to prepare a description in advance.
 
 ### Local integration tests against avito
 
-1. Choose project version that will not clash with released ones (example: `2020.2.4-<yourname>-1`)
-1. Run `./gradlew publishToMavenLocal -PprojectVersion=<Your test version>`
+1. Run `./gradlew publishToMavenLocal -PprojectVersion=local` in github repository.
 1. Run integration tests of your choice in avito with specified test version
 
 ### CI integration tests against avito
 
-1. Run [Teamcity configuration (internal)](http://links.k.avito.ru/fastCheck) to check pull request builds. 
-1. And/or [This one](http://links.k.avito.ru/fullCheck) to check full set of checks.
-1. You don't need to be bothered about versions here, checks of avito would run against generated version of tools project.
+1 Choose a necessary configuration
 
-{{< hint info>}}
-You can also change build branch if you need to test unmerged code.
-But be careful, Teamcity is tricky about this one:
+- [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request builds
+- [full check configuration (internal)](http://links.k.avito.ru/fullCheck) - a full set of checks (without a release chain)
+
+2 Run custom build
+
+If you need to test unmerged code, select a custom build branch.\
+You will see branches from both repositories:
+
+![](https://user-images.githubusercontent.com/1104540/75977180-e5dd4d80-5eec-11ea-80d3-2f9abd7efd36.png)
  
-- By default build will use develop from github agains develop from avito
-- If you pick a different branch of avito, it will run against develop on github
-- If you pick a different branch of github, it will run against develop on avito
+- By default, build uses develop from github against develop from avito
+- If you pick a branch from avito, it will run against develop on github
+- If you pick a branch from github, it will run against develop on avito
 - (UNTESTED) To build both projects of special branch, they should have the same name
-
-{{< /hint >}}
-
