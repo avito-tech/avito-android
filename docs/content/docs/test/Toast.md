@@ -5,7 +5,7 @@ type: docs
 
 # Testing toasts
 
-[androidx.widget.Toast](https://developer.android.com/reference/android/widget/Toast)
+[android.widget.Toast](https://developer.android.com/reference/android/widget/Toast)
 
 {{< hint warning>}}
 Testing toasts reliably is a hard task because some other toast can show up and yours will be queued. 
