@@ -136,10 +136,6 @@ Shared modules between android-test and gradle.
 
 ## Publishing
 
-### Versioning releases
-
-We use a `projectVersion` property in `gradle.properties` to define a next release.
-
 ### Publishing a new release
 
 All releases are published to [bintray](https://bintray.com/avito-tech/maven/avito-android).
@@ -165,18 +161,16 @@ You can use a draft release to prepare a description in advance.
 1 Choose a necessary configuration
 
 - [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request builds
-- [full check configuration (internal)](http://links.k.avito.ru/fullCheck) - a full set of checks
+- [full check configuration (internal)](http://links.k.avito.ru/fullCheck) - a full set of checks (without a release chain)
 
 2 Run custom build
 
-{{< hint info>}}
 If you need to test unmerged code, select a custom build branch.\
 You will see branches from both repositories:
+
+![](https://user-images.githubusercontent.com/1104540/75977180-e5dd4d80-5eec-11ea-80d3-2f9abd7efd36.png)
  
 - By default, build uses develop from github against develop from avito
 - If you pick a branch from avito, it will run against develop on github
 - If you pick a branch from github, it will run against develop on avito
 - (UNTESTED) To build both projects of special branch, they should have the same name
-
-{{< /hint >}}
-
