@@ -5,56 +5,58 @@ import org.gradle.api.file.RegularFileProperty
 import java.io.File
 import kotlin.reflect.KProperty
 
-fun Project.getOptionalStringProperty(name: String): String? {
-    return if (hasProperty(name)) {
-        property(name)?.toString()
+//TODO these methods should return Property<X>
+
+/**
+ * @param nullIfBlank there may be cases when it's ok to pass empty string to override
+ * todo true by default, false to not break anything that rely on previous behavior
+ */
+fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false): String? =
+    if (hasProperty(name)) {
+        val string = property(name)?.toString()
+        if (nullIfBlank && string.isNullOrBlank()) null else string
     } else {
         null
     }
-}
 
-fun Project.getOptionalStringProperty(name: String, default: String): String {
-    return if (hasProperty(name)) {
-        property(name)?.toString() ?: default
-    } else {
+fun Project.getOptionalStringProperty(name: String, default: String, defaultIfBlank: Boolean = true): String =
+    getOptionalStringProperty(name, nullIfBlank = defaultIfBlank) ?: default
+
+/**
+ * @param allowBlank todo false by default
+ */
+fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true): String =
+    getOptionalStringProperty(name, nullIfBlank = !allowBlank)
+        ?: throw RuntimeException("Parameter: $name is required (must be not empty)")
+
+fun Project.getOptionalIntProperty(name: String): Int? =
+    try {
+        getOptionalStringProperty(name, nullIfBlank = true)?.toInt()
+    } catch (e: NumberFormatException) {
+        null
+    }
+
+fun Project.getOptionalIntProperty(name: String, default: Int): Int =
+    try {
+        getOptionalStringProperty(name, nullIfBlank = true)?.toInt() ?: default
+    } catch (e: NumberFormatException) {
         default
     }
-}
-
-fun Project.getMandatoryStringProperty(name: String): String =
-    getOptionalStringProperty(name) ?: throw RuntimeException("Parameter: $name is required (must be not empty)")
-
-fun Project.getOptionalIntProperty(name: String): Int? = try {
-    getOptionalStringProperty(name)?.toInt()
-} catch (e: NumberFormatException) {
-    null
-}
-
-fun Project.getOptionalIntProperty(name: String, default: Int): Int = try {
-    getOptionalStringProperty(name)?.toInt() ?: default
-} catch (e: NumberFormatException) {
-    default
-}
 
 fun Project.getMandatoryIntProperty(name: String): Int =
     getOptionalIntProperty(name) ?: throw RuntimeException("Parameter: $name is required (must be digit)")
 
 @JvmOverloads
 fun Project.getBooleanProperty(name: String, default: Boolean = false): Boolean =
-    getOptionalStringProperty(name)?.toBoolean() ?: default
+    getOptionalStringProperty(name, nullIfBlank = true)?.toBoolean() ?: default
 
 @JvmOverloads
-fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Float? {
-    return if (hasProperty(name)) {
-        try {
-            property(name)?.toString()?.toFloat() ?: default
-        } catch (e: NumberFormatException) {
-            default
-        }
-    } else {
+fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Float? =
+    try {
+        getOptionalStringProperty(name, nullIfBlank = true)?.toFloat() ?: default
+    } catch (e: NumberFormatException) {
         default
     }
-}
 
 @Suppress("UnstableApiUsage")
 fun Project.fileProperty(file: File): RegularFileProperty = objects.fileProperty().apply { set { file } }
