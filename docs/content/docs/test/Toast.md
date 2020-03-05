@@ -1,9 +1,9 @@
 ---
-title: Testing toast
+title: Testing toasts
 type: docs
 ---
 
-# Testing toast
+# Testing toasts
 
 [androidx.widget.Toast](https://developer.android.com/reference/android/widget/Toast)
 
