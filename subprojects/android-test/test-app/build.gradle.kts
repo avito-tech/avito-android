@@ -82,6 +82,8 @@ android {
 dependencies {
     keeperR8("com.android.tools:r8:$r8Version")
 
+    implementation(project(":subprojects:android-lib:proxy-toast"))
+
     implementation("com.google.android.gms:play-services-maps:17.0.0")
 
     implementation("androidx.appcompat:appcompat:$androidXVersion")
@@ -91,6 +93,7 @@ dependencies {
     androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
     androidTestImplementation(project(":subprojects:android-test:test-report"))
     androidTestImplementation(project(":subprojects:android-test:junit-utils"))
+    androidTestImplementation(project(":subprojects:android-test:toast-rule"))
     androidTestImplementation(project(":subprojects:android-test:test-annotations"))
     androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
     androidTestImplementation(project(":subprojects:common:report-viewer"))
