@@ -162,12 +162,12 @@ You can use a draft release to prepare a description in advance.
 
 ### CI integration tests against avito
 
-1. Choose a necessary configuration:
+1 Choose a necessary configuration
 
 - [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request builds
 - [full check configuration (internal)](http://links.k.avito.ru/fullCheck) - a full set of checks
 
-2. Run custom build.
+2 Run custom build
 
 {{< hint info>}}
 If you need to test unmerged code, select a custom build branch.\
