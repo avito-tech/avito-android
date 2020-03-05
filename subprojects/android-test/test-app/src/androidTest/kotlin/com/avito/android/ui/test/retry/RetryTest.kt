@@ -4,10 +4,10 @@ import com.avito.android.ui.RetryActivity
 import com.avito.android.ui.UnexpectedFatalError
 import com.avito.android.ui.test.Screen
 import com.avito.android.ui.test.screenRule
-import org.hamcrest.Matchers.instanceOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
+import ru.avito.util.instanceOf
 
 class RetryTest {
 
@@ -21,7 +21,7 @@ class RetryTest {
     fun hasOriginalError_oneShotActionFailedWithUnknownCause() {
         // We must preserve an original error for a user
         // It can get lost accidentally due to UITestConfig.waiterAllowedExceptions
-        exception.expectCause(instanceOf(UnexpectedFatalError::class.java))
+        exception.expectCause(instanceOf<UnexpectedFatalError>())
 
         Screen.retry.button.click()
 
