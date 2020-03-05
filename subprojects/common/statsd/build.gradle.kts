@@ -5,11 +5,8 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-val statsdVersion: String by project
-
 dependencies {
-    implementation("com.timgroup:java-statsd-client:$statsdVersion")
+    implementation(Dependencies.statsd)
 
-    testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    testFixturesImplementation(Dependencies.kotlinStdlib)
 }

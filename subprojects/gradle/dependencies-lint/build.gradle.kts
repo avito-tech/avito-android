@@ -5,10 +5,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-val androidGradlePluginVersion: String by project
-val mockitoKotlinVersion: String by project
-
 dependencies {
     implementation(project(":subprojects:gradle:cd"))
     implementation(project(":subprojects:gradle:impact-shared"))
@@ -17,12 +13,12 @@ dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
 
-    implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.ow2.asm:asm:7.1")
+    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.asm)
 
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
+    testImplementation(Dependencies.test.mockitoKotlin)
 }
 
 gradlePlugin {
