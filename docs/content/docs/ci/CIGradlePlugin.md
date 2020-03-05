@@ -106,7 +106,7 @@ release {
 }
 ```
 
-В шагe `uiTests` можно [Включить игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
+В шагe `uiTests` можно [включить игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
 
 #### Custom steps
 
