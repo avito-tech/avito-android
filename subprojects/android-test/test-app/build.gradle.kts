@@ -79,6 +79,10 @@ android {
     }
 }
 
+keeper {
+    automaticR8RepoManagement.set(false)
+}
+
 dependencies {
     keeperR8("com.android.tools:r8:$r8Version")
 
