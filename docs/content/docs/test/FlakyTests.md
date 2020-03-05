@@ -8,20 +8,20 @@ type: docs
 A flaky test is a test that could fail or pass without project changes.\
 One could say this is unstable tests that fail sometimes but not every launch.\
 It happens when: 
-1. test relies on an external environment. Real back-end for instance.
-1. test had written incorrect. Mistakes easy to do in async jobs.
-1. test framework has bugs
+- test relies on an external environment. Real back-end for instance.
+- test had written incorrect. Mistakes easy to do in async jobs.
+- test framework has bugs
 
 Flaky tests make hard:
-1. to find real failures
-1. to react on failures as soon as possible \
+- to find real failures
+- to react on failures as soon as possible \
 
 That's why we introduce annotion to mark your test flaky. 
 
 Our future goals:
-1. Minimize flaky count
-1. Launch as many tests as we can on pull request checks
-1. Help our users to fix common flaky problems
+- Minimize flaky count
+- Launch as many tests as we can on pull request checks
+- Help our users to fix common flaky problems
 
 ## `@Flaky` annotation
 
