@@ -31,7 +31,7 @@ GRADLE_RO_DEP_CACHE_DEST=/gradle/readonlydepcache
 function resolveDependenciesCacheOptions() {
     if [ ! -f "$MARKER_FILE" ]; then
         echo "[Gradle] Marker file not found. Mounting writeable dependencies cache."
-        MOUNT_OPTIONS+="--volume ${GRADLE_CACHE_DIR}:/gradle/caches "
+        MOUNT_OPTIONS+="--volume ${GRADLE_CACHE_DIR}:/gradle/caches/modules-2 "
         MOUNT_OPTIONS+="--volume ${GRADLE_HOME_DIR}/readonlydepcache:$GRADLE_RO_DEP_CACHE_DEST "
         MOUNT_OPTIONS+="--env GRADLE_RO_DEP_CACHE_DEST=$GRADLE_RO_DEP_CACHE_DEST "
     else
@@ -77,8 +77,6 @@ GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
 GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
 GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL \\
              -Pavito.bitbucket.enabled=true"
-
-# TODO: Use IMAGE_ANDROID_BUILDER image from public registry
 
 function runInBuilder() {
     COMMANDS=$@
