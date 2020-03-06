@@ -124,7 +124,7 @@ class MyTest { ... }
 ## Mocking Preferences
 
 All kind of tests are using real implementations of `com.avito.android.util.preferences.Preferences`, not mocked ones.
-But it's unnecessary to mock `Preferences` somehow because all test data is [cleared]({{< ref "/docs/test/TestDataClearing.md" >}}) between tests,
+But it's unnecessary to mock `Preferences` because all test data is [cleared]({{< ref "/docs/test/TestDataClearing.md" >}}) between tests,
 including databases and `SharedPreferences` files.
 
 All entities that depend on `Preferences` are gathered together in `PreferencesRule`. You can access that entities without going into details of `Preferences`
