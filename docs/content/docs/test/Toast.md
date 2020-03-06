@@ -8,7 +8,7 @@ type: docs
 [android.widget.Toast](https://developer.android.com/reference/android/widget/Toast)
 
 {{< hint warning>}}
-Testing toasts reliably is a hard task because some other toast can show up and yours will be queued. 
+Testing toasts is a hard because other toasts can show up and yours will be queued. 
 We hack app with proxy object to mitigate this.
 {{< /hint >}}
 
