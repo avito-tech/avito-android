@@ -50,6 +50,19 @@ fastCheck {
 
 - `configuration` - проверить конфигурацию проекта, модуль `build-script-test`
 - `uiTests` - запустить ui тесты модуля
+
+```groovy
+    fastCheck {
+        uiTests {
+          configurations = ["configurationName"] // list of instrumentation configuration to depend
+          sendStatistics = false // by default
+          suppressFailures = false // by default
+          useImpactAnalysis = false // by default
+          suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
+        }
+    }
+```
+
 - `performanceTests` - запустить перформанс тесты модуля
 
 ```groovy
@@ -105,9 +118,6 @@ release {
     }
 }
 ```
-
-Также можно настроить реакцию на падения флаки тестов для шагов, которые это поддерживают.
-Подробнее описано [здесь]({{< ref "/docs/test/FlakyTests.md" >}}).
 
 #### Custom steps
 
