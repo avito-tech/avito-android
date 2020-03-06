@@ -96,7 +96,7 @@ class ReportViewerTestReporter(
                     val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(FileReader(reportJson))
 
                     //отправляем только для упавших тестов
-                    val (stdout: String, stderr: String) = if (testRuntimeData.incident != null) {
+                    val (stdout: String, stderr: String) = if (true) {
                         logcatBuffers.getLogcat(key)
                     } else {
                         "" to ""
