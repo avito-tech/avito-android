@@ -33,8 +33,6 @@ implementation("com.avito.android:proxy-toast:$version")
 
 ## ToastRule
 
-ToastRule changes proxy toast's singleton before the test to store `showToast` invocations.
-
 ```kotlin
 @get:Rule
 val toastRule = ToastRule()
@@ -42,4 +40,8 @@ val toastRule = ToastRule()
 fun test() {
     toastRule.checks.toastDisplayedWithText("I'am a toast!")
 }
+```
+
+```kotlin
+androidTestImplementation("com.avito.android:toast-rule:$version")
 ```

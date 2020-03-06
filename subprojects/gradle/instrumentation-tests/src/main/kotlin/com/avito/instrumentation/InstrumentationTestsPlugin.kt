@@ -77,8 +77,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             }
         }
 
-
-
         project.withAndroidApp { appExtension ->
 
             // see LintWorkerApiWorkaround.md
