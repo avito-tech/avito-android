@@ -25,9 +25,22 @@ fun Project.getOptionalStringProperty(name: String, default: String, defaultIfBl
 /**
  * @param allowBlank todo false by default
  */
-fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true): String =
-    getOptionalStringProperty(name, nullIfBlank = !allowBlank)
-        ?: throw RuntimeException("Parameter: $name is required (must be not empty)")
+fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true): String {
+    return if (hasProperty(name)) {
+        val string = property(name)?.toString()
+        if (string.isNullOrBlank()) {
+            if (allowBlank) {
+                ""
+            } else {
+                throw RuntimeException("Parameter: $name is blank but required")
+            }
+        } else {
+            string
+        }
+    } else {
+        throw RuntimeException("Parameter: $name is missing but required")
+    }
+}
 
 fun Project.getOptionalIntProperty(name: String): Int? =
     try {
