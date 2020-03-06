@@ -5,11 +5,63 @@ type: docs
 
 # Mocking in tests
 
+To use mocks or require specific state you need to use suitable `@Rule` or annotation.\
+Thus, test runner knows how to prepare it for the test ([more details]({{< relref "#writing-custom-mocks-for-tests">}})).
+
 ## Mocks (internal)
 
-### Mocking network
+### Networking
 
-TBD
+#### Mocking a network on http layer
+
+```kotlin
+@get:Rule
+val mockApi = MockWebServerApiRule()
+
+@Before
+fun setUp() {
+    mockApi.registerMock(
+        Mock(
+            requestMatcher = { path.contains("1/feature/item") },
+            response = MockResponse().setBodyFromFile("assets/mock/feature/api.feature.item/v1.default.json")
+        )
+    )
+```
+
+If you need to reuse a mocking logic, compose the rule into another rule:
+
+```kotlin
+@get:Rule
+val mockApi = MockWebServerApiRule()
+
+@get:Rule
+val mockFeature = MockFeatureApiRule(mockApi)
+
+class MockFeatureApiRule(private val mockApi: MockWebServerApiRule) : SimpleRule() {
+    
+    override fun before() {
+        ...
+```
+
+#### Mocking a network on Retrofit layer
+
+```kotlin
+@get:Rule
+val apiRule = MockApiRule()
+
+@Before
+fun setUp() {
+    apiRule.stub {
+        getFeatureItem.success()
+    }
+}
+```
+
+All stubs for API live in `AvitoRequestRegistry`
+
+#### Using a real network implementation
+
+It's a default behavior if you haven't used any mocks for a network.
 
 ### Mocking analytics
 
