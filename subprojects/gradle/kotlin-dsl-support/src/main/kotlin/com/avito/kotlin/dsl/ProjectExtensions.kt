@@ -8,7 +8,7 @@ import kotlin.reflect.KProperty
 //TODO these methods should return Property<X>
 
 /**
- * @param nullIfBlank there may be cases when it's ok to pass empty string to override
+ * @param nullIfBlank we accept cases when user passes empty string to override
  * todo true by default, false to not break anything that rely on previous behavior
  */
 fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false): String? =
