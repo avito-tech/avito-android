@@ -5,11 +5,73 @@ type: docs
 
 # Mocking in tests
 
+To use a specific state you need to find a suitable `@Rule` or annotation.\
+Thus, test runner knows how to prepare it for the test ([more details]({{< relref "#writing-custom-mocks-for-tests">}})).
+
 ## Mocks (internal)
 
-### Mocking network
+### Networking
 
-TBD
+#### Mocking a network on http layer
+
+```kotlin
+@get:Rule
+val mockApi = MockWebServerApiRule()
+
+@Before
+fun setUp() {
+    mockApi.registerMock(
+        Mock(
+            requestMatcher = { path.contains("1/feature/item") },
+            response = MockResponse().setBodyFromFile("assets/mock/feature/api.feature.item/v1.default.json")
+        )
+    )
+```
+
+If you need to reuse a mocking logic, compose the rule into another rule:
+
+```kotlin
+@get:Rule
+val mockApi = MockWebServerApiRule()
+
+@get:Rule
+val mockFeature = MockFeatureApiRule(mockApi)
+
+class MockFeatureApiRule(private val mockApi: MockWebServerApiRule) : SimpleRule() {
+    
+    override fun before() {
+        ...
+```
+
+#### Mocking a network on Retrofit layer
+
+```kotlin
+@get:Rule
+val apiRule = MockApiRule()
+
+@Before
+fun setUp() {
+    apiRule.stub {
+        getFeatureItem.success()
+    }
+}
+```
+
+All stubs for API live in `AvitoRequestRegistry`
+
+#### Using a real network implementation
+
+It's a default behavior if you haven't used any mocks for a network.
+
+#### Override an API endpoint
+
+You can set a custom endpoint for API. 
+It'll be used for all request including internal integration services.
+
+```kotlin
+@Host("http://...")
+class MyAwesomeTests {}
+```
 
 ### Mocking analytics
 
@@ -26,7 +88,7 @@ val analytics = AnalyticsRule()
 analytics.checks.assertEventTracked<ShowSearchEvent>()
 ```
 
-### Mocking location
+### Mocking a location
 
 `LocationRule` serves for mocking location in tests.
 
@@ -41,7 +103,7 @@ locationRule.setLocation(getTestLocation())
 in `BaseGeoProvider`. That is technically possible that device location providers would give better location that was mocked. 
 To avoid that mock location with high accuracy.
 
-### Mocking User-Agent
+### Mocking a User-Agent
 
 It is possible to mock User-Agent for test suite or for specific test with `@UserAgent` annotation. Here's an example:
 
@@ -51,6 +113,13 @@ class MyAwesomeTests {}
 ```
 
 This annotation is available in all types of tests but make sense mostly for functional tests.
+
+#### Mocking a device id
+
+```kotlin
+@DeviceId("abcdefg123456")
+class MyTest { ... }
+```
 
 ## Writing custom mocks for tests
 
