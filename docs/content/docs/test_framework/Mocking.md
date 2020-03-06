@@ -65,7 +65,7 @@ It's a default behavior if you haven't used any mocks for a network.
 
 #### Override an API endpoint
 
-You can set a custom endpoint for API. 
+You can set a custom endpoint for API.
 It'll be used for all request including internal integration services.
 
 ```kotlin
@@ -119,6 +119,27 @@ This annotation is available in all types of tests but make sense mostly for fun
 ```kotlin
 @DeviceId("abcdefg123456")
 class MyTest { ... }
+```
+
+## Mocking Preferences
+
+All kind of tests are using real implementations of `com.avito.android.util.preferences.Preferences`, not mocked ones.
+But it's unnecessary to mock `Preferences` somehow because all test data is [cleared]({{< ref "/docs/test/TestDataClearing.md" >}}) between tests,
+including databases and `SharedPreferences` files.
+
+All entities that depend on `Preferences` are gathered together in `PreferencesRule`. You can access that entities without going into details of `Preferences`
+implementations/mocks like the following:
+
+```kotlin
+@get:Rule
+val preferencesRule = PreferencesRule()
+
+@Test
+fun profileTest() {
+    // ...
+    preferencesRule.mutableProfileInfoStorage.saveProfileInfo(info)
+    // ...
+}
 ```
 
 ## Writing custom mocks for tests

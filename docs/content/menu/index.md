@@ -46,6 +46,7 @@ headless: true
     - [Work Manager Testing]({{< ref "/docs/test/WorkManager.md" >}})
     - [Flaky Tests]({{< ref "/docs/test/FlakyTests.md" >}})
     - [Toast]({{< ref "/docs/test/Toast.md" >}})
+    - [Test Data Clearing]({{< ref "/docs/test/TestDataClearing.md" >}})
 - [Test framework]({{< ref "/docs/test_framework/TestFramework.md" >}})
     - [Mocking]({{< ref "/docs/test_framework/Mocking.md" >}})
     - [Internals]({{< ref "/docs/test_framework/Internals.md" >}})
