@@ -78,6 +78,9 @@ if (syncAndroidModules.toBoolean()) {
     include(":subprojects:android-test:test-report")
     include(":subprojects:android-test:test-inhouse-runner")
     include(":subprojects:android-test:test-app")
+    include(":subprojects:android-test:toast-rule")
+
+    include(":subprojects:android-lib:proxy-toast")
 }
 
 pluginManagement {
@@ -159,7 +162,7 @@ pluginManagement {
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
 
                 pluginId == "com.slack.keeper" ->
-                    useModule("com.slack.keeper:keeper:0.1.0")
+                    useModule("com.slack.keeper:keeper:0.2.0")
             }
         }
     }
