@@ -2,4 +2,4 @@
 
 source $(dirname $0)/_main.sh
 
-runInBuilder "./gradlew publishRelease ${GRADLE_ARGS}"
+runInBuilder "./gradlew publishRelease ${GRADLE_ARGS} --no-parallel"

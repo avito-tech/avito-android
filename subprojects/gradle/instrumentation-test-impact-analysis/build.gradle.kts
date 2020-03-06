@@ -5,12 +5,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-val kotlinHtmlVersion: String by project
-val bcelVersion: String by project
-val gsonVersion: String by project
-val kotsonVersion: String by project
-
 dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:impact-shared"))
@@ -24,12 +18,12 @@ dependencies {
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:ui-test-bytecode-analyzer"))
-    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinHtmlVersion")
-    implementation("org.apache.bcel:bcel:$bcelVersion")
-    implementation("com.google.code.gson:gson:$gsonVersion")
-    implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
+    implementation(Dependencies.kotlinCompilerEmbeddable)
+    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.kotlinHtml)
+    implementation(Dependencies.bcel)
+    implementation(Dependencies.gson)
+    implementation(Dependencies.kotson)
 
     testImplementation(project(":subprojects:gradle:test-project"))
 }

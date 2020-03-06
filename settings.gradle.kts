@@ -9,7 +9,6 @@ include(":subprojects:gradle:build-properties")
 include(":subprojects:gradle:cd")
 include(":subprojects:gradle:dependencies-lint")
 include(":subprojects:gradle:docs")
-include(":subprojects:gradle:enforce-repos")
 include(":subprojects:gradle:module-types")
 include(":subprojects:gradle:bitbucket")
 include(":subprojects:gradle:design-screenshots")
@@ -37,6 +36,7 @@ include(":subprojects:gradle:runner:shared")
 include(":subprojects:gradle:runner:shared-test")
 include(":subprojects:gradle:docker")
 include(":subprojects:gradle:sentry-config")
+include(":subprojects:gradle:graphite-config")
 include(":subprojects:gradle:statsd-config")
 include(":subprojects:gradle:android")
 include(":subprojects:gradle:lint-report")
@@ -59,6 +59,7 @@ include(":subprojects:common:file-storage")
 include(":subprojects:common:test-okhttp")
 include(":subprojects:common:report-viewer")
 include(":subprojects:common:sentry")
+include(":subprojects:common:graphite")
 include(":subprojects:common:statsd")
 include(":subprojects:common:logger")
 
@@ -77,6 +78,9 @@ if (syncAndroidModules.toBoolean()) {
     include(":subprojects:android-test:test-report")
     include(":subprojects:android-test:test-inhouse-runner")
     include(":subprojects:android-test:test-app")
+    include(":subprojects:android-test:toast-rule")
+
+    include(":subprojects:android-lib:proxy-toast")
 }
 
 pluginManagement {
@@ -149,7 +153,7 @@ pluginManagement {
             val pluginId = requested.id.id
             when {
                 pluginId.startsWith("com.android.") ->
-                    useModule("com.android.tools.build:gradle:$androidGradlePluginVersion")
+                    useModule("com.android.tools.build:gradle:3.5.3")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
                     useVersion(kotlinVersion)
@@ -158,7 +162,7 @@ pluginManagement {
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
 
                 pluginId == "com.slack.keeper" ->
-                    useModule("com.slack.keeper:keeper:0.1.0")
+                    useModule("com.slack.keeper:keeper:0.2.0")
             }
         }
     }

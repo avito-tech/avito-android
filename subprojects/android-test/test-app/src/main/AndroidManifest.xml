@@ -37,5 +37,6 @@
         <activity android:name=".StatefulRecyclerViewAdapterActivity" />
         <activity android:name=".ViewPagerActivity" />
         <activity android:name=".RecyclerDescendantLevelsActivity" />
+        <activity android:name=".ToastActivity" />
     </application>
 </manifest>

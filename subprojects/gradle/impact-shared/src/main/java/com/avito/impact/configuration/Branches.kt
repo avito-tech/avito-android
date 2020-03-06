@@ -9,7 +9,7 @@ internal fun isBranchProtected(branch: String, protectedBranches: Set<String>): 
     } else {
         protectedBranches.any { pattern ->
 
-            require(pattern.isNotBlank()) { "protectedBranchesPattern must not be empty string" }
+            require(pattern.isNotBlank()) { "protectedBranches pattern for $branch must non-empty" }
 
             val patternMatcher = AntPathMatcher.Builder()
                 .withIgnoreCase()

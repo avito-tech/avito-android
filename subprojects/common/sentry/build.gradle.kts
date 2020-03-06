@@ -4,8 +4,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val sentryVersion: String by project
-
 dependencies {
-    api("io.sentry:sentry:$sentryVersion")
+    api(Dependencies.sentry)
 }

@@ -5,12 +5,10 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-
 dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation(Dependencies.gradle.kotlinPlugin)
 
     testImplementation(project(":subprojects:gradle:test-project"))
 }

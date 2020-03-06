@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    val r8Version: String by project
     dependencies {
-        classpath("com.android.tools:r8:$r8Version")
+        classpath(Dependencies.r8)
     }
 }
 
@@ -24,17 +23,13 @@ plugins {
 
 val artifactoryUrl: String? by project
 val projectVersion: String by project
-val buildToolsVersion: String by project
-val javaVersion: String by project
-val compileSdkVersion: String by project
-val kotlinVersion: String by project
-val junit5Version: String by project
-val junit5PlatformVersion: String by project
-val truthVersion: String by project
-val buildTools = requireNotNull(project.properties["buildToolsVersion"]).toString()
-val compileSdk = requireNotNull(project.properties["compileSdkVersion"]).toString().toInt()
-val targetSdk = requireNotNull(project.properties["targetSdkVersion"]).toString()
-val minSdk = requireNotNull(project.properties["minSdkVersion"]).toString()
+/**
+ * We use exact version to provide consistent environment and avoid build cache issues
+ * (AGP tasks has artifacts from build tools)
+ */
+val buildTools = "29.0.2"
+val javaVersion = JavaVersion.VERSION_1_8
+val compileSdk = 29
 
 val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
     group = "publication"
@@ -107,13 +102,13 @@ subprojects {
             compileSdkVersion(compileSdk)
 
             compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_1_8
-                targetCompatibility = JavaVersion.VERSION_1_8
+                sourceCompatibility = javaVersion
+                targetCompatibility = javaVersion
             }
 
             defaultConfig {
-                minSdkVersion(minSdk)
-                targetSdkVersion(targetSdk)
+                minSdkVersion(21)
+                targetSdkVersion(28)
             }
 
             lintOptions {
@@ -203,7 +198,7 @@ subprojects {
             tasks {
                 withType<KotlinCompile> {
                     kotlinOptions {
-                        jvmTarget = javaVersion
+                        jvmTarget = javaVersion.toString()
                         allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
                         freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
                     }
@@ -211,7 +206,7 @@ subprojects {
             }
 
             dependencies {
-                "implementation"("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+                "implementation"(Dependencies.kotlinStdlib)
             }
         }
     }
@@ -227,9 +222,9 @@ subprojects {
                 @Suppress("UnstableApiUsage")
                 useJUnitPlatform()
 
-                systemProperty("kotlinVersion", kotlinVersion)
-                systemProperty("compileSdkVersion", compileSdkVersion)
-                systemProperty("buildToolsVersion", buildToolsVersion)
+                systemProperty("kotlinVersion", Dependencies.Versions.kotlin)
+                systemProperty("compileSdkVersion", compileSdk)
+                systemProperty("buildToolsVersion", buildTools)
 
                 /**
                  * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
@@ -241,22 +236,22 @@ subprojects {
         }
 
         dependencies {
-            "testImplementation"("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
+            "testImplementation"(Dependencies.test.junitJupiterApi)
 
-            "testRuntimeOnly"("org.junit.platform:junit-platform-runner:$junit5PlatformVersion")
-            "testRuntimeOnly"("org.junit.platform:junit-platform-launcher:$junit5PlatformVersion")
-            "testRuntimeOnly"("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
+            "testRuntimeOnly"(Dependencies.test.junitPlatformRunner)
+            "testRuntimeOnly"(Dependencies.test.junitPlatformLauncher)
+            "testRuntimeOnly"(Dependencies.test.junitJupiterEngine)
 
             "testImplementation"(gradleTestKit())
-            "testImplementation"("com.google.truth:truth:$truthVersion")
+            "testImplementation"(Dependencies.test.truth)
         }
     }
 
     plugins.withId("java-test-fixtures") {
 
         dependencies {
-            "testFixturesImplementation"("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
-            "testFixturesImplementation"("com.google.truth:truth:$truthVersion")
+            "testFixturesImplementation"(Dependencies.test.junitJupiterApi)
+            "testFixturesImplementation"(Dependencies.test.truth)
         }
     }
 
@@ -275,7 +270,7 @@ val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
 tasks.withType<Wrapper> {
     //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = project.properties["gradleVersion"] as String
+    gradleVersion = "6.2.1"
 }
 
 project.gradle.startParameter.run { setTaskNames(taskNames + ":${installGitHooksTask.name}") }

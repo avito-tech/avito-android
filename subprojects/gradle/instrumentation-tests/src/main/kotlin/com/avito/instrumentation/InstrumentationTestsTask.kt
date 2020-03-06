@@ -89,6 +89,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
 
     @Input
     @Optional
+    val suppressFlaky = objects.property<Boolean>()
+
+    @Input
+    @Optional
     val targetCommit = objects.property<String?>()
 
     @Input
@@ -161,6 +165,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     sourceCommitHash = sourceCommitHash.get(),
                     testedVariantName = testedVariantName.get(),
                     suppressFailure = suppressFailure.getOrElse(false),
+                    suppressFlaky = suppressFlaky.getOrElse(false),
                     impactAnalysisResult = impactAnalysisResult.asFile.orNull,
                     logger = ciLogger,
                     outputDir = output.get().asFile,

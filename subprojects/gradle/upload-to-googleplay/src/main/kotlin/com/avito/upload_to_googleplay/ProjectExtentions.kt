@@ -9,7 +9,7 @@ internal val Project.playConsoleJsonKey by ProjectProperty.lazy { project ->
     val keyPath = project.getOptionalStringProperty("cd.google.play.key.file")
     if (keyPath != null) {
         val keyFile = project.rootProject.file(keyPath)
-        require(keyFile.exists()) { "Can't find google play key file" }
+        require(keyFile.exists()) { "Can't find google play key file in $keyPath" }
         Providers.of(keyFile)
     } else {
         Providers.notDefined()

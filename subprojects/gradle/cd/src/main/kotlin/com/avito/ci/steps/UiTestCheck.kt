@@ -11,7 +11,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
 open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
-    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
+    ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
+    FlakyAwareBuildStep by FlakyAwareBuildStep.Impl() {
 
     var configurations = mutableListOf<String>()
 
@@ -53,6 +54,7 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
                 // TODO: can we do it in "configure" block anyway?
                 uiTestTask.get().also { task ->
                     task.suppressFailure.set(this@UiTestCheck.suppressFailures)
+                    task.suppressFlaky.set(this@UiTestCheck.suppressFlaky)
                     task.sendStatistics.set(this@UiTestCheck.sendStatistics)
 
                     // TODO: how to switch off impact analysis?

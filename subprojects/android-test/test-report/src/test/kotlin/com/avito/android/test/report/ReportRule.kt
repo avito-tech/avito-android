@@ -12,13 +12,13 @@ import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
+import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import io.sentry.SentryClient
 import io.sentry.SentryClientFactory
 import okhttp3.OkHttpClient
 import okhttp3.mock.MockInterceptor
@@ -109,7 +109,8 @@ internal class ReportRule(
         featuresFromAnnotation: List<String> = emptyList(),
         featuresFromPackage: List<String> = emptyList(),
         priority: TestCasePriority? = null,
-        behavior: TestCaseBehavior? = null
+        behavior: TestCaseBehavior? = null,
+        flakiness: Flakiness = Flakiness.Stable
     ) {
         initTestCase(
             testMetadata = TestMetadata(
@@ -126,7 +127,8 @@ internal class ReportRule(
                 externalId = externalId,
                 tagIds = tagIds,
                 featureIds = featureIds,
-                kind = kind
+                kind = kind,
+                flakiness = flakiness
             )
         )
     }

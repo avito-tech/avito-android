@@ -897,7 +897,8 @@ class RunnerIntegrationTest {
         testApplication = "test application path",
         testPackage = "test package",
         deviceConfiguration = DeviceConfiguration(
-            api = apiLevel
+            api = apiLevel,
+            model = "model"
         )
     )
 

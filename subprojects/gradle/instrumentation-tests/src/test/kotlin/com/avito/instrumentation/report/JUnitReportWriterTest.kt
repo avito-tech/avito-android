@@ -62,15 +62,7 @@ internal class JUnitReportWriterTest {
                 reportedTests = listOf(
                     failed
                 ),
-                failed = HasFailedTestDeterminer.Result.Failed(
-                    failed = listOf(failed),
-                    suppressed = HasFailedTestDeterminer.Result.Failed.Suppressed(
-                        tests = emptyList(),
-                        reason = HasFailedTestDeterminer.Result.Failed.Suppressed.Reason.SuppressedByGroups(
-                            emptyList()
-                        )
-                    )
-                ),
+                failed = HasFailedTestDeterminer.Result.Failed(failed = listOf(failed)),
                 notReported = HasNotReportedTestsDeterminer.Result.AllTestsReported
             )
         )

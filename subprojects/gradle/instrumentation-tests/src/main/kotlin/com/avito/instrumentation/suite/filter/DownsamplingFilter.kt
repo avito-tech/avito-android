@@ -13,7 +13,7 @@ class DownsamplingFilter(
 
     init {
         require(factor > 0.0 && factor <= 1.0) {
-            "factor must be in (0.0; 1.0]"
+            "downsampling factor must be in (0.0; 1.0]"
         }
     }
 

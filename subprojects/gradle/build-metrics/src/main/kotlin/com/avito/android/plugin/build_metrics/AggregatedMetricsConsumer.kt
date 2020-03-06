@@ -30,7 +30,7 @@ internal class AggregatedMetricsConsumer(
         get() = action == "Build"
 
     init {
-        check(project.isRoot())
+        check(project.isRoot()) { "Project ${project.path} must be root" }
 
         project.subprojects.forEach { module ->
             module.pluginManager.withPlugin("com.android.application") {

@@ -5,10 +5,8 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val androidGradlePluginVersion: String by project
-
 dependencies {
-    implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
+    implementation(Dependencies.gradle.androidPlugin)
 
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:utils"))

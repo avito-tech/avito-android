@@ -158,6 +158,42 @@ internal class ComparedTestComparisonTest {
     }
 
     @Test
+    fun `failed - returns 0 - if less than zero and should be greater and less than static threshold`() {
+        assertThat(
+            givenTestComparison(
+                currentSampleIs = LESS,
+                meanDiff = -1.0,
+                metric = "FPS",
+                thresholdStatic = 2.0
+            ).failed())
+            .hasSize(0)
+    }
+
+    @Test
+    fun `failed - returns 0 - if greater than zero and should be greater and greater than static threshold`() {
+        assertThat(
+            givenTestComparison(
+                currentSampleIs = GREATER,
+                meanDiff = 1.0,
+                metric = "FPS",
+                thresholdStatic = 0.5
+            ).failed())
+            .hasSize(0)
+    }
+
+    @Test
+    fun `failed - returns 1 - if less than zero and should be greater and greater than static threshold`() {
+        assertThat(
+            givenTestComparison(
+                currentSampleIs = LESS,
+                meanDiff = -1.0,
+                metric = "FPS",
+                thresholdStatic = 0.5
+            ).failed())
+            .hasSize(1)
+    }
+
+    @Test
     fun `failed - returns 1 - if less than zero and should be greater and greater than threshold`() {
         assertThat(
             givenTestComparison(
@@ -187,6 +223,7 @@ internal class ComparedTestComparisonTest {
         //current-previous
         meanDiff: Double = 0.0,
         threshold: Double = 0.0,
+        thresholdStatic: Double = 0.0,
         metric: String = "FPS"
     ): Comparison {
         return Comparison(
@@ -198,7 +235,8 @@ internal class ComparedTestComparisonTest {
                     statistic,
                     pValue,
                     meanDiff,
-                    threshold
+                    threshold,
+                    thresholdStatic
                 )
             )
         )

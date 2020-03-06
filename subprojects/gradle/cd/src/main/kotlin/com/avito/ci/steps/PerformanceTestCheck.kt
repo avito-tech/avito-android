@@ -24,7 +24,7 @@ open class PerformanceTestCheck(context: String) : SuppressibleBuildStep(context
             group = "cd"
             description = "Run performance tests"
 
-            require(configuration.isNotBlank()) { "performance configuration should be set" }
+            require(configuration.isNotBlank()) { "performance.configuration must be set" }
 
             val instrumentationTask = project.tasks.instrumentationTask(configuration)
 

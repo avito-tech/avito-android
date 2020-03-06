@@ -58,7 +58,7 @@ open class TargetConfiguration(val name: String) : Serializable {
     fun validate() {
         scheduling.validate()
         rerunScheduling?.validate()
-        require(deviceName.isNotBlank())
+        require(deviceName.isNotBlank()) { "deviceName must be set" }
     }
 
     data class Data(

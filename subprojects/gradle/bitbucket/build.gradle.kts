@@ -4,11 +4,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val funktionaleVersion: String by project
-val okhttpVersion: String by project
-val retrofitVersion: String by project
-val sentryVersion: String by project
-
 dependencies {
     implementation(gradleApi())
 
@@ -17,12 +12,12 @@ dependencies {
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
-    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
-    implementation("io.sentry:sentry:$sentryVersion")
-    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    implementation(Dependencies.retrofit)
+    implementation(Dependencies.retrofitConverterGson)
+    implementation(Dependencies.okhttp)
+    implementation(Dependencies.okhttpLogging)
+    implementation(Dependencies.sentry)
+    implementation(Dependencies.funktionaleTry)
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:common:test-okhttp"))

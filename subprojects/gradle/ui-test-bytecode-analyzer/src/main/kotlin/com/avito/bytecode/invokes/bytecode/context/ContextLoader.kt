@@ -18,7 +18,7 @@ class ContextLoader : EmptyVisitor() {
         require(directories.isNotEmpty()) { "can't load classes from empty list of directories" }
 
         directories.forEach { directory ->
-            require(directory.isDirectory) { "$directory must be directory" }
+            require(directory.isDirectory) { "$directory must be a directory" }
 
             directory.walk()
                 .filter { it.isFile && it.extension == CLASS_FILE_POSTFIX }

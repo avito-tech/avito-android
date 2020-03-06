@@ -62,7 +62,7 @@ internal enum class Metric(
     FPS(
         "FPS",
         shouldBeLess = false,
-        diffThreshold = 3.0,
+        diffThreshold = 2.0,
         isBlocker = true
     ),
     PROPER_FRAMES_PERCENT(
@@ -74,7 +74,7 @@ internal enum class Metric(
     ACTIVITY_STARTUP_TIME(
         "ActivityStartupTime",
         shouldBeLess = true,
-        diffThreshold = 150.0,
+        diffThreshold = 200.0,
         isBlocker = true
     ),
     JUNKY_FRAME_MAX_DURATION(
@@ -113,16 +113,30 @@ internal fun ComparedTest.Comparison.failed() =
             } else {
                 val greaterThanExpected = it.greaterThanExpected(metric)
                 val lessThanExpected = it.lessThanExpected(metric)
-                val significantThreshold = significantThreshold(
-                    value = it.value.meanDiff,
-                    threshold = metric.diffThreshold
-                )
+                val significantThreshold = isSignificant(it.value, metric)
                 val blocker = metric.isBlocker
                 ((lessThanExpected || greaterThanExpected)
                     && significantThreshold
                     && blocker)
             }
         }
+
+private fun isSignificant(
+    series: ComparedTest.Series,
+    metric: Metric
+): Boolean {
+    return if (abs(series.thresholdStatic) < EPSILON) {
+        significantThreshold(
+            value = series.meanDiff,
+            threshold = metric.diffThreshold
+        )
+    } else {
+        significantThreshold(
+            value = series.meanDiff,
+            threshold = series.thresholdStatic
+        )
+    }
+}
 
 internal fun ComparedTest.Comparison.performedMuchBetterThanUsual() =
     this.series
@@ -146,3 +160,4 @@ internal fun ComparedTest.Comparison.performedMuchBetterThanUsual() =
 
 private const val NEW_LINE = "\n"
 private const val PERFORMER = "Performer"
+private const val EPSILON = 1e-9

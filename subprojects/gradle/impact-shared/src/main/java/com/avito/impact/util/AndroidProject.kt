@@ -10,7 +10,7 @@ import java.io.File
 class AndroidProject(project: Project) : Project by project {
 
     init {
-        require(project.isAndroid()) { "Trying to create AndroidProject from $project" }
+        require(project.isAndroid()) { "Trying to create AndroidProject from non-android ${project.path}" }
     }
 
     val debug = Variant(

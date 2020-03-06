@@ -42,7 +42,8 @@ data class SimpleRunTest(
     val tagIds: List<Int>,
     val priority: TestCasePriority?,
     val behavior: TestCaseBehavior?,
-    val kind: Kind
+    val kind: Kind,
+    val flakiness: Flakiness
 ) {
 
     override fun toString(): String = name

@@ -50,7 +50,7 @@ interface StatsDSender {
         }
 
         private val errorHandler = StatsDClientErrorHandler {
-            logger.invoke("statsd", it)
+            logger.invoke("statsd error", it)
         }
     }
 }

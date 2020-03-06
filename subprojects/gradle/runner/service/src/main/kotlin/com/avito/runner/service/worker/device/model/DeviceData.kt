@@ -10,6 +10,7 @@ data class DeviceData(
 fun Device.getData(): DeviceData = DeviceData(
     serial = id,
     configuration = DeviceConfiguration(
-        api = api
+        api = api,
+        model = model
     )
 )

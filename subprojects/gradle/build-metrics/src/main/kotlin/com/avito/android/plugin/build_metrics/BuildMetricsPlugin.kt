@@ -4,6 +4,7 @@ import com.avito.android.gradle.profile.ProfileEventAdapter
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getBooleanProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
@@ -13,6 +14,7 @@ import org.gradle.api.Project
 import org.gradle.internal.buildevents.BuildStartedTime
 import org.gradle.internal.logging.LoggingOutputInternal
 import org.gradle.internal.time.Clock
+import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.support.serviceOf
 import java.io.File
 
@@ -34,6 +36,9 @@ open class BuildMetricsPlugin : Plugin<Project> {
             SentryConsumer(project),
             buildTraceConsumer(project)
         ))
+        project.tasks.register<CollectTeamcityMetricsTask>("collectTeamcityMetrics") {
+            buildId.set(project.getOptionalStringProperty("avito.build.metrics.teamcityBuildId"))
+        }
     }
 
     private fun aggregatedConsumer(project: Project): MetricsConsumer {

@@ -6,18 +6,8 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val gsonVersion: String by project
-val kotlinCoroutinesVersion: String by project
-val teamcityRestClientVersion: String by project
-val retrofitVersion: String by project
-val funktionaleVersion: String by project
-val kotsonVersion: String by project
-val mockitoKotlinVersion: String by project
-val mockitoJunit5Version: String by project
-val okhttpVersion: String by project
-
 dependencies {
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+    api(Dependencies.coroutinesCore)
 
     implementation(project(":subprojects:gradle:instrumentation-test-impact-analysis"))
     implementation(project(":subprojects:gradle:runner:client"))
@@ -40,22 +30,22 @@ dependencies {
     implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:gradle:kubernetes"))
     implementation(project(":subprojects:gradle:upload-cd-build-result"))
-    implementation("org.smali:dexlib2:2.3")
-    implementation("com.google.code.gson:gson:$gsonVersion")
-    implementation("org.jetbrains.teamcity:teamcity-rest-client:$teamcityRestClientVersion")
-    implementation("org.apache.commons:commons-text:1.6")
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
-    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    implementation(Dependencies.dexlib)
+    implementation(Dependencies.gson)
+    implementation(Dependencies.teamcityClient)
+    implementation(Dependencies.commonsText)
+    implementation(Dependencies.retrofit)
+    implementation(Dependencies.kotson)
+    implementation(Dependencies.funktionaleTry)
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:gradle:logging")))
     testImplementation(testFixtures(project(":subprojects:gradle:slack")))
     testImplementation(testFixtures(project(":subprojects:gradle:utils")))
     testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
-    testImplementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
-    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunit5Version")
-    testImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
+    testImplementation(Dependencies.test.mockitoKotlin)
+    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.test.okhttpMockWebServer)
 
     testFixturesImplementation(project(":subprojects:gradle:kubernetes"))
     testFixturesImplementation(project(":subprojects:gradle:utils"))
@@ -64,8 +54,8 @@ dependencies {
     testFixturesImplementation(project(":subprojects:gradle:slack"))
     testFixturesImplementation(project(":subprojects:common:statsd"))
     testFixturesImplementation(project(":subprojects:common:report-viewer"))
-    testFixturesImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    testFixturesImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    testFixturesImplementation(Dependencies.test.okhttpMockWebServer)
+    testFixturesImplementation(Dependencies.funktionaleTry)
 }
 
 gradlePlugin {

@@ -138,7 +138,7 @@ class InstrumentationTestsAction(
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
         suppressFailure = params.suppressFailure,
-        suppressGroups = params.instrumentationConfiguration.suppressGroups
+        suppressFlaky = params.suppressFlaky
     ),
     private val slackClient: SlackClient = SlackClient.Impl(params.slackToken, workspace = "avito"),
     private val bitbucket: Bitbucket = Bitbucket.create(
@@ -317,6 +317,7 @@ class InstrumentationTestsAction(
         val projectName: String,
         val testedVariantName: String,
         val suppressFailure: Boolean,
+        val suppressFlaky: Boolean,
         val impactAnalysisResult: File?,
         val logger: CILogger,
         val outputDir: File, //todo валидация на соответствие teamcity конфигу

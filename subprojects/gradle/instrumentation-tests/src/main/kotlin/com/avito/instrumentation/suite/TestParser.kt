@@ -7,6 +7,7 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.instrumentation.suite.dex.AnnotationData
 import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.report.model.DeviceName
+import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
@@ -53,7 +54,13 @@ internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStatic
         .find { it.name == Behavior::class.java.name }
         ?.getEnumValue("behavior")?.let { TestCaseBehavior.fromName(it) },
 
-    kind = determineKind(testInApk.annotations)
+    kind = determineKind(testInApk.annotations),
+
+    flakiness = testInApk.annotations
+        .find { it.name == FLAKY_NAME }
+        ?.getStringValue(FLAKY_REASON_KEY)
+        ?.let { reason -> Flakiness.Flaky(reason)}
+        ?: Flakiness.Stable
 )
 
 private val annotationsToKindMap = mapOf(
@@ -96,3 +103,6 @@ private const val TAG_ID_VALUE_KEY = "value"
 
 private const val FEATURE_ID_NAME = "com.avito.android.test.annotations.FeatureId"
 private const val FEATURE_ID_VALUE_KEY = "value"
+
+private const val FLAKY_NAME = "com.avito.android.test.annotations.Flaky"
+private const val FLAKY_REASON_KEY = "reason"

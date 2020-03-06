@@ -10,11 +10,17 @@ interface TeamcityCredentials : Serializable {
     val user: String
     val password: String
 
-    class Impl(project: Project) : TeamcityCredentials,
-        Serializable {
-        override val url: String by lazy { project.getMandatoryStringProperty("teamcityUrl") }
-        override val user: String by lazy { project.getMandatoryStringProperty("teamcityApiUser") }
-        override val password: String by lazy { project.getMandatoryStringProperty("teamcityApiPassword") }
+    class Impl(
+        override val url: String,
+        override val user: String,
+        override val password: String
+    ) : TeamcityCredentials, Serializable {
+
+        constructor(project: Project) : this(
+            project.getMandatoryStringProperty("teamcityUrl"),
+            project.getMandatoryStringProperty("teamcityApiUser"),
+            project.getMandatoryStringProperty("teamcityApiPassword")
+        )
     }
 }
 

@@ -30,7 +30,7 @@ class IntentionsRouter(
     }
 
     private fun State.routingIdentifier(): String = State(
-        layers = layers.filterIsInstance<State.Layer.ApiLevel>()
+        layers = layers.filterIsInstance<State.Layer.Model>() + layers.filterIsInstance<State.Layer.ApiLevel>()
     )
         .digest
 }

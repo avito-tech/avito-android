@@ -5,11 +5,13 @@ import java.io.Serializable
 sealed class Device : Serializable {
 
     abstract val name: String
+    abstract val model: String
     abstract val api: Int
 
     sealed class Emulator(
         override val name: String,
         override val api: Int,
+        override val model: String = "Android_SDK_built_for_x86",
         val image: String,
         val gpu: Boolean = false,
         val cpuCoresLimit: String,
@@ -82,15 +84,24 @@ sealed class Device : Serializable {
 
     sealed class Phone(
         override val name: String,
+        override val model: String,
         override val api: Int,
         val proxyImage: String
     ) : Device() {
 
         // TODO: api aware real devices reservations
-        object RealPhone : Phone(
+        object Pixel3Phone : Phone(
             name = "real_phone",
-            api = 22,
-            proxyImage = "android/device:8299de168b"
+            model = "Pixel_3",
+            api = 29,
+            proxyImage = "android/device:54bb1105d2"
+        )
+
+        object SamsungS8Phone : Phone(
+            name = "real_phone",
+            model = "SM_G950F",
+            api = 26,
+            proxyImage = "android/device:54bb1105d2"
         )
     }
 }

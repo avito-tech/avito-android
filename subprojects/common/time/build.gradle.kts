@@ -5,8 +5,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-
 dependencies {
-    testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    testFixturesImplementation(Dependencies.kotlinStdlib)
 }

@@ -8,8 +8,6 @@ import java.io.Serializable
 @Suppress("MemberVisibilityCanBePrivate")
 open class InstrumentationConfiguration(val name: String) {
 
-    var suppressGroups: List<String> = emptyList()
-
     var instrumentationParams: Map<String, String> = emptyMap()
 
     /**
@@ -62,7 +60,7 @@ open class InstrumentationConfiguration(val name: String) {
     }
 
     fun validate() {
-        require(kubernetesNamespace.isNotBlank())
+        require(kubernetesNamespace.isNotBlank()) { "kubernetesNamespace must be set" }
         targets.forEach { it.validate() }
     }
 
@@ -73,7 +71,6 @@ open class InstrumentationConfiguration(val name: String) {
 
         return Data(
             name = name,
-            suppressGroups = suppressGroups,
             instrumentationParams = mergedInstrumentationParameters,
             tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
             rerunFailedTests = rerunFailedTests,
@@ -93,7 +90,6 @@ open class InstrumentationConfiguration(val name: String) {
 
     data class Data(
         val name: String,
-        val suppressGroups: List<String>,
         val instrumentationParams: InstrumentationParameters,
         val tryToReRunOnTargetBranch: Boolean,
         val reportFlakyTests: Boolean,
