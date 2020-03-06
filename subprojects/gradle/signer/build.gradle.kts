@@ -5,10 +5,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val funktionaleVersion: String by project
-val androidGradlePluginVersion: String by project
-val okhttpVersion: String by project
-
 dependencies {
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:utils"))
@@ -17,14 +13,14 @@ dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:files"))
 
-    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
-    implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
-    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
+    implementation(Dependencies.funktionaleTry)
+    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.okhttp)
+    implementation(Dependencies.okhttpLogging)
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:utils"))
-    testCompile("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
+    testCompile(Dependencies.test.okhttpMockWebServer)
 }
 
 gradlePlugin {

@@ -4,12 +4,9 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val bcelVersion: String by project
-val gsonVersion: String by project
-
 dependencies {
-    implementation("org.apache.bcel:bcel:$bcelVersion")
-    implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation(Dependencies.bcel)
+    implementation(Dependencies.gson)
 
     testImplementation(project(":subprojects:gradle:test-project"))
 }

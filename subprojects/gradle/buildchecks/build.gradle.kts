@@ -5,12 +5,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-val funktionaleVersion: String by project
-val androidGradlePluginVersion: String by project
-val statsdVersion: String by project
-val sentryVersion: String by project
-
 dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))
@@ -21,9 +15,9 @@ dependencies {
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
-    implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
+    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.funktionaleTry)
+    implementation(Dependencies.gradle.androidPlugin)
 
     //for test
     implementation(project(":subprojects:gradle:module-types"))

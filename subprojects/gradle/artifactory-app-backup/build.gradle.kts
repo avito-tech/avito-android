@@ -6,14 +6,12 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val androidGradlePluginVersion: String by project
-
 dependencies {
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:signer"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:upload-cd-build-result"))
-    implementation("com.android.tools.build:gradle:$androidGradlePluginVersion")
+    implementation(Dependencies.gradle.androidPlugin)
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:common:test-okhttp"))

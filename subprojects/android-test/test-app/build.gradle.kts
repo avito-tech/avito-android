@@ -14,16 +14,6 @@ plugins {
     id("com.slack.keeper")
 }
 
-val androidXVersion: String by project
-val sentryVersion: String by project
-val truthVersion: String by project
-val okhttpVersion: String by project
-val junitVersion: String by project
-val funktionaleVersion: String by project
-val gsonVersion: String by project
-val kotsonVersion: String by project
-val r8Version: String by project
-
 android {
 
     defaultConfig {
@@ -84,15 +74,15 @@ keeper {
 }
 
 dependencies {
-    keeperR8("com.android.tools:r8:$r8Version")
+    keeperR8(Dependencies.r8)
 
     implementation(project(":subprojects:android-lib:proxy-toast"))
 
-    implementation("com.google.android.gms:play-services-maps:17.0.0")
+    implementation(Dependencies.playServicesMaps)
 
-    implementation("androidx.appcompat:appcompat:$androidXVersion")
-    implementation("androidx.recyclerview:recyclerview:$androidXVersion")
-    implementation("com.google.android.material:material:$androidXVersion")
+    implementation(Dependencies.appcompat)
+    implementation(Dependencies.recyclerView)
+    implementation(Dependencies.material)
 
     androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
     androidTestImplementation(project(":subprojects:android-test:test-report"))
@@ -105,15 +95,15 @@ dependencies {
     androidTestImplementation(project(":subprojects:common:okhttp"))
     androidTestImplementation(project(":subprojects:common:time"))
 
-    androidTestImplementation("junit:junit:$junitVersion")
-    androidTestImplementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    androidTestImplementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
-    androidTestImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
-    androidTestImplementation("com.google.code.gson:gson:$gsonVersion")
-    androidTestImplementation("com.github.salomonbrys.kotson:kotson:$kotsonVersion")
-    androidTestImplementation("io.sentry:sentry:$sentryVersion")
-    androidTestImplementation("com.google.truth:truth:$truthVersion")
-    androidTestImplementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
+    androidTestImplementation(Dependencies.test.junit)
+    androidTestImplementation(Dependencies.okhttp)
+    androidTestImplementation(Dependencies.okhttpLogging)
+    androidTestImplementation(Dependencies.funktionaleTry)
+    androidTestImplementation(Dependencies.gson)
+    androidTestImplementation(Dependencies.kotson)
+    androidTestImplementation(Dependencies.sentry)
+    androidTestImplementation(Dependencies.test.truth)
+    androidTestImplementation(Dependencies.test.okhttpMockWebServer)
 }
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {

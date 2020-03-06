@@ -5,16 +5,12 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-val funktionaleVersion: String by project
-val antPatternMatcherVersion: String by project
-
 dependencies {
     //todo жирная зависимость ради единственного Commandline.translateCommandline(source)
     implementation(gradleApi())
 
-    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    implementation(Dependencies.funktionaleTry)
 
-    testFixturesImplementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    testFixturesImplementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    testFixturesImplementation(Dependencies.kotlinStdlib)
+    testFixturesImplementation(Dependencies.funktionaleTry)
 }

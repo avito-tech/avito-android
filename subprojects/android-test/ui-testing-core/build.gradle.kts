@@ -6,26 +6,20 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val androidXTestVersion: String by project
-val espressoVersion: String by project
-val androidXVersion: String by project
-val hamcrestVersion: String by project
-val junitVersion: String by project
-
 dependencies {
-    api("androidx.test:core:$androidXTestVersion")
-    api("androidx.test.espresso:espresso-core:$espressoVersion")
-    api("androidx.test.espresso:espresso-web:$espressoVersion")
-    api("androidx.test.espresso:espresso-intents:$espressoVersion")
-    api("androidx.test.uiautomator:uiautomator:2.2.0")
+    api(Dependencies.androidTest.core)
+    api(Dependencies.androidTest.espressoCore)
+    api(Dependencies.androidTest.espressoWeb)
+    api(Dependencies.androidTest.espressoIntents)
+    api(Dependencies.androidTest.uiAutomator)
 
-    api("com.forkingcode.espresso.contrib:espresso-descendant-actions:1.4.0")
+    api(Dependencies.androidTest.espressoDescendantActions)
 
-    api("androidx.appcompat:appcompat:$androidXVersion")
-    api("androidx.recyclerview:recyclerview:$androidXVersion")
-    api("com.google.android.material:material:$androidXVersion")
+    api(Dependencies.appcompat)
+    api(Dependencies.recyclerView)
+    api(Dependencies.material)
 
-    implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
-    implementation("junit:junit:$junitVersion")
-    implementation("me.weishu:free_reflection:2.2.0")
+    implementation(Dependencies.test.hamcrestLib)
+    implementation(Dependencies.test.junit)
+    implementation(Dependencies.freeReflection)
 }

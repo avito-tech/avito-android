@@ -4,14 +4,11 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val okhttpVersion: String by project
-val gsonVersion: String by project
-
 dependencies {
     implementation(gradleApi())
-    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
-    implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation(Dependencies.okhttp)
+    implementation(Dependencies.okhttpLogging)
+    implementation(Dependencies.gson)
 
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:logging"))

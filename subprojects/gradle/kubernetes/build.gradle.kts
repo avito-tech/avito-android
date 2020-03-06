@@ -4,14 +4,12 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-
 dependencies {
     // TODO: describe reasons why don't we use an official client https://github.com/kubernetes-client/java
-    api("io.fabric8:kubernetes-client:4.6.3")
-    api("com.fkorotkov:kubernetes-dsl:1.2.1")
+    api(Dependencies.kubernetesClient)
+    api(Dependencies.kubernetesDsl)
     // because kubernetes dsl uses old version
-    api("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    api(Dependencies.kotlinReflect)
 
     implementation(gradleApi())
 }

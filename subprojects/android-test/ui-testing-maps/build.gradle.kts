@@ -8,5 +8,5 @@ plugins {
 
 dependencies {
     api(project(":subprojects:android-test:ui-testing-core"))
-    api("com.google.android.gms:play-services-maps:17.0.0")
+    api(Dependencies.playServicesMaps)
 }

@@ -6,13 +6,6 @@ plugins {
     id("digital.wup.android-maven-publish")
 }
 
-val okhttpVersion: String by project
-val truthVersion: String by project
-val androidXTestVersion: String by project
-val kotlinPoetVersion: String by project
-val kotlinCompileTestingVersion: String by project
-val gsonVersion: String by project
-
 dependencies {
     implementation(project(":subprojects:common:sentry"))
     implementation(project(":subprojects:common:okhttp"))
@@ -26,12 +19,12 @@ dependencies {
     implementation(project(":subprojects:android-test:ui-testing-core"))
     implementation(project(":subprojects:android-test:ui-testing-maps"))
     implementation(project(":subprojects:android-test:mockito-utils"))
-    implementation("androidx.test:runner:$androidXTestVersion")
-    implementation("com.google.truth:truth:$truthVersion")
-    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
-    implementation("com.squareup.okhttp3:mockwebserver:$okhttpVersion")
-    implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation(Dependencies.androidTest.runner)
+    implementation(Dependencies.test.truth)
+    implementation(Dependencies.okhttpLogging)
+    implementation(Dependencies.test.okhttpMockWebServer)
+    implementation(Dependencies.gson)
 
-    testImplementation("com.squareup:kotlinpoet:$kotlinPoetVersion")
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestingVersion")
+    testImplementation(Dependencies.test.kotlinPoet)
+    testImplementation(Dependencies.test.kotlinCompileTesting)
 }

@@ -4,9 +4,7 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val gsonVersion: String by project
-
 dependencies {
-    implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation(Dependencies.gson)
     implementation(project(":subprojects:gradle:utils"))
 }
