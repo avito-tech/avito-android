@@ -151,10 +151,10 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 logger.info("[InstrConfig:${instrumentationConfiguration.name}] will depend on buildOnTargetBranch because: ${useArtifactsFromTargetBranch.reason}")
                             }
 
+                            val preInstrumentationName = preInstrumentationTaskName(instrumentationConfiguration.name)
+
                             // see LintWorkerApiWorkaround.md
-                            project.tasks.register<Task>(
-                                preInstrumentationTaskName(instrumentationConfiguration.name)
-                            ) {
+                            project.tasks.register<Task>(preInstrumentationName) {
                                 group = ciTaskGroup
 
                                 dependsOn(testedVariantPackageTask, testVariantPackageTask)
@@ -163,8 +163,14 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                     dependsOn(buildOnTargetCommitTask)
                                 }
 
-                                if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
-                                    dependsOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project))
+                                when (instrumentationConfiguration.impactAnalysisPolicy) {
+                                    is ImpactAnalysisPolicy.On -> {
+                                        dependsOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project))
+                                        logger.info("[InstrConfig:$preInstrumentationName] will depend on ui-impact-analysis")
+                                    }
+                                    is ImpactAnalysisPolicy.Off -> {
+                                        logger.info("[InstrConfig:$preInstrumentationName] ui-impact-analysis is off")
+                                    }
                                 }
                             }
 
@@ -195,17 +201,21 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                             instrumentationConfiguration.impactAnalysisPolicy.getTask(project)
                                         ) {
                                             impactAnalysisResult.set(
-                                                instrumentationConfiguration.impactAnalysisPolicy
-                                                    .getArtifact(it)
+                                                instrumentationConfiguration.impactAnalysisPolicy.getArtifact(it)
                                             )
                                         }
+
+                                        logger.info("[InstrConfig:${instrumentationConfiguration.name}] will depend on ui-impact-analysis")
+                                    }
+                                    is ImpactAnalysisPolicy.Off -> {
+                                        logger.info("[InstrConfig:${instrumentationConfiguration.name}] ui-impact-analysis is off")
                                     }
                                 }
 
                                 val isFullTestSuite = gitState.map {
-                                    it.isOnDefaultBranch
-                                        && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
-                                }
+                                        it.isOnDefaultBranch
+                                            && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                                    }
                                     .orElse(false)
 
                                 this.instrumentationConfiguration.set(instrumentationConfiguration)
