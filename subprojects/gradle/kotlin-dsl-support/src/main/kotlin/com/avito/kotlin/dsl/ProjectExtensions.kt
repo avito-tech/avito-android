@@ -11,6 +11,7 @@ import kotlin.reflect.KProperty
  * @param nullIfBlank we accept cases when user passes empty string to override
  * todo true by default, false to not break anything that rely on previous behavior
  */
+@JvmOverloads
 fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false): String? =
     if (hasProperty(name)) {
         val string = property(name)?.toString()
@@ -19,12 +20,14 @@ fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false
         null
     }
 
+@JvmOverloads
 fun Project.getOptionalStringProperty(name: String, default: String, defaultIfBlank: Boolean = true): String =
     getOptionalStringProperty(name, nullIfBlank = defaultIfBlank) ?: default
 
 /**
  * @param allowBlank todo false by default
  */
+@JvmOverloads
 fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true): String {
     return if (hasProperty(name)) {
         val string = property(name)?.toString()
