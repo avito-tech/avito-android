@@ -90,8 +90,6 @@ if (syncAndroidModules.toBoolean()) {
 pluginManagement {
 
     val artifactoryUrl: String? by settings
-    val kotlinVersion: String by settings
-    val androidGradlePluginVersion: String by settings
     val infraVersion: String by settings
 
     repositories {
@@ -160,7 +158,7 @@ pluginManagement {
                     useModule("com.android.tools.build:gradle:3.5.3")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion(kotlinVersion)
+                    useVersion("1.3.70")
 
                 pluginId.startsWith("com.avito.android") ->
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")

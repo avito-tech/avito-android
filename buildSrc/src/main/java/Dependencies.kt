@@ -4,7 +4,7 @@ object Dependencies {
         val okhttp = "3.14.6"
         val sentry = "1.7.23"
         val retrofit = "2.6.2"
-        val kotlin = "1.3.61"
+        val kotlin = "1.3.70"
         val androidXTest = "1.2.0"
         val junit5 = "5.6.0"
         val junit5Platform = "1.6.0"
