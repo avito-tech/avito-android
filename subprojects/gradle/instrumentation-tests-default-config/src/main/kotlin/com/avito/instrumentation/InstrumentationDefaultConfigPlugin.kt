@@ -211,7 +211,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             config.reportSkippedTests = true
             config.rerunFailedTests = true
             config.reportFlakyTests = true
-            config.impactAnalysisPolicy = ImpactAnalysisPolicy.On.RunAffectedTests
+            config.impactAnalysisPolicy = ImpactAnalysisPolicy.Off
 
             EmulatorSet.fast.forEach { config.targetsContainer.registerDevice(it) }
         }
@@ -278,7 +278,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             config.reportSkippedTests = false
             config.reportFlakyTests = true
             config.rerunFailedTests = false
-            config.impactAnalysisPolicy = ImpactAnalysisPolicy.On.RunNewTests
+            config.impactAnalysisPolicy = ImpactAnalysisPolicy.Off
 
             config.instrumentationParams = mapOf("jobSlug" to "NewFunctionalTests")
 
