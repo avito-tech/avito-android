@@ -16,6 +16,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.invocation.Gradle
+import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
 import org.gradle.tooling.BuildException
 
@@ -70,11 +71,25 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             group = "verification"
             description = "Detects dynamic dependencies"
         }
-        project.tasks.register("checkBuildEnvironment") {
+        val checkBuildEnvironment = project.tasks.register("checkBuildEnvironment") {
             it.group = "verification"
             it.description = "Check typical build problems"
             it.dependsOn(checkAndroidSdk, checkGradleDaemonTask, dynamicDependenciesTask)
         }
+        if (isMac()) {
+            val task = project.tasks.register<OsxLocalhostResolvingTask>("checkOsxLocalhostResolving") {
+                outputs.upToDateWhen { false }
+                group = "verification"
+                description = "Check OSX localhost resolving issue from Java (https://thoeni.io/post/macos-sierra-java/)"
+            }
+            checkBuildEnvironment {
+                dependsOn(task)
+            }
+        }
+    }
+
+    private fun isMac(): Boolean {
+        return System.getProperty("os.name", "").contains("mac", ignoreCase = true)
     }
 
     private val validationErrors = mutableListOf<String>()
