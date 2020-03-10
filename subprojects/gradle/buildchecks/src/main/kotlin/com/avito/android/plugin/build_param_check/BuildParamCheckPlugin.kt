@@ -78,7 +78,6 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
         if (isMac()) {
             val task = project.tasks.register<OsxLocalhostResolvingTask>("checkOsxLocalhostResolving") {
-                outputs.upToDateWhen { false }
                 group = "verification"
                 description = "Check OSX localhost resolving issue from Java (https://thoeni.io/post/macos-sierra-java/)"
             }
