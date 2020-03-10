@@ -1,6 +1,6 @@
 package com.avito.report.model
 
-enum class Kind(val tmsId: String) {
+enum class TestKind(val tmsId: String) {
     UNIT("unit"),
     UI_COMPONENT("ui-component"),
     INTEGRATION("integration"),
@@ -20,6 +20,6 @@ enum class Kind(val tmsId: String) {
     UNKNOWN("unknown");
 
     companion object {
-        fun fromTmdId(tmsId: String): Kind? = values().find { it.tmsId == tmsId }
+        fun fromTmdId(tmsId: String): TestKind? = values().find { it.tmsId == tmsId }
     }
 }

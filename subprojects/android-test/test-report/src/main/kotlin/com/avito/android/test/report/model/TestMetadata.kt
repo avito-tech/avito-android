@@ -2,9 +2,8 @@ package com.avito.android.test.report.model
 
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.android.test.report.TestPackageParser
 import com.avito.report.model.Flakiness
-import com.avito.report.model.Kind
+import com.avito.report.model.TestKind
 import java.io.Serializable
 
 data class TestMetadata(
@@ -13,12 +12,9 @@ data class TestMetadata(
     val className: String,
     val methodName: String?,
     val dataSetNumber: Int?,
-    val testType: TestType,
-    val kind: Kind,
-    val packageParserResult: TestPackageParser.Result,
+    val kind: TestKind,
     val priority: TestCasePriority?,
     val behavior: TestCaseBehavior?,
-    val features: List<String>,
     val externalId: String?,
     val featureIds: List<Int>,
     val tagIds: List<Int>,

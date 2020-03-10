@@ -1,8 +1,7 @@
 package com.avito.android.test.annotations
 
-/**
- * Identifies case as part of Regression suite
- */
+import com.avito.report.model.TestKind
+
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class Regression
+annotation class Kind(val value: TestKind)

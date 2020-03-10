@@ -15,7 +15,7 @@ internal class KindTest {
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
             test = AndroidTest.Completed.createStubInstance(
-                testStaticData = TestStaticDataPackage.createStubInstance(kind = Kind.E2E)
+                testStaticData = TestStaticDataPackage.createStubInstance(kind = TestKind.E2E)
             )
         )
             .singleRequestCaptured()
@@ -28,7 +28,7 @@ internal class KindTest {
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
             test = AndroidTest.Completed.createStubInstance(
-                testStaticData = TestStaticDataPackage.createStubInstance(kind = Kind.UI_COMPONENT)
+                testStaticData = TestStaticDataPackage.createStubInstance(kind = TestKind.UI_COMPONENT)
             )
         )
             .singleRequestCaptured()
@@ -41,7 +41,7 @@ internal class KindTest {
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
             test = AndroidTest.Completed.createStubInstance(
-                testStaticData = TestStaticDataPackage.createStubInstance(kind = Kind.MANUAL)
+                testStaticData = TestStaticDataPackage.createStubInstance(kind = TestKind.MANUAL)
             )
         )
             .singleRequestCaptured()

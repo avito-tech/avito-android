@@ -5,7 +5,6 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.future.MockFutureValue
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.model.TestType
 import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.transport.LocalRunTransport
@@ -13,7 +12,7 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
-import com.avito.report.model.Kind
+import com.avito.report.model.TestKind
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import com.nhaarman.mockito_kotlin.any
@@ -33,7 +32,7 @@ internal class ReportRule(
     val mockTimeProvider: TimeProvider = mock(),
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
-    private val logger: Logger = object: Logger {
+    private val logger: Logger = object : Logger {
         override fun debug(msg: String) {
             println(msg)
         }
@@ -98,11 +97,7 @@ internal class ReportRule(
         testMethod: String = "test",
         testDescription: String? = null,
         dataSetNumber: Int? = null,
-        kind: Kind = Kind.UNKNOWN,
-        testType: TestType = TestType.FUNCTIONAL,
-        packageParserResult: TestPackageParser.Result = TestPackageParser.Result.Success(
-            emptyList()
-        ),
+        kind: TestKind = TestKind.UNKNOWN,
         externalId: String? = null,
         tagIds: List<Int> = emptyList(),
         featureIds: List<Int> = emptyList(),
@@ -119,15 +114,12 @@ internal class ReportRule(
                 className = testClass,
                 methodName = testMethod,
                 dataSetNumber = dataSetNumber,
-                testType = testType,
-                packageParserResult = packageParserResult,
+                kind = kind,
                 priority = priority,
                 behavior = behavior,
-                features = featuresFromPackage + featuresFromAnnotation,
                 externalId = externalId,
-                tagIds = tagIds,
                 featureIds = featureIds,
-                kind = kind,
+                tagIds = tagIds,
                 flakiness = flakiness
             )
         )
