@@ -9,6 +9,7 @@ import java.util.Properties
 
 internal class GradlePropertiesCheck(private val project: Project) : Check {
 
+    // TODO: use a white-list and pass it externally
     private val ignoredParams = setOf(
         "artifactory_deployer",
         "artifactory_deployer_password",
