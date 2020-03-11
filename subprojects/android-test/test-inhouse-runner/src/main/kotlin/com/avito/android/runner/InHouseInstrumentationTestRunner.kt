@@ -29,7 +29,7 @@ import com.avito.android.util.ImitateFlagProvider
 import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
-import com.avito.report.model.TestKind
+import com.avito.report.model.Kind
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
@@ -275,7 +275,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     private fun shouldRecordVideo(testMetadata: TestMetadata): Boolean {
         return when (testMetadata.kind) {
-            TestKind.UI_COMPONENT, TestKind.E2E -> true
+            Kind.UI_COMPONENT, Kind.E2E -> true
             else -> false
         }
     }

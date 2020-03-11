@@ -2,19 +2,33 @@ package com.avito.android.runner.annotation.resolver
 
 import com.avito.android.test.annotations.Behavior
 import com.avito.android.test.annotations.CaseId
+import com.avito.android.test.annotations.ComponentTest
 import com.avito.android.test.annotations.DataSetNumber
 import com.avito.android.test.annotations.Description
+import com.avito.android.test.annotations.E2EStub
+import com.avito.android.test.annotations.E2ETest
 import com.avito.android.test.annotations.ExternalId
 import com.avito.android.test.annotations.FeatureId
 import com.avito.android.test.annotations.Flaky
-import com.avito.android.test.annotations.Kind
+import com.avito.android.test.annotations.FunctionalTest
+import com.avito.android.test.annotations.InstrumentationUnitTest
+import com.avito.android.test.annotations.IntegrationTest
+import com.avito.android.test.annotations.ManualTest
+import com.avito.android.test.annotations.MessengerTest
+import com.avito.android.test.annotations.PerformanceComponentTest
+import com.avito.android.test.annotations.PerformanceFunctionalTest
 import com.avito.android.test.annotations.Priority
+import com.avito.android.test.annotations.PublishTest
+import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.TagId
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
+import com.avito.android.test.annotations.UIComponentStub
+import com.avito.android.test.annotations.UIComponentTest
+import com.avito.android.test.annotations.UnitTest
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Flakiness
-import com.avito.report.model.TestKind
+import com.avito.report.model.Kind
 import java.lang.reflect.Method
 
 class TestMetadataAnnotationResolver : TestMetadataResolver {
@@ -31,7 +45,21 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             ExternalId::class.java,
             TagId::class.java,
             Flaky::class.java,
-            Kind::class.java
+            UIComponentTest::class.java,
+            E2ETest::class.java,
+            IntegrationTest::class.java,
+            ManualTest::class.java,
+            UIComponentStub::class.java,
+            E2EStub::class.java,
+            UnitTest::class.java,
+            PerformanceFunctionalTest::class.java,
+            PerformanceComponentTest::class.java,
+            ScreenshotTest::class.java,
+            ComponentTest::class.java,
+            PublishTest::class.java,
+            MessengerTest::class.java,
+            FunctionalTest::class.java,
+            InstrumentationUnitTest::class.java
         )
 
         var testClass: Class<*>? = null
@@ -64,7 +92,7 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             }
         }
 
-        var kind: TestKind = TestKind.UNKNOWN
+        var kind: Kind = Kind.UNKNOWN
         var caseId: Int? = null
         var description: String? = null
         var priority: TestCasePriority? = null
@@ -79,8 +107,50 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
         annotationsExtractingResult
             .forEach { annotation ->
                 when (annotation) {
-                    is Kind -> {
-                        kind = annotation.value
+                    is UIComponentTest -> {
+                        kind = Kind.UI_COMPONENT
+                    }
+                    is E2ETest -> {
+                        kind = Kind.E2E
+                    }
+                    is IntegrationTest -> {
+                        kind = Kind.INTEGRATION
+                    }
+                    is ManualTest -> {
+                        kind = Kind.MANUAL
+                    }
+                    is UIComponentStub -> {
+                        kind = Kind.UI_COMPONENT_STUB
+                    }
+                    is E2EStub -> {
+                        kind = Kind.E2E_STUB
+                    }
+                    is UnitTest -> {
+                        kind = Kind.UNIT
+                    }
+                    is PerformanceFunctionalTest -> {
+                        kind = Kind.E2E
+                    }
+                    is PerformanceComponentTest -> {
+                        kind = Kind.UI_COMPONENT
+                    }
+                    is ScreenshotTest -> {
+                        kind = Kind.UI_COMPONENT
+                    }
+                    is ComponentTest -> {
+                        kind = Kind.UI_COMPONENT
+                    }
+                    is PublishTest -> {
+                        kind = Kind.UI_COMPONENT
+                    }
+                    is MessengerTest -> {
+                        kind = Kind.UI_COMPONENT
+                    }
+                    is FunctionalTest -> {
+                        kind = Kind.E2E
+                    }
+                    is InstrumentationUnitTest -> {
+                        kind = Kind.INTEGRATION
                     }
                     is CaseId -> {
                         caseId = annotation.value

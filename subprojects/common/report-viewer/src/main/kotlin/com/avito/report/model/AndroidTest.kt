@@ -20,7 +20,7 @@ sealed class AndroidTest : TestStaticData {
         override val tagIds: List<Int>,
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
-        override val kind: TestKind,
+        override val kind: Kind,
         override val flakiness: Flakiness,
         val startTime: Long,
         val lastSignalTime: Long,
@@ -86,7 +86,7 @@ sealed class AndroidTest : TestStaticData {
         override val tagIds: List<Int>,
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
-        override val kind: TestKind,
+        override val kind: Kind,
         override val flakiness: Flakiness,
         val skipReason: String,
         val reportTime: Long
@@ -155,7 +155,7 @@ sealed class AndroidTest : TestStaticData {
         override val tagIds: List<Int>,
         override val priority: TestCasePriority?,
         override val behavior: TestCaseBehavior?,
-        override val kind: TestKind,
+        override val kind: Kind,
         override val startTime: Long,
         override val endTime: Long,
         override val flakiness: Flakiness,
@@ -257,7 +257,7 @@ interface TestStaticData {
     val tagIds: List<Int>
     val priority: TestCasePriority?
     val behavior: TestCaseBehavior?
-    val kind: TestKind
+    val kind: Kind
     val flakiness: Flakiness
 }
 
@@ -272,7 +272,7 @@ data class TestStaticDataPackage(
     override val tagIds: List<Int>,
     override val priority: TestCasePriority?,
     override val behavior: TestCaseBehavior?,
-    override val kind: TestKind,
+    override val kind: Kind,
     override val flakiness: Flakiness
 ) : TestStaticData {
 

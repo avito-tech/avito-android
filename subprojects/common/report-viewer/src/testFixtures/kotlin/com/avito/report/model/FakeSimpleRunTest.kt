@@ -26,7 +26,7 @@ fun SimpleRunTest.Companion.createStubInstance(
     featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
-    kind: TestKind = TestKind.E2E,
+    kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable
 ) = SimpleRunTest(
     id = id,

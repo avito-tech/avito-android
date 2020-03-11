@@ -17,7 +17,7 @@ import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.FailureOnDevice
 import com.avito.report.model.Flakiness
 import com.avito.report.model.GetReportResult
-import com.avito.report.model.TestKind
+import com.avito.report.model.Kind
 import com.avito.report.model.PerformanceTest
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
@@ -203,7 +203,7 @@ internal class ReportsFetchApiImpl(
                     featureIds = listResult.preparedData?.lastOrNull()?.featureIds ?: emptyList(),
                     priority = getPriority(listResult),
                     behavior = getBehavior(listResult),
-                    kind = listResult.kind?.let { TestKind.fromTmdId(it) } ?: TestKind.UNKNOWN,
+                    kind = listResult.kind?.let { Kind.fromTmdId(it) } ?: Kind.UNKNOWN,
                     flakiness = getFlakiness(listResult)
                 )
             } ?: emptyList()

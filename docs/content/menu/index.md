@@ -36,6 +36,7 @@ headless: true
 - Testing
     - [Ручное]({{< ref "/docs/test/Manual.md" >}})
     - [Test Management System]({{< ref "/docs/test/TestManagementSystem.md" >}})
+    - [Test case in code]({{< ref "/docs/test/TestCaseInCode.md" >}})
     - [Запуск тестов]({{< ref "/docs/test/Run.md" >}})
     - [Юнит тесты]({{< ref "/docs/test/UnitTesting.md" >}})
     - [Скриншотные тесты]({{< ref "/docs/test/ScreenshotTesting.md" >}})

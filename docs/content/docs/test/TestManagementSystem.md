@@ -5,61 +5,38 @@ type: docs
 
 # Test Management System (internal)
 
-В Авито используется собственная TMS, которой нет в open-source.
+Avito uses in-house TMS: [Internal docs](http://links.k.avito.ru/h)
 
-[Внутренняя документация](http://links.k.avito.ru/h)
+## Metadata
 
-## Метаданные
-
-`@FeatureId(IntArray)` - указать принадлежность к глобальному дереву фич приложения
-`@TagId(IntArray)` - принадлежность к облаку тегов теста (у каждой команды свое)
+`@FeatureId(IntArray)` - specify test's place in global features tree
+`@TagId(IntArray)` - specify id's of team tag cloud
 
 -- deprecated --
 
-`@CaseId(Int)` - id теста в TMS, не актуально после введения `test case in code`
-`@Features(vararg String)` - строковое представление фич, не используется в синхронизации 
+`@CaseId(Int)` - TMS id, please consider [test case in code]({{< ref "/docs/test/TestCaseInCode.md#test-case-in-code" >}})
 
 ## Kind
 
-Для того чтобы визуализировать тестовую пирамиду, указывается тип см. `com.avito.report.model.Kind`
+Kind is specified to map test on test pyramid in TMS, see `com.avito.report.model.Kind`
 
-## Test case in code
+These annotations also used to filter tests for different suites.
 
-Правда о тест кейсе исторически хранилась в TMS. \
-Поддерживать актуальной информацию сразу в двух местах не самое достойное занятие, а увеличение кол-ва автоматизированных
-кейсов остро поставило вопрос о стоимости этого занятия.
+- @E2ETest - e2e functional tests
+- @UIComponentTest - UI tests without(or minimal) e2e networking
+- @IntegrationTest - Instrumentation tests without UI
+- [@ManualTest]({{< ref "/docs/test/TestCaseInCode.md#stubs-tests-without-implementation" >}})
+- [@UIComponentStub]({{< ref "/docs/test/TestCaseInCode.md#stubs-tests-without-implementation" >}})
+- [@E2EStub]({{< ref "/docs/test/TestCaseInCode.md#stubs-tests-without-implementation" >}})
+- @UnitTest - Classical unit tests that should be synced with TMS
+- [@PerformanceFunctionalTest]({{< ref "/docs/test/PerformanceTesting.md" >}})
+- [@PerformanceComponentTest]({{< ref "/docs/test/PerformanceTesting.md" >}})
+- [@ScreenshotTest]({{< ref "/docs/test/ScreenshotTesting.md" >}})
 
-Чтобы упростить поддержку, появилась возможность держать источник правды в коде, синхронизируя всю информацию в TMS.
+-- deprecated --
 
-### Как синхронизировать свой тест с TMS?
-
-Чтобы это сделать, тесту нужно проставить аннотацию `@ExternalId(UUID)`, где UUID - сгенерированный на клиенте случайный UUID.
-
-{{< hint info>}}
-С возможными коллизиями пока никак не боремся
-{{< /hint >}}
-
-### FAQ
-
-Q: Когда происходит синхронизация
-A: После попадания кода в ветку develop
-
-Q: Как выглядит такие тесты в TMS
-A: Становятся read-only
-
-### Stubs: tests without implementation
-
-Если тестами хочется управлять из кода уже сейчас, а их написание отложить, то можно просто создать стабы. \
-Стабы это тесты со всей нужной информацией (аннотации, шаги), но не выполняющие никаких действий и проверок.
-
-Чтобы на уровне TMS отличать автоматизированные тесты, от стабов, добавлены специальные типы с приставкой `-stub`
-(см. `com.avito.report.model.Kind`)
-
-Тип `manual` - специально для указания ручных тестов, которые не планируется автоматизировать,
-но хочется держать рядом с автотестами в коде.
-
-#### Stubs generation
-
-> TODO вынести в opensource для демонстрации
-
-Для упрощения переноса в проекте есть модуль `:test-generator`, который по указанию списка id тесткейсов генерирует код тестов-стабов.
+- @ComponentTest -> @UIComponentTest
+- @PublishTest -> @UIComponentTest
+- @MessengerTest -> @UIComponentTest
+- @FunctionalTest -> @E2ETest
+- @InstrumentationUnitTest -> @IntegrationTest

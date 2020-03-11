@@ -14,7 +14,7 @@ fun TestStaticDataPackage.Companion.createStubInstance(
     featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
-    kind: TestKind = TestKind.E2E,
+    kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable
 ) = TestStaticDataPackage(
     name = TestName(name),
@@ -63,7 +63,7 @@ fun AndroidTest.Skipped.Companion.createStubInstance(
     featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
-    kind: TestKind = TestKind.E2E,
+    kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable,
     skipReason: String = "просто потомучто"
 ): AndroidTest.Skipped = fromTestMetadata(
@@ -98,7 +98,7 @@ fun AndroidTest.Lost.Companion.createStubInstance(
     featureIds: List<Int> = emptyList(),
     priority: TestCasePriority? = null,
     behavior: TestCaseBehavior? = null,
-    kind: TestKind = TestKind.E2E,
+    kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable,
     stdout: String = "",
     stderr: String = ""

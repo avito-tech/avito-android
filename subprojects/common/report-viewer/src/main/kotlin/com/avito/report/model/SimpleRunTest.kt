@@ -42,7 +42,7 @@ data class SimpleRunTest(
     val tagIds: List<Int>,
     val priority: TestCasePriority?,
     val behavior: TestCaseBehavior?,
-    val kind: TestKind,
+    val kind: Kind,
     val flakiness: Flakiness
 ) {
 

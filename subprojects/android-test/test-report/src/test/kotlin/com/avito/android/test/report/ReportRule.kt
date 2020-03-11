@@ -12,7 +12,7 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
-import com.avito.report.model.TestKind
+import com.avito.report.model.Kind
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import com.nhaarman.mockito_kotlin.any
@@ -97,7 +97,7 @@ internal class ReportRule(
         testMethod: String = "test",
         testDescription: String? = null,
         dataSetNumber: Int? = null,
-        kind: TestKind = TestKind.UNKNOWN,
+        kind: Kind = Kind.UNKNOWN,
         externalId: String? = null,
         tagIds: List<Int> = emptyList(),
         featureIds: List<Int> = emptyList(),

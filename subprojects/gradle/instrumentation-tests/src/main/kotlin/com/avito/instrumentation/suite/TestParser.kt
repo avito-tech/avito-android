@@ -8,7 +8,7 @@ import com.avito.instrumentation.suite.dex.AnnotationData
 import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
-import com.avito.report.model.TestKind
+import com.avito.report.model.Kind
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
 
@@ -59,22 +59,22 @@ internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStatic
 )
 
 private val annotationsToKindMap = mapOf(
-    "com.avito.android.test.annotations.FunctionalTest" to TestKind.E2E,
-    "com.avito.android.test.annotations.ComponentTest" to TestKind.UI_COMPONENT,
-    "com.avito.android.test.annotations.PublishTest" to TestKind.UI_COMPONENT,
-    "com.avito.android.test.annotations.MessengerTest" to TestKind.UI_COMPONENT,
-    "com.avito.android.test.annotations.InfrastructureTest" to TestKind.INTEGRATION,
-    "com.avito.android.test.annotations.InstrumentationUnitTest" to TestKind.INTEGRATION,
-    "com.avito.android.test.annotations.ManualTest" to TestKind.MANUAL,
-    "com.avito.android.test.annotations.PerformanceFunctionalTest" to TestKind.E2E,
-    "com.avito.android.test.annotations.PerformanceComponentTest" to TestKind.UI_COMPONENT,
-    "com.avito.android.test.annotations.ScreenshotTest" to TestKind.UI_COMPONENT
+    "com.avito.android.test.annotations.FunctionalTest" to Kind.E2E,
+    "com.avito.android.test.annotations.ComponentTest" to Kind.UI_COMPONENT,
+    "com.avito.android.test.annotations.PublishTest" to Kind.UI_COMPONENT,
+    "com.avito.android.test.annotations.MessengerTest" to Kind.UI_COMPONENT,
+    "com.avito.android.test.annotations.InfrastructureTest" to Kind.INTEGRATION,
+    "com.avito.android.test.annotations.InstrumentationUnitTest" to Kind.INTEGRATION,
+    "com.avito.android.test.annotations.ManualTest" to Kind.MANUAL,
+    "com.avito.android.test.annotations.PerformanceFunctionalTest" to Kind.E2E,
+    "com.avito.android.test.annotations.PerformanceComponentTest" to Kind.UI_COMPONENT,
+    "com.avito.android.test.annotations.ScreenshotTest" to Kind.UI_COMPONENT
 )
 
-private fun determineKind(annotations: List<AnnotationData>): TestKind =
+private fun determineKind(annotations: List<AnnotationData>): Kind =
     annotations.find { it.name in annotationsToKindMap.keys }
         ?.let { annotationsToKindMap[it.name] }
-        ?: TestKind.UNKNOWN
+        ?: Kind.UNKNOWN
 
 // todo use real classes
 
