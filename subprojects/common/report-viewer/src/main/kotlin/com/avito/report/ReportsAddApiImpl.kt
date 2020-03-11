@@ -119,8 +119,6 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
         val groupList = mutableListOf(test.name.team.name)
         val reportData = mutableMapOf<String, Any>()
 
-        groupList.addAll(test.features)
-
         val kind = test.kind
         groupList.add(kind.tmsId)
 
@@ -180,7 +178,6 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
         }
         if (test.tagIds.isNotEmpty()) preparedData["tag_id"] = test.tagIds
         if (test.featureIds.isNotEmpty()) preparedData["feature_id"] = test.featureIds
-        if (test.features.isNotEmpty()) preparedData["features"] = test.features
 
         val priority = test.priority
         preparedData["priority_id"] = priority?.tmsValue ?: TestCasePriority.NORMAL.tmsValue
