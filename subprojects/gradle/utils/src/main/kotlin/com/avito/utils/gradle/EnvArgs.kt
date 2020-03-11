@@ -11,6 +11,7 @@ import com.avito.kotlin.dsl.getOptionalFloatProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Project
 import java.io.Serializable
+import java.util.concurrent.TimeUnit
 
 // Used in build.gradle's of avito
 val Project.envArgs by ProjectProperty.lazy<EnvArgs>(scope = ROOT_PROJECT) { project ->
@@ -32,11 +33,15 @@ interface EnvArgs {
             override val id = id.id
             override val url = "No url. This is local build"
             override val number = "local"
-            override val type = "local"
+            override val type = "${userName}-local-${TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())}"
 
             internal enum class Id(val id: Int) {
                 FOR_STUDIO_RUN(-1),
                 FOR_LOCAL_KUBERNETES_RUN(1)
+            }
+
+            companion object {
+                private val userName = System.getProperty("user.name")
             }
         }
 
