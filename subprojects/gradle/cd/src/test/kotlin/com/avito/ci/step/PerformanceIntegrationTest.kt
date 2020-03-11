@@ -137,6 +137,9 @@ class PerformanceIntegrationTest {
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
             "-Pavito.repo.ssh.url=someUrl",
+            "-PkubernetesToken=stub",
+            "-PkubernetesUrl=stub",
+            "-PkubernetesCaCertData=stub",
             expectFailure = expectFailure,
             dryRun = true,
             targetBranch = SYNC_BRANCH

@@ -71,7 +71,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val report: Report by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
-        val isLocalRun = runEnvironment.teamcityBuildId <= 0
+        val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
         val transport: List<Transport> = when {
             isLocalRun -> {
                 if (runEnvironment.reportConfig != null) {

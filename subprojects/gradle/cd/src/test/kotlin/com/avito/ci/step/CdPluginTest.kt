@@ -547,6 +547,9 @@ class CdPluginTest {
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
+            "-PkubernetesToken=stub",
+            "-PkubernetesUrl=stub",
+            "-PkubernetesCaCertData=stub",
             dryRun = dryRun,
             expectFailure = expectedFailure
         )

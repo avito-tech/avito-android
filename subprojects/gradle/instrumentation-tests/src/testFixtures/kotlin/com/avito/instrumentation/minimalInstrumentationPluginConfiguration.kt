@@ -18,6 +18,7 @@ instrumentation {
     sentryDsn = "stub"
     slackToken = "stub"
     fileStorageUrl = "stub"
+    registry = "stub"
     
     instrumentationParams = [
     "planSlug": "plan",
