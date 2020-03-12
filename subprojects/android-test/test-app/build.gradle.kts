@@ -27,12 +27,7 @@ android {
         testInstrumentationRunnerArguments(
             mapOf(
                 "planSlug" to "AndroidTestApp",
-                "slackToken" to "STUB",
-                "sentryDsn" to "http://stub-project@stub-host/0",
-                "fileStorageUrl" to "https://file-storage-stub",
-                "unnecessaryUrl" to "https://localhost",
-                // todo move to instrumentation plugin
-                "avito.report.enabled" to "false"
+                "unnecessaryUrl" to "https://localhost"
             )
         )
     }
@@ -113,7 +108,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     reportApiFallbackUrl = project.getOptionalStringProperty("avito.report.fallbackUrl") ?: "http://stub"
     reportViewerUrl = project.getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
     registry = project.getOptionalStringProperty("avito.registry") ?: "registry"
-    sentryDsn = project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "stub"
+    sentryDsn = project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
     slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
     fileStorageUrl = project.getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
 
@@ -128,6 +123,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         "VideoCaptureListener:*",
         "TestRunner:*",
         "SystemDialogsManager:*",
+        "AndroidJUnitRunner:*",
         "ito.android.de:*", //по этому тэгу система пишет логи об использовании hidden/restricted api https://developer.android.com/distribute/best-practices/develop/restrictions-non-sdk-interfaces
         "*:E"
     )

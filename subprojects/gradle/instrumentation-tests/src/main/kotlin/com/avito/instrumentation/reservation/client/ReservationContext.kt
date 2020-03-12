@@ -62,7 +62,7 @@ fun withDevices(
             }
         }
 
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         logger.critical("Error during starting reservation job", e)
     } finally {
         logger.info("Devices: Starting releasing devices for configuration: $configurationName...")

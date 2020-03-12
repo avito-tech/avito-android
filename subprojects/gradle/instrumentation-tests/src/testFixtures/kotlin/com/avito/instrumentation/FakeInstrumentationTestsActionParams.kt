@@ -22,15 +22,11 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     buildId: String = "33456",
     buildUrl: String = "https://build",
     targetCommit: String = randomCommitHash(),
-    kubernetesCredentials: KubernetesCredentials = object :
-        KubernetesCredentials {
-        override val token: String
-            get() = error("not implemented")
-        override val caCertData: String
-            get() = error("not implemented")
-        override val url: String
-            get() = error("not implemented")
-    },
+    kubernetesCredentials: KubernetesCredentials = KubernetesCredentials(
+        token = "empty",
+        caCertData = "empty",
+        url = "empty"
+    ),
     projectName: String = "testProject",
     testedVariantName: String = "debug",
     suppressFailure: Boolean = false,

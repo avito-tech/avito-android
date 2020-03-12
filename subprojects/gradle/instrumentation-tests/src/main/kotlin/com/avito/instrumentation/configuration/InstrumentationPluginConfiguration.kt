@@ -88,7 +88,9 @@ class InstrumentationPluginConfiguration internal constructor(
                         reportApiUrl = configuration.reportApiUrl,
                         reportApiFallbackUrl = configuration.reportApiFallbackUrl,
                         reportViewerUrl = configuration.reportViewerUrl,
+                        fileStorageUrl = configuration.fileStorageUrl,
                         registry = configuration.registry,
+                        slackToken = configuration.slackToken,
                         unitToChannelMapping = configuration.unitToChannelMap
                             .map { (k, v) -> Team(k) to SlackChannel(v) }
                             .toMap()
@@ -153,6 +155,9 @@ class InstrumentationPluginConfiguration internal constructor(
             require(fileStorageUrl.isNotEmpty()) {
                 "fileStorageUrl must be initialized"
             }
+            require(registry.isNotEmpty()) {
+                "registry must be initialized"
+            }
         }
     }
 
@@ -164,7 +169,9 @@ class InstrumentationPluginConfiguration internal constructor(
         val reportApiUrl: String,
         val reportApiFallbackUrl: String,
         val reportViewerUrl: String,
+        val fileStorageUrl: String,
         val registry: String,
+        val slackToken: String,
         val unitToChannelMapping: Map<Team, SlackChannel>
     ) : Serializable {
 
