@@ -90,6 +90,10 @@ sealed class TestRunEnvironment {
         val runId: String
             get() = testRunCoordinates.runId
     }
+
+    companion object {
+        internal val LOCAL_STUDIO_RUN_ID = -1
+    }
 }
 
 fun provideEnvironment(

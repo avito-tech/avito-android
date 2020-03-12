@@ -34,6 +34,7 @@ class InstrumentationTestsPluginTest {
                                 sentryDsn = "stub"
                                 slackToken = "stub"
                                 fileStorageUrl = "stub"
+                                registry = "stub"
 
                                 instrumentationParams = [
                                     "jobSlug": "FunctionalTests"
@@ -129,6 +130,9 @@ class InstrumentationTestsPluginTest {
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
+            "-PkubernetesToken=stub",
+            "-PkubernetesUrl=stub",
+            "-PkubernetesCaCertData=stub",
             dryRun = dryRun
         )
 }

@@ -6,14 +6,12 @@ import com.avito.bitbucket.pullRequestId
 import com.avito.cd.buildOutput
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
-import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
+import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
-import com.avito.utils.gradle.kubernetesCredentials
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -118,7 +116,13 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val registry = objects.property<String>()
 
     @Internal
+    val fileStorageUrl = objects.property<String>()
+
+    @Internal
     val unitToChannelMapping = objects.mapProperty<Team, SlackChannel>()
+
+    @Internal
+    val kubernetesCredentials = objects.property<KubernetesCredentials>()
 
     @OutputDirectory
     val output: DirectoryProperty = objects.directoryProperty()
@@ -159,7 +163,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     buildId = buildId.get(),
                     buildUrl = buildUrl.get(),
                     targetCommit = targetCommit.orNull,
-                    kubernetesCredentials = project.kubernetesCredentials,
+                    kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) { "you need to provide kubernetesCredentials" },
                     projectName = project.name,
                     currentBranch = gitBranch.get(),
                     sourceCommitHash = sourceCommitHash.get(),
@@ -175,7 +179,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     downsamplingFactor = project.envArgs.testDownsamplingFactor,
                     reportId = testResults.reportId,
                     reportApiUrl = reportApiUrl.get(),
-                    fileStorageUrl = project.fileStorageUrl,
+                    fileStorageUrl = fileStorageUrl.get(),
                     pullRequestId = project.pullRequestId.orNull,
                     bitbucketConfig = project.bitbucketConfig.get(),
                     statsdConfig = project.statsdConfig.get(),
@@ -187,8 +191,4 @@ abstract class InstrumentationTestsTask @Inject constructor(
             )
         }
     }
-
-    // TODO: extract to a config to file-storage module
-    private val Project.fileStorageUrl: String
-        get() = this.getMandatoryStringProperty("avito.fileStorage.url")
 }
