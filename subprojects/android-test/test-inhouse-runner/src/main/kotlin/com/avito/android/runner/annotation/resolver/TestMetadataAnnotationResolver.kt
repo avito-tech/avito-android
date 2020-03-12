@@ -5,12 +5,14 @@ import com.avito.android.test.annotations.CaseId
 import com.avito.android.test.annotations.ComponentTest
 import com.avito.android.test.annotations.DataSetNumber
 import com.avito.android.test.annotations.Description
+import com.avito.android.test.annotations.E2EStub
+import com.avito.android.test.annotations.E2ETest
 import com.avito.android.test.annotations.ExternalId
-import com.avito.android.test.annotations.Feature
 import com.avito.android.test.annotations.FeatureId
 import com.avito.android.test.annotations.Flaky
 import com.avito.android.test.annotations.FunctionalTest
 import com.avito.android.test.annotations.InstrumentationUnitTest
+import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.MessengerTest
 import com.avito.android.test.annotations.PerformanceComponentTest
@@ -21,40 +23,43 @@ import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.TagId
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.android.test.report.TestPackageParser
+import com.avito.android.test.annotations.UIComponentStub
+import com.avito.android.test.annotations.UIComponentTest
+import com.avito.android.test.annotations.UnitTest
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.model.TestType
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import java.lang.reflect.Method
 
-class TestMetadataAnnotationResolver(
-    private val testPackageParser: TestPackageParser = TestPackageParser.Impl()
-) : TestMetadataResolver {
+class TestMetadataAnnotationResolver : TestMetadataResolver {
 
     override val key: String = TEST_METADATA_KEY
 
     override fun resolve(test: String): TestMetadataResolver.Resolution {
         val subset = arrayOf(
-            FunctionalTest::class.java,
+            FeatureId::class.java,
+            Description::class.java,
+            DataSetNumber::class.java,
+            Priority::class.java,
+            Behavior::class.java,
+            ExternalId::class.java,
+            TagId::class.java,
+            Flaky::class.java,
+            UIComponentTest::class.java,
+            E2ETest::class.java,
+            IntegrationTest::class.java,
+            ManualTest::class.java,
+            UIComponentStub::class.java,
+            E2EStub::class.java,
+            UnitTest::class.java,
             PerformanceFunctionalTest::class.java,
             PerformanceComponentTest::class.java,
             ScreenshotTest::class.java,
             ComponentTest::class.java,
             PublishTest::class.java,
             MessengerTest::class.java,
-            ManualTest::class.java,
-            InstrumentationUnitTest::class.java,
-            CaseId::class.java,
-            FeatureId::class.java,
-            Description::class.java,
-            DataSetNumber::class.java,
-            Priority::class.java,
-            Behavior::class.java,
-            Feature::class.java,
-            ExternalId::class.java,
-            TagId::class.java,
-            Flaky::class.java
+            FunctionalTest::class.java,
+            InstrumentationUnitTest::class.java
         )
 
         var testClass: Class<*>? = null
@@ -87,13 +92,11 @@ class TestMetadataAnnotationResolver(
             }
         }
 
-        var testType: TestType = TestType.NONE
         var kind: Kind = Kind.UNKNOWN
         var caseId: Int? = null
         var description: String? = null
         var priority: TestCasePriority? = null
         var behavior: TestCaseBehavior? = null
-        var features: List<String> = emptyList()
         var dataSetNumber: Int? = null
         val testMethod: Method? = method
         var externalId: String? = null
@@ -104,40 +107,49 @@ class TestMetadataAnnotationResolver(
         annotationsExtractingResult
             .forEach { annotation ->
                 when (annotation) {
-                    is FunctionalTest -> {
-                        testType = TestType.FUNCTIONAL
+                    is UIComponentTest -> {
+                        kind = Kind.UI_COMPONENT
+                    }
+                    is E2ETest -> {
                         kind = Kind.E2E
                     }
+                    is IntegrationTest -> {
+                        kind = Kind.INTEGRATION
+                    }
+                    is ManualTest -> {
+                        kind = Kind.MANUAL
+                    }
+                    is UIComponentStub -> {
+                        kind = Kind.UI_COMPONENT_STUB
+                    }
+                    is E2EStub -> {
+                        kind = Kind.E2E_STUB
+                    }
+                    is UnitTest -> {
+                        kind = Kind.UNIT
+                    }
                     is PerformanceFunctionalTest -> {
-                        testType = TestType.PERFORMANCE_FUNCTIONAL
                         kind = Kind.E2E
                     }
                     is PerformanceComponentTest -> {
-                        testType = TestType.PERFORMANCE_COMPONENT
                         kind = Kind.UI_COMPONENT
                     }
                     is ScreenshotTest -> {
-                        testType = TestType.SCREENSHOT
                         kind = Kind.UI_COMPONENT
                     }
                     is ComponentTest -> {
-                        testType = TestType.COMPONENT
                         kind = Kind.UI_COMPONENT
                     }
                     is PublishTest -> {
-                        testType = TestType.PUBLISH
                         kind = Kind.UI_COMPONENT
                     }
                     is MessengerTest -> {
-                        testType = TestType.MESSENGER
                         kind = Kind.UI_COMPONENT
                     }
-                    is ManualTest -> {
-                        testType = TestType.MANUAL
-                        kind = Kind.MANUAL
+                    is FunctionalTest -> {
+                        kind = Kind.E2E
                     }
                     is InstrumentationUnitTest -> {
-                        testType = TestType.UNIT
                         kind = Kind.INTEGRATION
                     }
                     is CaseId -> {
@@ -151,9 +163,6 @@ class TestMetadataAnnotationResolver(
                     }
                     is Behavior -> {
                         behavior = annotation.behavior
-                    }
-                    is Feature -> {
-                        features = annotation.value.toList()
                     }
                     is DataSetNumber -> {
                         dataSetNumber = annotation.value
@@ -177,15 +186,12 @@ class TestMetadataAnnotationResolver(
             replacement = TestMetadata(
                 caseId = caseId,
                 description = description,
-                testType = testType,
+                className = testClass.name,
+                methodName = testMethod?.name,
+                dataSetNumber = dataSetNumber,
                 kind = kind,
                 priority = priority,
                 behavior = behavior,
-                dataSetNumber = dataSetNumber,
-                features = features,
-                className = testClass.name,
-                methodName = testMethod?.name,
-                packageParserResult = testPackageParser.parse(testClass.`package`?.name),
                 externalId = externalId,
                 featureIds = featureIds,
                 tagIds = tagIds,
