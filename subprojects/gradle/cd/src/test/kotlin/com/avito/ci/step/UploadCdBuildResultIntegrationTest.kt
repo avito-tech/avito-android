@@ -180,6 +180,9 @@ class UploadCdBuildResultIntegrationTest {
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
+            "-PkubernetesToken=stub",
+            "-PkubernetesUrl=stub",
+            "-PkubernetesCaCertData=stub",
             branch = gitBranch.name,
             dryRun = false
         )
@@ -255,6 +258,9 @@ class UploadCdBuildResultIntegrationTest {
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
+            "-PkubernetesToken=stub",
+            "-PkubernetesUrl=stub",
+            "-PkubernetesCaCertData=stub",
             branch = gitBranch.name,
             dryRun = false
         )
@@ -323,13 +329,14 @@ class UploadCdBuildResultIntegrationTest {
                 testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
             }
             instrumentation {
-                reportViewerUrl="$reportsApiUrl"
+                 reportViewerUrl="$reportsApiUrl"
                  reportApiFallbackUrl = "stub"
                  sentryDsn = "stub"
                  slackToken = "stub"
                  fileStorageUrl = "stub"
-                reportApiUrl = "$mockUrl"
-                instrumentationParams = [
+                 registry = "stub"
+                 reportApiUrl = "$mockUrl"
+                 instrumentationParams = [
                     "deviceName"    : "regress",
                     "jobSlug"       : "regress",
                     "runId"         : "runId"

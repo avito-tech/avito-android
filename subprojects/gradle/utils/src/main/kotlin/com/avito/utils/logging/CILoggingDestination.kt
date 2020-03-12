@@ -22,9 +22,11 @@ abstract class CILoggingDestination : Serializable {
 object StdoutDestination : CILoggingDestination() {
 
     override fun write(formattedMessage: CILoggingFormatter.FormattedMessage) {
-        val errorMessage = formattedMessage.cause?.message
-
-        println(formattedMessage.message + if (errorMessage.isNullOrBlank()) "" else " $errorMessage")
+        println(formattedMessage.message)
+        formattedMessage.cause?.let { throwable ->
+            println(throwable.message)
+            throwable.printStackTrace()
+        }
     }
 
     override fun child(tag: String): CILoggingDestination = this

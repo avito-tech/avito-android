@@ -10,10 +10,14 @@ class AdbDevicesManager(
     private val logger: Logger,
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl()
 ) : DevicesManager {
+    private val androidHome: String? = System.getenv("ANDROID_HOME")
+    private val adb: String = "$androidHome/platform-tools/adb"
 
-    private val androidHome: String by lazy { System.getenv("ANDROID_HOME") }
-    private val adb: String by lazy { "$androidHome/platform-tools/adb" }
-
+    init {
+        requireNotNull(androidHome) {
+            "Can't find env ANDROID_HOME. It needs to run 'adb'"
+        }
+    }
     override fun connectedDevices(): Set<Device> =
         commandLine.executeProcess(
             command = adb,

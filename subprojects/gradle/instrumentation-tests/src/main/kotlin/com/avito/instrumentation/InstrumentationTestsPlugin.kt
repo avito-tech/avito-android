@@ -28,6 +28,7 @@ import com.avito.kotlin.dsl.toOptional
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
+import com.avito.utils.gradle.kubernetesCredentials
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -223,14 +224,16 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 // будет переписано из [UiTestCheck]
                                 this.sendStatistics.set(false)
-                                this.slackToken.set(env.slackToken)
+                                this.slackToken.set(configurationData.slackToken)
 
                                 this.output.set(configurationOutputFolder)
                                 this.reportApiUrl.set(configurationData.reportApiUrl)
+                                this.fileStorageUrl.set(configurationData.fileStorageUrl)
                                 this.reportApiFallbackUrl.set(configurationData.reportApiFallbackUrl)
                                 this.reportViewerUrl.set(configurationData.reportViewerUrl)
                                 this.registry.set(configurationData.registry)
                                 this.unitToChannelMapping.set(configurationData.unitToChannelMapping)
+                                this.kubernetesCredentials.set(project.kubernetesCredentials)
                             }
                         }
                     }
@@ -244,10 +247,11 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         val args = mutableMapOf<String, String>()
         args["jobSlug"] = "LocalTests"
         args["runId"] = resolveLocalInstrumentationRunId()
-        args["deviceName"] = project.getMandatoryStringProperty("deviceName")
+        args["deviceName"] = "local"
         args["buildBranch"] = gitState?.currentBranch?.name ?: "local"
         args["buildCommit"] = gitState?.currentBranch?.commit ?: "local"
-        args["teamcityBuildId"] = project.getMandatoryStringProperty("teamcityBuildId")
+        args["teamcityBuildId"] = project.envArgs.build.id.toString()
+        args["avito.report.enabled"] = project.getBooleanProperty("avito.report.enabled", default = false).toString()
 
         config.testInstrumentationRunnerArguments(filterNotBlankValues(args))
     }

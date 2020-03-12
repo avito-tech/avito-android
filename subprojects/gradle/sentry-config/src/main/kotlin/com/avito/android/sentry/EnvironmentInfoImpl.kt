@@ -35,7 +35,7 @@ internal class EnvironmentInfoImpl(private val project: Project, private val git
         return System.getenv("TEAMCITY_AGENT_NAME")
             ?: System.getProperty("TEAMCITY_AGENT_NAME", null)
     }
-
+    // todo to one place
     override fun teamcityBuildId(): String? {
         return project.rootProject.getOptionalStringProperty("teamcityBuildId")
     }

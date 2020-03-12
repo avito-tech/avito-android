@@ -10,7 +10,14 @@ class Device(
     private val serial: String,
     private val logger: (String) -> Unit = {}
 ) {
+    private val androidHome: String? = System.getenv("ANDROID_HOME")
+    private val adb: String = "$androidHome/platform-tools/adb"
 
+    init {
+        requireNotNull(androidHome) {
+            "Can't find env ANDROID_HOME. It needs to run 'adb'"
+        }
+    }
     fun redirectLogcatToFile(
         file: File,
         tags: Collection<String> = emptyList()
@@ -35,7 +42,7 @@ class Device(
     )
 
     fun disconnect(): Try<String> = runCommand(
-        command = "adb disconnect $serial",
+        command = "$adb disconnect $serial",
         logger = logger
     )
 
@@ -43,7 +50,7 @@ class Device(
         disconnect()
 
         return runCommand(
-            "adb connect $serial",
+            "$adb connect $serial",
             logger = logger
         )
     }
@@ -71,7 +78,7 @@ class Device(
     }
 
     private fun executeCommand(command: String): Try<String> = runCommand(
-        command = "adb -s $serial $command",
+        command = "$adb -s $serial $command",
         logger = logger
     )
 
@@ -80,7 +87,7 @@ class Device(
         redirectOutputTo: File? = null
     ): Process =
         spawnProcess(
-            command = "adb -s $serial $command",
+            command = "$adb -s $serial $command",
             outputTo = redirectOutputTo
         )
 }
