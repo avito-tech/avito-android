@@ -5,6 +5,8 @@ type: docs
 
 # Feature toggle
 
+{{<avito page>}}
+
 - [Feature toggle (Wikipedia)](https://en.wikipedia.org/wiki/Feature_toggle)
 - [Feature toggle (Martin Fowler)](https://martinfowler.com/bliki/FeatureToggle.html)
 - [Feature Toggles (Pete Hodgson)](https://martinfowler.com/articles/feature-toggles.html)

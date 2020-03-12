@@ -5,6 +5,8 @@ type: docs
 
 # Analytics
 
+{{<avito page>}}
+
 Для сбора данных используем собственные транспорты:
 
 - [Clickstream (internal)](http://links.k.avito.ru/HF)

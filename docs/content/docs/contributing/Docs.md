@@ -163,14 +163,28 @@ Anchor: `{{</* ref "/Name.md#header" */>}}`.
 
 ### Internal links
 
-Документация публичная, поэтому в ней ней не должно быть прямых ссылок на внутренние сервисы (issue tracker, CI, ...).\
-Чтобы не терять эту информацию, используй links.k.avito.ru для редиректа.
+The documentation is public but some links and services are not.\
+In this case, define it clearly and in advance.
 
-{{< hint info>}}
-Ссылки с кастомным путем должны указывать на что-то неизменяемое.\
-Путь изменится, а ссылку уже не подменить.
-{{< /hint >}}
+To be consistent we use a shortcode:
 
+```tpl
+{{</* avito */>}}
+```
+
+{{<avito>}}
+
+In this shortcode you can override the "text" word to be more clear:
+
+```tpl
+{{</* avito section */>}}
+```
+
+{{<avito section>}}
+
+Also, you have to replace internal links by links.k.avito.ru shortener. It is available only in Avito.\
+
+To get links statistics
 Чтобы посмотреть статистику по ссылке, добавь к ней `+`.
 
 ### Diagrams
