@@ -5,34 +5,42 @@ type: docs
 
 # Android Lint
 
-https://developer.android.com/studio/write/lint
+We use [Android lint](https://developer.android.com/studio/write/lint) to check applications in CI.
 
-В PR результаты отображаются во вкладках "\<app name\> lint".
+By default, we check only applications. It's no use to check libraries in isolation.
 
-## Настройки
+## How to run lint locally
 
-Помимо стандартных настроек lint у нас есть:
+`./gradlew :app:lintRelease`
 
-- Проставляем общие lintOptions для всех модулей в рутовом build.gradle
-- Рутовый lint.xml для задания исключений для всех модулей в репозитории
-- Плагин для общего lint отчета по всем модулям: `com.avito.android.lint-report`
+## Configure lint to suppress warnings
 
-## Как подавить ошибку?
+You can use default capabilities of Android lint ([Configure lint to suppress warnings](https://developer.android.com/studio/write/lint.html#config)). 
 
-Используем стандартные возможности lint ([Configure lint to suppress warnings](https://developer.android.com/studio/write/lint.html#config)): 
+It's better to minimize a scope of suppressing:
 
-- Проставить аннотацию @Suppress в коде, если это единичное ложное срабатывание
-- Добавить исключение в lint.xml
-    - Конкретного модуля (android library).\
-    Используем lintOptions.checkDependencies, поэтому может не примениться для приложения, которое подключает модуль. 
-    - Приложения (android application)
-    - Всего репозитория. Отключит проверку во всех модулях.
+- `@SuppressLint` annotation in the code
+- `tools:ignore` attribute in XML files
 
-## Custom lint checks
+Otherwise, use `lint.xml` config file in an application module.
+
+## Configure lint to run in CI
+
+Add a `lint` [build step]({{< ref "/docs/ci/CIGradlePlugin.md#android-lint-step" >}}) to a build in `build.gradle`
+
+```groovy
+fastCheck {
+    lint {}
+}
+```
+
+## Writing a custom lint check
+
+{{< hint info>}} This section contains Avito specific information {{< /hint >}}
 
 All customs android lint checks are in `lint-checks` (internal) module.
 
-### Writing a custom lint check
+How to start:
 
 - [Static Analysis with Android Lint by Tor Norbye (mDevCamp 2019)](https://slideslive.com/38916502) 
 - [Sample project](https://github.com/googlesamples/android-custom-lint-rules)

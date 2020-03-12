@@ -38,57 +38,143 @@ builds {
 - fullCheck - максимально полные проверки, можем жертвовать скоростью
 - release - набор действий необходимых для предоставления всех релизных артефактов
 
-### Steps
+## Steps
 
-Внутри сценариев описываем декларативно необходимые шаги:
+Step is a declaration to run some logic. It works inside a scenario:
 
 ```groovy
-fastCheck {
+fastCheck { // scenario/build
+    unitTests {} // series of steps
     uiTests {}
+    lint {}
 }
 ```
 
-- `configuration` - проверить конфигурацию проекта, модуль `build-script-test`
-- `uiTests` - запустить ui тесты модуля
+### Built-in steps
+
+#### UI tests
+
+Runs instrumentation tests.
 
 ```groovy
-    fastCheck {
-        uiTests {
-          configurations = ["configurationName"] // list of instrumentation configuration to depend
-          sendStatistics = false // by default
-          suppressFailures = false // by default
-          useImpactAnalysis = false // by default
-          suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
-        }
-    }
+uiTests {
+  configurations = ["configurationName"] // list of instrumentation configuration to depends on
+  sendStatistics = false // by default
+  suppressFailures = false // by default
+  useImpactAnalysis = false // by default
+  suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
+}
 ```
 
-- `performanceTests` - запустить перформанс тесты модуля
+#### Performance tests
+
+Runs performance tests.
 
 ```groovy
-    fastCheck {
-        performanceTests {
-          configuration = "configuration name"
-          enabled = true // true by default
-        }
-    }
+performanceTests {
+  configuration = "configuration name" // performance configuration from Instrumentation plugin
+  enabled = true // true by default
+}
 ```
 
-enabled - запускать ли шаг. \
-configuration - имя performance конфигурации, которая объявленна в instrumentation plugin
+#### Android lint
 
-- `compileUiTests` - скомпилировать androidTest модуля
-- `unitTests` - запустить юнит тесты модуля и всех его зависимостей
-- `lint` - запустить android lint по настройкам в модуле
-- `docsDeploy` - опубликовать документацию в k8s (отключено)
-- `docsCheck` - запустить проверки документации
-- `uploadToQapps` - загрузить указанные артефакты в QApps
-- `uploadToArtifactory` - загрузить указанные артефакты в Artifactory
-- `uploadToProsector` - загрузить указанные артефакты в [Prosector (internal)](http://links.k.avito.ru/cfxrREPBQ)
-- `uploadBuildResult` - загрузить указанные артефакты в сервис релизов
-- `deploy` - загрузить указанные артефакты в google play
-- `artifacts` - зарегистрировать артефакты в качестве результатов билда.\
-Добавит проверку на их наличие и возможность загрузить при помощи других тасок.
+Run [Android lint]({{< ref "/docs/checks/AndroidLint.md" >}}) tasks.
+
+```groovy
+lint {}
+```
+
+#### Compile UI tests
+
+Compile instrumentation tests. It is helpful in local development.
+
+```groovy
+compileUiTests {}
+```
+
+#### Unit tests
+
+Run unit tests.
+
+```groovy
+unitTests {}
+```
+
+#### Upload to QApps
+
+{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+
+Upload [artifacts]({{< relref "#collecting-artifacts">}}) to QApps (internal system )
+
+```groovy
+artifacts {
+    apk("debugApk", ...)
+}
+uploadToQapps {
+    artifacts = ["debugApk"]
+}
+```
+
+#### Upload to Artifactory
+
+Upload [artifacts]({{< relref "#collecting-artifacts">}}) to Artifactory.
+
+```groovy
+artifacts {
+    file("myReport", "${project.buildDir}/reports/my_report.json")
+}
+uploadToArtifactory {
+    artifacts = ["myReport"]
+}
+```
+
+#### Upload to Prosector
+
+{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+
+Upload [artifacts]({{< relref "#collecting-artifacts">}}) to [Prosector (internal)](http://links.k.avito.ru/cfxrREPBQ).
+
+```groovy
+artifacts {
+    apk("debugApk", ...)
+}
+uploadToProsector {
+    artifacts = ["debugApk"]
+}
+```
+
+#### Upload build results
+
+{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+
+Upload all build results to a deploy service.
+
+```groovy
+uploadBuildResult {
+    uiTestConfiguration = "regression" // instrumentation configuration
+}
+```
+
+#### Deploy to Google Play
+
+Deploy to Google play.
+
+```groovy
+deploy {}
+```
+
+#### Configuration checks
+
+{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+
+Checks a repository configuration. See `:build-script-test` for details.
+
+```groovy
+    configuration {}
+```
+
+### Using impact analysis in step
 
 Сценарий может использовать [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}})(по-умолчанию отключено):
 
@@ -100,7 +186,7 @@ fastCheck {
 }
 ```
 
-#### SuppressibleBuildStep
+### Suppressing errors in step
 
 В разных сценариях падения шагов могут ронять за собой весь билд, а можно настроить чтобы билд не упал.
 Обработка этого флага должна быть явно поддержана шагом. 
@@ -119,11 +205,7 @@ release {
 }
 ```
 
-#### Custom steps
-
-По необходимости добавляем свои шаги, наследуясь от `BuildStep`
-
-### Artifacts
+### Collecting artifacts
 
 Артефакты, которые планируется как-то использовать нужно зарегистрировать специальным образом
 
@@ -150,3 +232,7 @@ artifacts {
 ```
 
 Первый аргумент - регистрирует ключ, который затем используется в upload шагах для указания артефактов
+
+### Writing a custom step
+
+По необходимости добавляем свои шаги, наследуясь от `BuildStep`
