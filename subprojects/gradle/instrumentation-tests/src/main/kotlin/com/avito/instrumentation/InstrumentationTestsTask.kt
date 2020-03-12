@@ -163,7 +163,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     buildId = buildId.get(),
                     buildUrl = buildUrl.get(),
                     targetCommit = targetCommit.orNull,
-                    kubernetesCredentials = kubernetesCredentials.orNull ?: throw IllegalArgumentException("kubernetesCredentials is absent"),
+                    kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) { "you need to provide kubernetesCredentials" },
                     projectName = project.name,
                     currentBranch = gitBranch.get(),
                     sourceCommitHash = sourceCommitHash.get(),
