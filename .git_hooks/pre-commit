@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
+# https://git-scm.com/docs/githooks#_pre_commit
 
 set -e
 set -o pipefail
 
-# grep returns exit code 1 in case of no matches. It's easier to check it in place due to pipe
+# Checking for internal URLs
+# NB: grep returns exit code 1 in case of no matches. It's easier to check it in place due to pipe
 
 INTERNAL_URLS=$(git diff --cached --no-color --no-prefix --unified=0 \
     | { grep -E --only-matching "[[:alnum:]_\-\.]+\.avito\.ru\b" || test $? = 1; } \
     | { grep -E --invert-match "links\.k\.avito\.ru" || test $? = 1; } )
 
 if [ -n "${INTERNAL_URLS}" ]; then
-    echo "=== pre-commit git hook has been failed ==="
-    echo "Found forbidden internal links:"
-    echo "${INTERNAL_URLS}"
-    exit 1
+  echo >&2 "ERROR: pre-commit git hook has been failed."
+  echo >&2 "Found forbidden internal links in changes:"
+  echo >&2 "${INTERNAL_URLS}"
+  exit 1
 fi

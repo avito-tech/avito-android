@@ -4,8 +4,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val funktionaleVersion: String by project
-
 dependencies {
     api(project(":subprojects:common:sentry"))
 
@@ -13,6 +11,6 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    implementation(Dependencies.funktionaleTry)
 }
 

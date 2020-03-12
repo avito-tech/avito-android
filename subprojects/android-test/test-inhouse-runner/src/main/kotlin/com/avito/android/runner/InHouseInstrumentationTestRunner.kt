@@ -18,7 +18,6 @@ import com.avito.android.test.report.*
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.model.TestType
 import com.avito.android.test.report.performance.PerformanceProvider
 import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.transport.ExternalStorageTransport
@@ -30,6 +29,7 @@ import com.avito.android.util.ImitateFlagProvider
 import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
+import com.avito.report.model.Kind
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
@@ -254,11 +254,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     private fun validateEnvironment(runEnvironment: TestRunEnvironment.RunEnvironment) {
-        val packageParserResult = runEnvironment.testMetadata.packageParserResult
-
-        if (packageParserResult is TestPackageParser.Result.Error) {
-            throw packageParserResult.error
-        }
+        //todo validate
     }
 
     private fun initTestCase(runEnvironment: TestRunEnvironment.RunEnvironment) {
@@ -278,18 +274,9 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     private fun shouldRecordVideo(testMetadata: TestMetadata): Boolean {
-        return when (testMetadata.testType) {
-            TestType.FUNCTIONAL,
-            TestType.COMPONENT,
-            TestType.PUBLISH,
-            TestType.MESSENGER -> true
-
-            TestType.PERFORMANCE_FUNCTIONAL,
-            TestType.PERFORMANCE_COMPONENT,
-            TestType.SCREENSHOT,
-            TestType.MANUAL,
-            TestType.UNIT,
-            TestType.NONE -> false
+        return when (testMetadata.kind) {
+            Kind.UI_COMPONENT, Kind.E2E -> true
+            else -> false
         }
     }
 

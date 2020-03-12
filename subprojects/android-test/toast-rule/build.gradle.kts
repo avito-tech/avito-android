@@ -6,11 +6,9 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val junitVersion: String by project
-
 dependencies {
-    implementation("androidx.annotation:annotation:1.1.0")
-    implementation("junit:junit:$junitVersion")
+    implementation(Dependencies.androidAnnotations)
+    implementation(Dependencies.test.junit)
 
     implementation(project(":subprojects:android-lib:proxy-toast"))
     implementation(project(":subprojects:android-test:ui-testing-core"))

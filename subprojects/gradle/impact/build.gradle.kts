@@ -5,10 +5,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val kotlinVersion: String by project
-val antPatternMatcherVersion: String by project
-val mockitoKotlinVersion: String by project
-
 dependencies {
     implementation(gradleApi())
     implementation(project(":subprojects:gradle:impact-shared"))
@@ -18,13 +14,13 @@ dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation("io.github.azagniotov:ant-style-path-matcher:$antPatternMatcherVersion")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation(Dependencies.antPattern)
+    implementation(Dependencies.gradle.kotlinPlugin)
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:gradle:logging")))
     testImplementation(testFixtures(project(":subprojects:gradle:git")))
-    testImplementation("com.nhaarman:mockito-kotlin:$mockitoKotlinVersion")
+    testImplementation(Dependencies.test.mockitoKotlin)
 }
 
 gradlePlugin {

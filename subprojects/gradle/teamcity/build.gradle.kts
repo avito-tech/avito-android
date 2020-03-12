@@ -4,10 +4,8 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val teamcityRestClientVersion: String by project
-
 dependencies {
-    api("org.jetbrains.teamcity:teamcity-rest-client:$teamcityRestClientVersion")
+    api(Dependencies.teamcityClient)
 
     implementation(gradleApi())
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))

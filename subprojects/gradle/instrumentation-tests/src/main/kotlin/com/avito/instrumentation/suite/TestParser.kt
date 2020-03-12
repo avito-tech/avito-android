@@ -11,7 +11,6 @@ import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
-import com.avito.report.model.features
 
 internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStaticData = TestStaticDataPackage(
     name = testInApk.testName,
@@ -33,10 +32,6 @@ internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStatic
     externalId = testInApk.annotations
         .find { it.name == EXTERNAL_ID_NAME }
         ?.getStringValue(EXTERNAL_ID_VALUE_KEY),
-
-    features = testInApk.annotations
-        .find { it.name == FEATURES_NAME }
-        ?.getStringArrayValue(FEATURES_VALUE_KEY) ?: testInApk.testName.features,
 
     tagIds = testInApk.annotations
         .find { it.name == TAG_ID_NAME }

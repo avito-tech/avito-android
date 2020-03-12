@@ -5,12 +5,9 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val okhttpVersion: String by project
-val funktionaleVersion: String by project
-
 dependencies {
     implementation(gradleApi())
-    implementation("org.funktionale:funktionale-try:$funktionaleVersion")
+    implementation(Dependencies.funktionaleTry)
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:impact"))
@@ -39,7 +36,7 @@ dependencies {
 configurations.all {
     resolutionStrategy {
         //docker client тянет 4.x версию
-        force("com.squareup.okhttp3:okhttp:$okhttpVersion")
+        force(Dependencies.okhttp)
     }
 }
 

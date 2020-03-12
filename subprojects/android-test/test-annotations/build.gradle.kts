@@ -3,3 +3,7 @@ plugins {
     `maven-publish`
     id("com.jfrog.bintray")
 }
+
+dependencies {
+    implementation(project(":subprojects:common:report-viewer"))
+}

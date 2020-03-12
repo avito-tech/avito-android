@@ -4,8 +4,6 @@ plugins {
     id("com.jfrog.bintray")
 }
 
-val statsdVersion: String by project
-
 dependencies {
     api(project(":subprojects:common:graphite"))
 

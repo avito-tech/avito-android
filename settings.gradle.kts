@@ -153,7 +153,7 @@ pluginManagement {
             val pluginId = requested.id.id
             when {
                 pluginId.startsWith("com.android.") ->
-                    useModule("com.android.tools.build:gradle:$androidGradlePluginVersion")
+                    useModule("com.android.tools.build:gradle:3.5.3")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
                     useVersion(kotlinVersion)
