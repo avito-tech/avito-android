@@ -14,7 +14,7 @@ https://stackoverflow.com/questions/54201216/android-studio-3-3-new-gradle-sync-
 
 ## Instrumentation tests run from Android Studio are failed with `java.lang.NoClassDefFoundError`
 
-The problem occurs only when running a test from Android Studio because of generated Run Configuration has inappropriate type.
+The problem occurs when running a test from Android Studio because of generated Run Configuration has inappropriate type.
 Wherein test run from command line via `./gradlew test` ends up normally.  
 Mostly this reproduced in tests that use Kotlin extensions from Test Fixtures from other Gradle modules.
 
