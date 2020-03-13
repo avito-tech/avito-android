@@ -43,8 +43,8 @@ builds {
 Step is a declaration to run some logic. It works inside a scenario:
 
 ```groovy
-fastCheck { // scenario/build
-    unitTests {} // series of steps
+fastCheck { // <--- scenario (build)
+    unitTests {} // <--- step
     uiTests {}
     lint {}
 }
@@ -103,9 +103,9 @@ unitTests {}
 
 #### Upload to QApps
 
-{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+{{<avito step>}}
 
-Upload [artifacts]({{< relref "#collecting-artifacts">}}) to QApps (internal system )
+Upload [artifacts]({{< relref "#collecting-artifacts">}}) to QApps (internal system)
 
 ```groovy
 artifacts {
@@ -131,7 +131,7 @@ uploadToArtifactory {
 
 #### Upload to Prosector
 
-{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+{{<avito step>}}
 
 Upload [artifacts]({{< relref "#collecting-artifacts">}}) to [Prosector (internal)](http://links.k.avito.ru/cfxrREPBQ).
 
@@ -146,7 +146,7 @@ uploadToProsector {
 
 #### Upload build results
 
-{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+{{<avito step>}}
 
 Upload all build results to a deploy service.
 
@@ -158,6 +158,8 @@ uploadBuildResult {
 
 #### Deploy to Google Play
 
+{{<avito step>}}
+
 Deploy to Google play.
 
 ```groovy
@@ -166,7 +168,7 @@ deploy {}
 
 #### Configuration checks
 
-{{< hint info>}} This section contains Avito specific information {{< /hint >}}
+{{<avito check>}}
 
 Checks a repository configuration. See `:build-script-test` for details.
 
