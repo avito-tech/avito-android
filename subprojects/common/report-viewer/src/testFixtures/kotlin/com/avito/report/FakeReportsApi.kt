@@ -12,6 +12,7 @@ import com.google.gson.JsonElement
 import org.funktionale.tries.Try
 import java.util.ArrayDeque
 import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class FakeReportsApi(
     reportListResults: List<Try<List<Report>>> = emptyList()
@@ -37,7 +38,7 @@ class FakeReportsApi(
         TODO("not implemented")
     }
 
-    val addTestsRequests: MutableList<AddTestsRequest> = mutableListOf()
+    val addTestsRequests: ConcurrentLinkedQueue<AddTestsRequest> = ConcurrentLinkedQueue<AddTestsRequest>()
 
     override fun addTests(
         reportCoordinates: ReportCoordinates,

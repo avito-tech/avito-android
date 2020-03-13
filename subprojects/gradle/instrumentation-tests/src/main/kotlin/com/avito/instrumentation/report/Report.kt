@@ -177,12 +177,11 @@ interface Report {
             }
         }
 
-        private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) =
+        private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) {
             chunked(batchSize)
                 .mapIndexed { index, batch -> index to batch }
                 .parallelStream()
-                .forEach { (index, batch) ->
-                    batchAction(index, batch)
-                }
+                .forEach { (index, batch) -> batchAction(index, batch) }
+        }
     }
 }
