@@ -67,15 +67,18 @@ data class TestRunResult(
             failed.throwable
         )
         is HasFailedTestDeterminer.Result.Failed -> {
-            Verdict.Failed(
-                "Failed. Has unsuppressed failed tests.",
-                IllegalStateException(
-                    "Unsuppressed failed tests ${failed.failed.joinToString(separator = "\n") { it.name }}"
+            if (failed.notSuppressedCount > 0) {
+                Verdict.Failed(
+                    "Failed. Has unsuppressed failed tests.",
+                    IllegalStateException(
+                        "Unsuppressed failed tests ${failed.notSuppressed.joinToString(
+                            separator = "\n"
+                        ) { it.name }}"
+                    )
                 )
-            )
-        }
-        is HasFailedTestDeterminer.Result.FailedWithSuppressed -> {
-            Verdict.Success("Success. All failed tests suppressed by ${failed.suppressed.reason}")
+            } else {
+                Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")
+            }
         }
     }
 
