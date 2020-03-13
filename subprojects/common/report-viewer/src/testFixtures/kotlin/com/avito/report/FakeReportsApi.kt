@@ -38,7 +38,7 @@ class FakeReportsApi(
         TODO("not implemented")
     }
 
-    val addTestsRequests: ConcurrentLinkedQueue<AddTestsRequest> = ConcurrentLinkedQueue<AddTestsRequest>()
+    val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
 
     override fun addTests(
         reportCoordinates: ReportCoordinates,
