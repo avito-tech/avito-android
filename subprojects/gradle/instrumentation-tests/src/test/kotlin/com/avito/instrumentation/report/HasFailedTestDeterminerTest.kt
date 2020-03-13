@@ -123,13 +123,83 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.FailedWithSuppressed::class.java)
-        val failed = result as HasFailedTestDeterminer.Result.FailedWithSuppressed
-        assertThat(failed.suppressed.tests).hasSize(1)
-        assertThat(failed.suppressed.tests[0].name).isEqualTo("com.Test.test2")
-        assertThat(failed.suppressed.reason).isInstanceOf(
-            HasFailedTestDeterminer.Result.FailedWithSuppressed.Suppressed.Reason.SuppressedByFlakiness::class.java
+        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
+        val failed = result as HasFailedTestDeterminer.Result.Failed
+        assertThat(failed.notSuppressedCount).isEqualTo(0)
+        assertThat(failed.suppression).isInstanceOf(
+            HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky::class.java
         )
+        assertThat(failed.suppression.tests).hasSize(1)
+        assertThat(failed.suppression.tests[0].name).isEqualTo("com.Test.test2")
+    }
+
+    @Test
+    fun `determine - results failed - suppress flaky is false`() {
+        val result = createImpl(suppressFlaky = false)
+            .determine(
+                runResult = Try.Success(
+                    listOf(
+                        SimpleRunTest.createStubInstance(
+                            name = "com.Test.test1",
+                            deviceName = "api22"
+                        ),
+                        SimpleRunTest.createStubInstance(
+                            name = "com.Test.test2",
+                            deviceName = "api22",
+                            status = Status.Failure("", ""),
+                            flakiness = Flakiness.Flaky("oops")
+                        ),
+                        SimpleRunTest.createStubInstance(
+                            name = "com.Test.test3",
+                            deviceName = "api22"
+                        )
+                    )
+                )
+            )
+
+        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
+        val failed = result as HasFailedTestDeterminer.Result.Failed
+        assertThat(failed.notSuppressedCount).isEqualTo(1)
+        assertThat(failed.notSuppressed[0].name).isEqualTo("com.Test.test2")
+        assertThat(failed.suppression).isInstanceOf(
+            HasFailedTestDeterminer.Result.Failed.Suppression.NoSuppressed::class.java
+        )
+    }
+
+    @Test
+    fun `determine - results failed - suppress flaky is true but there is failed stable test`() {
+        val result = createImpl(suppressFlaky = true)
+            .determine(
+                runResult = Try.Success(
+                    listOf(
+                        SimpleRunTest.createStubInstance(
+                            name = "com.Test.test1",
+                            deviceName = "api22"
+                        ),
+                        SimpleRunTest.createStubInstance(
+                            name = "com.Test.test2",
+                            deviceName = "api22",
+                            status = Status.Failure("", ""),
+                            flakiness = Flakiness.Flaky("oops")
+                        ),
+                        SimpleRunTest.createStubInstance(
+                            name = "com.Test.test3",
+                            deviceName = "api22",
+                            status = Status.Failure("", "")
+                        )
+                    )
+                )
+            )
+
+        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
+        val failed = result as HasFailedTestDeterminer.Result.Failed
+        assertThat(failed.notSuppressedCount).isEqualTo(1)
+        assertThat(failed.notSuppressed[0].name).isEqualTo("com.Test.test3")
+        assertThat(failed.suppression).isInstanceOf(
+            HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky::class.java
+        )
+        assertThat(failed.suppression.tests).hasSize(1)
+        assertThat(failed.suppression.tests[0].name).isEqualTo("com.Test.test2")
     }
 
     private fun createImpl(
