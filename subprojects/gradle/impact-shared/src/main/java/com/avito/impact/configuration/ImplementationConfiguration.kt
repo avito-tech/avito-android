@@ -5,6 +5,7 @@ import com.avito.impact.changes.ChangedFile
 import com.avito.impact.configuration.sets.isImplementation
 import com.avito.impact.fallback.ImpactFallbackDetector
 import org.funktionale.tries.Try
+import org.gradle.api.attributes.Category
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import java.io.File
 
@@ -58,6 +59,7 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
                     .dependencies
                     .withType(DefaultProjectDependency::class.java)
             }
+            .filter { it.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE)?.name == Category.LIBRARY }
             .toSet()
             .map {
                 it.dependencyProject
