@@ -43,19 +43,17 @@ internal class TestReporterTest {
 
         reporter.sendSkippedTests(skippedTests = skippedTestsToReport)
 
-        assertThat(reportsApi.addTestsRequests).isEqualTo(
-            listOf(
-                FakeReportsApi.AddTestsRequest(
-                    reportCoordinates = coordinates,
-                    buildId = buildId,
-                    tests = skippedTestsToReport
-                        .filter {
-                            it.second !is TestRunFilter.Verdict.Skip.OnlyFailed
-                        }
-                        .map {
-                            AndroidTest.Skipped.fromTestMetadata(it.first, it.second.description, 0)
-                        }
-                )
+        assertThat(reportsApi.addTestsRequests).containsExactly(
+            FakeReportsApi.AddTestsRequest(
+                reportCoordinates = coordinates,
+                buildId = buildId,
+                tests = skippedTestsToReport
+                    .filter {
+                        it.second !is TestRunFilter.Verdict.Skip.OnlyFailed
+                    }
+                    .map {
+                        AndroidTest.Skipped.fromTestMetadata(it.first, it.second.description, 0)
+                    }
             )
         )
     }

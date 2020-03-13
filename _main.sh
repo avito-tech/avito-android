@@ -71,7 +71,8 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.stats.namespace=$AVITO_STATS_NAMESPACE \\
              -PkubernetesToken=$KUBERNETES_TOKEN \\
              -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
-             -PkubernetesUrl=$KUBERNETES_URL"
+             -PkubernetesUrl=$KUBERNETES_URL \\
+             -Pavito.bitbucket.enabled=true"
 
 # TODO: Use IMAGE_ANDROID_BUILDER image from public registry
 

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# https://git-scm.com/docs/githooks#_commit_msg
+
+set -e
+set -o pipefail
+
+MESSAGE_FILE="$1"
+
+JIRA_ISSUE_REGEX="\b[A-Z]{2,5}-[0-9]+\b"
+
+if ! grep -qE "$JIRA_ISSUE_REGEX" "$MESSAGE_FILE";then
+  echo >&2 "ERROR: commit-msg git hook has been failed."
+  echo >&2 "Commit message must contain a Jira issue in the format ABC-1234."
+  cat >&2 "$MESSAGE_FILE"
+  exit 1
+fi

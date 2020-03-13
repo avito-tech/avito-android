@@ -466,7 +466,7 @@ class KubernetesReservationClient(
                 }
 
                 delay(
-                    TimeUnit.SECONDS.toMillis(1)
+                    TimeUnit.SECONDS.toMillis(5)
                 )
 
                 pods = podsFromDeployment(deploymentName)

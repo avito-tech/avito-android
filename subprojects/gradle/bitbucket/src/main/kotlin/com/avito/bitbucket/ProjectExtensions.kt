@@ -1,6 +1,7 @@
 package com.avito.bitbucket
 
 import com.avito.kotlin.dsl.ProjectProperty
+import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalIntProperty
 import com.avito.utils.gradle.BuildEnvironment
@@ -30,16 +31,31 @@ val Project.pullRequestId: Provider<Int> by ProjectProperty.lazy { project ->
     }
 }
 
-val Project.bitbucketConfig: Provider<BitbucketConfig> by ProjectProperty.lazy { project ->
-    Providers.of(
-        BitbucketConfig(
-            baseUrl = project.getMandatoryStringProperty("avito.bitbucket.url"),
-            projectKey = project.getMandatoryStringProperty("avito.bitbucket.projectKey"),
-            repositorySlug = project.getMandatoryStringProperty("avito.bitbucket.repositorySlug"),
-            credentials = atlassianCredentials(project)
-        )
-    )
-}
+// todo return notdefine
+val Project.bitbucketConfig: Provider<BitbucketConfig>
+    get() {
+        return providers.provider {
+            val isEnabled = project.getBooleanProperty("avito.bitbucket.enabled", false)
+            if (isEnabled) {
+                BitbucketConfig(
+                    baseUrl = project.getMandatoryStringProperty("avito.bitbucket.url"),
+                    projectKey = project.getMandatoryStringProperty("avito.bitbucket.projectKey"),
+                    repositorySlug = project.getMandatoryStringProperty("avito.bitbucket.repositorySlug"),
+                    credentials = atlassianCredentials(project)
+                )
+            } else {
+                BitbucketConfig(
+                    baseUrl = "http://disable",
+                    projectKey = "disable",
+                    credentials = AtlassianCredentials(
+                        "disabled", "disabled"
+                    ),
+                    repositorySlug = "disabled"
+                )
+            }
+        }
+    }
+
 
 //todo добавить префиксы avito.
 private fun atlassianCredentials(project: Project): AtlassianCredentials = AtlassianCredentials(

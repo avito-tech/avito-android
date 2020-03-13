@@ -3,7 +3,9 @@ title: Report Viewer
 type: docs
 ---
 
-# Report Viewer (internal)
+# Report Viewer
+
+{{<avito page>}}
 
 Используем отчеты в [Report Viewer (internal)](http://links.k.avito.ru/cfxRp7KAg), которые содержат:
 
