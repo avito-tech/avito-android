@@ -3,7 +3,9 @@ title: Release
 type: docs
 ---
 
-# Релиз приложения Android (internal)
+# Релиз приложения Android
+
+{{<avito page>}}
 
 Канал для коммуникации: [#regression-android](http://links.k.avito.ru/slackregressionandroid)
 

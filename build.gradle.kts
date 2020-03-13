@@ -33,8 +33,10 @@ val compileSdk = 29
 
 val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
     group = "publication"
-    requireNotNull(artifactoryUrl) {
-        "Property artifactoryUrl is required for publishing"
+    doLast {
+        requireNotNull(artifactoryUrl) {
+            "Property artifactoryUrl is required for publishing"
+        }
     }
 }
 

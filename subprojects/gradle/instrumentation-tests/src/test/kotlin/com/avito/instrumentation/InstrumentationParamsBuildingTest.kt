@@ -54,6 +54,7 @@ class InstrumentationParamsBuildingTest {
                              sentryDsn = "stub"
                              slackToken = "stub"
                              fileStorageUrl = "stub"
+                             registry = "stub"
 
                              instrumentationParams = [
                                  "jobSlug": "FunctionalTests",
@@ -168,7 +169,7 @@ class InstrumentationParamsBuildingTest {
                     "planSlug" to "AvitoAndroid",
                     "jobSlug" to "FunctionalTests",
                     "override" to "overrideInPlugin",
-                    "deviceName" to "LOCAL",
+                    "deviceName" to "local",
                     "teamcityBuildId" to "0",
                     "buildBranch" to "develop",
                     "buildCommit" to commit,
@@ -182,7 +183,8 @@ class InstrumentationParamsBuildingTest {
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
                     "fileStorageUrl" to "stub",
-                    "inHouse" to "true"
+                    "inHouse" to "true",
+                    "avito.report.enabled" to "false"
                 )
             )
     }
@@ -214,7 +216,7 @@ class InstrumentationParamsBuildingTest {
                     "jobSlug" to "FunctionalTests",
                     "override" to "overrideInConfiguration",
                     "configuration" to "functional",
-                    "deviceName" to "LOCAL",
+                    "deviceName" to "local",
                     "teamcityBuildId" to "0",
                     "buildBranch" to "develop",
                     "buildCommit" to commit,
@@ -228,7 +230,8 @@ class InstrumentationParamsBuildingTest {
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
                     "fileStorageUrl" to "stub",
-                    "inHouse" to "true"
+                    "inHouse" to "true",
+                    "avito.report.enabled" to "false"
                 )
             )
     }
@@ -277,7 +280,8 @@ class InstrumentationParamsBuildingTest {
                     "sentryDsn" to "stub",
                     "slackToken" to "stub",
                     "fileStorageUrl" to "stub",
-                    "inHouse" to "true"
+                    "inHouse" to "true",
+                    "avito.report.enabled" to "false"
                 )
             )
     }
@@ -311,7 +315,6 @@ class InstrumentationParamsBuildingTest {
         ciRun(
             projectDir,
             *args,
-            "-PdeviceName=LOCAL",
             "-PteamcityBuildId=0",
             buildType = buildType,
             targetBranch = targetBranch

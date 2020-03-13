@@ -3,7 +3,9 @@ title: Dynamic config
 type: docs
 ---
 
-# Запуск тестов в CI с кастомными параметрами (internal)
+# Запуск тестов в CI с кастомными параметрами
+
+{{<avito page>}}
 
 В Teamcity есть [конфигурация instrumentationDynamic](http://links.k.avito.ru/tmctAvitoAndroidInstrumentationDynamic) 
 для запуска тестов со специфическим набором требований.

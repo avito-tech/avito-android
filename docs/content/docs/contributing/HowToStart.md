@@ -5,6 +5,8 @@ type: docs
 
 # How to start
 
+{{<avito page>}}
+
 ## Minimal requirements
 
 - 16Gb RAM
