@@ -59,7 +59,10 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
                     .dependencies
                     .withType(DefaultProjectDependency::class.java)
             }
-            .filter { it.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE)?.name == Category.LIBRARY }
+            .filter {
+                val category = it.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE)?.name
+                category == null || category == Category.LIBRARY
+            }
             .toSet()
             .map {
                 it.dependencyProject
