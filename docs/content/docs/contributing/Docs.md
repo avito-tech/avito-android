@@ -296,7 +296,7 @@ Markdown content
 
 #### Ordered vs Unordered lists
 
-Only use ordered list for describing an algorithm.
+Only use ordered list for describing a series of steps to follow.
 
 {{< columns >}}
 Do: 👍
