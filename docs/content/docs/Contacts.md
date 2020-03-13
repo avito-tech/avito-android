@@ -11,11 +11,13 @@ type: docs
 
 ## Internal channels
 
+{{<avito section>}}
+
 Slack:
 
 - [#android-dev](http://links.k.avito.ru/slackandroiddev) - single slack channel for any android related stuff
 - [#android-autotesting](http://links.k.avito.ru/slackandroidautotesting) - all about testing
-- #speed
+- [#speed](http://links.k.avito.ru/yo)
 
 Issues:
 

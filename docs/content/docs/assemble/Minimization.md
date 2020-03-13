@@ -5,6 +5,8 @@ type: docs
 
 # Минимизация сборки
 
+{{<avito page>}}
+
 [Официальная документация](https://developer.android.com/studio/build/shrink-code#shrink-code)
 
 В проекте используется R8 ([задача (internal)](http://links.k.avito.ru/MBS6221) на включение "full mode")

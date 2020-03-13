@@ -5,6 +5,8 @@ type: docs
 
 # Сборки в контейнерах
 
+{{<avito page>}}
+
 [Avito Docker documentation (internal)](http://links.k.avito.ru/cfxOMToAQ)
 
 Все образы расположены в `ci/docker`.

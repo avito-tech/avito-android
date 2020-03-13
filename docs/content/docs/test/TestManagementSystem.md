@@ -3,7 +3,9 @@ title: Test Management System
 type: docs
 ---
 
-# Test Management System (internal)
+# Test Management System
+
+{{<avito page>}}
 
 Avito uses in-house TMS: [Internal docs](http://links.k.avito.ru/h)
 

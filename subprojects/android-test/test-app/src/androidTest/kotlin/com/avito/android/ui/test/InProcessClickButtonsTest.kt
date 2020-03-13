@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import androidx.test.espresso.PerformException
 import com.avito.android.runner.UITestFrameworkPerformException
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.util.ClicksTypeRule
@@ -32,17 +33,17 @@ class InProcessClickButtonsTest {
         Screen.buttons.enabledButtonLongClickIndicatorView.checks.isDisplayed()
     }
 
-    @Test(expected = UITestFrameworkPerformException::class)
+    @Test(expected = PerformException::class)
     fun clickOnDisabledButton_mustThrowPerformException() {
         Screen.buttons.disabledButton.click()
     }
 
-    @Test(expected = UITestFrameworkPerformException::class)
+    @Test(expected = PerformException::class)
     fun longClickOnDisabledButton_mustThrowPerformException() {
         Screen.buttons.disabledButton.longClick()
     }
 
-    @Test(expected = UITestFrameworkPerformException::class)
+    @Test(expected = PerformException::class)
     fun clickOnNonClickableButton_mustThrowPerformException() {
         Screen.buttons.nonClickableButton.click()
     }
@@ -63,7 +64,7 @@ class InProcessClickButtonsTest {
         Screen.buttons.nonLongClickableButtonIndicator.checks.isDisplayed()
     }
 
-    @Test(expected = UITestFrameworkPerformException::class)
+    @Test(expected = PerformException::class)
     fun longClickOnNonLongClickableButton_mustThrowPerformException() {
         Screen.buttons.nonLongClickableButton.longClick()
     }

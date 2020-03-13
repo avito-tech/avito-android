@@ -21,35 +21,28 @@ interface HasFailedTestDeterminer {
         object NoFailed : Result()
 
         data class Failed(
-            val failed: List<SimpleRunTest>
-        ) : Result() {
-
-            override fun count(): Int = failed.size
-
-        }
-
-        data class FailedWithSuppressed(
             val failed: List<SimpleRunTest>,
-            val suppressed: Suppressed
+            val suppression: Suppression = Suppression.NoSuppressed
         ) : Result() {
 
             override fun count(): Int = failed.size
 
-            data class Suppressed(
-                val tests: List<SimpleRunTest>,
-                val reason: Reason
-            ) {
+            val notSuppressed = failed.minus(suppression.tests)
 
-                sealed class Reason {
-                    object SuppressedAll : Reason() {
-                        override fun toString(): String {
-                            return "Suppressed all by flag in build.gradle"
-                        }
-                    }
+            val notSuppressedCount = notSuppressed.size
 
-                    object SuppressedByFlakiness : Reason() {
-                        override fun toString(): String = "Suppressed all @Flaky tests"
-                    }
+            sealed class Suppression(val tests: List<SimpleRunTest>) {
+
+                object NoSuppressed : Suppression(emptyList()) {
+                    override fun toString(): String = "No suppressed tests"
+                }
+
+                class SuppressedAll(tests: List<SimpleRunTest>) : Suppression(tests) {
+                    override fun toString(): String = "Suppressed all by flag in build.gradle"
+                }
+
+                class SuppressedFlaky(tests: List<SimpleRunTest>) : Suppression(tests) {
+                    override fun toString(): String = "Suppressed all @Flaky tests"
                 }
             }
         }
@@ -73,20 +66,18 @@ interface HasFailedTestDeterminer {
                         hasFailedTests -> {
                             when {
                                 suppressFailure -> {
-                                    Result.FailedWithSuppressed(
+                                    Result.Failed(
                                         failed = failedTests,
-                                        suppressed = Result.FailedWithSuppressed.Suppressed(
-                                            tests = failedTests,
-                                            reason = Result.FailedWithSuppressed.Suppressed.Reason.SuppressedAll
+                                        suppression = Result.Failed.Suppression.SuppressedAll(
+                                            tests = failedTests
                                         )
                                     )
                                 }
                                 suppressFlaky -> {
-                                    Result.FailedWithSuppressed(
+                                    Result.Failed(
                                         failed = failedTests,
-                                        suppressed = Result.FailedWithSuppressed.Suppressed(
-                                            tests = failedTests.filter { it.flakiness is Flakiness.Flaky },
-                                            reason = Result.FailedWithSuppressed.Suppressed.Reason.SuppressedByFlakiness
+                                        suppression = Result.Failed.Suppression.SuppressedFlaky(
+                                            tests = failedTests.filter { it.flakiness is Flakiness.Flaky }
                                         )
                                     )
                                 }

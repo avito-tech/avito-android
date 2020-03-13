@@ -7,7 +7,7 @@ type: docs
 
 Multiple projects live in two repositories:
 
-- Open Source repository (https://github.com/avito-tech/avito-android) - monorepo of all tooling to continuously test and deliver apps to users
+- Open Source repository ([avito-tech/avito-android](https://github.com/avito-tech/avito-android)) - monorepo of all tooling to continuously test and deliver apps to users
 - Internal repository (closed source) - monorepo of all apps and shared libraries
 
 ## Open Source repository
