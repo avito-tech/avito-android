@@ -3,7 +3,9 @@ title: Artifacts
 type: docs
 ---
 
-# Артефакты сборки (internal)
+# Артефакты сборки
+
+{{<avito page>}}
 
 ## Где храним артефакты?
 

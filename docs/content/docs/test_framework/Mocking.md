@@ -5,10 +5,12 @@ type: docs
 
 # Mocking in tests
 
+{{<avito page>}}
+
 To use a specific state you need to find a suitable `@Rule` or annotation.\
 Thus, test runner knows how to prepare it for the test ([more details]({{< relref "#writing-custom-mocks-for-tests">}})).
 
-## Mocks (internal)
+## Mocks
 
 ### Networking
 

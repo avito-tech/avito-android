@@ -3,7 +3,9 @@ title: QApps
 type: docs
 ---
 
-# QApps (internal)
+# QApps
+
+{{<avito page>}}
 
 [QApps Android](http://links.k.avito.ru/qappsAndroid)
 

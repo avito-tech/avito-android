@@ -5,6 +5,8 @@ type: docs
 
 # Бенчмарки сборки
 
+{{<avito page>}}
+
 Для бенчмарков используем [Gradle profiler](https://github.com/gradle/gradle-profiler), 
 где можно описать воспрозводимый сценарий:
 
