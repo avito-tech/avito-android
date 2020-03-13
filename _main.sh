@@ -75,8 +75,8 @@ GRADLE_ARGS+="-Pavito.stats.port=$AVITO_STATS_PORT "
 GRADLE_ARGS+="-Pavito.stats.namespace=$AVITO_STATS_NAMESPACE "
 GRADLE_ARGS+="-PkubernetesToken=$KUBERNETES_TOKEN "
 GRADLE_ARGS+="-PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA "
-GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL \\
-             -Pavito.bitbucket.enabled=true"
+GRADLE_ARGS+="-PkubernetesUrl=$KUBERNETES_URL "
+GRADLE_ARGS+="-Pavito.bitbucket.enabled=true "
 
 function runInBuilder() {
     COMMANDS=$@
