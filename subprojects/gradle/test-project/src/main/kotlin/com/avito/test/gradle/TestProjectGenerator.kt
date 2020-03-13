@@ -202,6 +202,30 @@ class EmptyModule(
     }
 }
 
+class PlatformModule(
+    override val name: String,
+    override val plugins: List<String> = emptyList(),
+    override val modules: List<Module> = emptyList(),
+    override val buildGradleExtra: String = ""
+) : Module {
+
+    override fun generateIn(file: File) {
+        file.module(name) {
+            build_gradle {
+                writeText(
+                    """
+plugins {
+    id 'java-platform'
+    ${plugins.joinToString(separator = "\n") { "id '$it'" }}
+}
+
+$buildGradleExtra
+""")
+            }
+        }
+    }
+}
+
 class AndroidLibModule(
     override val name: String,
     override val packageName: String = "com.$name",
