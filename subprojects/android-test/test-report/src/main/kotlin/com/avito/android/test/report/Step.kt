@@ -10,6 +10,7 @@ internal val onlyImitateProvider: ImitateFlagProvider
     get() = InstrumentationRegistry.getInstrumentation() as ImitateFlagProvider
 
 @PublishedApi
+@Deprecated("")
 internal val reportInstance: Report
     get() = (InstrumentationRegistry.getInstrumentation() as ReportProvider).report
 

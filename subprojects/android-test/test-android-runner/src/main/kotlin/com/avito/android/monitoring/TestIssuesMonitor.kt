@@ -27,6 +27,7 @@ private const val sentryExtraValueLimit: Int = 50000
 /**
  * http://links.k.avito.ru/kV
  */
+@Deprecated("")
 fun createSentry(sentryDsn: String): SentryClient {
     return SentryClientFactory.sentryClient(
         sentryDsn,

@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":subprojects:android-test:ui-testing-core"))
     implementation(project(":subprojects:android-test:ui-testing-maps"))
     implementation(project(":subprojects:android-test:mockito-utils"))
+    api(project(":subprojects:android-test:test-android-runner"))
     implementation(Dependencies.androidTest.runner)
     implementation(Dependencies.test.truth)
     implementation(Dependencies.okhttpLogging)

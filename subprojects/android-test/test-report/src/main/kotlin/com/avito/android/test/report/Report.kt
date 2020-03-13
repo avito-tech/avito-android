@@ -13,7 +13,7 @@ import okhttp3.HttpUrl
 interface Report {
 
     val isFirstStepOrPrecondition: Boolean
-
+    @Deprecated("")
     val sentry: SentryClient
 
     fun initTestCase(testMetadata: TestMetadata)

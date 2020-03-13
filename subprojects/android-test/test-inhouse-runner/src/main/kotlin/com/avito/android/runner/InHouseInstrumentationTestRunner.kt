@@ -1,122 +1,79 @@
 package com.avito.android.runner
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
-import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnitRunner
 import com.avito.android.mock.MockDispatcher
-import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
-import com.avito.android.monitoring.createSentry
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
-import com.avito.android.test.UITestConfig
-import com.avito.android.test.interceptor.HumanReadableActionInterceptor
-import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
-import com.avito.android.test.report.*
+import com.avito.android.runner.delegates.CompositeInstrumentationDelegate
+import com.avito.android.test.report.Report
+import com.avito.android.test.report.ReportProvider
+import com.avito.android.test.report.ReportViewerHttpInterceptor
+import com.avito.android.test.report.ReportViewerWebsocketReporter
 import com.avito.android.test.report.incident.AppCrashException
-import com.avito.android.test.report.listener.TestLifecycleNotifier
-import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.performance.PerformanceProvider
-import com.avito.android.test.report.performance.PerformanceTestReporter
-import com.avito.android.test.report.transport.ExternalStorageTransport
-import com.avito.android.test.report.transport.LocalRunTransport
-import com.avito.android.test.report.transport.Transport
-import com.avito.android.test.report.video.VideoCaptureTestListener
-import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
-import com.avito.logger.Logger
-import com.avito.report.model.DeviceName
-import com.avito.report.model.EntryTypeAdapterFactory
-import com.avito.report.model.Kind
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
-import java.util.concurrent.TimeUnit
+import java.net.IDN
 
 abstract class InHouseInstrumentationTestRunner :
-    AndroidJUnitRunner(),
+    AndroidJUnitRunner,
     ReportProvider,
     PerformanceProvider,
     ImitateFlagProvider {
 
+    private val delegateProviders: List<InstrumentationDelegateProvider>
+
+    constructor() : this(emptyList())
+
+    constructor(delegateProviders: List<InstrumentationDelegateProvider>) {
+        this.delegateProviders = delegateProviders
+    }
+
+    @Deprecated("")
     protected val tag = "UITestRunner"
 
+    private val instrumentationContext: InstrumentationDelegateProvider.Context by lazy {
+        InstrumentationDelegateProvider.Context(
+            targetContext = targetContext,
+            environment = testRunEnvironment.asRunEnvironmentOrThrow(),
+            tag = tag
+        )
+    }
+
+    private var mainInstrumentationDelegate: InstrumentationDelegate? = null
+
+    @Deprecated("")
     protected val sentry by lazy {
-        createSentry(
-            sentryDsn = testRunEnvironment.asRunEnvironmentOrThrow().sentryDsn
-        )
+        instrumentationContext.sentry
     }
 
-    private val testReportLogger: Logger = object : Logger {
-        override fun debug(msg: String) {
-            Log.d("TestReport", msg)
-        }
-
-        override fun exception(msg: String, error: Throwable) {
-            Log.e("TestReport", msg, error)
-        }
-
-        override fun critical(msg: String, error: Throwable) {
-            Log.e("TestReport", msg, error)
-            sentry.sendException(error)
-        }
-
+    @Deprecated("")
+    override val performanceTestReporter by lazy {
+        instrumentationContext.performanceTestReporter
     }
 
-    override val performanceTestReporter = PerformanceTestReporter()
-
+    @Deprecated("")
     override val report: Report by lazy {
-        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
-        val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
-        val transport: List<Transport> = when {
-            isLocalRun -> {
-                if (runEnvironment.reportConfig != null) {
-                    listOf(
-                        LocalRunTransport(
-                            reportApiHost = runEnvironment.reportConfig.reportApiUrl,
-                            reportFallbackUrl = runEnvironment.reportConfig.reportApiFallbackUrl,
-                            reportViewerUrl = runEnvironment.reportConfig.reportViewerUrl,
-                            reportCoordinates = runEnvironment.testRunCoordinates,
-                            deviceName = DeviceName(runEnvironment.deviceName),
-                            logger = testReportLogger
-                        )
-                    )
-                } else {
-                    emptyList()
-                }
-            }
-            else -> {
-                val gson: Gson = GsonBuilder()
-                    .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-                    .create()
-                listOf(ExternalStorageTransport(gson))
-            }
-        }
-
-        ReportImplementation(
-            sentry = sentry,
-            fileStorageUrl = runEnvironment.fileStorageUrl,
-            onDeviceCacheDirectory = runEnvironment.outputDirectory,
-            httpClient = reportHttpClient,
-            onIncident = { testIssuesMonitor.onFailure(it) },
-            performanceTestReporter = performanceTestReporter,
-            transport = transport,
-            logger = testReportLogger
-        )
+        instrumentationContext.report
     }
 
+    @Deprecated("")
     override val isImitate: Boolean by lazy {
         testRunEnvironment.asRunEnvironmentOrThrow().isImitation
     }
 
+    @Deprecated("")
     val testRunEnvironment: TestRunEnvironment by lazy {
         createRunnerEnvironment(instrumentationArguments)
     }
 
+    @Deprecated("")
     val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
@@ -125,28 +82,24 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
+    @Deprecated("")
     val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
         ReportViewerWebsocketReporter(this)
     }
 
+    @Deprecated("")
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
 
     @SuppressLint("LogNotTimber")
+    @Deprecated("")
     val mockDispatcher = MockDispatcher(logger = { Log.d("MOCK_WEB_SERVER", it) })
 
+    @Deprecated("")
     protected open val testIssuesMonitor: TestIssuesMonitor by lazy {
-        CompositeTestIssuesMonitor(
-            sentry = sentry,
-            testRunEnvironment = testRunEnvironment.asRunEnvironmentOrThrow(),
-            logTag = tag
-        )
+        instrumentationContext.testIssuesMonitor
     }
 
     private lateinit var instrumentationArguments: Bundle
-
-    private val systemDialogsManager: SystemDialogsManager by lazy { SystemDialogsManager(report) }
-
-    private val reportHttpClient: OkHttpClient by lazy { createReportHttpClient() }
 
     abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
 
@@ -159,6 +112,7 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
+    @Deprecated("")
     protected open fun beforeApplicationCreated(
         runEnvironment: TestRunEnvironment.RunEnvironment,
         bundleWithTestAnnotationValues: Bundle
@@ -172,60 +126,42 @@ abstract class InHouseInstrumentationTestRunner :
     @SuppressLint("LogNotTimber")
     override fun onCreate(arguments: Bundle) {
         instrumentationArguments = arguments
-        injectTestMetadata(arguments)
-
+        injectTestMetadata(arguments) // todo to delegate
         Log.d(tag, "Instrumentation arguments: $instrumentationArguments")
         Log.d(tag, "TestRunEnvironment: $testRunEnvironment")
 
         testRunEnvironment.executeIfRealRun {
-            initApplicationCrashHandling()
-
-            addReportListener(arguments)
-            initTestCase(runEnvironment = it)
-            initListeners(runEnvironment = it)
+            mainInstrumentationDelegate = CompositeInstrumentationDelegate(
+                delegates = delegateProviders.map { it.get(instrumentationContext) }
+            )
             beforeApplicationCreated(
                 runEnvironment = it,
                 bundleWithTestAnnotationValues = arguments
             )
         }
-
+        mainInstrumentationDelegate?.beforeOnCreate(arguments)
         super.onCreate(arguments)
-
-        testRunEnvironment.executeIfRealRun {
-            Espresso.setFailureHandler(ReportFriendlyFailureHandler(targetContext))
-            initUITestConfig()
-
-            DeviceSettingsChecker(targetContext).check()
-        }
+        mainInstrumentationDelegate?.afterOnCreate()
     }
 
     override fun onStart() {
-        testRunEnvironment.executeIfRealRun {
-            systemDialogsManager.closeSystemDialogs()
-        }
-
+        mainInstrumentationDelegate?.beforeOnStart()
         super.onStart()
-
-        testRunEnvironment.executeIfRealRun {
-            validateEnvironment(runEnvironment = it)
-        }
+        mainInstrumentationDelegate?.afterOnStart()
     }
 
-    @SuppressLint("LogNotTimber")
     override fun onException(obj: Any?, e: Throwable): Boolean {
-        Log.e(tag, "Application crash captured by onException handler inside instrumentation", e)
-
-        testRunEnvironment.executeIfRealRun {
-            tryToReportUnexpectedIncident(
-                incident = e,
-                tag = tag
-            )
-        }
-
+        mainInstrumentationDelegate?.onException(obj, e)
         return super.onException(obj, e)
     }
 
+    override fun finish(resultCode: Int, results: Bundle) {
+        mainInstrumentationDelegate?.onFinish(resultCode, results)
+        super.finish(resultCode, results)
+    }
+
     @SuppressLint("LogNotTimber")
+    @Deprecated("")
     fun tryToReportUnexpectedIncident(incident: Throwable, tag: String) {
         try {
             report.registerIncident(AppCrashException(incident))
@@ -235,75 +171,8 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    /**
-     * Мы перехватываем все падения приложения тут с помощью глобального хэндлера.
-     * Мы используем этот механизм вместе с onException.
-     *
-     * Если происходит падение внутри приложения в другом треде (например в IO), то срабатывает
-     * глобальный обработчик ошибок и крашит приложение внутри Android Runtime. Это падение
-     * instrumentation не перехватывает.
-     *
-     * Сейчас за обработку всех падений приложения в mainThread и внутри instrumentation колбеков
-     * отвечает onException. Все остальное (например, падение в отдельном треде) мы перехватываем в
-     * глобальном обработчике.
-     */
-    private fun initApplicationCrashHandling() {
-        Thread.setDefaultUncaughtExceptionHandler(
-            ReportUncaughtHandler()
-        )
-    }
-
-    private fun validateEnvironment(runEnvironment: TestRunEnvironment.RunEnvironment) {
-        //todo validate
-    }
-
-    private fun initTestCase(runEnvironment: TestRunEnvironment.RunEnvironment) {
-        report.initTestCase(testMetadata = runEnvironment.testMetadata)
-    }
-
-    private fun initListeners(runEnvironment: TestRunEnvironment.RunEnvironment) {
-        TestLifecycleNotifier.addListener(
-            VideoCaptureTestListener(
-                videoFeatureValue = runEnvironment.videoRecordingFeature,
-                onDeviceCacheDirectory = runEnvironment.outputDirectory,
-                httpClient = reportHttpClient,
-                shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
-                fileStorageUrl = runEnvironment.fileStorageUrl
-            )
-        )
-    }
-
-    private fun shouldRecordVideo(testMetadata: TestMetadata): Boolean {
-        return when (testMetadata.kind) {
-            Kind.UI_COMPONENT, Kind.E2E -> true
-            else -> false
-        }
-    }
-
-    private fun initUITestConfig() {
-        with(UITestConfig) {
-            waiterTimeoutMs = TimeUnit.SECONDS.toMillis(12)
-
-            activityLaunchTimeoutMilliseconds = TimeUnit.SECONDS.toMillis(15)
-
-            actionInterceptors += HumanReadableActionInterceptor {
-                report.addComment(it)
-            }
-
-            assertionInterceptors += HumanReadableAssertionInterceptor {
-                report.addComment(it)
-            }
-
-            onWaiterRetry = { }
-        }
-    }
-
-    private fun addReportListener(arguments: Bundle) {
-        arguments.putString("listener", ReportTestListener::class.java.name)
-        arguments.putString("newRunListenerMode", "true")
-    }
-
     companion object {
+        @Deprecated("")
         val instance: InHouseInstrumentationTestRunner by lazy {
             InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner
         }

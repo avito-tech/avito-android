@@ -92,7 +92,7 @@ sealed class TestRunEnvironment {
     }
 
     companion object {
-        internal val LOCAL_STUDIO_RUN_ID = -1
+        val LOCAL_STUDIO_RUN_ID = -1
     }
 }
 
@@ -157,7 +157,9 @@ fun provideEnvironment(
                 reportConfig = reportConfig
             )
         } catch (e: Throwable) {
-            TestRunEnvironment.InitError(e.message ?: "Unknown error")
+            TestRunEnvironment.InitError(
+                e.message ?: "Unknown error"
+            )
         }
     }
 }
@@ -186,4 +188,4 @@ private fun provideVideoRecordingFeature(argumentsProvider: ArgsProvider): Video
     }
 }
 
-internal const val FAKE_ORCHESTRATOR_RUN_ARGUMENT = "listTestsForOrchestrator"
+const val FAKE_ORCHESTRATOR_RUN_ARGUMENT = "listTestsForOrchestrator"

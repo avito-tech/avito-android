@@ -77,6 +77,7 @@ if (syncAndroidModules.toBoolean()) {
     include(":subprojects:android-test:ui-testing-core")
     include(":subprojects:android-test:test-report")
     include(":subprojects:android-test:test-inhouse-runner")
+    include(":subprojects:android-test:test-android-runner")
     include(":subprojects:android-test:test-app")
     include(":subprojects:android-test:toast-rule")
 
