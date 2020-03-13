@@ -86,12 +86,12 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                         throw AssertionFailedError("Не прошла проверка: ${e.actionDescription}")
                     }
 
-                    // rethrow exception but with bare minimum of useful info
-                    throw UITestFrameworkPerformException(
-                        actionDescription = e.actionDescription,
-                        viewDescription = minimizeViewDescription(e.viewDescription),
-                        cause = e
-                    )
+                    // rethrow exception with bare minimum of useful info
+                    throw PerformException.Builder()
+                        .from(e)
+                        .withViewDescription(minimizeViewDescription(e.viewDescription))
+                        .withCause(e)
+                        .build()
                 }
                 e is AssertionFailedError -> {
                     throw AssertionFailedError(e.normalizedMessage())
