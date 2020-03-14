@@ -39,7 +39,10 @@ data class TestRunResult(
                     val message = "${failedVerdict.message}. ${notReportedVerdict.message}"
                     Verdict.Failed(
                         message,
-                        CompositeException(message, arrayOf(failedVerdict.throwable, notReportedVerdict.throwable))
+                        CompositeException(
+                            message,
+                            arrayOf(failedVerdict.throwable, notReportedVerdict.throwable)
+                        )
                     )
                 }
                 failedVerdict is Verdict.Failed -> failedVerdict
@@ -69,12 +72,8 @@ data class TestRunResult(
         is HasFailedTestDeterminer.Result.Failed -> {
             if (failed.notSuppressedCount > 0) {
                 Verdict.Failed(
-                    "Failed. Has unsuppressed failed tests.",
-                    IllegalStateException(
-                        "Unsuppressed failed tests ${failed.notSuppressed.joinToString(
-                            separator = "\n"
-                        ) { it.name }}"
-                    )
+                    "Failed. Unsuppressed failed tests:\n${failed.notSuppressed.lineByLine()}",
+                    IllegalStateException("Failed. There are unsuppressed failed tests")
                 )
             } else {
                 Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")
@@ -87,13 +86,16 @@ data class TestRunResult(
 
     fun testCount(): Int = reportedTests.size + notReported.lostTests.size
 
-    fun successCount(): Int = reportedTests.filter { it.status is Status.Success || it.status is Status.Manual }.size
+    fun successCount(): Int =
+        reportedTests.filter { it.status is Status.Success || it.status is Status.Manual }.size
 
     fun skippedCount(): Int = reportedTests.filter { it.status is Status.Skipped }.size
 
     fun failureCount(): Int = failed.count()
 
     fun notReportedCount(): Int = notReported.lostTests.size
+
+    private fun Iterable<SimpleRunTest>.lineByLine() = joinToString(separator = "\n") { it.name }
 
 }
 
