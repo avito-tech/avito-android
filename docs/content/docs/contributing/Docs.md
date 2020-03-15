@@ -307,27 +307,29 @@ Markdown content
 
 ### Lists
 
-#### Нумерованный или ненумерованный
+#### Ordered vs Unordered lists
 
-Используй нумерованный список только если он описывает последовательность шагов.
+Only use ordered list for describing a series of steps to follow.
 
 {{< columns >}}
-👎
+Do: 👍
 
 ```md
-Система состоит из следующих компонентов:
-1. `Collector`
-1. `Publisher`
-```
+Run commands:
 
-<--->
-👍
-
-```md
-Запусти команды:
 1. `cd dir`
 1. `./prepare_data.sh`
 1. `./publish_results.sh`
+```
+
+<--->
+Don't: 👎
+
+```md
+There are two components in the system:
+
+1. `Collector`
+1. `Publisher`
 ```
 
 {{< /columns >}}
@@ -356,11 +358,14 @@ Open **Preferences > Build, Execution, Deployment > Debugger**
 
 ## Changing documentation
 
-### How to check locally
+### How to check changes locally
 
-Run: `docs/local.sh`\
+Run `docs/local.sh`\
 It will open documentation at `localhost:1313`.\
-You can edit markdown files in the `content/` on the fly. Changes out of this directory usually require a restart.  
+You can edit markdown files in the `content/` on the fly. Changes out of this directory usually require a restart.
+
+By default, we don't publish [draft, future and expired](https://gohugo.io/getting-started/usage/#draft-future-and-expired-content) pages.\
+To publish them, add relevant argument to the command: `docs/local.sh --buildDrafts`
 
 Checklist for changes:
 
