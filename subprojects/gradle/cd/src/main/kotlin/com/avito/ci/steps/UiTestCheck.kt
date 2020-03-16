@@ -33,7 +33,7 @@ open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
 
         configurations.forEach { configuration ->
             preInstrumentationTask.configure {
-                it.logger.lifecycle("setting dependency between preInstrumentation tasks of configuration $configuration")
+                it.logger.debug("setting dependency between preInstrumentation tasks of configuration $configuration")
                 it.dependsOn(project.tasks.preInstrumentationTask(configuration))
             }
         }

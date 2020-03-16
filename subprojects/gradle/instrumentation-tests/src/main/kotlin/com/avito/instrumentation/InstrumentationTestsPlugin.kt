@@ -149,7 +149,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 RunOnTargetBranchCondition.evaluate(instrumentationConfiguration)
 
                             if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
-                                logger.info("[InstrConfig:${instrumentationConfiguration.name}] will depend on buildOnTargetBranch because: ${useArtifactsFromTargetBranch.reason}")
+                                logger.debug("[InstrConfig:${instrumentationConfiguration.name}] will depend on buildOnTargetBranch because: ${useArtifactsFromTargetBranch.reason}")
                             }
 
                             // see LintWorkerApiWorkaround.md
