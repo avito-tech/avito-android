@@ -20,7 +20,7 @@ sealed class Device : Serializable {
     ) : Device() {
 
         override val description: String
-            get() = name
+            get() = "emulator-$name"
 
         private object Image {
             const val emulator_22 = "android/emulator-22:116d6ed6c6"
