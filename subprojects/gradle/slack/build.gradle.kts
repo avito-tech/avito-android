@@ -1,3 +1,12 @@
+import com.avito.kotlin.dsl.getOptionalStringProperty
+
+buildscript {
+    val infraVersion: String by project
+    dependencies {
+        classpath("${Dependencies.gradle.avito.kotlinDslSupport}:$infraVersion")
+    }
+}
+
 plugins {
     id("kotlin")
     id("java-test-fixtures")
@@ -20,4 +29,17 @@ dependencies {
 
     testFixturesImplementation(Dependencies.kotlinStdlib)
     testFixturesImplementation(Dependencies.funktionaleTry)
+}
+
+tasks.withType(Test::class.java).forEach { testTask ->
+    with(testTask) {
+        val testProperties = listOf(
+            "avito.slack.test.channel",
+            "avito.slack.test.token",
+            "avito.slack.test.workspace"
+        )
+        testProperties.forEach { key ->
+            systemProperty(key, project.getOptionalStringProperty(key) ?: "")
+        }
+    }
 }

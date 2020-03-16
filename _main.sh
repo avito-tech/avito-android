@@ -72,6 +72,14 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -PkubernetesToken=$KUBERNETES_TOKEN \\
              -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
              -PkubernetesUrl=$KUBERNETES_URL \\
+             -Davito.project.version=$PROJECT_VERSION \\
+             -Pavito.artifactory.user=$ARTIFACTORY_USER \\
+             -Pavito.artifactory.password=$ARTIFACTORY_PASSWORD \\
+             -Pavito.bintray.user=$BINTRAY_USER \\
+             -Pavito.bintray.key=$BINTRAY_API_KEY \\
+             -Pavito.slack.test.channel=$SLACK_TEST_CHANNEL \\
+             -Pavito.slack.test.token=$SLACK_TEST_TOKEN \\
+             -Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE \\
              -Pavito.bitbucket.enabled=true"
 
 # TODO: Use IMAGE_ANDROID_BUILDER image from public registry
@@ -87,15 +95,7 @@ function runInBuilder() {
     --workdir /app \
     --env GRADLE_USER_HOME=/gradle \
     --env LOCAL_USER_ID="$USER_ID" \
-    --env BINTRAY_USER="$BINTRAY_USER" \
-    --env BINTRAY_API_KEY="$BINTRAY_API_KEY" \
     --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
-    --env PROJECT_VERSION="$PROJECT_VERSION" \
-    --env ARTIFACTORY_USER="$ARTIFACTORY_USER" \
-    --env ARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" \
-    --env SLACK_TEST_WORKSPACE="$SLACK_TEST_WORKSPACE" \
-    --env SLACK_TEST_CHANNEL="$SLACK_TEST_CHANNEL" \
-    --env SLACK_TEST_TOKEN="$SLACK_TEST_TOKEN" \
     dsvoronin/android-builder \
     bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }

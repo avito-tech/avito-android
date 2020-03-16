@@ -55,6 +55,9 @@ object Dependencies {
     object gradle {
         val androidPlugin = "com.android.tools.build:gradle:3.5.3"
         val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+        object avito {
+            val kotlinDslSupport = "com.avito.android:kotlin-dsl-support"
+        }
     }
 
     object androidTest {
