@@ -10,6 +10,7 @@ interface TestExecutorFactory {
         logger: CILogger,
         kubernetesCredentials: KubernetesCredentials,
         buildId: String,
+        buildType: String,
         projectName: String,
         testReporter: TestReporter?,
         registry: String
@@ -21,6 +22,7 @@ interface TestExecutorFactory {
             logger: CILogger,
             kubernetesCredentials: KubernetesCredentials,
             buildId: String,
+            buildType: String,
             projectName: String,
             testReporter: TestReporter?,
             registry: String
@@ -29,6 +31,7 @@ interface TestExecutorFactory {
                 logger = logger,
                 kubernetesCredentials = kubernetesCredentials,
                 buildId = buildId,
+                buildType = buildType,
                 projectName = projectName,
                 testReporter = testReporter,
                 registry = registry

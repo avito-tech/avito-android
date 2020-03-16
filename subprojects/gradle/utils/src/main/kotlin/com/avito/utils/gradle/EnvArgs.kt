@@ -104,7 +104,7 @@ interface EnvArgs {
                         id = teamcityBuildId,
                         url = "${project.getMandatoryStringProperty("teamcityUrl")}/viewLog.html?buildId=$teamcityBuildId&tab=buildLog",
                         number = project.getMandatoryStringProperty("buildNumber"),
-                        type = project.getMandatoryStringProperty("teamcityBuildType")
+                        type = "teamcity-${project.getMandatoryStringProperty("teamcityBuildType")}"
                     )
                 }
                 "local" -> {

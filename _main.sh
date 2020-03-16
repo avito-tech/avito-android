@@ -46,7 +46,7 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
 GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pci=true \\
              -PteamcityUrl \\
-             -PteamcityBuildType \\
+             -PteamcityBuildType=${BUILD_TYPE} \\
              -PbuildNumber \\
              -PgitBranch=$BUILD_BRANCH \\
              -PbuildCommit=$BUILD_COMMIT \\
@@ -72,6 +72,7 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -PkubernetesToken=$KUBERNETES_TOKEN \\
              -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
              -PkubernetesUrl=$KUBERNETES_URL \\
+             -Pavito.build=teamcity \\
              -Pavito.bitbucket.enabled=true"
 
 # TODO: Use IMAGE_ANDROID_BUILDER image from public registry

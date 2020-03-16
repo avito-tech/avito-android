@@ -99,6 +99,7 @@ class InstrumentationTestsAction(
             )
         },
         buildId = params.buildId,
+        buildType = params.buildType,
         projectName = params.projectName,
         executionParameters = params.executionParameters,
         outputDirectory = params.outputDir,
@@ -308,6 +309,7 @@ class InstrumentationTestsAction(
         val instrumentationConfiguration: InstrumentationConfiguration.Data,
         val executionParameters: ExecutionParameters,
         val buildId: String,
+        val buildType: String,
         val pullRequestId: Int?,
         val buildUrl: String,
         val currentBranch: String,

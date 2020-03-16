@@ -7,6 +7,7 @@ import com.avito.instrumentation.util.launchGroupedCoroutines
 import com.avito.runner.scheduler.args.Serial
 import com.avito.utils.logging.CILogger
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.runBlocking
 
 data class TargetGroup(val name: String, val reservation: Reservation)
@@ -43,6 +44,7 @@ fun withDevices(
             reservation
         }
 
+    val reservationDeployments = Channel<String>(reservations.size)
     try {
         val serialsChannel = Channel<String>(Channel.UNLIMITED)
 
@@ -51,7 +53,8 @@ fun withDevices(
                 logger.info("Devices: Starting reservation job for configuration: $configurationName...")
                 client.claim(
                     reservations = reservations,
-                    serialsChannel = serialsChannel
+                    serialsChannel = serialsChannel,
+                    reservationDeployments = reservationDeployments
                 )
                 logger.info("Devices: Reservation job completed for configuration: $configurationName")
             }
@@ -65,9 +68,10 @@ fun withDevices(
     } catch (e: Throwable) {
         logger.critical("Error during starting reservation job", e)
     } finally {
+        reservationDeployments.close()
         logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
         runBlocking {
-            client.release(reservations = reservations)
+            client.release(reservationDeployments = reservationDeployments.toList())
         }
         logger.info("Devices: Devices released for configuration: $configurationName")
     }

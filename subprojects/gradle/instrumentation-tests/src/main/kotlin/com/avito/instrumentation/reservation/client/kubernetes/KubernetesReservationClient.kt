@@ -9,7 +9,6 @@ import com.avito.instrumentation.util.forEachAsync
 import com.avito.instrumentation.util.iterateInParallel
 import com.avito.instrumentation.util.merge
 import com.avito.instrumentation.util.waitForCondition
-import com.avito.runner.retry
 import com.avito.utils.logging.CILogger
 import com.fkorotkov.kubernetes.metadata
 import com.fkorotkov.kubernetes.newContainer
@@ -35,6 +34,7 @@ import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -45,6 +45,7 @@ class KubernetesReservationClient(
     private val configurationName: String,
     private val projectName: String,
     private val buildId: String,
+    private val buildType: String,
     private val logger: CILogger,
     private val registry: String
 ) : ReservationClient {
@@ -57,7 +58,8 @@ class KubernetesReservationClient(
 
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<String>
+        serialsChannel: SendChannel<String>,
+        reservationDeployments: SendChannel<String>
     ) {
         if (state !is State.Idling) {
             val error = RuntimeException("Unable to start reservation job. Already started")
@@ -69,9 +71,8 @@ class KubernetesReservationClient(
 
         val podsChannel: Channel<Pod> = reservations
             .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName(
-                    reservation = reservation
-                )
+                val deploymentName = generateDeploymentName()
+                reservationDeployments.send(deploymentName)
 
                 logger.info("Starting deployment: $deploymentName")
                 when (reservation.device) {
@@ -131,7 +132,7 @@ class KubernetesReservationClient(
     }
 
     override suspend fun release(
-        reservations: Collection<Reservation.Data>
+        reservationDeployments: Collection<String>
     ) {
         if (state !is State.Reserving) {
             val error = RuntimeException("Unable to stop reservation job. Hasn't started yet")
@@ -142,11 +143,8 @@ class KubernetesReservationClient(
 
         logger.info("Releasing devices for configuration: $configurationName...")
 
-        reservations
-            .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName(
-                    reservation = reservation
-                )
+        reservationDeployments
+            .iterateInParallel { _, deploymentName ->
 
                 val runningPods = podsFromDeployment(
                     deploymentName = deploymentName
@@ -235,10 +233,15 @@ class KubernetesReservationClient(
         count: Int,
         phone: Device.Phone,
         deploymentName: String,
-        kubernetesNodeName : String = "avi-training06" //temporary node, remove later
+        kubernetesNodeName: String = "avi-training06" //temporary node, remove later
     ): Deployment {
         val deploymentMatchLabels = mapOf(
-            "app" to "device"
+            "app" to "device",
+            "type" to "", // teamcity or local
+            "id" to buildId, // teamcity_build_id or local synthetic
+            "project" to projectName,
+            "instrumentationConfiguration" to configurationName,
+            "device" to phone.description
         )
         val deploymentSpecificationsMatchLabels = deploymentMatchLabels
             .plus("deploymentName" to deploymentName)
@@ -322,7 +325,12 @@ class KubernetesReservationClient(
         deploymentName: String
     ): Deployment {
         val deploymentMatchLabels = mapOf(
-            "app" to "emulator"
+            "app" to "emulator",
+            "type" to buildType, // teamcity or local
+            "id" to buildId, // teamcity_build_id or local synthetic
+            "project" to projectName,
+            "instrumentationConfiguration" to configurationName,
+            "device" to emulator.description
         )
         val deploymentSpecificationsMatchLabels = deploymentMatchLabels
             .plus("deploymentName" to deploymentName)
@@ -476,8 +484,8 @@ class KubernetesReservationClient(
         return result
     }
 
-    private fun generateDeploymentName(reservation: Reservation.Data): String =
-        "${buildId}_${projectName}_${configurationName}_${reservation.device.name}"
+    private fun generateDeploymentName(): String =
+        "${kubernetesClient.namespace}-${UUID.randomUUID()}"
             .kubernetesName()
 
     private fun emulatorSerialName(name: String): String = "$name:$ADB_DEFAULT_PORT"

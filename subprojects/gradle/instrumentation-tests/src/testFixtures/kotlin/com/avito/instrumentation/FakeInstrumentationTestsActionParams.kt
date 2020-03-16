@@ -20,6 +20,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     instrumentationConfiguration: InstrumentationConfiguration.Data = InstrumentationConfiguration.Data.createStubInstance(),
     executionParameters: ExecutionParameters = ExecutionParameters.createStubInstance(),
     buildId: String = "33456",
+    buildType: String = "teamcity",
     buildUrl: String = "https://build",
     targetCommit: String = randomCommitHash(),
     kubernetesCredentials: KubernetesCredentials = KubernetesCredentials(
@@ -64,6 +65,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         instrumentationConfiguration = instrumentationConfiguration,
         executionParameters = executionParameters,
         buildId = buildId,
+        buildType = buildType,
         buildUrl = buildUrl,
         targetCommit = targetCommit,
         kubernetesCredentials = kubernetesCredentials,
