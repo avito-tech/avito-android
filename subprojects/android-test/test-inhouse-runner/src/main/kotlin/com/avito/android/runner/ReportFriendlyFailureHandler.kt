@@ -3,8 +3,8 @@ package com.avito.android.runner
 import android.content.Context
 import android.view.View
 import androidx.test.espresso.AppNotIdleException
+import androidx.test.espresso.EspressoException
 import androidx.test.espresso.FailureHandler
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.base.DefaultFailureHandler
 import junit.framework.AssertionFailedError
@@ -96,7 +96,7 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                 e is AssertionFailedError -> {
                     throw AssertionFailedError(e.normalizedMessage())
                 }
-                e is NoMatchingViewException -> {
+                e is EspressoException -> {
                     throw e
                 }
                 else -> {
