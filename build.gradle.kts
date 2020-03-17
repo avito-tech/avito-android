@@ -42,7 +42,7 @@ val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
 
 val publishReleaseTaskName = "publishRelease"
 
-val finalProjectVersion: String = System.getenv("PROJECT_VERSION").let { env ->
+val finalProjectVersion: String = System.getProperty("avito.project.version").let { env ->
     if (env.isNullOrBlank()) projectVersion else env
 }
 
@@ -183,8 +183,8 @@ subprojects {
                         name = "artifactory"
                         setUrl("$artifactoryUrl/libs-release-local")
                         credentials {
-                            username = System.getenv("ARTIFACTORY_USER")
-                            password = System.getenv("ARTIFACTORY_PASSWORD")
+                            username = project.getOptionalExtra("avito.artifactory.user")
+                            password = project.getOptionalExtra("avito.artifactory.password")
                         }
                     }
                 }
@@ -298,8 +298,8 @@ fun Project.configureBintray(vararg publications: String) {
     extensions.findByType<BintrayExtension>()?.run {
 
         //todo fail fast with meaningful error message
-        user = System.getenv("BINTRAY_USER")
-        key = System.getenv("BINTRAY_API_KEY")
+        user = getOptionalExtra("avito.bintray.user")
+        key = getOptionalExtra("avito.bintray.key")
 
         setPublications(*publications)
 
