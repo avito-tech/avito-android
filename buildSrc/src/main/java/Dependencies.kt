@@ -58,6 +58,7 @@ object Dependencies {
         object avito {
             val kotlinDslSupport = "com.avito.android:kotlin-dsl-support"
             val utils = "com.avito.android:utils"
+            val buildEnvironment = "com.avito.android:build-environment"
         }
     }
 

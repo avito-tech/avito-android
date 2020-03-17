@@ -15,11 +15,11 @@ object ClearK8SDeployments {
         .option(type = ArgType.String)
         .required()
 
-    private val teamcityUser: String by parser
+    private val teamcityApiUser: String by parser
         .option(type = ArgType.String)
         .required()
 
-    private val teamcityPassword: String by parser
+    private val teamcityApiPassword: String by parser
         .option(type = ArgType.String)
         .required()
 
@@ -49,8 +49,8 @@ object ClearK8SDeployments {
         println("namespaces: $namespaces")
         val teamcity = TeamcityApi.Impl(
             url = teamcityUrl,
-            user = teamcityUser,
-            password = teamcityPassword
+            user = teamcityApiUser,
+            password = teamcityApiPassword
         )
         val kubernetesClient = DefaultKubernetesClient(
             ConfigBuilder()
@@ -74,6 +74,7 @@ object ClearK8SDeployments {
                             "labels id and type must be together"
                         }
                     } else {
+                        // todo remove after 2020.3.3 release
                         deployment.metadata.name.split('-')[0]
                     }
                     try {

@@ -52,6 +52,7 @@ include(":subprojects:gradle:process")
 include(":subprojects:gradle:test-summary")
 include(":subprojects:gradle:slack")
 include(":subprojects:gradle:utils")
+include(":subprojects:gradle:build-environment")
 
 include(":subprojects:common:time")
 include(":subprojects:common:okhttp")
