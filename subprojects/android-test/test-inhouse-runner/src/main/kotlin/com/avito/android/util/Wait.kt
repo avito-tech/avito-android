@@ -23,7 +23,7 @@ import com.avito.android.test.UITestConfig
  */
 inline fun waitForSuccess(
     triesCount: Int = 3,
-    allowedExceptions: Set<Class<out Throwable>> = UITestConfig.waiterAllowedExceptions,
+    allowedExceptions: Set<Class<out Any>> = UITestConfig.waiterAllowedExceptions,
     action: () -> Unit
 ) {
     var timer = 0

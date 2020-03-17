@@ -1,7 +1,6 @@
 package com.avito.android.test
 
-import androidx.test.espresso.NoMatchingViewException
-import androidx.test.espresso.PerformException
+import androidx.test.espresso.EspressoException
 import com.avito.android.test.interceptor.ActionInterceptor
 import com.avito.android.test.interceptor.AssertionInterceptor
 import java.util.concurrent.TimeUnit
@@ -45,8 +44,7 @@ object UITestConfig {
      * Exceptions to be waited for; any unregistered exceptions will be propagated
      */
     var waiterAllowedExceptions = setOf(
-        PerformException::class.java,
-        NoMatchingViewException::class.java,
+        EspressoException::class.java,
         AssertionError::class.java
     )
 
