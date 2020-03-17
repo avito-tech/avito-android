@@ -5,6 +5,7 @@ import android.view.View
 import androidx.test.espresso.AppNotIdleException
 import androidx.test.espresso.EspressoException
 import androidx.test.espresso.FailureHandler
+import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.base.DefaultFailureHandler
 import junit.framework.AssertionFailedError
@@ -95,6 +96,12 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                 }
                 e is AssertionFailedError -> {
                     throw AssertionFailedError(e.normalizedMessage())
+                }
+                e is NoMatchingRootException -> {
+                    throw UITestFrameworkException(
+                        message = e.normalizedMessage(),
+                        cause = e
+                    )
                 }
                 e is EspressoException -> {
                     throw e
