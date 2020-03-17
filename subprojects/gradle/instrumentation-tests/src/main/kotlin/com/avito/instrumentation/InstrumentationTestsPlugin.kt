@@ -212,6 +212,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 this.instrumentationConfiguration.set(instrumentationConfiguration)
                                 this.parameters.set(runFunctionalTestsParameters)
                                 this.buildId.set(env.buildId)
+                                this.buildType.set(env.build.type)
                                 this.buildUrl.set(env.buildUrl)
                                 this.gitBranch.set(gitState.map { it.currentBranch.name })
                                 this.gitCommit.set(gitState.map { it.currentBranch.commit })
@@ -242,6 +243,10 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         }
     }
 
+    // TODO: Make stronger contract: MBS-7890
+    /**
+     * NB: sync project in IDE after changes in InstrumentationRunnerArguments
+     */
     private fun setupLocalInstrumentationArguments(project: Project, gitState: GitState?, config: DefaultConfig) {
 
         val args = mutableMapOf<String, String>()
@@ -250,6 +255,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         args["deviceName"] = "local"
         args["buildBranch"] = gitState?.currentBranch?.name ?: "local"
         args["buildCommit"] = gitState?.currentBranch?.commit ?: "local"
+        args["slackToken"] = "stub"
+        args["sentryDsn"] = "http://stub-project@stub-host/0"
+        args["fileStorageUrl"] = "http://stub"
         args["teamcityBuildId"] = project.envArgs.build.id.toString()
         args["avito.report.enabled"] = project.getBooleanProperty("avito.report.enabled", default = false).toString()
 

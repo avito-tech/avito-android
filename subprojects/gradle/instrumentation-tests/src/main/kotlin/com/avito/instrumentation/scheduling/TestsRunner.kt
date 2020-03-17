@@ -38,6 +38,7 @@ class TestsRunnerImplementation(
     private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter?,
     private val logger: CILogger,
     private val buildId: String,
+    private val buildType: String,
     private val projectName: String,
     private val executionParameters: ExecutionParameters,
     private val outputDirectory: File,
@@ -67,6 +68,7 @@ class TestsRunnerImplementation(
                 logger = logger.child(runType.id),
                 kubernetesCredentials = kubernetesCredentials,
                 buildId = buildId,
+                buildType = buildType,
                 projectName = projectName,
                 testReporter = testReporterFactory.invoke(
                     testsToRun.associate {

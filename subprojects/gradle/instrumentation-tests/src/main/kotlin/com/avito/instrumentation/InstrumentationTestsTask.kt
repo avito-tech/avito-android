@@ -61,6 +61,9 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val buildId = objects.property<String>()
 
     @Input
+    val buildType = objects.property<String>()
+
+    @Input
     val buildUrl = objects.property<String>()
 
     @Input
@@ -161,6 +164,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     instrumentationConfiguration = configuration,
                     executionParameters = parameters.get(),
                     buildId = buildId.get(),
+                    buildType = buildType.get(),
                     buildUrl = buildUrl.get(),
                     targetCommit = targetCommit.orNull,
                     kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) { "you need to provide kubernetesCredentials" },

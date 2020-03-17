@@ -6,8 +6,9 @@ import kotlinx.coroutines.channels.SendChannel
 interface ReservationClient {
     suspend fun claim(
         reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<String>
+        serialsChannel: SendChannel<String>,
+        reservationDeployments: SendChannel<String>
     )
 
-    suspend fun release(reservations: Collection<Reservation.Data>)
+    suspend fun release(reservationDeployments: Collection<String>)
 }

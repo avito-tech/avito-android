@@ -9,7 +9,6 @@ import com.avito.instrumentation.util.forEachAsync
 import com.avito.instrumentation.util.iterateInParallel
 import com.avito.instrumentation.util.merge
 import com.avito.instrumentation.util.waitForCondition
-import com.avito.runner.retry
 import com.avito.utils.logging.CILogger
 import com.fkorotkov.kubernetes.metadata
 import com.fkorotkov.kubernetes.newContainer
@@ -25,6 +24,7 @@ import com.fkorotkov.kubernetes.selector
 import com.fkorotkov.kubernetes.spec
 import com.fkorotkov.kubernetes.template
 import io.fabric8.kubernetes.api.model.Pod
+import io.fabric8.kubernetes.api.model.PodSpec
 import io.fabric8.kubernetes.api.model.Quantity
 import io.fabric8.kubernetes.api.model.apps.Deployment
 import io.fabric8.kubernetes.client.KubernetesClient
@@ -35,6 +35,7 @@ import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -45,6 +46,7 @@ class KubernetesReservationClient(
     private val configurationName: String,
     private val projectName: String,
     private val buildId: String,
+    private val buildType: String,
     private val logger: CILogger,
     private val registry: String
 ) : ReservationClient {
@@ -57,7 +59,8 @@ class KubernetesReservationClient(
 
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<String>
+        serialsChannel: SendChannel<String>,
+        reservationDeployments: SendChannel<String>
     ) {
         if (state !is State.Idling) {
             val error = RuntimeException("Unable to start reservation job. Already started")
@@ -65,28 +68,27 @@ class KubernetesReservationClient(
             throw error
         }
 
-        logger.info("Starting deployments for configuration: $configurationName...")
+        logger.debug("Starting deployments for configuration: $configurationName...")
 
         val podsChannel: Channel<Pod> = reservations
             .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName(
-                    reservation = reservation
-                )
+                val deploymentName = generateDeploymentName()
+                reservationDeployments.send(deploymentName)
 
-                logger.info("Starting deployment: $deploymentName")
+                logger.debug("Starting deployment: $deploymentName")
                 when (reservation.device) {
-                    is Device.Emulator -> createEmulatorsDeployment(
-                        count = reservation.count,
+                    is Device.Emulator -> getEmulatorDeployment(
                         emulator = reservation.device,
-                        deploymentName = deploymentName
+                        deploymentName = deploymentName,
+                        count = reservation.count
                     )
-                    is Device.Phone -> createDeviceDeployment(
+                    is Device.Phone -> getDeviceDeployment(
                         count = reservation.count,
                         phone = reservation.device,
                         deploymentName = deploymentName
                     )
-                }
-                logger.info("Deployment created: $deploymentName")
+                }.create()
+                logger.debug("Deployment created: $deploymentName")
 
                 listenPodsFromDeployment(
                     deploymentName = deploymentName
@@ -131,7 +133,7 @@ class KubernetesReservationClient(
     }
 
     override suspend fun release(
-        reservations: Collection<Reservation.Data>
+        reservationDeployments: Collection<String>
     ) {
         if (state !is State.Reserving) {
             val error = RuntimeException("Unable to stop reservation job. Hasn't started yet")
@@ -142,11 +144,8 @@ class KubernetesReservationClient(
 
         logger.info("Releasing devices for configuration: $configurationName...")
 
-        reservations
-            .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName(
-                    reservation = reservation
-                )
+        reservationDeployments
+            .iterateInParallel { _, deploymentName ->
 
                 val runningPods = podsFromDeployment(
                     deploymentName = deploymentName
@@ -231,103 +230,132 @@ class KubernetesReservationClient(
         }
     }
 
-    private suspend fun createDeviceDeployment(
+    private fun getDeviceDeployment(
         count: Int,
         phone: Device.Phone,
         deploymentName: String,
-        kubernetesNodeName : String = "avi-training06" //temporary node, remove later
+        kubernetesNodeName: String = "avi-training06" //temporary node, remove later
     ): Deployment {
-        val deploymentMatchLabels = mapOf(
-            "app" to "device"
-        )
-        val deploymentSpecificationsMatchLabels = deploymentMatchLabels
-            .plus("deploymentName" to deploymentName)
-
-        val deployment = newDeployment {
-            apiVersion = "extensions/v1beta1"
-            metadata {
-                name = deploymentName
-                labels = deploymentMatchLabels
-                finalizers = listOf(
-                    // Remove all dependencies (replicas) in foreground after removing deployment
-                    "foregroundDeletion"
-                )
-            }
-            spec {
-                replicas = count
-
-                selector {
-                    matchLabels = deploymentSpecificationsMatchLabels
-                }
-
-                template {
-                    metadata {
-                        labels = deploymentSpecificationsMatchLabels
-                    }
-
-                    spec {
-                        containers = listOf(
-                            newContainer {
-                                name = phone.name.kubernetesName()
-                                image = "$registry/${phone.proxyImage}"
-
-                                securityContext {
-                                    privileged = true
-                                }
-                                resources {
-                                    limits = mapOf(
-                                        "android/device" to Quantity("1")
-                                    )
-                                    requests = mapOf(
-                                        "android/device" to Quantity("1")
-                                    )
-                                }
-
-
-                            }
-                        )
-                        dnsPolicy = "ClusterFirst"
-                        nodeName = kubernetesNodeName
-                        tolerations = listOf(
-                            newToleration {
-                                operator = "Exists"
-                                effect = "NoSchedule"
-                            }
-                        )
-                    }
-                }
-            }
-        }
-        kubernetesClient.apps().deployments().create(deployment)
-
-        val isDeploymentDone = waitForCondition(
-            logger = { logger.info(it) },
-            conditionName = "Deployment $deploymentName deployed"
+        return deviceDeployment(
+            deploymentMatchLabels = deviceMatchLabels(phone),
+            deploymentName = deploymentName,
+            count = count
         ) {
-            podsFromDeployment(
-                deploymentName = deploymentName
-            ).size == count
+            containers = listOf(
+                newContainer {
+                    name = phone.name.kubernetesName()
+                    image = "$registry/${phone.proxyImage}"
+
+                    securityContext {
+                        privileged = true
+                    }
+                    resources {
+                        limits = mapOf(
+                            "android/device" to Quantity("1")
+                        )
+                        requests = mapOf(
+                            "android/device" to Quantity("1")
+                        )
+                    }
+                }
+            )
+            dnsPolicy = "ClusterFirst"
+            nodeName = kubernetesNodeName
+            tolerations = listOf(
+                newToleration {
+                    operator = "Exists"
+                    effect = "NoSchedule"
+                }
+            )
         }
-        if (!isDeploymentDone) {
-            val error = RuntimeException("Something went wrong during deploying deployment: $deploymentName")
-            logger.critical(error.message.orEmpty())
-            throw error
-        }
-        return deployment
     }
 
-    private suspend fun createEmulatorsDeployment(
-        count: Int,
+    private fun getEmulatorDeployment(
         emulator: Device.Emulator,
-        deploymentName: String
+        deploymentName: String,
+        count: Int
     ): Deployment {
-        val deploymentMatchLabels = mapOf(
-            "app" to "emulator"
-        )
+        return deviceDeployment(
+            deploymentMatchLabels = deviceMatchLabels(emulator),
+            deploymentName = deploymentName,
+            count = count
+        ) {
+            containers = listOf(
+                newContainer {
+                    name = emulator.name.kubernetesName()
+                    image = "$registry/${emulator.image}"
+
+                    securityContext {
+                        privileged = true
+                    }
+
+                    resources {
+                        limits = mapOf(
+                            "cpu" to Quantity(emulator.cpuCoresLimit),
+                            "memory" to Quantity("3.5Gi")
+                        )
+                        requests = mapOf(
+                            "cpu" to Quantity(emulator.cpuCoresRequest)
+                        )
+                    }
+
+                    if (emulator.gpu) {
+                        volumeMounts = listOf(
+                            newVolumeMount {
+                                name = "x-11"
+                                mountPath = "/tmp/.X11-unix"
+                                readOnly = true
+                            }
+                        )
+
+                        env = listOf(
+                            newEnvVar {
+                                name = "GPU_ENABLED"
+                                value = "true"
+                            },
+                            newEnvVar {
+                                name = "SNAPSHOT_DISABLED"
+                                value = "true"
+                            }
+                        )
+                    }
+                }
+            )
+
+            if (emulator.gpu) {
+                volumes = listOf(
+                    newVolume {
+                        name = "x-11"
+
+                        hostPath = newHostPathVolumeSource {
+                            path = "/tmp/.X11-unix"
+                            type = "Directory"
+                        }
+                    }
+                )
+            }
+
+            tolerations = listOf(
+                newToleration {
+                    key = "dedicated"
+                    operator = "Equal"
+                    value = "android"
+                    effect = "NoSchedule"
+                }
+            )
+        }
+    }
+
+    private fun deviceDeployment(
+        deploymentMatchLabels: Map<String, String>,
+        deploymentName: String,
+        count: Int,
+        block: PodSpec.() -> Unit
+    ): Deployment {
         val deploymentSpecificationsMatchLabels = deploymentMatchLabels
             .plus("deploymentName" to deploymentName)
 
-        val deployment = newDeployment {
+        return newDeployment {
             apiVersion = "extensions/v1beta1"
             metadata {
                 name = deploymentName
@@ -339,7 +367,6 @@ class KubernetesReservationClient(
             }
             spec {
                 replicas = count
-
                 selector {
                     matchLabels = deploymentSpecificationsMatchLabels
                 }
@@ -348,77 +375,21 @@ class KubernetesReservationClient(
                     metadata {
                         labels = deploymentSpecificationsMatchLabels
                     }
-
-                    spec {
-                        containers = listOf(
-                            newContainer {
-                                name = emulator.name.kubernetesName()
-                                image = "$registry/${emulator.image}"
-
-                                securityContext {
-                                    privileged = true
-                                }
-
-                                resources {
-                                    limits = mapOf(
-                                        "cpu" to Quantity(emulator.cpuCoresLimit),
-                                        "memory" to Quantity("3.5Gi")
-                                    )
-                                    requests = mapOf(
-                                        "cpu" to Quantity(emulator.cpuCoresRequest)
-                                    )
-                                }
-
-                                if (emulator.gpu) {
-                                    volumeMounts = listOf(
-                                        newVolumeMount {
-                                            name = "x-11"
-                                            mountPath = "/tmp/.X11-unix"
-                                            readOnly = true
-                                        }
-                                    )
-
-                                    env = listOf(
-                                        newEnvVar {
-                                            name = "GPU_ENABLED"
-                                            value = "true"
-                                        },
-                                        newEnvVar {
-                                            name = "SNAPSHOT_DISABLED"
-                                            value = "true"
-                                        }
-                                    )
-                                }
-                            }
-                        )
-
-                        if (emulator.gpu) {
-                            volumes = listOf(
-                                newVolume {
-                                    name = "x-11"
-
-                                    hostPath = newHostPathVolumeSource {
-                                        path = "/tmp/.X11-unix"
-                                        type = "Directory"
-                                    }
-                                }
-                            )
-                        }
-
-                        tolerations = listOf(
-                            newToleration {
-                                key = "dedicated"
-                                operator = "Equal"
-                                value = "android"
-                                effect = "NoSchedule"
-                            }
-                        )
-                    }
+                    spec(block)
                 }
             }
         }
-        kubernetesClient.apps().deployments().create(deployment)
+    }
 
+    private suspend fun Deployment.create() {
+        kubernetesClient.apps().deployments().create(this)
+        waitForDeploymentCreationDone(metadata.name, spec.replicas)
+    }
+
+    private suspend fun waitForDeploymentCreationDone(
+        deploymentName: String,
+        count: Int
+    ) {
         val isDeploymentDone = waitForCondition(
             logger = { logger.info(it) },
             conditionName = "Deployment $deploymentName deployed"
@@ -428,11 +399,11 @@ class KubernetesReservationClient(
             ).size == count
         }
         if (!isDeploymentDone) {
-            val error = RuntimeException("Something went wrong during deploying deployment: $deploymentName")
+            val error =
+                RuntimeException("Something went wrong during deploying deployment: $deploymentName")
             logger.critical(error.message.orEmpty())
             throw error
         }
-        return deployment
     }
 
     private fun podsFromDeployment(
@@ -443,7 +414,7 @@ class KubernetesReservationClient(
         val runningPods = items.filter { it.status.phase == POD_STATUS_RUNNING }
         logger.info(
             "Getting pods for deployment: $deploymentName completed. " +
-                "Received ${items.size} pods (running: ${runningPods.size})."
+                    "Received ${items.size} pods (running: ${runningPods.size})."
         )
 
         items
@@ -476,9 +447,21 @@ class KubernetesReservationClient(
         return result
     }
 
-    private fun generateDeploymentName(reservation: Reservation.Data): String =
-        "${buildId}_${projectName}_${configurationName}_${reservation.device.name}"
+    private fun generateDeploymentName(): String =
+        "${kubernetesClient.namespace}-${UUID.randomUUID()}"
             .kubernetesName()
+
+    private fun deviceMatchLabels(
+        device: Device
+    ): Map<String, String> {
+        return mapOf(
+            "type" to buildType, // teamcity or local
+            "id" to buildId, // teamcity_build_id or local synthetic
+            "project" to projectName,
+            "instrumentationConfiguration" to configurationName,
+            "device" to device.description
+        )
+    }
 
     private fun emulatorSerialName(name: String): String = "$name:$ADB_DEFAULT_PORT"
 
