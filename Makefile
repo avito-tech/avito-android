@@ -8,3 +8,6 @@ test_app_instrumentation_debug:
 
 test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi --stacktrace -PinfraVersion=local -Pci=true
+
+clear_k8s_deployments:
+	./gradlew subprojects\:ci\:clear-k8s-deployments\:run -Pci=true

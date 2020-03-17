@@ -71,6 +71,17 @@ subprojects {
                 includeModule("com.android.tools", "r8")
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "KotlinX"
+                    setUrl("https://kotlin.bintray.com/kotlinx")
+                }
+            }
+            filter {
+                includeModuleByRegex("org\\.jetbrains\\.kotlinx", "(?!kotlinx-cli).*")
+            }
+        }
     }
 
     group = "com.avito.android"
