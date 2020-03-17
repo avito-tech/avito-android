@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+#skip merge commits
+if grep "merge" "$1"; then
+    exit 0
+fi
+
+jira_issue_regex="^[A-Z]{2,5}-[0-9]+"
+
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+current_issue="$(echo ${current_branch} | grep ${jira_issue_regex} -Eo)"
+issue_in_message="$(grep ${jira_issue_regex} ${1} -Eo)"
+
+# allow if not on feature branch
+if [ -z "$current_issue" ]; then
+    echo "Don't know current issue"
+    exit 0
+fi
+
+# add issue to commit message and allow commit if issue is missed in commit message
+if [ -z "$issue_in_message" ]; then
+	echo "Add issue $current_issue info to commit"
+    echo "$current_issue $(cat ${1})" > ${1}
+    exit 0
+fi
+
+# allow commit if commit message contains issue same as branch name. Forbid commit otherwise
+if [ ${issue_in_message} == ${current_issue} ]; then
+	exit 0
+else
+	echo "Cancel commit. Wrong issue number. branch is $current_issue  commit message is $issue_in_message"
+	exit 1
+fi
