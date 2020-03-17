@@ -11,7 +11,7 @@ import androidx.test.espresso.ViewInteraction
 fun <T> waitFor(
     frequencyMs: Long = UITestConfig.waiterFrequencyMs,
     timeoutMs: Long = UITestConfig.waiterTimeoutMs,
-    allowedExceptions: Set<Class<out Throwable>> = UITestConfig.waiterAllowedExceptions,
+    allowedExceptions: Set<Class<out Any>> = UITestConfig.waiterAllowedExceptions,
     sleepAction: (frequencyMs: Long) -> Unit = { Thread.sleep(it) },
     onWaiterRetry: (e: Throwable) -> Unit = UITestConfig.onWaiterRetry,
     action: () -> T
