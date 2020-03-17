@@ -50,6 +50,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             logger: CILogger,
             kubernetesCredentials: KubernetesCredentials,
             buildId: String,
+            buildType: String,
             projectName: String,
             testReporter: TestReporter?,
             registry: String

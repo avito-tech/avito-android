@@ -23,6 +23,7 @@ class KubernetesTestExecutor(
     private val logger: CILogger,
     private val kubernetesCredentials: KubernetesCredentials,
     private val buildId: String,
+    private val buildType: String,
     private val projectName: String,
     private val testReporter: TestReporter?,
     private val registry: String
@@ -60,6 +61,7 @@ class KubernetesTestExecutor(
                 projectName = projectName,
                 logger = logger,
                 buildId = buildId,
+                buildType = buildType,
                 emulatorsLogsReporter = EmulatorsLogsReporter(
                     outputFolder = output,
                     logcatTags = executionParameters.logcatTags,

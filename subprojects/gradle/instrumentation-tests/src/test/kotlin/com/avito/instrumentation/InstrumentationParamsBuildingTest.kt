@@ -175,7 +175,7 @@ class InstrumentationParamsBuildingTest {
                     "buildCommit" to commit,
                     "runId" to RunId(
                         commitHash = commit,
-                        buildTypeId = buildType
+                        buildTypeId = "teamcity-$buildType"
                     ).toString(),
                     "reportApiUrl" to "stub",
                     "reportApiFallbackUrl" to "stub",
@@ -222,7 +222,7 @@ class InstrumentationParamsBuildingTest {
                     "buildCommit" to commit,
                     "runId" to RunId(
                         commitHash = commit,
-                        buildTypeId = buildType
+                        buildTypeId = "teamcity-$buildType"
                     ).toString(),
                     "reportApiUrl" to "stub",
                     "reportApiFallbackUrl" to "stub",
@@ -272,7 +272,7 @@ class InstrumentationParamsBuildingTest {
                     "buildCommit" to commit,
                     "runId" to RunId(
                         commitHash = commit,
-                        buildTypeId = buildType
+                        buildTypeId = "teamcity-$buildType"
                     ).toString(),
                     "reportApiUrl" to "stub",
                     "reportApiFallbackUrl" to "stub",

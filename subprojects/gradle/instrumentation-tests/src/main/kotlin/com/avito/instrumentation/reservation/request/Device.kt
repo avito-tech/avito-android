@@ -7,6 +7,7 @@ sealed class Device : Serializable {
     abstract val name: String
     abstract val model: String
     abstract val api: Int
+    abstract val description: String
 
     sealed class Emulator(
         override val name: String,
@@ -17,6 +18,9 @@ sealed class Device : Serializable {
         val cpuCoresLimit: String,
         val cpuCoresRequest: String = cpuCoresLimit
     ) : Device() {
+
+        override val description: String
+            get() = "emulator-$name"
 
         private object Image {
             const val emulator_22 = "android/emulator-22:116d6ed6c6"
@@ -88,6 +92,9 @@ sealed class Device : Serializable {
         override val api: Int,
         val proxyImage: String
     ) : Device() {
+
+        override val description: String
+            get() = "$name-$model-api-$api"
 
         // TODO: api aware real devices reservations
         object Pixel3Phone : Phone(
