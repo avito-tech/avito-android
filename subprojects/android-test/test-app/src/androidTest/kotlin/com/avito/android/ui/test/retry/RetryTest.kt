@@ -22,7 +22,7 @@ class RetryTest {
     fun failWithOriginalError_oneShotActionFailedWithUnexpectedError() {
         // We must preserve an original error for a user
         // It can get lost accidentally due to UITestConfig.waiterAllowedExceptions
-        exception.expect(instanceOf<UnexpectedFatalError>())
+        exception.expectCause(instanceOf<UnexpectedFatalError>())
 
         Screen.retry.button.firstFail(UnexpectedFatalError()).click()
 
