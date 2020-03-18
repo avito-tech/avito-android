@@ -49,6 +49,7 @@ val finalProjectVersion: String = System.getProperty("avito.project.version").le
 subprojects {
 
     repositories {
+        jcenter()
         exclusiveContent {
             forRepository {
                 maven {
@@ -56,10 +57,9 @@ subprojects {
                 }
             }
             filter {
-                includeModule("org.jetbrains.kotlinx", "kotlinx-cli")
+                includeModuleByRegex("org\\.jetbrains\\.kotlinx", "kotlinx-cli.*")
             }
         }
-        jcenter()
         exclusiveContent {
             forRepository {
                 google()
