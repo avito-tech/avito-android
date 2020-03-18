@@ -1,6 +1,5 @@
 package com.avito.android.test.annotations
 
-//todo move to report module
 /**
  * Kind.UI_COMPONENT
  */
@@ -50,7 +49,6 @@ annotation class E2EStub
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class UnitTest
 
-//todo move to performance modules
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class PerformanceFunctionalTest
@@ -59,10 +57,13 @@ annotation class PerformanceFunctionalTest
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class PerformanceComponentTest
 
-//todo move to screenshot modules
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class ScreenshotTest
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
+annotation class SyntheticMonitoringTest
 
 @Deprecated("2020.3.2; use @UIComponentTest", ReplaceWith("@UIComponentTest"))
 @Retention(AnnotationRetention.RUNTIME)
