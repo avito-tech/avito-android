@@ -16,7 +16,7 @@ class CdPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
-        //todo создавать типы билдов динамически
+        //TODO: MBS-7948 create builds dynamically
         val config = project.extensions.create<CiCdExtension>("builds", project.objects)
 
         // TODO: MBS-6118. В CD во время конфигурации активно используется git. Это слишком долго.
@@ -33,6 +33,11 @@ class CdPlugin : Plugin<Project> {
             description = "Task to build for release (runs full non-blocking full regression suite)"
         }
 
+        val uploadArtifactsTask = project.tasks.register<Task>("uploadArtifacts") {
+            group = taskGroup
+            description = "Task to upload artifacts without checks"
+        }
+
         val fullCheckTask = project.tasks.register<Task>("fullCheck") {
             group = taskGroup
             description = "Task to run all specified check on project"
@@ -46,6 +51,7 @@ class CdPlugin : Plugin<Project> {
         project.gradle.projectsEvaluated {
             registerTask(project, config.localCheckSteps, localCheckTask)
             registerTask(project, config.releaseSteps, releaseTask)
+            registerTask(project, config.uploadArtifactsSteps, uploadArtifactsTask)
             registerTask(project, config.fullCheckSteps, fullCheckTask)
             registerTask(project, config.fastCheckSteps, fastCheckTask)
         }

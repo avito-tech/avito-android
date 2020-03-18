@@ -10,6 +10,8 @@ open class CiCdExtension(objects: ObjectFactory) {
 
     internal val releaseSteps = BuildStepListExtension("release", objects)
 
+    internal val uploadArtifactsSteps = BuildStepListExtension("uploadArtifacts", objects)
+
     internal val fullCheckSteps = BuildStepListExtension("fullCheck", objects)
 
     internal val fastCheckSteps = BuildStepListExtension("fastCheck", objects).apply {
@@ -22,6 +24,10 @@ open class CiCdExtension(objects: ObjectFactory) {
 
     fun release(action: Action<BuildStepListExtension>) {
         action.execute(releaseSteps)
+    }
+
+    fun uploadArtifacts(action: Action<BuildStepListExtension>) {
+        action.execute(uploadArtifactsSteps)
     }
 
     fun fullCheck(action: Action<BuildStepListExtension>) {
