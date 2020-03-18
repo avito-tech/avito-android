@@ -24,7 +24,7 @@ dependencies {
 //if(project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
 if (project.getOptionalStringProperty("ci", "false").toBoolean()) {
     tasks.register("run", JavaExec::class.java) {
-        main = "com.avito.ci.ClearK8SDeployments"
+        main = "com.avito.ci.ClearK8SDeploymentsMain"
         classpath = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).runtimeClasspath
         args(
             "--teamcityUrl", project.getMandatoryStringProperty("teamcityUrl"),
@@ -33,7 +33,7 @@ if (project.getOptionalStringProperty("ci", "false").toBoolean()) {
             "--kubernetesToken", project.getMandatoryStringProperty("kubernetesToken"),
             "--kubernetesUrl", project.getMandatoryStringProperty("kubernetesUrl"),
             "--kubernetesCaCert", project.getMandatoryStringProperty("kubernetesCaCertData"),
-            "--namespaces", "android-emulator"
+            "--namespaces", "android-emulator,android-performance"
         )
     }
 }
