@@ -9,9 +9,8 @@ type: docs
 
 [QApps Android](http://links.k.avito.ru/qappsAndroid)
 
-Внутреннее хранилище сборок для ручного тестирования.\
-Заливаем в него apk по расписанию из develop.\
-См. конфиг `uploadToQapps` в `build.gradle` приложений.
+This is the internal storage with bulds for manual testing.\
+We publish builds automatically after merge in develop.
 
 ## Как залить вручную в QApps с ветки?
 
@@ -34,17 +33,16 @@ type: docs
 
 {{< /tab >}}
 
-{{< tab "Из CI" >}}
-Запусти конфигурацию [fullCheck](http://links.k.avito.ru/tmctAvitoAndroidFullCheck)\
-Выбери кастомный запуск, укажи свою ветку.
+{{< tab "CI" >}}
 
-## Known issues
+Run [uploadArtifacts](http://links.k.avito.ru/Mx9) Teamcity configuration.\
+Choose your custom branch if needed.
 
-**Длится до 1 часа**, запускает все тесты.\
-Чтобы ускорить, закомментируй лишние [шаги]({{< ref "/docs/ci/CIGradlePlugin.md#steps" >}}) в `fullCheck` конфиге в `build.gradle` приложений.\
-Задача на более быстрый способ: [MBS-7340](http://links.k.avito.ru/MBS7340)
 {{< /tab >}}
 {{< /tabs >}}
 
+## How to change upload settings?
 
+In `build.gradle` you can find [uploadToQapps]({{< ref "/docs/ci/CIGradlePlugin.md#upload-to-qapps" >}}) build step. It defines what to publish.\
+We run this step in [uploadArtifacts](http://links.k.avito.ru/Mx9) Teamcity configuration.
 
