@@ -136,6 +136,8 @@ Shared modules between android-test and gradle.
 
 ## Publishing
 
+{{<avito section>}}
+
 ### Publishing a new release
 
 All releases are published to [bintray](https://bintray.com/avito-tech/maven/avito-android).
@@ -143,7 +145,7 @@ All releases are published to [bintray](https://bintray.com/avito-tech/maven/avi
 1. Checkout a release branch with a name equals to `projectVersion`. For example, `2020.3.1`.\
 This branch must be persistent. It will be used for automation.
 1. Make sure integration tests on release branch passed full integration checks [CI integration tests against avito]({{<relref "#ci-integration-tests-against-avito">}})
-1. Manually run [Github publish configuration (internal)](http://links.k.avito.ru/releaseAvitoTools)
+1. Manually run [Github publish configuration (internal)](http://links.k.avito.ru/releaseAvitoTools) on the release branch.
 1. Make a PR to internal avito repository with the new version of infrastructure
 1. Checkout a new branch and make a PR to github repository:
     - Use the new version in `infraVersion` property
