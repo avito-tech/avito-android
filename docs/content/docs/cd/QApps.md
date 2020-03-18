@@ -10,7 +10,7 @@ type: docs
 [QApps Android](http://links.k.avito.ru/qappsAndroid)
 
 This is the internal storage with bulds for manual testing.\
-We publish builds automatically after merge in develop.
+We publish builds automatically after merge to develop.
 
 ## Как залить вручную в QApps с ветки?
 
