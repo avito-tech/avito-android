@@ -20,6 +20,7 @@ import com.avito.android.test.annotations.PerformanceFunctionalTest
 import com.avito.android.test.annotations.Priority
 import com.avito.android.test.annotations.PublishTest
 import com.avito.android.test.annotations.ScreenshotTest
+import com.avito.android.test.annotations.SyntheticMonitoringTest
 import com.avito.android.test.annotations.TagId
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
@@ -55,6 +56,7 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             PerformanceFunctionalTest::class.java,
             PerformanceComponentTest::class.java,
             ScreenshotTest::class.java,
+            SyntheticMonitoringTest::class.java,
             ComponentTest::class.java,
             PublishTest::class.java,
             MessengerTest::class.java,
@@ -129,6 +131,9 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
                         kind = Kind.UNIT
                     }
                     is PerformanceFunctionalTest -> {
+                        kind = Kind.E2E
+                    }
+                    is SyntheticMonitoringTest -> {
                         kind = Kind.E2E
                     }
                     is PerformanceComponentTest -> {
