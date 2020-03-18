@@ -113,8 +113,7 @@ fun provideEnvironment(
                 jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
                 runId = argumentsProvider.getMandatoryArgument("runId")
             )
-            // todo move to instrumentation plugin
-            val isReportEnabled = (argumentsProvider.getOptionalArgument("avito.report.enabled") ?: "true").toBoolean()
+            val isReportEnabled = argumentsProvider.getOptionalArgument("avito.report.enabled")?.toBoolean() ?: false
             val reportConfig = if (isReportEnabled) {
                 TestRunEnvironment.ReportConfig(
                     reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
