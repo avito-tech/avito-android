@@ -17,7 +17,7 @@ plugins {
 dependencies {
     api(Dependencies.kubernetesClient)
     api(project(":subprojects:common:teamcity-common"))
-    api("org.jetbrains.kotlinx:kotlinx-cli:0.2.1")
+    api(Dependencies.kotlinXCli)
 }
 
 // todo add if ci

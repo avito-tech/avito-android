@@ -49,6 +49,16 @@ val finalProjectVersion: String = System.getProperty("avito.project.version").le
 subprojects {
 
     repositories {
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrl("https://kotlin.bintray.com/kotlinx")
+                }
+            }
+            filter {
+                includeModule("org.jetbrains.kotlinx", "kotlinx-cli")
+            }
+        }
         jcenter()
         exclusiveContent {
             forRepository {
@@ -70,10 +80,6 @@ subprojects {
             filter {
                 includeModule("com.android.tools", "r8")
             }
-        }
-        // todo add exclusive content
-        maven {
-            setUrl("https://kotlin.bintray.com/kotlinx")
         }
     }
 
