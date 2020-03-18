@@ -16,7 +16,6 @@ import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-@CacheableTask
 abstract class BuildOnTargetCommitForTestTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
