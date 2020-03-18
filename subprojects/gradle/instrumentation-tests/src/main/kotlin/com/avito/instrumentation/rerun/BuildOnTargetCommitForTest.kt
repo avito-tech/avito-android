@@ -116,7 +116,10 @@ class BuildOnTargetCommitForTest(
                         "teamcityBuildType" to "xxx",
                         "slackToken" to "xxx",
                         "atlassianUser" to "STUB",
-                        "atlassianPassword" to "STUB"
+                        "atlassianPassword" to "STUB",
+                        "kubernetesToken" to "STUB",
+                        "kubernetesCaCertData" to "STUB",
+                        "kubernetesUrl" to "STUB"
                     )
                 )
             }
