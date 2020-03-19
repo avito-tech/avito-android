@@ -9,7 +9,7 @@ type: docs
 
 [QApps Android](http://links.k.avito.ru/qappsAndroid)
 
-This is the internal storage with bulds for manual testing.\
+This is the internal storage with builds for manual testing.\
 We publish builds automatically after merge to develop.
 
 ## Как залить вручную в QApps с ветки?
@@ -45,4 +45,3 @@ Choose your custom branch if needed.
 
 In `build.gradle` you can find [uploadToQapps]({{< ref "/docs/ci/CIGradlePlugin.md#upload-to-qapps" >}}) build step. It defines what to publish.\
 We run this step in [uploadArtifacts](http://links.k.avito.ru/Mx9) Teamcity configuration.
-
