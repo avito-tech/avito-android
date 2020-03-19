@@ -6,10 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(gradleApi())
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    api(gradleApi())
+    api(project(":subprojects:gradle:kotlin-dsl-support"))
 
     testImplementation(Dependencies.test.truth)
     testImplementation(Dependencies.test.mockitoKotlin2)
