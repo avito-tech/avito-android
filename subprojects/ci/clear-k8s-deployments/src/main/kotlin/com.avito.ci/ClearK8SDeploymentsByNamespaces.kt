@@ -8,7 +8,7 @@ import java.lang.IllegalStateException
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-class ClearK8SDeployments(
+class ClearK8SDeploymentsByNamespaces(
     private val teamcity: TeamcityApi,
     private val kubernetesClient: DefaultKubernetesClient
 ) {

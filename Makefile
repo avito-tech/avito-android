@@ -1,4 +1,5 @@
-ARGS?=''
+ci?=false
+
 help:
 
 publish_to_maven_local:
@@ -10,5 +11,8 @@ test_app_instrumentation_debug:
 test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi --stacktrace -PinfraVersion=local -Pci=true
 
-clear_k8s_deployments:
-	./gradlew subprojects\:ci\:clear-k8s-deployments\:run -Pci=true $(ARGS)
+clear_k8s_deployments_by_namespaces:
+	./gradlew subprojects\:ci\:clear-k8s-deployments\:byNamespaces -Pci=$(ci)
+
+clear_k8s_deployments_by_names:
+	./gradlew subprojects\:ci\:clear-k8s-deployments\:byNames -Pci=$(ci)
