@@ -61,6 +61,8 @@ interface Checks : LabelChecks {
 
     fun withChildCountEquals(count: Int)
 
+    @Deprecated(message = "Checking that element does not exist by matcher is fragile. " +
+        "Positive scenario for the expected state is more reliable")
     fun doesNotExist()
 
     fun exists()
