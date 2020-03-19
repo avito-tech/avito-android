@@ -5,6 +5,11 @@ import io.fabric8.kubernetes.api.model.apps.Deployment
 sealed class DeploymentEnvironment {
     data class Teamcity(val buildId: String) : DeploymentEnvironment()
     data class Local(val creationTimeInMillis: Long) : DeploymentEnvironment()
+
+    /**
+     * environment for long lived pods
+     */
+    object Service : DeploymentEnvironment()
     object Unknown : DeploymentEnvironment()
 }
 
@@ -12,6 +17,7 @@ val Deployment.environment: DeploymentEnvironment
     get() {
         val type = metadata.labels.get("type")
         return when {
+            type != null && type.startsWith("service") -> DeploymentEnvironment.Service
             type != null && type.startsWith("teamcity") -> {
                 DeploymentEnvironment.Teamcity(
                     buildId = requireNotNull(metadata.labels["id"])

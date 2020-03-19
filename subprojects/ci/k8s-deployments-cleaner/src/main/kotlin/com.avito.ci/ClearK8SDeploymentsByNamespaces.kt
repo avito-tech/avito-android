@@ -59,13 +59,15 @@ class ClearK8SDeploymentsByNamespaces(
                 is DeploymentEnvironment.Local -> {
                     val creation = Date(env.creationTimeInMillis)
                     val now = Date(System.currentTimeMillis())
+                    val hourInMillis = TimeUnit.HOURS.toMillis(1)
                     val hourAgo = Date(
                         now.toInstant()
-                            .minusMillis(TimeUnit.HOURS.toMillis(1))
+                            .minusMillis(hourInMillis)
                             .toEpochMilli()
                     )
                     creation.before(hourAgo)
                 }
+                is DeploymentEnvironment.Service -> false
                 is DeploymentEnvironment.Unknown -> throw IllegalStateException("Unknown environment in deployment:$description")
             }
         }

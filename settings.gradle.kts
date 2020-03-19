@@ -72,7 +72,7 @@ include(":subprojects:android-test:junit-utils")
 include(":subprojects:android-test:test-annotations")
 include(":subprojects:android-test:keep-for-testing")
 
-include(":subprojects:ci:clear-k8s-deployments")
+include(":subprojects:ci:k8s-deployments-cleaner")
 
 // see gradle.properties flag explanation
 val syncAndroidModules: String by settings
