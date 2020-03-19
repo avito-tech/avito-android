@@ -23,11 +23,11 @@ dependencies {
 // todo add if ci
 //if(project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
 if (project.getOptionalStringProperty("ci", "false").toBoolean()) {
-    tasks.register("byNamespaces", JavaExec::class.java) {
+    tasks.register("clearByNamespaces", JavaExec::class.java) {
         main = "com.avito.ci.ClearK8SDeploymentsMain"
         classpath = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).runtimeClasspath
         args(
-            "byNamespaces",
+            "clearByNamespaces",
             "--teamcityUrl", project.getMandatoryStringProperty("teamcityUrl"),
             "--teamcityApiUser", project.getMandatoryStringProperty("teamcityApiUser"),
             "--teamcityApiPassword", project.getMandatoryStringProperty("teamcityApiPassword"),
@@ -37,11 +37,11 @@ if (project.getOptionalStringProperty("ci", "false").toBoolean()) {
             "--namespaces", "android-emulator,android-performance"
         )
     }
-    tasks.register("byNames", JavaExec::class.java) {
+    tasks.register("deleteByNames", JavaExec::class.java) {
         main = "com.avito.ci.ClearK8SDeploymentsMain"
         classpath = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).runtimeClasspath
         args(
-            "byNames",
+            "deleteByNames",
             "--teamcityUrl", project.getMandatoryStringProperty("teamcityUrl"),
             "--teamcityApiUser", project.getMandatoryStringProperty("teamcityApiUser"),
             "--teamcityApiPassword", project.getMandatoryStringProperty("teamcityApiPassword"),
