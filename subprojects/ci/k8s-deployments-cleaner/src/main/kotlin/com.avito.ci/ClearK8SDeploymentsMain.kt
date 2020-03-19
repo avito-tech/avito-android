@@ -40,7 +40,7 @@ object ClearK8SDeploymentsMain {
     @JvmStatic
     fun main(args: Array<String>) {
         class ByNamespaces :
-            ClearDeployments("byNamespaces", "Clear given namespaces from leaked deployments") {
+            ClearDeployments("cleanByNamespaces", "Clear given namespaces from leaked deployments") {
 
             private val namespaces by option(
                 type = ArgType.String,
@@ -66,7 +66,7 @@ object ClearK8SDeploymentsMain {
         }
 
         class ByNames :
-            ClearDeployments("byNames", "Delete deployments by names in given namespace") {
+            ClearDeployments("deleteByNames", "Delete deployments by names in given namespace") {
 
             private val namespace by option(
                 type = ArgType.String,
