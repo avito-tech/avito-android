@@ -4,7 +4,7 @@ import io.fabric8.kubernetes.api.model.apps.Deployment
 
 sealed class DeploymentEnvironment {
     data class Teamcity(val buildId: String) : DeploymentEnvironment()
-    data class Local(val creationTimeInMillis: Long) : DeploymentEnvironment()
+    object Local : DeploymentEnvironment()
 
     /**
      * environment for long lived pods
@@ -18,14 +18,10 @@ val Deployment.environment: DeploymentEnvironment
         val type = metadata.labels.get("type")
         return when {
             type != null && type.startsWith("service") -> DeploymentEnvironment.Service
+            type != null && type.startsWith("local") -> DeploymentEnvironment.Local
             type != null && type.startsWith("teamcity") -> {
                 DeploymentEnvironment.Teamcity(
                     buildId = requireNotNull(metadata.labels["id"])
-                )
-            }
-            type != null && type.startsWith("local") -> {
-                DeploymentEnvironment.Local(
-                    creationTimeInMillis = requireNotNull(metadata.labels["id"]).toLong()
                 )
             }
             // todo remove after 2020.3.4 release
