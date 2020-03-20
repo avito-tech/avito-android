@@ -52,6 +52,16 @@ subprojects {
         jcenter()
         exclusiveContent {
             forRepository {
+                maven {
+                    setUrl("https://kotlin.bintray.com/kotlinx")
+                }
+            }
+            filter {
+                includeModuleByRegex("org\\.jetbrains\\.kotlinx", "kotlinx-cli.*")
+            }
+        }
+        exclusiveContent {
+            forRepository {
                 google()
             }
             filter {

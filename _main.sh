@@ -45,7 +45,9 @@ GIT_COMMANDS="git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/de
 
 GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pci=true \\
-             -PteamcityUrl \\
+             -PteamcityUrl=${TEAMCITY_URL} \\
+             -PteamcityApiUser=${TEAMCITY_API_USER} \\
+             -PteamcityApiPassword=${TEAMCITY_API_PASSWORD} \\
              -PteamcityBuildType=${BUILD_TYPE} \\
              -PbuildNumber \\
              -PgitBranch=$BUILD_BRANCH \\

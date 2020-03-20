@@ -52,6 +52,7 @@ include(":subprojects:gradle:process")
 include(":subprojects:gradle:test-summary")
 include(":subprojects:gradle:slack")
 include(":subprojects:gradle:utils")
+include(":subprojects:gradle:build-environment")
 
 include(":subprojects:common:time")
 include(":subprojects:common:okhttp")
@@ -62,6 +63,7 @@ include(":subprojects:common:sentry")
 include(":subprojects:common:graphite")
 include(":subprojects:common:statsd")
 include(":subprojects:common:logger")
+include(":subprojects:common:teamcity-common")
 
 include(":subprojects:android-test:resource-manager-exceptions")
 include(":subprojects:android-test:websocket-reporter")
@@ -69,6 +71,8 @@ include(":subprojects:android-test:mockito-utils")
 include(":subprojects:android-test:junit-utils")
 include(":subprojects:android-test:test-annotations")
 include(":subprojects:android-test:keep-for-testing")
+
+include(":subprojects:ci:k8s-deployments-cleaner")
 
 // see gradle.properties flag explanation
 val syncAndroidModules: String by settings

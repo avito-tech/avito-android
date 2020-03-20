@@ -1,7 +1,5 @@
 package com.avito.teamcity
 
-import com.avito.kotlin.dsl.getMandatoryStringProperty
-import org.gradle.api.Project
 import org.jetbrains.teamcity.rest.Build
 import org.jetbrains.teamcity.rest.BuildConfigurationId
 import org.jetbrains.teamcity.rest.BuildId
@@ -77,12 +75,6 @@ interface TeamcityApi {
                 user,
                 password
             ).withLogResponses()
-        )
-
-        constructor(project: Project) : this(
-            url = project.getMandatoryStringProperty("teamcityUrl"),
-            user = project.getMandatoryStringProperty("teamcityApiUser"),
-            password = project.getMandatoryStringProperty("teamcityApiPassword")
         )
 
         constructor(credentials: TeamcityCredentials) : this(credentials.url, credentials.user, credentials.password)

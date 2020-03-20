@@ -11,7 +11,7 @@ object Dependencies {
         val androidX = "1.0.0"
         val espresso = "3.2.0"
     }
-
+    val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
     val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
     val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
     val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.9"
@@ -57,6 +57,8 @@ object Dependencies {
         val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
         object avito {
             val kotlinDslSupport = "com.avito.android:kotlin-dsl-support"
+            val utils = "com.avito.android:utils"
+            val buildEnvironment = "com.avito.android:build-environment"
         }
     }
 

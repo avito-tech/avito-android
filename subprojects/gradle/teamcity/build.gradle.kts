@@ -5,8 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(Dependencies.teamcityClient)
-
+    api(project(":subprojects:common:teamcity-common"))
     implementation(gradleApi())
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:utils"))
