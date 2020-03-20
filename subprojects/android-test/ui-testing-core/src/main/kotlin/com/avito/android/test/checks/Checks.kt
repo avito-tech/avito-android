@@ -53,7 +53,7 @@ interface Checks : LabelChecks {
     fun isDisabled()
 
     /**
-     * Можно использовать для проверки "выбранности" табов
+     * You can use it to check if a tab is active
      */
     fun isSelected()
 
@@ -61,8 +61,8 @@ interface Checks : LabelChecks {
 
     fun withChildCountEquals(count: Int)
 
-    @Deprecated(message = "Проверка отсутсвия элемента по какому-то матчеру хрупкая. " +
-        "Позитивный сценарий на ожидаемое состояние более надежен")
+    @Deprecated(message = "Checking that element does not exist by matcher is fragile. " +
+        "Positive scenario for the expected state is more reliable")
     fun doesNotExist()
 
     fun exists()
