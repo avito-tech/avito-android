@@ -9,8 +9,9 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:process"))
-    implementation(project(":subprojects:gradle:utils")) // project.buildEnvironment only
     implementation(Dependencies.funktionaleTry)
+    api(project(":subprojects:gradle:build-environment")) // project.buildEnvironment only
+
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(Dependencies.test.mockitoJUnitJupiter)
