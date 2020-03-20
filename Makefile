@@ -12,7 +12,7 @@ test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi --stacktrace -PinfraVersion=local -Pci=true
 
 clear_k8s_deployments_by_namespaces:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:byNamespaces -Pci=$(ci)
+	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -Pci=$(ci)
 
 clear_k8s_deployments_by_names:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:byNames -Pci=$(ci)
+	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=$(ci)
