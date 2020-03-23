@@ -12,7 +12,7 @@ type: docs
 1. Setup a context on `beta/android-emulator` with your user access (also described in first doc)
 1. Run tests with extra parameters specified, example for `:test-app`:
 
-```
+```shell script
 ./gradlew :subprojects:android-test:test-app:instrumentationUi 
     -Pci=true 
     -PkubernetesContext=<your context>
