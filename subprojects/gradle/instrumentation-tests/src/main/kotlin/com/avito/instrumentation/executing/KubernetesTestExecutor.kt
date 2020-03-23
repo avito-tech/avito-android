@@ -14,9 +14,8 @@ import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.utils.gradle.KubernetesCredentials
+import com.avito.utils.gradle.createKubernetesClient
 import com.avito.utils.logging.CILogger
-import io.fabric8.kubernetes.client.ConfigBuilder
-import io.fabric8.kubernetes.client.DefaultKubernetesClient
 import java.io.File
 
 class KubernetesTestExecutor(
@@ -49,14 +48,7 @@ class KubernetesTestExecutor(
                 androidDebugBridge = AndroidDebugBridge(
                     logger = { logger.info(it) }
                 ),
-                kubernetesClient = DefaultKubernetesClient(
-                    ConfigBuilder()
-                        .withCaCertData(kubernetesCredentials.caCertData)
-                        .withMasterUrl(kubernetesCredentials.url)
-                        .withOauthToken(kubernetesCredentials.token)
-                        .build()
-                )
-                    .inNamespace(executionParameters.namespace),
+                kubernetesClient = createKubernetesClient(kubernetesCredentials, executionParameters.namespace),
                 configurationName = configuration.name,
                 projectName = projectName,
                 logger = logger,
