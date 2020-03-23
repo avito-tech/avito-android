@@ -43,7 +43,7 @@ class TestsRunnerImplementation(
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
     private val reportsApi: ReportsApi,
-    private val kubernetesRegistry: String
+    private val dockerRegistry: String
 ) : TestsRunner {
 
     override fun runTests(
@@ -81,7 +81,7 @@ class TestsRunnerImplementation(
                 buildType = buildType,
                 projectName = projectName,
                 kubernetesCredentials = kubernetesCredentials,
-                kubernetesRegistry = kubernetesRegistry,
+                dockerRegistry = dockerRegistry,
                 output = output,
                 logcatDir = logcatDir
             )

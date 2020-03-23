@@ -190,7 +190,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     unitToChannelMapping = unitToChannelMapping.get(),
                     reportApiFallbackUrl = reportApiFallbackUrl.get(),
                     reportViewerUrl = reportViewerUrl.get(),
-                    kubernetesRegistry = registry.get()
+                    dockerRegistry = registry.get()
                 )
             )
         }

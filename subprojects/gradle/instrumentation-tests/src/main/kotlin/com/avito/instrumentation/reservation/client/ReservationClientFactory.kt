@@ -29,7 +29,7 @@ interface ReservationClientFactory {
         private val buildType: String,
         private val projectName: String,
         private val kubernetesCredentials: KubernetesCredentials,
-        private val kubernetesRegistry: String,
+        private val dockerRegistry: String,
         private val output: File,
         private val logcatDir: File
     ) : ReservationClientFactory {
@@ -85,7 +85,7 @@ interface ReservationClientFactory {
                     buildId = buildId,
                     buildType = buildType,
                     emulatorsLogsReporter = emulatorsLogsReporter,
-                    registry = kubernetesRegistry
+                    registry = dockerRegistry
                 )
             }
         }

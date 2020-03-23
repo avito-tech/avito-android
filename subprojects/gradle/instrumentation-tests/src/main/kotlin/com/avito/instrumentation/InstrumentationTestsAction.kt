@@ -103,7 +103,7 @@ class InstrumentationTestsAction(
         instrumentationConfiguration = params.instrumentationConfiguration,
         reportsApi = reportsApi,
         logger = logger,
-        kubernetesRegistry = params.kubernetesRegistry
+        dockerRegistry = params.dockerRegistry
     ),
     private val performanceTestsScheduler: TestsScheduler = PerformanceTestsScheduler(
         testsRunner = testRunner,
@@ -332,7 +332,7 @@ class InstrumentationTestsAction(
         val bitbucketConfig: BitbucketConfig,
         val statsdConfig: StatsDConfig,
         val unitToChannelMapping: Map<Team, SlackChannel>,
-        val kubernetesRegistry: String
+        val dockerRegistry: String
     ) : Serializable {
         companion object
     }
