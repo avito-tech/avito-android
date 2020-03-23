@@ -21,6 +21,7 @@ import com.avito.instrumentation.configuration.target.scheduling.reservation.Tes
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTestTask
 import com.avito.instrumentation.rerun.RunOnTargetBranchCondition
+import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
@@ -75,56 +76,22 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             logger.info("Instrumentation plugin disabled due to non CI environment")
             return
         }
-
-        project.extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
-            .apply {
-                val retryCountValue = project.getOptionalIntProperty(
-                    "dynamicRetryCount",
-                    1
-                )
-                val dynamicPrefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", "")
-                configurationsContainer.register(
-                    "dynamic",
-                    Action { configuration ->
-                        configuration.annotatedWith = TestsFilter.ui
-                        configuration.tryToReRunOnTargetBranch = false
-                        configuration.reportSkippedTests = true
-                        configuration.rerunFailedTests = false
-
-                    configuration.prefixFilter = dynamicPrefixFilter
-
-                        configuration.targetsContainer.apply {
-                            EmulatorSet.full.forEach { emulator ->
-                                register(
-                                    emulator.name,
-                                    Action { target ->
-                                        target.deviceName = "functional-${emulator.api}"
-
-                                        target.enabled = project.getBooleanProperty(
-                                            "dynamicTarget${emulator.api}",
-                                            false
-                                        )
-
-                                        target.scheduling = SchedulingConfiguration().apply {
-                                            quota = QuotaConfiguration().apply {
-                                                retryCount = retryCountValue
-                                                minimumSuccessCount = retryCountValue / 2 + retryCountValue % 2
-                                                minimumFailedCount = retryCountValue / 2 + retryCountValue % 2
-                                            }
-
-                                            reservation = TestsBasedDevicesReservationConfiguration.create(
-                                                device = emulator,
-                                                min = 2,
-                                                max = 25
-                                            )
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    }
+        val instrumentationConfigurations =
+            project.extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
+        instrumentationConfigurations.registerDynamicConfiguration(
+            testFilter = TestsFilter.valueOf(project.getOptionalStringProperty("instrumentation.dynamic.testFilter", TestsFilter.empty.name)),
+            retryCountValue = project.getOptionalIntProperty(
+                "dynamicRetryCount",
+                1
+            ),
+            prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
+            isDeviceEnabled = { device ->
+                project.getBooleanProperty(
+                    "dynamicTarget${device.api}",
+                    false
                 )
             }
+        )
 
         val targetBranch: Provider<Branch> = gitState.flatMap { state ->
             val targetBranch = state.targetBranch
@@ -315,6 +282,53 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 }
             }
         }
+    }
+
+    private fun InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.registerDynamicConfiguration(
+        testFilter: TestsFilter,
+        retryCountValue: Int,
+        prefixFilter: String,
+        isDeviceEnabled: (Device) -> Boolean
+    ) {
+        configurationsContainer.register(
+            "dynamic",
+            Action { configuration ->
+                configuration.annotatedWith = testFilter.annotatedWith
+                configuration.tryToReRunOnTargetBranch = false
+                configuration.reportSkippedTests = true
+                configuration.rerunFailedTests = false
+
+                configuration.prefixFilter = prefixFilter
+
+                configuration.targetsContainer.apply {
+                    EmulatorSet.full.forEach { emulator ->
+                        register(
+                            emulator.name,
+                            Action { target ->
+                                target.deviceName = "functional-${emulator.api}"
+                                target.enabled = isDeviceEnabled(emulator)
+                                target.scheduling = SchedulingConfiguration().apply {
+                                    quota = QuotaConfiguration().apply {
+                                        retryCount = retryCountValue
+                                        minimumSuccessCount =
+                                            retryCountValue / 2 + retryCountValue % 2
+                                        minimumFailedCount =
+                                            retryCountValue / 2 + retryCountValue % 2
+                                    }
+
+                                    reservation =
+                                        TestsBasedDevicesReservationConfiguration.create(
+                                            device = emulator,
+                                            min = 2,
+                                            max = 25
+                                        )
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        )
     }
 
     // TODO: Make stronger contract: MBS-7890

@@ -55,7 +55,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "uiNoE2e",
-                    registerUiConfig(TestsFilter.uiNoE2e, hasE2eTests = false)
+                    registerUiConfig(TestsFilter.uiNoE2E, hasE2eTests = false)
                 )
 
                 configurationsContainer.register(
@@ -64,7 +64,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "newUiNoE2e",
-                    registerNewUiConfig(TestsFilter.uiNoE2e)
+                    registerNewUiConfig(TestsFilter.uiNoE2E)
                 )
 
                 configurationsContainer.register(
@@ -73,7 +73,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "allUiNoE2e",
-                    registerAllUI(TestsFilter.regressionNoE2e)
+                    registerAllUI(TestsFilter.regressionNoE2E)
                 )
 
                 configurationsContainer.register(
@@ -82,13 +82,13 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "regressionNoE2e",
-                    registerRegressionConfig(TestsFilter.regressionNoE2e)
+                    registerRegressionConfig(TestsFilter.regressionNoE2E)
                 )
 
                 //todo перенести в performance модуль?
                 configurationsContainer.register(
                     "performance", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance,
+                        annotatedWith = TestsFilter.performance.annotatedWith,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -97,7 +97,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 configurationsContainer.register(
                     "performanceNoE2e",
                     registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performanceNoE2e,
+                        annotatedWith = TestsFilter.performanceNoE2E.annotatedWith,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -105,7 +105,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "performanceMde", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance,
+                        annotatedWith = TestsFilter.performance.annotatedWith,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.MDE
@@ -116,7 +116,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
     }
 
     private fun registerUiConfig(
-        annotatedWith: Collection<String>,
+        testsFilter: TestsFilter,
         hasE2eTests: Boolean
     ): Action<InstrumentationConfiguration> {
 
@@ -153,7 +153,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
 
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = hasE2eTests
             config.reportSkippedTests = true
             config.rerunFailedTests = true
@@ -198,7 +198,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerNewUiConfig(annotatedWith: Collection<String>): Action<InstrumentationConfiguration> {
+    private fun registerNewUiConfig(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) {
             register("api${emulator.api}") { target ->
@@ -220,7 +220,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
 
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = false
             config.reportSkippedTests = false
             config.reportFlakyTests = true
@@ -233,7 +233,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerAllUI(annotatedWith: Collection<String>): Action<InstrumentationConfiguration> {
+    private fun registerAllUI(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) {
             register("api${emulator.api}") { target ->
@@ -254,7 +254,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             }
         }
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = false
             config.rerunFailedTests = true
             config.reportSkippedTests = true
@@ -263,7 +263,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerRegressionConfig(annotatedWith: Collection<String>): Action<InstrumentationConfiguration> {
+    private fun registerRegressionConfig(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) =
             register(emulator.name) { target ->
@@ -283,7 +283,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             }
 
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.reportSkippedTests = true
             config.rerunFailedTests = true
 

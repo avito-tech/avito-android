@@ -17,7 +17,7 @@ open class QuotaConfiguration {
         require(minimumSuccessCount >= 0) { "minimumSuccessCount must be positive or 0" }
         require(minimumFailedCount >= 0) { "minimumFailedCount must be positive or 0" }
         require(minimumRequiredRunsCount > 0) {
-            "minimumRequiredRunsCount (minimumSuccessCount + minimumFailedCount) must be greater then zero"
+            "minimumRequiredRunsCount (minimumSuccessCount + minimumFailedCount) must be greater than zero"
         }
 
         require(runsCount >= minimumRequiredRunsCount) {
