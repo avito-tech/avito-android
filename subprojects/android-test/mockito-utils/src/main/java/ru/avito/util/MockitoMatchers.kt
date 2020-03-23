@@ -1,6 +1,6 @@
 package ru.avito.util
 
-import com.nhaarman.mockito_kotlin.createinstance.createInstance
+import com.nhaarman.mockitokotlin2.internal.createInstance
 import org.hamcrest.Matcher
 import org.mockito.Mockito
 import org.mockito.hamcrest.MockitoHamcrest

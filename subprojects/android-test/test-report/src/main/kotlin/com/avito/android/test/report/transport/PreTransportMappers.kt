@@ -1,8 +1,10 @@
 package com.avito.android.test.report.transport
 
+import com.avito.android.test.report.TestPackageParser
+import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepResult
+import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Step
-import kotlin.reflect.full.memberProperties
 
 internal interface PreTransportMappers {
 
@@ -17,10 +19,15 @@ internal interface PreTransportMappers {
         }
     }
 
-    //todo remove reflect call
-    fun com.avito.android.test.report.model.DataSet.serialize(): Map<String, String> =
-        this::class.memberProperties
+    fun DataSet.serialize(): Map<String, String> {
+        return javaClass.declaredFields
             .filter { it.name != "number" }
-            .map { it.name to it.getter.call(this).toString() }
+            .map { field ->
+                field.name to javaClass.methods
+                    .find { it.name == "get${field.name.capitalize()}" }
+                    ?.invoke(this)
+                    .toString()
+            }
             .toMap()
+    }
 }

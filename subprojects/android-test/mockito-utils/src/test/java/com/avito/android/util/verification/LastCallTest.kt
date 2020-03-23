@@ -1,9 +1,9 @@
 package com.avito.android.util.verification
 
 import com.avito.android.util.verification.VerificationModes.lastCall
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.junit.Test
 
 @Suppress("IllegalIdentifier")

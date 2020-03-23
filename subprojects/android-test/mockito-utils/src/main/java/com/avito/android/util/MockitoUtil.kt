@@ -2,8 +2,8 @@
 
 package com.avito.android.util
 
-import com.nhaarman.mockito_kotlin.createinstance.createInstance
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.internal.createInstance
+import com.nhaarman.mockitokotlin2.mock
 import org.mockito.Mockito.any
 import org.mockito.internal.stubbing.defaultanswers.ForwardsInvocations
 import org.mockito.stubbing.Answer

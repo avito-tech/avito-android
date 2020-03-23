@@ -1,6 +1,6 @@
 package com.avito.android.util
 
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import org.mockito.ArgumentCaptor
 
 inline fun <reified T : Any> capture(instance: T = mock(), function: (InstanceArgumentCaptor<T>) -> Unit): T {

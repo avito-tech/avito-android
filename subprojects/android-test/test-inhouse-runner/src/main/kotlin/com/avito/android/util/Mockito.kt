@@ -1,7 +1,7 @@
 package com.avito.android.util
 
 import com.avito.android.test.waitFor
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.verify
 import org.mockito.verification.VerificationMode
 import java.util.concurrent.TimeUnit
 

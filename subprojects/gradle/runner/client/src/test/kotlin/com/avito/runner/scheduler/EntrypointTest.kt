@@ -12,10 +12,10 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.test.generateDeviceTestCaseRun
 import com.avito.runner.test.generateTestCase
 import com.avito.runner.test.generateTestCaseRun
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

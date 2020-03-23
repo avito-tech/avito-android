@@ -1,7 +1,7 @@
 package ru.avito.util
 
-import com.nhaarman.mockito_kotlin.KArgumentCaptor
-import com.nhaarman.mockito_kotlin.argumentCaptor
+import com.nhaarman.mockitokotlin2.KArgumentCaptor
+import com.nhaarman.mockitokotlin2.argumentCaptor
 
 inline fun <reified T : Any> capture(captureBlock: (KArgumentCaptor<T>) -> Unit): T =
     with(argumentCaptor<T>()) {

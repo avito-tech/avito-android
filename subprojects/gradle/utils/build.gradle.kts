@@ -10,7 +10,7 @@ dependencies {
     api(project(":subprojects:gradle:kotlin-dsl-support"))
 
     testImplementation(Dependencies.test.truth)
-    testImplementation(Dependencies.test.mockitoKotlin2)
+    testImplementation(Dependencies.test.mockitoKotlin)
 
     testFixturesImplementation(Dependencies.kotlinStdlib)
 }
