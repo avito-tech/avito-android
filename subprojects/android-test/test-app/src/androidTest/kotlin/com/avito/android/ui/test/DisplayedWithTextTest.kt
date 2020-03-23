@@ -1,10 +1,12 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.ui.IdenticalCellsRecyclerActivity
 import org.hamcrest.Matchers
 import org.junit.Rule
 import org.junit.Test
 
+@UIComponentTest
 class DisplayedWithTextTest {
 
     @get:Rule

@@ -46,7 +46,7 @@ android {
         }
     }
 
-    testBuildType = "staging"
+    testBuildType = getOptionalStringProperty("avito.testBuildType", "staging")
 
     /**
      * Disable all buildTypes except testing
