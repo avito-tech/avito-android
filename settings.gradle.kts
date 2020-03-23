@@ -91,6 +91,7 @@ pluginManagement {
 
     val artifactoryUrl: String? by settings
     val infraVersion: String by settings
+    val kotlinVersion: String by System.getProperties()
 
     repositories {
         exclusiveContent {
@@ -158,7 +159,7 @@ pluginManagement {
                     useModule("com.android.tools.build:gradle:3.5.3")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion("1.3.70")
+                    useVersion(kotlinVersion)
 
                 pluginId.startsWith("com.avito.android") ->
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
