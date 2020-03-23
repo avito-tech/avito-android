@@ -1,5 +1,7 @@
 package com.avito.instrumentation.reservation.adb
 
+import com.google.common.net.InetAddresses
+
 class AndroidDebugBridge(
     private val logger: (String) -> Unit = {} // TODO: use Logger interface
 ) {
@@ -19,7 +21,8 @@ class AndroidDebugBridge(
     }
 
     private fun isRemote(serial: String): Boolean {
-        return serial.contains(':') && serial.substringBefore(':').contains('.')
+        return serial.contains(':')
+            && InetAddresses.isInetAddress(serial.substringBefore(':'))
     }
 
 }
