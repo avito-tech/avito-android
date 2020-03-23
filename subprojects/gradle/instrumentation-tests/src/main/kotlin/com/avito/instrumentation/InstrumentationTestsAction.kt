@@ -6,6 +6,7 @@ import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.BitbucketConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
+import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
@@ -84,7 +85,9 @@ class InstrumentationTestsAction(
     private val testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
         report = sourceReport
     ),
+    private val testExecutorFactory: TestExecutorFactory = TestExecutorFactory.Implementation(),
     private val testRunner: TestsRunner = TestsRunnerImplementation(
+        testExecutorFactory = testExecutorFactory,
         kubernetesCredentials = params.kubernetesCredentials,
         testReporterFactory = { testSuite, outputDir, report ->
             ReportViewerTestReporter(
@@ -103,7 +106,7 @@ class InstrumentationTestsAction(
         instrumentationConfiguration = params.instrumentationConfiguration,
         reportsApi = reportsApi,
         logger = logger,
-        dockerRegistry = params.dockerRegistry
+        registry = params.registry
     ),
     private val performanceTestsScheduler: TestsScheduler = PerformanceTestsScheduler(
         testsRunner = testRunner,
@@ -332,7 +335,7 @@ class InstrumentationTestsAction(
         val bitbucketConfig: BitbucketConfig,
         val statsdConfig: StatsDConfig,
         val unitToChannelMapping: Map<Team, SlackChannel>,
-        val dockerRegistry: String
+        val registry: String
     ) : Serializable {
         companion object
     }

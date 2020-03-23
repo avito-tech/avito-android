@@ -91,5 +91,5 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         unitToChannelMapping = unitToChannelMapping,
         reportViewerUrl = reportViewerUrl,
         reportApiFallbackUrl = reportApiFallbackUrl,
-        dockerRegistry = kubernetesRegistry
+        registry = kubernetesRegistry
     )

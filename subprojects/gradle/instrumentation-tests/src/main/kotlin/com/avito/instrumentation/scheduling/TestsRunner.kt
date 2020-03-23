@@ -3,6 +3,7 @@ package com.avito.instrumentation.scheduling
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.TestExecutor
+import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.client.ReservationClientFactory
@@ -33,6 +34,7 @@ interface TestsRunner {
 }
 
 class TestsRunnerImplementation(
+    private val testExecutorFactory: TestExecutorFactory,
     private val kubernetesCredentials: KubernetesCredentials,
     private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter?,
     private val logger: CILogger,
@@ -43,7 +45,7 @@ class TestsRunnerImplementation(
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
     private val reportsApi: ReportsApi,
-    private val dockerRegistry: String
+    private val registry: String
 ) : TestsRunner {
 
     override fun runTests(
@@ -81,11 +83,11 @@ class TestsRunnerImplementation(
                 buildType = buildType,
                 projectName = projectName,
                 kubernetesCredentials = kubernetesCredentials,
-                dockerRegistry = dockerRegistry,
+                registry = registry,
                 output = output,
                 logcatDir = logcatDir
             )
-            val executor = TestExecutor.Impl(
+            val executor = testExecutorFactory.createExecutor(
                 logger = logger,
                 reservationClientFactory = reservationClientFactory,
                 testReporter = testReporter
