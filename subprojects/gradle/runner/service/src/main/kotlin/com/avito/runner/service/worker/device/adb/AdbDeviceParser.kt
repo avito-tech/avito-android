@@ -3,12 +3,17 @@ package com.avito.runner.service.worker.device.adb
 class AdbDeviceParser {
 
     fun parse(output: String): Set<AdbDeviceParams> {
-        return output
+        val sanitizedOutput = output
             .substringAfter("List of devices attached")
             .split(System.lineSeparator())
             .asSequence()
             .map { it.trim() }
             .filter { it.isNotEmpty() }
+
+        check(!sanitizedOutput.contains("error: cannot connect to daemon")) {
+            "Cannot connect to adb daemon:\n$output"
+        }
+        return sanitizedOutput
             .filter { it.contains("online") || it.contains("device") }
             .map {
                 AdbDeviceParams(

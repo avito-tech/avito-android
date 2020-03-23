@@ -53,7 +53,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             buildType: String,
             projectName: String,
             testReporter: TestReporter?,
-            registry: String
+            kubernetesRegistry: String
         ): TestExecutor {
             return testRunner
         }

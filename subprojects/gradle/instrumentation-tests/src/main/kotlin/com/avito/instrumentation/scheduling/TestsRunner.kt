@@ -3,9 +3,9 @@ package com.avito.instrumentation.scheduling
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.TestExecutor
-import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.listener.TestReporter
+import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.suite.model.transformTestsWithNewJobSlug
 import com.avito.report.ReportsApi
@@ -33,7 +33,6 @@ interface TestsRunner {
 }
 
 class TestsRunnerImplementation(
-    private val testExecutorFactory: TestExecutorFactory,
     private val kubernetesCredentials: KubernetesCredentials,
     private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter?,
     private val logger: CILogger,
@@ -44,7 +43,7 @@ class TestsRunnerImplementation(
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
     private val reportsApi: ReportsApi,
-    private val registry: String
+    private val kubernetesRegistry: String
 ) : TestsRunner {
 
     override fun runTests(
@@ -64,25 +63,35 @@ class TestsRunnerImplementation(
             val output = File(outputDirectory, runType.id).apply { mkdirs() }
             val logcatDir = Files.createTempDirectory(null).toFile()
 
-            testExecutorFactory.createExecutor(
-                logger = logger.child(runType.id),
-                kubernetesCredentials = kubernetesCredentials,
-                buildId = buildId,
+            val testReporter = testReporterFactory.invoke(
+                testsToRun.associate {
+                    TestCase(
+                        className = it.test.name.className,
+                        methodName = it.test.name.methodName,
+                        deviceName = it.target.deviceName
+                    ) to it.test
+                },
+                logcatDir,
+                report
+            )
+            val logger = logger.child(runType.id)
+            val reservationClientFactory = ReservationClientFactory.Impl(
+                logger = logger,
+                buildId= buildId,
                 buildType = buildType,
                 projectName = projectName,
-                testReporter = testReporterFactory.invoke(
-                    testsToRun.associate {
-                        TestCase(
-                            className = it.test.name.className,
-                            methodName = it.test.name.methodName,
-                            deviceName = it.target.deviceName
-                        ) to it.test
-                    },
-                    logcatDir,
-                    report
-                ),
-                registry = registry
-            ).execute(
+                kubernetesCredentials = kubernetesCredentials,
+                kubernetesRegistry = kubernetesRegistry,
+                output = output,
+                logcatDir = logcatDir
+            )
+            val executor = TestExecutor.Impl(
+                logger = logger,
+                reservationClientFactory = reservationClientFactory,
+                testReporter = testReporter
+            )
+
+            executor.execute(
                 application = mainApk,
                 testApplication = testApk,
                 testsToRun = testsToRun.transformTestsWithNewJobSlug(reportCoordinates.jobSlug),

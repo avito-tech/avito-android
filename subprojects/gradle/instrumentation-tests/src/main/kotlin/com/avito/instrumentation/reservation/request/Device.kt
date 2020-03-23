@@ -9,6 +9,24 @@ sealed class Device : Serializable {
     abstract val api: Int
     abstract val description: String
 
+    class LocalEmulator(
+        override val name: String,
+        override val api: Int,
+        override val model: String = "Android_SDK_built_for_x86"
+    ) : Device() {
+
+        override val description: String
+            get() = "local-emulator-$name"
+
+        companion object {
+
+            fun device(api: Int): LocalEmulator = LocalEmulator(
+                name = api.toString(),
+                api = api
+            )
+        }
+    }
+
     sealed class Emulator(
         override val name: String,
         override val api: Int,
