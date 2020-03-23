@@ -357,8 +357,6 @@ class KubernetesReservationClient(
         val deploymentSpecificationsMatchLabels = deploymentMatchLabels
             .plus("deploymentName" to deploymentName)
 
-        logger.info("deploymentSpecificationsMatchLabels = $deploymentSpecificationsMatchLabels")
-
         return newDeployment {
             apiVersion = "extensions/v1beta1"
             metadata {

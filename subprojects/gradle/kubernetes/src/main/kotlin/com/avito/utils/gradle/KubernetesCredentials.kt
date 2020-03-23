@@ -24,8 +24,6 @@ val Project.kubernetesCredentials: KubernetesCredentials
     get() {
         val context = getOptionalStringProperty("kubernetesContext", nullIfBlank = true)
         return if (context.isNullOrBlank()) {
-            //todo it should be mandatory only in avito ci
-            // move it to instrumentationPlugin config to control
             KubernetesCredentials.Service(
                 token = getMandatoryStringProperty("kubernetesToken"),
                 caCertData = getMandatoryStringProperty("kubernetesCaCertData"),
