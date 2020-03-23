@@ -43,24 +43,26 @@ class KubernetesTestExecutor(
         output: File,
         logcatDir: File
     ) {
-        val kubernetesReservation =
-            KubernetesReservationClient(
-                androidDebugBridge = AndroidDebugBridge(
-                    logger = { logger.info(it) }
-                ),
-                kubernetesClient = createKubernetesClient(kubernetesCredentials, executionParameters.namespace),
-                configurationName = configuration.name,
-                projectName = projectName,
-                logger = logger,
-                buildId = buildId,
-                buildType = buildType,
-                emulatorsLogsReporter = EmulatorsLogsReporter(
-                    outputFolder = output,
-                    logcatTags = executionParameters.logcatTags,
-                    logcatDir = logcatDir
-                ),
-                registry = registry
-            )
+        val kubernetesReservation = KubernetesReservationClient(
+            androidDebugBridge = AndroidDebugBridge(
+                logger = { logger.info(it) }
+            ),
+            kubernetesClient = createKubernetesClient(
+                kubernetesCredentials = kubernetesCredentials,
+                namespace = executionParameters.namespace
+            ),
+            configurationName = configuration.name,
+            projectName = projectName,
+            logger = logger,
+            buildId = buildId,
+            buildType = buildType,
+            emulatorsLogsReporter = EmulatorsLogsReporter(
+                outputFolder = output,
+                logcatTags = executionParameters.logcatTags,
+                logcatDir = logcatDir
+            ),
+            registry = registry
+        )
 
         withDevices(
             logger = logger,

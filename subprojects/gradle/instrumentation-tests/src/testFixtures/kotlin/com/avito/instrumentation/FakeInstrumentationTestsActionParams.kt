@@ -23,7 +23,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     buildType: String = "teamcity",
     buildUrl: String = "https://build",
     targetCommit: String = randomCommitHash(),
-    kubernetesCredentials: KubernetesCredentials = KubernetesCredentials(
+    kubernetesCredentials: KubernetesCredentials = KubernetesCredentials.Service(
         token = "empty",
         caCertData = "empty",
         url = "empty"
