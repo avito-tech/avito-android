@@ -1,5 +1,6 @@
 package com.avito.android.test.espresso.action.click
 
+import android.graphics.Color
 import android.view.View
 import android.view.ViewConfiguration
 import android.webkit.WebView
@@ -61,16 +62,19 @@ class ClickAction(
                 coordinates: FloatArray,
                 precision: FloatArray
             ) {
+                val clickVisualization = ClickVisualization(coordinates[0], coordinates[1])
                 val downEvent = downEvent(
                     coordinates = coordinates,
                     precision = precision
                 )
+                clickVisualization.attachTo(rootView)
                 rootView.dispatchTouchEvent(downEvent)
 
                 uiController.loopMainThreadForAtLeast(ViewConfiguration.getTapTimeout().toLong())
 
                 val upEvent = upEvent(downEvent)
                 rootView.dispatchTouchEvent(upEvent)
+                clickVisualization.detach()
 
                 downEvent.recycle()
                 upEvent.recycle()
@@ -97,10 +101,16 @@ class ClickAction(
                 coordinates: FloatArray,
                 precision: FloatArray
             ) {
+                val clickVisualization = ClickVisualization(
+                    x = coordinates[0],
+                    y = coordinates[1],
+                    color = Color.argb(0xA0, 0x00, 0x00, 0xFF)
+                )
                 val downEvent = downEvent(
                     coordinates = coordinates,
                     precision = precision
                 )
+                clickVisualization.attachTo(rootView)
                 rootView.dispatchTouchEvent(downEvent)
 
                 // Factor 1.5 is needed, otherwise a long press is not safely detected.
@@ -109,6 +119,7 @@ class ClickAction(
 
                 val upEvent = upEvent(downEvent)
                 rootView.dispatchTouchEvent(upEvent)
+                clickVisualization.detach()
 
                 downEvent.recycle()
                 upEvent.recycle()
