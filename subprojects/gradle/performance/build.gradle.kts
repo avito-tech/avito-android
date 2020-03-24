@@ -32,7 +32,7 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
-    testImplementation(Dependencies.test.mockitoKotlin2)
+    testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.truth)
 }
 
