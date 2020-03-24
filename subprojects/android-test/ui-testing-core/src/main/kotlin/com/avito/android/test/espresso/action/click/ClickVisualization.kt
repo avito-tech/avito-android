@@ -11,7 +11,7 @@ import android.os.Build
 import android.view.View
 import androidx.annotation.ColorInt
 
-class ClickVisualization(
+internal class ClickVisualization(
     private val x: Float,
     private val y: Float,
     private val radiusInDp: Int = 16,
