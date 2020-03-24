@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:instrumentation-tests"))
+    api(project(":subprojects:gradle:instrumentation-tests"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
 }
 

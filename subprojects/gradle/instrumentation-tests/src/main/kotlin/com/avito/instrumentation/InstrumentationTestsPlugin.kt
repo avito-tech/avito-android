@@ -15,27 +15,35 @@ import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTestTask
 import com.avito.instrumentation.rerun.RunOnTargetBranchCondition
+import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.getOptionalIntProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.toOptional
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
 import com.avito.utils.logging.ciLogger
+import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.time.Duration
@@ -68,6 +76,22 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             logger.info("Instrumentation plugin disabled due to non CI environment")
             return
         }
+        val instrumentationConfigurations =
+            project.extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
+        instrumentationConfigurations.registerDynamicConfiguration(
+            testFilter = TestsFilter.valueOf(project.getOptionalStringProperty("instrumentation.dynamic.testFilter", TestsFilter.empty.name)),
+            retryCountValue = project.getOptionalIntProperty(
+                "dynamicRetryCount",
+                1
+            ),
+            prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
+            isDeviceEnabled = { device ->
+                project.getBooleanProperty(
+                    "dynamicTarget${device.api}",
+                    false
+                )
+            }
+        )
 
         val targetBranch: Provider<Branch> = gitState.flatMap { state ->
             val targetBranch = state.targetBranch
@@ -83,23 +107,29 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             // see LintWorkerApiWorkaround.md
             project.tasks.register<DelayTask>(preInstrumentationTaskName) {
                 group = ciTaskGroup
-                description = "Executed when all inputs of all instrumentation tasks in the module are ready"
+                description =
+                    "Executed when all inputs of all instrumentation tasks in the module are ready"
 
                 delayMillis.set(500L)
             }
 
             appExtension.testVariants.all { testVariant: TestVariant ->
-                val testedVariant: ApplicationVariant = testVariant.testedVariant as ApplicationVariant
+                val testedVariant: ApplicationVariant =
+                    testVariant.testedVariant as ApplicationVariant
 
                 val buildOnTargetCommitTask =
                     project.tasks.register<BuildOnTargetCommitForTestTask>("buildOnTargetCommit") {
                         group = ciTaskGroup
-                        description = "Run build on targetCommit to get apks for tests run on target branch"
+                        description =
+                            "Run build on targetCommit to get apks for tests run on target branch"
 
-                        val nestedBuildDir = File(project.projectDir, "nested-build").apply { mkdirs() }
+                        val nestedBuildDir =
+                            File(project.projectDir, "nested-build").apply { mkdirs() }
                         val variant = testedVariant.name
-                        val versionName = project.getMandatoryStringProperty("${project.name}.versionName")
-                        val versionCode = project.getMandatoryIntProperty("${project.name}.versionCode")
+                        val versionName =
+                            project.getMandatoryStringProperty("${project.name}.versionName")
+                        val versionCode =
+                            project.getMandatoryIntProperty("${project.name}.versionCode")
 
                         this.shouldFailBuild.set(false) //todo should be configurable outside
                         this.appPath.set(project.path)
@@ -109,7 +139,12 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                         this.versionName.set(versionName)
                         this.versionCode.set(versionCode)
                         this.repoSshUrl.set(project.getMandatoryStringProperty("avito.repo.ssh.url"))
-                        this.stubForTest.set(project.getBooleanProperty("stubBuildOnTargetCommit", default = false))
+                        this.stubForTest.set(
+                            project.getBooleanProperty(
+                                "stubBuildOnTargetCommit",
+                                default = false
+                            )
+                        )
 
                         onlyIf { targetBranch.isPresent }
                         onlyIf { !env.isRerunDisabled }
@@ -165,7 +200,11 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 }
 
                                 if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
-                                    dependsOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project))
+                                    dependsOn(
+                                        instrumentationConfiguration.impactAnalysisPolicy.getTask(
+                                            project
+                                        )
+                                    )
                                 }
                             }
 
@@ -193,7 +232,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 when (instrumentationConfiguration.impactAnalysisPolicy) {
                                     is ImpactAnalysisPolicy.On -> {
                                         dependencyOn(
-                                            instrumentationConfiguration.impactAnalysisPolicy.getTask(project)
+                                            instrumentationConfiguration.impactAnalysisPolicy.getTask(
+                                                project
+                                            )
                                         ) {
                                             impactAnalysisResult.set(
                                                 instrumentationConfiguration.impactAnalysisPolicy
@@ -204,9 +245,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 }
 
                                 val isFullTestSuite = gitState.map {
-                                    it.isOnDefaultBranch
-                                        && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
-                                }
+                                        it.isOnDefaultBranch
+                                                && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                                    }
                                     .orElse(false)
 
                                 this.instrumentationConfiguration.set(instrumentationConfiguration)
@@ -243,11 +284,62 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         }
     }
 
+    private fun InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.registerDynamicConfiguration(
+        testFilter: TestsFilter,
+        retryCountValue: Int,
+        prefixFilter: String,
+        isDeviceEnabled: (Device) -> Boolean
+    ) {
+        configurationsContainer.register(
+            "dynamic",
+            Action { configuration ->
+                configuration.annotatedWith = testFilter.annotatedWith
+                configuration.tryToReRunOnTargetBranch = false
+                configuration.reportSkippedTests = true
+                configuration.rerunFailedTests = false
+
+                configuration.prefixFilter = prefixFilter
+
+                configuration.targetsContainer.apply {
+                    EmulatorSet.full.forEach { emulator ->
+                        register(
+                            emulator.name,
+                            Action { target ->
+                                target.deviceName = "functional-${emulator.api}"
+                                target.enabled = isDeviceEnabled(emulator)
+                                target.scheduling = SchedulingConfiguration().apply {
+                                    quota = QuotaConfiguration().apply {
+                                        retryCount = retryCountValue
+                                        minimumSuccessCount =
+                                            retryCountValue / 2 + retryCountValue % 2
+                                        minimumFailedCount =
+                                            retryCountValue / 2 + retryCountValue % 2
+                                    }
+
+                                    reservation =
+                                        TestsBasedDevicesReservationConfiguration.create(
+                                            device = emulator,
+                                            min = 2,
+                                            max = 25
+                                        )
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        )
+    }
+
     // TODO: Make stronger contract: MBS-7890
     /**
      * NB: sync project in IDE after changes in InstrumentationRunnerArguments
      */
-    private fun setupLocalInstrumentationArguments(project: Project, gitState: GitState?, config: DefaultConfig) {
+    private fun setupLocalInstrumentationArguments(
+        project: Project,
+        gitState: GitState?,
+        config: DefaultConfig
+    ) {
 
         val args = mutableMapOf<String, String>()
         args["jobSlug"] = "LocalTests"
@@ -259,7 +351,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         args["sentryDsn"] = "http://stub-project@stub-host/0"
         args["fileStorageUrl"] = "http://stub"
         args["teamcityBuildId"] = project.envArgs.build.id.toString()
-        args["avito.report.enabled"] = project.getBooleanProperty("avito.report.enabled", default = false).toString()
+        args["avito.report.enabled"] =
+            project.getBooleanProperty("avito.report.enabled", default = false).toString()
 
         config.testInstrumentationRunnerArguments(filterNotBlankValues(args))
     }
@@ -268,9 +361,13 @@ class InstrumentationTestsPlugin : Plugin<Project> {
      * Здесь будут сосредоточены таски, которые используются ТОЛЬКО для интеграционного
      * тестирования плагина. Добавляем сюда их аккуратно только для критичных кейсов.
      */
-    private fun applyTestTasks(project: Project, pluginConfiguration: InstrumentationPluginConfiguration) {
+    private fun applyTestTasks(
+        project: Project,
+        pluginConfiguration: InstrumentationPluginConfiguration
+    ) {
         pluginConfiguration.withData { configuration ->
-            val configurationDumpFile = project.rootProject.file("instrumentation-configuration-dump.bin")
+            val configurationDumpFile =
+                project.rootProject.file("instrumentation-configuration-dump.bin")
 
             project.tasks.register<DumpConfigurationTask>("instrumentationDumpConfiguration") {
                 group = ciTaskGroup
@@ -285,7 +382,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
 @Suppress("UNCHECKED_CAST")
 private fun filterNotBlankValues(map: Map<String, Any?>) =
-    map.filterValues { value: Any? -> value?.toString().isNullOrBlank().not() } as Map<String, String>
+    map.filterValues { value: Any? ->
+        value?.toString().isNullOrBlank().not()
+    } as Map<String, String>
 
 private fun resolveLocalInstrumentationRunId(): String =
     "LOCAL-${TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis())}"

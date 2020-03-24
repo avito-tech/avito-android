@@ -8,63 +8,16 @@ import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfi
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
-import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Device.Emulator
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator23
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator24
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator24Cores2
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
-import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.kotlin.dsl.getOptionalIntProperty
-import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
-
-object EmulatorSet {
-    val fast = setOf(Emulator22, Emulator27)
-    val full = setOf(Emulator22, Emulator23, Emulator24, Emulator27)
-}
-
-object TestsFilter {
-
-    private val manual = setOf(
-        "com.avito.android.test.annotations.ManualTest",
-        "com.avito.android.test.annotations.UIComponentStub",
-        "com.avito.android.test.annotations.E2EStub"
-    )
-
-    val uiNoE2e = setOf(
-        "com.avito.android.test.annotations.ComponentTest",
-        "com.avito.android.test.annotations.InstrumentationUnitTest",
-        "com.avito.android.test.annotations.PublishTest",
-        "com.avito.android.test.annotations.MessengerTest",
-
-        "com.avito.android.test.annotations.ScreenshotTest",
-
-        "com.avito.android.test.annotations.UIComponentTest",
-        "com.avito.android.test.annotations.IntegrationTest"
-    )
-
-    val ui = uiNoE2e + setOf(
-        "com.avito.android.test.annotations.FunctionalTest",
-        "com.avito.android.test.annotations.E2ETest"
-    )
-
-    val regressionNoE2e = uiNoE2e + manual
-
-    val regression = ui + manual
-
-    val performanceNoE2e = setOf("com.avito.android.test.annotations.PerformanceComponentTest")
-
-    val performance = performanceNoE2e + "com.avito.android.test.annotations.PerformanceFunctionalTest"
-}
 
 class InstrumentationDefaultConfigPlugin : Plugin<Project> {
 
@@ -97,29 +50,12 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
 
                 configurationsContainer.register(
-                    "dynamic",
-                    registerDynamicConfig(
-                        retryCountValue = project.getOptionalIntProperty(
-                            "dynamicRetryCount",
-                            1
-                        ) * 2, // TODO почему * 2?
-                        dynamicPrefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
-                        isConfigEnabled = { apiVersion ->
-                            project.getBooleanProperty(
-                                "dynamicTarget$apiVersion",
-                                false
-                            )
-                        }
-                    )
-                )
-
-                configurationsContainer.register(
                     "ui",
                     registerUiConfig(TestsFilter.ui, hasE2eTests = true)
                 )
                 configurationsContainer.register(
                     "uiNoE2e",
-                    registerUiConfig(TestsFilter.uiNoE2e, hasE2eTests = false)
+                    registerUiConfig(TestsFilter.uiNoE2E, hasE2eTests = false)
                 )
 
                 configurationsContainer.register(
@@ -128,7 +64,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "newUiNoE2e",
-                    registerNewUiConfig(TestsFilter.uiNoE2e)
+                    registerNewUiConfig(TestsFilter.uiNoE2E)
                 )
 
                 configurationsContainer.register(
@@ -137,7 +73,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "allUiNoE2e",
-                    registerAllUI(TestsFilter.regressionNoE2e)
+                    registerAllUI(TestsFilter.regressionNoE2E)
                 )
 
                 configurationsContainer.register(
@@ -146,13 +82,13 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "regressionNoE2e",
-                    registerRegressionConfig(TestsFilter.regressionNoE2e)
+                    registerRegressionConfig(TestsFilter.regressionNoE2E)
                 )
 
                 //todo перенести в performance модуль?
                 configurationsContainer.register(
                     "performance", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance,
+                        annotatedWith = TestsFilter.performance.annotatedWith,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -161,7 +97,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 configurationsContainer.register(
                     "performanceNoE2e",
                     registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performanceNoE2e,
+                        annotatedWith = TestsFilter.performanceNoE2E.annotatedWith,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -169,7 +105,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "performanceMde", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance,
+                        annotatedWith = TestsFilter.performance.annotatedWith,
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.MDE
@@ -180,7 +116,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
     }
 
     private fun registerUiConfig(
-        annotatedWith: Collection<String>,
+        testsFilter: TestsFilter,
         hasE2eTests: Boolean
     ): Action<InstrumentationConfiguration> {
 
@@ -194,7 +130,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         minimumSuccessCount = 1
                     }
 
-                    reservation = testBasedReservation(
+                    reservation = TestsBasedDevicesReservationConfiguration.create(
                         device = emulator,
                         min = 2,
                         max = 130
@@ -207,7 +143,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         minimumFailedCount = 1
                     }
 
-                    reservation = testBasedReservation(
+                    reservation = TestsBasedDevicesReservationConfiguration.create(
                         device = emulator,
                         min = 2,
                         max = 130
@@ -217,7 +153,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
 
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = hasE2eTests
             config.reportSkippedTests = true
             config.rerunFailedTests = true
@@ -252,7 +188,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                     minimumSuccessCount = performanceMinimumSuccessCount
                 }
 
-                reservation = testBasedReservation(
+                reservation = TestsBasedDevicesReservationConfiguration.create(
                     device = Emulator24Cores2,
                     min = 12,
                     max = 42,
@@ -262,7 +198,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerNewUiConfig(annotatedWith: Collection<String>): Action<InstrumentationConfiguration> {
+    private fun registerNewUiConfig(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) {
             register("api${emulator.api}") { target ->
@@ -274,7 +210,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         minimumSuccessCount = 3
                     }
 
-                    reservation = testBasedReservation(
+                    reservation = TestsBasedDevicesReservationConfiguration.create(
                         device = emulator,
                         min = 2,
                         max = 30
@@ -284,7 +220,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
 
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = false
             config.reportSkippedTests = false
             config.reportFlakyTests = true
@@ -297,7 +233,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerAllUI(annotatedWith: Collection<String>): Action<InstrumentationConfiguration> {
+    private fun registerAllUI(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) {
             register("api${emulator.api}") { target ->
@@ -309,7 +245,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         minimumSuccessCount = 1
                     }
 
-                    reservation = testBasedReservation(
+                    reservation = TestsBasedDevicesReservationConfiguration.create(
                         device = emulator,
                         min = 16,
                         max = 36
@@ -318,7 +254,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             }
         }
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = false
             config.rerunFailedTests = true
             config.reportSkippedTests = true
@@ -327,53 +263,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerDynamicConfig(
-        retryCountValue: Int,
-        dynamicPrefixFilter: String,
-        isConfigEnabled: (apiVersion: Int) -> Boolean
-    ) = Action<InstrumentationConfiguration> { config ->
-
-        config.annotatedWith = TestsFilter.ui
-        config.tryToReRunOnTargetBranch = false
-        config.reportSkippedTests = true
-        config.rerunFailedTests = false
-
-        config.prefixFilter = dynamicPrefixFilter
-
-        fun NamedDomainObjectContainer<TargetConfiguration>.registerDynamic(device: Device) =
-            register(
-                device.name,
-                dynamicTarget(device, isConfigEnabled(device.api), retryCountValue)
-            )
-
-        EmulatorSet.full.forEach { config.targetsContainer.registerDynamic(it) }
-    }
-
-    private fun dynamicTarget(
-        device: Device,
-        isEnabled: Boolean,
-        retryCountValue: Int
-    ) = Action<TargetConfiguration> { target ->
-        target.deviceName = "functional-${device.api}"
-
-        target.enabled = isEnabled
-
-        target.scheduling = SchedulingConfiguration().apply {
-            quota = QuotaConfiguration().apply {
-                retryCount = retryCountValue
-                minimumSuccessCount = retryCountValue / 2
-                minimumFailedCount = retryCountValue / 2
-            }
-
-            reservation = testBasedReservation(
-                device = device,
-                min = 2,
-                max = 25
-            )
-        }
-    }
-
-    private fun registerRegressionConfig(annotatedWith: Collection<String>): Action<InstrumentationConfiguration> {
+    private fun registerRegressionConfig(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) =
             register(emulator.name) { target ->
@@ -393,25 +283,11 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             }
 
         return Action { config ->
-            config.annotatedWith = annotatedWith
+            config.annotatedWith = testsFilter.annotatedWith
             config.reportSkippedTests = true
             config.rerunFailedTests = true
 
             EmulatorSet.full.forEach { config.targetsContainer.registerDevice(it) }
-        }
-    }
-
-    private fun testBasedReservation(
-        device: Device,
-        min: Int,
-        max: Int,
-        testsPerEmulator: Int = 12
-    ): TestsBasedDevicesReservationConfiguration {
-        return TestsBasedDevicesReservationConfiguration().apply {
-            this.device = device
-            maximum = max
-            minimum = min
-            this.testsPerEmulator = testsPerEmulator
         }
     }
 }
