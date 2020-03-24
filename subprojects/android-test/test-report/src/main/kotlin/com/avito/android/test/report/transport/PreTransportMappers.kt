@@ -1,9 +1,7 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.test.report.TestPackageParser
 import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepResult
-import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Step
 
 internal interface PreTransportMappers {
