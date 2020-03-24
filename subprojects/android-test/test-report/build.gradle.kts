@@ -22,7 +22,6 @@ dependencies {
     implementation(Dependencies.okhttp)
     implementation(Dependencies.sentryAndroid) //todo use common:sentry
 
-    testImplementation(project(":subprojects:android-test:mockito-utils"))
     testImplementation(project(":subprojects:android-test:junit-utils"))
     testImplementation(Dependencies.test.okhttpMock)
     testImplementation(Dependencies.test.mockitoKotlin)
