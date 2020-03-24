@@ -40,6 +40,13 @@ object UITestConfig {
 
     var clicksType: ClickType = defaultClicksType
 
+    const val defaultVisualizeClicks = true
+
+    /**
+     * Works only for [ClickType.InProcessClick]
+     */
+    var visualizeClicks: Boolean = defaultVisualizeClicks
+
     /**
      * Exceptions to be waited for; any unregistered exceptions will be propagated
      */
