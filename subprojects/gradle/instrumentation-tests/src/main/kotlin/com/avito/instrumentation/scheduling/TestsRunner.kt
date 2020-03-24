@@ -77,6 +77,7 @@ class TestsRunnerImplementation(
                 report
             )
             val logger = logger.child(runType.id)
+            // TODO: pass through constructor and isolate k8s
             val reservationClientFactory = ReservationClientFactory.Impl(
                 logger = logger,
                 buildId= buildId,
@@ -87,6 +88,7 @@ class TestsRunnerImplementation(
                 output = output,
                 logcatDir = logcatDir
             )
+            // TODO: pass through constructor
             val executor = testExecutorFactory.createExecutor(
                 logger = logger,
                 reservationClientFactory = reservationClientFactory,

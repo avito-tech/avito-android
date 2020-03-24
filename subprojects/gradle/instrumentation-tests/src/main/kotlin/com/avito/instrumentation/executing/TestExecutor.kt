@@ -66,13 +66,15 @@ interface TestExecutor {
                 executionParameters = executionParameters,
                 testsToRun = testsToRun
             )
-
+            val reservations = reservations(
+                runType,
+                testsToRun,
+                configurationName = configuration.name
+            )
             withDevices(
-                logger = logger,
                 client = reservationClient,
                 configurationName = configuration.name,
-                runType = runType,
-                tests = testsToRun
+                reservations = reservations
             ) { devices ->
                 val testRequests = testsToRun
                     .map { targetTestRun ->
@@ -137,14 +139,12 @@ interface TestExecutor {
             outputDirectoryName
         ).apply { mkdirs() }
 
-        private fun withDevices(
-            logger: CILogger,
-            client: ReservationClient,
-            configurationName: String,
-            tests: List<TestWithTarget>,
+        private fun reservations(
             runType: RunType,
-            action: (devices: Channel<Serial>) -> Unit
-        ) {
+            tests: List<TestWithTarget>,
+            configurationName: String
+        ): Collection<Reservation.Data> {
+
             val testsGroupedByTargets: Map<TargetGroup, List<TestWithTarget>> = tests.groupBy {
                 TargetGroup(
                     name = it.target.name,
@@ -155,7 +155,7 @@ interface TestExecutor {
                 )
             }
 
-            val reservations = testsGroupedByTargets
+            return testsGroupedByTargets
                 .map { (target, tests) ->
                     val reservation = target.reservation.data(
                         tests = tests.map { it.test.name }
@@ -168,7 +168,16 @@ interface TestExecutor {
 
                     reservation
                 }
+        }
 
+        // TODO: extract and delegate this channels orchestration.
+        // It's overcomplicated for local client
+        private fun withDevices(
+            client: ReservationClient,
+            configurationName: String,
+            reservations: Collection<Reservation.Data>,
+            action: (devices: Channel<Serial>) -> Unit
+        ) {
             val reservationDeployments = Channel<String>(reservations.size)
             try {
                 val serialsChannel = Channel<String>(Channel.UNLIMITED)
