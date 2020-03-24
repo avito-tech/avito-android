@@ -67,7 +67,7 @@ object UITestConfig {
         }
 
         /**
-         * [Documentation](https://avito-tech.github.io/avito-android/test/inprocessclick/)
+         * [Documentation](https://avito-tech.github.io/avito-android/docs/test_framework/internals/)
          */
         object InProcessClick : ClickType()
     }
