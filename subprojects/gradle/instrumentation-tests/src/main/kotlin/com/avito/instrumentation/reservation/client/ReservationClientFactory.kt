@@ -39,11 +39,6 @@ interface ReservationClientFactory {
             executionParameters: ExecutionParameters,
             testsToRun: List<TestWithTarget>
         ): ReservationClient {
-            val hasLocal = testsToRun.any { it.target.reservation.device is Device.LocalEmulator }
-            val hasKubernetes = testsToRun.any { it.target.reservation.device is Device.Emulator }
-            if (hasLocal && hasKubernetes) {
-                throw IllegalStateException("Scheduling to local and kubernetes emulators at the same time is not supported yet")
-            }
             val emulatorsLogsReporter = EmulatorsLogsReporter(
                 outputFolder = output,
                 logcatTags = executionParameters.logcatTags,
@@ -52,7 +47,7 @@ interface ReservationClientFactory {
             val androidDebugBridge = AndroidDebugBridge(
                 logger = { logger.info(it) }
             )
-            return if (hasLocal) {
+            return if (isLocalRun(testsToRun)) {
                 LocalReservationClient(
                     androidDebugBridge = androidDebugBridge,
                     devicesManager = AdbDevicesManager(logger = object : Logger {
@@ -88,6 +83,10 @@ interface ReservationClientFactory {
                     registry = registry
                 )
             }
+        }
+
+        private fun isLocalRun(testsToRun: List<TestWithTarget>): Boolean {
+            return testsToRun.any { it.target.reservation.device is Device.LocalEmulator }
         }
     }
 }

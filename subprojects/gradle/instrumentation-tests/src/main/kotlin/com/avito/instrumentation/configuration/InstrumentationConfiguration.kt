@@ -1,6 +1,7 @@
 package com.avito.instrumentation.configuration
 
 import com.avito.instrumentation.configuration.target.TargetConfiguration
+import com.avito.instrumentation.reservation.request.Device
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import java.io.Serializable
@@ -103,6 +104,14 @@ open class InstrumentationConfiguration(val name: String) {
         val targets: List<TargetConfiguration.Data>,
         val performanceType: PerformanceType?
     ) : Serializable {
+
+        init {
+            val hasLocal = targets.any { it.reservation.device is Device.LocalEmulator }
+            val hasKubernetes = targets.any { it.reservation.device is Device.Emulator }
+            if (hasLocal && hasKubernetes) {
+                throw IllegalStateException("Targeting to local and kubernetes emulators at the same configuration $name is not supported yet")
+            }
+        }
 
         override fun toString(): String = "$name with targets: $targets for tests annotated with: $annotatedWith"
 
