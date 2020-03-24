@@ -21,12 +21,13 @@ class PerformanceTestRule : TestRule {
     override fun apply(base: Statement, description: Description): Statement =
         object : Statement() {
             override fun evaluate() {
+                val originalVisualizeClicks = UITestConfig.visualizeClicks
                 UITestConfig.visualizeClicks = false
                 UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
                 try {
                     base.evaluate()
                 } finally {
-                    UITestConfig.visualizeClicks = UITestConfig.defaultVisualizeClicks
+                    UITestConfig.visualizeClicks = originalVisualizeClicks
                 }
             }
         }
