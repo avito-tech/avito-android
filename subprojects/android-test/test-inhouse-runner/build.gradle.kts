@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":subprojects:android-test:ui-testing-maps"))
     implementation(Dependencies.androidTest.runner)
     implementation(Dependencies.test.truth)
+    implementation(Dependencies.test.mockitoKotlin)
     implementation(Dependencies.okhttpLogging)
     implementation(Dependencies.test.okhttpMockWebServer)
     implementation(Dependencies.gson)
