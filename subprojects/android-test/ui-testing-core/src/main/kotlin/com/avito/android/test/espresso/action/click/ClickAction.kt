@@ -1,5 +1,6 @@
 package com.avito.android.test.espresso.action.click
 
+import android.graphics.Color
 import android.view.View
 import android.view.ViewConfiguration
 import android.webkit.WebView
@@ -17,7 +18,8 @@ import org.hamcrest.Matchers
 class ClickAction(
     private val event: Event,
     private val coordinatesProvider: CoordinatesProvider,
-    private val precisionDescriber: PrecisionDescriber
+    private val precisionDescriber: PrecisionDescriber,
+    private val visualizeClicks: Boolean
 ) : ViewAction {
 
     override fun getDescription(): String = event.description()
@@ -34,7 +36,8 @@ class ClickAction(
             view = view,
             rootView = rootView,
             coordinates = coordinates,
-            precision = precision
+            precision = precision,
+            visualize = visualizeClicks
         )
     }
 
@@ -45,7 +48,8 @@ class ClickAction(
             view: View,
             rootView: View,
             coordinates: FloatArray,
-            precision: FloatArray
+            precision: FloatArray,
+            visualize: Boolean
         )
 
         abstract fun description(): String
@@ -59,18 +63,25 @@ class ClickAction(
                 view: View,
                 rootView: View,
                 coordinates: FloatArray,
-                precision: FloatArray
+                precision: FloatArray,
+                visualize: Boolean
             ) {
+                val clickVisualization = when (visualize) {
+                    true -> ClickVisualization(coordinates[0], coordinates[1])
+                    else -> null
+                }
                 val downEvent = downEvent(
                     coordinates = coordinates,
                     precision = precision
                 )
+                clickVisualization?.attachTo(rootView)
                 rootView.dispatchTouchEvent(downEvent)
 
                 uiController.loopMainThreadForAtLeast(ViewConfiguration.getTapTimeout().toLong())
 
                 val upEvent = upEvent(downEvent)
                 rootView.dispatchTouchEvent(upEvent)
+                clickVisualization?.detach()
 
                 downEvent.recycle()
                 upEvent.recycle()
@@ -95,12 +106,22 @@ class ClickAction(
                 view: View,
                 rootView: View,
                 coordinates: FloatArray,
-                precision: FloatArray
+                precision: FloatArray,
+                visualize: Boolean
             ) {
+                val clickVisualization = when (visualize) {
+                    true -> ClickVisualization(
+                        x = coordinates[0],
+                        y = coordinates[1],
+                        color = Color.argb(0xA0, 0x00, 0x00, 0xFF)
+                    )
+                    else -> null
+                }
                 val downEvent = downEvent(
                     coordinates = coordinates,
                     precision = precision
                 )
+                clickVisualization?.attachTo(rootView)
                 rootView.dispatchTouchEvent(downEvent)
 
                 // Factor 1.5 is needed, otherwise a long press is not safely detected.
@@ -109,6 +130,7 @@ class ClickAction(
 
                 val upEvent = upEvent(downEvent)
                 rootView.dispatchTouchEvent(upEvent)
+                clickVisualization?.detach()
 
                 downEvent.recycle()
                 upEvent.recycle()
@@ -127,18 +149,23 @@ class ClickAction(
     }
 }
 
-internal fun inProcessClickAction(coordinatesProvider: CoordinatesProvider): ViewAction = actionWithAssertions(
+internal fun inProcessClickAction(
+    coordinatesProvider: CoordinatesProvider,
+    visualizeClicks: Boolean
+): ViewAction = actionWithAssertions(
     ClickAction(
         coordinatesProvider = RelativeCoordinatesProvider(coordinatesProvider),
         precisionDescriber = Press.FINGER,
-        event = ClickAction.Event.ClickEvent
+        event = ClickAction.Event.ClickEvent,
+        visualizeClicks = visualizeClicks
     )
 )
 
-internal fun inProcessLongClickAction(): ViewAction = actionWithAssertions(
+internal fun inProcessLongClickAction(visualizeClicks: Boolean): ViewAction = actionWithAssertions(
     ClickAction(
         coordinatesProvider = RelativeCoordinatesProvider(GeneralLocation.VISIBLE_CENTER),
         precisionDescriber = Press.FINGER,
-        event = ClickAction.Event.LongClickEvent
+        event = ClickAction.Event.LongClickEvent,
+        visualizeClicks = visualizeClicks
     )
 )
