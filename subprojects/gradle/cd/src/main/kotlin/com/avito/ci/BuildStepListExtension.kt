@@ -5,8 +5,6 @@ import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.DeployStep
-import com.avito.ci.steps.DocsCheckStep
-import com.avito.ci.steps.DocsDeployStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.PerformanceTestCheck
@@ -53,14 +51,6 @@ open class BuildStepListExtension(private val name: String, objects: ObjectFacto
 
     fun lint(closure: Closure<LintCheck>) {
         configureAndAdd(LintCheck(name), closure)
-    }
-
-    fun docsDeploy(closure: Closure<DocsDeployStep>) {
-        configureAndAdd(DocsDeployStep(name), closure)
-    }
-
-    fun docsCheck(closure: Closure<DocsCheckStep>) {
-        configureAndAdd(DocsCheckStep(name), closure)
     }
 
     fun uploadToQapps(closure: Closure<UploadToQapps>) {

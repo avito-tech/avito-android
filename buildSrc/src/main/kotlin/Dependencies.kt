@@ -11,6 +11,7 @@ object Dependencies {
         val espresso = "3.2.0"
         val mockito = "3.3.3"
     }
+
     val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
     val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib"
     val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect"
@@ -35,8 +36,11 @@ object Dependencies {
     val slackClient = "com.github.seratch:jslack-api-client:3.4.1"
     val rxJava = "io.reactivex:rxjava:1.3.8"
     val statsd = "com.timgroup:java-statsd-client:3.1.0"
-    val kubernetesClient = "io.fabric8:kubernetes-client:4.6.3"
-    val kubernetesDsl = "com.fkorotkov:kubernetes-dsl:1.2.1"
+
+    // we don't use an official client https://github.com/kubernetes-client/java because fabric8 one has much better api,
+    // support all features we need and actively maintained
+    val kubernetesClient = "io.fabric8:kubernetes-client:4.9.0"
+    val kubernetesDsl = "com.fkorotkov:kubernetes-dsl:2.7.1"
     val dexlib = "org.smali:dexlib2:2.3"
     val commonsText = "org.apache.commons:commons-text:1.6"
     val antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"

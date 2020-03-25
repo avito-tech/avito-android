@@ -10,9 +10,13 @@ import com.avito.instrumentation.util.iterateInParallel
 import com.avito.instrumentation.util.merge
 import com.avito.instrumentation.util.waitForCondition
 import com.avito.utils.logging.CILogger
+import com.fkorotkov.kubernetes.apps.metadata
+import com.fkorotkov.kubernetes.apps.newDeployment
+import com.fkorotkov.kubernetes.apps.selector
+import com.fkorotkov.kubernetes.apps.spec
+import com.fkorotkov.kubernetes.apps.template
 import com.fkorotkov.kubernetes.metadata
 import com.fkorotkov.kubernetes.newContainer
-import com.fkorotkov.kubernetes.newDeployment
 import com.fkorotkov.kubernetes.newEnvVar
 import com.fkorotkov.kubernetes.newHostPathVolumeSource
 import com.fkorotkov.kubernetes.newToleration
@@ -20,9 +24,7 @@ import com.fkorotkov.kubernetes.newVolume
 import com.fkorotkov.kubernetes.newVolumeMount
 import com.fkorotkov.kubernetes.resources
 import com.fkorotkov.kubernetes.securityContext
-import com.fkorotkov.kubernetes.selector
 import com.fkorotkov.kubernetes.spec
-import com.fkorotkov.kubernetes.template
 import io.fabric8.kubernetes.api.model.Pod
 import io.fabric8.kubernetes.api.model.PodSpec
 import io.fabric8.kubernetes.api.model.Quantity
@@ -414,7 +416,7 @@ class KubernetesReservationClient(
         val runningPods = items.filter { it.status.phase == POD_STATUS_RUNNING }
         logger.info(
             "Getting pods for deployment: $deploymentName completed. " +
-                    "Received ${items.size} pods (running: ${runningPods.size})."
+                "Received ${items.size} pods (running: ${runningPods.size})."
         )
 
         items

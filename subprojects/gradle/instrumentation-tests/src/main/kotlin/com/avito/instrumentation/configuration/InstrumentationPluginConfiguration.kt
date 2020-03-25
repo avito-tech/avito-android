@@ -2,7 +2,6 @@ package com.avito.instrumentation.configuration
 
 import com.avito.android.withAndroidModule
 import com.avito.git.gitState
-import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.report.model.RunId
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
@@ -12,6 +11,7 @@ import com.google.common.annotations.VisibleForTesting
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.container
 import org.gradle.kotlin.dsl.create
 import java.io.Serializable
 
@@ -24,11 +24,10 @@ class InstrumentationPluginConfiguration internal constructor(
         project,
         project.extensions.create<GradleInstrumentationPluginConfiguration>("instrumentation")
     ) {
-        configuration.configurationsContainer =
-            project.container(InstrumentationConfiguration::class.java)
+        configuration.configurationsContainer = project.container()
 
         configuration.configurationsContainer.all {
-            it.targetsContainer = project.container(TargetConfiguration::class.java)
+            it.targetsContainer = project.container()
         }
 
         project.afterEvaluate {
@@ -61,19 +60,23 @@ class InstrumentationPluginConfiguration internal constructor(
                 val instrumentationParameters = InstrumentationParameters()
                     .applyParameters(baseExtension.defaultConfig.testInstrumentationRunnerArguments)
                     .applyParameters(runIdOverride)
-                    .applyParameters(mapOf(
-                        "reportApiUrl" to configuration.reportApiUrl,
-                        "reportApiFallbackUrl" to configuration.reportApiFallbackUrl,
-                        "reportViewerUrl" to configuration.reportViewerUrl,
-                        "sentryDsn" to configuration.sentryDsn,
-                        "slackToken" to configuration.slackToken,
-                        "fileStorageUrl" to configuration.fileStorageUrl
-                    ))
+                    .applyParameters(
+                        mapOf(
+                            "reportApiUrl" to configuration.reportApiUrl,
+                            "reportApiFallbackUrl" to configuration.reportApiFallbackUrl,
+                            "reportViewerUrl" to configuration.reportViewerUrl,
+                            "sentryDsn" to configuration.sentryDsn,
+                            "slackToken" to configuration.slackToken,
+                            "fileStorageUrl" to configuration.fileStorageUrl
+                        )
+                    )
                     .applyParameters(configuration.instrumentationParams)
-                    .applyParameters(mapOf(
-                        // info for InHouseRunner testRunEnvironment creation
-                        "inHouse" to "true"
-                    ))
+                    .applyParameters(
+                        mapOf(
+                            // info for InHouseRunner testRunEnvironment creation
+                            "inHouse" to "true"
+                        )
+                    )
 
                 action(
                     Data(
