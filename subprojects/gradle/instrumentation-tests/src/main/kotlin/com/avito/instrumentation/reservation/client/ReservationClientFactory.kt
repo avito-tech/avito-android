@@ -11,9 +11,8 @@ import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.runner.logging.Logger
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.gradle.KubernetesCredentials
+import com.avito.utils.gradle.createKubernetesClient
 import com.avito.utils.logging.CILogger
-import io.fabric8.kubernetes.client.ConfigBuilder
-import io.fabric8.kubernetes.client.DefaultKubernetesClient
 import java.io.File
 
 interface ReservationClientFactory {
@@ -66,14 +65,10 @@ interface ReservationClientFactory {
             } else {
                 KubernetesReservationClient(
                     androidDebugBridge = androidDebugBridge,
-                    kubernetesClient = DefaultKubernetesClient(
-                        ConfigBuilder()
-                            .withCaCertData(kubernetesCredentials.caCertData)
-                            .withMasterUrl(kubernetesCredentials.url)
-                            .withOauthToken(kubernetesCredentials.token)
-                            .build()
-                    )
-                        .inNamespace(executionParameters.namespace),
+                    kubernetesClient = createKubernetesClient(
+                        kubernetesCredentials = kubernetesCredentials,
+                        namespace = executionParameters.namespace
+                    ),
                     configurationName = configuration.name,
                     projectName = projectName,
                     logger = logger,
