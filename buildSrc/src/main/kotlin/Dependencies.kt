@@ -29,6 +29,7 @@ object Dependencies {
     val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
     val sentry = "io.sentry:sentry:${Versions.sentry}"
     val sentryAndroid = "io.sentry:sentry-android:${Versions.sentry}"
+    val kotlinPoet = "com.squareup:kotlinpoet:1.5.0"
 
     //https://github.com/JetBrains/teamcity-rest-client
     val teamcityClient = "org.jetbrains.teamcity:teamcity-rest-client:1.6.2"
@@ -62,6 +63,7 @@ object Dependencies {
     object gradle {
         val androidPlugin = "com.android.tools.build:gradle:${Versions.androidGradlePlugin}"
         val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin"
+
         object avito {
             val kotlinDslSupport = "com.avito.android:kotlin-dsl-support"
             val utils = "com.avito.android:utils"
