@@ -16,8 +16,14 @@ sealed class KubernetesCredentials : Serializable {
     data class Config(
         val context: String,
         val caCertFile: String? = null,
-        val configFile: String = "${System.getProperty("user.home")}/.kube/config"
+        val configFile: String = kubeConfigDefaultPath
     ) : KubernetesCredentials(), Serializable
+}
+
+private val kubeConfigDefaultPath: String by lazy {
+    val userHome: String? = System.getProperty("user.home")
+    require(!userHome.isNullOrBlank()) { "system property 'user.home' is not set" }
+    "${userHome}/.kube/config"
 }
 
 val Project.kubernetesCredentials: KubernetesCredentials
