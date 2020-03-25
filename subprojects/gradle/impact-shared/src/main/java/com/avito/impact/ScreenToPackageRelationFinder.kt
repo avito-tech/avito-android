@@ -22,13 +22,18 @@ interface ScreenToPackageRelationFinder {
     ) :
         ScreenToPackageRelationFinder {
 
-        private val targetModuleRs = targetModule.debug.rs
+        private val targetModuleR = targetModule.debug.resourceSymbolList
         private val targetModulePackage = targetModule.debug.manifest.getPackage()
 
         private val screenToPackages: Map<Screen, List<AndroidPackage>> by lazy {
             screenToViewId
                 .mapValues { (_, decimalId) ->
-                    targetModuleRs.filter { r -> r.contains(decimalId) }.map { it.getPackage() }
+                    //todo test it!!
+                    if (targetModuleR != null && targetModuleR.contains(decimalId)) {
+                        listOf(targetModulePackage)
+                    } else {
+                        emptyList()
+                    }
                 }
         }
 

@@ -3,6 +3,7 @@ package com.avito.impact.util
 import com.avito.android.isAndroid
 import org.gradle.api.Project
 import java.io.File
+import java.io.File.separator
 
 /**
  * Simplified android project model
@@ -30,14 +31,13 @@ class Variant(
     buildVariant: String
 ) {
 
-    private val notNameSpacedRSourcesDir =
-        "${project.buildDir}/generated/not_namespaced_r_class_sources/$buildVariant/r/"
+    private val rJavaDir =
+        "${project.buildDir}${separator}intermediates${separator}runtime_symbol_list${separator}$buildVariant${separator}"
 
-    val rs by lazy {
-        File(notNameSpacedRSourcesDir).walk()
-            .filter { it.name == "R.java" }
-            .map { R(it) }
-            .toList()
+    val resourceSymbolList: R? by lazy {
+        File(rJavaDir).walk()
+            .find { it.name == "R.txt" }
+            ?.let { R(it) }
     }
 }
 

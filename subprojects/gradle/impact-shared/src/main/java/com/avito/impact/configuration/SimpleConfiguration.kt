@@ -37,8 +37,6 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
     }
 
     fun sourceSets(): Set<File> {
-        val sourcesTaskRaw = project.tasks.findByPath("sourceSets") ?: return setOf(project.projectDir)
-
         return project.androidBaseExtension
             .sourceSets
             .filter { containsSources(it) }
@@ -51,7 +49,10 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
     open fun changedFiles(): Try<List<ChangedFile>> {
         return sourceSets()
             .map { sourceDir -> changesDetector.computeChanges(sourceDir) }
-            .fold(Try { listOf<ChangedFile>() }) { accumulator, element ->
+            .fold(Try {
+                @Suppress("RemoveExplicitTypeArguments") //Type inference failed: Not enough information to infer parameter T
+                listOf<ChangedFile>()
+            }) { accumulator, element ->
                 Try { accumulator.get() + element.get() }
             }
     }
