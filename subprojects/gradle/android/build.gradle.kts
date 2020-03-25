@@ -15,5 +15,4 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:process-test-fixtures"))
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(Dependencies.kotlinPoet)
 }
