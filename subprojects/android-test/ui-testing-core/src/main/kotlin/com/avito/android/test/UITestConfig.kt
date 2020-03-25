@@ -41,6 +41,11 @@ object UITestConfig {
     var clicksType: ClickType = defaultClicksType
 
     /**
+     * Works only for [ClickType.InProcessClick]
+     */
+    var visualizeClicks: Boolean = true
+
+    /**
      * Exceptions to be waited for; any unregistered exceptions will be propagated
      */
     var waiterAllowedExceptions = setOf(
@@ -67,7 +72,7 @@ object UITestConfig {
         }
 
         /**
-         * [Documentation](https://avito-tech.github.io/avito-android/test/inprocessclick/)
+         * [Documentation](https://avito-tech.github.io/avito-android/docs/test_framework/internals/)
          */
         object InProcessClick : ClickType()
     }
