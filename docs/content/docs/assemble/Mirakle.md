@@ -32,6 +32,8 @@ sequenceDiagram
     или [сгенерируй новый](https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html).    
     Нужен ключ без пароля, потому что из mirakle (Gradle) его некуда вводить.
     - Добавь свой публичный ssh ключ - [инструкция (internal)](http://links.k.avito.ru/QP)
+        - Создай PR в указанный репозиторий
+        - Попроси в чатике [#devops](https://avito.slack.com/archives/C02D4DCQ2) влить его
     - Запроси в [Service Desk (internal)](http://links.k.avito.ru/uZ) доступ по ssh на host android-builder
 - Включи mirakle: `./mirakle.py --enable`   
 Если локальный пользователь отличается: `./mirakle.py --enable --username <username>`
