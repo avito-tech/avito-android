@@ -44,7 +44,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     reportApiUrl: String = "https://reports",
     reportApiFallbackUrl: String = "https://reports",
     reportViewerUrl: String = "https://reports",
-    registry: String = "",
+    kubernetesRegistry: String = "",
     fileStorageUrl: String = "https://files",
     pullRequestId: Int? = null,
     isFullTestSuite: Boolean = false,
@@ -91,5 +91,5 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         unitToChannelMapping = unitToChannelMapping,
         reportViewerUrl = reportViewerUrl,
         reportApiFallbackUrl = reportApiFallbackUrl,
-        registry = registry
+        registry = kubernetesRegistry
     )

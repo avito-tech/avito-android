@@ -6,7 +6,7 @@ import com.avito.utils.spawnProcess
 import org.funktionale.tries.Try
 import java.io.File
 
-class Device(
+open class Device(
     private val serial: String,
     private val logger: (String) -> Unit = {}
 ) {
@@ -18,6 +18,7 @@ class Device(
             "Can't find env ANDROID_HOME. It needs to run 'adb'"
         }
     }
+
     fun redirectLogcatToFile(
         file: File,
         tags: Collection<String> = emptyList()
@@ -41,12 +42,12 @@ class Device(
         errorMessage = "failed to connect to $serial"
     )
 
-    fun disconnect(): Try<String> = runCommand(
+    open fun disconnect(): Try<String> = runCommand(
         command = "$adb disconnect $serial",
         logger = logger
     )
 
-    fun connect(): Try<String> {
+    open fun connect(): Try<String> {
         disconnect()
 
         return runCommand(

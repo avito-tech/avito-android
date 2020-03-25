@@ -1,40 +1,31 @@
 package com.avito.instrumentation.executing
 
 import com.avito.instrumentation.report.listener.TestReporter
-import com.avito.utils.gradle.KubernetesCredentials
+import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.utils.logging.CILogger
 
+/**
+ * Abstraction for testing purposes only
+ */
 interface TestExecutorFactory {
 
     fun createExecutor(
         logger: CILogger,
-        kubernetesCredentials: KubernetesCredentials,
-        buildId: String,
-        buildType: String,
-        projectName: String,
-        testReporter: TestReporter?,
-        registry: String
+        reservationClientFactory: ReservationClientFactory,
+        testReporter: TestReporter?
     ): TestExecutor
 
     class Implementation : TestExecutorFactory {
 
         override fun createExecutor(
             logger: CILogger,
-            kubernetesCredentials: KubernetesCredentials,
-            buildId: String,
-            buildType: String,
-            projectName: String,
-            testReporter: TestReporter?,
-            registry: String
+            reservationClientFactory: ReservationClientFactory,
+            testReporter: TestReporter?
         ): TestExecutor {
-            return KubernetesTestExecutor(
+            return TestExecutor.Impl(
                 logger = logger,
-                kubernetesCredentials = kubernetesCredentials,
-                buildId = buildId,
-                buildType = buildType,
-                projectName = projectName,
-                testReporter = testReporter,
-                registry = registry
+                reservationClientFactory = reservationClientFactory,
+                testReporter = testReporter
             )
         }
     }

@@ -8,6 +8,7 @@ import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.FakeReport
 import com.avito.instrumentation.report.Report.Impl
 import com.avito.instrumentation.report.listener.TestReporter
+import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestInApk
@@ -48,12 +49,8 @@ internal class InstrumentationTestsActionIntegrationTest {
     private val testExecutorFactory = object : TestExecutorFactory {
         override fun createExecutor(
             logger: CILogger,
-            kubernetesCredentials: KubernetesCredentials,
-            buildId: String,
-            buildType: String,
-            projectName: String,
-            testReporter: TestReporter?,
-            registry: String
+            reservationClientFactory: ReservationClientFactory,
+            testReporter: TestReporter?
         ): TestExecutor {
             return testRunner
         }

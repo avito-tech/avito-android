@@ -37,6 +37,7 @@ import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.IllegalStateException
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -88,6 +89,9 @@ class KubernetesReservationClient(
                         count = reservation.count,
                         phone = reservation.device,
                         deploymentName = deploymentName
+                    )
+                    is Device.LocalEmulator -> throw IllegalStateException(
+                        "Local emulator ${reservation.device} is unsupported in kubernetes reservation"
                     )
                 }.create()
                 logger.debug("Deployment created: $deploymentName")

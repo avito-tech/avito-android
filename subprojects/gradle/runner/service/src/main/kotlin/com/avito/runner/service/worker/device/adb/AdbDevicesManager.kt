@@ -51,7 +51,7 @@ class AdbDevicesManager(
                         ) as Device
                     }.toSet()
             }
-            .doOnError { logger.log("Error during getting connectedAdbDevices, error = $it") }
+            .doOnError { logger.log("Error on getting adb devices, error = $it") }
             .toSingle()
             .toBlocking()
             .value()
