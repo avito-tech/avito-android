@@ -1,9 +1,9 @@
 package com.avito.instrumentation.suite.dex
 
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.jf.dexlib2.iface.Annotation
 import org.jf.dexlib2.iface.AnnotationElement
 import org.jf.dexlib2.iface.ClassDef

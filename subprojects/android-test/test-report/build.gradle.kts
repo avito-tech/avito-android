@@ -20,10 +20,8 @@ dependencies {
     implementation(Dependencies.kotson)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.okhttp)
-    implementation(Dependencies.kotlinReflect) //todo remove reflect call
     implementation(Dependencies.sentryAndroid) //todo use common:sentry
 
-    testImplementation(project(":subprojects:android-test:mockito-utils"))
     testImplementation(project(":subprojects:android-test:junit-utils"))
     testImplementation(Dependencies.test.okhttpMock)
     testImplementation(Dependencies.test.mockitoKotlin)

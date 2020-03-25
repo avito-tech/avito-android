@@ -15,9 +15,9 @@ import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.sentry.SentryClientFactory
 import okhttp3.OkHttpClient
 import okhttp3.mock.MockInterceptor

@@ -7,6 +7,7 @@ import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
 import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -23,6 +24,7 @@ plugins {
 
 val artifactoryUrl: String? by project
 val projectVersion: String by project
+
 /**
  * We use exact version to provide consistent environment and avoid build cache issues
  * (AGP tasks has artifacts from build tools)
@@ -237,7 +239,7 @@ subprojects {
                 @Suppress("UnstableApiUsage")
                 useJUnitPlatform()
 
-                systemProperty("kotlinVersion", Dependencies.Versions.kotlin)
+                systemProperty("kotlinVersion", plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion)
                 systemProperty("compileSdkVersion", compileSdk)
                 systemProperty("buildToolsVersion", buildTools)
 

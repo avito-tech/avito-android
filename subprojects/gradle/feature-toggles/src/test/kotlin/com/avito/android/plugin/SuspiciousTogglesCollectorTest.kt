@@ -1,7 +1,7 @@
 package com.avito.android.plugin
 
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.gradle.api.logging.Logger
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
