@@ -139,26 +139,27 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     configurationsContainer.register("ui") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
-        rerunFailedTests = true
+        rerunFailedTests = false
         reportFlakyTests = true
+        prefixFilter = "com.avito.android.ui.test.AppBarTest"
 
-        targetsContainer.register("api22") {
-            deviceName = "API22"
-
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
-                }
-
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = Emulator22
-                    maximum = 50
-                    minimum = 2
-                    testsPerEmulator = 3
-                }
-            }
-        }
+//        targetsContainer.register("api22") {
+//            deviceName = "API22"
+//
+//            scheduling = SchedulingConfiguration().apply {
+//                quota = QuotaConfiguration().apply {
+//                    retryCount = 1
+//                    minimumSuccessCount = 1
+//                }
+//
+//                reservation = TestsBasedDevicesReservationConfiguration().apply {
+//                    device = Emulator22
+//                    maximum = 50
+//                    minimum = 2
+//                    testsPerEmulator = 3
+//                }
+//            }
+//        }
 
         targetsContainer.register("api27") {
             deviceName = "API27"
@@ -171,9 +172,9 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 
                 reservation = TestsBasedDevicesReservationConfiguration().apply {
                     device = Emulator27
-                    maximum = 50
-                    minimum = 2
-                    testsPerEmulator = 3
+                    maximum = 1
+                    minimum = 1
+                    testsPerEmulator = 1
                 }
             }
         }

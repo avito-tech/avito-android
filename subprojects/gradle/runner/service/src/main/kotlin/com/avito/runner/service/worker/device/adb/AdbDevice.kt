@@ -275,8 +275,9 @@ data class AdbDevice(
             command = listOf(
                 "am",
                 "instrument",
-                "-w", // wait for instrumentation to finish before returning.  Required for test runners.
                 "-r", // raw mode is necessary for parsing
+                "-w", // wait for instrumentation to finish before returning.  Required for test runners.
+                "-e debug true",
                 instrumentationArguments.formatInstrumentationOptions(),
                 "$testPackageName/$testRunnerClass"
             ),
