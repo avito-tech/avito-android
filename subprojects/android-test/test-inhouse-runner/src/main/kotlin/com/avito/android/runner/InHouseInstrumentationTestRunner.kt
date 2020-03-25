@@ -3,6 +3,7 @@ package com.avito.android.runner
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnitRunner
@@ -225,6 +226,25 @@ abstract class InHouseInstrumentationTestRunner :
         return super.onException(obj, e)
     }
 
+    @CallSuper
+    open fun initUITestConfig() {
+        with(UITestConfig) {
+            waiterTimeoutMs = TimeUnit.SECONDS.toMillis(12)
+
+            activityLaunchTimeoutMilliseconds = TimeUnit.SECONDS.toMillis(15)
+
+            actionInterceptors += HumanReadableActionInterceptor {
+                report.addComment(it)
+            }
+
+            assertionInterceptors += HumanReadableAssertionInterceptor {
+                report.addComment(it)
+            }
+
+            onWaiterRetry = { }
+        }
+    }
+
     @SuppressLint("LogNotTimber")
     fun tryToReportUnexpectedIncident(incident: Throwable, tag: String) {
         try {
@@ -277,24 +297,6 @@ abstract class InHouseInstrumentationTestRunner :
         return when (testMetadata.kind) {
             Kind.UI_COMPONENT, Kind.E2E -> true
             else -> false
-        }
-    }
-
-    private fun initUITestConfig() {
-        with(UITestConfig) {
-            waiterTimeoutMs = TimeUnit.SECONDS.toMillis(12)
-
-            activityLaunchTimeoutMilliseconds = TimeUnit.SECONDS.toMillis(15)
-
-            actionInterceptors += HumanReadableActionInterceptor {
-                report.addComment(it)
-            }
-
-            assertionInterceptors += HumanReadableAssertionInterceptor {
-                report.addComment(it)
-            }
-
-            onWaiterRetry = { }
         }
     }
 

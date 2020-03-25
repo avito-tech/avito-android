@@ -69,7 +69,8 @@ object EspressoActions {
 
     fun click(
         type: UITestConfig.ClickType = UITestConfig.clicksType,
-        coordinatesProvider: CoordinatesProvider = GeneralLocation.VISIBLE_CENTER
+        coordinatesProvider: CoordinatesProvider = GeneralLocation.VISIBLE_CENTER,
+        visualize: Boolean = UITestConfig.visualizeClicks
     ): ViewAction {
 
         fun safeAction(action: ViewAction) = ActionOnEnabledElement(
@@ -105,13 +106,17 @@ object EspressoActions {
                 )
             }
 
-            is UITestConfig.ClickType.InProcessClick -> inProcessClickAction(coordinatesProvider)
+            is UITestConfig.ClickType.InProcessClick -> inProcessClickAction(
+                coordinatesProvider = coordinatesProvider,
+                visualizeClicks = visualize
+            )
         }
         return safeAction(clickAction)
     }
 
     fun longClick(
-        type: UITestConfig.ClickType = UITestConfig.clicksType
+        type: UITestConfig.ClickType = UITestConfig.clicksType,
+        visualize: Boolean = UITestConfig.visualizeClicks
     ): ViewAction {
         fun safeAction(action: ViewAction) = ActionOnEnabledElement(
             ActionOnLongClickableElement(action)
@@ -119,7 +124,7 @@ object EspressoActions {
         return safeAction(
             when (type) {
                 is UITestConfig.ClickType.EspressoClick -> ViewActions.longClick()
-                is UITestConfig.ClickType.InProcessClick -> inProcessLongClickAction()
+                is UITestConfig.ClickType.InProcessClick -> inProcessLongClickAction(visualize)
             }
         )
     }
