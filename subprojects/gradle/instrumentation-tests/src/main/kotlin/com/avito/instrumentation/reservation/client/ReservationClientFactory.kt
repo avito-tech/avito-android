@@ -85,6 +85,7 @@ interface ReservationClientFactory {
             }
         }
 
+        // TODO: make this decision earlier and distinguish run type not by tests
         private fun isLocalRun(testsToRun: List<TestWithTarget>): Boolean {
             return testsToRun.any { it.target.reservation.device is Device.LocalEmulator }
         }
