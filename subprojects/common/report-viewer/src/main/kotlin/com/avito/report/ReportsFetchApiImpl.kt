@@ -117,6 +117,10 @@ internal class ReportsFetchApiImpl(
         }
     }
 
+    override fun getTestsForReportId(reportId: String): Try<List<SimpleRunTest>> {
+        return getTestData(reportId)
+    }
+
     override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Try<CrossDeviceSuite> {
         return when (val getReportResult = getReport(reportCoordinates)) {
             is GetReportResult.Found -> getTestData(getReportResult.report.id)

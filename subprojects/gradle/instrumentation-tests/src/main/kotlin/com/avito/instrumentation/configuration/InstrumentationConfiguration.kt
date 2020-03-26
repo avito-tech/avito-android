@@ -29,7 +29,8 @@ open class InstrumentationConfiguration(val name: String) {
     var tryToReRunOnTargetBranch = false
 
     /**
-     * При последующих запусках на том же коммите и на той же ветке запускать только упавшие билды с прошлого запуска
+     * Applied only in next instrumentation invoke at the same git HEAD
+     * It remove already succeed test from execution
      */
     var rerunFailedTests = true
 
@@ -51,7 +52,15 @@ open class InstrumentationConfiguration(val name: String) {
 
     var kubernetesNamespace = "android-emulator"
 
+    /**
+     * It must be a valid reportId.
+     * Get test runs from report by id. Filter already succeed or new tests.
+     * Stay only failed contained in report
+     */
+    var filterSucceedAndNewTestsByReport: String? = null
+
     lateinit var targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
+
     val targets: List<TargetConfiguration>
         get() = targetsContainer.toList()
             .filter { it.enabled }
@@ -74,10 +83,10 @@ open class InstrumentationConfiguration(val name: String) {
             name = name,
             instrumentationParams = mergedInstrumentationParameters,
             tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
-            rerunFailedTests = rerunFailedTests,
+            filterSucceedTestsByPreviousRun = rerunFailedTests,
             reportSkippedTests = reportSkippedTests,
             annotatedWith = annotatedWith,
-            tests = tests,
+            filterTestsByName = tests,
             impactAnalysisPolicy = impactAnalysisPolicy,
             reportFlakyTests = reportFlakyTests,
             prefixFilter = prefixFilter,
@@ -85,7 +94,8 @@ open class InstrumentationConfiguration(val name: String) {
             targets = targets.map {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
             },
-            performanceType = performanceType
+            performanceType = performanceType,
+            filterSucceedAndNewByReport = filterSucceedAndNewTestsByReport
         )
     }
 
@@ -94,15 +104,16 @@ open class InstrumentationConfiguration(val name: String) {
         val instrumentationParams: InstrumentationParameters,
         val tryToReRunOnTargetBranch: Boolean,
         val reportFlakyTests: Boolean,
-        val rerunFailedTests: Boolean,
+        val filterSucceedTestsByPreviousRun: Boolean,
         val reportSkippedTests: Boolean,
         val impactAnalysisPolicy: ImpactAnalysisPolicy,
         val annotatedWith: Collection<String>?,
-        val tests: List<String>?,
+        val filterTestsByName: List<String>?,
         val prefixFilter: String?,
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
-        val performanceType: PerformanceType?
+        val performanceType: PerformanceType?,
+        val filterSucceedAndNewByReport: String?
     ) : Serializable {
 
         init {

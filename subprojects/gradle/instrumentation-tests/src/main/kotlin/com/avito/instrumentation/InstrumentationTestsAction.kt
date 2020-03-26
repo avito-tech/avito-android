@@ -131,7 +131,12 @@ class InstrumentationTestsAction(
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(
         config = params.statsdConfig,
-        logger = { message, error -> if (error != null) logger.info(message, error) else logger.debug(message) }
+        logger = { message, error ->
+            if (error != null) logger.info(
+                message,
+                error
+            ) else logger.debug(message)
+        }
     ),
     private val reportViewer: ReportViewer = ReportViewer.Impl(params.reportViewerUrl),
     private val buildFailer: BuildFailer = BuildFailer.RealFailer(),
@@ -171,8 +176,10 @@ class InstrumentationTestsAction(
             testSuiteProvider.getInitialTestSuite(
                 testApk = params.testApk,
                 params = params,
-                testSignatureCheck = AllChecks()
-            ) { previousRun }
+                testSignatureCheck = AllChecks(),
+                previousRun = { previousRun },
+                getTestsByReportId = { reportId -> reportsApi.getTestsForReportId(reportId) }
+            )
 
         val buildOnTargetCommitResult = BuildOnTargetCommitForTest.fromParams(params)
 
@@ -326,7 +333,6 @@ class InstrumentationTestsAction(
         val sendStatistics: Boolean,
         val isFullTestSuite: Boolean,
         val slackToken: String,
-        val downsamplingFactor: Float?,
         val reportId: String?,
         val reportApiUrl: String,
         val reportApiFallbackUrl: String,

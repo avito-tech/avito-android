@@ -9,11 +9,10 @@ import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.dex.check.TestSignatureCheck
 import com.avito.instrumentation.suite.filter.AnnotatedWithFilter
 import com.avito.instrumentation.suite.filter.CompositeTestRunFilter
-import com.avito.instrumentation.suite.filter.DownsamplingFilter
 import com.avito.instrumentation.suite.filter.FileTestsFilter
+import com.avito.instrumentation.suite.filter.HasFailedTestRun
 import com.avito.instrumentation.suite.filter.IgnoredAnnotationFilter
 import com.avito.instrumentation.suite.filter.NameTestsFilter
-import com.avito.instrumentation.suite.filter.OnlyFailedTestsFilter
 import com.avito.instrumentation.suite.filter.PackagePrefixFilter
 import com.avito.instrumentation.suite.filter.SkipSdkFilter
 import com.avito.instrumentation.suite.filter.TestRunFilter
@@ -32,7 +31,8 @@ interface TestSuiteProvider {
         testApk: File,
         params: InstrumentationTestsAction.Params,
         testSignatureCheck: TestSignatureCheck? = null,
-        previousRun: () -> Try<List<SimpleRunTest>>
+        previousRun: () -> Try<List<SimpleRunTest>>,
+        getTestsByReportId: (String) -> Try<List<SimpleRunTest>>
     ): List<TestWithTarget>
 
     fun getFailedOnlySuite(
@@ -55,13 +55,14 @@ interface TestSuiteProvider {
             testApk: File,
             params: InstrumentationTestsAction.Params,
             testSignatureCheck: TestSignatureCheck?,
-            previousRun: () -> Try<List<SimpleRunTest>>
+            previousRun: () -> Try<List<SimpleRunTest>>,
+            getTestsByReportId: (String) -> Try<List<SimpleRunTest>>
         ): List<TestWithTarget> {
 
             val suite = getTestSuite(
                 targets = params.instrumentationConfiguration.targets,
                 loadedTests = testSuiteLoader.loadTestSuite(testApk, testSignatureCheck),
-                filters = initialFilters(params, previousRun)
+                filters = initialFilters(params, previousRun, getTestsByReportId)
             )
 
             if (params.instrumentationConfiguration.reportSkippedTests) {
@@ -83,7 +84,11 @@ interface TestSuiteProvider {
             return getTestSuite(
                 targets = params.instrumentationConfiguration.targets,
                 loadedTests = testSuiteLoader.loadTestSuite(testApk),
-                filters = listOf(OnlyFailedTestsFilter(previousRun.invoke()))
+                filters = listOf(
+                    HasFailedTestRun.failedOrWithoutTestRun(
+                        testRuns = previousRun()
+                    )
+                )
             ).testsToRun
         }
 
@@ -135,7 +140,8 @@ interface TestSuiteProvider {
          */
         private fun initialFilters(
             params: InstrumentationTestsAction.Params,
-            previousRun: () -> Try<List<SimpleRunTest>>
+            previousRun: () -> Try<List<SimpleRunTest>>,
+            testsByReportId: (String) -> Try<List<SimpleRunTest>>
         ): List<TestRunFilter> {
 
             val filters: MutableList<TestRunFilter> = mutableListOf(
@@ -143,16 +149,12 @@ interface TestSuiteProvider {
                 SkipSdkFilter()
             )
 
-            if (params.instrumentationConfiguration.tests != null) {
-                filters.add(NameTestsFilter(params.instrumentationConfiguration.tests))
+            if (params.instrumentationConfiguration.filterTestsByName != null) {
+                filters.add(NameTestsFilter(params.instrumentationConfiguration.filterTestsByName))
             }
 
             if (params.instrumentationConfiguration.annotatedWith != null) {
                 filters.add(AnnotatedWithFilter(params.instrumentationConfiguration.annotatedWith))
-            }
-
-            if (params.instrumentationConfiguration.tests != null) {
-                filters.add(AnnotatedWithFilter(params.instrumentationConfiguration.tests))
             }
 
             if (params.instrumentationConfiguration.prefixFilter != null) {
@@ -163,17 +165,26 @@ interface TestSuiteProvider {
                 filters.add(FileTestsFilter(params.impactAnalysisResult))
             }
 
-            if (params.downsamplingFactor != null) {
-                filters.add(
-                    DownsamplingFilter(
-                        params.downsamplingFactor,
-                        seed = System.currentTimeMillis()
-                    )
-                )
+            if (params.instrumentationConfiguration.filterSucceedTestsByPreviousRun) {
+                previousRun.invoke()
+                    .onSuccess { testRuns ->
+                        filters.add(
+                            HasFailedTestRun.failedOrWithoutTestRun(
+                                testRuns = testRuns
+                            )
+                        )
+                    }
             }
 
-            if (params.instrumentationConfiguration.rerunFailedTests) {
-                previousRun.invoke().onSuccess { results -> filters.add(OnlyFailedTestsFilter(results)) }
+            if (params.instrumentationConfiguration.filterSucceedAndNewByReport != null) {
+                testsByReportId(params.instrumentationConfiguration.filterSucceedAndNewByReport)
+                    .onSuccess { testRuns ->
+                        filters.add(
+                            HasFailedTestRun.onlyFailed(
+                                testRuns = testRuns
+                            )
+                        )
+                    }
             }
 
             return filters
