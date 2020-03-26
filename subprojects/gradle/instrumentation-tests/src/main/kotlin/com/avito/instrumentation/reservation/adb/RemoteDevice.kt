@@ -1,10 +1,11 @@
 package com.avito.instrumentation.reservation.adb
 
+import com.avito.runner.service.worker.device.Serial
 import com.avito.utils.runCommand
 import org.funktionale.tries.Try
 
-class RemoteDevice(
-    serial: String,
+internal class RemoteDevice(
+    serial: Serial,
     logger: (String) -> Unit = {}
 ): Device(serial, logger) {
 

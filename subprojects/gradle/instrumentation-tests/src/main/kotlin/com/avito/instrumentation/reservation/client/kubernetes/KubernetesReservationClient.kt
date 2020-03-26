@@ -3,6 +3,7 @@ package com.avito.instrumentation.reservation.client.kubernetes
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.adb.RemoteDevice
+import com.avito.runner.service.worker.device.Serial
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
@@ -63,7 +64,7 @@ class KubernetesReservationClient(
 
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<String>,
+        serialsChannel: SendChannel<Serial>,
         reservationDeployments: SendChannel<String>
     ) {
         if (state !is State.Idling) {
@@ -472,7 +473,7 @@ class KubernetesReservationClient(
         )
     }
 
-    private fun emulatorSerialName(name: String): String = "$name:$ADB_DEFAULT_PORT"
+    private fun emulatorSerialName(name: String): Serial = Serial.Remote("$name:$ADB_DEFAULT_PORT")
 
     private fun String.kubernetesName(): String = replace("_", "-").toLowerCase()
 

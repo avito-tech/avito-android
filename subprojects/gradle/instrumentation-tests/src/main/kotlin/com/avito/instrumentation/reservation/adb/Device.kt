@@ -1,13 +1,14 @@
 package com.avito.instrumentation.reservation.adb
 
 import com.avito.instrumentation.util.waitForCondition
+import com.avito.runner.service.worker.device.Serial
 import com.avito.utils.runCommand
 import com.avito.utils.spawnProcess
 import org.funktionale.tries.Try
 import java.io.File
 
 abstract class Device(
-    protected val serial: String,
+    protected val serial: Serial,
     protected val logger: (String) -> Unit = {}
 ) {
     private val androidHome: String? = System.getenv("ANDROID_HOME")

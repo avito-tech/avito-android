@@ -5,6 +5,7 @@ import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
@@ -16,7 +17,7 @@ import java.util.ArrayDeque
 import java.util.Queue
 
 class MockDevice(
-    override val id: String,
+    override val id: Serial,
     private val logger: Logger,
     installApplicationResults: List<MockActionResult<Any>> = emptyList(),
     gettingDeviceStatusResults: List<MockActionResult<Device.DeviceStatus>> = emptyList(),

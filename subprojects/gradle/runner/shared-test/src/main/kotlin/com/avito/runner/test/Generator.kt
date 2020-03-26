@@ -6,6 +6,7 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
+import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.DeviceData
 
@@ -56,8 +57,10 @@ fun generateDeviceTestCaseRun(
         device = deviceData
     )
 
+fun randomSerial(): Serial = Serial.Local(randomString())
+
 fun generateDeviceData(
-    serial: String = randomString(),
+    serial: Serial = randomSerial(),
     configuration: DeviceConfiguration = generateDeviceConfiguration()
 ): DeviceData = DeviceData(
     serial = serial,

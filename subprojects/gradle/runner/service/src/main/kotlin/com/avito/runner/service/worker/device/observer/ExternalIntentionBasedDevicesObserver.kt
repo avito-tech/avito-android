@@ -3,13 +3,14 @@ package com.avito.runner.service.worker.device.observer
 import com.avito.runner.logging.Logger
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DevicesManager
+import com.avito.runner.service.worker.device.Serial
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
 
 class ExternalIntentionBasedDevicesObserver(
     private val devicesManager: DevicesManager,
-    private val externalIntentionOfSerials: Channel<String>,
+    private val externalIntentionOfSerials: Channel<Serial>,
     private val logger: Logger
 ) : DevicesObserver {
 

@@ -1,5 +1,7 @@
 package com.avito.runner.service.worker.device.adb
 
+import com.avito.runner.service.worker.device.Serial
+
 class AdbDeviceParser {
 
     fun parse(output: String): Set<AdbDeviceParams> {
@@ -17,7 +19,7 @@ class AdbDeviceParser {
             .filter { it.contains("online") || it.contains("device") }
             .map {
                 AdbDeviceParams(
-                    id = it.substringBefore(" "),
+                    id = Serial.from(it.substringBefore(" ")),
                     model = it.substringAfter("model:").substringBefore(" device"),
                     online = when {
                         it.contains("offline", ignoreCase = true) -> false

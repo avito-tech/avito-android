@@ -1,7 +1,9 @@
 package com.avito.instrumentation.reservation.adb
 
-class LocalDevice(
-    serial: String,
+import com.avito.runner.service.worker.device.Serial
+
+internal class LocalDevice(
+    serial: Serial,
     logger: (String) -> Unit = {}
 ) : Device(serial, logger) {
 

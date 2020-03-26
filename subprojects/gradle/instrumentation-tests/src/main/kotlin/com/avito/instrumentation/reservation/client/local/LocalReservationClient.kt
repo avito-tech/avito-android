@@ -2,6 +2,7 @@ package com.avito.instrumentation.reservation.client.local
 
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
+import com.avito.runner.service.worker.device.Serial
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device as RequestedDevice
 import com.avito.runner.service.worker.device.Device as WorkerDevice
@@ -17,11 +18,10 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-class LocalReservationClient(
+internal class LocalReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
     private val devicesManager: AdbDevicesManager,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
@@ -33,7 +33,7 @@ class LocalReservationClient(
 
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<String>,
+        serialsChannel: SendChannel<Serial>,
         reservationDeployments: SendChannel<String>
     ) {
         if (state !is State.Idling) {
@@ -68,7 +68,7 @@ class LocalReservationClient(
             .forEachAsync { workerDevice ->
                 logger.info("Found new emulator: ${workerDevice.id}")
 
-                val serial = emulatorSerialName(workerDevice)
+                val serial = workerDevice.id
                 val device = androidDebugBridge.getDevice(serial)
                 val isReady = device.waitForBoot()
                 if (isReady) {
@@ -139,8 +139,6 @@ class LocalReservationClient(
 
         return result
     }
-
-    private fun emulatorSerialName(device: WorkerDevice): String = device.id
 
     sealed class State {
 
