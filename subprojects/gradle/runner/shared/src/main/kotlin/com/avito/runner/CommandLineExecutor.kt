@@ -38,6 +38,7 @@ interface CommandLineExecutor {
                 outputFile?.apply { parentFile?.mkdirs() }
 
                 val commandAndArgs: List<String> = listOf(command) + args
+                println("_@_ commandAndArgs = $commandAndArgs")
                 val process: Process = ProcessBuilder(commandAndArgs)
                     .redirectErrorStream(true)
                     .start()

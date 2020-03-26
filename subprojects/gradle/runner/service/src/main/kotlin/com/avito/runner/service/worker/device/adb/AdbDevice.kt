@@ -89,7 +89,8 @@ data class AdbDevice(
             testRunnerClass = action.testRunner,
             instrumentationArguments = finalInstrumentationArguments,
             outputDir = outputDir,
-            timeoutMinutes = action.timeoutMinutes
+            timeoutMinutes = action.timeoutMinutes,
+            debugMode = action.debugMode
         )
             .map {
                 when (it) {
@@ -265,19 +266,21 @@ data class AdbDevice(
         testRunnerClass: String,
         instrumentationArguments: Map<String, String>,
         outputDir: File,
-        timeoutMinutes: Long
+        timeoutMinutes: Long,
+        debugMode: Boolean
     ): Single<InstrumentationTestCaseRun> {
         val logsDir = File(File(outputDir, "logs"), id.value)
             .apply { mkdirs() }
         val started = System.currentTimeMillis()
 
+        // Be careful - order of arguments matter
         val output = executeShellCommand(
             command = listOf(
                 "am",
                 "instrument",
                 "-r", // raw mode is necessary for parsing
                 "-w", // wait for instrumentation to finish before returning.  Required for test runners.
-                "-e debug true",
+                "-e debug $debugMode",
                 instrumentationArguments.formatInstrumentationOptions(),
                 "$testPackageName/$testRunnerClass"
             ),

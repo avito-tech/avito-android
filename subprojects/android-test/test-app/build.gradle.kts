@@ -141,25 +141,51 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         reportSkippedTests = true
         rerunFailedTests = false
         reportFlakyTests = true
-        prefixFilter = "com.avito.android.ui.test.AppBarTest"
 
-//        targetsContainer.register("api22") {
-//            deviceName = "API22"
-//
-//            scheduling = SchedulingConfiguration().apply {
-//                quota = QuotaConfiguration().apply {
-//                    retryCount = 1
-//                    minimumSuccessCount = 1
-//                }
-//
-//                reservation = TestsBasedDevicesReservationConfiguration().apply {
-//                    device = Emulator22
-//                    maximum = 50
-//                    minimum = 2
-//                    testsPerEmulator = 3
-//                }
-//            }
-//        }
+        targetsContainer.register("api22") {
+            deviceName = "API22"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = Emulator22
+                    maximum = 50
+                    minimum = 2
+                    testsPerEmulator = 3
+                }
+            }
+        }
+
+        targetsContainer.register("api27") {
+            deviceName = "API27"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = Emulator27
+                    maximum = 1
+                    minimum = 1
+                    testsPerEmulator = 1
+                }
+            }
+        }
+    }
+
+    configurationsContainer.register("uiDebug") {
+        tryToReRunOnTargetBranch = false
+        reportSkippedTests = false
+        rerunFailedTests = false
+        reportFlakyTests = false
+        prefixFilter = "com.avito.android.ui.test.AppBarTest"
+        debugMode = true
 
         targetsContainer.register("api27") {
             deviceName = "API27"

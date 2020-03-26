@@ -5,6 +5,7 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.test.generateDeviceConfiguration
 import com.avito.runner.test.generateTestCase
+import com.avito.runner.test.randomBoolean
 import com.avito.runner.test.randomLong
 import com.avito.runner.test.randomString
 
@@ -17,6 +18,7 @@ fun generateTestRunRequest(
     testPackage: String = randomString(),
     testRunner: String = randomString(),
     timeoutMinutes: Long = randomLong(),
+    debugMode: Boolean = randomBoolean(),
     scheduling: TestRunRequest.Scheduling = TestRunRequest.Scheduling(
         retryCount = 0,
         minimumSuccessCount = 1,
@@ -33,5 +35,6 @@ fun generateTestRunRequest(
         testRunner = testRunner,
         timeoutMinutes = timeoutMinutes,
         instrumentationParameters = emptyMap(),
-        scheduling = scheduling
+        scheduling = scheduling,
+        debugMode = debugMode
     )

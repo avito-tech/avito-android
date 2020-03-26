@@ -95,7 +95,8 @@ class TestExecutionStateImplementation(
                 testRunner = request.testRunner,
                 instrumentationParams = request.instrumentationParameters,
                 timeoutMinutes = request.timeoutMinutes,
-                executionNumber = executionNumber
+                executionNumber = executionNumber,
+                debugMode = request.debugMode
             )
         )
 }

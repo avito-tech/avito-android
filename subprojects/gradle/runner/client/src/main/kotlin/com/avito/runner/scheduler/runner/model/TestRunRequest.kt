@@ -13,7 +13,8 @@ data class TestRunRequest(
     val testRunner: String,
     val timeoutMinutes: Long,
     val scheduling: Scheduling,
-    val instrumentationParameters: Map<String, String>
+    val instrumentationParameters: Map<String, String>,
+    val debugMode: Boolean
 ) {
     data class Scheduling(
         val retryCount: Int,
