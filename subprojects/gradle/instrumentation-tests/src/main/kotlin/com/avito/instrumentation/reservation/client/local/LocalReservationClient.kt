@@ -46,7 +46,7 @@ class LocalReservationClient(
 
         val devicesChannel: Channel<WorkerDevice> = reservations
             .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName()
+                val deploymentName = "local-stub"
                 reservationDeployments.send(deploymentName)
 
                 logger.debug("Starting deployment: $deploymentName")
@@ -128,7 +128,7 @@ class LocalReservationClient(
         GlobalScope.launch {
             var emulators = localEmulators(reservation)
 
-            while (!result.isClosedForSend && emulators.isNotEmpty()) {
+            while (!result.isClosedForSend) {
                 emulators.forEach { emulator ->
                     result.send(emulator)
                 }
@@ -141,8 +141,6 @@ class LocalReservationClient(
 
         return result
     }
-
-    private fun generateDeploymentName(): String = "local-${UUID.randomUUID()}"
 
     private fun emulatorSerialName(device: WorkerDevice): String = device.id
 
