@@ -6,12 +6,12 @@ import com.avito.utils.spawnProcess
 import org.funktionale.tries.Try
 import java.io.File
 
-open class Device(
-    private val serial: String,
-    private val logger: (String) -> Unit = {}
+abstract class Device(
+    protected val serial: String,
+    protected val logger: (String) -> Unit = {}
 ) {
     private val androidHome: String? = System.getenv("ANDROID_HOME")
-    private val adb: String = "$androidHome/platform-tools/adb"
+    protected val adb: String = "$androidHome/platform-tools/adb"
 
     init {
         requireNotNull(androidHome) {
@@ -35,28 +35,11 @@ open class Device(
         )
     }
 
-    suspend fun waitForBoot() = waitForCommand(
-        runner = { connectAndCheck() },
-        checker = { it.exists { output -> output == "1" } },
-        successMessage = "$serial connected",
-        errorMessage = "failed to connect to $serial"
-    )
+    abstract suspend fun waitForBoot(): Boolean
 
-    open fun disconnect(): Try<String> = runCommand(
-        command = "$adb disconnect $serial",
-        logger = logger
-    )
+    protected fun isBootCompleted() = executeCommand(CHECK_BOOT_COMPLETED_COMMAND)
 
-    open fun connect(): Try<String> {
-        disconnect()
-
-        return runCommand(
-            "$adb connect $serial",
-            logger = logger
-        )
-    }
-
-    private suspend fun waitForCommand(
+    protected suspend fun waitForCommand(
         runner: () -> Try<String>,
         checker: (Try<String>) -> Boolean,
         successMessage: String,
@@ -71,11 +54,6 @@ open class Device(
         checker(
             runner()
         )
-    }
-
-    private fun connectAndCheck(): Try<String> {
-        connect()
-        return executeCommand(CHECK_BOOT_COMPLETED_COMMAND)
     }
 
     private fun executeCommand(command: String): Try<String> = runCommand(

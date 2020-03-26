@@ -8,7 +8,7 @@ class AndroidDebugBridge(
 
     fun getDevice(serial: String): Device {
         return if (isRemote(serial)) {
-            Device(
+            RemoteDevice(
                 serial = serial,
                 logger = logger
             )

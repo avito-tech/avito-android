@@ -78,11 +78,9 @@ class LocalReservationClient(
                     )
                     serialsChannel.send(serial)
 
-                    logger.info("Device $serial sent outside for further usage")
+                    logger.info("Device $serial is reserved for further usage")
                 } else {
-                    logger.info("Device $serial can't load device. Disconnect and delete")
-                    val isDisconnected = device.disconnect().isSuccess()
-                    logger.info("Disconnect device $serial: $isDisconnected. Can't boot it.")
+                    logger.info("Device $serial can't be used")
                 }
             }
     }

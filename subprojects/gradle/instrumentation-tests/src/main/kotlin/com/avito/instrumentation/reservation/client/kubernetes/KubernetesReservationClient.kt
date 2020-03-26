@@ -2,6 +2,7 @@ package com.avito.instrumentation.reservation.client.kubernetes
 
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
+import com.avito.instrumentation.reservation.adb.RemoteDevice
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
@@ -119,6 +120,7 @@ class KubernetesReservationClient(
                 val device = androidDebugBridge.getDevice(
                     serial = serial
                 )
+                check(device is RemoteDevice)
                 val isReady = device.waitForBoot()
                 if (isReady) {
                     emulatorsLogsReporter.redirectLogcat(
@@ -170,6 +172,7 @@ class KubernetesReservationClient(
                             val device = androidDebugBridge.getDevice(
                                 serial = serial
                             )
+                            check(device is RemoteDevice)
 
                             logger.info("Saving emulator logs for pod: $podName with serial: $serial...")
                             try {
