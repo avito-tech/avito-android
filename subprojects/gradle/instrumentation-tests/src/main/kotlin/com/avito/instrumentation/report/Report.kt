@@ -74,7 +74,7 @@ interface Report {
              * заскипанные.
              */
             val testsToSkip = skippedTests
-                .filter { (_, verdict) -> verdict !is TestRunFilter.Verdict.Skip.OnlyFailed }
+                .filter { (_, verdict) -> verdict !is TestRunFilter.Verdict.Skip.ByPreviousTestRun }
                 .map { (test, verdict) ->
                     AndroidTest.Skipped.fromTestMetadata(
                         testStaticData = test,

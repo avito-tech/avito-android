@@ -34,7 +34,9 @@ internal class TestReporterTest {
             TestStaticDataPackage.createStubInstance(
                 name = "skippedBecauseOfAlreadyPassed",
                 deviceName = device
-            ) to TestRunFilter.Verdict.Skip.OnlyFailed(status = Status.Success),
+            ) to TestRunFilter.Verdict.Skip.ByPreviousTestRun.TestRunIsSucceed(
+                status = Status.Success
+            ),
             TestStaticDataPackage.createStubInstance(
                 name = "skippedBecauseOfNotSpecifiedInFile",
                 deviceName = device
@@ -49,7 +51,7 @@ internal class TestReporterTest {
                 buildId = buildId,
                 tests = skippedTestsToReport
                     .filter {
-                        it.second !is TestRunFilter.Verdict.Skip.OnlyFailed
+                        it.second !is TestRunFilter.Verdict.Skip.ByPreviousTestRun
                     }
                     .map {
                         AndroidTest.Skipped.fromTestMetadata(it.first, it.second.description, 0)
