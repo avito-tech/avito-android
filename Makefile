@@ -13,9 +13,10 @@ test_app_instrumentation:
 
 dynamic_properties:
 	$(eval testFilter?=empty)
+	$(eval dynamicPrefixFilter?=)
 
 test_app_instrumentation_dynamic: dynamic_properties
-	./gradlew subprojects\:android-test\:test-app\:instrumentationDynamic --stacktrace -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) -PdynamicTarget22=true -Pinstrumentation.dynamic.testFilter=$(testFilter)
+	./gradlew subprojects\:android-test\:test-app\:instrumentationDynamic --stacktrace -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) -PdynamicTarget22=true -Pinstrumentation.dynamic.testFilter=$(testFilter) -PdynamicPrefixFilter=$(skipTestsWithPrefix)
 
 clear_k8s_deployments_by_namespaces:
 	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -Pci=true
