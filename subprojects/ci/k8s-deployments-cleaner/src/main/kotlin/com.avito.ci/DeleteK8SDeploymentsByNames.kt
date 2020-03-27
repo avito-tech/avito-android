@@ -19,13 +19,11 @@ class DeleteK8SDeploymentsByNames(
                         .withName(deployment)
                         .delete()
                 } catch (e: Throwable) {
-                    println("Error when delete deployment. namespace=$namespace; deployment=$deployment")
-                    e.printStackTrace()
+                    throw RuntimeException("Error when delete deployment=${deployment}", e)
                 }
             }
         } catch (e: Throwable) {
-            println("Error when delete deployments. namespace=$namespace; deployments=$deploymentNames")
-            e.printStackTrace()
+            throw RuntimeException("Error when delete deployments. namespace=$namespace; deployments=$deploymentNames", e)
         }
     }
 }
