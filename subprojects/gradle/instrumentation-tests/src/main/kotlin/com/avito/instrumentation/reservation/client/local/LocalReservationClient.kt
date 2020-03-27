@@ -46,14 +46,14 @@ internal class LocalReservationClient(
 
         val devicesChannel: Channel<WorkerDevice> = reservations
             .iterateInParallel { _, reservation ->
-                val deploymentName = "local-stub"
-                reservationDeployments.send(deploymentName)
+                val fakeDeploymentName = "local-stub"
+                reservationDeployments.send(fakeDeploymentName)
 
-                logger.debug("Starting deployment: $deploymentName")
+                logger.debug("Starting deployment: $fakeDeploymentName")
                 check(reservation.device is RequestedDevice.LocalEmulator) {
                     "Non-local emulator ${reservation.device} is unsupported in local reservation"
                 }
-                logger.debug("Deployment created: $deploymentName")
+                logger.debug("Deployment created: $fakeDeploymentName")
 
                 listenEmulators(reservation)
             }

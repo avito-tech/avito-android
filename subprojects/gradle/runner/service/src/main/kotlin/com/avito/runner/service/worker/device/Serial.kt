@@ -2,15 +2,17 @@ package com.avito.runner.service.worker.device
 
 import com.google.common.net.InetAddresses
 
-sealed class Serial(open val value: String) {
+sealed class Serial {
 
-    data class Remote(override val value: String) : Serial(value) {
+    abstract val value: String
+
+    data class Remote(override val value: String) : Serial() {
         override fun toString(): String {
             return value
         }
     }
 
-    data class Local(override val value: String) : Serial(value) {
+    data class Local(override val value: String) : Serial() {
         override fun toString(): String {
             return value
         }
