@@ -90,6 +90,9 @@ dependencies {
     androidTestImplementation(project(":subprojects:common:okhttp"))
     androidTestImplementation(project(":subprojects:common:time"))
 
+    androidTestImplementation(Dependencies.androidTest.runner)
+    androidTestUtil(Dependencies.androidTest.orchestrator)
+
     androidTestImplementation(Dependencies.test.junit)
     androidTestImplementation(Dependencies.okhttp)
     androidTestImplementation(Dependencies.okhttpLogging)
