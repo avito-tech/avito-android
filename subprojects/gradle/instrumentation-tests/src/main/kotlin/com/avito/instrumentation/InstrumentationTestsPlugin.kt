@@ -85,6 +85,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 1
             ),
             prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
+            skipSucceedTestsFromPreviousRun = project.getBooleanProperty("instrumentation.dynamic.skipSucceedTestsFromPreviousRun", true),
+            keepFailedTestsFromReport = project.getOptionalStringProperty("instrumentation.dynamic.keepFailedTestsFromReport"),
             isDeviceEnabled = { device ->
                 project.getBooleanProperty(
                     "dynamicTarget${device.api}",
@@ -288,6 +290,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         testFilter: TestsFilter,
         retryCountValue: Int,
         prefixFilter: String,
+        skipSucceedTestsFromPreviousRun: Boolean,
+        keepFailedTestsFromReport: String?,
         isDeviceEnabled: (Device) -> Boolean
     ) {
         configurationsContainer.register(
@@ -298,6 +302,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 configuration.reportSkippedTests = true
                 configuration.rerunFailedTests = false
 
+                configuration.rerunFailedTests = skipSucceedTestsFromPreviousRun
+                configuration.keepFailedTestsFromReport = keepFailedTestsFromReport
                 configuration.prefixFilter = prefixFilter
 
                 configuration.targetsContainer.apply {
