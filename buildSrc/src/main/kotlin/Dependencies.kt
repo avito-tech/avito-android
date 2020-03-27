@@ -68,6 +68,7 @@ object Dependencies {
 
     object androidTest {
         val runner = "androidx.test:runner:${Versions.androidXTest}"
+        val orchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"
         val ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"
         val uiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
         val core = "androidx.test:core:${Versions.androidXTest}"
