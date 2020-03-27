@@ -273,13 +273,12 @@ data class AdbDevice(
             .apply { mkdirs() }
         val started = System.currentTimeMillis()
 
-        // Be careful - order of arguments matter
         val output = executeShellCommand(
             command = listOf(
                 "am",
                 "instrument",
-                "-r", // raw mode is necessary for parsing
                 "-w", // wait for instrumentation to finish before returning.  Required for test runners.
+                "-r", // raw mode is necessary for parsing
                 "-e debug $debugMode",
                 instrumentationArguments.formatInstrumentationOptions(),
                 "$testPackageName/$testRunnerClass"
