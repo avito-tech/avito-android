@@ -171,9 +171,9 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 
                 reservation = TestsBasedDevicesReservationConfiguration().apply {
                     device = Emulator27
-                    maximum = 1
-                    minimum = 1
-                    testsPerEmulator = 1
+                    maximum = 50
+                    minimum = 2
+                    testsPerEmulator = 3
                 }
             }
         }
