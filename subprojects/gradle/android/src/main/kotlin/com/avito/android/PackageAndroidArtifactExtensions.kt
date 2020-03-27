@@ -8,8 +8,7 @@ fun PackageAndroidArtifact.getApkFile(): File {
         "Cannot get apk from $name android artifact task because apkNames.size != 1 ($apkNames). Split apk is not supported."
     }
 
-    return File(
-        outputDirectory.get().asFile,
-        apkNames.first()
-    )
+    val outputDir = outputDirectory.get().asFile
+
+    return File(outputDir, apkNames.first())
 }
