@@ -32,12 +32,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
-    init {
-        outputs.upToDateWhen {
-            false
-        }
-    }
-
     @InputFile
     val application: RegularFileProperty = objects.fileProperty()
 

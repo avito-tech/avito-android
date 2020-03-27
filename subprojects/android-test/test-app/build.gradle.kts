@@ -139,7 +139,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     configurationsContainer.register("ui") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
-        rerunFailedTests = false
+        rerunFailedTests = true
         reportFlakyTests = true
 
         targetsContainer.register("api22") {
@@ -184,7 +184,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         reportSkippedTests = false
         rerunFailedTests = false
         reportFlakyTests = false
-        prefixFilter = "com.avito.android.ui.test.AppBarTest"
         // uncomment after 2020.3.6 release (MBS-8050)
         // debugMode = true
 
