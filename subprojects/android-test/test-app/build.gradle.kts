@@ -185,7 +185,8 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         rerunFailedTests = false
         reportFlakyTests = false
         prefixFilter = "com.avito.android.ui.test.AppBarTest"
-        debugMode = true
+        // uncomment after 2020.3.6 release (MBS-8050)
+        // debugMode = true
 
         targetsContainer.register("api27") {
             deviceName = "API27"
