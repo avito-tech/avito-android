@@ -9,7 +9,6 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -180,7 +179,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     sendStatistics = sendStatistics.get(),
                     slackToken = slackToken.get(),
                     isFullTestSuite = fullTestSuite.get(),
-                    downsamplingFactor = project.envArgs.testDownsamplingFactor,
                     reportId = testResults.reportId,
                     reportApiUrl = reportApiUrl.get(),
                     fileStorageUrl = fileStorageUrl.get(),

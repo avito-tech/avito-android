@@ -48,7 +48,8 @@ internal class TestSuiteProviderTest {
                     targets = listOf(TargetConfiguration.Data.createStubInstance())
                 )
             ),
-            previousRun = { Try.Failure(Exception("anything")) }
+            previousRun = { Try.Failure(Exception("anything")) },
+            getTestsByReportId = { Try.Success(emptyList()) }
         )
 
         assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
@@ -65,7 +66,8 @@ internal class TestSuiteProviderTest {
                     targets = listOf(TargetConfiguration.Data.createStubInstance())
                 )
             ),
-            previousRun = { Try.Success(emptyList()) }
+            previousRun = { Try.Success(emptyList()) },
+            getTestsByReportId = { Try.Success(emptyList()) }
         )
 
         assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
@@ -92,7 +94,8 @@ internal class TestSuiteProviderTest {
                         )
                     )
                 )
-            }
+            },
+            getTestsByReportId = { _ -> Try { emptyList<SimpleRunTest>() }}
         )
 
         assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
@@ -119,7 +122,8 @@ internal class TestSuiteProviderTest {
                         )
                     )
                 )
-            }
+            },
+            getTestsByReportId = { _ -> Try { emptyList<SimpleRunTest>() }}
         )
 
         assertThat(reporter.reportedSkippedTests?.map { it.first.name })
