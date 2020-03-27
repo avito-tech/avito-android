@@ -4,7 +4,7 @@ import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.report.model.DeviceName
 import com.avito.report.model.SimpleRunTest
 
-class HasFailedTestRun private constructor(
+class TestRunsFilter private constructor(
     private val testRuns: List<SimpleRunTest>,
     private val needRunTestWithoutTestRun: Boolean
 ) : TestRunFilter {
@@ -36,15 +36,15 @@ class HasFailedTestRun private constructor(
     }
 
     companion object {
-        fun onlyFailed(testRuns: List<SimpleRunTest>): TestRunFilter {
-            return HasFailedTestRun(
+        fun keepFailedTestRuns(testRuns: List<SimpleRunTest>): TestRunFilter {
+            return TestRunsFilter(
                 testRuns = testRuns,
                 needRunTestWithoutTestRun = false
             )
         }
 
-        fun failedOrWithoutTestRun(testRuns: List<SimpleRunTest>): TestRunFilter {
-            return HasFailedTestRun(
+        fun skipSucceedTestRuns(testRuns: List<SimpleRunTest>): TestRunFilter {
+            return TestRunsFilter(
                 testRuns = testRuns,
                 needRunTestWithoutTestRun = true
             )

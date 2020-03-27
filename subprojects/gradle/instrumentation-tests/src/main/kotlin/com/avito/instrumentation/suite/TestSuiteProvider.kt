@@ -10,12 +10,12 @@ import com.avito.instrumentation.suite.dex.check.TestSignatureCheck
 import com.avito.instrumentation.suite.filter.AnnotatedWithFilter
 import com.avito.instrumentation.suite.filter.CompositeTestRunFilter
 import com.avito.instrumentation.suite.filter.FileTestsFilter
-import com.avito.instrumentation.suite.filter.HasFailedTestRun
 import com.avito.instrumentation.suite.filter.IgnoredAnnotationFilter
 import com.avito.instrumentation.suite.filter.NameTestsFilter
 import com.avito.instrumentation.suite.filter.PackagePrefixFilter
 import com.avito.instrumentation.suite.filter.SkipSdkFilter
 import com.avito.instrumentation.suite.filter.TestRunFilter
+import com.avito.instrumentation.suite.filter.TestRunsFilter
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.report.model.DeviceName
 import com.avito.report.model.SimpleRunTest
@@ -85,7 +85,7 @@ interface TestSuiteProvider {
                 targets = params.instrumentationConfiguration.targets,
                 loadedTests = testSuiteLoader.loadTestSuite(testApk),
                 filters = listOf(
-                    HasFailedTestRun.failedOrWithoutTestRun(
+                    TestRunsFilter.skipSucceedTestRuns(
                         testRuns = previousRun()
                     )
                 )
@@ -149,38 +149,38 @@ interface TestSuiteProvider {
                 SkipSdkFilter()
             )
 
-            if (params.instrumentationConfiguration.filterTestsByName != null) {
-                filters.add(NameTestsFilter(params.instrumentationConfiguration.filterTestsByName))
+            if (params.instrumentationConfiguration.keepTestsWithNames != null) {
+                filters.add(NameTestsFilter(params.instrumentationConfiguration.keepTestsWithNames))
             }
 
-            if (params.instrumentationConfiguration.annotatedWith != null) {
-                filters.add(AnnotatedWithFilter(params.instrumentationConfiguration.annotatedWith))
+            if (params.instrumentationConfiguration.keepTestsAnnotatedWith != null) {
+                filters.add(AnnotatedWithFilter(params.instrumentationConfiguration.keepTestsAnnotatedWith))
             }
 
-            if (params.instrumentationConfiguration.prefixFilter != null) {
-                filters.add(PackagePrefixFilter(params.instrumentationConfiguration.prefixFilter))
+            if (params.instrumentationConfiguration.keepTestsWithPrefix != null) {
+                filters.add(PackagePrefixFilter(params.instrumentationConfiguration.keepTestsWithPrefix))
             }
 
             if (params.impactAnalysisResult != null) {
                 filters.add(FileTestsFilter(params.impactAnalysisResult))
             }
 
-            if (params.instrumentationConfiguration.filterSucceedTestsByPreviousRun) {
+            if (params.instrumentationConfiguration.skipSucceedTestsFromPreviousRun) {
                 previousRun.invoke()
                     .onSuccess { testRuns ->
                         filters.add(
-                            HasFailedTestRun.failedOrWithoutTestRun(
+                            TestRunsFilter.skipSucceedTestRuns(
                                 testRuns = testRuns
                             )
                         )
                     }
             }
 
-            if (params.instrumentationConfiguration.filterSucceedAndNewByReport != null) {
-                testsByReportId(params.instrumentationConfiguration.filterSucceedAndNewByReport)
+            if (params.instrumentationConfiguration.keepFailedTestsFromReport != null) {
+                testsByReportId(params.instrumentationConfiguration.keepFailedTestsFromReport)
                     .onSuccess { testRuns ->
                         filters.add(
-                            HasFailedTestRun.onlyFailed(
+                            TestRunsFilter.keepFailedTestRuns(
                                 testRuns = testRuns
                             )
                         )

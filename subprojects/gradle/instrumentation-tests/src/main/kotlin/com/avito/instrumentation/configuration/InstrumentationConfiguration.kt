@@ -57,7 +57,7 @@ open class InstrumentationConfiguration(val name: String) {
      * Get test runs from report by id. Filter already succeed or new tests.
      * Stay only failed contained in report
      */
-    var filterSucceedAndNewTestsByReport: String? = null
+    var keepFailedTestsFromReport: String? = null
 
     lateinit var targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
 
@@ -83,19 +83,19 @@ open class InstrumentationConfiguration(val name: String) {
             name = name,
             instrumentationParams = mergedInstrumentationParameters,
             tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
-            filterSucceedTestsByPreviousRun = rerunFailedTests,
+            skipSucceedTestsFromPreviousRun = rerunFailedTests,
             reportSkippedTests = reportSkippedTests,
-            annotatedWith = annotatedWith,
-            filterTestsByName = tests,
+            keepTestsAnnotatedWith = annotatedWith,
+            keepTestsWithNames = tests,
             impactAnalysisPolicy = impactAnalysisPolicy,
             reportFlakyTests = reportFlakyTests,
-            prefixFilter = prefixFilter,
+            keepTestsWithPrefix = prefixFilter,
             kubernetesNamespace = kubernetesNamespace,
             targets = targets.map {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
             },
             performanceType = performanceType,
-            filterSucceedAndNewByReport = filterSucceedAndNewTestsByReport
+            keepFailedTestsFromReport = keepFailedTestsFromReport
         )
     }
 
@@ -104,16 +104,16 @@ open class InstrumentationConfiguration(val name: String) {
         val instrumentationParams: InstrumentationParameters,
         val tryToReRunOnTargetBranch: Boolean,
         val reportFlakyTests: Boolean,
-        val filterSucceedTestsByPreviousRun: Boolean,
+        val skipSucceedTestsFromPreviousRun: Boolean,
         val reportSkippedTests: Boolean,
         val impactAnalysisPolicy: ImpactAnalysisPolicy,
-        val annotatedWith: Collection<String>?,
-        val filterTestsByName: List<String>?,
-        val prefixFilter: String?,
+        val keepTestsAnnotatedWith: Collection<String>?,
+        val keepTestsWithNames: List<String>?,
+        val keepTestsWithPrefix: String?,
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
         val performanceType: PerformanceType?,
-        val filterSucceedAndNewByReport: String?
+        val keepFailedTestsFromReport: String?
     ) : Serializable {
 
         init {
@@ -124,7 +124,7 @@ open class InstrumentationConfiguration(val name: String) {
             }
         }
 
-        override fun toString(): String = "$name with targets: $targets for tests annotated with: $annotatedWith"
+        override fun toString(): String = "$name with targets: $targets for tests annotated with: $keepTestsAnnotatedWith"
 
         companion object
     }

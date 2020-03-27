@@ -18,7 +18,7 @@ internal class HasFailedTestRunFilterTest {
     fun `filter - run - test not found in previous result`() {
         val previousRunResults = emptyList<SimpleRunTest>()
 
-        val runNeeded = HasFailedTestRun.failedOrWithoutTestRun(previousRunResults)
+        val runNeeded = TestRunsFilter.skipSucceedTestRuns(previousRunResults)
             .runNeeded(
                 test = TestInApk.createStubInstance(),
                 deviceName = deviceName,
@@ -38,7 +38,7 @@ internal class HasFailedTestRunFilterTest {
             )
         )
 
-        val runNeeded = HasFailedTestRun.failedOrWithoutTestRun(previousRunResults)
+        val runNeeded = TestRunsFilter.skipSucceedTestRuns(previousRunResults)
             .runNeeded(
                 test = TestInApk.createStubInstance(className = "com.Test", methodName = "test1"),
                 deviceName = deviceName,
@@ -58,7 +58,7 @@ internal class HasFailedTestRunFilterTest {
             )
         )
 
-        val runNeeded = HasFailedTestRun.failedOrWithoutTestRun(previousRunResults)
+        val runNeeded = TestRunsFilter.skipSucceedTestRuns(previousRunResults)
             .runNeeded(
                 test = TestInApk.createStubInstance(className = "com.Test", methodName = "test1"),
                 deviceName = deviceName,
@@ -78,7 +78,7 @@ internal class HasFailedTestRunFilterTest {
             )
         )
 
-        val runNeeded = HasFailedTestRun.failedOrWithoutTestRun(previousRunResults)
+        val runNeeded = TestRunsFilter.skipSucceedTestRuns(previousRunResults)
             .runNeeded(
                 test = TestInApk.createStubInstance(
                     className = "com.Test",
@@ -101,7 +101,7 @@ internal class HasFailedTestRunFilterTest {
             )
         )
 
-        val runNeeded = HasFailedTestRun.failedOrWithoutTestRun(previousRunResults)
+        val runNeeded = TestRunsFilter.skipSucceedTestRuns(previousRunResults)
             .runNeeded(
                 test = TestInApk.createStubInstance(
                     className = "com.Test",
@@ -124,7 +124,7 @@ internal class HasFailedTestRunFilterTest {
             )
         )
 
-        val runNeeded = HasFailedTestRun.failedOrWithoutTestRun(previousRunResults)
+        val runNeeded = TestRunsFilter.skipSucceedTestRuns(previousRunResults)
             .runNeeded(
                 test = TestInApk.createStubInstance(
                     className = "com.Test",

@@ -14,12 +14,12 @@ test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) $(log_level)
 
 dynamic_properties:
-	$(eval filter_report_id?=)
-	$(eval filter_already_succeed=true)
+	$(eval keepFailedTestsFromReport?=)
+	$(eval skipSucceedTestsFromPreviousRun=true)
 	$(eval testFilter?=empty)
 
 test_app_instrumentation_dynamic: dynamic_properties
-	./gradlew subprojects\:android-test\:test-app\:instrumentationDynamic -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) -PdynamicTarget22=true -Pinstrumentation.dynamic.testFilter=$(testFilter) -Pinstrumentation.dynamic.filterSucceedAndNewByReport=$(filter_report_id) -Pinstrumentation.dynamic.filterSucceedTestsByPreviousRun=$(filter_already_succeed) $(log_level)
+	./gradlew subprojects\:android-test\:test-app\:instrumentationDynamic -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) -PdynamicTarget22=true -Pinstrumentation.dynamic.testFilter=$(testFilter) -Pinstrumentation.dynamic.keepFailedTestsFromReport=$(keepFailedTestsFromReport) -Pinstrumentation.dynamic.skipSucceedTestsFromPreviousRun=$(skipSucceedTestsFromPreviousRun) $(log_level)
 
 unit_tests:
 	./gradlew test $(log_level)
