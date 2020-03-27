@@ -1,6 +1,7 @@
 test_build_type?=debug
 log_level?=-q
 filter_report_id?=
+ca_cert_file=~/.kube/avito_ca.crt
 
 help:
 
@@ -12,6 +13,9 @@ test_app_instrumentation_debug:
 
 test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) $(log_level)
+
+test_app_debug:
+	./gradlew :subprojects:android-test:test-app:instrumentationUiDebug -PinfraVersion=local -Pci=true -PkubernetesContext=beta -PkubernetesCaCertFile=$(ca_cert_file) -PtestBuildType=$(test_build_type) $(log_level)
 
 dynamic_properties:
 	$(eval keepFailedTestsFromReport?=)
