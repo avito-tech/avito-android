@@ -57,7 +57,12 @@ internal class PerformanceTestsScheduler(
         if (buildOnTargetCommitResult is BuildOnTargetCommitForTest.Result.OK) {
             testResultsAfterBranchRerunsFuture = group.launch {
                 val testsToRun: List<TestWithTarget> =
-                    testSuiteProvider.getInitialTestSuite(buildOnTargetCommitResult.testApk, params) { previousRun }
+                    testSuiteProvider.getInitialTestSuite(
+                        testApk = buildOnTargetCommitResult.testApk,
+                        params = params,
+                        previousRun = { previousRun },
+                        getTestsByReportId = {reportId -> reportsApi.getTestsForReportId(reportId)}
+                    )
 
                 val testResultsAfterBranchReruns = testsRunner.runTests(
                     mainApk = buildOnTargetCommitResult.mainApk,

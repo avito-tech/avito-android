@@ -38,6 +38,10 @@ class FakeReportsApi(
         TODO("not implemented")
     }
 
+    override fun getTestsForReportId(reportId: String): Try<List<SimpleRunTest>> {
+        TODO("Not yet implemented")
+    }
+
     val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
 
     override fun addTests(

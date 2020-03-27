@@ -23,14 +23,15 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name = name,
     performanceType = performanceType,
     instrumentationParams = instrumentationParams,
-    prefixFilter = prefixFilter,
+    keepTestsWithPrefix = prefixFilter,
     tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
-    rerunFailedTests = rerunFailedTests,
+    skipSucceedTestsFromPreviousRun = rerunFailedTests,
     reportFlakyTests = reportFlakyTests,
     reportSkippedTests = reportSkippedTests,
-    annotatedWith = annotatedWith,
+    keepTestsAnnotatedWith = annotatedWith,
     impactAnalysisPolicy = impactAnalysisPolicy,
-    tests = tests,
+    keepTestsWithNames = tests,
     kubernetesNamespace = kubernetesNamespace,
-    targets = targets
+    targets = targets,
+    keepFailedTestsFromReport = null
 )
