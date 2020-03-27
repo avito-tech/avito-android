@@ -25,7 +25,7 @@ unit_tests:
 	./gradlew test $(log_level)
 
 clear_k8s_deployments_by_namespaces:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -Pci=true $(log_level)
+	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) -Pci=true $(log_level)
 
 clear_k8s_deployments_by_names:
 	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
