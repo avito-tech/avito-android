@@ -1,17 +1,16 @@
 package com.avito.instrumentation.reservation.adb
 
-import org.funktionale.tries.Try
+import com.avito.runner.service.worker.device.Serial
 
-class LocalDevice(
-    serial: String,
+internal class LocalDevice(
+    serial: Serial,
     logger: (String) -> Unit = {}
 ) : Device(serial, logger) {
 
-    override fun disconnect(): Try<String> {
-        return Try.Success("USB device doesn't support disconnection")
-    }
-
-    override fun connect(): Try<String> {
-        return Try.Success("USB device is connected already")
-    }
+    override suspend fun waitForBoot() = waitForCommand(
+        runner = { isBootCompleted() },
+        checker = { it.exists { output -> output == "1" } },
+        successMessage = "$serial is booted",
+        errorMessage = "failed to boot emulator $serial"
+    )
 }

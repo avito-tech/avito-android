@@ -2,6 +2,7 @@ package com.avito.instrumentation.reservation.client.local
 
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
+import com.avito.runner.service.worker.device.Serial
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device as RequestedDevice
 import com.avito.runner.service.worker.device.Device as WorkerDevice
@@ -17,11 +18,10 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-class LocalReservationClient(
+internal class LocalReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
     private val devicesManager: AdbDevicesManager,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
@@ -33,7 +33,7 @@ class LocalReservationClient(
 
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<String>,
+        serialsChannel: SendChannel<Serial>,
         reservationDeployments: SendChannel<String>
     ) {
         if (state !is State.Idling) {
@@ -46,14 +46,14 @@ class LocalReservationClient(
 
         val devicesChannel: Channel<WorkerDevice> = reservations
             .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName()
-                reservationDeployments.send(deploymentName)
+                val fakeDeploymentName = "local-stub"
+                reservationDeployments.send(fakeDeploymentName)
 
-                logger.debug("Starting deployment: $deploymentName")
+                logger.debug("Starting deployment: $fakeDeploymentName")
                 check(reservation.device is RequestedDevice.LocalEmulator) {
                     "Non-local emulator ${reservation.device} is unsupported in local reservation"
                 }
-                logger.debug("Deployment created: $deploymentName")
+                logger.debug("Deployment created: $fakeDeploymentName")
 
                 listenEmulators(reservation)
             }
@@ -68,7 +68,7 @@ class LocalReservationClient(
             .forEachAsync { workerDevice ->
                 logger.info("Found new emulator: ${workerDevice.id}")
 
-                val serial = emulatorSerialName(workerDevice)
+                val serial = workerDevice.id
                 val device = androidDebugBridge.getDevice(serial)
                 val isReady = device.waitForBoot()
                 if (isReady) {
@@ -78,11 +78,9 @@ class LocalReservationClient(
                     )
                     serialsChannel.send(serial)
 
-                    logger.info("Device $serial sent outside for further usage")
+                    logger.info("Device $serial is reserved for further usage")
                 } else {
-                    logger.info("Device $serial can't load device. Disconnect and delete")
-                    val isDisconnected = device.disconnect().isSuccess()
-                    logger.info("Disconnect device $serial: $isDisconnected. Can't boot it.")
+                    logger.info("Device $serial can't be used")
                 }
             }
     }
@@ -128,7 +126,7 @@ class LocalReservationClient(
         GlobalScope.launch {
             var emulators = localEmulators(reservation)
 
-            while (!result.isClosedForSend && emulators.isNotEmpty()) {
+            while (!result.isClosedForSend) {
                 emulators.forEach { emulator ->
                     result.send(emulator)
                 }
@@ -141,10 +139,6 @@ class LocalReservationClient(
 
         return result
     }
-
-    private fun generateDeploymentName(): String = "local-${UUID.randomUUID()}"
-
-    private fun emulatorSerialName(device: WorkerDevice): String = device.id
 
     sealed class State {
 

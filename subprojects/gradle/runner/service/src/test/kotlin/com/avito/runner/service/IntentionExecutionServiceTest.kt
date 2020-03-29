@@ -12,6 +12,7 @@ import com.avito.runner.test.generateIntention
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.mock.MockDevicesObserver
+import com.avito.runner.test.randomSerial
 import com.avito.runner.test.randomString
 import com.avito.runner.test.receiveAvailable
 import com.avito.runner.test.runBlockingWithTimeout
@@ -63,7 +64,7 @@ class IntentionExecutionServiceTest {
             )
             val successfulDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomString(),
+                id = randomSerial(),
                 api = 22,
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
@@ -157,7 +158,7 @@ class IntentionExecutionServiceTest {
             )
             val freezeDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomString(),
+                id = randomSerial(),
                 api = 22,
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
@@ -171,7 +172,7 @@ class IntentionExecutionServiceTest {
             )
             val successfulDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomString(),
+                id = randomSerial(),
                 api = 22,
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
