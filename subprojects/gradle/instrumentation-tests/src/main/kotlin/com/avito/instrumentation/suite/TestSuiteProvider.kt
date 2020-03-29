@@ -23,7 +23,7 @@ import org.funktionale.tries.Try
 import java.io.File
 
 /**
- * todo сделать подмножество конфига для фильтров, сейчас тащим сюда огромный объект InstrumentationTestsAction.Params
+ * todo MBS-8045 сделать подмножество конфига для фильтров, сейчас тащим сюда огромный объект InstrumentationTestsAction.Params
  */
 interface TestSuiteProvider {
 

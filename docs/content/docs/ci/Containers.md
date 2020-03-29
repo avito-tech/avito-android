@@ -11,34 +11,58 @@ type: docs
 
 Все образы расположены в `ci/docker`.
 
-## Android SDK
+## Android SDK image
 
-Базовый образ c build tools. (будет сделан в MBS-7071)
+This is the base image with Android Build Tools.\
+It's not ready yet, see MBS-7071.
 
-## Android builder
+## Android builder image
 
-Образ который умеет собирать приложение в CI.
+This is the image for building and testing Android applications. It contains Android SDK.
 
-### How to update?
+### How to update android-builder image?
 
-- Собери образ локально для проверки изменений:
+1. Build the image to test your changes
+{{< tabs "android-builder update" >}}
 
-```bash
-cd ci/docker
-./publish <папка с dockerfile>`
+{{< tab "In CI" >}}
+
+Run [Build android-builder (internal)](http://links.k.avito.ru/tmctAvitoAndroidBuilder) teamcity configuration.\
+You will see the tag in stdout:
+
+```text
+Image *******/android/builder:eb4a3b67e564 has been published successfully
 ```
 
-В output будет новый tag образа. 
-- Обнови тег образа в `_main.sh` в переменной `IMAGE_ANDROID_BUILDER`
-- Убедись что образ отрабатывает корректно при локальном использовании.  
-Прогони хотя-бы `ci/local_check.sh`. 
+{{< /tab >}}
 
-- Собери образ на ветке в teamcity конфигурации [Build android-builder (internal)](http://links.k.avito.ru/tmctAvitoAndroidBuilder)  
-В этом проекте зашита авторизация для доступа к registry.
-- Обнови тег в `_main.sh`
-- Запушь изменение в ветку.
+{{< tab "Locally" >}}
 
-## Docker in docker
+```bash
+export DOCKER_REGISTRY=<docker registry>
+cd ci/docker
+./publish.sh <directory with Dockerfile>
+```
+
+This script will build a new image. You will the tag in stdout:
+
+```text
+Successfully built eb4a3b67e564
+```
+
+To push the image you must have registry credentials in these envs: `DOCKER_LOGIN`, `DOCKER_PASSWORD` .\
+Without it the script will stop after building.
+
+{{< /tab >}}
+
+{{< /tabs >}}
+1. Update image hash in `IMAGE_ANDROID_BUILDER` variable in ci shell scripts:
+    - In github repo: `ci/_environment.sh` 
+    - In internal avito repository: `ci/_main.sh`
+1. Check this images is working. At least, run `ci/local_check.sh`.
+1. Make PR with a new image.
+
+## Docker in docker image
 
 Утилитарный образ с докером внутри.\ 
 Используем внутри скриптов для создания и публикации других образов, прежде всего эмулятора.
@@ -54,7 +78,7 @@ cd ci/docker
 
 [Build docker-in-docker (internal)](http://links.k.avito.ru/tmctAvitoAndroidDockerInDocker)
 
-## Android emulator
+## Android emulator images
 
 Эмуляторы имеют кастомные настройки, оптимизированы для стабильности и производительности.
 
