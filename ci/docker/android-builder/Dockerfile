@@ -36,8 +36,8 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV PYTHONUNBUFFERED 1
 
 # --------------- Gradle Profiler -----------------
-# TODO: update
-ARG PROFILER_VERSION=0.9.1
+# https://github.com/gradle/gradle-profiler/releases
+ARG PROFILER_VERSION=0.11.0
 
 # Install gradle-profiler
 RUN \
@@ -69,7 +69,7 @@ RUN mkdir $HOME/.android && \
   # empty file to mitigate warning
   touch $HOME/.android/repositories.cfg && \
   echo "y" | sdkmanager --verbose \
-    "build-tools;29.0.2" \
+    "build-tools;29.0.3" \
     "patcher;v4" \
     "platform-tools" \
     "platforms;android-29" \
