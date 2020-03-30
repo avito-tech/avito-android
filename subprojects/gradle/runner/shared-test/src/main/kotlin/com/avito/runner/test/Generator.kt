@@ -35,7 +35,8 @@ fun generateInstrumentationTestAction(
     testRunner: String = randomString(),
     instrumentationParams: Map<String, String> = emptyMap(),
     timeoutMinutes: Long = randomLong(),
-    executionNumber: Int = randomInt()
+    executionNumber: Int = randomInt(),
+    enableDeviceDebug: Boolean = randomBoolean()
 ): InstrumentationTestRunAction =
     InstrumentationTestRunAction(
         test = test,
@@ -44,7 +45,8 @@ fun generateInstrumentationTestAction(
         testPackage = testPackage,
         instrumentationParams = instrumentationParams,
         timeoutMinutes = timeoutMinutes,
-        executionNumber = executionNumber
+        executionNumber = executionNumber,
+        enableDeviceDebug = enableDeviceDebug
     )
 
 

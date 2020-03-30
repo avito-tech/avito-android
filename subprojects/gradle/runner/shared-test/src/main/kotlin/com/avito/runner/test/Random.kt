@@ -15,3 +15,7 @@ fun randomLong(): Long {
 fun randomString(): String {
     return "test_" + randomInt()
 }
+
+fun randomBoolean(): Boolean {
+    return random.nextBoolean()
+}

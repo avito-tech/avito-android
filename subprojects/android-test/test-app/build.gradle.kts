@@ -178,6 +178,33 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
             }
         }
     }
+
+    configurationsContainer.register("uiDebug") {
+        tryToReRunOnTargetBranch = false
+        reportSkippedTests = false
+        rerunFailedTests = false
+        reportFlakyTests = false
+        // uncomment after 2020.3.6 release (MBS-8050)
+        // enableDeviceDebug = true
+
+        targetsContainer.register("api27") {
+            deviceName = "API27"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = Emulator27
+                    maximum = 1
+                    minimum = 1
+                    testsPerEmulator = 1
+                }
+            }
+        }
+    }
 }
 
 configurations.all {

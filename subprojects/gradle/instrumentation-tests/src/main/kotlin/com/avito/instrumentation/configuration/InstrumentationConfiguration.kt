@@ -52,6 +52,8 @@ open class InstrumentationConfiguration(val name: String) {
 
     var kubernetesNamespace = "android-emulator"
 
+    var enableDeviceDebug: Boolean = false
+
     /**
      * It must be a valid reportId.
      * Get test runs from report by id. Filter already succeed or new tests.
@@ -95,6 +97,7 @@ open class InstrumentationConfiguration(val name: String) {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
             },
             performanceType = performanceType,
+            enableDeviceDebug = enableDeviceDebug,
             keepFailedTestsFromReport = keepFailedTestsFromReport
         )
     }
@@ -113,6 +116,7 @@ open class InstrumentationConfiguration(val name: String) {
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
         val performanceType: PerformanceType?,
+        val enableDeviceDebug: Boolean,
         val keepFailedTestsFromReport: String?
     ) : Serializable {
 

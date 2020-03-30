@@ -18,7 +18,8 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off,
     tests: List<String>? = null,
     kubernetesNamespace: String = "kubernetesNamespace",
-    targets: List<TargetConfiguration.Data> = emptyList()
+    targets: List<TargetConfiguration.Data> = emptyList(),
+    enableDeviceDebug: Boolean = false
 ): InstrumentationConfiguration.Data = InstrumentationConfiguration.Data(
     name = name,
     performanceType = performanceType,
@@ -33,5 +34,6 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     keepTestsWithNames = tests,
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
+    enableDeviceDebug = enableDeviceDebug,
     keepFailedTestsFromReport = null
 )
