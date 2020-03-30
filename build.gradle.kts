@@ -322,6 +322,7 @@ fun Project.configureBintray(vararg publications: String) {
             userOrg = "avito"
             name = "avito-android"
             setLicenses("Apache-2.0")
+            vcsUrl = "https://github.com/avito-tech/avito-android.git"
 
             version(closureOf<VersionConfig> {
                 name = finalProjectVersion
