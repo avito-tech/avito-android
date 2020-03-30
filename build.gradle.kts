@@ -321,6 +321,7 @@ fun Project.configureBintray(vararg publications: String) {
             repo = "maven"
             userOrg = "avito"
             name = "avito-android"
+            setLicenses("Apache-2.0")
 
             version(closureOf<VersionConfig> {
                 name = finalProjectVersion
