@@ -319,7 +319,7 @@ fun Project.configureBintray(vararg publications: String) {
         publish = true
         pkg(closureOf<PackageConfig> {
             repo = "maven"
-            userOrg = "avito-tech"
+            userOrg = "avito"
             name = "avito-android"
 
             version(closureOf<VersionConfig> {
