@@ -31,7 +31,11 @@ class TestApp {
         )
             .generateIn(projectDir)
 
-        gradlew(projectDir, ":app:assembleAndroidTest", "--info", isPlugin = false)
+        gradlew(
+            projectDir,
+            ":app:assembleAndroidTest",
+            "--info"
+        )
             .assertThat()
             .buildSuccessful()
     }

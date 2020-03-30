@@ -19,3 +19,4 @@ dependencies {
     testImplementation(Dependencies.test.kotlinTest)
     testImplementation(Dependencies.test.kotlinTestJUnit)
 }
+
