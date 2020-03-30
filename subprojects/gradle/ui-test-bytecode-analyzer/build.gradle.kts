@@ -11,7 +11,9 @@ dependencies {
 
     testKit(Dependencies.gradle.kotlinPlugin)
     testKit(Dependencies.gradle.androidPlugin)
+    testKit(project(":subprojects:gradle:impact"))
 
     testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:gradle:impact-shared"))
     testImplementation(Dependencies.kotlinPoet)
 }

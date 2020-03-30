@@ -326,12 +326,17 @@ class AndroidAppModule(
 ) : AndroidModule {
 
     private val androidTestMutators = mutableListOf<File.() -> Unit>()
+    private val resourcesMutators = mutableListOf<File.() -> Unit>()
 
     /**
      * Create something inside androidTest directory
      */
     fun androidTest(block: File.() -> Unit) {
         androidTestMutators.add(block)
+    }
+
+    fun resources(block: File.() -> Unit) {
+        resourcesMutators.add(block)
     }
 
     override fun generateIn(file: File) {
@@ -343,6 +348,7 @@ class AndroidAppModule(
                         kotlinClass("SomeClass")
                     }
                     dir("res") {
+                        resourcesMutators.forEach { it.invoke(this) }
                         dir("values") {
                             file(
                                 "id.xml", content = """<?xml version="1.0" encoding="utf-8"?>

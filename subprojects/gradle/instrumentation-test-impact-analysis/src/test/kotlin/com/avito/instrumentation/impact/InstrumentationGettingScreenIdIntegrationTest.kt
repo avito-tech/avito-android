@@ -8,6 +8,7 @@ import com.avito.test.gradle.ciRun
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -17,7 +18,7 @@ class InstrumentationGettingScreenIdIntegrationTest {
 
     @Test
     fun `screens ids file contains screen from local androidTest module`(@TempDir tempPath: Path) {
-        val testProjectDir = tempPath.toFile()
+        val testProjectDir = File("XXX")
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,
@@ -37,7 +38,9 @@ class InstrumentationGettingScreenIdIntegrationTest {
             "--rerun-tasks",
             "--no-build-cache",
             "-PgitBranch=$sourceBranch",
-            "-PtargetBranch=$targetBranch"
+            "-PtargetBranch=$targetBranch",
+            "-Pandroid.namespacedRClass=true",
+            "-Pandroid.enableSeparateRClassCompilation=true"
         ).also { it.assertThat().buildSuccessful() }
 
         val output = impactAnalysisScreenIdsOutput(outputDir)

@@ -2,7 +2,9 @@ package com.avito.bytecode.metadata
 
 import com.avito.bytecode.TestApp
 import com.avito.bytecode.extractMetadata
+import com.avito.bytecode.invokes.bytecode.context.ContextLoader
 import com.avito.bytecode.metadata.IdFieldExtractor.ScreenToId
+import com.avito.impact.BytecodeResolver
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.io.File
