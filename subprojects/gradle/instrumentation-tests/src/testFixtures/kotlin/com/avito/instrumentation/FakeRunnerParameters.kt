@@ -8,12 +8,12 @@ fun ExecutionParameters.Companion.createStubInstance(
     testRunner: String = "com.test.TestRunner",
     namespace: String = "",
     logcatTags: List<String> = listOf(),
-    debugMode: Boolean = false
+    enableDeviceDebug: Boolean = false
 ) = ExecutionParameters(
     applicationPackageName = applicationPackageName,
     applicationTestPackageName = applicationTestPackageName,
     testRunner = testRunner,
     namespace = namespace,
     logcatTags = logcatTags,
-    debugMode = debugMode
+    enableDeviceDebug = enableDeviceDebug
 )

@@ -14,7 +14,7 @@ data class TestRunRequest(
     val timeoutMinutes: Long,
     val scheduling: Scheduling,
     val instrumentationParameters: Map<String, String>,
-    val debugMode: Boolean
+    val enableDeviceDebug: Boolean
 ) {
     data class Scheduling(
         val retryCount: Int,

@@ -19,7 +19,7 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     tests: List<String>? = null,
     kubernetesNamespace: String = "kubernetesNamespace",
     targets: List<TargetConfiguration.Data> = emptyList(),
-    debugMode: Boolean = false
+    enableDeviceDebug: Boolean = false
 ): InstrumentationConfiguration.Data = InstrumentationConfiguration.Data(
     name = name,
     performanceType = performanceType,
@@ -34,6 +34,6 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     keepTestsWithNames = tests,
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
-    debugMode = debugMode,
+    enableDeviceDebug = enableDeviceDebug,
     keepFailedTestsFromReport = null
 )

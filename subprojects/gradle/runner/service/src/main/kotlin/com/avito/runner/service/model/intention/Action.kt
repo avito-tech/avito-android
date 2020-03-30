@@ -11,7 +11,7 @@ data class InstrumentationTestRunAction(
     val instrumentationParams: Map<String, String>,
     val executionNumber: Int,
     val timeoutMinutes: Long,
-    val debugMode: Boolean
+    val enableDeviceDebug: Boolean
 ) {
     override fun toString(): String = "Run ${test.testName} test"
 }

@@ -8,7 +8,7 @@ data class ExecutionParameters(
     val testRunner: String,
     val namespace: String,
     val logcatTags: Collection<String>,
-    val debugMode: Boolean
+    val enableDeviceDebug: Boolean
 ) : Serializable {
     companion object
 }

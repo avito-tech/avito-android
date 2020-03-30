@@ -107,7 +107,7 @@ interface TestExecutor {
                             testRunner = executionParameters.testRunner,
                             timeoutMinutes = TEST_TIMEOUT_MINUTES,
                             instrumentationParameters = targetTestRun.target.instrumentationParams,
-                            debugMode = executionParameters.debugMode
+                            enableDeviceDebug = executionParameters.enableDeviceDebug
                         )
                     }
 

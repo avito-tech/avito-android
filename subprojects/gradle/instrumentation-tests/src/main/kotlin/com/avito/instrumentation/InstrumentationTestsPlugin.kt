@@ -180,7 +180,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 testRunner = runner,
                                 namespace = instrumentationConfiguration.kubernetesNamespace,
                                 logcatTags = configurationData.logcatTags,
-                                debugMode = instrumentationConfiguration.debugMode
+                                enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
                             )
 
                             val useArtifactsFromTargetBranch =

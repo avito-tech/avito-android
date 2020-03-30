@@ -18,7 +18,7 @@ fun generateTestRunRequest(
     testPackage: String = randomString(),
     testRunner: String = randomString(),
     timeoutMinutes: Long = randomLong(),
-    debugMode: Boolean = randomBoolean(),
+    enableDeviceDebug: Boolean = randomBoolean(),
     scheduling: TestRunRequest.Scheduling = TestRunRequest.Scheduling(
         retryCount = 0,
         minimumSuccessCount = 1,
@@ -36,5 +36,5 @@ fun generateTestRunRequest(
         timeoutMinutes = timeoutMinutes,
         instrumentationParameters = emptyMap(),
         scheduling = scheduling,
-        debugMode = debugMode
+        enableDeviceDebug = enableDeviceDebug
     )
