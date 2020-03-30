@@ -37,7 +37,7 @@ class ClearK8SDeploymentsByNamespaces(
                         deployments.checkDeploymentLeak(deployment)
                     }
             } catch (e: Throwable) {
-                throw RuntimeException("Error when checked leak in namespace=$namespace", e)
+                throw RuntimeException("Error when checked leak in namespace=$namespace. If reason wasn't clear read previous discussion http://links.k.avito.ru/Az", e)
             }
         }
     }
