@@ -18,7 +18,8 @@ fun gradlew(
     projectDir: File,
     vararg args: String,
     dryRun: Boolean = false,
-    expectFailure: Boolean = false
+    expectFailure: Boolean = false,
+    isPlugin: Boolean = true
 ): TestResult {
 
     val defaultArguments = mutableListOf(
@@ -41,7 +42,11 @@ fun gradlew(
         val builder = GradleRunner.create()
             .withProjectDir(projectDir)
             .withArguments(finalArgs)
-            .withPluginClasspath()
+            .let {
+                if (isPlugin) {
+                    it.withPluginClasspath()
+                } else it
+            }
             /**
              * WARNING! it breaks classpath and causes failures in AGP's tasks
              * see. MBS-5462

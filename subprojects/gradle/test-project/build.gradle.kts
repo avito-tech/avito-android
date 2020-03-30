@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":subprojects:gradle:utils"))
     implementation(project(":subprojects:gradle:android"))
     implementation(gradleTestKit())
+    implementation(Dependencies.kotlinPoet)
     implementation(Dependencies.kotlinReflect)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.test.truth)

@@ -2,6 +2,7 @@
 
 package com.avito.test.gradle
 
+import com.squareup.kotlinpoet.FileSpec
 import java.io.File
 
 fun File.kotlinClass(className: String, content: () -> String? = { "class $className" }) =
@@ -17,6 +18,12 @@ fun File.kotlinClass(
         """.trimIndent()
     }
 ) = file("${packageName.replace(".", "/")}/$className.kt", content.invoke())
+
+fun File.kotlinClass(content: FileSpec): File = kotlinClass(
+    className = content.name,
+    packageName = content.packageName,
+    content = content::toString
+)
 
 fun File.module(
     name: String,

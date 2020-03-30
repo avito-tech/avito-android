@@ -9,4 +9,5 @@ dependencies {
     implementation(Dependencies.gson)
 
     testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(Dependencies.kotlinPoet)
 }

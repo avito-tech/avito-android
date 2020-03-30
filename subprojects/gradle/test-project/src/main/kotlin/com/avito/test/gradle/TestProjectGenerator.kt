@@ -220,7 +220,8 @@ plugins {
 }
 
 $buildGradleExtra
-""")
+"""
+                )
             }
         }
     }
@@ -316,7 +317,6 @@ class AndroidAppModule(
     override val plugins: List<String> = emptyList(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
-    private val instrumentationTests: List<InstrumentationTest> = emptyList(),
     private val dependencies: String = "",
     private val versionName: String = "",
     private val versionCode: String = "",
@@ -324,6 +324,15 @@ class AndroidAppModule(
     private val imports: List<String> = emptyList(),
     private val mutator: File.() -> Unit = {}
 ) : AndroidModule {
+
+    private val androidTestMutators = mutableListOf<File.() -> Unit>()
+
+    /**
+     * Create something inside androidTest directory
+     */
+    fun androidTest(block: File.() -> Unit) {
+        androidTestMutators.add(block)
+    }
 
     override fun generateIn(file: File) {
         file.module(name) {
@@ -348,7 +357,7 @@ class AndroidAppModule(
                 dir("androidTest") {
                     dir("java") {
                         kotlinClass("SomeClass")
-                        instrumentationTests.forEach { it.generateIn(this) }
+                        androidTestMutators.forEach { it.invoke(this) }
                     }
                 }
             }

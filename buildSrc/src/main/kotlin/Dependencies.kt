@@ -18,6 +18,7 @@ object Dependencies {
     val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect"
     val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.9"
     val kotlinCompilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+    val kotlinPoet = "com.squareup:kotlinpoet:1.5.0"
     val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.2"
     val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     val retrofitConverterGson = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"

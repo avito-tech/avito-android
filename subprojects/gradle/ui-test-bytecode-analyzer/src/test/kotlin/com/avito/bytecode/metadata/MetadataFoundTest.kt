@@ -1,9 +1,11 @@
 package com.avito.bytecode.metadata
 
+import com.avito.bytecode.TestApp
 import com.avito.bytecode.extractMetadata
 import com.avito.bytecode.metadata.IdFieldExtractor.ScreenToId
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class MetadataFoundTest {
 
@@ -37,6 +39,12 @@ class MetadataFoundTest {
                 "332"
             )
         )
+    }
+
+    @Test
+    fun `metadata xxx`() {
+        val projectDir = File("XXX")
+        TestApp().createTestProject(projectDir)
     }
 
     @Test
