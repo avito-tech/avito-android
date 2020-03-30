@@ -19,13 +19,14 @@ class TestExecutionClient {
     private val results: Channel<ClientTestRunResult> = Channel(Channel.UNLIMITED)
 
     fun start(executionServiceCommunication: IntentionExecutionService.Communication): Communication {
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (request in requests) {
                 statesMapping[request.intention] = request.state
                 executionServiceCommunication.intentions.send(request.intention)
             }
         }
-
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (serviceResult in executionServiceCommunication.results) {
                 val sourceState: TestExecutionState = statesMapping[serviceResult.intention]

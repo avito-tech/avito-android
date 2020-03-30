@@ -24,7 +24,7 @@ class MockIntentionExecutionService(
     private val results: Channel<IntentionResult> = Channel(Channel.UNLIMITED)
 
     override fun start(): IntentionExecutionService.Communication {
-
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (intention in intentions) {
                 if (testIntentionExecutionResultsQueue.isEmpty()) {

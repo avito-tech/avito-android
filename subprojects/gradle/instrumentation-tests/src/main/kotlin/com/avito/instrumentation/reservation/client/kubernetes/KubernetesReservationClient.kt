@@ -9,7 +9,6 @@ import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.util.forEachAsync
 import com.avito.instrumentation.util.iterateInParallel
-import com.avito.instrumentation.util.merge
 import com.avito.instrumentation.util.waitForCondition
 import com.avito.utils.logging.CILogger
 import com.fkorotkov.kubernetes.apps.metadata
@@ -65,46 +64,44 @@ class KubernetesReservationClient(
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
         serialsChannel: SendChannel<Serial>,
-        reservationDeployments: SendChannel<String>
+        reservationDeployments: SendChannel<String> // TODO: make this state internal
     ) {
         if (state !is State.Idling) {
             val error = RuntimeException("Unable to start reservation job. Already started")
             logger.critical(error.message.orEmpty())
             throw error
         }
-
         logger.debug("Starting deployments for configuration: $configurationName...")
+        val podsChannel = Channel<Pod>()
+        state = State.Reserving(pods = podsChannel)
 
-        val podsChannel: Channel<Pod> = reservations
-            .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName()
-                reservationDeployments.send(deploymentName)
+        reservations.forEach { reservation ->
+            val deploymentName = generateDeploymentName()
+            reservationDeployments.send(deploymentName)
 
-                logger.debug("Starting deployment: $deploymentName")
-                when (reservation.device) {
-                    is Device.Emulator -> getEmulatorDeployment(
-                        emulator = reservation.device,
-                        deploymentName = deploymentName,
-                        count = reservation.count
-                    )
-                    is Device.Phone -> getDeviceDeployment(
-                        count = reservation.count,
-                        phone = reservation.device,
-                        deploymentName = deploymentName
-                    )
-                    is Device.LocalEmulator -> throw IllegalStateException(
-                        "Local emulator ${reservation.device} is unsupported in kubernetes reservation"
-                    )
-                }.create()
-                logger.debug("Deployment created: $deploymentName")
-
-                listenPodsFromDeployment(
+            logger.debug("Starting deployment: $deploymentName")
+            when (reservation.device) {
+                is Device.Emulator -> getEmulatorDeployment(
+                    emulator = reservation.device,
+                    deploymentName = deploymentName,
+                    count = reservation.count
+                )
+                is Device.Phone -> getDeviceDeployment(
+                    count = reservation.count,
+                    phone = reservation.device,
                     deploymentName = deploymentName
                 )
-            }
-            .merge()
+                is Device.LocalEmulator -> throw IllegalStateException(
+                    "Local emulator ${reservation.device} is unsupported in kubernetes reservation"
+                )
+            }.create()
+            logger.debug("Deployment created: $deploymentName")
 
-        state = State.Reserving(channel = podsChannel)
+            listenPodsFromDeployment(
+                deploymentName = deploymentName,
+                podsChannel = podsChannel
+            )
+        }
 
         //todo use Flow
         @Suppress("DEPRECATION")
@@ -145,11 +142,12 @@ class KubernetesReservationClient(
         reservationDeployments: Collection<String>
     ) {
         if (state !is State.Reserving) {
+            // TODO: check on client side beforehand
             val error = RuntimeException("Unable to stop reservation job. Hasn't started yet")
             logger.critical(error.message.orEmpty())
             throw error
         }
-        (state as State.Reserving).channel.close()
+        (state as State.Reserving).pods.close()
 
         logger.info("Releasing devices for configuration: $configurationName...")
 
@@ -434,27 +432,25 @@ class KubernetesReservationClient(
     }
 
     private fun listenPodsFromDeployment(
-        deploymentName: String
-    ): Channel<Pod> {
-        val result: Channel<Pod> = Channel()
-
+        deploymentName: String,
+        podsChannel: SendChannel<Pod>
+    ) {
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
+            logger.debug("Start listening devices for $deploymentName")
             var pods = podsFromDeployment(deploymentName)
 
-            while (!result.isClosedForSend && pods.isNotEmpty()) {
+            while (!podsChannel.isClosedForSend && pods.isNotEmpty()) {
                 pods.forEach { pod ->
-                    result.send(pod)
+                    podsChannel.send(pod)
                 }
 
-                delay(
-                    TimeUnit.SECONDS.toMillis(5)
-                )
+                delay(TimeUnit.SECONDS.toMillis(5))
 
                 pods = podsFromDeployment(deploymentName)
             }
+            logger.debug("Finish listening devices for $deploymentName")
         }
-
-        return result
     }
 
     private fun generateDeploymentName(): String =
@@ -479,7 +475,7 @@ class KubernetesReservationClient(
 
     sealed class State {
         class Reserving(
-            val channel: Channel<Pod>
+            val pods: Channel<Pod>
         ) : State()
 
         object Idling : State()

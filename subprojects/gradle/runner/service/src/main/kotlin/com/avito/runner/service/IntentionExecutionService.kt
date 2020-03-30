@@ -40,7 +40,7 @@ class IntentionExecutionServiceImplementation(
         Channel(Channel.UNLIMITED)
 
     override fun start(): IntentionExecutionService.Communication {
-
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (device in devicesObserver.observeDevices()) {
                 DeviceWorker(
@@ -52,7 +52,7 @@ class IntentionExecutionServiceImplementation(
                 ).run()
             }
         }
-
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (intention in intentions) {
                 intentionsRouter.sendIntention(intention = intention)

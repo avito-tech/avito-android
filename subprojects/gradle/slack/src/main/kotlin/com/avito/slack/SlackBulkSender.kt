@@ -35,6 +35,7 @@ class CoroutinesSlackBulkSender(
         //todo use Flow
         @Suppress("DEPRECATION")
         val tickedQueue = requestQueue.zip(ticker) { request, _ -> request }
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (request in tickedQueue) {
                 sender.sendMessage(request)
