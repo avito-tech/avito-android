@@ -8,13 +8,13 @@ help:
 publish_to_maven_local:
 	./gradlew publishToMavenLocal -PprojectVersion=local $(log_level)
 
-test_app_instrumentation_debug:
+test_app_instrumentation_gradle_debug:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi -Dorg.gradle.jvmargs='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=5005,suspend=y' --no-daemon -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) $(log_level)
 
 test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) $(log_level)
 
-test_app_debug:
+test_app_instrumentation_android_debug:
 	./gradlew :subprojects:android-test:test-app:instrumentationUiDebug -PinfraVersion=local -Pci=true -PkubernetesContext=beta -PkubernetesCaCertFile=$(ca_cert_file) -PtestBuildType=$(test_build_type) $(log_level)
 
 dynamic_properties:
