@@ -141,7 +141,7 @@ private fun androidHomeFromLocalProperties(
     }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 private fun String?.hasContent(): Boolean {
     contract {
         returns(true) implies (this@hasContent != null)

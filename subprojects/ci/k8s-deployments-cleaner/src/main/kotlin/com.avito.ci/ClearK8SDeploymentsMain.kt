@@ -11,7 +11,7 @@ import kotlinx.cli.delimiter
 import kotlinx.cli.required
 
 object ClearK8SDeploymentsMain {
-    @UseExperimental(ExperimentalCli::class)
+    @OptIn(ExperimentalCli::class)
     abstract class ClearDeployments(
         name: String, description: String
     ) : Subcommand(name, description) {
