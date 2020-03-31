@@ -2,7 +2,6 @@ package com.avito.bytecode.metadata
 
 import com.avito.bytecode.invokes.bytecode.context.Context
 import org.apache.bcel.classfile.JavaClass
-import java.lang.RuntimeException
 
 interface IdFieldExtractor {
 
@@ -13,7 +12,7 @@ interface IdFieldExtractor {
         targetClasses: Set<JavaClass>
     ): Set<ScreenToId>
 
-    class Impl(private val fieldName: String) : IdFieldExtractor {
+    class Impl(private val fieldName: String, private val logger: (String) -> Unit) : IdFieldExtractor {
 
         override fun extract(
             context: Context,
@@ -26,10 +25,11 @@ interface IdFieldExtractor {
                         .find { it.name == fieldName }
                         ?.let { field ->
                             try {
-                                ScreenToId(
-                                    screenClass = clazz.className,
-                                    rootViewRId = field.constantValue.toString()
-                                )
+                                val constantValue = field.constantValue
+                                if (constantValue == null) {
+                                    logger.invoke("Can't get constant value $fieldName from class ${clazz.className}; field attributes are: ${field.attributes}")
+                                }
+                                clazz.className to constantValue?.toString()
                             } catch (t: Throwable) {
                                 throw RuntimeException(
                                     "Failed to get field value: $fieldName from class: ${clazz.className}", t
@@ -37,9 +37,12 @@ interface IdFieldExtractor {
                             }
                         }
                 }
+                .filter { it.second != null }
+                .map { ScreenToId(screenClass = it.first, rootViewRId = it.second!!) }
                 .toSet()
         }
     }
 }
 
-fun Set<IdFieldExtractor.ScreenToId>.toMap(): Map<String, Int> = map { it.screenClass to it.rootViewRId.toInt() }.toMap()
+fun Set<IdFieldExtractor.ScreenToId>.toMap(): Map<String, Int> =
+    map { it.screenClass to it.rootViewRId.toInt() }.toMap()

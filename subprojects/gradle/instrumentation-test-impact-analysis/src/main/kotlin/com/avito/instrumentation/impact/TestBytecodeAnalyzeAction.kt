@@ -146,8 +146,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject> =
             @Suppress("DEPRECATION")
             finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(
-                    reportType = ReportType.ANDROID_TESTS
-                )
+                reportType = ReportType.ANDROID_TESTS
+            )
                 .asSequence()
                 .filter { it.project.isAndroid() }
                 .map { AndroidProject(it.project).debug.manifest.getPackage() to it }
@@ -308,7 +308,9 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         context: Context,
         targetClasses: Set<JavaClass>
     ): Map<Screen, RootId> {
-        val idFieldExtractor = IdFieldExtractor.Impl(fieldName = config.screenMarkerMetadataField.get())
+        val idFieldExtractor = IdFieldExtractor.Impl(
+            fieldName = config.screenMarkerMetadataField.get(),
+            logger = { ciLogger.info(it) })
         val screenToIds: Set<IdFieldExtractor.ScreenToId> = idFieldExtractor.extract(
             context = context,
             targetClasses = targetClasses

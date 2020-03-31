@@ -55,7 +55,7 @@ fun prepareInvocationsFinder(): InvocationGraphBuildingResult {
     )
 }
 
-fun prepareMetadataExtractor() = IdFieldExtractor.Impl(fieldName = METADATA_FIELD_NAME)
+fun prepareMetadataExtractor() = IdFieldExtractor.Impl(fieldName = METADATA_FIELD_NAME, logger = { println(it) })
 
 fun findInvocations(): Map<String, Collection<String>> = prepareInvocationsFinder().let {
     TargetClassesByTestsInvokesFinder().find(
