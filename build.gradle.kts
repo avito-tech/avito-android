@@ -242,6 +242,7 @@ subprojects {
                 systemProperty("kotlinVersion", plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion)
                 systemProperty("compileSdkVersion", compileSdk)
                 systemProperty("buildToolsVersion", buildTools)
+                systemProperty("androidGradlePluginVersion", Dependencies.Versions.androidGradlePlugin)
 
                 /**
                  * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE

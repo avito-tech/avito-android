@@ -10,6 +10,7 @@ object Dependencies {
         val androidX = "1.0.0"
         val espresso = "3.2.0"
         val mockito = "3.3.3"
+        val androidGradlePlugin = System.getProperty("androidGradlePluginVersion")
     }
 
     val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
@@ -57,7 +58,7 @@ object Dependencies {
     val freeReflection = "me.weishu:free_reflection:2.2.0"
 
     object gradle {
-        val androidPlugin = "com.android.tools.build:gradle:3.5.3"
+        val androidPlugin = "com.android.tools.build:gradle:${Versions.androidGradlePlugin}"
         val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin"
         object avito {
             val kotlinDslSupport = "com.avito.android:kotlin-dsl-support"
