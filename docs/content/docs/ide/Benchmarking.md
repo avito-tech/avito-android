@@ -5,6 +5,8 @@ type: docs
 
 # Бенчмарки IDE
 
+{{< avito >}}
+
 Используем [Performance testing plugin](https://intellij-support.jetbrains.com/hc/en-us/articles/207241225-Performance-testing-plugin).
 
 {{< hint warning>}}
