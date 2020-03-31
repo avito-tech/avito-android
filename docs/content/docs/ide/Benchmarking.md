@@ -5,20 +5,21 @@ type: docs
 
 # Бенчмарки IDE
 
-Используем [Performance testing plugin](https://intellij-support.jetbrains.com/hc/en-us/articles/207241225-Performance-testing-plugin-in-PhpStorm).
+Используем [Performance testing plugin](https://intellij-support.jetbrains.com/hc/en-us/articles/207241225-Performance-testing-plugin).
 
 ## Как попробовать?
 
 1. Установи плагин
-1. Запусти **Help > Diagnostic > Execute Performance Scrip from File**\
-Выбери готовый сценарий из /benchmarks/ide
+1. Запусти **Help > Diagnostic > Execute Performance Script...**
+1. Выбери готовый сценарий из `/benchmarks/ide` и вставь содержимое скрипта в открывшееся диалоговое
+   окно (содержимое выпадающего списка **Please select scenario:** не имеет значения)
 
 ## Как проверить гипотезу и измерить разницу?
 
 Используем в ручном режиме:
 
 1. Прогони бенчмарк несколько раз до внесения изменений в проект
-1. Сохрани резульататы. Они отобразятся в диалоге после прогона бенчмарка
+1. Сохрани результаты. Они отобразятся в диалоге после прогона бенчмарка
 1. Внеси изменения в проект
 1. Прогони бенчмарк несколько раз, сравни результаты.
 
