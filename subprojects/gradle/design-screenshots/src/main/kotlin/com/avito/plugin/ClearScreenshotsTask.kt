@@ -33,20 +33,5 @@ open class ClearScreenshotsTask : DefaultTask() {
         }.onFailure {
             ciLogger.info("Cannot list screenshot directory")
         }
-        clearOutputFiles()
-    }
-
-
-    private fun clearOutputFiles() {
-        File(project.rootDir.path).listFiles()?.forEach { file ->
-            if (!file.isDirectory && file.name.endsWith(".output")) {
-                try {
-                    file.delete()
-                } catch (exception: Exception) {
-                    ciLogger.info("Cannot clear ${file.name}, reason ${exception.message}")
-                }
-            }
-        }
-        ciLogger.info("Cleared .output files")
     }
 }
