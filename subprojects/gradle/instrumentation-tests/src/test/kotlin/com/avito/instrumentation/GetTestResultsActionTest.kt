@@ -18,9 +18,7 @@ class GetTestResultsActionTest {
 
     @Test
     fun `action - failed and send critical event for configuration without targets`() {
-        val configuration = InstrumentationConfiguration.Data.createStubInstance(
-            targets = emptyList()
-        )
+        val configuration = InstrumentationConfiguration.Data.createStubInstance()
 
         Try {
             createGetTestResultsAction(configuration).getTestResults()

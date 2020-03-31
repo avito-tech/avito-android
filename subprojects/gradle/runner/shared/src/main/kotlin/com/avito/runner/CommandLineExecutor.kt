@@ -28,13 +28,14 @@ interface CommandLineExecutor {
             output: File?
         ): Observable<ProcessNotification> = Observable.create(
             { emitter ->
-                val outputFile: File = when {
-                    output == null || output.isDirectory -> {
-                        prepareOutputFile(output, true)
+                val outputFile: File? = when {
+                    output == null -> null
+                    output.isDirectory -> {
+                        prepareOutputFile(command, output)
                     }
                     else -> output
                 }
-                outputFile.apply { parentFile?.mkdirs() }
+                outputFile?.apply { parentFile?.mkdirs() }
 
                 val commandAndArgs: List<String> = listOf(command) + args
                 val process: Process = ProcessBuilder(commandAndArgs)
@@ -59,7 +60,7 @@ interface CommandLineExecutor {
                     )
                     buffer.appendln(line)
 
-                    outputFile.appendText("$line${System.lineSeparator()}")
+                    outputFile?.appendText("$line${System.lineSeparator()}")
 
                     line = reader.readLine()
                 }
@@ -80,15 +81,14 @@ interface CommandLineExecutor {
             }, Emitter.BackpressureMode.ERROR
         )
 
-        private fun prepareOutputFile(parent: File?, keepOnExit: Boolean): File = Random()
-            .nextInt()
-            .let { System.nanoTime() + it }
+        private fun prepareOutputFile(
+            command: String,
+            parent: File?
+        ): File = Random().nextInt()
+            .let { "$command#$it.output" }
             .let { name ->
-                File(parent, "$name.output").apply {
+                File(parent, name).apply {
                     createNewFile()
-                    if (!keepOnExit) {
-                        deleteOnExit()
-                    }
                 }
             }
     }

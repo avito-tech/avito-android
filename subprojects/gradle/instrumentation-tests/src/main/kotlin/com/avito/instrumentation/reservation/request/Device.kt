@@ -9,7 +9,7 @@ sealed class Device : Serializable {
     abstract val api: Int
     abstract val description: String
 
-    class LocalEmulator(
+    data class LocalEmulator(
         override val name: String,
         override val api: Int,
         override val model: String = "Android_SDK_built_for_x86"

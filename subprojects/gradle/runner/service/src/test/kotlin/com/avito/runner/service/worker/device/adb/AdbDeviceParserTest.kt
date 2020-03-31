@@ -1,5 +1,6 @@
 package com.avito.runner.service.worker.device.adb
 
+import com.avito.runner.service.worker.device.Serial
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -22,7 +23,7 @@ internal class AdbDeviceParserTest {
         assertThat(devices).hasSize(2)
         assertThat(devices.first()).isEqualTo(
             AdbDeviceParams(
-                "ce11182b8452d0070b",
+                Serial.Local("ce11182b8452d0070b"),
                 "SM_G950F",
                 true
             )
@@ -30,7 +31,7 @@ internal class AdbDeviceParserTest {
 
         assertThat(devices.last()).isEqualTo(
             AdbDeviceParams(
-                "10.21.100.53:5555",
+                Serial.Remote("10.21.100.53:5555"),
                 "Android_SDK_built_for_x86",
                 true
             )

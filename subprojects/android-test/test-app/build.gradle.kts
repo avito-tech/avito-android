@@ -90,6 +90,9 @@ dependencies {
     androidTestImplementation(project(":subprojects:common:okhttp"))
     androidTestImplementation(project(":subprojects:common:time"))
 
+    androidTestImplementation(Dependencies.androidTest.runner)
+    androidTestUtil(Dependencies.androidTest.orchestrator)
+
     androidTestImplementation(Dependencies.test.junit)
     androidTestImplementation(Dependencies.okhttp)
     androidTestImplementation(Dependencies.okhttpLogging)
@@ -171,6 +174,33 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
                     maximum = 50
                     minimum = 2
                     testsPerEmulator = 3
+                }
+            }
+        }
+    }
+
+    configurationsContainer.register("uiDebug") {
+        tryToReRunOnTargetBranch = false
+        reportSkippedTests = false
+        rerunFailedTests = false
+        reportFlakyTests = false
+        // uncomment after 2020.3.6 release (MBS-8050)
+        // enableDeviceDebug = true
+
+        targetsContainer.register("api27") {
+            deviceName = "API27"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = Emulator27
+                    maximum = 1
+                    minimum = 1
+                    testsPerEmulator = 1
                 }
             }
         }

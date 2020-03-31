@@ -17,6 +17,7 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
+import com.avito.runner.service.worker.device.Serial
 import com.avito.utils.getStackTraceString
 import org.funktionale.tries.Try
 import rx.Observable
@@ -27,7 +28,7 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 data class AdbDevice(
-    override val id: String,
+    override val id: Serial,
     override val model: String,
     override val online: Boolean,
     private val adb: String,
@@ -88,7 +89,8 @@ data class AdbDevice(
             testRunnerClass = action.testRunner,
             instrumentationArguments = finalInstrumentationArguments,
             outputDir = outputDir,
-            timeoutMinutes = action.timeoutMinutes
+            timeoutMinutes = action.timeoutMinutes,
+            enableDeviceDebug = action.enableDeviceDebug
         )
             .map {
                 when (it) {
@@ -264,9 +266,11 @@ data class AdbDevice(
         testRunnerClass: String,
         instrumentationArguments: Map<String, String>,
         outputDir: File,
-        timeoutMinutes: Long
+        timeoutMinutes: Long,
+        enableDeviceDebug: Boolean
     ): Single<InstrumentationTestCaseRun> {
-        val logsDir = File(File(outputDir, "logs"), id).apply { mkdirs() }
+        val logsDir = File(File(outputDir, "logs"), id.value)
+            .apply { mkdirs() }
         val started = System.currentTimeMillis()
 
         val output = executeShellCommand(
@@ -275,6 +279,7 @@ data class AdbDevice(
                 "instrument",
                 "-w", // wait for instrumentation to finish before returning.  Required for test runners.
                 "-r", // raw mode is necessary for parsing
+                "-e debug $enableDeviceDebug",
                 instrumentationArguments.formatInstrumentationOptions(),
                 "$testPackageName/$testRunnerClass"
             ),
@@ -312,7 +317,7 @@ data class AdbDevice(
         waitForAdb(bridge)
 
         return bridge.devices.find {
-            it.serialNumber == id
+            it.serialNumber == id.value
         } ?: throw RuntimeException("Device $id not found")
     }
 
@@ -400,7 +405,7 @@ data class AdbDevice(
     ): Observable<ProcessNotification> =
         commandLine.executeProcess(
             command = adb,
-            args = listOf("-s", id) + command,
+            args = listOf("-s", id.value) + command,
             output = redirectOutputTo
         )
 

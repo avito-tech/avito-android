@@ -12,7 +12,7 @@ import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
-import com.avito.runner.test.randomString
+import com.avito.runner.test.randomSerial
 import com.avito.runner.test.receiveAvailable
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertWithMessage
@@ -56,7 +56,7 @@ class DeviceWorkerTest {
             )
             val successfulDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomString(),
+                id = randomSerial(),
                 api = 22,
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
@@ -146,7 +146,7 @@ class DeviceWorkerTest {
             )
             val freezeDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomString(),
+                id = randomSerial(),
                 api = 22,
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(

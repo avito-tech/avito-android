@@ -7,7 +7,6 @@ import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.kotlin.dsl.getOptionalFloatProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Project
 import java.io.Serializable
@@ -81,8 +80,6 @@ interface EnvArgs {
 
     val isRerunDisabled: Boolean
 
-    val testDownsamplingFactor: Float?
-
     val build: Build
 
     class Impl(project: Project) : EnvArgs, Serializable {
@@ -91,10 +88,6 @@ interface EnvArgs {
 
         override val isRerunDisabled: Boolean =
             project.getBooleanProperty("avito.tests.disableRerunOnTargetBranch", default = false)
-
-        override val testDownsamplingFactor: Float? =
-            project.getOptionalFloatProperty("avito.tests.downsamplingFactor", default = null)
-
 
         init {
             build = when (project.getOptionalStringProperty("avito.build", "teamcity")) {
@@ -131,7 +124,6 @@ interface EnvArgs {
         override val buildNumber: String = ""
         override val buildId: String = ""
         override val isRerunDisabled: Boolean = false
-        override val testDownsamplingFactor: Float? = null
         override val build: Build = Build.Local(Build.Local.Id.FOR_STUDIO_RUN)
     }
 }

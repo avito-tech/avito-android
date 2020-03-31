@@ -1,14 +1,14 @@
 package com.avito.instrumentation.reservation.adb
 
-import com.google.common.net.InetAddresses
+import com.avito.runner.service.worker.device.Serial
 
 class AndroidDebugBridge(
     private val logger: (String) -> Unit = {} // TODO: use Logger interface
 ) {
 
-    fun getDevice(serial: String): Device {
-        return if (isRemote(serial)) {
-            Device(
+    fun getDevice(serial: Serial): Device {
+        return if (serial is Serial.Remote) {
+            RemoteDevice(
                 serial = serial,
                 logger = logger
             )
@@ -19,10 +19,4 @@ class AndroidDebugBridge(
             )
         }
     }
-
-    private fun isRemote(serial: String): Boolean {
-        return serial.contains(':')
-            && InetAddresses.isInetAddress(serial.substringBefore(':'))
-    }
-
 }

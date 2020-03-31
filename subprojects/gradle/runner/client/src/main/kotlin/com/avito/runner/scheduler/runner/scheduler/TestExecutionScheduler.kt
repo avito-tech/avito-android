@@ -22,6 +22,7 @@ class TestExecutionScheduler(
         executionClient: TestExecutionClient.Communication
     ): Communication {
 
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (testRunResult in executionClient.results) {
 
@@ -49,6 +50,7 @@ class TestExecutionScheduler(
             }
         }
 
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
             for (request in requests) {
                 val testState =

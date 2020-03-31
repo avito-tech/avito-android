@@ -1,5 +1,6 @@
 package com.avito.instrumentation.reservation.adb
 
+import com.avito.runner.service.worker.device.Serial
 import java.io.File
 
 class EmulatorsLogsReporter(
@@ -8,17 +9,17 @@ class EmulatorsLogsReporter(
     private val logcatTags: Collection<String>
 ) {
 
-    fun reportEmulatorLogs(emulatorName: String, log: String) {
+    fun reportEmulatorLogs(emulatorName: Serial, log: String) {
         getFile(
             dir = File(outputFolder, DEVICES_LOGS),
-            emulatorName = emulatorName
+            emulatorName = emulatorName.value
         ).writeText(log)
     }
 
-    fun redirectLogcat(emulatorName: String, device: Device) {
+    fun redirectLogcat(emulatorName: Serial, device: Device) {
         val logcatFile = getFile(
             dir = logcatDir,
-            emulatorName = emulatorName
+            emulatorName = emulatorName.value
         )
 
         device.redirectLogcatToFile(

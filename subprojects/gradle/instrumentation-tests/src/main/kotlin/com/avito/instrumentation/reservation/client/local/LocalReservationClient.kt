@@ -2,13 +2,12 @@ package com.avito.instrumentation.reservation.client.local
 
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
+import com.avito.runner.service.worker.device.Serial
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device as RequestedDevice
 import com.avito.runner.service.worker.device.Device as WorkerDevice
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.util.forEachAsync
-import com.avito.instrumentation.util.iterateInParallel
-import com.avito.instrumentation.util.merge
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.logging.CILogger
 import kotlinx.coroutines.GlobalScope
@@ -17,11 +16,10 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Suppress("EXPERIMENTAL_API_USAGE")
-class LocalReservationClient(
+internal class LocalReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
     private val devicesManager: AdbDevicesManager,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
@@ -33,33 +31,31 @@ class LocalReservationClient(
 
     override suspend fun claim(
         reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<String>,
-        reservationDeployments: SendChannel<String>
+        serialsChannel: SendChannel<Serial>,
+        reservationDeployments: SendChannel<String> // TODO: make this state internal
     ) {
         if (state !is State.Idling) {
             val error = RuntimeException("Unable to start reservation job. Already started")
             logger.critical(error.message.orEmpty())
             throw error
         }
+        logger.debug("Starting reservations for the configuration: $configurationName...")
 
-        logger.debug("Starting deployments for the configuration: $configurationName...")
+        val devicesChannel = Channel<WorkerDevice>(Channel.UNLIMITED)
+        state = State.Reserving(devices = devicesChannel)
 
-        val devicesChannel: Channel<WorkerDevice> = reservations
-            .iterateInParallel { _, reservation ->
-                val deploymentName = generateDeploymentName()
-                reservationDeployments.send(deploymentName)
+        reservations.forEach { reservation ->
+            val fakeDeploymentName = "local-stub"
+            reservationDeployments.send(fakeDeploymentName)
 
-                logger.debug("Starting deployment: $deploymentName")
-                check(reservation.device is RequestedDevice.LocalEmulator) {
-                    "Non-local emulator ${reservation.device} is unsupported in local reservation"
-                }
-                logger.debug("Deployment created: $deploymentName")
-
-                listenEmulators(reservation)
+            logger.debug("Starting deployment: $fakeDeploymentName")
+            check(reservation.device is RequestedDevice.LocalEmulator) {
+                "Non-local emulator ${reservation.device} is unsupported in local reservation"
             }
-            .merge()
+            logger.debug("Deployment created: $fakeDeploymentName")
 
-        state = State.Reserving(channel = devicesChannel)
+            listenEmulators(reservation, devicesChannel)
+        }
 
         //todo use Flow
         @Suppress("DEPRECATION")
@@ -68,7 +64,7 @@ class LocalReservationClient(
             .forEachAsync { workerDevice ->
                 logger.info("Found new emulator: ${workerDevice.id}")
 
-                val serial = emulatorSerialName(workerDevice)
+                val serial = workerDevice.id
                 val device = androidDebugBridge.getDevice(serial)
                 val isReady = device.waitForBoot()
                 if (isReady) {
@@ -78,11 +74,9 @@ class LocalReservationClient(
                     )
                     serialsChannel.send(serial)
 
-                    logger.info("Device $serial sent outside for further usage")
+                    logger.info("Device $serial is reserved for further usage")
                 } else {
-                    logger.info("Device $serial can't load device. Disconnect and delete")
-                    val isDisconnected = device.disconnect().isSuccess()
-                    logger.info("Disconnect device $serial: $isDisconnected. Can't boot it.")
+                    logger.info("Device $serial can't be used")
                 }
             }
     }
@@ -91,19 +85,54 @@ class LocalReservationClient(
         reservationDeployments: Collection<String>
     ) {
         if (state !is State.Reserving) {
+            // TODO: check the state on client side beforehand
             val error = RuntimeException("Unable to stop reservation job. Hasn't started yet")
             logger.critical(error.message.orEmpty())
             throw error
         }
-        (state as State.Reserving).channel.close()
+        (state as State.Reserving).devices.close()
 
         state = State.Idling
 
         logger.info("Devices released for configuration: $configurationName")
     }
 
+    private fun listenEmulators(reservation: Reservation.Data, devices: SendChannel<WorkerDevice>) {
+        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
+        GlobalScope.launch {
+            logger.debug("Start listening devices for $reservation")
+            // TODO: prevent reusing the same device in different reservations
+            val reservedDevices = mutableSetOf<Serial>()
+            var emulators = localEmulators(reservation)
+
+            while (!devices.isClosedForSend) {
+                findRemainingDevices(reservation, emulators, reservedDevices)
+                    .forEach { emulator ->
+                        devices.send(emulator)
+                        reservedDevices.add(emulator.id)
+                    }
+
+                delay(TimeUnit.SECONDS.toMillis(5))
+
+                emulators = localEmulators(reservation)
+            }
+            logger.debug("Finish listening devices for $reservation")
+        }
+    }
+
+    private fun findRemainingDevices(
+        reservation: Reservation.Data,
+        devices: Set<WorkerDevice>,
+        reserved: Set<Serial>
+    ): List<WorkerDevice> {
+        val remaining = reservation.count - reserved.size
+        return devices.filterNot { device ->
+            reserved.contains(device.id)
+        }.take(remaining)
+    }
+
     private fun localEmulators(reservation: Reservation.Data): Set<WorkerDevice> = try {
-        logger.info("Getting local emulators")
+        logger.debug("Getting local emulators")
         val devices = devicesManager.connectedDevices()
             .filter { fitsReservation(it, reservation) }
             .toSet()
@@ -122,34 +151,10 @@ class LocalReservationClient(
             && device.api == reservation.device.api
     }
 
-    private fun listenEmulators(reservation: Reservation.Data): Channel<WorkerDevice> {
-        val result: Channel<WorkerDevice> = Channel()
-
-        GlobalScope.launch {
-            var emulators = localEmulators(reservation)
-
-            while (!result.isClosedForSend && emulators.isNotEmpty()) {
-                emulators.forEach { emulator ->
-                    result.send(emulator)
-                }
-
-                delay(TimeUnit.SECONDS.toMillis(5))
-
-                emulators = localEmulators(reservation)
-            }
-        }
-
-        return result
-    }
-
-    private fun generateDeploymentName(): String = "local-${UUID.randomUUID()}"
-
-    private fun emulatorSerialName(device: WorkerDevice): String = device.id
-
-    sealed class State {
+    private sealed class State {
 
         class Reserving(
-            val channel: Channel<WorkerDevice>
+            val devices: Channel<WorkerDevice>
         ) : State()
 
         object Idling : State()

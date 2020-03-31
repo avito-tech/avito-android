@@ -18,36 +18,49 @@ interface TestRunFilter {
             abstract val description: String
 
             class NotHasPrefix(prefix: String) : Skip() {
-                override val description: String = "тест не соответствует переданному префиксу: $prefix"
+                override val description: String =
+                    "test doesn't match the prefix: $prefix"
             }
 
             class NotAnnotatedWith(annotations: Collection<String>) : Skip() {
-                override val description: String = "тест не содержит аннотацию из списка: $annotations"
+                override val description: String =
+                    "test doesn't contain any annotation from list: $annotations"
             }
 
-            class OnlyFailed(status: Status) : Skip() {
+            abstract class ByPreviousTestRun(
+                expectTests: String,
+                actual: String
+            ) : Skip() {
+
+                object TestRunIsAbsent : ByPreviousTestRun(
+                    expectTests = "test had a test run",
+                    actual = "test didn't have a test run"
+                )
+
+                class TestRunIsSucceed(status: Status): ByPreviousTestRun(
+                    expectTests = "test had failed test run",
+                    actual = "test had test run in status: $status"
+                )
+
                 override val description: String =
-                    "запускаем только неуспешные тесты в прошлом прогоне, а этот тест: ${status.javaClass.simpleName}"
+                    "Skip because expect $expectTests, but actual $actual"
             }
 
             object NotSpecifiedInFile : Skip() {
-                override val description: String = "тест не указан явно в файле переданном для запуска"
+                override val description: String =
+                    "Test wasn't in execution file"
             }
 
             object Ignored : Skip() {
-                override val description: String = "тест содержит аннотацию @Ignore"
+                override val description: String = "test contains @Ignore annotation"
             }
 
             object NotSpecifiedInTestsToRun : Skip() {
-                override val description: String = "тест не указан явно в списке для запуска"
+                override val description: String = "test wasn't in execution list"
             }
 
             object SkippedBySdk : Skip() {
-                override val description: String = "тест помечен аннотацией SkipOnSdk"
-            }
-
-            object SkippedByDownsampling : Skip() {
-                override val description: String = "тесту просто не повезло, пропущен из-за downsampling"
+                override val description: String = "test was marked by @SkipOnSdk annotation"
             }
         }
     }

@@ -2,6 +2,7 @@ package com.avito.instrumentation.executing
 
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.report.listener.TestReporter
+import com.avito.runner.service.worker.device.Serial
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.instrumentation.reservation.request.Reservation
@@ -10,7 +11,6 @@ import com.avito.instrumentation.util.launchGroupedCoroutines
 import com.avito.runner.logging.Logger
 import com.avito.runner.scheduler.TestsRunnerClient
 import com.avito.runner.scheduler.args.Arguments
-import com.avito.runner.scheduler.args.Serial
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
@@ -106,7 +106,8 @@ interface TestExecutor {
                             testPackage = executionParameters.applicationTestPackageName,
                             testRunner = executionParameters.testRunner,
                             timeoutMinutes = TEST_TIMEOUT_MINUTES,
-                            instrumentationParameters = targetTestRun.target.instrumentationParams
+                            instrumentationParameters = targetTestRun.target.instrumentationParams,
+                            enableDeviceDebug = executionParameters.enableDeviceDebug
                         )
                     }
 
@@ -180,7 +181,7 @@ interface TestExecutor {
         ) {
             val reservationDeployments = Channel<String>(reservations.size)
             try {
-                val serialsChannel = Channel<String>(Channel.UNLIMITED)
+                val serialsChannel = Channel<Serial>(Channel.UNLIMITED)
 
                 launchGroupedCoroutines {
                     launch(blocking = false) {

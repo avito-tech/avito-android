@@ -6,6 +6,7 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
+import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.DeviceData
 
@@ -34,7 +35,8 @@ fun generateInstrumentationTestAction(
     testRunner: String = randomString(),
     instrumentationParams: Map<String, String> = emptyMap(),
     timeoutMinutes: Long = randomLong(),
-    executionNumber: Int = randomInt()
+    executionNumber: Int = randomInt(),
+    enableDeviceDebug: Boolean = randomBoolean()
 ): InstrumentationTestRunAction =
     InstrumentationTestRunAction(
         test = test,
@@ -43,7 +45,8 @@ fun generateInstrumentationTestAction(
         testPackage = testPackage,
         instrumentationParams = instrumentationParams,
         timeoutMinutes = timeoutMinutes,
-        executionNumber = executionNumber
+        executionNumber = executionNumber,
+        enableDeviceDebug = enableDeviceDebug
     )
 
 
@@ -56,8 +59,10 @@ fun generateDeviceTestCaseRun(
         device = deviceData
     )
 
+fun randomSerial(): Serial = Serial.Local(randomString())
+
 fun generateDeviceData(
-    serial: String = randomString(),
+    serial: Serial = randomSerial(),
     configuration: DeviceConfiguration = generateDeviceConfiguration()
 ): DeviceData = DeviceData(
     serial = serial,

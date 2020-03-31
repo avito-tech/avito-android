@@ -29,7 +29,8 @@ open class InstrumentationConfiguration(val name: String) {
     var tryToReRunOnTargetBranch = false
 
     /**
-     * При последующих запусках на том же коммите и на той же ветке запускать только упавшие билды с прошлого запуска
+     * Applied only in next instrumentation invoke at the same git HEAD
+     * It remove already succeed test from execution
      */
     var rerunFailedTests = true
 
@@ -51,7 +52,17 @@ open class InstrumentationConfiguration(val name: String) {
 
     var kubernetesNamespace = "android-emulator"
 
+    var enableDeviceDebug: Boolean = false
+
+    /**
+     * It must be a valid reportId.
+     * Get test runs from report by id. Filter already succeed or new tests.
+     * Stay only failed contained in report
+     */
+    var keepFailedTestsFromReport: String? = null
+
     lateinit var targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
+
     val targets: List<TargetConfiguration>
         get() = targetsContainer.toList()
             .filter { it.enabled }
@@ -74,18 +85,20 @@ open class InstrumentationConfiguration(val name: String) {
             name = name,
             instrumentationParams = mergedInstrumentationParameters,
             tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
-            rerunFailedTests = rerunFailedTests,
+            skipSucceedTestsFromPreviousRun = rerunFailedTests,
             reportSkippedTests = reportSkippedTests,
-            annotatedWith = annotatedWith,
-            tests = tests,
+            keepTestsAnnotatedWith = annotatedWith,
+            keepTestsWithNames = tests,
             impactAnalysisPolicy = impactAnalysisPolicy,
             reportFlakyTests = reportFlakyTests,
-            prefixFilter = prefixFilter,
+            keepTestsWithPrefix = prefixFilter,
             kubernetesNamespace = kubernetesNamespace,
             targets = targets.map {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
             },
-            performanceType = performanceType
+            performanceType = performanceType,
+            enableDeviceDebug = enableDeviceDebug,
+            keepFailedTestsFromReport = keepFailedTestsFromReport
         )
     }
 
@@ -94,15 +107,17 @@ open class InstrumentationConfiguration(val name: String) {
         val instrumentationParams: InstrumentationParameters,
         val tryToReRunOnTargetBranch: Boolean,
         val reportFlakyTests: Boolean,
-        val rerunFailedTests: Boolean,
+        val skipSucceedTestsFromPreviousRun: Boolean,
         val reportSkippedTests: Boolean,
         val impactAnalysisPolicy: ImpactAnalysisPolicy,
-        val annotatedWith: Collection<String>?,
-        val tests: List<String>?,
-        val prefixFilter: String?,
+        val keepTestsAnnotatedWith: Collection<String>?,
+        val keepTestsWithNames: List<String>?,
+        val keepTestsWithPrefix: String?,
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
-        val performanceType: PerformanceType?
+        val performanceType: PerformanceType?,
+        val enableDeviceDebug: Boolean,
+        val keepFailedTestsFromReport: String?
     ) : Serializable {
 
         init {
@@ -113,7 +128,7 @@ open class InstrumentationConfiguration(val name: String) {
             }
         }
 
-        override fun toString(): String = "$name with targets: $targets for tests annotated with: $annotatedWith"
+        override fun toString(): String = "$name with targets: $targets for tests annotated with: $keepTestsAnnotatedWith"
 
         companion object
     }
