@@ -217,7 +217,6 @@ subprojects {
                     kotlinOptions {
                         jvmTarget = javaVersion.toString()
                         allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
-                        freeCompilerArgs = freeCompilerArgs + "-Xuse-experimental=kotlin.Experimental"
                     }
                 }
             }

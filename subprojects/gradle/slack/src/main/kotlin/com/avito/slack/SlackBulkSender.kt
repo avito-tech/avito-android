@@ -19,7 +19,7 @@ interface SlackBulkSender {
 }
 
 //todo use Flow API
-@UseExperimental(ObsoleteCoroutinesApi::class)
+@OptIn(ObsoleteCoroutinesApi::class)
 class CoroutinesSlackBulkSender(
     private val sender: SlackMessageSender,
     private val logger: (String, Throwable) -> Unit

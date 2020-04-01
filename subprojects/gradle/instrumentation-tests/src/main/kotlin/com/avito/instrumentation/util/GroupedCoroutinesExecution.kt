@@ -13,7 +13,7 @@ internal class GroupedCoroutinesExecution {
 
     private val coroutines: MutableList<CompletionAwareCoroutine> = mutableListOf()
 
-    @UseExperimental(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val activeCoroutines: List<CompletionAwareCoroutine>
         get() = coroutines
             .filter { !it.completionChannel.isClosedForReceive }
