@@ -48,6 +48,8 @@ class TestProjectGenerator(
     }
 
     override fun generateIn(file: File) {
+        println("Effective AGP version in tests = $agpVersion")
+
         with(file) {
             modules.forEach { it.generateIn(file) }
 
@@ -220,7 +222,8 @@ plugins {
 }
 
 $buildGradleExtra
-""")
+"""
+                )
             }
         }
     }

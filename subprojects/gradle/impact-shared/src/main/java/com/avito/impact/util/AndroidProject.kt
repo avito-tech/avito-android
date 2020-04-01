@@ -19,6 +19,12 @@ class AndroidProject(project: Project) : Project by project {
         buildVariant = "debug"
     )
 
+    val release = Variant(
+        this,
+        AndroidManifest.from(project),
+        buildVariant = "release"
+    )
+
     override fun toString(): String {
         return "AndroidProject(name=$displayName, pkg=${debug.manifest.getPackage()})"
     }
@@ -29,7 +35,6 @@ class Variant(
     val manifest: AndroidManifest,
     buildVariant: String
 ) {
-
     private val notNameSpacedRSourcesDir =
         "${project.buildDir}/generated/not_namespaced_r_class_sources/$buildVariant/r/"
 
@@ -39,6 +44,15 @@ class Variant(
             .map { R(it) }
             .toList()
     }
+}
+
+class Variant36(project: Project, buildVariant: String) {
+
+    private val intermediates = "${project.buildDir}/intermediates"
+
+    val runtimeSymbolListPath = "$intermediates/runtime_symbol_list/$buildVariant/R.txt"
+
+    val symbolListWithPackageNamePath = "$intermediates/symbol_list_with_package_name/$buildVariant/package-aware-r.txt"
 }
 
 class R(val file: File) {

@@ -11,6 +11,7 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.time.Duration
@@ -57,6 +58,10 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
                 description = "Find tests to run based on changed modules and test code analysis"
                 dependsOn(bytecodeAnalyzeTask)
                 bytecodeAnalyzeSummaryJson.set(bytecodeAnalyzeTask.flatMap { it.byteCodeAnalyzeSummary })
+            }
+
+            project.tasks.register<Copy>("copyRToAssets") {
+                from()
             }
         }
     }

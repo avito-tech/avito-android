@@ -27,17 +27,23 @@ class AndroidProjectTest {
     }
 
     @Test
-    fun `android project - r files`(){
+    fun `android project - has runtime symbols list`() {
         TestProjectGenerator(
             modules = listOf(
-                AndroidAppModule(name = "app", packageName = "com.app", dependencies = """
+                AndroidAppModule(
+                    name = "app", packageName = "com.app", dependencies = """
                     implementation project(":lib")
-                """.trimIndent()),
+                """.trimIndent()
+                ),
                 AndroidLibModule(name = "lib", packageName = "com.lib")
             )
         ).generateIn(tempDir)
 
-        val buildResult = build(":app:assembleAndroidTest")
+        val buildResult = build(
+            ":app:assembleAndroidTest",
+            "-Pandroid.namespacedRClass=true",
+            "-Pandroid.enableSeparateRClassCompilation=true"
+        )
         assertThat(buildResult).isInstanceOf<TestResult.Success>()
 
         val projectStub = applicationProjectStub(projectDir = File(tempDir, "app"))
@@ -52,7 +58,7 @@ class AndroidProjectTest {
     }
 
     @Test
-    fun `android manifest - package`(){
+    fun `android manifest - package`() {
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(name = "app", packageName = "com.app")
@@ -66,9 +72,10 @@ class AndroidProjectTest {
     }
 
     @Test
-    fun `R file - content`(){
+    fun `R file - content`() {
         val rFile = File(tempDir, "R.java")
-        rFile.writeText("""
+        rFile.writeText(
+            """
         /* AUTO-GENERATED FILE.  DO NOT MODIFY */
         package com.app;
         
@@ -83,7 +90,8 @@ class AndroidProjectTest {
                 public static final int root = 0x7f0a002b;
             }
         }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val r = R(rFile)
 

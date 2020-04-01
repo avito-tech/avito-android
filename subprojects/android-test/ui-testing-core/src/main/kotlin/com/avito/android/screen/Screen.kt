@@ -14,14 +14,6 @@ interface Screen {
      */
     val rootId: Int
 
-    /**
-     * Should be a full path to a module containing it's [rootId]
-     *
-     * Used to link "Screen" PageObject and "Screen" (android.view.View) in app code
-     * for impact analysis in ui tests
-     */
-    val modulePath: String
-
     val checks: ScreenChecks
         get() = SimpleScreenChecks(this) // TODO: replace by StrictScreenChecks MBS-7204
 
@@ -33,3 +25,4 @@ interface Screen {
         const val UNKNOWN_ROOT_ID: Int = -1
     }
 }
+
