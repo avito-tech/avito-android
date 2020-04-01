@@ -15,7 +15,7 @@ const val projectToChange = "application"
 const val androidModuleTestDependency = "androidModuleDependency"
 const val kotlinModuleTestDependency = "kotlinModuleDependency"
 const val markerClass = "kotlinModule.marker.Screen"
-const val markerField = "rootId"
+const val markerField = "module"
 private val artifactoryUrl = System.getProperty("artifactoryUrl")
 
 private fun generateBaseStubProject(dir: File, output: File): File {
@@ -70,7 +70,7 @@ private fun generateBaseStubProject(dir: File, output: File): File {
                     package kotlinModule.marker
 
                     interface Screen {
-                        val $markerField: Int
+                        val $markerField: String
                     }
                 """.trimIndent()
             }
@@ -93,7 +93,7 @@ fun generateProjectWithScreensInSingleModule(dir: File, output: File): File {
                     import kotlinModule.marker.Screen
 
                     class SomeScreen : Screen {
-                        override val $markerField: Int = -1
+                        override val $markerField: String = ":$projectToChange"
 
                         fun foo() { }
                     }
@@ -159,7 +159,7 @@ fun generateProjectWithScreensInMultiModule(dir: File, output: File): File {
                     package kotlinModule.marker
 
                     class ScreenFromKotlinModule : Screen {
-                        override val $markerField: Int = 100
+                        override val $markerField: String = ":$kotlinModuleTestDependency"
 
                         fun foo() { }
                     }
@@ -171,7 +171,7 @@ fun generateProjectWithScreensInMultiModule(dir: File, output: File): File {
                     package kotlinModule.marker
 
                     class Screen2FromKotlinModule : Screen {
-                        override val $markerField: Int = 200
+                        override val $markerField: String = ":$kotlinModuleTestDependency"
 
                         fun foo() { }
                     }

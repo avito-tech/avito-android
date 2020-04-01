@@ -17,6 +17,7 @@ import org.hamcrest.Matchers
 
 class RetryScreen : PageObject(), Screen {
     override val rootId: Int = R.id.activity_retry
+    override val modulePath: String = ":test-app"
 
     val button: FailViewElement = element(withId(R.id.button))
     val buttonClickIndicator: ViewElement = element(

@@ -16,6 +16,8 @@ import org.hamcrest.Matchers
 
 class PageObjectScreen(@IdRes override val rootId: Int) : PageObject(), Screen {
 
+    override val modulePath: String = ":test-app"
+
     // Our goal is to demonstrate how interaction context extends matcher in case of HandleParentContext
     //
     // We use a standalone parent element intentionally.

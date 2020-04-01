@@ -11,9 +11,8 @@ import com.avito.bytecode.invokes.bytecode.find.TargetClassesFinderImpl
 import com.avito.bytecode.invokes.bytecode.find.TestMethodsFinderImpl
 import com.avito.bytecode.invokes.bytecode.model.FoundMethod
 import com.avito.bytecode.invokes.bytecode.tracer.InvokesTracerImpl
-import com.avito.bytecode.metadata.DuplicateIdChecker
-import com.avito.bytecode.metadata.IdFieldExtractor
-import com.avito.bytecode.metadata.toMap
+import com.avito.bytecode.metadata.ModulePathExtractor
+import com.avito.bytecode.metadata.ScreenToModulePath
 import com.avito.bytecode.report.JsonFileReporter
 import com.avito.bytecode.target.TargetClassesDetector
 import com.avito.impact.BytecodeResolver
@@ -23,7 +22,6 @@ import com.avito.impact.ReportType
 import com.avito.impact.changes.ChangeType
 import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
-import com.avito.impact.util.RootId
 import com.avito.impact.util.Screen
 import com.avito.impact.util.Test
 import com.avito.instrumentation.impact.model.AffectedTest
@@ -63,6 +61,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
 
     private val finder
         get() = parameters.state.finder
+
+    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     abstract class Params : WorkParameters {
         class State(
@@ -119,14 +119,12 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 context = context,
                 changedClasses = invocationGraphResult.changedClasses
             ),
-            rootIdByScreen = getRootIdByScreen(
+            screenToModule = getScreenToModule(
                 config = config,
                 context = context,
                 targetClasses = invocationGraphResult.targetClasses
             )
         )
-
-        val gson = GsonBuilder().setPrettyPrinting().create()
 
         JsonFileReporter(
             path = byteCodeAnalyzeSummary.get().asFile,
@@ -146,8 +144,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject> =
             @Suppress("DEPRECATION")
             finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(
-                    reportType = ReportType.ANDROID_TESTS
-                )
+                reportType = ReportType.ANDROID_TESTS
+            )
                 .asSequence()
                 .filter { it.project.isAndroid() }
                 .map { AndroidProject(it.project).debug.manifest.getPackage() to it }
@@ -303,22 +301,13 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         )
     }
 
-    private fun getRootIdByScreen(
+    private fun getScreenToModule(
         config: InstrumentationTestImpactAnalysisExtension,
         context: Context,
         targetClasses: Set<JavaClass>
-    ): Map<Screen, RootId> {
-        val idFieldExtractor = IdFieldExtractor.Impl(fieldName = config.screenMarkerMetadataField.get())
-        val screenToIds: Set<IdFieldExtractor.ScreenToId> = idFieldExtractor.extract(
-            context = context,
-            targetClasses = targetClasses
-        )
-        val duplicateCheckResult = DuplicateIdChecker.Impl(config.unknownRootId.get()).check(screenToIds)
-        if (duplicateCheckResult.hasDuplicates) {
-            ciLogger.info("There are duplicate id's: ${duplicateCheckResult.ids}")
-        }
-
-        return screenToIds.toMap()
+    ): Set<ScreenToModulePath> {
+        val extractor = ModulePathExtractor.Impl(fieldName = config.screenMarkerMetadataField.get())
+        return extractor.extract(context, targetClasses)
     }
 
     data class InvocationGraphCreationResult(

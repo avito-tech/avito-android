@@ -9,6 +9,7 @@ import com.avito.android.ui.R
 
 class ButtonsScreen : PageObject(), Screen {
     override val rootId: Int = R.id.activity_buttons_root
+    override val modulePath: String = ":test-app"
 
     val enabledButton: ViewElement = element(withId(R.id.button_enabled))
     val enabledButtonClickIndicatorView: ViewElement = element(

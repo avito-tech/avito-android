@@ -2,10 +2,11 @@ package com.avito.instrumentation.impact
 
 import com.avito.android.isAndroid
 import com.avito.bytecode.DIRTY_STUB
+import com.avito.bytecode.metadata.ModulePath
+import com.avito.bytecode.metadata.ScreenToModulePath
 import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.ReportType
-import com.avito.impact.ScreenToPackageRelationFinder
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
@@ -41,11 +42,6 @@ internal class AnalyzeTestImpactAction(
     private val ciLogger: CILogger
 ) {
 
-    private val screenToPackageRelationFinder: ScreenToPackageRelationFinder = ScreenToPackageRelationFinder.Impl(
-        targetModule = targetModule,
-        screenToViewId = bytecodeAnalyzeSummary.rootIdByScreen
-    )
-
     private val tests: Set<Test> = bytecodeAnalyzeSummary
         .testsByScreen
         .values
@@ -78,16 +74,16 @@ internal class AnalyzeTestImpactAction(
             finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(ReportType.ANDROID_TESTS)
         )
 
-        val affectedTestsByImpl = getAffectedTestsByChangedPackages(
-            changedPackages = affectedImplProjects.map { it.debug.manifest.getPackage() }.toSet()
+        val affectedTestsByImpl = getAffectedTestsByChangedModules(
+            changedModules = affectedImplProjects.toSet(),
+            screenToModulePaths = bytecodeAnalyzeSummary.screenToModule
         )
 
         val affectedTestsByAndroidTest = getAffectedTestsByAndroidTest(
             affectedAndroidTestProjects = affectedAndroidTestProjects
         )
 
-        val testsToRun: Set<Test> =
-            affectedTestsByImpl + affectedTestsByAndroidTest + affectedByCodeChanges
+        val testsToRun: Set<Test> = affectedTestsByImpl + affectedTestsByAndroidTest + affectedByCodeChanges
         val skippedTests: Set<Test> = filteredTest - testsToRun
 
         return ImpactSummary(
@@ -116,42 +112,45 @@ internal class AnalyzeTestImpactAction(
         return if (isTargetModuleAffected && targetModuleHasModifiedAndroidTestDependency) {
             filteredTest
         } else {
-            getAffectedTestsByChangedPackages(
-                changedPackages = affectedAndroidTestProjects.map { it.debug.manifest.getPackage() }.toSet()
+            getAffectedTestsByChangedModules(
+                changedModules = affectedAndroidTestProjects.toSet(),
+                screenToModulePaths = bytecodeAnalyzeSummary.screenToModule
             )
         }
     }
 
-    private fun getAffectedTestsByChangedPackages(
-        changedPackages: Set<String>
+    private fun getAffectedTestsByChangedModules(
+        changedModules: Set<AndroidProject>,
+        screenToModulePaths: Set<ScreenToModulePath>
     ): Set<Test> {
 
         return bytecodeAnalyzeSummary
             .testsByScreen
             .flatMap { (screen, tests) ->
-                //We couldn't determine screen to test relation, so we will run all of these tests
-                if (screen == DIRTY_STUB) {
-                    return@flatMap tests
-                }
+                when (screen) {
+                    //We couldn't determine screen to test relation, so we will run all of these tests
+                    DIRTY_STUB -> tests
+                    else -> {
+                        val screenToModuleMaps = screenToModulePaths
+                            .map { it.screenClass to it.modulePath }
+                            .toMap()
 
-                when (val screenToPackageRelation = screenToPackageRelationFinder.find(screen)) {
-                    is ScreenToPackageRelationFinder.Result.Found -> if (changedPackages.contains(
-                            screenToPackageRelation.pkg
-                        )
-                    ) tests else emptySet()
-                    is ScreenToPackageRelationFinder.Result.NotFound -> {
-                        ciLogger.info("Failed NotFound: $screen -> []")
-                        tests
-                    }
-                    is ScreenToPackageRelationFinder.Result.FoundInTargetModuleOnly -> {
-                        ciLogger.info("Failed FoundInTargetModuleOnly: $screen -> [${screenToPackageRelation.targetModulePackage}]")
-                        tests
-                    }
-                    is ScreenToPackageRelationFinder.Result.MultiplePackagesFound -> {
-                        val anyPackageAffected =
-                            screenToPackageRelation.packages.any { pkg -> changedPackages.contains(pkg) }
-                        ciLogger.info("MultiplePackages: $screen -> [${screenToPackageRelation.packages.joinToString(", ")}]")
-                        if (anyPackageAffected) tests else emptySet()
+                        when (val screensModule: ModulePath? = screenToModuleMaps[screen]) {
+                            null -> {
+                                ciLogger.info("Module not found for screen $screen")
+                                tests
+                            }
+                            else -> when {
+                                changedModules.map { it.path }.contains(screensModule.path) -> {
+                                    ciLogger.info("Module $screensModule for screen $screen changed, will run its tests")
+                                    tests
+                                }
+                                else -> {
+                                    ciLogger.info("Module $screensModule for screen $screen not changed, won't run it tests")
+                                    emptySet()
+                                }
+                            }
+                        }
                     }
                 }
             }.toSet()

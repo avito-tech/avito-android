@@ -1,8 +1,10 @@
 package com.avito.instrumentation.impact
 
+import com.avito.bytecode.metadata.ModulePath
 import com.avito.instrumentation.impact.util.generateProjectWithScreensInMultiModule
 import com.avito.instrumentation.impact.util.generateProjectWithScreensInSingleModule
 import com.avito.instrumentation.impact.util.impactAnalysisScreenIdsOutput
+import com.avito.instrumentation.impact.util.kotlinModuleTestDependency
 import com.avito.instrumentation.impact.util.projectToChange
 import com.avito.test.gradle.ciRun
 import com.google.common.truth.Truth.assertWithMessage
@@ -44,7 +46,7 @@ class InstrumentationGettingScreenIdIntegrationTest {
 
         assertWithMessage("output contains screen from local androidTest module")
             .that(output)
-            .containsEntry("test.SomeScreen", -1)
+            .containsEntry("test.SomeScreen", ModulePath(":$projectToChange"))
     }
 
     @Test
@@ -78,8 +80,8 @@ class InstrumentationGettingScreenIdIntegrationTest {
             .that(output.entries.map { it.toPair() })
             .containsExactlyElementsIn(
                 listOf(
-                    "kotlinModule.marker.ScreenFromKotlinModule" to 100,
-                    "kotlinModule.marker.Screen2FromKotlinModule" to 200
+                    "kotlinModule.marker.ScreenFromKotlinModule" to ModulePath(":$kotlinModuleTestDependency"),
+                    "kotlinModule.marker.Screen2FromKotlinModule" to ModulePath(":$kotlinModuleTestDependency")
                 )
             )
     }
