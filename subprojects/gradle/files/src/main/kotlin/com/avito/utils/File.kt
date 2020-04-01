@@ -27,7 +27,7 @@ fun <T> File.rewriteIterable(data: T, transform: (T) -> String) {
     writer(Charsets.UTF_8).use { it.write(transform.invoke(data)) }
 }
 
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun File?.hasFileContent(): Boolean {
     contract {
         returns(true) implies (this@hasFileContent != null)

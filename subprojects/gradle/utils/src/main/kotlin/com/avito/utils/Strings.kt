@@ -6,7 +6,7 @@ import kotlin.contracts.contract
 /**
  * у gradle специфичные toString() из property
  */
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 fun String?.hasContent(): Boolean {
     contract {
         returns(true) implies (this@hasContent != null)
