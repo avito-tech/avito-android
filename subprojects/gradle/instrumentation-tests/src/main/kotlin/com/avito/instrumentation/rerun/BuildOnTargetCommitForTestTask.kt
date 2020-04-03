@@ -15,6 +15,8 @@ import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
+// Caching is disabled due to https://github.com/gradle/gradle/issues/7769
+// See details in MBS-7955
 @Suppress("UnstableApiUsage")
 abstract class BuildOnTargetCommitForTestTask @Inject constructor(
     objects: ObjectFactory,
