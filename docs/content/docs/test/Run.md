@@ -98,7 +98,7 @@ type: docs
   - `regressionNoE2E` -- `uiNoE2E` + ручные тесты
   - `regression` -- `ui` + ручные тесты
   - `performanceNoE2E` -- только компонентные перформанс тесты
-  - `performance ` -- только функциональные перформанс тесты
+  - `performance` -- только функциональные перформанс тесты
 - Фильтр тестов в формате `[+ имя класса [+ имя тестового метода ]]` (*Parameters -> Package prefix*)
 - Количество запусков. Полезно для [отладки нестабильных тестов]({{< ref "/docs/test/TroubleshootingUI.md" >}})
   (*Parameters -> Retry count*)
