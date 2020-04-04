@@ -1,7 +1,6 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
-    id("java-test-fixtures")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -23,8 +22,8 @@ dependencies {
     testImplementation(Dependencies.test.mockitoJUnitJupiter)
     testImplementation(project(":subprojects:gradle:git"))
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(testFixtures(project(":subprojects:common:graphite")))
-    testImplementation(testFixtures(project(":subprojects:common:statsd")))
+    testImplementation(project(":subprojects:common:graphite-test-fixtures"))
+    testImplementation(project(":subprojects:common:statsd-test-fixtures"))
 }
 
 gradlePlugin {

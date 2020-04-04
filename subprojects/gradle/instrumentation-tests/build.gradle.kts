@@ -1,7 +1,6 @@
 plugins {
     id("java-gradle-plugin")
     id("kotlin")
-    id("java-test-fixtures")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -39,23 +38,14 @@ dependencies {
     implementation(Dependencies.funktionaleTry)
 
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(testFixtures(project(":subprojects:gradle:logging")))
-    testImplementation(testFixtures(project(":subprojects:gradle:slack")))
-    testImplementation(testFixtures(project(":subprojects:gradle:utils")))
-    testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
+    testImplementation(project(":subprojects:gradle:logging-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:slack-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:utils-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:instrumentation-tests-test-fixtures"))
+    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.mockitoJUnitJupiter)
     testImplementation(Dependencies.test.okhttpMockWebServer)
-
-    testFixturesImplementation(project(":subprojects:gradle:kubernetes"))
-    testFixturesImplementation(project(":subprojects:gradle:utils"))
-    testFixturesImplementation(project(":subprojects:gradle:test-project"))
-    testFixturesImplementation(project(":subprojects:gradle:bitbucket"))
-    testFixturesImplementation(project(":subprojects:gradle:slack"))
-    testFixturesImplementation(project(":subprojects:common:statsd"))
-    testFixturesImplementation(project(":subprojects:common:report-viewer"))
-    testFixturesImplementation(Dependencies.test.okhttpMockWebServer)
-    testFixturesImplementation(Dependencies.funktionaleTry)
 }
 
 gradlePlugin {

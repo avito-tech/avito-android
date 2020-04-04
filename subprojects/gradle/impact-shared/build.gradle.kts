@@ -17,7 +17,7 @@ dependencies {
     implementation(Dependencies.funktionaleTry)
 
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(testFixtures(project(":subprojects:gradle:logging")))
-    testImplementation(testFixtures(project(":subprojects:gradle:git")))
+    testImplementation(project(":subprojects:gradle:logging-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:git-test-fixtures"))
     testImplementation(Dependencies.test.mockitoKotlin)
 }

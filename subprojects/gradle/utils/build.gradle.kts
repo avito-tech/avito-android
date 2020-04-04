@@ -1,6 +1,5 @@
 plugins {
     id("kotlin")
-    id("java-test-fixtures")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -11,6 +10,4 @@ dependencies {
 
     testImplementation(Dependencies.test.truth)
     testImplementation(Dependencies.test.mockitoKotlin)
-
-    testFixturesImplementation(Dependencies.kotlinStdlib)
 }

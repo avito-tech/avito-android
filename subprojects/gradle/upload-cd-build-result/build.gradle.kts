@@ -18,5 +18,5 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:gradle:git")))
+    testImplementation(project(":subprojects:gradle:git-test-fixtures"))
 }

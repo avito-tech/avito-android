@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":subprojects:gradle:bitbucket"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
 
-    testImplementation(testFixtures(project(":subprojects:gradle:logging")))
+    testImplementation(project(":subprojects:gradle:logging-test-fixtures"))
 }
 
 gradlePlugin {
