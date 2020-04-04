@@ -68,7 +68,13 @@ keeper {
     automaticR8RepoManagement.set(false)
 }
 
-dependencies {
+/**
+ * delegateClosureOf used because kotlin dsl accessor
+ * `fun Project.dependencies(configuration: DependencyHandlerScope.() -> Unit)`
+ * is somehow unavailable for this and only this module.
+ * It probably related to our custom plugins applied, but don't know how to debug this issue right now
+ */
+dependencies(delegateClosureOf<DependencyHandler> {
     keeperR8(Dependencies.r8)
 
     implementation(project(":subprojects:android-lib:proxy-toast"))
@@ -102,7 +108,7 @@ dependencies {
     androidTestImplementation(Dependencies.sentry)
     androidTestImplementation(Dependencies.test.truth)
     androidTestImplementation(Dependencies.test.okhttpMockWebServer)
-}
+})
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 
@@ -111,7 +117,8 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     reportApiFallbackUrl = project.getOptionalStringProperty("avito.report.fallbackUrl") ?: "http://stub"
     reportViewerUrl = project.getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
     registry = project.getOptionalStringProperty("avito.registry") ?: "registry"
-    sentryDsn = project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
+    sentryDsn =
+        project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
     slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
     fileStorageUrl = project.getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
 
