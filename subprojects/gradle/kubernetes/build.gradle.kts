@@ -12,4 +12,5 @@ dependencies {
     api(project(":subprojects:gradle:kotlin-dsl-support"))
 
     implementation(gradleApi())
+    implementation(Dependencies.officialKubernetesClient)
 }
