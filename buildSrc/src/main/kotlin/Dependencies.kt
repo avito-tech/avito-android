@@ -38,9 +38,11 @@ object Dependencies {
     val rxJava = "io.reactivex:rxjava:1.3.8"
     val statsd = "com.timgroup:java-statsd-client:3.1.0"
 
-    // we don't use an official client https://github.com/kubernetes-client/java because fabric8 one has much better api,
-    // support all features we need and actively maintained
+    // We use this client due to better API
+    // It supports all features we need and actively maintained
     val kubernetesClient = "io.fabric8:kubernetes-client:4.9.0"
+    // We use the official kubernetes client only for missing features
+    val officialKubernetesClient = "io.kubernetes:client-java:8.0.0"
     val kubernetesDsl = "com.fkorotkov:kubernetes-dsl:2.7.1"
     val dexlib = "org.smali:dexlib2:2.3"
     val commonsText = "org.apache.commons:commons-text:1.6"
