@@ -4,6 +4,9 @@ import io.fabric8.kubernetes.client.Config
 import io.fabric8.kubernetes.client.ConfigBuilder
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
 import io.fabric8.kubernetes.client.KubernetesClient
+import io.fabric8.kubernetes.client.OAuthTokenProvider
+import io.kubernetes.client.util.FilePersister
+import io.kubernetes.client.util.KubeConfig
 import java.io.File
 
 fun createKubernetesClient(
@@ -32,14 +35,27 @@ fun createKubernetesClient(
                     caCertFile = kubernetesCredentials.caCertFile
                 }
 
-                // work with multiple namespaces/contexts not supported
+                // working with multiple namespaces/contexts is not supported
                 require(getNamespace() == namespace) {
                     "kubernetes.context.namespace should be $namespace. " +
                         "Namespace hardcoded in plugin, and this check only prevents from using wrong context"
                 }
+                requestConfig.oauthTokenProvider = oauthTokenProvider(configFile)
             }
         }
     }
 
     return DefaultKubernetesClient(config)
+}
+
+/**
+ * OAuth token provider that automatically refreshes an expired token and persists changes to kube config.
+ * https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens
+ */
+private fun oauthTokenProvider(config: File): OAuthTokenProvider {
+    val kubeConfig = KubeConfig.loadKubeConfig(config.inputStream().reader())
+    val persister = FilePersister(config)
+    kubeConfig.setPersistConfig(persister)
+
+    return OAuthTokenProvider { kubeConfig.accessToken }
 }
