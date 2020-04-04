@@ -100,6 +100,12 @@ pluginManagement {
             forRepository {
                 jcenter()
             }
+            forRepository {
+                maven {
+                    name = "Avito bintray"
+                    setUrl("https://dl.bintray.com/avito/maven")
+                }
+            }
             if (!artifactoryUrl.isNullOrBlank()) {
                 forRepository {
                     maven {
