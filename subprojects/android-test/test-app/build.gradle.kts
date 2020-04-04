@@ -5,6 +5,7 @@ import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConf
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
 
 plugins {
@@ -143,6 +144,31 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         "jobSlug" to "FunctionalTests"
     )
 
+    configurationsContainer.register("Local") {
+        tryToReRunOnTargetBranch = false
+        reportSkippedTests = true
+        rerunFailedTests = true
+        reportFlakyTests = false
+
+        targetsContainer.register("api27") {
+            deviceName = "API27"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = LocalEmulator.device(27)
+                    maximum = 1
+                    minimum = 1
+                    testsPerEmulator = 1
+                }
+            }
+        }
+    }
+
     configurationsContainer.register("ui") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
@@ -191,7 +217,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         reportSkippedTests = false
         rerunFailedTests = false
         reportFlakyTests = false
-        // uncomment after 2020.3.6 release (MBS-8050)
+        // uncomment after 2020.4.1 release (MBS-8050)
         // enableDeviceDebug = true
 
         targetsContainer.register("api27") {
