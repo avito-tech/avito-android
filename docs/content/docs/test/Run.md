@@ -79,6 +79,10 @@ type: docs
 В Teamcity есть [конфигурация `instrumentationDynamic`](http://links.k.avito.ru/tmctAvitoAndroidInstrumentationDynamic)
 для запуска тестов со специфическим набором требований.
 
+{{< hint info >}}
+Параметры, помеченные красной *, - это параметры, специфичные для данной конфигурации. Они опциональны.
+{{< /hint >}}
+
 Запускайте и вам будет предложено выбрать:
 - Ветку для запуска (*Changes -> Build branch*)
 - API URL, в который ходят тесты (*Parameters -> Test URL*)
@@ -89,7 +93,7 @@ type: docs
   - `regression` -- `ui` + ручные тесты
   - `performanceNoE2E` -- только компонентные перформанс тесты
   - `performance` -- только функциональные перформанс тесты
-- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*)
+- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*, по умолчанию пустая строка)
 - Количество запусков. Полезно для [отладки нестабильных тестов]({{< ref "/docs/test/TroubleshootingUI.md" >}})
   (*Parameters -> Retry count*)
 - Версии API (*Parameters -> * Api*)
