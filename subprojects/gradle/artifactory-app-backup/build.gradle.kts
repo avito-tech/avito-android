@@ -1,7 +1,6 @@
 plugins {
     id("kotlin")
     id("java-gradle-plugin")
-    id("java-test-fixtures")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -14,9 +13,8 @@ dependencies {
     implementation(Dependencies.gradle.androidPlugin)
 
     testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
     testImplementation(project(":subprojects:common:test-okhttp"))
-
-    testFixturesImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

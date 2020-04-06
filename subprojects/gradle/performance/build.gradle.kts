@@ -31,7 +31,7 @@ dependencies {
     implementation(Dependencies.okhttpLogging)
 
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
+    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.truth)
 }

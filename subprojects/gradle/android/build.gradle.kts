@@ -13,5 +13,5 @@ dependencies {
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)
 
-    testImplementation(testFixtures(project(":subprojects:gradle:process")))
+    testImplementation(project(":subprojects:gradle:process-test-fixtures"))
 }

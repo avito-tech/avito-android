@@ -5,7 +5,8 @@ plugins {
 }
 
 dependencies {
-    implementation(Dependencies.okhttp)
+    api(Dependencies.okhttp)
+
     implementation(project(":subprojects:common:logger"))
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(Dependencies.funktionaleTry)

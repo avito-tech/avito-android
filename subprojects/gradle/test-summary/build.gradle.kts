@@ -1,6 +1,5 @@
 plugins {
     id("kotlin")
-    id("java-test-fixtures")
     `maven-publish`
     id("com.jfrog.bintray")
 }
@@ -17,7 +16,5 @@ dependencies {
     implementation(Dependencies.okhttp)
 
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
-
-    testFixturesImplementation(project(":subprojects:common:report-viewer"))
+    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
 }
