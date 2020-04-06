@@ -66,8 +66,6 @@ internal class AndroidGradlePluginExtensionsKtTest {
                 "int id some_new_id",
                 "int layout new_layout"
             )
-
-
     }
 
     @Test

@@ -163,6 +163,7 @@ pluginManagement {
     }
 
     resolutionStrategy {
+
         eachPlugin {
             val pluginId = requested.id.id
             when {
