@@ -5,7 +5,7 @@ type: docs
 
 # Avito test runner
 
-This is the Gradle to run Android instrumentation tests.
+This is the Gradle plugin to run Android instrumentation tests.
 
 It can do the following:
 
