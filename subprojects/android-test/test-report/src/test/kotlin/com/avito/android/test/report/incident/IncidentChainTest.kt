@@ -68,7 +68,7 @@ class IncidentChainTest {
     }
 }
 
-val incidentMessageCorrespondence: Correspondence<IncidentElement, IncidentElement> = Correspondence.from(
+private val incidentMessageCorrespondence: Correspondence<IncidentElement, IncidentElement> = Correspondence.from(
     { actual, expected ->
         if (actual != null && expected != null) {
             actual.message == expected.message && actual.data == expected.data

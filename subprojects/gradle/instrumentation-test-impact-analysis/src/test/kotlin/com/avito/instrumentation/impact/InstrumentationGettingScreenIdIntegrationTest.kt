@@ -10,7 +10,7 @@ import com.avito.test.gradle.ciRun
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.nio.file.Path
+import java.io.File
 import java.nio.file.Paths
 
 class InstrumentationGettingScreenIdIntegrationTest {
@@ -18,8 +18,7 @@ class InstrumentationGettingScreenIdIntegrationTest {
     private val targetBranch = "develop"
 
     @Test
-    fun `screens ids file contains screen from local androidTest module`(@TempDir tempPath: Path) {
-        val testProjectDir = tempPath.toFile()
+    fun `screens ids file contains screen from local androidTest module`(@TempDir testProjectDir: File) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,
@@ -50,8 +49,7 @@ class InstrumentationGettingScreenIdIntegrationTest {
     }
 
     @Test
-    fun `screens ids file contains screen from dependant kotlin module`(@TempDir tempPath: Path) {
-        val testProjectDir = tempPath.toFile()
+    fun `screens ids file contains screen from dependant kotlin module`(@TempDir testProjectDir: File) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,

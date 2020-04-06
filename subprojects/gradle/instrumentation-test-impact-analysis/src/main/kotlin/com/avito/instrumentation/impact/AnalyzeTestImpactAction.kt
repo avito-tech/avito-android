@@ -64,7 +64,6 @@ internal class AnalyzeTestImpactAction(
     private val filteredTest =
         if (packageFilter != null) tests.filter { it.startsWith(packageFilter) }.toSet() else tests
 
-
     fun computeImpact(): ImpactSummary {
         val affectedImplProjects = findModifiedAndroidProjects(
             finder.findModifiedProjects(ReportType.IMPLEMENTATION)

@@ -33,7 +33,9 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
         modifiedProjectsFinder = ModifiedProjectsFinder.from(project)
         modulesBytecodeResolver = BytecodeResolver(project)
 
-        project.withAndroidApp {
+        project.withAndroidApp { app ->
+
+            val testBuildTypeSlug = app.testBuildType.capitalize()
 
             val bytecodeAnalyzeTask = project.tasks.register<TestBytecodeAnalyzeTask>(
                 "analyzeTestBytecode",
@@ -46,7 +48,7 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
                 description = "Analyze androidTest bytecode to collect maps: [Screen:Test], [Screen:RootId]"
 
                 //todo we should also support flavors here
-                dependsOn("${project.path}:compile${it.testBuildType.capitalize()}AndroidTestKotlin")
+                dependsOn("${project.path}:compile${testBuildTypeSlug}AndroidTestKotlin")
             }
 
             project.tasks.register<AnalyzeTestImpactTask>(
@@ -60,8 +62,25 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
                 bytecodeAnalyzeSummaryJson.set(bytecodeAnalyzeTask.flatMap { it.byteCodeAnalyzeSummary })
             }
 
-            project.tasks.register<Copy>("copyRToAssets") {
-                from()
+            val runtimeSymbolList = runtimeSymbolListPath(project.projectDir, app.testBuildType)
+            val mergedAssets = mergedAssetsPath(project.projectDir, app.testBuildType)
+
+            val copySymbolsToAssetsTask = project.tasks.register<Copy>("copy${testBuildTypeSlug}SymbolsToAssets") {
+                from(runtimeSymbolList)
+                //todo from all library modules
+                into(mergedAssets)
+
+                //todo onlyIf impactAnalysis will be performed
+
+                //todo hook on android gradle plugin task outputs
+                dependsOn("${project.path}:merge${testBuildTypeSlug}AndroidTestAssets")
+                dependsOn("${project.path}:process${testBuildTypeSlug}Resources")
+            }
+
+            project.afterEvaluate {
+                project.tasks.named("package${testBuildTypeSlug}AndroidTest").configure {
+                    it.dependsOn(copySymbolsToAssetsTask)
+                }
             }
         }
     }

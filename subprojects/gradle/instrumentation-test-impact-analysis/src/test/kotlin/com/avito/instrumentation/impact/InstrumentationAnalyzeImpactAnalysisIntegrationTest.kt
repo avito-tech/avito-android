@@ -22,8 +22,7 @@ class InstrumentationAnalyzeImpactAnalysisIntegrationTest {
     private val targetBranch = "develop"
 
     @Test
-    fun `new instrumentation tests in module without marker - run impact analysis`(@TempDir tempPath: Path) {
-        val testProjectDir = tempPath.toFile()
+    fun `new instrumentation tests in module without marker - run impact analysis`(@TempDir testProjectDir: File) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,
@@ -72,8 +71,7 @@ class InstrumentationAnalyzeImpactAnalysisIntegrationTest {
     }
 
     @Test
-    fun `feature module(not linked to screen) changed`(@TempDir tempPath: Path) {
-        val testProjectDir = tempPath.toFile()
+    fun `feature module(not linked to screen) changed`(@TempDir testProjectDir: File) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,

@@ -27,37 +27,6 @@ class AndroidProjectTest {
     }
 
     @Test
-    fun `android project - has runtime symbols list`() {
-        TestProjectGenerator(
-            modules = listOf(
-                AndroidAppModule(
-                    name = "app", packageName = "com.app", dependencies = """
-                    implementation project(":lib")
-                """.trimIndent()
-                ),
-                AndroidLibModule(name = "lib", packageName = "com.lib")
-            )
-        ).generateIn(tempDir)
-
-        val buildResult = build(
-            ":app:assembleAndroidTest",
-            "-Pandroid.namespacedRClass=true",
-            "-Pandroid.enableSeparateRClassCompilation=true"
-        )
-        assertThat(buildResult).isInstanceOf<TestResult.Success>()
-
-        val projectStub = applicationProjectStub(projectDir = File(tempDir, "app"))
-        val androidProject = AndroidProject(projectStub)
-
-        assertThat(androidProject.debug.manifest.getPackage()).isEqualTo("com.app")
-        val rFiles = androidProject.debug.rs
-        val appR = rFiles.firstOrNull { r -> r.getPackage() == "com.app" }
-        val libR = rFiles.firstOrNull { r -> r.getPackage() == "com.lib" }
-        assertThat(appR).isNotNull()
-        assertThat(libR).isNotNull()
-    }
-
-    @Test
     fun `android manifest - package`() {
         TestProjectGenerator(
             modules = listOf(
