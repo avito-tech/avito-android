@@ -39,7 +39,7 @@ fastCheck {
 
 {{< hint info>}} This section contains Avito specific information {{< /hint >}}
 
-All customs android lint checks are in `lint-checks` (internal) module.
+All customs Android lint checks are in `lint-checks` (internal) module.
 
 How to start:
 

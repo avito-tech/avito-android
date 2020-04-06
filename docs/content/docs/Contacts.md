@@ -15,7 +15,7 @@ type: docs
 
 Slack:
 
-- [#android-dev](http://links.k.avito.ru/slackandroiddev) - single slack channel for any android related stuff
+- [#android-dev](http://links.k.avito.ru/slackandroiddev) - single slack channel for any Android related stuff
 - [#android-autotesting](http://links.k.avito.ru/slackandroidautotesting) - all about testing
 - [#speed](http://links.k.avito.ru/yo)
 

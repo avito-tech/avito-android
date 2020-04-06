@@ -10,7 +10,7 @@ type: docs
 Для бенчмарков используем [Gradle profiler](https://github.com/gradle/gradle-profiler), 
 где можно описать воспрозводимый сценарий:
 
-- Редактировать java/kotlin файлы, android ресурсы
+- Редактировать java/kotlin файлы, Android ресурсы
 - Переключаться между коммитами
 - Проверить на разных версиях Gradle
 - Почистить кеш, сборку

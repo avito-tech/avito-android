@@ -83,7 +83,7 @@ OSX
 
 Добавь в исключения Spotlight: **System preferences > Spotlight > Privacy**
 
-- Директории с android проектами (обязательно)
+- Директории с Android проектами (обязательно)
 - Android SDK
 - Android Studio
 - ~/.gradle
