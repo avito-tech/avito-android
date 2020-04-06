@@ -26,6 +26,8 @@ abstract class CopySymbolsToAssetsConfigurator : DefaultTask() {
 
     @TaskAction
     fun configure() {
+
+        //todo could filter only id's here, to decrease filesize
         val runtimeSymbolList = runtimeSymbolListPath(project.projectDir, app.testBuildType)
 
         //not available in configuration phase

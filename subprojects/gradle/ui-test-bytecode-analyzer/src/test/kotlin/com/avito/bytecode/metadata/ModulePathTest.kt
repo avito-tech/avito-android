@@ -13,7 +13,8 @@ internal class ModulePathTest {
         ":lib:one:two",
         ":lib_x",
         ":lib:one_x:two",
-        ":kotlinModuleDependency"
+        ":kotlinModuleDependency",
+        ":avito-app:publish"
     )
         .map {
             dynamicTest("path = $it") {

@@ -40,6 +40,6 @@ class ImpactAnalysisAssets(private val assetManager: AssetManager) {
     }
 
     private fun modulePathFromFileName(fileName: String): String {
-        return ":" + fileName.substringBefore('_').replace('-', ':')
+        return ":" + fileName.substringBefore('_').replace('+', ':')
     }
 }
