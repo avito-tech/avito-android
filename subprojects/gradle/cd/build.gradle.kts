@@ -29,7 +29,7 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:gradle:artifactory-app-backup")))
+    testImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
 }
 
 configurations.all {
