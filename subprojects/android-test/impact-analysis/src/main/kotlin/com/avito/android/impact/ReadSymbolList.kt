@@ -10,7 +10,7 @@ package com.avito.android.impact
  * int styleable AppBarLayout_expanded 4
  * int[] styleable ViewBackgroundHelper { 0x010100d4, 0x7f04005d, 0x7f04005e } //this case is not handled well here, but we don't need it
  */
-fun readSymbolList(lines: Sequence<String>): Map<String, Int> {
+internal fun readSymbolList(lines: Sequence<String>): Map<String, Int> {
     return lines.map {
         val split = it.split(" ")
         SymbolListEntry(

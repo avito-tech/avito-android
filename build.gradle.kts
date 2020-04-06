@@ -225,42 +225,14 @@ subprojects {
                 "implementation"(Dependencies.kotlinStdlib)
             }
         }
+
+        configureJunit5(this.kotlinPluginVersion)
     }
 
     plugins.withId("kotlin") {
 
         extensions.getByType<JavaPluginExtension>().run {
             withSourcesJar()
-        }
-
-        this@subprojects.tasks {
-            withType<Test> {
-                @Suppress("UnstableApiUsage")
-                useJUnitPlatform()
-
-                systemProperty("kotlinVersion", plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion)
-                systemProperty("compileSdkVersion", compileSdk)
-                systemProperty("buildToolsVersion", buildTools)
-                systemProperty("androidGradlePluginVersion", Dependencies.Versions.androidGradlePlugin)
-
-                /**
-                 * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
-                 * используется в `:test-project`
-                 */
-                systemProperty("isInvokedFromIde",
-                    gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null)
-            }
-        }
-
-        dependencies {
-            "testImplementation"(Dependencies.test.junitJupiterApi)
-
-            "testRuntimeOnly"(Dependencies.test.junitPlatformRunner)
-            "testRuntimeOnly"(Dependencies.test.junitPlatformLauncher)
-            "testRuntimeOnly"(Dependencies.test.junitJupiterEngine)
-
-            "testImplementation"(gradleTestKit())
-            "testImplementation"(Dependencies.test.truth)
         }
     }
 
@@ -332,5 +304,35 @@ fun Project.configureBintray(vararg publications: String) {
 
     tasks.named(publishReleaseTaskName).configure {
         dependsOn(tasks.named("bintrayUpload"))
+    }
+}
+
+fun Project.configureJunit5(kotlinVersion: String) {
+    tasks {
+        withType<Test> {
+            useJUnitPlatform()
+
+            systemProperty("kotlinVersion", kotlinVersion)
+            systemProperty("compileSdkVersion", compileSdk)
+            systemProperty("buildToolsVersion", buildTools)
+            systemProperty("androidGradlePluginVersion", Dependencies.Versions.androidGradlePlugin)
+
+            /**
+             * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
+             * используется в `:test-project`
+             */
+            systemProperty("isInvokedFromIde",
+                gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null)
+        }
+    }
+
+    dependencies {
+        "testImplementation"(Dependencies.test.junitJupiterApi)
+
+        "testRuntimeOnly"(Dependencies.test.junitPlatformRunner)
+        "testRuntimeOnly"(Dependencies.test.junitPlatformLauncher)
+        "testRuntimeOnly"(Dependencies.test.junitJupiterEngine)
+
+        "testImplementation"(Dependencies.test.truth)
     }
 }

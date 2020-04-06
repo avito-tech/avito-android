@@ -12,12 +12,10 @@ package com.avito.android.impact
  * layout notification_center_load_snippet
  * string notification_direct_reply
  */
-fun readModuleIds(rFilesLines: Map<String, Sequence<String>>): Map<String, List<String>> {
-    return rFilesLines.map { (moduleName, lines) ->
-        moduleName to lines
-            .drop(1) // don't need package name
-            .filter { it.startsWith("id ") }
-            .map { line -> line.split(" ")[1] }
-            .toList()
-    }.toMap()
+internal fun readModuleIds(lines: Sequence<String>): List<String> {
+    return lines
+        .drop(1) // don't need package name
+        .filter { it.startsWith("id ") }
+        .map { line -> line.split(" ")[1] }
+        .toList()
 }
