@@ -1,19 +1,17 @@
 ---
-title: Infrastructure project
+title: Android infrastructure
 type: docs
 ---
 
 # Avito android infrastructure on github
 
-Monorepo of all tooling to continuously test and deliver apps to users
+Monorepo of all tooling to continuously test and deliver apps to users.
 
 ## Modules
 
 ### Gradle plugins
 
-To use plugins in your project:
-
-`build.gradle`
+To use plugins in your project apply them in `build.gradle`:
 
 ```groovy
 buildscript {
@@ -28,9 +26,7 @@ buildscript {
 apply("com.avito.android.instrumentation-tests")
 ```
 
-or 
-
-`build.gradle`
+Or use [plugins DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block): 
 
 ```groovy
 plugins {
@@ -38,7 +34,7 @@ plugins {
 }
 ```
 
-and in `settings.gradle`
+`settings.gradle`:
 
 ```groovy
 pluginManagement {
@@ -57,16 +53,18 @@ pluginManagement {
 }
 ```
 
+Plugins:
+
 - `:artifactory-app-backup` - Gradle plugin to back up build artifacts in [artifactory](https://jfrog.com/artifactory/)
-- `:build-metrics` - Gradle plugin for gathering build metrics and deliver it to [grafana](https://grafana.com/)
-- `:build-properties` - Gradle plugin to deliver custom build parameters to android assets
+- `:build-metrics` - Gradle plugin for gathering build metrics and deliver them to [grafana](https://grafana.com/)
+- `:build-properties` - Gradle plugin to deliver custom build parameters to Android assets
 - `:buildchecks` - Gradle plugin to early detection of build problems
 - [`:cd`]({{< ref "/docs/ci/CIGradlePlugin.md" >}})
 - `:dependencies-lint` - Gradle plugin to detect unused Gradle dependencies
 - `:design-screenshots` - Gradle plugin, extended tasks to support screenshot testing on top of our `:instrumentation` plugin
 - `:feature-toggles` - Gradle plugin to extract feature toggles values from code and report it as build artifact
 - `:impact`, `:impact-shared` - Gradle plugin to search parts of the project we can avoid testing based on diff. 
-- `:instrumentation-tests` - Gradle plugin to set up and run instrumentation tests on android
+- `:instrumentation-tests` - Gradle plugin to set up and run instrumentation tests on Android
 - `:instrumentation-test-impact-analysis`, `:ui-test-bytecode-analyser` - Gradle plugin to search ui tests we can avoid based on `impact-plugin` analysis
 - `:kotlin-root` - Gradle plugin to configure kotlin tasks for internal project
 - `:lint-report` - Gradle plugin merging lint reports from different modules
@@ -81,18 +79,18 @@ pluginManagement {
 
 ### Buildscript dependencies
 
-- `:android` - android Gradle plugin extensions, and android sdk wrapper // todo separate
-- `:bitbucket` - bitbucket server client to deliver checks results right into pull request context
+- `:android` - Android Gradle plugin extensions, and Android SDK wrapper // todo separate
+- `:bitbucket` - Bitbucket client to deliver checks results right into pull request context
 via [code insights](https://www.atlassian.com/blog/bitbucket/bitbucket-server-code-insights) and comments
-- `:docker` - docker client to work with docker daemon from gradle
+- `:docker` - docker client to work with docker daemon from Gradle
 - `:files` - utils to work with files and directories
-- `:git` - git client to work within gradle
+- `:git` - git client to work within Gradle
 See [impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}})
 - `:kotlin-dsl-support` - Gradle api extensions //todo rename
 - `:kubernetes` - kubernetes credentials config extension
 - `:logging` - custom logger to serialize for Gradle workers //todo no longer a problem, remove
 - `:pre-build` - extensions to add tasks to the early stages of build
-- `:process` - utils to execute external commands from gradle
+- `:process` - utils to execute external commands from Gradle
 - `:runner:client`, `:runner:service`, `:runner:shared`, `:runner:shared-test` - instrumentation tests runner
 - `:sentry-config` - [sentry](https://sentry.io/) client config extension
 - `:slack` - [slack](https://slack.com/) client to work within Gradle plugins
@@ -106,9 +104,9 @@ and [service messages]((https://www.jetbrains.com/help/teamcity/build-script-int
 - `:upload-to-googleplay` - wrapper for google publishing api
 - `:utils` - //todo remove 
 
-### Android-test modules
+### Android testing modules
 
-Code that goes in androidTestImplementation configuration and runs on emulators.
+Code that goes in `androidTestImplementation` configuration and runs on emulators.
 
 - `:junit-utils` - //todo move to common
 - `:mockito-utils` - //todo move to common
@@ -121,9 +119,13 @@ Code that goes in androidTestImplementation configuration and runs on emulators.
 - `:ui-testing-maps` - addon for main library to test google maps scenarios
 - `:websocket-reporter` - client to gather websocket info for reporting
 
+### Android libraries
+
+- [`:proxy-toast`]({{< ref "/docs/test/Toast.md" >}}) - helps with testing toasts
+
 ### Common modules
 
-Shared modules between android-test and gradle.
+Shared modules between android-test and Gradle.
 
 - `:file-storage` - client for internal file storage client, used to store screenshots, videos and other binary stuff
 - `:okhttp` - okhttp extensions
