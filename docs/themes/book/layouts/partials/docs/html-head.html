@@ -4,7 +4,7 @@
 {{- template "_internal/opengraph.html" . -}}
 
 <title>{{ partial "docs/title" . }} | {{ .Site.Title -}}</title>
-<link rel="icon" href="{{ "favicon.png" | relURL }}" type="image/x-icon">
+<link rel="icon" href="{{ "favicon.ico" | relURL }}" type="image/x-icon">
 
 <!-- Theme stylesheet, you can customize scss by creating `assets/custom.scss` in your website -->
 {{- $styles := resources.Get "book.scss" | resources.ExecuteAsTemplate "book.scss" . | resources.ToCSS | resources.Minify | resources.Fingerprint }}
