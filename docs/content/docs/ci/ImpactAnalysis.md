@@ -16,13 +16,13 @@ If a module is not affected by changes, we don't want to run anything in it.
 
 {{<mermaid>}}
 graph TD
-    AppX --> FeatureA
-    AppX --> FeatureB
-    AppX --> FeatureC
-    AppY --> FeatureC
-    AppY:::changed --> FeatureD:::changed
+AppX --> FeatureA
+AppX --> FeatureB
+AppX --> FeatureC
+AppY --> FeatureC
+AppY:::changed --> FeatureD:::changed
     
-    classDef changed fill:#f96;
+classDef changed fill:#f96;
 {{</mermaid>}}
 
 These optimizations are supported in [CI Gradle Plugin]({{< ref "/docs/ci/CIGradlePlugin.md" >}}).\
