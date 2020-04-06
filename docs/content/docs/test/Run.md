@@ -31,7 +31,6 @@ type: docs
   - E2E
   - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
   - Интеграционные (`@IntegrationTest`)
-  - Ручные (`@ManualTest`)
 - [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
 
 {{< hint warning >}}
@@ -54,7 +53,6 @@ type: docs
   - E2E
   - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
   - Интеграционные (`@IntegrationTest`)
-  - Ручные (`@ManualTest`)
 - [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
 
 ## Запуск тестов вручную
