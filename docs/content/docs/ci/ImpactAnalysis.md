@@ -1,35 +1,57 @@
 ---
-title: Impact analysis
+title: Test impact analysis
 type: docs
 ---
 
-# Impact analysis
+# Test impact analysis
 
-Импакт анализ находит измененные файлы и запускает минимально возможный набор проверок. 
-Это всегда баланс между скоростью проверок и их полнотой.
+Test impact analysis finds automatically a minimum set of tests that can verify changed code.
 
-Описание подхода: [The Rise of Test Impact Analysis](https://martinfowler.com/articles/rise-test-impact-analysis.html)
+[The Rise of Test Impact Analysis](https://martinfowler.com/articles/rise-test-impact-analysis.html)
 
-## UI тесты
+## On module level
 
-Обзор реализации для автотестов: [Android CI Impact analysis](https://youtu.be/EBO2S9qcp0s?t=6948).
+Besides tests, we have different work to do in modules: Android Lint, unit-tests, assemble, ...\
+If a module is not affected by changes, we don't want to run anything in it.
 
-Импакт анализу нужна помощь в привязке экрана к модулю. 
-Для этого проставляем Screen.rootId.
+{{<mermaid>}}
+graph TD
+    AppX --> FeatureA
+    AppX --> FeatureB
+    AppX --> FeatureC
+    AppY --> FeatureC
+    AppY:::changed --> FeatureD:::changed
+    
+    classDef changed fill:#f96;
+{{</mermaid>}}
 
-## Ограничения
+These optimizations are supported in [CI Gradle Plugin]({{< ref "/docs/ci/CIGradlePlugin.md" >}}).\
+See implementation in `impact` module.
 
-В импакт анализе есть два типа ошибок:
+## UI tests
 
-- Не запустили, то что было задето. 
-- Запустили больше, чем было задето (fallback).   
-Отдаем этому варианту предпочтение.
+An overview: [Android CI Impact analysis - AppsConf Mobile meetup (RU)](https://youtu.be/EBO2S9qcp0s?t=6948).
 
-Известные сценарии fallback'ов:
+See implementation in `instrumentation-test-impact-analysis` module.
 
-- Точность до уровня теста: если задет класс, запустим все его тесты.
-- Точность до уровня модуля: если задет модуль, запустим все тесты связанные с package этого модуля.
-- Запустим все тесты связанные с Screen, если не можем найти его package:
-    - Screen не соответствует ни одному пакету
-    - Screen соответствует нескольким пакетам
+### Tradeoffs in impact analysis
+
+To bind a Page Object to a Gradle-module we keep this information in the code. 
+See [Screen.rootId]({{< ref "/docs/test_framework/TestFramework.md#screen" >}})
+
+There are two types of errors in impact analysis:
+
+- False-negative: haven't run affected tests. 
+- False-positive: run extra tests.
+
+There is a special case - fallback. If we can't understand impact of changes, we ran all tests.
+We loose time in favor of correctness.
+
+Known fallbacks:
+
+- Fallback on test level: if a class has been changed, we'll run all his tests.
+- Fallback on module level: if a module has been changed, we'll run all tests from its package.
+- Fallback on Screen level: if we can't find Screen's package, we'll run all tests related to it.
+    - Screen doesn't match any of packages
+    - Screen matches to multiple packages
 
