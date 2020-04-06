@@ -14,7 +14,7 @@ type: docs
 
 ## Local Git hooks
 
-**`./git_hooks`** будут синхронизированы с **`.git/hooks`** при первом запуске gradle.
+**`./git_hooks`** будут синхронизированы с **`.git/hooks`** при первом запуске Gradle.
 
 ## [Git LFS](https://git-lfs.github.com/)
 

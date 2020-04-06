@@ -1,39 +1,105 @@
 ---
-title: Введение
+title: Запуск тестов
 type: docs
 ---
 
 # Запуск тестов
 
-## IDE
+{{<avito page>}}
+
+## Автоматически запускаемые тесты
+
+### Тесты на PR
+
+При создании Pull Request'а ваша ветка ребейзится на целевую ветку и автоматически запускается
+[`fastCheck`](http://links.k.avito.ru/PV), объявленный в `avito/build.gradle`:
+- Юнит тесты
+- Инструментальные тесты:
+  - Перформанс
+  - Компонентные
+  - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
+  - Интеграционные (`@IntegrationTest`)
+- [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
+
+### Проверки develop'а
+
+Раз в 3 часа при наличии изменений в develop-ветке на ней запускается [`fullCheck`](http://links.k.avito.ru/5u),
+объявленный в `avito/build.gradle` и содержищий следующие проверки:
+- Юнит тесты
+- Инструментальные тесты:
+  - Компонентные
+  - E2E
+  - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
+  - Интеграционные (`@IntegrationTest`)
+  - Ручные (`@ManualTest`)
+- [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
+
+{{< hint warning >}}
+Тесты, почеменные как [`@Flaky`]({{< ref "/docs/test/FlakyTests.md" >}}) запускаются, но на результат прогона не влияют.
+{{< /hint >}}
+
+### Регресс
+
+Регресс [автоматически запускается](http://links.k.avito.ru/OjE) каждый день таким образом, чтобы к началу рабочего дня
+уже был как минимум один прогон, а к началу регресса - несколько прогонов для выявления флаки тестов. За регресс
+отвечает конфигурация `release`, объявленая в `avito/build.gradle`. Результаты прогонов агрегируются в отчет по коммиту,
+с которого был запущен регресс, и упавшие тесты рассылаются ответственным юнитам в соответствующие чаты в Slack. Имя
+пакета теста отображается на имя канала в словаре `unitToChannelMap` [здесь](http://links.k.avito.ru/RM) (ссылка на
+внутренний ресурс).
+
+Регресс включает в себя:
+- Юнит тесты
+- Инструментальные тесты:
+  - Компонентные
+  - E2E
+  - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
+  - Интеграционные (`@IntegrationTest`)
+  - Ручные (`@ManualTest`)
+- [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
+
+## Запуск тестов вручную
+
+### В IDE
 
 Обрати внимание на [кастомные конфигурации]({{< ref "/docs/ide/Configurations.md" >}})
 
-### Robolectric
+#### Запуск Robolectric тестов
 
 Просто запускаем стрелками Run напротив имени тестового класса или метода.
 
-Важно чтобы в настройках запуск был делегирован Gradle:
+#### Запуск Instrumentation тестов
 
-**Preferences > Build, Execution, Deployment > Build Tools > Gradle**
+Аналогично Robolectric тестам - просто запускаем тест средствами Android Studio.
 
-{{< tabs "robolectric" >}}
-{{< tab "AS 3.6+" >}}
-Build and run using: Gradle
-Run tests using: Gradle
-{{< /tab >}}
-{{< tab "AS 3.5" >}}
-- Delegate IDE build/run actions to Gradle
-- Run tests using: Gradle Test Runner
-{{< /tab >}}
-{{< /tabs >}}
+### Запуск тестов в CI с кастомными параметрами {#custom-run}
 
-### Instrumentation
+В Teamcity есть [конфигурация `instrumentationDynamic`](http://links.k.avito.ru/tmctAvitoAndroidInstrumentationDynamic)
+для запуска тестов со специфическим набором требований.
 
-#### Known issues
+Запускайте и вам будет предложено выбрать:
+- Ветку для запуска (*Changes -> Build branch*)
+- API URL, в который ходят тесты (*Parameters -> Test URL*)
+- Предустановленный набор тестов (*Parameters -> env.DYNAMIC_FILTER*)
+  - `ui` -- компонентные, E2E, скриншотные, интеграционные тесты
+  - `uiNoE2E` -- как `ui`, но без E2E тестов
+  - `regressionNoE2E` -- `uiNoE2E` + ручные тесты
+  - `regression` -- `ui` + ручные тесты
+  - `performanceNoE2E` -- только компонентные перформанс тесты
+  - `performance` -- только функциональные перформанс тесты
+- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*)
+- Количество запусков. Полезно для [отладки нестабильных тестов]({{< ref "/docs/test/TroubleshootingUI.md" >}})
+  (*Parameters -> Retry count*)
+- Версии API (*Parameters -> * Api*)
 
-- Не работает запуск конкретного метода в тесте, только всего класса ([#127662898](https://issuetracker.google.com/issues/127662898))
+### Запуск всех E2E тестов
 
-## CI
+Для запуска всех E2E тестов воспользуйтесь TeamCity конфигурацией [fullCheck](http://links.k.avito.ru/5u). В настройках
+запуска можно задать следующие параметры:
+- Ветку для запуска (*Changes -> Build branch*)
+- API URL, в который ходят тесты (*Parameters -> Test URL*)
 
-[Кастомный запуск]({{< relref "DynamicConfig.md" >}})
+### Локальный запуск тестов в инфре
+
+Сейчас в разработке находится механизм локального запуска инструментальных тестов на эмуляторах в кубе. Уже работает для
+тестового приложения в инфре. Подробности [здесь]({{< ref "/docs/test/Runner.md" >}}).
+

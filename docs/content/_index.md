@@ -18,7 +18,7 @@ All source code lives in `subprojects/`:
 
 - `android-test` - code that goes in androidTestImplementation configuration and runs on emulators
 - `gradle` - Gradle plugins and buildscript dependencies
-- `common` - shared code between android-test and gradle
+- `common` - shared code between `android-test` and `gradle`
 
 More details - [project structure]({{< ref "/Infrastructure.md" >}})
 
