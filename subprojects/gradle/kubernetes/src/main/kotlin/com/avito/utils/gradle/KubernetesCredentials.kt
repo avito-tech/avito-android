@@ -20,6 +20,7 @@ sealed class KubernetesCredentials : Serializable {
     ) : KubernetesCredentials(), Serializable
 }
 
+// TODO: get rid of this default. autoConfig is enabled by default
 private val kubeConfigDefaultPath: String by lazy {
     val userHome: String = requireUserHome()
     "${userHome}/.kube/config"
