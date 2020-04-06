@@ -6,4 +6,6 @@ data class ModulePath(val path: String) {
     }
 }
 
+fun ModulePath.toFileName() = path.drop(1).replace(":", "-")
+
 private val validModulePath = Regex("(:[a-zA-Z]+(_[a-zA-Z])?)*")

@@ -17,12 +17,13 @@ internal class CopySymbolsToAssetsTaskTest {
     @Test
     fun test(@TempDir projectDir: File) {
         val testBuildType = "debug"
+        val libPackageName = "some.lib.packagename"
 
         TestProjectGenerator(
             plugins = listOf("com.avito.android.impact"),
             modules = listOf(
                 AndroidAppModule(
-                    "app",
+                    name = "app",
                     plugins = listOf("com.avito.android.instrumentation-test-impact-analysis"),
                     dependencies = "implementation(project(\":lib\"))",
                     mutator = {
@@ -39,7 +40,23 @@ internal class CopySymbolsToAssetsTaskTest {
                         }
                     }
                 ),
-                AndroidLibModule("lib")
+                AndroidLibModule(
+                    name = "lib",
+                    packageName = libPackageName,
+                    mutator = {
+                        dir("src/main/res/layout") {
+                            file(
+                                name = "some_lib_new_layout.xml",
+                                content = """<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:tools="http://schemas.android.com/tools"
+                                        android:id="@+id/some_new_id_from_lib"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                />""".trimIndent()
+                            )
+                        }
+                    }
+                )
             )
         ).generateIn(projectDir)
 
@@ -63,6 +80,7 @@ internal class CopySymbolsToAssetsTaskTest {
             "merged_assets",
             "${testBuildType}AndroidTest",
             "out",
+            "impactAnalysisMeta",
             "R.txt"
         ).toFile()
 
@@ -71,5 +89,25 @@ internal class CopySymbolsToAssetsTaskTest {
                 "int id some_new_id",
                 "int layout new_layout"
             )
+
+        val libSymbolListInAssets = Paths.get(
+            projectDir.path,
+            "app",
+            "build",
+            "intermediates",
+            "merged_assets",
+            "${testBuildType}AndroidTest",
+            "out",
+            "impactAnalysisMeta",
+            "lib_package-aware-r.txt"
+        ).toFile()
+
+        val libSymbolListInAssetsLines = libSymbolListInAssets.readLines()
+
+        assertThat(libSymbolListInAssetsLines[0]).isEqualTo(libPackageName)
+        assertThat(libSymbolListInAssetsLines).containsAtLeast(
+            "id some_new_id_from_lib",
+            "layout some_lib_new_layout"
+        )
     }
 }

@@ -14,6 +14,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
+import java.io.File
 import java.time.Duration
 
 class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
@@ -62,19 +63,26 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
                 bytecodeAnalyzeSummaryJson.set(bytecodeAnalyzeTask.flatMap { it.byteCodeAnalyzeSummary })
             }
 
-            val runtimeSymbolList = runtimeSymbolListPath(project.projectDir, app.testBuildType)
-            val mergedAssets = mergedAssetsPath(project.projectDir, app.testBuildType)
+            val copySymbolsToAssetsTask =
+                project.tasks.register<Copy>("copy${testBuildTypeSlug}SymbolsToAssets") {
+                    val mergedAssets = mergedAssetsPath(project.projectDir, app.testBuildType)
+                    into(File(mergedAssets, "impactAnalysisMeta"))
 
-            val copySymbolsToAssetsTask = project.tasks.register<Copy>("copy${testBuildTypeSlug}SymbolsToAssets") {
-                from(runtimeSymbolList)
-                //todo from all library modules
-                into(mergedAssets)
+                    //todo onlyIf impactAnalysis will be performed
 
-                //todo onlyIf impactAnalysis will be performed
+                    //todo hook on android gradle plugin task outputs
+                    dependsOn("${project.path}:merge${testBuildTypeSlug}AndroidTestAssets")
+                    dependsOn("${project.path}:process${testBuildTypeSlug}Resources")
+                }
 
-                //todo hook on android gradle plugin task outputs
-                dependsOn("${project.path}:merge${testBuildTypeSlug}AndroidTestAssets")
-                dependsOn("${project.path}:process${testBuildTypeSlug}Resources")
+            val copyTaskConfiguratorTask =
+                project.tasks.register<CopySymbolsToAssetsConfigurator>("copy${testBuildTypeSlug}SymbolsToAssetsConfiguratior") {
+                    this.app = app
+                    this.targetTask = copySymbolsToAssetsTask
+                }
+
+            copySymbolsToAssetsTask.configure {
+                it.dependsOn(copyTaskConfiguratorTask)
             }
 
             project.afterEvaluate {
