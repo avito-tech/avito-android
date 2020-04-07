@@ -1,193 +1,106 @@
 package com.avito.instrumentation.suite
 
-import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.dex.TestInApk
-import com.avito.instrumentation.suite.dex.TestSuiteLoader
-import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
-import com.avito.instrumentation.suite.dex.check.TestSignatureCheck
-import com.avito.instrumentation.suite.filter.AnnotatedWithFilter
-import com.avito.instrumentation.suite.filter.CompositeTestRunFilter
-import com.avito.instrumentation.suite.filter.FileTestsFilter
-import com.avito.instrumentation.suite.filter.IgnoredAnnotationFilter
-import com.avito.instrumentation.suite.filter.NameTestsFilter
-import com.avito.instrumentation.suite.filter.PackagePrefixFilter
-import com.avito.instrumentation.suite.filter.SkipSdkFilter
-import com.avito.instrumentation.suite.filter.TestRunFilter
-import com.avito.instrumentation.suite.filter.TestRunsFilter
+import com.avito.instrumentation.suite.filter.FilterFactory
+import com.avito.instrumentation.suite.filter.TestsFilter
+import com.avito.instrumentation.suite.filter.TestsFilter.Result.Excluded
+import com.avito.instrumentation.suite.filter.TestsFilter.Signatures
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.report.model.DeviceName
-import com.avito.report.model.SimpleRunTest
-import org.funktionale.tries.Try
-import java.io.File
 
 /**
  * todo MBS-8045 сделать подмножество конфига для фильтров, сейчас тащим сюда огромный объект InstrumentationTestsAction.Params
  */
 interface TestSuiteProvider {
 
-    fun getInitialTestSuite(
-        testApk: File,
-        params: InstrumentationTestsAction.Params,
-        testSignatureCheck: TestSignatureCheck? = null,
-        previousRun: () -> Try<List<SimpleRunTest>>,
-        getTestsByReportId: (String) -> Try<List<SimpleRunTest>>
-    ): List<TestWithTarget>
-
-    fun getFailedOnlySuite(
-        testApk: File,
-        params: InstrumentationTestsAction.Params,
-        previousRun: () -> List<SimpleRunTest>
-    ): List<TestWithTarget>
+    fun getInitialTestSuite(tests: List<TestInApk>): List<TestWithTarget>
+    fun getRerunTestsSuite(tests: List<TestInApk>): List<TestWithTarget>
 
     class Impl(
         private val report: Report,
-        private val testSuiteLoader: TestSuiteLoader = TestSuiteLoaderImpl()
+        private val targets: List<TargetConfiguration.Data>,
+        private val reportSkippedTests: Boolean,
+        private val filterFactory: FilterFactory
     ) : TestSuiteProvider {
 
         private data class TestSuite(
             val testsToRun: List<TestWithTarget>,
-            val skippedTests: List<Pair<TestWithTarget, TestRunFilter.Verdict.Skip>>
+            val skippedTests: List<Pair<TestWithTarget, Excluded>>
         )
 
         override fun getInitialTestSuite(
-            testApk: File,
-            params: InstrumentationTestsAction.Params,
-            testSignatureCheck: TestSignatureCheck?,
-            previousRun: () -> Try<List<SimpleRunTest>>,
-            getTestsByReportId: (String) -> Try<List<SimpleRunTest>>
+            tests: List<TestInApk>
         ): List<TestWithTarget> {
 
             val suite = getTestSuite(
-                targets = params.instrumentationConfiguration.targets,
-                loadedTests = testSuiteLoader.loadTestSuite(testApk, testSignatureCheck),
-                filters = initialFilters(params, previousRun, getTestsByReportId)
+                tests = tests,
+                filter = filterFactory.createInitialFilter()
             )
 
-            if (params.instrumentationConfiguration.reportSkippedTests) {
+            if (reportSkippedTests) {
                 report.sendSkippedTests(
-                    skippedTests = suite.skippedTests.map { (targetTest, verdict) ->
-                        targetTest.test to verdict
-                    }
+                    skippedTests = suite.skippedTests
+                        /**
+                         * Не репортим скипы по причине "тест уже прошел на этом коммите" т.к репорт вьювер финальным статусом теста
+                         * считает его последний статус. Так, в итоге, в репорт вьювере у нас отображаются все прошедшие тесты как
+                         * заскипанные.
+                         */
+                        .filter { (_, verdict) ->
+                            verdict is Excluded.BySignatures && verdict.source == Signatures.Source.PreviousRun
+                        }
+                        .map { (targetTest, verdict) ->
+                            targetTest.test to verdict.reason
+                        }
                 )
             }
 
             return suite.testsToRun
         }
 
-        override fun getFailedOnlySuite(
-            testApk: File,
-            params: InstrumentationTestsAction.Params,
-            previousRun: () -> List<SimpleRunTest>
+        override fun getRerunTestsSuite(
+            tests: List<TestInApk>
         ): List<TestWithTarget> {
             return getTestSuite(
-                targets = params.instrumentationConfiguration.targets,
-                loadedTests = testSuiteLoader.loadTestSuite(testApk),
-                filters = listOf(
-                    TestRunsFilter.skipSucceedTestRuns(
-                        testRuns = previousRun()
-                    )
-                )
+                tests = tests,
+                filter = filterFactory.createRerunFilter()
             ).testsToRun
         }
 
-        /**
-         * Определяем какие тесты должны быть запущены последующим таском-раннером
-         * Помимо разнообразных фильтров мы еще должны убедиться, что запрашиваемые тесты вообще находятся в тестовой apk,
-         * для этого парсим dex, при помощи [TestSuiteLoader]
-         *
-         * TODO импакт анализ должен передавать тесты которые нужно НЕ запускать (сейчас наоборот)
-         */
         private fun getTestSuite(
-            targets: List<TargetConfiguration.Data>,
-            loadedTests: List<TestInApk>,
-            filters: List<TestRunFilter>
+            tests: List<TestInApk>,
+            filter: TestsFilter
         ): TestSuite {
-            val compositeTestRunFilter = CompositeTestRunFilter(filters)
-
             val source = targets.flatMap { target ->
                 val deviceName = DeviceName(target.deviceName)
-                loadedTests.map { testInApk ->
+                tests.map { testInApk ->
                     TestWithTarget(
                         test = parseTest(testInApk, deviceName),
                         target = target
-                    ) to compositeTestRunFilter.runNeeded(
-                        test = testInApk,
-                        deviceName = deviceName,
-                        api = target.reservation.device.api
+                    ) to filter.filter(
+                        TestsFilter.Test(
+                            name = testInApk.testName.name,
+                            annotations = testInApk.annotations,
+                            deviceName = deviceName,
+                            api = target.reservation.device.api
+                        )
                     )
                 }
             }
 
             val skippedTests =
-                source.filter { (_, verdict) -> verdict is TestRunFilter.Verdict.Skip }
-                    .map { (test, verdict) -> test to verdict as TestRunFilter.Verdict.Skip }
+                source.filter { (_, verdict) -> verdict !is TestsFilter.Result.Included }
+                    .map { (test, verdict) -> test to verdict as Excluded }
 
-            val testsToRun = source.filter { (_, verdict) -> verdict is TestRunFilter.Verdict.Run }
-                .map { (test, _) -> test }
+            val testsToRun =
+                source.filter { (_, verdict) -> verdict is TestsFilter.Result.Included }
+                    .map { (test, _) -> test }
 
             return TestSuite(
                 testsToRun = testsToRun,
                 skippedTests = skippedTests
             )
-        }
-
-        /**
-         * порядок фильтров не должен влиять на корректность
-         * todo как быть с manual?
-         * todo вместо params должен быть какойто верхнеуровневый конфиг
-         */
-        private fun initialFilters(
-            params: InstrumentationTestsAction.Params,
-            previousRun: () -> Try<List<SimpleRunTest>>,
-            testsByReportId: (String) -> Try<List<SimpleRunTest>>
-        ): List<TestRunFilter> {
-
-            val filters: MutableList<TestRunFilter> = mutableListOf(
-                IgnoredAnnotationFilter(),
-                SkipSdkFilter()
-            )
-
-            if (params.instrumentationConfiguration.keepTestsWithNames != null) {
-                filters.add(NameTestsFilter(params.instrumentationConfiguration.keepTestsWithNames))
-            }
-
-            if (params.instrumentationConfiguration.keepTestsAnnotatedWith != null) {
-                filters.add(AnnotatedWithFilter(params.instrumentationConfiguration.keepTestsAnnotatedWith))
-            }
-
-            if (params.instrumentationConfiguration.keepTestsWithPrefix != null) {
-                filters.add(PackagePrefixFilter(params.instrumentationConfiguration.keepTestsWithPrefix))
-            }
-
-            if (params.impactAnalysisResult != null) {
-                filters.add(FileTestsFilter(params.impactAnalysisResult))
-            }
-
-            if (params.instrumentationConfiguration.skipSucceedTestsFromPreviousRun) {
-                previousRun.invoke()
-                    .onSuccess { testRuns ->
-                        filters.add(
-                            TestRunsFilter.skipSucceedTestRuns(
-                                testRuns = testRuns
-                            )
-                        )
-                    }
-            }
-
-            if (params.instrumentationConfiguration.keepFailedTestsFromReport != null) {
-                testsByReportId(params.instrumentationConfiguration.keepFailedTestsFromReport)
-                    .onSuccess { testRuns ->
-                        filters.add(
-                            TestRunsFilter.keepFailedTestRuns(
-                                testRuns = testRuns
-                            )
-                        )
-                    }
-            }
-
-            return filters
         }
     }
 }

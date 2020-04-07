@@ -5,11 +5,9 @@ import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.executing.FakeTestExecutor
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.executing.TestExecutorFactory
-import com.avito.instrumentation.report.FakeReport
 import com.avito.instrumentation.report.Report.Impl
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.client.ReservationClientFactory
-import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.instrumentation.suite.dex.createStubInstance
@@ -23,7 +21,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
 import com.avito.slack.FakeSlackClient
 import com.avito.utils.FakeBuildFailer
-import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.FakeCILogger
 import com.google.common.truth.Truth.assertThat
@@ -40,11 +37,11 @@ internal class InstrumentationTestsActionIntegrationTest {
     private lateinit var inputDir: File
     private lateinit var apk: File
     private lateinit var outputDir: File
-    private val reporter = FakeReport()
     private val reportsApi = FakeReportsApi()
     private val testSuiteLoader = FakeTestSuiteLoader()
     private val reportCoordinates = ReportCoordinates.createStubInstance()
-    private val targetReportCoordinates = reportCoordinates.copy(jobSlug = reportCoordinates.jobSlug + "-rerun")
+    private val targetReportCoordinates =
+        reportCoordinates.copy(jobSlug = reportCoordinates.jobSlug + "-rerun")
     private val testRunner = FakeTestExecutor()
     private val testExecutorFactory = object : TestExecutorFactory {
         override fun createExecutor(
@@ -72,7 +69,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             targets = singletonList(TargetConfiguration.Data.createStubInstance())
         )
 
-        reportsApi.enqueueTestsForRunId(reportCoordinates, Try.Failure(Exception("no data")))
+        reportsApi.enqueueTestsForRunId(reportCoordinates, Try.Success(emptyList()))
 
         createAction(
             configuration = configuration,
@@ -162,7 +159,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         reportCoordinates = reportCoordinates,
         reportsApi = reportsApi,
         buildFailer = buildFailer,
-        testSuiteProvider = TestSuiteProvider.Impl(reporter, testSuiteLoader),
+        testSuiteLoader = testSuiteLoader,
         sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
         targetReport = Impl(reportsApi, logger, targetReportCoordinates, params.buildId),
         slackClient = FakeSlackClient()

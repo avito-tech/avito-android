@@ -122,7 +122,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
     slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
     fileStorageUrl = project.getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
-
+    // deprecated since 2020.3.6
     output = project.rootProject.file("outputs/${project.name}/instrumentation").path
 
     logcatTags = setOf(

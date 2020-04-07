@@ -28,8 +28,7 @@ interface TestsRunner {
         runType: TestExecutor.RunType,
         reportCoordinates: ReportCoordinates,
         report: Report,
-        testsToRun: List<TestWithTarget>,
-        currentReportState: () -> Try<List<SimpleRunTest>>
+        testsToRun: List<TestWithTarget>
     ): Try<List<SimpleRunTest>>
 }
 
@@ -54,12 +53,10 @@ class TestsRunnerImplementation(
         runType: TestExecutor.RunType,
         reportCoordinates: ReportCoordinates,
         report: Report,
-        testsToRun: List<TestWithTarget>,
-        currentReportState: () -> Try<List<SimpleRunTest>>
+        testsToRun: List<TestWithTarget>
     ): Try<List<SimpleRunTest>> {
         return if (testsToRun.isEmpty()) {
-            //todo есть сомнения что это нормально работает во всех кейсах, нужно больше тестов
-            currentReportState.invoke().rescue { Try.Success(emptyList()) }
+            Try.Success(emptyList())
         } else {
 
             val output = File(outputDirectory, runType.id).apply { mkdirs() }
@@ -80,7 +77,7 @@ class TestsRunnerImplementation(
             // TODO: pass through constructor and isolate k8s
             val reservationClientFactory = ReservationClientFactory.Impl(
                 logger = logger,
-                buildId= buildId,
+                buildId = buildId,
                 buildType = buildType,
                 projectName = projectName,
                 kubernetesCredentials = kubernetesCredentials,

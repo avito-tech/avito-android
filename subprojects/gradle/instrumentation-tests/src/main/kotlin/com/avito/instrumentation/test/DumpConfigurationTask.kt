@@ -1,6 +1,6 @@
 package com.avito.instrumentation.test
 
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -17,7 +17,7 @@ abstract class DumpConfigurationTask @Inject constructor(
 ) : DefaultTask() {
 
     @Input
-    val configuration = objects.property<InstrumentationPluginConfiguration.Data>()
+    val configuration = objects.property<GradleInstrumentationPluginConfiguration.Data>()
 
     @OutputFile
     val output: RegularFileProperty = objects.fileProperty()

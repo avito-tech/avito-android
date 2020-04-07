@@ -2,7 +2,8 @@ test_build_type?=debug
 log_level?=-q
 filter_report_id?=
 
-help:
+test_app_help:
+	./gradlew s:android-test:test-app:help -PinfraVersion=local $(log_level)
 
 publish_to_maven_local:
 	./gradlew publishToMavenLocal -PprojectVersion=local $(log_level)

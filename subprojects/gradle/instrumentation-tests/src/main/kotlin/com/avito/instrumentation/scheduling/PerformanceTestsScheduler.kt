@@ -6,29 +6,26 @@ import com.avito.instrumentation.report.FlakyTestInfo
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.suite.TestSuiteProvider
+import com.avito.instrumentation.suite.dex.TestSuiteLoader
+import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
+import com.avito.instrumentation.suite.dex.check.AllChecks
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.util.FutureValue
 import com.avito.instrumentation.util.GroupedCoroutinesExecution
-import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import org.funktionale.tries.Try
 
 internal class PerformanceTestsScheduler(
     private val testsRunner: TestsRunner,
-    private val reportsApi: ReportsApi,
     private val params: InstrumentationTestsAction.Params,
     private val reportCoordinates: ReportCoordinates,
     private val sourceReport: Report,
     private val targetReport: Report,
     private val targetReportCoordinates: ReportCoordinates,
-    private val testSuiteProvider: TestSuiteProvider
+    private val testSuiteProvider: TestSuiteProvider,
+    private val testSuiteLoader: TestSuiteLoader = TestSuiteLoaderImpl()
 ) : TestsScheduler {
-
-    /**
-     * Тут мы сейчас всегда получим отчет, даже если прогона не было, т.к. создаем его для CD предварительно
-     */
-    private val previousRun by lazy { reportsApi.getTestsForRunId(reportCoordinates) }
 
     override fun schedule(
         initialTestsSuite: List<TestWithTarget>,
@@ -45,9 +42,8 @@ internal class PerformanceTestsScheduler(
                 testApk = params.testApk,
                 runType = TestExecutor.RunType.Run(id = "initialRun"),
                 reportCoordinates = reportCoordinates,
-                testsToRun = initialTestsSuite,
-                currentReportState = { previousRun },
-                report = sourceReport
+                report = sourceReport,
+                testsToRun = initialTestsSuite
             )
 
             initialTestsResult
@@ -58,10 +54,7 @@ internal class PerformanceTestsScheduler(
             testResultsAfterBranchRerunsFuture = group.launch {
                 val testsToRun: List<TestWithTarget> =
                     testSuiteProvider.getInitialTestSuite(
-                        testApk = buildOnTargetCommitResult.testApk,
-                        params = params,
-                        previousRun = { previousRun },
-                        getTestsByReportId = {reportId -> reportsApi.getTestsForReportId(reportId)}
+                        tests = testSuiteLoader.loadTestSuite(buildOnTargetCommitResult.testApk, AllChecks())
                     )
 
                 val testResultsAfterBranchReruns = testsRunner.runTests(
@@ -69,9 +62,8 @@ internal class PerformanceTestsScheduler(
                     testApk = buildOnTargetCommitResult.testApk,
                     runType = TestExecutor.RunType.Run(id = "runOnTarget"),
                     reportCoordinates = targetReportCoordinates,
-                    testsToRun = testsToRun,
-                    currentReportState = { Try.Failure(Exception("No previous runs")) },
-                    report = targetReport
+                    report = targetReport,
+                    testsToRun = testsToRun
                 )
 
                 testResultsAfterBranchReruns

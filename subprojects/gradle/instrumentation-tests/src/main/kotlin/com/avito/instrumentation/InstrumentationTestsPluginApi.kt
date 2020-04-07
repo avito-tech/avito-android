@@ -1,12 +1,13 @@
 package com.avito.instrumentation
 
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.kotlin.dsl.typedNamed
+import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.withType
 
 //API для использования другими плагинами
@@ -40,15 +41,12 @@ fun TaskContainer.instrumentationTask(
     }
 }
 
-fun Project.withInstrumentationTests(block: (config: InstrumentationPluginConfiguration.Data) -> Unit) {
+fun Project.withInstrumentationTests(block: (config: GradleInstrumentationPluginConfiguration.Data) -> Unit) {
+    instrumentationDumpPath
     plugins.withType<InstrumentationTestsPlugin> {
-        val pluginConfiguration =
-            extensions.findByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
-        requireNotNull(pluginConfiguration) { "InstrumentationTestsPlugin not found!" }
-
-        InstrumentationPluginConfiguration(
-            project = project,
-            configuration = pluginConfiguration
-        ).withData(block)
+        withInstrumentationExtensionData(block)
     }
 }
+
+@VisibleForTesting
+internal val instrumentationDumpPath = "instrumentation-extension-dump.bin"

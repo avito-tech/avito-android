@@ -1,6 +1,6 @@
 package com.avito.instrumentation
 
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.report.model.RunId
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
@@ -151,13 +151,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: InstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
             projectDir
-                .file("instrumentation-configuration-dump.bin")
+                .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as InstrumentationPluginConfiguration.Data
+                it.readObject() as GradleInstrumentationPluginConfiguration.Data
             }
 
 
@@ -196,13 +196,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: InstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
             projectDir
-                .file("instrumentation-configuration-dump.bin")
+                .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as InstrumentationPluginConfiguration.Data
+                it.readObject() as GradleInstrumentationPluginConfiguration.Data
             }
 
         val functionalConfigurationInstrumentationParameters = data.configurations
@@ -243,13 +243,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: InstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
             projectDir
-                .file("instrumentation-configuration-dump.bin")
+                .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as InstrumentationPluginConfiguration.Data
+                it.readObject() as GradleInstrumentationPluginConfiguration.Data
             }
 
         val api22TargetInstrumentationParameters = data.configurations
@@ -293,13 +293,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: InstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
             projectDir
-                .file("instrumentation-configuration-dump.bin")
+                .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as InstrumentationPluginConfiguration.Data
+                it.readObject() as GradleInstrumentationPluginConfiguration.Data
             }
 
         val dynamicInstrumentationConfiguration = data.configurations
