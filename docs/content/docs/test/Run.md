@@ -31,7 +31,6 @@ type: docs
   - E2E
   - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
   - Интеграционные (`@IntegrationTest`)
-  - Ручные (`@ManualTest`)
 - [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
 
 {{< hint warning >}}
@@ -54,8 +53,12 @@ type: docs
   - E2E
   - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
   - Интеграционные (`@IntegrationTest`)
-  - Ручные (`@ManualTest`)
 - [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
+
+{{< hint danger >}}
+Пожалуйста, не запускайте эту конфигурацию руками. Это приведет к рассылке уведомлений в каналы юнитов в Slack, что зря
+потревожит ответственных. Можно прогнать аналогичный набор тестов и [другим образом](#all-tests).
+{{< /hint >}}
 
 ## Запуск тестов вручную
 
@@ -76,6 +79,10 @@ type: docs
 В Teamcity есть [конфигурация `instrumentationDynamic`](http://links.k.avito.ru/tmctAvitoAndroidInstrumentationDynamic)
 для запуска тестов со специфическим набором требований.
 
+{{< hint info >}}
+Параметры, помеченные красной *, - это параметры, специфичные для данной конфигурации. Они опциональны.
+{{< /hint >}}
+
 Запускайте и вам будет предложено выбрать:
 - Ветку для запуска (*Changes -> Build branch*)
 - API URL, в который ходят тесты (*Parameters -> Test URL*)
@@ -86,15 +93,16 @@ type: docs
   - `regression` -- `ui` + ручные тесты
   - `performanceNoE2E` -- только компонентные перформанс тесты
   - `performance` -- только функциональные перформанс тесты
-- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*)
+- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*, по умолчанию фильтр пустой, не
+  применяется)
 - Количество запусков. Полезно для [отладки нестабильных тестов]({{< ref "/docs/test/TroubleshootingUI.md" >}})
   (*Parameters -> Retry count*)
 - Версии API (*Parameters -> * Api*)
 
-### Запуск всех E2E тестов
+### Как прогнать полный набор тестов (как на регрессе) {#all-tests}
 
-Для запуска всех E2E тестов воспользуйтесь TeamCity конфигурацией [fullCheck](http://links.k.avito.ru/5u). В настройках
-запуска можно задать следующие параметры:
+Для запуска набора тестов, аналогичного регрессу (но без рассылки репортов в юниты), воспользуйтесь TeamCity
+конфигурацией [fullCheck](http://links.k.avito.ru/5u). В настройках запуска можно задать следующие параметры:
 - Ветку для запуска (*Changes -> Build branch*)
 - API URL, в который ходят тесты (*Parameters -> Test URL*)
 
