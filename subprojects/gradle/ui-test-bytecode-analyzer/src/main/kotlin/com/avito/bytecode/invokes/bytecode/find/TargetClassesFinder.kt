@@ -16,7 +16,7 @@ class TargetClassesFinderImpl(
 
     override fun find(context: Context): Set<JavaClass> {
         result.clear()
-        context.classes.forEach { _, clazz ->
+        context.classes.forEach { (_, clazz) ->
             visitJavaClass(context, clazz)
         }
 

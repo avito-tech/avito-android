@@ -1,4 +1,4 @@
-package com.avito.bytecode.metadata
+package com.avito.instrumentation.impact.metadata
 
 data class ModulePath(val path: String) {
     init {

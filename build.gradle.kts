@@ -7,7 +7,6 @@ import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
 import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {

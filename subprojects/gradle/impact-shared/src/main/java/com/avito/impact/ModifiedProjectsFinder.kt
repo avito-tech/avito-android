@@ -15,7 +15,7 @@ class ModifiedProjectsFinder(
         fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
     }
 
-    val supportedProjects: Set<Project> by lazy {
+    private val supportedProjects: Set<Project> by lazy {
         rootProject
             .subprojects
             .asSequence()
@@ -37,7 +37,10 @@ class ModifiedProjectsFinder(
             }.toSet()
     }
 
-    @Deprecated("Используется только для поиска по ReportType.ANDROID_TESTS. Оптимизация для UI тестов, явно игнорируем изменения в реализации, чтобы не сваливаться всегда в fallback")
+    @Deprecated(
+        "Используется только для поиска по ReportType.ANDROID_TESTS. Оптимизация для UI тестов," +
+            " явно игнорируем изменения в реализации, чтобы не сваливаться всегда в fallback"
+    )
     fun findModifiedProjectsWithoutDependencyToAnotherConfigurations(reportType: ReportType): Set<ModifiedProject> =
         findProjects(reportType) {
             it.internalModule.getConfiguration(reportType).let { configuration ->
@@ -74,5 +77,4 @@ class ModifiedProjectsFinder(
             return ModifiedProjectsFinder(project, project.impactFallbackDetector)
         }
     }
-
 }

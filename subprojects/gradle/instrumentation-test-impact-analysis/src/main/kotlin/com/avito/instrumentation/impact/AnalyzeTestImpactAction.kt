@@ -2,8 +2,6 @@ package com.avito.instrumentation.impact
 
 import com.avito.android.isAndroid
 import com.avito.bytecode.DIRTY_STUB
-import com.avito.bytecode.metadata.ModulePath
-import com.avito.bytecode.metadata.ScreenToModulePath
 import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.ReportType
@@ -11,6 +9,8 @@ import com.avito.impact.configuration.internalModule
 import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Test
+import com.avito.instrumentation.impact.metadata.ModulePath
+import com.avito.instrumentation.impact.metadata.ScreenToModulePath
 import com.avito.instrumentation.impact.model.AffectionType
 import com.avito.utils.logging.CILogger
 

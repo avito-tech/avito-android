@@ -1,9 +1,9 @@
 package com.avito.instrumentation.impact
 
 import com.android.build.gradle.AppExtension
-import com.avito.bytecode.metadata.ModulePath
-import com.avito.bytecode.metadata.toFileName
 import com.avito.impact.configuration.internalModule
+import com.avito.instrumentation.impact.metadata.ModulePath
+import com.avito.instrumentation.impact.metadata.toFileName
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Internal

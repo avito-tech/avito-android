@@ -11,8 +11,6 @@ import com.avito.bytecode.invokes.bytecode.find.TargetClassesFinderImpl
 import com.avito.bytecode.invokes.bytecode.find.TestMethodsFinderImpl
 import com.avito.bytecode.invokes.bytecode.model.FoundMethod
 import com.avito.bytecode.invokes.bytecode.tracer.InvokesTracerImpl
-import com.avito.bytecode.metadata.ModulePathExtractor
-import com.avito.bytecode.metadata.ScreenToModulePath
 import com.avito.bytecode.report.JsonFileReporter
 import com.avito.bytecode.target.TargetClassesDetector
 import com.avito.impact.BytecodeResolver
@@ -24,6 +22,8 @@ import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Screen
 import com.avito.impact.util.Test
+import com.avito.instrumentation.impact.metadata.ModulePathExtractor
+import com.avito.instrumentation.impact.metadata.ScreenToModulePath
 import com.avito.instrumentation.impact.model.AffectedTest
 import com.avito.instrumentation.impact.model.AffectionType
 import com.avito.utils.logging.CILogger
@@ -100,9 +100,13 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             reportType = ReportType.ANDROID_TESTS
         )
         val context: Context = contextLoader.load(foldersWithClassesToLoad)
+
+        val affectedAndroidTestModules = getAffectedAndroidTestModules()
+
         val invocationGraphResult = getInvocationGraph(
             config = config,
-            context = context
+            context = context,
+            affectedAndroidTestModules = affectedAndroidTestModules
         )
 
         val bytecodeAnalyzeSummary = BytecodeAnalyzeSummary(
@@ -120,9 +124,9 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 changedClasses = invocationGraphResult.changedClasses
             ),
             screenToModule = getScreenToModule(
-                config = config,
-                context = context,
-                targetClasses = invocationGraphResult.targetClasses
+                fieldName = config.screenMarkerMetadataField.get(),
+                targetClasses = invocationGraphResult.targetClasses,
+                affectedAndroidTestModules = affectedAndroidTestModules
             )
         )
 
@@ -132,7 +136,18 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         ).report(bytecodeAnalyzeSummary)
     }
 
-    private fun getChangedClasses(context: Context): Map<ChangeType, Collection<JavaClass>> {
+    @Suppress("DEPRECATION")
+    private fun getAffectedAndroidTestModules(): Map<AndroidPackage, ModifiedProject> =
+        finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(reportType = ReportType.ANDROID_TESTS)
+            .asSequence()
+            .filter { it.project.isAndroid() }
+            .map { AndroidProject(it.project).debug.manifest.getPackage() to it }
+            .toMap()
+
+    private fun getChangedClasses(
+        context: Context,
+        affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject>
+    ): Map<ChangeType, Collection<JavaClass>> {
         val targetModule = AndroidProject(project)
         val targetModulePackage = targetModule.debug.manifest.getPackage()
 
@@ -140,16 +155,6 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             projectDir = project.rootDir,
             logger = ciLogger
         )
-
-        val affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject> =
-            @Suppress("DEPRECATION")
-            finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(
-                reportType = ReportType.ANDROID_TESTS
-            )
-                .asSequence()
-                .filter { it.project.isAndroid() }
-                .map { AndroidProject(it.project).debug.manifest.getPackage() to it }
-                .toMap()
 
         return if (targetModulePackage in affectedAndroidTestModules) {
             val changedFiles = affectedAndroidTestModules[targetModulePackage]!!.changedFiles
@@ -199,7 +204,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
 
     private fun getInvocationGraph(
         config: InstrumentationTestImpactAnalysisExtension,
-        context: Context
+        context: Context,
+        affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject>
     ): InvocationGraphCreationResult {
         val invocationGraphBuilder = InvocationGraphBuilder(
             invokesTracer = InvokesTracerImpl()
@@ -208,7 +214,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val invocationsOnChangedClasses: MutableSet<Node> = ConcurrentHashMap.newKeySet()
         val invocationsOnTargetClasses: MutableSet<Node> = ConcurrentHashMap.newKeySet()
 
-        val changedClasses = getChangedClasses(context = context)
+        val changedClasses = getChangedClasses(context, affectedAndroidTestModules)
+
         val targetClasses = getTargetClasses(
             config = config,
             context = context
@@ -231,10 +238,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 }
             )
         }
-        ciLogger.info(
-            "Invocation tracing completed in " +
-                "${TimeUnit.MILLISECONDS.toSeconds(tracingTime)}s"
-        )
+        ciLogger.info("Invocation tracing completed in ${TimeUnit.MILLISECONDS.toSeconds(tracingTime)}s")
 
         return InvocationGraphCreationResult(
             changedClasses = changedClasses,
@@ -302,12 +306,13 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
     }
 
     private fun getScreenToModule(
-        config: InstrumentationTestImpactAnalysisExtension,
-        context: Context,
-        targetClasses: Set<JavaClass>
+        fieldName: String,
+        targetClasses: Set<JavaClass>,
+        affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject>
     ): Set<ScreenToModulePath> {
-        val extractor = ModulePathExtractor.Impl(fieldName = config.screenMarkerMetadataField.get())
-        return extractor.extract(context, targetClasses)
+        ciLogger.info("affectedAndroidTestModule = $affectedAndroidTestModules")
+        val extractor = ModulePathExtractor.Impl(fieldName)
+        return extractor.extract(targetClasses.map { it.fileName })
     }
 
     data class InvocationGraphCreationResult(

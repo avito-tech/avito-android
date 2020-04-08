@@ -62,16 +62,15 @@ class AndroidManifest(
     private val sourceSet: String = "main"
 ) {
     companion object {
-        private val manifestPackagePattern = Regex(" package=\"(.+)\"")
-
-        fun from(project: Project): AndroidManifest {
-            return AndroidManifest(project.projectDir)
-        }
+        fun from(project: Project): AndroidManifest = AndroidManifest(project.projectDir)
     }
 
+    private val packageParser = AndroidManifestPackageParser
+
     fun getPackage(): String {
-        val manifest = File("${projectDir}/src/$sourceSet/AndroidManifest.xml").readText()
-        return manifestPackagePattern.find(manifest)?.groupValues?.get(1)
-            ?: throw NullPointerException("Project $projectDir doesn't have AndroidManifest or package in it")
+        val manifest = File("${projectDir}/src/$sourceSet/AndroidManifest.xml")
+
+        return packageParser.parse(manifest)
+            ?: error("Project $projectDir doesn't have AndroidManifest or package in it")
     }
 }

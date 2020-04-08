@@ -12,9 +12,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 private typealias ClassName = String
 
-class Context(
-    val classes: Map<ClassName, JavaClass>
-) {
+class Context(val classes: Map<ClassName, JavaClass>) {
+
     /**
      * Return all methods, that could be affected by passed invocation.
      * For example, when we have execution on abstract class or interface,
@@ -38,6 +37,61 @@ class Context(
         )
 
         return result
+    }
+
+    /**
+     * Get all interfaces, which implemented by passed class
+     */
+    fun implementationOf(clazz: JavaClass): Set<String> {
+        val result: MutableSet<String> = mutableSetOf()
+
+        implementationOfRecursively(
+            clazz = clazz,
+            result = result
+        )
+
+        return result
+    }
+
+    /**
+     * Get all implemented (not abstract) methods from class (and it's parents)
+     */
+    fun getAllRealMethods(clazz: JavaClass): Set<Method> = getAllMethods(clazz)
+        .asSequence()
+        .filter { !it.isAbstract }
+        .toSet()
+
+    /**
+     * Get all implemented (not abstract) fields from class (and it's parents)
+     */
+    fun getAllRealFields(clazz: JavaClass): Set<Field> = getAllFields(clazz)
+        .asSequence()
+        .filter { !it.isAbstract }
+        .toSet()
+
+    private fun implementationOfRecursively(
+        clazz: JavaClass,
+        result: MutableSet<String>
+    ) {
+        clazz.interfaceNames.forEach {
+            result.add(it)
+
+            val loadedInterface = classes[it]
+            if (loadedInterface != null) {
+                implementationOfRecursively(
+                    clazz = loadedInterface,
+                    result = result
+                )
+            }
+        }
+
+        val loadedSuperClass = classes[clazz.superclassName]
+        if (loadedSuperClass != null) {
+            implementationOfRecursively(
+                clazz = loadedSuperClass,
+                result = result
+            )
+        }
     }
 
     private fun findAllPossibleAffectedMethods(
@@ -100,7 +154,7 @@ class Context(
     /**
      * Get all fields from class (and it's parents)
      */
-    fun getAllFields(clazz: JavaClass): Set<Field> {
+    private fun getAllFields(clazz: JavaClass): Set<Field> {
         val result: MutableSet<Field> = mutableSetOf()
 
         getAllFieldsRecursively(
@@ -132,7 +186,7 @@ class Context(
     /**
      * Get all methods from class (and it's parents)
      */
-    fun getAllMethods(clazz: JavaClass): Set<Method> {
+    private fun getAllMethods(clazz: JavaClass): Set<Method> {
         val result: MutableSet<Method> = mutableSetOf()
 
         getAllMethodsRecursively(
@@ -164,61 +218,6 @@ class Context(
             )
         }
     }
-
-    /**
-     * Get all interfaces, which implemented by passed class
-     */
-    fun implementationOf(clazz: JavaClass): Set<String> {
-        val result: MutableSet<String> = mutableSetOf()
-
-        implementationOfRecursively(
-            clazz = clazz,
-            result = result
-        )
-
-        return result
-    }
-
-    private fun implementationOfRecursively(
-        clazz: JavaClass,
-        result: MutableSet<String>
-    ) {
-        clazz.interfaceNames.forEach {
-            result.add(it)
-
-            val loadedInterface = classes[it]
-            if (loadedInterface != null) {
-                implementationOfRecursively(
-                    clazz = loadedInterface,
-                    result = result
-                )
-            }
-        }
-
-        val loadedSuperClass = classes[clazz.superclassName]
-        if (loadedSuperClass != null) {
-            implementationOfRecursively(
-                clazz = loadedSuperClass,
-                result = result
-            )
-        }
-    }
-
-    /**
-     * Get all implemented (not abstract) methods from class (and it's parents)
-     */
-    fun getAllRealMethods(clazz: JavaClass): Set<Method> = getAllMethods(clazz)
-        .asSequence()
-        .filter { !it.isAbstract }
-        .toSet()
-
-    /**
-     * Get all implemented (not abstract) fields from class (and it's parents)
-     */
-    fun getAllRealFields(clazz: JavaClass): Set<Field> = getAllFields(clazz)
-        .asSequence()
-        .filter { !it.isAbstract }
-        .toSet()
 
     private fun findAllImplementationsOfClass(clazz: JavaClass): List<JavaClass> =
         classes.values.filter { it.interfaceNames.contains(clazz.className) }
