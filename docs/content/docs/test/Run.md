@@ -93,7 +93,8 @@ type: docs
   - `regression` -- `ui` + ручные тесты
   - `performanceNoE2E` -- только компонентные перформанс тесты
   - `performance` -- только функциональные перформанс тесты
-- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*, по умолчанию пустая строка)
+- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*, по умолчанию фильтр пустой, не
+  применяется)
 - Количество запусков. Полезно для [отладки нестабильных тестов]({{< ref "/docs/test/TroubleshootingUI.md" >}})
   (*Parameters -> Retry count*)
 - Версии API (*Parameters -> * Api*)
