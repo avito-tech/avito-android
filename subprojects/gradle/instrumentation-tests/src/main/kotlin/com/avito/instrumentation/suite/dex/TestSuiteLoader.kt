@@ -7,8 +7,12 @@ import org.jf.dexlib2.iface.ClassDef
 import org.jf.dexlib2.iface.Method
 import java.io.File
 
+/**
+ * Определяем какие тесты должны быть запущены последующим таском-раннером
+ * Помимо разнообразных фильтров мы еще должны убедиться, что запрашиваемые тесты вообще находятся в тестовой apk,
+ * для этого парсим dex, при помощи [TestSuiteLoader]
+ */
 interface TestSuiteLoader {
-
     fun loadTestSuite(file: File, testSignatureCheck: TestSignatureCheck? = null): List<TestInApk>
 }
 

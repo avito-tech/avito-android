@@ -1,30 +1,19 @@
 package com.avito.instrumentation.suite
 
-import com.avito.instrumentation.InstrumentationTestsAction
-import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.report.FakeReport
-import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
+import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.instrumentation.suite.dex.createStubInstance
-import com.avito.report.model.SimpleRunTest
-import com.avito.report.model.Status
-import com.avito.report.model.createStubInstance
+import com.avito.instrumentation.suite.filter.FakeFilterFactory
+import com.avito.instrumentation.suite.filter.FilterFactory
+import com.avito.instrumentation.suite.filter.TestsFilter
+import com.avito.instrumentation.suite.filter.excludedFilter
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.File
 
 internal class TestSuiteProviderTest {
-
-    private val testSuiteLoader = FakeTestSuiteLoader()
-    private val reporter = FakeReport()
-    private val testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
-        report = reporter,
-        testSuiteLoader = testSuiteLoader
-    )
 
     private val simpleTestInApk = TestInApk.createStubInstance(
         className = "com.MyTestClass",
@@ -32,24 +21,12 @@ internal class TestSuiteProviderTest {
         annotations = emptyList()
     )
 
-    @BeforeEach
-    private fun setup() {
-        testSuiteLoader.result.add(simpleTestInApk)
-    }
-
     @Test
     fun `initial suite - dont skip tests - if rerun enabled, but results unavailable`() {
+        val testSuiteProvider = createTestSuiteProvider()
 
         val result = testSuiteProvider.getInitialTestSuite(
-            testApk = File("."),
-            params = InstrumentationTestsAction.Params.createStubInstance(
-                instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(
-                    rerunFailedTests = true,
-                    targets = listOf(TargetConfiguration.Data.createStubInstance())
-                )
-            ),
-            previousRun = { Try.Failure(Exception("anything")) },
-            getTestsByReportId = { Try.Success(emptyList()) }
+            tests = listOf(simpleTestInApk)
         )
 
         assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
@@ -57,17 +34,10 @@ internal class TestSuiteProviderTest {
 
     @Test
     fun `initial suite - dont skip tests - if rerun enabled, but report is empty`() {
+        val testSuiteProvider = createTestSuiteProvider()
 
         val result = testSuiteProvider.getInitialTestSuite(
-            testApk = File("."),
-            params = InstrumentationTestsAction.Params.createStubInstance(
-                instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(
-                    rerunFailedTests = true,
-                    targets = listOf(TargetConfiguration.Data.createStubInstance())
-                )
-            ),
-            previousRun = { Try.Success(emptyList()) },
-            getTestsByReportId = { Try.Success(emptyList()) }
+            tests = listOf(simpleTestInApk)
         )
 
         assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
@@ -75,27 +45,10 @@ internal class TestSuiteProviderTest {
 
     @Test
     fun `initial suite - dont skip tests - if rerun enabled, but previous report does not contain specific test`() {
+        val testSuiteProvider = createTestSuiteProvider()
 
         val result = testSuiteProvider.getInitialTestSuite(
-            testApk = File("."),
-            params = InstrumentationTestsAction.Params.createStubInstance(
-                instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(
-                    rerunFailedTests = true,
-                    targets = listOf(TargetConfiguration.Data.createStubInstance("api22"))
-                )
-            ),
-            previousRun = {
-                Try.Success(
-                    listOf(
-                        SimpleRunTest.createStubInstance(
-                            name = "some.other.test",
-                            deviceName = "someOtherDevice",
-                            status = Status.Failure("somethingWentWrong", "111")
-                        )
-                    )
-                )
-            },
-            getTestsByReportId = { _ -> Try { emptyList<SimpleRunTest>() }}
+            tests = listOf(simpleTestInApk)
         )
 
         assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
@@ -103,30 +56,38 @@ internal class TestSuiteProviderTest {
 
     @Test
     fun `initial suite - skip test - if rerun enabled and test passed in previous run`() {
-
-        testSuiteProvider.getInitialTestSuite(
-            testApk = File("."),
-            params = InstrumentationTestsAction.Params.createStubInstance(
-                instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(
-                    rerunFailedTests = true,
-                    targets = listOf(TargetConfiguration.Data.createStubInstance("api25"))
-                )
-            ),
-            previousRun = {
-                Try.Success(
-                    listOf(
-                        SimpleRunTest.createStubInstance(
-                            name = simpleTestInApk.testName.name,
-                            deviceName = "api25",
-                            status = Status.Success
-                        )
+        val report = FakeReport()
+        val testSuiteProvider = createTestSuiteProvider(
+            report = report,
+            reportSkippedTests = true,
+            filterFactory = FakeFilterFactory(
+                initialFilter = excludedFilter(
+                    TestsFilter.Result.Excluded.MatchExcludeSignature(
+                        source = TestsFilter.Signatures.Source.PreviousRun
                     )
                 )
-            },
-            getTestsByReportId = { _ -> Try { emptyList<SimpleRunTest>() }}
+            )
         )
 
-        assertThat(reporter.reportedSkippedTests?.map { it.first.name })
+        testSuiteProvider.getInitialTestSuite(
+            tests = listOf(simpleTestInApk)
+        )
+
+        assertThat(report.reportedSkippedTests?.map { it.first.name })
             .containsExactly(simpleTestInApk.testName)
+    }
+
+    private fun createTestSuiteProvider(
+        report: Report = FakeReport(),
+        targets: List<TargetConfiguration.Data> = listOf(TargetConfiguration.Data.createStubInstance()),
+        reportSkippedTests: Boolean = false,
+        filterFactory: FilterFactory = FakeFilterFactory()
+    ): TestSuiteProvider {
+        return TestSuiteProvider.Impl(
+            report = report,
+            targets = targets,
+            reportSkippedTests = reportSkippedTests,
+            filterFactory = filterFactory
+        )
     }
 }

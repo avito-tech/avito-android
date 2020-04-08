@@ -1,50 +1,51 @@
 package com.avito.instrumentation.suite.filter
 
-import com.avito.instrumentation.suite.dex.AnnotationData
-import com.avito.instrumentation.suite.dex.TestInApk
-import com.avito.instrumentation.suite.dex.createStubInstance
-import com.avito.report.model.DeviceName
-import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.isInstanceOf
+import com.avito.instrumentation.createStub
+import com.avito.instrumentation.suite.filter.TestsFilter.Result.Excluded
+import com.google.common.truth.Truth
 import org.junit.jupiter.api.Test
 
 internal class CompositeTestRunFilterTest {
 
     @Test
-    fun `runNeeded - returns first skip occurrence - when multiple possible`() {
-        val verdict = checkIfRunNeeded(
-            CompositeTestRunFilter(
-                listOf(
-                    IgnoredAnnotationFilter(setOf("Dont.Run.Me")),
-                    AnnotatedWithFilter(listOf("Run.Me"))
-                )
+    fun `exclude reason must be returned by first applied exclude filter`() {
+        val compositionFilter = CompositionFilter(
+            listOf(
+                object : TestsFilter {
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+                        return Excluded.HaveSkipSdkAnnotation(21)
+                    }
+                },
+                object : TestsFilter {
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+                        return Excluded.HaveExcludeAnnotations(emptySet())
+                    }
+                }
             )
         )
 
-        assertThat(verdict).isInstanceOf<TestRunFilter.Verdict.Skip.Ignored>()
+        Truth.assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
+            .isInstanceOf(Excluded.HaveSkipSdkAnnotation::class.java)
     }
 
     @Test
-    fun `check if another test works`() {
-        val verdict = checkIfRunNeeded(
-            CompositeTestRunFilter(
-                listOf(
-                    AnnotatedWithFilter(listOf("Run.Me")),
-                    IgnoredAnnotationFilter(setOf("Dont.Run.Me"))
-                )
+    fun `if any one of filters return exclude then test will be excluded`() {
+        val compositionFilter = CompositionFilter(
+            listOf(
+                object : TestsFilter {
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+                        return TestsFilter.Result.Included
+                    }
+                },
+                object : TestsFilter {
+                    override fun filter(test: TestsFilter.Test): TestsFilter.Result {
+                        return Excluded.HaveExcludeAnnotations(emptySet())
+                    }
+                }
             )
         )
 
-        assertThat(verdict).isInstanceOf<TestRunFilter.Verdict.Skip.NotAnnotatedWith>()
-    }
-
-    private fun checkIfRunNeeded(filter: CompositeTestRunFilter): TestRunFilter.Verdict {
-        return filter.runNeeded(
-            test = TestInApk.createStubInstance(
-                annotations = listOf(AnnotationData("Dont.Run.Me", emptyMap()))
-            ),
-            deviceName = DeviceName("api22"),
-            api = 22
-        )
+        Truth.assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
+            .isInstanceOf(Excluded::class.java)
     }
 }

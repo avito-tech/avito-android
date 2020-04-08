@@ -7,6 +7,7 @@ import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
+import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.report.FakeReportsApi
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
@@ -126,17 +127,24 @@ internal class PerformanceTestsSchedulerTest {
         reportsApi: ReportsApi = FakeReportsApi(),
         sourceReport: Report = FakeReport(),
         targetReport: Report = FakeReport(),
+        reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
         testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
             report = FakeReport(),
-            testSuiteLoader = FakeTestSuiteLoader()
+            targets = params.instrumentationConfiguration.targets,
+            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
+            filterFactory = FilterFactory.create(
+                filterData = params.instrumentationConfiguration.filter,
+                impactAnalysisResult = params.impactAnalysisResult,
+                reportCoordinates = reportCoordinates,
+                reportsFetchApi = reportsApi
+            )
         ),
-        reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
         targetCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
     ): PerformanceTestsScheduler = PerformanceTestsScheduler(
         testsRunner = runner,
-        reportsApi = reportsApi,
         testSuiteProvider = testSuiteProvider,
         params = params,
+        testSuiteLoader = FakeTestSuiteLoader(),
         reportCoordinates = reportCoordinates,
         targetReportCoordinates = targetCoordinates,
         sourceReport = sourceReport,

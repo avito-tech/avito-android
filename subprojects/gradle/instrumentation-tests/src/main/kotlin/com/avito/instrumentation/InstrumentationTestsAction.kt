@@ -20,7 +20,10 @@ import com.avito.instrumentation.scheduling.TestsRunner
 import com.avito.instrumentation.scheduling.TestsRunnerImplementation
 import com.avito.instrumentation.scheduling.TestsScheduler
 import com.avito.instrumentation.suite.TestSuiteProvider
+import com.avito.instrumentation.suite.dex.TestSuiteLoader
+import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.dex.check.AllChecks
+import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.logger.Logger
 import com.avito.report.ReportViewer
@@ -65,8 +68,11 @@ class InstrumentationTestsAction(
         }
 
     ),
-    private val reportCoordinates: ReportCoordinates = params.instrumentationConfiguration.instrumentationParams
+    private val reportCoordinates: ReportCoordinates = params
+        .instrumentationConfiguration
+        .instrumentationParams
         .reportCoordinates(),
+
     private val targetReportCoordinates: ReportCoordinates = reportCoordinates.copy(
         jobSlug = "${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG"
     ),
@@ -81,9 +87,6 @@ class InstrumentationTestsAction(
         logger = logger,
         reportCoordinates = targetReportCoordinates,
         buildId = params.buildId
-    ),
-    private val testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
-        report = sourceReport
     ),
     private val testExecutorFactory: TestExecutorFactory = TestExecutorFactory.Implementation(),
     private val testRunner: TestsRunner = TestsRunnerImplementation(
@@ -108,9 +111,22 @@ class InstrumentationTestsAction(
         logger = logger,
         registry = params.registry
     ),
+    private val testSuiteLoader: TestSuiteLoader = TestSuiteLoaderImpl(),
+
+    private val filterFactory: FilterFactory = FilterFactory.create(
+        filterData = params.instrumentationConfiguration.filter,
+        impactAnalysisResult = params.impactAnalysisResult,
+        reportCoordinates = reportCoordinates,
+        reportsFetchApi = reportsApi
+    ),
+    private val testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
+        report = sourceReport,
+        targets = params.instrumentationConfiguration.targets,
+        filterFactory = filterFactory,
+        reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
+    ),
     private val performanceTestsScheduler: TestsScheduler = PerformanceTestsScheduler(
         testsRunner = testRunner,
-        reportsApi = reportsApi,
         params = params,
         reportCoordinates = reportCoordinates,
         sourceReport = sourceReport,
@@ -164,21 +180,12 @@ class InstrumentationTestsAction(
     @Inject
     constructor(params: Params) : this(params, params.logger)
 
-    /**
-     * Тут мы сейчас всегда получим отчет, даже если прогона не было, т.к. создаем его для CD предварительно
-     */
-    private val previousRun by lazy { reportsApi.getTestsForRunId(reportCoordinates) }
-
     override fun run() {
         logger.info("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
 
         val initialTestSuite: List<TestWithTarget> =
             testSuiteProvider.getInitialTestSuite(
-                testApk = params.testApk,
-                params = params,
-                testSignatureCheck = AllChecks(),
-                previousRun = { previousRun },
-                getTestsByReportId = { reportId -> reportsApi.getTestsForReportId(reportId) }
+                tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
             )
 
         val buildOnTargetCommitResult = BuildOnTargetCommitForTest.fromParams(params)

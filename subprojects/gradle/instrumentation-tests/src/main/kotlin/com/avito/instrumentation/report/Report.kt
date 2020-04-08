@@ -1,6 +1,5 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.suite.filter.TestRunFilter
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
@@ -20,7 +19,7 @@ interface Report {
 
     fun tryGetId(): String?
 
-    fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, TestRunFilter.Verdict.Skip>>)
+    fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)
 
     fun sendLostTests(lostTests: List<AndroidTest.Lost>)
 
@@ -62,23 +61,17 @@ interface Report {
             }
         }
 
-        override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, TestRunFilter.Verdict.Skip>>) {
+        override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
             if (skippedTests.isEmpty()) {
                 logger.info("No skipped tests to report")
                 return
             }
 
-            /**
-             * Не репортим скипы по причине "тест уже прошел на этом коммите" т.к репорт вьювер финальным статусом теста
-             * считает его последний статус. Так, в итоге, в репорт вьювере у нас отображаются все прошедшие тесты как
-             * заскипанные.
-             */
             val testsToSkip = skippedTests
-                .filter { (_, verdict) -> verdict !is TestRunFilter.Verdict.Skip.ByPreviousTestRun }
-                .map { (test, verdict) ->
+                .map { (test, reason) ->
                     AndroidTest.Skipped.fromTestMetadata(
                         testStaticData = test,
-                        skipReason = verdict.description,
+                        skipReason = reason,
                         reportTime = timeProvider.nowInMillis()
                     )
                 }

@@ -1,13 +1,16 @@
 package com.avito.instrumentation.configuration
 
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.instrumentation.suite.filter.Filter
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import java.io.Serializable
 
 @Suppress("MemberVisibilityCanBePrivate")
-open class InstrumentationConfiguration(val name: String) {
+abstract class InstrumentationConfiguration(val name: String) {
 
     var instrumentationParams: Map<String, String> = emptyMap()
 
@@ -28,11 +31,6 @@ open class InstrumentationConfiguration(val name: String) {
      */
     var tryToReRunOnTargetBranch = false
 
-    /**
-     * Applied only in next instrumentation invoke at the same git HEAD
-     * It remove already succeed test from execution
-     */
-    var rerunFailedTests = true
 
     var reportFlakyTests = false
 
@@ -42,33 +40,51 @@ open class InstrumentationConfiguration(val name: String) {
      */
     var reportSkippedTests = false
 
+    /**
+     * Applied only in next instrumentation invoke at the same git HEAD
+     * It remove already succeed test from execution
+     */
+    @Deprecated("since 2020.3.6")
+    var rerunFailedTests = true
+
+    @Deprecated("since 2020.3.6")
     var annotatedWith: Collection<String>? = null
 
-    var impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off
-
+    @Deprecated("since 2020.3.6")
     var tests: List<String>? = null
 
+    @Deprecated("since 2020.3.6")
     var prefixFilter: String? = null
-
-    var kubernetesNamespace = "android-emulator"
-
-    var enableDeviceDebug: Boolean = false
 
     /**
      * It must be a valid reportId.
      * Get test runs from report by id. Filter already succeed or new tests.
      * Stay only failed contained in report
      */
+    @Deprecated("since 2020.3.6")
     var keepFailedTestsFromReport: String? = null
 
-    lateinit var targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
+    var impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off
+
+    var kubernetesNamespace = "android-emulator"
+
+    var enableDeviceDebug: Boolean = false
+
+    var filter = "default"
+
+    abstract val targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
 
     val targets: List<TargetConfiguration>
         get() = targetsContainer.toList()
             .filter { it.enabled }
 
+    @Deprecated("since 2020.3.6 https://docs.gradle.org/current/userguide/kotlin_dsl.html#sec:interoperability", replaceWith = ReplaceWith("targets(Action<NamedDomainObjectContainer<TargetConfiguration>>)"))
     fun targets(closure: Closure<NamedDomainObjectContainer<TargetConfiguration>>) {
         targetsContainer.configure(closure)
+    }
+
+    fun targets(action: Action<NamedDomainObjectContainer<TargetConfiguration>>) {
+        action.execute(targetsContainer)
     }
 
     fun validate() {
@@ -76,10 +92,14 @@ open class InstrumentationConfiguration(val name: String) {
         targets.forEach { it.validate() }
     }
 
-    fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
+    fun data(
+        parentInstrumentationParameters: InstrumentationParameters,
+        filters: List<InstrumentationFilter.Data>
+    ): Data {
 
-        val mergedInstrumentationParameters: InstrumentationParameters = parentInstrumentationParameters
-            .applyParameters(instrumentationParams)
+        val mergedInstrumentationParameters: InstrumentationParameters =
+            parentInstrumentationParameters
+                .applyParameters(instrumentationParams)
 
         return Data(
             name = name,
@@ -98,8 +118,50 @@ open class InstrumentationConfiguration(val name: String) {
             },
             performanceType = performanceType,
             enableDeviceDebug = enableDeviceDebug,
-            keepFailedTestsFromReport = keepFailedTestsFromReport
+            keepFailedTestsFromReport = keepFailedTestsFromReport,
+            filter = filters.singleOrNull { it.name == filter }
+                ?: createBackwardCompatibilityFilter())
+    }
+
+    @Deprecated(
+        "since 2020.3.6",
+        replaceWith = ReplaceWith("throw IllegalStateException(\"can't find filter by name\")")
+    )
+    private fun createBackwardCompatibilityFilter(): InstrumentationFilter.Data {
+        val includedPrefixes = mutableSetOf<String>()
+        tests?.let { includedPrefixes.addAll(it) }
+        prefixFilter?.let { includedPrefixes.add(it) }
+        return InstrumentationFilter.Data(
+            name = "syntheticFilter$name",
+            fromSource = InstrumentationFilter.Data.FromSource(
+                prefixes = Filter.Value(
+                    included = includedPrefixes.toSet(),
+                    excluded = setOf()
+                ),
+                annotations = Filter.Value(
+                    included = annotatedWith?.toSet() ?: emptySet(),
+                    excluded = setOf()
+                )
+            ),
+            fromRunHistory = InstrumentationFilter.Data.FromRunHistory(
+                previousStatuses = Filter.Value(
+                    included = setOf(),
+                    excluded = if (rerunFailedTests) {
+                        setOf(RunStatus.Success, RunStatus.Manual)
+                    } else emptySet()
+                ),
+                reportFilter = keepFailedTestsFromReport?.let { id ->
+                    InstrumentationFilter.Data.FromRunHistory.ReportFilter(
+                        id = id,
+                        statuses = Filter.Value(
+                            included = setOf(RunStatus.Failed),
+                            excluded = setOf()
+                        )
+                    )
+                }
+            )
         )
+
     }
 
     data class Data(
@@ -117,7 +179,8 @@ open class InstrumentationConfiguration(val name: String) {
         val targets: List<TargetConfiguration.Data>,
         val performanceType: PerformanceType?,
         val enableDeviceDebug: Boolean,
-        val keepFailedTestsFromReport: String?
+        val keepFailedTestsFromReport: String?,
+        val filter: InstrumentationFilter.Data
     ) : Serializable {
 
         init {
@@ -128,7 +191,8 @@ open class InstrumentationConfiguration(val name: String) {
             }
         }
 
-        override fun toString(): String = "$name with targets: $targets for tests annotated with: $keepTestsAnnotatedWith"
+        override fun toString(): String =
+            "$name with targets: $targets for tests annotated with: $keepTestsAnnotatedWith"
 
         companion object
     }

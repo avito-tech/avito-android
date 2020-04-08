@@ -15,9 +15,11 @@ import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTestTask
 import com.avito.instrumentation.rerun.RunOnTargetBranchCondition
@@ -55,14 +57,10 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val env = project.envArgs
-        val pluginConfiguration = InstrumentationPluginConfiguration(project)
         val logger = project.ciLogger
         val gitState = project.gitState { logger.info(it) }
-
-        applyTestTasks(
-            project = project,
-            pluginConfiguration = pluginConfiguration
-        )
+        project.createInstrumentationPluginExtension()
+        project.applyTestTasks()
 
         project.withAndroidModule { baseExtension ->
             setupLocalInstrumentationArguments(
@@ -79,13 +77,21 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         val instrumentationConfigurations =
             project.extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
         instrumentationConfigurations.registerDynamicConfiguration(
-            testFilter = TestsFilter.valueOf(project.getOptionalStringProperty("instrumentation.dynamic.testFilter", TestsFilter.empty.name)),
+            testFilter = TestsFilter.valueOf(
+                project.getOptionalStringProperty(
+                    "instrumentation.dynamic.testFilter",
+                    TestsFilter.empty.name
+                )
+            ),
             retryCountValue = project.getOptionalIntProperty(
                 "dynamicRetryCount",
                 1
             ),
             prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
-            skipSucceedTestsFromPreviousRun = project.getBooleanProperty("instrumentation.dynamic.skipSucceedTestsFromPreviousRun", true),
+            skipSucceedTestsFromPreviousRun = project.getBooleanProperty(
+                "instrumentation.dynamic.skipSucceedTestsFromPreviousRun",
+                true
+            ),
             keepFailedTestsFromReport = project.getOptionalStringProperty("instrumentation.dynamic.keepFailedTestsFromReport"),
             isDeviceEnabled = { device ->
                 project.getBooleanProperty(
@@ -162,15 +168,15 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             .map { RegularFile { nestedBuildDir.resolve(it) } })
                     }
 
-                pluginConfiguration.withData { configurationData ->
-                    configurationData.configurations.forEach { instrumentationConfiguration ->
+                project.withInstrumentationExtensionData { extensionData ->
+                    extensionData.configurations.forEach { instrumentationConfiguration ->
 
                         logger.info("[InstrConfig:${instrumentationConfiguration.name}] Creating...")
 
                         testVariant.withArtifacts { testVariantPackageTask, testedVariantPackageTask ->
 
                             val configurationOutputFolder =
-                                File(configurationData.output, instrumentationConfiguration.name)
+                                File(extensionData.output, instrumentationConfiguration.name)
 
                             val runner = appExtension.defaultConfig.testInstrumentationRunner
                             require(runner.isNotBlank()) { "testInstrumentationRunner must be set" }
@@ -179,7 +185,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 applicationTestPackageName = testVariant.applicationId,
                                 testRunner = runner,
                                 namespace = instrumentationConfiguration.kubernetesNamespace,
-                                logcatTags = configurationData.logcatTags,
+                                logcatTags = extensionData.logcatTags,
                                 enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
                             )
 
@@ -269,15 +275,15 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 // будет переписано из [UiTestCheck]
                                 this.sendStatistics.set(false)
-                                this.slackToken.set(configurationData.slackToken)
+                                this.slackToken.set(extensionData.slackToken)
 
                                 this.output.set(configurationOutputFolder)
-                                this.reportApiUrl.set(configurationData.reportApiUrl)
-                                this.fileStorageUrl.set(configurationData.fileStorageUrl)
-                                this.reportApiFallbackUrl.set(configurationData.reportApiFallbackUrl)
-                                this.reportViewerUrl.set(configurationData.reportViewerUrl)
-                                this.registry.set(configurationData.registry)
-                                this.unitToChannelMapping.set(configurationData.unitToChannelMapping)
+                                this.reportApiUrl.set(extensionData.reportApiUrl)
+                                this.fileStorageUrl.set(extensionData.fileStorageUrl)
+                                this.reportApiFallbackUrl.set(extensionData.reportApiFallbackUrl)
+                                this.reportViewerUrl.set(extensionData.reportViewerUrl)
+                                this.registry.set(extensionData.registry)
+                                this.unitToChannelMapping.set(extensionData.unitToChannelMapping)
                                 this.kubernetesCredentials.set(project.kubernetesCredentials)
                             }
                         }
@@ -296,46 +302,44 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         isDeviceEnabled: (Device) -> Boolean
     ) {
         configurationsContainer.register(
-            "dynamic",
-            Action { configuration ->
-                configuration.annotatedWith = testFilter.annotatedWith
-                configuration.tryToReRunOnTargetBranch = false
-                configuration.reportSkippedTests = true
-                configuration.rerunFailedTests = false
+            "dynamic"
+        ) { configuration ->
+            configuration.annotatedWith = testFilter.annotatedWith
+            configuration.tryToReRunOnTargetBranch = false
+            configuration.reportSkippedTests = true
 
-                configuration.rerunFailedTests = skipSucceedTestsFromPreviousRun
-                configuration.keepFailedTestsFromReport = keepFailedTestsFromReport
-                configuration.prefixFilter = prefixFilter
+            configuration.rerunFailedTests = skipSucceedTestsFromPreviousRun
+            configuration.keepFailedTestsFromReport = keepFailedTestsFromReport
+            configuration.prefixFilter = prefixFilter
 
-                configuration.targetsContainer.apply {
-                    EmulatorSet.full.forEach { emulator ->
-                        register(
-                            emulator.name,
-                            Action { target ->
-                                target.deviceName = "functional-${emulator.api}"
-                                target.enabled = isDeviceEnabled(emulator)
-                                target.scheduling = SchedulingConfiguration().apply {
-                                    quota = QuotaConfiguration().apply {
-                                        retryCount = retryCountValue
-                                        minimumSuccessCount =
-                                            retryCountValue / 2 + retryCountValue % 2
-                                        minimumFailedCount =
-                                            retryCountValue / 2 + retryCountValue % 2
-                                    }
-
-                                    reservation =
-                                        TestsBasedDevicesReservationConfiguration.create(
-                                            device = emulator,
-                                            min = 2,
-                                            max = 25
-                                        )
+            configuration.targetsContainer.apply {
+                EmulatorSet.full.forEach { emulator ->
+                    register(
+                        emulator.name,
+                        Action { target ->
+                            target.deviceName = "functional-${emulator.api}"
+                            target.enabled = isDeviceEnabled(emulator)
+                            target.scheduling = SchedulingConfiguration().apply {
+                                quota = QuotaConfiguration().apply {
+                                    retryCount = retryCountValue
+                                    minimumSuccessCount =
+                                        retryCountValue / 2 + retryCountValue % 2
+                                    minimumFailedCount =
+                                        retryCountValue / 2 + retryCountValue % 2
                                 }
+
+                                reservation =
+                                    TestsBasedDevicesReservationConfiguration.create(
+                                        device = emulator,
+                                        min = 2,
+                                        max = 25
+                                    )
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
-        )
+        }
     }
 
     // TODO: Make stronger contract: MBS-7890
@@ -368,19 +372,16 @@ class InstrumentationTestsPlugin : Plugin<Project> {
      * Здесь будут сосредоточены таски, которые используются ТОЛЬКО для интеграционного
      * тестирования плагина. Добавляем сюда их аккуратно только для критичных кейсов.
      */
-    private fun applyTestTasks(
-        project: Project,
-        pluginConfiguration: InstrumentationPluginConfiguration
-    ) {
-        pluginConfiguration.withData { configuration ->
+    private fun Project.applyTestTasks() {
+        withInstrumentationExtensionData { extension ->
             val configurationDumpFile =
-                project.rootProject.file("instrumentation-configuration-dump.bin")
+                rootProject.file(instrumentationDumpPath)
 
-            project.tasks.register<DumpConfigurationTask>("instrumentationDumpConfiguration") {
+            tasks.register<DumpConfigurationTask>("instrumentationDumpConfiguration") {
                 group = ciTaskGroup
-                description = "Dump instrumentation configuration as json"
+                description = "Dump instrumentation extension as json"
 
-                this.configuration.set(configuration)
+                this.configuration.set(extension)
                 this.output.set(configurationDumpFile)
             }
         }

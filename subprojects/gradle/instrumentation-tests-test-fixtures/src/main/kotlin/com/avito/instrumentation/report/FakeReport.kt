@@ -1,13 +1,12 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.suite.filter.TestRunFilter
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
 import okhttp3.HttpUrl
 
 class FakeReport : Report {
 
-    var reportedSkippedTests: List<Pair<TestStaticData, TestRunFilter.Verdict.Skip>>? = null
+    var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
     var reportedMissingTests: Collection<AndroidTest.Lost>? = null
     var reportId: String? = null
 
@@ -16,7 +15,7 @@ class FakeReport : Report {
 
     override fun tryGetId(): String? = reportId
 
-    override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, TestRunFilter.Verdict.Skip>>) {
+    override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         reportedSkippedTests = skippedTests
     }
 

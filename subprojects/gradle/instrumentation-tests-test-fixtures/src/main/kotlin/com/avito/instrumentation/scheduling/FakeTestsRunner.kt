@@ -25,8 +25,7 @@ class FakeTestsRunner(
         runType: TestExecutor.RunType,
         reportCoordinates: ReportCoordinates,
         report: Report,
-        testsToRun: List<TestWithTarget>,
-        currentReportState: () -> Try<List<SimpleRunTest>>
+        testsToRun: List<TestWithTarget>
     ): Try<List<SimpleRunTest>> {
         if (runTestsResultsQueue.isEmpty()) {
             throw IllegalArgumentException(

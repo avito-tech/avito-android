@@ -7,6 +7,8 @@ import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun
 import com.avito.instrumentation.suite.TestSuiteProvider
+import com.avito.instrumentation.suite.dex.TestSuiteLoader
+import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
@@ -23,13 +25,9 @@ class InstrumentationTestsScheduler(
     private val targetReportCoordinates: ReportCoordinates,
     private val sourceReport: Report,
     private val targetReport: Report,
-    private val testSuiteProvider: TestSuiteProvider
+    private val testSuiteProvider: TestSuiteProvider,
+    private val testSuiteLoader: TestSuiteLoader = TestSuiteLoaderImpl()
 ) : TestsScheduler {
-
-    /**
-     * Тут мы сейчас всегда получим отчет, даже если прогона не было, т.к. создаем его для CD предварительно
-     */
-    private val previousRun by lazy { reportsApi.getTestsForRunId(reportCoordinates) }
 
     override fun schedule(
         initialTestsSuite: List<TestWithTarget>,
@@ -42,9 +40,8 @@ class InstrumentationTestsScheduler(
             testApk = params.testApk,
             runType = TestExecutor.RunType.Run(id = "initialRun"),
             reportCoordinates = reportCoordinates,
-            testsToRun = initialTestsSuite,
-            currentReportState = { previousRun },
-            report = sourceReport
+            report = sourceReport,
+            testsToRun = initialTestsSuite
         )
 
         val (
@@ -123,12 +120,9 @@ class InstrumentationTestsScheduler(
             else -> {
                 // cast is not smart enough
                 buildOnTargetCommit as BuildOnTargetCommitForTest.Result.OK
-                val currentState = currentReportState.get()
 
-                val testsToRunOnTarget: List<TestWithTarget> = testSuiteProvider.getFailedOnlySuite(
-                    testApk = buildOnTargetCommit.testApk,
-                    params = params,
-                    previousRun = { currentState }
+                val testsToRunOnTarget: List<TestWithTarget> = testSuiteProvider.getRerunTestsSuite(
+                    testSuiteLoader.loadTestSuite(buildOnTargetCommit.testApk)
                 )
 
                 // число перезапусков определяется
@@ -137,9 +131,8 @@ class InstrumentationTestsScheduler(
                     testApk = buildOnTargetCommit.testApk,
                     runType = TestExecutor.RunType.Rerun("rerunOnTarget-$rerunAttempt"),
                     reportCoordinates = targetReportCoordinates,
-                    testsToRun = testsToRunOnTarget,
-                    currentReportState = { currentReportState },
-                    report = targetReport
+                    report = targetReport,
+                    testsToRun = testsToRunOnTarget
                 )
 
                 MergeResultsWithTargetBranchRun(
@@ -159,11 +152,9 @@ class InstrumentationTestsScheduler(
         rerunAttempt: Int,
         report: Report
     ): Try<List<SimpleRunTest>> = currentReportState.fold(
-        { currentState ->
-            val testsToRun: List<TestWithTarget> = testSuiteProvider.getFailedOnlySuite(
-                testApk = params.testApk,
-                params = params,
-                previousRun = { currentState }
+        {
+            val testsToRun: List<TestWithTarget> = testSuiteProvider.getRerunTestsSuite(
+                testSuiteLoader.loadTestSuite(params.testApk)
             )
 
             // сознательно берем число перезапусков с первого запуска
@@ -173,9 +164,8 @@ class InstrumentationTestsScheduler(
                 runType = TestExecutor.RunType.Run("rerunOnSource-$rerunAttempt"),
                 //пишем в главный отчет
                 reportCoordinates = reportCoordinates,
-                testsToRun = testsToRun,
-                currentReportState = { currentReportState },
-                report = report
+                report = report,
+                testsToRun = testsToRun
             )
 
             // здесь ничего не мерджим, работает как обычный перезапуск по квоте
