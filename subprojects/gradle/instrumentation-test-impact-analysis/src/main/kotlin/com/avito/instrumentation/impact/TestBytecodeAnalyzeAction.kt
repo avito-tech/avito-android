@@ -166,7 +166,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 .groupByTo(
                     destination = mutableMapOf(),
                     keySelector = { it.first },
-                    valueTransform = { it.second })
+                    valueTransform = { it.second }
+                )
 
             ciLogger.info("Finding changed classes using patterns: $patterns...")
             val changedClasses = patterns.mapValues { (_, patterns) ->
@@ -310,7 +311,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         targetClasses: Set<JavaClass>,
         affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject>
     ): Set<ScreenToModulePath> {
-        ciLogger.info("affectedAndroidTestModule = $affectedAndroidTestModules")
+        ciLogger.info("affectedAndroidTestModule = ${affectedAndroidTestModules.map { it.key to it.value.project.path }}")
         val extractor = ModulePathExtractor.Impl(fieldName)
         return extractor.extract(targetClasses.map { it.fileName })
     }

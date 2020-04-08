@@ -13,13 +13,23 @@ internal class AndroidManifestPackageParserTest {
     fun `parse - success - valid files`() = listOf(
         createCase(
             caseName = "oneliner",
-            manifestContent = "<manifest package=\"ru.domofond.account\" xmlns:android=\"http://schemas.android.com/apk/res/android\" />",
-            expectedPackage = "ru.domofond.account"
+            manifestContent = "<manifest package=\"com.test.account\" xmlns:android=\"http://schemas.android.com/apk/res/android\" />",
+            expectedPackage = "com.test.account"
         ),
         createCase(
             caseName = "multiline",
-            manifestContent = "<manifest package=\"ru.domofond.account\"\nxmlns:android=\"http://schemas.android.com/apk/res/android\" />",
-            expectedPackage = "ru.domofond.account"
+            manifestContent = "<manifest package=\"com.test.account\"\nxmlns:android=\"http://schemas.android.com/apk/res/android\" />",
+            expectedPackage = "com.test.account"
+        ),
+        createCase(
+            caseName = "underscore",
+            manifestContent = "<manifest package=\"com.test.one_two\" xmlns:android=\"http://schemas.android.com/apk/res/android\" />",
+            expectedPackage = "com.test.one_two"
+        ),
+        createCase(
+            caseName = "number",
+            manifestContent = "<manifest package=\"com.test2.account\" xmlns:android=\"http://schemas.android.com/apk/res/android\" />",
+            expectedPackage = "com.test2.account"
         )
     ).map { case ->
         dynamicTest(case.name) {
