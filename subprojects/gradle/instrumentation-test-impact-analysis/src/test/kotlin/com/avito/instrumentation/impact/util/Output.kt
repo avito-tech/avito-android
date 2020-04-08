@@ -1,10 +1,10 @@
 package com.avito.instrumentation.impact.util
 
-import com.avito.bytecode.metadata.ModulePath
 import com.avito.impact.util.Screen
 import com.avito.impact.util.Test
 import com.avito.instrumentation.impact.BytecodeAnalyzeSummary
 import com.avito.instrumentation.impact.ImpactSummary
+import com.avito.instrumentation.impact.metadata.ModulePath
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import java.io.File

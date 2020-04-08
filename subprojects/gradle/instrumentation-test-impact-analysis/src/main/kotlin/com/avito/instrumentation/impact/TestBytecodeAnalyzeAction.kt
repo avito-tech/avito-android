@@ -18,6 +18,7 @@ import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.ReportType
 import com.avito.impact.changes.ChangeType
+import com.avito.impact.configuration.internalModule
 import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Screen
@@ -37,6 +38,7 @@ import org.gradle.internal.isolation.Isolatable
 import org.gradle.internal.snapshot.ValueSnapshot
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import org.jetbrains.kotlin.psi.KtClass
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
@@ -126,7 +128,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             screenToModule = getScreenToModule(
                 fieldName = config.screenMarkerMetadataField.get(),
                 targetClasses = invocationGraphResult.targetClasses,
-                affectedAndroidTestModules = affectedAndroidTestModules
+                affectedAndroidTestModules = affectedAndroidTestModules,
+                screenClass = config.screenMarkerClass.get()
             )
         )
 
@@ -288,7 +291,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                     changeType.toAffectReason(),
                     testMethods.map { it.name }.toSet()
                 )
-            }.filter { it.methods.isNotEmpty() }
+            }
+            .filter { it.methods.isNotEmpty() }
             .toSet()
     }
 
@@ -308,12 +312,46 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
 
     private fun getScreenToModule(
         fieldName: String,
+        screenClass: String,
         targetClasses: Set<JavaClass>,
         affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject>
     ): Set<ScreenToModulePath> {
         ciLogger.info("affectedAndroidTestModule = ${affectedAndroidTestModules.map { it.key to it.value.project.path }}")
+        affectedAndroidTestModules.mapValues { (_, project) ->
+            getScreenFiles(project.project, screenClass)
+        }
         val extractor = ModulePathExtractor.Impl(fieldName)
         return extractor.extract(targetClasses.map { it.fileName })
+    }
+
+    private fun getScreenFiles(project: Project, screenClass: String) {
+        val ktc = KotlinCompiler(ModifiedKotlinClassesFinder.createKotlinCoreEnvironment())
+        val sourceSets = project.internalModule.androidTestConfiguration.sourceSets()
+
+        ciLogger.info("ANALYZIIIING")
+        val startTime = System.currentTimeMillis()
+
+        sourceSets.forEach { dir ->
+            ciLogger.info("dir = ${dir.path}")
+
+            dir.walkTopDown()
+                .filter {
+                    ciLogger.info("file = ${it.path}")
+                    it.extension == "kt"
+                }
+                .map { ktc.compile(it) }
+                .forEach { ktFile ->
+                    ciLogger.info("ktFile = ${ktFile.name}")
+
+                    ktFile.declarations
+                        .filterIsInstance<KtClass>()
+                        .forEach {
+                            ciLogger.info("declaration = ${it.name}; implements = ${it.superTypeListEntries.map { it.typeAsUserType?.referenceExpression?.getIdentifier()?.text }}}")
+                        }
+                }
+        }
+
+        ciLogger.info("DONE ANALYZIIIING in ${System.currentTimeMillis() - startTime}ms")
     }
 
     data class InvocationGraphCreationResult(

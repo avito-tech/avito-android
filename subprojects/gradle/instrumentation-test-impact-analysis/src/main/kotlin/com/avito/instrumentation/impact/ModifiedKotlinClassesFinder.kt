@@ -85,7 +85,7 @@ internal class ModifiedKotlinClassesFinder(
 
         private const val KOTLIN_FILE_EXTENSION = "kt"
 
-        private fun createKotlinCoreEnvironment(): Project {
+        internal fun createKotlinCoreEnvironment(): Project {
             // Based on detekt by Artur Bosch
             val configuration = CompilerConfiguration()
 

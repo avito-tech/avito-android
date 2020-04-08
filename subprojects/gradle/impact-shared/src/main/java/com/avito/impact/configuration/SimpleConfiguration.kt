@@ -64,14 +64,8 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
             .filter { it !is KaptGenerateStubsTask }
 
         return kotlinCompileTasks
-            .map {
-                it.destinationDir
-            }
-            .filter {
-                it.isDirectory &&
-                    it.exists() &&
-                    it.list().isNotEmpty()
-            }
+            .map { it.destinationDir }
+            .filter { it.isDirectory && it.exists() && it.list().isNotEmpty() }
             .filter { containsBytecode(it) }
             .toSet()
     }

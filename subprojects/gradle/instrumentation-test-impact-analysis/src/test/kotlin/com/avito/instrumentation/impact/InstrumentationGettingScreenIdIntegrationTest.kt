@@ -1,6 +1,6 @@
 package com.avito.instrumentation.impact
 
-import com.avito.bytecode.metadata.ModulePath
+import com.avito.instrumentation.impact.metadata.ModulePath
 import com.avito.instrumentation.impact.util.generateProjectWithScreensInMultiModule
 import com.avito.instrumentation.impact.util.generateProjectWithScreensInSingleModule
 import com.avito.instrumentation.impact.util.impactAnalysisScreenIdsOutput
