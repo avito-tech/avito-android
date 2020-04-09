@@ -64,28 +64,3 @@ annotation class ScreenshotTest
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class SyntheticMonitoringTest
-
-@Deprecated("2020.3.2; use @UIComponentTest", ReplaceWith("@UIComponentTest"))
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class ComponentTest
-
-@Deprecated("2020.3.2; use @UIComponentTest", ReplaceWith("@UIComponentTest"))
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class PublishTest
-
-@Deprecated("2020.3.2; use @UIComponentTest", ReplaceWith("@UIComponentTest"))
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class MessengerTest
-
-@Deprecated("2020.3.2; use @E2ETest", ReplaceWith("@E2ETest"))
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class FunctionalTest
-
-@Deprecated("2020.3.2; use @IntegrationTest", ReplaceWith("@IntegrationTest"))
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class InstrumentationUnitTest
