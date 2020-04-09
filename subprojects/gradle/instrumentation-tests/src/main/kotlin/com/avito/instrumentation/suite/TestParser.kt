@@ -59,16 +59,17 @@ internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStatic
 )
 
 private val annotationsToKindMap = mapOf(
-    "com.avito.android.test.annotations.FunctionalTest" to Kind.E2E,
-    "com.avito.android.test.annotations.ComponentTest" to Kind.UI_COMPONENT,
-    "com.avito.android.test.annotations.PublishTest" to Kind.UI_COMPONENT,
-    "com.avito.android.test.annotations.MessengerTest" to Kind.UI_COMPONENT,
     "com.avito.android.test.annotations.InfrastructureTest" to Kind.INTEGRATION,
-    "com.avito.android.test.annotations.InstrumentationUnitTest" to Kind.INTEGRATION,
     "com.avito.android.test.annotations.ManualTest" to Kind.MANUAL,
     "com.avito.android.test.annotations.PerformanceFunctionalTest" to Kind.E2E,
     "com.avito.android.test.annotations.PerformanceComponentTest" to Kind.UI_COMPONENT,
-    "com.avito.android.test.annotations.ScreenshotTest" to Kind.UI_COMPONENT
+    "com.avito.android.test.annotations.ScreenshotTest" to Kind.UI_COMPONENT,
+    "com.avito.android.test.annotations.E2EStub" to Kind.E2E_STUB,
+    "com.avito.android.test.annotations.E2ETest" to Kind.E2E,
+    "com.avito.android.test.annotations.UIComponentTest" to Kind.UI_COMPONENT,
+    "com.avito.android.test.annotations.IntegrationTest" to Kind.INTEGRATION,
+    "com.avito.android.test.annotations.UIComponentStub" to Kind.UI_COMPONENT_STUB,
+    "com.avito.android.test.annotations.UnitTest" to Kind.UNIT
 )
 
 private fun determineKind(annotations: List<AnnotationData>): Kind =
