@@ -11,7 +11,7 @@ import androidx.test.espresso.action.CoordinatesProvider
  * Espresso implementation can miss on property animated views (e.g. rotated and scaled)
  *
  * Known issues:
- * - It can miss in case of clipping.
+ * - It can miss in case of clipping when a view is rotated.
  */
 internal class VisibleCenterGlobalCoordinatesProvider : CoordinatesProvider {
 
