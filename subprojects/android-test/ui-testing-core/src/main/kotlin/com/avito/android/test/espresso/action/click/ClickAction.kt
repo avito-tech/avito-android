@@ -7,11 +7,9 @@ import android.webkit.WebView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.CoordinatesProvider
-import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.PrecisionDescriber
 import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.ViewActions.actionWithAssertions
-import com.avito.android.test.espresso.RelativeCoordinatesProvider
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 
@@ -89,7 +87,7 @@ class ClickAction(
                 uiController.loopMainThreadForAtLeast(ViewConfiguration.getPressedStateDuration().toLong())
 
                 /**
-                 * according to [androidx.test.espresso.action.GeneralClickAction.perform]
+                 * According to [androidx.test.espresso.action.GeneralClickAction.perform]
                  */
                 if (view is WebView) {
                     uiController.loopMainThreadForAtLeast(ViewConfiguration.getDoubleTapTimeout().toLong())
@@ -154,16 +152,19 @@ internal fun inProcessClickAction(
     visualizeClicks: Boolean
 ): ViewAction = actionWithAssertions(
     ClickAction(
-        coordinatesProvider = RelativeCoordinatesProvider(coordinatesProvider),
+        coordinatesProvider = coordinatesProvider,
         precisionDescriber = Press.FINGER,
         event = ClickAction.Event.ClickEvent,
         visualizeClicks = visualizeClicks
     )
 )
 
-internal fun inProcessLongClickAction(visualizeClicks: Boolean): ViewAction = actionWithAssertions(
+internal fun inProcessLongClickAction(
+    coordinatesProvider: CoordinatesProvider,
+    visualizeClicks: Boolean
+): ViewAction = actionWithAssertions(
     ClickAction(
-        coordinatesProvider = RelativeCoordinatesProvider(GeneralLocation.VISIBLE_CENTER),
+        coordinatesProvider = coordinatesProvider,
         precisionDescriber = Press.FINGER,
         event = ClickAction.Event.LongClickEvent,
         visualizeClicks = visualizeClicks

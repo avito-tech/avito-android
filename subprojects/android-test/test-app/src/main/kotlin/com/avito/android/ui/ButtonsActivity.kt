@@ -21,6 +21,8 @@ class ButtonsActivity : AppCompatActivity() {
 
         setupNonLongClickableButton()
         setupNonLongClickableButtonInsideLongClickableContainer()
+
+        setupAnimatedButton()
     }
 
     private fun setupDisabledButton() {
@@ -101,6 +103,17 @@ class ButtonsActivity : AppCompatActivity() {
         findViewById<View>(R.id.long_clickable_container).setOnLongClickListener {
             indicatorView.visibility = View.VISIBLE
             true
+        }
+    }
+
+    private fun setupAnimatedButton() {
+        val view = findViewById<View>(R.id.animated_view)
+        view.rotation = 45f
+        view.scaleY = 0.1f
+
+        val clickIndicator = findViewById<View>(R.id.animated_view_click_indicator)
+        view.setOnClickListener {
+            clickIndicator.visibility = View.VISIBLE
         }
     }
 }

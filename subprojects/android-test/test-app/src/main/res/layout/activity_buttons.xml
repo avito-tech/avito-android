@@ -138,4 +138,33 @@
 
     </FrameLayout>
 
+    <Button
+        android:id="@+id/hidden_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Hidden"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/hidden_button_click_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clicked"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/animated_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:background="@color/black" />
+
+    <TextView
+        android:id="@+id/animated_view_click_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clicked"
+        android:visibility="gone" />
+
 </LinearLayout>

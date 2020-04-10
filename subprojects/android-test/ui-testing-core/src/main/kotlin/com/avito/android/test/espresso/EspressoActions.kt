@@ -7,7 +7,6 @@ import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.GeneralClickAction
-import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.GeneralSwipeAction
 import androidx.test.espresso.action.PrecisionDescriber
 import androidx.test.espresso.action.Press
@@ -69,7 +68,7 @@ object EspressoActions {
 
     fun click(
         type: UITestConfig.ClickType = UITestConfig.clicksType,
-        coordinatesProvider: CoordinatesProvider = GeneralLocation.VISIBLE_CENTER,
+        coordinatesProvider: CoordinatesProvider = VisibleCenterGlobalCoordinatesProvider(),
         visualize: Boolean = UITestConfig.visualizeClicks
     ): ViewAction {
 
@@ -116,6 +115,7 @@ object EspressoActions {
 
     fun longClick(
         type: UITestConfig.ClickType = UITestConfig.clicksType,
+        coordinatesProvider: CoordinatesProvider = VisibleCenterGlobalCoordinatesProvider(),
         visualize: Boolean = UITestConfig.visualizeClicks
     ): ViewAction {
         fun safeAction(action: ViewAction) = ActionOnEnabledElement(
@@ -124,7 +124,7 @@ object EspressoActions {
         return safeAction(
             when (type) {
                 is UITestConfig.ClickType.EspressoClick -> ViewActions.longClick()
-                is UITestConfig.ClickType.InProcessClick -> inProcessLongClickAction(visualize)
+                is UITestConfig.ClickType.InProcessClick -> inProcessLongClickAction(coordinatesProvider, visualize)
             }
         )
     }
