@@ -64,13 +64,11 @@ private class FilterFactoryImpl(
                 )
             )
         }
-        if (filterData.fromSource.annotations.excluded.isNotEmpty()) {
-            add(
-                ExcludeAnnotationsFilter(
-                    filterData.fromSource.annotations.excluded + "org.junit.Ignore"
-                )
+        add(
+            ExcludeAnnotationsFilter(
+                filterData.fromSource.annotations.excluded + "org.junit.Ignore"
             )
-        }
+        )
     }
 
     private fun MutableList<TestsFilter>.addSourceCodeSignaturesFilters() {
