@@ -75,4 +75,18 @@ class InProcessClickButtonsTest {
 
         Screen.buttons.longClickableContainerIndicator.checks.isVisible()
     }
+
+    @Test(expected = PerformException::class)
+    fun hiddenButton_fails() {
+        Screen.buttons.hiddenButton.click()
+
+        Screen.buttons.hiddenButtonIndicator.checks.isDisplayed()
+    }
+
+    @Test
+    fun animatedView_performs() {
+        Screen.buttons.animatedView.click()
+
+        Screen.buttons.animatedViewIndicator.checks.isDisplayed()
+    }
 }
