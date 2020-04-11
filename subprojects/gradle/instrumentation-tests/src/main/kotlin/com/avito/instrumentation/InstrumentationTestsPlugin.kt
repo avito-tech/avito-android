@@ -269,7 +269,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 this.targetBranch.set(targetBranch.map { it.name })
                                 this.targetCommit.set(targetBranch.map { it.name })
                                 this.defaultBranch.set(gitState.map { it.defaultBranch })
-                                this.testedVariantName.set(testVariant.testedVariant.name)
                                 this.fullTestSuite.set(isFullTestSuite)
                                 this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
 
