@@ -1,7 +1,6 @@
 package com.avito.android.ui.test
 
 import androidx.test.espresso.PerformException
-import com.avito.android.runner.UITestFrameworkPerformException
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.util.ClicksTypeRule
 import com.avito.android.ui.ButtonsActivity

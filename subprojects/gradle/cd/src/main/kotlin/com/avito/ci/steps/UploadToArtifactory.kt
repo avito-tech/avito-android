@@ -33,7 +33,7 @@ class UploadToArtifactory(
         project.appBackupExtension.backup(noOwnerClosureOf {
             name = "${project.name}-android"
             type = projectType
-            version = "${defaultConfig.versionName}-${defaultConfig.versionCode}-${project.envArgs.buildNumber}"
+            version = "${defaultConfig.versionName}-${defaultConfig.versionCode}-${project.envArgs.build.number}"
             artifactsMap.forEach { key, output ->
                 artifact(noOwnerClosureOf {
                     id = key
