@@ -74,7 +74,7 @@ internal class TestSuiteProviderTest {
         )
 
         assertThat(report.reportedSkippedTests?.map { it.first.name })
-            .containsExactly(simpleTestInApk.testName)
+            .isEmpty()
     }
 
     private fun createTestSuiteProvider(
