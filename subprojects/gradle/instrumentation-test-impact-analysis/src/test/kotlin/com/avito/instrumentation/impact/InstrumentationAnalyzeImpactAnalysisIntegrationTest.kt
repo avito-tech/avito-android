@@ -14,7 +14,6 @@ import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.nio.file.Path
 import java.nio.file.Paths
 
 class InstrumentationAnalyzeImpactAnalysisIntegrationTest {
@@ -22,8 +21,7 @@ class InstrumentationAnalyzeImpactAnalysisIntegrationTest {
     private val targetBranch = "develop"
 
     @Test
-    fun `new instrumentation tests in module without marker - run impact analysis`(@TempDir tempPath: Path) {
-        val testProjectDir = tempPath.toFile()
+    fun `new instrumentation tests in module without marker - run impact analysis`(@TempDir testProjectDir: File) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,
@@ -72,8 +70,7 @@ class InstrumentationAnalyzeImpactAnalysisIntegrationTest {
     }
 
     @Test
-    fun `feature module(not linked to screen) changed`(@TempDir tempPath: Path) {
-        val testProjectDir = tempPath.toFile()
+    fun `feature module(not linked to screen) changed`(@TempDir testProjectDir: File) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,
