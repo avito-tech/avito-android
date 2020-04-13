@@ -79,6 +79,7 @@ object Dependencies {
         val espressoWeb = "androidx.test.espresso:espresso-web:${Versions.espresso}"
         val espressoIntents = "androidx.test.espresso:espresso-intents:${Versions.espresso}"
         val espressoDescendantActions = "com.forkingcode.espresso.contrib:espresso-descendant-actions:1.4.0"
+        val kaspresso = "com.kaspersky.android-components:kaspresso:1.1.0"
     }
 
     object test {

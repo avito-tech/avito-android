@@ -66,6 +66,9 @@ subprojects {
             forRepository {
                 google()
             }
+            forRepository {
+                mavenCentral()
+            }
             filter {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
