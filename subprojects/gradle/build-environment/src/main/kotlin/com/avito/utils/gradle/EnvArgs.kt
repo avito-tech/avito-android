@@ -53,31 +53,6 @@ interface EnvArgs {
 
     }
 
-    @Deprecated(replaceWith = ReplaceWith("build.url"), message = "since 2020.3.2")
-    val buildUrl: String
-
-    /**
-     * номер билда, который составляется из версии авито_автоинкремент
-     * например "56.0.393.40835"
-     * todo это неправильно, должен быть только автоинкремент
-     */
-    @Deprecated(replaceWith = ReplaceWith("build.number"), message = "since 2020.3.2")
-    val buildNumber: String
-
-    /**
-     * id билда в базе teamcity, используется для доступа по rest api
-     * например: "7690353"
-     */
-    @Deprecated(replaceWith = ReplaceWith("build.id"), message = "since 2020.3.2")
-    val buildId: String
-
-    /**
-     * id билд конфигурации
-     * например: "AvitoAndroid_Build"
-     */
-    @Deprecated(replaceWith = ReplaceWith("build.type"), message = "since 2020.3.2")
-    val buildTypeId: String
-
     val isRerunDisabled: Boolean
 
     val build: Build
@@ -112,17 +87,9 @@ interface EnvArgs {
             }
         }
 
-        override val buildUrl: String = build.url
-        override val buildTypeId: String = build.type
-        override val buildNumber: String = build.number
-        override val buildId: String = build.id.toString()
     }
 
     object Stub : EnvArgs, Serializable {
-        override val buildUrl: String = ""
-        override val buildTypeId: String = ""
-        override val buildNumber: String = ""
-        override val buildId: String = ""
         override val isRerunDisabled: Boolean = false
         override val build: Build = Build.Local(Build.Local.Id.FOR_STUDIO_RUN)
     }

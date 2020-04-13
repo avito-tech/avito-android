@@ -27,45 +27,6 @@ class RetryInterceptor constructor(
     private val onFailure: (Response) -> Unit = {}
 ) : Interceptor {
 
-    @Deprecated("since 2020.2.8")
-    constructor(
-        retries: Int = 5,
-        allowedMethods: List<String> = listOf("GET"),
-        allowedCodes: List<Int> = listOf(
-            408, // client timeout
-            500, // internal error
-            502, // bad gateway
-            503, // unavailable
-            504  // gateway timeout
-        ),
-        delayMs: Long = TimeUnit.SECONDS.toMillis(1),
-        useIncreasingDelay: Boolean = true,
-        logger: (String, Throwable?) -> Unit,
-        onSuccess: (Response) -> Unit = {},
-        onFailure: (Response) -> Unit = {}
-    ) : this(
-        retries = retries,
-        allowedMethods = allowedMethods,
-        allowedCodes = allowedCodes,
-        delayMs = delayMs,
-        useIncreasingDelay = useIncreasingDelay,
-        logger = object : Logger {
-            override fun debug(msg: String) {
-                logger.invoke(msg, null)
-            }
-
-            override fun exception(msg: String, error: Throwable) {
-                logger.invoke(msg, error)
-            }
-
-            override fun critical(msg: String, error: Throwable) {
-                logger.invoke(msg, error)
-            }
-        },
-        onFailure = onFailure,
-        onSuccess = onSuccess
-    )
-
     init {
         require(retries >= 1)
     }

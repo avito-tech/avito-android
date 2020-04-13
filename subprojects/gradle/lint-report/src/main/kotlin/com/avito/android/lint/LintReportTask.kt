@@ -23,7 +23,7 @@ abstract class LintReportTask : DefaultTask() {
     abstract val abortOnError: Property<Boolean>
 
     @get:Input
-    abstract val buildId: Property<String>
+    abstract val buildId: Property<Int>
 
     @get:Internal
     abstract val bitbucket: Property<Bitbucket>

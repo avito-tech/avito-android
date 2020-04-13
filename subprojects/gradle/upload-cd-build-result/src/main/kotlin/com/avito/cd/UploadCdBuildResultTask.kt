@@ -13,7 +13,6 @@ import okhttp3.RequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 //TODO internal?
@@ -56,7 +55,7 @@ abstract class UploadCdBuildResultTask
             buildOutput = project.buildOutput.get(),
             cdBuildConfig = project.cdBuildConfig.get(),
             versionCode = project.androidAppExtension.defaultConfig.versionCode.toString(),
-            teamcityUrl = project.envArgs.buildUrl,
+            teamcityUrl = project.envArgs.build.url,
             gitState = gitState.get(),
             uiTestConfiguration = uiTestConfiguration
         )
