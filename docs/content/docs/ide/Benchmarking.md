@@ -13,9 +13,9 @@ type: docs
 Чтобы плагин работал корректно на macOS, необходимо разрешить Android Studio/IntelliJ IDEA доступ к функциям
 Accessibility системы. Для этого:
 
-1. Открываем *System Preferences* -> *Security & Privacy*
-1. Выбираем вкладку *Privacy*
-1. В списке слева находим пункт *Accessibility*
+1. Открываем **System Preferences > Security & Privacy**
+1. Выбираем вкладку **Privacy**
+1. В списке слева находим пункт **Accessibility**
 1. Ставим галочку в списке справа для нужных приложений
 {{< /hint >}}
 
