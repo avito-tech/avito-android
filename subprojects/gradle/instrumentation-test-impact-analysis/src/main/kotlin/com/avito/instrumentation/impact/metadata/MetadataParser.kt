@@ -34,9 +34,7 @@ class MetadataParser(
                 .forEach { ktFile ->
                     ktFile.declarations
                         .filterIsInstance<KtClass>()
-                        .filter {
-                            it.getSuperNames().contains(screenClassSimpleName)
-                        } //todo and import is correct, or fullname
+                        .filter { it.getSuperNames().contains(screenClassSimpleName) }
                         .forEach { ktClass ->
                             val packageName = ktFile.packageFqName.asString()
                             val className = ktClass.name!!
@@ -49,7 +47,10 @@ class MetadataParser(
                             ktClass.body?.properties?.forEach { property ->
                                 if (property.name == fieldName) {
 
-                                    val expression = property.children.filterIsInstance<KtExpression>().single()
+                                    val expression =
+                                        property.getter?.bodyExpression ?:
+                                        property.children.filterIsInstance<KtExpression>().firstOrNull()
+                                        ?: error("Can't parse $fieldName value, only direct value initialization or property getter supported")
 
                                     val importLines = ktFile.importDirectives.map { it.importedFqName.toString() }
                                     result[fullClassName] = getPackageName(expression.text, importLines)!!
@@ -59,7 +60,7 @@ class MetadataParser(
                 }
         }
 
-        ciLogger.info("Analyzed screen classes in ${System.currentTimeMillis() - startTime}ms")
+        ciLogger.debug("Analyzed screen classes in ${System.currentTimeMillis() - startTime}ms")
 
         return result
     }

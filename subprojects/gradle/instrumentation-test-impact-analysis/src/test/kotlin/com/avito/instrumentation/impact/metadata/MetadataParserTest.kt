@@ -18,7 +18,31 @@ internal class MetadataParserTest {
                 class NewClass : Screen {
                 
                     val rootId: Int = R.id.something_root
+                }
+            """.trimIndent()
+            )
+        }
+
+        val result = MetadataParser(
+            ciLogger = CILogger.allToStdout,
+            screenClass = "com.test.Screen",
+            fieldName = "rootId"
+        ).parseMetadata(setOf(projectDir))
+
+        assertThat(result).containsEntry("NewClass", "com.test.pkg")
+    }
+
+    @Test
+    fun `rootId package via getter`(@TempDir projectDir: File) {
+        File(projectDir, "NewFile.kt").apply {
+            writeText(
+                """
+                import com.test.pkg.R
+                    
+                class NewClass : Screen {
                 
+                    val rootId: Int
+                        get() = R.id.something_root
                 }
             """.trimIndent()
             )
