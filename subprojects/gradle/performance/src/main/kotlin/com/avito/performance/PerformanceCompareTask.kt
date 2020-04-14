@@ -59,7 +59,7 @@ abstract class PerformanceCompareTask @Inject constructor(
                     previousTests = previousTests.orNull?.asFile,
                     currentTests = currentTests.asFile.get(),
                     comparison = comparison.asFile.get(),
-                    buildUrl = project.envArgs.buildUrl,
+                    buildUrl = project.envArgs.build.url,
                     logger = ciLogger,
                     reportApiUrl = reportApiUrl.get(),
                     reportApiFallbackUrl = reportApiFallbackUrl.get(),

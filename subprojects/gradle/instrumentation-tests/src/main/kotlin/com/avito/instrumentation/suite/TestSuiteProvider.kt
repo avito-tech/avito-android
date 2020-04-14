@@ -48,7 +48,8 @@ interface TestSuiteProvider {
                          * заскипанные.
                          */
                         .filter { (_, verdict) ->
-                            verdict is Excluded.BySignatures && verdict.source == Signatures.Source.PreviousRun
+                            (verdict !is Excluded.BySignatures) ||
+                                    (verdict.source != Signatures.Source.PreviousRun)
                         }
                         .map { (targetTest, verdict) ->
                             targetTest.test to verdict.reason

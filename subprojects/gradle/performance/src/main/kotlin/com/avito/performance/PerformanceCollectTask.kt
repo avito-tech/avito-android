@@ -54,7 +54,7 @@ abstract class PerformanceCollectTask @Inject constructor(
                     graphiteKey = graphiteKey.get(),
                     reportCoordinates = reportCoordinates.get(),
                     buildId = buildId.get(),
-                    buildUrl = project.envArgs.buildUrl,
+                    buildUrl = project.envArgs.build.url,
                     logger = ciLogger,
                     reportApiUrl = reportApiUrl.get(),
                     reportApiFallbackUrl = reportApiFallbackUrl.get(),

@@ -37,7 +37,7 @@ internal fun Project.withInstrumentationExtensionData(action: (InstrumentationPl
                 .map { gitState ->
                     RunId(
                         commitHash = gitState.currentBranch.commit,
-                        buildTypeId = env.buildTypeId
+                        buildTypeId = env.build.type
                     )
                 }.orNull
 
