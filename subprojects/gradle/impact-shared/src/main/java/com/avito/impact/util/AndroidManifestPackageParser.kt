@@ -4,10 +4,19 @@ import java.io.File
 
 object AndroidManifestPackageParser {
 
-    private val manifestPackagePattern = Regex(" package=\"([a-zA-Z0-9._]+)\"")
+    private val manifestPackagePattern = Regex(" package=\"(.*?)\"")
 
     fun parse(manifestFile: File): String? {
-        val manifest = manifestFile.readText()
-        return manifestPackagePattern.find(manifest)?.groupValues?.get(1)
+        val packageLine = manifestFile.useLines { lines ->
+            lines.find {
+                println(it)
+                manifestPackagePattern.containsMatchIn(it) }
+        }
+
+        return if (packageLine != null) {
+            manifestPackagePattern.find(packageLine)?.groupValues?.get(1)
+        } else {
+            null
+        }
     }
 }
