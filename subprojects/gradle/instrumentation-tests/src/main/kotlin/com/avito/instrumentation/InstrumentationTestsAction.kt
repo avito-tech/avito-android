@@ -208,7 +208,7 @@ class InstrumentationTestsAction(
             ),
             notReported = hasNotReportedTestsDeterminer.determine(
                 runResult = testsExecutionResults.initialTestsResult,
-                allTests = testsExecutionResults.initialTestSuite.map { it.test }
+                allTests = testsExecutionResults.initialTestSuite.testsToRun.map { it.test }
             )
         )
 

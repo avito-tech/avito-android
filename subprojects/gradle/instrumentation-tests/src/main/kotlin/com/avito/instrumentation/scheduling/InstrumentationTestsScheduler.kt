@@ -9,7 +9,6 @@ import com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.check.AllChecks
-import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -42,7 +41,7 @@ class InstrumentationTestsScheduler(
             runType = TestExecutor.RunType.Run(id = "initialRun"),
             reportCoordinates = reportCoordinates,
             report = sourceReport,
-            testsToRun = initialTestSuite
+            testsToRun = initialTestSuite.testsToRun
         )
 
         val (
@@ -123,9 +122,9 @@ class InstrumentationTestsScheduler(
                 // cast is not smart enough
                 buildOnTargetCommit as BuildOnTargetCommitForTest.Result.OK
 
-                val testsToRunOnTarget: List<TestWithTarget> = testSuiteProvider.getRerunTestsSuite(
+                val testsToRunOnTarget = testSuiteProvider.getRerunTestsSuite(
                     testSuiteLoader.loadTestSuite(buildOnTargetCommit.testApk)
-                )
+                ).testsToRun
 
                 // число перезапусков определяется
                 val rerunResults = testsRunner.runTests(
@@ -155,9 +154,9 @@ class InstrumentationTestsScheduler(
         report: Report
     ): Try<List<SimpleRunTest>> = currentReportState.fold(
         {
-            val testsToRun: List<TestWithTarget> = testSuiteProvider.getRerunTestsSuite(
+            val testsToRun = testSuiteProvider.getRerunTestsSuite(
                 testSuiteLoader.loadTestSuite(params.testApk)
-            )
+            ).testsToRun
 
             // сознательно берем число перезапусков с первого запуска
             testsRunner.runTests(
