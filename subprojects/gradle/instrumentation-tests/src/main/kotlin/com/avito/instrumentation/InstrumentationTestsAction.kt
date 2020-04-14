@@ -22,9 +22,7 @@ import com.avito.instrumentation.scheduling.TestsScheduler
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
-import com.avito.instrumentation.suite.dex.check.AllChecks
 import com.avito.instrumentation.suite.filter.FilterFactory
-import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.logger.Logger
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
@@ -132,7 +130,8 @@ class InstrumentationTestsAction(
         sourceReport = sourceReport,
         targetReport = targetReport,
         targetReportCoordinates = targetReportCoordinates,
-        testSuiteProvider = testSuiteProvider
+        testSuiteProvider = testSuiteProvider,
+        testSuiteLoader = testSuiteLoader
     ),
     private val instrumentationTestsScheduler: TestsScheduler = InstrumentationTestsScheduler(
         logger = logger,
@@ -143,7 +142,8 @@ class InstrumentationTestsAction(
         targetReportCoordinates = targetReportCoordinates,
         testSuiteProvider = testSuiteProvider,
         sourceReport = sourceReport,
-        targetReport = targetReport
+        targetReport = targetReport,
+        testSuiteLoader = testSuiteLoader
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(
         config = params.statsdConfig,
@@ -181,7 +181,7 @@ class InstrumentationTestsAction(
     constructor(params: Params) : this(params, params.logger)
 
     override fun run() {
-        logger.info("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
+        logger.debug("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
 
         val initialTestSuite: List<TestWithTarget> =
             testSuiteProvider.getInitialTestSuite(
@@ -193,12 +193,10 @@ class InstrumentationTestsAction(
         val testsExecutionResults: TestsScheduler.Result =
             if (params.instrumentationConfiguration.performanceType != null) {
                 performanceTestsScheduler.schedule(
-                    initialTestsSuite = initialTestSuite,
                     buildOnTargetCommitResult = buildOnTargetCommitResult
                 )
             } else {
                 instrumentationTestsScheduler.schedule(
-                    initialTestsSuite = initialTestSuite,
                     buildOnTargetCommitResult = buildOnTargetCommitResult
                 )
             }
@@ -210,7 +208,7 @@ class InstrumentationTestsAction(
             ),
             notReported = hasNotReportedTestsDeterminer.determine(
                 runResult = testsExecutionResults.initialTestsResult,
-                allTests = initialTestSuite.map { it.test }
+                allTests = testsExecutionResults.initialTestSuite.map { it.test }
             )
         )
 

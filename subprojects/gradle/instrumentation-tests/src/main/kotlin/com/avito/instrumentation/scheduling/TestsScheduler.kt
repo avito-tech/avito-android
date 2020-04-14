@@ -9,11 +9,11 @@ import org.funktionale.tries.Try
 interface TestsScheduler {
 
     fun schedule(
-        initialTestsSuite: List<TestWithTarget>,
         buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): Result
 
     data class Result(
+        val initialTestSuite: List<TestWithTarget>,
         val initialTestsResult: Try<List<SimpleRunTest>>,
         val testResultsAfterBranchReruns: Try<List<SimpleRunTest>>,
         val flakyInfo: List<FlakyInfo>
