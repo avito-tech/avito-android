@@ -84,12 +84,7 @@ sealed class TestRunEnvironment {
         val fileStorageUrl: String,
         val reportConfig: ReportConfig?,
         val testRunCoordinates: ReportCoordinates
-    ) : TestRunEnvironment() {
-
-        @Deprecated("since 2020.2.8", ReplaceWith("testRunCoordinates.runId"))
-        val runId: String
-            get() = testRunCoordinates.runId
-    }
+    ) : TestRunEnvironment()
 
     companion object {
         internal val LOCAL_STUDIO_RUN_ID = -1

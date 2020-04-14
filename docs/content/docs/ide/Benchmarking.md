@@ -10,15 +10,13 @@ type: docs
 Используем [Performance testing plugin](https://intellij-support.jetbrains.com/hc/en-us/articles/207241225-Performance-testing-plugin).
 
 {{< hint warning>}}
-К сожалению в Android Studio 3.6.1 (Build #AI-192.7142.36.36.6241897, built on
-February 27, 2020) и IntelliJ IDEA 2019.3.3 (Build #IC-193.6494.35 February 11, 2020) Performance
-testing plugin не работает должным образом. А именно команда `%[ENTER]` не делает ничего: не
-переводит строку и не выбирать опции в выпадающем меню автокомплита.
+Чтобы плагин работал корректно на macOS, необходимо разрешить Android Studio/IntelliJ IDEA доступ к функциям
+Accessibility системы. Для этого:
 
-К самому плагину оставлен
-[комментарий](https://intellij-support.jetbrains.com/hc/en-us/articles/207241225/comments/360001111259),
-а также заведен [issue](https://intellij-support.jetbrains.com/hc/en-us/requests/2577588) в трекер
-IntelliJ.
+1. Открываем **System Preferences > Security & Privacy**
+1. Выбираем вкладку **Privacy**
+1. В списке слева находим пункт **Accessibility**
+1. Ставим галочку в списке справа для нужных приложений
 {{< /hint >}}
 
 ## Как попробовать?

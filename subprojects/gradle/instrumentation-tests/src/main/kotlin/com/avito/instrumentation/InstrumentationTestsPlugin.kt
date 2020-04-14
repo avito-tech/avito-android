@@ -261,9 +261,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 this.instrumentationConfiguration.set(instrumentationConfiguration)
                                 this.parameters.set(runFunctionalTestsParameters)
-                                this.buildId.set(env.buildId)
+                                this.buildId.set(env.build.id.toString())
                                 this.buildType.set(env.build.type)
-                                this.buildUrl.set(env.buildUrl)
+                                this.buildUrl.set(env.build.url)
                                 this.gitBranch.set(gitState.map { it.currentBranch.name })
                                 this.gitCommit.set(gitState.map { it.currentBranch.commit })
                                 this.targetBranch.set(targetBranch.map { it.name })

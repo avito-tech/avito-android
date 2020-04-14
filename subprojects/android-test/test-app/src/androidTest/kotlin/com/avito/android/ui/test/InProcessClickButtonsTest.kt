@@ -1,7 +1,6 @@
 package com.avito.android.ui.test
 
 import androidx.test.espresso.PerformException
-import com.avito.android.runner.UITestFrameworkPerformException
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.util.ClicksTypeRule
 import com.avito.android.ui.ButtonsActivity
@@ -74,5 +73,19 @@ class InProcessClickButtonsTest {
         Screen.buttons.longClickableContainerInnerButton.longClick()
 
         Screen.buttons.longClickableContainerIndicator.checks.isVisible()
+    }
+
+    @Test(expected = PerformException::class)
+    fun hiddenButton_fails() {
+        Screen.buttons.hiddenButton.click()
+
+        Screen.buttons.hiddenButtonIndicator.checks.isDisplayed()
+    }
+
+    @Test
+    fun animatedView_performs() {
+        Screen.buttons.animatedView.click()
+
+        Screen.buttons.animatedViewIndicator.checks.isDisplayed()
     }
 }

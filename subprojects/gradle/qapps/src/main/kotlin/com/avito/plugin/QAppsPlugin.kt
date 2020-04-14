@@ -37,7 +37,7 @@ class QAppsPlugin : Plugin<Project> {
 
                     host.set(config.host)
 
-                    comment.set(getComment(env.buildNumber))
+                    comment.set(getComment(env.build.number))
 
                     branch.set(git.map { it.currentBranch.name }.orElse(placeholderForLocalBuild))
                     releaseChain.set(git.map { it.isOnReleaseBranch }.orElse(false))

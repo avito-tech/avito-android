@@ -33,4 +33,10 @@ class ButtonsScreen : PageObject(), Screen {
 
     val overlappedByClickable = element<ViewElement>(withId(R.id.overlapped_by_clickable_button))
     val overlappedByNonClickable = element<ViewElement>(withId(R.id.overlapped_by_non_clickable_button))
+
+    val hiddenButton: ViewElement = element(withId(R.id.hidden_button))
+    val hiddenButtonIndicator: ViewElement = element(withId(R.id.hidden_button_click_indicator))
+
+    val animatedView: ViewElement = element(withId(R.id.animated_view))
+    val animatedViewIndicator: ViewElement = element(withId(R.id.animated_view_click_indicator))
 }

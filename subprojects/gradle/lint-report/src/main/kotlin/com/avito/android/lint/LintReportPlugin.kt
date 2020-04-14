@@ -38,7 +38,7 @@ open class LintReportPlugin : Plugin<Project> {
                 )
             }
 
-            buildId.set(project.envArgs.buildId)
+            buildId.set(project.envArgs.build.id)
         }
 
         if (app.buildEnvironment is BuildEnvironment.CI) {
