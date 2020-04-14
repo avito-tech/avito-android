@@ -8,9 +8,7 @@ object AndroidManifestPackageParser {
 
     fun parse(manifestFile: File): String? {
         val packageLine = manifestFile.useLines { lines ->
-            lines.find {
-                println(it)
-                manifestPackagePattern.containsMatchIn(it) }
+            lines.find { manifestPackagePattern.containsMatchIn(it) }
         }
 
         return if (packageLine != null) {
