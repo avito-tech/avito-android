@@ -10,11 +10,16 @@ interface TestsFilter {
         object Included : Result()
         abstract class Excluded(val reason: String) : Result() {
             class HaveSkipSdkAnnotation(sdk: Int) : Excluded("test has SkipSdk with value sdk=$sdk")
-            class DoNotHaveIncludeAnnotations(annotations: Set<String>) : Excluded("test doesn't have any of annotations=$annotations")
-            class HaveExcludeAnnotations(annotations: Set<String>) : Excluded("test has any of excluded annotations=$annotations")
-            abstract class BySignatures(reason: String): Excluded(reason) {
+            class DoNotHaveIncludeAnnotations(annotations: Set<String>) :
+                Excluded("test doesn't have any of annotations=$annotations")
+
+            class HaveExcludeAnnotations(annotations: Set<String>) :
+                Excluded("test has any of excluded annotations=$annotations")
+
+            abstract class BySignatures(reason: String) : Excluded(reason) {
                 abstract val source: Signatures.Source
             }
+
             class DoNotMatchIncludeSignature(
                 override val source: Signatures.Source
             ) : BySignatures("test doesn't match any of signatures from source=$source")
@@ -47,6 +52,8 @@ interface TestsFilter {
             val deviceName: String? = null
         ) : Serializable
     }
+
+    val name: String
 
     fun filter(test: Test): Result
 }

@@ -36,6 +36,7 @@ import com.avito.utils.BuildFailer
 import com.avito.utils.createOrClear
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.CILogger
+import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
 import java.io.File
 import java.io.Serializable
@@ -183,10 +184,10 @@ class InstrumentationTestsAction(
     override fun run() {
         logger.debug("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
 
-        val initialTestSuite: List<TestWithTarget> =
-            testSuiteProvider.getInitialTestSuite(
-                tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
-            )
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        val filterDir = File(params.outputDir, "filter").apply { mkdir() }
+        val filterConfig = File(filterDir, "filters-config.json")
+        filterConfig.writeText(gson.toJson(params.instrumentationConfiguration.filter))
 
         val buildOnTargetCommitResult = BuildOnTargetCommitForTest.fromParams(params)
 
@@ -200,7 +201,8 @@ class InstrumentationTestsAction(
                     buildOnTargetCommitResult = buildOnTargetCommitResult
                 )
             }
-
+        val filterApplied = File(filterDir, "filters-applied.json")
+        filterApplied.writeText(gson.toJson(testsExecutionResults.initialTestSuite.appliedFilter))
         val testRunResult = TestRunResult(
             reportedTests = testsExecutionResults.initialTestsResult.getOrElse { emptyList() },
             failed = hasFailedTestDeterminer.determine(
