@@ -4,6 +4,8 @@ package com.avito.instrumentation.suite.filter
 internal val ExcludeBySdkFilter = object : TestsFilter {
     override val name: String = "ExcludeBySdkFilter"
 
+    override val name = "ExcludeBySdkFilter"
+
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         val testAnnotations = test.annotations
             .find {
