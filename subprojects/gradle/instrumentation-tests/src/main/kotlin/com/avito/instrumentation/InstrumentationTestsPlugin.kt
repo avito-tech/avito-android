@@ -223,12 +223,20 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 timeout.set(Duration.ofMinutes(100))
                                 group = ciTaskGroup
 
-                                dependencyOn(testedVariantPackageTask) { dependentTask ->
-                                    application.set(dependentTask.getApkFile())
+                                if (extensionData.applicationApk == null) {
+                                    dependencyOn(testedVariantPackageTask) { dependentTask ->
+                                        application.set(dependentTask.getApkFile())
+                                    }
+                                } else {
+                                    application.set(File(extensionData.applicationApk))
                                 }
 
-                                dependencyOn(testVariantPackageTask) { dependentTask ->
-                                    testApplication.set(dependentTask.getApkFile())
+                                if (extensionData.testApplicationApk == null) {
+                                    dependencyOn(testVariantPackageTask) { dependentTask ->
+                                        testApplication.set(dependentTask.getApkFile())
+                                    }
+                                } else {
+                                    testApplication.set(File(extensionData.testApplicationApk))
                                 }
 
                                 if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
@@ -254,9 +262,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 }
 
                                 val isFullTestSuite = gitState.map {
-                                        it.isOnDefaultBranch
-                                                && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
-                                    }
+                                    it.isOnDefaultBranch
+                                        && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                                }
                                     .orElse(false)
 
                                 this.instrumentationConfiguration.set(instrumentationConfiguration)
@@ -269,7 +277,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 this.targetBranch.set(targetBranch.map { it.name })
                                 this.targetCommit.set(targetBranch.map { it.name })
                                 this.defaultBranch.set(gitState.map { it.defaultBranch })
-                                this.testedVariantName.set(testVariant.testedVariant.name)
                                 this.fullTestSuite.set(isFullTestSuite)
                                 this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
 

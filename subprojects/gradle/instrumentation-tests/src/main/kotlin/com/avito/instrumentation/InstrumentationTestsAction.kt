@@ -331,7 +331,6 @@ class InstrumentationTestsAction(
         val targetCommit: String?,
         val kubernetesCredentials: KubernetesCredentials,
         val projectName: String,
-        val testedVariantName: String,
         val suppressFailure: Boolean,
         val suppressFlaky: Boolean,
         val impactAnalysisResult: File?,

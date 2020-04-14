@@ -66,9 +66,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val buildUrl = objects.property<String>()
 
     @Input
-    val testedVariantName = objects.property<String>()
-
-    @Input
     val defaultBranch = objects.property<String>()
 
     @Input
@@ -170,7 +167,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     projectName = project.name,
                     currentBranch = gitBranch.get(),
                     sourceCommitHash = sourceCommitHash.get(),
-                    testedVariantName = testedVariantName.get(),
                     suppressFailure = suppressFailure.getOrElse(false),
                     suppressFlaky = suppressFlaky.getOrElse(false),
                     impactAnalysisResult = impactAnalysisResult.asFile.orNull,
