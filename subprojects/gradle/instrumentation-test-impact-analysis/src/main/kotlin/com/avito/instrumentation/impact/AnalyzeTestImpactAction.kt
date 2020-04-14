@@ -9,10 +9,10 @@ import com.avito.impact.configuration.internalModule
 import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Test
-import com.avito.instrumentation.impact.metadata.ModulePath
 import com.avito.instrumentation.impact.metadata.ScreenToModulePath
 import com.avito.instrumentation.impact.model.AffectionType
 import com.avito.utils.logging.CILogger
+import org.gradle.util.Path
 
 internal data class ImpactSummary(
     val affectedPackages: AffectedPackages,
@@ -135,7 +135,7 @@ internal class AnalyzeTestImpactAction(
                             .map { it.screenClass to it.modulePath }
                             .toMap()
 
-                        when (val screensModule: ModulePath? = screenToModuleMaps[screen]) {
+                        when (val screensModule: Path? = screenToModuleMaps[screen]) {
                             null -> {
                                 ciLogger.info("Module not found for screen $screen")
                                 tests

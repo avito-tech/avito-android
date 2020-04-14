@@ -37,16 +37,16 @@ class MetadataParser(
                         .filter {
                             it.getSuperNames().contains(screenClassSimpleName)
                         } //todo and import is correct, or fullname
-                        .forEach {
+                        .forEach { ktClass ->
                             val packageName = ktFile.packageFqName.asString()
-                            val className = it.name!!
+                            val className = ktClass.name!!
                             val fullClassName = if (packageName.isBlank()) {
                                 className
                             } else {
                                 "$packageName.$className"
                             }
 
-                            it.body?.properties?.forEach { property ->
+                            ktClass.body?.properties?.forEach { property ->
                                 if (property.name == fieldName) {
 
                                     val expression = property.children.filterIsInstance<KtExpression>().single()

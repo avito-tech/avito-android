@@ -25,7 +25,6 @@ import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Screen
 import com.avito.impact.util.Test
 import com.avito.instrumentation.impact.metadata.MetadataParser
-import com.avito.instrumentation.impact.metadata.ModulePath
 import com.avito.instrumentation.impact.metadata.ScreenToModulePath
 import com.avito.instrumentation.impact.model.AffectedTest
 import com.avito.instrumentation.impact.model.AffectionType
@@ -38,6 +37,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.internal.hash.Hasher
 import org.gradle.internal.isolation.Isolatable
 import org.gradle.internal.snapshot.ValueSnapshot
+import org.gradle.util.Path
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import java.util.concurrent.ConcurrentHashMap
@@ -319,21 +319,18 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
 
         val sourceSets = projectModules.flatMap { it.androidTestConfiguration.sourceSets() }
 
-        ciLogger.info("projectModules=$projectModules")
-
-        val androidModules = projectModules.filter {
-            it.project.pluginManager.hasPlugin("com.android.library") || it.project.pluginManager.hasPlugin("com.android.application")
-        }.map { AndroidProject(it.project) }
+        val androidModules = projectModules
+            .filter { it.project.isAndroid() }
+            .map { AndroidProject(it.project) }
 
         return metadataParser.parseMetadata(sourceSets)
             .map { (screen, packageName) ->
-                //todo unique packageName for modules
                 val project = androidModules.find { it.manifest.getPackage() == packageName }
                 if (project == null) {
                     ciLogger.critical("packageName=$packageName not found in project, available packages=${androidModules.map { it.name to it.manifest.getPackage() }}")
                     null
                 } else {
-                    ScreenToModulePath(screen, ModulePath(project.path))
+                    ScreenToModulePath(screen, Path.path(project.path))
                 }
             }
             .filterNotNull()
