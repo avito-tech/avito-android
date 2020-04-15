@@ -9,10 +9,17 @@ import java.io.File
 
 internal class CheckGradleDaemonTaskTest {
 
-    @Disabled("can't test single check atm #61")
     @Test
     fun `checkGradleDaemon - passes - when no buildSrc in project`(@TempDir projectDir: File) {
-        TestProjectGenerator(plugins = listOf("com.avito.android.buildchecks")).generateIn(projectDir)
+        TestProjectGenerator(
+            plugins = listOf("com.avito.android.buildchecks"),
+            buildGradleExtra = """
+                buildChecks {
+                    gradleDaemon {}
+                }
+            """.trimIndent()
+        )
+            .generateIn(projectDir)
 
         gradlew(projectDir, ":checkGradleDaemon")
     }

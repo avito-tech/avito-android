@@ -3,7 +3,7 @@ package com.avito.android.plugin.build_param_check
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 
-class DynamicDependenciesTest {
+class DynamicVersionTest {
 
     @Test
     fun `non dynamic dependency versions`() {

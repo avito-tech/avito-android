@@ -79,16 +79,22 @@ class AndroidSdk(
         }
 
     val platformSourceProperties: File
-        get() {
-            val file = File(platformDir, "source.properties")
-            require(file.exists()) {
-                sdkNotFoundMessage(file.path)
-            }
-            return file
+        get() = platformSourceProperties()
+
+    fun platformSourceProperties(compileSdkVersion: Int = this.compileSdkVersion): File {
+        val file = File(platformDir(compileSdkVersion), "source.properties")
+        require(file.exists()) {
+            sdkNotFoundMessage(file.path)
         }
+        return file
+    }
+
+    private fun platformDir(compileSdkVersion: Int = this.compileSdkVersion): File {
+        return File(androidHome.dir, "platforms/android-$compileSdkVersion")
+    }
 
     private val platformDir: File
-        get() = File(androidHome.dir, "platforms/android-$compileSdkVersion")
+        get() = platformDir(compileSdkVersion)
 
     override fun getApkSha1(apk: ExistingFile): Try<String> = apkSigner.getApkSha1(apk)
 

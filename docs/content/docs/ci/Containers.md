@@ -88,7 +88,7 @@ Without it the script will stop after building.
 ### Как запустить эмулятор?
 
 {{< tabs "run emulator" >}}
-{{< tab "OSX/Windows" >}}
+{{< tab "macOS/Windows" >}}
 
 CI эмулятор невозможно запустить из-за ограничений виртуализации [haxm #51](https://github.com/intel/haxm/issues/51#issuecomment-389731675).
 Поэтому воспроизводим идентичную конфигурацию.
