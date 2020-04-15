@@ -165,13 +165,15 @@ To diagnose the problem manually use [thoeni/inetTester](https://github.com/thoe
 To fix the problem use this workaround:
 
 1. Find your computer's name - [Find your computer's name and network address](https://support.apple.com/en-us/guide/mac-help/find-your-computers-name-and-network-address-mchlp1177/mac)
-1. Add it to `/etc/hosts` config:
-    ```text
-    127.0.0.1        localhost <your_host_name>.local
-    ::1              localhost <your_host_name>.local
-    ```
-1. Reboot the computer
-1. Check again by [thoeni/inetTester](https://github.com/thoeni/inetTester)
+2. Add it to `/etc/hosts` config:
+
+```text
+127.0.0.1        localhost <your_host_name>.local
+::1              localhost <your_host_name>.local
+```
+
+3. Reboot the computer
+4. Check again by [thoeni/inetTester](https://github.com/thoeni/inetTester)
 
 See an original post [thoeni.io/post/macos-sierra-java](https://thoeni.io/post/macos-sierra-java/).
 
@@ -186,7 +188,8 @@ buildChecks {
 ### Dynamic dependency version
 
 Dynamic versions, such as "2.+", and snapshot versions force Gradle to check them on a remote server. 
-It slows down a [configuration time](https://guides.gradle.org/performance/#minimize_dynamic_and_snapshot_versions) and makes build [less reproducible](https://reproducible-builds.org/). 
+It slows down a [configuration time](https://guides.gradle.org/performance/#minimize_dynamic_and_snapshot_versions) 
+and makes build [less reproducible](https://reproducible-builds.org/). 
 
 This check forbids dynamic dependency versions.
 
@@ -233,7 +236,7 @@ Use 'compile' instead.
 
 ### Module types
 
-This check force to apply [`module-types`](https://github.com/avito-tech/avito-android/blob/develop/subprojects/gradle/module-types/src/main/kotlin/com/avito/android/CheckProjectDependenciesTypeTask.kt) Gradle plugin in all modules.
+This check force to apply [`module-types`](https://github.com/avito-tech/avito-android/blob/develop/subprojects/gradle/module-types) Gradle plugin in all modules.
 It prevents modules go to wrong configurations (android-test module as an app’s implementation dependency for example).
 
 ```groovy
