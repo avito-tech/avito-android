@@ -207,6 +207,11 @@ While merging, it can unexpectedly override resources. It happens even with `and
 To forbid merged R files use this check:
 
 ```groovy
+plugins {
+    id("com.avito.android.buildchecks")
+    id("com.avito.android.impact") // this check requires impact analysis
+}
+
 buildChecks {
     uniqueRClasses { } // enabled by default
 }
