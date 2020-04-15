@@ -15,10 +15,6 @@ Apply the plugin in the root `build.gradle` file:
 plugins {
     id("com.avito.android.buildchecks")
 }
-
-buildChecks {
-    enableByDefault = true
-}
 ```
 
 In the `settings.gradle`:
@@ -40,7 +36,7 @@ pluginManagement {
 }
 ```
 
-Some checks require settings to work properly. 
+Some checks will require settings to work properly. 
 You'll get an error about missing settings:
 
 ```text
@@ -54,8 +50,6 @@ After adding missing properties you will get something like this:
 
 ```groovy
 buildChecks {
-    enableByDefault = true
-
     androidSdk {
         it.compileSdkVersion = 29
         it.revision = 4
@@ -76,11 +70,13 @@ The plugin will run it automatically on every build.
 
 ## Configuration
 
-### Enable all checks
+### Disable single check
 
 ```groovy
 buildChecks {
-    enableByDefault = true // false by default
+    androidSdk {
+        it.enabled = false
+    }
 }
 ```
 
@@ -89,18 +85,6 @@ buildChecks {
 ```groovy
 buildChecks {
     enableByDefault = false
-}
-```
-
-### Disable single check
-
-```groovy
-buildChecks {
-    enableByDefault = true
-
-    androidSdk {
-        it.enabled = false
-    }
 }
 ```
 

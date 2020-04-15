@@ -11,7 +11,7 @@ import org.gradle.api.Action
 
 open class BuildChecksExtension {
 
-    var enableByDefault: Boolean? = null
+    var enableByDefault: Boolean = true
 
     internal val checks = mutableSetOf<Check>()
 

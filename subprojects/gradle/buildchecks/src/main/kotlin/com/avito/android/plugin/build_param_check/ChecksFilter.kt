@@ -17,7 +17,6 @@ internal class ChecksFilter(
     fun checks(): List<Check> {
         return if (project.hasProperty(legacyEnabledGradleProperty)) {
             warnAboutLegacyProperties()
-            verifyNoExtensionUsage()
 
             val isEnabled = project.getBooleanProperty(legacyEnabledGradleProperty, false)
             if (isEnabled) {
@@ -28,15 +27,6 @@ internal class ChecksFilter(
             }
         } else {
             enabledChecksFromExtension()
-        }
-    }
-
-    private fun verifyNoExtensionUsage() {
-        if (extension.enableByDefault == true || extension.checks.isNotEmpty()) {
-            throw IllegalStateException(
-                "Gradle properties $deprecatedProperties are unsupported with buildCheck {} extension.\n" +
-                    "Please move those values to the extension."
-            )
         }
     }
 
@@ -52,6 +42,9 @@ internal class ChecksFilter(
             compileSdkVersion = checkNotNull(System.getProperty("compileSdkVersion").toIntOrNull())
             revision = project.getMandatoryIntProperty(androidJarRevision)
         }
+        checks.getInstance<Check.GradleProperties>().enabled = true
+        checks.getInstance<Check.ModuleTypes>().enabled = true
+
         return checks
     }
 
@@ -63,7 +56,8 @@ internal class ChecksFilter(
 
         project.ciLogger.info(
             "WARNING: Properties $deprecatedProperties are deprecated. " +
-                "Remove them and use '$extensionName {}' extension."
+                "Remove them and use '$extensionName {}' extension.\n" +
+                "Checks in '$extensionName {}' won't work unless you do it."
         )
     }
 
@@ -77,7 +71,7 @@ internal class ChecksFilter(
         val enabledByUser = extension.checks
             .filter { it.enabled }
 
-        return if (extension.enableByDefault == true) {
+        return if (extension.enableByDefault) {
             enabledByUser + allDefaultChecks(excluded = extension.checks).filter { it.enabled }
         } else {
             enabledByUser

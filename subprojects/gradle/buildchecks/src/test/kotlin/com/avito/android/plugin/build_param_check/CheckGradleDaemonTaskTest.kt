@@ -2,7 +2,6 @@ package com.avito.android.plugin.build_param_check
 
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -15,6 +14,7 @@ internal class CheckGradleDaemonTaskTest {
             plugins = listOf("com.avito.android.buildchecks"),
             buildGradleExtra = """
                 buildChecks {
+                    enableByDefault = false
                     gradleDaemon {}
                 }
             """.trimIndent()

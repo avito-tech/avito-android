@@ -30,42 +30,34 @@ class ChecksFilterTest {
         assertHasInstance<Check.JavaVersion>(checks)
         assertHasInstance<Check.AndroidSdk>(checks)
 
-        val javaVersionCheck = checks.getInstance<Check.JavaVersion>()
-        assertThat(javaVersionCheck.version).isEqualTo(org.gradle.api.JavaVersion.VERSION_1_8)
-
-        val androidSdkCheck = checks.getInstance<Check.AndroidSdk>()
-        assertThat(androidSdkCheck.enabled).isEqualTo(true)
-        assertThat(androidSdkCheck.revision).isEqualTo(1)
+        checks.getInstance<Check.JavaVersion>().also { check ->
+            assertThat(check.version).isEqualTo(org.gradle.api.JavaVersion.VERSION_1_8)
+        }
+        checks.getInstance<Check.AndroidSdk>().also { check ->
+            assertThat(check.enabled).isEqualTo(true)
+            assertThat(check.revision).isEqualTo(1)
+        }
+        checks.getInstance<Check.ModuleTypes>().also { check ->
+            assertThat(check.enabled).isEqualTo(true)
+        }
+        checks.getInstance<Check.GradleProperties>().also { check ->
+            assertThat(check.enabled).isEqualTo(true)
+        }
     }
 
     @Test
-    fun `prohibit extension - legacy mode`() {
+    fun `no checks - enableByDefault is false`() {
         val extension = BuildChecksExtension().apply {
-            enableByDefault = true
+            enableByDefault = false
         }
-        val project = project(
-            legacyEnabledGradleProperty to "true"
-        )
-        val error = assertThrows<IllegalStateException> {
-            ChecksFilter(project, extension).checks()
-        }
-        assertThat(error).hasMessageThat()
-            .contains("are unsupported with buildCheck {} extension")
-    }
-
-    @Test
-    fun `no checks - default state`() {
-        val extension = BuildChecksExtension()
         val checks = ChecksFilter(project(), extension).checks()
 
         assertThat(checks).isEmpty()
     }
 
     @Test
-    fun `all default checks are enabled - enableByDefault`() {
-        val extension = BuildChecksExtension().apply {
-            enableByDefault = true
-        }
+    fun `all default checks are enabled - default config`() {
+        val extension = BuildChecksExtension()
         val checks = ChecksFilter(project(), extension).checks()
 
         assertHasInstance<Check.MacOSLocalhost>(checks)
@@ -81,6 +73,7 @@ class ChecksFilterTest {
     @Test
     fun `enable single check`() {
         val extension = BuildChecksExtension().apply {
+            enableByDefault = false
             androidSdk(Action { })
         }
         val checks = ChecksFilter(project(), extension).checks()
@@ -92,8 +85,6 @@ class ChecksFilterTest {
     @Test
     fun `disable single check`() {
         val extension = BuildChecksExtension().apply {
-            enableByDefault = true
-
             androidSdk(Action {
                 it.enabled = false
             })
