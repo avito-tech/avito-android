@@ -39,8 +39,8 @@ interface FilterInfoWriter {
                         },
                         valueTransform = { (test, _) ->
                             mapOf(
-                                "testName" to test.test.name,
-                                "device" to test.test.device
+                                "testName" to test.test.name.name,
+                                "device" to test.test.device.name
                             )
                         })
                 )
