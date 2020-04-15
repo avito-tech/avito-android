@@ -7,9 +7,7 @@ import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
-import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.dex.check.AllChecks
-import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.util.FutureValue
 import com.avito.instrumentation.util.GroupedCoroutinesExecution
 import com.avito.report.model.ReportCoordinates
@@ -24,15 +22,16 @@ internal class PerformanceTestsScheduler(
     private val targetReport: Report,
     private val targetReportCoordinates: ReportCoordinates,
     private val testSuiteProvider: TestSuiteProvider,
-    private val testSuiteLoader: TestSuiteLoader = TestSuiteLoaderImpl()
+    private val testSuiteLoader: TestSuiteLoader
 ) : TestsScheduler {
 
     override fun schedule(
-        initialTestsSuite: List<TestWithTarget>,
         buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): TestsScheduler.Result {
         val flakyTestInfo = FlakyTestInfo()
-
+        val initialTestSuite = testSuiteProvider.getInitialTestSuite(
+            tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
+        )
         val group = GroupedCoroutinesExecution()
 
         var testResultsAfterBranchRerunsFuture: FutureValue<Try<List<SimpleRunTest>>>? = null
@@ -43,7 +42,7 @@ internal class PerformanceTestsScheduler(
                 runType = TestExecutor.RunType.Run(id = "initialRun"),
                 reportCoordinates = reportCoordinates,
                 report = sourceReport,
-                testsToRun = initialTestsSuite
+                testsToRun = initialTestSuite.testsToRun
             )
 
             initialTestsResult
@@ -52,10 +51,10 @@ internal class PerformanceTestsScheduler(
         // TODO: почему здесь неявно пропускаем отсутствие сборки? fail-fast?
         if (buildOnTargetCommitResult is BuildOnTargetCommitForTest.Result.OK) {
             testResultsAfterBranchRerunsFuture = group.launch {
-                val testsToRun: List<TestWithTarget> =
+                val testsToRun =
                     testSuiteProvider.getInitialTestSuite(
                         tests = testSuiteLoader.loadTestSuite(buildOnTargetCommitResult.testApk, AllChecks())
-                    )
+                    ).testsToRun
 
                 val testResultsAfterBranchReruns = testsRunner.runTests(
                     mainApk = buildOnTargetCommitResult.mainApk,
@@ -81,6 +80,7 @@ internal class PerformanceTestsScheduler(
         }
 
         return TestsScheduler.Result(
+            initialTestSuite = initialTestSuite,
             initialTestsResult = initialTestsResult,
             testResultsAfterBranchReruns = initialTestsResult,
             flakyInfo = flakyTestInfo.getInfo()

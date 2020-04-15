@@ -12,13 +12,19 @@ internal class CompositeTestRunFilterTest {
         val compositionFilter = CompositionFilter(
             listOf(
                 object : TestsFilter {
+                    override val name: String
+                        get() = TODO("Not yet implemented")
+
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveSkipSdkAnnotation(21)
+                        return Excluded.HaveSkipSdkAnnotation("", 21)
                     }
                 },
                 object : TestsFilter {
+                    override val name: String
+                        get() = TODO("Not yet implemented")
+
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveExcludeAnnotations(emptySet())
+                        return Excluded.HaveExcludeAnnotations("", emptySet())
                     }
                 }
             )
@@ -33,13 +39,17 @@ internal class CompositeTestRunFilterTest {
         val compositionFilter = CompositionFilter(
             listOf(
                 object : TestsFilter {
+                    override val name: String = ""
+
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
                         return TestsFilter.Result.Included
                     }
                 },
                 object : TestsFilter {
+                    override val name: String = ""
+
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveExcludeAnnotations(emptySet())
+                        return Excluded.HaveExcludeAnnotations("", emptySet())
                     }
                 }
             )

@@ -29,7 +29,7 @@ internal class TestSuiteProviderTest {
             tests = listOf(simpleTestInApk)
         )
 
-        assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
+        assertThat(result.testsToRun.map { it.test.name }).containsExactly(simpleTestInApk.testName)
     }
 
     @Test
@@ -40,7 +40,7 @@ internal class TestSuiteProviderTest {
             tests = listOf(simpleTestInApk)
         )
 
-        assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
+        assertThat(result.testsToRun.map { it.test.name }).containsExactly(simpleTestInApk.testName)
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class TestSuiteProviderTest {
             tests = listOf(simpleTestInApk)
         )
 
-        assertThat(result.map { it.test.name }).containsExactly(simpleTestInApk.testName)
+        assertThat(result.testsToRun.map { it.test.name }).containsExactly(simpleTestInApk.testName)
     }
 
     @Test
@@ -63,6 +63,7 @@ internal class TestSuiteProviderTest {
             filterFactory = FakeFilterFactory(
                 initialFilter = excludedFilter(
                     TestsFilter.Result.Excluded.MatchExcludeSignature(
+                        name = "",
                         source = TestsFilter.Signatures.Source.PreviousRun
                     )
                 )
