@@ -157,7 +157,8 @@ buildChecks {
 
 ### macOS localhost lookup
 
-On macOs `java.net.InetAddress#getLocalHost()` invocation can last up to 5 seconds instead of milliseconds.
+On macOs `java.net.InetAddress#getLocalHost()` invocation can last up to 5 seconds instead of milliseconds 
+([thoeni.io/post/macos-sierra-java](https://thoeni.io/post/macos-sierra-java/)).
 Gradle has a [workaround](https://github.com/gradle/gradle/pull/11134) but it works only inside Gradle's code.
 
 To diagnose the problem manually use [thoeni/inetTester](https://github.com/thoeni/inetTester).
@@ -174,8 +175,6 @@ To fix the problem use this workaround:
 
 3. Reboot the computer
 4. Check again by [thoeni/inetTester](https://github.com/thoeni/inetTester)
-
-See an original post [thoeni.io/post/macos-sierra-java](https://thoeni.io/post/macos-sierra-java/).
 
 This check automatically detects the issue:
 
