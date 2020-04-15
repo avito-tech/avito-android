@@ -36,6 +36,11 @@ exclude_rule 'MD012'
 # Rationale: false-positive in tabs (e.g. multiple "Known issues" topics)
 exclude_rule 'MD024'
 
+# MD029 Ordered list item prefix
+# Rationale: false-positive in lists with code blocks.
+#   This check conflicts with MD031 (Fenced code blocks should be surrounded by blank lines)
+exclude_rule 'MD029'
+
 # MD032 - Lists should be surrounded by blank lines
 # Rationale: false-positive on sentences with ":" inside
 exclude_rule 'MD032'
