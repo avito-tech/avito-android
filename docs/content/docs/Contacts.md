@@ -7,7 +7,7 @@ type: docs
 
 ## Public channels 
 
-Telegram chat - [English](https://t.me/avito_android_opensource_en), [Russian](https://t.me/avito_android_opensource)
+[Telegram chat (Russian)](https://t.me/avito_android_opensource)
 
 ## Internal channels
 
