@@ -15,7 +15,7 @@ rule 'MD004', :style => :dash
 rule 'MD007', :indent => 4
 
 # MD013 - Line length
-# TODO: Decrease to 120 ?
+# Small values gives false-positive errors on long links
 rule 'MD013', :line_length => 180
 
 # MD026 - Trailing punctuation in header
