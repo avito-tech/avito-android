@@ -15,7 +15,43 @@ It can do the following:
 - Save tests result in a report.\
 It uses an internal TMS (test management system). We are working on support other formats.
 
-## Example
+## Getting started
+
+TBD
+
+## Configuration
+
+A configuration is done in gradle script:
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("com.avito.android.instrumentation-tests")
+}
+
+extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
+    // all options goes here
+}
+
+```
+
+### Test APK
+
+Plugin builds APKs on his own by default.\
+If for any reason you have to build APK externally, you can pass files manually:
+
+```kotlin
+// optional
+applicationApk = "/path/to/app.apk"
+// optional
+testApplicationApk = "/path/to/test-app-debug-androidTest.apk"
+```
+
+### Tests filtering
+
+TBD
+
+## Examples
 
 Check out a configuration to run in `GradleInstrumentationPluginConfiguration` in the [test app](https://github.com/avito-tech/avito-android/blob/develop/subprojects/android-test/test-app/build.gradle.kts#L114)
 

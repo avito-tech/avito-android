@@ -15,8 +15,14 @@ import com.avito.report.model.DeviceName
  */
 interface TestSuiteProvider {
 
-    fun getInitialTestSuite(tests: List<TestInApk>): List<TestWithTarget>
-    fun getRerunTestsSuite(tests: List<TestInApk>): List<TestWithTarget>
+    data class TestSuite(
+        val appliedFilter: TestsFilter,
+        val testsToRun: List<TestWithTarget>,
+        val skippedTests: List<Pair<TestWithTarget, Excluded>>
+    )
+
+    fun getInitialTestSuite(tests: List<TestInApk>): TestSuite
+    fun getRerunTestsSuite(tests: List<TestInApk>): TestSuite
 
     class Impl(
         private val report: Report,
@@ -25,14 +31,10 @@ interface TestSuiteProvider {
         private val filterFactory: FilterFactory
     ) : TestSuiteProvider {
 
-        private data class TestSuite(
-            val testsToRun: List<TestWithTarget>,
-            val skippedTests: List<Pair<TestWithTarget, Excluded>>
-        )
 
         override fun getInitialTestSuite(
             tests: List<TestInApk>
-        ): List<TestWithTarget> {
+        ): TestSuite {
 
             val suite = getTestSuite(
                 tests = tests,
@@ -48,7 +50,8 @@ interface TestSuiteProvider {
                          * заскипанные.
                          */
                         .filter { (_, verdict) ->
-                            verdict is Excluded.BySignatures && verdict.source == Signatures.Source.PreviousRun
+                            (verdict !is Excluded.BySignatures) ||
+                                    (verdict.source != Signatures.Source.PreviousRun)
                         }
                         .map { (targetTest, verdict) ->
                             targetTest.test to verdict.reason
@@ -56,17 +59,15 @@ interface TestSuiteProvider {
                 )
             }
 
-            return suite.testsToRun
+            return suite
         }
 
         override fun getRerunTestsSuite(
             tests: List<TestInApk>
-        ): List<TestWithTarget> {
-            return getTestSuite(
-                tests = tests,
-                filter = filterFactory.createRerunFilter()
-            ).testsToRun
-        }
+        ): TestSuite = getTestSuite(
+            tests = tests,
+            filter = filterFactory.createRerunFilter()
+        )
 
         private fun getTestSuite(
             tests: List<TestInApk>,
@@ -98,6 +99,7 @@ interface TestSuiteProvider {
                     .map { (test, _) -> test }
 
             return TestSuite(
+                appliedFilter = filter,
                 testsToRun = testsToRun,
                 skippedTests = skippedTests
             )

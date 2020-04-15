@@ -29,7 +29,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         url = "empty"
     ),
     projectName: String = "testProject",
-    testedVariantName: String = "debug",
     suppressFailure: Boolean = false,
     suppressFlaky: Boolean = false,
     impactAnalysisResult: File? = null,
@@ -69,7 +68,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         targetCommit = targetCommit,
         kubernetesCredentials = kubernetesCredentials,
         projectName = projectName,
-        testedVariantName = testedVariantName,
         suppressFailure = suppressFailure,
         suppressFlaky = suppressFlaky,
         impactAnalysisResult = impactAnalysisResult,

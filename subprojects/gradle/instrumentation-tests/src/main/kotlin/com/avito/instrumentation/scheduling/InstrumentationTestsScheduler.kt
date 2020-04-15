@@ -8,8 +8,7 @@ import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
-import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
-import com.avito.instrumentation.suite.model.TestWithTarget
+import com.avito.instrumentation.suite.dex.check.AllChecks
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -26,22 +25,23 @@ class InstrumentationTestsScheduler(
     private val sourceReport: Report,
     private val targetReport: Report,
     private val testSuiteProvider: TestSuiteProvider,
-    private val testSuiteLoader: TestSuiteLoader = TestSuiteLoaderImpl()
+    private val testSuiteLoader: TestSuiteLoader
 ) : TestsScheduler {
 
     override fun schedule(
-        initialTestsSuite: List<TestWithTarget>,
         buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): TestsScheduler.Result {
         val flakyTestInfo = FlakyTestInfo()
-
+        val initialTestSuite = testSuiteProvider.getInitialTestSuite(
+            tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
+        )
         val initialTestsResult = testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
             runType = TestExecutor.RunType.Run(id = "initialRun"),
             reportCoordinates = reportCoordinates,
             report = sourceReport,
-            testsToRun = initialTestsSuite
+            testsToRun = initialTestSuite.testsToRun
         )
 
         val (
@@ -92,6 +92,7 @@ class InstrumentationTestsScheduler(
         }
 
         return TestsScheduler.Result(
+            initialTestSuite = initialTestSuite,
             initialTestsResult = initialTestsResult,
             testResultsAfterBranchReruns = finalSourceBranchState,
             flakyInfo = flakyTestInfo.getInfo()
@@ -110,20 +111,20 @@ class InstrumentationTestsScheduler(
     ): Try<List<SimpleRunTest>> {
         return when {
             currentReportState is Try.Failure -> {
-                logger.info("Rerun on target branch cancelled: Can't get current report state")
+                logger.debug("Rerun on target branch cancelled: Can't get current report state")
                 currentReportState
             }
             buildOnTargetCommit is BuildOnTargetCommitForTest.Result.ApksUnavailable -> {
-                logger.info("Rerun on target branch cancelled: target apks unavailable")
+                logger.debug("Rerun on target branch cancelled: target apks unavailable")
                 currentReportState
             }
             else -> {
                 // cast is not smart enough
                 buildOnTargetCommit as BuildOnTargetCommitForTest.Result.OK
 
-                val testsToRunOnTarget: List<TestWithTarget> = testSuiteProvider.getRerunTestsSuite(
+                val testsToRunOnTarget = testSuiteProvider.getRerunTestsSuite(
                     testSuiteLoader.loadTestSuite(buildOnTargetCommit.testApk)
-                )
+                ).testsToRun
 
                 // число перезапусков определяется
                 val rerunResults = testsRunner.runTests(
@@ -153,9 +154,9 @@ class InstrumentationTestsScheduler(
         report: Report
     ): Try<List<SimpleRunTest>> = currentReportState.fold(
         {
-            val testsToRun: List<TestWithTarget> = testSuiteProvider.getRerunTestsSuite(
+            val testsToRun = testSuiteProvider.getRerunTestsSuite(
                 testSuiteLoader.loadTestSuite(params.testApk)
-            )
+            ).testsToRun
 
             // сознательно берем число перезапусков с первого запуска
             testsRunner.runTests(
@@ -171,7 +172,7 @@ class InstrumentationTestsScheduler(
             // здесь ничего не мерджим, работает как обычный перезапуск по квоте
         },
         {
-            logger.info("Rerun on source branch cancelled: Can't get rerun on target results")
+            logger.debug("Rerun on source branch cancelled: Can't get rerun on target results")
             currentReportState
         }
     )

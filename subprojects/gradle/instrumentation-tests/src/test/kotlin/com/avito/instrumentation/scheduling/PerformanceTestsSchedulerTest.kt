@@ -61,7 +61,6 @@ internal class PerformanceTestsSchedulerTest {
         )
 
         val result = scheduler.schedule(
-            initialTestsSuite = listOf(),
             buildOnTargetCommitResult = BuildOnTargetCommitForTest.Result.ApksUnavailable
         )
 
@@ -100,7 +99,6 @@ internal class PerformanceTestsSchedulerTest {
         )
 
         val result = scheduler.schedule(
-            initialTestsSuite = listOf(),
             buildOnTargetCommitResult = BuildOnTargetCommitForTest.Result.OK(
                 mainApk = targetApk,
                 testApk = targetTestApk

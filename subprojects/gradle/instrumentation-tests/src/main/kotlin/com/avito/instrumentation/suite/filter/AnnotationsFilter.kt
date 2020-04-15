@@ -9,10 +9,13 @@ internal fun TestsFilter.Test.matched(annotations: Set<String>): Boolean {
 internal class IncludeAnnotationsFilter(
     private val annotations: Set<String>
 ) : TestsFilter {
+
+    override val name = "IncludeAnnotations"
+
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
             test.matched(annotations) -> TestsFilter.Result.Included
-            else -> Excluded.DoNotHaveIncludeAnnotations(annotations)
+            else -> Excluded.DoNotHaveIncludeAnnotations(name, annotations)
         }
     }
 }
@@ -20,9 +23,12 @@ internal class IncludeAnnotationsFilter(
 internal class ExcludeAnnotationsFilter(
     private val annotations: Set<String>
 ) : TestsFilter {
+
+    override val name = "ExcludeAnnotations"
+
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
-            test.matched(annotations) -> Excluded.HaveExcludeAnnotations(annotations)
+            test.matched(annotations) -> Excluded.HaveExcludeAnnotations(name, annotations)
             else -> TestsFilter.Result.Included
         }
     }

@@ -14,6 +14,8 @@ object InstrumentationPluginConfiguration {
         project: Project
     ) {
 
+        var applicationApk: String? = null
+        var testApplicationApk: String? = null
         var reportApiUrl: String = ""
         var reportApiFallbackUrl: String = ""
         var reportViewerUrl: String = ""
@@ -79,6 +81,8 @@ object InstrumentationPluginConfiguration {
             private val pluginInstrumentationParameters: InstrumentationParameters,
             val logcatTags: Collection<String>,
             val output: String,
+            val applicationApk: String?,
+            val testApplicationApk: String?,
             val reportApiUrl: String,
             val reportApiFallbackUrl: String,
             val reportViewerUrl: String,

@@ -39,7 +39,7 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
     fun sourceSets(): Set<File> {
         val sourcesTaskRaw = project.tasks.findByPath("sourceSets") ?: return setOf(project.projectDir)
 
-        return (sourcesTaskRaw as SourceSetsTask).config
+        return (sourcesTaskRaw as SourceSetsTask).extension
             .sourceSets
             .filter { containsSources(it) }
             .flatMap { it.java.srcDirs }

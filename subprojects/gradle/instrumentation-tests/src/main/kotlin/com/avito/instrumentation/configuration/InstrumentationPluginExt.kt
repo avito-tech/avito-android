@@ -37,7 +37,7 @@ internal fun Project.withInstrumentationExtensionData(action: (InstrumentationPl
                 .map { gitState ->
                     RunId(
                         commitHash = gitState.currentBranch.commit,
-                        buildTypeId = env.buildTypeId
+                        buildTypeId = env.build.type
                     )
                 }.orNull
 
@@ -77,6 +77,8 @@ internal fun Project.withInstrumentationExtensionData(action: (InstrumentationPl
                     pluginInstrumentationParameters = instrumentationParameters,
                     logcatTags = extension.logcatTags,
                     output = extension.output,
+                    applicationApk = extension.applicationApk,
+                    testApplicationApk = extension.testApplicationApk,
                     reportApiUrl = extension.reportApiUrl,
                     reportApiFallbackUrl = extension.reportApiFallbackUrl,
                     reportViewerUrl = extension.reportViewerUrl,

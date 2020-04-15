@@ -217,8 +217,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         reportSkippedTests = false
         rerunFailedTests = false
         reportFlakyTests = false
-        // uncomment after 2020.4.1 release (MBS-8050)
-        // enableDeviceDebug = true
+        enableDeviceDebug = true
 
         targetsContainer.register("api27") {
             deviceName = "API27"
