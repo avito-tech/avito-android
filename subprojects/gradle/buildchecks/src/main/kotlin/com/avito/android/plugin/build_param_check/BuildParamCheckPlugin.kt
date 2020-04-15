@@ -2,6 +2,7 @@ package com.avito.android.plugin.build_param_check
 
 import com.avito.android.androidSdk
 import com.avito.android.plugin.build_metrics.BuildMetricTracker
+import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.sentry.sentry
 import com.avito.android.stats.CountMetric
@@ -16,70 +17,103 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.invocation.Gradle
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
 import org.gradle.tooling.BuildException
 
-@Suppress("unused", "RemoveCurlyBracesFromTemplate", "UnstableApiUsage")
+@Suppress("unused")
 open class BuildParamCheckPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
+        val extension = project.extensions.create<BuildChecksExtension>(extensionName)
+
         printBuildEnvironment(project)
 
         check(project.isRoot()) {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
-        val isEnabled = project.getBooleanProperty("avito.build.paramCheck.enabled", false)
-        registerRequiredTasks(project, isEnabled)
+        project.afterEvaluate {
+            val checks = ChecksFilter(project, extension).checks()
+            checks
+                .filterIsInstance<BuildChecksExtension.RequireParameters>()
+                .forEach {
+                    it.validate()
+                }
 
-        if (!isEnabled) {
-            project.ciLogger.info("Build checks are skipped")
-            return
+            registerRequiredTasks(project, checks)
+
+            if (checks.hasInstance<Check.JavaVersion>()) {
+                checkJavaVersion(checks.getInstance<Check.JavaVersion>())
+            }
+            if (checks.hasInstance<Check.GradleProperties>()) {
+                checkGradleProperties(project)
+            }
+            if (checks.hasInstance<Check.ModuleTypes>()) {
+                checkModuleHasRequiredPlugins(project)
+            }
+
+            showErrorsIfAny(project)
         }
-        check(JavaVersion.current() == JavaVersion.VERSION_1_8) {
-            "Only Java 1.8 is supported for this project but was ${javaInfo()}. " +
-                "Please check java home property or install appropriate JDK."
-        }
-        applyChecks(project)
-
-        checkModuleHasRequiredPlugins(project)
-        checkKotlinModulesDoesNotUseApiConfiguration(project)
-
-        showErrorsIfAny(project)
     }
 
-    private fun registerRequiredTasks(
-        project: Project,
-        enabled: Boolean
-    ) {
-        val checkAndroidSdk =
-            project.tasks.register<CheckAndroidSdkVersionTask>("checkAndroidSdkVersion") {
+    private fun checkJavaVersion(check: Check.JavaVersion) {
+        check(JavaVersion.current() == check.version) {
+            "Only ${check.version} is supported for this project but was ${javaInfo()}. " +
+                "Please check java home property or install appropriate JDK."
+        }
+    }
+
+    private fun registerRequiredTasks(project: Project, checks: List<Check>) {
+        val checkBuildEnvironment = project.tasks.register("checkBuildEnvironment") {
+            it.group = "verification"
+            it.description = "Check typical build problems"
+        }
+        project.gradle.startParameter.setTaskNames(
+            // getter returns defencive copy
+            project.gradle.startParameter.taskNames + "checkBuildEnvironment"
+        )
+
+        if (checks.hasInstance<Check.AndroidSdk>()) {
+            val check = checks.getInstance<Check.AndroidSdk>()
+            val task = project.tasks.register<CheckAndroidSdkVersionTask>("checkAndroidSdkVersion") {
                 group = "verification"
                 description =
                     "Checks sdk version in docker against local one to prevent build cache misses"
 
+                compileSdkVersion.set(check.compileSdkVersion)
+                revision.set(check.revision)
                 // don't run task if it is already compared hashes and it's ok
                 // task will be executed next time if either local jar or docker jar(e.g. inputs) changed
                 outputs.upToDateWhen { outputs.files.singleFile.exists() }
-                onlyIf { enabled }
             }
-        val checkGradleDaemonTask = project.tasks.register<CheckGradleDaemonTask>("checkGradleDaemon") {
-            group = "verification"
-            description = "Check gradle daemon problems"
+            checkBuildEnvironment {
+                dependsOn(task)
+            }
         }
-        val dynamicDependenciesTask = project.tasks.register<DynamicDependenciesTask>("checkDynamicDependencies") {
-            group = "verification"
-            description = "Detects dynamic dependencies"
-        }
-        val checkBuildEnvironment = project.tasks.register("checkBuildEnvironment") {
-            it.group = "verification"
-            it.description = "Check typical build problems"
-            it.dependsOn(checkAndroidSdk, checkGradleDaemonTask, dynamicDependenciesTask)
-        }
-        if (isMac()) {
-            val task = project.tasks.register<OsxLocalhostResolvingTask>("checkOsxLocalhostResolving") {
+        if (checks.hasInstance<Check.GradleDaemon>()) {
+            val task = project.tasks.register<CheckGradleDaemonTask>("checkGradleDaemon") {
                 group = "verification"
-                description = "Check OSX localhost resolving issue from Java (https://thoeni.io/post/macos-sierra-java/)"
+                description = "Check gradle daemon problems"
+            }
+            checkBuildEnvironment {
+                dependsOn(task)
+            }
+        }
+        if (checks.hasInstance<Check.DynamicDependencies>()) {
+            val task = project.tasks.register<DynamicDependenciesTask>("checkDynamicDependencies") {
+                group = "verification"
+                description = "Detects dynamic dependencies"
+            }
+            checkBuildEnvironment {
+                dependsOn(task)
+            }
+        }
+        if (checks.hasInstance<Check.MacOSLocalhost>() && isMac()) {
+            val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
+                group = "verification"
+                description =
+                    "Check macOS localhost resolving issue from Java (https://thoeni.io/post/macos-sierra-java/)"
             }
             checkBuildEnvironment {
                 dependsOn(task)
@@ -125,47 +159,9 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    /**
-     * TODO: найти issue
-     * Нужно проверять что при применении плагина kotlin не используется api зависимость
-     * Текущее поведение очень неожиданное: ничего не падает, но модуль который ожидает что прилетит транзитивно api зависимость не компилится,
-     * то есть работает как implementation
-     */
-    private fun checkKotlinModulesDoesNotUseApiConfiguration(project: Project) {
-        project.subprojects { subproject ->
-            subproject.afterEvaluate {
-                subproject.plugins.withId("kotlin") {
-                    try {
-                        subproject.configurations.named("api") { configuration ->
-                            // без afterEvaluate коллекция всегда пустая
-                            val validDependencies = configuration.dependencies.filter { it.group != null }
-                            lazyCheck(validDependencies.isEmpty()) {
-                                val dependenciesDescription = validDependencies.joinToString {
-                                    "${it.group}:${it.name}:${it.version}"
-                                }
-                                "$subproject uses api dependencies $dependenciesDescription in the $configuration configuration. \n" +
-                                    "It's not working correctly in the kotlin plugin. \n" +
-                                    "Use 'compile' instead."
-                            }
-                        }
-                    } catch (e: UnknownConfigurationException) {
-                        // нам в этой проверке не важно почему это происходит
-                        // https://avito.slack.com/archives/G0G8TFB25/p1547555630125200
-                    }
-                }
-            }
-        }
-    }
-
     private fun lazyCheck(precondition: Boolean, message: () -> String) {
         if (!precondition) {
             validationErrors += message.invoke()
-        }
-    }
-
-    private fun check(precondition: Boolean, message: () -> String) {
-        if (!precondition) {
-            throw BuildException(message(), null)
         }
     }
 
@@ -175,14 +171,14 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    private fun applyChecks(project: Project) {
+    private fun checkGradleProperties(project: Project) {
         project.afterEvaluate {
             val tracker = buildTracker(project)
             val sentry = project.sentry
-            val checks = listOf(
-                GradlePropertiesCheck(project)
+            val propertiesChecks = listOf(
+                GradlePropertiesCheck(project) // TODO: extract to a task
             )
-            checks.forEach { checker ->
+            propertiesChecks.forEach { checker ->
                 checker.getMismatches()
                     .onSuccess {
                         it.forEach { mismatch ->
@@ -250,3 +246,12 @@ javaIncrementalCompilation=$javaIncrementalCompilation
 }
 
 private const val pluginName = "BuildParamCheckPlugin"
+
+@Deprecated("Since 2020.4.5")
+internal const val legacyEnabledGradleProperty = "avito.build.paramCheck.enabled"
+
+@Deprecated("Since 2020.4.5")
+internal const val failOnSdkVersionMismatch = "avito.build.failOnSdkMismatch"
+
+@Deprecated("Since 2020.4.5")
+internal const val androidJarRevision = "avito.build.androidJar.revision"

@@ -7,19 +7,19 @@ import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
-internal class GradlePropertiesCheck(private val project: Project) : Check {
+internal class GradlePropertiesCheck(private val project: Project) : ParameterCheck {
 
-    // TODO: use a white-list and pass it externally
+    // TODO: use a white-list and pass it through extension
     private val ignoredParams = setOf(
         "artifactory_deployer",
         "artifactory_deployer_password",
         "android.builder.sdkDownload"
     )
 
-    override fun getMismatches(): Try<Collection<Mismatch>> {
+    override fun getMismatches(): Try<Collection<ParameterMismatch>> {
         val references = readReferenceValues(project)
         return references.map {
-            val mismatches = mutableListOf<Mismatch>()
+            val mismatches = mutableListOf<ParameterMismatch>()
             it.forEach { entry ->
                 val param = entry.key
                 val expected = entry.value
@@ -37,19 +37,19 @@ internal class GradlePropertiesCheck(private val project: Project) : Check {
         }
     }
 
-    private fun systemPropertyMismatch(name: String, expected: String): Mismatch? {
+    private fun systemPropertyMismatch(name: String, expected: String): ParameterMismatch? {
         val actual = System.getProperty(normalizedSystemProperty(name)) ?: return null
         return if (actual != expected) {
-            Mismatch(name, expected, actual)
+            ParameterMismatch(name, expected, actual)
         } else {
             null
         }
     }
 
-    private fun projectPropertyMismatch(name: String, expected: String): Mismatch? {
+    private fun projectPropertyMismatch(name: String, expected: String): ParameterMismatch? {
         val actual = project.getOptionalStringProperty(name) ?: return null
         return if (actual != expected) {
-            Mismatch(name, expected, actual)
+            ParameterMismatch(name, expected, actual)
         } else {
             null
         }

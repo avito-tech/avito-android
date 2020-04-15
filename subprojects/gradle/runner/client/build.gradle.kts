@@ -8,8 +8,8 @@ extra["artifact-id"] = "runner-client"
 
 dependencies {
     compileOnly(gradleApi())
-    compile(project(":subprojects:gradle:runner:shared"))
-    compile(project(":subprojects:gradle:runner:service"))
+    api(project(":subprojects:gradle:runner:shared"))
+    api(project(":subprojects:gradle:runner:service"))
 
     implementation(project(":subprojects:gradle:trace-event"))
     implementation(Dependencies.funktionaleTry)

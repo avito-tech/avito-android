@@ -10,7 +10,7 @@ type: docs
 ## Minimal requirements
 
 - 16Gb RAM
-- Linux/OSX/Windows
+- Linux/macOS/Windows
 
 ## 1. Установи Java
 

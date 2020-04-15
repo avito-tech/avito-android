@@ -6,6 +6,8 @@ headless: true
 - [Tech radar]({{< ref "/docs/tech_radar/TechRadar.md" >}})
 - [Known Issues]({{< ref "/docs/KnownIssues.md" >}})
 - [Contacts]({{< ref "/docs/Contacts.md" >}})
+- Projects
+    - [Build checks]({{< ref "/docs/projects/BuildChecks.md" >}})
 - Contributing
     - [How to start]({{< ref "/docs/contributing/HowToStart.md" >}})
     - [Documentation]({{< ref "/docs/contributing/Docs.md" >}})
@@ -30,7 +32,6 @@ headless: true
 - Architecture
     - [Dagger]({{< ref "/docs/architecture/Dagger.md" >}})
     - [Модули]({{< ref "/docs/architecture/Modules.md" >}})
-- API
 - [Аналитика]({{< ref "/docs/analytics/Analytics.md" >}})
     - [Statsd]({{< ref "/docs/analytics/Statsd.md" >}})
 - Testing

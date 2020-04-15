@@ -15,7 +15,7 @@ rule 'MD004', :style => :dash
 rule 'MD007', :indent => 4
 
 # MD013 - Line length
-# TODO: Decrease to 120 ?
+# Small values gives false-positive errors on long links
 rule 'MD013', :line_length => 180
 
 # MD026 - Trailing punctuation in header
@@ -35,6 +35,11 @@ exclude_rule 'MD012'
 # MD024 Multiple headers with the same content
 # Rationale: false-positive in tabs (e.g. multiple "Known issues" topics)
 exclude_rule 'MD024'
+
+# MD029 Ordered list item prefix
+# Rationale: false-positive in lists with code blocks.
+#   This check conflicts with MD031 (Fenced code blocks should be surrounded by blank lines)
+exclude_rule 'MD029'
 
 # MD032 - Lists should be surrounded by blank lines
 # Rationale: false-positive on sentences with ":" inside

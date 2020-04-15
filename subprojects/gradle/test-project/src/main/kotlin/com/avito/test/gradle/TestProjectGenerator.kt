@@ -65,6 +65,7 @@ class TestProjectGenerator(
                jcenter()
            }
         }
+        $buildGradleExtra
 """.trimIndent()
                 )
             }

@@ -79,7 +79,7 @@ sync...
 
 При сборке проект генерирует много файлов, что вызывает постоянную переиндексацию.
 
-OSX
+macOs
 
 Добавь в исключения Spotlight: **System preferences > Spotlight > Privacy**
 
