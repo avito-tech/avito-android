@@ -23,6 +23,7 @@ import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.filter.FilterFactory
+import com.avito.instrumentation.suite.filter.FilterInfoWriter
 import com.avito.logger.Logger
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
@@ -36,7 +37,6 @@ import com.avito.utils.BuildFailer
 import com.avito.utils.createOrClear
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.CILogger
-import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
 import java.io.File
 import java.io.Serializable
@@ -168,6 +168,9 @@ class InstrumentationTestsAction(
         bitbucketConfig = params.bitbucketConfig,
         logger = logger,
         pullRequestId = params.pullRequestId
+    ),
+    private val filterInfoWriter: FilterInfoWriter = FilterInfoWriter.Impl(
+        outputDir = params.outputDir
     )
 ) : Runnable,
     FlakyTestReporterFactory by FlakyTestReporterFactory.Impl(
@@ -183,14 +186,9 @@ class InstrumentationTestsAction(
 
     override fun run() {
         logger.debug("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
-
-        val gson = GsonBuilder().setPrettyPrinting().create()
-        val filterDir = File(params.outputDir, "filter").apply { mkdir() }
-        val filterConfig = File(filterDir, "filters-config.json")
-        filterConfig.writeText(gson.toJson(params.instrumentationConfiguration.filter))
+        filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
 
         val buildOnTargetCommitResult = BuildOnTargetCommitForTest.fromParams(params)
-
         val testsExecutionResults: TestsScheduler.Result =
             if (params.instrumentationConfiguration.performanceType != null) {
                 performanceTestsScheduler.schedule(
@@ -201,24 +199,9 @@ class InstrumentationTestsAction(
                     buildOnTargetCommitResult = buildOnTargetCommitResult
                 )
             }
-        val filterApplied = File(filterDir, "filters-applied.json")
-        val filterExcludesFile = File(filterDir, "filters-excludes.json")
-        val filterExcludes = testsExecutionResults.initialTestSuite.skippedTests.groupBy(
-            keySelector = { (_, excludeReason) ->
-                excludeReason.byFilter
-            },
-            valueTransform = { (test, _) ->
-                mapOf(
-                    "testName" to test.test.name,
-                    "device" to test.test.device
-                )
-            })
-        filterApplied.writeText(gson.toJson(testsExecutionResults.initialTestSuite.appliedFilter))
-        filterExcludesFile.writeText(
-            gson.toJson(
-                filterExcludes
-            )
-        )
+
+        filterInfoWriter.writeAppliedFilter(testsExecutionResults.initialTestSuite.appliedFilter)
+        filterInfoWriter.writeFilterExcludes(testsExecutionResults.initialTestSuite.skippedTests)
 
         val testRunResult = TestRunResult(
             reportedTests = testsExecutionResults.initialTestsResult.getOrElse { emptyList() },
