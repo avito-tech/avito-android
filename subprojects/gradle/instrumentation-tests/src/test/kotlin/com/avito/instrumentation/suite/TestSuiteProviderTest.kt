@@ -63,6 +63,7 @@ internal class TestSuiteProviderTest {
             filterFactory = FakeFilterFactory(
                 initialFilter = excludedFilter(
                     TestsFilter.Result.Excluded.MatchExcludeSignature(
+                        name = "",
                         source = TestsFilter.Signatures.Source.PreviousRun
                     )
                 )

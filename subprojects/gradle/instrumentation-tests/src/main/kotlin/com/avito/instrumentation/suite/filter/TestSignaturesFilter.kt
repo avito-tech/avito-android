@@ -18,6 +18,7 @@ internal class IncludeByTestSignaturesFilter(
         return when {
             test.matched(signatures) -> TestsFilter.Result.Included
             else -> TestsFilter.Result.Excluded.DoNotMatchIncludeSignature(
+                name = name,
                 source = source
             )
         }
@@ -35,6 +36,7 @@ internal class ExcludeByTestSignaturesFilter(
         return when {
             test.matched(signatures) ->
                 TestsFilter.Result.Excluded.MatchExcludeSignature(
+                    name = name,
                     source = source
                 )
             else -> TestsFilter.Result.Included

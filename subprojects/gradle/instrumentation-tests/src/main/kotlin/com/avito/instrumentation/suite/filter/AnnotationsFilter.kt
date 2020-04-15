@@ -15,7 +15,7 @@ internal class IncludeAnnotationsFilter(
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
             test.matched(annotations) -> TestsFilter.Result.Included
-            else -> Excluded.DoNotHaveIncludeAnnotations(annotations)
+            else -> Excluded.DoNotHaveIncludeAnnotations(name, annotations)
         }
     }
 }
@@ -28,7 +28,7 @@ internal class ExcludeAnnotationsFilter(
 
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
-            test.matched(annotations) -> Excluded.HaveExcludeAnnotations(annotations)
+            test.matched(annotations) -> Excluded.HaveExcludeAnnotations(name, annotations)
             else -> TestsFilter.Result.Included
         }
     }

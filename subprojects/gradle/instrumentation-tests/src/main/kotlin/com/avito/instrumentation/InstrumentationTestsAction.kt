@@ -202,7 +202,24 @@ class InstrumentationTestsAction(
                 )
             }
         val filterApplied = File(filterDir, "filters-applied.json")
+        val filterExcludesFile = File(filterDir, "filters-excludes.json")
+        val filterExcludes = testsExecutionResults.initialTestSuite.skippedTests.groupBy(
+            keySelector = { (_, excludeReason) ->
+                excludeReason.byFilter
+            },
+            valueTransform = { (test, _) ->
+                mapOf(
+                    "testName" to test.test.name,
+                    "device" to test.test.device
+                )
+            })
         filterApplied.writeText(gson.toJson(testsExecutionResults.initialTestSuite.appliedFilter))
+        filterExcludesFile.writeText(
+            gson.toJson(
+                filterExcludes
+            )
+        )
+
         val testRunResult = TestRunResult(
             reportedTests = testsExecutionResults.initialTestsResult.getOrElse { emptyList() },
             failed = hasFailedTestDeterminer.determine(

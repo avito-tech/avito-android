@@ -16,7 +16,7 @@ internal class CompositeTestRunFilterTest {
                         get() = TODO("Not yet implemented")
 
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveSkipSdkAnnotation(21)
+                        return Excluded.HaveSkipSdkAnnotation("", 21)
                     }
                 },
                 object : TestsFilter {
@@ -24,7 +24,7 @@ internal class CompositeTestRunFilterTest {
                         get() = TODO("Not yet implemented")
 
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveExcludeAnnotations(emptySet())
+                        return Excluded.HaveExcludeAnnotations("", emptySet())
                     }
                 }
             )
@@ -49,7 +49,7 @@ internal class CompositeTestRunFilterTest {
                     override val name: String = ""
 
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveExcludeAnnotations(emptySet())
+                        return Excluded.HaveExcludeAnnotations("", emptySet())
                     }
                 }
             )
