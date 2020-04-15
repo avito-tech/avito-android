@@ -12,7 +12,7 @@ internal class IncludeByTestSignaturesFilter(
     private val source: TestsFilter.Signatures.Source,
     private val signatures: Set<TestsFilter.Signatures.TestSignature>
 ) : TestsFilter {
-    override val name = "IncludeSignatures"
+    override val name = "IncludeSignatures#$source"
 
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
@@ -30,7 +30,7 @@ internal class ExcludeByTestSignaturesFilter(
     private val signatures: Set<TestsFilter.Signatures.TestSignature>
 ) : TestsFilter {
 
-    override val name = "ExcludeSignatures"
+    override val name = "ExcludeSignatures#$source"
 
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
