@@ -181,7 +181,7 @@ This check automatically detects the issue:
 
 ```groovy
 buildChecks {
-    macOSLocalhost { } // enabled by default
+    macOSLocalhost { }
 }
 ```
 
@@ -195,7 +195,7 @@ This check forbids dynamic dependency versions.
 
 ```groovy
 buildChecks {
-    dynamicDependencies { } // enabled by default
+    dynamicDependencies { }
 }
 ```
 
@@ -207,7 +207,7 @@ If you use `buildSrc` in the project with standalone Gradle wrapper, this check 
 
 ```groovy
 buildChecks {
-    gradleDaemon { } // enabled by default
+    gradleDaemon { }
 }
 ```
 
@@ -218,7 +218,7 @@ We have to use `compile` dependency as a workaround.
 
 ```groovy
 buildChecks {
-    kotlinApiDependencies { } // enabled by default
+    kotlinApiDependencies { }
 }
 ```
 
