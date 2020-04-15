@@ -52,9 +52,6 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             if (checks.hasInstance<Check.ModuleTypes>()) {
                 checkModuleHasRequiredPlugins(project)
             }
-            if (checks.hasInstance<Check.KotlinApiDependencies>()) {
-                checkKotlinModulesDoesNotUseApiConfiguration(project)
-            }
 
             showErrorsIfAny(project)
         }
@@ -158,38 +155,6 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                         validationErrors.joinToString(separator = "\n", transform = { " - $it" }),
                     null
                 )
-            }
-        }
-    }
-
-    /**
-     * TODO: найти issue
-     * Нужно проверять что при применении плагина kotlin не используется api зависимость
-     * Текущее поведение очень неожиданное: ничего не падает, но модуль который ожидает что прилетит транзитивно api зависимость не компилится,
-     * то есть работает как implementation
-     */
-    private fun checkKotlinModulesDoesNotUseApiConfiguration(project: Project) {
-        project.subprojects { subproject ->
-            subproject.afterEvaluate {
-                subproject.plugins.withId("kotlin") {
-                    try {
-                        subproject.configurations.named("api") { configuration ->
-                            // без afterEvaluate коллекция всегда пустая
-                            val validDependencies = configuration.dependencies.filter { it.group != null }
-                            lazyCheck(validDependencies.isEmpty()) {
-                                val dependenciesDescription = validDependencies.joinToString {
-                                    "${it.group}:${it.name}:${it.version}"
-                                }
-                                "$subproject uses api dependencies $dependenciesDescription in the '$configuration' configuration. \n" +
-                                    "It's not working correctly in the kotlin plugin. \n" +
-                                    "Use 'compile' instead."
-                            }
-                        }
-                    } catch (e: UnknownConfigurationException) {
-                        // нам в этой проверке не важно почему это происходит
-                        // https://avito.slack.com/archives/G0G8TFB25/p1547555630125200
-                    }
-                }
             }
         }
     }

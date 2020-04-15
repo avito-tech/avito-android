@@ -22,7 +22,6 @@ class ChecksFilterTest {
         )
         val checks = ChecksFilter(project, BuildChecksExtension()).checks()
 
-        assertHasInstance<Check.KotlinApiDependencies>(checks)
         assertHasInstance<Check.ModuleTypes>(checks)
         assertHasInstance<Check.GradleProperties>(checks)
         assertHasInstance<Check.MacOSLocalhost>(checks)
@@ -69,7 +68,6 @@ class ChecksFilterTest {
         }
         val checks = ChecksFilter(project(), extension).checks()
 
-        assertHasInstance<Check.KotlinApiDependencies>(checks)
         assertHasInstance<Check.MacOSLocalhost>(checks)
         assertHasInstance<Check.DynamicDependencies>(checks)
         assertHasInstance<Check.GradleDaemon>(checks)

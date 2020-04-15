@@ -210,29 +210,6 @@ buildChecks {
 }
 ```
 
-### Kotlin API dependency
-
-Gradle `api` dependencies are not working properly in kotlin plugin. 
-We have to use `compile` dependency as a workaround.
-
-```groovy
-buildChecks {
-    kotlinApiDependencies { }
-}
-```
-
-This check detects the issue as early as possible and provides helpful information:
-
-```text
-> ./gradlew assemble
-
-There were errors:
- - project ':module' uses api dependencies <dependency> in the 'configuration ':module:api' configuration. 
-It's not working correctly in the kotlin plugin. 
-Use 'compile' instead.
-
-```
-
 ### Module types
 
 This check force to apply [`module-types`](https://github.com/avito-tech/avito-android/blob/develop/subprojects/gradle/module-types) Gradle plugin in all modules.

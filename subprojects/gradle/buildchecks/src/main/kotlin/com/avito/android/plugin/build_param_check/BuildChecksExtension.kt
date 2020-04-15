@@ -5,7 +5,6 @@ import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.Dyn
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.GradleDaemon
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.GradleProperties
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.JavaVersion
-import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.KotlinApiDependencies
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.ModuleTypes
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.MacOSLocalhost
 import org.gradle.api.Action
@@ -29,8 +28,6 @@ open class BuildChecksExtension {
     fun gradleProperties(action: Action<GradleProperties>) = register(GradleProperties(), action)
 
     fun moduleTypes(action: Action<ModuleTypes>) = register(ModuleTypes(), action)
-
-    fun kotlinApiDependencies(action: Action<KotlinApiDependencies>) = register(KotlinApiDependencies(), action)
 
     private fun <T : Check> register(check: T, action: Action<T>) {
         @Suppress("UselessCallOnCollection")
@@ -84,8 +81,6 @@ open class BuildChecksExtension {
         open class ModuleTypes : Check() {
             override var enabled: Boolean = false
         }
-
-        open class KotlinApiDependencies : Check()
 
         override fun equals(other: Any?): Boolean {
             return this.javaClass == other?.javaClass
