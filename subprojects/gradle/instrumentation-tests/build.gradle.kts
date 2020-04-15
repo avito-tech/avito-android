@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:gradle:files"))
+    implementation(project(":subprojects:gradle:build-on-target"))
     implementation(project(":subprojects:gradle:slack"))
     implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:gradle:bitbucket"))

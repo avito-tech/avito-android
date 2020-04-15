@@ -4,7 +4,7 @@ import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.report.FlakyTestInfo
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
+import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.check.AllChecks

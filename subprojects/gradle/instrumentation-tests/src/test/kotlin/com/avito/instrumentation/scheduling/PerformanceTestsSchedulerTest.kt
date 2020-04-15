@@ -4,7 +4,7 @@ import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.report.FakeReport
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
+import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
 import com.avito.instrumentation.suite.filter.FilterFactory

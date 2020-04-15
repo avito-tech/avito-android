@@ -1,9 +1,7 @@
-package com.avito.instrumentation.rerun
+package com.avito.buildontarget
 
 import com.avito.git.Git
-import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.utils.BuildFailer
-import com.avito.utils.hasFileContent
 import com.avito.utils.logging.CILogger
 import com.avito.utils.retry
 import org.gradle.util.Path
@@ -12,7 +10,7 @@ import java.io.Serializable
 import javax.inject.Inject
 
 /**
- * "Встроенный" запуск gradle на отличном от рабочего коммите
+ * Nested gradle run on another commit
  */
 class BuildOnTargetCommitForTest(
     private val params: Params,
@@ -40,19 +38,6 @@ class BuildOnTargetCommitForTest(
         ) : Result()
 
         object ApksUnavailable : Result()
-    }
-
-    companion object {
-        fun fromParams(params: InstrumentationTestsAction.Params): Result {
-            return if (!params.apkOnTargetCommit.hasFileContent() || !params.testApkOnTargetCommit.hasFileContent()) {
-                Result.ApksUnavailable
-            } else {
-                Result.OK(
-                    mainApk = params.apkOnTargetCommit,
-                    testApk = params.testApkOnTargetCommit
-                )
-            }
-        }
     }
 
     data class Params(
