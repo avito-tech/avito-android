@@ -1,9 +1,9 @@
 ---
-title: Build checks plugin
+title: Build checks Gradle plugin
 type: docs
 ---
 
-# Build checks plugin
+# Build checks Gradle plugin
 
 This plugin verifies [common build problems]({{< relref "#checks">}}) with environment and project configuration.
 
