@@ -37,7 +37,7 @@ private class FilterFactoryImpl(
 
     override fun createInitialFilter(): TestsFilter {
         val filters = mutableListOf<TestsFilter>()
-        filters.add(ExcludeBySdkFilter)
+        filters.add(ExcludeBySdkFilter())
         filters.addAnnotationFilters()
         filters.addSourceCodeSignaturesFilters()
         filters.addSourcePreviousSignatureFilters()
