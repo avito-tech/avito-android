@@ -109,6 +109,18 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
+        if (checks.hasInstance<Check.UniqueRClasses>()) {
+            check(project.pluginManager.hasPlugin("com.avito.android.impact")) {
+                "build check for unique R classes requires 'com.avito.android.impact' plugin"
+            }
+            val task = project.tasks.register<UniqueRClassesTask>("checkUniqueAndroidPackages") {
+                group = "verification"
+                description = "Verify unique R classes"
+            }
+            checkBuildEnvironment {
+                dependsOn(task)
+            }
+        }
         if (checks.hasInstance<Check.MacOSLocalhost>() && isMac()) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
                 group = "verification"
@@ -217,7 +229,6 @@ JAVA_HOME=${System.getenv("JAVA_HOME")}
 ANDROID_HOME=${project.androidSdk.androidHome}
 org.gradle.caching=$isBuildCachingEnabled
 android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
-android.enableR8=${project.getOptionalStringProperty("android.enableR8")}
 android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}
 android.builder.sdkDownload=${project.getOptionalStringProperty("android.builder.sdkDownload")}
 kotlin.version=${System.getProperty("kotlinVersion")}

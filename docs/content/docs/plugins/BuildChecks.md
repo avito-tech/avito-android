@@ -199,6 +199,19 @@ buildChecks {
 }
 ```
 
+### Unique R classes
+
+If two Android modules use the same package, their R classes will be merged. 
+While merging, it can unexpectedly override resources. It happens even with `android.namespacedRClass`.
+
+To forbid merged R files use this check:
+
+```groovy
+buildChecks {
+    uniqueRClasses { } // enabled by default
+}
+```
+
 ### Gradle daemon reusage
 
 Gradle can run multiple daemons for [many reasons](https://docs.gradle.org/5.0/userguide/gradle_daemon.html#sec:why_is_there_more_than_one_daemon_process_on_my_machine).
