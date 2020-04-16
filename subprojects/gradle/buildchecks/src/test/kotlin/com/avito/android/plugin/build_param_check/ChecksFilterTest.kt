@@ -22,6 +22,7 @@ class ChecksFilterTest {
         )
         val checks = ChecksFilter(project, BuildChecksExtension()).checks()
 
+        // this duplication will go away after deleting legacy mode
         assertHasInstance<Check.ModuleTypes>(checks)
         assertHasInstance<Check.GradleProperties>(checks)
         assertHasInstance<Check.MacOSLocalhost>(checks)
@@ -29,6 +30,7 @@ class ChecksFilterTest {
         assertHasInstance<Check.GradleDaemon>(checks)
         assertHasInstance<Check.JavaVersion>(checks)
         assertHasInstance<Check.AndroidSdk>(checks)
+        assertHasInstance<Check.UniqueRClasses>(checks)
 
         checks.getInstance<Check.JavaVersion>().also { check ->
             assertThat(check.version).isEqualTo(org.gradle.api.JavaVersion.VERSION_1_8)
@@ -65,6 +67,7 @@ class ChecksFilterTest {
         assertHasInstance<Check.GradleDaemon>(checks)
         assertHasInstance<Check.JavaVersion>(checks)
         assertHasInstance<Check.AndroidSdk>(checks)
+        assertHasInstance<Check.UniqueRClasses>(checks)
 
         assertNoInstance<Check.GradleProperties>(checks)
         assertNoInstance<Check.ModuleTypes>(checks)
