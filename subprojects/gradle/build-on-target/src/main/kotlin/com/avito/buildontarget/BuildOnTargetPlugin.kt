@@ -16,6 +16,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
 
@@ -24,6 +25,8 @@ class BuildOnTargetPlugin : Plugin<Project> {
     private val ciTaskGroup = "ci"
 
     override fun apply(project: Project) {
+
+        val extension = project.extensions.create<BuildOnTargetExtension>("buildOnTarget")
 
         val logger = project.ciLogger
         val env = project.envArgs
@@ -82,7 +85,7 @@ class BuildOnTargetPlugin : Plugin<Project> {
                         .map { RegularFile { nestedBuildDir.resolve(it) } })
 
                     outputs.doNotCacheIf("property 'avito.buildOnTarget.disableCache' is set to true") {
-                        project.getBooleanProperty("avito.buildOnTarget.disableCache", default = false)
+                        extension.buildCacheEnabled
                     }
                 }
             }

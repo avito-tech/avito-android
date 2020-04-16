@@ -25,7 +25,7 @@ import javax.inject.Inject
  * fails silently in this case and it is expected.
  *
  * Caching is enabled anyways, because speed benefits overweights the problem in our case.
- * Set gradle project property 'avito.buildOnTarget.disableCache=true' to manually disable cache for a build
+ * `buildOnTarget { buildCacheEnabled = false }` to manually disable cache for a build
  */
 @CacheableTask
 @Suppress("UnstableApiUsage")
