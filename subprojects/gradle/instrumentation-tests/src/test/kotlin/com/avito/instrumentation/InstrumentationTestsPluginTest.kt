@@ -1,121 +1,141 @@
 package com.avito.instrumentation
 
 import com.avito.test.gradle.AndroidAppModule
+import com.avito.test.gradle.AndroidLibModule
+import com.avito.test.gradle.Module
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.nio.file.Path
 
 class InstrumentationTestsPluginTest {
 
-    private lateinit var projectDir: File
+    @Test
+    fun `run instrumentation by name - ok - in application project`(@TempDir projectDir: File) {
+        val moduleName = "app"
 
-    @BeforeEach
-    fun setup(@TempDir temp: Path) {
-        projectDir = temp.toFile()
+        createProject(
+            projectDir = projectDir,
+            module = AndroidAppModule(
+                moduleName,
+                plugins = listOf("com.avito.android.instrumentation-tests"),
+                buildGradleExtra = instrumentationConfiguration()
+            )
+        )
 
-        projectDir.apply {
-            TestProjectGenerator(
-                modules = listOf(
-                    AndroidAppModule(
-                        "app",
-                        plugins = listOf("com.avito.android.instrumentation-tests"),
-                        buildGradleExtra = """
-                            import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
-
-                            instrumentation {
-                                output = project.file("outputs").path
-                                reportApiUrl = "stub"
-                                reportApiFallbackUrl = "stub"
-                                reportViewerUrl = "stub"
-                                sentryDsn = "stub"
-                                slackToken = "stub"
-                                fileStorageUrl = "stub"
-                                registry = "stub"
-
-                                instrumentationParams = [
-                                    "jobSlug": "FunctionalTests"
-                                ]
-
-                                configurations {
-
-                                    functional {
-                                        instrumentationParams = [
-                                            "deviceName": "api22"
-                                        ]
-
-                                        targets {
-                                            api22 {
-                                                deviceName = "api22"
-
-                                                scheduling {
-                                                    quota {
-                                                        minimumSuccessCount = 1
-                                                    }
-
-                                                    staticDevicesReservation {
-                                                        device = Emulator22.INSTANCE
-                                                        count = 1
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    two {
-                                        instrumentationParams = [
-                                            "deviceName": "api22"
-                                        ]
-
-                                        targets {
-                                            api22 {
-                                                deviceName = "api22"
-
-                                                scheduling {
-                                                    quota {
-                                                        minimumSuccessCount = 1
-                                                    }
-
-                                                    staticDevicesReservation {
-                                                        device = Emulator22.INSTANCE
-                                                        count = 1
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    three {
-
-                                    }
-                                }
-                            }
-
-                            android {
-                                defaultConfig {
-                                    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-                                    testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
-                                }
-                            }
-                    """.trimIndent()
-                    )
-                )
-            ).generateIn(this)
-        }
+        runGradle(projectDir, ":$moduleName:instrumentationTwo", "-PrunOnlyFailedTests=false").assertThat()
+            .run {
+                tasksShouldBeTriggered(
+                    ":$moduleName:instrumentationTwo"
+                ).inOrder()
+            }
     }
 
     @Test
-    fun `run instrumentation by name - first run`() {
-        runGradle(":app:instrumentationTwo", "-PrunOnlyFailedTests=false").assertThat().run {
-            tasksShouldBeTriggered(
-                ":app:instrumentationTwo"
-            ).inOrder()
-        }
+    fun `run instrumentation by name - ok - in library project`(@TempDir projectDir: File) {
+        val moduleName = "lib"
+
+        createProject(
+            projectDir = projectDir,
+            module = AndroidLibModule(
+                moduleName,
+                plugins = listOf("com.avito.android.instrumentation-tests"),
+                buildGradleExtra = instrumentationConfiguration()
+            )
+        )
+
+        runGradle(projectDir, ":$moduleName:instrumentationTwo", "-PrunOnlyFailedTests=false").assertThat()
+            .run {
+                tasksShouldBeTriggered(
+                    ":$moduleName:instrumentationTwo"
+                ).inOrder()
+            }
     }
 
-    private fun runGradle(vararg args: String, dryRun: Boolean = true) =
+    private fun createProject(projectDir: File, module: Module) {
+        TestProjectGenerator(modules = listOf(module)).generateIn(projectDir)
+    }
+
+    private fun instrumentationConfiguration(): String = """
+                        import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+
+                        instrumentation {
+                            output = project.file("outputs").path
+                            reportApiUrl = "stub"
+                            reportApiFallbackUrl = "stub"
+                            reportViewerUrl = "stub"
+                            sentryDsn = "stub"
+                            slackToken = "stub"
+                            fileStorageUrl = "stub"
+                            registry = "stub"
+
+                            instrumentationParams = [
+                                "jobSlug": "FunctionalTests"
+                            ]
+
+                            configurations {
+
+                                functional {
+                                    instrumentationParams = [
+                                        "deviceName": "api22"
+                                    ]
+
+                                    targets {
+                                        api22 {
+                                            deviceName = "api22"
+
+                                            scheduling {
+                                                quota {
+                                                    minimumSuccessCount = 1
+                                                }
+
+                                                staticDevicesReservation {
+                                                    device = Emulator22.INSTANCE
+                                                    count = 1
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                two {
+                                    instrumentationParams = [
+                                        "deviceName": "api22"
+                                    ]
+
+                                    targets {
+                                        api22 {
+                                            deviceName = "api22"
+
+                                            scheduling {
+                                                quota {
+                                                    minimumSuccessCount = 1
+                                                }
+
+                                                staticDevicesReservation {
+                                                    device = Emulator22.INSTANCE
+                                                    count = 1
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                three {
+
+                                }
+                            }
+                        }
+
+                        android {
+                            defaultConfig {
+                                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+                                testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
+                            }
+                        }
+                """.trimIndent()
+
+    private fun runGradle(projectDir: File, vararg args: String) =
         ciRun(
             projectDir, *args,
             "-PdeviceName=LOCAL",
@@ -133,6 +153,6 @@ class InstrumentationTestsPluginTest {
             "-PkubernetesToken=stub",
             "-PkubernetesUrl=stub",
             "-PkubernetesCaCertData=stub",
-            dryRun = dryRun
+            dryRun = true
         )
 }

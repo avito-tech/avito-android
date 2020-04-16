@@ -23,7 +23,7 @@ import java.nio.file.Files
 interface TestsRunner {
 
     fun runTests(
-        mainApk: File,
+        mainApk: File?,
         testApk: File,
         runType: TestExecutor.RunType,
         reportCoordinates: ReportCoordinates,
@@ -48,7 +48,7 @@ class TestsRunnerImplementation(
 ) : TestsRunner {
 
     override fun runTests(
-        mainApk: File,
+        mainApk: File?,
         testApk: File,
         runType: TestExecutor.RunType,
         reportCoordinates: ReportCoordinates,

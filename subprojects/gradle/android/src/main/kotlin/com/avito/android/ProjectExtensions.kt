@@ -5,6 +5,7 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
+import com.android.build.gradle.TestedExtension
 import com.android.build.gradle.api.ApplicationVariant
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
@@ -20,7 +21,7 @@ fun Project.withAndroidLib(block: (appExtension: LibraryExtension) -> Unit) {
     plugins.withType<LibraryPlugin> { block(androidLibraryExtension) }
 }
 
-fun Project.withAndroidModule(block: (baseExtension: BaseExtension) -> Unit) {
+fun Project.withAndroidModule(block: (testedExtension: TestedExtension) -> Unit) {
     withAndroidApp(block)
     withAndroidLib(block)
 }
