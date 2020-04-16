@@ -84,7 +84,7 @@ class BuildOnTargetPlugin : Plugin<Project> {
                         .map { it.relativeTo(project.rootDir) }
                         .map { RegularFile { nestedBuildDir.resolve(it) } })
 
-                    outputs.doNotCacheIf("property 'avito.buildOnTarget.disableCache' is set to true") {
+                    outputs.doNotCacheIf("'buildOnTarget.buildCacheEnabled' is set to false") {
                         extension.buildCacheEnabled
                     }
                 }
