@@ -1,4 +1,4 @@
-package com.avito.instrumentation.rerun
+package com.avito.buildontarget
 
 import com.avito.git.Git
 import com.avito.instrumentation.minimalInstrumentationPluginConfiguration

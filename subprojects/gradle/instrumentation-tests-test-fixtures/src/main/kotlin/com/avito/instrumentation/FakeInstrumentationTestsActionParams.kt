@@ -7,7 +7,6 @@ import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
-import com.avito.test.gradle.randomCommitHash
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.CILogger
 import java.io.File
@@ -22,7 +21,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     buildId: String = "33456",
     buildType: String = "teamcity",
     buildUrl: String = "https://build",
-    targetCommit: String = randomCommitHash(),
     kubernetesCredentials: KubernetesCredentials = KubernetesCredentials.Service(
         token = "empty",
         caCertData = "empty",
@@ -65,7 +63,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         buildId = buildId,
         buildType = buildType,
         buildUrl = buildUrl,
-        targetCommit = targetCommit,
         kubernetesCredentials = kubernetesCredentials,
         projectName = projectName,
         suppressFailure = suppressFailure,
