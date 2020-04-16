@@ -4,6 +4,7 @@ import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
 import com.google.common.annotations.VisibleForTesting
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
@@ -44,8 +45,8 @@ object InstrumentationPluginConfiguration {
             configurationsContainer.configure(closure)
         }
 
-        fun filters(closure: Closure<NamedDomainObjectSet<InstrumentationFilter>>) {
-            filters.configure(closure)
+        fun filters(action: Action<NamedDomainObjectSet<InstrumentationFilter>>) {
+            action.execute(filters)
         }
 
         fun validate() {

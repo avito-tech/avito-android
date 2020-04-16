@@ -15,6 +15,7 @@ import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
@@ -207,7 +208,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 val isFullTestSuite = gitState.map {
                                     it.isOnDefaultBranch
-                                        && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                                            && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
                                 }
                                     .orElse(false)
 
@@ -250,17 +251,29 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         keepFailedTestsFromReport: String?,
         isDeviceEnabled: (Device) -> Boolean
     ) {
+        val filterName = "dynamic"
+        filters.register(filterName) { filter ->
+            filter.fromSource.includeByAnnotations(testFilter.annotatedWith)
+            if (skipSucceedTestsFromPreviousRun) {
+                filter.fromRunHistory.excludePreviousStatuses(
+                    setOf(RunStatus.Success, RunStatus.Manual)
+                )
+            }
+            if (keepFailedTestsFromReport != null) {
+                filter.fromRunHistory.report(keepFailedTestsFromReport, filter = Action {
+                    it.include(setOf(RunStatus.Failed, RunStatus.Lost))
+                })
+            }
+            if (prefixFilter.isNotEmpty()) {
+                filter.fromSource.includeByPrefixes(setOf(prefixFilter))
+            }
+        }
         configurationsContainer.register(
             "dynamic"
         ) { configuration ->
-            configuration.annotatedWith = testFilter.annotatedWith
             configuration.tryToReRunOnTargetBranch = false
             configuration.reportSkippedTests = true
-
-            configuration.rerunFailedTests = skipSucceedTestsFromPreviousRun
-            configuration.keepFailedTestsFromReport = keepFailedTestsFromReport
-            configuration.prefixFilter = prefixFilter
-
+            configuration.filter = filterName
             configuration.targetsContainer.apply {
                 EmulatorSet.full.forEach { emulator ->
                     register(
