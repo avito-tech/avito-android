@@ -9,6 +9,8 @@ import com.avito.android.getApkFile
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidModule
 import com.avito.android.withArtifacts
+import com.avito.buildontarget.buildOnTargetTask
+import com.avito.buildontarget.hasBuildOnTargetPlugin
 import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
@@ -54,8 +56,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         val gitState = project.gitState { logger.info(it) }
         project.createInstrumentationPluginExtension()
         project.applyTestTasks()
-
-        val runOnTargetBranchCondition = RunOnTargetCommitCondition(project)
 
         project.withAndroidModule { baseExtension ->
             setupLocalInstrumentationArguments(
@@ -134,8 +134,11 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
                             )
 
-                            val runOnTargetCommit =
-                                runOnTargetBranchCondition.evaluate(instrumentationConfiguration)
+                            val runOnTargetCommit = RunOnTargetCommitCondition.evaluate(
+                                instrumentationConfiguration = instrumentationConfiguration,
+                                hasBuildOnTargetPlugin = project.pluginManager.hasBuildOnTargetPlugin(),
+                                buildOnTargetTaskProvider = project.tasks.buildOnTargetTask()
+                            )
 
                             // see LintWorkerApiWorkaround.md
                             project.tasks.register<Task>(

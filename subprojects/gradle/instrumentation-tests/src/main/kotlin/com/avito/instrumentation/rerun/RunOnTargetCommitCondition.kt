@@ -1,31 +1,32 @@
 package com.avito.instrumentation.rerun
 
 import com.avito.buildontarget.BuildOnTargetCommitForTestTask
-import com.avito.buildontarget.buildOnTargetTask
-import com.avito.buildontarget.hasBuildOnTargetPlugin
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
-import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 
-class RunOnTargetCommitCondition(private val project: Project) {
+object RunOnTargetCommitCondition {
 
     sealed class Result {
         object No : Result()
         data class Yes(val task: TaskProvider<BuildOnTargetCommitForTestTask>) : Result()
     }
 
-    fun evaluate(instrumentationConfiguration: InstrumentationConfiguration.Data): Result {
+    fun evaluate(
+        instrumentationConfiguration: InstrumentationConfiguration.Data,
+        hasBuildOnTargetPlugin: Boolean,
+        buildOnTargetTaskProvider: TaskProvider<BuildOnTargetCommitForTestTask>
+    ): Result {
         val useArtifactsFromTargetBranch = isArtifactsFromTargetBranchNeeded(instrumentationConfiguration)
 
         return if (useArtifactsFromTargetBranch != null) {
-            if (!project.pluginManager.hasBuildOnTargetPlugin()) {
+            if (!hasBuildOnTargetPlugin) {
                 throw IllegalStateException(
                     "[${instrumentationConfiguration.name}] " +
                         "Plugin com.avito.android.build-on-target is missing, but required, " +
                         "because $useArtifactsFromTargetBranch"
                 )
             }
-            Result.Yes(project.tasks.buildOnTargetTask())
+            Result.Yes(buildOnTargetTaskProvider)
         } else {
             Result.No
         }
