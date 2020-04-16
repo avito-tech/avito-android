@@ -2,6 +2,7 @@ package com.avito.instrumentation
 
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
@@ -48,47 +49,74 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                     "videoRecording" to "failed",
                     "jobSlug" to "FunctionalTests"
                 )
-
+                filters.register("ui") {
+                    it.fromSource.includeByAnnotations(TestsFilter.ui.annotatedWith)
+                    it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Success, RunStatus.Manual))
+                }
+                filters.register("uiNoE2e") {
+                    it.fromSource.includeByAnnotations(TestsFilter.uiNoE2E.annotatedWith)
+                    it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Success, RunStatus.Manual))
+                }
+                filters.register("newUi") {
+                    it.fromSource.includeByAnnotations(TestsFilter.ui.annotatedWith)
+                }
+                filters.register("newUiNoE2E") {
+                    it.fromSource.includeByAnnotations(TestsFilter.uiNoE2E.annotatedWith)
+                }
+                filters.register("regression") {
+                    it.fromSource.includeByAnnotations(TestsFilter.regression.annotatedWith)
+                    it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Success, RunStatus.Manual))
+                }
+                filters.register("regressionNoE2E") {
+                    it.fromSource.includeByAnnotations(TestsFilter.regressionNoE2E.annotatedWith)
+                    it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Success, RunStatus.Manual))
+                }
+                filters.register("performance") {
+                    it.fromSource.includeByAnnotations(TestsFilter.performance.annotatedWith)
+                }
+                filters.register("performanceNoE2E") {
+                    it.fromSource.includeByAnnotations(TestsFilter.performanceNoE2E.annotatedWith)
+                }
                 configurationsContainer.register(
                     "ui",
-                    registerUiConfig(TestsFilter.ui, hasE2eTests = true)
+                    registerUiConfig("ui", hasE2eTests = true)
                 )
                 configurationsContainer.register(
                     "uiNoE2e",
-                    registerUiConfig(TestsFilter.uiNoE2E, hasE2eTests = false)
+                    registerUiConfig("uiNoE2e", hasE2eTests = false)
                 )
 
                 configurationsContainer.register(
                     "newUi",
-                    registerNewUiConfig(TestsFilter.ui)
+                    registerNewUiConfig("newUi")
                 )
                 configurationsContainer.register(
                     "newUiNoE2e",
-                    registerNewUiConfig(TestsFilter.uiNoE2E)
+                    registerNewUiConfig("newUiNoE2E")
                 )
 
                 configurationsContainer.register(
                     "allUi",
-                    registerAllUI(TestsFilter.regression)
+                    registerAllUI("regression")
                 )
                 configurationsContainer.register(
                     "allUiNoE2e",
-                    registerAllUI(TestsFilter.regressionNoE2E)
+                    registerAllUI("regressionNoE2E")
                 )
 
                 configurationsContainer.register(
                     "regression",
-                    registerRegressionConfig(TestsFilter.regression)
+                    registerRegressionConfig("regression")
                 )
                 configurationsContainer.register(
                     "regressionNoE2e",
-                    registerRegressionConfig(TestsFilter.regressionNoE2E)
+                    registerRegressionConfig("regressionNoE2E")
                 )
 
                 //todo перенести в performance модуль?
                 configurationsContainer.register(
                     "performance", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance.annotatedWith,
+                        filterName = "performance",
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -97,7 +125,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 configurationsContainer.register(
                     "performanceNoE2e",
                     registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performanceNoE2E.annotatedWith,
+                        filterName = "performanceNoE2E",
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
@@ -105,7 +133,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 )
                 configurationsContainer.register(
                     "performanceMde", registerPerformanceConfig(
-                        annotatedWith = TestsFilter.performance.annotatedWith,
+                        filterName = "performance",
                         k8sNamespace = performanceNamespace,
                         performanceMinimumSuccessCount = performanceMinimumSuccessCount,
                         performanceType = InstrumentationConfiguration.PerformanceType.MDE
@@ -116,7 +144,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
     }
 
     private fun registerUiConfig(
-        testsFilter: TestsFilter,
+        filterName: String,
         hasE2eTests: Boolean
     ): Action<InstrumentationConfiguration> {
 
@@ -153,26 +181,22 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
 
         return Action { config ->
-            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = hasE2eTests
             config.reportSkippedTests = true
-            config.rerunFailedTests = true
             config.reportFlakyTests = true
             config.impactAnalysisPolicy = ImpactAnalysisPolicy.On.RunAffectedTests
-
+            config.filter = filterName
             EmulatorSet.fast.forEach { config.targetsContainer.registerDevice(it) }
         }
     }
 
     private fun registerPerformanceConfig(
-        annotatedWith: Collection<String>,
+        filterName: String,
         k8sNamespace: String,
         performanceMinimumSuccessCount: Int,
         performanceType: InstrumentationConfiguration.PerformanceType
     ) = Action<InstrumentationConfiguration> { config ->
-        config.annotatedWith = annotatedWith
-        config.rerunFailedTests = false
-
+        config.filter = filterName
         config.performanceType = performanceType
 
         config.kubernetesNamespace = k8sNamespace
@@ -198,7 +222,9 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerNewUiConfig(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
+    private fun registerNewUiConfig(
+        filterName: String
+    ): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) {
             register("api${emulator.api}") { target ->
@@ -220,20 +246,20 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         }
 
         return Action { config ->
-            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = false
             config.reportSkippedTests = false
             config.reportFlakyTests = true
-            config.rerunFailedTests = false
             config.impactAnalysisPolicy = ImpactAnalysisPolicy.On.RunNewTests
-
+            config.filter = filterName
             config.instrumentationParams = mapOf("jobSlug" to "NewFunctionalTests")
 
             EmulatorSet.fast.forEach { config.targetsContainer.registerDevice(it) }
         }
     }
 
-    private fun registerAllUI(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
+    private fun registerAllUI(
+        filterName: String
+    ): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) {
             register("api${emulator.api}") { target ->
@@ -254,16 +280,14 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             }
         }
         return Action { config ->
-            config.annotatedWith = testsFilter.annotatedWith
             config.tryToReRunOnTargetBranch = false
-            config.rerunFailedTests = true
             config.reportSkippedTests = true
-
+            config.filter = filterName
             EmulatorSet.fast.forEach { config.targetsContainer.registerDevice(it) }
         }
     }
 
-    private fun registerRegressionConfig(testsFilter: TestsFilter): Action<InstrumentationConfiguration> {
+    private fun registerRegressionConfig(filterName: String): Action<InstrumentationConfiguration> {
 
         fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) =
             register(emulator.name) { target ->
@@ -283,9 +307,8 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             }
 
         return Action { config ->
-            config.annotatedWith = testsFilter.annotatedWith
+            config.filter = filterName
             config.reportSkippedTests = true
-            config.rerunFailedTests = true
 
             EmulatorSet.full.forEach { config.targetsContainer.registerDevice(it) }
         }

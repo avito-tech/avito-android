@@ -2,6 +2,7 @@ package com.avito.instrumentation.configuration
 
 import com.avito.android.withAndroidModule
 import com.avito.git.gitState
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.report.model.RunId
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
@@ -17,6 +18,9 @@ internal fun Project.createInstrumentationPluginExtension() {
             "instrumentation",
             this
         )
+    extension.filters.register("default") {
+        it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Manual, RunStatus.Success))
+    }
     afterEvaluate {
         extension.validate()
     }

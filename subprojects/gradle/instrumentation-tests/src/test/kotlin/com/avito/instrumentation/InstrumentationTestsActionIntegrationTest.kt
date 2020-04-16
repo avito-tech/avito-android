@@ -83,7 +83,6 @@ internal class InstrumentationTestsActionIntegrationTest {
     @Test
     fun `inconsistent test run - missing tests reported as lost and failed build`() {
         val configuration = InstrumentationConfiguration.Data.createStubInstance(
-            rerunFailedTests = false,
             targets = listOf(
                 TargetConfiguration.Data.createStubInstance(deviceName = "api22")
             )

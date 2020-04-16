@@ -1,4 +1,5 @@
 import com.android.build.gradle.ProguardFiles.ProguardFile
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
@@ -144,10 +145,21 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         "jobSlug" to "FunctionalTests"
     )
 
+    val filterName = "default"
+
+    // deprecated since 2020.4.4
+    if (filters.findByName(filterName) == null) {
+        filters.register(filterName) {
+            fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Manual, RunStatus.Success))
+        }
+    }
+
+    val runAllFilterName = "runAll"
+    filters.register(runAllFilterName)
+
     configurationsContainer.register("Local") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
-        rerunFailedTests = true
         reportFlakyTests = false
 
         targetsContainer.register("api27") {
@@ -172,7 +184,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     configurationsContainer.register("ui") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
-        rerunFailedTests = true
         reportFlakyTests = true
 
         targetsContainer.register("api22") {
@@ -215,9 +226,9 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     configurationsContainer.register("uiDebug") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = false
-        rerunFailedTests = false
         reportFlakyTests = false
         enableDeviceDebug = true
+        filter = runAllFilterName
 
         targetsContainer.register("api27") {
             deviceName = "API27"
