@@ -14,7 +14,7 @@ object RunOnTargetCommitCondition {
     fun evaluate(
         instrumentationConfiguration: InstrumentationConfiguration.Data,
         hasBuildOnTargetPlugin: Boolean,
-        buildOnTargetTaskProvider: TaskProvider<BuildOnTargetCommitForTestTask>
+        buildOnTargetTaskProvider: () -> TaskProvider<BuildOnTargetCommitForTestTask>
     ): Result {
         val useArtifactsFromTargetBranch = isArtifactsFromTargetBranchNeeded(instrumentationConfiguration)
 
@@ -26,7 +26,7 @@ object RunOnTargetCommitCondition {
                         "because $useArtifactsFromTargetBranch"
                 )
             }
-            Result.Yes(buildOnTargetTaskProvider)
+            Result.Yes(buildOnTargetTaskProvider.invoke())
         } else {
             Result.No
         }

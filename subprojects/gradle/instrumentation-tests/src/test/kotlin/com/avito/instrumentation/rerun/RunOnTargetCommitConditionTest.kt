@@ -17,7 +17,7 @@ internal class RunOnTargetCommitConditionTest {
                 tryToReRunOnTargetBranch = true
             ),
             hasBuildOnTargetPlugin = true,
-            buildOnTargetTaskProvider = mock()
+            buildOnTargetTaskProvider = { mock() }
         )
 
         assertThat(result).isInstanceOf<RunOnTargetCommitCondition.Result.Yes>()
@@ -30,7 +30,7 @@ internal class RunOnTargetCommitConditionTest {
                 performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
             ),
             hasBuildOnTargetPlugin = true,
-            buildOnTargetTaskProvider = mock()
+            buildOnTargetTaskProvider = { mock() }
         )
 
         assertThat(result).isInstanceOf<RunOnTargetCommitCondition.Result.Yes>()
@@ -41,7 +41,7 @@ internal class RunOnTargetCommitConditionTest {
         val result = RunOnTargetCommitCondition.evaluate(
             instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(),
             hasBuildOnTargetPlugin = false,
-            buildOnTargetTaskProvider = mock()
+            buildOnTargetTaskProvider = { mock() }
         )
 
         assertThat(result).isInstanceOf<RunOnTargetCommitCondition.Result.No>()
@@ -55,7 +55,7 @@ internal class RunOnTargetCommitConditionTest {
                     tryToReRunOnTargetBranch = true
                 ),
                 hasBuildOnTargetPlugin = false,
-                buildOnTargetTaskProvider = mock()
+                buildOnTargetTaskProvider = { mock() }
             )
         }
 
@@ -71,7 +71,7 @@ internal class RunOnTargetCommitConditionTest {
                     performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
                 ),
                 hasBuildOnTargetPlugin = false,
-                buildOnTargetTaskProvider = mock()
+                buildOnTargetTaskProvider = { mock() }
             )
         }
 

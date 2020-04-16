@@ -137,7 +137,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             val runOnTargetCommit = RunOnTargetCommitCondition.evaluate(
                                 instrumentationConfiguration = instrumentationConfiguration,
                                 hasBuildOnTargetPlugin = project.pluginManager.hasBuildOnTargetPlugin(),
-                                buildOnTargetTaskProvider = project.tasks.buildOnTargetTask()
+                                buildOnTargetTaskProvider = { project.tasks.buildOnTargetTask() }
                             )
 
                             // see LintWorkerApiWorkaround.md
