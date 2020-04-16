@@ -4,6 +4,7 @@ import com.avito.android.stats.StatsDConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.BitbucketConfig
+import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.TestExecutorFactory
@@ -13,7 +14,6 @@ import com.avito.instrumentation.report.JUnitReportWriter
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.SendStatisticsAction
 import com.avito.instrumentation.report.listener.ReportViewerTestReporter
-import com.avito.instrumentation.rerun.BuildOnTargetCommitForTest
 import com.avito.instrumentation.scheduling.InstrumentationTestsScheduler
 import com.avito.instrumentation.scheduling.PerformanceTestsScheduler
 import com.avito.instrumentation.scheduling.TestsRunner
@@ -36,6 +36,7 @@ import com.avito.test.summary.TestSummarySenderImplementation
 import com.avito.utils.BuildFailer
 import com.avito.utils.createOrClear
 import com.avito.utils.gradle.KubernetesCredentials
+import com.avito.utils.hasFileContent
 import com.avito.utils.logging.CILogger
 import okhttp3.HttpUrl
 import java.io.File
@@ -184,11 +185,22 @@ class InstrumentationTestsAction(
     @Inject
     constructor(params: Params) : this(params, params.logger)
 
+    fun fromParams(params: InstrumentationTestsAction.Params): BuildOnTargetCommitForTest.Result {
+        return if (!params.apkOnTargetCommit.hasFileContent() || !params.testApkOnTargetCommit.hasFileContent()) {
+            BuildOnTargetCommitForTest.Result.ApksUnavailable
+        } else {
+            BuildOnTargetCommitForTest.Result.OK(
+                mainApk = params.apkOnTargetCommit,
+                testApk = params.testApkOnTargetCommit
+            )
+        }
+    }
+
     override fun run() {
         logger.debug("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
         filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
 
-        val buildOnTargetCommitResult = BuildOnTargetCommitForTest.fromParams(params)
+        val buildOnTargetCommitResult = fromParams(params)
         val testsExecutionResults: TestsScheduler.Result =
             if (params.instrumentationConfiguration.performanceType != null) {
                 performanceTestsScheduler.schedule(
@@ -328,7 +340,6 @@ class InstrumentationTestsAction(
         val buildUrl: String,
         val currentBranch: String,
         val sourceCommitHash: String,
-        val targetCommit: String?,
         val kubernetesCredentials: KubernetesCredentials,
         val projectName: String,
         val suppressFailure: Boolean,

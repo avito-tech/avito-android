@@ -1,4 +1,4 @@
-package com.avito.instrumentation.rerun
+package com.avito.buildontarget
 
 import com.avito.utils.logging.CILogger
 import org.funktionale.tries.Try

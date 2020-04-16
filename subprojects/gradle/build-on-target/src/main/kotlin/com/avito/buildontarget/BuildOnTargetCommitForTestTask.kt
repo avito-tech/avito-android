@@ -1,4 +1,4 @@
-package com.avito.instrumentation.rerun
+package com.avito.buildontarget
 
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
@@ -15,8 +15,19 @@ import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
-// Caching is disabled due to https://github.com/gradle/gradle/issues/7769
-// See details in MBS-7955
+/**
+ * There is a problem with caching here, if [shouldFailBuild] set to false, task will cache wrong stub values instead of
+ * correct apk's if nested build fails. And we can't recover from it until [targetCommit] or other @Input changes.
+ *
+ * Why it [shouldFailBuild] is a thing? Because nested build could be broken on purpose,
+ * for example if contract between builds on target and source branch are changed.
+ * We don't have mechanisms to know about it before nested build fails yet, so we silently fails, and all dependent tasks
+ * fails silently in this case and it is expected.
+ *
+ * Caching is enabled anyways, because speed benefits overweights the problem in our case.
+ * `buildOnTarget { buildCacheEnabled = false }` to manually disable cache for a build
+ */
+@CacheableTask
 @Suppress("UnstableApiUsage")
 abstract class BuildOnTargetCommitForTestTask @Inject constructor(
     objects: ObjectFactory,

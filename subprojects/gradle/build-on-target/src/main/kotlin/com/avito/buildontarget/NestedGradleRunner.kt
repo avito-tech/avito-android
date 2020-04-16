@@ -1,4 +1,4 @@
-package com.avito.instrumentation.rerun
+package com.avito.buildontarget
 
 import org.funktionale.tries.Try
 import java.io.File

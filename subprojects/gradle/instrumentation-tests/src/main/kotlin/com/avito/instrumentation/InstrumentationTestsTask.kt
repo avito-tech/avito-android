@@ -89,14 +89,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val suppressFlaky = objects.property<Boolean>()
 
     @Input
-    @Optional
-    val targetCommit = objects.property<String?>()
-
-    @Input
-    @Optional
-    val targetBranch = objects.property<String>()
-
-    @Input
     val instrumentationConfiguration = objects.property<InstrumentationConfiguration.Data>()
 
     @Input
@@ -162,7 +154,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     buildId = buildId.get(),
                     buildType = buildType.get(),
                     buildUrl = buildUrl.get(),
-                    targetCommit = targetCommit.orNull,
                     kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) { "you need to provide kubernetesCredentials" },
                     projectName = project.name,
                     currentBranch = gitBranch.get(),

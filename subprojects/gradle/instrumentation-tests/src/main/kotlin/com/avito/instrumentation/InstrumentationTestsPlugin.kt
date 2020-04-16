@@ -9,7 +9,8 @@ import com.avito.android.getApkFile
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidModule
 import com.avito.android.withArtifacts
-import com.avito.git.Branch
+import com.avito.buildontarget.buildOnTargetTask
+import com.avito.buildontarget.hasBuildOnTargetPlugin
 import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
@@ -21,15 +22,12 @@ import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConf
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.executing.ExecutionParameters
-import com.avito.instrumentation.rerun.BuildOnTargetCommitForTestTask
-import com.avito.instrumentation.rerun.RunOnTargetBranchCondition
+import com.avito.instrumentation.rerun.RunOnTargetCommitCondition
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
-import com.avito.kotlin.dsl.getMandatoryIntProperty
-import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalIntProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.toOptional
@@ -42,9 +40,6 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.RegularFile
-import org.gradle.api.internal.provider.Providers
-import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import java.io.File
@@ -74,8 +69,10 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             logger.info("Instrumentation plugin disabled due to non CI environment")
             return
         }
+
         val instrumentationConfigurations =
             project.extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
+
         instrumentationConfigurations.registerDynamicConfiguration(
             testFilter = TestsFilter.valueOf(
                 project.getOptionalStringProperty(
@@ -101,15 +98,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             }
         )
 
-        val targetBranch: Provider<Branch> = gitState.flatMap { state ->
-            val targetBranch = state.targetBranch
-            if (targetBranch != null) {
-                Providers.of(targetBranch)
-            } else {
-                Providers.notDefined()
-            }
-        }
-
         project.withAndroidApp { appExtension ->
 
             // see LintWorkerApiWorkaround.md
@@ -125,53 +113,10 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 val testedVariant: ApplicationVariant =
                     testVariant.testedVariant as ApplicationVariant
 
-                val buildOnTargetCommitTask =
-                    project.tasks.register<BuildOnTargetCommitForTestTask>("buildOnTargetCommit") {
-                        group = ciTaskGroup
-                        description =
-                            "Run build on targetCommit to get apks for tests run on target branch"
-
-                        val nestedBuildDir =
-                            File(project.projectDir, "nested-build").apply { mkdirs() }
-                        val variant = testedVariant.name
-                        val versionName =
-                            project.getMandatoryStringProperty("${project.name}.versionName")
-                        val versionCode =
-                            project.getMandatoryIntProperty("${project.name}.versionCode")
-
-                        this.shouldFailBuild.set(false) //todo should be configurable outside
-                        this.appPath.set(project.path)
-                        this.testedVariant.set(variant)
-                        this.targetCommit.set(targetBranch.map { it.commit })
-                        this.tempDir.set(nestedBuildDir)
-                        this.versionName.set(versionName)
-                        this.versionCode.set(versionCode)
-                        this.repoSshUrl.set(project.getMandatoryStringProperty("avito.repo.ssh.url"))
-                        this.stubForTest.set(
-                            project.getBooleanProperty(
-                                "stubBuildOnTargetCommit",
-                                default = false
-                            )
-                        )
-
-                        onlyIf { targetBranch.isPresent }
-                        onlyIf { !env.isRerunDisabled }
-
-                        this.mainApk.set(testedVariant.packageApplicationProvider
-                            .map { it.getApkFile() }
-                            .map { it.relativeTo(project.rootDir) }
-                            .map { RegularFile { nestedBuildDir.resolve(it) } })
-
-                        this.testApk.set(testVariant.packageApplicationProvider
-                            .map { it.getApkFile() }
-                            .map { it.relativeTo(project.rootDir) }
-                            .map { RegularFile { nestedBuildDir.resolve(it) } })
-                    }
-
                 project.withInstrumentationExtensionData { extensionData ->
                     extensionData.configurations.forEach { instrumentationConfiguration ->
 
-                        logger.info("[InstrConfig:${instrumentationConfiguration.name}] Creating...")
+                        logger.debug("[InstrConfig:${instrumentationConfiguration.name}] Creating...")
 
                         testVariant.withArtifacts { testVariantPackageTask, testedVariantPackageTask ->
 
@@ -189,12 +134,11 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
                             )
 
-                            val useArtifactsFromTargetBranch =
-                                RunOnTargetBranchCondition.evaluate(instrumentationConfiguration)
-
-                            if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
-                                logger.debug("[InstrConfig:${instrumentationConfiguration.name}] will depend on buildOnTargetBranch because: ${useArtifactsFromTargetBranch.reason}")
-                            }
+                            val runOnTargetCommit = RunOnTargetCommitCondition.evaluate(
+                                instrumentationConfiguration = instrumentationConfiguration,
+                                hasBuildOnTargetPlugin = project.pluginManager.hasBuildOnTargetPlugin(),
+                                buildOnTargetTaskProvider = { project.tasks.buildOnTargetTask() }
+                            )
 
                             // see LintWorkerApiWorkaround.md
                             project.tasks.register<Task>(
@@ -204,8 +148,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 dependsOn(testedVariantPackageTask, testVariantPackageTask)
 
-                                if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
-                                    dependsOn(buildOnTargetCommitTask)
+                                if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
+                                    dependsOn(runOnTargetCommit.task)
                                 }
 
                                 if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
@@ -239,8 +183,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                     testApplication.set(File(extensionData.testApplicationApk))
                                 }
 
-                                if (useArtifactsFromTargetBranch is RunOnTargetBranchCondition.Result.Yes) {
-                                    dependencyOn(buildOnTargetCommitTask) { dependentTask ->
+                                if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
+                                    dependencyOn(runOnTargetCommit.task) { dependentTask ->
                                         apkOnTargetCommit.set(dependentTask.mainApk.toOptional())
                                         testApkOnTargetCommit.set(dependentTask.testApk.toOptional())
                                     }
@@ -274,8 +218,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 this.buildUrl.set(env.build.url)
                                 this.gitBranch.set(gitState.map { it.currentBranch.name })
                                 this.gitCommit.set(gitState.map { it.currentBranch.commit })
-                                this.targetBranch.set(targetBranch.map { it.name })
-                                this.targetCommit.set(targetBranch.map { it.name })
                                 this.defaultBranch.set(gitState.map { it.defaultBranch })
                                 this.fullTestSuite.set(isFullTestSuite)
                                 this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
