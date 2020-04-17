@@ -121,7 +121,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     configurationsContainer.register("Local") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
-        rerunFailedTests = true
         reportFlakyTests = false
 
         targetsContainer.register("api27") {
@@ -146,7 +145,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     configurationsContainer.register("ui") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
-        rerunFailedTests = true
         reportFlakyTests = true
 
         targetsContainer.register("api22") {
@@ -189,10 +187,8 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     configurationsContainer.register("uiDebug") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = false
-        rerunFailedTests = false
         reportFlakyTests = false
-        // uncomment after 2020.4.1 release (MBS-8050)
-        // enableDeviceDebug = true
+        enableDeviceDebug = true
 
         targetsContainer.register("api27") {
             deviceName = "API27"
