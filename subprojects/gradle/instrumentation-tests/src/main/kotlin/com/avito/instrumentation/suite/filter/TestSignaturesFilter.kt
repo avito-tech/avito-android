@@ -8,7 +8,7 @@ internal fun TestsFilter.Test.matched(signatures: Set<TestsFilter.Signatures.Tes
     }
 }
 
-internal class IncludeByTestSignaturesFilter(
+internal data class IncludeByTestSignaturesFilter(
     private val source: TestsFilter.Signatures.Source,
     private val signatures: Set<TestsFilter.Signatures.TestSignature>
 ) : TestsFilter {
@@ -25,7 +25,7 @@ internal class IncludeByTestSignaturesFilter(
     }
 }
 
-internal class ExcludeByTestSignaturesFilter(
+internal data class ExcludeByTestSignaturesFilter(
     private val source: TestsFilter.Signatures.Source,
     private val signatures: Set<TestsFilter.Signatures.TestSignature>
 ) : TestsFilter {
