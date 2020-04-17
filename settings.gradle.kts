@@ -88,12 +88,9 @@ include(":subprojects:android-test:test-inhouse-runner")
 include(":subprojects:android-test:test-app")
 include(":subprojects:android-test:toast-rule")
 include(":subprojects:android-lib:proxy-toast")
+include(":subprojects:android-test:test-app-kaspresso")
 
 include(":subprojects:ci:k8s-deployments-cleaner")
-val syncKaspresso: String by settings
-if (syncKaspresso.toBoolean()) {
-    include(":subprojects:android-test:test-app-kaspresso")
-}
 
 pluginManagement {
 

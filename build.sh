@@ -12,5 +12,5 @@ TEMP_PROJECT_VERSION="temp-version"
 # `tasks` triggers full tasks graph resolving, checking for possible misconfigurations
 runInBuilder "set -e;
     ./gradlew help;
-    ./gradlew build publishToMavenLocal ${GRADLE_ARGS} -PprojectVersion=${TEMP_PROJECT_VERSION} -PsyncKasspresso=true;
+    ./gradlew build publishToMavenLocal ${GRADLE_ARGS} -PprojectVersion=${TEMP_PROJECT_VERSION};
     ./gradlew tasks :subprojects:android-test:test-app:instrumentationUi ${GRADLE_ARGS} -PinfraVersion=${TEMP_PROJECT_VERSION}"
