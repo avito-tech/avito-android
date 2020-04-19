@@ -2,6 +2,7 @@ package com.avito.android.runner
 
 import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.HostAnnotationResolver
 import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
 import com.avito.android.runner.annotation.resolver.NetworkingType
@@ -179,5 +180,3 @@ private fun provideVideoRecordingFeature(argumentsProvider: ArgsProvider): Video
         )
     }
 }
-
-internal const val FAKE_ORCHESTRATOR_RUN_ARGUMENT = "listTestsForOrchestrator"

@@ -5,12 +5,11 @@ import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
-import com.avito.android.test.report.Report
 
 /**
  * Based on https://github.com/nenick/espresso-macchiato
  */
-class SystemDialogsManager(private val report: Report) {
+class SystemDialogsManager(private val errorsReporter: ErrorsReporter) {
 
     @SuppressLint("LogNotTimber")
     fun closeSystemDialogs() {
@@ -18,21 +17,21 @@ class SystemDialogsManager(private val report: Report) {
             dismissCrashDialogIfShown()
         } catch (t: Throwable) {
             Log.v(TAG, "Failed to close crash dialog: ${t.message}")
-            report.sentry.sendException(t)
+            errorsReporter.reportError(t)
         }
 
         try {
             dismissAnrDialogIfShown()
         } catch (t: Throwable) {
             Log.v(TAG, "Failed to close application not respond dialog: ${t.message}")
-            report.sentry.sendException(t)
+            errorsReporter.reportError(t)
         }
 
         try {
             dismissHiddenApiDialog()
         } catch (t: Throwable) {
             Log.v(TAG, "Failed to close hidden api dialog: ${t.message}")
-            report.sentry.sendException(t)
+            errorsReporter.reportError(t)
         }
     }
 
