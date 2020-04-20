@@ -2,6 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
+import com.avito.instrumentation.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.report.ReportsFetchApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -12,6 +13,8 @@ interface FilterFactory {
     fun createRerunFilter(): TestsFilter
 
     companion object {
+        internal val JUNIT_IGNORE_ANNOTATION = "org.junit.Ignore"
+
         fun create(
             filterData: InstrumentationFilter.Data,
             impactAnalysisResult: File?,
@@ -66,7 +69,7 @@ private class FilterFactoryImpl(
         }
         add(
             ExcludeAnnotationsFilter(
-                filterData.fromSource.annotations.excluded + "org.junit.Ignore"
+                filterData.fromSource.annotations.excluded + JUNIT_IGNORE_ANNOTATION
             )
         )
     }

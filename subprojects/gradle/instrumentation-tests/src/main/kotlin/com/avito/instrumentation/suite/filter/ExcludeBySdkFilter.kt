@@ -23,4 +23,12 @@ internal class ExcludeBySdkFilter : TestsFilter {
             TestsFilter.Result.Included
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        return other != null && other.hashCode() == hashCode() && other.javaClass.isInstance(this)
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
 }
