@@ -187,7 +187,69 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
+### Change applied filter without changing `build.gradle.kts`
+
+1. Add custom gradle property for filter name to gradle.properties file
+
+```properties
+filterName="filterName"
+```
+
+2. Let plugin configuration depends on `property`
+
+```kotlin
+val filterName by project
+
+extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
+    configurationsContainer.register("Local") {
+        filter = filterName
+        // else...   
+    }    
+}
+```
+
+3. Add `property` to cli command if you want to override `filterName`
+
+```shell script
+./gradlew instrumentationLocal -PfilterName=<any name of defined filter>
+```
+
+### Customize filter without changing `build.gradle.kts`
+
+You can customize everything by adding custom properties to cli command e.g.
+
+1. You have [filter including tests by annotation]({{< relref "#filter-tests-by-annotations">}})
+2. Add logic to check presence of gradle property.
+
+```kotlin
+val includedAnnotation: String? by project
+ 
+extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
+    filters.register("filterName") {
+        val annotation = if(includedAnnotation != null){
+            includedAnnotation
+        } else {
+            "package.AnnotationClassName"
+        }
+        
+        val annotations = setOf(annotation)
+        fromSource.includeByAnnotations(annotations)
+    }
+}
+```
+
+3. Run gradle task with property `includedAnnotation` to override filter
+
+```shell script
+./gradlew instrumentationLocal -PincludedAnnotation="package.AnotherAnnotationClassName"
+```
+
 ## Choosing target for tests execution
+
+### Run test on APK was built before
+
+Plugin builds APKs on his own by default.\
+If for any reason you have to build APK externally, you can pass files manually:
 
 ### Run tests on kubernetes target from a local machine
 
