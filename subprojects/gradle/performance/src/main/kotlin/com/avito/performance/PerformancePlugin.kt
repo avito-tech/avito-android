@@ -25,11 +25,12 @@ open class PerformancePlugin : Plugin<Project> {
 
         val extension = project.extensions.create<PerformanceExtension>("performance")
 
-        val gitState = project.gitState { project.ciLogger.info(it) }
+        val logger = project.ciLogger
+
+        val gitState = project.gitState { logger.info(it) }
 
         val envArgs = project.envArgs
 
-        @Suppress("UnstableApiUsage")
         val graphiteKeyProvider = gitState.map {
             if (it.isOnDefaultBranch) {
                 it.defaultBranch
@@ -43,6 +44,8 @@ open class PerformancePlugin : Plugin<Project> {
             instrumentationConfig.configurations
                 .filter { it.performanceType == InstrumentationConfiguration.PerformanceType.MDE }
                 .forEach { performanceMdeConfig ->
+
+                    logger.info("Creating performance mde configuration: $performanceMdeConfig")
 
                     val performanceResultsFile = File(
                         extension.output,
@@ -78,6 +81,8 @@ open class PerformancePlugin : Plugin<Project> {
                 .filter { it.performanceType == InstrumentationConfiguration.PerformanceType.SIMPLE }
                 .forEach { performanceConfig ->
 
+                    logger.info("Creating performance configuration: $performanceConfig")
+
                     val performanceResultsFile = File(
                         extension.output,
                         "${performanceConfig.name}_${extension.performanceTestResultName}"
@@ -86,6 +91,8 @@ open class PerformancePlugin : Plugin<Project> {
                     val reportCoordinates = performanceConfig.instrumentationParams.reportCoordinates()
 
                     project.tasks.instrumentationTask(performanceConfig.name) { instrumentationTask ->
+
+                        logger.info("Based on instrumentation task: $instrumentationTask")
 
                         val performanceCollectProvider =
                             project.tasks.register<PerformanceCollectTask>("collect${performanceConfig.name.capitalize()}") {
@@ -156,6 +163,8 @@ open class PerformancePlugin : Plugin<Project> {
                                 else -> Providers.notDefined<Task>()
                             }
                         }
+
+                        logger.info("performanceProvider=${performanceProvider.get()}")
 
                         project.tasks.register<Task>(measurePerformanceTaskName(performanceConfig.name)) {
                             this.group = TASK_GROUP

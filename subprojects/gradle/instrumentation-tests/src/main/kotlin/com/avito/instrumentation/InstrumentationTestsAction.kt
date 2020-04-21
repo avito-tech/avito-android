@@ -328,7 +328,7 @@ class InstrumentationTestsAction(
 
     // TODO: вынести все параметры для зависимостей в конфиги по аналогии с BitbucketConfig, StatsDConfig
     data class Params(
-        val mainApk: File,
+        val mainApk: File?,
         val testApk: File,
         val apkOnTargetCommit: File?,
         val testApkOnTargetCommit: File?,

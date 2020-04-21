@@ -23,7 +23,7 @@ import java.io.File
 interface TestExecutor {
 
     fun execute(
-        application: File,
+        application: File?,
         testApplication: File,
         testsToRun: List<TestWithTarget>,
         executionParameters: ExecutionParameters,
@@ -52,7 +52,7 @@ interface TestExecutor {
         private val outputDirectoryName = "composer"
 
         override fun execute(
-            application: File,
+            application: File?,
             testApplication: File,
             testsToRun: List<TestWithTarget>,
             executionParameters: ExecutionParameters,
@@ -100,7 +100,7 @@ interface TestExecutor {
                                 minimumFailedCount = quota.minimumFailedCount,
                                 minimumSuccessCount = quota.minimumSuccessCount
                             ),
-                            application = application.absolutePath,
+                            application = application?.absolutePath,
                             applicationPackage = executionParameters.applicationPackageName,
                             testApplication = testApplication.absolutePath,
                             testPackage = executionParameters.applicationTestPackageName,
