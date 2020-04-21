@@ -15,7 +15,7 @@ test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) $(log_level)
 
 test_app_instrumentation_local:
-	./gradlew subprojects\:android-test\:test-app\:instrumentationLocal -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) $(log_level)
+	./gradlew subprojects\:android-test\:test-app\:instrumentationLocal -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) -PlocalFilter=$(local_filter) -PincludeAnnotation=$(includeAnnotation) $(log_level)
 
 test_app_instrumentation_android_debug:
 	./gradlew :subprojects:android-test:test-app:instrumentationUiDebug -PinfraVersion=local -Pci=true -PkubernetesContext=beta -PtestBuildType=$(test_build_type) $(log_level)
