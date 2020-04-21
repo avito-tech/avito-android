@@ -76,7 +76,7 @@ dependencies(delegateClosureOf<DependencyHandler> {
 
     implementation(Dependencies.appcompat)
 
-    androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
+    androidTestImplementation("com.avito.android:test-inhouse-runner")
 
     androidTestImplementation(Dependencies.androidTest.runner)
     androidTestImplementation(Dependencies.androidTest.kaspresso)
@@ -206,14 +206,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
                     testsPerEmulator = 1
                 }
             }
-        }
-    }
-}
-
-configurations.all {
-    if (name.contains("AndroidTestRuntimeClasspath")) {
-        resolutionStrategy {
-            force("org.jetbrains:annotations:16.0.1")
         }
     }
 }
