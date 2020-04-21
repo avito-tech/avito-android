@@ -95,6 +95,5 @@ internal fun Project.withInstrumentationExtensionData(action: (InstrumentationPl
                 )
             )
         }
-
     }
 }

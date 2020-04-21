@@ -147,4 +147,4 @@ class PerformanceIntegrationTest {
         )
 }
 
-private const val SYNC_BRANCH = "develop"
+private const val SYNC_BRANCH = "origin/develop"
