@@ -176,7 +176,7 @@ interface GooglePlayDeployer {
                 try {
                     edits.commit(deploy.applicationId, editId).execute()
                 } catch (e: Exception) {
-                    throw IllegalStateException("Fail commit edit of $deploy")
+                    throw IllegalStateException("Fail commit edit of $deploy", e)
                 }
             }
         }

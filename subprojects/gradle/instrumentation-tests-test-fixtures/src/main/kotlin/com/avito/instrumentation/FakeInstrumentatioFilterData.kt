@@ -13,7 +13,8 @@ fun <T : Serializable> emptyFilter() = Filter.Value<T>(
 fun InstrumentationFilter.Data.Companion.createStub(
     prefixes: Filter.Value<String> = emptyFilter(),
     annotations: Filter.Value<String> = emptyFilter(),
-    previousStatuses: Filter.Value<FromRunHistory.RunStatus> = emptyFilter()
+    previousStatuses: Filter.Value<FromRunHistory.RunStatus> = emptyFilter(),
+    report: InstrumentationFilter.Data.FromRunHistory.ReportFilter? = null
 ): InstrumentationFilter.Data {
     return InstrumentationFilter.Data(
         name = "stub",
@@ -23,7 +24,7 @@ fun InstrumentationFilter.Data.Companion.createStub(
         ),
         fromRunHistory = InstrumentationFilter.Data.FromRunHistory(
             previousStatuses = previousStatuses,
-            reportFilter = null
+            reportFilter = report
         )
     )
 }

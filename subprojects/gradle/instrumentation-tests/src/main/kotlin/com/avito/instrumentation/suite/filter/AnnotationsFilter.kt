@@ -6,7 +6,7 @@ internal fun TestsFilter.Test.matched(annotations: Set<String>): Boolean {
     return this.annotations.any { testAnnotation -> annotations.contains(testAnnotation.name) }
 }
 
-internal class IncludeAnnotationsFilter(
+internal data class IncludeAnnotationsFilter(
     private val annotations: Set<String>
 ) : TestsFilter {
 
@@ -20,7 +20,7 @@ internal class IncludeAnnotationsFilter(
     }
 }
 
-internal class ExcludeAnnotationsFilter(
+internal data class ExcludeAnnotationsFilter(
     private val annotations: Set<String>
 ) : TestsFilter {
 

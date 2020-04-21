@@ -38,8 +38,14 @@ class FakeReportsApi(
         TODO("not implemented")
     }
 
+    private val testsForReportId = mutableMapOf<String, Try<List<SimpleRunTest>>>()
+
+    fun enqueueTestsForReportId(reportId: String, value: Try<List<SimpleRunTest>>) {
+        testsForReportId[reportId] = value
+    }
+
     override fun getTestsForReportId(reportId: String): Try<List<SimpleRunTest>> {
-        TODO("Not yet implemented")
+        return testsForReportId[reportId] ?: error("you need to enqueue result by reportId: $reportId")
     }
 
     val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
