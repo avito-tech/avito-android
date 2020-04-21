@@ -6,8 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.gradle.kotlinPlugin)
 }
 

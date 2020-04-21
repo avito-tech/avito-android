@@ -7,11 +7,11 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:gradle:git"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":common:okhttp"))
+    implementation(project(":gradle:git"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)
     implementation(Dependencies.okhttp)
@@ -19,6 +19,6 @@ dependencies {
     implementation(Dependencies.sentry)
     implementation(Dependencies.funktionaleTry)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":common:test-okhttp"))
 }

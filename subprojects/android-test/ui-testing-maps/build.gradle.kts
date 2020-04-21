@@ -7,6 +7,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:android-test:ui-testing-core"))
+    api(project(":android-test:ui-testing-core"))
     api(Dependencies.playServicesMaps)
 }

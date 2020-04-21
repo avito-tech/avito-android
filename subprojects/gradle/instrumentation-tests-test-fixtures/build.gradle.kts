@@ -3,13 +3,13 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:instrumentation-tests"))
+    api(project(":gradle:instrumentation-tests"))
 
-    implementation(project(":subprojects:gradle:bitbucket"))
-    implementation(project(":subprojects:common:report-viewer"))
-    implementation(project(":subprojects:gradle:slack"))
-    implementation(project(":subprojects:gradle:statsd-config"))
-    implementation(project(":subprojects:gradle:kubernetes"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:test-project"))
+    implementation(project(":gradle:bitbucket"))
+    implementation(project(":common:report-viewer"))
+    implementation(project(":gradle:slack"))
+    implementation(project(":gradle:statsd-config"))
+    implementation(project(":gradle:kubernetes"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:test-project"))
 }

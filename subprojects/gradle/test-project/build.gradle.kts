@@ -7,9 +7,9 @@ plugins {
 dependencies {
     api(Dependencies.test.okhttpMockWebServer)
 
-    implementation(project(":subprojects:gradle:process"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":gradle:process"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:android"))
     implementation(gradleTestKit())
     implementation(Dependencies.kotlinReflect)
     implementation(Dependencies.funktionaleTry)

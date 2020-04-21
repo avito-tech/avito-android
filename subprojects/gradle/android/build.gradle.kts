@@ -8,10 +8,10 @@ dependencies {
     api(Dependencies.gradle.androidPlugin)
 
     implementation(gradleApi())
-    implementation(project(":subprojects:gradle:files"))
-    implementation(project(":subprojects:gradle:process"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:files"))
+    implementation(project(":gradle:process"))
+    implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)
 
-    testImplementation(project(":subprojects:gradle:process-test-fixtures"))
+    testImplementation(project(":gradle:process-test-fixtures"))
 }

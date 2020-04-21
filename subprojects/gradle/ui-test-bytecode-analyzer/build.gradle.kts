@@ -8,5 +8,5 @@ dependencies {
     implementation(Dependencies.bcel)
     implementation(Dependencies.gson)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":gradle:test-project"))
 }

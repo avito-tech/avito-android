@@ -5,13 +5,13 @@ plugins {
 }
 
 dependencies {
+    api(project(":gradle:build-environment")) // project.buildEnvironment only
+
     implementation(gradleApi())
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:process"))
     implementation(Dependencies.funktionaleTry)
-    api(project(":subprojects:gradle:build-environment")) // project.buildEnvironment only
 
-
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":gradle:test-project"))
     testImplementation(Dependencies.test.mockitoJUnitJupiter)
 }

@@ -7,8 +7,8 @@ plugins {
 dependencies {
     api(Dependencies.okhttp)
 
-    implementation(project(":subprojects:common:logger"))
-    testImplementation(project(":subprojects:common:test-okhttp"))
+    implementation(project(":common:logger"))
+    testImplementation(project(":common:test-okhttp"))
     testImplementation(Dependencies.funktionaleTry)
     testImplementation(Dependencies.test.okhttpMockWebServer)
     testImplementation(Dependencies.retrofit)

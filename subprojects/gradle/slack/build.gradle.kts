@@ -1,12 +1,3 @@
-import com.avito.kotlin.dsl.getOptionalStringProperty
-
-buildscript {
-    val infraVersion: String by project
-    dependencies {
-        classpath("${Dependencies.gradle.avito.kotlinDslSupport}:$infraVersion")
-    }
-}
-
 plugins {
     id("kotlin")
     `maven-publish`
@@ -17,16 +8,16 @@ plugins {
 dependencies {
     api(Dependencies.funktionaleTry)
 
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:common:time"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":common:time"))
     implementation(Dependencies.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(Dependencies.okhttp)
     implementation(Dependencies.coroutinesCore)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:gradle:slack-test-fixtures"))
-    testImplementation(project(":subprojects:common:time-test-fixtures"))
+    testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":gradle:slack-test-fixtures"))
+    testImplementation(project(":common:time-test-fixtures"))
 }
 
 tasks.withType(Test::class.java).forEach { testTask ->
@@ -36,8 +27,8 @@ tasks.withType(Test::class.java).forEach { testTask ->
             "avito.slack.test.token",
             "avito.slack.test.workspace"
         )
-        testProperties.forEach { key ->
-            systemProperty(key, project.getOptionalStringProperty(key) ?: "")
-        }
+//        testProperties.forEach { key ->
+//            systemProperty(key, project.getOptionalStringProperty(key) ?: "")
+//        }
     }
 }

@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:common:graphite"))
+    api(project(":common:graphite"))
 }

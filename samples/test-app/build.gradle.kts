@@ -79,7 +79,7 @@ keeper {
 dependencies(delegateClosureOf<DependencyHandler> {
     keeperR8(Dependencies.r8)
 
-    implementation(project(":subprojects:android-lib:proxy-toast"))
+    implementation(project(":android-lib:proxy-toast"))
 
     implementation(Dependencies.playServicesMaps)
 
