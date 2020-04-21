@@ -6,6 +6,7 @@ headless: true
 - [Tech radar]({{< ref "/docs/tech_radar/TechRadar.md" >}})
 - [Known Issues]({{< ref "/docs/KnownIssues.md" >}})
 - [Contacts]({{< ref "/docs/Contacts.md" >}})
+- [Avito internal]({{< ref "/docs/avito_internal/AvitoInternalMain.md" >}})
 - Projects
     - [Build checks]({{< ref "/docs/projects/BuildChecks.md" >}})
 - Contributing
