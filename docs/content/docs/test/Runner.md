@@ -17,7 +17,7 @@ It uses an internal TMS (test management system). We are working on support othe
 
 ## Getting started
 
-1. {{< expand "Apply the instrumentation-tests gradle plugin" >}}
+1. Apply the instrumentation-tests gradle plugin
 Add to your build.gradle.kts
 
 ```kotlin
@@ -27,9 +27,7 @@ plugins {
 }
 ```
 
-{{< /expand >}}
-
-2. {{< expand "Add common plugin configuration" >}}
+2. Add common plugin configuration
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -66,9 +64,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-{{< /expand >}}
-
-3. {{< expand "Run tests via gradle task" >}}
+3. Run tests via gradle task
 
 ```shell script
     ./gradlew :<projectPath>:instrumentation<ConfigurationName>           
@@ -80,24 +76,14 @@ In our case:
     ./gradlew :<projectPath>:instrumentationLocal 
 ```
 
-{{< /expand >}}
-
 ## Examples
 
 Check out a configuration to run in `GradleInstrumentationPluginConfiguration` in the [test app](https://github.com/avito-tech/avito-android/blob/develop/subprojects/android-test/test-app/build.gradle.kts#L114)
 
-## How to
+## Filtering tests for execution
 
-Firstly, [you must apply a plugin]({{< relref "#getting-started">}})
-
-### Run tests on local emulator
-
-1. Run an emulator with 27 API
-2. Run `./gradlew :subprojects:android-test:test-app:instrumentationLocal`
-
-### Filter tests for execution
-
-1. {{< expand "Create filter" >}}
+0. [You must apply a plugin]({{< relref "#getting-started">}})
+1. Create filter
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -118,9 +104,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-{{< /expand >}}
-
-2. {{< expand "Add filter to configuration" >}}
+2. Add filter to configuration
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -131,9 +115,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-{{< /expand >}}
-
-#### Filter tests by annotations
+### Filter tests by annotations
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -149,7 +131,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-#### Filter tests by prefix or name
+### Filter tests by prefix or name
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -167,7 +149,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-#### Filter tests by statuses from previous run on the same commit
+### Filter tests by statuses from previous run on the same commit
 
 ```kotlin
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
@@ -184,7 +166,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-#### Filter tests by statuses from report by id
+### Filter tests by statuses from report by id
 
 ```kotlin
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
@@ -205,19 +187,9 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-### Run test on APK was built before
+## Choosing target for tests execution
 
-Plugin builds APKs on his own by default.\
-If for any reason you have to build APK externally, you can pass files manually:
-
-```kotlin
-// optional
-applicationApk = "/path/to/app.apk"
-// optional
-testApplicationApk = "/path/to/test-app-debug-androidTest.apk"
-```
-
-### How to run tests in kubernetes from a local machine
+### Run tests on kubernetes target from a local machine
 
 {{< avito >}}
 
@@ -233,4 +205,21 @@ More about kubernetes context: [Official docs](https://kubernetes.io/docs/tasks/
     -PkubernetesContext=<your context>
     -PkubernetesCaCertFile=<path to ca certificate file>
     -Pavito.registry=<avito registry>
+```
+
+### Run tests on local emulator target
+
+1. Run an emulator with 27 API
+2. Run `./gradlew :subprojects:android-test:test-app:instrumentationLocal`
+
+## Run test on APK was built before
+
+Plugin builds APKs on his own by default.\
+If for any reason you have to build APK externally, you can pass files manually:
+
+```kotlin
+// optional
+applicationApk = "/path/to/app.apk"
+// optional
+testApplicationApk = "/path/to/test-app-debug-androidTest.apk"
 ```
