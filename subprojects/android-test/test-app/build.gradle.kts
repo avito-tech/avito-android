@@ -157,10 +157,20 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     val runAllFilterName = "runAll"
     filters.register(runAllFilterName)
 
+    filters.register("dynamicFilter") {
+        val includeAnnotation: String? = project.getOptionalStringProperty("includeAnnotation")
+        if (includeAnnotation != null) {
+            fromSource.includeByAnnotations(setOf(includeAnnotation))
+        }
+    }
+
+    val localFilter: String = project.getOptionalStringProperty("localFilter", filterName)
+
     configurationsContainer.register("Local") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
         reportFlakyTests = false
+        filter = localFilter
 
         targetsContainer.register("api27") {
             deviceName = "API27"
