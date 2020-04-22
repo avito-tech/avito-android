@@ -6,16 +6,21 @@ import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnitRunner
 import com.avito.android.mock.MockDispatcher
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
 import com.avito.android.monitoring.createSentry
+import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
-import com.avito.android.test.report.*
+import com.avito.android.test.report.Report
+import com.avito.android.test.report.ReportImplementation
+import com.avito.android.test.report.ReportProvider
+import com.avito.android.test.report.ReportTestListener
+import com.avito.android.test.report.ReportViewerHttpInterceptor
+import com.avito.android.test.report.ReportViewerWebsocketReporter
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
@@ -39,7 +44,7 @@ import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
 
 abstract class InHouseInstrumentationTestRunner :
-    AndroidJUnitRunner(),
+    InstrumentationTestRunner(),
     ReportProvider,
     PerformanceProvider,
     ImitateFlagProvider {
@@ -145,8 +150,6 @@ abstract class InHouseInstrumentationTestRunner :
 
     private lateinit var instrumentationArguments: Bundle
 
-    private val systemDialogsManager: SystemDialogsManager by lazy { SystemDialogsManager(report) }
-
     private val reportHttpClient: OkHttpClient by lazy { createReportHttpClient() }
 
     abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
@@ -200,11 +203,17 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    override fun onStart() {
-        testRunEnvironment.executeIfRealRun {
-            systemDialogsManager.closeSystemDialogs()
+    override fun createFactory(): ContextFactory {
+        return object : ContextFactory.Default() {
+            override fun createIfRealRun(arguments: Bundle): Context {
+                return DefaultTestInstrumentationContext(
+                    errorsReporter = SentryErrorsReporter(sentry)
+                )
+            }
         }
+    }
 
+    override fun onStart() {
         super.onStart()
 
         testRunEnvironment.executeIfRealRun {
