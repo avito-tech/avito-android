@@ -32,6 +32,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
+    @Optional
     @InputFile
     val application: RegularFileProperty = objects.fileProperty()
 
@@ -145,7 +146,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
             workerConfiguration.isolationMode = IsolationMode.NONE
             workerConfiguration.setParams(
                 InstrumentationTestsAction.Params(
-                    mainApk = application.get().asFile,
+                    mainApk = application.orNull?.asFile,
                     testApk = testApplication.get().asFile,
                     apkOnTargetCommit = apkOnTargetCommit.orNull?.asFile,
                     testApkOnTargetCommit = testApkOnTargetCommit.orNull?.asFile,

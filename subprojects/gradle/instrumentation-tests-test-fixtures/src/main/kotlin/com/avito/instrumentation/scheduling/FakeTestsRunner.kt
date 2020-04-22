@@ -20,7 +20,7 @@ class FakeTestsRunner(
 
     @Synchronized
     override fun runTests(
-        mainApk: File,
+        mainApk: File?,
         testApk: File,
         runType: TestExecutor.RunType,
         reportCoordinates: ReportCoordinates,
@@ -47,7 +47,7 @@ class FakeTestsRunner(
     }
 
     data class RunTestsRequest(
-        val mainApk: File,
+        val mainApk: File?,
         val testApk: File,
         val runType: TestExecutor.RunType,
         val reportCoordinates: ReportCoordinates,

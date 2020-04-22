@@ -7,6 +7,7 @@ import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.avito.android.getApkFile
 import com.avito.android.withAndroidApp
+import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
 import com.avito.android.withArtifacts
 import com.avito.buildontarget.buildOnTargetTask
@@ -99,33 +100,146 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             }
         )
 
-        project.withAndroidApp { appExtension ->
+        // see LintWorkerApiWorkaround.md
+        project.tasks.register<DelayTask>(preInstrumentationTaskName) {
+            group = ciTaskGroup
+            description = "Executed when all inputs of all instrumentation tasks in the module are ready"
 
-            // see LintWorkerApiWorkaround.md
-            project.tasks.register<DelayTask>(preInstrumentationTaskName) {
-                group = ciTaskGroup
-                description =
-                    "Executed when all inputs of all instrumentation tasks in the module are ready"
+            delayMillis.set(500L)
+        }
 
-                delayMillis.set(500L)
-            }
+        project.withInstrumentationExtensionData { extensionData ->
+            extensionData.configurations.forEach { instrumentationConfiguration ->
 
-            appExtension.testVariants.all { testVariant: TestVariant ->
-                val testedVariant: ApplicationVariant =
-                    testVariant.testedVariant as ApplicationVariant
+                val configurationOutputFolder =
+                    File(extensionData.output, instrumentationConfiguration.name)
 
-                project.withInstrumentationExtensionData { extensionData ->
-                    extensionData.configurations.forEach { instrumentationConfiguration ->
+                val runOnTargetCommit = RunOnTargetCommitCondition.evaluate(
+                    instrumentationConfiguration = instrumentationConfiguration,
+                    hasBuildOnTargetPlugin = project.pluginManager.hasBuildOnTargetPlugin(),
+                    buildOnTargetTaskProvider = { project.tasks.buildOnTargetTask() }
+                )
 
-                        logger.debug("[InstrConfig:${instrumentationConfiguration.name}] Creating...")
+                // see LintWorkerApiWorkaround.md
+                val preInstrumentationTask = project.tasks.register<Task>(
+                    preInstrumentationTaskName(instrumentationConfiguration.name)
+                ) {
+                    group = ciTaskGroup
+
+                    if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
+                        dependsOn(runOnTargetCommit.task)
+                    }
+
+                    if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
+                        dependsOn(
+                            instrumentationConfiguration.impactAnalysisPolicy.getTask(
+                                project
+                            )
+                        )
+                    }
+                }
+
+                val instrumentationTask = project.tasks.register<InstrumentationTestsTask>(
+                    instrumentationTaskName(instrumentationConfiguration.name)
+                ) {
+                    timeout.set(Duration.ofMinutes(100)) //todo move value to extension
+                    group = ciTaskGroup
+
+                    if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
+                        dependencyOn(runOnTargetCommit.task) { dependentTask ->
+                            apkOnTargetCommit.set(dependentTask.mainApk.toOptional())
+                            testApkOnTargetCommit.set(dependentTask.testApk.toOptional())
+                        }
+                    }
+
+                    when (instrumentationConfiguration.impactAnalysisPolicy) {
+                        is ImpactAnalysisPolicy.On -> {
+                            dependencyOn(
+                                instrumentationConfiguration.impactAnalysisPolicy.getTask(
+                                    project
+                                )
+                            ) {
+                                impactAnalysisResult.set(
+                                    instrumentationConfiguration.impactAnalysisPolicy
+                                        .getArtifact(it)
+                                )
+                            }
+                        }
+                    }
+
+                    val isFullTestSuite = gitState.map {
+                        it.isOnDefaultBranch
+                            && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                    }
+                        .orElse(false)
+
+                    this.instrumentationConfiguration.set(instrumentationConfiguration)
+                    this.buildId.set(env.build.id.toString())
+                    this.buildType.set(env.build.type)
+                    this.buildUrl.set(env.build.url)
+                    this.gitBranch.set(gitState.map { it.currentBranch.name })
+                    this.gitCommit.set(gitState.map { it.currentBranch.commit })
+                    this.defaultBranch.set(gitState.map { it.defaultBranch })
+                    this.fullTestSuite.set(isFullTestSuite)
+                    this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
+
+                    // will be changed in [UiTestCheck]
+                    this.sendStatistics.set(false)
+                    this.slackToken.set(extensionData.slackToken)
+
+                    this.output.set(configurationOutputFolder)
+                    this.reportApiUrl.set(extensionData.reportApiUrl)
+                    this.fileStorageUrl.set(extensionData.fileStorageUrl)
+                    this.reportApiFallbackUrl.set(extensionData.reportApiFallbackUrl)
+                    this.reportViewerUrl.set(extensionData.reportViewerUrl)
+                    this.registry.set(extensionData.registry)
+                    this.unitToChannelMapping.set(extensionData.unitToChannelMapping)
+                    this.kubernetesCredentials.set(project.kubernetesCredentials)
+                }
+
+                project.withAndroidLib { libExtension ->
+
+                    val runner = libExtension.defaultConfig.testInstrumentationRunner
+                    require(runner.isNotBlank()) { "testInstrumentationRunner must be set" }
+
+                    libExtension.testVariants.all { testVariant: TestVariant ->
+                        val testApkProvider = testVariant.packageApplicationProvider
+
+                        val runFunctionalTestsParameters = ExecutionParameters(
+                            applicationPackageName = testVariant.applicationId,
+                            applicationTestPackageName = testVariant.applicationId,
+                            testRunner = runner,
+                            namespace = instrumentationConfiguration.kubernetesNamespace,
+                            logcatTags = extensionData.logcatTags,
+                            enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
+                        )
+
+                        preInstrumentationTask.configure { it.dependsOn(testApkProvider) }
+
+                        instrumentationTask.configure { task ->
+                            task.parameters.set(runFunctionalTestsParameters)
+
+                            if (extensionData.testApplicationApk == null) {
+                                task.dependencyOn(testApkProvider) { dependentTask ->
+                                    task.testApplication.set(dependentTask.getApkFile())
+                                }
+                            } else {
+                                task.testApplication.set(File(extensionData.testApplicationApk))
+                            }
+                        }
+                    }
+                }
+
+                project.withAndroidApp { appExtension ->
+
+                    appExtension.testVariants.all { testVariant: TestVariant ->
+                        val testedVariant: ApplicationVariant = testVariant.testedVariant as ApplicationVariant
 
                         testVariant.withArtifacts { testVariantPackageTask, testedVariantPackageTask ->
 
-                            val configurationOutputFolder =
-                                File(extensionData.output, instrumentationConfiguration.name)
-
                             val runner = appExtension.defaultConfig.testInstrumentationRunner
                             require(runner.isNotBlank()) { "testInstrumentationRunner must be set" }
+
                             val runFunctionalTestsParameters = ExecutionParameters(
                                 applicationPackageName = testedVariant.applicationId,
                                 applicationTestPackageName = testVariant.applicationId,
@@ -135,106 +249,31 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
                             )
 
-                            val runOnTargetCommit = RunOnTargetCommitCondition.evaluate(
-                                instrumentationConfiguration = instrumentationConfiguration,
-                                hasBuildOnTargetPlugin = project.pluginManager.hasBuildOnTargetPlugin(),
-                                buildOnTargetTaskProvider = { project.tasks.buildOnTargetTask() }
-                            )
-
-                            // see LintWorkerApiWorkaround.md
-                            project.tasks.register<Task>(
-                                preInstrumentationTaskName(instrumentationConfiguration.name)
-                            ) {
-                                group = ciTaskGroup
-
-                                dependsOn(testedVariantPackageTask, testVariantPackageTask)
-
-                                if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
-                                    dependsOn(runOnTargetCommit.task)
-                                }
-
-                                if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
-                                    dependsOn(
-                                        instrumentationConfiguration.impactAnalysisPolicy.getTask(
-                                            project
-                                        )
-                                    )
-                                }
+                            preInstrumentationTask.configure {
+                                it.dependsOn(
+                                    testedVariantPackageTask,
+                                    testVariantPackageTask
+                                )
                             }
 
-                            project.tasks.register<InstrumentationTestsTask>(
-                                instrumentationTaskName(instrumentationConfiguration.name)
-                            ) {
-                                timeout.set(Duration.ofMinutes(100))
-                                group = ciTaskGroup
+                            instrumentationTask.configure { task ->
+                                task.parameters.set(runFunctionalTestsParameters)
 
                                 if (extensionData.applicationApk == null) {
-                                    dependencyOn(testedVariantPackageTask) { dependentTask ->
-                                        application.set(dependentTask.getApkFile())
+                                    task.dependencyOn(testedVariantPackageTask) { dependentTask ->
+                                        task.application.set(dependentTask.getApkFile())
                                     }
                                 } else {
-                                    application.set(File(extensionData.applicationApk))
+                                    task.application.set(File(extensionData.applicationApk))
                                 }
 
                                 if (extensionData.testApplicationApk == null) {
-                                    dependencyOn(testVariantPackageTask) { dependentTask ->
-                                        testApplication.set(dependentTask.getApkFile())
+                                    task.dependencyOn(testVariantPackageTask) { dependentTask ->
+                                        task.testApplication.set(dependentTask.getApkFile())
                                     }
                                 } else {
-                                    testApplication.set(File(extensionData.testApplicationApk))
+                                    task.testApplication.set(File(extensionData.testApplicationApk))
                                 }
-
-                                if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
-                                    dependencyOn(runOnTargetCommit.task) { dependentTask ->
-                                        apkOnTargetCommit.set(dependentTask.mainApk.toOptional())
-                                        testApkOnTargetCommit.set(dependentTask.testApk.toOptional())
-                                    }
-                                }
-
-                                when (instrumentationConfiguration.impactAnalysisPolicy) {
-                                    is ImpactAnalysisPolicy.On -> {
-                                        dependencyOn(
-                                            instrumentationConfiguration.impactAnalysisPolicy.getTask(
-                                                project
-                                            )
-                                        ) {
-                                            impactAnalysisResult.set(
-                                                instrumentationConfiguration.impactAnalysisPolicy
-                                                    .getArtifact(it)
-                                            )
-                                        }
-                                    }
-                                }
-
-                                val isFullTestSuite = gitState.map {
-                                    it.isOnDefaultBranch
-                                            && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
-                                }
-                                    .orElse(false)
-
-                                this.instrumentationConfiguration.set(instrumentationConfiguration)
-                                this.parameters.set(runFunctionalTestsParameters)
-                                this.buildId.set(env.build.id.toString())
-                                this.buildType.set(env.build.type)
-                                this.buildUrl.set(env.build.url)
-                                this.gitBranch.set(gitState.map { it.currentBranch.name })
-                                this.gitCommit.set(gitState.map { it.currentBranch.commit })
-                                this.defaultBranch.set(gitState.map { it.defaultBranch })
-                                this.fullTestSuite.set(isFullTestSuite)
-                                this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
-
-                                // будет переписано из [UiTestCheck]
-                                this.sendStatistics.set(false)
-                                this.slackToken.set(extensionData.slackToken)
-
-                                this.output.set(configurationOutputFolder)
-                                this.reportApiUrl.set(extensionData.reportApiUrl)
-                                this.fileStorageUrl.set(extensionData.fileStorageUrl)
-                                this.reportApiFallbackUrl.set(extensionData.reportApiFallbackUrl)
-                                this.reportViewerUrl.set(extensionData.reportViewerUrl)
-                                this.registry.set(extensionData.registry)
-                                this.unitToChannelMapping.set(extensionData.unitToChannelMapping)
-                                this.kubernetesCredentials.set(project.kubernetesCredentials)
                             }
                         }
                     }

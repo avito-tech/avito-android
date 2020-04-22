@@ -1,7 +1,10 @@
 package com.avito.instrumentation.suite.filter
 
+import com.google.common.annotations.VisibleForTesting
+
 internal class CompositionFilter(
-    private val filters: List<TestsFilter>
+    @VisibleForTesting
+    internal val filters: List<TestsFilter>
 ) : TestsFilter {
 
     override val name = "Composition"

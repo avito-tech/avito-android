@@ -6,7 +6,7 @@ import com.avito.runner.service.worker.device.model.DeviceConfiguration
 data class TestRunRequest(
     val testCase: TestCase,
     val configuration: DeviceConfiguration,
-    val application: String,
+    val application: String?,
     val applicationPackage: String,
     val testApplication: String,
     val testPackage: String,

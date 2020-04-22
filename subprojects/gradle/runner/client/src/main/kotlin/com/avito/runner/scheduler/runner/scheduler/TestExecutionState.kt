@@ -72,22 +72,28 @@ class TestExecutionStateImplementation(
             .toList()
     }
 
-    private fun nextRunIntention(executionNumber: Int) =
-        Intention(
-            state = State(
-                layers = listOf(
-                    State.Layer.ApiLevel(api = request.configuration.api),
-                    State.Layer.Model(model = request.configuration.model),
-                    State.Layer.InstalledApplication(
-                        applicationPath = request.application,
-                        applicationPackage = request.applicationPackage
-                    ),
-                    State.Layer.InstalledApplication(
-                        applicationPath = request.testApplication,
-                        applicationPackage = request.testPackage
-                    )
+    private fun nextRunIntention(executionNumber: Int): Intention {
+
+        val layers = mutableListOf(
+            State.Layer.ApiLevel(api = request.configuration.api),
+            State.Layer.Model(model = request.configuration.model),
+            State.Layer.InstalledApplication(
+                applicationPath = request.testApplication,
+                applicationPackage = request.testPackage
+            )
+        )
+
+        if (request.application != null) {
+            layers.add(
+                State.Layer.InstalledApplication(
+                    applicationPath = request.application,
+                    applicationPackage = request.applicationPackage
                 )
-            ),
+            )
+        }
+
+        return Intention(
+            state = State(layers = layers),
             action = InstrumentationTestRunAction(
                 test = request.testCase,
                 testPackage = request.testPackage,
@@ -99,4 +105,5 @@ class TestExecutionStateImplementation(
                 enableDeviceDebug = request.enableDeviceDebug
             )
         )
+    }
 }

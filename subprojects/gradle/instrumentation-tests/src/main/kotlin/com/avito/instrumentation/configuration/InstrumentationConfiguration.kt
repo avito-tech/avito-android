@@ -6,7 +6,6 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import java.io.Serializable
 
-@Suppress("MemberVisibilityCanBePrivate")
 abstract class InstrumentationConfiguration(val name: String) {
 
     var instrumentationParams: Map<String, String> = emptyMap()
@@ -27,7 +26,6 @@ abstract class InstrumentationConfiguration(val name: String) {
      * Логика для принятия решения о типе падений в [com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun]
      */
     var tryToReRunOnTargetBranch = false
-
 
     var reportFlakyTests = false
 
@@ -82,7 +80,8 @@ abstract class InstrumentationConfiguration(val name: String) {
             },
             performanceType = performanceType,
             enableDeviceDebug = enableDeviceDebug,
-            filter = filters.singleOrNull { it.name == filter } ?: throw IllegalStateException("Can't find filter=$filter")
+            filter = filters.singleOrNull { it.name == filter }
+                ?: throw IllegalStateException("Can't find filter=$filter")
         )
     }
 
@@ -108,8 +107,7 @@ abstract class InstrumentationConfiguration(val name: String) {
             }
         }
 
-        override fun toString(): String =
-            "$name, targets: $targets, filter: $filter "
+        override fun toString(): String = "$name, targets: $targets, filter: $filter "
 
         companion object
     }

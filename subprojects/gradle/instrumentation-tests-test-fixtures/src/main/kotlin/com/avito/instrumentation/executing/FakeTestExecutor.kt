@@ -9,7 +9,7 @@ class FakeTestExecutor : TestExecutor {
     val configurationsQueue: List<String> = mutableListOf()
 
     override fun execute(
-        application: File,
+        application: File?,
         testApplication: File,
         testsToRun: List<TestWithTarget>,
         executionParameters: ExecutionParameters,

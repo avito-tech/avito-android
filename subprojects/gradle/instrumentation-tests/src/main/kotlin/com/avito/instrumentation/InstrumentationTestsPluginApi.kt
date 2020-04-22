@@ -3,6 +3,7 @@ package com.avito.instrumentation
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.kotlin.dsl.typedNamed
+import com.avito.kotlin.dsl.typedNamedOrNull
 import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -34,15 +35,19 @@ fun TaskContainer.instrumentationTask(
     callback: (TaskProvider<InstrumentationTestsTask>) -> Unit
 ) {
     val name = instrumentationTaskName(configuration)
-    whenTaskAdded {
-        if (it.name == name) {
-            callback.invoke(typedNamed(name))
+    val taskProvider = typedNamedOrNull<InstrumentationTestsTask>(name)
+    if (taskProvider != null) {
+        callback(taskProvider)
+    } else {
+        whenTaskAdded {
+            if (it.name == name) {
+                callback.invoke(typedNamed(name))
+            }
         }
     }
 }
 
 fun Project.withInstrumentationTests(block: (config: GradleInstrumentationPluginConfiguration.Data) -> Unit) {
-    instrumentationDumpPath
     plugins.withType<InstrumentationTestsPlugin> {
         withInstrumentationExtensionData(block)
     }
