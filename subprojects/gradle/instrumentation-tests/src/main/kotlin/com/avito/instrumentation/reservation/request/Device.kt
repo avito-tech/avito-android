@@ -19,7 +19,7 @@ sealed class Device : Serializable {
             get() = "local-emulator-$name"
 
         companion object {
-
+            @JvmStatic
             fun device(api: Int): LocalEmulator = LocalEmulator(
                 name = api.toString(),
                 api = api
