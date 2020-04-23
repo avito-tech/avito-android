@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.base.DefaultFailureHandler
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.mock.MockDispatcher
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
@@ -16,6 +17,7 @@ import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
 import com.avito.android.test.report.Report
+import com.avito.android.test.report.ReportFriendlyFailureHandler
 import com.avito.android.test.report.ReportImplementation
 import com.avito.android.test.report.ReportProvider
 import com.avito.android.test.report.ReportTestListener
@@ -196,7 +198,9 @@ abstract class InHouseInstrumentationTestRunner :
         super.onCreate(arguments)
 
         testRunEnvironment.executeIfRealRun {
-            Espresso.setFailureHandler(ReportFriendlyFailureHandler(targetContext))
+            Espresso.setFailureHandler(
+                ReportFriendlyFailureHandler(DefaultFailureHandler(targetContext))
+            )
             initUITestConfig()
 
             DeviceSettingsChecker(targetContext).check()
