@@ -14,7 +14,7 @@ interface ContextFactory {
         abstract fun createIfRealRun(arguments: Bundle): Context
 
         private val Bundle.isRealRun: Boolean
-            get() = containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
+            get() = !containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
     }
 
     companion object {
