@@ -41,7 +41,7 @@ private fun defaultCILogger(
     project: Project,
     name: String
 ): CILoggerRegistry.Entity {
-    val destinationFileName = "outputs/ci/$name.txt"
+    val destinationFileName = "${project.rootDir}/outputs/ci/$name.txt"
     val destinationFile = File(destinationFileName)
 
     val destinationFileHandler = CILoggingHandlerImplementation(

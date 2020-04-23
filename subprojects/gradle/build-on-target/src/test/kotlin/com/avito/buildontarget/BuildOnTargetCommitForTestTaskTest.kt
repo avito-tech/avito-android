@@ -1,7 +1,6 @@
 package com.avito.buildontarget
 
 import com.avito.git.Git
-import com.avito.instrumentation.minimalInstrumentationPluginConfiguration
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
@@ -11,7 +10,6 @@ import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -20,7 +18,7 @@ import java.nio.file.Paths
 internal class BuildOnTargetCommitForTestTaskTest {
 
     private lateinit var tempDir: File
-    private val git: Git by lazy { Git.Impl(tempDir) { CILogger.allToStdout.info(it)} }
+    private val git: Git by lazy { Git.Impl(tempDir) { CILogger.allToStdout.info(it) } }
 
     private val syncBranch = "develop"
 
@@ -31,8 +29,7 @@ internal class BuildOnTargetCommitForTestTaskTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    plugins = listOf("com.avito.android.instrumentation-tests"),
-                    buildGradleExtra = minimalInstrumentationPluginConfiguration
+                    plugins = listOf("com.avito.android.build-on-target")
                 )
             ),
             localBuildCache = File(tempDir, "local-build-cache").apply { mkdirs() }
@@ -46,7 +43,6 @@ internal class BuildOnTargetCommitForTestTaskTest {
         }
     }
 
-    @Disabled("task is not cacheable atm")
     @Test
     fun `instrumentation task - is loaded from cache`() {
         val versionName = "123"
@@ -88,7 +84,6 @@ internal class BuildOnTargetCommitForTestTaskTest {
         assertThat(File(testApkPath.toFile(), "app-debug-androidTest.apk").readText()).isEqualTo("stub")
     }
 
-    @Disabled("task is not cacheable atm")
     @Test
     fun `instrumentation task - misses cache for new commit hash`(@TempDir tempDir: File) {
         val versionName = "123"
