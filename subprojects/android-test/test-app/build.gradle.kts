@@ -145,11 +145,11 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         "jobSlug" to "FunctionalTests"
     )
 
-    val filterName = "default"
+    val defaultFilter = "default"
 
     // deprecated since 2020.4.4
-    if (filters.findByName(filterName) == null) {
-        filters.register(filterName) {
+    if (filters.findByName(defaultFilter) == null) {
+        filters.register(defaultFilter) {
             fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Manual, RunStatus.Success))
         }
     }
@@ -162,15 +162,19 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         if (includeAnnotation != null) {
             fromSource.includeByAnnotations(setOf(includeAnnotation))
         }
+        val includePrefix: String? = project.getOptionalStringProperty("includePrefix")
+        if (includePrefix != null) {
+            fromSource.includeByPrefixes(setOf(includePrefix))
+        }
     }
 
-    val localFilter: String = project.getOptionalStringProperty("localFilter", filterName)
+    val customFilter: String = project.getOptionalStringProperty("localFilter", defaultFilter)
 
     configurationsContainer.register("Local") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
         reportFlakyTests = false
-        filter = localFilter
+        filter = customFilter
 
         targetsContainer.register("api27") {
             deviceName = "API27"
@@ -195,6 +199,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
         reportFlakyTests = true
+        filter = customFilter
 
         targetsContainer.register("api22") {
             deviceName = "API22"
@@ -238,7 +243,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         reportSkippedTests = false
         reportFlakyTests = false
         enableDeviceDebug = true
-        filter = runAllFilterName
+        filter = customFilter
 
         targetsContainer.register("api27") {
             deviceName = "API27"
