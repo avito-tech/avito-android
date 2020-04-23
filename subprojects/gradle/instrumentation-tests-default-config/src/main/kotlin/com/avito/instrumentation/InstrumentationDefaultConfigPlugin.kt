@@ -57,6 +57,11 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                     it.fromSource.includeByAnnotations(TestsFilter.uiNoE2E.annotatedWith)
                     it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Success, RunStatus.Manual))
                 }
+                filters.register("uiNoE2eNoFlaky") {
+                    it.fromSource.includeByAnnotations(TestsFilter.uiNoE2E.annotatedWith)
+                    it.fromSource.excludeByAnnotations(TestsFilter.flaky.annotatedWith)
+                    it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Success, RunStatus.Manual))
+                }
                 filters.register("newUi") {
                     it.fromSource.includeByAnnotations(TestsFilter.ui.annotatedWith)
                 }
@@ -84,6 +89,10 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                 configurationsContainer.register(
                     "uiNoE2e",
                     registerUiConfig("uiNoE2e", hasE2eTests = false)
+                )
+                configurationsContainer.register(
+                    "uiNoE2eNoFlaky",
+                    registerUiConfig("uiNoE2eNoFlaky", hasE2eTests = false)
                 )
 
                 configurationsContainer.register(
