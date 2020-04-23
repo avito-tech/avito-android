@@ -1,4 +1,4 @@
-package com.avito.ci.steps
+package com.avito.ci.steps.release
 
 import com.avito.android.plugin.artifactory.artifactoryAppBackupTask
 import com.avito.cd.AndroidArtifactType.APK
@@ -6,6 +6,10 @@ import com.avito.cd.AndroidArtifactType.BUNDLE
 import com.avito.cd.CdBuildConfig
 import com.avito.cd.cdBuildConfig
 import com.avito.cd.isCdBuildConfigPresent
+import com.avito.ci.steps.ArtifactsConfiguration
+import com.avito.ci.steps.Output
+import com.avito.ci.steps.SuppressibleBuildStep
+import com.avito.ci.steps.verifyTaskName
 import com.avito.upload_to_googleplay.GooglePlayDeploy
 import com.avito.upload_to_googleplay.registerDeployToGooglePlayTask
 import com.avito.utils.logging.ciLogger

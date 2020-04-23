@@ -8,7 +8,7 @@ open class CiCdExtension(objects: ObjectFactory) {
 
     internal val localCheckSteps = BuildStepListExtension("localCheck", objects)
 
-    internal val releaseSteps = BuildStepListExtension("release", objects)
+    internal val releaseSteps = ReleaseBuildStepsExtension(objects)
 
     internal val uploadArtifactsSteps = BuildStepListExtension("uploadArtifacts", objects)
 

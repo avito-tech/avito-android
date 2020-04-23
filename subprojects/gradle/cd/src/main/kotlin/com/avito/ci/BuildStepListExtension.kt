@@ -4,7 +4,6 @@ import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.ConfigurationCheck
-import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.PerformanceTestCheck
@@ -21,9 +20,12 @@ import org.gradle.api.provider.ListProperty
 
 
 @Suppress("UnstableApiUsage")
-open class BuildStepListExtension(private val name: String, objects: ObjectFactory) {
+open class BuildStepListExtension(
+    protected val name: String,
+    objects: ObjectFactory
+) {
 
-    private val artifactsConfig = ArtifactsConfiguration()
+    protected val artifactsConfig = ArtifactsConfiguration()
 
     internal val steps: ListProperty<BuildStep> = objects.listProperty(BuildStep::class.java).empty()
 
@@ -69,10 +71,6 @@ open class BuildStepListExtension(private val name: String, objects: ObjectFacto
         configureAndAdd(UploadBuildResult(name), closure)
     }
 
-    fun deploy(closure: Closure<DeployStep>) {
-        configureAndAdd(DeployStep(name, artifactsConfig), closure)
-    }
-
     fun artifacts(closure: Closure<ArtifactsConfiguration>) {
         val step = VerifyArtifactsStep(name, artifactsConfig)
         steps.add(step)
@@ -84,7 +82,7 @@ open class BuildStepListExtension(private val name: String, objects: ObjectFacto
         step.useImpactAnalysis = this.useImpactAnalysis
     }
 
-    private fun <T : BuildStep> configureAndAdd(step: T, configure: Closure<T>) {
+    protected fun <T : BuildStep> configureAndAdd(step: T, configure: Closure<T>) {
         configure.delegate = step
         configure.resolveStrategy = Closure.DELEGATE_FIRST
         configure.call()
