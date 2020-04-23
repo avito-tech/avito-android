@@ -30,7 +30,7 @@ class BuildOnTargetPlugin : Plugin<Project> {
 
         val logger = project.ciLogger
         val env = project.envArgs
-        val gitState = project.gitState { logger.info(it) }
+        val gitState = project.gitState { message -> logger.debug(message) }
 
         @Suppress("UnstableApiUsage")
         val targetBranch: Provider<Branch> = gitState.flatMap { state ->
@@ -84,7 +84,7 @@ class BuildOnTargetPlugin : Plugin<Project> {
                         .map { it.relativeTo(project.rootDir) }
                         .map { RegularFile { nestedBuildDir.resolve(it) } })
 
-                    outputs.doNotCacheIf("'buildOnTarget.buildCacheEnabled' is set to false") {
+                    outputs.cacheIf("'buildOnTarget.buildCacheEnabled' is set to false") {
                         extension.buildCacheEnabled
                     }
                 }
