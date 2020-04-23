@@ -187,7 +187,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-### Change applied filter without changing `build.gradle.kts`
+### Apply a filter without changing `build.gradle.kts`
 
 1. Add custom gradle property for filter name to gradle.properties file
 
@@ -254,6 +254,12 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 1. [Request](http://links.k.avito.ru/androidEmulatorServiceDesk) `exec` access to `android-emulator` namespace in `beta` cluster
 1. Setup a context on `beta`, `android-emulator` with your user access.\
 More about kubernetes context: [Official docs](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#define-clusters-users-and-contexts)
+1. Add a configuration with target on kubernetes
+
+```kotlin
+TBD
+```
+
 1. Run tests with extra parameters specified. The example for `:test-app`:
 
 ```shell script
@@ -266,8 +272,37 @@ More about kubernetes context: [Official docs](https://kubernetes.io/docs/tasks/
 
 ### Run tests on local emulator target
 
+0. Add a configuration with target on local emulator
+
+```kotlin
+configurationsContainer.register("Local") {
+
+        targetsContainer.register("api27") {
+            deviceName = "API27"
+
+            scheduling = SchedulingConfiguration().apply {
+                quota = QuotaConfiguration().apply {
+                    retryCount = 1
+                    minimumSuccessCount = 1
+                }
+
+                reservation = TestsBasedDevicesReservationConfiguration().apply {
+                    device = LocalEmulator.device(27)
+                    maximum = 1
+                    testsPerEmulator = 1
+                }
+            }
+        }
+    }
+```
+
 1. Run an emulator with 27 API
-2. Run `./gradlew :subprojects:android-test:test-app:instrumentationLocal`
+2. Run gradle CLI command
+
+```shell script
+`./gradlew :<project gradle path>:instrumentation<configuration name>`, e.g.
+`./gradlew :subprojects:android-test:test-app:instrumentationLocal`
+```
 
 ## Run test on APK was built before
 
