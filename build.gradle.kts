@@ -230,7 +230,14 @@ subprojects {
         }
     }
 
+    plugins.withId("kotlin-android") {
+        configureJunit5Tests()
+    }
+
+    //todo more precise configuration for gradle plugins, no need for gradle testing in common kotlin modules
     plugins.withId("kotlin") {
+
+        configureJunit5Tests()
 
         extensions.getByType<JavaPluginExtension>().run {
             withSourcesJar()
@@ -238,9 +245,6 @@ subprojects {
 
         this@subprojects.tasks {
             withType<Test> {
-                @Suppress("UnstableApiUsage")
-                useJUnitPlatform()
-
                 systemProperty("kotlinVersion", plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion)
                 systemProperty("compileSdkVersion", compileSdk)
                 systemProperty("buildToolsVersion", buildTools)
@@ -256,14 +260,7 @@ subprojects {
         }
 
         dependencies {
-            "testImplementation"(Dependencies.test.junitJupiterApi)
-
-            "testRuntimeOnly"(Dependencies.test.junitPlatformRunner)
-            "testRuntimeOnly"(Dependencies.test.junitPlatformLauncher)
-            "testRuntimeOnly"(Dependencies.test.junitJupiterEngine)
-
             "testImplementation"(gradleTestKit())
-            "testImplementation"(Dependencies.test.truth)
         }
     }
 
@@ -335,5 +332,21 @@ fun Project.configureBintray(vararg publications: String) {
 
     tasks.named(publishReleaseTaskName).configure {
         dependsOn(tasks.named("bintrayUpload"))
+    }
+}
+
+fun Project.configureJunit5Tests() {
+    dependencies {
+        "testImplementation"(Dependencies.test.junitJupiterApi)
+
+        "testRuntimeOnly"(Dependencies.test.junitPlatformRunner)
+        "testRuntimeOnly"(Dependencies.test.junitPlatformLauncher)
+        "testRuntimeOnly"(Dependencies.test.junitJupiterEngine)
+
+        "testImplementation"(Dependencies.test.truth)
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
