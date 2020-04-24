@@ -175,4 +175,4 @@ You will see branches from both repositories:
 - By default, build uses develop from github against develop from avito
 - If you pick a branch from avito, it will run against develop on github
 - If you pick a branch from github, it will run against develop on avito
-- (UNTESTED) To build both projects of special branch, they should have the same name
+- To build both projects of special branch, they should have the same name
