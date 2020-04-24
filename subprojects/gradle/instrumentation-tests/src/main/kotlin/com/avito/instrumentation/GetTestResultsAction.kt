@@ -32,13 +32,14 @@ internal class GetTestResultsAction(
                 }
 
                 override fun exception(msg: String, error: Throwable) {
-                    ciLogger.debug(msg, error)
+                    ciLogger.critical(msg, error)
                 }
 
                 override fun critical(msg: String, error: Throwable) {
-                    ciLogger.debug(msg, error)
+                    ciLogger.critical(msg, error)
                 }
-            }
+            },
+            verboseHttp = false
         ),
         logger = ciLogger,
         reportCoordinates = reportCoordinates,
