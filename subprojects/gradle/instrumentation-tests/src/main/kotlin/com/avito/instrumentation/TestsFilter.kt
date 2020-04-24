@@ -33,6 +33,8 @@ private val performanceNoE2EAnnotations =
 private val performanceAnnotations =
     performanceNoE2EAnnotations + "com.avito.android.test.annotations.PerformanceFunctionalTest"
 
+private val flakyAnnotations = setOf("com.avito.android.test.annotations.Flaky")
+
 enum class TestsFilter(val annotatedWith: Set<String>) {
     uiNoE2E(uiNoE2EAnnotations),
     ui(uiAnnotations),
@@ -40,5 +42,6 @@ enum class TestsFilter(val annotatedWith: Set<String>) {
     regression(regressionAnnotations),
     performanceNoE2E(performanceNoE2EAnnotations),
     performance(performanceAnnotations),
+    flaky(flakyAnnotations),
     empty(emptySet())
 }
