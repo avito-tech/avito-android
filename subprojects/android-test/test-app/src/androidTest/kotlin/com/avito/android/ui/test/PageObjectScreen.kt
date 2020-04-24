@@ -7,6 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.avito.android.screen.Screen
+import com.avito.android.screen.StrictScreenChecks
 import com.avito.android.test.InteractionContext
 import com.avito.android.test.page_object.HandleParentContext
 import com.avito.android.test.page_object.PageObject
@@ -31,6 +32,14 @@ class PageObjectScreen(@IdRes override val rootId: Int) : PageObject(), Screen {
 
     val textViewWithWrongText: TextViewElement = parentContainer.element(withText("invalid"))
 
+    override val checks: ScreenChecks = ScreenChecks()
+
+    inner class ScreenChecks : StrictScreenChecks(this) {
+        override fun isScreenOpened() {
+            super.isScreenOpened()
+            parentContainer.checks.exists()
+        }
+    }
 }
 
 /**

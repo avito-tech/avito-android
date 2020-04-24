@@ -35,7 +35,6 @@ interface ScreenChecks {
 class SimpleScreenChecks(override val screen: Screen) : ScreenChecks
 
 open class StrictScreenChecks(override val screen: Screen) : ScreenChecks {
-
     @SuppressLint("MissingSuperCall")
     override fun isOpened() = isScreenOpened() // for invokes from tests
 
