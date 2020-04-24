@@ -1,19 +1,17 @@
 package com.avito.android.ui.test
 
 import android.view.MenuItem
-import com.avito.android.runner.UITestFrameworkException
+import androidx.test.espresso.NoMatchingRootException
 import com.avito.android.ui.OverflowMenuActivity
+import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException
+import ru.avito.util.assertThrows
 
 class OverflowMenuTest {
 
     @get:Rule
     val rule = screenRule<OverflowMenuActivity>()
-
-    @get:Rule
-    val exception: ExpectedException = ExpectedException.none()
 
     @Test
     fun menuItem_isClickable_inActionMenu() {
@@ -42,9 +40,9 @@ class OverflowMenuTest {
             )
         )
 
-        exception.expect(UITestFrameworkException::class.java)
-        exception.expectMessage("Не найдена view в иерархии")
-
-        Screen.overflow.toolbar.menuItem.withDisabledAutoOpenOverflow().actions.click()
+        val error = assertThrows<NoMatchingRootException> {
+            Screen.overflow.toolbar.menuItem.withDisabledAutoOpenOverflow().actions.click()
+        }
+        assertThat(error).hasMessageThat().contains("Не найдена view в иерархии")
     }
 }

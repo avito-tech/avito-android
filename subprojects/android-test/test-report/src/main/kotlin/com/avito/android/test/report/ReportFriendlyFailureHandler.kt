@@ -1,33 +1,15 @@
-package com.avito.android.runner
+package com.avito.android.test.report
 
-import android.content.Context
 import android.view.View
 import androidx.test.espresso.AppNotIdleException
 import androidx.test.espresso.EspressoException
 import androidx.test.espresso.FailureHandler
 import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.PerformException
-import androidx.test.espresso.base.DefaultFailureHandler
 import junit.framework.AssertionFailedError
 import org.hamcrest.Matcher
 
-/**
- * todo move to :test:report
- * Trying to transform all espresso exceptions to readable form here
- */
-@Deprecated(
-    "Since 2020.4.5. Use implementation from test report",
-    ReplaceWith(
-        "ReportFriendlyFailureHandler(DefaultFailureHandler(targetContext))",
-        imports = arrayOf(
-            "androidx.test.espresso.base.DefaultFailureHandler",
-            "com.avito.android.test.report.ReportFriendlyFailureHandler"
-        )
-    )
-)
-class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
-
-    private val defaultFailureHandler = DefaultFailureHandler(targetContext)
+class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) : FailureHandler {
 
     private val normalizers = listOf(
         RegexNormalizer(
@@ -68,24 +50,22 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
 
     override fun handle(error: Throwable, viewMatcher: Matcher<View>?) {
         try {
-            defaultFailureHandler.handle(error, viewMatcher)
+            defaultHandler.handle(error, viewMatcher)
         } catch (e: Throwable) {
             when {
                 e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("ASYNC_TASKS_HAVE_IDLED") } -> {
                     val asyncTaskThreads = Thread.getAllStackTraces()
                         .filterKeys { it.name.contains("AsyncTask") }
                     val threadDump = asyncTaskThreads.entries.joinToString(separator = "\n") { it.dumpState() }
-                    throw UITestFrameworkException(
-                        message = "AsyncTask is still running in background. Thread dump:\n$threadDump",
-                        cause = e
+                    throw createException<AppNotIdleException>(
+                        "AsyncTask is still running in background. Thread dump:\n$threadDump"
                     )
                 }
                 e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } -> {
-                    throw UITestFrameworkException(
-                        message = "Main thread is busy. " +
+                    throw createException<AppNotIdleException>(
+                        "Main thread is busy. " +
                             "The probable cause is in animations. " +
-                            "Try to find them and suppress by @SuppressAnimationRule",
-                        cause = e
+                            "Try to find them and suppress by @SuppressAnimationRule"
                     )
                 }
                 // Handle expected errors from UITestConfig.waiterAllowedExceptions
@@ -108,19 +88,13 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
                     throw AssertionFailedError(e.normalizedMessage())
                 }
                 e is NoMatchingRootException -> {
-                    throw UITestFrameworkException(
-                        message = e.normalizedMessage(),
-                        cause = e
-                    )
+                    throw createException<NoMatchingRootException>(e.normalizedMessage())
                 }
                 e is EspressoException -> {
                     throw e
                 }
                 else -> {
-                    throw UITestFrameworkException(
-                        message = e.normalizedMessage(),
-                        cause = e
-                    )
+                    throw e
                 }
             }
         }
@@ -132,6 +106,12 @@ class ReportFriendlyFailureHandler(targetContext: Context) : FailureHandler {
         normalizers.forEach { failureMessage = it.normalize(failureMessage) }
 
         return failureMessage
+    }
+
+    private inline fun <reified T : Exception> createException(message: String): T {
+        val constructor = T::class.java.getDeclaredConstructor(String::class.java)
+        constructor.isAccessible = true
+        return constructor.newInstance(message)
     }
 
     private inline fun <reified T : Throwable> Throwable.isCausedBy(matcher: (error: T) -> Boolean): Boolean {

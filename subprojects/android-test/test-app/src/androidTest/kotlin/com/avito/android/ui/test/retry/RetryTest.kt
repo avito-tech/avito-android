@@ -6,27 +6,20 @@ import com.avito.android.ui.test.Screen
 import com.avito.android.ui.test.screenRule
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.ExpectedException
-import ru.avito.util.instanceOf
-import java.lang.RuntimeException
+import ru.avito.util.assertThrows
 
 class RetryTest {
 
     @get:Rule
     val rule = screenRule<RetryActivity>(launchActivity = true)
 
-    @get:Rule
-    val exception: ExpectedException = ExpectedException.none()
-
     @Test
     fun failWithOriginalError_oneShotActionFailedWithUnexpectedError() {
         // We must preserve an original error for a user
         // It can get lost accidentally due to UITestConfig.waiterAllowedExceptions
-        exception.expectCause(instanceOf<UnexpectedFatalError>())
-
-        Screen.retry.button.firstFail(UnexpectedFatalError()).click()
-
-        Screen.retry.buttonClickIndicator.checks.isDisplayed()
+        assertThrows<UnexpectedFatalError> {
+            Screen.retry.button.firstFail(UnexpectedFatalError()).click()
+        }
     }
 
     @Test
