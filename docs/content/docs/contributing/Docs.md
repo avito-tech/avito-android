@@ -379,18 +379,32 @@ Checklist for changes:
 Run manually after changes: `docs/publish.sh`\
 Auto-publishing will be done in MBS-7514 (internal).
 
-### How to upgrade hugo
+### How to upgrade Hugo
 
 Just change the version in Dockerfile.
 
-### How to update theme
+### How to upgrade theme
 
-Скачай новую версию темы и подмени существующие файлы.\
-Мы кастомизировали тему, проверь что не потеряем эти изменения:
-- Удалили примеры (book/exampleSite) и статику для них (book/images/)
-- Удалили js файлы для shortcode (book/static/*.js), потому что они могут весить мегабайты. 
-Загружаем из unpkg.com.
+Hugo theme is just a set of files in directory `themes/<theme>`. They are arranged by a specific layout.
 
-### How to upgrade custom shortcodes
+To upgrade theme to a new version:
 
-TBD
+1. Download a source code of a new [theme version](https://github.com/alex-shpak/hugo-book/releases).
+1. Replace `docs/themes/book` files by new ones
+1. Remove useless example files in the `book` folder: 
+    - `.github`
+    - `exampleSite`
+    - `images`
+    - `static/favicon.png`
+1. Remove a mermaid shortcode (`book/static/mermaid.min.js` and `book/layouts/shortcodes/mermaid.html`).
+We have a custom one.
+1. Restart Hugo: `docs/local.sh`
+1. Check locally that everything is working as expected:
+    - [Custom shortcodes]({{< relref "#working-with-custom-shortcodes" >}})
+    - Searching in English and Russian text
+
+### Working with custom shortcodes
+
+All [custom shortcodes](https://gohugo.io/templates/shortcode-templates/) 
+live in [docs/layouts/shortcodes](https://github.com/avito-tech/avito-android/tree/develop/docs/layouts/shortcodes) folder.\
+You can find them in markdown files by a filename - `layouts/shortcodes/avito.html` is `{{</*avito*/>}}`.

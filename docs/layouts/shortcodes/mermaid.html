@@ -1,11 +1,19 @@
 {{ if not (.Page.Scratch.Get "mermaid") }}
 <!-- Include mermaid only first time -->
-<!-- <script src="{{ "mermaid.min.js" | relURL }}"></script>
+<!--
 ======
-WARNING: We don't want to store huge js files in repo
+This is a copy of https://github.com/alex-shpak/hugo-book/blob/master/layouts/shortcodes/mermaid.html
+Rationale for a custom implementation:
+- Be able to update it independently
+- Use CDN instead of inlining megabytes of js in repository
 ======
 -->
 <script src="https://unpkg.com/mermaid@8.4.8/dist/mermaid.min.js" type="text/javascript" async></script>
+<script>
+mermaid.initialize({
+  flowchart: { useMaxWidth:true }
+});
+</script>
 {{ .Page.Scratch.Set "mermaid" true }}
 {{ end }}
 
