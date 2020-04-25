@@ -377,15 +377,11 @@ Checklist for changes:
 ### Publishing changes
 
 Run manually after changes: `docs/publish.sh`\
-Auto-publish: MBS-7514.
+Auto-publishing will be done in MBS-7514 (internal).
 
-### How to update hugo
+### How to upgrade hugo
 
-1. Обнови версию hugo в Dockerfile
-1. Обнови другие файлы
-    - Проверь, что локально установлена такая-же версия: `hugo version`
-    - Сгенерируй новый сайт: `hugo new site template`
-    - Сравни директорию `docs` со сгенерированным пустым сайтом
+Just change the version in Dockerfile.
 
 ### How to update theme
 
@@ -394,3 +390,7 @@ Auto-publish: MBS-7514.
 - Удалили примеры (book/exampleSite) и статику для них (book/images/)
 - Удалили js файлы для shortcode (book/static/*.js), потому что они могут весить мегабайты. 
 Загружаем из unpkg.com.
+
+### How to upgrade custom shortcodes
+
+TBD
