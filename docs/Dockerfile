@@ -1,12 +1,12 @@
 FROM ruby:2.6.5-alpine3.11 AS linter
 # mdl: https://github.com/markdownlint/markdownlint
-RUN gem install mdl -v 0.8.0
+RUN gem install mdl -v 0.9.0
 COPY . /docs
 WORKDIR /docs
 RUN mdl /docs/content
 
 
-FROM alpine:3.11
+FROM alpine:3.11.6
 
 RUN apk update \
     && apk add --update \
