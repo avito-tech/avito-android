@@ -380,7 +380,7 @@ data class AdbDevice(
         command = command
     )
         .ofType(ProcessNotification.Exit::class.java)
-        .doOnError { throw RuntimeException("Failed to execute command: $command on device $id") }
+        .doOnError { throwable -> throw RuntimeException("Failed to execute command: $command on device $id", throwable) }
         .timeout(
             timeoutSeconds,
             TimeUnit.SECONDS,
