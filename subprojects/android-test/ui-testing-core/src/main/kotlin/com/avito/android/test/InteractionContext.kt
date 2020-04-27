@@ -30,11 +30,13 @@ class SimpleInteractionContext(
     private val precondition: () -> Unit = {}
 ) : InteractionContext {
 
+    private var inPrecondition = false
+
     private val interaction: ViewInteraction
         get() = Espresso.onView(matcher)
 
     override fun perform(vararg actions: ViewAction) {
-        precondition()
+        runPrecondition()
 
         interaction.waitToPerform(actions.map { action ->
             ActionInterceptor.Proxy(
@@ -45,7 +47,7 @@ class SimpleInteractionContext(
     }
 
     override fun check(assertion: ViewAssertion) {
-        precondition()
+        runPrecondition()
 
         interaction.waitForCheck(
             AssertionInterceptor.Proxy(assertion, UITestConfig.assertionInterceptors)
@@ -54,6 +56,14 @@ class SimpleInteractionContext(
 
     override fun provideChildContext(matcher: Matcher<View>): InteractionContext =
         SimpleInteractionContext(allOf(isDescendantOfA(this.matcher), matcher), precondition)
+
+    private fun runPrecondition() {
+        if (!inPrecondition) {
+            inPrecondition = true
+            precondition()
+            inPrecondition = false
+        }
+    }
 }
 
 class RecyclerViewInteractionContext(
