@@ -23,7 +23,7 @@ android {
 
         testInstrumentationRunnerArguments(
             mapOf(
-                "planSlug" to "KaspressoAndroidTestAoo",
+                "planSlug" to "KaspressoAndroidTestApp",
                 "unnecessaryUrl" to "https://localhost"
             )
         )
@@ -118,10 +118,13 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         "jobSlug" to "FunctionalTests"
     )
 
+    filters.register("all")
+
     configurationsContainer.register("Local") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
         reportFlakyTests = false
+        filter = "all"
 
         targetsContainer.register("api27") {
             deviceName = "API27"
