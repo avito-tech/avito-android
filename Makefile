@@ -1,5 +1,35 @@
 test_build_type?=debug
+infra?=
+ci?=true
 log_level?=-q
+
+localFilter?=
+includePrefix?=
+includeAnnotation?=
+
+params?=
+
+ifdef localFilter
+params +=-PlocalFilter=$(localFilter)
+endif
+
+ifdef includePrefix
+params +=-PincludePrefix=$(includePrefix)
+endif
+
+ifdef includeAnnotation
+params +=-PincludeAnnotation=$(includeAnnotation)
+endif
+
+ifdef infra
+params +=-PinfraVersion=$(infra)
+endif
+
+params +=-PtestBuildType=$(test_build_type)
+params +=-Pci=$(ci)
+
+params +=$(log_level)
+
 filter_report_id?=
 
 test_app_help:
@@ -15,7 +45,7 @@ test_app_instrumentation:
 	./gradlew subprojects\:android-test\:test-app\:instrumentationUi -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) -PlocalFilter=$(local_filter) -PincludeAnnotation=$(includeAnnotation) -PincludePrefix=$(includePrefix) $(log_level)
 
 test_app_instrumentation_local:
-	./gradlew subprojects\:android-test\:test-app\:instrumentationLocal -PinfraVersion=local -Pci=true -PtestBuildType=$(test_build_type) -PlocalFilter=$(local_filter) -PincludeAnnotation=$(includeAnnotation) -PincludePrefix=$(includePrefix) $(log_level)
+	./gradlew subprojects\:android-test\:test-app\:instrumentationLocal $(params)
 
 test_app_instrumentation_android_debug:
 	./gradlew :subprojects:android-test:test-app:instrumentationUiDebug -PinfraVersion=local -Pci=true -PkubernetesContext=beta -PtestBuildType=$(test_build_type) -PlocalFilter=$(local_filter) -PincludeAnnotation=$(includeAnnotation) -PincludePrefix=$(includePrefix) $(log_level)

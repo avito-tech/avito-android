@@ -158,11 +158,11 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     filters.register(runAllFilterName)
 
     filters.register("dynamicFilter") {
-        val includeAnnotation: String? = project.getOptionalStringProperty("includeAnnotation")
+        val includeAnnotation: String? = project.getOptionalStringProperty("includeAnnotation", true)
         if (includeAnnotation != null) {
             fromSource.includeByAnnotations(setOf(includeAnnotation))
         }
-        val includePrefix: String? = project.getOptionalStringProperty("includePrefix")
+        val includePrefix: String? = project.getOptionalStringProperty("includePrefix", true)
         if (includePrefix != null) {
             fromSource.includeByPrefixes(setOf(includePrefix))
         }

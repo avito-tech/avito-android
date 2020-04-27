@@ -39,12 +39,20 @@ class PageObjectTest {
     }
 
     @Test
-    fun element__notFound__byDefaultMatcherInTheWrongParent() {
+    fun parent__assertionError__byDefaultMatcherInTheWrongParent() {
         rule.launchActivity(PageObjectActivity.intent(R.layout.page_object_2)) // twin
 
-        exception.expect(NoMatchingViewException::class.java)
+        exception.expect(junit.framework.AssertionFailedError::class.java)
 
         screen().textView.checks.isDisplayed()
+    }
+
+    @Test
+    fun overridden_is_screen_opened_doesnt_have_recursion() {
+        rule.launchActivity(PageObjectActivity.intent(R.layout.page_object_1))
+
+        screen().textView.checks.isDisplayed()
+        screen().checks.isScreenOpened()
     }
 
     private fun screen() = PageObjectScreen(R.id.page_object_root_1)
