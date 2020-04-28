@@ -47,7 +47,7 @@ Senior engineer\
 
 Daniil Popov\
 Senior engineer\
-[Int02h](https://twitter.com/Int02h)
+[Int02h](https://twitter.com/int02h)
 
 ![](https://user-images.githubusercontent.com/1104540/80411864-8d677280-88d5-11ea-8a91-4f40d3eec71d.jpg)
 
