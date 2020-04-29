@@ -30,3 +30,10 @@ BookMenuBundle = "/menu"
 BookRepo = "https://github.com/avito-tech/avito-android"
 BookEditPath = "tree/develop/docs/content"
 BookSearch = true
+
+# Portable links let you write markdown links without {{< relref >}} shortcode
+# Examples: https://github.com/bep/portable-hugo-links/
+# Reasons to disabling:
+#   - Don't fail in case of missing page
+# TODO: Find a workaround and enable
+BookPortableLinks = false

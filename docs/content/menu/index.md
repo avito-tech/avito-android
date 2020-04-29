@@ -68,4 +68,3 @@ headless: true
     - [QApps]({{< ref "/docs/cd/QApps.md" >}})
 - [Infrastructure (Github project)]({{< ref "/docs/Infrastructure.md" >}})
 - [Внешние библиотеки]({{< ref "/docs/ExternalLibraryChangeProcess.md" >}})
-- [Blog]({{< relref "/posts" >}})
