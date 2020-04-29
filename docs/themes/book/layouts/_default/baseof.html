@@ -18,13 +18,18 @@
         {{ template "header" . }} <!-- Mobile layout header -->
       </header>
 
+      {{ partial "docs/inject/content-before" . }}
       {{ template "main" . }} <!-- Page Content -->
+      {{ partial "docs/inject/content-after" . }}
 
       <footer class="book-footer">
         {{ template "footer" . }} <!-- Footer under page content -->
-        {{ template "comments" . }} <!-- Comments block -->
+        {{ partial "docs/inject/footer" . }}
       </footer>
-      {{ partial "docs/inject/footer" . }}
+
+      {{ template "comments" . }} <!-- Comments block -->
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
     </div>
 
     {{ if default true (default .Site.Params.BookToC .Params.BookToC) }}
@@ -67,9 +72,11 @@
 {{ end }}
 
 {{ define "main" }}
-  {{ .Content }}
+  <article class="markdown">
+    {{- .Content -}}
+  </article>
 {{ end }}
 
 {{ define "toc" }}
-  {{ .TableOfContents }}
+  {{ partial "docs/toc" . }}
 {{ end }}

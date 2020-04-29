@@ -140,7 +140,7 @@ class SignServicePlugin : Plugin<Project> {
 
         val isSignNeeded: Boolean = token.hasContent()
 
-        // сигнал для agp что мы будем подписывать самостоятельно
+        // сигнал для AGP что мы будем подписывать самостоятельно
         // todo не понятно как оно себя ведет с bundle
         variant.outputsAreSigned = isSignNeeded
 

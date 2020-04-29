@@ -11,6 +11,10 @@
   translation: Expand
 
 - id: bookSearchConfig
-  translation: '{ cache: true, split: /[^a-zа-яё0-9\w]/gi }'
-
-# TODO: Use russian language for pages with russian
+  translation: |
+    {
+      encode: false,
+      tokenize: function(str) {
+        return str.replace(/[\x00-\x7F]/g, '').split('');
+      }
+    }
