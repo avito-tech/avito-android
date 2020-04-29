@@ -153,6 +153,8 @@ The closest analog is [Marathon](https://github.com/Malinskiy/marathon), but our
 The results are stored in custom TMS (test management system), which is not open source. 
 We are working on the possibility of connecting to a different implementation.
 
+![](https://habrastorage.org/webt/1s/pt/62/1spt626ixunfqut3ya9ubxti_us.png)
+
 ### Impact analysis
 
 We have about 1,600 instrumentation tests and 10K unit tests. We would like to run all the tests for any code change,
@@ -164,16 +166,18 @@ An ideal solution would be to understand which minimum test set can verify all c
 This is known as [test impact analysis](https://martinfowler.com/articles/rise-test-impact-analysis.html).
  
 We wrote [a Gradle plugin]({{< ref "/docs/ci/ImpactAnalysis.md" >}}), which searches for changes in modules, parses tests, and determines which ones to run.
- 
+
+![](https://habrastorage.org/webt/ox/s3/8i/oxs38itwej7tehznhbslvjpmsi0.png)
+
 For more details of the main modules and approaches, see [the project documentation]({{< ref "/docs/Infrastructure.md#buildscript-dependencies" >}}).
 It is still incomplete, and not everything is translated. We want to make the documentation easier to understand, and need your help. 
-Tell us what to improve and correct in the documentation in [our Telegram chat](https://t.me/avito_android_opensource_en).
+Tell us what to improve and correct in the documentation in [our Telegram chat](https://t-do.ru/avito_android_opensource_en).
 
 ## How our libraries can be useful
 
 Since there are many components in our project, its applications depend on your needs. 
 If you are working on a similar problem or just want to understand the technology better — feel free to contact us in our 
-Telegram chat ([En](https://t.me/avito_android_opensource_en), [Ru](https://t.me/avito_android_opensource)). 
+Telegram chat ([En](https://t-do.ru/avito_android_opensource_en), [Ru](https://t-do.ru/avito_android_opensource)). 
 We will share what we know, try to help, and show relevant examples.
  
 You can ask anything:

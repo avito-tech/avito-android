@@ -16,7 +16,7 @@ rule 'MD007', :indent => 4
 
 # MD013 - Line length
 # Small values gives false-positive errors on long links
-rule 'MD013', :line_length => 180
+rule 'MD013', :line_length => 200
 
 # MD026 - Trailing punctuation in header
 # Rationale: more readable links, consistency
