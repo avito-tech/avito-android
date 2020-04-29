@@ -6,7 +6,7 @@ tags: [open-source]
 
 # Open source: CI/CD and test infrastructure for Android
 
-Avito.ru is the biggest Russian classified. 
+Avito.ru is the second biggest classified in the world. 
 We have moved our Android infrastructure into open source: Gradle plugins, emulators, and test libraries. 
 [Our code](https://github.com/avito-tech/avito-android) will be useful in automating CI/CD and will also facilitate the coding and support of autotests. 
  
@@ -80,16 +80,16 @@ We need them to point out issues in the internal implementation and the convenie
 
 We have already seen how moving the code to GitHub highlighted the problems of reuse. 
 When you understand that other companies can use your project, you start looking at the architecture differently. 
-Reusing code is not an end in itself. But this external criterion says a lot about the quality of the architecture and its flexibility.
+Reusing code is not the ultimate target. But this external criterion says a lot about the quality of the architecture and its flexibility.
 
 ### Influence the industry standards
 
-We have been developing infrastructure for mobile apps since 2017 and regularly talk about this at conferences and events.
+We have been developing infrastructure for mobile apps since 2017 and regularly make talks at local developer conferences and meetups.
 
-In addition to talking about this, we always wanted to share the code and allow others to reuse it. 
+We always wanted to share the code in addition to our words and allow others to reuse it. 
 Indeed, many Android developers face similar challenges:
 
-- How to author effective autotests.
+- How to write effective autotests.
 - How to run these in pull requests.
 - How to maintain infrastructure cost-effectively.
  
@@ -119,7 +119,7 @@ it becomes easier for its developer to understand what is going on. This increas
 
 The popularity of an open source project also increases the likelihood that you will be paid attention to. 
 When an issue in a library has many stars and users, this increases the pressure, and the issue becomes more difficult to ignore. 
-Achieving this without open source is more challenging — the apps has to be super popular, or one should make oneself known.
+Achieving this without open source is more challenging — the app has to be super popular, or one should make oneself known.
 
 ### PR and personal motivation
 
@@ -176,8 +176,8 @@ Tell us what to improve and correct in the documentation in [our Telegram chat](
 ## How our libraries can be useful
 
 Since there are many components in our project, its applications depend on your needs. 
-If you are working on a similar problem or just want to understand the technology better — feel free to contact us in our 
-Telegram chat ([En](https://t-do.ru/avito_android_opensource_en), [Ru](https://t-do.ru/avito_android_opensource)). 
+If you are working on a similar problem or just want to understand the technology better — feel free to contact us 
+in GitHub or our [Telegram chat](https://t-do.ru/avito_android_opensource_en). 
 We will share what we know, try to help, and show relevant examples.
  
 You can ask anything:
