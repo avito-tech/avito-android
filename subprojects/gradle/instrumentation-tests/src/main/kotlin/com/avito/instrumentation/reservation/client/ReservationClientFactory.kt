@@ -6,7 +6,6 @@ import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.client.local.LocalReservationClient
-import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.runner.logging.Logger
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
@@ -46,7 +45,7 @@ interface ReservationClientFactory {
             val androidDebugBridge = AndroidDebugBridge(
                 logger = { logger.info(it) }
             )
-            return if (isLocalRun(testsToRun)) {
+            return if (configuration.isTargetLocalEmulators) {
                 LocalReservationClient(
                     androidDebugBridge = androidDebugBridge,
                     devicesManager = AdbDevicesManager(logger = object : Logger {
@@ -78,11 +77,6 @@ interface ReservationClientFactory {
                     registry = registry
                 )
             }
-        }
-
-        // TODO: make this decision earlier and distinguish run type not by tests
-        private fun isLocalRun(testsToRun: List<TestWithTarget>): Boolean {
-            return testsToRun.any { it.target.reservation.device is Device.LocalEmulator }
         }
     }
 }

@@ -6,8 +6,9 @@ plugins {
 }
 
 dependencies {
-    api(Dependencies.coroutinesCore)
+    api(project(":subprojects:gradle:kubernetes"))
 
+    implementation(Dependencies.coroutinesCore)
     implementation(project(":subprojects:gradle:instrumentation-test-impact-analysis"))
     implementation(project(":subprojects:gradle:runner:client"))
     implementation(project(":subprojects:gradle:utils"))
@@ -28,7 +29,6 @@ dependencies {
     implementation(project(":subprojects:common:file-storage"))
     implementation(project(":subprojects:common:sentry"))
     implementation(project(":subprojects:common:logger"))
-    implementation(project(":subprojects:gradle:kubernetes"))
     implementation(project(":subprojects:gradle:upload-cd-build-result"))
     implementation(Dependencies.dexlib)
     implementation(Dependencies.gson)

@@ -87,6 +87,9 @@ fun ciRun(
         "-PslackToken=xxx",
         "-PatlassianUser=xxx",
         "-PatlassianPassword=xxx",
+        "-PkubernetesToken=xxx",
+        "-PkubernetesCaCertData=xxx",
+        "-PkubernetesUrl=xxx",
         *args,
         dryRun = dryRun,
         expectFailure = expectFailure
