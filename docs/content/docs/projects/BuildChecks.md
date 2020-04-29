@@ -17,24 +17,7 @@ plugins {
 }
 ```
 
-In the `settings.gradle`:
-
-```groovy
-pluginManagement {
-    repositories {
-        jcenter()
-    }
-    resolutionStrategy {
-        eachPlugin {
-            String pluginId = requested.id.id
-            if (pluginId.startsWith("com.avito.android")) {
-                def artifact = pluginId.replace("com.avito.android.", "")
-                useModule("com.avito.android:$artifact:$avitoToolsVersion")
-            }
-        }
-    }
-}
-```
+{{%project-setup%}}
 
 Some checks will require settings to work properly. 
 You'll get an error about missing settings:

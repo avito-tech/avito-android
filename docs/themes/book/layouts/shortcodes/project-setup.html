@@ -1,0 +1,21 @@
+In the `settings.gradle`:
+
+```groovy
+pluginManagement {
+    repositories {
+        maven {
+            name = "Avito bintray"
+            url = "https://dl.bintray.com/avito/maven"
+        }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            String pluginId = requested.id.id
+            if (pluginId.startsWith("com.avito.android")) {
+                def artifact = pluginId.replace("com.avito.android.", "")
+                useModule("com.avito.android:$artifact:$avitoToolsVersion")
+            }
+        }
+    }
+}
+```

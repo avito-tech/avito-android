@@ -11,47 +11,9 @@ Monorepo of all tooling to continuously test and deliver apps to users.
 
 ### Gradle plugins
 
-To use plugins in your project apply them in `build.gradle`:
+To use plugins in your project:
 
-```groovy
-buildscript {
-    dependencies {
-        classpath("com.avito.android:instrumentation-tests:$avitoToolsVersion")   
-    }
-    repositories {
-        jcenter()   
-    }
-}
-
-apply("com.avito.android.instrumentation-tests")
-```
-
-Or use [plugins DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block): 
-
-```groovy
-plugins {
-    id("com.avito.android.instrumentation-tests")
-}
-```
-
-`settings.gradle`:
-
-```groovy
-pluginManagement {
-    repositories {
-        jcenter()
-    }
-    resolutionStrategy {
-        eachPlugin {
-            String pluginId = requested.id.id
-            if (pluginId.startsWith("com.avito.android")) {
-                def artifact = pluginId.replace("com.avito.android.", "")
-                useModule("com.avito.android:$artifact:$avitoToolsVersion")
-            }
-        }
-    }
-}
-```
+{{%project-setup%}}
 
 Plugins:
 
