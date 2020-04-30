@@ -1,6 +1,7 @@
 package com.avito.android.plugin
 
 import com.avito.android.withAndroidModule
+import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -18,6 +19,7 @@ class RoomConfigPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val archPersistence = target.getMandatoryStringProperty("archPersistenceVersion")
+        val kaptIncremental = target.getBooleanProperty("kapt.incremental.apt", default = false)
 
         target.withAndroidModule {
             target.dependencies.add("implementation", "androidx.room:room-runtime:$archPersistence")
@@ -33,6 +35,7 @@ class RoomConfigPlugin : Plugin<Project> {
             target.extensions.getByType<KaptExtension>().run {
                 arguments {
                     arg("room.schemaLocation", File(target.projectDir, "room-schemas").absolutePath)
+                    arg("room.incremental", kaptIncremental)
                 }
             }
         }
