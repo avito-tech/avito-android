@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 enum class AndroidArtifactType {
     @SerializedName("bundle")
     BUNDLE,
+
     @SerializedName("apk")
     APK
 }
@@ -12,8 +13,10 @@ enum class AndroidArtifactType {
 enum class BuildVariant {
     @SerializedName("release")
     RELEASE,
+
     @SerializedName("staging")
     STAGING,
+
     @SerializedName("debug")
     DEBUG
 }
@@ -21,6 +24,7 @@ enum class BuildVariant {
 enum class NupokatiProject(val id: String) {
     @SerializedName("avito")
     AVITO("avito"),
+
     @SerializedName("avito_test")
     AVITO_TEST("avito_test")
 }
@@ -38,19 +42,35 @@ data class CdBuildConfig(
     )
 
     sealed class Deployment {
+
         data class GooglePlay(
             val artifactType: AndroidArtifactType,
             val buildVariant: BuildVariant,
             val track: Track
         ) : Deployment()
 
+        /**
+         * Deploy artifacts to QApps.
+         * Uses UploadToQapps build step to find them.
+         */
+        data class Qapps(
+            /**
+             * Send artifacts as release versions.
+             * Non-release artifacts stored limited time.
+             */
+            val isRelease: Boolean
+        ) : Deployment()
+
         enum class Track {
             @SerializedName("alpha")
             ALPHA,
+
             @SerializedName("internal")
             INTERNAL,
+
             @SerializedName("beta")
             BETA,
+
             @SerializedName("production")
             PRODUCTION
         }

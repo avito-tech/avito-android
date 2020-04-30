@@ -44,9 +44,13 @@ private class CdBuildConfigFactory : (Project) -> Provider<CdBuildConfig> {
         val googlePlayDeployments = config.deployments.filterIsInstance<CdBuildConfig.Deployment.GooglePlay>()
         val deploysByVariant = googlePlayDeployments.groupBy(CdBuildConfig.Deployment.GooglePlay::buildVariant)
         deploysByVariant.forEach { (_, deploys) ->
-            if (deploys.size > 1) {
-                throw IllegalArgumentException("Must be one deploy per variant, but was: $googlePlayDeployments")
+            require(deploys.size == 1) {
+                "Must be one deploy per variant, but was: $googlePlayDeployments"
             }
+        }
+        val qappsDeployments = config.deployments.filterIsInstance<CdBuildConfig.Deployment.Qapps>()
+        require(qappsDeployments.size <= 1) {
+            "Must be one Qapps deployment, but was: $qappsDeployments"
         }
     }
 }

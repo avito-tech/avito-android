@@ -61,7 +61,7 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
         val buildFailer = BuildFailer.RealFailer()
 
         uploadResult.fold(
-            { logger.info("upload to qapps successfully: ${apk.path}") },
+            { logger.info("Upload to qapps was successful: ${apk.path}") },
             { buildFailer.failBuild("Can't upload to qapps: ${apk.path};", it) }
         )
     }

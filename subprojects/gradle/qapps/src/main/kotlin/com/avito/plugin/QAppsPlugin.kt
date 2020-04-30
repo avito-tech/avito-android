@@ -40,7 +40,6 @@ class QAppsPlugin : Plugin<Project> {
                     comment.set(getComment(env.build.number))
 
                     branch.set(git.map { it.currentBranch.name }.orElse(placeholderForLocalBuild))
-                    releaseChain.set(git.map { it.isOnReleaseBranch }.orElse(false))
                 }
             }
         }

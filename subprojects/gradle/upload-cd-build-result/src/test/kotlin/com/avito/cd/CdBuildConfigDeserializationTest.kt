@@ -1,6 +1,7 @@
 package com.avito.cd
 
 import com.avito.cd.CdBuildConfig.Deployment.GooglePlay
+import com.avito.cd.CdBuildConfig.Deployment.Qapps
 import com.avito.cd.CdBuildConfig.Deployment.Track
 import com.google.common.truth.Truth
 import com.google.gson.FieldNamingPolicy
@@ -28,6 +29,10 @@ private const val actualConfig = """
             "artifact_type": "apk",
             "build_variant": "debug",
             "track": "internal"
+        },
+        {
+            "type": "qapps",
+            "is_release": true
         }
     ]
 }
@@ -63,6 +68,9 @@ class CdBuildConfigDeserializationTest {
                             AndroidArtifactType.APK,
                             BuildVariant.DEBUG,
                             Track.INTERNAL
+                        ),
+                        Qapps(
+                            isRelease = true
                         )
                     )
                 )

@@ -7,7 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:signer"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:gradle:utils"))
