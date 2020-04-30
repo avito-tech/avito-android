@@ -33,8 +33,7 @@ import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getOptionalIntProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.toOptional
-import com.avito.utils.gradle.BuildEnvironment
-import com.avito.utils.gradle.buildEnvironment
+import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
 import com.avito.utils.logging.ciLogger
@@ -67,38 +66,37 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             )
         }
 
-        if (project.buildEnvironment !is BuildEnvironment.CI) {
-            logger.info("Instrumentation plugin disabled due to non CI environment")
-            return
-        }
-
         val instrumentationConfigurations =
             project.extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
 
-        instrumentationConfigurations.registerDynamicConfiguration(
-            testFilter = TestsFilter.valueOf(
-                project.getOptionalStringProperty(
-                    "instrumentation.dynamic.testFilter",
-                    TestsFilter.empty.name
-                )
-            ),
-            retryCountValue = project.getOptionalIntProperty(
-                "dynamicRetryCount",
-                1
-            ),
-            prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
-            skipSucceedTestsFromPreviousRun = project.getBooleanProperty(
-                "instrumentation.dynamic.skipSucceedTestsFromPreviousRun",
-                true
-            ),
-            keepFailedTestsFromReport = project.getOptionalStringProperty("instrumentation.dynamic.keepFailedTestsFromReport"),
-            isDeviceEnabled = { device ->
-                project.getBooleanProperty(
-                    "dynamicTarget${device.api}",
-                    false
+        when (project.kubernetesCredentials) {
+            !is KubernetesCredentials.Empty -> {
+                instrumentationConfigurations.registerDynamicConfiguration(
+                    testFilter = TestsFilter.valueOf(
+                        project.getOptionalStringProperty(
+                            "instrumentation.dynamic.testFilter",
+                            TestsFilter.empty.name
+                        )
+                    ),
+                    retryCountValue = project.getOptionalIntProperty(
+                        "dynamicRetryCount",
+                        1
+                    ),
+                    prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
+                    skipSucceedTestsFromPreviousRun = project.getBooleanProperty(
+                        "instrumentation.dynamic.skipSucceedTestsFromPreviousRun",
+                        true
+                    ),
+                    keepFailedTestsFromReport = project.getOptionalStringProperty("instrumentation.dynamic.keepFailedTestsFromReport"),
+                    isDeviceEnabled = { device ->
+                        project.getBooleanProperty(
+                            "dynamicTarget${device.api}",
+                            false
+                        )
+                    }
                 )
             }
-        )
+        }
 
         // see LintWorkerApiWorkaround.md
         project.tasks.register<DelayTask>(preInstrumentationTaskName) {
@@ -110,7 +108,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withInstrumentationExtensionData { extensionData ->
             extensionData.configurations.forEach { instrumentationConfiguration ->
-
+                if (!instrumentationConfiguration.isTargetLocalEmulators && project.kubernetesCredentials is KubernetesCredentials.Empty) {
+                    throw IllegalStateException("Configuration ${instrumentationConfiguration.name} error: has kubernetes device target without kubernetes credentials")
+                }
                 val configurationOutputFolder =
                     File(extensionData.output, instrumentationConfiguration.name)
 
@@ -169,7 +169,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                     val isFullTestSuite = gitState.map {
                         it.isOnDefaultBranch
-                            && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                                && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
                     }
                         .orElse(false)
 
