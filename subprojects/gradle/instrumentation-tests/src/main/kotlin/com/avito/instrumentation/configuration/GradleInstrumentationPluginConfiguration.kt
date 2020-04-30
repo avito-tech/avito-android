@@ -50,7 +50,6 @@ object InstrumentationPluginConfiguration {
         }
 
         fun validate() {
-            require(configurations.isNotEmpty()) { "instrumentation plugin applied without configurations" }
             configurations.forEach {
                 it.validate()
             }
