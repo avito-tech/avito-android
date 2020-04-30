@@ -43,17 +43,6 @@ internal class ComparedTestComparisonTest {
     }
 
     @Test
-    fun `performedMuchBetterThanUsual - returns 1 - if less and should be less and greater than threshold`() {
-        assertThat(
-            givenTestComparison(
-                currentSampleIs = LESS,
-                meanDiff = Double.MAX_VALUE,
-                metric = "AvitoStartupTime"
-            ).performedMuchBetterThanUsual())
-            .hasSize(1)
-    }
-
-    @Test
     fun `performedMuchBetterThanUsual - returns 1 - if greater and should be greater and greater than threshold`() {
         assertThat(
             givenTestComparison(
@@ -133,17 +122,6 @@ internal class ComparedTestComparisonTest {
                 metric = "ProperFramesPercent"
             ).failed())
             .isEmpty()
-    }
-
-    @Test
-    fun `failed - returns 1 - if greater and should be less and greater than threshold`() {
-        assertThat(
-            givenTestComparison(
-                currentSampleIs = GREATER,
-                meanDiff = Double.MAX_VALUE,
-                metric = "AvitoStartupTime"
-            ).failed())
-            .hasSize(1)
     }
 
     @Test
