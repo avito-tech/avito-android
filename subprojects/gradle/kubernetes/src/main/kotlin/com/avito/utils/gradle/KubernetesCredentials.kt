@@ -1,11 +1,10 @@
 package com.avito.utils.gradle
 
-import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.kotlin.dsl.getOptionalStringProperty
-import org.gradle.api.Project
 import java.io.Serializable
 
 sealed class KubernetesCredentials : Serializable {
+
+    object Empty : KubernetesCredentials(), Serializable
 
     data class Service(
         val token: String,
@@ -37,17 +36,3 @@ private fun requireUserHome(): String {
     return userHome
 }
 
-val Project.kubernetesCredentials: KubernetesCredentials
-    get() {
-        val context = getOptionalStringProperty("kubernetesContext", nullIfBlank = true)
-        return if (context.isNullOrBlank()) {
-            KubernetesCredentials.Service(
-                token = getMandatoryStringProperty("kubernetesToken"),
-                caCertData = getMandatoryStringProperty("kubernetesCaCertData"),
-                url = getMandatoryStringProperty("kubernetesUrl")
-            )
-        } else {
-            val caCertFile = getOptionalStringProperty("kubernetesCaCertFile", nullIfBlank = true)
-            KubernetesCredentials.Config(context, caCertFile = caCertFile)
-        }
-    }

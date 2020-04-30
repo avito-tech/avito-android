@@ -1,5 +1,4 @@
 import com.android.build.gradle.ProguardFiles.ProguardFile
-import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
@@ -8,6 +7,7 @@ import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
 import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.utils.gradle.buildEnvironment
 
 plugins {
     id("com.android.application")
@@ -145,14 +145,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         "jobSlug" to "FunctionalTests"
     )
 
-    val defaultFilter = "default"
-
-    // deprecated since 2020.4.4
-    if (filters.findByName(defaultFilter) == null) {
-        filters.register(defaultFilter) {
-            fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Manual, RunStatus.Success))
-        }
-    }
 
     val runAllFilterName = "runAll"
     filters.register(runAllFilterName)
@@ -168,6 +160,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         }
     }
 
+    val defaultFilter = "default"
     val customFilter: String = project.getOptionalStringProperty("localFilter", defaultFilter)
 
     configurationsContainer.register("Local") {
@@ -194,71 +187,76 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
             }
         }
     }
+// TODO uncomment after 2020.4.6 release
+//    val credentials = project.kubernetesCredentials
+//    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
+//    }
+    if (project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
+        configurationsContainer.register("ui") {
+            tryToReRunOnTargetBranch = false
+            reportSkippedTests = true
+            reportFlakyTests = true
+            filter = customFilter
 
-    configurationsContainer.register("ui") {
-        tryToReRunOnTargetBranch = false
-        reportSkippedTests = true
-        reportFlakyTests = true
-        filter = customFilter
+            targetsContainer.register("api22") {
+                deviceName = "API22"
 
-        targetsContainer.register("api22") {
-            deviceName = "API22"
+                scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
 
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
+                    reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        device = Emulator22
+                        maximum = 50
+                        minimum = 2
+                        testsPerEmulator = 3
+                    }
                 }
+            }
 
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = Emulator22
-                    maximum = 50
-                    minimum = 2
-                    testsPerEmulator = 3
+            targetsContainer.register("api27") {
+                deviceName = "API27"
+
+                scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
+
+                    reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        device = Emulator27
+                        maximum = 50
+                        minimum = 2
+                        testsPerEmulator = 3
+                    }
                 }
             }
         }
 
-        targetsContainer.register("api27") {
-            deviceName = "API27"
+        configurationsContainer.register("uiDebug") {
+            tryToReRunOnTargetBranch = false
+            reportSkippedTests = false
+            reportFlakyTests = false
+            enableDeviceDebug = true
+            filter = customFilter
 
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
-                }
+            targetsContainer.register("api27") {
+                deviceName = "API27"
 
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = Emulator27
-                    maximum = 50
-                    minimum = 2
-                    testsPerEmulator = 3
-                }
-            }
-        }
-    }
+                scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
 
-    configurationsContainer.register("uiDebug") {
-        tryToReRunOnTargetBranch = false
-        reportSkippedTests = false
-        reportFlakyTests = false
-        enableDeviceDebug = true
-        filter = customFilter
-
-        targetsContainer.register("api27") {
-            deviceName = "API27"
-
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
-                }
-
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = Emulator27
-                    maximum = 1
-                    minimum = 1
-                    testsPerEmulator = 1
+                    reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        device = Emulator27
+                        maximum = 1
+                        minimum = 1
+                        testsPerEmulator = 1
+                    }
                 }
             }
         }

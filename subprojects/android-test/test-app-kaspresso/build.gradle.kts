@@ -7,6 +7,7 @@ import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
 import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.utils.gradle.buildEnvironment
 
 plugins {
     id("com.android.application")
@@ -144,69 +145,74 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
             }
         }
     }
+    // TODO uncomment after 2020.4.6 release
+//    val credentials = project.kubernetesCredentials
+//    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
+//    }
+    if (project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
+        configurationsContainer.register("ui") {
+            tryToReRunOnTargetBranch = false
+            reportSkippedTests = true
+            reportFlakyTests = true
 
-    configurationsContainer.register("ui") {
-        tryToReRunOnTargetBranch = false
-        reportSkippedTests = true
-        reportFlakyTests = true
+            targetsContainer.register("api22") {
+                deviceName = "API22"
 
-        targetsContainer.register("api22") {
-            deviceName = "API22"
+                scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
 
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
+                    reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        device = Emulator22
+                        maximum = 50
+                        minimum = 2
+                        testsPerEmulator = 3
+                    }
                 }
+            }
 
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = Emulator22
-                    maximum = 50
-                    minimum = 2
-                    testsPerEmulator = 3
+            targetsContainer.register("api27") {
+                deviceName = "API27"
+
+                scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
+
+                    reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        device = Emulator27
+                        maximum = 50
+                        minimum = 2
+                        testsPerEmulator = 3
+                    }
                 }
             }
         }
 
-        targetsContainer.register("api27") {
-            deviceName = "API27"
+        configurationsContainer.register("uiDebug") {
+            tryToReRunOnTargetBranch = false
+            reportSkippedTests = false
+            reportFlakyTests = false
+            enableDeviceDebug = true
 
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
-                }
+            targetsContainer.register("api27") {
+                deviceName = "API27"
 
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = Emulator27
-                    maximum = 50
-                    minimum = 2
-                    testsPerEmulator = 3
-                }
-            }
-        }
-    }
+                scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
 
-    configurationsContainer.register("uiDebug") {
-        tryToReRunOnTargetBranch = false
-        reportSkippedTests = false
-        reportFlakyTests = false
-        enableDeviceDebug = true
-
-        targetsContainer.register("api27") {
-            deviceName = "API27"
-
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
-                }
-
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = Emulator27
-                    maximum = 1
-                    minimum = 1
-                    testsPerEmulator = 1
+                    reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        device = Emulator27
+                        maximum = 1
+                        minimum = 1
+                        testsPerEmulator = 1
+                    }
                 }
             }
         }

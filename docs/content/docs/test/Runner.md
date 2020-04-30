@@ -67,7 +67,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 3. Run tests via gradle task
 
 ```shell script
-    ./gradlew :<projectPath>:instrumentation<ConfigurationName> -Pci=true           
+    ./gradlew :<projectPath>:instrumentation<ConfigurationName>         
 ```
 
 In our case:
@@ -211,7 +211,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 3. Add `property` to CLI command if you want to override `filterName`
 
 ```shell script
-./gradlew instrumentationLocal -PfilterName=<any name of defined filter> -Pci=true 
+./gradlew instrumentationLocal -PfilterName=<any name of defined filter>
 ```
 
 ### Customize a filter without changing `build.gradle.kts`
@@ -241,7 +241,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 3. Run gradle task with property `includedAnnotation` to override filter
 
 ```shell script
-./gradlew instrumentationLocal -PincludedAnnotation="package.AnotherAnnotationClassName" -Pci=true 
+./gradlew instrumentationLocal -PincludedAnnotation="package.AnotherAnnotationClassName" 
 ```
 
 ## Choosing target for tests execution
@@ -263,8 +263,7 @@ TBD
 1. Run tests with extra parameters specified. The example for `:test-app`:
 
 ```shell script
-./gradlew :subprojects:android-test:test-app:instrumentationUi 
-    -Pci=true 
+./gradlew :subprojects:android-test:test-app:instrumentationUi
     -PkubernetesContext=<your context>
     -PkubernetesCaCertFile=<path to ca certificate file>
     -Pavito.registry=<avito registry>
@@ -300,8 +299,8 @@ configurationsContainer.register("Local") {
 2. Run gradle CLI command
 
 ```shell script
-`./gradlew :<project gradle path>:instrumentation<configuration name>` -Pci=true, e.g.
-`./gradlew :subprojects:android-test:test-app:instrumentationLocal` -Pci=true 
+`./gradlew :<project gradle path>:instrumentation<configuration name>` e.g.
+`./gradlew :subprojects:android-test:test-app:instrumentationLocal`
 ```
 
 ## Run test on APK was built before
