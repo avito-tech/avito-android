@@ -71,30 +71,33 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         when (project.kubernetesCredentials) {
             !is KubernetesCredentials.Empty -> {
-                instrumentationConfigurations.registerDynamicConfiguration(
-                    testFilter = TestsFilter.valueOf(
-                        project.getOptionalStringProperty(
-                            "instrumentation.dynamic.testFilter",
-                            TestsFilter.empty.name
-                        )
-                    ),
-                    retryCountValue = project.getOptionalIntProperty(
-                        "dynamicRetryCount",
-                        1
-                    ),
-                    prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
-                    skipSucceedTestsFromPreviousRun = project.getBooleanProperty(
-                        "instrumentation.dynamic.skipSucceedTestsFromPreviousRun",
-                        true
-                    ),
-                    keepFailedTestsFromReport = project.getOptionalStringProperty("instrumentation.dynamic.keepFailedTestsFromReport"),
-                    isDeviceEnabled = { device ->
-                        project.getBooleanProperty(
-                            "dynamicTarget${device.api}",
-                            false
-                        )
-                    }
-                )
+                val enabledDevices = EmulatorSet.full.filter { device ->
+                    project.getBooleanProperty(
+                        "dynamicTarget${device.api}",
+                        false
+                    )
+                }
+                if (!enabledDevices.isEmpty()) {
+                    instrumentationConfigurations.registerDynamicConfiguration(
+                        testFilter = TestsFilter.valueOf(
+                            project.getOptionalStringProperty(
+                                "instrumentation.dynamic.testFilter",
+                                TestsFilter.empty.name
+                            )
+                        ),
+                        retryCountValue = project.getOptionalIntProperty(
+                            "dynamicRetryCount",
+                            1
+                        ),
+                        prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
+                        skipSucceedTestsFromPreviousRun = project.getBooleanProperty(
+                            "instrumentation.dynamic.skipSucceedTestsFromPreviousRun",
+                            true
+                        ),
+                        keepFailedTestsFromReport = project.getOptionalStringProperty("instrumentation.dynamic.keepFailedTestsFromReport"),
+                        devices = enabledDevices
+                    )
+                }
             }
         }
 
@@ -288,7 +291,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         prefixFilter: String,
         skipSucceedTestsFromPreviousRun: Boolean,
         keepFailedTestsFromReport: String?,
-        isDeviceEnabled: (Device) -> Boolean
+        devices: List<Device.Emulator>
     ) {
         val filterName = "dynamic"
         filters.register(filterName) { filter ->
@@ -314,12 +317,11 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             configuration.reportSkippedTests = true
             configuration.filter = filterName
             configuration.targetsContainer.apply {
-                EmulatorSet.full.forEach { emulator ->
+                devices.forEach { emulator ->
                     register(
                         emulator.name,
                         Action { target ->
                             target.deviceName = "functional-${emulator.api}"
-                            target.enabled = isDeviceEnabled(emulator)
                             target.scheduling = SchedulingConfiguration().apply {
                                 quota = QuotaConfiguration().apply {
                                     retryCount = retryCountValue
