@@ -1,5 +1,7 @@
+@file:JvmName("Kubernetes")
 package com.avito.utils.gradle
 
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import io.fabric8.kubernetes.client.Config
 import io.fabric8.kubernetes.client.ConfigBuilder
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
@@ -7,6 +9,7 @@ import io.fabric8.kubernetes.client.KubernetesClient
 import io.fabric8.kubernetes.client.OAuthTokenProvider
 import io.kubernetes.client.util.FilePersister
 import io.kubernetes.client.util.KubeConfig
+import org.gradle.api.Project
 import java.io.File
 
 fun createKubernetesClient(
@@ -43,6 +46,9 @@ fun createKubernetesClient(
                 requestConfig.oauthTokenProvider = oauthTokenProvider(configFile)
             }
         }
+        is KubernetesCredentials.Empty -> {
+            throw IllegalStateException("Can't create kubernetesClient without credentials")
+        }
     }
 
     return DefaultKubernetesClient(config)
@@ -59,3 +65,25 @@ private fun oauthTokenProvider(config: File): OAuthTokenProvider {
 
     return OAuthTokenProvider { kubeConfig.accessToken }
 }
+
+val Project.kubernetesCredentials: KubernetesCredentials
+    get() {
+        val context = getOptionalStringProperty("kubernetesContext", nullIfBlank = true)
+        return if (context.isNullOrBlank()) {
+            val token = getOptionalStringProperty("kubernetesToken", nullIfBlank = true)
+            val caCertData = getOptionalStringProperty("kubernetesCaCertData", nullIfBlank = true)
+            val url = getOptionalStringProperty("kubernetesUrl", nullIfBlank = true)
+            if (token != null && caCertData != null && url != null) {
+                KubernetesCredentials.Service(
+                    token = token,
+                    caCertData = caCertData,
+                    url = url
+                )
+            } else {
+                KubernetesCredentials.Empty
+            }
+        } else {
+            val caCertFile = getOptionalStringProperty("kubernetesCaCertFile", nullIfBlank = true)
+            KubernetesCredentials.Config(context, caCertFile = caCertFile)
+        }
+    }
