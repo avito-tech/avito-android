@@ -164,7 +164,7 @@ open class PerformancePlugin : Plugin<Project> {
                             }
                         }
 
-                        logger.info("performanceProvider=${performanceProvider.get()}")
+                        logger.info("performanceProvider=${performanceProvider.orNull}")
 
                         project.tasks.register<Task>(measurePerformanceTaskName(performanceConfig.name)) {
                             this.group = TASK_GROUP
