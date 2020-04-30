@@ -55,6 +55,7 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     fun validate() {
         require(kubernetesNamespace.isNotBlank()) { "kubernetesNamespace must be set" }
+        require(targets.isNotEmpty()) { "configuration $name must have at least one target" }
         targets.forEach { it.validate() }
     }
 
