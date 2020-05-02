@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:teamcity"))
-    implementation(project(":subprojects:gradle:trace-event"))
+    implementation(project(":subprojects:gradle:gradle-profile"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gradle.androidPlugin)
 

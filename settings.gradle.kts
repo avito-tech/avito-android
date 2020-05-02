@@ -6,7 +6,9 @@ include(":subprojects:gradle:artifactory-app-backup")
 include(":subprojects:gradle:artifactory-app-backup-test-fixtures")
 include(":subprojects:gradle:buildchecks")
 include(":subprojects:gradle:build-metrics")
+include(":subprojects:gradle:gradle-profile")
 include(":subprojects:gradle:build-properties")
+include(":subprojects:gradle:build-trace")
 include(":subprojects:gradle:cd")
 include(":subprojects:gradle:dependencies-lint")
 include(":subprojects:gradle:module-types")
@@ -132,6 +134,7 @@ pluginManagement {
                 gradlePluginPortal()
             }
             filter {
+                includeGroup("com.gradle")
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
                 includeGroup("com.slack.keeper")

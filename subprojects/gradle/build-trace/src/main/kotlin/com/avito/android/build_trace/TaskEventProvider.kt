@@ -1,4 +1,4 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.build_trace
 
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.CompleteEvent

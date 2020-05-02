@@ -2,6 +2,7 @@
 
 package com.avito.android.plugin.build_metrics
 
+import com.avito.android.gradle.metric.AbstractMetricsConsumer
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.sentry.sentry
 import com.avito.kotlin.dsl.getOptionalStringProperty

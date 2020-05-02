@@ -36,22 +36,7 @@ https://guides.gradle.org/creating-build-scans/
 
 ## Avito build trace
 
-Чтобы обойти ограничения build scan, собираем свой trace со временем исполнения задач.   
-В CI сборках лежит в артефактах TeamCity.
-
-**Как использовать:** 
-
-- Запусти сборку с любым из аргументов:   
-`-Pci=true`, `--scan`, `--profile`, `-Pandroid.enableProfileJson=true`.
-- Открой файл `outputs/trace/build.trace` в `chrome://tracing`
-
-**Known issues:**
-
-- Завышено время исполнения задач (см. выше).
-
-**Реализация:** 
-
-Смотри плагин `com.avito.android.build-metrics`.
+[Build trace plugin]({{< ref "/docs/projects/BuildTrace.md" >}})
 
 ## Gradle profiler
 
