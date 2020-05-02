@@ -249,16 +249,16 @@ Lorem markdownum insigne. Olympo signis Delphis!
 
 ```tpl
 {{</* tabs "Unique ID" */>}}
-{{</* tab "MacOS" */>}} MacOS Content {{</* /tab */>}}
+{{</* tab "macOS" */>}} macOS Content {{</* /tab */>}}
 {{</* tab "Linux" */>}} Linux Content {{</* /tab */>}}
 {{</* tab "Windows" */>}} Windows Content {{</* /tab */>}}
 {{</* /tabs */>}}
 ```
 
 {{< tabs "Unique ID" >}}
-{{< tab "MacOS" >}} MacOS Content {{< /tab >}}
-{{< tab "Linux" >}} Linux Content {{< /tab >}}
-{{< tab "Windows" >}} Windows Content {{< /tab >}}
+{{< tab "macOS" >}} macOS content {{< /tab >}}
+{{< tab "Linux" >}} Linux content {{< /tab >}}
+{{< tab "Windows" >}} Windows content {{< /tab >}}
 {{< /tabs >}}
 
 ### Columns

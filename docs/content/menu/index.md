@@ -17,7 +17,7 @@ headless: true
 - IDE
     - [Конфигурации]({{< ref "/docs/ide/Configurations.md" >}})
     - [Шаблоны]({{< ref "/docs/ide/Templates.md" >}})
-    - [Ускорение]({{< ref "/docs/ide/Speedup.md" >}})
+    - [Speedup]({{< ref "/docs/ide/Speedup.md" >}})
     - [Бенчмарки]({{< ref "/docs/ide/Benchmarking.md" >}})
 - Сборка
     - [Запуск]({{< ref "/docs/ide/Configurations.md" >}})
