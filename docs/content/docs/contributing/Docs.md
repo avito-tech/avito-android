@@ -184,7 +184,7 @@ In this shortcode you can override the "text" word to be more clear:
 
 Also, you have to replace internal links by links.k.avito.ru shortener. It is available only in Avito.\
 
-To get links statistics add `+` to the it.
+To get links statistics add `+` to it.
 
 ### Diagrams
 
