@@ -57,12 +57,12 @@ internal enum class Metric(
         "AvitoStartupTime",
         shouldBeLess = true,
         diffThreshold = 500.0,
-        isBlocker = true
+        isBlocker = false
     ),
     FPS(
         "FPS",
         shouldBeLess = false,
-        diffThreshold = 2.0,
+        diffThreshold = 3.0,
         isBlocker = true
     ),
     PROPER_FRAMES_PERCENT(
@@ -75,7 +75,7 @@ internal enum class Metric(
         "ActivityStartupTime",
         shouldBeLess = true,
         diffThreshold = 200.0,
-        isBlocker = true
+        isBlocker = false
     ),
     JUNKY_FRAME_MAX_DURATION(
         "JunkyFrameMaxDuration",
@@ -147,12 +147,9 @@ internal fun ComparedTest.Comparison.performedMuchBetterThanUsual() =
             } else {
                 val greaterThanExpected = it.greaterThanExpected(metric)
                 val lessThanExpected = it.lessThanExpected(metric)
-                val significantThreshold = significantThreshold(
-                    value = it.value.meanDiff,
-                    threshold = metric.diffThreshold
-                )
+                val significantThreshold = isSignificant(it.value, metric)
                 val blocker = metric.isBlocker
-                (((lessThanExpected || greaterThanExpected).not())
+                (!lessThanExpected && !greaterThanExpected
                     && significantThreshold
                     && blocker)
             }
