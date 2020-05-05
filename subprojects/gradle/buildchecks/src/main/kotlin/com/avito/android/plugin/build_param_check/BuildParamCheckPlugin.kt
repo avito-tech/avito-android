@@ -111,7 +111,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
         if (checks.hasInstance<Check.UniqueRClasses>()) {
             check(project.pluginManager.hasPlugin("com.avito.android.impact")) {
-                "build check for unique R classes requires 'com.avito.android.impact' plugin"
+                "build check 'uniqueRClasses' requires 'com.avito.android.impact' plugin"
             }
             val task = project.tasks.register<UniqueRClassesTask>("checkUniqueAndroidPackages") {
                 group = "verification"

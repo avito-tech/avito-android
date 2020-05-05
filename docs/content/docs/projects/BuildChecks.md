@@ -106,7 +106,7 @@ buildChecks {
 ### Java version
 
 The Java version can influence the output of the Java compiler. 
-It leads to Gradle [cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss).\
+It leads to Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss).\
 This check forces the same version for all builds.
 
 ```groovy
@@ -128,7 +128,7 @@ android {
 }
 ```
 
-Different revisions lead to Gradle cache misses. This check forces the same revision:
+Different revisions lead to Gradle remote cache misses. This check forces the same revision:
 
 ```groovy
 buildChecks {
@@ -231,7 +231,7 @@ buildChecks {
 
 This check detects if you override [Gradle project property](https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties) by command-line.
 It sends mismatches to [statsd]({{< ref "/docs/analytics/Statsd.md" >}}). 
-This information helps to see frequently changed propeties that can lead to cache misses.
+This information helps to see frequently changed propeties that can lead to remote cache misses.
 
 ```groovy
 buildChecks {
