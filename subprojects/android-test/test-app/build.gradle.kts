@@ -118,7 +118,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     reportApiUrl = project.getOptionalStringProperty("avito.report.url") ?: "http://stub"
     reportApiFallbackUrl = project.getOptionalStringProperty("avito.report.fallbackUrl") ?: "http://stub"
     reportViewerUrl = project.getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
-    registry = project.getOptionalStringProperty("avito.registry") ?: "registry"
+    registry = project.getOptionalStringProperty("avito.registry", "registry") ?: "registry"
     sentryDsn =
         project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
     slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
