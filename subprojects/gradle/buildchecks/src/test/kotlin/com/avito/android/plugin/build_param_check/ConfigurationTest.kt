@@ -1,6 +1,5 @@
 package com.avito.android.plugin.build_param_check
 
-import com.avito.test.gradle.KotlinModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test
@@ -13,12 +12,7 @@ internal class ConfigurationTest {
     fun `empty legacy configuration`(@TempDir projectDir: File) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.buildchecks"),
-            modules = listOf(
-                KotlinModule(
-                    name = "someModule",
-                    plugins = listOf("com.avito.android.module-types")
-                )
-            )
+            modules = emptyList()
         ).generateIn(projectDir)
 
         gradlew(
@@ -40,12 +34,7 @@ internal class ConfigurationTest {
     fun `empty dsl`(@TempDir projectDir: File) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.buildchecks"),
-            modules = listOf(
-                KotlinModule(
-                    name = "someModule",
-                    plugins = listOf("com.avito.android.module-types")
-                )
-            ),
+            modules = emptyList(),
             buildGradleExtra = """
                 buildChecks {
                     enableByDefault = false
