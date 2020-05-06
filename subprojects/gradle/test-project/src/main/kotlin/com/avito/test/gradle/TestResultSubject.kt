@@ -34,6 +34,11 @@ class TestResultSubject private constructor(
         return this
     }
 
+    fun outputDoesNotContain(substring: String): TestResultSubject {
+        check("output does not contain").that(subject.output).doesNotContain(substring)
+        return this
+    }
+
     fun taskWithOutcome(taskPath: String, outcome: TaskOutcome) {
         check("task $taskPath has outcome ${outcome.name}").that(subject.task(taskPath)?.outcome)
             .isEquivalentAccordingToCompareTo(outcome)

@@ -3,6 +3,7 @@ package com.avito.android.plugin.build_param_check
 import com.avito.android.androidSdk
 import com.avito.android.plugin.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check
+import com.avito.android.plugin.build_param_check.incremental_check.IncrementalKaptTask
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.sentry.sentry
 import com.avito.android.stats.CountMetric
@@ -15,7 +16,6 @@ import com.avito.utils.logging.ciLogger
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.UnknownConfigurationException
 import org.gradle.api.invocation.Gradle
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.invoke
@@ -126,6 +126,17 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                 group = "verification"
                 description =
                     "Check macOS localhost resolving issue from Java (https://thoeni.io/post/macos-sierra-java/)"
+            }
+            checkBuildEnvironment {
+                dependsOn(task)
+            }
+        }
+        if (checks.hasInstance<Check.IncrementalKapt>()) {
+            val check = checks.getInstance<Check.IncrementalKapt>()
+            val task = project.tasks.register<IncrementalKaptTask>("checkIncrementalKapt") {
+                group = "verification"
+                description = "Check that all annotation processors support incremental kapt if it is turned on"
+                mode.set(check.mode)
             }
             checkBuildEnvironment {
                 dependsOn(task)

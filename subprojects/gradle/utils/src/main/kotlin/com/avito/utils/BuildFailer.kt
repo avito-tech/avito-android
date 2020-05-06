@@ -8,11 +8,19 @@ val Project.buildFailer: BuildFailer
 interface BuildFailer {
 
     fun failBuild(
+        message: String
+    )
+
+    fun failBuild(
         message: String,
         cause: Throwable
     )
 
     class RealFailer : BuildFailer {
+
+        override fun failBuild(message: String) {
+            throw IllegalStateException(message)
+        }
 
         override fun failBuild(message: String, cause: Throwable) {
             throw IllegalStateException(message, cause)
