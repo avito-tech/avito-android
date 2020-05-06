@@ -3,6 +3,7 @@ package com.avito.android.plugin.build_param_check.incremental_check
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.io.TempDir
@@ -10,55 +11,73 @@ import java.io.File
 
 internal class IncrementalKaptTaskTest {
 
-    @Test
-    fun `build success with no warnings - unsupported Java version`(@TempDir projectDir: File) {
-        generateProject("none", projectDir)
+    private lateinit var projectDir: File
 
-        checkIncrementalKapt(projectDir = projectDir, javaVersion = UNSUPPORTED_JAVA_VERSION)
+    @BeforeEach
+    internal fun setUp(@TempDir projectDir: File) {
+        this.projectDir = projectDir
+    }
+
+    @Test
+    fun `build success with no warnings - unsupported Java version`() {
+        generateProject(mode = "none")
+
+        checkIncrementalKapt(javaVersion = UNSUPPORTED_JAVA_VERSION)
             .assertThat()
             .buildSuccessful()
             .outputDoesNotContain(
-                substring = "Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions"
+                substring = ERROR_MESSAGE_FIRST_LINE
             )
     }
 
     @Test
-    fun `build success with warning - unsupported Java version`(@TempDir projectDir: File) {
-        generateProject("warning", projectDir)
+    fun `build success with warning - unsupported Java version`() {
+        generateProject(mode = "warning")
 
-        checkIncrementalKapt(projectDir = projectDir, javaVersion = UNSUPPORTED_JAVA_VERSION)
+        checkIncrementalKapt(javaVersion = UNSUPPORTED_JAVA_VERSION)
             .assertThat()
             .buildSuccessful()
             .outputContains(
-                substring = "Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions"
+                substring = ERROR_MESSAGE_FIRST_LINE
             )
     }
 
     @Test
-    fun `build fail - unsupported Java version`(@TempDir projectDir: File) {
-        generateProject("fail", projectDir)
+    fun `build fail - unsupported Java version`() {
+        generateProject(mode = "fail")
 
-        checkIncrementalKapt(projectDir = projectDir, javaVersion = UNSUPPORTED_JAVA_VERSION, expectFailure = true)
+        checkIncrementalKapt(javaVersion = UNSUPPORTED_JAVA_VERSION, expectFailure = true)
             .assertThat()
             .buildFailed(
-                expectedErrorSubstring = "Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions"
+                expectedErrorSubstring = ERROR_MESSAGE_FIRST_LINE
             )
     }
 
     @Test
-    fun `build success - supported Java version`(@TempDir projectDir: File) {
-        generateProject("fail", projectDir)
+    fun `build success - supported Java version`() {
+        generateProject(mode = "fail")
 
-        checkIncrementalKapt(projectDir = projectDir, javaVersion = SUPPORTED_JAVA_VERSION)
+        checkIncrementalKapt(javaVersion = SUPPORTED_JAVA_VERSION)
             .assertThat()
             .buildSuccessful()
             .outputDoesNotContain(
-                substring = "Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions"
+                substring = ERROR_MESSAGE_FIRST_LINE
+            )
+    }
+
+    @Test
+    fun `build success - room not applied`() {
+        generateProject(mode = "fail", applyRoomPlugin = false)
+
+        checkIncrementalKapt(javaVersion = SUPPORTED_JAVA_VERSION)
+            .assertThat()
+            .buildSuccessful()
+            .outputDoesNotContain(
+                substring = ERROR_MESSAGE_FIRST_LINE
             )
     }
 
     private fun checkIncrementalKapt(
-        projectDir: File,
         javaVersion: String,
         expectFailure: Boolean = false
     ) = gradlew(
@@ -71,7 +90,10 @@ internal class IncrementalKaptTaskTest {
         expectFailure = expectFailure
     )
 
-    private fun generateProject(mode: String, projectDir: File) {
+    private fun generateProject(
+        mode: String,
+        applyRoomPlugin: Boolean = true
+    ) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.buildchecks"),
             buildGradleExtra = """
@@ -85,12 +107,19 @@ internal class IncrementalKaptTaskTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "room-test",
-                    plugins = listOf("kotlin-android", "kotlin-kapt", "com.avito.android.room-config")
+                    plugins = listOfNotNull(
+                        "kotlin-android",
+                        "kotlin-kapt",
+                        if (applyRoomPlugin) "com.avito.android.room-config" else null
+                    )
                 )
             )
         ).generateIn(projectDir)
     }
 }
+
+private const val ERROR_MESSAGE_FIRST_LINE =
+    "Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions"
 
 // About Java version read here - https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-master-dev/room/compiler/src/main/kotlin/androidx/room/RoomProcessor.kt
 private const val SUPPORTED_JAVA_VERSION = "11.0.0"

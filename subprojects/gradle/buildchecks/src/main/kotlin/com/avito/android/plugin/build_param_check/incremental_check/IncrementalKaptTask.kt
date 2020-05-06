@@ -3,6 +3,7 @@ package com.avito.android.plugin.build_param_check.incremental_check
 import com.avito.android.plugin.build_param_check.CheckResult
 import com.avito.android.plugin.build_param_check.CheckTaskWithMode
 import com.avito.kotlin.dsl.getBooleanProperty
+import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 
 internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
@@ -17,7 +18,7 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
 
     private fun checkAnnotationProcessors() {
         project.subprojects.forEach { subproject ->
-            if (subproject.plugins.hasPlugin("kotlin-kapt")) {
+            if (subproject.hasKotlinKapt && subproject.hasRoomKapt) {
                 mode.get().check(subproject) {
                     if (RoomIncrementalKaptChecker(subproject).isSupported()) {
                         CheckResult.Ok
@@ -34,4 +35,13 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
         You have to use JDK embedded in Android Studio 3.5.0-beta02 and higher.
         Current JDK is ${System.getProperty("java.runtime.version")} provided by ${System.getProperty("java.vendor")}.
     """.trimIndent()
+
+    private val Project.hasKotlinKapt: Boolean
+        get() = plugins.hasPlugin("kotlin-kapt")
+
+    private val Project.hasRoomKapt: Boolean
+        get() = configurations.findByName("kapt")?.dependencies?.any {
+            it.group == "androidx.room" && it.name == "room-compiler"
+        } ?: false
+
 }
