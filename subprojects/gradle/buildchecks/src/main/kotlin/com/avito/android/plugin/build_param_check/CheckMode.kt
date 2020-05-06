@@ -24,5 +24,5 @@ enum class CheckMode {
         }
     };
 
-    abstract fun check(project: Project, block: () -> CheckResult)
+    internal abstract fun check(project: Project, block: () -> CheckResult)
 }

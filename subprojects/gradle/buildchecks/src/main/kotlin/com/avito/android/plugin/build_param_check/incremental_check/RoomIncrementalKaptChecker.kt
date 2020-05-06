@@ -18,16 +18,16 @@ internal class RoomIncrementalKaptChecker(
             // like it does in the real compilation process
             return checkCommonWay(processor)
         } catch (e: Exception) {
-            System.err.println("Fail to check Room for KAPT incremental support in official way: %e")
+            System.err.println("Failed to check Room for KAPT incremental support in official way: %e")
         }
 
         try {
             return checkReflectionWay(processor)
         } catch (e: Exception) {
-            System.err.println("Fail to check Room for KAPT incremental support in reflection way: %e")
+            System.err.println("Failed to check Room for KAPT incremental support in reflection way: %e")
         }
 
-        return false
+        throw IllegalStateException("Failed to check Room for KAPT incremental support")
     }
 
     private fun createRoomProcessor(): AbstractProcessor =
