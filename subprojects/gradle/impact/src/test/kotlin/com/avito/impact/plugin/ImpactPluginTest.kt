@@ -12,6 +12,10 @@ internal class ImpactPluginTest {
     fun simpleIntegration(@TempDir projectDir: File) {
         TestProjectGenerator(plugins = listOf("com.avito.android.impact")).generateIn(projectDir)
 
-        gradlew(projectDir, "help").assertThat().buildSuccessful()
+        gradlew(
+            projectDir,
+            "-PgitBranch=xxx", // todo need for impact plugin
+            "help"
+        ).assertThat().buildSuccessful()
     }
 }

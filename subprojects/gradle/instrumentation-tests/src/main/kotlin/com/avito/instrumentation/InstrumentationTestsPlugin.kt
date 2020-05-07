@@ -135,6 +135,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                     if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
                         dependsOn(
+                            // todo implicit dependency on impact task
                             instrumentationConfiguration.impactAnalysisPolicy.getTask(
                                 project
                             )
@@ -158,6 +159,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     when (instrumentationConfiguration.impactAnalysisPolicy) {
                         is ImpactAnalysisPolicy.On -> {
                             dependencyOn(
+                                // todo implicit dependency on impact task
                                 instrumentationConfiguration.impactAnalysisPolicy.getTask(
                                     project
                                 )
@@ -364,7 +366,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         args["slackToken"] = "stub"
         args["sentryDsn"] = "http://stub-project@stub-host/0"
         args["fileStorageUrl"] = "http://stub"
-        args["teamcityBuildId"] = project.envArgs.build.id.toString()
+        args["teamcityBuildId"] = "-1"
         args["avito.report.enabled"] =
             project.getBooleanProperty("avito.report.enabled", default = false).toString()
 

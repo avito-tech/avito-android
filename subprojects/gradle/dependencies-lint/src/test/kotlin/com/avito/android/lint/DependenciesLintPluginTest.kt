@@ -339,7 +339,7 @@ class DependenciesLintPluginTest {
     }
 
     private fun runLinter(dir: File): DependenciesReport {
-        val result = gradlew(dir, ":lintDependencies")
+        val result = gradlew(dir, "-PgitBranch=xxx", ":lintDependencies") // todo need for impact plugin
         result.assertThat().isInstanceOf<TestResult.Success>()
 
         return ReportXmlAdapter().read(

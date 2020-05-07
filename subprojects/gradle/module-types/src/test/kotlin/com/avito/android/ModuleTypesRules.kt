@@ -82,7 +82,8 @@ class ModuleTypesRules {
                             gradlew(
                                 projectDir,
                                 ":feature:checkProjectDependenciesType",
-                                "-Pavito.moduleTypeValidationEnabled=true"
+                                "-Pavito.moduleTypeValidationEnabled=true",
+                                "-PgitBranch=xxx" // todo need for impact plugin
                             ).assertThat().buildSuccessful()
                         }
                         is NegativeCase -> {
@@ -90,6 +91,7 @@ class ModuleTypesRules {
                                 projectDir,
                                 ":feature:checkProjectDependenciesType",
                                 "-Pavito.moduleTypeValidationEnabled=true",
+                                "-PgitBranch=xxx", // todo need for impact plugin
                                 expectFailure = true
                             ).assertThat()
                                 .buildFailed(
