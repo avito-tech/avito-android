@@ -1,16 +1,23 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.gradle.metric
 
 import com.avito.android.gradle.profile.BuildListener
 import com.avito.android.gradle.profile.BuildProfile
+import com.avito.android.gradle.profile.ProfileEventAdapter
 import com.avito.android.gradle.profile.TaskExecution
 import org.gradle.BuildResult
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.StandardOutputListener
+import org.gradle.internal.buildevents.BuildStartedTime
 import org.gradle.internal.logging.LoggingOutputInternal
+import org.gradle.internal.time.Clock
 import org.gradle.kotlin.dsl.support.serviceOf
 
-internal open class GradleCollector(
+/**
+ * Use [initialize] to consume events
+ */
+class GradleCollector(
     // collection is used to avoid cyclic dependencies
     private val consumers: List<MetricsConsumer>
 ) : BuildListener, StandardOutputListener {
@@ -43,4 +50,23 @@ internal open class GradleCollector(
         gradle.serviceOf<LoggingOutputInternal>().removeStandardOutputListener(this)
     }
 
+    companion object {
+
+        fun initialize(project: Project, consumers: List<MetricsConsumer>) {
+            if (consumers.isEmpty()) return
+
+            val collector = GradleCollector(consumers)
+
+            val gradle = project.gradle
+            val clock = gradle.serviceOf<Clock>()
+            val startedTime = gradle.serviceOf<BuildStartedTime>()
+            val adapter = ProfileEventAdapter(clock, collector)
+            adapter.buildStarted(startedTime)
+
+            gradle.addListener(adapter)
+
+            val outputService = gradle.serviceOf<LoggingOutputInternal>()
+            outputService.addStandardOutputListener(collector)
+        }
+    }
 }

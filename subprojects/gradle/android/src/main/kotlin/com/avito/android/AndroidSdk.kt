@@ -5,7 +5,6 @@ import com.avito.utils.ExistingFile
 import com.avito.utils.ProcessRunner
 import org.funktionale.tries.Try
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
 import java.io.File
 import java.util.Properties
 import kotlin.contracts.ExperimentalContracts
@@ -25,16 +24,19 @@ val Project.androidSdk: AndroidSdk
 
 class AndroidSdk(
     private val project: Project,
-    processRunner: ProcessRunner,
-    private val logger: Logger = project.logger
+    private val processRunner: ProcessRunner
 ) : ApkSigner, Aapt {
 
     @Suppress("unused")
     private val targetSdkVersion: Int
-        get() = requireNotNull(System.getProperty("targetSdkVersion").toIntOrNull()) { "targetSdkVersion property should be set" }
+        get() = requireNotNull(System.getProperty("targetSdkVersion").toIntOrNull()) {
+            "targetSdkVersion system property should be set"
+        }
 
     private val compileSdkVersion: Int
-        get() = requireNotNull(System.getProperty("compileSdkVersion").toIntOrNull()) { "compileSdkVersion property should be set" }
+        get() = requireNotNull(System.getProperty("compileSdkVersion").toIntOrNull()) {
+            "compileSdkVersion system property should be set"
+        }
 
 
     private val buildToolsVersion: String
@@ -56,18 +58,16 @@ class AndroidSdk(
             return ExistingDirectory.Impl(dir)
         }
 
-    private val apkSigner = ApkSigner.Impl(buildToolsPath, processRunner)
+    private val apkSigner: ApkSigner
+        get() = ApkSigner.Impl(buildToolsPath, processRunner)
 
-    private val aapt = Aapt.Impl(buildToolsPath, processRunner)
+    private val aapt: Aapt
+        get() = Aapt.Impl(buildToolsPath, processRunner)
 
     private val keytool = KeyTool(processRunner)
 
     val androidHome: ExistingDirectory
-        get() = ExistingDirectory.Impl(File(System.getenv("ANDROID_HOME")
-            ?: androidHomeFromLocalProperties(project.rootProject.file("local.properties")) {
-                logger.error(it)
-            }
-            ?: error("Can't resolve ANDROID_HOME")))
+        get() = ExistingDirectory.Impl(project.androidHome)
 
     val androidJar: File
         get() {

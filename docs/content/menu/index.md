@@ -8,6 +8,7 @@ headless: true
 - [Contacts]({{< ref "/docs/Contacts.md" >}})
 - Projects
     - [Build checks]({{< ref "/docs/projects/BuildChecks.md" >}})
+    - [Build trace]({{< ref "/docs/projects/BuildTrace.md" >}})
 - Contributing
     - [How to start]({{< ref "/docs/contributing/HowToStart.md" >}})
     - [Documentation]({{< ref "/docs/contributing/Docs.md" >}})
@@ -17,7 +18,7 @@ headless: true
 - IDE
     - [Конфигурации]({{< ref "/docs/ide/Configurations.md" >}})
     - [Шаблоны]({{< ref "/docs/ide/Templates.md" >}})
-    - [Ускорение]({{< ref "/docs/ide/Speedup.md" >}})
+    - [Speedup]({{< ref "/docs/ide/Speedup.md" >}})
     - [Бенчмарки]({{< ref "/docs/ide/Benchmarking.md" >}})
 - Сборка
     - [Запуск]({{< ref "/docs/ide/Configurations.md" >}})

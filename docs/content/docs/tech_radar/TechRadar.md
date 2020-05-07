@@ -25,7 +25,7 @@ Original: https://www.thoughtworks.com/radar
 
 ### What questions does tech radar help to solve?
 
-- What criteria is technology selected or declined by?
+- What criteria guide the choice?
 - What should happen to reconsider the choice?
 - I want to use X. How can I compare it against Y?
 

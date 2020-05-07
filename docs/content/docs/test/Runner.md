@@ -17,8 +17,11 @@ It uses an internal TMS (test management system). We are working on support othe
 
 ## Getting started
 
-1. Apply the instrumentation-tests gradle plugin
-Add to your build.gradle.kts
+1. Apply the instrumentation-tests Gradle plugin \
+
+{{< tabs "applyPlugin" >}}
+{{< tab "Kotlin" >}}
+Add to your `build.gradle.kts`
 
 ```kotlin
 plugins {
@@ -27,7 +30,23 @@ plugins {
 }
 ```
 
+{{< /tab >}}
+{{< tab "Groovy" >}}
+Add to your `build.gradle`
+
+```groovy
+plugins {
+    id("com.android.application")
+    id("com.avito.android.instrumentation-tests")
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 2. Add common plugin configuration
+{{< tabs "pluginConfiguration" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -40,7 +59,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     slackToken = "stub"
     fileStorageUrl = "http://stub"
 
-    configurationsContainer.register("Local") {
+    configurationsContainer.register("local") {
         tryToReRunOnTargetBranch = false
 
         targetsContainer.register("api27") {
@@ -64,7 +83,51 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-3. Run tests via gradle task
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+import com.avito.instrumentation.reservation.request.Device.LocalEmulator
+
+instrumentation {
+    // they are required for Avito app. We will make them optional in future.
+    reportApiUrl = "http://stub"
+    reportApiFallbackUrl = "http://stub"
+    reportViewerUrl = "http://stub"
+    registry = "registry"
+    sentryDsn = "http://stub-project@stub-host/0"
+    slackToken = "stub"
+    fileStorageUrl = "http://stub"
+    
+    configurations {
+        local {
+            tryToReRunOnTargetBranch = false
+            targets {
+                api27 {
+                    deviceName = "API27"
+                    scheduling {
+                        quota {
+                            retryCount = 1
+                            minimumSuccessCount = 1
+                        }
+
+                        testsCountBasedReservation {
+                            device = new LocalEmulator("27", 27, "Android_SDK_built_for_x86")
+                            maximum = 1
+                            testsPerEmulator = 1
+                        }
+                    }
+                }   
+            }       
+        }   
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
+3. Run tests via Gradle task
 
 ```shell script
     ./gradlew :<projectPath>:instrumentation<ConfigurationName>         
@@ -85,6 +148,9 @@ Check out a configuration to run in `GradleInstrumentationPluginConfiguration` i
 0. [You must apply a plugin]({{< relref "#getting-started">}})
 1. Create filter
 
+{{< tabs "createFilter" >}}
+{{< tab "Kotlin" >}}
+
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     filters.register("filterName") {
@@ -104,18 +170,70 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+import com.avito.instrumentation.reservation.request.Device.LocalEmulator
+
+instrumentation {
+    filters {
+        filterName {
+            fromSource.includeByAnnotations(annotations)
+            fromSource.excludeByAnnotations(annotations)
+            fromSource.includeByPrefixes(prefixes)
+            fromSource.excludeByPrefixes(prefixes)
+            
+            // it is internal for Avito. It uses run history from our test-report system.
+            fromRunHistory.excludePreviousStatuses(statuses)
+            fromRunHistory.excludePreviousStatuses(statuses)
+            fromRunHistory.report("reportId") { reportStatuses ->
+                reportStatuses.include(statuses)
+                reportStatuses.exclude(statuses)
+            }
+        }
+    }   
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 2. Add filter to configuration
+
+{{< tabs "addFilterToConfiguration" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
-    configurationsContainer.register("Local") {
+    configurationsContainer.register("local") {
         filter = "filterName"
         // else...   
     }    
 }
 ```
 
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+instrumentation {
+    configurations {
+        local {
+            filter = filterName
+            // else...       
+        }   
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Filter tests by annotations
+
+{{< tabs "filterTestsByAnnotations" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -131,7 +249,32 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+instrumentation {
+    filters {
+        filterName {
+            def yourFullyQualifiedAnnotationName = "package.AnnotationClassName"
+                    
+            def annotations = [youFullyQualifiedAnnotationName] as Set
+            // will include only tests with at least one annotation
+            fromSource.includeByAnnotations(annotations)
+            // will exclude all tests with at least one annotation
+            fromSource.excludeByAnnotations(annotations)       
+        }
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Filter tests by prefix or name
+
+{{< tabs "filterTestsByPrefix" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -149,15 +292,41 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+instrumentation {
+    filters {
+        filterName {
+            def packageTestFilter = "testPackage"
+            def classTestFilter = "testPackage.testClass"
+            def fullyQualifiedTestFilter = "testPackage.testClass.testMetod"
+            def prefixes = [packageTestFilter, classTestFilter, fullyQualifiedTestFilter] as Set
+            // will include only tests from package, class and concrete test
+            fromSource.includeByPrefixes(prefixes)
+            
+            // will exclude all tests from package, class and concrete test
+            fromSource.excludeByPrefixes(prefixes)
+        }
+    }   
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Filter tests by statuses from previous run on the same commit
+
+{{< tabs "filterTestsByPreviousRun" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     filters.register("filterName") {
-        val statuses = setOf(RunStatus.Success)
-        
+        val statuses = setOf(RunStatus.Success)        
         // will run only Success previously Succeed tests
         fromRunHistory.includePreviousStatuses(statuses)
         // will run all tests except previously Succeed
@@ -166,7 +335,32 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
+
+instrumentation {
+    filters {
+        filterName {
+            def statuses = [RunStatus.Success] as Set   
+            // will run only Success previously Succeed tests
+            fromRunHistory.includePreviousStatuses(statuses)
+            // will run all tests except previously Succeed
+            fromRunHistory.excludePreviousStatuses(statuses)
+        }
+    }   
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Filter tests by statuses from report by id
+
+{{< tabs "filterTestsByReport" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
@@ -187,26 +381,83 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-### Apply a filter without changing `build.gradle.kts`
+{{< /tab >}}
+{{< tab "Groovy" >}}
 
-1. Add custom gradle property for filter name to gradle.properties file
+```groovy
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
+
+instrumentation {
+    filters {
+        filterName {
+            // report-viewer report id
+            def reportId = "id"
+            def statuses = [RunStatus.Failed] as Set  
+            fromRunHistory.report(reportId) { reportStatuses ->
+                // will run only Failed tests from report 
+                reportStatuses.include(statuses)
+                // will run all tests except Failed tests from report
+                reportStatuses.exclude(statuses)
+            }
+        }
+    }   
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
+### Apply a filter without changing `build.gradle.kts` or `build.gradle`
+
+1. Add custom Gradle property for filter name to gradle.properties file
 
 ```properties
-filterName="filterName"
+filterName="default"
 ```
 
 2. Use the property to configure plugin
 
+{{< tabs "applyFilterWithoutChanging" >}}
+{{< tab "Kotlin" >}}
+
 ```kotlin
-val filterName by project
+import com.avito.kotlin.dsl.getOptionalStringProperty
+
+// read property
+val filterName: String? by project
+// or
+val filterName = project.getOptionalStringProperty("filterName", "default")
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
-    configurationsContainer.register("Local") {
+    configurationsContainer.register("local") {
         filter = filterName
         // else...   
     }    
 }
 ```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+import static com.avito.kotlin.dsl.ProjectExtensionsKt.getOptionalStringProperty
+
+// read property
+def filterName = project.hasProperty("filterName") ? project["filterName"] : "default"
+// or
+def filterName = getOptionalStringProperty(project, "filterName", "default")
+
+instrumentation {
+    configurations {
+        local {
+            filter = filterName
+        }
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 3. Add `property` to CLI command if you want to override `filterName`
 
@@ -214,15 +465,20 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 ./gradlew instrumentationLocal -PfilterName=<any name of defined filter>
 ```
 
-### Customize a filter without changing `build.gradle.kts`
+### Customize a filter without changing `build.gradle.kts` or `build.gradle`
 
 You can customize everything by adding custom properties to CLI command e.g.
 
-1. You have [filter including tests by annotation]({{< relref "#filter-tests-by-annotations">}})
-2. Add logic to check presence of gradle property.
+1. Define [filter including tests by annotation]({{< relref "#filter-tests-by-annotations">}})
+2. Add logic to check presence of Gradle property.
+
+{{< tabs "customizeFilterWithoutChanging" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
 val includedAnnotation: String? by project
+// or
+val includedAnnotation = project.getOptionalStringProperty("includedAnnotation")
  
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     filters.register("filterName") {
@@ -238,7 +494,32 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 }
 ```
 
-3. Run gradle task with property `includedAnnotation` to override filter
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+import static com.avito.kotlin.dsl.ProjectExtensionsKt.getOptionalStringProperty
+
+// read property
+def includedAnnotation = project.hasProperty("includedAnnotation") ? project["includedAnnotation"] : null
+// or
+def includedAnnotation = getOptionalStringProperty(project, "includedAnnotation")
+
+instrumentation {
+    filters {
+        filterName {
+            def annotation = includedAnnotation ?: "package.AnnotationClassName"
+            def annotations = [annotation] as Set
+            fromSource.includeByAnnotations(annotations)
+        }
+    }   
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
+3. Run Gradle task with property `includedAnnotation` to override filter
 
 ```shell script
 ./gradlew instrumentationLocal -PincludedAnnotation="package.AnotherAnnotationClassName" 
@@ -263,7 +544,7 @@ TBD
 1. Run tests with extra parameters specified. The example for `:test-app`:
 
 ```shell script
-./gradlew :subprojects:android-test:test-app:instrumentationUi
+./gradlew :subprojects:android-test:test-app:instrumentationUi 
     -PkubernetesContext=<your context>
     -PkubernetesCaCertFile=<path to ca certificate file>
     -Pavito.registry=<avito registry>
@@ -273,9 +554,12 @@ TBD
 
 0. Add a configuration with target on local emulator
 
-```kotlin
-configurationsContainer.register("Local") {
+{{< tabs "addLocalEmulator" >}}
+{{< tab "Kotlin" >}}
 
+```kotlin
+extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
+configurationsContainer.register("local") {
         targetsContainer.register("api27") {
             deviceName = "API27"
 
@@ -293,14 +577,48 @@ configurationsContainer.register("Local") {
             }
         }
     }
+}
 ```
 
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+instrumentation {
+    configurations {
+        local {
+            tryToReRunOnTargetBranch = false
+            targets {
+                api27 {
+                    deviceName = "API27"
+                    scheduling {
+                        quota {
+                            retryCount = 1
+                            minimumSuccessCount = 1
+                        }
+
+                        testsCountBasedReservation {
+                            device = new LocalEmulator("27", 27, "Android_SDK_built_for_x86")
+                            maximum = 1
+                            testsPerEmulator = 1
+                        }
+                    }
+                }   
+            }       
+        }   
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 1. Run an emulator with 27 API
-2. Run gradle CLI command
+2. Run Gradle CLI command
 
 ```shell script
-`./gradlew :<project gradle path>:instrumentation<configuration name>` e.g.
-`./gradlew :subprojects:android-test:test-app:instrumentationLocal`
+`./gradlew :<project gradle path>:instrumentation<configuration name>`, e.g.
+`./gradlew :subprojects:android-test:test-app:instrumentationLocal` 
 ```
 
 ## Run test on APK was built before

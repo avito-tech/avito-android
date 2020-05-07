@@ -18,7 +18,8 @@ and we rely on it to test and ship our apps.
 ## Communication
 
 [Telegram chat (Russian)](https://t.me/avito_android_opensource)
-[Telegram chat (Eng)](https://t.me/avito_android_opensource_en)
+
+[Telegram chat (English)](https://t.me/avito_android_opensource_en)
 
 ## Contribution
 

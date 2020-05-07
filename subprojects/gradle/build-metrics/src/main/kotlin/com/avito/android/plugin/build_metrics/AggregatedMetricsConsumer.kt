@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics
 
+import com.avito.android.gradle.metric.AbstractMetricsConsumer
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.Operation
 import com.avito.android.gradle.profile.TaskExecution
@@ -190,13 +191,3 @@ private const val considerableTimeMs = 100
  * Добавляются неявно к каждой сборке, зашумляют метрики.
  */
 private val defaultBuildTasks = listOf("checkBuildEnvironment")
-
-internal val BuildProfile.initWithConfigurationTimeMs: Long
-    get() {
-        val firstMeaningfulTask = getProjects()
-            .filterNot { it.path.startsWith(":buildSrc") } // just to be sure
-            .flatMap { it.getTasks() }
-            .minBy { it.startTime } ?: return 0
-
-        return firstMeaningfulTask.startTime - profilingStarted
-    }
