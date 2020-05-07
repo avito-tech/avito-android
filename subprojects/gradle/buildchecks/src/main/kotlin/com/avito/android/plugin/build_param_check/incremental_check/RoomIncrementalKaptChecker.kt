@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_param_check.incremental_check
 
 import com.avito.kotlin.dsl.withType
+import com.avito.utils.logging.ciLogger
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import java.net.URLClassLoader
@@ -12,22 +13,27 @@ internal class RoomIncrementalKaptChecker(
 
     fun isSupported(): Boolean {
         val processor = createRoomProcessor()
+        val suppressedExceptions = mutableListOf<Exception>()
 
         try {
             // Trying the first approach when the annotation processor is asked for supported options
             // like it does in the real compilation process
             return checkCommonWay(processor)
         } catch (e: Exception) {
-            System.err.println("Failed to check Room for KAPT incremental support in official way: %e")
+            suppressedExceptions += e
+            project.ciLogger.critical("Failed to check Room for KAPT incremental support in official way", e)
         }
 
         try {
             return checkReflectionWay(processor)
         } catch (e: Exception) {
-            System.err.println("Failed to check Room for KAPT incremental support in reflection way: %e")
+            suppressedExceptions += e
+            project.ciLogger.critical("Failed to check Room for KAPT incremental support in reflection way", e)
         }
 
-        throw IllegalStateException("Failed to check Room for KAPT incremental support")
+        throw IllegalStateException("Failed to check Room for KAPT incremental support").also { e ->
+            suppressedExceptions.forEach { e.addSuppressed(it) }
+        }
     }
 
     private fun createRoomProcessor(): AbstractProcessor =

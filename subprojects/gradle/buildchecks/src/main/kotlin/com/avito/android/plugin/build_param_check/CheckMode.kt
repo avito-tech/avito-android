@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_param_check
 
 import com.avito.utils.buildFailer
+import com.avito.utils.logging.ciLogger
 import org.gradle.api.Project
 
 enum class CheckMode {
@@ -12,7 +13,7 @@ enum class CheckMode {
     WARNING {
         override fun check(project: Project, block: () -> CheckResult) {
             when (val result = block()) {
-                is CheckResult.Failed -> project.logger.error(result.message)
+                is CheckResult.Failed -> project.ciLogger.info(result.message)
             }
         }
     },
