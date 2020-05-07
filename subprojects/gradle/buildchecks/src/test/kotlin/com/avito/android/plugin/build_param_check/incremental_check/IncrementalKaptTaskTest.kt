@@ -66,10 +66,22 @@ internal class IncrementalKaptTaskTest {
     }
 
     @Test
-    fun `build success - room not applied`() {
+    fun `build success - Room not applied`() {
         generateProject(mode = "fail", applyRoomPlugin = false)
 
         checkIncrementalKapt(javaVersion = SUPPORTED_JAVA_VERSION)
+            .assertThat()
+            .buildSuccessful()
+            .outputDoesNotContain(
+                substring = ERROR_MESSAGE_FIRST_LINE
+            )
+    }
+
+    @Test
+    fun `build success - without Room and unsupported Java`() {
+        generateProject(mode = "fail", applyRoomPlugin = false)
+
+        checkIncrementalKapt(javaVersion = UNSUPPORTED_JAVA_VERSION)
             .assertThat()
             .buildSuccessful()
             .outputDoesNotContain(
