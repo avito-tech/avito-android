@@ -143,22 +143,39 @@ If some parameter is missing or has invalid value, the plugin should fail and ex
 
 ### Feature toggles
 
-Плагин может сломаться и заблокировать всем работу с проектом. 
-Чтобы дать себе время на исправление, делай плагин отключаемым:
+The plugin may break and blocks the work of other developers.
+Making the plugin unpluggable gives you time for a fix. 
 
 ```kotlin
 open class MyPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        // В каждом property используем префикс `avito.<plugin>`
-        // сразу видно где используется
+        // In each property use prefix `avito.<plugin>`
+        // It makes it easy to find it in the future
         if (!project.getBooleanProperty("avito.my_plugin.enabled", default = false)) {
             project.logger.lifecycle("My plugin is disabled")
             return
         }
+    }
+}
 ```
 
-Тогда каждый разработчик сможет локально отключить плагин в случае проблем. 
+### Logging
+
+Do not use `System.out` or `System.err` to log something from your plugin. It is not customizable and
+do not allow you to write logs to a file or disable them at all. Consider using `com.avito.utils.logging.CILogger`.
+It is serializable so it can be passed through `org.gradle.workers.WorkerConfiguration.setParams` and it is able
+to direct logs to a file.
+
+There are convenient extensions allowing you to get instance of CILogger:
+
+```kotlin
+val Task.ciLogger: CILogger
+    get() = ...
+
+val Project.ciLogger: CILogger
+    get() = ...
+```
 
 ## Директория ci
 
