@@ -31,7 +31,7 @@ internal class ChecksFilter(
     }
 
     private fun checksFromLegacyProperties(): List<Check> {
-        val checks = allDefaultChecks(excluded = emptySet())
+        val checks = allChecksInDefaultState(excluded = emptySet())
 
         // hardcoded value for backward compatibility
         checks.getInstance<Check.JavaVersion>().version = JavaVersion.VERSION_1_8
@@ -68,17 +68,16 @@ internal class ChecksFilter(
     )
 
     private fun enabledChecksFromExtension(): List<Check> {
-        val enabledByUser = extension.checks
-            .filter { it.enabled }
-
+        val changedByUser = extension.checks
+        val enabledByUser = changedByUser.filter { it.enabled }
         return if (extension.enableByDefault) {
-            enabledByUser + allDefaultChecks(excluded = extension.checks).filter { it.enabled }
+            enabledByUser + allChecksInDefaultState(excluded = changedByUser).filter { it.enabled }
         } else {
             enabledByUser
         }
     }
 
-    private fun allDefaultChecks(excluded: Set<Check>): List<Check> {
+    private fun allChecksInDefaultState(excluded: Set<Check>): List<Check> {
         return Check::class.sealedSubclasses
             .filter {
                 excluded.filterIsInstance(it.java).isEmpty()
