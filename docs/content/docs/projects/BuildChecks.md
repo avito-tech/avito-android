@@ -240,3 +240,45 @@ buildChecks {
     } 
 }
 ```
+
+### Incremental KAPT
+
+This check verifies that all KAPT annotation processors are support incremental annotation processing 
+if it is [enabled](https://kotlinlang.org/docs/reference/kapt.html#incremental-annotation-processing-since-1330) (`kapt.incremental.apt=true`). 
+Because if one of them does not support it then whole incremental annotation processing won't work at all.
+
+Incremental KAPT check allows to set up one of three behavioral modes:
+- `"none"` -- check is disable
+- `"warning"` -- prints warning in build log (default behaviour)
+- `"fail"` -- fail whole build
+
+```groovy
+buildChecks {
+    incrementalKapt {
+        mode = "fail"
+    }
+}
+```
+
+Right now the check verifies the following processors:
+- [Room](https://developer.android.com/topic/libraries/architecture/room)
+
+#### Room
+
+Room supports incremental annotation processing if all of the following conditions are met:
+- [`room.incremental`](https://developer.android.com/jetpack/androidx/releases/room#compiler-options) it set to `true`  
+(or `com.avito.android.room-config` Gradle-plugin is applied)
+- You use Java 11 (and higher) or use JDK embedded in Android Studio 3.5.0-beta02 and higher 
+(for more info about these restrictions read the documentation for the method `methodParametersVisibleInClassFiles` 
+in `RoomProcessor` [sources](https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-master-dev/room/compiler/src/main/kotlin/androidx/room/RoomProcessor.kt))
+
+If you use IntelliJ IDEA or build a project from the command line you have to set up `JAVA_HOME` environment variable to 
+reference the path to embedded JDK in Android Studio. You can add to `~/.gradle/gradle.properties` line like this:
+
+```shell script
+# for macOS
+org.gradle.java.home=/Applications/Android Studio.app/Contents/jre/jdk/Contents/Home
+```
+
+This path can be retrieved from **Project Structure > SDK Location > JDK location** in 
+Android Studio.
