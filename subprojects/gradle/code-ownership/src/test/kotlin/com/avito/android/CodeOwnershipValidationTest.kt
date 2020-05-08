@@ -131,7 +131,8 @@ class CodeOwnershipValidationTest {
                         gradlew(
                             projectDir,
                             ":feature:checkProjectDependenciesOwnership",
-                            "-Pavito.moduleOwnershipValidationEnabled=true"
+                            "-Pavito.moduleOwnershipValidationEnabled=true",
+                            "-PgitBranch=xxx" // todo need for impact plugin
                         ).assertThat().buildSuccessful()
                     }
                     is NegativeCase -> {
@@ -139,6 +140,7 @@ class CodeOwnershipValidationTest {
                             projectDir,
                             ":feature:checkProjectDependenciesOwnership",
                             "-Pavito.moduleOwnershipValidationEnabled=true",
+                            "-PgitBranch=xxx", // todo need for impact plugin
                             expectFailure = true
                         ).assertThat().buildFailed(case.errorText)
                     }

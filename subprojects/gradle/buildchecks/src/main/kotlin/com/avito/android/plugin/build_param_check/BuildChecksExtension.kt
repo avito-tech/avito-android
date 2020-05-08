@@ -8,6 +8,7 @@ import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.Jav
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.ModuleTypes
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.MacOSLocalhost
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.UniqueRClasses
+import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.IncrementalKapt
 import org.gradle.api.Action
 
 open class BuildChecksExtension {
@@ -31,6 +32,8 @@ open class BuildChecksExtension {
     fun moduleTypes(action: Action<ModuleTypes>) = register(ModuleTypes(), action)
 
     fun uniqueRClasses(action: Action<UniqueRClasses>) = register(UniqueRClasses(), action)
+
+    fun incrementalKapt(action: Action<IncrementalKapt>) = register(IncrementalKapt(), action)
 
     private fun <T : Check> register(check: T, action: Action<T>) {
         @Suppress("UselessCallOnCollection")
@@ -86,6 +89,10 @@ open class BuildChecksExtension {
         }
 
         open class UniqueRClasses : Check()
+
+        open class IncrementalKapt : Check() {
+            var mode: CheckMode = CheckMode.WARNING
+        }
 
         override fun equals(other: Any?): Boolean {
             return this.javaClass == other?.javaClass

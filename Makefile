@@ -1,6 +1,6 @@
 test_build_type?=debug
 infra?=
-ci?=true
+ci?=false
 log_level?=-q
 
 localFilter?=
@@ -29,6 +29,10 @@ params +=-PtestBuildType=$(test_build_type)
 params +=-Pci=$(ci)
 
 params +=$(log_level)
+
+ifeq ($(gradle_debug),true)
+params +=-Dorg.gradle.jvmargs='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=5005,suspend=y' --no-daemon
+endif
 
 filter_report_id?=
 

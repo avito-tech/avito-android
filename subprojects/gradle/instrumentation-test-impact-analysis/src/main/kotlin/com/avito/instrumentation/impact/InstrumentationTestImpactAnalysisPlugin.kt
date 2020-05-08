@@ -7,8 +7,6 @@ import com.avito.android.withAndroidApp
 import com.avito.impact.BytecodeResolver
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.kotlin.dsl.isRoot
-import com.avito.utils.gradle.BuildEnvironment
-import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
@@ -25,9 +23,6 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
 
         val extension = project.extensions
             .create<InstrumentationTestImpactAnalysisExtension>("instrumentationTestImpactAnalysis", project)
-
-        //todo should work in any environment
-        if (project.buildEnvironment !is BuildEnvironment.CI) return
 
         modifiedProjectsFinder = ModifiedProjectsFinder.from(project)
         modulesBytecodeResolver = BytecodeResolver(project)

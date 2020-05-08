@@ -48,7 +48,8 @@ class UniqueRClassesTest {
 
         val build = gradlew(
             projectDir,
-            "checkUniqueAndroidPackages"
+            "checkUniqueAndroidPackages",
+            "-PgitBranch=xxx" // todo need for impact plugin
         )
         build.assertThat().buildSuccessful()
     }
@@ -92,6 +93,7 @@ class UniqueRClassesTest {
         val build = gradlew(
             projectDir,
             "checkUniqueAndroidPackages",
+            "-PgitBranch=xxx",
             expectFailure = true
         )
         build.assertThat().buildFailed("Application :app-y has modules with the same package: [b]")

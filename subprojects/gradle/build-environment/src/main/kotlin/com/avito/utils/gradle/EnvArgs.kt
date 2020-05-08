@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 // Used in build.gradle's of avito
 val Project.envArgs by ProjectProperty.lazy<EnvArgs>(scope = ROOT_PROJECT) { project ->
-    if (project.buildEnvironment is BuildEnvironment.CI) EnvArgs.Impl(project) else EnvArgs.Stub
+    EnvArgs.Impl(project)
 }
 
 interface EnvArgs {
@@ -35,7 +35,6 @@ interface EnvArgs {
             override val type = "local-${userName}"
 
             internal enum class Id(val id: Int) {
-                FOR_STUDIO_RUN(-1),
                 FOR_LOCAL_KUBERNETES_RUN(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt())
             }
 
@@ -65,6 +64,7 @@ interface EnvArgs {
             project.getBooleanProperty("avito.tests.disableRerunOnTargetBranch", default = false)
 
         init {
+            // todo make local by default?
             build = when (project.getOptionalStringProperty("avito.build", "teamcity")) {
                 "teamcity" -> {
                     val teamcityBuildId = project.getMandatoryIntProperty("teamcityBuildId")
@@ -76,21 +76,11 @@ interface EnvArgs {
                     )
                 }
                 "local" -> {
-                    val id = if (buildEnvironment(project) is BuildEnvironment.CI) {
-                        Build.Local.Id.FOR_LOCAL_KUBERNETES_RUN
-                    } else {
-                        Build.Local.Id.FOR_STUDIO_RUN
-                    }
-                    Build.Local(id)
+                    Build.Local(Build.Local.Id.FOR_LOCAL_KUBERNETES_RUN)
                 }
                 else -> throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
             }
         }
 
-    }
-
-    object Stub : EnvArgs, Serializable {
-        override val isRerunDisabled: Boolean = false
-        override val build: Build = Build.Local(Build.Local.Id.FOR_STUDIO_RUN)
     }
 }
