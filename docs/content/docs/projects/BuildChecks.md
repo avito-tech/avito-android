@@ -243,11 +243,11 @@ buildChecks {
 
 ### Incremental KAPT
 
-This check verifies that all KAPT annotation processors are support incremental annotation processing 
+This check verifies that all KAPT annotation processors support incremental annotation processing 
 if it is [enabled](https://kotlinlang.org/docs/reference/kapt.html#incremental-annotation-processing-since-1330) (`kapt.incremental.apt=true`). 
 Because if one of them does not support it then whole incremental annotation processing won't work at all.
 
-Incremental KAPT check allows to set up one of three behavioral modes:
+Incremental KAPT check has three modes:
 - `"none"` -- check is disable
 - `"warning"` -- prints warning in build log (default behaviour)
 - `"fail"` -- fail whole build
