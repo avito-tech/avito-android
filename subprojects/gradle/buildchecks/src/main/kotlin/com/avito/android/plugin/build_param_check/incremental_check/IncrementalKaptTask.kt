@@ -34,6 +34,7 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
         Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions. 
         You have to use JDK embedded in Android Studio 3.5.0-beta02 and higher.
         Current JDK is ${System.getProperty("java.runtime.version")} provided by ${System.getProperty("java.vendor")}.
+        https://avito-tech.github.io/avito-android/docs/projects/buildchecks/#room
     """.trimIndent()
 
     private val Project.hasKotlinKapt: Boolean
