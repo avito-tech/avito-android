@@ -25,7 +25,8 @@ internal class PlatformDependencyTest {
         gradlew(
             projectDir,
             ":a:checkProjectDependenciesOwnership",
-            "-Pavito.moduleOwnershipValidationEnabled=true"
+            "-Pavito.moduleOwnershipValidationEnabled=true",
+            "-PgitBranch=xxx" // todo need for impact plugin
         ).assertThat().buildSuccessful()
     }
 }

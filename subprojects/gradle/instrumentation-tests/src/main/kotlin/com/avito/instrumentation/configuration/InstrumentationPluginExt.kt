@@ -59,7 +59,8 @@ internal fun Project.withInstrumentationExtensionData(action: (InstrumentationPl
                         "reportViewerUrl" to extension.reportViewerUrl,
                         "sentryDsn" to extension.sentryDsn,
                         "slackToken" to extension.slackToken,
-                        "fileStorageUrl" to extension.fileStorageUrl
+                        "fileStorageUrl" to extension.fileStorageUrl,
+                        "teamcityBuildId" to envArgs.build.id.toString()
                     )
                 )
                 .applyParameters(extension.instrumentationParams)

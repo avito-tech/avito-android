@@ -48,6 +48,7 @@ class ModuleTypesPluginTest {
         val result = gradlew(
             projectDir, "assemble",
             "-Pavito.moduleTypeValidationEnabled=true",
+            "-PgitBranch=xxx", // todo need for impact plugin
             dryRun = true
         )
         result.assertThat()

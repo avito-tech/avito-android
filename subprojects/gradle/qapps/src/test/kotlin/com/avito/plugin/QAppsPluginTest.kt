@@ -47,7 +47,7 @@ internal class QAppsPluginTest {
 
     @Test
     fun `plugin applied - without gitState or envArgs - locally`() {
-        val result = gradlew(projectDir, "help")
+        val result = gradlew(projectDir, "-Pavito.build=local", "-Pavito.git.state=local", "help")
 
         result.assertThat().buildSuccessful()
     }
