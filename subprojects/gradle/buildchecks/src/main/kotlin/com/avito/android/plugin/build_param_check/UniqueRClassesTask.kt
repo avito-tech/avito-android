@@ -21,9 +21,16 @@ abstract class UniqueRClassesTask : DefaultTask() {
 
             val duplicates = packages.duplicates()
             if (duplicates.isNotEmpty()) {
-                throw IllegalStateException("Application ${app.path} has modules with the same package: $duplicates.\n" +
-                    "It leads to unexpected resource overriding.\n" +
-                    "Please, make packages unique.")
+                throw IllegalStateException(
+                    FailedCheckMessage(
+                        BuildChecksExtension::uniqueRClasses,
+                        """
+                    Application ${app.path} has modules with the same package: $duplicates.
+                    It leads to unexpected resource overriding.
+                    Please, make packages unique.
+                    """
+                    ).toString()
+                )
             }
         }
     }

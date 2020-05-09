@@ -60,7 +60,9 @@ abstract class CheckGradleDaemonTask : DefaultTask() {
         require(left !== right)
 
         if (left.getProperty(property) != right.getProperty(property)) {
-            throw GradleException(error())
+            throw GradleException(
+                FailedCheckMessage(BuildChecksExtension::gradleDaemon, error()).toString()
+            )
         }
     }
 
