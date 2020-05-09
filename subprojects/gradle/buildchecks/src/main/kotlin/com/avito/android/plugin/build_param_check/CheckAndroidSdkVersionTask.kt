@@ -34,8 +34,12 @@ abstract class CheckAndroidSdkVersionTask : DefaultTask() {
             ${project.androidSdk.androidJar.path} has revision $localRevision but $expectedRevision expected at least
             It breaks build caching (https://issuetracker.google.com/issues/117789774)
             Please update your local Android SDK build tools and SDK Platform
-            You can disable this check temporarily via "$legacyEnabledGradleProperty" gradle property 
-            or in $extensionName extension.
+            You can disable this check by an extension:
+            $extensionName {
+                androidSdk { 
+                    enabled = false
+                } 
+            }
             ========= ERROR =========
             """.trimIndent()
             )
