@@ -39,7 +39,7 @@ Plugins:
 - `:room-config` - Gradle plugin to configure [room](https://developer.android.com/topic/libraries/architecture/room) for internal project
 - `:signer` - Gradle plugin for internal app signer
 
-### Buildscript dependencies
+### Build script dependencies
 
 - `:android` - Android Gradle plugin extensions, and Android SDK wrapper // todo separate
 - `:bitbucket` - Bitbucket client to deliver checks results right into pull request context
