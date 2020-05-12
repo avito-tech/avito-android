@@ -527,7 +527,7 @@ instrumentation {
 
 ## Find out how filters were applied
 
-If build finished successfully It will produce files in which you must find filters debug information
+If build finished successfully there will be files with debug information
 Files will be located at: \
  `<Project root folder>/outputs/<subproject name>/instrumentation/<instrumentation task name>/filter`
 
