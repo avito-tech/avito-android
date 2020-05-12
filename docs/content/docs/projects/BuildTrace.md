@@ -22,24 +22,7 @@ plugins {
 }
 ```
 
-In the `settings.gradle`:
-
-```groovy
-pluginManagement {
-    repositories {
-        jcenter()
-    }
-    resolutionStrategy {
-        eachPlugin {
-            String pluginId = requested.id.id
-            if (pluginId.startsWith("com.avito.android")) {
-                def artifact = pluginId.replace("com.avito.android.", "")
-                useModule("com.avito.android:$artifact:$avitoToolsVersion")
-            }
-        }
-    }
-}
-```
+{{%plugins-setup%}}
 
 Run a build with `--profile` argument. You will get a message in a log:
 
