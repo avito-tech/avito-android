@@ -2,7 +2,6 @@
 date: 2020-02-20
 title: Android lint and Gradle worker API workaround
 tags: [gradle, agp, lint]
-weight: 10
 ---
 
 # Workaround for Android lint that doesn't use Gradle Worker API 
