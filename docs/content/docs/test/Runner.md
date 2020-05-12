@@ -542,7 +542,7 @@ Look at file `filters-applied.json`
 ### Find out what tests were filtered
 
 Look at file `filters-excludes.json` \
-- You may find filtered tests grouped by filters name declared in `filters-applied.json`
+- You may find filtered tests grouped by filter names declared in `filters-applied.json`
 - You may find a filtered test by name
 
 ## Choosing target for tests execution
