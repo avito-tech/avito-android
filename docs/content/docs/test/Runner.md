@@ -525,6 +525,26 @@ instrumentation {
 ./gradlew instrumentationLocal -PincludedAnnotation="package.AnotherAnnotationClassName" 
 ```
 
+## Find out how filters applied
+
+If build finished successfully It will produce files in which you must find filters debug information
+Files will be located at: \
+ `<Project root folder>/outputs/<subproject name>/instrumentation/<instrumentation task name>/filter`
+
+### Find out what filter config was
+
+Look at file `filter-config.json`
+
+### Find out what filters applied
+
+Look at file `filters-applied.json`
+
+### Find out what tests were filtered
+
+0. Look at file `filters-excludes.json`
+- You may find filtered tests by the filter by the filter name declared in `filters-applied.json`
+- You may find a filtered test by name
+
 ## Choosing target for tests execution
 
 ### Run tests on kubernetes target from a local machine
