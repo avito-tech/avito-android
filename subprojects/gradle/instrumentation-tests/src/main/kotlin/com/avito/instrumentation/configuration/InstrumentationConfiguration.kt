@@ -55,6 +55,7 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     fun validate() {
         require(kubernetesNamespace.isNotBlank()) { "kubernetesNamespace must be set" }
+        require(targets.isNotEmpty()) { "configuration $name must have at least one target" }
         targets.forEach { it.validate() }
     }
 
@@ -99,11 +100,15 @@ abstract class InstrumentationConfiguration(val name: String) {
         val filter: InstrumentationFilter.Data
     ) : Serializable {
 
+        val isTargetLocalEmulators: Boolean
+
         init {
             val hasLocal = targets.any { it.reservation.device is Device.LocalEmulator }
             val hasKubernetes = targets.any { it.reservation.device is Device.Emulator }
             if (hasLocal && hasKubernetes) {
                 throw IllegalStateException("Targeting to local and kubernetes emulators at the same configuration $name is not supported yet")
+            } else {
+                isTargetLocalEmulators = hasLocal
             }
         }
 

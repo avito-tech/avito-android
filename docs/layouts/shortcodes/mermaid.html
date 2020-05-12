@@ -1,0 +1,22 @@
+{{ if not (.Page.Scratch.Get "mermaid") }}
+<!-- Include mermaid only first time -->
+<!--
+======
+This is a copy of https://github.com/alex-shpak/hugo-book/blob/master/layouts/shortcodes/mermaid.html
+Rationale for a custom implementation:
+- Be able to update it independently
+- Use CDN instead of inlining megabytes of js in repository
+======
+-->
+<script src="https://unpkg.com/mermaid@8.5.0/dist/mermaid.min.js" type="text/javascript" async></script>
+<script>
+mermaid.initialize({
+  flowchart: { useMaxWidth:true }
+});
+</script>
+{{ .Page.Scratch.Set "mermaid" true }}
+{{ end }}
+
+<p class="mermaid{{ with .Get "class" }} {{ . }}{{ end }}">
+  {{- .Inner -}}
+</p>

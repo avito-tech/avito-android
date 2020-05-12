@@ -59,7 +59,7 @@ internal class QAppsPluginIntegrationTest {
     fun `send apk - qapps upload task`() {
         mockWebServer.enqueue(MockResponse().setResponseCode(200))
 
-        val result = gradlew(":app:assembleDebug", ":app:qappsUploadDebug", expectFailure = false)
+        val result = gradlew("-Pavito.build=local", "-Pavito.git.state=local", ":app:assembleDebug", ":app:qappsUploadDebug", expectFailure = false)
 
         result.assertThat().buildSuccessful()
         assertThat(mockWebServer.requestCount).isEqualTo(1)

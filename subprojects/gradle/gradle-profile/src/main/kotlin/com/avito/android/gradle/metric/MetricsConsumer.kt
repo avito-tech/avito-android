@@ -1,11 +1,11 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.gradle.metric
 
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import org.gradle.BuildResult
 import org.gradle.api.Task
 
-internal interface MetricsConsumer : com.avito.android.gradle.profile.TaskExecutionListener {
+interface MetricsConsumer : com.avito.android.gradle.profile.TaskExecutionListener {
 
     fun onOutput(output: CharSequence)
 
@@ -13,10 +13,10 @@ internal interface MetricsConsumer : com.avito.android.gradle.profile.TaskExecut
 
 }
 
-internal abstract class AbstractMetricsConsumer : MetricsConsumer {
+abstract class AbstractMetricsConsumer : MetricsConsumer {
 
     /**
-     * Do not print or log in this method. It'll cause infinite recursion.
+     * Do not print or log in this method. It'll cause an infinite recursion.
      */
     override fun onOutput(output: CharSequence) {
     }

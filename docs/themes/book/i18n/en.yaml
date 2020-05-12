@@ -12,3 +12,5 @@
 
 - id: bookSearchConfig
   translation: '{ cache: true, split: /[^a-zа-яё0-9\w]/gi }'
+
+# TODO: Use russian language for pages with russian

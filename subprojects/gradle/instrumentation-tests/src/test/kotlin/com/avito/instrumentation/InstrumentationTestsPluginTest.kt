@@ -121,9 +121,6 @@ class InstrumentationTestsPluginTest {
                                         }
                                     }
                                 }
-                                three {
-
-                                }
                             }
                         }
 

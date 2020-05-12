@@ -5,7 +5,7 @@ import java.util.ArrayList
 import java.util.LinkedHashMap
 
 /**
- * See ProfileEventAdapter to understand limitations.
+ * See [ProfileEventAdapter] to understand limitations.
  *
  * Root container for profile information about a build.  This includes summary
  * information about the overall build timing and collection of project specific
@@ -13,13 +13,12 @@ import java.util.LinkedHashMap
  *
  * Setters are expected to be called in the following order:
  *
- *  * setProfilingStarted
- *  * setBuildStarted *
- *  * setSettingsEvaluated *
- *  * setProjectsLoaded *
- *  * setProjectsEvaluated
- *  * setBuildFinished
- *
+ *  - setProfilingStarted
+ *  - setBuildStarted *
+ *  - setSettingsEvaluated *
+ *  - setProjectsLoaded *
+ *  - setProjectsEvaluated
+ *  - setBuildFinished
  */
 class BuildProfile {
 
@@ -98,6 +97,19 @@ class BuildProfile {
                 result += projectProfile.elapsedTime
             }
             return result
+        }
+
+    /**
+     * Total time to initialize and configure the project to run tasks.
+     * An analog of **Build scan > Performance > Build > Initialization & configuration**
+     */
+    val initWithConfigurationTimeMs: Long
+        get() {
+            val firstTask = getProjects()
+                .flatMap { it.getTasks() }
+                .minBy { it.startTime } ?: return 0
+
+            return firstTask.startTime - profilingStarted
         }
 
     /**

@@ -184,7 +184,7 @@ In this shortcode you can override the "text" word to be more clear:
 
 Also, you have to replace internal links by links.k.avito.ru shortener. It is available only in Avito.\
 
-To get links statistics add `+` to the it.
+To get links statistics add `+` to it.
 
 ### Diagrams
 
@@ -249,16 +249,16 @@ Lorem markdownum insigne. Olympo signis Delphis!
 
 ```tpl
 {{</* tabs "Unique ID" */>}}
-{{</* tab "MacOS" */>}} MacOS Content {{</* /tab */>}}
+{{</* tab "macOS" */>}} macOS Content {{</* /tab */>}}
 {{</* tab "Linux" */>}} Linux Content {{</* /tab */>}}
 {{</* tab "Windows" */>}} Windows Content {{</* /tab */>}}
 {{</* /tabs */>}}
 ```
 
 {{< tabs "Unique ID" >}}
-{{< tab "MacOS" >}} MacOS Content {{< /tab >}}
-{{< tab "Linux" >}} Linux Content {{< /tab >}}
-{{< tab "Windows" >}} Windows Content {{< /tab >}}
+{{< tab "macOS" >}} macOS content {{< /tab >}}
+{{< tab "Linux" >}} Linux content {{< /tab >}}
+{{< tab "Windows" >}} Windows content {{< /tab >}}
 {{< /tabs >}}
 
 ### Columns
@@ -377,20 +377,34 @@ Checklist for changes:
 ### Publishing changes
 
 Run manually after changes: `docs/publish.sh`\
-Auto-publish: MBS-7514.
+Auto-publishing will be done in MBS-7514 (internal).
 
-### How to update hugo
+### How to upgrade Hugo
 
-1. Обнови версию hugo в Dockerfile
-1. Обнови другие файлы
-    - Проверь, что локально установлена такая-же версия: `hugo version`
-    - Сгенерируй новый сайт: `hugo new site template`
-    - Сравни директорию `docs` со сгенерированным пустым сайтом
+Just change the version in Dockerfile.
 
-### How to update theme
+### How to upgrade theme
 
-Скачай новую версию темы и подмени существующие файлы.\
-Мы кастомизировали тему, проверь что не потеряем эти изменения:
-- Удалили примеры (book/exampleSite) и статику для них (book/images/)
-- Удалили js файлы для shortcode (book/static/*.js), потому что они могут весить мегабайты. 
-Загружаем из unpkg.com.
+Hugo theme is just a set of files in directory `themes/<theme>`. They are arranged by a specific layout.
+
+To upgrade theme to a new version:
+
+1. Download a source code of a new [theme version](https://github.com/alex-shpak/hugo-book/releases).
+1. Replace `docs/themes/book` files by new ones
+1. Remove useless example files in the `book` folder: 
+    - `.github`
+    - `exampleSite`
+    - `images`
+    - `static/favicon.png`
+1. Remove a mermaid shortcode (`book/static/mermaid.min.js` and `book/layouts/shortcodes/mermaid.html`).
+We have a custom one.
+1. Restart Hugo: `docs/local.sh`
+1. Check locally that everything is working as expected:
+    - [Custom shortcodes]({{< relref "#working-with-custom-shortcodes" >}})
+    - Searching in English and Russian text
+
+### Working with custom shortcodes
+
+All [custom shortcodes](https://gohugo.io/templates/shortcode-templates/) 
+live in [docs/layouts/shortcodes](https://github.com/avito-tech/avito-android/tree/develop/docs/layouts/shortcodes) folder.\
+You can find them in markdown files by a filename - `layouts/shortcodes/avito.html` is `{{</*avito*/>}}`.

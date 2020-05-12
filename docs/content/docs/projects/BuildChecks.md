@@ -89,7 +89,7 @@ buildChecks {
 ### Java version
 
 The Java version can influence the output of the Java compiler. 
-It leads to Gradle [cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss).\
+It leads to Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss).\
 This check forces the same version for all builds.
 
 ```groovy
@@ -111,7 +111,7 @@ android {
 }
 ```
 
-Different revisions lead to Gradle cache misses. This check forces the same revision:
+Different revisions lead to Gradle remote cache misses. This check forces the same revision:
 
 ```groovy
 buildChecks {
@@ -214,7 +214,7 @@ buildChecks {
 
 This check detects if you override [Gradle project property](https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties) by command-line.
 It sends mismatches to [statsd]({{< ref "/docs/analytics/Statsd.md" >}}). 
-This information helps to see frequently changed propeties that can lead to cache misses.
+This information helps to see frequently changed propeties that can lead to remote cache misses.
 
 ```groovy
 buildChecks {
@@ -223,3 +223,44 @@ buildChecks {
     } 
 }
 ```
+
+### Incremental KAPT
+
+This check verifies that all KAPT annotation processors support incremental annotation processing 
+if it is [enabled](https://kotlinlang.org/docs/reference/kapt.html#incremental-annotation-processing-since-1330) (`kapt.incremental.apt=true`). 
+Because if one of them does not support it then whole incremental annotation processing won't work at all.
+
+Supported processors:
+- [Room](https://developer.android.com/topic/libraries/architecture/room)
+
+Incremental KAPT check has three modes:
+- `"none"` -- check is disable
+- `"warning"` -- prints warning in build log (default behaviour)
+- `"fail"` -- fail whole build
+
+```groovy
+buildChecks {
+    incrementalKapt {
+        mode = "fail"
+    }
+}
+```
+
+#### Room
+
+Room supports incremental annotation processing if all of the following conditions are met:
+- [`room.incremental`](https://developer.android.com/jetpack/androidx/releases/room#compiler-options) it set to `true` 
+or `com.avito.android.room-config` Gradle-plugin is applied
+- You use Java 11 and higher or use JDK embedded in Android Studio 3.5.0-beta02 and higher. 
+For more info about these restrictions read the documentation for the method `methodParametersVisibleInClassFiles` 
+in `RoomProcessor` [sources](https://android.googlesource.com/platform/frameworks/support/+/refs/heads/androidx-master-dev/room/compiler/src/main/kotlin/androidx/room/RoomProcessor.kt)
+
+If you use IntelliJ IDEA or build a project from the command line you have to set up `JAVA_HOME` environment variable to 
+reference the path to embedded JDK in Android Studio. You can add to `~/.gradle/gradle.properties` line like this:
+
+```shell script
+org.gradle.java.home=/Applications/Android Studio.app/Contents/jre/jdk/Contents/Home
+```
+
+This path can be retrieved from **Project Structure > SDK Location > JDK location** in 
+Android Studio.

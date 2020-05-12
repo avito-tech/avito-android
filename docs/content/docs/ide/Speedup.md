@@ -3,62 +3,73 @@ title: IDE Speedup
 type: docs
 ---
 
-# Ускорение IDE
+# IDE Speedup
 
-Чтобы IDE меньше тормозила при работе с проектом, попробуй эти настройки:
+To increase IDE performance you need to disable all unnecessary stuff and tune some settings.
 
+## Increase memory heap
 
-## Выдай IDE больше памяти  
+[Increasing memory heap](https://www.jetbrains.com/help/idea/increasing-memory-heap.html)
 
-По умолчанию IDE выделяет мало, чтобы суметь запуститься на слабой машине.
-
-**Help > Edit custom VM Options**
-
-```none
--Xmx4g
-```
-
-Слишком много не нужно. Чтобы посмотреть реальное потребление памяти:
-
-**Appearance & Behavior > Appearance > Show memory indicator**
-
-
-## Включи удаленную сборку 
+## Enable remote build
 
 [Mirakle]({{< ref "/docs/assemble/Mirakle.md" >}})
 
+## Disable unnecessary modules
 
-## Оставь только необходимые приложения
+{{<avito section>}}
 
-Подключаем в settings.gradle только часть приложений, чтобы ускорить работу с проектом. 
-Посмотри в gradle.properties флаги `sync...` и выбери какие нужны.   
-Переопределяй в системных настройках (`~/.gradle/gradle.properties`):
+We develop all our Android applications in a single [monorepo](https://en.wikipedia.org/wiki/Monorepo). If you work only with some apps you can disable others.
+To do so, disable relevant [Gradle properties on a user level](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties) 
+in `~/.gradle/gradle.properties`:
 
-```ini
+```properties
 syncAvito=false
-sync...
+sync<app module>
 ```
 
-После изменения синхронизируй проект.
+These flags are used in a simple way in `settings.gradle`:
 
+```groovy
+if (syncAvito.toBoolean()) {
+    include(":avito")
+    ...
+} else {
+    logger.lifecycle("Avito modules are disabled")
+}
+```
 
-## Отключи излишние действия во время синхронизации
+Also, you can disable specific modules manually in IDE: [Unloading modules](https://www.jetbrains.com/help/idea/unloading-modules.html)
 
-- **Preferences > Experimental > Skip source generation on Gradle sync**
-- **Preferences > Experimental > Skip download of sources and javadoc on Gradle sync**
-- **Preferences > Build, Execution, Deployment > Compiler > Sync project with Gradle before building**
+## Disable extra work on Gradle sync
 
+- **Preferences > Experimental > Only sync the active variant**
+- **Preferences > Experimental > Do not build Gradle task list during Gradle sync**
 
-## Проверь что Gradle и Kotlin не запускают несколько демонов
+## Reuse Gradle daemons
+
+Gradle can run [multiple daemons](https://docs.gradle.org/5.0/userguide/gradle_daemon.html#sec:why_is_there_more_than_one_daemon_process_on_my_machine)
+if there are no compatible ones. You can see current Gradle daemons by this command: 
 
 ```bash
 ./gradlew --status
 ```
 
-Если запущено несколько: https://stackoverflow.com/c/avito/questions/109
+To make Gradle daemons more reusable, you need to reuse the same JDK for all Gradle projects:
 
+1. Make sure you use an embedded JDK in Android Studio: [](https://developer.android.com/studio/intro/studio-config#jdk)
+1. Specify this JDK in [Gradle properties on a user level](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties) 
+in `~/.gradle/gradle.properties`:
 
-## Отключи неиспользуемые плагины
+```properties
+org.gradle.java.home=<path to the embedded JDK>
+```
+
+## Disable unneeded plugins
+
+Android Studio comes with a lot of plugins. Ideally, they shouldn't affect the performance if you don't use them.
+To be sure and to avoid any possible overhead it's better to disable that you don't use. 
+These are only the possible options:
 
 - Android APK Support
 - Android Games
@@ -66,71 +77,66 @@ sync...
 - App Links
 - Assistant
 - CVS, hg4idea, Subversion integration
-- Firebase <product>
+- Firebase ...
 - GitHub
-- Google <product>
+- Google ...
 - Task management
 - Terminal
 - Test recorder, TestNG
 - YAML
 
+## Exclude project from indexing and antiviruses
 
-## Отключи индексацию директорий (Spotlight, Антивирус)
+Gradle generates many files during a build. It's extra work for antiviruses and any search indexing.\
+Exclude these directories:
 
-При сборке проект генерирует много файлов, что вызывает постоянную переиндексацию.
-
-macOs
-
-Добавь в исключения Spotlight: **System preferences > Spotlight > Privacy**
-
-- Директории с Android проектами (обязательно)
+- The project directory
 - Android SDK
 - Android Studio
 - ~/.gradle
 - ~/.android
+- ~/.m2
 - ~/.gradle-profiler
 - ~/gradle-profiler
-- ~/.m2
-- ~/Android StudioX.X ?
-- ~/lldb ?
 
-tip: показать скрытые директории в Finder: _Cmd + Shift + ._
+{{< tabs "indexing" >}}
+{{< tab "macOS" >}}
 
-## Скрой ненужные директории и типы файлов
+Add an exclusion to [**System preferences > Spotlight > Privacy**](https://support.apple.com/guide/mac-help/change-spotlight-preferences-mchlp2811/mac).
 
-Проект большой и в нем много сгенерированных файлов, что нагружает IDE.
-Чтобы немного помочь, скрой файлы, которые никогда не нужны:
+tip: press _Cmd + Shift + **.**_ to see hidden files in Finder
+
+{{< /tab >}}
+{{< tab "Windows" >}}
+
+[Add an exclusion to Windows Security](https://support.microsoft.com/en-us/help/4028485/windows-10-add-an-exclusion-to-windows-security)
+
+{{< /tab >}}
+{{< /tabs >}}
+
+## Ignore unneeded files
+
+`build` directories in modules contain many files. You can hide and ignore them from the Editor. 
+We assume that any little bit can help to IDE.
  
 **Preferences > Editor > File Types > Ignore Files and Folders**
 
-Недостатки:
+{{< hint warning>}}
+Some intermediate build files are still needed for development.
 
-Про эти исключения легко забыть, неочевидно, может помешать:
+- `generated/source` contains `BuildConfig`.
+- `apt`, `kapt`, `kaptKotlin` contains files from annotation processors.
 
-- *build* - не будут видны BuildConfig файлы, сгенерированные файлы, вообще ничего.
-- *.gradle;intermediates;kotlin-classes;caches-jvm;* - intermediates файлы сборки, обычно не нужны.
-- *apt;kapt;kaptKotlin;* не будут видны Dagger файлы.   
-Они будут красными в редакторе и автоформатирование может удалять их импорты.
+They will be unreachable in an editor and can break a refactoring.
+{{< /hint >}}
 
+## Free more memory
 
-## kotlin.use.ultra.light.classes (experimental)
+Java are greedy for RAM. The worst case scenario is [memory swapping](https://en.wikipedia.org/wiki/Paging#Implementations).\
+Check it out, what applications can be shrinked.
 
-A light class is a representation of a Kotlin class as the Java PSI, allowing IntelliJ IDEA's Java support features to work with Kotlin classes.
+## Enable power save mode
 
-`Cmd + Shift + A` - найди Registry, включи флаг `kotlin.use.ultra.light.classes`.
-
-
-## Освободи в ОС больше памяти
-
-Посмотри какие приложения потребляют много памяти, не используется ли swap.
-
-Для Google Chrome есть плагины для авто-остановки старых вкладок: [The Great suspender](https://chrome.google.com/webstore/detail/the-great-suspender/klbibkeccnjlkjkiokjodocebajanakg?hl=en)
-
-![](https://lh3.googleusercontent.com/hVzJ8OibWTB1JRqu0_2w3gY_nfPKiVfOLAwC93OtHWvWrSKOk-QgCF3rvLQgFhXUb79Aidq3OQ=w640-h400-e365)
-
-
-## Включи режим энергосбережения
-
-Отключает инспекции и подсветку синтаксиса
-
-**File > Power Save Mode**
+The last resort is a power save mode. It disables code inspections and syntax highlighting in a current file.\
+Use **File > Power Save Mode** or find an icon ![](https://resources.jetbrains.com/help/img/idea/2020.1/icons.ide.hectorOn@2x.png) 
+in a [status bar](https://www.jetbrains.com/help/idea/guided-tour-around-the-user-interface.html#status-bar).
