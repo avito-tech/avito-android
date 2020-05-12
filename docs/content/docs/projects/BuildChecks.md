@@ -17,7 +17,7 @@ plugins {
 }
 ```
 
-{{%project-setup%}}
+{{%plugins-setup%}}
 
 Some checks will require settings to work properly. 
 You'll get an error about missing settings:

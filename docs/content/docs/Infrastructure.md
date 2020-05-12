@@ -13,7 +13,7 @@ Monorepo of all tooling to continuously test and deliver apps to users.
 
 To use plugins in your project:
 
-{{%project-setup%}}
+{{%plugins-setup%}}
 
 Plugins:
 
