@@ -527,7 +527,7 @@ instrumentation {
 
 ## Find out how filters were applied
 
-If build finished successfully there will be files with debug information
+If build finishes successfully It will produce files with debug information
 Files will be located at: \
  `<Project root folder>/outputs/<subproject name>/instrumentation/<instrumentation task name>/filter`
 
@@ -541,8 +541,8 @@ Look at file `filters-applied.json`
 
 ### Find out what tests were filtered
 
-0. Look at file `filters-excludes.json`
-- You may find filtered tests by the filter by the filter name declared in `filters-applied.json`
+Look at file `filters-excludes.json` \
+- You may find filtered tests grouped by filters name declared in `filters-applied.json`
 - You may find a filtered test by name
 
 ## Choosing target for tests execution
