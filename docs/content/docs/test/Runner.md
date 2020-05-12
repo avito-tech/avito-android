@@ -525,7 +525,7 @@ instrumentation {
 ./gradlew instrumentationLocal -PincludedAnnotation="package.AnotherAnnotationClassName" 
 ```
 
-## Find out how filters applied
+## Find out how filters were applied
 
 If build finished successfully It will produce files in which you must find filters debug information
 Files will be located at: \
