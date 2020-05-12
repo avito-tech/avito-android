@@ -114,6 +114,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -125,6 +126,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -139,6 +141,7 @@ buildChecks {
     enableByDefault = false
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -148,6 +151,7 @@ buildChecks {
     enableByDefault = false
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -167,6 +171,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -181,6 +186,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -203,6 +209,7 @@ buildChecks {
     }   
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -214,6 +221,7 @@ buildChecks {
     }   
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -235,6 +243,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -247,6 +256,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -282,6 +292,7 @@ buildChecks {
     macOSLocalhost { }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -291,6 +302,7 @@ buildChecks {
     macOSLocalhost { }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -311,6 +323,7 @@ buildChecks {
     dynamicDependencies { }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -320,6 +333,7 @@ buildChecks {
     dynamicDependencies { }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -344,6 +358,7 @@ buildChecks {
     uniqueRClasses { } // enabled by default
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -358,6 +373,7 @@ buildChecks {
     uniqueRClasses { } // enabled by default
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -376,6 +392,7 @@ buildChecks {
     gradleDaemon { }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -385,6 +402,7 @@ buildChecks {
     gradleDaemon { }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -404,6 +422,7 @@ buildChecks {
     } 
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -415,6 +434,7 @@ buildChecks {
     } 
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -437,6 +457,7 @@ buildChecks {
     } 
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -448,6 +469,7 @@ buildChecks {
     } 
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -476,6 +498,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
 `build.gradle`
@@ -487,6 +510,7 @@ buildChecks {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
