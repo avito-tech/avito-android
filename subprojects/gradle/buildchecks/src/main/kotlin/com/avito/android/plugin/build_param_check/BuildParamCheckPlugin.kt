@@ -34,7 +34,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
         project.afterEvaluate {
-            val checks = ChecksFilter(project, extension).checks()
+            val checks = ChecksFilter(extension).checks()
             checks
                 .filterIsInstance<BuildChecksExtension.RequireParameters>()
                 .forEach {
@@ -268,12 +268,3 @@ javaIncrementalCompilation=$javaIncrementalCompilation
 }
 
 private const val pluginName = "BuildParamCheckPlugin"
-
-@Deprecated("Since 2020.4.5")
-internal const val legacyEnabledGradleProperty = "avito.build.paramCheck.enabled"
-
-@Deprecated("Since 2020.4.5")
-internal const val failOnSdkVersionMismatch = "avito.build.failOnSdkMismatch"
-
-@Deprecated("Since 2020.4.5")
-internal const val androidJarRevision = "avito.build.androidJar.revision"

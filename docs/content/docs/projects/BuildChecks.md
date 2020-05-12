@@ -9,7 +9,7 @@ This plugin verifies [common build problems]({{< relref "#checks">}}) with envir
 
 ## Getting started
 
-Apply the plugin in the root `build.gradle` file:
+Apply the plugin in the root build script:
 
 ```groovy
 plugins {
@@ -48,17 +48,48 @@ A problem occurred configuring root project
 
 After adding missing properties you will get something like this:
 
-```groovy
+{{< tabs "build checks example" >}}
+{{< tab "Kotlin" >}}
+
+`build.gradle.kts`
+
+```kotlin
 buildChecks {
     androidSdk {
-        it.compileSdkVersion = 29
-        it.revision = 4
+        compileSdkVersion = 29
+        revision = 4
     }
     javaVersion {
-        it.version = JavaVersion.VERSION_1_8
+        version = JavaVersion.VERSION_1_8
+    }
+    uniqueRClasses {
+        enabled = false
     }
 }
 ```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+`build.gradle`
+
+```groovy
+buildChecks {
+    androidSdk {
+        compileSdkVersion = 29
+        revision = 4
+    }
+    javaVersion {
+        version = JavaVersion.VERSION_1_8
+    }
+    uniqueRClasses {
+        enabled = false
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 That's all for a configuration. Run it manually to verify that it works:
 
@@ -72,34 +103,92 @@ The plugin will run it automatically on every build.
 
 ### Disable single check
 
-```groovy
+{{< tabs "Disable single check" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
 buildChecks {
     androidSdk {
-        it.enabled = false
+        enabled = false
     }
 }
 ```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
+
+```groovy
+buildChecks {
+    androidSdk {
+        enabled = false
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ### Disable all checks
 
+{{< tabs "Disable all checks" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    enableByDefault = false
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
+
 ```groovy
 buildChecks {
     enableByDefault = false
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Enable single check
+
+{{< tabs "Enable single check" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    enableByDefault = false
+
+    androidSdk {
+        compileSdkVersion = 29
+        revision = 4
+    }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
 
 ```groovy
 buildChecks {
     enableByDefault = false
 
     androidSdk {
-        it.compileSdkVersion = 29
-        it.revision = 4
+        compileSdkVersion = 29
+        revision = 4
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ## Checks
 
@@ -109,35 +198,67 @@ The Java version can influence the output of the Java compiler.
 It leads to Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss).\
 This check forces the same version for all builds.
 
-```groovy
+{{< tabs "Java version" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
 buildChecks {
     javaVersion {
-        it.version = JavaVersion.VERSION_1_8
+        version = JavaVersion.VERSION_1_8
     }   
 }
 ```
 
-### Android SDK version
-
-Android build tools uses android.jar (`$ANDROID_HOME/platforms/android-<compileSdkVersion>/android.jar`).\ 
-We can specify only a version without a revision ([#117789774](https://issuetracker.google.com/issues/117789774)).
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
 
 ```groovy
-android {
-    compileSdkVersion 29
+buildChecks {
+    javaVersion {
+        version = JavaVersion.VERSION_1_8
+    }   
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
+### Android SDK version
+
+Android build tools uses android.jar (`$ANDROID_HOME/platforms/android-<compileSdkVersion>/android.jar`).\
+The version can be specified only without a revision ([#117789774](https://issuetracker.google.com/issues/117789774)).
 Different revisions lead to Gradle remote cache misses. This check forces the same revision:
+
+{{< tabs "Android SDK version" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    androidSdk {
+        compileSdkVersion = 29
+        revision = 4
+    }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
 
 ```groovy
 buildChecks {
     androidSdk {
-        it.compileSdkVersion = 29
-        it.revision = 4
+        compileSdkVersion = 29
+        revision = 4
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ### macOS localhost lookup
 
@@ -162,11 +283,28 @@ To fix the problem use this workaround:
 
 This check automatically detects the issue:
 
+{{< tabs "macOS" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    macOSLocalhost { }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
+
 ```groovy
 buildChecks {
     macOSLocalhost { }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ### Dynamic dependency version
 
@@ -176,11 +314,28 @@ and makes build [less reproducible](https://reproducible-builds.org/).
 
 This check forbids dynamic dependency versions.
 
+{{< tabs "Dynamic dependency version" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    dynamicDependencies { }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
+
 ```groovy
 buildChecks {
     dynamicDependencies { }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ### Unique R classes
 
@@ -188,6 +343,25 @@ If two Android modules use the same package, their R classes will be merged.
 While merging, it can unexpectedly override resources. It happens even with `android.namespacedRClass`.
 
 To forbid merged R files use this check:
+
+{{< tabs "Unique R classes" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+plugins {
+    id("com.avito.android.buildchecks")
+    id("com.avito.android.impact") // this check requires impact analysis
+}
+
+buildChecks {
+    uniqueRClasses { } // enabled by default
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
 
 ```groovy
 plugins {
@@ -200,11 +374,28 @@ buildChecks {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Gradle daemon reusage
 
 Gradle can run multiple daemons for [many reasons](https://docs.gradle.org/5.0/userguide/gradle_daemon.html#sec:why_is_there_more_than_one_daemon_process_on_my_machine).
 
 If you use `buildSrc` in the project with standalone Gradle wrapper, this check will verify common problems to reuse it.
+
+{{< tabs "Gradle daemon reusage" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    gradleDaemon { }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
 
 ```groovy
 buildChecks {
@@ -212,10 +403,29 @@ buildChecks {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Module types
 
 This check force to apply [`module-types`](https://github.com/avito-tech/avito-android/blob/develop/subprojects/gradle/module-types) Gradle plugin in all modules.
 It prevents modules go to wrong configurations (android-test module as an app’s implementation dependency for example).
+
+{{< tabs "Module types" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    moduleTypes { 
+        enabled = true // disabled by default
+    } 
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
 
 ```groovy
 buildChecks {
@@ -225,6 +435,9 @@ buildChecks {
 }
 ```
 
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Gradle properties
 
 {{<avito check>}}
@@ -233,6 +446,22 @@ This check detects if you override [Gradle project property](https://docs.gradle
 It sends mismatches to [statsd]({{< ref "/docs/analytics/Statsd.md" >}}). 
 This information helps to see frequently changed propeties that can lead to remote cache misses.
 
+{{< tabs "Gradle properties" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    gradleProperties { 
+        enabled = true // disabled by default
+    } 
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
+
 ```groovy
 buildChecks {
     gradleProperties { 
@@ -240,6 +469,9 @@ buildChecks {
     } 
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 ### Incremental KAPT
 
@@ -255,6 +487,22 @@ Incremental KAPT check has three modes:
 - `"warning"` -- prints warning in build log (default behaviour)
 - `"fail"` -- fail whole build
 
+{{< tabs "" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    incrementalKapt {
+        mode = "fail"
+    }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
+
 ```groovy
 buildChecks {
     incrementalKapt {
@@ -262,6 +510,9 @@ buildChecks {
     }
 }
 ```
+
+{{< /tab >}}
+{{< /tabs >}}
 
 #### Room
 
@@ -275,7 +526,7 @@ in `RoomProcessor` [sources](https://android.googlesource.com/platform/framework
 If you use IntelliJ IDEA or build a project from the command line you have to set up `JAVA_HOME` environment variable to 
 reference the path to embedded JDK in Android Studio. You can add to `~/.gradle/gradle.properties` line like this:
 
-```shell script
+```properties
 org.gradle.java.home=/Applications/Android Studio.app/Contents/jre/jdk/Contents/Home
 ```
 

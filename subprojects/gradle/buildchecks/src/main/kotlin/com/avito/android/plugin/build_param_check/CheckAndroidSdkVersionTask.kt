@@ -29,26 +29,26 @@ abstract class CheckAndroidSdkVersionTask : DefaultTask() {
 
         if (localRevision < expectedRevision) {
             throw GradleException(
+                FailedCheckMessage(
+                    BuildChecksExtension::androidSdk,
+                    """
+                ${project.androidSdk.androidJar.path} has revision $localRevision but $expectedRevision expected at least
+                It breaks build caching (https://issuetracker.google.com/issues/117789774)
+                Please update your local Android SDK build tools and SDK Platform
                 """
-            ========= ERROR =========
-            ${project.androidSdk.androidJar.path} has revision $localRevision but $expectedRevision expected at least
-            It breaks build caching (https://issuetracker.google.com/issues/117789774)
-            Please update your local Android SDK build tools and SDK Platform
-            You can disable this check temporarily via "$legacyEnabledGradleProperty" gradle property 
-            or in $extensionName extension.
-            ========= ERROR =========
-            """.trimIndent()
+                ).toString()
             )
         }
         if (localRevision > expectedRevision) {
             logger.error(
-                """
-            ========= ERROR =========
+                FailedCheckMessage(
+                    BuildChecksExtension::androidSdk,
+                    """
             ${project.androidSdk.androidJar.path} has revision $localRevision but we use $expectedRevision in CI
             It breaks build caching (https://issuetracker.google.com/issues/117789774)
             Please update android-builder image: https://avito-tech.github.io/avito-android/docs/ci/containers/#android-builder-image
-            ========= ERROR =========
-            """.trimIndent()
+            """
+                ).toString()
             )
         }
         output.writeText(localRevision.toString())
