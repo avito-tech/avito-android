@@ -51,13 +51,12 @@ open class VerifyArtifactsStep(
             entries.set(project.files(artifactsConfig.outputs.values.map { it.path }))
 
             project.gradle.buildFinished { buildResult ->
-                val isCopyScheduled = buildResult.gradle?.isTaskScheduled(this) ?: false
-                // TODO: consider skipped state (--dry-run)
-                val copyFinished = this.didWork
-                if (isCopyScheduled && !copyFinished) {
-                    project.ciLogger.info("Artifacts copying was scheduled but didn't run. Start it now")
-                    if (!this.didWork) {
-                        this.doAction()
+                if (buildResult.failure != null && buildResult.action == "Build") {
+                    if (!didWork) {
+                        // Copy artifacts that managed to be generated.
+                        // Do not verify them because it is last resort to save anything.
+                        project.ciLogger.info("Build failed. Trying to copy artifacts that managed to be generated.")
+                        doAction()
                     }
                 }
             }
