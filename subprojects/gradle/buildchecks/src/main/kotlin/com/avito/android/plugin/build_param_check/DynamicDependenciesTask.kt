@@ -29,11 +29,14 @@ abstract class DynamicDependenciesTask : DefaultTask() {
         val version = dependency.versionConstraint.displayName
 
         check(!isDynamicVersion(version)) {
-            """
+            FailedCheckMessage(
+                BuildChecksExtension::dynamicDependencies,
+                """
             Module ${module.path} has dynamic dependency ${dependency.name}:${version}.
             It leads to non-reproducible builds and slower configuration time.
             Please use exact version.
             """
+            ).toString()
         }
     }
 

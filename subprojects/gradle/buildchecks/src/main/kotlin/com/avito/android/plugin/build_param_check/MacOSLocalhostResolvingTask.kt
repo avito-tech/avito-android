@@ -31,9 +31,12 @@ abstract class MacOSLocalhostResolvingTask @Inject constructor(
 
             if (resolveTimeMs > 100) {
                 throw GradleException(
-                    "Localhost resolution took $resolveTimeMs ms.\n" +
-                        "Please fix an issue with localhost resolving in macOS: " +
-                        "https://thoeni.io/post/macos-sierra-java/, https://avito-tech.github.io/avito-android/ (search Build checks)"
+                    FailedCheckMessage(
+                        BuildChecksExtension::macOSLocalhost, """
+                            Localhost resolution took $resolveTimeMs ms.
+                            This is a bug in JVM on macOS. Please fix it: https://thoeni.io/post/macos-sierra-java/
+                            """
+                    ).toString()
                 )
             }
         }
