@@ -31,11 +31,11 @@ open class PerformanceCompareAction(
             }
 
             override fun exception(msg: String, error: Throwable) {
-                logger.critical(msg, error)
+                logger.debug(msg, error)
             }
 
             override fun critical(msg: String, error: Throwable) {
-                logger.critical(msg, error)
+                logger.debug(msg, error)
             }
         },
         verboseHttp = false

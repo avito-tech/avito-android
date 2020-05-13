@@ -3,7 +3,11 @@ package com.avito.report
 import com.avito.logger.Logger
 import com.avito.test.http.MockDispatcher
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.jupiter.api.extension.*
+import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.extension.ParameterContext
+import org.junit.jupiter.api.extension.ParameterResolver
 
 class MockReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
