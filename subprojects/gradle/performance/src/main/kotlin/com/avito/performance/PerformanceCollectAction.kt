@@ -25,13 +25,14 @@ class PerformanceCollectAction(
             }
 
             override fun exception(msg: String, error: Throwable) {
-                logger.debug(msg, error)
+                logger.critical(msg, error)
             }
 
             override fun critical(msg: String, error: Throwable) {
-                logger.debug(msg, error)
+                logger.critical(msg, error)
             }
-        }
+        },
+        verboseHttp = false
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(
         config = params.statsdConfig,

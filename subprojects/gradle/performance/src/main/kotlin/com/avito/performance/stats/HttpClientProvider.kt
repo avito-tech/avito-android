@@ -7,9 +7,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
-internal class HttpClientProvider(
-    private val logger: CILogger
-) {
+internal class HttpClientProvider(private val logger: CILogger) {
 
     fun getHttpClient(verbose: Boolean): OkHttpClient = OkHttpClient.Builder()
         .readTimeout(90, TimeUnit.SECONDS)
@@ -18,15 +16,15 @@ internal class HttpClientProvider(
                 allowedMethods = listOf("POST", "GET"),
                 logger = object : Logger {
                     override fun debug(msg: String) {
-                        logger.info(msg)
+                        logger.debug(msg)
                     }
 
                     override fun exception(msg: String, error: Throwable) {
-                        logger.info(msg, error)
+                        logger.debug(msg, error)
                     }
 
                     override fun critical(msg: String, error: Throwable) {
-                        logger.info(msg, error)
+                        logger.debug(msg, error)
                     }
                 }
             )
