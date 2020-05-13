@@ -90,7 +90,7 @@ val analytics = AnalyticsRule()
 analytics.checks.assertEventTracked<ShowSearchEvent>()
 ```
 
-### Mocking ab-tests
+### Mocking A/B-tests
 
 Make sure, you don't use this in conjunction with mocking abtest list's request.
 
