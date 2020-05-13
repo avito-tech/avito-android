@@ -3,7 +3,6 @@ package com.avito.instrumentation.report
 import com.avito.instrumentation.TestRunResult
 import com.avito.report.ReportViewer
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
 import org.apache.commons.text.StringEscapeUtils
@@ -54,8 +53,8 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
                     appendln("</system-out>")
                 }
 
-                when {
-                    test.status is Status.Skipped -> {
+                when (test.status) {
+                    is Status.Skipped -> {
                         appendln("<skipped/>")
                         if (test.skipReason != null) {
                             appendln("<system-out>")
@@ -63,17 +62,21 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
                             appendln("</system-out>")
                         }
                     }
-                    test.status is Status.Failure -> {
+                    is Status.Failure -> {
                         appendln("<failure>")
                         appendEscapedLine((test.status as Status.Failure).verdict)
                         appendln("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
                         appendln("</failure>")
                     }
-                    test.status is Status.Lost -> {
+                    is Status.Lost -> {
                         appendln("<error>")
                         appendln("LOST (no info in report)")
                         appendln("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
                         appendln("</error>")
+                    }
+                    Status.Success -> { /* do nothing */
+                    }
+                    Status.Manual -> { /* do nothing */
                     }
                 }
 
@@ -94,7 +97,6 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
 
                 appendln("</testcase>")
             }
-
 
             appendln("</testsuite>")
         }
