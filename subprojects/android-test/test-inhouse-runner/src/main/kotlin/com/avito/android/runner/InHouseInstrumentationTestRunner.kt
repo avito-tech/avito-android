@@ -72,7 +72,6 @@ abstract class InHouseInstrumentationTestRunner :
             Log.e("TestReport", msg, error)
             sentry.sendException(error)
         }
-
     }
 
     override val performanceTestReporter = PerformanceTestReporter()

@@ -19,17 +19,9 @@ internal class ReportsFetchApiImplTest {
         host = mockWebServer.url("/").toString(),
         fallbackUrl = "",
         logger = object : Logger {
-            override fun debug(msg: String) {
-                // empty
-            }
-
-            override fun exception(msg: String, error: Throwable) {
-                // empty
-            }
-
-            override fun critical(msg: String, error: Throwable) {
-                // empty
-            }
+            override fun debug(msg: String) {}
+            override fun exception(msg: String, error: Throwable) {}
+            override fun critical(msg: String, error: Throwable) {}
         }
     )
 

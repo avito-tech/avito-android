@@ -26,19 +26,9 @@ internal class ReportsApiTest {
             host = host,
             fallbackUrl = "",
             logger = object : Logger {
-                override fun debug(msg: String) {
-                    println(msg)
-                }
-
-                override fun exception(msg: String, error: Throwable) {
-                    println(msg)
-                    error.printStackTrace()
-                }
-
-                override fun critical(msg: String, error: Throwable) {
-                    println(msg)
-                    error.printStackTrace()
-                }
+                override fun debug(msg: String) {}
+                override fun exception(msg: String, error: Throwable) {}
+                override fun critical(msg: String, error: Throwable) {}
             }
         )
     }
@@ -93,7 +83,9 @@ internal class ReportsApiTest {
 
         assertThat(result).isInstanceOf(Try.Success::class.java)
 
-        assertThat(result.get().first().name).isEqualTo("ru.domofond.features.RemoteToggleMonitorTest.check_remote_toggle")
+        assertThat(
+            result.get().first().name
+        ).isEqualTo("ru.domofond.features.RemoteToggleMonitorTest.check_remote_toggle")
     }
 
     @Test
