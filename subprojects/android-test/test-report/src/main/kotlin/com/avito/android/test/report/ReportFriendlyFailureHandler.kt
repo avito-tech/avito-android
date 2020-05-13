@@ -89,10 +89,10 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
                     throw AssertionFailedError(e.normalizedMessage())
                 }
                 e is NoMatchingRootException -> {
-                    throw e.normalizedException()
+                    throw e.toNormalizedException()
                 }
                 e is NoMatchingViewException -> {
-                    throw e.normalizedException()
+                    throw e.toNormalizedException()
                 }
                 e is EspressoException -> {
                     throw e
@@ -104,7 +104,7 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
         }
     }
 
-    private inline fun <reified T : Exception> T.normalizedException(): T {
+    private inline fun <reified T : Exception> T.toNormalizedException(): T {
         return createExceptionWithPrivateStringConstructor(this.normalizedMessage())
     }
 
