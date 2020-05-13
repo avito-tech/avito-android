@@ -5,6 +5,7 @@ import androidx.test.espresso.AppNotIdleException
 import androidx.test.espresso.EspressoException
 import androidx.test.espresso.FailureHandler
 import androidx.test.espresso.NoMatchingRootException
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
 import junit.framework.AssertionFailedError
 import org.hamcrest.Matcher
@@ -57,12 +58,12 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
                     val asyncTaskThreads = Thread.getAllStackTraces()
                         .filterKeys { it.name.contains("AsyncTask") }
                     val threadDump = asyncTaskThreads.entries.joinToString(separator = "\n") { it.dumpState() }
-                    throw createException<AppNotIdleException>(
+                    throw createExceptionWithPrivateStringConstructor<AppNotIdleException>(
                         "AsyncTask is still running in background. Thread dump:\n$threadDump"
                     )
                 }
                 e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } -> {
-                    throw createException<AppNotIdleException>(
+                    throw createExceptionWithPrivateStringConstructor<AppNotIdleException>(
                         "Main thread is busy. " +
                             "The probable cause is in animations. " +
                             "Try to find them and suppress by @SuppressAnimationRule"
@@ -88,7 +89,10 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
                     throw AssertionFailedError(e.normalizedMessage())
                 }
                 e is NoMatchingRootException -> {
-                    throw createException<NoMatchingRootException>(e.normalizedMessage())
+                    throw e.toNormalizedException()
+                }
+                e is NoMatchingViewException -> {
+                    throw e.toNormalizedException()
                 }
                 e is EspressoException -> {
                     throw e
@@ -100,18 +104,16 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
         }
     }
 
+    private inline fun <reified T : Exception> T.toNormalizedException(): T {
+        return createExceptionWithPrivateStringConstructor(this.normalizedMessage())
+    }
+
     private fun Throwable.normalizedMessage(): String {
         var failureMessage: String = this.message ?: return "No message"
 
         normalizers.forEach { failureMessage = it.normalize(failureMessage) }
 
         return failureMessage
-    }
-
-    private inline fun <reified T : Exception> createException(message: String): T {
-        val constructor = T::class.java.getDeclaredConstructor(String::class.java)
-        constructor.isAccessible = true
-        return constructor.newInstance(message)
     }
 
     private inline fun <reified T : Throwable> Throwable.isCausedBy(matcher: (error: T) -> Boolean): Boolean {
@@ -182,4 +184,10 @@ private fun Map.Entry<Thread, Array<StackTraceElement>>.dumpState(): String {
     val thread = this.key
     val stacktrace = this.value
     return "Thread: ${thread.name}  state: ${thread.state}" + stacktrace.joinToString(separator = "\n") { "    $it" }
+}
+
+internal inline fun <reified T : Exception> createExceptionWithPrivateStringConstructor(message: String): T {
+    val constructor = T::class.java.getDeclaredConstructor(String::class.java)
+    constructor.isAccessible = true
+    return constructor.newInstance(message)
 }
