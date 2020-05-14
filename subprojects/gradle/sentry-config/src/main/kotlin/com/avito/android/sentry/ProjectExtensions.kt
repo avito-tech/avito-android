@@ -16,7 +16,7 @@ import org.gradle.api.provider.Provider
 fun Project.environmentInfo(): Provider<EnvironmentInfo> = lazyProperty("ENVIRONMENT_INFO_PROVIDER") { project ->
     project.providers.lazy {
         val git = Git.Impl(project.rootDir, project.logger::info)
-        EnvironmentInfoImpl(project, git) as EnvironmentInfo
+        EnvironmentInfoImpl(project, git)
     }
 }
 

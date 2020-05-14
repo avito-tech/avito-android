@@ -37,7 +37,8 @@ open class PerformanceCompareAction(
             override fun critical(msg: String, error: Throwable) {
                 logger.debug(msg, error)
             }
-        }
+        },
+        verboseHttp = false
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(
         config = params.statsdConfig,

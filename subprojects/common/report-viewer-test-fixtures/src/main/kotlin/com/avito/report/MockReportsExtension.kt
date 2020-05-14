@@ -1,8 +1,8 @@
 package com.avito.report
 
+import com.avito.logger.Logger
 import com.avito.test.http.MockDispatcher
 import okhttp3.mockwebserver.MockWebServer
-import com.avito.logger.Logger
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -23,20 +23,9 @@ class MockReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
                     host = mockWebServer.url("/").toString(),
                     fallbackUrl = "",
                     logger = object : Logger {
-                        override fun debug(msg: String) {
-                            println(msg)
-                        }
-
-                        override fun exception(msg: String, error: Throwable) {
-                            println(msg)
-                            error.printStackTrace()
-
-                        }
-
-                        override fun critical(msg: String, error: Throwable) {
-                            println(msg)
-                            error.printStackTrace()
-                        }
+                        override fun debug(msg: String) {}
+                        override fun exception(msg: String, error: Throwable) {}
+                        override fun critical(msg: String, error: Throwable) {}
                     }
                 ),
                 mockDispatcher = mockDispatcher

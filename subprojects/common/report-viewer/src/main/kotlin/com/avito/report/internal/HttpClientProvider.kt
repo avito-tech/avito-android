@@ -22,9 +22,8 @@ internal fun getHttpClient(verbose: Boolean, fallbackUrl: String, logger: Logger
                 onFallback = { logger.debug("Fallback to ingress") })
         )
         .apply {
-            addInterceptor(
-                HttpLoggingInterceptor { logger.debug(it) }
-                    .setLevel(if (verbose) Level.BODY else Level.BASIC)
-            )
+            if (verbose) {
+                addInterceptor(HttpLoggingInterceptor { logger.debug(it) }.setLevel(Level.BODY))
+            }
         }
         .build()
