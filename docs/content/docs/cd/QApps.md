@@ -44,5 +44,5 @@ Choose your custom branch if needed.
 ## How to change upload settings?
 
 In `build.gradle` you can find `uploadToQapps` build step.\
-This build step defines artifacts to publish. See examples in [uploadToQapps]({{< ref "/docs/ci/CIGradlePlugin.md#upload-to-qapps" >}}).\
+This build step defines artifacts to publish. See examples in [uploadToQapps]({{< ref "/docs/projects/CISteps.md#upload-to-qapps" >}}).\
 We run this step in [uploadArtifacts](http://links.k.avito.ru/Mx9) Teamcity configuration.

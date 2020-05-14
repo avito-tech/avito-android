@@ -1,52 +1,68 @@
 ---
-title: CI Gradle Plugin
+title: CI steps plugin
 type: docs
 ---
 
-# CI Gradle plugin
+# CI steps plugin
 
-Для настройки CI под конкретный Gradle модуль используется in-house плагин.
+{{< hint warning>}}
+Plugin wasn't tested outside Avito yet, so expect difficulties, or even blockers.
+However, if you interested, please [contact us]({{< ref "/docs/Contacts.md" >}})!
+{{< /hint >}}
 
-Решает задачу точечной настройки типа и строгости проверок для разных сценариев.
+Plugin creates chains of tasks for CI, encapsulating it under single gradle task.
+
+For example, scenario "Pull Request checks".\
+Typically, you need to create multiple CI builds and wire it into chain.\
+Chain configuration(and possibly parameters) leaks to CI server settings, and you have less control over its changes inside gradle.\
+It makes sense if resources of single machine limited, but if all chain could run effectively
+(e.g. tasks runs in parallel and server has extra resources) on single machine, having all configuration in Gradle has benefits.
+
+## Getting started
+
+Apply the plugin in the app's `build.gradle` file:
 
 ```groovy
 plugins {
     id("com.avito.android.cd")
 }
-
-builds {
-   ...
-}
 ```
 
-Применяется например в модуле приложения, однако нет никаких ограничений, чтобы применить плагин как-то иначе (см. `./build.gradle`)
+There are no restriction in applying plugin to root project, and it could make sense for "global repo checks"
+
+{{%plugins-setup%}}
+
 
 ## Builds
 
-Используется набор захардкоженых сценариев(builds):
+First of all name your chain:
 
 ```groovy
 builds {
-    fastCheck {
+    myChain {
        ...
     }
 }
 ```
 
-- localCheck - проверки компиляции на локальной машине
-- fastCheck - максимально быстрые проверки, выполняющие [требования к CI]({{< ref "/docs/ci/CIValues.md" >}})
-- fullCheck - максимально полные проверки, можем жертвовать скоростью
-- release - набор действий необходимых для предоставления всех релизных артефактов
+### Avito example chains:
+
+- localCheck - compilation checks for local run
+- fastCheck - fast as possible checks for Pull Request in CI scenario, must conform [CI agreement]({{< ref "/docs/ci/CIValues.md" >}})
+- fullCheck - full as possible checks to be run after merges, non-blocking, could be slow
+- release - chain to release our app
 
 ## Steps
 
-Step is a declaration to run some logic. It works inside a scenario:
+Step is a declaration to run some logic. It works inside a chain:
 
 ```groovy
-fastCheck { // <--- scenario (build)
-    unitTests {} // <--- step
-    uiTests {}
-    lint {}
+build {
+    fastCheck { // <--- chain
+        unitTests {} // <--- step
+        uiTests {}
+        lint {}
+    }
 }
 ```
 
@@ -178,7 +194,7 @@ Checks a repository configuration. See `:build-script-test` for details.
 
 ### Using impact analysis in step
 
-Сценарий может использовать [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}})(по-умолчанию отключено):
+Step could use [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}})(disabled by default):
 
 ```groovy
 fastCheck {
@@ -190,8 +206,7 @@ fastCheck {
 
 ### Suppressing errors in step
 
-В разных сценариях падения шагов могут ронять за собой весь билд, а можно настроить чтобы билд не упал.
-Обработка этого флага должна быть явно поддержана шагом. 
+In different scenarios steps could fail whole build, some can be configured not to.
 
 ```groovy
 fastCheck {
@@ -209,7 +224,7 @@ release {
 
 ### Collecting artifacts
 
-Артефакты, которые планируется как-то использовать нужно зарегистрировать специальным образом
+Artifacts that planned to be used(uploaded somewhere) must be registered:
 
 ```groovy
 artifacts {
@@ -217,12 +232,12 @@ artifacts {
 }
 ```
 
-Есть разные типы артефактов, различаются по типам проверок и способу описания путей
+There are different types of artifacts:
 
-- apk - достает apk по buildType и проверяют пакет и подпись
-- bundle - достает bundle по buildType и проверяют пакет и подпись
-- mapping - достает mapping по buildType и проверяют наличие
-- file - простой доступ к файлу по пути и проверка на наличие
+- apk - gets apk by buildType and checks packageName and signature
+- bundle - gets bundle by buildType and checks packageName and signature
+- mapping - gets r8 mapping by buildType and checks availability
+- file - gets any file by path and checks availability
 
 ```groovy
 artifacts {
@@ -233,8 +248,8 @@ artifacts {
 }
 ```
 
-Первый аргумент - регистрирует ключ, который затем используется в upload шагах для указания артефактов
+First argument registers key, that can be used in upload steps
 
 ### Writing a custom step
 
-По необходимости добавляем свои шаги, наследуясь от `BuildStep`
+Inherit from `BuildStep`, check available implementations as examples

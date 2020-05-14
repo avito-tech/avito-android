@@ -27,7 +27,7 @@ Try to minimize a scope of suppressing. It reduces the risk of suppressing other
 
 ## Configure lint to run in CI
 
-Add a `lint` [build step]({{< ref "/docs/ci/CIGradlePlugin.md#android-lint-step" >}}) to a build in `build.gradle`
+Add a `lint` [build step]({{< ref "/docs/projects/CiSteps.md#android-lint-step" >}}) to a build in `build.gradle`
 
 ```groovy
 fastCheck {

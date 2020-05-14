@@ -9,6 +9,7 @@ headless: true
 - Projects
     - [Build checks]({{< ref "/docs/projects/BuildChecks.md" >}})
     - [Build trace]({{< ref "/docs/projects/BuildTrace.md" >}})
+    - [CI Steps]({{< ref "/docs/projects/CiSteps.md" >}})
 - Contributing
     - [How to start]({{< ref "/docs/contributing/HowToStart.md" >}})
     - [Documentation]({{< ref "/docs/contributing/Docs.md" >}})
@@ -59,7 +60,7 @@ headless: true
     - [Android lint]({{< ref "/docs/checks/AndroidLint.md" >}})
 - CI
     - [Требования]({{< ref "/docs/ci/CIValues.md" >}})
-    - [CI Gradle Plugin]({{< ref "/docs/ci/CIGradlePlugin.md" >}})
+    - [CI Gradle Plugin]({{< ref "/docs/projects/CISteps.md" >}})
     - [Custom Gradle Plugins]({{< ref "/docs/ci/CustomGradlePlugins.md" >}})
     - [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}})
     - [Containers]({{< ref "/docs/ci/Containers.md" >}})
