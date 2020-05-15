@@ -2,7 +2,6 @@ package com.avito.ci
 
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -21,15 +20,13 @@ class CiStepsPlugin : Plugin<Project> {
 
         project.extensions.add("builds", buildContainer)
 
-        buildContainer.registerPredefinedBuildTasks()
-
         if (project.buildEnvironment !is BuildEnvironment.CI) return
 
         buildContainer.all { buildTask ->
 
             val task = project.tasks.register<Task>(buildTask.name) {
                 group = taskGroup
-                description = buildTask.description.get()
+                description = buildTask.description.orNull
             }
 
             project.gradle.projectsEvaluated {
@@ -37,29 +34,6 @@ class CiStepsPlugin : Plugin<Project> {
                     step.registerTask(project, task)
                 }
             }
-        }
-    }
-
-    @Deprecated("2020.5.1; remove when supported in Avito")
-    private fun NamedDomainObjectContainer<BuildStepListExtension>.registerPredefinedBuildTasks() {
-        register("localCheck") { buildTask ->
-            buildTask.description.set("Fast local checks with impact analysis")
-        }
-
-        register("release") { buildTask ->
-            buildTask.description.set("Task to build for release (runs full non-blocking full regression suite)")
-        }
-
-        register("uploadArtifacts") { buildTask ->
-            buildTask.description.set("Task to upload artifacts without checks")
-        }
-
-        register("fullCheck") { buildTask ->
-            buildTask.description.set("Task to run all specified check on project")
-        }
-
-        register("fastCheck") { buildTask ->
-            buildTask.description.set("Task to run fast check of project. Based on impact analysis")
         }
     }
 }
