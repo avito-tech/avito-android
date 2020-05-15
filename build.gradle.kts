@@ -287,7 +287,7 @@ val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
 tasks.withType<Wrapper> {
     //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.2.1"
+    gradleVersion = "6.3"
 }
 
 project.gradle.startParameter.run { setTaskNames(taskNames + ":${installGitHooksTask.name}") }
