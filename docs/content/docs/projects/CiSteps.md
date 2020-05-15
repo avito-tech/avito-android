@@ -194,7 +194,7 @@ Checks a repository configuration. See `:build-script-test` for details.
 
 ### Using impact analysis in step
 
-Step could use [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}})(disabled by default):
+Step could use [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}}). It is disabled by default.
 
 ```groovy
 fastCheck {
