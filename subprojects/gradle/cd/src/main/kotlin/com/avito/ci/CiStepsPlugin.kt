@@ -23,8 +23,6 @@ class CiStepsPlugin : Plugin<Project> {
 
         buildContainer.registerPredefinedBuildTasks()
 
-        // TODO: MBS-6118. В CD во время конфигурации активно используется git. Это слишком долго.
-        // Локально не создаем эти таски для ускорения конфигурации
         if (project.buildEnvironment !is BuildEnvironment.CI) return
 
         buildContainer.all { buildTask ->
