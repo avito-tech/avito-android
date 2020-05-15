@@ -47,7 +47,7 @@ builds {
 
 ### Avito example chains
 
-- localCheck - compilation checks for local run
+- `localCheck` - compilation checks for local run
 - fastCheck - fast as possible checks for Pull Request in CI scenario, must conform [CI agreement]({{< ref "/docs/ci/CIValues.md" >}})
 - fullCheck - full as possible checks to be run after merges, non-blocking, could be slow
 - release - chain to release our app
