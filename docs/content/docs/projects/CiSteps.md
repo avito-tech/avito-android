@@ -12,12 +12,6 @@ However, if you interested, please [contact us]({{< ref "/docs/Contacts.md" >}})
 
 Plugin creates chains of tasks for CI, encapsulating it under single gradle task.
 
-For example, scenario "Pull Request checks".\
-Typically, you need to create multiple CI builds and wire them into a chain.\
-Chain configuration and parameters leak to CI server settings, and you have less control over their's changes inside grade. \
-It makes sense if resources of single machine limited, but if all chain could run effectively
-(e.g. tasks runs in parallel and server has extra resources) on single machine, having all configuration in Gradle has benefits.
-
 ## Getting started
 
 Apply the plugin in the app's `build.gradle` file:
@@ -31,7 +25,6 @@ plugins {
 The plugin can be applied to a root project or any module.
 
 {{%plugins-setup%}}
-
 
 ## Builds
 
@@ -65,6 +58,8 @@ build {
     }
 }
 ```
+
+Now when you invoke `./gradlew fastCheck` gradle will run unitTests, uiTests and lint of corresponding project
 
 ### Built-in steps
 
