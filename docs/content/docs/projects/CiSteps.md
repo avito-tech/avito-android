@@ -49,7 +49,7 @@ builds {
 
 - `localCheck` - compilation checks for local run
 - `fastCheck` - as fast as possible checks for Pull Request. It must conform [CI agreement]({{< ref "/docs/ci/CIValues.md" >}})
-- fullCheck - full as possible checks to be run after merges, non-blocking, could be slow
+- `fullCheck` - as full as possible checks to be run after merges, non-blocking, could be slow
 - `release` - chain to release our app
 
 ## Steps
