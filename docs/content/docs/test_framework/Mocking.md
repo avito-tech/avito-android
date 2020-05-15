@@ -90,6 +90,22 @@ val analytics = AnalyticsRule()
 analytics.checks.assertEventTracked<ShowSearchEvent>()
 ```
 
+### Mocking A/B-tests
+
+Make sure, you don't use this in conjunction with mocking abtest list's request.
+
+```kotlin
+@get:Rule
+val abTests = AbTestsRule()
+
+@Before
+fun setUp() {
+    with(abTests) {
+        SimpleTestGroup.TEST.mockFor { publishServerDraft() }
+    }
+}
+```
+
 ### Mocking a location
 
 `LocationRule` serves for mocking location in tests.
