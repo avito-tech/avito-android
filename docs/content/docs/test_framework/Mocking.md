@@ -100,9 +100,9 @@ val abTests = AbTestsRule()
 
 @Before
 fun setUp() {
-	with(abTests) {
-		SimpleTestGroup.TEST.mockFor { publishServerDraft() }
-	}
+    with(abTests) {
+        SimpleTestGroup.TEST.mockFor { publishServerDraft() }
+    }
 }
 ```
 
