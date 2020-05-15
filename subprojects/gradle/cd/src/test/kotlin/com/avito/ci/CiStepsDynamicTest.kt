@@ -54,7 +54,7 @@ internal class CiStepsDynamicTest {
     }
 
     @Test
-    fun `cd plugin - custom task with same name created in multiple projects`(@TempDir projectDir: File) {
+    fun `cd plugin - custom task with the same name is created in multiple projects`(@TempDir projectDir: File) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.cd"),
             buildGradleExtra = """
