@@ -248,7 +248,7 @@ artifacts {
 }
 ```
 
-First argument registers key, that can be used in upload steps
+The first argument is a key for upload steps.
 
 ### Writing a custom step
 
