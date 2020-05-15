@@ -3,19 +3,20 @@ package com.avito.android.test
 //see TestMinimized.md
 
 /**
- * keep,allowobfuscation class * {
- *     @com.avito.android.test.KeepForTesting <fields>;
- *     @com.avito.android.test.KeepForTesting <methods>;
- * }
+ * An analog of [androidx.annotation.Keep]
+ * The difference is in intention.
+ * It is used only with minimized test APK.
+ * See proguad config.
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
 annotation class KeepForTesting
 
 /**
- * -keep,allowobfuscation @com.avito.android.test.KeepSyntheticConstructorsForTesting class * {
- *     synthetic <init>(...);
- * }
+ * An analog of [androidx.annotation.Keep]
+ * The difference is in intention.
+ * It is used only with minimized test APK.
+ * See proguad config.
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
