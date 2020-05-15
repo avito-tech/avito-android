@@ -7,6 +7,7 @@ import com.avito.plugin.signedApkTaskProvider
 import com.avito.plugin.signedBundleTaskProvider
 import com.avito.utils.exhaustive
 import com.avito.utils.logging.ciLogger
+import com.avito.utils.onBuildFailed
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
@@ -50,15 +51,12 @@ open class VerifyArtifactsStep(
             destinationDir.set(File("${project.rootProject.rootDir}/outputs"))
             entries.set(project.files(artifactsConfig.outputs.values.map { it.path }))
 
-            project.gradle.buildFinished { buildResult ->
-                val isCopyScheduled = buildResult.gradle?.isTaskScheduled(this) ?: false
-                // TODO: consider skipped state (--dry-run)
-                val copyFinished = this.didWork
-                if (isCopyScheduled && !copyFinished) {
-                    project.ciLogger.info("Artifacts copying was scheduled but didn't run. Start it now")
-                    if (!this.didWork) {
-                        this.doAction()
-                    }
+            project.gradle.onBuildFailed {
+                if (!didWork) {
+                    // Copy artifacts that managed to be generated.
+                    // Do not verify them because it is last resort to save anything.
+                    project.ciLogger.info("Build failed. Trying to copy artifacts that managed to be generated.")
+                    doAction()
                 }
             }
         }
