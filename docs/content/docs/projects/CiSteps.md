@@ -28,7 +28,7 @@ plugins {
 }
 ```
 
-There are no restriction in applying plugin to root project, and it could make sense for "global repo checks"
+The plugin can be applied to a root project or any module.
 
 {{%plugins-setup%}}
 
