@@ -35,7 +35,7 @@ The plugin can be applied to a root project or any module.
 
 ## Builds
 
-First of all name your chain:
+First of all, name your chain:
 
 ```groovy
 builds {
