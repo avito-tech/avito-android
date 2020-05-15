@@ -42,7 +42,7 @@ class CiStepsPlugin : Plugin<Project> {
         }
     }
 
-    @Deprecated("remove when supported in Avito")
+    @Deprecated("2020.5.1; remove when supported in Avito")
     private fun NamedDomainObjectContainer<BuildStepListExtension>.registerPredefinedBuildTasks() {
         register("localCheck") { buildTask ->
             buildTask.description.set("Fast local checks with impact analysis")
