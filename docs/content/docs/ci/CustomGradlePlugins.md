@@ -187,7 +187,7 @@ val Project.ciLogger: CILogger
 
 ## Интеграция плагина в CI
 
-[CI Gradle Plugin]({{< ref "/docs/ci/CIGradlePlugin.md" >}})
+[CI Steps Plugin]({{< ref "/docs/projects/CISteps.md" >}})
 
 ## Дополнительные материалы
 
