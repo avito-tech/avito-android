@@ -33,6 +33,27 @@ internal class CiStepsDynamicTest {
     }
 
     @Test
+    fun `cd plugin - custom task created without description`(@TempDir projectDir: File) {
+        projectDir.file(
+            name = "build.gradle",
+            content = """
+            plugins {
+                id("com.avito.android.cd")
+            }
+            
+            builds {
+                myCustomTask {
+                }
+            }
+        """.trimIndent()
+        )
+
+        gradlew(projectDir, "tasks", "-Pci=true").assertThat()
+            .buildSuccessful()
+            .outputContains("myCustomTask")
+    }
+
+    @Test
     fun `cd plugin - custom task with same name created in multiple projects`(@TempDir projectDir: File) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.cd"),
