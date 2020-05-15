@@ -18,12 +18,14 @@ import com.avito.ci.steps.VerifyArtifactsStep
 import groovy.lang.Closure
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
-
+import org.gradle.kotlin.dsl.property
 
 @Suppress("UnstableApiUsage")
-open class BuildStepListExtension(private val name: String, objects: ObjectFactory) {
+open class BuildStepListExtension(internal val name: String, objects: ObjectFactory) {
 
     private val artifactsConfig = ArtifactsConfiguration()
+
+    internal val description = objects.property<String>()
 
     internal val steps: ListProperty<BuildStep> = objects.listProperty(BuildStep::class.java).empty()
 

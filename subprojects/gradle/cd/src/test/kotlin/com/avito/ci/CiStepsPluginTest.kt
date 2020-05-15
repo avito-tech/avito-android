@@ -1,4 +1,4 @@
-package com.avito.ci.step
+package com.avito.ci
 
 import com.avito.android.plugin.artifactory.artifactoryAppBackupTaskName
 import com.avito.android.plugin.artifactory.artifactoryPasswordParameterName
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class CdPluginTest {
+class CiStepsPluginTest {
 
     private lateinit var projectDir: File
 

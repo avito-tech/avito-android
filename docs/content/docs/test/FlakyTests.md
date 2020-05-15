@@ -50,4 +50,4 @@ class MyAwesomeTests {
 ## Suppress `@Flaky` test failures
 
 To suppress failures of @Flaky tests just add `suppressFlaky = true` to your `uiTests` step.
-For more information on configuring build steps for the CI / CD Plugin, please refer to [this document]({{< ref "/docs/ci/CIGradlePlugin.md" >}}).
+For more information on configuring build steps for the CI Steps plugin, please refer to [this document]({{< ref "/docs/projects/CISteps.md" >}}).
