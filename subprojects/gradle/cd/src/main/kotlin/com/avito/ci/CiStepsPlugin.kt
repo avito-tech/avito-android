@@ -26,7 +26,7 @@ class CiStepsPlugin : Plugin<Project> {
 
             val task = project.tasks.register<Task>(buildTask.name) {
                 group = taskGroup
-                description = buildTask.description.orNull
+                description = buildTask.taskDescription.orNull
             }
 
             project.gradle.projectsEvaluated {
