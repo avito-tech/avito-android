@@ -32,6 +32,7 @@ First of all, name your chain:
 
 {{< tabs "chain" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 builds {
     register("myChain") {
@@ -41,8 +42,10 @@ builds {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 builds {
     myChain {
@@ -52,6 +55,7 @@ builds {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -68,6 +72,7 @@ Step is a declaration to run some logic. It works inside a chain:
 
 {{< tabs "steps" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 build {
     register("prCheck") { // <--- chain
@@ -81,8 +86,10 @@ build {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 build {
     fastCheck { // <--- chain
@@ -96,6 +103,7 @@ build {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -109,6 +117,7 @@ Runs instrumentation tests.
 
 {{< tabs "ui tests" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 uiTests {
   configurations("configurationName") // list of instrumentation configuration to depends on
@@ -118,8 +127,10 @@ uiTests {
   suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 uiTests {
   configurations = ["configurationName"] // list of instrumentation configuration to depends on
@@ -129,6 +140,7 @@ uiTests {
   suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -138,20 +150,24 @@ Runs performance tests.
 
 {{< tabs "performance tests" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 performanceTests {
   configuration("configuration name") // performance configuration from Instrumentation plugin
   enabled = true // true by default
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 performanceTests {
   configuration = "configuration name" // performance configuration from Instrumentation plugin
   enabled = true // true by default
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -161,14 +177,18 @@ Run [Android lint]({{< ref "/docs/checks/AndroidLint.md" >}}) tasks.
 
 {{< tabs "lint" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 lint {}
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 lint {}
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -178,14 +198,18 @@ Compile instrumentation tests. It is helpful in local development.
 
 {{< tabs "compile ui tests" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 compileUiTests {}
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 compileUiTests {}
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -195,14 +219,18 @@ Run unit tests.
 
 {{< tabs "unit tests" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 unitTests {}
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 unitTests {}
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -214,6 +242,7 @@ Upload [artifacts]({{< relref "#collecting-artifacts">}}) to QApps (internal sys
 
 {{< tabs "upload to qapps" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 artifacts {
     apk("debugApk", ...)
@@ -222,8 +251,10 @@ uploadToQapps {
     artifacts = setOf("debugApk")
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 artifacts {
     apk("debugApk", ...)
@@ -232,6 +263,7 @@ uploadToQapps {
     artifacts = ["debugApk"]
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -241,6 +273,7 @@ Upload [artifacts]({{< relref "#collecting-artifacts">}}) to Artifactory.
 
 {{< tabs "upload to artifactory" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 artifacts {
     file("myReport", "${project.buildDir}/reports/my_report.json")
@@ -249,8 +282,10 @@ uploadToArtifactory {
     artifacts = setOf("myReport")
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 artifacts {
     file("myReport", "${project.buildDir}/reports/my_report.json")
@@ -259,6 +294,7 @@ uploadToArtifactory {
     artifacts = ["myReport"]
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -270,6 +306,7 @@ Upload [artifacts]({{< relref "#collecting-artifacts">}}) to [Prosector (interna
 
 {{< tabs "upload to prosector" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 artifacts {
     apk("debugApk", ...)
@@ -278,8 +315,10 @@ uploadToProsector {
     artifacts = setOf("debugApk")
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 artifacts {
     apk("debugApk", ...)
@@ -288,6 +327,7 @@ uploadToProsector {
     artifacts = ["debugApk"]
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -299,18 +339,22 @@ Upload all build results to a deploy service.
 
 {{< tabs "upload build result" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 uploadBuildResult {
     uiTestConfiguration = "regression" // instrumentation configuration
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 uploadBuildResult {
     uiTestConfiguration = "regression" // instrumentation configuration
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -322,14 +366,18 @@ Deploy to Google play.
 
 {{< tabs "deploy to google play" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 deploy {}
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 deploy {}
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -341,14 +389,18 @@ Checks a repository configuration. See `:build-script-test` for details.
 
 {{< tabs "config checks" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 configuration {}
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 configuration {}
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -358,6 +410,7 @@ Step could use [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}}). It i
 
 {{< tabs "use impact analysis" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 fastCheck {
     uiTests {
@@ -365,8 +418,10 @@ fastCheck {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 fastCheck {
     uiTests {
@@ -374,6 +429,7 @@ fastCheck {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -383,6 +439,7 @@ In different scenarios steps could fail whole build, some can be configured not 
 
 {{< tabs "suppressing errors" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 fastCheck {
     uiTests { 
@@ -396,8 +453,10 @@ release {
     }
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 fastCheck {
     uiTests { 
@@ -411,6 +470,7 @@ release {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -420,18 +480,22 @@ Artifacts that planned to be used(uploaded somewhere) must be registered:
 
 {{< tabs "collecting artifacts" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 artifacts {
    file("lintReport", "${project.buildDir}/reports/lint-results-release.html")
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 artifacts {
    file("lintReport", "${project.buildDir}/reports/lint-results-release.html")
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -444,6 +508,7 @@ There are different types of artifacts:
 
 {{< tabs "different types of artifacts" >}}
 {{< tab "Kotlin" >}}
+
 ```kotlin
 import com.avito.cd.BuildVariant.RELEASE
 
@@ -456,8 +521,10 @@ artifacts {
    file("featureTogglesJson", "${project.buildDir}/reports/feature_toggles.json")
 }
 ```
+
 {{< /tab >}}
 {{< tab "Groovy" >}}
+
 ```groovy
 def releaseSha1 = "my sha" // it's public info, so safe to share
 
@@ -468,6 +535,7 @@ artifacts {
    file("featureTogglesJson", "${project.buildDir}/reports/feature_toggles.json")
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
