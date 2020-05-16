@@ -26,11 +26,12 @@ open class BuildStepListExtension(internal val name: String, objects: ObjectFact
 
     private val artifactsConfig = ArtifactsConfiguration()
 
-    internal val description = objects.property<String>()
-
     internal val steps: ListProperty<BuildStep> = objects.listProperty(BuildStep::class.java).empty()
 
-    internal var useImpactAnalysis: Boolean = false
+    //todo property
+    var useImpactAnalysis: Boolean = false
+
+    val taskDescription = objects.property<String>()
 
     fun configuration(closure: Closure<ConfigurationCheck>) {
         configureAndAdd(ConfigurationCheck(name), closure)

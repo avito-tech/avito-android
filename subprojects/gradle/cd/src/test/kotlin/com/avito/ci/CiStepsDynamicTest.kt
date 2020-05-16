@@ -11,6 +11,28 @@ import java.io.File
 internal class CiStepsDynamicTest {
 
     @Test
+    fun `cd plugin - custom task created - kotlin dsl`(@TempDir projectDir: File) {
+        projectDir.file(
+            name = "build.gradle.kts",
+            content = """
+            plugins {
+                id("com.avito.android.cd")
+            }
+            
+            builds {
+                register("myCustomTask") {
+                    taskDescription.set("My customTask description")
+                }
+            }
+        """.trimIndent()
+        )
+
+        gradlew(projectDir, "tasks", "-Pci=true").assertThat()
+            .buildSuccessful()
+            .outputContains("myCustomTask - My customTask description")
+    }
+
+    @Test
     fun `cd plugin - custom task created`(@TempDir projectDir: File) {
         projectDir.file(
             name = "build.gradle",
@@ -21,7 +43,7 @@ internal class CiStepsDynamicTest {
             
             builds {
                 myCustomTask {
-                    description.set("My customTask description")
+                    taskDescription.set("My customTask description")
                 }
             }
         """.trimIndent()
@@ -60,7 +82,7 @@ internal class CiStepsDynamicTest {
             buildGradleExtra = """
             builds {
                 myCustomTask {
-                    description.set("My customTask description from root project")
+                    taskDescription.set("My customTask description from root project")
                 }
             }    
             """.trimIndent(),
@@ -71,7 +93,7 @@ internal class CiStepsDynamicTest {
                     buildGradleExtra = """
                     builds {
                         myCustomTask {
-                            description.set("My customTask description from inner project")
+                            taskDescription.set("My customTask description from inner project")
                         }
                     }       
                     """.trimIndent()
