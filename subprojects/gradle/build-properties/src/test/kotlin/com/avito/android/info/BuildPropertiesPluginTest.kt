@@ -2,7 +2,6 @@ package com.avito.android.info
 
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -29,6 +28,31 @@ class BuildPropertiesPluginTest {
                     "app",
                     plugins = listOf("com.avito.android.build-properties"),
                     buildGradleExtra = """
+                        buildProperties {
+                            buildProperty("GIT_COMMIT", "commit")
+                            buildProperty("BUILD_NUMBER", 1.toString())
+                        }
+                    """.trimIndent()
+                )
+            )
+        ).generateIn(projectDir)
+
+        gradlew(projectDir, "assemble")
+
+        val properties = readProperties("app/src/main/assets/build-info.properties")
+
+        assertThat(properties.getProperty("GIT_COMMIT")).isEqualTo("commit")
+        assertThat(properties.getProperty("BUILD_NUMBER")).isEqualTo("1")
+    }
+
+    @Test
+    fun `assemble - creates backward compatible build info properties`() {
+        TestProjectGenerator(
+            modules = listOf(
+                AndroidAppModule(
+                    "app",
+                    plugins = listOf("com.avito.android.build-properties"),
+                    buildGradleExtra = """
                         buildInfo {
                             gitCommit = "commit"
                             gitBranch = "branch"
@@ -39,24 +63,25 @@ class BuildPropertiesPluginTest {
             )
         ).generateIn(projectDir)
 
-        with(projectDir) {
-            git("checkout -b develop")
-        }
-
         gradlew(projectDir, "assemble")
-        
-        val propertiesFile = File(projectDir, "app/src/main/assets/app-build-info.properties")
 
-        assertThat(propertiesFile.exists()).isTrue()
-        assertThat(propertiesFile.isFile).isTrue()
+        val properties = readProperties("app/src/main/assets/app-build-info.properties")
 
-        propertiesFile.inputStream().use { input ->
-            val properties = Properties()
-            properties.load(input)
+        assertThat(properties.getProperty("GIT_COMMIT")).isEqualTo("commit")
+        assertThat(properties.getProperty("GIT_BRANCH")).isEqualTo("branch")
+        assertThat(properties.getProperty("BUILD_NUMBER")).isEqualTo("build_number")
+    }
 
-            assertThat(properties.getProperty("GIT_COMMIT")).isEqualTo("commit")
-            assertThat(properties.getProperty("GIT_BRANCH")).isEqualTo("branch")
-            assertThat(properties.getProperty("BUILD_NUMBER")).isEqualTo("build_number")
+    private fun readProperties(path: String): Properties {
+        val file = File(projectDir, path)
+
+        assertThat(file.exists()).isTrue()
+        assertThat(file.isFile).isTrue()
+
+        return Properties().also { properties ->
+            file.inputStream().use { input ->
+                properties.load(input)
+            }
         }
     }
 }
