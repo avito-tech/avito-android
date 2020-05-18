@@ -61,6 +61,8 @@ data class CdBuildConfig(
             val isRelease: Boolean
         ) : Deployment()
 
+        data class Unknown(val type: String): Deployment()
+
         enum class Track {
             @SerializedName("alpha")
             ALPHA,

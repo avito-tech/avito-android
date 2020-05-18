@@ -15,7 +15,7 @@ internal object DeploymentDeserializer : JsonDeserializer<CdBuildConfig.Deployme
             "qapps" -> {
                 context.deserialize<CdBuildConfig.Deployment.Qapps>(json, CdBuildConfig.Deployment.Qapps::class.java)
             }
-            else -> throw IllegalArgumentException("Unsupported deployment \"type\": $type")
+            else -> CdBuildConfig.Deployment.Unknown(type)
         }
     }
 }

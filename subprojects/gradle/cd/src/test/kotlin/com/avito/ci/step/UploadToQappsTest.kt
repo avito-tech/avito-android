@@ -43,7 +43,7 @@ class UploadToQappsTest {
         val configFile = createCdConfig(
             """
         {
-            "schema_version": 1,
+            "schema_version": 2,
             "release_version": "1.0",
             "output_descriptor": {
                 "path": "http://foo.bar",
@@ -78,7 +78,7 @@ class UploadToQappsTest {
         val configFile = createCdConfig(
             """
         {
-            "schema_version": 1,
+            "schema_version": 2,
             "release_version": "1.0",
             "output_descriptor": {
                 "path": "http://foo.bar",

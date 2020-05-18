@@ -23,7 +23,7 @@ private class CdBuildConfigFactory : (Project) -> Provider<CdBuildConfig> {
                 Providers.of(configFilePath).map { path ->
                     val configFile = project.rootProject.file(path)
                     val config = deserializeToCdBuildConfig(configFile)
-                    validate(config)
+                    CdBuildConfigValidator(config).validate()
                     config
                 }
             } else {
@@ -38,20 +38,6 @@ private class CdBuildConfigFactory : (Project) -> Provider<CdBuildConfig> {
     private fun deserializeToCdBuildConfig(configFile: File): CdBuildConfig {
         require(configFile.exists()) { "Can't find cd config file in $configFile" }
         return gson.fromJson<CdBuildConfig>(configFile.reader(), CdBuildConfig::class.java)
-    }
-
-    private fun validate(config: CdBuildConfig) {
-        val googlePlayDeployments = config.deployments.filterIsInstance<CdBuildConfig.Deployment.GooglePlay>()
-        val deploysByVariant = googlePlayDeployments.groupBy(CdBuildConfig.Deployment.GooglePlay::buildVariant)
-        deploysByVariant.forEach { (_, deploys) ->
-            require(deploys.size == 1) {
-                "Must be one deploy per variant, but was: $googlePlayDeployments"
-            }
-        }
-        val qappsDeployments = config.deployments.filterIsInstance<CdBuildConfig.Deployment.Qapps>()
-        require(qappsDeployments.size <= 1) {
-            "Must be one Qapps deployment, but was: $qappsDeployments"
-        }
     }
 }
 
