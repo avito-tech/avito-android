@@ -8,6 +8,7 @@ headless: true
 - [Contacts]({{< ref "/docs/Contacts.md" >}})
 - Projects
     - [Build checks]({{< ref "/docs/projects/BuildChecks.md" >}})
+    - [Build properties]({{< ref "/docs/projects/BuildProperties.md" >}})
     - [Build trace]({{< ref "/docs/projects/BuildTrace.md" >}})
     - [CI Steps]({{< ref "/docs/projects/CiSteps.md" >}})
 - Contributing
