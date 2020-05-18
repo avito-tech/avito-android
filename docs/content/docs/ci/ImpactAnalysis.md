@@ -25,7 +25,7 @@ AppY:::changed --> FeatureD:::changed
 classDef changed fill:#f96;
 {{</mermaid>}}
 
-These optimizations are supported in [CI Gradle Plugin]({{< ref "/docs/ci/CIGradlePlugin.md" >}}).\
+These optimizations are supported in [CI Steps Plugin]({{< ref "/docs/projects/CISteps.md" >}}).\
 See implementation in `impact` module.
 
 ## UI tests

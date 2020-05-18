@@ -21,7 +21,7 @@ Plugins:
 - `:build-metrics` - Gradle plugin for gathering build metrics and deliver them to [grafana](https://grafana.com/)
 - `:build-properties` - Gradle plugin to deliver custom build parameters to Android assets
 - [`:buildchecks`]({{< ref "/docs/projects/BuildChecks.md" >}}) - Gradle plugin to early detection of build problems
-- [`:cd`]({{< ref "/docs/ci/CIGradlePlugin.md" >}})
+- [`:cd`]({{< ref "/docs/projects/CISteps.md" >}})
 - `:dependencies-lint` - Gradle plugin to detect unused Gradle dependencies
 - `:design-screenshots` - Gradle plugin, extended tasks to support screenshot testing on top of our `:instrumentation` plugin
 - `:feature-toggles` - Gradle plugin to extract feature toggles values from code and report it as build artifact
