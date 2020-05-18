@@ -5,6 +5,7 @@ import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
@@ -40,7 +41,7 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
     val packageName = objects.property<String>()
 
     @Input
-    val releaseChain = objects.property<Boolean>()
+    val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @TaskAction
     fun upload() {
@@ -61,7 +62,7 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
         val buildFailer = BuildFailer.RealFailer()
 
         uploadResult.fold(
-            { logger.info("upload to qapps successfully: ${apk.path}") },
+            { logger.info("Upload to qapps was successful: ${apk.path}") },
             { buildFailer.failBuild("Can't upload to qapps: ${apk.path};", it) }
         )
     }
