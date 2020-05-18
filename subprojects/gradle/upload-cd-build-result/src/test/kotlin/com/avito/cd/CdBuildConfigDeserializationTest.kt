@@ -2,7 +2,7 @@ package com.avito.cd
 
 import com.avito.cd.CdBuildConfig.Deployment.GooglePlay
 import com.avito.cd.CdBuildConfig.Deployment.Track
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
@@ -43,7 +43,7 @@ class CdBuildConfigDeserializationTest {
     @Test
     fun `build config deserialized correctly`() {
         val deserialized = gson.fromJson<CdBuildConfig>(actualConfig, CdBuildConfig::class.java)
-        Truth.assertThat(deserialized)
+        assertThat(deserialized)
             .isEqualTo(
                 CdBuildConfig(
                     schemaVersion = 1,
@@ -67,6 +67,54 @@ class CdBuildConfigDeserializationTest {
                     )
                 )
             )
+    }
+
+    @Test
+    fun `build config considers unknown deployments`() {
+        val json = """
+        {
+            "schema_version": 1,
+            "project": "avito",
+            "release_version": "248.0",
+            "output_descriptor": {
+                "path": "http://foo.bar",
+                "skip_upload": true
+            },
+            "deployments": [
+                {
+                    "type": "google-play",
+                    "artifact_type": "bundle",
+                    "build_variant": "release",
+                    "track": "alpha"
+                },
+                {
+                    "type": "unknown-deployment"
+                }
+            ]
+        }
+        """
+        val config = gson.fromJson<CdBuildConfig>(json, CdBuildConfig::class.java)
+        assertThat(config).isEqualTo(
+            CdBuildConfig(
+                schemaVersion = 1,
+                project = NupokatiProject.AVITO,
+                releaseVersion = "248.0",
+                outputDescriptor = CdBuildConfig.OutputDescriptor(
+                    path = "http://foo.bar",
+                    skipUpload = true
+                ),
+                deployments = listOf(
+                    GooglePlay(
+                        AndroidArtifactType.BUNDLE,
+                        BuildVariant.RELEASE,
+                        Track.ALPHA
+                    ),
+                    CdBuildConfig.Deployment.Unknown(
+                        "unknown-deployment"
+                    )
+                )
+            )
+        )
     }
 }
 

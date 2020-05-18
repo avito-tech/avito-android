@@ -12,7 +12,7 @@ internal object DeploymentDeserializer : JsonDeserializer<CdBuildConfig.Deployme
             "google-play" -> {
                 context.deserialize<CdBuildConfig.Deployment.GooglePlay>(json, CdBuildConfig.Deployment.GooglePlay::class.java)
             }
-            else -> throw IllegalArgumentException("Value of field \"type\":$type incorrect")
+            else -> CdBuildConfig.Deployment.Unknown(type)
         }
     }
 }
