@@ -317,6 +317,7 @@ fun Project.configureBintray(vararg publications: String) {
 
         dryRun = false
         publish = true
+        override = true
         pkg(closureOf<PackageConfig> {
             repo = "maven"
             userOrg = "avito"
