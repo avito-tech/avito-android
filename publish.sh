@@ -4,4 +4,4 @@
 
 source $(dirname $0)/_main.sh
 
-runInBuilder "./gradlew publishRelease ${GRADLE_ARGS} --no-parallel --stacktrace"
+runInBuilder "./gradlew publishRelease ${GRADLE_ARGS} --no-parallel --continue --stacktrace"
