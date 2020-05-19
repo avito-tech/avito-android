@@ -1,14 +1,28 @@
 package com.avito.performance
 
-open class PerformanceExtension {
+import org.gradle.api.model.ObjectFactory
+import org.gradle.kotlin.dsl.property
+import javax.inject.Inject
 
-    /* Результаты перформанс-тестов, резултаты сравнения с предыдущим прогоном на девелопе */
-    lateinit var output: String
+open class PerformanceExtension @Inject constructor(objects: ObjectFactory) {
 
-    /* Название файла с результатами теста */
-    lateinit var performanceTestResultName: String
+    /**
+     * Name of a directory for performance test results
+     */
+    val output = objects.property<String>()
 
-    lateinit var statsUrl: String
+    /**
+     * Test results file name
+     */
+    val performanceTestResultName = objects.property<String>()
 
-    lateinit var slackHookUrl: String
+    /**
+     * Performance calculations service url
+     */
+    val statsUrl = objects.property<String>()
+
+    /**
+     * Slack hook url to send urgent info
+     */
+    val slackHookUrl = objects.property<String>()
 }
