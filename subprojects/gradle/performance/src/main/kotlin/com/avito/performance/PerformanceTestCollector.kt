@@ -17,9 +17,11 @@ internal class PerformanceTestCollector(
 
         return report.get()
             .parallelStream()
-            .apply {
+            .filter {
                 if (buildId != null) {
-                    filter { it.buildId == buildId }
+                    it.buildId == buildId
+                } else {
+                    true
                 }
             }
             .map { reports.getPerformanceTest(it.id).get() }
