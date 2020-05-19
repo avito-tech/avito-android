@@ -7,17 +7,21 @@ import kotlin.streams.toList
 
 internal class PerformanceTestCollector(
     private val reports: ReportsApi,
-    private val id: ReportCoordinates,
-    private val buildId: String
+    private val coordinates: ReportCoordinates,
+    private val buildId: String?
 ) {
 
     fun collect(): List<PerformanceTest> {
 
-        val report = reports.getTestsForRunId(id)
+        val report = reports.getTestsForRunId(coordinates)
 
         return report.get()
             .parallelStream()
-            .filter { it.buildId == buildId }
+            .apply {
+                if (buildId != null) {
+                    filter { it.buildId == buildId }
+                }
+            }
             .map { reports.getPerformanceTest(it.id).get() }
             .toList()
     }
