@@ -6,7 +6,7 @@ import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.instrumentationTask
 import com.avito.instrumentation.withInstrumentationTests
-import com.avito.kotlin.dsl.fileProperty
+import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.toOptional
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
@@ -45,12 +45,7 @@ open class PerformancePlugin : Plugin<Project> {
                 .filter { it.performanceType == InstrumentationConfiguration.PerformanceType.MDE }
                 .forEach { performanceMdeConfig ->
 
-                    logger.info("Creating performance mde configuration: $performanceMdeConfig")
-
-                    val performanceResultsFile = File(
-                        extension.output,
-                        "${performanceMdeConfig.name}_${extension.performanceTestResultName}"
-                    )
+                    logger.debug("Creating performance mde configuration: $performanceMdeConfig")
 
                     project.tasks.instrumentationTask(performanceMdeConfig.name) { instrumentationTask ->
 
@@ -59,7 +54,12 @@ open class PerformancePlugin : Plugin<Project> {
                                 group = TASK_GROUP
                                 description = "Collect performance data nightly"
                                 graphiteKey.set(graphiteKeyProvider)
-                                performanceTests.set(performanceResultsFile)
+                                performanceTests.set(
+                                    File(
+                                        extension.output,
+                                        "${performanceMdeConfig.name}_${extension.performanceTestResultName}"
+                                    )
+                                )
                                 buildId.set(envArgs.build.id.toString())
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
@@ -70,9 +70,11 @@ open class PerformancePlugin : Plugin<Project> {
                         project.tasks.register<SendPerformanceMdeTask>("sendPerformanceMdeTask") {
                             group = TASK_GROUP
                             description = "Report for mde calculations"
-                            currentTests.set(performanceResultsFile)
                             statsUrl.set(extension.statsUrl)
-                            dependsOn(performanceMdeCollectProvider)
+
+                            dependencyOn(performanceMdeCollectProvider) { mdeCollectTask ->
+                                currentTests.set(mdeCollectTask.performanceTests)
+                            }
                         }
                     }
                 }
@@ -81,34 +83,31 @@ open class PerformancePlugin : Plugin<Project> {
                 .filter { it.performanceType == InstrumentationConfiguration.PerformanceType.SIMPLE }
                 .forEach { performanceConfig ->
 
-                    logger.info("Creating performance configuration: $performanceConfig")
-
-                    val performanceResultsFile = File(
-                        extension.output,
-                        "${performanceConfig.name}_${extension.performanceTestResultName}"
-                    )
+                    logger.debug("Creating performance configuration: $performanceConfig")
 
                     val reportCoordinates = performanceConfig.instrumentationParams.reportCoordinates()
 
                     project.tasks.instrumentationTask(performanceConfig.name) { instrumentationTask ->
 
-                        logger.info("Based on instrumentation task: $instrumentationTask")
+                        logger.debug("Based on instrumentation task: $instrumentationTask")
 
                         val performanceCollectProvider =
                             project.tasks.register<PerformanceCollectTask>("collect${performanceConfig.name.capitalize()}") {
                                 group = TASK_GROUP
                                 description = "Collect performance data"
                                 graphiteKey.set(graphiteKeyProvider)
-                                performanceTests.set(performanceResultsFile)
+                                performanceTests.set(
+                                    File(
+                                        extension.output,
+                                        "${performanceConfig.name}_${extension.performanceTestResultName}"
+                                    )
+                                )
                                 this.reportCoordinates.set(reportCoordinates)
                                 buildId.set(envArgs.build.id.toString())
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
                                 dependsOn(instrumentationTask)
                             }
-
-                        val previousPerformanceTestResultName =
-                            "previous_${performanceConfig.name}_${extension.performanceTestResultName}"
 
                         val targetBranch =
                             gitState.map {
@@ -125,7 +124,7 @@ open class PerformancePlugin : Plugin<Project> {
                                 performanceTests.set(
                                     File(
                                         extension.output,
-                                        previousPerformanceTestResultName
+                                        "previous_${performanceConfig.name}_${extension.performanceTestResultName}"
                                     )
                                 )
                                 this.reportCoordinates.set(reportCoordinates.copy(jobSlug = "${reportCoordinates.jobSlug}-${InstrumentationTestsAction.RUN_ON_TARGET_BRANCH_SLUG}"))
@@ -135,25 +134,22 @@ open class PerformancePlugin : Plugin<Project> {
                                 dependsOn(performanceCollectProvider)
                             }
 
-                        val previousTestsFile = project.fileProperty(
-                            File(
-                                extension.output,
-                                previousPerformanceTestResultName
-                            )
-                        )
-
                         val performanceCompareProvider =
                             project.tasks.register<PerformanceCompareTask>("compare${performanceConfig.name.capitalize()}") {
                                 group = TASK_GROUP
                                 description = "Compare performance reports"
                                 comparison.set(File(extension.output, "comparison.json"))
-                                currentTests.set(performanceResultsFile)
-                                previousTests.set(previousTestsFile.toOptional())
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
                                 statsUrl.set(extension.statsUrl)
-                                dependsOn(performanceCollectProvider)
-                                dependsOn(performanceDownloadProvider)
+
+                                dependencyOn(performanceCollectProvider) { sourceTestsCollector ->
+                                    currentTests.set(sourceTestsCollector.performanceTests)
+                                }
+
+                                dependencyOn(performanceDownloadProvider) { targetTestsCollector ->
+                                    previousTests.set(targetTestsCollector.performanceTests.toOptional())
+                                }
                             }
 
                         val performanceProvider = gitState.map {
@@ -164,7 +160,7 @@ open class PerformancePlugin : Plugin<Project> {
                             }
                         }
 
-                        logger.info("performanceProvider=${performanceProvider.orNull}")
+                        logger.debug("performanceProvider=${performanceProvider.orNull}")
 
                         project.tasks.register<Task>(measurePerformanceTaskName(performanceConfig.name)) {
                             this.group = TASK_GROUP
