@@ -13,16 +13,9 @@ data class SlackConfig(
     val hookUrl: String
 ) : Serializable
 
-
 val Project.slackConfig: Provider<SlackConfig>
     get() = try {
-        Providers.of(
-            extensions.getByType<PerformanceExtension>().let { extension ->
-                SlackConfig(
-                    hookUrl = extension.slackHookUrl
-                )
-            }
-        )
+        Providers.of(SlackConfig(hookUrl = extensions.getByType<PerformanceExtension>().slackHookUrl.get()))
     } catch (e: Exception) {
         Providers.notDefined()
     }

@@ -41,6 +41,9 @@ open class PerformancePlugin : Plugin<Project> {
 
         project.withInstrumentationTests { instrumentationConfig ->
 
+            val performanceOutputDir = extension.output.get()
+            val performanceResultsFileName = extension.performanceTestResultName.get()
+
             instrumentationConfig.configurations
                 .filter { it.performanceType == InstrumentationConfiguration.PerformanceType.MDE }
                 .forEach { performanceMdeConfig ->
@@ -56,8 +59,8 @@ open class PerformancePlugin : Plugin<Project> {
                                 graphiteKey.set(graphiteKeyProvider)
                                 performanceTests.set(
                                     File(
-                                        extension.output,
-                                        "${performanceMdeConfig.name}_${extension.performanceTestResultName}"
+                                        performanceOutputDir,
+                                        "${performanceMdeConfig.name}_${performanceResultsFileName}"
                                     )
                                 )
                                 buildId.set(envArgs.build.id.toString())
@@ -98,8 +101,8 @@ open class PerformancePlugin : Plugin<Project> {
                                 graphiteKey.set(graphiteKeyProvider)
                                 performanceTests.set(
                                     File(
-                                        extension.output,
-                                        "${performanceConfig.name}_${extension.performanceTestResultName}"
+                                        performanceOutputDir,
+                                        "${performanceConfig.name}_${performanceResultsFileName}"
                                     )
                                 )
                                 this.reportCoordinates.set(reportCoordinates)
@@ -123,8 +126,8 @@ open class PerformancePlugin : Plugin<Project> {
                                 graphiteKey.set(targetBranch)
                                 performanceTests.set(
                                     File(
-                                        extension.output,
-                                        "previous_${performanceConfig.name}_${extension.performanceTestResultName}"
+                                        performanceOutputDir,
+                                        "previous_${performanceConfig.name}_${performanceResultsFileName}"
                                     )
                                 )
                                 this.reportCoordinates.set(reportCoordinates.copy(jobSlug = "${reportCoordinates.jobSlug}-${InstrumentationTestsAction.RUN_ON_TARGET_BRANCH_SLUG}"))
@@ -138,7 +141,7 @@ open class PerformancePlugin : Plugin<Project> {
                             project.tasks.register<PerformanceCompareTask>("compare${performanceConfig.name.capitalize()}") {
                                 group = TASK_GROUP
                                 description = "Compare performance reports"
-                                comparison.set(File(extension.output, "comparison.json"))
+                                comparison.set(File(performanceOutputDir, "comparison.json"))
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
                                 statsUrl.set(extension.statsUrl)
