@@ -49,6 +49,8 @@ plugins {
 {{< tab "Kotlin" >}}
 
 ```kotlin
+import com.avito.instrumentation.reservation.request.Device.LocalEmulator
+
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     // they are required for Avito app. We will make them optional in future.
     reportApiUrl = "http://stub"
@@ -60,7 +62,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     fileStorageUrl = "http://stub"
 
     configurationsContainer.register("local") {
-        tryToReRunOnTargetBranch = false
 
         targetsContainer.register("api27") {
             deviceName = "API27"
@@ -101,7 +102,6 @@ instrumentation {
     
     configurations {
         local {
-            tryToReRunOnTargetBranch = false
             targets {
                 api27 {
                     deviceName = "API27"
@@ -552,23 +552,82 @@ Look at file `filters-excludes.json` \
 {{< avito >}}
 
 1. Get access to kubernetes cloud: [internal doc](http://links.k.avito.ru/Kubectl)
-1. [Request](http://links.k.avito.ru/androidEmulatorServiceDesk) `exec` access to `android-emulator` namespace in `beta` cluster
-1. Setup a context on `beta`, `android-emulator` with your user access.\
+2. [Request](http://links.k.avito.ru/androidEmulatorServiceDesk) `exec` access to `android-emulator` namespace in `beta` cluster
+3. Setup a context on `beta`, `android-emulator` with your user access.\
 More about kubernetes context: [Official docs](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#define-clusters-users-and-contexts)
-1. Add a configuration with target on kubernetes
+4. Add a configuration with target on kubernetes
+
+{{< tabs "addK8SInstrumentation" >}}
+{{< tab "Kotlin" >}}
 
 ```kotlin
-TBD
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+
+configurationsContainer.register("k8s") {                    
+
+            targetsContainer.register("api27") {
+                deviceName = "API27"
+
+                scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 1
+                        minimumSuccessCount = 1
+                    }
+
+                    reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        device = Emulator27
+                        maximum = 1
+                        minimum = 1
+                        testsPerEmulator = 1
+                    }
+                }
+            }
+        }
 ```
 
-1. Run tests with extra parameters specified. The example for `:test-app`:
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+
+instrumentation {
+    configurations {
+        k8s {
+            targets {
+                api27 {
+                    deviceName = "API27"
+                    scheduling {
+                        quota {
+                            retryCount = 1
+                            minimumSuccessCount = 1
+                        }
+
+                        testsCountBasedReservation {
+                            device = Emulator27.INSTANCE
+                            maximum = 1
+                            minimum = 1
+                            testsPerEmulator = 1
+                        }
+                    }
+                }   
+            }       
+        }   
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
+5. Run tests with extra parameters specified.
 
 ```shell script
-./gradlew :subprojects:android-test:test-app:instrumentationUi 
-    -PkubernetesContext=<your context>
-    -PkubernetesCaCertFile=<path to ca certificate file>
-    -Pavito.registry=<avito registry>
+./gradlew :subprojects:android-test:test-app:instrumentation<configuration name> 
+    -PkubernetesContext=<your context> // for Avito probably 'beta'
 ```
+
+We will looking for `.kube/config` in your $HOME
 
 ### Run tests on local emulator target
 
@@ -578,6 +637,8 @@ TBD
 {{< tab "Kotlin" >}}
 
 ```kotlin
+import com.avito.instrumentation.reservation.request.Device.LocalEmulator
+
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 configurationsContainer.register("local") {
         targetsContainer.register("api27") {
@@ -604,6 +665,8 @@ configurationsContainer.register("local") {
 {{< tab "Groovy" >}}
 
 ```groovy
+import com.avito.instrumentation.reservation.request.Device.LocalEmulator
+
 instrumentation {
     configurations {
         local {

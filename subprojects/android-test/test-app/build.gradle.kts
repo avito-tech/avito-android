@@ -1,3 +1,4 @@
+
 import com.android.build.gradle.ProguardFiles.ProguardFile
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
@@ -7,7 +8,8 @@ import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
 import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.utils.gradle.buildEnvironment
+import com.avito.utils.gradle.KubernetesCredentials
+import com.avito.utils.gradle.kubernetesCredentials
 
 plugins {
     id("com.android.application")
@@ -187,11 +189,9 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
             }
         }
     }
-// TODO uncomment after 2020.4.6 release
-//    val credentials = project.kubernetesCredentials
-//    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
-//    }
-    if (project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
+
+    val credentials = project.kubernetesCredentials
+    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
         configurationsContainer.register("ui") {
             tryToReRunOnTargetBranch = false
             reportSkippedTests = true
