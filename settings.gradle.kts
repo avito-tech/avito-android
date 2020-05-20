@@ -182,7 +182,7 @@ pluginManagement {
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
 
                 pluginId == "com.slack.keeper" ->
-                    useModule("com.slack.keeper:keeper:0.2.0")
+                    useModule("com.slack.keeper:keeper:0.4.3")
             }
         }
     }
