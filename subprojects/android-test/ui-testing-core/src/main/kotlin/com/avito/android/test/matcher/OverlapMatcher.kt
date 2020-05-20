@@ -1,8 +1,8 @@
 package com.avito.android.test.matcher
 
-import android.graphics.Rect
 import android.view.View
-import android.view.ViewGroup
+import com.avito.android.test.util.forEachVisibleViewsWithHigherZOrder
+import com.avito.android.test.util.getRect
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 
@@ -21,32 +21,10 @@ class OverlapMatcher : TypeSafeMatcher<View>() {
     }
 
     override fun matchesSafely(view: View): Boolean {
-        val viewRect = Rect()
-        view.getGlobalVisibleRect(viewRect)
-
-        return view.parentViewGroup?.iterateVisibleViewsWithHigherZOrder(view) { viewBelow ->
-            viewBelow.isIntersectedWith(viewRect)
-        } ?: false
-    }
-
-    private fun ViewGroup.iterateVisibleViewsWithHigherZOrder(view: View, block: (View) -> Boolean): Boolean {
-        val index = indexOfChild(view)
-        for (i in (index + 1) until childCount) {
-            val child = getChildAt(i)
-            if (child.visibility == View.VISIBLE && block(child)) {
-                return true
-            }
+        val viewRect = view.getRect()
+        return view.forEachVisibleViewsWithHigherZOrder { higherZOrderView ->
+            higherZOrderView.getRect().intersect(viewRect)
         }
-
-        return parentViewGroup?.iterateVisibleViewsWithHigherZOrder(this, block) ?: false
     }
 
-    private fun View.isIntersectedWith(otherRect: Rect): Boolean {
-        val thisRect = Rect()
-        getGlobalVisibleRect(thisRect)
-        return thisRect.intersect(otherRect)
-    }
-
-    private val View.parentViewGroup: ViewGroup?
-        get() = parent as? ViewGroup
 }

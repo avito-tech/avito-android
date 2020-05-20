@@ -4,13 +4,18 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
-import androidx.test.espresso.util.TreeIterables
 
-internal fun View.getAboveVisibleViews(): List<View> {
-    return TreeIterables.breadthFirstViewTraversal(this.rootView)
-        .dropWhile { it != this }
-        .drop(1)
-        .filter { it.visibility == View.VISIBLE }
+internal fun View.forEachVisibleViewsWithHigherZOrder(block: (View) -> Boolean): Boolean {
+    val parentViewGroup = parent as? ViewGroup ?: return false
+    val index = parentViewGroup.indexOfChild(this)
+    for (i in (index + 1) until parentViewGroup.childCount) {
+        val child = parentViewGroup.getChildAt(i)
+        if (child.visibility == View.VISIBLE && block(child)) {
+            return true
+        }
+    }
+
+    return parentViewGroup.forEachVisibleViewsWithHigherZOrder(block)
 }
 
 internal fun canHandleClick(view: View?): Boolean {
