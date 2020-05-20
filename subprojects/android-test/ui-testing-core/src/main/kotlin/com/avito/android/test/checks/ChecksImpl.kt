@@ -10,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import com.avito.android.test.espresso.assertion.ViewExistsAssertion
 import com.avito.android.test.matcher.AvitoPositionAssertions
 import com.avito.android.test.matcher.DrawableBackgroundMatcher
+import com.avito.android.test.matcher.OverlapMatcher
 import com.avito.android.test.matcher.ViewGroupMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.`is`
@@ -32,6 +33,14 @@ class ChecksImpl(private val driver: ChecksDriver) : Checks,
 
     override fun isNotDisplayed() {
         driver.check(matches(not(ViewMatchers.isDisplayed())))
+    }
+
+    override fun isOverlapped() {
+        driver.check(matches(OverlapMatcher()))
+    }
+
+    override fun isNotOverlapped() {
+        driver.check(matches(not(OverlapMatcher())))
     }
 
     override fun isVisible() {

@@ -19,12 +19,13 @@ data class State(
             val applicationPackage: String
         ) : Layer() {
             override fun toString(): String =
-                "Application: $applicationPath with package: $applicationPackage installed"
+                "Application: $applicationPath, package: $applicationPackage"
         }
     }
 
     override fun toString(): String = buildString {
-        append("State ($digest) with layers:")
-        layers.forEach { append(" $it") }
+        append("State ($digest) with layers: {")
+        append(layers.joinToString(prefix = "[Layer: ", postfix = "]"))
+        append(" }")
     }
 }

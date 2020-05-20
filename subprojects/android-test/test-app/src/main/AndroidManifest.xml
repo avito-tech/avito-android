@@ -38,5 +38,6 @@
         <activity android:name=".ViewPagerActivity" />
         <activity android:name=".RecyclerDescendantLevelsActivity" />
         <activity android:name=".ToastActivity" />
+        <activity android:name=".OverlapActivity" />
     </application>
 </manifest>
