@@ -19,7 +19,7 @@ class PerformanceCollectAction(
     private val reports: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,
-        logger = object: Logger {
+        logger = object : Logger {
             override fun debug(msg: String) {
                 logger.debug(msg)
             }
@@ -43,7 +43,7 @@ class PerformanceCollectAction(
         val logger: CILogger,
         val graphiteKey: String,
         val reportCoordinates: ReportCoordinates,
-        val buildId: String,
+        val buildId: String?,
         val reportApiUrl: String,
         val reportApiFallbackUrl: String,
         val performanceTests: File,
@@ -67,11 +67,14 @@ class PerformanceCollectAction(
 
             val performanceResults = PerformanceTestCollector(
                 reports = reports,
-                id = params.reportCoordinates,
+                coordinates = params.reportCoordinates,
                 buildId = params.buildId
             ).collect()
 
-            PerformanceWriter().write(performanceResults, performanceTestFile)
+            PerformanceWriter().write(
+                tests = performanceResults,
+                output = performanceTestFile
+            )
 
             PerformanceTestStatsdSender(
                 PerformanceMetricSender.Impl(

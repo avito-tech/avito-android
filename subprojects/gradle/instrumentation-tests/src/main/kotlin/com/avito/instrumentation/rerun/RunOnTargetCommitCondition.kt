@@ -18,6 +18,8 @@ object RunOnTargetCommitCondition {
     ): Result {
         val useArtifactsFromTargetBranch = isArtifactsFromTargetBranchNeeded(instrumentationConfiguration)
 
+        println("DEBUG: ${instrumentationConfiguration.name} useArtifactsFromTargetBranch=$useArtifactsFromTargetBranch")
+
         return if (useArtifactsFromTargetBranch != null) {
             if (!hasBuildOnTargetPlugin) {
                 throw IllegalStateException(
@@ -33,14 +35,10 @@ object RunOnTargetCommitCondition {
     }
 
     private fun isArtifactsFromTargetBranchNeeded(instrumentationConfiguration: InstrumentationConfiguration.Data): String? {
-        return when {
-            instrumentationConfiguration.tryToReRunOnTargetBranch -> {
-                "tryToReRunOnTargetBranch options enabled in configuration"
-            }
-            instrumentationConfiguration.performanceType != null -> {
-                "it is a performance configuration of type ${instrumentationConfiguration.performanceType}, which needs target commit artifacts"
-            }
-            else -> null
+        return if (instrumentationConfiguration.tryToReRunOnTargetBranch) {
+            "tryToReRunOnTargetBranch options enabled in configuration"
+        } else {
+            null
         }
     }
 }

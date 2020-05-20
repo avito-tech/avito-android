@@ -2,12 +2,13 @@ package com.avito.performance
 
 import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
-import com.avito.instrumentation.InstrumentationTestsAction
+import com.avito.instrumentation.InstrumentationTestsAction.Companion.RUN_ON_TARGET_BRANCH_SLUG
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.instrumentationTask
 import com.avito.instrumentation.withInstrumentationTests
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.toOptional
+import com.avito.report.model.RunId
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
@@ -94,7 +95,7 @@ open class PerformancePlugin : Plugin<Project> {
 
                         logger.debug("Based on instrumentation task: $instrumentationTask")
 
-                        val performanceCollectProvider =
+                        val sourceBranchResultsCollector =
                             project.tasks.register<PerformanceCollectTask>("collect${performanceConfig.name.capitalize()}") {
                                 group = TASK_GROUP
                                 description = "Collect performance data"
@@ -112,29 +113,57 @@ open class PerformancePlugin : Plugin<Project> {
                                 dependsOn(instrumentationTask)
                             }
 
-                        val targetBranch =
-                            gitState.map {
-                                // падаем раньше с более понятной ошибкой, иначе упадем т.к. graphiteKey не @Optional
-                                requireNotNull(it.targetBranch?.name)
-                                { "Can't run performance tasks without targetBranch specified" }
-                            }
-
-                        val performanceDownloadProvider =
+                        val targetBranchResultsCollector =
                             project.tasks.register<PerformanceCollectTask>("download${performanceConfig.name.capitalize()}") {
                                 group = TASK_GROUP
-                                description = "Download performance report from last build"
-                                graphiteKey.set(targetBranch)
+                                description = "Download performance report from target branch build"
+                                graphiteKey.set(
+                                    gitState.map {
+                                        // fail fast for more meaningful error message
+                                        requireNotNull(it.targetBranch?.name)
+                                        { "Can't run performance tasks without targetBranch specified" }
+                                    })
                                 performanceTests.set(
                                     File(
                                         performanceOutputDir,
                                         "previous_${performanceConfig.name}_${performanceResultsFileName}"
                                     )
                                 )
-                                this.reportCoordinates.set(reportCoordinates.copy(jobSlug = "${reportCoordinates.jobSlug}-${InstrumentationTestsAction.RUN_ON_TARGET_BRANCH_SLUG}"))
                                 buildId.set(envArgs.build.id.toString())
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
-                                dependsOn(performanceCollectProvider)
+
+                                when (val targetBranchResultSource = extension.targetBranchResultSource.get()) {
+                                    is PerformanceExtension.TargetBranchResultSource.RunInProcess -> {
+                                        //run on target branch is a part of the same task in `instrumentation plugin`
+                                        dependsOn(sourceBranchResultsCollector)
+
+                                        buildId.set(envArgs.build.id.toString())
+
+                                        this.reportCoordinates.set(
+                                            reportCoordinates.copy(
+                                                jobSlug = "${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG"
+                                            )
+                                        )
+                                    }
+                                    is PerformanceExtension.TargetBranchResultSource.FetchFromOtherBuild -> {
+
+                                        //there is no need to depend on tests, it is a hack to postpone fetching
+                                        dependsOn(sourceBranchResultsCollector)
+
+                                        //todo probably it's a mistake; but we need to fetch teamcity API otherwise
+                                        buildId.set(null as String?)
+
+                                        this.reportCoordinates.set(
+                                            reportCoordinates.copy(
+                                                runId = RunId(
+                                                    commitHash = gitState.map { it.targetBranch!!.commit }.get(),
+                                                    buildTypeId = targetBranchResultSource.targetBuildConfigId
+                                                ).toString()
+                                            )
+                                        )
+                                    }
+                                }
                             }
 
                         val performanceCompareProvider =
@@ -146,18 +175,18 @@ open class PerformancePlugin : Plugin<Project> {
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
                                 statsUrl.set(extension.statsUrl)
 
-                                dependencyOn(performanceCollectProvider) { sourceTestsCollector ->
-                                    currentTests.set(sourceTestsCollector.performanceTests)
+                                dependencyOn(sourceBranchResultsCollector) { sourceTestsCollector ->
+                                    sourceResults.set(sourceTestsCollector.performanceTests)
                                 }
 
-                                dependencyOn(performanceDownloadProvider) { targetTestsCollector ->
-                                    previousTests.set(targetTestsCollector.performanceTests.toOptional())
+                                dependencyOn(targetBranchResultsCollector) { targetTestsCollector ->
+                                    targetResults.set(targetTestsCollector.performanceTests.toOptional())
                                 }
                             }
 
                         val performanceProvider = gitState.map {
                             when {
-                                it.isOnDefaultBranch -> performanceCollectProvider
+                                it.isOnDefaultBranch -> sourceBranchResultsCollector
                                 it.targetBranch != null -> performanceCompareProvider
                                 else -> Providers.notDefined<Task>()
                             }

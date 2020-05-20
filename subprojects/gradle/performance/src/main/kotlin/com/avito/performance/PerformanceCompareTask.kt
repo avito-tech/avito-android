@@ -28,11 +28,11 @@ abstract class PerformanceCompareTask @Inject constructor(
 
     @Optional
     @InputFile
-    val previousTests: RegularFileProperty = objects.fileProperty()
+    val targetResults: RegularFileProperty = objects.fileProperty()
 
     //todo support @Optional
     @InputFile
-    val currentTests: RegularFileProperty = objects.fileProperty()
+    val sourceResults: RegularFileProperty = objects.fileProperty()
 
     @Internal
     val reportApiUrl = objects.property<String>()
@@ -56,8 +56,8 @@ abstract class PerformanceCompareTask @Inject constructor(
             workerConfiguration.isolationMode = IsolationMode.NONE
             workerConfiguration.setParams(
                 PerformanceCompareAction.Params(
-                    previousTests = previousTests.orNull?.asFile,
-                    currentTests = currentTests.asFile.get(),
+                    previousTests = targetResults.orNull?.asFile,
+                    currentTests = sourceResults.asFile.get(),
                     comparison = comparison.asFile.get(),
                     buildUrl = project.envArgs.build.url,
                     logger = ciLogger,

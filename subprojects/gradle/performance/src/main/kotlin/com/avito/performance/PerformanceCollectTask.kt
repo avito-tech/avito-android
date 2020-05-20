@@ -11,13 +11,13 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
 abstract class PerformanceCollectTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
@@ -28,6 +28,7 @@ abstract class PerformanceCollectTask @Inject constructor(
     @get:Input
     internal abstract val reportCoordinates: Property<ReportCoordinates>
 
+    @get:Optional
     @get:Input
     abstract val buildId: Property<String>
 
@@ -53,7 +54,7 @@ abstract class PerformanceCollectTask @Inject constructor(
                     performanceTests = performanceTests.asFile.get(),
                     graphiteKey = graphiteKey.get(),
                     reportCoordinates = reportCoordinates.get(),
-                    buildId = buildId.get(),
+                    buildId = buildId.orNull,
                     buildUrl = project.envArgs.build.url,
                     logger = ciLogger,
                     reportApiUrl = reportApiUrl.get(),

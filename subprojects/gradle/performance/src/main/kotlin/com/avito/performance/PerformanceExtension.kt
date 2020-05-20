@@ -1,6 +1,7 @@
 package com.avito.performance
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
@@ -25,4 +26,17 @@ open class PerformanceExtension @Inject constructor(objects: ObjectFactory) {
      * Slack hook url to send urgent info
      */
     val slackHookUrl = objects.property<String>()
+
+    /**
+     * Toggle for different strategies of target branch results fetching
+     */
+    @Suppress("UnstableApiUsage")
+    val targetBranchResultSource: Property<TargetBranchResultSource> =
+        objects.property<TargetBranchResultSource>()
+            .convention(TargetBranchResultSource.RunInProcess)
+
+    sealed class TargetBranchResultSource {
+        object RunInProcess : TargetBranchResultSource()
+        data class FetchFromOtherBuild(val targetBuildConfigId: String) : TargetBranchResultSource()
+    }
 }

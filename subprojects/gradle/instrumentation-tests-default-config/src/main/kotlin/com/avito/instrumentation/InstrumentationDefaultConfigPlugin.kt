@@ -10,7 +10,6 @@ import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConf
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.reservation.request.Device.Emulator
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator24Cores2
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.utils.gradle.KubernetesCredentials
@@ -123,33 +122,6 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                             "regressionNoE2e",
                             registerRegressionConfig("regressionNoE2E")
                         )
-
-                        //todo перенести в performance модуль?
-                        configurationsContainer.register(
-                            "performance", registerPerformanceConfig(
-                                filterName = "performance",
-                                k8sNamespace = performanceNamespace,
-                                performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
-                            )
-                        )
-                        configurationsContainer.register(
-                            "performanceNoE2e",
-                            registerPerformanceConfig(
-                                filterName = "performanceNoE2E",
-                                k8sNamespace = performanceNamespace,
-                                performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
-                            )
-                        )
-                        configurationsContainer.register(
-                            "performanceMde", registerPerformanceConfig(
-                                filterName = "performance",
-                                k8sNamespace = performanceNamespace,
-                                performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                performanceType = InstrumentationConfiguration.PerformanceType.MDE
-                            )
-                        )
                     }
                 }
             }
@@ -200,38 +172,6 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             config.impactAnalysisPolicy = ImpactAnalysisPolicy.On.RunAffectedTests
             config.filter = filterName
             EmulatorSet.fast.forEach { config.targetsContainer.registerDevice(it) }
-        }
-    }
-
-    private fun registerPerformanceConfig(
-        filterName: String,
-        k8sNamespace: String,
-        performanceMinimumSuccessCount: Int,
-        performanceType: InstrumentationConfiguration.PerformanceType
-    ) = Action<InstrumentationConfiguration> { config ->
-        config.filter = filterName
-        config.performanceType = performanceType
-
-        config.kubernetesNamespace = k8sNamespace
-
-        config.instrumentationParams = mapOf("jobSlug" to "PerformanceTests")
-
-        config.targetsContainer.register("api24") { target ->
-            target.deviceName = "API24"
-
-            target.scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = performanceMinimumSuccessCount + 20
-                    minimumSuccessCount = performanceMinimumSuccessCount
-                }
-
-                reservation = TestsBasedDevicesReservationConfiguration.create(
-                    device = Emulator24Cores2,
-                    min = 12,
-                    max = 42,
-                    testsPerEmulator = 1
-                )
-            }
         }
     }
 
