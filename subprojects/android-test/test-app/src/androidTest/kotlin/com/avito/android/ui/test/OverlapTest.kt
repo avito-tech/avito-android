@@ -1,6 +1,8 @@
 package com.avito.android.ui.test
 
+import android.view.View
 import com.avito.android.ui.OverlapActivity
+import com.avito.android.ui.R
 import org.junit.Rule
 import org.junit.Test
 
@@ -30,6 +32,17 @@ class OverlapTest {
         rule.launchActivity(null)
 
         Screen.overlapScreen.overlappedText.checks.isOverlapped()
+    }
+
+    @Test
+    fun isNotOverlapped_when_overlapping_view_is_invisible() {
+        rule.launchActivity(null)
+
+        rule.runOnUiThread {
+            rule.activity.findViewById<View>(R.id.green_group).visibility = View.INVISIBLE
+        }
+
+        Screen.overlapScreen.overlappedText.checks.isNotOverlapped()
     }
 
     @Test

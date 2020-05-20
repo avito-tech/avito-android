@@ -24,21 +24,21 @@ class OverlapMatcher : TypeSafeMatcher<View>() {
         val viewRect = Rect()
         view.getGlobalVisibleRect(viewRect)
 
-        return view.parentViewGroup?.iterateViewsBelow(view) { viewBelow ->
+        return view.parentViewGroup?.iterateVisibleViewsWithHigherZOrder(view) { viewBelow ->
             viewBelow.isIntersectedWith(viewRect)
         } ?: false
     }
 
-    private fun ViewGroup.iterateViewsBelow(view: View, block: (View) -> Boolean): Boolean {
+    private fun ViewGroup.iterateVisibleViewsWithHigherZOrder(view: View, block: (View) -> Boolean): Boolean {
         val index = indexOfChild(view)
         for (i in (index + 1) until childCount) {
             val child = getChildAt(i)
-            if (block(child)) {
+            if (child.visibility == View.VISIBLE && block(child)) {
                 return true
             }
         }
 
-        return parentViewGroup?.iterateViewsBelow(this, block) ?: false
+        return parentViewGroup?.iterateVisibleViewsWithHigherZOrder(this, block) ?: false
     }
 
     private fun View.isIntersectedWith(otherRect: Rect): Boolean {
