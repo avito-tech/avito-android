@@ -8,8 +8,6 @@ import com.avito.instrumentation.instrumentationTask
 import com.avito.instrumentation.withInstrumentationTests
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.toOptional
-import com.avito.performance.PerformanceExtension.TargetBranchResultSource.FETCH_FROM_OTHER_BUILD
-import com.avito.performance.PerformanceExtension.TargetBranchResultSource.RUN_IN_PROCESS
 import com.avito.report.model.RunId
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
@@ -135,9 +133,8 @@ open class PerformancePlugin : Plugin<Project> {
                                 reportApiUrl.set(instrumentationConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
 
-                                @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-                                when (extension.targetBranchResultSource.get()) {
-                                    RUN_IN_PROCESS -> {
+                                when (val targetBranchResultSource = extension.targetBranchResultSource.get()) {
+                                    is PerformanceExtension.TargetBranchResultSource.RunInProcess -> {
                                         //run on target branch is a part of the same task in `instrumentation plugin`
                                         dependsOn(sourceBranchResultsCollector)
 
@@ -149,7 +146,7 @@ open class PerformancePlugin : Plugin<Project> {
                                             )
                                         )
                                     }
-                                    FETCH_FROM_OTHER_BUILD -> {
+                                    is PerformanceExtension.TargetBranchResultSource.FetchFromOtherBuild -> {
 
                                         //there is no need to depend on tests, it is a hack to postpone fetching
                                         dependsOn(sourceBranchResultsCollector)
@@ -161,7 +158,7 @@ open class PerformancePlugin : Plugin<Project> {
                                             reportCoordinates.copy(
                                                 runId = RunId(
                                                     commitHash = gitState.map { it.targetBranch!!.commit }.get(),
-                                                    buildTypeId = extension.targetBuildConfigId.get()
+                                                    buildTypeId = targetBranchResultSource.targetBuildConfigId
                                                 ).toString()
                                             )
                                         )

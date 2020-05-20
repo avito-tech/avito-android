@@ -33,14 +33,10 @@ open class PerformanceExtension @Inject constructor(objects: ObjectFactory) {
     @Suppress("UnstableApiUsage")
     val targetBranchResultSource: Property<TargetBranchResultSource> =
         objects.property<TargetBranchResultSource>()
-            .convention(TargetBranchResultSource.RUN_IN_PROCESS)
+            .convention(TargetBranchResultSource.RunInProcess)
 
-    /**
-     * FETCH_FROM_OTHER_BUILD strategy needs to know about build config id
-     */
-    val targetBuildConfigId = objects.property<String>()
-
-    enum class TargetBranchResultSource {
-        RUN_IN_PROCESS, FETCH_FROM_OTHER_BUILD;
+    sealed class TargetBranchResultSource {
+        object RunInProcess : TargetBranchResultSource()
+        data class FetchFromOtherBuild(val targetBuildConfigId: String) : TargetBranchResultSource()
     }
 }

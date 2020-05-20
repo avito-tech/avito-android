@@ -16,7 +16,7 @@ import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator24C
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.performance.PerformanceExtension
-import com.avito.performance.PerformanceExtension.TargetBranchResultSource.RUN_IN_PROCESS
+import com.avito.performance.PerformanceExtension.TargetBranchResultSource.RunInProcess
 import com.avito.performance.PerformancePlugin
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.kubernetesCredentials
@@ -132,7 +132,7 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         project.plugins.withType<PerformancePlugin> {
                             project.extensions.getByType<PerformanceExtension>().apply {
 
-                                val runOnTargetBranch = targetBranchResultSource.orNull == RUN_IN_PROCESS
+                                val runOnTargetBranch = targetBranchResultSource.get() is RunInProcess
 
                                 project.logger.lifecycle("DEBUG: runOnTargetBranch=$runOnTargetBranch")
 
