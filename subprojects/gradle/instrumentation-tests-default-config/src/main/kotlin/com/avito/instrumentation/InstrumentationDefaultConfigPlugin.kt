@@ -2,6 +2,8 @@ package com.avito.instrumentation
 
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
+import com.avito.instrumentation.configuration.InstrumentationConfiguration.PerformanceType.MDE
+import com.avito.instrumentation.configuration.InstrumentationConfiguration.PerformanceType.SIMPLE
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
@@ -13,6 +15,9 @@ import com.avito.instrumentation.reservation.request.Device.Emulator
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator24Cores2
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.performance.PerformanceExtension
+import com.avito.performance.PerformanceExtension.TargetBranchResultSource.RUN_IN_PROCESS
+import com.avito.performance.PerformancePlugin
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.kubernetesCredentials
 import org.gradle.api.Action
@@ -124,32 +129,44 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                             registerRegressionConfig("regressionNoE2E")
                         )
 
-                        //todo перенести в performance модуль?
-                        configurationsContainer.register(
-                            "performance", registerPerformanceConfig(
-                                filterName = "performance",
-                                k8sNamespace = performanceNamespace,
-                                performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
-                            )
-                        )
-                        configurationsContainer.register(
-                            "performanceNoE2e",
-                            registerPerformanceConfig(
-                                filterName = "performanceNoE2E",
-                                k8sNamespace = performanceNamespace,
-                                performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
-                            )
-                        )
-                        configurationsContainer.register(
-                            "performanceMde", registerPerformanceConfig(
-                                filterName = "performance",
-                                k8sNamespace = performanceNamespace,
-                                performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                performanceType = InstrumentationConfiguration.PerformanceType.MDE
-                            )
-                        )
+                        project.plugins.withType<PerformancePlugin> {
+                            project.extensions.getByType<PerformanceExtension>().apply {
+
+                                val runOnTargetBranch = targetBranchResultSource.orNull == RUN_IN_PROCESS
+
+                                //todo перенести в performance модуль?
+                                configurationsContainer.register(
+                                    "performance",
+                                    registerPerformanceConfig(
+                                        filterName = "performance",
+                                        k8sNamespace = performanceNamespace,
+                                        performanceMinimumSuccessCount = performanceMinimumSuccessCount,
+                                        performanceType = SIMPLE,
+                                        runOnTargetBranch = runOnTargetBranch
+                                    )
+                                )
+                                configurationsContainer.register(
+                                    "performanceNoE2e",
+                                    registerPerformanceConfig(
+                                        filterName = "performanceNoE2E",
+                                        k8sNamespace = performanceNamespace,
+                                        performanceMinimumSuccessCount = performanceMinimumSuccessCount,
+                                        performanceType = SIMPLE,
+                                        runOnTargetBranch = runOnTargetBranch
+                                    )
+                                )
+                                configurationsContainer.register(
+                                    "performanceMde",
+                                    registerPerformanceConfig(
+                                        filterName = "performance",
+                                        k8sNamespace = performanceNamespace,
+                                        performanceMinimumSuccessCount = performanceMinimumSuccessCount,
+                                        performanceType = MDE,
+                                        runOnTargetBranch = false
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -207,10 +224,13 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
         filterName: String,
         k8sNamespace: String,
         performanceMinimumSuccessCount: Int,
-        performanceType: InstrumentationConfiguration.PerformanceType
+        performanceType: InstrumentationConfiguration.PerformanceType,
+        runOnTargetBranch: Boolean
     ) = Action<InstrumentationConfiguration> { config ->
         config.filter = filterName
         config.performanceType = performanceType
+
+        config.tryToReRunOnTargetBranch = runOnTargetBranch
 
         config.kubernetesNamespace = k8sNamespace
 

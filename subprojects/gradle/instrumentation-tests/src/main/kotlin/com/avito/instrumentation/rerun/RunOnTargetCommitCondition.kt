@@ -33,14 +33,10 @@ object RunOnTargetCommitCondition {
     }
 
     private fun isArtifactsFromTargetBranchNeeded(instrumentationConfiguration: InstrumentationConfiguration.Data): String? {
-        return when {
-            instrumentationConfiguration.tryToReRunOnTargetBranch -> {
-                "tryToReRunOnTargetBranch options enabled in configuration"
-            }
-            instrumentationConfiguration.performanceType != null -> {
-                "it is a performance configuration of type ${instrumentationConfiguration.performanceType}, which needs target commit artifacts"
-            }
-            else -> null
+        return if (instrumentationConfiguration.tryToReRunOnTargetBranch) {
+            "tryToReRunOnTargetBranch options enabled in configuration"
+        } else {
+            null
         }
     }
 }

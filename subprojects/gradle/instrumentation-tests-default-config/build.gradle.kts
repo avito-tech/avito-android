@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":subprojects:gradle:instrumentation-tests"))
+    implementation(project(":subprojects:gradle:performance"))
     implementation(project(":subprojects:gradle:kotlin-dsl-support"))
     implementation(project(":subprojects:gradle:kubernetes"))
 }

@@ -160,7 +160,7 @@ open class PerformancePlugin : Plugin<Project> {
                                         this.reportCoordinates.set(
                                             reportCoordinates.copy(
                                                 runId = RunId(
-                                                    commitHash = gitState.map { it.originalBranch.commit }.get(),
+                                                    commitHash = gitState.map { it.targetBranch!!.commit }.get(),
                                                     buildTypeId = extension.targetBuildConfigId.get()
                                                 ).toString()
                                             )
