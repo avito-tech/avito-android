@@ -134,7 +134,8 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
 
                                 val runOnTargetBranch = targetBranchResultSource.orNull == RUN_IN_PROCESS
 
-                                //todo перенести в performance модуль?
+                                project.logger.lifecycle("DEBUG: runOnTargetBranch=$runOnTargetBranch")
+
                                 configurationsContainer.register(
                                     "performance",
                                     registerPerformanceConfig(
