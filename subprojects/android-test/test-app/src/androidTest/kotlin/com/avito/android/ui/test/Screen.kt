@@ -69,4 +69,7 @@ object Screen {
 
     val recyclerDescendantLevelsScreen: RecyclerDescendantLevelsScreen
         get() = RecyclerDescendantLevelsScreen()
+
+    val overlapScreen: OverlapScreen
+        get() = OverlapScreen()
 }

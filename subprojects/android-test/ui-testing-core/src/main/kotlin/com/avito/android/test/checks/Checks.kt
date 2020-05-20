@@ -26,7 +26,7 @@ interface Checks : LabelChecks {
     fun isCompletelyDisplayed()
 
     /**
-     * Matches {@link View}s that are currently displayed on the screen to the
+     * Matches [View]s that are currently displayed on the screen to the
      * user.
      *
      * Note: isDisplayed will select views that are partially displayed (eg: the full height/width of
@@ -36,12 +36,22 @@ interface Checks : LabelChecks {
     fun isDisplayed()
 
     /**
-     * Matches {@link View}s that are NOT currently displayed on the screen to the
+     * Matches [View]s that are NOT currently displayed on the screen to the
      * user.
      *
      * Note: isNotDisplayed inverts the logic by isDisplayed().
      */
     fun isNotDisplayed()
+
+    /**
+     * Accepts a [View] that overlapped with another view by at least one pixel
+     */
+    fun isOverlapped()
+
+    /**
+     * Accepts a [View] that not overlapped with another view even by one pixel
+     */
+    fun isNotOverlapped()
 
     // checked the property Visible of the PageObject and his parent hierarchy
     fun isVisible()
