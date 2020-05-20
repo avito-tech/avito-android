@@ -3,6 +3,7 @@ package com.avito.instrumentation.report
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
+import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -12,6 +13,7 @@ import com.avito.time.TimeProvider
 import com.avito.utils.logging.CILogger
 import com.github.salomonbrys.kotson.jsonObject
 import okhttp3.HttpUrl
+import org.funktionale.tries.Try
 
 interface Report {
 
@@ -26,6 +28,12 @@ interface Report {
     fun sendCompletedTest(completedTest: AndroidTest.Completed)
 
     fun finish(isFullTestSuite: Boolean, reportViewerUrl: HttpUrl)
+
+    fun getTests(): Try<List<SimpleRunTest>>
+
+    fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit>
+
+    fun getCrossDeviceTestData(): Try<CrossDeviceSuite>
 
     //todo новый инстанс на каждый reportCoordinates, сейчас уже неверно шарится между rerun report и основным
     //todo перенести логику с батчами в reportsApi
@@ -148,6 +156,18 @@ interface Report {
             } else {
                 logger.info("Skipping finishing report. It is empty.")
             }
+        }
+
+        override fun getTests(): Try<List<SimpleRunTest>> {
+            return reportsApi.getTestsForRunId(reportCoordinates)
+        }
+
+        override fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit> {
+            return reportsApi.markAsSuccessful(testRunId, author, comment)
+        }
+
+        override fun getCrossDeviceTestData(): Try<CrossDeviceSuite> {
+            return reportsApi.getCrossDeviceTestData(reportCoordinates)
         }
 
         /**
