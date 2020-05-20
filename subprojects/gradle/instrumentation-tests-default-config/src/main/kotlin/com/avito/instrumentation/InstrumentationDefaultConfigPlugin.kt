@@ -132,40 +132,43 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         project.plugins.withType<PerformancePlugin> {
                             project.extensions.getByType<PerformanceExtension>().apply {
 
-                                val runOnTargetBranch = targetBranchResultSource.get() is RunInProcess
+                                project.afterEvaluate {
 
-                                project.logger.lifecycle("DEBUG: runOnTargetBranch=$runOnTargetBranch")
+                                    val runOnTargetBranch = targetBranchResultSource.get() is RunInProcess
 
-                                configurationsContainer.register(
-                                    "performance",
-                                    registerPerformanceConfig(
-                                        filterName = "performance",
-                                        k8sNamespace = performanceNamespace,
-                                        performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                        performanceType = SIMPLE,
-                                        runOnTargetBranch = runOnTargetBranch
+                                    project.logger.lifecycle("DEBUG: runOnTargetBranch=$runOnTargetBranch")
+
+                                    configurationsContainer.register(
+                                        "performance",
+                                        registerPerformanceConfig(
+                                            filterName = "performance",
+                                            k8sNamespace = performanceNamespace,
+                                            performanceMinimumSuccessCount = performanceMinimumSuccessCount,
+                                            performanceType = SIMPLE,
+                                            runOnTargetBranch = runOnTargetBranch
+                                        )
                                     )
-                                )
-                                configurationsContainer.register(
-                                    "performanceNoE2e",
-                                    registerPerformanceConfig(
-                                        filterName = "performanceNoE2E",
-                                        k8sNamespace = performanceNamespace,
-                                        performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                        performanceType = SIMPLE,
-                                        runOnTargetBranch = runOnTargetBranch
+                                    configurationsContainer.register(
+                                        "performanceNoE2e",
+                                        registerPerformanceConfig(
+                                            filterName = "performanceNoE2E",
+                                            k8sNamespace = performanceNamespace,
+                                            performanceMinimumSuccessCount = performanceMinimumSuccessCount,
+                                            performanceType = SIMPLE,
+                                            runOnTargetBranch = runOnTargetBranch
+                                        )
                                     )
-                                )
-                                configurationsContainer.register(
-                                    "performanceMde",
-                                    registerPerformanceConfig(
-                                        filterName = "performance",
-                                        k8sNamespace = performanceNamespace,
-                                        performanceMinimumSuccessCount = performanceMinimumSuccessCount,
-                                        performanceType = MDE,
-                                        runOnTargetBranch = false
+                                    configurationsContainer.register(
+                                        "performanceMde",
+                                        registerPerformanceConfig(
+                                            filterName = "performance",
+                                            k8sNamespace = performanceNamespace,
+                                            performanceMinimumSuccessCount = performanceMinimumSuccessCount,
+                                            performanceType = MDE,
+                                            runOnTargetBranch = false
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
