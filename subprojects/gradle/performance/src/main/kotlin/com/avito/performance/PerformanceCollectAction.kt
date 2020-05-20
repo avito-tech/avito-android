@@ -43,7 +43,7 @@ class PerformanceCollectAction(
         val logger: CILogger,
         val graphiteKey: String,
         val reportCoordinates: ReportCoordinates,
-        val buildId: String,
+        val buildId: String?,
         val reportApiUrl: String,
         val reportApiFallbackUrl: String,
         val performanceTests: File,
