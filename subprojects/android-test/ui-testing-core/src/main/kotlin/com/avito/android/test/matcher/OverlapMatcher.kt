@@ -1,8 +1,8 @@
 package com.avito.android.test.matcher
 
 import android.view.View
-import com.avito.android.test.util.forEachVisibleViewsWithHigherZOrder
 import com.avito.android.test.util.getRect
+import com.avito.android.test.util.getVisibleViewsWithHigherZOrder
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 
@@ -22,7 +22,7 @@ class OverlapMatcher : TypeSafeMatcher<View>() {
 
     override fun matchesSafely(view: View): Boolean {
         val viewRect = view.getRect()
-        return view.forEachVisibleViewsWithHigherZOrder { higherZOrderView ->
+        return view.getVisibleViewsWithHigherZOrder().any { higherZOrderView ->
             higherZOrderView.getRect().intersect(viewRect)
         }
     }

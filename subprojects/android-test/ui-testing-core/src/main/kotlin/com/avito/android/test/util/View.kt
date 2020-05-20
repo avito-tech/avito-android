@@ -5,17 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewParent
 
-internal fun View.forEachVisibleViewsWithHigherZOrder(block: (View) -> Boolean): Boolean {
-    val parentViewGroup = parent as? ViewGroup ?: return false
-    val index = parentViewGroup.indexOfChild(this)
-    for (i in (index + 1) until parentViewGroup.childCount) {
-        val child = parentViewGroup.getChildAt(i)
-        if (child.visibility == View.VISIBLE && block(child)) {
-            return true
-        }
-    }
-
-    return parentViewGroup.forEachVisibleViewsWithHigherZOrder(block)
+/**
+ * Returns list of views that have higher z-order than current view.
+ * The list is ordered by ascending z-order.
+ *
+ * It is a more efficient analog of [TreeIterables.breadthFirstViewTraversal(this.rootView)] because
+ * it iterates over less amount of views.
+ */
+internal fun View.getVisibleViewsWithHigherZOrder(): List<View> {
+    val result = mutableListOf<View>()
+    walkOverVisibleViewsWithHigherZOrder(this, result)
+    return result
 }
 
 internal fun canHandleClick(view: View?): Boolean {
@@ -74,4 +74,17 @@ private fun <T> findViewsInParentRecursively(
         type = type,
         result = result
     )
+}
+
+internal fun walkOverVisibleViewsWithHigherZOrder(view: View, list: MutableList<View>) {
+    val parentViewGroup = view.parent as? ViewGroup ?: return
+    val index = parentViewGroup.indexOfChild(view)
+    for (i in (index + 1) until parentViewGroup.childCount) {
+        val child = parentViewGroup.getChildAt(i)
+        if (child.visibility == View.VISIBLE) {
+            list.add(child)
+        }
+    }
+
+    return walkOverVisibleViewsWithHigherZOrder(parentViewGroup, list)
 }
