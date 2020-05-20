@@ -24,19 +24,6 @@ internal class RunOnTargetCommitConditionTest {
     }
 
     @Test
-    fun `run on target commit - yes - performance test`() {
-        val result = RunOnTargetCommitCondition.evaluate(
-            instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(
-                performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
-            ),
-            hasBuildOnTargetPlugin = true,
-            buildOnTargetTaskProvider = { mock() }
-        )
-
-        assertThat(result).isInstanceOf<RunOnTargetCommitCondition.Result.Yes>()
-    }
-
-    @Test
     fun `run on target commit - no - default config, no build-on-target plugin`() {
         val result = RunOnTargetCommitCondition.evaluate(
             instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(),
@@ -53,22 +40,6 @@ internal class RunOnTargetCommitConditionTest {
             RunOnTargetCommitCondition.evaluate(
                 instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(
                     tryToReRunOnTargetBranch = true
-                ),
-                hasBuildOnTargetPlugin = false,
-                buildOnTargetTaskProvider = { mock() }
-            )
-        }
-
-        assertThat(exception).hasMessageThat()
-            .contains("Plugin com.avito.android.build-on-target is missing, but required")
-    }
-
-    @Test
-    fun `run on target commit - exception - performance test, no build-on-target plugin`() {
-        val exception = assertThrows<IllegalStateException> {
-            RunOnTargetCommitCondition.evaluate(
-                instrumentationConfiguration = InstrumentationConfiguration.Data.createStubInstance(
-                    performanceType = InstrumentationConfiguration.PerformanceType.SIMPLE
                 ),
                 hasBuildOnTargetPlugin = false,
                 buildOnTargetTaskProvider = { mock() }
