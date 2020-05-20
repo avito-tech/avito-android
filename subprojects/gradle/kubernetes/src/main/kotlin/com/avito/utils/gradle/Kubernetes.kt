@@ -26,6 +26,7 @@ fun createKubernetesClient(
                 .build()
         }
         is KubernetesCredentials.Config -> {
+            // todo move validation to configuration phase
             require(kubernetesCredentials.context.isNotBlank()) { "kubernetes.context should be set" }
 
             val configFile = File(kubernetesCredentials.configFile)
@@ -40,7 +41,7 @@ fun createKubernetesClient(
 
                 // working with multiple namespaces/contexts is not supported
                 require(getNamespace() == namespace) {
-                    "kubernetes.context.namespace should be $namespace. " +
+                    "kubernetes.context.namespace should be $namespace, but was ${getNamespace()}. " +
                         "Namespace hardcoded in plugin, and this check only prevents from using wrong context"
                 }
                 requestConfig.oauthTokenProvider = oauthTokenProvider(configFile)
