@@ -25,7 +25,7 @@ class OverlapMatcher : TypeSafeMatcher<View>() {
         view.getGlobalVisibleRect(viewRect)
 
         return view.parentViewGroup?.iterateViewsBelow(view) { viewBelow ->
-            viewBelow.isIntersectWith(viewRect)
+            viewBelow.isIntersectedWith(viewRect)
         } ?: false
     }
 
@@ -41,7 +41,7 @@ class OverlapMatcher : TypeSafeMatcher<View>() {
         return parentViewGroup?.iterateViewsBelow(this, block) ?: false
     }
 
-    private fun View.isIntersectWith(otherRect: Rect): Boolean {
+    private fun View.isIntersectedWith(otherRect: Rect): Boolean {
         val thisRect = Rect()
         getGlobalVisibleRect(thisRect)
         return thisRect.intersect(otherRect)
