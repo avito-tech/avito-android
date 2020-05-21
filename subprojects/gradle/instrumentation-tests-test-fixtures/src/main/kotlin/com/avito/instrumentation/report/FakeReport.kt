@@ -1,8 +1,11 @@
 package com.avito.instrumentation.report
 
 import com.avito.report.model.AndroidTest
+import com.avito.report.model.CrossDeviceSuite
+import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import okhttp3.HttpUrl
+import org.funktionale.tries.Try
 
 class FakeReport : Report {
 
@@ -28,5 +31,17 @@ class FakeReport : Report {
     }
 
     override fun finish(isFullTestSuite: Boolean, reportViewerUrl: HttpUrl) {
+    }
+
+    override fun getTests(): Try<List<SimpleRunTest>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCrossDeviceTestData(): Try<CrossDeviceSuite> {
+        TODO("Not yet implemented")
     }
 }

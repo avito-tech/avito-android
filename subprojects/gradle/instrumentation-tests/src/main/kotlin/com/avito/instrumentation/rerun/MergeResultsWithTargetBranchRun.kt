@@ -1,16 +1,14 @@
 package com.avito.instrumentation.rerun
 
-import com.avito.report.ReportsApi
-import com.avito.report.model.ReportCoordinates
+import com.avito.instrumentation.report.Report
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.utils.logging.CILogger
 import org.funktionale.tries.Try
 
 class MergeResultsWithTargetBranchRun(
-    private val reports: ReportsApi,
     private val logger: CILogger,
-    private val mainReportCoordinates: ReportCoordinates
+    private val sourceReport: Report
 ) {
 
     private val tag = "[MergeResultsWithTargetBranchRun]"
@@ -30,7 +28,7 @@ class MergeResultsWithTargetBranchRun(
                     }
                     .flatMap { markedAsSuccessful: List<Boolean> ->
                         if (markedAsSuccessful.any()) {
-                            reports.getTestsForRunId(reportCoordinates = mainReportCoordinates)
+                            sourceReport.getTests()
                         } else {
                             initialRunResults
                         }
@@ -94,7 +92,7 @@ class MergeResultsWithTargetBranchRun(
         return markedAsSuccessful
     }
 
-    private fun markAsSuccessful(id: String, message: String) = reports.markAsSuccessful(
+    private fun markAsSuccessful(id: String, message: String) = sourceReport.markAsSuccessful(
         testRunId = id,
         author = "Roberto",
         comment = message
