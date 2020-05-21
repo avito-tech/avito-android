@@ -16,6 +16,7 @@ import javax.inject.Inject
 class PerformanceCollectAction(
     private val params: Params,
     private val logger: CILogger,
+    // todo hide behind of factory
     private val reports: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,

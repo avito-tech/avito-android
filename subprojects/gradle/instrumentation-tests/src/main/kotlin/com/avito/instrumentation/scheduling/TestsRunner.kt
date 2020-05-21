@@ -9,7 +9,6 @@ import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.suite.model.transformTestsWithNewJobSlug
-import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
@@ -43,7 +42,6 @@ class TestsRunnerImplementation(
     private val executionParameters: ExecutionParameters,
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
-    private val reportsApi: ReportsApi,
     private val registry: String
 ) : TestsRunner {
 
@@ -104,7 +102,7 @@ class TestsRunnerImplementation(
             )
 
             //todo через Report
-            reportsApi.getTestsForRunId(reportCoordinates)
+            report.getTests()
         }
     }
 }

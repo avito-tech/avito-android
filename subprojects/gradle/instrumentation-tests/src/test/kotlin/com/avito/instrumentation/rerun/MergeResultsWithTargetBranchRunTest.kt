@@ -1,5 +1,6 @@
 package com.avito.instrumentation.rerun
 
+import com.avito.instrumentation.report.Report
 import com.avito.report.FakeReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -15,7 +16,8 @@ internal class MergeResultsWithTargetBranchRunTest {
     private val reportsApi = FakeReportsApi()
     private val logger = FakeCILogger()
     private val reportCoordinates = ReportCoordinates.createStubInstance()
-    private val merger = MergeResultsWithTargetBranchRun(reportsApi, logger, reportCoordinates)
+    private val report = Report.Impl(reportsApi, logger, reportCoordinates, "stub")
+    private val merger = MergeResultsWithTargetBranchRun(logger, report)
 
     /**
      * Пока мы просто маркем в любом случае, дальше в случае false positives нужно будет полагаться на verdict/errorHash
