@@ -1,4 +1,3 @@
-
 import com.android.build.gradle.ProguardFiles.ProguardFile
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
