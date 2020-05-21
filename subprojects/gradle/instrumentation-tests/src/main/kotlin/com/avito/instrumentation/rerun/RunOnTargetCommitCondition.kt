@@ -18,8 +18,6 @@ object RunOnTargetCommitCondition {
     ): Result {
         val useArtifactsFromTargetBranch = isArtifactsFromTargetBranchNeeded(instrumentationConfiguration)
 
-        println("DEBUG: ${instrumentationConfiguration.name} useArtifactsFromTargetBranch=$useArtifactsFromTargetBranch")
-
         return if (useArtifactsFromTargetBranch != null) {
             if (!hasBuildOnTargetPlugin) {
                 throw IllegalStateException(
