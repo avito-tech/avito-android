@@ -138,36 +138,25 @@ subprojects {
             }
         }
     }
-
-    plugins.withType<LibraryPlugin> {
-        tasks.register<Jar>(sourcesTaskName).configure {
-            archiveClassifier.set("sources")
-            from(this@withType.extension.sourceSets["main"].java.srcDirs)
+    plugins.withId("com.android.library") {
+        plugins.withType<MavenPublishPlugin>() {
+            afterEvaluate {
+                val publicationName = "release"
+                extensions.getByType<PublishingExtension>().apply {
+                    publications {
+                        create<MavenPublication>(publicationName) {
+                            from(components.getAt("release"))
+                        }
+                    }
+                }
+                configureBintray(publicationName)
+            }
         }
     }
 
     plugins.withType<JavaGradlePluginPlugin> {
         extensions.getByType<GradlePluginDevelopmentExtension>().run {
             isAutomatedPublishing = false
-        }
-    }
-
-    plugins.withId("digital.wup.android-maven-publish") {
-        //todo remove afterEvaluate if possible
-        afterEvaluate {
-
-            val publicationName = "mavenAar"
-
-            extensions.getByType<PublishingExtension>().run {
-                publications {
-                    create<MavenPublication>(publicationName) {
-                        from(components["android"])
-                        artifact(tasks.named(sourcesTaskName).get())
-                    }
-                }
-            }
-
-            configureBintray(publicationName)
         }
     }
 
