@@ -54,8 +54,6 @@ open class PerformanceCompareAction(
         )
     )
 
-    private val prefix = "ci.performance.outcome"
-
     data class Params(
         val logger: CILogger,
         val reportApiUrl: String,
@@ -81,6 +79,8 @@ open class PerformanceCompareAction(
     constructor(params: Params) : this(params, params.logger)
 
     override fun run() {
+        val metricPrefix = "ci.performance.outcome.${params.pullRequestId ?: "null"}"
+
         try {
             val previousTestsFile = params.previousTests
             val currentTestsFile = params.currentTests
@@ -95,13 +95,13 @@ open class PerformanceCompareAction(
                 PerformanceWriter().write(comparisonList, params.comparison)
 
                 report(comparisonList)
-                statsSender.send(prefix, CountMetric("success"))
+                statsSender.send(metricPrefix, CountMetric("success"))
             } else {
-                statsSender.send(prefix, CountMetric("missing"))
+                statsSender.send(metricPrefix, CountMetric("missing"))
                 logger.info("Previous performance test does not exist!")
             }
         } catch (e: Throwable) {
-            statsSender.send(prefix, CountMetric("failure"))
+            statsSender.send(metricPrefix, CountMetric("failure"))
             logger.critical("PerformanceCompareTask error", e)
             with(
                 SlackSender.Impl(
