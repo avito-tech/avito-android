@@ -93,6 +93,7 @@ include(":subprojects:android-test:toast-rule")
 include(":subprojects:android-lib:proxy-toast")
 include(":subprojects:android-test:test-app-kaspresso")
 include(":subprojects:android-test:test-instrumentation-runner")
+include(":subprojects:android-test:test-app-1")
 
 include(":subprojects:ci:k8s-deployments-cleaner")
 
