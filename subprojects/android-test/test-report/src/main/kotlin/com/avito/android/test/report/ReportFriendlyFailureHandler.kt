@@ -24,8 +24,8 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
             "Во view: \"{2}\"\nожидался текст: \"{1}\"\nполучили: \"{3}\""
         ),
         RegexToPatternMessageNormalizer(
-            Regex("No views in hierarchy found matching.+"),
-            "Не найдена view в иерархии"
+            Regex("No views in hierarchy found matching: (.+)"),
+            "Не найдена view в иерархии: \"{1}\""
         ),
         RegexToPatternMessageNormalizer(
             Regex("View is not present in the hierarchy.+"),
