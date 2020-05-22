@@ -138,7 +138,6 @@ pluginManagement {
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
                 includeGroup("com.slack.keeper")
-                includeGroup("digital.wup.android-maven-publish")
                 includeGroup("nebula.integtest")
             }
         }
@@ -164,7 +163,6 @@ pluginManagement {
     }
 
     plugins {
-        id("digital.wup.android-maven-publish") version "3.6.3"
         id("nebula.integtest") version "7.0.7"
     }
 
