@@ -19,6 +19,6 @@ internal class ReportFriendlyFailureHandlerTest {
             )
         }
 
-        assertThat(exception.message).isEqualTo("Не найдена view в иерархии")
+        assertThat(exception.message).isEqualTo("Не найдена view в иерархии: \"(is descendant of a: with id: com.avito.android.stagingautotest:id/layout_delivery_buttons and with id: 2131363381)\"")
     }
 }
