@@ -30,8 +30,8 @@ class DeviceSettingsChecker(private val context: Context) {
     }
 
     private fun checkSupportedApi() {
-        if (Build.VERSION.SDK_INT >= 28) {
-            throw IllegalStateException("Android P (28) and above is not supported yet (MBS-6859)")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            throw IllegalStateException("Android Q (${Build.VERSION_CODES.Q}) and above is not supported yet")
         }
     }
 
