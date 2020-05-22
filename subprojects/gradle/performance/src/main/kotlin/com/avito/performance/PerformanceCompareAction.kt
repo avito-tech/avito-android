@@ -79,7 +79,7 @@ open class PerformanceCompareAction(
     constructor(params: Params) : this(params, params.logger)
 
     override fun run() {
-        val metricPrefix = "ci.performance.outcome.${params.pullRequestId ?: "null"}"
+        val metricPrefix = "ci.performance.${params.pullRequestId ?: "null"}.compare.outcome"
 
         try {
             val previousTestsFile = params.previousTests
