@@ -25,7 +25,6 @@ object StdoutDestination : CILoggingDestination() {
         println(formattedMessage.message)
         formattedMessage.cause?.let { throwable ->
             println(throwable.message)
-            throwable.printStackTrace()
         }
     }
 
