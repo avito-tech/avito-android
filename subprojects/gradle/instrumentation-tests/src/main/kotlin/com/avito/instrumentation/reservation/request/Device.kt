@@ -94,6 +94,7 @@ sealed class Device : Serializable {
         )
 
         object Emulator28 : Emulator(
+            model = "AOSP_on_IA_Emulator",
             api = 28,
             image = Image.emulator_28,
             name = "phone_28",
