@@ -1,6 +1,7 @@
 package com.avito.android.runner
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -27,11 +28,13 @@ class SystemDialogsManager(private val errorsReporter: ErrorsReporter) {
             errorsReporter.reportError(t)
         }
 
-        try {
-            dismissHiddenApiDialog()
-        } catch (t: Throwable) {
-            Log.v(TAG, "Failed to close hidden api dialog: ${t.message}")
-            errorsReporter.reportError(t)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            try {
+                dismissHiddenApiDialog()
+            } catch (t: Throwable) {
+                Log.v(TAG, "Failed to close hidden api dialog: ${t.message}")
+                errorsReporter.reportError(t)
+            }
         }
     }
 
