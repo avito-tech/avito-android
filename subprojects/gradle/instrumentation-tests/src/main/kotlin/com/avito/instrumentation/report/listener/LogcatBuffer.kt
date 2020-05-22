@@ -50,7 +50,10 @@ interface LogcatBuffer {
         }
 
         override fun getLogs(): Logcat {
-            return Logcat(stdout = stdoutBuffer, stderr = stderrBuffer)
+            return Logcat(
+                stdout = stdoutBuffer.toList(),
+                stderr = stderrBuffer.toList()
+            )
         }
     }
 }
