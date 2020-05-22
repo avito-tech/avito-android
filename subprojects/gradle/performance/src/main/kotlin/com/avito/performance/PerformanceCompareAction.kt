@@ -1,5 +1,6 @@
 package com.avito.performance
 
+import com.avito.android.stats.CountMetric
 import com.avito.android.stats.StatsDConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.bitbucket.AtlassianCredentials
@@ -53,6 +54,8 @@ open class PerformanceCompareAction(
         )
     )
 
+    private val prefix = "ci.performance.outcome"
+
     data class Params(
         val logger: CILogger,
         val reportApiUrl: String,
@@ -92,11 +95,13 @@ open class PerformanceCompareAction(
                 PerformanceWriter().write(comparisonList, params.comparison)
 
                 report(comparisonList)
-
+                statsSender.send(prefix, CountMetric("success"))
             } else {
+                statsSender.send(prefix, CountMetric("missing"))
                 logger.info("Previous performance test does not exist!")
             }
         } catch (e: Throwable) {
+            statsSender.send(prefix, CountMetric("failure"))
             logger.critical("PerformanceCompareTask error", e)
             with(
                 SlackSender.Impl(
