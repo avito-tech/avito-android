@@ -107,7 +107,6 @@ class InstrumentationTestsAction(
         executionParameters = params.executionParameters,
         outputDirectory = params.outputDir,
         instrumentationConfiguration = params.instrumentationConfiguration,
-        reportsApi = reportsApi,
         logger = logger,
         registry = params.registry
     ),
@@ -280,7 +279,6 @@ class InstrumentationTestsAction(
         if (params.sendStatistics) {
             SendStatisticsAction(
                 reportId = reportId,
-                reportCoordinates = reportCoordinates,
                 testSummarySender = TestSummarySenderImplementation(
                     slackClient = slackClient,
                     reportViewer = reportViewer,
@@ -289,7 +287,7 @@ class InstrumentationTestsAction(
                     unitToChannelMapping = params.unitToChannelMapping,
                     logger = logger
                 ),
-                reportsApi = reportsApi,
+                report = sourceReport,
                 graphiteRunWriter = GraphiteRunWriter(statsSender),
                 ciLogger = logger
             ).send()

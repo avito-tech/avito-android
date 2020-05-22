@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     api(project(":subprojects:gradle:kubernetes"))
+    api(project(":subprojects:common:time"))
 
     implementation(Dependencies.coroutinesCore)
     implementation(project(":subprojects:gradle:instrumentation-test-impact-analysis"))
@@ -24,7 +25,6 @@ dependencies {
     implementation(project(":subprojects:gradle:files"))
     implementation(project(":subprojects:gradle:build-on-target"))
     implementation(project(":subprojects:gradle:slack"))
-    implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:gradle:bitbucket"))
     implementation(project(":subprojects:common:file-storage"))
     implementation(project(":subprojects:common:sentry"))

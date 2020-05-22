@@ -1,10 +1,10 @@
 package com.avito.instrumentation.scheduling
 
+import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.report.FlakyTestInfo
 import com.avito.instrumentation.report.Report
-import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
@@ -80,7 +80,7 @@ class InstrumentationTestsScheduler(
                     )
                 }
 
-                val targetReportState = reportsApi.getTestsForRunId(targetReportCoordinates)
+                val targetReportState = targetReport.getTests()
 
                 sourceReportState to targetReportState
             }
@@ -137,9 +137,8 @@ class InstrumentationTestsScheduler(
                 )
 
                 MergeResultsWithTargetBranchRun(
-                    reports = reportsApi,
                     logger = logger,
-                    mainReportCoordinates = reportCoordinates
+                    sourceReport = sourceReport
                 ).merge(
                     initialRunResults = currentReportState,
                     rerunResults = rerunResults
