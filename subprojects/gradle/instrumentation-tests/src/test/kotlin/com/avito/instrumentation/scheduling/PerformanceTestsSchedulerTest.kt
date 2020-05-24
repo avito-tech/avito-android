@@ -1,10 +1,11 @@
 package com.avito.instrumentation.scheduling
 
+import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.report.FakeReport
+import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
-import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
 import com.avito.instrumentation.suite.filter.FilterFactory
@@ -134,7 +135,7 @@ internal class PerformanceTestsSchedulerTest {
                 filterData = params.instrumentationConfiguration.filter,
                 impactAnalysisResult = params.impactAnalysisResult,
                 reportCoordinates = reportCoordinates,
-                reportsFetchApi = reportsApi
+                readReportFactory = ReadReport.Factory.create(reportsApi)
             )
         ),
         targetCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()

@@ -12,6 +12,7 @@ import com.avito.instrumentation.finalizer.InstrumentationActionFinalizer
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
+import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.SendStatisticsAction
 import com.avito.instrumentation.report.listener.ReportViewerTestReporter
@@ -114,7 +115,7 @@ class InstrumentationTestsAction(
         filterData = params.instrumentationConfiguration.filter,
         impactAnalysisResult = params.impactAnalysisResult,
         reportCoordinates = reportCoordinates,
-        reportsFetchApi = reportsApi
+        readReportFactory = ReadReport.Factory.create(reportsApi)
     ),
     private val testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
         report = sourceReport,

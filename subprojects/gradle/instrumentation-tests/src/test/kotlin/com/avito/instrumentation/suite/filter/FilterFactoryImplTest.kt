@@ -4,6 +4,7 @@ import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.Data.FromRunHistory.ReportFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.createStub
+import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.suite.filter.TestsFilter.Signatures.Source
 import com.avito.instrumentation.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.report.FakeReportsApi
@@ -441,7 +442,7 @@ internal class FilterFactoryImplTest {
             filterData = filter,
             impactAnalysisResult = impactAnalysisFile,
             reportCoordinates = coordinates,
-            reportsFetchApi = reportsFetchApi
+            readReportFactory = ReadReport.Factory.create(reportsFetchApi)
         )
     }
 }

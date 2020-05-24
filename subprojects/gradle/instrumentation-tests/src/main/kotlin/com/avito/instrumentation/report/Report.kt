@@ -14,7 +14,7 @@ import com.avito.utils.logging.CILogger
 import com.github.salomonbrys.kotson.jsonObject
 import org.funktionale.tries.Try
 
-interface Report {
+interface Report : ReadReport {
 
     fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String)
 
@@ -27,8 +27,6 @@ interface Report {
     fun sendCompletedTest(completedTest: AndroidTest.Completed)
 
     fun finish(isFullTestSuite: Boolean)
-
-    fun getTests(): Try<List<SimpleRunTest>>
 
     fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit>
 
