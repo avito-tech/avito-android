@@ -50,11 +50,24 @@ class SlackDestination(
     }
 }
 
-class SentryDestination(private val sentry: SentryClient) : CILoggingDestination() {
+/**
+ * @param config can't pass SentryClient directly here, even if it's already created, because CILogger instance should be serializable
+ */
+class SentryDestination(private val config: SentryConfig) : CILoggingDestination() {
+
+    @Transient
+    private lateinit var _sentry: SentryClient
+
+    private fun sentry(): SentryClient {
+        if (!::_sentry.isInitialized) {
+            _sentry = sentryClient(config)
+        }
+        return _sentry
+    }
 
     override fun write(formattedMessage: CILoggingFormatter.FormattedMessage) {
         if (formattedMessage.cause != null) {
-            sentry.sendException(formattedMessage.cause)
+            sentry().sendException(formattedMessage.cause)
         }
     }
 
