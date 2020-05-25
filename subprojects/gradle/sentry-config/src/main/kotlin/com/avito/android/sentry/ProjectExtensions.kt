@@ -7,8 +7,10 @@ import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.lazyProperty
 import io.sentry.SentryClient
+import okhttp3.HttpUrl
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 
@@ -32,16 +34,39 @@ private fun from(project: Project): SentryConfig {
         val info = project.environmentInfo().get()
         val tags = mutableMapOf<String, String>()
         tags["ide"] = info.isInvokedFromIde().toString()
-        info.teamcityBuildId()?.also { id ->
-            tags["build_id"] = id
+
+        val buildId = info.teamcityBuildId()
+
+        val buildIdTag = "build_id"
+
+        if (!buildId.isNullOrBlank()) {
+            tags[buildIdTag] = buildId
         }
-        SentryConfig.Enabled(
+
+        val config = SentryConfig.Enabled(
             dsn = project.getMandatoryStringProperty("avito.sentry.dsn"),
             environment = info.environment.publicName,
             serverName = info.node ?: "unknown",
             release = info.commit ?: "unknown",
             tags = tags
         )
+
+        val projectUrl = project.getOptionalStringProperty("avito.sentry.projectUrl")
+
+        if (!projectUrl.isNullOrBlank() && !buildId.isNullOrBlank()) {
+            project.gradle.buildFinished {
+
+                val url = HttpUrl.parse(projectUrl)
+                    ?.newBuilder()
+                    ?.addQueryParameter("query", "$buildIdTag:$buildId")
+                    ?.build()
+                    ?.toString()
+
+                project.logger.lifecycle("Build errors: $url")
+            }
+        }
+
+        config
     } else {
         SentryConfig.Disabled
     }
