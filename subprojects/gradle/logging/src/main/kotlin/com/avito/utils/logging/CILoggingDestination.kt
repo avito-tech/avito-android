@@ -50,6 +50,9 @@ class SlackDestination(
     }
 }
 
+/**
+ * @param config can't pass SentryClient directly here, even if it's already created, because CILogger instance should be serializable
+ */
 class SentryDestination(private val config: SentryConfig) : CILoggingDestination() {
 
     @Transient

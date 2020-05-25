@@ -44,15 +44,15 @@ class CompositeTestIssuesMonitor(
 
         val event = createEvent()
             .withMessage("${requestResponseData.host} ${requestResponseData.responseCode}")
-            .withExtra("requestUrl", requestResponseData.requestUrl)
-            .withExtra("responseCode", requestResponseData.responseCode)
+            .withExtra("request_url", requestResponseData.requestUrl)
+            .withExtra("response_code", requestResponseData.responseCode)
 
         if (requestResponseData.requestBody != null) {
-            event.withExtra("requestBody", requestResponseData.requestBody)
+            event.withExtra("request_body", requestResponseData.requestBody)
         }
 
         if (requestResponseData.responseBody != null) {
-            event.withExtra("responseBody", requestResponseData.responseBody)
+            event.withExtra("response_body", requestResponseData.responseBody)
         }
 
         return event
@@ -67,13 +67,13 @@ class CompositeTestIssuesMonitor(
     private fun createEvent(): EventBuilder {
         return EventBuilder()
             .withTag(
-                "testName",
+                "test_name",
                 "${testRunEnvironment.testMetadata.className}.${testRunEnvironment.testMetadata.methodName}"
             )
-            .withTag("buildId", testRunEnvironment.teamcityBuildId.toString())
-            .withTag("buildBranch", testRunEnvironment.buildBranch)
-            .withTag("deviceId", testRunEnvironment.deviceId)
-            .withTag("deviceName", testRunEnvironment.deviceName)
-            .withTag("runId", testRunEnvironment.testRunCoordinates.runId)
+            .withTag("build_id", testRunEnvironment.teamcityBuildId.toString())
+            .withTag("build_branch", testRunEnvironment.buildBranch)
+            .withTag("device_id", testRunEnvironment.deviceId)
+            .withTag("device_name", testRunEnvironment.deviceName)
+            .withTag("run_id", testRunEnvironment.testRunCoordinates.runId)
     }
 }
