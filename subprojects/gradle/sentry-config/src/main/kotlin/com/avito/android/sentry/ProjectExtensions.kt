@@ -20,16 +20,11 @@ fun Project.environmentInfo(): Provider<EnvironmentInfo> = lazyProperty("ENVIRON
 }
 
 val Project.sentry: Provider<SentryClient> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    project.providers.provider {
-        val config = from(project)
-        sentryClient(config)
-    }
+    project.sentryConfig.map { sentryClient(it) }
 }
 
 val Project.sentryConfig: Provider<SentryConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    project.providers.provider {
-        from(project)
-    }
+    project.providers.provider { from(project) }
 }
 
 private fun from(project: Project): SentryConfig {
