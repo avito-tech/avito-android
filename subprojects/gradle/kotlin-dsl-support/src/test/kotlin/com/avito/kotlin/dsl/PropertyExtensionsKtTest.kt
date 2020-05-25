@@ -76,24 +76,38 @@ internal class PropertyExtensionsKtTest {
     }
 
     @Test
-    fun `single value - lazy project providers property`() {
+    fun `single value - lazy transformed project provider property`() {
         val project = childProject()
 
-        assertStableProvidedValue { project.providersProperty }
+        assertStableProvidedValue { project.transformedProviderProperty }
     }
 
     @Test
-    fun `single value - lazy project providers shortcut property`() {
+    fun `different values - lazy project providers property`() {
         val project = childProject()
 
-        assertStableProvidedValue { project.providersShortcutProperty }
+        assertDifferentProvidedValues { project.providersProperty }
     }
 
     @Test
-    fun `single value - lazy project providers of Unit property`() {
+    fun `different values - lazy project mapped provider property`() {
         val project = childProject()
 
-        assertStableProvidedValue { project.providersOfUnitProperty }
+        assertDifferentProvidedValues { project.mappedProviderProperty }
+    }
+
+    @Test
+    fun `different values - lazy project providers shortcut property`() {
+        val project = childProject()
+
+        assertDifferentProvidedValues { project.providersShortcutProperty }
+    }
+
+    @Test
+    fun `different values - lazy project providers of Unit property`() {
+        val project = childProject()
+
+        assertDifferentProvidedValues { project.providersOfUnitProperty }
     }
 
     private fun <T : Any> assertStableValue(provider: () -> T): T {
@@ -109,6 +123,13 @@ internal class PropertyExtensionsKtTest {
         val second = provider().get()
 
         assertThat(first).isSameInstanceAs(second)
+    }
+
+    private fun <T : Any> assertDifferentProvidedValues(provider: () -> Provider<T>) {
+        val first = provider().get()
+        val second = provider().get()
+
+        assertThat(first).isNotSameInstanceAs(second)
     }
 
     private fun childProject(): Project {
@@ -134,6 +155,14 @@ internal class PropertyExtensionsKtTest {
 
     private val Project.intProperty: Int by ProjectProperty.lazy { project ->
         project.property("intProperty").toString().toInt()
+    }
+
+    private val Project.transformedProviderProperty: Provider<String> by ProjectProperty.lazy { project ->
+        Providers.of(UUID.randomUUID().toString() + project.providerProperty.get())
+    }
+
+    private val Project.mappedProviderProperty: Provider<String> by ProjectProperty.lazy { project ->
+        project.providerProperty.map { UUID.randomUUID().toString() }
     }
 
     // use this form to achieve single value for every Provider.get() call
