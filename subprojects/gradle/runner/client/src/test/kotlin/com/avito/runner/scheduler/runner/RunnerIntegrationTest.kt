@@ -16,6 +16,7 @@ import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.device.observer.DevicesObserver
 import com.avito.runner.test.NoOpListener
+import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.randomSerial
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
@@ -56,11 +57,12 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any()), // Install application
                     MockActionResult.Success(Any())  // Install test application
                 ),
-                gettingDeviceStatusResults = requests.map {
+                gettingDeviceStatusResults = listWithDefault(
+                    1 + requests.size,
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     )
-                },
+                ),
                 clearPackageResults = (0 until requests.size - 1).flatMap {
                     listOf(
                         MockActionResult.Success<Try<Any>>(
@@ -90,9 +92,7 @@ class RunnerIntegrationTest {
 
             device.verify()
 
-            assertThat(
-                result.runs
-            ).isEqualTo(
+            assertThat(result.runs).isEqualTo(
                 requests
                     .map { request ->
                         request to listOf(
@@ -131,6 +131,9 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any())  // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
+                    MockActionResult.Success<Device.DeviceStatus>(
+                        Device.DeviceStatus.Alive
+                    ), // Device status for initializing
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     ), // Device status for first test
@@ -179,6 +182,9 @@ class RunnerIntegrationTest {
                     MockActionResult.Success<Try<Any>>(Try.Success(Unit))
                 ),
                 gettingDeviceStatusResults = listOf(
+                    MockActionResult.Success<Device.DeviceStatus>(
+                        Device.DeviceStatus.Alive
+                    ), // Device status for initializing
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     ), // Device status for third test
@@ -266,22 +272,19 @@ class RunnerIntegrationTest {
                 clearPackageResults = (0 until requests.size - 1).flatMap {
                     listOf(
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         ),
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         )
                     )
                 },
-                gettingDeviceStatusResults = requests.map {
+                gettingDeviceStatusResults = listWithDefault(
+                    1 + requests.size,
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     )
-                },
+                ),
                 runTestsResults = requests.map {
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
@@ -354,22 +357,19 @@ class RunnerIntegrationTest {
                 clearPackageResults = (0 until requests.size - 1).flatMap {
                     listOf(
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         ),
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         )
                     )
                 },
-                gettingDeviceStatusResults = requests.map {
+                gettingDeviceStatusResults = listWithDefault(
+                    1 + requests.size,
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     )
-                },
+                ),
                 runTestsResults = requests.map {
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
@@ -438,22 +438,19 @@ class RunnerIntegrationTest {
                 clearPackageResults = (0 until requests.size - 1).flatMap {
                     listOf(
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         ),
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         )
                     )
                 },
-                gettingDeviceStatusResults = requests.map {
+                gettingDeviceStatusResults = listWithDefault(
+                    1 + requests.size,
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     )
-                },
+                ),
                 runTestsResults = requests.map {
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
@@ -464,6 +461,9 @@ class RunnerIntegrationTest {
                 logger = StdOutLogger(),
                 id = randomSerial(),
                 gettingDeviceStatusResults = listOf(
+                    MockActionResult.Success<Device.DeviceStatus>(
+                        Device.DeviceStatus.Alive
+                    ), // Device state for initializing
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     )
@@ -535,6 +535,9 @@ class RunnerIntegrationTest {
                 MockActionResult.Success<Try<Any>>(Try.Success(Unit)) // Clear application package for second try for second test
             ),
             gettingDeviceStatusResults = listOf(
+                MockActionResult.Success<Device.DeviceStatus>(
+                    Device.DeviceStatus.Alive
+                ), // Alive status for initializing
                 MockActionResult.Success<Device.DeviceStatus>(
                     Device.DeviceStatus.Alive
                 ), // Alive status for first test
@@ -621,6 +624,9 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
+                    MockActionResult.Success<Device.DeviceStatus>(
+                        Device.DeviceStatus.Alive
+                    ), // Alive status for initializing
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     ), // Alive status for first try for first test
@@ -770,6 +776,9 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
+                    MockActionResult.Success<Device.DeviceStatus>(
+                        Device.DeviceStatus.Alive
+                    ), // Alive status for initializing
                     MockActionResult.Success<Device.DeviceStatus>(
                         Device.DeviceStatus.Alive
                     ), // Alive status for first try for first test

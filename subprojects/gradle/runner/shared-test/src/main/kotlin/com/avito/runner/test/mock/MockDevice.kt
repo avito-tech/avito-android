@@ -16,15 +16,15 @@ import java.nio.file.Path
 import java.util.ArrayDeque
 import java.util.Queue
 
-class MockDevice(
+open class MockDevice(
     override val id: Serial,
     private val logger: Logger,
     installApplicationResults: List<MockActionResult<Any>> = emptyList(),
     gettingDeviceStatusResults: List<MockActionResult<Device.DeviceStatus>> = emptyList(),
     runTestsResults: List<MockActionResult<TestCaseRun.Result>> = emptyList(),
     clearPackageResults: List<MockActionResult<Try<Any>>> = emptyList(),
+    private val apiResult: MockActionResult<Int> = MockActionResult.Success(22),
     override val online: Boolean = true,
-    override val api: Int = 22,
     override val model: String = "model"
 ) : Device {
 
@@ -37,11 +37,14 @@ class MockDevice(
     private val clearPackageResultsQueue: Queue<MockActionResult<Try<Any>>> =
         ArrayDeque(clearPackageResults)
 
+    override val api: Int
+        get() {
+            return apiResult.get()
+        }
+
     override fun installApplication(application: String): DeviceInstallation {
-        if (installApplicationResultsQueue.isEmpty()) {
-            throw IllegalArgumentException(
-                "Install application results queue is empty in MockDevice"
-            )
+        check(installApplicationResultsQueue.isNotEmpty()) {
+            "Install application results queue is empty in MockDevice"
         }
 
         installApplicationResultsQueue.poll().get()
@@ -60,10 +63,8 @@ class MockDevice(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun {
-        if (runTestsResultsQueue.isEmpty()) {
-            throw IllegalArgumentException(
-                "Running test results queue is empty in MockDevice"
-            )
+        check(runTestsResultsQueue.isNotEmpty()) {
+            "Running test results queue is empty in MockDevice"
         }
 
         val result = runTestsResultsQueue.poll().get()
@@ -80,10 +81,8 @@ class MockDevice(
     }
 
     override fun clearPackage(name: String): Try<Any> {
-        if (clearPackageResultsQueue.isEmpty()) {
-            throw IllegalArgumentException(
-                "Clear package results queue is empty in MockDevice"
-            )
+        check(clearPackageResultsQueue.isNotEmpty()) {
+            "Clear package results queue is empty in MockDevice"
         }
 
         return clearPackageResultsQueue.poll().get()
@@ -96,10 +95,8 @@ class MockDevice(
     override fun list(remotePath: String): Try<Any> = Try {}
 
     override fun deviceStatus(): Device.DeviceStatus {
-        if (gettingDeviceStatusResultsQueue.isEmpty()) {
-            throw IllegalArgumentException(
-                "Getting device status results queue is empty in MockDevice"
-            )
+        check(gettingDeviceStatusResultsQueue.isNotEmpty()) {
+            "Getting device status results queue is empty in MockDevice"
         }
 
         return gettingDeviceStatusResultsQueue.poll().get()
