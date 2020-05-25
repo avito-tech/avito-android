@@ -3,6 +3,8 @@ package com.avito.kotlin.dsl
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
+import org.gradle.api.provider.Provider
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -66,12 +68,47 @@ internal class PropertyExtensionsKtTest {
         assertThat(projectValue).isSameInstanceAs(rootValue)
     }
 
+    @Test
+    fun `single value - lazy project provider property`() {
+        val project = childProject()
+
+        assertStableProvidedValue { project.providerProperty }
+    }
+
+    @Test
+    fun `single value - lazy project providers property`() {
+        val project = childProject()
+
+        assertStableProvidedValue { project.providersProperty }
+    }
+
+    @Test
+    fun `single value - lazy project providers shortcut property`() {
+        val project = childProject()
+
+        assertStableProvidedValue { project.providersShortcutProperty }
+    }
+
+    @Test
+    fun `single value - lazy project providers of Unit property`() {
+        val project = childProject()
+
+        assertStableProvidedValue { project.providersOfUnitProperty }
+    }
+
     private fun <T : Any> assertStableValue(provider: () -> T): T {
         val first = provider()
         val second = provider()
 
         assertThat(first).isSameInstanceAs(second)
         return first
+    }
+
+    private fun <T : Any> assertStableProvidedValue(provider: () -> Provider<T>) {
+        val first = provider().get()
+        val second = provider().get()
+
+        assertThat(first).isSameInstanceAs(second)
     }
 
     private fun childProject(): Project {
@@ -88,11 +125,33 @@ internal class PropertyExtensionsKtTest {
     }
 
     private var Project.simpleProperty: String by ProjectProperty.lateinit(fallbackValue = "default")
+
     private val Project.perProjectProperty: String
         by ProjectProperty.lazy(scope = PropertyScope.PER_PROJECT) { UUID.randomUUID().toString() }
+
     private val Project.singleProperty: String
         by ProjectProperty.lazy(scope = PropertyScope.ROOT_PROJECT) { UUID.randomUUID().toString() }
+
     private val Project.intProperty: Int by ProjectProperty.lazy { project ->
         project.property("intProperty").toString().toInt()
+    }
+
+    // use this form to achieve single value for every Provider.get() call
+    private val Project.providerProperty: Provider<String> by ProjectProperty.lazy {
+        Providers.of(UUID.randomUUID().toString())
+    }
+
+    // properties below will create new instance on every Provider.get() call
+
+    private val Project.providersProperty: Provider<String> by ProjectProperty.lazy { project ->
+        project.providers.provider { UUID.randomUUID().toString() }
+    }
+
+    private val Project.providersShortcutProperty: Provider<String> by ProjectProperty.lazy { project ->
+        project.provider { UUID.randomUUID().toString() }
+    }
+
+    private val Project.providersOfUnitProperty: Provider<String> by ProjectProperty.lazy {
+        Providers.of(Unit).map { UUID.randomUUID().toString() }
     }
 }
