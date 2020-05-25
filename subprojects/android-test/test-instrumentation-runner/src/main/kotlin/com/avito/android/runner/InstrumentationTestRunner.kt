@@ -3,7 +3,7 @@ package com.avito.android.runner
 import android.os.Bundle
 import androidx.test.runner.AndroidJUnitRunner
 
-abstract class InstrumentationTestRunner() : AndroidJUnitRunner() {
+abstract class InstrumentationTestRunner : AndroidJUnitRunner() {
 
     private var delegate: InstrumentationDelegate? = null
 

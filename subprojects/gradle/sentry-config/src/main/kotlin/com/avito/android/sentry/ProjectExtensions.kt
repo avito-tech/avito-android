@@ -25,7 +25,7 @@ val Project.sentry: Provider<SentryClient> by ProjectProperty.lazy(scope = ROOT_
     project.sentryConfig.map { sentryClient(it) }
 }
 
-val Project.sentryConfig: Provider<SentryConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
+private val Project.sentryConfig: Provider<SentryConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
     project.providers.provider { from(project) }
 }
 

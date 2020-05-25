@@ -50,21 +50,11 @@ class SlackDestination(
     }
 }
 
-class SentryDestination(private val config: SentryConfig) : CILoggingDestination() {
-
-    @Transient
-    private lateinit var _sentry: SentryClient
-
-    private fun sentry(): SentryClient {
-        if (!::_sentry.isInitialized) {
-            _sentry = sentryClient(config)
-        }
-        return _sentry
-    }
+class SentryDestination(private val sentry: SentryClient) : CILoggingDestination() {
 
     override fun write(formattedMessage: CILoggingFormatter.FormattedMessage) {
         if (formattedMessage.cause != null) {
-            sentry().sendException(formattedMessage.cause)
+            sentry.sendException(formattedMessage.cause)
         }
     }
 
