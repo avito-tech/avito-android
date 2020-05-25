@@ -2,11 +2,20 @@ package com.avito.test.http
 
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class MockDispatcher(
     private val defaultResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked")
 ) : Dispatcher() {
+
+    private val logger = Logger.getLogger(MockWebServer::class.java.name)
+
+    init {
+        logger.level = Level.WARNING
+    }
 
     private val capturers = mutableListOf<RequestCapturer>()
 
@@ -16,7 +25,7 @@ class MockDispatcher(
 
         capturers.find { it.requestMatcher.invoke(request) }?.run {
             capture(request)
-            println("request captured: $request")
+            logger.info("request captured: $request")
         }
 
         val response = responses
@@ -24,7 +33,7 @@ class MockDispatcher(
             .find { (matcher, _) -> matcher(request) }
             ?.value ?: defaultResponse
 
-        println("got request: ${request.path}, response will be: $response")
+        logger.info("got request: ${request.path}, response will be: $response")
 
         return response
     }

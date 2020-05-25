@@ -1,14 +1,19 @@
 package com.avito.test.http
 
 import com.google.common.truth.Truth
+import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert
 import org.hamcrest.core.StringContains
+import java.util.logging.Level
+import java.util.logging.Logger
 
 private typealias Header = Pair<String, String>
 
 class RequestCapturer(val requestMatcher: RecordedRequest.() -> Boolean) {
+
+    private val logger = Logger.getLogger(MockWebServer::class.java.name)
 
     private val requests = mutableListOf<RecordedRequest>()
 
@@ -34,7 +39,7 @@ class RequestCapturer(val requestMatcher: RecordedRequest.() -> Boolean) {
     inner class RequestChecks(private val recordedRequest: RecordedRequest) {
         private val body: String by lazy {
             val readUtf8 = recordedRequest.body.readUtf8()
-            println("captured request (${recordedRequest.path}) body: $readUtf8")
+            logger.info("captured request (${recordedRequest.path}) body: $readUtf8")
             readUtf8
         }
 
