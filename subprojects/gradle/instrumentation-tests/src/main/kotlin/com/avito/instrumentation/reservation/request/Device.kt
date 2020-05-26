@@ -45,7 +45,7 @@ sealed class Device : Serializable {
             const val emulator_23 = "android/emulator-23:33578ce220"
             const val emulator_24 = "android/emulator-24:46b6a74473"
             const val emulator_27 = "android/emulator-27:1c36e79d44"
-            const val emulator_28 = "android/emulator-28:8a298b5bf6"
+            const val emulator_28 = "android/emulator-28:37ac40d0fa"
         }
 
         object Emulator22 : Emulator(
