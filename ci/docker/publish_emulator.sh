@@ -10,4 +10,4 @@ docker run --rm \
     --env "DOCKER_REGISTRY=${DOCKER_REGISTRY}" \
     --env DOCKER_LOGIN=${DOCKER_LOGIN} \
     --env DOCKER_PASSWORD=${DOCKER_PASSWORD} \
-    ${IMAGE_DOCKER_IN_DOCKER} publish_docker_image publish_emulator /build "28"
+    ${IMAGE_DOCKER_IN_DOCKER} publish_docker_image publish_emulator /build "22 23 24 27 28"
