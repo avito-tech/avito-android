@@ -308,7 +308,7 @@ fun Project.configureBintray(vararg publications: String) {
         publish = true
         // You can use override for inconsistently uploaded artifacts
         // Example: NoHttpResponseException: api.bintray.com:443 failed to respond (https://github.com/bintray/gradle-bintray-plugin/issues/325)
-        override = false
+        override = true
         pkg(closureOf<PackageConfig> {
             repo = "maven"
             userOrg = "avito"
