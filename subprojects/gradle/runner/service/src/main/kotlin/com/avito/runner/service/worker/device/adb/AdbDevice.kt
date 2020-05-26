@@ -436,13 +436,8 @@ data class AdbDevice(
         return "Device $TAG"
     }
 
-    private val TAG: String by lazy {
-        try {
-            "[$id $api]"
-        } catch (ignore: Exception) {
-            "[$id]"
-        }
-    }
+    // MBS-8531: don't use ADB here to avoid possible recursion
+    private val TAG: String = "[$id]"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L
