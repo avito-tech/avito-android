@@ -20,6 +20,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
+    id("com.autonomousapps.dependency-analysis")
 }
 
 val artifactoryUrl: String? by project
@@ -46,6 +47,10 @@ val publishReleaseTaskName = "publishRelease"
 
 val finalProjectVersion: String = System.getProperty("avito.project.version").let { env ->
     if (env.isNullOrBlank()) projectVersion else env
+}
+
+dependencyAnalysis {
+    chatty(false)
 }
 
 subprojects {
