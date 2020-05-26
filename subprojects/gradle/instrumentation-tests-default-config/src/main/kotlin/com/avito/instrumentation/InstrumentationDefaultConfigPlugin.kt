@@ -69,6 +69,12 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         filters.register("newUiNoE2E") {
                             it.fromSource.includeByAnnotations(TestsFilter.uiNoE2E.annotatedWith)
                         }
+                        filters.register("modifiedUi") {
+                            it.fromSource.includeByAnnotations(TestsFilter.ui.annotatedWith)
+                        }
+                        filters.register("modifiedUiNoE2e") {
+                            it.fromSource.includeByAnnotations(TestsFilter.uiNoE2E.annotatedWith)
+                        }
                         filters.register("regression") {
                             it.fromSource.includeByAnnotations(TestsFilter.regression.annotatedWith)
                             it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Success, RunStatus.Manual))
@@ -103,6 +109,15 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
                         configurationsContainer.register(
                             "newUiNoE2e",
                             registerNewUiConfig("newUiNoE2E")
+                        )
+
+                        configurationsContainer.register(
+                            "modifiedUi",
+                            registerModifiedUiConfig("modifiedUi")
+                        )
+                        configurationsContainer.register(
+                            "modifiedUiNoE2e",
+                            registerModifiedUiConfig("modifiedUiNoE2e")
                         )
 
                         configurationsContainer.register(
@@ -205,6 +220,41 @@ class InstrumentationDefaultConfigPlugin : Plugin<Project> {
             config.impactAnalysisPolicy = ImpactAnalysisPolicy.On.RunNewTests
             config.filter = filterName
             config.instrumentationParams = mapOf("jobSlug" to "NewFunctionalTests")
+
+            EmulatorSet.fast.forEach { config.targetsContainer.registerDevice(it) }
+        }
+    }
+
+    private fun registerModifiedUiConfig(
+        filterName: String
+    ): Action<InstrumentationConfiguration> {
+
+        fun NamedDomainObjectContainer<TargetConfiguration>.registerDevice(emulator: Emulator) {
+            register("api${emulator.api}") { target ->
+                target.deviceName = "API${emulator.api}"
+
+                target.scheduling = SchedulingConfiguration().apply {
+                    quota = QuotaConfiguration().apply {
+                        retryCount = 2
+                        minimumSuccessCount = 3
+                    }
+
+                    reservation = TestsBasedDevicesReservationConfiguration.create(
+                        device = emulator,
+                        min = 2,
+                        max = 30
+                    )
+                }
+            }
+        }
+
+        return Action { config ->
+            config.tryToReRunOnTargetBranch = false
+            config.reportSkippedTests = false
+            config.reportFlakyTests = true
+            config.impactAnalysisPolicy = ImpactAnalysisPolicy.On.RunModifiedTests
+            config.filter = filterName
+            config.instrumentationParams = mapOf("jobSlug" to "ModifiedFunctionalTests")
 
             EmulatorSet.fast.forEach { config.targetsContainer.registerDevice(it) }
         }
