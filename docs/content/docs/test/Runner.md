@@ -63,8 +63,8 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 
     configurationsContainer.register("local") {
 
-        targetsContainer.register("api27") {
-            deviceName = "API27"
+        targetsContainer.register("api28") {
+            deviceName = "API28"
 
             scheduling = SchedulingConfiguration().apply {
                 quota = QuotaConfiguration().apply {
@@ -73,7 +73,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
                 }
 
                 reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = LocalEmulator.device(27)
+                    device = LocalEmulator.device(28)
                     maximum = 1
                     minimum = 1
                     testsPerEmulator = 1
@@ -103,8 +103,8 @@ instrumentation {
     configurations {
         local {
             targets {
-                api27 {
-                    deviceName = "API27"
+                api28 {
+                    deviceName = "API28"
                     scheduling {
                         quota {
                             retryCount = 1
@@ -112,7 +112,7 @@ instrumentation {
                         }
 
                         testsCountBasedReservation {
-                            device = new LocalEmulator("27", 27, "Android_SDK_built_for_x86")
+                            device = new LocalEmulator("28", 28, "AOSP_on_IA_Emulator")
                             maximum = 1
                             testsPerEmulator = 1
                         }
@@ -561,12 +561,12 @@ More about kubernetes context: [Official docs](https://kubernetes.io/docs/tasks/
 {{< tab "Kotlin" >}}
 
 ```kotlin
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator28
 
 configurationsContainer.register("k8s") {                    
 
-            targetsContainer.register("api27") {
-                deviceName = "API27"
+            targetsContainer.register("api28") {
+                deviceName = "API28"
 
                 scheduling = SchedulingConfiguration().apply {
                     quota = QuotaConfiguration().apply {
@@ -575,7 +575,7 @@ configurationsContainer.register("k8s") {
                     }
 
                     reservation = TestsBasedDevicesReservationConfiguration().apply {
-                        device = Emulator27
+                        device = Emulator28
                         maximum = 1
                         minimum = 1
                         testsPerEmulator = 1
@@ -589,14 +589,14 @@ configurationsContainer.register("k8s") {
 {{< tab "Groovy" >}}
 
 ```groovy
-import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator28
 
 instrumentation {
     configurations {
         k8s {
             targets {
-                api27 {
-                    deviceName = "API27"
+                api28 {
+                    deviceName = "API28"
                     scheduling {
                         quota {
                             retryCount = 1
@@ -604,7 +604,7 @@ instrumentation {
                         }
 
                         testsCountBasedReservation {
-                            device = Emulator27.INSTANCE
+                            device = Emulator28.INSTANCE
                             maximum = 1
                             minimum = 1
                             testsPerEmulator = 1
@@ -641,8 +641,8 @@ import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 configurationsContainer.register("local") {
-        targetsContainer.register("api27") {
-            deviceName = "API27"
+        targetsContainer.register("api28") {
+            deviceName = "API28"
 
             scheduling = SchedulingConfiguration().apply {
                 quota = QuotaConfiguration().apply {
@@ -651,7 +651,7 @@ configurationsContainer.register("local") {
                 }
 
                 reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = LocalEmulator.device(27)
+                    device = LocalEmulator.device(28)
                     maximum = 1
                     testsPerEmulator = 1
                 }
@@ -672,8 +672,8 @@ instrumentation {
         local {
             tryToReRunOnTargetBranch = false
             targets {
-                api27 {
-                    deviceName = "API27"
+                api28 {
+                    deviceName = "API28"
                     scheduling {
                         quota {
                             retryCount = 1
@@ -681,7 +681,7 @@ instrumentation {
                         }
 
                         testsCountBasedReservation {
-                            device = new LocalEmulator("27", 27, "Android_SDK_built_for_x86")
+                            device = new LocalEmulator("28", 28, "AOSP_on_IA_Emulator")
                             maximum = 1
                             testsPerEmulator = 1
                         }
@@ -696,7 +696,7 @@ instrumentation {
 {{< /tab >}}
 {{< /tabs >}}
 
-1. Run an emulator with 27 API
+1. Run an emulator with 28 API
 2. Run Gradle CLI command
 
 ```shell script
