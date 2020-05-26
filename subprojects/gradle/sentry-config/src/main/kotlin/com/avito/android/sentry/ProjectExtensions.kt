@@ -12,6 +12,7 @@ import com.avito.kotlin.dsl.lazyProperty
 import io.sentry.SentryClient
 import okhttp3.HttpUrl
 import org.gradle.api.Project
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
 fun Project.environmentInfo(): Provider<EnvironmentInfo> = lazyProperty("ENVIRONMENT_INFO_PROVIDER") { project ->
@@ -22,11 +23,11 @@ fun Project.environmentInfo(): Provider<EnvironmentInfo> = lazyProperty("ENVIRON
 }
 
 val Project.sentry: Provider<SentryClient> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    project.sentryConfig.map { sentryClient(it) }
+    Providers.of(sentryClient(project.sentryConfig.get()))
 }
 
 val Project.sentryConfig: Provider<SentryConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    project.providers.provider { from(project) }
+    Providers.of(from(project))
 }
 
 private fun from(project: Project): SentryConfig {
