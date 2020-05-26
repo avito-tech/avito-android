@@ -38,9 +38,19 @@ data class AdbDevice(
 ) : Device {
 
     override val api: Int by lazy {
-        loadProperty(
-            key = "ro.build.version.sdk",
-            cast = { it.toInt() }
+        retry(
+            retriesCount = 5,
+            delaySeconds = 3,
+            block = { attempt ->
+                log("Attempt $attempt: getting ro.build.version.sdk")
+                loadProperty(
+                    key = "ro.build.version.sdk",
+                    cast = { it.toInt() }
+                )
+            },
+            attemptFailedHandler = { attempt, throwable ->
+                log("Attempt $attempt: reading ro.build.version.sdk failed. Reason: ${throwable.message}")
+            }
         )
     }
 
@@ -380,7 +390,12 @@ data class AdbDevice(
         command = command
     )
         .ofType(ProcessNotification.Exit::class.java)
-        .doOnError { throwable -> throw RuntimeException("Failed to execute command: $command on device $id", throwable) }
+        .doOnError { throwable ->
+            throw RuntimeException(
+                "Failed to execute command: $command on device $id",
+                throwable
+            )
+        }
         .timeout(
             timeoutSeconds,
             TimeUnit.SECONDS,
@@ -410,12 +425,19 @@ data class AdbDevice(
         )
 
     override fun log(message: String) {
-        logger.log("[$id $api] $message")
+        logger.log("$TAG $message")
     }
 
     override fun notifyError(message: String, error: Throwable) {
-        logger.notify("[$id $api] $message", error)
+        logger.notify("$TAG $message", error)
     }
+
+    override fun toString(): String {
+        return "Device $TAG"
+    }
+
+    // MBS-8531: don't use ADB here to avoid possible recursion
+    private val TAG: String = "[$id]"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L

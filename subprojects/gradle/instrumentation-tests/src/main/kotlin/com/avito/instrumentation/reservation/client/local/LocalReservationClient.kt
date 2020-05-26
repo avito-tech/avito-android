@@ -8,6 +8,7 @@ import com.avito.instrumentation.reservation.request.Device as RequestedDevice
 import com.avito.runner.service.worker.device.Device as WorkerDevice
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.util.forEachAsync
+import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.logging.CILogger
 import kotlinx.coroutines.GlobalScope
@@ -148,6 +149,7 @@ internal class LocalReservationClient(
 
     private fun fitsReservation(device: WorkerDevice, reservation: Reservation.Data): Boolean {
         return device.online
+            && device.deviceStatus() == DeviceStatus.Alive
             && device.api == reservation.device.api
     }
 
