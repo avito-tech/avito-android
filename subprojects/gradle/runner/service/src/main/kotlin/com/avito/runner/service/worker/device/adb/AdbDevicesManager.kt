@@ -18,6 +18,7 @@ class AdbDevicesManager(
             "Can't find env ANDROID_HOME. It needs to run 'adb'"
         }
     }
+
     override fun connectedDevices(): Set<Device> =
         commandLine.executeProcess(
             command = adb,

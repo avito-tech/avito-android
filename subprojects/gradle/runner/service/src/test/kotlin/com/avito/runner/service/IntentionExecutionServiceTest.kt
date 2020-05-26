@@ -3,17 +3,17 @@ package com.avito.runner.service
 import com.avito.runner.logging.StdOutLogger
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
-import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.device.observer.DevicesObserver
 import com.avito.runner.test.NoOpListener
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
+import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.mock.MockDevicesObserver
 import com.avito.runner.test.randomSerial
-import com.avito.runner.test.randomString
 import com.avito.runner.test.receiveAvailable
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertWithMessage
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
 class IntentionExecutionServiceTest {
 
     @Test
-    fun `intention execution service scheduled all tests to supported devices`() =
+    fun `schedule all tests to supported devices`() =
         runBlockingWithTimeout {
             val devicesObserver = MockDevicesObserver()
             val intentionsRouter = IntentionsRouter()
@@ -65,27 +65,24 @@ class IntentionExecutionServiceTest {
             val successfulDevice = MockDevice(
                 logger = StdOutLogger(),
                 id = randomSerial(),
-                api = 22,
+                apiResult = MockActionResult.Success(22),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
                     MockActionResult.Success(Any()) // Install test application
                 ),
-                gettingDeviceStatusResults = intentions.map {
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
+                gettingDeviceStatusResults = listWithDefault(
+                    1 + intentions.size,
+                    MockActionResult.Success<DeviceStatus>(
+                        DeviceStatus.Alive
                     )
-                },
+                ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         ),
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         )
                     )
                 },
@@ -120,7 +117,7 @@ class IntentionExecutionServiceTest {
         }
 
     @Test
-    fun `intention execution service rescheduled tests because of device problems (freeze)`() =
+    fun `reschedule test to another device - when device is broken while processing intention`() =
         runBlockingWithTimeout {
             val devicesObserver = MockDevicesObserver()
             val intentionsRouter = IntentionsRouter()
@@ -142,28 +139,19 @@ class IntentionExecutionServiceTest {
                 generateIntention(
                     state = compatibleWithDeviceState,
                     action = generateInstrumentationTestAction()
-                ),
-                generateIntention(
-                    state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
-                ),
-                generateIntention(
-                    state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
-                ),
-                generateIntention(
-                    state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
                 )
             )
             val freezeDevice = MockDevice(
                 logger = StdOutLogger(),
                 id = randomSerial(),
-                api = 22,
+                apiResult = MockActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Freeze(
+                    MockActionResult.Success<DeviceStatus>(
+                        DeviceStatus.Alive
+                    ), // State while initializing worker
+                    MockActionResult.Success<DeviceStatus>(
+                        DeviceStatus.Freeze(
                             RuntimeException()
                         )
                     )
@@ -173,7 +161,7 @@ class IntentionExecutionServiceTest {
             val successfulDevice = MockDevice(
                 logger = StdOutLogger(),
                 id = randomSerial(),
-                api = 22,
+                apiResult = MockActionResult.Success(22),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
                     MockActionResult.Success(Any()) // Install test application
@@ -181,22 +169,21 @@ class IntentionExecutionServiceTest {
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         ),
                         MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
+                            Try.Success(Unit)
                         )
                     )
                 },
-                gettingDeviceStatusResults = intentions.map {
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
+                gettingDeviceStatusResults = listOf(
+                    MockActionResult.Success<DeviceStatus>(
+                        DeviceStatus.Alive
+                    ), // State while initializing worker
+                    MockActionResult.Success<DeviceStatus>(
+                        DeviceStatus.Alive
                     )
-                },
+                ),
                 runTestsResults = intentions.map {
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
@@ -204,14 +191,12 @@ class IntentionExecutionServiceTest {
                 }
             )
 
-            // Add freeze device
             devicesObserver.send(freezeDevice)
             intentions.forEach { communication.intentions.send(it) }
 
             // Wait for device failed with infrastructure problems
             delay(TimeUnit.SECONDS.toMillis(2))
 
-            // Add successful device
             devicesObserver.send(successfulDevice)
 
             // Wait for tests passed

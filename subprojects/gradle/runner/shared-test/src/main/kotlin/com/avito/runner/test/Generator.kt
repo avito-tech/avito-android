@@ -61,6 +61,10 @@ fun generateDeviceTestCaseRun(
 
 fun randomSerial(): Serial = Serial.Local(randomString())
 
+fun <T : Any> listWithDefault(size: Int, value: T): List<T> {
+    return (0 until size).map { value }
+}
+
 fun generateDeviceData(
     serial: Serial = randomSerial(),
     configuration: DeviceConfiguration = generateDeviceConfiguration()

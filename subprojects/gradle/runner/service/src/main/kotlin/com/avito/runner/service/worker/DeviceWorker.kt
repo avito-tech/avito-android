@@ -16,6 +16,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
 import java.io.File
+import java.lang.Exception
 import java.util.concurrent.Executors
 
 class DeviceWorker(
@@ -30,9 +31,17 @@ class DeviceWorker(
         Executors.newSingleThreadExecutor().asCoroutineDispatcher()
     )
 
-    private var state: State = device.state()
-
     fun run() = scope.launch {
+
+        var state: State = try {
+            checkDeviceAlive()
+            device.state()
+        } catch (t: Exception) {
+            device.notifyError("Error while checking device initial state", t)
+            // No intention is lost. DeviceWorkerMessage.WorkerFailed event is unnecessary.
+            // Can't use this device any more. ReservationClient will get a new one.
+            return@launch
+        }
 
         for (intention in intentionsRouter.observeIntentions(state)) {
             try {
@@ -41,7 +50,7 @@ class DeviceWorker(
                 device.log("Receive intention: $intention")
 
                 device.log("Preparing state: ${intention.state}")
-                state = prepareState(intentionState = intention.state).get()
+                state = prepareDeviceState(currentState = state, intentionState = intention.state).get()
                 device.log("State prepared")
 
                 val result = executeAction(action = intention.action)
@@ -75,13 +84,13 @@ class DeviceWorker(
         device.log("Worker ended with success result")
     }
 
-    /**
-     * Готовим состояние девайса к прогну теста
-     */
-    private suspend fun prepareState(intentionState: State): Try<State> {
-        device.log("Check worker state. Current: ${state.digest}, desired: ${intentionState.digest}")
-        if (intentionState.digest == state.digest) {
-            clearStatePackages().get()
+    private suspend fun prepareDeviceState(
+        currentState: State,
+        intentionState: State
+    ): Try<State> {
+        device.log("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
+        if (intentionState.digest == currentState.digest) {
+            clearStatePackages(currentState).get()
             return Try.Success(intentionState)
         }
 
@@ -148,7 +157,7 @@ class DeviceWorker(
         return deviceTestCaseRun
     }
 
-    private fun clearStatePackages(): Try<Any> = Try {
+    private fun clearStatePackages(state: State): Try<Any> = Try {
         device.log("Clearing packages")
         state.layers
             .asSequence()
