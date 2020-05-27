@@ -73,7 +73,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
                 }
 
                 reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = LocalEmulator.device(28)
+                    device = LocalEmulator.device(28, "Android_SDK_built_for_x86_64")
                     maximum = 1
                     minimum = 1
                     testsPerEmulator = 1
@@ -112,7 +112,7 @@ instrumentation {
                         }
 
                         testsCountBasedReservation {
-                            device = new LocalEmulator("28", 28, "AOSP_on_IA_Emulator")
+                            device = new LocalEmulator("28", 28, "Android_SDK_built_for_x86_64")
                             maximum = 1
                             testsPerEmulator = 1
                         }
@@ -651,7 +651,7 @@ configurationsContainer.register("local") {
                 }
 
                 reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = LocalEmulator.device(28)
+                    device = LocalEmulator.device(28, "Android_SDK_built_for_x86_64")
                     maximum = 1
                     testsPerEmulator = 1
                 }
@@ -681,7 +681,7 @@ instrumentation {
                         }
 
                         testsCountBasedReservation {
-                            device = new LocalEmulator("28", 28, "AOSP_on_IA_Emulator")
+                            device = new LocalEmulator("28", 28, "Android_SDK_built_for_x86_64")
                             maximum = 1
                             testsPerEmulator = 1
                         }
