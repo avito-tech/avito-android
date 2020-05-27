@@ -45,7 +45,7 @@ object InstrumentationPluginConfiguration {
             configurationsContainer.configure(closure)
         }
 
-        fun filters(action: Action<NamedDomainObjectSet<InstrumentationFilter>>) {
+        fun filters(action: Action<NamedDomainObjectContainer<InstrumentationFilter>>) {
             action.execute(filters)
         }
 
