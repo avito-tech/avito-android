@@ -139,6 +139,7 @@ pluginManagement {
                 includeGroup("com.jfrog.bintray")
                 includeGroup("com.slack.keeper")
                 includeGroup("nebula.integtest")
+                includeGroup("com.autonomousapps.dependency-analysis")
             }
         }
         exclusiveContent {
@@ -181,6 +182,8 @@ pluginManagement {
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.4.3")
+                pluginId == "com.autonomousapps.dependency-analysis" ->
+                    useVersion("0.38.0")
             }
         }
     }
