@@ -43,10 +43,6 @@ import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
 
-/**
- * @param params параметры собраны в serializable box, чтобы
- * получить типизацию при создании инстанса рефлекшном для Worker Api
- */
 class InstrumentationTestsAction(
     private val params: Params,
     private val logger: CILogger,
@@ -181,10 +177,14 @@ class InstrumentationTestsAction(
         sourceCommitHash = params.sourceCommitHash
     ) {
 
+    /**
+     * for Worker API
+     */
+    @Suppress("unused")
     @Inject
     constructor(params: Params) : this(params, params.logger)
 
-    fun fromParams(params: InstrumentationTestsAction.Params): BuildOnTargetCommitForTest.Result {
+    private fun fromParams(params: Params): BuildOnTargetCommitForTest.Result {
         return if (!params.apkOnTargetCommit.hasFileContent() || !params.testApkOnTargetCommit.hasFileContent()) {
             BuildOnTargetCommitForTest.Result.ApksUnavailable
         } else {
@@ -265,8 +265,8 @@ class InstrumentationTestsAction(
         } else {
             logger.critical("Cannot find report id for $reportCoordinates. Skip statistic sending")
         }
-        val verdict = testRunResult.verdict
-        when (verdict) {
+
+        when (val verdict = testRunResult.verdict) {
             is TestRunResult.Verdict.Success -> logger.info(verdict.message)
             is TestRunResult.Verdict.Failed -> buildFailer.failBuild(
                 verdict.message,
@@ -306,10 +306,6 @@ class InstrumentationTestsAction(
      */
     private fun reportViewerFile(outputDir: File): File = File(outputDir, "rv.html")
 
-    /**
-     * todo тест что файл с репортом есть даже если фейл билда
-     * todo если репорт пустой, мы можем корректную ошибку печатать (возможно это лучше сделать на стороне RM)
-     */
     private fun writeReportViewerLinkFile(
         reportViewerUrl: HttpUrl,
         reportFile: File
@@ -319,12 +315,9 @@ class InstrumentationTestsAction(
     }
 
     companion object {
-
-        //todo прокидывать в performance таску параметром
         const val RUN_ON_TARGET_BRANCH_SLUG = "rerun"
     }
 
-    // TODO: вынести все параметры для зависимостей в конфиги по аналогии с BitbucketConfig, StatsDConfig
     data class Params(
         val mainApk: File?,
         val testApk: File,
@@ -344,7 +337,7 @@ class InstrumentationTestsAction(
         val suppressFlaky: Boolean,
         val impactAnalysisResult: File?,
         val logger: CILogger,
-        val outputDir: File, //todo валидация на соответствие teamcity конфигу
+        val outputDir: File,
         val sendStatistics: Boolean,
         val isFullTestSuite: Boolean,
         val slackToken: String,
