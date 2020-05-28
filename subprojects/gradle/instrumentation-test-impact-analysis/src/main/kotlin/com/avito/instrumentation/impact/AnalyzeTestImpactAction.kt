@@ -19,6 +19,7 @@ internal data class ImpactSummary(
     val affectedTests: AffectedTests,
     val allTests: Set<Test>,
     val addedTests: Set<Test>,
+    val modifiedTests: Set<Test>,
     val skippedTests: Set<Test>,
     val testsToRun: Set<Test>
 ) {
@@ -61,6 +62,12 @@ internal class AnalyzeTestImpactAction(
         .flatMap { it.methods }
         .toSet()
 
+    private val modifiedTests: Set<Test> = bytecodeAnalyzeSummary
+        .testsModifiedByUser
+        .filter { it.affectionType == AffectionType.TEST_MODIFIED }
+        .flatMap { it.methods }
+        .toSet()
+
     private val filteredTest =
         if (packageFilter != null) tests.filter { it.startsWith(packageFilter) }.toSet() else tests
 
@@ -98,6 +105,7 @@ internal class AnalyzeTestImpactAction(
             ),
             allTests = filteredTest,
             addedTests = addedTests,
+            modifiedTests = modifiedTests,
             skippedTests = skippedTests,
             testsToRun = testsToRun
         )

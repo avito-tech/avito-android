@@ -24,6 +24,10 @@ sealed class ImpactAnalysisPolicy : Serializable {
         object RunNewTests : On() {
             override fun getArtifact(task: AnalyzeTestImpactTask): Provider<RegularFile> = task.addedTestsFile
         }
+
+        object RunModifiedTests : On() {
+            override fun getArtifact(task: AnalyzeTestImpactTask): Provider<RegularFile> = task.modifiedTestsFile
+        }
     }
 
     object Off : ImpactAnalysisPolicy()

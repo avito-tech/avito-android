@@ -7,7 +7,8 @@ internal enum class AffectionType {
     TEST_MODIFIED,
     TEST_RENAMED,
     /**
-     * Shows that test itself isn't changed, but changed classes in test source sets that are used byt test
+     * Shows that test itself isn't changed, but changed classes in test source sets that are used by test
      */
+    // use?
     DEPENDENT_TEST_CODE_CHANGED
 }

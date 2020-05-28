@@ -48,6 +48,9 @@ abstract class AnalyzeTestImpactTask @Inject constructor(
     @OutputFile
     val addedTestsFile: Provider<RegularFile> = config.output.file("tests-added.txt")
 
+    @OutputFile
+    val modifiedTestsFile: Provider<RegularFile> = config.output.file("tests-modified.txt")
+
     /**
      * combination of changed and impacted
      */
@@ -80,6 +83,7 @@ abstract class AnalyzeTestImpactTask @Inject constructor(
             testsToRun = impactSummary.testsToRun
         )
         addedTestsFile.get().asFile.rewriteNewLineList(impactSummary.addedTests)
+        modifiedTestsFile.get().asFile.rewriteNewLineList(impactSummary.modifiedTests)
         testsToRunFile.get().asFile.rewriteNewLineList(impactSummary.testsToRun)
     }
 
