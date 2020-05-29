@@ -6,8 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:process"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:process"))
+    implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gradle.androidPlugin)
 

@@ -80,7 +80,7 @@ keeper {
 dependencies(delegateClosureOf<DependencyHandler> {
     keeperR8(Dependencies.r8)
 
-    implementation(project(":subprojects:android-lib:proxy-toast"))
+    implementation("com.avito.android:proxy-toast")
 
     implementation(Dependencies.playServicesMaps)
 
@@ -88,16 +88,16 @@ dependencies(delegateClosureOf<DependencyHandler> {
     implementation(Dependencies.recyclerView)
     implementation(Dependencies.material)
 
-    androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
-    androidTestImplementation(project(":subprojects:android-test:test-report"))
-    androidTestImplementation(project(":subprojects:android-test:junit-utils"))
-    androidTestImplementation(project(":subprojects:android-test:toast-rule"))
-    androidTestImplementation(project(":subprojects:android-test:test-annotations"))
-    androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
-    androidTestImplementation(project(":subprojects:common:report-viewer"))
-    androidTestImplementation(project(":subprojects:common:file-storage"))
-    androidTestImplementation(project(":subprojects:common:okhttp"))
-    androidTestImplementation(project(":subprojects:common:time"))
+    androidTestImplementation("com.avito.android:test-inhouse-runner")
+    androidTestImplementation("com.avito.android:test-report")
+    androidTestImplementation("com.avito.android:junit-utils")
+    androidTestImplementation("com.avito.android:toast-rule")
+    androidTestImplementation("com.avito.android:test-annotations")
+    androidTestImplementation("com.avito.android:ui-testing-core")
+    androidTestImplementation("com.avito.android:report-viewer")
+    androidTestImplementation("com.avito.android:file-storage")
+    androidTestImplementation("com.avito.android:okhttp")
+    androidTestImplementation("com.avito.android:time")
 
     androidTestImplementation(Dependencies.androidTest.runner)
     androidTestUtil(Dependencies.androidTest.orchestrator)
@@ -258,14 +258,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
                     }
                 }
             }
-        }
-    }
-}
-
-configurations.all {
-    if (name.contains("AndroidTestRuntimeClasspath")) {
-        resolutionStrategy {
-            force("org.jetbrains:annotations:16.0.1")
         }
     }
 }

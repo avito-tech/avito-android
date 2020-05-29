@@ -8,12 +8,12 @@ plugins {
 dependencies {
     implementation(Dependencies.gradle.androidPlugin)
 
-    implementation(project(":subprojects:gradle:pre-build"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:pre-build"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:kotlin-dsl-support"))
 
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

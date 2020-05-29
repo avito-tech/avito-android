@@ -20,6 +20,7 @@ android {
     defaultConfig {
         versionName = "1.0"
         versionCode = 1
+        compileSdkVersion(28)
         testInstrumentationRunner = "com.avito.android.kaspressoui.test.KaspressoTestRunner"
 
         testInstrumentationRunnerArguments(
@@ -77,7 +78,7 @@ dependencies(delegateClosureOf<DependencyHandler> {
 
     implementation(Dependencies.appcompat)
 
-    androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
+    androidTestImplementation("com.avito.android:test-inhouse-runner")
 
     androidTestImplementation(Dependencies.androidTest.runner)
     androidTestImplementation(Dependencies.androidTest.kaspresso)

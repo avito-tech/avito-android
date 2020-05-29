@@ -8,8 +8,8 @@ dependencies {
     implementation(gradleApi())
     implementation(Dependencies.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(Dependencies.okhttp)
-    api(project(":subprojects:gradle:utils"))
-    api(project(":subprojects:gradle:build-environment"))
-    implementation(project(":subprojects:gradle:sentry-config"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    api(project(":gradle:utils"))
+    api(project(":gradle:build-environment"))
+    implementation(project(":gradle:sentry-config"))
+    implementation(project(":gradle:kotlin-dsl-support"))
 }

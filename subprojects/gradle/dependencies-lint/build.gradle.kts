@@ -6,18 +6,18 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:cd"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:files"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:cd"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:files"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:kotlin-dsl-support"))
 
     implementation(Dependencies.gradle.androidPlugin)
     implementation(Dependencies.gradle.kotlinPlugin)
     implementation(Dependencies.asm)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":gradle:test-project"))
     testImplementation(Dependencies.test.mockitoKotlin)
 }
 
