@@ -4,7 +4,6 @@ import androidx.test.espresso.PerformException
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.util.ClicksTypeRule
 import com.avito.android.ui.ButtonsActivity
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 

@@ -185,7 +185,7 @@ You can ask anything:
 - Why so much code? It makes no sense.
 - Why is all the code in Gradle plugins and not in python scripts?
  
-If you want to use a specific module, you can try it in [the test app](https://github.com/avito-tech/avito-android/tree/develop/subprojects/android-test/test-app). 
+If you want to use a specific module, you can try it in [the test app](https://github.com/avito-tech/avito-android/tree/develop/samples/test-app). 
 Currently, it shows an example of using our test runner.
  
 Unfortunately, we still have few examples of reuse in other projects, so integration may reveal yet unknown limitations. Let us know if this happens, and we we will see what to fix.

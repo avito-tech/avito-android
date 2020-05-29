@@ -141,7 +141,7 @@ In our case:
 
 ## Examples
 
-Check out a configuration to run in `GradleInstrumentationPluginConfiguration` in the [test app](https://github.com/avito-tech/avito-android/blob/develop/subprojects/android-test/test-app/build.gradle.kts#L114)
+Check out a configuration to run in `GradleInstrumentationPluginConfiguration` in the [test app](https://github.com/avito-tech/avito-android/blob/develop/samples/test-app/build.gradle.kts#L114)
 
 ## Filtering tests for execution
 
@@ -623,7 +623,7 @@ instrumentation {
 5. Run tests with extra parameters specified.
 
 ```shell script
-./gradlew :subprojects:android-test:test-app:instrumentation<configuration name> 
+./gradlew :samples:test-app:instrumentation<configuration name> 
     -PkubernetesContext=<your context> // for Avito probably 'beta'
 ```
 
@@ -701,7 +701,7 @@ instrumentation {
 
 ```shell script
 `./gradlew :<project gradle path>:instrumentation<configuration name>`, e.g.
-`./gradlew :subprojects:android-test:test-app:instrumentationLocal` 
+`./gradlew :samples:test-app:instrumentationLocal` 
 ```
 
 ## Run test on APK was built before

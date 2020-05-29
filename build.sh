@@ -13,4 +13,4 @@ TEMP_PROJECT_VERSION="temp-version"
 runInBuilder "set -e;
     ./gradlew help;
     ./gradlew build publishToMavenLocal ${GRADLE_ARGS} -PprojectVersion=${TEMP_PROJECT_VERSION};
-    ./gradlew tasks :subprojects:android-test:test-app:instrumentationUi ${GRADLE_ARGS} -PinfraVersion=${TEMP_PROJECT_VERSION}"
+    ./gradlew tasks :samples:test-app:instrumentationUi ${GRADLE_ARGS} -PinfraVersion=${TEMP_PROJECT_VERSION}"

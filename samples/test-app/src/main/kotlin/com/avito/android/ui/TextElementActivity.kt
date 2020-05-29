@@ -1,13 +1,12 @@
 package com.avito.android.ui
 
 import android.os.Bundle
-
-import android.widget.TextView
-import android.text.Spanned
-import android.text.style.ClickableSpan
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class TextElementActivity : AppCompatActivity() {
