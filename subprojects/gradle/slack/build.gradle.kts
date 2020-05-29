@@ -27,9 +27,13 @@ tasks.withType(Test::class.java).forEach { testTask ->
             "avito.slack.test.token",
             "avito.slack.test.workspace"
         )
-        // todo
-//        testProperties.forEach { key ->
-//            systemProperty(key, project.getOptionalStringProperty(key) ?: "")
-//        }
+        testProperties.forEach { key ->
+            val property = if (project.hasProperty(key)) {
+                project.property(key)!!.toString()
+            } else {
+                ""
+            }
+            systemProperty(key, property)
+        }
     }
 }
