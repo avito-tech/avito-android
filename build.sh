@@ -8,9 +8,8 @@ source $(dirname $0)/_main.sh
 
 docs/check.sh
 
-TEMP_PROJECT_VERSION="temp-version"
 # `tasks` triggers full tasks graph resolving, checking for possible misconfigurations
 runInBuilder "set -e;
     ./gradlew help;
-    ./gradlew build publishToMavenLocal ${GRADLE_ARGS} -PprojectVersion=${TEMP_PROJECT_VERSION};
-    ./gradlew tasks :samples:test-app:instrumentationUi ${GRADLE_ARGS} -PinfraVersion=${TEMP_PROJECT_VERSION}"
+    ./gradlew -p subprojects build;
+    ./gradlew tasks :samples:test-app:instrumentationUi ${GRADLE_ARGS}"
