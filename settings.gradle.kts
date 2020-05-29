@@ -5,20 +5,23 @@ include(":samples:test-app-kaspresso")
 
 includeBuild("buildscript")
 
-includeBuild("subprojects") {
-    dependencySubstitution {
-        substitute(module("com.avito.android:instrumentation-tests")).with(project(":gradle:instrumentation-tests"))
-        substitute(module("com.avito.android:proxy-toast")).with(project(":android-lib:proxy-toast"))
-        substitute(module("com.avito.android:time")).with(project(":common:time"))
-        substitute(module("com.avito.android:test-report")).with(project(":android-test:test-report"))
-        substitute(module("com.avito.android:junit-utils")).with(project(":android-test:junit-utils"))
-        substitute(module("com.avito.android:toast-rule")).with(project(":android-test:toast-rule"))
-        substitute(module("com.avito.android:test-inhouse-runner")).with(project(":android-test:test-inhouse-runner"))
-        substitute(module("com.avito.android:test-annotations")).with(project(":android-test:test-annotations"))
-        substitute(module("com.avito.android:ui-testing-core")).with(project(":android-test:ui-testing-core"))
-        substitute(module("com.avito.android:report-viewer")).with(project(":common:report-viewer"))
-        substitute(module("com.avito.android:file-storage")).with(project(":common:file-storage"))
-        substitute(module("com.avito.android:okhttp")).with(project(":common:okhttp"))
+val useCompositeBuild: String by settings
+if (useCompositeBuild.toBoolean()) {
+    includeBuild("subprojects") {
+        dependencySubstitution {
+            substitute(module("com.avito.android:instrumentation-tests")).with(project(":gradle:instrumentation-tests"))
+            substitute(module("com.avito.android:proxy-toast")).with(project(":android-lib:proxy-toast"))
+            substitute(module("com.avito.android:time")).with(project(":common:time"))
+            substitute(module("com.avito.android:test-report")).with(project(":android-test:test-report"))
+            substitute(module("com.avito.android:junit-utils")).with(project(":android-test:junit-utils"))
+            substitute(module("com.avito.android:toast-rule")).with(project(":android-test:toast-rule"))
+            substitute(module("com.avito.android:test-inhouse-runner")).with(project(":android-test:test-inhouse-runner"))
+            substitute(module("com.avito.android:test-annotations")).with(project(":android-test:test-annotations"))
+            substitute(module("com.avito.android:ui-testing-core")).with(project(":android-test:ui-testing-core"))
+            substitute(module("com.avito.android:report-viewer")).with(project(":common:report-viewer"))
+            substitute(module("com.avito.android:file-storage")).with(project(":common:file-storage"))
+            substitute(module("com.avito.android:okhttp")).with(project(":common:okhttp"))
+        }
     }
 }
 

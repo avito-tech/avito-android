@@ -11,5 +11,6 @@ docs/check.sh
 # `tasks` triggers full tasks graph resolving, checking for possible misconfigurations
 runInBuilder "set -e;
     ./gradlew help;
+    ./gradlew help -PuseCompositeBuild=false;
     ./gradlew -p subprojects build ${GRADLE_ARGS};
-    ./gradlew tasks :samples:test-app:instrumentationUi ${GRADLE_ARGS}"
+    ./gradlew :samples:test-app:instrumentationUi ${GRADLE_ARGS}"
