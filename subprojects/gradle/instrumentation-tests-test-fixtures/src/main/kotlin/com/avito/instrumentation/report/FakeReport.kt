@@ -32,8 +32,9 @@ class FakeReport : Report {
     override fun finish(isFullTestSuite: Boolean) {
     }
 
+    var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())
     override fun getTests(): Try<List<SimpleRunTest>> {
-        TODO("Not yet implemented")
+        return getTestsResult
     }
 
     override fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit> {

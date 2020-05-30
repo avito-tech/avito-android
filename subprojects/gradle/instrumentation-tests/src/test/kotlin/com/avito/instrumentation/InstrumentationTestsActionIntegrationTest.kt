@@ -155,8 +155,6 @@ internal class InstrumentationTestsActionIntegrationTest {
         params = params,
         logger = logger,
         testExecutorFactory = testExecutorFactory,
-        reportCoordinates = reportCoordinates,
-        reportsApi = reportsApi,
         buildFailer = buildFailer,
         testSuiteLoader = testSuiteLoader,
         sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
@@ -174,6 +172,8 @@ internal class InstrumentationTestsActionIntegrationTest {
         outputDir = outputDir,
         apkOnTargetCommit = apkOnTargetCommit,
         testApkOnTargetCommit = testApkOnTargetCommit,
-        reportId = reportId
+        reportId = reportId,
+        reportCoordinates = reportCoordinates,
+        targetReportCoordinates = targetReportCoordinates
     )
 }

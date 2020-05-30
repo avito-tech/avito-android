@@ -5,7 +5,12 @@ import com.avito.bitbucket.AtlassianCredentials
 import com.avito.bitbucket.BitbucketConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
+import com.avito.instrumentation.report.FakeReport
+import com.avito.instrumentation.report.ReadReport
+import com.avito.instrumentation.report.Report
+import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
+import com.avito.report.model.createStubInstance
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.CILogger
@@ -37,8 +42,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     currentBranch: String = "develop",
     outputDir: File = File("."),
     reportId: String? = null,
-    reportApiUrl: String = "https://reports",
-    reportApiFallbackUrl: String = "https://reports",
     reportViewerUrl: String = "https://reports",
     kubernetesRegistry: String = "",
     fileStorageUrl: String = "https://files",
@@ -51,7 +54,9 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         repositorySlug = "android"
     ),
     statsDConfig: StatsDConfig = StatsDConfig(false, "", "", 0, ""),
-    unitToChannelMapping: Map<Team, SlackChannel> = emptyMap()
+    unitToChannelMapping: Map<Team, SlackChannel> = emptyMap(),
+    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
+    targetReportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
 ) =
     InstrumentationTestsAction.Params(
         mainApk = mainApk,
@@ -75,7 +80,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         sendStatistics = sendStatistics,
         slackToken = slackToken,
         reportId = reportId,
-        reportApiUrl = reportApiUrl,
         fileStorageUrl = fileStorageUrl,
         pullRequestId = pullRequestId,
         isFullTestSuite = isFullTestSuite,
@@ -83,6 +87,24 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         statsdConfig = statsDConfig,
         unitToChannelMapping = unitToChannelMapping,
         reportViewerUrl = reportViewerUrl,
-        reportApiFallbackUrl = reportApiFallbackUrl,
-        registry = kubernetesRegistry
+        registry = kubernetesRegistry,
+        reportConfig = Report.Factory.Config.ReportViewerCoordinates(
+            ReportCoordinates.createStubInstance(),
+            buildId
+        ),
+        targetReportConfig = Report.Factory.Config.ReportViewerCoordinates(
+            ReportCoordinates.createStubInstance(),
+            buildId
+        ),
+        reportFactory = object : Report.Factory {
+            override fun createReport(config: Report.Factory.Config): Report {
+                return FakeReport()
+            }
+
+            override fun createReadReport(config: Report.Factory.Config): ReadReport {
+                return FakeReport()
+            }
+        },
+        reportCoordinates = reportCoordinates,
+        targetReportCoordinates = targetReportCoordinates
     )

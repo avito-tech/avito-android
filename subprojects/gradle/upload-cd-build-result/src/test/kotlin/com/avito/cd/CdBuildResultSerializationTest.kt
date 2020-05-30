@@ -56,10 +56,10 @@ class CdBuildResultSerializationTest {
                 teamcityBuildUrl = "https://teamcity/viewLog.html?buildId=6696546",
                 buildNumber = "323",
                 releaseVersion = "52.0",
-                testResults = CdBuildResult.TestResults(
+                testResults = CdBuildResult.TestResultsLink(
                     reportId = "123",
                     reportUrl = "https://report/run/5cab53abc0c8b00001f03453?q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxfX0%3D",
-                    reportCoordinates = CdBuildResult.TestResults.ReportCoordinates(
+                    reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
                         planSlug = "AvitoAndroid",
                         jobSlug = "Regress",
                         runId = "1234"

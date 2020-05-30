@@ -4,8 +4,10 @@ import com.avito.android.stats.statsdConfig
 import com.avito.bitbucket.bitbucketConfig
 import com.avito.bitbucket.pullRequestId
 import com.avito.cd.buildOutput
+import com.avito.instrumentation.InstrumentationTestsAction.Companion.RUN_ON_TARGET_BRANCH_SLUG
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
+import com.avito.instrumentation.report.Report
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
@@ -121,27 +123,42 @@ abstract class InstrumentationTestsTask @Inject constructor(
     fun doWork() {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
+        val reportConfig = Report.Factory.Config.ReportViewerCoordinates(
+            reportCoordinates = reportCoordinates,
+            buildId = buildId.get()
+        )
+        val reportFactory = Report.Factory.StrategyFactory(
+            factories = mapOf(
+                Report.Factory.Config.ReportViewerCoordinates::class.java to Report.Factory.ReportViewerFactory(
+                    reportApiUrl = reportApiUrl.get(),
+                    reportApiFallbackUrl = reportApiFallbackUrl.get(),
+                    ciLogger = ciLogger
+                )
+            )
+        )
 
         val getTestResultsAction = GetTestResultsAction(
-            reportApiUrl = reportApiUrl.get(),
-            reportApiFallbackUrl = reportApiFallbackUrl.get(),
             reportViewerUrl = reportViewerUrl.get(),
             reportCoordinates = reportCoordinates,
             ciLogger = ciLogger,
-            buildId = buildId.get(),
+            report = reportFactory.createReport(reportConfig),
             gitBranch = gitBranch.get(),
             gitCommit = gitCommit.get(),
             configuration = configuration
         )
+        // todo move that logic to task output. Instrumentation task mustn't know about Upload CD models
+        // todo Extract Instrumentation contract to module. Upload cd task will depend on it and consume Instrumentation result
         val buildOutput = project.buildOutput.get()
         val testResults = getTestResultsAction.getTestResults()
         buildOutput.testResults[configuration.name] = testResults
 
         //todo новое api, когда выйдет в stable
         // https://docs.gradle.org/5.6/userguide/custom_tasks.html#using-the-worker-api
+
         @Suppress("DEPRECATION")
         workerExecutor.submit(InstrumentationTestsAction::class.java) { workerConfiguration ->
             workerConfiguration.isolationMode = IsolationMode.NONE
+            val targetReportCoordinates = reportCoordinates.copy("${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG")
             workerConfiguration.setParams(
                 InstrumentationTestsAction.Params(
                     mainApk = application.orNull?.asFile,
@@ -166,15 +183,21 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     slackToken = slackToken.get(),
                     isFullTestSuite = fullTestSuite.get(),
                     reportId = testResults.reportId,
-                    reportApiUrl = reportApiUrl.get(),
                     fileStorageUrl = fileStorageUrl.get(),
                     pullRequestId = project.pullRequestId.orNull,
                     bitbucketConfig = project.bitbucketConfig.get(),
                     statsdConfig = project.statsdConfig.get(),
                     unitToChannelMapping = unitToChannelMapping.get(),
-                    reportApiFallbackUrl = reportApiFallbackUrl.get(),
                     reportViewerUrl = reportViewerUrl.get(),
-                    registry = registry.get()
+                    registry = registry.get(),
+                    reportConfig = reportConfig,
+                    targetReportConfig = Report.Factory.Config.ReportViewerCoordinates(
+                        reportCoordinates = targetReportCoordinates,
+                        buildId = buildId.get()
+                    ),
+                    reportFactory = reportFactory,
+                    reportCoordinates = reportCoordinates,
+                    targetReportCoordinates = targetReportCoordinates
                 )
             )
         }

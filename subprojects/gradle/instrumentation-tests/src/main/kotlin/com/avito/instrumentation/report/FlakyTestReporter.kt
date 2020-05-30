@@ -29,7 +29,7 @@ class FlakyTestReporter(
         buildUrl: String,
         currentBranch: String,
         reportCoordinates: ReportCoordinates,
-        rerunReportCoordinates: ReportCoordinates
+        targetReportCoordinates: ReportCoordinates
     ): Try<Unit> = Try {
 
         if (info.isNotEmpty()) {
@@ -51,7 +51,7 @@ class FlakyTestReporter(
                     team = Team.UNDEFINED
                 ).toString(),
                 rerunReportUrl = reportViewer.generateReportUrl(
-                    reportCoordinates = rerunReportCoordinates,
+                    reportCoordinates = targetReportCoordinates,
                     onlyFailures = true,
                     team = Team.UNDEFINED
                 ).toString()

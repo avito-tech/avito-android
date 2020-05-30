@@ -50,10 +50,10 @@ class GetTestResultsActionTest {
 
         Truth.assertThat(results)
             .isEqualTo(
-                CdBuildResult.TestResults(
+                CdBuildResult.TestResultsLink(
                     reportId = reportId,
                     reportUrl = reportViewer.byReportCoordinatesUrl.toString(),
-                    reportCoordinates = CdBuildResult.TestResults.ReportCoordinates(
+                    reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
                         planSlug = reportCoordinates.planSlug,
                         jobSlug = reportCoordinates.jobSlug,
                         runId = reportCoordinates.runId
@@ -70,12 +70,9 @@ class GetTestResultsActionTest {
         reportViewer: ReportViewer = FakeReportViewer()
     ): GetTestResultsAction {
         return GetTestResultsAction(
-            reportApiUrl = "xxx",
-            reportApiFallbackUrl = "xxx",
             reportViewerUrl = "xxx",
             reportCoordinates = reportCoordinates,
             ciLogger = ciLogger,
-            buildId = "buildId",
             report = report,
             reportViewer = reportViewer,
             gitBranch = "gitBranch",

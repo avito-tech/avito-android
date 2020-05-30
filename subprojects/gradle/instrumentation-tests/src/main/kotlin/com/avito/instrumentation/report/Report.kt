@@ -11,10 +11,108 @@ import com.avito.report.model.TestStaticData
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import com.github.salomonbrys.kotson.jsonObject
 import org.funktionale.tries.Try
+import java.io.Serializable
 
 interface Report : ReadReport {
+
+    interface Factory {
+
+        sealed class Config : Serializable {
+            data class ReportViewerCoordinates(
+                val reportCoordinates: ReportCoordinates,
+                val buildId: String
+            ) : Config()
+
+            data class ReportViewerId(
+                val reportId: String
+            ) : Config()
+        }
+
+        fun createReport(config: Config): Report
+
+        fun createReadReport(config: Config): ReadReport
+
+        class StrategyFactory(
+            private val factories: Map<in Class<Config>, Factory>
+        ) : Factory, Serializable {
+
+            override fun createReport(config: Config): Report =
+                getFactory(config).createReport(config)
+
+            override fun createReadReport(config: Config): ReadReport =
+                getFactory(config).createReadReport(config)
+
+            private fun getFactory(config: Config): Factory =
+                requireNotNull(factories[config::class.java]) {
+                    "Factory for config: $config hasn't found. You must register"
+                }
+        }
+
+        class ReportViewerFactory(
+            val reportApiUrl: String,
+            val reportApiFallbackUrl: String,
+            val ciLogger: CILogger,
+            val verboseHttp: Boolean = false
+        ) : Factory, Serializable {
+
+            @Transient
+            private lateinit var reportsApi: ReportsApi
+
+            override fun createReport(config: Config): Report {
+                return when (config) {
+                    is Config.ReportViewerCoordinates -> {
+                        ensureInitializedReportsApi()
+                        Report.Impl(
+                            reportsApi = reportsApi,
+                            logger = ciLogger,
+                            reportCoordinates = config.reportCoordinates,
+                            buildId = config.buildId
+                        )
+                    }
+                    else -> throwUnsupportedConfigException(config)
+                }
+            }
+
+            override fun createReadReport(config: Config): ReadReport {
+                return when(config) {
+                    is Config.ReportViewerCoordinates -> {
+                        ensureInitializedReportsApi()
+                        ReadReport.ReportCoordinates(
+                            reportsFetchApi = reportsApi,
+                            coordinates = config.reportCoordinates
+                        )
+                    }
+                    is Config.ReportViewerId -> {
+                        ensureInitializedReportsApi()
+                        ReadReport.Id(
+                            reportsFetchApi = reportsApi,
+                            id = config.reportId
+                        )
+                    }
+                    else -> throwUnsupportedConfigException(config)
+                }
+            }
+
+            private fun throwUnsupportedConfigException(config: Config): Nothing {
+                throw IllegalArgumentException("Unsupported config: $config")
+            }
+
+            private fun ensureInitializedReportsApi() {
+                if (!::reportsApi.isInitialized) {
+                    reportsApi = ReportsApi.create(
+                        host = reportApiUrl,
+                        fallbackUrl = reportApiFallbackUrl,
+                        logger = commonLogger(ciLogger),
+                        verboseHttp = verboseHttp
+                    )
+                }
+            }
+
+        }
+    }
 
     fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String)
 

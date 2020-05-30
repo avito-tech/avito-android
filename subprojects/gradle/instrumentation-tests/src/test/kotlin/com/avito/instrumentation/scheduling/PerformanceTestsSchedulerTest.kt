@@ -9,8 +9,6 @@ import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
 import com.avito.instrumentation.suite.filter.FilterFactory
-import com.avito.report.FakeReportsApi
-import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
@@ -123,9 +121,6 @@ internal class PerformanceTestsSchedulerTest {
     private fun createPerformanceTestsScheduler(
         runner: TestsRunner,
         params: InstrumentationTestsAction.Params = InstrumentationTestsAction.Params.createStubInstance(),
-        reportsApi: ReportsApi = FakeReportsApi(),
-        sourceReport: Report = FakeReport(),
-        targetReport: Report = FakeReport(),
         reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
         testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
             report = FakeReport(),
@@ -134,8 +129,17 @@ internal class PerformanceTestsSchedulerTest {
             filterFactory = FilterFactory.create(
                 filterData = params.instrumentationConfiguration.filter,
                 impactAnalysisResult = params.impactAnalysisResult,
-                reportCoordinates = reportCoordinates,
-                readReportFactory = ReadReport.Factory.create(reportsApi)
+                reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub"),
+                factory = object : Report.Factory {
+                    override fun createReport(config: Report.Factory.Config): Report {
+                        return FakeReport()
+                    }
+
+                    override fun createReadReport(config: Report.Factory.Config): ReadReport {
+                        return FakeReport()
+                    }
+
+                }
             )
         ),
         targetCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
@@ -146,7 +150,7 @@ internal class PerformanceTestsSchedulerTest {
         testSuiteLoader = FakeTestSuiteLoader(),
         reportCoordinates = reportCoordinates,
         targetReportCoordinates = targetCoordinates,
-        sourceReport = sourceReport,
-        targetReport = targetReport
+        sourceReport = FakeReport(),
+        targetReport = FakeReport()
     )
 }

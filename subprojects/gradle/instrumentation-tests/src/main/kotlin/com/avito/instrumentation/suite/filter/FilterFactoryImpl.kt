@@ -2,9 +2,8 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
-import com.avito.instrumentation.report.ReadReport
+import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
-import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import java.io.File
 
@@ -18,14 +17,14 @@ interface FilterFactory {
         fun create(
             filterData: InstrumentationFilter.Data,
             impactAnalysisResult: File?,
-            reportCoordinates: ReportCoordinates,
-            readReportFactory: ReadReport.Factory
+            reportConfig: Report.Factory.Config,
+            factory: Report.Factory
         ): FilterFactory {
             return FilterFactoryImpl(
                 filterData = filterData,
                 impactAnalysisResult = impactAnalysisResult,
-                reportCoordinates = reportCoordinates,
-                readReportFactory = readReportFactory
+                reportConfig = reportConfig,
+                factory = factory
             )
         }
     }
@@ -34,8 +33,8 @@ interface FilterFactory {
 private class FilterFactoryImpl(
     private val filterData: InstrumentationFilter.Data,
     private val impactAnalysisResult: File?,
-    private val readReportFactory: ReadReport.Factory,
-    private val reportCoordinates: ReportCoordinates
+    private val factory: Report.Factory,
+    private val reportConfig: Report.Factory.Config
 ) : FilterFactory {
 
     override fun createInitialFilter(): TestsFilter {
@@ -107,8 +106,8 @@ private class FilterFactoryImpl(
     private fun MutableList<TestsFilter>.addSourcePreviousSignatureFilters() {
         val previousStatuses = filterData.fromRunHistory.previousStatuses
         if (previousStatuses.included.isNotEmpty() || previousStatuses.excluded.isNotEmpty()) {
-            val previousRunTests = readReportFactory
-                .create(reportCoordinates)
+            val previousRunTests = factory
+                .createReadReport(reportConfig)
                 .getTests()
                 .get()
             if (previousStatuses.included.isNotEmpty()) {
@@ -136,7 +135,7 @@ private class FilterFactoryImpl(
         val reportFilter = filterData.fromRunHistory.reportFilter
         if (reportFilter != null && (reportFilter.statuses.included.isNotEmpty() || reportFilter.statuses.excluded.isNotEmpty())) {
             val statuses = reportFilter.statuses
-            val previousRunTests = readReportFactory.create(reportFilter.id)
+            val previousRunTests = factory.createReadReport(reportFilter.reportConfig)
                 .getTests()
                 .get()
             if (statuses.included.isNotEmpty()) {
