@@ -18,7 +18,7 @@ import java.io.Serializable
 
 interface Report : ReadReport {
 
-    interface Factory {
+    interface Factory : Serializable {
 
         sealed class Config : Serializable {
             data class ReportViewerCoordinates(
@@ -28,6 +28,10 @@ interface Report : ReadReport {
 
             data class ReportViewerId(
                 val reportId: String
+            ) : Config()
+
+            data class InMemory(
+                val id: String
             ) : Config()
         }
 
@@ -51,12 +55,43 @@ interface Report : ReadReport {
                 }
         }
 
+        class InMemoryReportFactory : Factory {
+
+            @Transient
+            private var reports: MutableMap<Config.InMemory, InMemoryReport> = mutableMapOf()
+
+            // TODO problems with serialization
+            @Synchronized
+            override fun createReport(config: Config): Report {
+                if (reports == null) {
+                    reports = mutableMapOf()
+                }
+                return when (config) {
+                    is Config.InMemory -> reports.getOrPut(config, { InMemoryReport(config.id) })
+                    is Config.ReportViewerCoordinates -> TODO("Unsupported type")
+                    is Config.ReportViewerId -> TODO("Unsupported type")
+                }
+            }
+
+            @Synchronized
+            override fun createReadReport(config: Config): ReadReport {
+                if (reports == null) {
+                    reports = mutableMapOf()
+                }
+                return when (config) {
+                    is Config.InMemory -> reports.getOrPut(config, { InMemoryReport(config.id) })
+                    is Config.ReportViewerCoordinates -> TODO("Unsupported type")
+                    is Config.ReportViewerId -> TODO("Unsupported type")
+                }
+            }
+        }
+
         class ReportViewerFactory(
             val reportApiUrl: String,
             val reportApiFallbackUrl: String,
             val ciLogger: CILogger,
             val verboseHttp: Boolean = false
-        ) : Factory, Serializable {
+        ) : Factory {
 
             @Transient
             private lateinit var reportsApi: ReportsApi
@@ -77,7 +112,7 @@ interface Report : ReadReport {
             }
 
             override fun createReadReport(config: Config): ReadReport {
-                return when(config) {
+                return when (config) {
                     is Config.ReportViewerCoordinates -> {
                         ensureInitializedReportsApi()
                         ReadReport.ReportCoordinates(
@@ -92,7 +127,7 @@ interface Report : ReadReport {
                             id = config.reportId
                         )
                     }
-                    else -> throwUnsupportedConfigException(config)
+                    is Config.InMemory -> TODO("Unsupported type")
                 }
             }
 
