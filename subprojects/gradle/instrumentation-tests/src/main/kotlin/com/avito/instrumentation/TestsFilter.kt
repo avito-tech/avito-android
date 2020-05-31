@@ -43,5 +43,6 @@ enum class TestsFilter(val annotatedWith: Set<String>) {
     performanceNoE2E(performanceNoE2EAnnotations),
     performance(performanceAnnotations),
     flaky(flakyAnnotations),
-    empty(emptySet())
+    empty(emptySet()),
+    manual(manualAnnotations)
 }
