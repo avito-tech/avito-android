@@ -6,14 +6,14 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:pre-build"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:pre-build"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:impact"))
     implementation(Dependencies.gradle.kotlinPlugin)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

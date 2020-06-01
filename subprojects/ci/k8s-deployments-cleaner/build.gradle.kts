@@ -1,22 +1,10 @@
-import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.kotlin.dsl.getOptionalStringProperty
-
-//import com.avito.utils.gradle.buildEnvironment
-
-buildscript {
-    val infraVersion: String by project
-    dependencies {
-        classpath("${Dependencies.gradle.avito.kotlinDslSupport}:$infraVersion")
-//        classpath("${Dependencies.gradle.avito.buildEnvironment}:$infraVersion")
-    }
-}
 plugins {
     id("kotlin")
 }
 
 dependencies {
     api(Dependencies.kubernetesClient)
-    api(project(":subprojects:common:teamcity-common"))
+    api(project(":common:teamcity-common"))
     api(Dependencies.kotlinXCli)
 }
 
@@ -53,4 +41,31 @@ if (project.getOptionalStringProperty("ci", "false").toBoolean()) {
         )
     }
 }
-//}
+
+fun Project.getOptionalStringProperty(name: String, nullIfBlank: Boolean = false): String? =
+    if (hasProperty(name)) {
+        val string = property(name)?.toString()
+        if (nullIfBlank && string.isNullOrBlank()) null else string
+    } else {
+        null
+    }
+
+fun Project.getOptionalStringProperty(name: String, default: String, defaultIfBlank: Boolean = true): String =
+    getOptionalStringProperty(name, nullIfBlank = defaultIfBlank) ?: default
+
+fun Project.getMandatoryStringProperty(name: String, allowBlank: Boolean = true): String {
+    return if (hasProperty(name)) {
+        val string = property(name)?.toString()
+        if (string.isNullOrBlank()) {
+            if (allowBlank) {
+                ""
+            } else {
+                throw RuntimeException("Parameter: $name is blank but required")
+            }
+        } else {
+            string
+        }
+    } else {
+        throw RuntimeException("Parameter: $name is missing but required")
+    }
+}

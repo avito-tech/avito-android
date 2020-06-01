@@ -110,8 +110,8 @@ This branch must be persistent. It will be used for automation.
 1. Manually run [Github publish configuration (internal)](http://links.k.avito.ru/releaseAvitoTools) on the release branch.
 1. Make a PR to internal avito repository with the new version of infrastructure
 1. Checkout a new branch and make a PR to github repository:
-    - Use the new version in `infraVersion` property
-    - Bump up a `projectVersion` property to the next version
+    - Change `infraVersion` property in the `./gradle.properties` to the new version 
+    - Bump up a `projectVersion` property in the `./subprojects/gradle.properties` to the next version
 1. Create a new [release](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository) against the release branch.\
 You can use a draft release to prepare a description in advance.
 

@@ -6,17 +6,17 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:kotlin-dsl-support"))
 
     implementation(Dependencies.gradle.androidPlugin)
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)
     implementation(Dependencies.okhttpLogging)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":gradle:test-project"))
     testImplementation(Dependencies.test.okhttpMockWebServer)
 }
 

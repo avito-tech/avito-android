@@ -5,13 +5,13 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:common:sentry"))
+    api(project(":common:sentry"))
 
     implementation(gradleApi())
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:git"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":common:okhttp"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:git"))
+    implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)
 }
 

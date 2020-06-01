@@ -6,8 +6,8 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:utils"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:utils"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.kotlinReflect)
     // TODO: Use https://github.com/docker-java/docker-java

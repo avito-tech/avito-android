@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:logging"))
+    api(project(":gradle:logging"))
 }

@@ -6,16 +6,16 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:trace-event"))
-    implementation(project(":subprojects:gradle:gradle-profile"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:trace-event"))
+    implementation(project(":gradle:gradle-profile"))
     implementation(gradleApi())
 
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.mockitoJUnitJupiter)
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:common:statsd"))
+    api(project(":common:statsd"))
 }
