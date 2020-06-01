@@ -97,37 +97,10 @@ include(":ci:k8s-deployments-cleaner")
 
 pluginManagement {
 
-    val artifactoryUrl: String? by settings
-    val infraVersion: String by settings
     val kotlinVersion: String by System.getProperties()
     val androidGradlePluginVersion: String by System.getProperties()
 
     repositories {
-        exclusiveContent {
-            forRepository {
-                mavenLocal()
-            }
-            forRepository {
-                jcenter()
-            }
-            forRepository {
-                maven {
-                    name = "Avito bintray"
-                    setUrl("https://dl.bintray.com/avito/maven")
-                }
-            }
-            if (!artifactoryUrl.isNullOrBlank()) {
-                forRepository {
-                    maven {
-                        name = "Local Artifactory"
-                        setUrl("$artifactoryUrl/libs-release-local")
-                    }
-                }
-            }
-            filter {
-                includeModuleByRegex("com\\.avito\\.android", ".*")
-            }
-        }
         exclusiveContent {
             forRepository {
                 gradlePluginPortal()
@@ -136,7 +109,6 @@ pluginManagement {
                 includeGroup("com.gradle")
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
-                includeGroup("com.slack.keeper")
                 includeGroup("nebula.integtest")
                 includeGroup("com.autonomousapps.dependency-analysis")
             }
@@ -147,17 +119,6 @@ pluginManagement {
             }
             filter {
                 includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
-            }
-        }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = "R8 releases"
-                    setUrl("http://storage.googleapis.com/r8-releases/raw")
-                }
-            }
-            filter {
-                includeModule("com.android.tools", "r8")
             }
         }
     }
@@ -176,11 +137,6 @@ pluginManagement {
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
                     useVersion(kotlinVersion)
 
-                pluginId.startsWith("com.avito.android") ->
-                    useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
-
-                pluginId == "com.slack.keeper" ->
-                    useModule("com.slack.keeper:keeper:0.4.3")
                 pluginId == "com.autonomousapps.dependency-analysis" ->
                     useVersion("0.38.0")
             }

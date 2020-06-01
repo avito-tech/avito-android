@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     dependencies {
-        classpath("com.android.tools:r8:1.6.58") // todo use constant
         classpath("com.avito.android:buildscript")
     }
 }
@@ -25,7 +24,7 @@ plugins {
 }
 
 val artifactoryUrl: String? by project
-val projectVersion: String? by project // TODO make non-null
+val projectVersion: String by project
 
 /**
  * We use exact version to provide consistent environment and avoid build cache issues
@@ -47,7 +46,7 @@ val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
 val publishReleaseTaskName = "publishRelease"
 
 val finalProjectVersion: String = System.getProperty("avito.project.version").let { env ->
-    if (env.isNullOrBlank()) "" else env
+    if (env.isNullOrBlank()) projectVersion else env
 }
 
 dependencyAnalysis {
@@ -79,17 +78,6 @@ subprojects {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
-            }
-        }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = "R8 releases"
-                    setUrl("http://storage.googleapis.com/r8-releases/raw")
-                }
-            }
-            filter {
-                includeModule("com.android.tools", "r8")
             }
         }
     }
@@ -272,20 +260,11 @@ subprojects {
     }
 }
 
-val installGitHooksTask = tasks.register<Exec>("installGitHooks") {
-    group = "Build Setup"
-    description = "Install local repository git hooks"
-    commandLine("git")
-    args("config", "core.hooksPath", ".git_hooks")
-}
-
 tasks.withType<Wrapper> {
     //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = "6.3"
 }
-
-project.gradle.startParameter.run { setTaskNames(taskNames + ":${installGitHooksTask.name}") }
 
 val Project.sourceSets: SourceSetContainer
     get() = (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer

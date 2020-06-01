@@ -67,8 +67,6 @@ pluginManagement {
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
                 includeGroup("com.slack.keeper")
-                includeGroup("nebula.integtest")
-                includeGroup("com.autonomousapps.dependency-analysis")
             }
         }
         exclusiveContent {
@@ -92,10 +90,6 @@ pluginManagement {
         }
     }
 
-    plugins {
-        id("nebula.integtest") version "7.0.7"
-    }
-
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
@@ -111,8 +105,6 @@ pluginManagement {
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.4.3")
-                pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.38.0")
             }
         }
     }

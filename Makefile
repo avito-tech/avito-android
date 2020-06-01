@@ -6,6 +6,7 @@ kubernetesContext?=beta
 localFilter?=
 includePrefix?=
 includeAnnotation?=
+useCompositeBuild=true
 
 params?=
 
@@ -33,6 +34,7 @@ params +=-PtestBuildType=$(test_build_type)
 params +=-Pci=$(ci)
 params +=$(log_level)
 params +=-PkubernetesContext=$(kubernetesContext)
+params +=-PuseCompositeBuild=$(useCompositeBuild)
 
 help:
 	./gradlew help $(params)
@@ -41,7 +43,7 @@ test_app_help:
 	./gradlew samples:test-app:help $(params)
 
 publish_to_maven_local:
-	./gradlew publishToMavenLocal -PprojectVersion=local $(log_level)
+	./gradlew -p subprojects publishToMavenLocal -PprojectVersion=local $(log_level)
 
 test_app_instrumentation:
 	./gradlew samples:test-app:instrumentationUi $(params)
