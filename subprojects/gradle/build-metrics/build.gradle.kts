@@ -6,24 +6,24 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:sentry-config"))
-    implementation(project(":subprojects:gradle:graphite-config"))
-    implementation(project(":subprojects:gradle:statsd-config"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:teamcity"))
-    implementation(project(":subprojects:gradle:gradle-profile"))
+    implementation(project(":gradle:sentry-config"))
+    implementation(project(":gradle:graphite-config"))
+    implementation(project(":gradle:statsd-config"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:teamcity"))
+    implementation(project(":gradle:gradle-profile"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gradle.androidPlugin)
 
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.mockitoJUnitJupiter)
-    testImplementation(project(":subprojects:gradle:git"))
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:graphite-test-fixtures"))
-    testImplementation(project(":subprojects:common:statsd-test-fixtures"))
+    testImplementation(project(":gradle:git"))
+    testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":common:graphite-test-fixtures"))
+    testImplementation(project(":common:statsd-test-fixtures"))
 }
 
 gradlePlugin {

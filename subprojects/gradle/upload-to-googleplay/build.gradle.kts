@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
     implementation(gradleApi())
     implementation(Dependencies.googlePublish)
 }

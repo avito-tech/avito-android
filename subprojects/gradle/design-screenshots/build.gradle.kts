@@ -6,12 +6,12 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:runner:service"))
-    implementation(project(":subprojects:gradle:runner:shared"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:runner:service"))
+    implementation(project(":gradle:runner:shared"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gradle.androidPlugin)
 }

@@ -7,8 +7,7 @@ import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
 import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
 import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.gradle.kubernetesCredentials
+import com.avito.utils.gradle.buildEnvironment
 
 plugins {
     id("com.android.application")
@@ -18,18 +17,15 @@ plugins {
 }
 
 android {
-
     defaultConfig {
         versionName = "1.0"
         versionCode = 1
-        testInstrumentationRunner = "com.avito.android.ui.test.TestAppRunner"
+        compileSdkVersion(28)
+        testInstrumentationRunner = "com.avito.android.kaspressoui.test.KaspressoTestRunner"
 
-        // TODO: protect from blank values
-        // TODO: get rid of unnecessary values
-        // TODO: describe in docs that they are updated in IDE configuration only after sync!
         testInstrumentationRunnerArguments(
             mapOf(
-                "planSlug" to "AndroidTestApp",
+                "planSlug" to "KaspressoAndroidTestApp",
                 "unnecessaryUrl" to "https://localhost"
             )
         )
@@ -80,37 +76,15 @@ keeper {
 dependencies(delegateClosureOf<DependencyHandler> {
     keeperR8(Dependencies.r8)
 
-    implementation(project(":subprojects:android-lib:proxy-toast"))
-
-    implementation(Dependencies.playServicesMaps)
-
     implementation(Dependencies.appcompat)
-    implementation(Dependencies.recyclerView)
-    implementation(Dependencies.material)
 
-    androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
-    androidTestImplementation(project(":subprojects:android-test:test-report"))
-    androidTestImplementation(project(":subprojects:android-test:junit-utils"))
-    androidTestImplementation(project(":subprojects:android-test:toast-rule"))
-    androidTestImplementation(project(":subprojects:android-test:test-annotations"))
-    androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
-    androidTestImplementation(project(":subprojects:common:report-viewer"))
-    androidTestImplementation(project(":subprojects:common:file-storage"))
-    androidTestImplementation(project(":subprojects:common:okhttp"))
-    androidTestImplementation(project(":subprojects:common:time"))
+    androidTestImplementation("com.avito.android:test-inhouse-runner")
 
     androidTestImplementation(Dependencies.androidTest.runner)
+    androidTestImplementation(Dependencies.androidTest.kaspresso)
     androidTestUtil(Dependencies.androidTest.orchestrator)
 
     androidTestImplementation(Dependencies.test.junit)
-    androidTestImplementation(Dependencies.okhttp)
-    androidTestImplementation(Dependencies.okhttpLogging)
-    androidTestImplementation(Dependencies.funktionaleTry)
-    androidTestImplementation(Dependencies.gson)
-    androidTestImplementation(Dependencies.kotson)
-    androidTestImplementation(Dependencies.sentry)
-    androidTestImplementation(Dependencies.test.truth)
-    androidTestImplementation(Dependencies.test.okhttpMockWebServer)
 })
 
 extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
@@ -119,7 +93,7 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
     reportApiUrl = project.getOptionalStringProperty("avito.report.url") ?: "http://stub"
     reportApiFallbackUrl = project.getOptionalStringProperty("avito.report.fallbackUrl") ?: "http://stub"
     reportViewerUrl = project.getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
-    registry = project.getOptionalStringProperty("avito.registry", "registry") ?: "registry"
+    registry = project.getOptionalStringProperty("avito.registry") ?: "registry"
     sentryDsn =
         project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
     slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
@@ -146,29 +120,13 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         "jobSlug" to "FunctionalTests"
     )
 
-
-    val runAllFilterName = "runAll"
-    filters.register(runAllFilterName)
-
-    filters.register("dynamicFilter") {
-        val includeAnnotation: String? = project.getOptionalStringProperty("includeAnnotation", true)
-        if (includeAnnotation != null) {
-            fromSource.includeByAnnotations(setOf(includeAnnotation))
-        }
-        val includePrefix: String? = project.getOptionalStringProperty("includePrefix", true)
-        if (includePrefix != null) {
-            fromSource.includeByPrefixes(setOf(includePrefix))
-        }
-    }
-
-    val defaultFilter = "default"
-    val customFilter: String = project.getOptionalStringProperty("localFilter", defaultFilter)
+    filters.register("all")
 
     configurationsContainer.register("Local") {
         tryToReRunOnTargetBranch = false
         reportSkippedTests = true
         reportFlakyTests = false
-        filter = customFilter
+        filter = "all"
 
         targetsContainer.register("api27") {
             deviceName = "API27"
@@ -188,14 +146,15 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
             }
         }
     }
-
-    val credentials = project.kubernetesCredentials
-    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
+    // TODO uncomment after 2020.4.6 release
+//    val credentials = project.kubernetesCredentials
+//    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
+//    }
+    if (project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
         configurationsContainer.register("ui") {
             tryToReRunOnTargetBranch = false
             reportSkippedTests = true
             reportFlakyTests = true
-            filter = customFilter
 
             targetsContainer.register("api22") {
                 deviceName = "API22"
@@ -239,7 +198,6 @@ extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
             reportSkippedTests = false
             reportFlakyTests = false
             enableDeviceDebug = true
-            filter = customFilter
 
             targetsContainer.register("api27") {
                 deviceName = "API27"

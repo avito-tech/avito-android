@@ -1,99 +1,29 @@
 @file:Suppress("UnstableApiUsage")
 
-rootProject.name = "avito-android"
+include(":samples:test-app")
+include(":samples:test-app-kaspresso")
 
-include(":subprojects:gradle:artifactory-app-backup")
-include(":subprojects:gradle:artifactory-app-backup-test-fixtures")
-include(":subprojects:gradle:buildchecks")
-include(":subprojects:gradle:build-metrics")
-include(":subprojects:gradle:gradle-profile")
-include(":subprojects:gradle:build-properties")
-include(":subprojects:gradle:build-trace")
-include(":subprojects:gradle:cd")
-include(":subprojects:gradle:dependencies-lint")
-include(":subprojects:gradle:module-types")
-include(":subprojects:gradle:bitbucket")
-include(":subprojects:gradle:design-screenshots")
-include(":subprojects:gradle:prosector")
-include(":subprojects:gradle:logging")
-include(":subprojects:gradle:logging-test-fixtures")
-include(":subprojects:gradle:robolectric")
-include(":subprojects:gradle:room-config")
-include(":subprojects:gradle:kotlin-root")
-include(":subprojects:gradle:code-ownership")
-include(":subprojects:gradle:performance")
-include(":subprojects:gradle:pre-build")
-include(":subprojects:gradle:kotlin-dsl-support")
-include(":subprojects:gradle:kubernetes")
-include(":subprojects:gradle:test-project")
-include(":subprojects:gradle:files")
-include(":subprojects:gradle:git")
-include(":subprojects:gradle:git-test-fixtures")
-include(":subprojects:gradle:impact-shared")
-include(":subprojects:gradle:impact")
-include(":subprojects:gradle:instrumentation-test-impact-analysis")
-include(":subprojects:gradle:instrumentation-tests")
-include(":subprojects:gradle:instrumentation-tests-test-fixtures")
-include(":subprojects:gradle:runner:client")
-include(":subprojects:gradle:runner:service")
-include(":subprojects:gradle:runner:shared")
-include(":subprojects:gradle:runner:shared-test")
-include(":subprojects:gradle:docker")
-include(":subprojects:gradle:sentry-config")
-include(":subprojects:gradle:graphite-config")
-include(":subprojects:gradle:statsd-config")
-include(":subprojects:gradle:android")
-include(":subprojects:gradle:build-on-target")
-include(":subprojects:gradle:lint-report")
-include(":subprojects:gradle:feature-toggles")
-include(":subprojects:gradle:ui-test-bytecode-analyzer")
-include(":subprojects:gradle:upload-cd-build-result")
-include(":subprojects:gradle:upload-to-googleplay")
-include(":subprojects:gradle:teamcity")
-include(":subprojects:gradle:signer")
-include(":subprojects:gradle:qapps")
-include(":subprojects:gradle:trace-event")
-include(":subprojects:gradle:process")
-include(":subprojects:gradle:process-test-fixtures")
-include(":subprojects:gradle:test-summary")
-include(":subprojects:gradle:slack")
-include(":subprojects:gradle:slack-test-fixtures")
-include(":subprojects:gradle:utils")
-include(":subprojects:gradle:utils-test-fixtures")
-include(":subprojects:gradle:build-environment")
+includeBuild("buildscript")
 
-include(":subprojects:common:time")
-include(":subprojects:common:time-test-fixtures")
-include(":subprojects:common:okhttp")
-include(":subprojects:common:file-storage")
-include(":subprojects:common:test-okhttp")
-include(":subprojects:common:report-viewer")
-include(":subprojects:common:report-viewer-test-fixtures")
-include(":subprojects:common:sentry")
-include(":subprojects:common:graphite")
-include(":subprojects:common:graphite-test-fixtures")
-include(":subprojects:common:statsd")
-include(":subprojects:common:statsd-test-fixtures")
-include(":subprojects:common:logger")
-include(":subprojects:common:teamcity-common")
-
-include(":subprojects:android-test:resource-manager-exceptions")
-include(":subprojects:android-test:websocket-reporter")
-include(":subprojects:android-test:junit-utils")
-include(":subprojects:android-test:test-annotations")
-include(":subprojects:android-test:keep-for-testing")
-include(":subprojects:android-test:ui-testing-maps")
-include(":subprojects:android-test:ui-testing-core")
-include(":subprojects:android-test:test-report")
-include(":subprojects:android-test:test-inhouse-runner")
-include(":subprojects:android-test:test-app")
-include(":subprojects:android-test:test-library")
-include(":subprojects:android-test:toast-rule")
-include(":subprojects:android-lib:proxy-toast")
-include(":subprojects:android-test:test-app-kaspresso")
-include(":subprojects:android-test:test-instrumentation-runner")
-
-include(":subprojects:ci:k8s-deployments-cleaner")
+val useCompositeBuild: String by settings
+if (useCompositeBuild.toBoolean()) {
+    includeBuild("subprojects") {
+        dependencySubstitution {
+            substitute(module("com.avito.android:instrumentation-tests")).with(project(":gradle:instrumentation-tests"))
+            substitute(module("com.avito.android:proxy-toast")).with(project(":android-lib:proxy-toast"))
+            substitute(module("com.avito.android:time")).with(project(":common:time"))
+            substitute(module("com.avito.android:test-report")).with(project(":android-test:test-report"))
+            substitute(module("com.avito.android:junit-utils")).with(project(":android-test:junit-utils"))
+            substitute(module("com.avito.android:toast-rule")).with(project(":android-test:toast-rule"))
+            substitute(module("com.avito.android:test-inhouse-runner")).with(project(":android-test:test-inhouse-runner"))
+            substitute(module("com.avito.android:test-annotations")).with(project(":android-test:test-annotations"))
+            substitute(module("com.avito.android:ui-testing-core")).with(project(":android-test:ui-testing-core"))
+            substitute(module("com.avito.android:report-viewer")).with(project(":common:report-viewer"))
+            substitute(module("com.avito.android:file-storage")).with(project(":common:file-storage"))
+            substitute(module("com.avito.android:okhttp")).with(project(":common:okhttp"))
+        }
+    }
+}
 
 pluginManagement {
 
@@ -137,8 +67,6 @@ pluginManagement {
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
                 includeGroup("com.slack.keeper")
-                includeGroup("nebula.integtest")
-                includeGroup("com.autonomousapps.dependency-analysis")
             }
         }
         exclusiveContent {
@@ -162,10 +90,6 @@ pluginManagement {
         }
     }
 
-    plugins {
-        id("nebula.integtest") version "7.0.7"
-    }
-
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
@@ -181,8 +105,6 @@ pluginManagement {
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.4.3")
-                pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.38.0")
             }
         }
     }

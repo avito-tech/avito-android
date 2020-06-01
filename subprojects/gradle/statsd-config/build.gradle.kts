@@ -5,10 +5,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:common:statsd"))
+    api(project(":common:statsd"))
 
     implementation(gradleApi())
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:kotlin-dsl-support"))
 }

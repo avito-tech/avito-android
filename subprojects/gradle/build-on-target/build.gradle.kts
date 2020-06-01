@@ -9,13 +9,13 @@ dependencies {
     implementation(Dependencies.okhttp)
     implementation(Dependencies.funktionaleTry)
 
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:git"))
 
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:gradle:instrumentation-tests-test-fixtures"))
+    testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":gradle:instrumentation-tests-test-fixtures"))
 }
 
 gradlePlugin {

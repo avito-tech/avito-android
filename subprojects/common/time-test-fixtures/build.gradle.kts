@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:common:time"))
+    api(project(":common:time"))
 }

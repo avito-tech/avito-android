@@ -12,7 +12,7 @@ dependencies {
     implementation(Dependencies.test.junitJupiterApi)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.test.truth)
-    implementation(project(":subprojects:gradle:runner:service"))
-    implementation(project(":subprojects:gradle:runner:shared"))
-    implementation(project(":subprojects:gradle:test-project"))
+    implementation(project(":gradle:runner:service"))
+    implementation(project(":gradle:runner:shared"))
+    implementation(project(":gradle:test-project"))
 }

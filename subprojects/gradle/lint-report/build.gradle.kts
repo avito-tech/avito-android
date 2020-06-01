@@ -11,17 +11,17 @@ dependencies {
     implementation(Dependencies.kotlinHtml)
     implementation(Dependencies.okhttp)
 
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:utils"))
-    implementation(project(":subprojects:gradle:logging"))
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:common:sentry"))
-    implementation(project(":subprojects:gradle:git"))
-    implementation(project(":subprojects:gradle:bitbucket"))
-    implementation(project(":subprojects:gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:logging"))
+    implementation(project(":common:okhttp"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":common:sentry"))
+    implementation(project(":gradle:git"))
+    implementation(project(":gradle:bitbucket"))
+    implementation(project(":gradle:kotlin-dsl-support"))
 
-    testImplementation(project(":subprojects:gradle:logging-test-fixtures"))
+    testImplementation(project(":gradle:logging-test-fixtures"))
 }
 
 gradlePlugin {
