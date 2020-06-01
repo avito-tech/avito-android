@@ -221,13 +221,13 @@ class InstrumentationTestsAction(
         }
 
         val reportViewerUrl = reportViewer.generateReportUrl(
-            reportCoordinates,
+            params.reportCoordinates,
             onlyFailures = testRunResult.failed !is HasFailedTestDeterminer.Result.NoFailed
         )
 
         actionFinalizer.finalize(
             params.outputDir,
-            reportCoordinates,
+            params.reportCoordinates,
             reportViewerUrl,
             testRunResult
         )

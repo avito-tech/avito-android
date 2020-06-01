@@ -4,6 +4,7 @@ import com.avito.android.stats.statsdConfig
 import com.avito.bitbucket.bitbucketConfig
 import com.avito.bitbucket.pullRequestId
 import com.avito.cd.buildOutput
+import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.InstrumentationTestsAction.Companion.RUN_ON_TARGET_BRANCH_SLUG
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
@@ -24,7 +25,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
-import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
@@ -156,11 +156,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
         //todo новое api, когда выйдет в stable
         // https://docs.gradle.org/5.6/userguide/custom_tasks.html#using-the-worker-api
 
-        @Suppress("DEPRECATION")
-        workerExecutor.submit(InstrumentationTestsAction::class.java) { workerConfiguration ->
-            workerConfiguration.isolationMode = IsolationMode.NONE
-            val targetReportCoordinates = reportCoordinates.copy("${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG")
-            workerConfiguration.setParams(
+        workerExecutor.inMemoryWork {
+            val targetReportCoordinates =
+                reportCoordinates.copy("${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG")
+            InstrumentationTestsAction(
                 InstrumentationTestsAction.Params(
                     mainApk = application.orNull?.asFile,
                     testApk = testApplication.get().asFile,
@@ -200,7 +199,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     reportCoordinates = reportCoordinates,
                     targetReportCoordinates = targetReportCoordinates
                 )
-            )
+            ).run()
         }
     }
 }

@@ -5,7 +5,6 @@ import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.time.DefaultTimeProvider
-import okhttp3.HttpUrl
 import org.funktionale.tries.Try
 
 class InMemoryReport(private val id: String) : Report {
@@ -52,7 +51,7 @@ class InMemoryReport(private val id: String) : Report {
     }
 
     @Synchronized
-    override fun finish(isFullTestSuite: Boolean, reportViewerUrl: HttpUrl) {
+    override fun finish(isFullTestSuite: Boolean) {
         // empty
     }
 
