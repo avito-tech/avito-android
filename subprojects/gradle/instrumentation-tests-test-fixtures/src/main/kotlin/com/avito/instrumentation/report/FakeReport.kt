@@ -4,7 +4,6 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
-import okhttp3.HttpUrl
 import org.funktionale.tries.Try
 
 class FakeReport : Report {
@@ -30,7 +29,7 @@ class FakeReport : Report {
         TODO("not implemented")
     }
 
-    override fun finish(isFullTestSuite: Boolean, reportViewerUrl: HttpUrl) {
+    override fun finish(isFullTestSuite: Boolean) {
     }
 
     override fun getTests(): Try<List<SimpleRunTest>> {

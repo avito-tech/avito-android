@@ -36,7 +36,7 @@ data class TestRunResult(
                     )
                 }
                 failedVerdict is Verdict.Failed && notReportedVerdict is Verdict.Failed -> {
-                    val message = "${failedVerdict.message}. ${notReportedVerdict.message}"
+                    val message = "${failedVerdict.message}. \n ${notReportedVerdict.message}"
                     Verdict.Failed(
                         message,
                         CompositeException(
@@ -58,8 +58,8 @@ data class TestRunResult(
             notReported.exception
         )
         is HasNotReportedTestsDeterminer.Result.HasNotReportedTests -> Verdict.Failed(
-            "Failed. Has tests not reported while run",
-            IllegalStateException("Not reported tests: ${notReported.lostTests.joinToString { it.name.toString() }}")
+            "Failed. Not reported while run tests:\n ${notReported.lostTests.joinToString { it.name.toString() }}",
+            IllegalStateException("Failed. There are ${notReported.lostTests.size} not reported tests.")
         )
     }
 
@@ -73,7 +73,7 @@ data class TestRunResult(
             if (failed.notSuppressedCount > 0) {
                 Verdict.Failed(
                     "Failed. Unsuppressed failed tests:\n${failed.notSuppressed.lineByLine()}",
-                    IllegalStateException("Failed. There are unsuppressed failed tests")
+                    IllegalStateException("Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests")
                 )
             } else {
                 Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")

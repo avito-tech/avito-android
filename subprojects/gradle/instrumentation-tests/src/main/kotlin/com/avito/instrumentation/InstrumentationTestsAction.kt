@@ -8,6 +8,7 @@ import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.TestExecutorFactory
+import com.avito.instrumentation.finalizer.InstrumentationActionFinalizer
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
@@ -33,12 +34,11 @@ import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.test.summary.GraphiteRunWriter
 import com.avito.test.summary.TestSummarySenderImplementation
-import com.avito.utils.BuildFailer
-import com.avito.utils.createOrClear
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.hasFileContent
 import com.avito.utils.logging.CILogger
-import okhttp3.HttpUrl
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
@@ -46,6 +46,7 @@ import javax.inject.Inject
 class InstrumentationTestsAction(
     private val params: Params,
     private val logger: CILogger,
+    private val gson: Gson = GsonBuilder().setPrettyPrinting().create(),
     private val reportsApi: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,
@@ -152,8 +153,6 @@ class InstrumentationTestsAction(
         }
     ),
     private val reportViewer: ReportViewer = ReportViewer.Impl(params.reportViewerUrl),
-    private val buildFailer: BuildFailer = BuildFailer.RealFailer(),
-    private val jUnitReportWriter: JUnitReportWriter = JUnitReportWriter(reportViewer),
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
         suppressFailure = params.suppressFailure,
@@ -166,7 +165,8 @@ class InstrumentationTestsAction(
         pullRequestId = params.pullRequestId
     ),
     private val filterInfoWriter: FilterInfoWriter = FilterInfoWriter.Impl(
-        outputDir = params.outputDir
+        outputDir = params.outputDir,
+        gson = gson
     )
 ) : Runnable,
     FlakyTestReporterFactory by FlakyTestReporterFactory.Impl(
@@ -183,6 +183,12 @@ class InstrumentationTestsAction(
     @Suppress("unused")
     @Inject
     constructor(params: Params) : this(params, params.logger)
+
+    private val actionFinalizer: InstrumentationActionFinalizer = InstrumentationActionFinalizer.Impl(
+        logger = logger,
+        jUnitReportWriter = JUnitReportWriter(reportViewer),
+        gson = gson
+    )
 
     private fun fromParams(params: Params): BuildOnTargetCommitForTest.Result {
         return if (!params.apkOnTargetCommit.hasFileContent() || !params.testApkOnTargetCommit.hasFileContent()) {
@@ -229,25 +235,8 @@ class InstrumentationTestsAction(
             sourceReport.sendLostTests(lostTests = testRunResult.notReported.lostTests)
         }
 
-        jUnitReportWriter.write(
-            reportCoordinates = reportCoordinates,
-            testRunResult = testRunResult,
-            destination = junitFile(params.outputDir)
-        )
-
-        val reportViewerUrl = reportViewer.generateReportUrl(
-            reportCoordinates,
-            onlyFailures = testRunResult.failed !is HasFailedTestDeterminer.Result.NoFailed
-        )
-
-        writeReportViewerLinkFile(
-            reportViewerUrl = reportViewerUrl,
-            reportFile = reportViewerFile(params.outputDir)
-        )
-
         sourceReport.finish(
-            isFullTestSuite = params.isFullTestSuite,
-            reportViewerUrl = reportViewerUrl
+            isFullTestSuite = params.isFullTestSuite
         )
 
         if (params.instrumentationConfiguration.reportFlakyTests) {
@@ -266,13 +255,17 @@ class InstrumentationTestsAction(
             logger.critical("Cannot find report id for $reportCoordinates. Skip statistic sending")
         }
 
-        when (val verdict = testRunResult.verdict) {
-            is TestRunResult.Verdict.Success -> logger.info(verdict.message)
-            is TestRunResult.Verdict.Failed -> buildFailer.failBuild(
-                verdict.message,
-                verdict.throwable
-            )
-        }
+        val reportViewerUrl = reportViewer.generateReportUrl(
+            reportCoordinates,
+            onlyFailures = testRunResult.failed !is HasFailedTestDeterminer.Result.NoFailed
+        )
+
+        actionFinalizer.finalize(
+            params.outputDir,
+            reportCoordinates,
+            reportViewerUrl,
+            testRunResult
+        )
     }
 
     private fun sendStatistics(reportId: String) {
@@ -294,24 +287,6 @@ class InstrumentationTestsAction(
         } else {
             logger.info("Send statistics disabled")
         }
-    }
-
-    /**
-     * teamcity XML report processing
-     */
-    private fun junitFile(outputDir: File): File = File(outputDir, "junit-report.xml")
-
-    /**
-     * teamcity report tab
-     */
-    private fun reportViewerFile(outputDir: File): File = File(outputDir, "rv.html")
-
-    private fun writeReportViewerLinkFile(
-        reportViewerUrl: HttpUrl,
-        reportFile: File
-    ) {
-        reportFile.createOrClear()
-        reportFile.writeText("<script>location=\"${reportViewerUrl}\"</script>")
     }
 
     companion object {
