@@ -1,4 +1,4 @@
-package com.avito.android.ui
+package com.avito.android.test.app.second
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

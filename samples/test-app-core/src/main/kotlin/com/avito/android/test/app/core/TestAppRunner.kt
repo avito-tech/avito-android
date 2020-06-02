@@ -1,4 +1,4 @@
-package com.avito.android.ui.test
+package com.avito.android.test.app.core
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,9 +15,6 @@ class TestAppRunner : InHouseInstrumentationTestRunner() {
 
     override fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment {
         return provideEnvironment(
-            //todo эти параметры должны быть не обязательными
-            apiUrlParameterKey = "unnecessaryUrl",
-            mockWebServerUrl = "localhost",
             argumentsProvider = BundleArgsProvider(bundle = arguments)
         )
     }

@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import androidx.test.espresso.action.SwipeDirections
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.ButtonsOverRecyclerActivity
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.greaterThan

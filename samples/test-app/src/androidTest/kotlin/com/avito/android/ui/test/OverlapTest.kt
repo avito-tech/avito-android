@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import android.view.View
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.OverlapActivity
 import com.avito.android.ui.R
 import org.junit.Rule

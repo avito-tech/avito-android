@@ -14,15 +14,14 @@ android {
     defaultConfig {
         versionName = "1.0"
         versionCode = 1
-        testInstrumentationRunner = "com.avito.android.ui.test.TestAppRunner"
+        testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
 
         // TODO: protect from blank values
         // TODO: get rid of unnecessary values
         // TODO: describe in docs that they are updated in IDE configuration only after sync!
         testInstrumentationRunnerArguments(
             mapOf(
-                "planSlug" to "AndroidTestApp",
-                "unnecessaryUrl" to "https://localhost"
+                "planSlug" to "AndroidTestApp"
             )
         )
     }
@@ -80,7 +79,7 @@ dependencies(delegateClosureOf<DependencyHandler> {
     implementation(Dependencies.recyclerView)
     implementation(Dependencies.material)
 
-    androidTestImplementation("com.avito.android:test-inhouse-runner")
+    androidTestImplementation(project(":samples:test-app-core"))
     androidTestImplementation("com.avito.android:test-report")
     androidTestImplementation("com.avito.android:junit-utils")
     androidTestImplementation("com.avito.android:toast-rule")
@@ -94,7 +93,6 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestImplementation(Dependencies.androidTest.runner)
     androidTestUtil(Dependencies.androidTest.orchestrator)
 
-    androidTestImplementation(Dependencies.test.junit)
     androidTestImplementation(Dependencies.okhttp)
     androidTestImplementation(Dependencies.okhttpLogging)
     androidTestImplementation(Dependencies.funktionaleTry)

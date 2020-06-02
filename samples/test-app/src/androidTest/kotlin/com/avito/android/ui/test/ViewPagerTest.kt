@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import androidx.test.espresso.action.SwipeDirections
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.ViewPagerActivity
 import org.junit.Rule
 import org.junit.Test

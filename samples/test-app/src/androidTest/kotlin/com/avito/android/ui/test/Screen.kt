@@ -28,9 +28,6 @@ object Screen {
     val movingButton: MovingButtonScreen
         get() = MovingButtonScreen()
 
-    val appBarScreen: AppBarScreen
-        get() = AppBarScreen()
-
     val snackbarScreen: SnackbarScreen
         get() = SnackbarScreen()
 

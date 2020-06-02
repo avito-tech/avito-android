@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.LongRecyclerActivity
 import com.avito.android.ui.RecyclerAsLayoutActivity
 import org.hamcrest.Matchers.greaterThan

@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import androidx.test.espresso.NoMatchingViewException
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.PageObjectActivity
 import com.avito.android.ui.R
 import org.junit.Rule

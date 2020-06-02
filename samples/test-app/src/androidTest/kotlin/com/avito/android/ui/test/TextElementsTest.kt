@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import com.avito.android.test.UITestConfig.ClickType.EspressoClick
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.test.util.ChangeClickType
 import com.avito.android.test.util.ClicksTypeRule
 import com.avito.android.ui.TextElementActivity
