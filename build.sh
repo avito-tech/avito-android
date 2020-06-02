@@ -13,4 +13,4 @@ runInBuilder "set -e;
     ./gradlew help;
     ./gradlew help -PuseCompositeBuild=false;
     ./gradlew -p subprojects build ${GRADLE_ARGS};
-    ./gradlew :samples:test-app:instrumentationUi ${GRADLE_ARGS}"
+    ./gradlew :samples:test-app:instrumentationUi :samples:test-app-second:instrumentationUi ${GRADLE_ARGS}"
