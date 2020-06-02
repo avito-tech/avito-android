@@ -13,7 +13,6 @@ useradd --shell /bin/bash --uid "${USER_ID}" --gid "${USER_ID}" --comment "User 
 
 mkdir -p "${GRADLE_USER_HOME}"
 
-# были проблемы, когда создавал git при первом обращении
 SSH_DIR=/home/${BUILD_USER}/.ssh
 mkdir -p ${SSH_DIR}
 chown ${BUILD_USER} ${SSH_DIR}
@@ -24,6 +23,4 @@ find "${GRADLE_USER_HOME}" -maxdepth 3 -type d -not -user ${BUILD_USER} -print -
 # shellcheck disable=SC2145
 echo "Running command: $@"
 
-# Запускаем команды в докере от имении $BUILD_USER
-# Дополнитьно прокидываем PATH, т.к. не прокидывается через --preserve-env, как safe value
 sudo --set-home --preserve-env "PATH=$PATH" -u ${BUILD_USER} "$@"

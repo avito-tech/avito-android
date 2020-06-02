@@ -85,8 +85,6 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE \\
              -Pavito.bitbucket.enabled=true"
 
-# TODO: Use IMAGE_ANDROID_BUILDER image from public registry
-
 function runInBuilder() {
     COMMANDS=$@
 
@@ -99,6 +97,6 @@ function runInBuilder() {
     --env GRADLE_USER_HOME=/gradle \
     --env LOCAL_USER_ID="$USER_ID" \
     --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
-    dsvoronin/android-builder \
+    ${IMAGE_ANDROID_BUILDER} \
     bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }

@@ -8,7 +8,6 @@ source $(dirname $0)/_main.sh
 
 docs/check.sh
 
-# `tasks` triggers full tasks graph resolving, checking for possible misconfigurations
 runInBuilder "set -e;
     ./gradlew help;
     ./gradlew help -PuseCompositeBuild=false;
