@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+rootProject.name = "avito-android-infra"
+
 include(":samples:test-app")
 include(":samples:test-app-kaspresso")
 include(":samples:test-app-second")
