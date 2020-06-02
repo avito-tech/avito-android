@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import com.avito.android.test.UITestConfig
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
 import com.avito.android.ui.VisibilityActivity

@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
 import android.content.Intent
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.StatefulRecyclerViewAdapterActivity
 import org.junit.Rule
 import org.junit.Test

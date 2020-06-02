@@ -1,4 +1,4 @@
-package com.avito.android.ui.test
+package com.avito.android.test.app.core
 
 import android.app.Activity
 import androidx.test.rule.ActivityTestRule

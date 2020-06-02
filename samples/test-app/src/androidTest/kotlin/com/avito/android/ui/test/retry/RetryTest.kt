@@ -1,9 +1,9 @@
 package com.avito.android.ui.test.retry
 
 import androidx.test.espresso.EspressoException
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.RetryActivity
 import com.avito.android.ui.test.Screen
-import com.avito.android.ui.test.screenRule
 import org.junit.Rule
 import org.junit.Test
 import ru.avito.util.assertThrows

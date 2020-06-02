@@ -1,14 +1,6 @@
+
 import com.android.build.gradle.ProguardFiles.ProguardFile
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
-import com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
-import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.gradle.kubernetesCredentials
 
 plugins {
     id("com.android.application")
@@ -22,15 +14,14 @@ android {
     defaultConfig {
         versionName = "1.0"
         versionCode = 1
-        testInstrumentationRunner = "com.avito.android.ui.test.TestAppRunner"
+        testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
 
         // TODO: protect from blank values
         // TODO: get rid of unnecessary values
         // TODO: describe in docs that they are updated in IDE configuration only after sync!
         testInstrumentationRunnerArguments(
             mapOf(
-                "planSlug" to "AndroidTestApp",
-                "unnecessaryUrl" to "https://localhost"
+                "planSlug" to "AndroidTestApp"
             )
         )
     }
@@ -88,7 +79,7 @@ dependencies(delegateClosureOf<DependencyHandler> {
     implementation(Dependencies.recyclerView)
     implementation(Dependencies.material)
 
-    androidTestImplementation("com.avito.android:test-inhouse-runner")
+    androidTestImplementation(project(":samples:test-app-core"))
     androidTestImplementation("com.avito.android:test-report")
     androidTestImplementation("com.avito.android:junit-utils")
     androidTestImplementation("com.avito.android:toast-rule")
@@ -102,7 +93,6 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestImplementation(Dependencies.androidTest.runner)
     androidTestUtil(Dependencies.androidTest.orchestrator)
 
-    androidTestImplementation(Dependencies.test.junit)
     androidTestImplementation(Dependencies.okhttp)
     androidTestImplementation(Dependencies.okhttpLogging)
     androidTestImplementation(Dependencies.funktionaleTry)
@@ -112,152 +102,3 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestImplementation(Dependencies.test.truth)
     androidTestImplementation(Dependencies.test.okhttpMockWebServer)
 })
-
-extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
-
-    //todo make these params optional features in plugin
-    reportApiUrl = project.getOptionalStringProperty("avito.report.url") ?: "http://stub"
-    reportApiFallbackUrl = project.getOptionalStringProperty("avito.report.fallbackUrl") ?: "http://stub"
-    reportViewerUrl = project.getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
-    registry = project.getOptionalStringProperty("avito.registry", "registry") ?: "registry"
-    sentryDsn =
-        project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
-    slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
-    fileStorageUrl = project.getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
-    // deprecated since 2020.3.6
-    output = project.rootProject.file("outputs/${project.name}/instrumentation").path
-
-    logcatTags = setOf(
-        "UITestRunner:*",
-        "ActivityManager:*",
-        "ReportTestListener:*",
-        "StorageJsonTransport:*",
-        "TestReport:*",
-        "VideoCaptureListener:*",
-        "TestRunner:*",
-        "SystemDialogsManager:*",
-        "AndroidJUnitRunner:*",
-        "ito.android.de:*", //по этому тэгу система пишет логи об использовании hidden/restricted api https://developer.android.com/distribute/best-practices/develop/restrictions-non-sdk-interfaces
-        "*:E"
-    )
-
-    instrumentationParams = mapOf(
-        "videoRecording" to "failed",
-        "jobSlug" to "FunctionalTests"
-    )
-
-
-    val runAllFilterName = "runAll"
-    filters.register(runAllFilterName)
-
-    filters.register("dynamicFilter") {
-        val includeAnnotation: String? = project.getOptionalStringProperty("includeAnnotation", true)
-        if (includeAnnotation != null) {
-            fromSource.includeByAnnotations(setOf(includeAnnotation))
-        }
-        val includePrefix: String? = project.getOptionalStringProperty("includePrefix", true)
-        if (includePrefix != null) {
-            fromSource.includeByPrefixes(setOf(includePrefix))
-        }
-    }
-
-    val defaultFilter = "default"
-    val customFilter: String = project.getOptionalStringProperty("localFilter", defaultFilter)
-
-    configurationsContainer.register("Local") {
-        tryToReRunOnTargetBranch = false
-        reportSkippedTests = true
-        reportFlakyTests = false
-        filter = customFilter
-
-        targetsContainer.register("api27") {
-            deviceName = "API27"
-
-            scheduling = SchedulingConfiguration().apply {
-                quota = QuotaConfiguration().apply {
-                    retryCount = 1
-                    minimumSuccessCount = 1
-                }
-
-                reservation = TestsBasedDevicesReservationConfiguration().apply {
-                    device = LocalEmulator.device(27)
-                    maximum = 1
-                    minimum = 1
-                    testsPerEmulator = 1
-                }
-            }
-        }
-    }
-
-    val credentials = project.kubernetesCredentials
-    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
-        configurationsContainer.register("ui") {
-            tryToReRunOnTargetBranch = false
-            reportSkippedTests = true
-            reportFlakyTests = true
-            filter = customFilter
-
-            targetsContainer.register("api22") {
-                deviceName = "API22"
-
-                scheduling = SchedulingConfiguration().apply {
-                    quota = QuotaConfiguration().apply {
-                        retryCount = 1
-                        minimumSuccessCount = 1
-                    }
-
-                    reservation = TestsBasedDevicesReservationConfiguration().apply {
-                        device = Emulator22
-                        maximum = 50
-                        minimum = 2
-                        testsPerEmulator = 3
-                    }
-                }
-            }
-
-            targetsContainer.register("api27") {
-                deviceName = "API27"
-
-                scheduling = SchedulingConfiguration().apply {
-                    quota = QuotaConfiguration().apply {
-                        retryCount = 1
-                        minimumSuccessCount = 1
-                    }
-
-                    reservation = TestsBasedDevicesReservationConfiguration().apply {
-                        device = Emulator27
-                        maximum = 50
-                        minimum = 2
-                        testsPerEmulator = 3
-                    }
-                }
-            }
-        }
-
-        configurationsContainer.register("uiDebug") {
-            tryToReRunOnTargetBranch = false
-            reportSkippedTests = false
-            reportFlakyTests = false
-            enableDeviceDebug = true
-            filter = customFilter
-
-            targetsContainer.register("api27") {
-                deviceName = "API27"
-
-                scheduling = SchedulingConfiguration().apply {
-                    quota = QuotaConfiguration().apply {
-                        retryCount = 1
-                        minimumSuccessCount = 1
-                    }
-
-                    reservation = TestsBasedDevicesReservationConfiguration().apply {
-                        device = Emulator27
-                        maximum = 1
-                        minimum = 1
-                        testsPerEmulator = 1
-                    }
-                }
-            }
-        }
-    }
-}

@@ -93,8 +93,8 @@ sealed class TestRunEnvironment {
 }
 
 fun provideEnvironment(
-    apiUrlParameterKey: String,
-    mockWebServerUrl: String,
+    apiUrlParameterKey: String = "unnecessaryUrl",
+    mockWebServerUrl: String = "localhost",
     argumentsProvider: ArgsProvider
 ): TestRunEnvironment {
 
@@ -163,7 +163,7 @@ private fun provideApiUrl(
 ): HttpUrl {
     val host = (argumentsProvider.getOptionalArgument(HostAnnotationResolver.KEY)
         ?: argumentsProvider.getOptionalArgument(apiUrlParameterKey)
-        ?: error("Instrumentation argument $apiUrlParameterKey is required"))
+        ?: "https://localhost")
 
     return HttpUrl.get(host)
 }

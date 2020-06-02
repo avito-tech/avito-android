@@ -75,6 +75,7 @@ object Dependencies {
         val ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"
         val uiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
         val core = "androidx.test:core:${Versions.androidXTest}"
+        val rules = "androidx.test:rules:${Versions.androidXTest}"
         val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espresso}"
         val espressoWeb = "androidx.test.espresso:espresso-web:${Versions.espresso}"
         val espressoIntents = "androidx.test.espresso:espresso-intents:${Versions.espresso}"

@@ -2,6 +2,7 @@ package com.avito.android.ui.test
 
 import androidx.test.espresso.PerformException
 import com.avito.android.test.UITestConfig
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.test.util.ClicksTypeRule
 import com.avito.android.ui.ButtonsActivity
 import org.junit.Rule

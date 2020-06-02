@@ -2,6 +2,7 @@ package com.avito.android.ui.test
 
 import android.view.MenuItem
 import androidx.test.espresso.NoMatchingRootException
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.OverflowMenuActivity
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule

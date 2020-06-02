@@ -3,6 +3,7 @@ package com.avito.android.ui.test
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.R
 import com.avito.android.ui.RecyclerWithLongItemsActivity
 import org.hamcrest.Matchers.allOf

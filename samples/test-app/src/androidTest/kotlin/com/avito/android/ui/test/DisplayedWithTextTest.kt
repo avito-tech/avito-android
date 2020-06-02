@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.IdenticalCellsRecyclerActivity
 import org.hamcrest.Matchers
 import org.junit.Rule

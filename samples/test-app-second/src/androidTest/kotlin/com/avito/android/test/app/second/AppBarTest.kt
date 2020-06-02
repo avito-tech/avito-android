@@ -1,6 +1,7 @@
 package com.avito.android.ui.test
 
-import com.avito.android.ui.AppBarActivity
+import com.avito.android.test.app.core.screenRule
+import com.avito.android.test.app.second.AppBarActivity
 import org.junit.Rule
 import org.junit.Test
 

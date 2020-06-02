@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.RecyclerInRecyclerActivity
 import com.google.common.truth.ThrowableSubject
 import com.google.common.truth.Truth

@@ -2,6 +2,8 @@
 
 include(":samples:test-app")
 include(":samples:test-app-kaspresso")
+include(":samples:test-app-second")
+include(":samples:test-app-core")
 
 includeBuild("buildscript")
 

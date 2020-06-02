@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.SwipeRefreshActivity
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat

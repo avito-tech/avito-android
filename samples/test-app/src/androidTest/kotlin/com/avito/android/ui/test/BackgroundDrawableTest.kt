@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.DrawableActivity
 import com.avito.android.ui.R
 import org.junit.Rule
