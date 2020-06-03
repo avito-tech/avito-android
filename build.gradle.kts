@@ -151,8 +151,8 @@ subprojects {
                 reportFlakyTests = false
                 filter = customFilter
 
-                targetsContainer.register("api27") {
-                    deviceName = "API27"
+                targetsContainer.register("api28") {
+                    deviceName = "API28"
 
                     scheduling = com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration().apply {
                         quota = com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration().apply {
@@ -162,6 +162,8 @@ subprojects {
 
                         reservation = com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration()
                             .apply {
+                            // Replace 27 with 28 when 2020.6.1 will be released
+                            //device = com.avito.instrumentation.reservation.request.Device.LocalEmulator.device(28, "Android_SDK_built_for_x86_64")
                             device = com.avito.instrumentation.reservation.request.Device.LocalEmulator.device(27)
                             maximum = 1
                             minimum = 1
@@ -200,8 +202,8 @@ subprojects {
                         }
                     }
 
-                    targetsContainer.register("api27") {
-                        deviceName = "API27"
+                    targetsContainer.register("api28") {
+                        deviceName = "API28"
 
                         scheduling = com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration()
                             .apply {
@@ -213,7 +215,7 @@ subprojects {
 
                             reservation = com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration()
                                 .apply {
-                                device = com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+                                device = com.avito.instrumentation.reservation.request.Device.Emulator.Emulator28
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -229,8 +231,8 @@ subprojects {
                     enableDeviceDebug = true
                     filter = customFilter
 
-                    targetsContainer.register("api27") {
-                        deviceName = "API27"
+                    targetsContainer.register("api28") {
+                        deviceName = "API28"
 
                         scheduling = com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration()
                             .apply {
@@ -242,7 +244,7 @@ subprojects {
 
                             reservation = com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration()
                                 .apply {
-                                device = com.avito.instrumentation.reservation.request.Device.Emulator.Emulator27
+                                device = com.avito.instrumentation.reservation.request.Device.Emulator.Emulator28
                                 maximum = 1
                                 minimum = 1
                                 testsPerEmulator = 1
