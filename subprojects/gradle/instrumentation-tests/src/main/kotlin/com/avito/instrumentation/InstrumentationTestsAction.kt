@@ -34,6 +34,7 @@ import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.test.summary.GraphiteRunWriter
 import com.avito.test.summary.TestSummarySenderImplementation
+import com.avito.utils.BuildFailer
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.hasFileContent
 import com.avito.utils.logging.CILogger
@@ -152,6 +153,7 @@ class InstrumentationTestsAction(
             ) else logger.debug(message)
         }
     ),
+    buildFailer: BuildFailer = BuildFailer.RealFailer(),
     private val reportViewer: ReportViewer = ReportViewer.Impl(params.reportViewerUrl),
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
@@ -187,7 +189,8 @@ class InstrumentationTestsAction(
     private val actionFinalizer: InstrumentationActionFinalizer = InstrumentationActionFinalizer.Impl(
         logger = logger,
         jUnitReportWriter = JUnitReportWriter(reportViewer),
-        gson = gson
+        gson = gson,
+        buildFailer = buildFailer
     )
 
     private fun fromParams(params: Params): BuildOnTargetCommitForTest.Result {

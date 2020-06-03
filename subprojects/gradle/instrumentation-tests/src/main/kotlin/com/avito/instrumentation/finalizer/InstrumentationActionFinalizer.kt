@@ -23,7 +23,7 @@ internal interface InstrumentationActionFinalizer {
         private val logger: CILogger,
         private val gson: Gson,
         private val jUnitReportWriter: JUnitReportWriter,
-        private val buildFailer: BuildFailer = BuildFailer.RealFailer()
+        private val buildFailer: BuildFailer
     ) : InstrumentationActionFinalizer {
 
         override fun finalize(
