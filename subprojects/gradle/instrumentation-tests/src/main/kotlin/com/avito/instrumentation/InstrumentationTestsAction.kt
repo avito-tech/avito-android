@@ -134,14 +134,14 @@ class InstrumentationTestsAction(
     private val instrumentationTestsScheduler: TestsScheduler = InstrumentationTestsScheduler(
         logger = logger,
         testsRunner = testRunner,
-        reportsApi = reportsApi,
         params = params,
         reportCoordinates = reportCoordinates,
         targetReportCoordinates = targetReportCoordinates,
         testSuiteProvider = testSuiteProvider,
         sourceReport = sourceReport,
         targetReport = targetReport,
-        testSuiteLoader = testSuiteLoader
+        testSuiteLoader = testSuiteLoader,
+        gson = gson
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(
         config = params.statsdConfig,
