@@ -82,12 +82,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val sourceCommitHash = objects.property<String>()
 
     @Input
-    @Optional
-    val suppressFailure = objects.property<Boolean>()
+    val suppressFailure = objects.property<Boolean>().convention(false)
 
     @Input
-    @Optional
-    val suppressFlaky = objects.property<Boolean>()
+    val suppressFlaky = objects.property<Boolean>().convention(false)
 
     @Input
     val instrumentationConfiguration = objects.property<InstrumentationConfiguration.Data>()
