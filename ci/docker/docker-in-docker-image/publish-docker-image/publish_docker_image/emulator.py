@@ -23,7 +23,10 @@ def publish_emulator(directory, registry, image, versions):
         not_prepared_image = build_image(
             image=full_image,
             directory=directory,
-            build_args={'SDK_VERSION': version}
+            build_args={
+                'SDK_VERSION': version,
+                'EMULATOR_ARCH': "x86" if int(version) < 28 else "x86_64"
+            }
         )
         container = run_detached_privileged_container(
             image=not_prepared_image

@@ -12,7 +12,7 @@ sealed class Device : Serializable {
     data class LocalEmulator(
         override val name: String,
         override val api: Int,
-        override val model: String = "Android_SDK_built_for_x86"
+        override val model: String
     ) : Device() {
 
         override val description: String
@@ -20,8 +20,10 @@ sealed class Device : Serializable {
 
         companion object {
             @JvmStatic
-            fun device(api: Int): LocalEmulator = LocalEmulator(
+            @JvmOverloads
+            fun device(api: Int, model: String = "Android_SDK_built_for_x86"): LocalEmulator = LocalEmulator(
                 name = api.toString(),
+                model = model,
                 api = api
             )
         }
@@ -45,7 +47,7 @@ sealed class Device : Serializable {
             const val emulator_23 = "android/emulator-23:33578ce220"
             const val emulator_24 = "android/emulator-24:46b6a74473"
             const val emulator_27 = "android/emulator-27:1c36e79d44"
-            const val emulator_28 = "android/emulator-28:8a298b5bf6"
+            const val emulator_28 = "android/emulator-28:37ac40d0fa"
         }
 
         object Emulator22 : Emulator(
@@ -94,6 +96,7 @@ sealed class Device : Serializable {
         )
 
         object Emulator28 : Emulator(
+            model = "Android_SDK_built_for_x86_64",
             api = 28,
             image = Image.emulator_28,
             name = "phone_28",
