@@ -54,12 +54,12 @@ val apiRule = MockApiRule()
 @Before
 fun setUp() {
     apiRule.stub {
-        getFeatureItem.success()
+        request<FeatureItemRequest>().success()
     }
 }
 ```
 
-All stubs for API live in `AvitoRequestRegistry`
+All stubs are provided by `ApiRequestsModule`.
 
 #### Using a real network implementation
 
