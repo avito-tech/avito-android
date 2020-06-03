@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":common:logger"))
     implementation(project(":android-test:junit-utils"))
     api(project(":android-test:test-report"))
-    implementation(project(":android-test:test-annotations"))
+    implementation(project(":common:test-annotations"))
     implementation(project(":android-test:ui-testing-core"))
     implementation(project(":android-test:ui-testing-maps"))
     implementation(Dependencies.androidTest.runner)

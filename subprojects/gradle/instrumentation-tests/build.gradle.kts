@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":common:file-storage"))
     implementation(project(":common:sentry"))
     implementation(project(":common:logger"))
+    implementation(project(":common:test-annotations"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(Dependencies.dexlib)
     implementation(Dependencies.gson)

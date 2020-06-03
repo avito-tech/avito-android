@@ -20,7 +20,7 @@ if (useCompositeBuild.toBoolean()) {
             substitute(module("com.avito.android:junit-utils")).with(project(":android-test:junit-utils"))
             substitute(module("com.avito.android:toast-rule")).with(project(":android-test:toast-rule"))
             substitute(module("com.avito.android:test-inhouse-runner")).with(project(":android-test:test-inhouse-runner"))
-            substitute(module("com.avito.android:test-annotations")).with(project(":android-test:test-annotations"))
+            substitute(module("com.avito.android:test-annotations")).with(project(":common:test-annotations"))
             substitute(module("com.avito.android:ui-testing-core")).with(project(":android-test:ui-testing-core"))
             substitute(module("com.avito.android:report-viewer")).with(project(":common:report-viewer"))
             substitute(module("com.avito.android:file-storage")).with(project(":common:file-storage"))

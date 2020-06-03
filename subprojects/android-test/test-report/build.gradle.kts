@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":common:file-storage"))
     implementation(project(":common:report-viewer"))
     implementation(project(":common:logger"))
-    implementation(project(":android-test:test-annotations"))
+    implementation(project(":common:test-annotations"))
     implementation(project(":android-test:ui-testing-core"))
     implementation(project(":android-test:resource-manager-exceptions"))
     implementation(project(":android-test:websocket-reporter"))
