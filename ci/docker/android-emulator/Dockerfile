@@ -1,6 +1,7 @@
 FROM nvidia/opengl:1.0-glvnd-runtime-ubuntu18.04
 
 ARG SDK_VERSION
+ARG EMULATOR_ARCH
 
 ENV VERSION=${SDK_VERSION}
 
@@ -55,7 +56,7 @@ RUN mkdir $HOME/.android && \
         "platforms;android-28" \
         "emulator" \
         "tools" \
-        "system-images;android-${SDK_VERSION};google_apis;x86" && \
+        "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" && \
     chmod -R o+rwX ${ANDROID_HOME}
 
 RUN mkdir --parents $ANDROID_HOME/tools/keymaps && \
@@ -66,7 +67,7 @@ RUN mkdir --parents $ANDROID_HOME/tools/keymaps && \
 
 # ------------------ Emulators ------------------
 # Create emulator and increase internal storage
-RUN echo "no" | avdmanager create avd --name emulator_${SDK_VERSION} --package "system-images;android-${SDK_VERSION};google_apis;x86" --abi google_apis/x86
+RUN echo "no" | avdmanager create avd --name emulator_${SDK_VERSION} --package "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" --abi google_apis/${EMULATOR_ARCH}
 
 RUN mksdcard -l e 512M /sdcard.img
 
