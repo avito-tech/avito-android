@@ -30,7 +30,7 @@ val projectVersion: String by project
  * We use exact version to provide consistent environment and avoid build cache issues
  * (AGP tasks has artifacts from build tools)
  */
-val buildTools = "29.0.2"
+val buildTools = "29.0.3"
 val javaVersion = JavaVersion.VERSION_1_8
 val compileSdk = 29
 

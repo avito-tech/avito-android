@@ -1,4 +1,6 @@
-FROM ubuntu:19.04
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN \
   apt-get update && \
@@ -7,33 +9,16 @@ RUN \
     curl \
     git \
     gcc \
-    rpl \
     openssh-client \
-    build-essential \
     ca-certificates \
-    docker.io \
     acl \
     sudo \
-    ruby ruby-dev \
-    openjdk-8-jdk \
-    python3-pip && \
+    openjdk-8-jdk && \
   apt-get clean && \
   apt-get purge
 
-RUN pip3 install --upgrade \
-  requests \
-  fire \
-  slackweb \
-  pandas \
-  lxml \
-  statsd
-
-# Fastlane to deploy stuff
-RUN gem install fastlane --no-document -v 2.135.2
-
 ENV LANG C.UTF-8
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
-ENV PYTHONUNBUFFERED 1
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
@@ -64,7 +49,6 @@ RUN curl $ANDROID_SDK_URL --progress-bar --location --output $ANDROID_SDK_FILE_N
 
 # Update sdk and install components
 # --package_file is broken https://issuetracker.google.com/issues/66465833
-# Use multiple platforms while upgrading for backward compatibility in buildOnTargetCommit task
 RUN mkdir $HOME/.android && \
   # empty file to mitigate warning
   touch $HOME/.android/repositories.cfg && \
