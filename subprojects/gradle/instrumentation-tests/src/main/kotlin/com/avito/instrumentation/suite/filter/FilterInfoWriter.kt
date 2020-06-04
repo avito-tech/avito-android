@@ -4,7 +4,6 @@ import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.suite.filter.TestsFilter.Result.Excluded
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import java.io.File
 
 interface FilterInfoWriter {
@@ -14,7 +13,7 @@ interface FilterInfoWriter {
 
     class Impl(
         outputDir: File,
-        private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+        private val gson: Gson
     ) : FilterInfoWriter {
 
         private val filterDir: File = File(outputDir, "filter").apply { mkdir() }

@@ -9,15 +9,15 @@ import com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.check.AllChecks
-import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.utils.logging.CILogger
+import com.google.gson.Gson
 import org.funktionale.tries.Try
+import java.io.File
 
 class InstrumentationTestsScheduler(
     private val testsRunner: TestsRunner,
-    private val reportsApi: ReportsApi,
     private val logger: CILogger,
     private val params: InstrumentationTestsAction.Params,
     private val reportCoordinates: ReportCoordinates,
@@ -25,7 +25,8 @@ class InstrumentationTestsScheduler(
     private val sourceReport: Report,
     private val targetReport: Report,
     private val testSuiteProvider: TestSuiteProvider,
-    private val testSuiteLoader: TestSuiteLoader
+    private val testSuiteLoader: TestSuiteLoader,
+    private val gson: Gson
 ) : TestsScheduler {
 
     override fun schedule(
@@ -35,6 +36,9 @@ class InstrumentationTestsScheduler(
         val initialTestSuite = testSuiteProvider.getInitialTestSuite(
             tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
         )
+
+        writeInitialTestSuite(initialTestSuite)
+
         val initialTestsResult = testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
@@ -97,6 +101,10 @@ class InstrumentationTestsScheduler(
             testResultsAfterBranchReruns = finalSourceBranchState,
             flakyInfo = flakyTestInfo.getInfo()
         )
+    }
+
+    private fun writeInitialTestSuite(initialTestSuite: TestSuiteProvider.TestSuite) {
+        File(params.outputDir, "initial-suite.json").writeText(gson.toJson(initialTestSuite.testsToRun.map { it.test }))
     }
 
     /**

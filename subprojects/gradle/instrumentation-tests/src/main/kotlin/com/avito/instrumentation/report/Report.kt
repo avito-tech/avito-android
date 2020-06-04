@@ -12,7 +12,6 @@ import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.logging.CILogger
 import com.github.salomonbrys.kotson.jsonObject
-import okhttp3.HttpUrl
 import org.funktionale.tries.Try
 
 interface Report {
@@ -27,7 +26,7 @@ interface Report {
 
     fun sendCompletedTest(completedTest: AndroidTest.Completed)
 
-    fun finish(isFullTestSuite: Boolean, reportViewerUrl: HttpUrl)
+    fun finish(isFullTestSuite: Boolean)
 
     fun getTests(): Try<List<SimpleRunTest>>
 
@@ -136,7 +135,7 @@ interface Report {
             )
         }
 
-        override fun finish(isFullTestSuite: Boolean, reportViewerUrl: HttpUrl) {
+        override fun finish(isFullTestSuite: Boolean) {
             val resultsInReport: List<SimpleRunTest> =
                 reportsApi.getTestsForRunId(reportCoordinates = reportCoordinates).fold(
                     { logger.info("Getting test count in report before closing: ${it.size}"); it },
@@ -150,7 +149,7 @@ interface Report {
                     markReportAsTmsSourceOfTruth(reportId)
                 }
                 reportsApi.setFinished(reportCoordinates = reportCoordinates).fold(
-                    { logger.info("Test run finished $reportViewerUrl") },
+                    { logger.debug("Test run finished $reportCoordinates") },
                     { error -> logger.critical("Can't finish test run $reportCoordinates", error) }
                 )
             } else {

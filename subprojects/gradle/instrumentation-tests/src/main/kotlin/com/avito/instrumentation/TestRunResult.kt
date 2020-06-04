@@ -36,7 +36,7 @@ data class TestRunResult(
                     )
                 }
                 failedVerdict is Verdict.Failed && notReportedVerdict is Verdict.Failed -> {
-                    val message = "${failedVerdict.message}. ${notReportedVerdict.message}"
+                    val message = "${failedVerdict.message}. \n ${notReportedVerdict.message}"
                     Verdict.Failed(
                         message,
                         CompositeException(
@@ -54,26 +54,26 @@ data class TestRunResult(
     private fun getNotReportedVerdict() = when (notReported) {
         is HasNotReportedTestsDeterminer.Result.AllTestsReported -> Verdict.Success("All tests reported")
         is HasNotReportedTestsDeterminer.Result.DetermineError -> Verdict.Failed(
-            "Failed. Can't determine not reported tests",
+            "Failed. Couldn't determine not reported tests",
             notReported.exception
         )
         is HasNotReportedTestsDeterminer.Result.HasNotReportedTests -> Verdict.Failed(
-            "Failed. Has tests not reported while run",
-            IllegalStateException("Not reported tests: ${notReported.lostTests.joinToString { it.name.toString() }}")
+            "Failed. There are ${notReported.lostTests.size} not reported tests.",
+            IllegalStateException("Not reported tests:\n ${notReported.lostTests.joinToString { it.name.toString() }}")
         )
     }
 
     private fun getFailedVerdict() = when (failed) {
         is HasFailedTestDeterminer.Result.NoFailed -> Verdict.Success("No failed tests")
         is HasFailedTestDeterminer.Result.DetermineError -> Verdict.Failed(
-            "Failed on determine failed tests",
+            "Failed. Couldn't determine failed tests",
             failed.throwable
         )
         is HasFailedTestDeterminer.Result.Failed -> {
             if (failed.notSuppressedCount > 0) {
                 Verdict.Failed(
-                    "Failed. Unsuppressed failed tests:\n${failed.notSuppressed.lineByLine()}",
-                    IllegalStateException("Failed. There are unsuppressed failed tests")
+                    "Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests",
+                    IllegalStateException("Unsuppressed failed tests:\\n${failed.notSuppressed.lineByLine()}")
                 )
             } else {
                 Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")

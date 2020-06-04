@@ -9,7 +9,7 @@ data class TestName(val className: String, val methodName: String) {
 
     constructor(name: String) : this(name.substringBeforeLast(delimiter), name.substringAfterLast(delimiter))
 
-    val packageName: String by lazy { className.substringBeforeLast(delimiter) }
+    val packageName: String = className.substringBeforeLast(delimiter)
 
     val name = "$className.$methodName"
 
