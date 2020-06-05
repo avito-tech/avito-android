@@ -3,13 +3,13 @@ package com.avito.instrumentation.reservation.client.kubernetes
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.adb.RemoteDevice
-import com.avito.runner.service.worker.device.Serial
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.util.forEachAsync
 import com.avito.instrumentation.util.iterateInParallel
 import com.avito.instrumentation.util.waitForCondition
+import com.avito.runner.service.worker.device.Serial
 import com.avito.utils.logging.CILogger
 import com.fkorotkov.kubernetes.apps.metadata
 import com.fkorotkov.kubernetes.apps.newDeployment
@@ -38,7 +38,6 @@ import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
@@ -93,6 +92,11 @@ class KubernetesReservationClient(
                 )
                 is Device.LocalEmulator -> throw IllegalStateException(
                     "Local emulator ${reservation.device} is unsupported in kubernetes reservation"
+                )
+                is Device.CloudEmulator -> getCloudEmulatorDeployment(
+                    emulator = reservation.device,
+                    deploymentName = deploymentName,
+                    count = reservation.count
                 )
             }.create()
             logger.debug("Deployment created: $deploymentName")
@@ -278,6 +282,7 @@ class KubernetesReservationClient(
         }
     }
 
+    @Deprecated("remove after 2020.6.1")
     private fun getEmulatorDeployment(
         emulator: Device.Emulator,
         deploymentName: String,
@@ -301,6 +306,82 @@ class KubernetesReservationClient(
                         limits = mapOf(
                             "cpu" to Quantity(emulator.cpuCoresLimit),
                             "memory" to Quantity("3.5Gi")
+                        )
+                        requests = mapOf(
+                            "cpu" to Quantity(emulator.cpuCoresRequest)
+                        )
+                    }
+
+                    if (emulator.gpu) {
+                        volumeMounts = listOf(
+                            newVolumeMount {
+                                name = "x-11"
+                                mountPath = "/tmp/.X11-unix"
+                                readOnly = true
+                            }
+                        )
+
+                        env = listOf(
+                            newEnvVar {
+                                name = "GPU_ENABLED"
+                                value = "true"
+                            },
+                            newEnvVar {
+                                name = "SNAPSHOT_DISABLED"
+                                value = "true"
+                            }
+                        )
+                    }
+                }
+            )
+
+            if (emulator.gpu) {
+                volumes = listOf(
+                    newVolume {
+                        name = "x-11"
+
+                        hostPath = newHostPathVolumeSource {
+                            path = "/tmp/.X11-unix"
+                            type = "Directory"
+                        }
+                    }
+                )
+            }
+
+            tolerations = listOf(
+                newToleration {
+                    key = "dedicated"
+                    operator = "Equal"
+                    value = "android"
+                    effect = "NoSchedule"
+                }
+            )
+        }
+    }
+
+    private fun getCloudEmulatorDeployment(
+        emulator: Device.CloudEmulator,
+        deploymentName: String,
+        count: Int
+    ): Deployment {
+        return deviceDeployment(
+            deploymentMatchLabels = deviceMatchLabels(emulator),
+            deploymentName = deploymentName,
+            count = count
+        ) {
+            containers = listOf(
+                newContainer {
+                    name = emulator.name.kubernetesName()
+                    image = "$registry/${emulator.image}"
+
+                    securityContext {
+                        privileged = true
+                    }
+
+                    resources {
+                        limits = mapOf(
+                            "cpu" to Quantity(emulator.cpuCoresLimit),
+                            "memory" to Quantity(emulator.memoryLimit)
                         )
                         requests = mapOf(
                             "cpu" to Quantity(emulator.cpuCoresRequest)
