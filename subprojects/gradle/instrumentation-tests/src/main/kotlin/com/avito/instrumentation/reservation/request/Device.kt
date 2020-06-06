@@ -29,6 +29,20 @@ sealed class Device : Serializable {
         }
     }
 
+    class CloudEmulator(
+        override val name: String,
+        override val api: Int,
+        override val model: String,
+        val image: String,
+        val gpu: Boolean = false,
+        val cpuCoresLimit: String,
+        val cpuCoresRequest: String,
+        val memoryLimit: String = "3.5Gi"
+    ) : Device() {
+
+        override val description: String = "emulator-$name"
+    }
+
     sealed class Emulator(
         override val name: String,
         override val api: Int,
