@@ -9,7 +9,7 @@ import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfi
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.reservation.request.Device
-import com.avito.instrumentation.reservation.request.Device.Emulator
+import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.KubernetesCredentials.Service
@@ -211,7 +211,14 @@ subprojects {
                             }
 
                             reservation = TestsBasedDevicesReservationConfiguration().apply {
-                                device = Emulator.Emulator22
+                                device = CloudEmulator(
+                                    name = "api22",
+                                    api = 22,
+                                    model = "Android_SDK_built_for_x86",
+                                    image = "avitotech/android-emulator-22:24e6ed0ec4",
+                                    cpuCoresRequest = "1",
+                                    cpuCoresLimit = "1.3"
+                                )
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -229,7 +236,14 @@ subprojects {
                             }
 
                             reservation = TestsBasedDevicesReservationConfiguration().apply {
-                                device = Emulator.Emulator28
+                                device = CloudEmulator(
+                                    name = "api28",
+                                    api = 28,
+                                    model = "Android_SDK_built_for_x86_64",
+                                    image = "avitotech/android-emulator-28:a9b53d28be",
+                                    cpuCoresRequest = "1",
+                                    cpuCoresLimit = "1.3"
+                                )
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -255,7 +269,14 @@ subprojects {
                             }
 
                             reservation = TestsBasedDevicesReservationConfiguration().apply {
-                                device = Emulator.Emulator28
+                                device = CloudEmulator(
+                                    name = "api28",
+                                    api = 28,
+                                    model = "Android_SDK_built_for_x86_64",
+                                    image = "avitotech/android-emulator-28:a9b53d28be",
+                                    cpuCoresRequest = "1",
+                                    cpuCoresLimit = "1.3"
+                                )
                                 maximum = 1
                                 minimum = 1
                                 testsPerEmulator = 1
