@@ -66,6 +66,14 @@ subprojects {
         }
     }
 
+    plugins.withType<com.android.build.gradle.AppPlugin> {
+        configure<com.android.build.gradle.BaseExtension> {
+            packagingOptions {
+                exclude("META-INF/*.kotlin_module")
+            }
+        }
+    }
+
     plugins.matching { it is com.android.build.gradle.AppPlugin || it is com.android.build.gradle.LibraryPlugin }.whenPluginAdded {
         configure<com.android.build.gradle.BaseExtension> {
             sourceSets {
@@ -273,4 +281,3 @@ subprojects {
         }
     }
 }
-
