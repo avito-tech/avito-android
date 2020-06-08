@@ -12,6 +12,7 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
 import com.avito.report.model.ReportCoordinates
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 import java.util.UUID
 
@@ -165,7 +166,7 @@ private fun provideApiUrl(
         ?: argumentsProvider.getOptionalArgument(apiUrlParameterKey)
         ?: "https://localhost")
 
-    return HttpUrl.get(host)
+    return host.toHttpUrl()
 }
 
 private fun provideVideoRecordingFeature(argumentsProvider: ArgsProvider): VideoFeatureValue {

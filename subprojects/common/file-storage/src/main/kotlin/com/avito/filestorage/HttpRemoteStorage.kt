@@ -6,6 +6,7 @@ import com.avito.time.TimeProvider
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,7 +30,7 @@ class HttpRemoteStorage(
      */
     fun fullUrl(result: RemoteStorage.Result.Success): String = "$endpoint${result.url}"
 
-    fun isFileStorageHost(url: HttpUrl): Boolean = url.host() == endpoint.host()
+    fun isFileStorageHost(url: HttpUrl): Boolean = url.host == endpoint.host
 
     override fun upload(
         uploadRequest: RemoteStorage.Request,
@@ -45,10 +46,10 @@ class HttpRemoteStorage(
 
         when (uploadRequest) {
             is RemoteStorage.Request.FileRequest.Image -> storageClient.uploadPng(
-                content = RequestBody.create(uploadRequest.mediaType, uploadRequest.file)
+                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
             )
             is RemoteStorage.Request.FileRequest.Video -> storageClient.uploadMp4(
-                content = RequestBody.create(uploadRequest.mediaType, uploadRequest.file)
+                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
             )
             is RemoteStorage.Request.ContentRequest -> storageClient.upload(
                 extension = uploadRequest.extension,

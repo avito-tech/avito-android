@@ -6,7 +6,7 @@ import com.avito.utils.logging.CILogger
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.funktionale.tries.Try
 import retrofit2.Call
@@ -38,13 +38,13 @@ internal class QAppsUploadAction(
     private fun uploadRequest(): Call<Void> {
         logger.info(
             "qapps upload: " +
-                    "apk=${apk.path}, " +
-                    "branch=$branch, " +
-                    "version_name=$versionName, " +
-                    "version_code=$versionCode, " +
-                    "package_name=$packageName, " +
-                    "release_chain=$releaseChain, " +
-                    "comment=$comment"
+                "apk=${apk.path}, " +
+                "branch=$branch, " +
+                "version_name=$versionName, " +
+                "version_code=$versionCode, " +
+                "package_name=$packageName, " +
+                "release_chain=$releaseChain, " +
+                "comment=$comment"
         )
         return apiClient.upload(
             comment = MultipartBody.Part.createFormData("comment", comment),
@@ -56,7 +56,7 @@ internal class QAppsUploadAction(
             apk = MultipartBody.Part.createFormData(
                 "app",
                 apk.name,
-                RequestBody.create(null, apk)
+                apk.asRequestBody(null)
             )
         )
     }
@@ -94,9 +94,11 @@ internal class QAppsUploadAction(
                 }
             )
         )
-        .addInterceptor(HttpLoggingInterceptor { message ->
-            logger.info(message)
-        }.apply {
+        .addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+            override fun log(message: String) {
+                logger.info(message)
+            }
+        }).apply {
             level = HttpLoggingInterceptor.Level.BASIC
         })
         .build()

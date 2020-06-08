@@ -1,6 +1,7 @@
 package com.avito.buildontarget
 
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.Serializable
 
 sealed class GitAccess(open val url: String) : Serializable {
@@ -10,7 +11,7 @@ sealed class GitAccess(open val url: String) : Serializable {
         val user: String,
         val password: String
     ) : GitAccess(
-        HttpUrl.get(url)
+        url.toHttpUrl()
             .newBuilder()
             .username(user)
             .password(password)

@@ -150,13 +150,13 @@ class UploadCdBuildResultIntegrationTest {
         projectDir.file("/app/build/reports/mapping.txt").writeText("1")
 
         val cdBuildResultRequest = dispatcher.captureRequest {
-            method.contains("PUT")
+            method?.contains("PUT") ?: false
                 && path == "/$outputPath"
-                && getHeader("Content-Type").startsWith("application/json")
+                && getHeader("Content-Type")?.startsWith("application/json") ?: false
         }
 
         dispatcher.mockResponse(
-            requestMatcher = { path.contains("maven-metadata.xml") },
+            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
             response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
         )
 
@@ -234,7 +234,7 @@ class UploadCdBuildResultIntegrationTest {
         projectDir.file("/app/build/reports/mapping.txt").writeText("1")
 
         dispatcher.mockResponse(
-            requestMatcher = { path.contains("maven-metadata.xml") },
+            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
             response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
         )
 

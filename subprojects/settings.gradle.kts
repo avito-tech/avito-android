@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-rootProject.name = "avito-android"
+rootProject.name = "avito-android-subprojects"
 
 includeBuild("../buildscript")
 

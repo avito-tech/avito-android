@@ -9,13 +9,13 @@ import okhttp3.Response
 class StatsdHttpTracker(private val statsd: StatsDSender) : HttpTracker {
 
     override fun trackRequest(response: Response) {
-        val durationMs = response.receivedResponseAtMillis() - response.sentRequestAtMillis()
+        val durationMs = response.receivedResponseAtMillis - response.sentRequestAtMillis
 
-        val urlKey = convertUrlToMetricKey(response.request().url())
+        val urlKey = convertUrlToMetricKey(response.request.url)
 
         statsd.send(
             "test.http.${urlKey}",
-            CountMetric(response.code().toString())
+            CountMetric(response.code.toString())
         )
         statsd.send(
             "test.http.duration",
@@ -26,8 +26,8 @@ class StatsdHttpTracker(private val statsd: StatsDSender) : HttpTracker {
 
 internal fun convertUrlToMetricKey(url: HttpUrl): String {
     val parts = mutableListOf<String>()
-    parts.add(url.host().substringBefore('.'))
-    parts.addAll(url.pathSegments().filterNot { it.isDigitsOnly() })
+    parts.add(url.host.substringBefore('.'))
+    parts.addAll(url.pathSegments.filterNot { it.isDigitsOnly() })
     return parts.joinToString(separator = "_").replace(Regex("[^a-z_]+"), "_")
 }
 

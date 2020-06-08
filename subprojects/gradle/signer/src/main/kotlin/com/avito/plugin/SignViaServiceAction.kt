@@ -1,15 +1,11 @@
 package com.avito.plugin
 
-import com.avito.utils.ExistingFile
-import com.avito.utils.createOrClear
-import com.avito.utils.getStackTraceString
+import com.avito.utils.*
 import com.avito.utils.logging.CILogger
-import com.avito.utils.retry
-import com.avito.utils.toExisting
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.funktionale.tries.Try
@@ -58,9 +54,11 @@ internal class SignViaServiceAction(
         .writeTimeout(1, TimeUnit.MINUTES)
         .readTimeout(1, TimeUnit.MINUTES)
         .addInterceptor(
-            HttpLoggingInterceptor { message ->
-                ciLogger.info(message)
-            }.setLevel(HttpLoggingInterceptor.Level.BASIC)
+            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                override fun log(message: String) {
+                    ciLogger.info(message)
+                }
+            }).setLevel(HttpLoggingInterceptor.Level.BASIC)
         )
         .build()
 
@@ -74,7 +72,7 @@ internal class SignViaServiceAction(
                 MultipartBody.Part.createFormData(
                     "files",
                     unsignedFile.name,
-                    RequestBody.create(null, unsignedFile)
+                    unsignedFile.asRequestBody(null)
                 )
             )
             .build()
@@ -90,7 +88,7 @@ internal class SignViaServiceAction(
     private fun Response.process(outputFile: File) {
         if (this.isSuccessful) {
             outputFile.createOrClear()
-            this.body()
+            this.body
                 ?.byteStream()
                 ?.use { input ->
                     outputFile.outputStream().use { output ->
@@ -98,11 +96,11 @@ internal class SignViaServiceAction(
                     }
                 }
         } else {
-            val stringBody = this.body()
+            val stringBody = this.body
                 ?.string()
                 ?: "Cannot read the response body"
 
-            error("Sign service returned: ${this.code()}, body: $stringBody")
+            error("Sign service returned: ${this.code}, body: $stringBody")
         }
     }
 }

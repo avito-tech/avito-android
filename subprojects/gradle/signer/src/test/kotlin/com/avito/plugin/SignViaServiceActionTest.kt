@@ -50,11 +50,11 @@ class SignViaServiceActionTest {
 
     @Test
     fun `action failed - when http request failed all attempts`() {
-        server.setDispatcher(object : Dispatcher() {
+        server.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 return failedResponse
             }
-        })
+        }
 
         val result = signViaServiceAction.sign()
 

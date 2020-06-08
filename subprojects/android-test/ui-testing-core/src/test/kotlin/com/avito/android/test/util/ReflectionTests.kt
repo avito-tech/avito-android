@@ -1,7 +1,6 @@
 package com.avito.android.test.util
 
-import org.hamcrest.Matchers.equalTo
-import org.junit.Assert.assertThat
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class ReflectionTests {
@@ -15,6 +14,6 @@ class ReflectionTests {
 
         val holder = Holder()
         val value = holder.getFieldByReflection<String>("field")
-        assertThat(value, equalTo("Lorem Ipsum"))
+        assertThat(value).isEqualTo("Lorem Ipsum")
     }
 }

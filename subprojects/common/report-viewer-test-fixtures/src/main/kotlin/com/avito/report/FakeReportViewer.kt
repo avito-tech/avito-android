@@ -3,12 +3,13 @@ package com.avito.report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class FakeReportViewer(
     private val reportViewerUrl: String = "http://localhost/",
-    var byReportCoordinatesUrl: HttpUrl = HttpUrl.parse(reportViewerUrl)!!,
-    var byReportIdUrl: HttpUrl = HttpUrl.parse(reportViewerUrl)!!,
-    var byTestIdUrl: HttpUrl = HttpUrl.parse(reportViewerUrl)!!
+    var byReportCoordinatesUrl: HttpUrl = reportViewerUrl.toHttpUrlOrNull()!!,
+    var byReportIdUrl: HttpUrl = reportViewerUrl.toHttpUrlOrNull()!!,
+    var byTestIdUrl: HttpUrl = reportViewerUrl.toHttpUrlOrNull()!!
 ) : ReportViewer {
 
     override fun generateReportUrl(

@@ -1,8 +1,9 @@
 package com.avito.filestorage
 
 import com.avito.logger.Logger
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import java.io.File
 
@@ -15,7 +16,7 @@ interface RemoteStorage {
             logger: Logger,
             httpClient: OkHttpClient = OkHttpClient()
         ): RemoteStorage = HttpRemoteStorage(
-            endpoint = requireNotNull(HttpUrl.parse(endpoint)) ,
+            endpoint = requireNotNull(endpoint.toHttpUrl()) ,
             httpClient = httpClient,
             logger = logger
         )
@@ -36,12 +37,12 @@ interface RemoteStorage {
 
             data class Image(
                 override val file: File,
-                override val mediaType: MediaType = MediaType.parse("image/png")!!
+                override val mediaType: MediaType = "image/png".toMediaType()
             ) : FileRequest()
 
             data class Video(
                 override val file: File,
-                override val mediaType: MediaType = MediaType.parse("video/mp4")!!
+                override val mediaType: MediaType = "video/mp4".toMediaType()
             ) : FileRequest()
         }
 

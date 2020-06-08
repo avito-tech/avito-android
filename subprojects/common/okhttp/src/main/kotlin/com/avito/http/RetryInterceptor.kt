@@ -74,6 +74,6 @@ class RetryInterceptor constructor(
 
     private fun Response?.shouldTry(): Boolean = when {
         this == null -> true
-        else -> (request().method() in allowedMethods) && (code() in allowedCodes)
+        else -> (request.method in allowedMethods) && (code in allowedCodes)
     }
 }

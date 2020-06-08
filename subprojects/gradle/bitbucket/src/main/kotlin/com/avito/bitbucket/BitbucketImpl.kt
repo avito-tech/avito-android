@@ -4,6 +4,7 @@ import com.avito.http.BasicAuthenticator
 import com.avito.impact.changes.newChangesDetector
 import com.avito.utils.logging.CILogger
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import org.funktionale.tries.Try
 import retrofit2.Retrofit
@@ -23,7 +24,7 @@ class BitbucketImpl(
     private val insightAnnotationsServerLimitPerReport = 1000
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(HttpUrl.get(config.baseUrl))
+        .baseUrl(config.baseUrl.toHttpUrl())
         .client(
             OkHttpClient.Builder()
                 .authenticator(BasicAuthenticator(config.credentials.user, config.credentials.password))

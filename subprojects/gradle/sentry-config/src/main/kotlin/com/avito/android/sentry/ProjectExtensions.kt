@@ -11,6 +11,7 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.lazyProperty
 import io.sentry.SentryClient
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.gradle.api.Project
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
@@ -57,7 +58,7 @@ private fun from(project: Project): SentryConfig {
         if (!projectUrl.isNullOrBlank() && !buildId.isNullOrBlank()) {
             project.gradle.buildFinished {
 
-                val url = HttpUrl.parse(projectUrl)
+                val url = projectUrl.toHttpUrlOrNull()
                     ?.newBuilder()
                     ?.addQueryParameter("query", "$buildIdTag:$buildId")
                     ?.build()

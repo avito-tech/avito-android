@@ -7,6 +7,7 @@ import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.utils.logging.ciLogger
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -129,7 +130,7 @@ abstract class LintReportTask : DefaultTask() {
 
     private fun mergedReportLink(): HttpUrl {
         val teamcityUrl = project.getMandatoryStringProperty("teamcityUrl").removeSuffix("/")
-        return HttpUrl.get("${teamcityUrl}/repository/download/AvitoAndroid_Build/${buildId.get()}:id/${project.name}/build/reports/lint-results-release.html")
+        return "${teamcityUrl}/repository/download/AvitoAndroid_Build/${buildId.get()}:id/${project.name}/build/reports/lint-results-release.html".toHttpUrl()
     }
 
     private fun failIfNeeded(reports: List<LintReportModel>, report: File) {

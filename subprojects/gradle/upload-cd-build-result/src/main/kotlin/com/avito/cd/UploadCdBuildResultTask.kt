@@ -7,9 +7,11 @@ import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import com.google.gson.Gson
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -40,8 +42,10 @@ abstract class UploadCdBuildResultTask
             client = Providers.client(
                 user = user,
                 password = password,
-                logger = HttpLoggingInterceptor.Logger { message ->
-                    project.ciLogger.info(message)
+                logger = object: HttpLoggingInterceptor.Logger  {
+                    override fun log(message: String) {
+                        project.ciLogger.info(message)
+                    }
                 }
             ),
             suppressErrors = suppressErrors
@@ -94,12 +98,12 @@ internal class UploadCdBuildResultTaskAction(
         val cdBuildResultRaw = gson.toJson(result)
         val request = Request.Builder()
             .url(cdBuildConfig.outputDescriptor.path)
-            .put(RequestBody.create(MediaType.get("application/json"), cdBuildResultRaw))
+            .put(cdBuildResultRaw.toRequestBody("application/json".toMediaType()))
             .build()
 
         val response = client.newCall(request).execute()
         if (!suppressErrors && !response.isSuccessful) {
-            throw RuntimeException("Upload build result failed: ${response.code()} ${response.body().toString()}")
+            throw RuntimeException("Upload build result failed: ${response.code} ${response.body.toString()}")
         }
     }
 }

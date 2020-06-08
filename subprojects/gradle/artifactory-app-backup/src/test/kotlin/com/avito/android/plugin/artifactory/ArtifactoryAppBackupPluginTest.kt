@@ -61,16 +61,16 @@ internal class ArtifactoryAppBackupPluginTest {
         Files.createFile(Paths.get(projectDir.path, moduleName, artifactName))
 
         val dispatcher = MockDispatcher(defaultResponse = MockResponse().setResponseCode(200))
-            .also { mockWebServer.setDispatcher(it) }
+            .also { mockWebServer.dispatcher = it }
 
         dispatcher.mockResponse(
-            requestMatcher = { path.contains("maven-metadata.xml") },
+            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
             response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
         )
 
-        val rootPomRequest = dispatcher.captureRequest { path.endsWith(".pom") }
+        val rootPomRequest = dispatcher.captureRequest { path?.endsWith(".pom") ?: false }
         val putApkRequest =
-            dispatcher.captureRequest { path.endsWith(".apk") && method.toLowerCase() == "put" }
+            dispatcher.captureRequest { (path?.endsWith(".apk") ?: false) && method?.toLowerCase() == "put" }
 
         val result = ciRun(
             projectDir,
@@ -138,16 +138,20 @@ internal class ArtifactoryAppBackupPluginTest {
         }
 
         val dispatcher = MockDispatcher(defaultResponse = MockResponse().setResponseCode(200))
-            .also { mockWebServer.setDispatcher(it) }
+            .also { mockWebServer.dispatcher = it }
 
         dispatcher.mockResponse(
-            requestMatcher = { path.contains("maven-metadata.xml") },
+            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
             response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
         )
 
-        val rootPomRequest = dispatcher.captureRequest { path.endsWith(".pom") }
+        val rootPomRequest = dispatcher.captureRequest { path?.endsWith(".pom") ?: false }
         val putJsonFileRequests =
-            artifacts.map { (id, _) -> dispatcher.captureRequest { path.endsWith("$id.json") && method.toLowerCase() == "put" } }
+            artifacts.map { (id, _) ->
+                dispatcher.captureRequest {
+                    (path?.endsWith("$id.json") ?: false) && method?.toLowerCase() == "put"
+                }
+            }
 
         val result = ciRun(
             projectDir,
