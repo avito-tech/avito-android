@@ -30,12 +30,13 @@ internal class HttpClientProvider(private val logger: CILogger) {
             )
         )
         .addInterceptor(
-            HttpLoggingInterceptor {
-                if (verbose) {
-                    logger.debug(it)
+            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                override fun log(message: String) {
+                    if (verbose) {
+                        logger.debug(message)
+                    }
                 }
-            }
-                .setLevel(HttpLoggingInterceptor.Level.BASIC)
+            }).setLevel(HttpLoggingInterceptor.Level.BASIC)
         )
         .build()
 }

@@ -4,9 +4,11 @@ import com.avito.report.internal.model.RfcRpcRequest
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 internal class JsonRpcRequestProvider(
     private val host: String,
@@ -26,15 +28,15 @@ internal class JsonRpcRequestProvider(
                 .url(host.removeSuffix("/"))
                 .header("Accept", jsonMime)
                 .header("Content-Type", jsonMime)
-                .post(RequestBody.create(MediaType.get(jsonMime), gson.toJson(request)))
+                .post(gson.toJson(request).toRequestBody(jsonMime.toMediaType()))
                 .build()
         ).execute()
 
-        val responseBody = response.body()?.string()
+        val responseBody = response.body?.string()
         if (responseBody != null && response.isSuccessful) {
             return gson.fromJson(responseBody)
         } else {
-            throw Exception("Request failed: ${response.message()} ${responseBody}\n$request")
+            throw Exception("Request failed: ${response.message} ${responseBody}\n$request")
         }
     }
 }

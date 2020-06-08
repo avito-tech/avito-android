@@ -2,16 +2,10 @@ import com.avito.utils.logging.ciLogger
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -39,9 +33,11 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
             .client(
                 OkHttpClient.Builder().apply {
                     if (debug) {
-                        addInterceptor(HttpLoggingInterceptor { message ->
-                            project.ciLogger.info(message)
-                        }.apply {
+                        addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                            override fun log(message: String) {
+                                project.ciLogger.info(message)
+                            }
+                        }).apply {
                             level = HttpLoggingInterceptor.Level.BODY
                         })
                     }
@@ -60,7 +56,7 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
                 apk = MultipartBody.Part.createFormData(
                     "build_after",
                     apk.name,
-                    RequestBody.create(MultipartBody.FORM, apk)
+                    apk.asRequestBody(MultipartBody.FORM)
                 )
             ).execute()
 
@@ -69,7 +65,8 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
             //require(result.body()?.result == "ok") { "Service should return {result:ok} normally" }
 
             ciLogger.info(
-                "isSuccessful = ${result.isSuccessful}; body = ${result.body()?.result}; errorBody = ${result.errorBody()?.string()}"
+                "isSuccessful = ${result.isSuccessful}; body = ${result.body()?.result}; errorBody = ${result.errorBody()
+                    ?.string()}"
             )
         } catch (e: Throwable) {
             ciLogger.critical("Prosector upload failed", e)

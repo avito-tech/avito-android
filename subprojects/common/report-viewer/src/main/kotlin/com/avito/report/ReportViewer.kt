@@ -3,6 +3,7 @@ package com.avito.report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 interface ReportViewer {
 
@@ -36,7 +37,7 @@ interface ReportViewer {
                 "$host/report/${reportCoordinates.planSlug}/${reportCoordinates.jobSlug}/${reportCoordinates.runId}" +
                     reportViewerQuery.createQuery(onlyFailures, team)
 
-            return requireNotNull(HttpUrl.parse(url)) { "Invalid url: $url" }
+            return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
         }
 
         override fun generateReportUrl(
@@ -48,12 +49,12 @@ interface ReportViewer {
                 "$host/run/$reportId" +
                     reportViewerQuery.createQuery(onlyFailures, team)
 
-            return requireNotNull(HttpUrl.parse(url)) { "Invalid url: $url" }
+            return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
         }
 
         override fun generateSingleTestRunUrl(testRunId: String): HttpUrl {
             val url = "$host/test/$testRunId"
-            return requireNotNull(HttpUrl.parse(url)) { "Invalid url: $url" }
+            return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
         }
     }
 }

@@ -5,5 +5,5 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 
 open class ConstantResponseDispatcher(private val response: MockResponse) : Dispatcher() {
-    override fun dispatch(request: RecordedRequest?): MockResponse = response
+    override fun dispatch(request: RecordedRequest): MockResponse = response
 }

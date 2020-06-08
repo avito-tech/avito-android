@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 internal class ReportsFetchApiImplTest {
 
     private val mockDispatcher = MockDispatcher()
-    private val mockWebServer = MockWebServer().apply { setDispatcher(mockDispatcher) }
+    private val mockWebServer = MockWebServer().apply { dispatcher = mockDispatcher }
 
     private val fetchApi: ReportsFetchApi = ReportsApi.create(
         host = mockWebServer.url("/").toString(),

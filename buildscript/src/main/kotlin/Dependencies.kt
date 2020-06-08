@@ -1,9 +1,9 @@
 object Dependencies {
 
     object Versions {
-        val okhttp = "3.14.6"
+        val okhttp = "4.7.2"
         val sentry = "1.7.23"
-        val retrofit = "2.6.2"
+        val retrofit = "2.9.0"
         val androidXTest = "1.2.0"
         val junit5 = "5.6.0"
         val junit5Platform = "1.6.0"

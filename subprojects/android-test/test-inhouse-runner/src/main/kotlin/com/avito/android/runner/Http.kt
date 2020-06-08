@@ -24,10 +24,13 @@ internal fun createReportHttpClient(): OkHttpClient {
                 Log.v("ReportViewerHttp", msg, error)
             }
         })
-    val httpLoggingInterceptor = HttpLoggingInterceptor { Log.v("ReportViewerHttp", it) }
-        .apply {
-            level = HttpLoggingInterceptor.Level.BASIC
+    val httpLoggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+        override fun log(message: String) {
+            Log.v("ReportViewerHttp", message)
         }
+    }).apply {
+        level = HttpLoggingInterceptor.Level.BASIC
+    }
 
     return OkHttpClient.Builder()
         .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)

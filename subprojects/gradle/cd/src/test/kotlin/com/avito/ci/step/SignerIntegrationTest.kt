@@ -79,11 +79,11 @@ class SignerIntegrationTest {
             git("commit -m 'new'")
         }
 
-        webServer.setDispatcher(object : Dispatcher() {
+        webServer.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 return MockResponse().setResponseCode(500)
             }
-        })
+        }
 
         val result = fullCheck(expectFailure = true)
         result.assertThat().run {

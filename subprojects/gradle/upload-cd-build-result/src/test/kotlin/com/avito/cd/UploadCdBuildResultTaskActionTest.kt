@@ -45,9 +45,9 @@ class UploadCdBuildResultTaskActionTest {
         dispatcher.mockResponse({ true }, MockResponse().setResponseCode(200))
 
         val sendOutputRequest = dispatcher.captureRequest {
-            method.contains("PUT")
+            method?.contains("PUT") ?: false
                 && path == "/$outputPath"
-                && getHeader("Content-Type").startsWith("application/json")
+                && getHeader("Content-Type")?.startsWith("application/json") ?: false
         }
 
         action(suppressErrors = false).send(

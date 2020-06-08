@@ -41,6 +41,7 @@ import com.avito.report.model.Kind
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
@@ -128,7 +129,7 @@ abstract class InHouseInstrumentationTestRunner :
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
             reportProvider = this,
-            remoteFileStorageEndpointHost = HttpUrl.get(runEnvironment.fileStorageUrl).host()
+            remoteFileStorageEndpointHost = runEnvironment.fileStorageUrl.toHttpUrl().host
         )
     }
 

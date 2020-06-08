@@ -8,11 +8,11 @@ object ResponseDataExtractor {
 
     fun extract(response: Response): RequestResponseData {
         return RequestResponseData(
-            requestUrl = response.request().url().toString(),
-            host = response.request().url().host(),
-            requestBody = response.request().body()?.toPlainText(),
-            responseCode = response.code(),
-            responseBody = response.body()?.extractBody()
+            requestUrl = response.request.url.toString(),
+            host = response.request.url.host,
+            requestBody = response.request.body?.toPlainText(),
+            responseCode = response.code,
+            responseBody = response.body?.extractBody()
         )
     }
 

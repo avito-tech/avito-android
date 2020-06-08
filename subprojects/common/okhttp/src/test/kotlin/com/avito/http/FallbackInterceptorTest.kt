@@ -23,7 +23,7 @@ internal class FallbackInterceptorTest {
                     doFallbackOnTheseCodes = listOf(doFallbackOnThisResponseCode),
                     fallbackRequest = { request ->
                         request.newBuilder()
-                            .url(request.url().newBuilder().addPathSegment("fallback").build())
+                            .url(request.url.newBuilder().addPathSegment("fallback").build())
                             .addHeader("X-FALLBACK", "true")
                             .build()
                     })
@@ -56,7 +56,7 @@ internal class FallbackInterceptorTest {
             response = MockResponse().setResponseCode(200)
         )
 
-        val fallbackRequest = mockDispatcher.captureRequest { path.contains("fallback") }
+        val fallbackRequest = mockDispatcher.captureRequest { path?.contains("fallback") ?: false }
 
         val result = api.request().execute()
 
@@ -78,7 +78,7 @@ internal class FallbackInterceptorTest {
             response = MockResponse().setResponseCode(doFallbackOnThisResponseCode)
         )
 
-        val fallbackRequest = mockDispatcher.captureRequest { path.contains("fallback") }
+        val fallbackRequest = mockDispatcher.captureRequest { path?.contains("fallback") ?: false }
 
         val result = api.request().execute()
 

@@ -1,6 +1,7 @@
 package com.avito.slack.model
 
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 /**
  * @param id он же timestamp, он же ts https://github.com/slackhq/slack-api-docs/issues/7
@@ -21,7 +22,7 @@ data class SlackMessage(
             if (threadId != null) {
                 source.append("?thread_ts=$threadId&cid=$channelId")
             }
-            return HttpUrl.get(source.toString())
+            return source.toString().toHttpUrl()
         }
 
     companion object

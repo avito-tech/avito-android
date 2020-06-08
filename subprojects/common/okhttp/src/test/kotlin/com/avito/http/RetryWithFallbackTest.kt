@@ -21,7 +21,7 @@ class RetryWithFallbackTest {
         )
 
         mockDispatcher.mockResponse(
-            requestMatcher = { path.contains("fallback") },
+            requestMatcher = { path?.contains("fallback") ?: false },
             response = MockResponse().setBody("ok").setResponseCode(200)
         )
 
@@ -52,7 +52,7 @@ class RetryWithFallbackTest {
                     fallbackRequest = { request ->
                         request.newBuilder()
                             .url(
-                                request.url()
+                                request.url
                                     .newBuilder()
                                     .encodedPath("/fallback")
                                     .build()

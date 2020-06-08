@@ -4,14 +4,8 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.http.isPlaintext
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.GsonBuilder
-import okhttp3.Headers
-import okhttp3.HttpUrl
-import okhttp3.Interceptor
-import okhttp3.MediaType
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.ResponseBody
-import okhttp3.internal.http.HttpHeaders
+import okhttp3.*
+import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
@@ -35,14 +29,14 @@ class ReportViewerHttpInterceptor(
         val request = chain.request()
 
         // чтобы не улететь в stackoverflow
-        if (RemoteStorage.isFileStorageHost(request.url())) return chain.proceed(request)
+        if (RemoteStorage.isFileStorageHost(request.url)) return chain.proceed(request)
 
         val reportViewerMessage = StringBuilder()
         reportViewerMessage.appendln(request.printUrl())
         reportViewerMessage.appendln(request.printHeaders())
         reportViewerMessage.appendln(request.printBody())
 
-        val label = "HTTP ${request.method()}: ${request.url().toString().split("?")[0]}"
+        val label = "HTTP ${request.method}: ${request.url.toString().split("?")[0]}"
 
         val startNs = System.nanoTime()
         val response: Response
@@ -60,15 +54,15 @@ class ReportViewerHttpInterceptor(
         reportViewerMessage.appendln(response.printHeaders())
         reportViewerMessage.appendln(response.printBody())
 
-        report.addHtml(label + "    ${response.code()}", reportViewerMessage.toString())
+        report.addHtml(label + "    ${response.code}", reportViewerMessage.toString())
 
         return response
     }
 
     private fun Request.printUrl(): String {
         val result = StringBuffer()
-        val requestBody = body()
-        result.append("--> ${method()} ${url()}")
+        result.append("--> $method $url")
+        val requestBody = body
         if (requestBody != null) {
             result.append("(${requestBody.contentLength()}-byte body)")
         }
@@ -78,7 +72,7 @@ class ReportViewerHttpInterceptor(
     private fun Request.printHeaders(): String {
         val result = StringBuilder()
 
-        val requestBody = body()
+        val requestBody = body
         // Request body headers are only present when installed as a network interceptor. Force
         // them to be included (when available) so there values are known.
         if (requestBody != null) {
@@ -91,8 +85,8 @@ class ReportViewerHttpInterceptor(
         }
 
         var requestHeadersIndex = 0
-        val headers = headers()
-        val requestHeadersCount = headers.size()
+        val headers = headers
+        val requestHeadersCount = headers.size
         while (requestHeadersIndex < requestHeadersCount) {
             val name = headers.name(requestHeadersIndex)
             // Skip headers from the request body as they are explicitly logged above.
@@ -110,11 +104,11 @@ class ReportViewerHttpInterceptor(
 
     private fun Request.printBody(): String {
         val result = StringBuilder()
-        val requestBody = body()
+        val requestBody = body
         if (requestBody == null) {
-            result.appendln("--> END ${method()}")
-        } else if (bodyEncoded(headers())) {
-            result.appendln("--> END ${method()} (encoded body omitted)")
+            result.appendln("--> END $method")
+        } else if (bodyEncoded(headers)) {
+            result.appendln("--> END $method (encoded body omitted)")
         } else {
             val buffer = Buffer()
             requestBody.writeTo(buffer)
@@ -123,24 +117,24 @@ class ReportViewerHttpInterceptor(
 
             if (isPlaintext(buffer)) {
                 result.appendln(tryPrettify(buffer.readString(charset)))
-                result.appendln("--> END ${method()} (${requestBody.contentLength()}-byte body)")
+                result.appendln("--> END $method (${requestBody.contentLength()}-byte body)")
             } else {
-                result.appendln("--> END ${method()} (binary ${requestBody.contentLength()}-byte body omitted)")
+                result.appendln("--> END $method (binary ${requestBody.contentLength()}-byte body omitted)")
             }
         }
         return result.toString()
     }
 
     private fun Response.printUrl(tookMs: Long): String {
-        val message = if (message().isEmpty()) "" else ' ' + message()
-        return "<-- ${code()}$message ${request().url()} (${tookMs}ms)"
+        val message = if (message.isEmpty()) "" else " $message"
+        return "<-- $code$message ${request.url} (${tookMs}ms)"
     }
 
     private fun Response.printHeaders(): String {
         val result = StringBuilder()
-        val headers = headers()
+        val headers = headers
         var i = 0
-        val count = headers.size()
+        val count = headers.size
         while (i < count) {
             result.appendln("${headers.name(i)}: ${headers.value(i)}")
             i++
@@ -150,12 +144,12 @@ class ReportViewerHttpInterceptor(
 
     private fun Response.printBody(): String {
         val result = StringBuilder()
-        val responseBody: ResponseBody? = body()
+        val responseBody: ResponseBody? = body
         val contentLength = responseBody!!.contentLength()
 
-        if (!HttpHeaders.hasBody(this)) {
+        if (!promisesBody()) {
             result.appendln("<-- END HTTP")
-        } else if (bodyEncoded(headers())) {
+        } else if (bodyEncoded(headers)) {
             result.appendln("<-- END HTTP (encoded body omitted)")
         } else {
             val source = responseBody.source()
@@ -187,7 +181,7 @@ class ReportViewerHttpInterceptor(
     }
 
     private fun RemoteStorage.Companion.isFileStorageHost(url: HttpUrl): Boolean =
-        url.host() == remoteFileStorageEndpointHost
+        url.host == remoteFileStorageEndpointHost
 
     private fun tryPrettify(source: String): String {
         return try {
@@ -198,7 +192,7 @@ class ReportViewerHttpInterceptor(
     }
 
     private fun bodyEncoded(headers: Headers): Boolean {
-        val contentEncoding = headers.get("Content-Encoding")
+        val contentEncoding = headers["Content-Encoding"]
         return contentEncoding != null && !contentEncoding.equals("identity", ignoreCase = true)
     }
 }

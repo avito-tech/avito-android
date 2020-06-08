@@ -41,7 +41,7 @@ class FallbackInterceptor(
         return when {
             response == null -> true
             response.isSuccessful -> false
-            else -> response.code() in doFallbackOnTheseCodes
+            else -> response.code in doFallbackOnTheseCodes
         }
     }
 

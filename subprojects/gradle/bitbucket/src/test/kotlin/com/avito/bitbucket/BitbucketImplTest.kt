@@ -8,7 +8,7 @@ import com.avito.test.gradle.getCommitHash
 import com.avito.test.gradle.git
 import com.avito.test.http.MockDispatcher
 import com.avito.utils.logging.CILogger
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
@@ -21,7 +21,7 @@ internal class BitbucketImplTest {
     private val mockWebServer = MockWebServer()
 
     private val dispatcher = MockDispatcher(defaultResponse = MockResponse().setResponseCode(200))
-        .also { dispatcher -> mockWebServer.setDispatcher(dispatcher) }
+        .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
 
     @Test
     fun addInsights(@TempDir tempDir: File) {
@@ -45,12 +45,12 @@ internal class BitbucketImplTest {
             val sourceHash = getCommitHash()
 
             dispatcher.mockResponse(
-                { path.contains("rest/insights/1.0") && method == "PUT" },
+                { (path?.contains("rest/insights/1.0") ?: false) && method == "PUT" },
                 MockResponse().setBody("""{ "createdDate": 12345 , "result": "PASS"  }""")
             )
 
             val addAnnotationsRequest =
-                dispatcher.captureRequest { path.contains("rest/insights/1.0") && method == "POST" }
+                dispatcher.captureRequest { (path?.contains("rest/insights/1.0") ?: false) && method == "POST" }
 
             createBitbucket().addInsights(
                 rootDir = tempDir,
@@ -58,7 +58,7 @@ internal class BitbucketImplTest {
                 targetCommitHash = targetCommit,
                 key = "SomeKey",
                 title = "SomeTitle",
-                link = HttpUrl.get("http://localhost"),
+                link = "http://localhost".toHttpUrl(),
                 issues = listOf(
                     Bitbucket.InsightIssue(
                         message = "Unsafe use of nullable receiver of type URL?",

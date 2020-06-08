@@ -1,7 +1,8 @@
 package com.avito.filestorage
 
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -10,7 +11,7 @@ import java.lang.reflect.Type
 internal class ToStringConverterFactory : Converter.Factory() {
 
     private val uriRegex = Regex("uri\":.*\"(.+)\"")
-    private val mediaType = MediaType.parse("text/html")
+    private val mediaType = "text/html".toMediaType()
 
     override fun responseBodyConverter(
         type: Type?,
@@ -29,7 +30,7 @@ internal class ToStringConverterFactory : Converter.Factory() {
         retrofit: Retrofit?
     ): Converter<*, RequestBody>? {
         return if (String::class.java == type) {
-            Converter<String, RequestBody> { value -> RequestBody.create(mediaType, value) }
+            Converter<String, RequestBody> { value -> value.toRequestBody(mediaType) }
         } else null
     }
 }

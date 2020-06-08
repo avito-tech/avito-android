@@ -23,7 +23,11 @@ internal fun getHttpClient(verbose: Boolean, fallbackUrl: String, logger: Logger
         )
         .apply {
             if (verbose) {
-                addInterceptor(HttpLoggingInterceptor { logger.debug(it) }.setLevel(Level.BODY))
+                addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                    override fun log(message: String) {
+                        logger.debug(message)
+                    }
+                }).setLevel(Level.BODY))
             }
         }
         .build()
