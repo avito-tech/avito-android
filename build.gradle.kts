@@ -195,6 +195,27 @@ subprojects {
 
             val credentials = project.kubernetesCredentials
             if (credentials is Service || credentials is KubernetesCredentials.Config) {
+
+                val registry = project.providers.environmentVariable("DOCKER_REGISTRY").orNull
+
+                val emulator22 = CloudEmulator(
+                    name = "api22",
+                    api = 22,
+                    model = "Android_SDK_built_for_x86",
+                    image = "${emulatorImage(registry, 22)}:24e6ed0ec4",
+                    cpuCoresRequest = "1",
+                    cpuCoresLimit = "1.3"
+                )
+
+                val emulator28 = CloudEmulator(
+                    name = "api28",
+                    api = 28,
+                    model = "Android_SDK_built_for_x86_64",
+                    image = "${emulatorImage(registry, 28)}:a9b53d28be",
+                    cpuCoresRequest = "1",
+                    cpuCoresLimit = "1.3"
+                )
+
                 configurationsContainer.register("ui") {
                     tryToReRunOnTargetBranch = false
                     reportSkippedTests = true
@@ -211,14 +232,7 @@ subprojects {
                             }
 
                             reservation = TestsBasedDevicesReservationConfiguration().apply {
-                                device = CloudEmulator(
-                                    name = "api22",
-                                    api = 22,
-                                    model = "Android_SDK_built_for_x86",
-                                    image = "avitotech/android-emulator-22:24e6ed0ec4",
-                                    cpuCoresRequest = "1",
-                                    cpuCoresLimit = "1.3"
-                                )
+                                device = emulator22
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -236,14 +250,7 @@ subprojects {
                             }
 
                             reservation = TestsBasedDevicesReservationConfiguration().apply {
-                                device = CloudEmulator(
-                                    name = "api28",
-                                    api = 28,
-                                    model = "Android_SDK_built_for_x86_64",
-                                    image = "avitotech/android-emulator-28:a9b53d28be",
-                                    cpuCoresRequest = "1",
-                                    cpuCoresLimit = "1.3"
-                                )
+                                device = emulator28
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -269,14 +276,7 @@ subprojects {
                             }
 
                             reservation = TestsBasedDevicesReservationConfiguration().apply {
-                                device = CloudEmulator(
-                                    name = "api28",
-                                    api = 28,
-                                    model = "Android_SDK_built_for_x86_64",
-                                    image = "avitotech/android-emulator-28:a9b53d28be",
-                                    cpuCoresRequest = "1",
-                                    cpuCoresLimit = "1.3"
-                                )
+                                device = emulator28
                                 maximum = 1
                                 minimum = 1
                                 testsPerEmulator = 1
@@ -303,5 +303,13 @@ subprojects {
                 "implementation"(Dependencies.kotlinStdlib)
             }
         }
+    }
+}
+
+fun emulatorImage(registry: String?, api: Int): String {
+    return if (registry.isNullOrBlank()) {
+        "avitotech/android-emulator-$api"
+    } else {
+        "$registry/android/emulator-$api"
     }
 }
