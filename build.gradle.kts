@@ -310,6 +310,7 @@ fun emulatorImage(registry: String?, api: Int): String {
     return if (registry.isNullOrBlank()) {
         "avitotech/android-emulator-$api"
     } else {
-        "$registry/android/emulator-$api"
+        //todo registry value not respected here, it's unclear how its used (in fact concatenated in runner)
+        "android/emulator-$api"
     }
 }
