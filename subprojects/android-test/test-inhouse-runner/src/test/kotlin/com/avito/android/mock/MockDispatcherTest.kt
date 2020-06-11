@@ -15,7 +15,7 @@ class MockDispatcherTest {
 
     @Test
     fun `dispatcher - dispatch last matching response - if multiple registered conditions matches`() {
-        val sameRequest: RequestData.() -> Boolean = { path?.contains("xxx") ?: false }
+        val sameRequest: RequestData.() -> Boolean = { path.contains("xxx") }
 
         dispatcher.mocks.add(Mock(sameRequest, MockResponse().setBody("First registered")))
         dispatcher.mocks.add(Mock(sameRequest, MockResponse().setBody("Second registered")))
@@ -29,13 +29,13 @@ class MockDispatcherTest {
     fun `dispatcher - find matching request - if multiple registered request has same path but different body`() {
         dispatcher.mocks.add(
             Mock(
-                { (path?.contains("xxx") ?: false) && body.contains("param1485") },
+                { path.contains("xxx") && body.contains("param1485") },
                 MockResponse().setBody("First registered")
             )
         )
         dispatcher.mocks.add(
             Mock(
-                { (path?.contains("xxx") ?: false) && body.contains("category89") },
+                { path.contains("xxx") && body.contains("category89") },
                 MockResponse().setBody("Second registered")
             )
         )
