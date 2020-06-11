@@ -12,7 +12,7 @@ fun SimpleRunTest.Companion.createStubInstance(
     tcBuild: String = "12345",
     groupList: List<String> = emptyList(),
     status: Status = Status.Success,
-    stability: Stability = Stability.Stable,
+    stability: Stability = Stability.Stable(1, 1),
     skipReason: String? = null,
     isFinished: Boolean = false,
     lastAttemptDurationInSeconds: Int = 123,

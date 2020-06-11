@@ -29,6 +29,10 @@ import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import org.funktionale.tries.Try
 
+/**
+ * TODO
+ * Move test status logic to [com.avito.instrumentation.report.TestStatusFinalizer]
+ */
 internal class ReportsFetchApiImpl(
     private val requestProvider: JsonRpcRequestProvider,
     private val gson: Gson,
@@ -259,7 +263,7 @@ internal class ReportsFetchApiImpl(
         return when {
             reportModel.attemptsCount == null || reportModel.successCount == null -> {
                 logger.debug("should not be here $reportModel")
-                Stability.Stable
+                Stability.Stable(0, 0)
             }
             reportModel.attemptsCount < 1 -> {
                 logger.debug("test without attempts? $reportModel")
@@ -267,10 +271,10 @@ internal class ReportsFetchApiImpl(
             }
             reportModel.successCount > reportModel.attemptsCount -> {
                 logger.debug("success count > attempts count?? $reportModel")
-                Stability.Stable // на самом деле не совсем, репортим эту ситуацию как невероятную
+                Stability.Stable(reportModel.attemptsCount, reportModel.successCount) // на самом деле не совсем, репортим эту ситуацию как невероятную
             }
             reportModel.successCount == 0 -> Stability.Failing(reportModel.attemptsCount)
-            reportModel.successCount == reportModel.attemptsCount -> Stability.Stable
+            reportModel.successCount == reportModel.attemptsCount -> Stability.Stable(reportModel.attemptsCount, reportModel.successCount)
             // FIXME тут может быть ошибка, т.к. attempt может быть skipped или какой-то другой не-success статус
             reportModel.successCount < reportModel.attemptsCount -> Stability.Flaky(
                 reportModel.attemptsCount,
@@ -278,7 +282,7 @@ internal class ReportsFetchApiImpl(
             )
             else -> {
                 logger.debug("should not be here $reportModel")
-                Stability.Stable
+                Stability.Unknown(reportModel.attemptsCount, reportModel.successCount)
             }
         }
     }

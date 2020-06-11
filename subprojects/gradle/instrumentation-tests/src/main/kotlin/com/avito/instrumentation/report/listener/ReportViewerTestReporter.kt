@@ -25,6 +25,7 @@ class ReportViewerTestReporter(
     private val logger: CILogger,
     private val testSuite: Map<TestCase, TestStaticData>,
     private val report: Report,
+    // todo extract write to file
     fileStorageUrl: String,
     private val logcatDir: File
 ) : TestReporter() {
@@ -33,6 +34,9 @@ class ReportViewerTestReporter(
         .registerTypeAdapterFactory(EntryTypeAdapterFactory())
         .create()
 
+    /**
+     * todo need implementation for in memory report
+     */
     private val remoteStorage: RemoteStorage =
         RemoteStorage.create(
             endpoint = fileStorageUrl,

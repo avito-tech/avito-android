@@ -68,7 +68,16 @@ internal class InstrumentationTestsActionIntegrationTest {
             name = "newUi",
             targets = singletonList(TargetConfiguration.Data.createStubInstance())
         )
-
+        reportsApi.getReportResult = GetReportResult.Found(
+            Report(
+                id = "stub",
+                planSlug = "planSlug",
+                jobSlug = "jobSlug",
+                runId = "runId",
+                isFinished = false,
+                buildBranch = "buildBranch"
+            )
+        )
         reportsApi.enqueueTestsForRunId(reportCoordinates, Try.Success(emptyList()))
 
         createAction(
@@ -125,7 +134,7 @@ internal class InstrumentationTestsActionIntegrationTest {
 
         reportsApi.finished = Try.Success(Unit)
 
-        createAction(configuration, reportId = reportId).run()
+        createAction(configuration).run()
 
         assertThat(reportsApi.addTestsRequests.last().tests).containsExactly(
             AndroidTest.Lost.createStubInstance(
@@ -144,19 +153,15 @@ internal class InstrumentationTestsActionIntegrationTest {
         configuration: InstrumentationConfiguration.Data,
         apkOnTargetCommit: File = File(""),
         testApkOnTargetCommit: File = File(""),
-        reportId: String? = null,
         params: InstrumentationTestsAction.Params = params(
             configuration,
             apkOnTargetCommit,
-            testApkOnTargetCommit,
-            reportId
+            testApkOnTargetCommit
         )
     ) = InstrumentationTestsAction(
         params = params,
         logger = logger,
         testExecutorFactory = testExecutorFactory,
-        reportCoordinates = reportCoordinates,
-        reportsApi = reportsApi,
         buildFailer = buildFailer,
         testSuiteLoader = testSuiteLoader,
         sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
@@ -167,13 +172,13 @@ internal class InstrumentationTestsActionIntegrationTest {
     private fun params(
         instrumentationConfiguration: InstrumentationConfiguration.Data,
         apkOnTargetCommit: File,
-        testApkOnTargetCommit: File,
-        reportId: String?
+        testApkOnTargetCommit: File
     ) = InstrumentationTestsAction.Params.createStubInstance(
         instrumentationConfiguration = instrumentationConfiguration,
         outputDir = outputDir,
         apkOnTargetCommit = apkOnTargetCommit,
         testApkOnTargetCommit = testApkOnTargetCommit,
-        reportId = reportId
+        reportCoordinates = reportCoordinates,
+        targetReportCoordinates = targetReportCoordinates
     )
 }

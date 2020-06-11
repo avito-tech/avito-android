@@ -325,5 +325,6 @@ fun Project.configureJunit5Tests() {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        maxParallelForks = 8
     }
 }

@@ -116,10 +116,10 @@ class UploadCdBuildResultIntegrationTest {
         )
 
         val runId = "runId"
-        val uiTestConfiguration = CdBuildResult.TestResults(
+        val uiTestConfiguration = CdBuildResult.TestResultsLink(
             reportId = reportId,
             reportUrl = "$reportsApiUrl/report/AvitoAndroid/regress/$runId",
-            reportCoordinates = CdBuildResult.TestResults.ReportCoordinates(
+            reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
                 planSlug = "AvitoAndroid",
                 jobSlug = uiTestConfigurationName,
                 runId = runId

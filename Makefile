@@ -36,25 +36,25 @@ params +=$(log_level)
 params +=-PkubernetesContext=$(kubernetesContext)
 params +=-PuseCompositeBuild=$(useCompositeBuild)
 
-module=samples:test-app
+module=test-app
 
 help:
 	./gradlew help $(params)
 
 sample_app_help:
-	./gradlew $(module):help $(params)
+	./gradlew samples:$(module):help $(params)
 
 publish_to_maven_local:
 	./gradlew -p subprojects publishToMavenLocal -PprojectVersion=local $(log_level)
 
 sample_app_instrumentation:
-	./gradlew $(module):instrumentationUi $(params)
+	./gradlew samples:$(module):instrumentationUi $(params)
 
 sample_app_instrumentation_local:
-	./gradlew $(module):instrumentationLocal $(params)
+	./gradlew samples:$(module):instrumentationLocal $(params)
 
 sample_app_instrumentation_android_debug:
-	./gradlew $(module):instrumentationUiDebug $(params)
+	./gradlew samples:$(module):instrumentationUiDebug $(params)
 
 dynamic_properties:
 	$(eval keepFailedTestsFromReport?=)
@@ -63,7 +63,7 @@ dynamic_properties:
 	$(eval dynamicPrefixFilter?=)
 
 sample_app_instrumentation_dynamic: dynamic_properties
-	./gradlew $(module):instrumentationDynamic -PinfraVersion=local -PtestBuildType=$(test_build_type) -PdynamicTarget22=true -Pinstrumentation.dynamic.testFilter=$(testFilter) -Pinstrumentation.dynamic.keepFailedTestsFromReport=$(keepFailedTestsFromReport) -Pinstrumentation.dynamic.skipSucceedTestsFromPreviousRun=$(skipSucceedTestsFromPreviousRun) -PdynamicPrefixFilter=$(skipTestsWithPrefix) $(log_level)
+	./gradlew samples:$(module):instrumentationDynamic -PinfraVersion=local -PtestBuildType=$(test_build_type) -PdynamicTarget22=true -Pinstrumentation.dynamic.testFilter=$(testFilter) -Pinstrumentation.dynamic.keepFailedTestsFromReport=$(keepFailedTestsFromReport) -Pinstrumentation.dynamic.skipSucceedTestsFromPreviousRun=$(skipSucceedTestsFromPreviousRun) -PdynamicPrefixFilter=$(skipTestsWithPrefix) $(log_level)
 
 unit_tests:
 	./gradlew test $(log_level)
