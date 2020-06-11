@@ -6,7 +6,7 @@ data class CdBuildResult(
     val buildNumber: String,
     val releaseVersion: String,
     val gitBranch: GitBranch,
-    val testResults: TestResults,
+    val testResults: TestResultsLink,
     val artifacts: List<Artifact>
 ) {
     data class GitBranch(
@@ -14,7 +14,7 @@ data class CdBuildResult(
         val commitHash: String
     )
 
-    data class TestResults(
+    data class TestResultsLink(
         val reportId: String?,
         val reportUrl: String,
         val reportCoordinates: ReportCoordinates

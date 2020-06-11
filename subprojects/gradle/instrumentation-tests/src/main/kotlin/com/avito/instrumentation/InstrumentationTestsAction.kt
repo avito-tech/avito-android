@@ -25,9 +25,7 @@ import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.instrumentation.suite.filter.FilterInfoWriter
-import com.avito.logger.Logger
 import com.avito.report.ReportViewer
-import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.SlackClient
@@ -48,44 +46,8 @@ class InstrumentationTestsAction(
     private val params: Params,
     private val logger: CILogger,
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create(),
-    private val reportsApi: ReportsApi = ReportsApi.create(
-        host = params.reportApiUrl,
-        fallbackUrl = params.reportApiFallbackUrl,
-        logger = object : Logger {
-            override fun debug(msg: String) {
-                logger.debug(msg)
-            }
-
-            override fun exception(msg: String, error: Throwable) {
-                logger.critical(msg, error)
-            }
-
-            override fun critical(msg: String, error: Throwable) {
-                logger.critical(msg, error)
-            }
-        },
-        verboseHttp = false
-    ),
-    private val reportCoordinates: ReportCoordinates = params
-        .instrumentationConfiguration
-        .instrumentationParams
-        .reportCoordinates(),
-
-    private val targetReportCoordinates: ReportCoordinates = reportCoordinates.copy(
-        jobSlug = "${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG"
-    ),
-    private val sourceReport: Report = Report.Impl(
-        reportsApi = reportsApi,
-        logger = logger,
-        reportCoordinates = reportCoordinates,
-        buildId = params.buildId
-    ),
-    private val targetReport: Report = Report.Impl(
-        reportsApi = reportsApi,
-        logger = logger,
-        reportCoordinates = targetReportCoordinates,
-        buildId = params.buildId
-    ),
+    private val sourceReport: Report = params.reportFactory.createReport(params.reportConfig),
+    private val targetReport: Report = params.reportFactory.createReport(params.targetReportConfig),
     private val testExecutorFactory: TestExecutorFactory = TestExecutorFactory.Implementation(),
     private val testRunner: TestsRunner = TestsRunnerImplementation(
         testExecutorFactory = testExecutorFactory,
@@ -113,8 +75,8 @@ class InstrumentationTestsAction(
     private val filterFactory: FilterFactory = FilterFactory.create(
         filterData = params.instrumentationConfiguration.filter,
         impactAnalysisResult = params.impactAnalysisResult,
-        reportCoordinates = reportCoordinates,
-        reportsFetchApi = reportsApi
+        factory = params.reportFactory,
+        reportConfig = params.reportConfig
     ),
     private val testSuiteProvider: TestSuiteProvider = TestSuiteProvider.Impl(
         report = sourceReport,
@@ -125,10 +87,10 @@ class InstrumentationTestsAction(
     private val performanceTestsScheduler: TestsScheduler = PerformanceTestsScheduler(
         testsRunner = testRunner,
         params = params,
-        reportCoordinates = reportCoordinates,
+        reportCoordinates = params.reportCoordinates,
         sourceReport = sourceReport,
         targetReport = targetReport,
-        targetReportCoordinates = targetReportCoordinates,
+        targetReportCoordinates = params.targetReportCoordinates,
         testSuiteProvider = testSuiteProvider,
         testSuiteLoader = testSuiteLoader
     ),
@@ -136,8 +98,8 @@ class InstrumentationTestsAction(
         logger = logger,
         testsRunner = testRunner,
         params = params,
-        reportCoordinates = reportCoordinates,
-        targetReportCoordinates = targetReportCoordinates,
+        reportCoordinates = params.reportCoordinates,
+        targetReportCoordinates = params.targetReportCoordinates,
         testSuiteProvider = testSuiteProvider,
         sourceReport = sourceReport,
         targetReport = targetReport,
@@ -154,6 +116,7 @@ class InstrumentationTestsAction(
         }
     ),
     buildFailer: BuildFailer = BuildFailer.RealFailer(),
+    // todo Make generic. Need two realization for InMemory and ReportViewer
     private val reportViewer: ReportViewer = ReportViewer.Impl(params.reportViewerUrl),
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
@@ -247,25 +210,21 @@ class InstrumentationTestsAction(
                 info = testsExecutionResults.flakyInfo,
                 buildUrl = params.buildUrl,
                 currentBranch = params.currentBranch,
-                reportCoordinates = reportCoordinates,
-                rerunReportCoordinates = targetReportCoordinates
+                reportCoordinates = params.reportCoordinates,
+                targetReportCoordinates = params.targetReportCoordinates
             ).onFailure { logger.critical("Can't send flaky test report", it) }
         }
 
-        if (params.reportId != null) {
-            sendStatistics(params.reportId)
-        } else {
-            logger.critical("Cannot find report id for $reportCoordinates. Skip statistic sending")
-        }
-
+        val reportId = requireNotNull(sourceReport.tryGetId())
+        sendStatistics(reportId)
         val reportViewerUrl = reportViewer.generateReportUrl(
-            reportCoordinates,
+            params.reportCoordinates,
             onlyFailures = testRunResult.failed !is HasFailedTestDeterminer.Result.NoFailed
         )
 
         actionFinalizer.finalize(
             params.outputDir,
-            reportCoordinates,
+            params.reportCoordinates,
             reportViewerUrl,
             testRunResult
         )
@@ -279,7 +238,7 @@ class InstrumentationTestsAction(
                     slackClient = slackClient,
                     reportViewer = reportViewer,
                     buildUrl = params.buildUrl,
-                    reportCoordinates = reportCoordinates,
+                    reportCoordinates = params.reportCoordinates,
                     unitToChannelMapping = params.unitToChannelMapping,
                     logger = logger
                 ),
@@ -319,15 +278,19 @@ class InstrumentationTestsAction(
         val sendStatistics: Boolean,
         val isFullTestSuite: Boolean,
         val slackToken: String,
-        val reportId: String?,
-        val reportApiUrl: String,
-        val reportApiFallbackUrl: String,
         val reportViewerUrl: String,
         val fileStorageUrl: String,
         val bitbucketConfig: BitbucketConfig,
         val statsdConfig: StatsDConfig,
         val unitToChannelMapping: Map<Team, SlackChannel>,
-        val registry: String
+        val registry: String,
+        val reportFactory: Report.Factory,
+        val reportConfig: Report.Factory.Config,
+        val targetReportConfig: Report.Factory.Config,
+        @Deprecated("Will be removed")
+        val reportCoordinates: ReportCoordinates,
+        @Deprecated("Will be removed")
+        val targetReportCoordinates: ReportCoordinates
     ) : Serializable {
         companion object
     }

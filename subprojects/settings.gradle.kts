@@ -63,6 +63,7 @@ include(":gradle:slack-test-fixtures")
 include(":gradle:utils")
 include(":gradle:utils-test-fixtures")
 include(":gradle:build-environment")
+include(":gradle:worker")
 
 include(":common:time")
 include(":common:time-test-fixtures")

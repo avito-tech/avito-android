@@ -218,7 +218,14 @@ sealed class AndroidTest : TestStaticData {
  */
 interface TestRuntimeData {
     val incident: Incident?
+
+    /**
+     * Must be in seconds
+     */
     val startTime: Long
+    /**
+     * Must be in seconds
+     */
     val endTime: Long
     val dataSetData: Map<String, String>
     val performanceJson: String?

@@ -41,7 +41,10 @@ open class PerformancePlugin : Plugin<Project> {
         }.orElse("not-defined")
 
         project.withInstrumentationTests { instrumentationConfig ->
-
+            // Apply performance only for Instrumentation with reportViewerConfig
+            val reportViewerConfig = requireNotNull(instrumentationConfig.reportViewer) {
+                "PerformancePlugin could be applied only with reportViewer report"
+            }
             val performanceOutputDir = extension.output.get()
             val performanceResultsFileName = extension.performanceTestResultName.get()
 
@@ -65,8 +68,8 @@ open class PerformancePlugin : Plugin<Project> {
                                     )
                                 )
                                 buildId.set(envArgs.build.id.toString())
-                                reportApiUrl.set(instrumentationConfig.reportApiUrl)
-                                reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
+                                reportApiUrl.set(reportViewerConfig.reportApiUrl)
+                                reportApiFallbackUrl.set(reportViewerConfig.reportApiFallbackUrl)
                                 reportCoordinates.set(performanceMdeConfig.instrumentationParams.reportCoordinates())
                                 dependsOn(instrumentationTask)
                             }
@@ -108,8 +111,8 @@ open class PerformancePlugin : Plugin<Project> {
                                 )
                                 this.reportCoordinates.set(reportCoordinates)
                                 buildId.set(envArgs.build.id.toString())
-                                reportApiUrl.set(instrumentationConfig.reportApiUrl)
-                                reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
+                                reportApiUrl.set(reportViewerConfig.reportApiUrl)
+                                reportApiFallbackUrl.set(reportViewerConfig.reportApiFallbackUrl)
                                 dependsOn(instrumentationTask)
                             }
 
@@ -130,8 +133,8 @@ open class PerformancePlugin : Plugin<Project> {
                                     )
                                 )
                                 buildId.set(envArgs.build.id.toString())
-                                reportApiUrl.set(instrumentationConfig.reportApiUrl)
-                                reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
+                                reportApiUrl.set(reportViewerConfig.reportApiUrl)
+                                reportApiFallbackUrl.set(reportViewerConfig.reportApiFallbackUrl)
 
                                 when (val targetBranchResultSource = extension.targetBranchResultSource.get()) {
                                     is PerformanceExtension.TargetBranchResultSource.RunInProcess -> {
@@ -157,7 +160,8 @@ open class PerformancePlugin : Plugin<Project> {
                                         this.reportCoordinates.set(
                                             reportCoordinates.copy(
                                                 runId = RunId(
-                                                    commitHash = gitState.map { it.targetBranch!!.commit }.get(),
+                                                    commitHash = gitState.map { it.targetBranch!!.commit }
+                                                        .get(),
                                                     buildTypeId = targetBranchResultSource.targetBuildConfigId
                                                 ).toString()
                                             )
@@ -171,8 +175,8 @@ open class PerformancePlugin : Plugin<Project> {
                                 group = TASK_GROUP
                                 description = "Compare performance reports"
                                 comparison.set(File(performanceOutputDir, "comparison.json"))
-                                reportApiUrl.set(instrumentationConfig.reportApiUrl)
-                                reportApiFallbackUrl.set(instrumentationConfig.reportApiFallbackUrl)
+                                reportApiUrl.set(reportViewerConfig.reportApiUrl)
+                                reportApiFallbackUrl.set(reportViewerConfig.reportApiFallbackUrl)
                                 statsUrl.set(extension.statsUrl)
 
                                 dependencyOn(sourceBranchResultsCollector) { sourceTestsCollector ->

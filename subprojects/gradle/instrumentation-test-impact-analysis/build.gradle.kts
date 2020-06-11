@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:ui-test-bytecode-analyzer"))
+    implementation(project(":gradle:worker"))
     implementation(Dependencies.kotlinCompilerEmbeddable)
     implementation(Dependencies.gradle.kotlinPlugin)
     implementation(Dependencies.kotlinHtml)

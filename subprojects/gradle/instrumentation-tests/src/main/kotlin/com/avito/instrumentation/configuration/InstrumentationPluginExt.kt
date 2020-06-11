@@ -4,8 +4,6 @@ import com.avito.android.withAndroidModule
 import com.avito.git.gitState
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.report.model.RunId
-import com.avito.report.model.Team
-import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Project
@@ -20,9 +18,6 @@ internal fun Project.createInstrumentationPluginExtension() {
         )
     extension.filters.register("default") {
         it.fromRunHistory.excludePreviousStatuses(setOf(RunStatus.Manual, RunStatus.Success))
-    }
-    afterEvaluate {
-        extension.validate()
     }
 }
 
@@ -54,46 +49,12 @@ internal fun Project.withInstrumentationExtensionData(action: (InstrumentationPl
                 .applyParameters(runIdOverride)
                 .applyParameters(
                     mapOf(
-                        "reportApiUrl" to extension.reportApiUrl,
-                        "reportApiFallbackUrl" to extension.reportApiFallbackUrl,
-                        "reportViewerUrl" to extension.reportViewerUrl,
-                        "sentryDsn" to extension.sentryDsn,
-                        "slackToken" to extension.slackToken,
-                        "fileStorageUrl" to extension.fileStorageUrl,
                         "teamcityBuildId" to envArgs.build.id.toString()
-                    )
-                )
-                .applyParameters(extension.instrumentationParams)
-                .applyParameters(
-                    mapOf(
-                        // info for InHouseRunner testRunEnvironment creation
-                        "inHouse" to "true"
                     )
                 )
 
             action(
-                InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data(
-                    configurations = extension.configurations.map { instrumentationConfiguration ->
-                        instrumentationConfiguration.data(
-                            parentInstrumentationParameters = instrumentationParameters,
-                            filters = extension.filters.map { it.toData() }
-                        )
-                    },
-                    pluginInstrumentationParameters = instrumentationParameters,
-                    logcatTags = extension.logcatTags,
-                    output = extension.output,
-                    applicationApk = extension.applicationApk,
-                    testApplicationApk = extension.testApplicationApk,
-                    reportApiUrl = extension.reportApiUrl,
-                    reportApiFallbackUrl = extension.reportApiFallbackUrl,
-                    reportViewerUrl = extension.reportViewerUrl,
-                    fileStorageUrl = extension.fileStorageUrl,
-                    registry = extension.registry,
-                    slackToken = extension.slackToken,
-                    unitToChannelMapping = extension.unitToChannelMap
-                        .map { (k, v) -> Team(k) to SlackChannel(v) }
-                        .toMap()
-                )
+                extension.toData(instrumentationParameters)
             )
         }
     }
