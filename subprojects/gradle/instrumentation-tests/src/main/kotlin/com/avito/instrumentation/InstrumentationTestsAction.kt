@@ -116,6 +116,7 @@ class InstrumentationTestsAction(
         }
     ),
     buildFailer: BuildFailer = BuildFailer.RealFailer(),
+    // todo Make generic. Need two realization for InMemory and ReportViewer
     private val reportViewer: ReportViewer = ReportViewer.Impl(params.reportViewerUrl),
     private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
     private val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
@@ -214,12 +215,8 @@ class InstrumentationTestsAction(
             ).onFailure { logger.critical("Can't send flaky test report", it) }
         }
 
-        if (params.reportId != null) {
-            sendStatistics(params.reportId)
-        } else {
-            logger.critical("Cannot find report id for ${params.reportCoordinates}. Skip statistic sending")
-        }
-
+        val reportId = requireNotNull(sourceReport.tryGetId())
+        sendStatistics(reportId)
         val reportViewerUrl = reportViewer.generateReportUrl(
             params.reportCoordinates,
             onlyFailures = testRunResult.failed !is HasFailedTestDeterminer.Result.NoFailed
@@ -281,7 +278,6 @@ class InstrumentationTestsAction(
         val sendStatistics: Boolean,
         val isFullTestSuite: Boolean,
         val slackToken: String,
-        val reportId: String?,
         val reportViewerUrl: String,
         val fileStorageUrl: String,
         val bitbucketConfig: BitbucketConfig,

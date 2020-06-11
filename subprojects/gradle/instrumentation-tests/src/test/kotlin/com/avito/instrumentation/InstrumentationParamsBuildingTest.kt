@@ -1,6 +1,6 @@
 package com.avito.instrumentation
 
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.report.model.RunId
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
@@ -22,6 +22,30 @@ class InstrumentationParamsBuildingTest {
     private val buildType: String = "buildType"
     private val targetBranch: String = "another"
     private lateinit var commit: String
+
+    private val pluginInstrumentationParams by lazy {
+        mapOf(
+            "planSlug" to "AvitoAndroid",
+            "jobSlug" to "FunctionalTests",
+            "override" to "overrideInPlugin",
+            "deviceName" to "local",
+            "teamcityBuildId" to "0",
+            "buildBranch" to "develop",
+            "buildCommit" to commit,
+            "runId" to RunId(
+                commitHash = commit,
+                buildTypeId = "teamcity-$buildType"
+            ).toString(),
+            "reportApiUrl" to "stub",
+            "reportApiFallbackUrl" to "stub",
+            "reportViewerUrl" to "stub",
+            "fileStorageUrl" to "stub",
+            "sentryDsn" to "stub",
+            "slackToken" to "stub",
+            "inHouse" to "true",
+            "avito.report.enabled" to "false" // todo
+        )
+    }
 
     @BeforeEach
     fun setup(@TempDir temp: Path) {
@@ -151,13 +175,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: Data = ObjectInputStream(
             projectDir
                 .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as GradleInstrumentationPluginConfiguration.Data
+                it.readObject() as Data
             }
 
 
@@ -165,26 +189,15 @@ class InstrumentationParamsBuildingTest {
 
         assertThat(pluginConfigurationInstrumentationParameters)
             .containsExactlyEntriesIn(
-                mapOf(
-                    "planSlug" to "AvitoAndroid",
-                    "jobSlug" to "FunctionalTests",
-                    "override" to "overrideInPlugin",
-                    "deviceName" to "local",
-                    "teamcityBuildId" to "0",
-                    "buildBranch" to "develop",
-                    "buildCommit" to commit,
-                    "runId" to RunId(
-                        commitHash = commit,
-                        buildTypeId = "teamcity-$buildType"
-                    ).toString(),
-                    "reportApiUrl" to "stub",
-                    "reportApiFallbackUrl" to "stub",
-                    "reportViewerUrl" to "stub",
-                    "sentryDsn" to "stub",
-                    "slackToken" to "stub",
-                    "fileStorageUrl" to "stub",
-                    "inHouse" to "true",
-                    "avito.report.enabled" to "false"
+                pluginInstrumentationParams
+            )
+        assertThat(data.reportViewer)
+            .isEqualTo(
+                Data.ReportViewer(
+                    reportViewerUrl = "stub",
+                    reportApiUrl = "stub",
+                    reportApiFallbackUrl = "stub",
+                    fileStorageUrl = "stub"
                 )
             )
     }
@@ -196,13 +209,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: Data = ObjectInputStream(
             projectDir
                 .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as GradleInstrumentationPluginConfiguration.Data
+                it.readObject() as Data
             }
 
         val functionalConfigurationInstrumentationParameters = data.configurations
@@ -211,27 +224,11 @@ class InstrumentationParamsBuildingTest {
 
         assertThat(functionalConfigurationInstrumentationParameters)
             .containsExactlyEntriesIn(
-                mapOf(
-                    "planSlug" to "AvitoAndroid",
-                    "jobSlug" to "FunctionalTests",
-                    "override" to "overrideInConfiguration",
-                    "configuration" to "functional",
-                    "deviceName" to "local",
-                    "teamcityBuildId" to "0",
-                    "buildBranch" to "develop",
-                    "buildCommit" to commit,
-                    "runId" to RunId(
-                        commitHash = commit,
-                        buildTypeId = "teamcity-$buildType"
-                    ).toString(),
-                    "reportApiUrl" to "stub",
-                    "reportApiFallbackUrl" to "stub",
-                    "reportViewerUrl" to "stub",
-                    "sentryDsn" to "stub",
-                    "slackToken" to "stub",
-                    "fileStorageUrl" to "stub",
-                    "inHouse" to "true",
-                    "avito.report.enabled" to "false"
+                pluginInstrumentationParams.plus(
+                    mapOf(
+                        "override" to "overrideInConfiguration",
+                        "configuration" to "functional"
+                    )
                 )
             )
     }
@@ -243,13 +240,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: Data = ObjectInputStream(
             projectDir
                 .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as GradleInstrumentationPluginConfiguration.Data
+                it.readObject() as Data
             }
 
         val api22TargetInstrumentationParameters = data.configurations
@@ -260,28 +257,13 @@ class InstrumentationParamsBuildingTest {
 
         assertThat(api22TargetInstrumentationParameters)
             .containsExactlyEntriesIn(
-                mapOf(
-                    "deviceName" to "api22",
-                    "planSlug" to "AvitoAndroid",
-                    "jobSlug" to "FunctionalTests",
-                    "target" to "yes",
-                    "override" to "overrideInTarget",
-                    "configuration" to "functional",
-                    "teamcityBuildId" to "0",
-                    "buildBranch" to "develop",
-                    "buildCommit" to commit,
-                    "runId" to RunId(
-                        commitHash = commit,
-                        buildTypeId = "teamcity-$buildType"
-                    ).toString(),
-                    "reportApiUrl" to "stub",
-                    "reportApiFallbackUrl" to "stub",
-                    "reportViewerUrl" to "stub",
-                    "sentryDsn" to "stub",
-                    "slackToken" to "stub",
-                    "fileStorageUrl" to "stub",
-                    "inHouse" to "true",
-                    "avito.report.enabled" to "false"
+                pluginInstrumentationParams.plus(
+                    mapOf(
+                        "target" to "yes",
+                        "deviceName" to "api22",
+                        "override" to "overrideInTarget",
+                        "configuration" to "functional"
+                    )
                 )
             )
     }
@@ -293,13 +275,13 @@ class InstrumentationParamsBuildingTest {
         )
         result.assertThat().buildSuccessful()
 
-        val data: GradleInstrumentationPluginConfiguration.Data = ObjectInputStream(
+        val data: Data = ObjectInputStream(
             projectDir
                 .file(instrumentationDumpPath)
                 .inputStream()
         )
             .use {
-                it.readObject() as GradleInstrumentationPluginConfiguration.Data
+                it.readObject() as Data
             }
 
         val dynamicInstrumentationConfiguration = data.configurations

@@ -7,8 +7,10 @@ import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.InstrumentationTestsAction.Companion.RUN_ON_TARGET_BRANCH_SLUG
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.Report
+import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
@@ -96,19 +98,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val parameters = objects.property<ExecutionParameters>()
 
     @Internal
-    val reportApiUrl = objects.property<String>()
-
-    @Internal
-    val reportApiFallbackUrl = objects.property<String>()
-
-    @Internal
-    val reportViewerUrl = objects.property<String>()
+    val reportViewerConfig = objects.property(Data.ReportViewer::class.java)
 
     @Internal
     val registry = objects.property<String>()
-
-    @Internal
-    val fileStorageUrl = objects.property<String>()
 
     @Internal
     val unitToChannelMapping = objects.mapProperty<Team, SlackChannel>()
@@ -123,35 +116,13 @@ abstract class InstrumentationTestsTask @Inject constructor(
     fun doWork() {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
-        val reportConfig = Report.Factory.Config.ReportViewerCoordinates(
-            reportCoordinates = reportCoordinates,
-            buildId = buildId.get()
-        )
-        val reportFactory = Report.Factory.StrategyFactory(
-            factories = mapOf(
-                Report.Factory.Config.ReportViewerCoordinates::class.java to Report.Factory.ReportViewerFactory(
-                    reportApiUrl = reportApiUrl.get(),
-                    reportApiFallbackUrl = reportApiFallbackUrl.get(),
-                    ciLogger = ciLogger
-                ),
-                Report.Factory.Config.InMemory::class.java to Report.Factory.InMemoryReportFactory()
-            )
-        )
+        val reportConfig = createReportConfig(reportCoordinates)
+        val reportFactory = createReportFactory()
 
-        val getTestResultsAction = GetTestResultsAction(
-            reportViewerUrl = reportViewerUrl.get(),
-            reportCoordinates = reportCoordinates,
-            ciLogger = ciLogger,
-            report = reportFactory.createReport(reportConfig),
-            gitBranch = gitBranch.get(),
-            gitCommit = gitCommit.get(),
-            configuration = configuration
+        saveTestResultsToBuildOutput(
+            reportFactory,
+            reportConfig
         )
-        // todo move that logic to task output. Instrumentation task mustn't know about Upload CD models
-        // todo Extract Instrumentation contract to module. Upload cd task will depend on it and consume Instrumentation result
-        val buildOutput = project.buildOutput.get()
-        val testResults = getTestResultsAction.getTestResults()
-        buildOutput.testResults[configuration.name] = testResults
 
         //todo новое api, когда выйдет в stable
         // https://docs.gradle.org/5.6/userguide/custom_tasks.html#using-the-worker-api
@@ -182,24 +153,86 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     sendStatistics = sendStatistics.get(),
                     slackToken = slackToken.get(),
                     isFullTestSuite = fullTestSuite.get(),
-                    reportId = testResults.reportId,
-                    fileStorageUrl = fileStorageUrl.get(),
+                    fileStorageUrl = getFileStorageUrl(),
                     pullRequestId = project.pullRequestId.orNull,
                     bitbucketConfig = project.bitbucketConfig.get(),
                     statsdConfig = project.statsdConfig.get(),
                     unitToChannelMapping = unitToChannelMapping.get(),
-                    reportViewerUrl = reportViewerUrl.get(),
+                    reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl ?: "http://stub", // stub for inmemory report
                     registry = registry.get(),
                     reportConfig = reportConfig,
-                    targetReportConfig = Report.Factory.Config.ReportViewerCoordinates(
-                        reportCoordinates = targetReportCoordinates,
-                        buildId = buildId.get()
-                    ),
+                    targetReportConfig = createReportConfig(targetReportCoordinates),
                     reportFactory = reportFactory,
                     reportCoordinates = reportCoordinates,
                     targetReportCoordinates = targetReportCoordinates
                 )
             ).run()
         }
+    }
+
+    /**
+     * todo FileStorage needed only for ReportViewer
+     */
+    private fun getFileStorageUrl(): String {
+        return reportViewerConfig.orNull?.fileStorageUrl ?: ""
+    }
+
+    private fun createReportConfig(
+        reportCoordinates: ReportCoordinates
+    ): Report.Factory.Config {
+        return if (reportViewerConfig.isPresent) {
+            Report.Factory.Config.ReportViewerCoordinates(
+                reportCoordinates = reportCoordinates,
+                buildId = buildId.get()
+            )
+        } else {
+            Report.Factory.Config.InMemory(buildId.get())
+        }
+    }
+
+    /**
+     * todo Move into Report.Impl
+     */
+    private fun saveTestResultsToBuildOutput(
+        reportFactory: Report.Factory,
+        reportConfig: Report.Factory.Config
+    ) {
+        val configuration = instrumentationConfiguration.get()
+        val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
+        val reportViewerConfig = reportViewerConfig.orNull
+        if (reportViewerConfig != null && reportConfig is Report.Factory.Config.ReportViewerCoordinates) {
+            val getTestResultsAction = GetTestResultsAction(
+                reportViewerUrl = reportViewerConfig.reportViewerUrl,
+                reportCoordinates = reportCoordinates,
+                report = reportFactory.createReport(reportConfig),
+                gitBranch = gitBranch.get(),
+                gitCommit = gitCommit.get()
+            )
+            // todo move that logic to task output. Instrumentation task mustn't know about Upload CD models
+            // todo Extract Instrumentation contract to module. Upload cd task will depend on it and consume Instrumentation result
+            val buildOutput = project.buildOutput.get()
+            val testResults = getTestResultsAction.getTestResults()
+            buildOutput.testResults[configuration.name] = testResults
+        }
+    }
+
+    private fun createReportFactory(): Report.Factory {
+        val reportViewerConfig = reportViewerConfig.orNull
+        val factories = mutableMapOf<Class<out Report.Factory.Config>, Report.Factory>()
+        if (reportViewerConfig != null) {
+            factories.put(
+                Report.Factory.Config.ReportViewerCoordinates::class.java, Report.Factory.ReportViewerFactory(
+                    reportApiUrl = reportViewerConfig.reportApiUrl,
+                    reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
+                    ciLogger = ciLogger
+                )
+            )
+        }
+        factories.put(
+            Report.Factory.Config.InMemory::class.java, Report.Factory.InMemoryReportFactory()
+        )
+        return Report.Factory.StrategyFactory(
+            factories = factories.toMap()
+        )
     }
 }
