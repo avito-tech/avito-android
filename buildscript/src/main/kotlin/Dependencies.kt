@@ -43,6 +43,7 @@ object Dependencies {
     val kubernetesClient = "io.fabric8:kubernetes-client:4.9.0"
     // We use the official kubernetes client only for missing features
     val officialKubernetesClient = "io.kubernetes:client-java:8.0.0"
+    val googleAuthLibrary = "com.google.auth:google-auth-library-oauth2-http:0.10.0"
     val kubernetesDsl = "com.fkorotkov:kubernetes-dsl:2.7.1"
     val dexlib = "org.smali:dexlib2:2.3"
     val commonsText = "org.apache.commons:commons-text:1.6"

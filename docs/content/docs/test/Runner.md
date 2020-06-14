@@ -715,3 +715,22 @@ applicationApk = "/path/to/app.apk"
 // optional
 testApplicationApk = "/path/to/test-app-debug-androidTest.apk"
 ```
+
+## Run tests on Google Cloud Platform
+
+Work in progress
+
+0. Create and configure Kubernetes cluster TODO
+    0. Create a node pool. Node must contain CPU that supports KVM https://cloud.google.com/compute/docs/instances/enable-nested-virtualization-vm-instances#gcloud
+0. Add configuration for your cluster to ./kube/config
+0. Providing credentials to the application https://cloud.google.com/docs/authentication/production#providing_credentials_to_your_application TODO
+    0. Run on local machine TODO
+        0. Run locally `gcloud auth application-default login` one time will be enough 
+        0. Run `./gradlew <instrumentationTaskName> -PkubernetesContext=<context from ./kube/config>`
+    0. Run on CI
+0. Customize deployment TODO
+    0. Custom POD image
+    0. Customize POD cpu and ram
+    0. Custom namespace
+
+
