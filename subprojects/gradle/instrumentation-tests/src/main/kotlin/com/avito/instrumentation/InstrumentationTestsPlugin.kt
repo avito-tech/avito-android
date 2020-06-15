@@ -30,8 +30,6 @@ import com.avito.instrumentation.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
-import com.avito.kotlin.dsl.getOptionalIntProperty
-import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.toOptional
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
@@ -41,7 +39,6 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.time.Duration
@@ -64,41 +61,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 gitState = gitState.orNull,
                 config = baseExtension.defaultConfig
             )
-        }
-
-        val instrumentationConfigurations =
-            project.extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
-
-        when (project.kubernetesCredentials) {
-            !is KubernetesCredentials.Empty -> {
-                val enabledDevices = EmulatorSet.full.filter { device ->
-                    project.getBooleanProperty(
-                        "dynamicTarget${device.api}",
-                        false
-                    )
-                }
-                if (!enabledDevices.isEmpty()) {
-                    instrumentationConfigurations.registerDynamicConfiguration(
-                        testFilter = TestsFilter.valueOf(
-                            project.getOptionalStringProperty(
-                                "instrumentation.dynamic.testFilter",
-                                TestsFilter.empty.name
-                            )
-                        ),
-                        retryCountValue = project.getOptionalIntProperty(
-                            "dynamicRetryCount",
-                            1
-                        ),
-                        prefixFilter = project.getOptionalStringProperty("dynamicPrefixFilter", ""),
-                        skipSucceedTestsFromPreviousRun = project.getBooleanProperty(
-                            "instrumentation.dynamic.skipSucceedTestsFromPreviousRun",
-                            true
-                        ),
-                        keepFailedTestsFromReport = project.getOptionalStringProperty("instrumentation.dynamic.keepFailedTestsFromReport"),
-                        devices = enabledDevices
-                    )
-                }
-            }
         }
 
         // see LintWorkerApiWorkaround.md
@@ -174,7 +136,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                     val isFullTestSuite = gitState.map {
                         it.isOnDefaultBranch
-                                && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                            && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
                     }
                         .orElse(false)
 
@@ -280,66 +242,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-    private fun InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.registerDynamicConfiguration(
-        testFilter: TestsFilter,
-        retryCountValue: Int,
-        prefixFilter: String,
-        skipSucceedTestsFromPreviousRun: Boolean,
-        keepFailedTestsFromReport: String?,
-        devices: List<Device.Emulator>
-    ) {
-        val filterName = "dynamic"
-        filters.register(filterName) { filter ->
-            filter.fromSource.includeByAnnotations(testFilter.annotatedWith)
-            if (skipSucceedTestsFromPreviousRun) {
-                filter.fromRunHistory.excludePreviousStatuses(
-                    setOf(RunStatus.Success, RunStatus.Manual)
-                )
-            }
-            if (keepFailedTestsFromReport != null) {
-                filter.fromRunHistory.report(keepFailedTestsFromReport, filter = Action {
-                    it.include(setOf(RunStatus.Failed, RunStatus.Lost))
-                })
-            }
-            if (prefixFilter.isNotEmpty()) {
-                filter.fromSource.includeByPrefixes(setOf(prefixFilter))
-            }
-        }
-        configurationsContainer.register(
-            "dynamic"
-        ) { configuration ->
-            configuration.tryToReRunOnTargetBranch = false
-            configuration.reportSkippedTests = true
-            configuration.filter = filterName
-            configuration.targetsContainer.apply {
-                devices.forEach { emulator ->
-                    register(
-                        emulator.name,
-                        Action { target ->
-                            target.deviceName = "functional-${emulator.api}"
-                            target.scheduling = SchedulingConfiguration().apply {
-                                quota = QuotaConfiguration().apply {
-                                    retryCount = retryCountValue
-                                    minimumSuccessCount =
-                                        retryCountValue / 2 + retryCountValue % 2
-                                    minimumFailedCount =
-                                        retryCountValue / 2 + retryCountValue % 2
-                                }
-
-                                reservation =
-                                    TestsBasedDevicesReservationConfiguration.create(
-                                        device = emulator,
-                                        min = 2,
-                                        max = 25
-                                    )
-                            }
-                        }
-                    )
                 }
             }
         }

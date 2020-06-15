@@ -104,7 +104,7 @@ abstract class InstrumentationConfiguration(val name: String) {
 
         init {
             val hasLocal = targets.any { it.reservation.device is Device.LocalEmulator }
-            val hasKubernetes = targets.any { it.reservation.device is Device.Emulator }
+            val hasKubernetes = targets.any { it.reservation.device is Device.CloudEmulator }
             if (hasLocal && hasKubernetes) {
                 throw IllegalStateException("Targeting to local and kubernetes emulators at the same configuration $name is not supported yet")
             } else {
