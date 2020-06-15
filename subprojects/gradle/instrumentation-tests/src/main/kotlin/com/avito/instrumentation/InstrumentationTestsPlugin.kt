@@ -191,12 +191,10 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     // will be changed in [UiTestCheck]
                     this.sendStatistics.set(false)
                     this.slackToken.set(extensionData.slackToken)
-
                     this.output.set(configurationOutputFolder)
-                    this.reportApiUrl.set(extensionData.reportApiUrl)
-                    this.fileStorageUrl.set(extensionData.fileStorageUrl)
-                    this.reportApiFallbackUrl.set(extensionData.reportApiFallbackUrl)
-                    this.reportViewerUrl.set(extensionData.reportViewerUrl)
+                    if (extensionData.reportViewer != null) {
+                        this.reportViewerConfig.set(extensionData.reportViewer)
+                    }
                     this.registry.set(extensionData.registry)
                     this.unitToChannelMapping.set(extensionData.unitToChannelMapping)
                     this.kubernetesCredentials.set(project.kubernetesCredentials)
@@ -370,6 +368,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
         args["avito.report.enabled"] =
             project.getBooleanProperty("avito.report.enabled", default = false).toString()
 
+        // TODO Need to be set before `afterEvaluate`
         config.testInstrumentationRunnerArguments(filterNotBlankValues(args))
     }
 

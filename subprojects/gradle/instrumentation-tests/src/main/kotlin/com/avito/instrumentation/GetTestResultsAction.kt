@@ -1,14 +1,9 @@
 package com.avito.instrumentation
 
 import com.avito.cd.CdBuildResult
-import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.report.Report
-import com.avito.logger.Logger
 import com.avito.report.ReportViewer
-import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
-import com.avito.utils.logging.CILogger
-import org.gradle.api.GradleException
 
 /**
  * Этот action может ввести в заблуждение своим названием.
@@ -16,48 +11,19 @@ import org.gradle.api.GradleException
  * который содержит ссылки на будущие результаты
  */
 internal class GetTestResultsAction(
-    reportApiUrl: String,
-    reportApiFallbackUrl: String,
     reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
-    private val ciLogger: CILogger,
-    private val buildId: String,
-    private val report: Report = Report.Impl(
-        reportsApi = ReportsApi.create(
-            host = reportApiUrl,
-            fallbackUrl = reportApiFallbackUrl,
-            logger = object : Logger {
-                override fun debug(msg: String) {
-                    ciLogger.debug(msg)
-                }
-
-                override fun exception(msg: String, error: Throwable) {
-                    ciLogger.critical(msg, error)
-                }
-
-                override fun critical(msg: String, error: Throwable) {
-                    ciLogger.critical(msg, error)
-                }
-            },
-            verboseHttp = false
-        ),
-        logger = ciLogger,
-        reportCoordinates = reportCoordinates,
-        buildId = buildId
-    ),
+    private val report: Report,
     private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl),
     private val gitBranch: String,
-    private val gitCommit: String,
-    private val configuration: InstrumentationConfiguration.Data
+    private val gitCommit: String
 ) {
 
-    fun getTestResults(): CdBuildResult.TestResults {
-        checkPreconditions()
-
-        return CdBuildResult.TestResults(
+    fun getTestResults(): CdBuildResult.TestResultsLink {
+        return CdBuildResult.TestResultsLink(
             reportId = getReportId(),
             reportUrl = getReportUrl(reportCoordinates),
-            reportCoordinates = CdBuildResult.TestResults.ReportCoordinates(
+            reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
                 planSlug = reportCoordinates.planSlug,
                 jobSlug = reportCoordinates.jobSlug,
                 runId = reportCoordinates.runId
@@ -77,14 +43,5 @@ internal class GetTestResultsAction(
         )
 
         return report.tryGetId()
-    }
-
-    private fun checkPreconditions() {
-        if (configuration.targets.isEmpty()) {
-            val message = "There are no targets in ${configuration.name} configuration"
-            ciLogger.critical(message)
-
-            throw GradleException(message)
-        }
     }
 }

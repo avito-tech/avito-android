@@ -2,6 +2,7 @@
 package com.avito.utils.gradle
 
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.google.auth.oauth2.GoogleCredentials
 import io.fabric8.kubernetes.client.Config
 import io.fabric8.kubernetes.client.ConfigBuilder
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
@@ -63,7 +64,7 @@ private fun oauthTokenProvider(config: File): OAuthTokenProvider {
     val kubeConfig = KubeConfig.loadKubeConfig(config.inputStream().reader())
     val persister = FilePersister(config)
     kubeConfig.setPersistConfig(persister)
-
+    KubeConfig.registerAuthenticator(CustomGCPAuthenticator(GoogleCredentials.getApplicationDefault()))
     return OAuthTokenProvider { kubeConfig.accessToken }
 }
 

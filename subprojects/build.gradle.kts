@@ -2,6 +2,7 @@
 
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
@@ -102,8 +103,6 @@ subprojects {
         finalizedBy(teamcityPrintVersionTask)
     }
 
-    val sourcesTaskName = "sourcesJar"
-
     plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded {
         configure<BaseExtension> {
             sourceSets {
@@ -132,19 +131,31 @@ subprojects {
             }
         }
     }
-    plugins.withId("com.android.library") {
-        plugins.withType<MavenPublishPlugin>() {
-            afterEvaluate {
-                val publicationName = "release"
-                extensions.getByType<PublishingExtension>().apply {
-                    publications {
-                        create<MavenPublication>(publicationName) {
-                            from(components.getAt("release"))
+
+    plugins.withType<LibraryPlugin> {
+        val libraryExtension = this@subprojects.extensions.getByType<LibraryExtension>()
+
+        val sourcesTask = tasks.register<Jar>("sourcesJar") {
+            archiveClassifier.set("sources")
+            from(libraryExtension.sourceSets["main"].java.srcDirs)
+        }
+
+        val publishingVariant = "release"
+
+        plugins.withType<MavenPublishPlugin> {
+            libraryExtension.libraryVariants
+                .matching { it.name == publishingVariant }
+                .whenObjectAdded {
+                    extensions.getByType<PublishingExtension>().apply {
+                        publications {
+                            create<MavenPublication>(publishingVariant) {
+                                from(components.getAt(publishingVariant))
+                                artifact(sourcesTask.get())
+                            }
                         }
                     }
+                    configureBintray(publishingVariant)
                 }
-                configureBintray(publicationName)
-            }
         }
     }
 
@@ -325,5 +336,6 @@ fun Project.configureJunit5Tests() {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        maxParallelForks = 8
     }
 }

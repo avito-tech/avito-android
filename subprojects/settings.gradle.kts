@@ -63,6 +63,7 @@ include(":gradle:slack-test-fixtures")
 include(":gradle:utils")
 include(":gradle:utils-test-fixtures")
 include(":gradle:build-environment")
+include(":gradle:worker")
 
 include(":common:time")
 include(":common:time-test-fixtures")
@@ -137,8 +138,10 @@ pluginManagement {
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
                     useVersion(kotlinVersion)
 
+                // Can't update further
+                // https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/issues/199
                 pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.38.0")
+                    useVersion("0.39.0")
             }
         }
     }

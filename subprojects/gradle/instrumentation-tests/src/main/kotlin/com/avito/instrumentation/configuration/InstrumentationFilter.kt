@@ -1,5 +1,6 @@
 package com.avito.instrumentation.configuration
 
+import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.Filter
 import com.avito.report.model.Status
 import org.gradle.api.Action
@@ -77,7 +78,7 @@ abstract class InstrumentationFilter(val name: String) {
                 previousStatuses = previous.value,
                 reportFilter = reportFilter?.let { filter ->
                     Data.FromRunHistory.ReportFilter(
-                        id = filter.id,
+                        reportConfig = Report.Factory.Config.ReportViewerId(filter.id),
                         statuses = filter.statuses.value
                     )
                 }
@@ -118,7 +119,7 @@ abstract class InstrumentationFilter(val name: String) {
         ) : Serializable {
 
             data class ReportFilter(
-                val id: String,
+                val reportConfig: Report.Factory.Config.ReportViewerId,
                 val statuses: Filter.Value<InstrumentationFilter.FromRunHistory.RunStatus>
             ) : Serializable
 
