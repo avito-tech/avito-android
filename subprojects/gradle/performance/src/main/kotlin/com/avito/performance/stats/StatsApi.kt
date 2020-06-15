@@ -27,7 +27,7 @@ internal interface StatsApi {
         }
 
         override fun compare(toCompare: List<TestForComparing>): List<ComparedTest.Result> {
-            return requestProvider.request("/2/validate", toCompare)
+            return requestProvider.request("/2/validate?stat=mw", toCompare)
         }
     }
 }
