@@ -13,4 +13,5 @@ dependencies {
 
     implementation(gradleApi())
     implementation(Dependencies.officialKubernetesClient)
+    implementation(Dependencies.googleAuthLibrary)
 }
