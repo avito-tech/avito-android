@@ -35,7 +35,7 @@ plugins {
  * We use exact version to provide consistent environment and avoid build cache issues
  * (AGP tasks has artifacts from build tools)
  */
-val buildTools = "29.0.2"
+val buildTools = "29.0.3"
 val javaVersion = JavaVersion.VERSION_1_8
 val compileSdk = 29
 
@@ -202,7 +202,7 @@ subprojects {
                     name = "api22",
                     api = 22,
                     model = "Android_SDK_built_for_x86",
-                    image = "${emulatorImage(registry, 22)}:24e6ed0ec4",
+                    image = "${emulatorImage(registry, 22)}:116d6ed6c6",
                     cpuCoresRequest = "1",
                     cpuCoresLimit = "1.3"
                 )
@@ -211,7 +211,7 @@ subprojects {
                     name = "api28",
                     api = 28,
                     model = "Android_SDK_built_for_x86_64",
-                    image = "${emulatorImage(registry, 28)}:a9b53d28be",
+                    image = "${emulatorImage(registry, 28)}:37ac40d0fa",
                     cpuCoresRequest = "1",
                     cpuCoresLimit = "1.3"
                 )
@@ -299,18 +299,19 @@ subprojects {
                 }
             }
 
-            dependencies {
-                "implementation"(Dependencies.kotlinStdlib)
-            }
+            dependencies(closureOf<DependencyHandler> {
+                add("implementation", Dependencies.kotlinStdlib)
+            })
         }
     }
 }
 
+//todo registry value not respected here, it's unclear how its used (in fact concatenated in runner)
+//todo pass whole image, and not registry
 fun emulatorImage(registry: String?, api: Int): String {
     return if (registry.isNullOrBlank()) {
         "avitotech/android-emulator-$api"
     } else {
-        //todo registry value not respected here, it's unclear how its used (in fact concatenated in runner)
         "android/emulator-$api"
     }
 }
