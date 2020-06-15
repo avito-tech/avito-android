@@ -1,8 +1,21 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.LibraryPlugin
+import com.avito.instrumentation.InstrumentationTestsPlugin
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.instrumentation.reservation.request.Device
+import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.utils.gradle.KubernetesCredentials
+import com.avito.utils.gradle.KubernetesCredentials.Service
 import com.avito.utils.gradle.kubernetesCredentials
+import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     buildscript {
@@ -22,7 +35,7 @@ plugins {
  * We use exact version to provide consistent environment and avoid build cache issues
  * (AGP tasks has artifacts from build tools)
  */
-val buildTools = "29.0.2"
+val buildTools = "29.0.3"
 val javaVersion = JavaVersion.VERSION_1_8
 val compileSdk = 29
 
@@ -74,8 +87,8 @@ subprojects {
         }
     }
 
-    plugins.matching { it is com.android.build.gradle.AppPlugin || it is com.android.build.gradle.LibraryPlugin }.whenPluginAdded {
-        configure<com.android.build.gradle.BaseExtension> {
+    plugins.matching { it is AppPlugin || it is LibraryPlugin }.whenPluginAdded {
+        configure<BaseExtension> {
             sourceSets {
                 named("main").configure { java.srcDir("src/main/kotlin") }
                 named("androidTest").configure { java.srcDir("src/androidTest/kotlin") }
@@ -103,7 +116,7 @@ subprojects {
         }
     }
 
-    plugins.withType<com.avito.instrumentation.InstrumentationTestsPlugin>() {
+    plugins.withType<InstrumentationTestsPlugin> {
         extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
 
             //todo make these params optional features in plugin
@@ -111,8 +124,8 @@ subprojects {
             reportApiFallbackUrl = project.getOptionalStringProperty("avito.report.fallbackUrl") ?: "http://stub"
             reportViewerUrl = project.getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
             registry = project.getOptionalStringProperty("avito.registry", "registry") ?: "registry"
-            sentryDsn =
-                project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
+            sentryDsn = project.getOptionalStringProperty("avito.instrumentaion.sentry.dsn")
+                ?: "http://stub-project@stub-host/0"
             slackToken = project.getOptionalStringProperty("avito.slack.token") ?: "stub"
             fileStorageUrl = project.getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
 
@@ -162,17 +175,16 @@ subprojects {
                 targetsContainer.register("api28") {
                     deviceName = "API28"
 
-                    scheduling = com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration().apply {
-                        quota = com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration().apply {
+                    scheduling = SchedulingConfiguration().apply {
+                        quota = QuotaConfiguration().apply {
                             retryCount = 1
                             minimumSuccessCount = 1
                         }
 
-                        reservation = com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration()
-                            .apply {
+                        reservation = TestsBasedDevicesReservationConfiguration().apply {
                             // Replace 27 with 28 when 2020.6.1 will be released
                             //device = com.avito.instrumentation.reservation.request.Device.LocalEmulator.device(28, "Android_SDK_built_for_x86_64")
-                            device = com.avito.instrumentation.reservation.request.Device.LocalEmulator.device(27)
+                            device = Device.LocalEmulator.device(27)
                             maximum = 1
                             minimum = 1
                             testsPerEmulator = 1
@@ -182,7 +194,28 @@ subprojects {
             }
 
             val credentials = project.kubernetesCredentials
-            if (credentials is com.avito.utils.gradle.KubernetesCredentials.Service || credentials is com.avito.utils.gradle.KubernetesCredentials.Config) {
+            if (credentials is Service || credentials is KubernetesCredentials.Config) {
+
+                val registry = project.providers.gradleProperty("avito.registry").orNull
+
+                val emulator22 = CloudEmulator(
+                    name = "api22",
+                    api = 22,
+                    model = "Android_SDK_built_for_x86",
+                    image = "${emulatorImage(registry, 22)}:116d6ed6c6",
+                    cpuCoresRequest = "1",
+                    cpuCoresLimit = "1.3"
+                )
+
+                val emulator28 = CloudEmulator(
+                    name = "api28",
+                    api = 28,
+                    model = "Android_SDK_built_for_x86_64",
+                    image = "${emulatorImage(registry, 28)}:37ac40d0fa",
+                    cpuCoresRequest = "1",
+                    cpuCoresLimit = "1.3"
+                )
+
                 configurationsContainer.register("ui") {
                     tryToReRunOnTargetBranch = false
                     reportSkippedTests = true
@@ -192,17 +225,14 @@ subprojects {
                     targetsContainer.register("api22") {
                         deviceName = "API22"
 
-                        scheduling = com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration()
-                            .apply {
-                            quota = com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration()
-                                .apply {
+                        scheduling = SchedulingConfiguration().apply {
+                            quota = QuotaConfiguration().apply {
                                 retryCount = 1
                                 minimumSuccessCount = 1
                             }
 
-                            reservation = com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration()
-                                .apply {
-                                device = com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+                            reservation = TestsBasedDevicesReservationConfiguration().apply {
+                                device = emulator22
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -213,17 +243,14 @@ subprojects {
                     targetsContainer.register("api28") {
                         deviceName = "API28"
 
-                        scheduling = com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration()
-                            .apply {
-                            quota = com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration()
-                                .apply {
+                        scheduling = SchedulingConfiguration().apply {
+                            quota = QuotaConfiguration().apply {
                                 retryCount = 1
                                 minimumSuccessCount = 1
                             }
 
-                            reservation = com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration()
-                                .apply {
-                                device = com.avito.instrumentation.reservation.request.Device.Emulator.Emulator28
+                            reservation = TestsBasedDevicesReservationConfiguration().apply {
+                                device = emulator28
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -242,17 +269,14 @@ subprojects {
                     targetsContainer.register("api28") {
                         deviceName = "API28"
 
-                        scheduling = com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration()
-                            .apply {
-                            quota = com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration()
-                                .apply {
+                        scheduling = SchedulingConfiguration().apply {
+                            quota = QuotaConfiguration().apply {
                                 retryCount = 1
                                 minimumSuccessCount = 1
                             }
 
-                            reservation = com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration()
-                                .apply {
-                                device = com.avito.instrumentation.reservation.request.Device.Emulator.Emulator28
+                            reservation = TestsBasedDevicesReservationConfiguration().apply {
+                                device = emulator28
                                 maximum = 1
                                 minimum = 1
                                 testsPerEmulator = 1
@@ -264,10 +288,10 @@ subprojects {
         }
     }
 
-    plugins.withType<org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper> {
+    plugins.withType<KotlinBasePluginWrapper> {
         this@subprojects.run {
             tasks {
-                withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+                withType<KotlinCompile> {
                     kotlinOptions {
                         jvmTarget = javaVersion.toString()
                         allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
@@ -275,9 +299,19 @@ subprojects {
                 }
             }
 
-            dependencies {
-                "implementation"(Dependencies.kotlinStdlib)
-            }
+            dependencies(closureOf<DependencyHandler> {
+                add("implementation", Dependencies.kotlinStdlib)
+            })
         }
+    }
+}
+
+//todo registry value not respected here, it's unclear how its used (in fact concatenated in runner)
+//todo pass whole image, and not registry
+fun emulatorImage(registry: String?, api: Int): String {
+    return if (registry.isNullOrBlank()) {
+        "avitotech/android-emulator-$api"
+    } else {
+        "android/emulator-$api"
     }
 }
