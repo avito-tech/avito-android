@@ -80,11 +80,6 @@ class KubernetesReservationClient(
 
             logger.debug("Starting deployment: $deploymentName")
             when (reservation.device) {
-                is Device.Emulator -> getEmulatorDeployment(
-                    emulator = reservation.device,
-                    deploymentName = deploymentName,
-                    count = reservation.count
-                )
                 is Device.Phone -> getDeviceDeployment(
                     count = reservation.count,
                     phone = reservation.device,
@@ -276,83 +271,6 @@ class KubernetesReservationClient(
             tolerations = listOf(
                 newToleration {
                     operator = "Exists"
-                    effect = "NoSchedule"
-                }
-            )
-        }
-    }
-
-    @Deprecated("remove after 2020.6.1")
-    private fun getEmulatorDeployment(
-        emulator: Device.Emulator,
-        deploymentName: String,
-        count: Int
-    ): Deployment {
-        return deviceDeployment(
-            deploymentMatchLabels = deviceMatchLabels(emulator),
-            deploymentName = deploymentName,
-            count = count
-        ) {
-            containers = listOf(
-                newContainer {
-                    name = emulator.name.kubernetesName()
-                    image = "$registry/${emulator.image}"
-
-                    securityContext {
-                        privileged = true
-                    }
-
-                    resources {
-                        limits = mapOf(
-                            "cpu" to Quantity(emulator.cpuCoresLimit),
-                            "memory" to Quantity("3.5Gi")
-                        )
-                        requests = mapOf(
-                            "cpu" to Quantity(emulator.cpuCoresRequest)
-                        )
-                    }
-
-                    if (emulator.gpu) {
-                        volumeMounts = listOf(
-                            newVolumeMount {
-                                name = "x-11"
-                                mountPath = "/tmp/.X11-unix"
-                                readOnly = true
-                            }
-                        )
-
-                        env = listOf(
-                            newEnvVar {
-                                name = "GPU_ENABLED"
-                                value = "true"
-                            },
-                            newEnvVar {
-                                name = "SNAPSHOT_DISABLED"
-                                value = "true"
-                            }
-                        )
-                    }
-                }
-            )
-
-            if (emulator.gpu) {
-                volumes = listOf(
-                    newVolume {
-                        name = "x-11"
-
-                        hostPath = newHostPathVolumeSource {
-                            path = "/tmp/.X11-unix"
-                            type = "Directory"
-                        }
-                    }
-                )
-            }
-
-            tolerations = listOf(
-                newToleration {
-                    key = "dedicated"
-                    operator = "Equal"
-                    value = "android"
                     effect = "NoSchedule"
                 }
             )

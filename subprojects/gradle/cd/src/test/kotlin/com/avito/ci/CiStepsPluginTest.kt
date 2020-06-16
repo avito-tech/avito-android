@@ -568,7 +568,7 @@ class CiStepsPluginTest {
                                 }
 
                                 staticDevicesReservation {
-                                    device = Emulator22.INSTANCE
+                                    device = LocalEmulator.device(27)
                                     count = 1
                                 }
                             }
@@ -578,7 +578,7 @@ class CiStepsPluginTest {
                 """
         }
         return """
-            import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+            import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
 
             android.defaultConfig {
                 testInstrumentationRunner = "no_matter"
@@ -586,12 +586,12 @@ class CiStepsPluginTest {
             }
             instrumentation {
                 reportApiUrl = "stub"
-                 reportApiFallbackUrl = "stub"
-                 reportViewerUrl = "stub"
-                 registry = "stub"
-                 sentryDsn = "stub"
-                 slackToken = "stub"
-                 fileStorageUrl = "stub"
+                reportApiFallbackUrl = "stub"
+                reportViewerUrl = "stub"
+                registry = "stub"
+                sentryDsn = "stub"
+                slackToken = "stub"
+                fileStorageUrl = "stub"
                 instrumentationParams = [
                     "deviceName"    : "regress",
                     "jobSlug"       : "regress"

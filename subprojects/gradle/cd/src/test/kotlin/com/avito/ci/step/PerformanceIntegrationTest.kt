@@ -74,7 +74,7 @@ class PerformanceIntegrationTest {
                                 }
 
                                 staticDevicesReservation {
-                                    device = Emulator22.INSTANCE
+                                    device = LocalEmulator.device(27)
                                     count = 1
                                 }
                             }
@@ -84,7 +84,7 @@ class PerformanceIntegrationTest {
                 """
         }
         return """
-            import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+            import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
 
             android.defaultConfig {
                 testInstrumentationRunner = "no_matter"

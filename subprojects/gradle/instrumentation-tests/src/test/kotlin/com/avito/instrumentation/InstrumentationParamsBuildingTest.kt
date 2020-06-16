@@ -58,7 +58,7 @@ class InstrumentationParamsBuildingTest {
                         "app",
                         plugins = listOf("com.avito.android.instrumentation-tests"),
                         buildGradleExtra = """
-                         import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+                         import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
 
                          android {
                             defaultConfig {
@@ -109,7 +109,7 @@ class InstrumentationParamsBuildingTest {
                                                 }
 
                                                 staticDevicesReservation {
-                                                    device = Emulator22.INSTANCE
+                                                    device = LocalEmulator.device(27)
                                                     count = 1
                                                 }
                                             }
@@ -130,7 +130,7 @@ class InstrumentationParamsBuildingTest {
                                                 }
 
                                                 staticDevicesReservation {
-                                                    device = Emulator22.INSTANCE
+                                                    device = LocalEmulator.device(27)
                                                     count = 1
                                                 }
                                             }
@@ -147,7 +147,7 @@ class InstrumentationParamsBuildingTest {
                                                 }
 
                                                 staticDevicesReservation {
-                                                    device = Emulator22.INSTANCE
+                                                    device = LocalEmulator.device(27)
                                                     count = 1
                                                 }
                                             }

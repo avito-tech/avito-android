@@ -58,7 +58,7 @@ class InstrumentationTestsPluginTest {
     }
 
     private fun instrumentationConfiguration(): String = """
-                        import static com.avito.instrumentation.reservation.request.Device.Emulator.Emulator22
+                        import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
 
                         instrumentation {
                             output = project.file("outputs").path
@@ -91,7 +91,7 @@ class InstrumentationTestsPluginTest {
                                                 }
 
                                                 staticDevicesReservation {
-                                                    device = Emulator22.INSTANCE
+                                                    device = LocalEmulator.device(27)
                                                     count = 1
                                                 }
                                             }
@@ -114,7 +114,7 @@ class InstrumentationTestsPluginTest {
                                                 }
 
                                                 staticDevicesReservation {
-                                                    device = Emulator22.INSTANCE
+                                                    device = LocalEmulator.device(27)
                                                     count = 1
                                                 }
                                             }
