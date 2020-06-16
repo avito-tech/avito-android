@@ -8,9 +8,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.util.HumanReadables
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.espresso.EspressoActions
 import com.avito.android.test.util.executeMethod
@@ -20,8 +22,6 @@ import me.weishu.reflection.Reflection
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
-import org.junit.Assert
-import java.lang.reflect.Method
 import java.util.concurrent.TimeUnit
 
 /**
@@ -52,8 +52,23 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
             return
         }
 
-        tapForFocus(uiController = uiController, editText = view)
-        writeText(uiController = uiController, editText = view)
+        try {
+            tapForFocus(uiController = uiController, editText = view)
+        } catch (e: Throwable) {
+            throw PerformException.Builder().withActionDescription(this.toString())
+                .withViewDescription(HumanReadables.describe(view))
+                .withCause(IllegalStateException("Can't get focus to write text: ${e.message}"))
+                .build()
+        }
+
+        try {
+            writeText(uiController = uiController, editText = view)
+        } catch (e: Throwable) {
+            throw PerformException.Builder().withActionDescription(this.toString())
+                .withViewDescription(HumanReadables.describe(view))
+                .withCause(IllegalStateException("Can't write text via custom avito method: ${e.message}"))
+                .build()
+        }
 
         uiController.loopMainThreadUntilIdle()
     }
@@ -63,7 +78,7 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
         uiController.loopMainThreadUntilIdle()
 
         waitMainLoopFor(uiController) {
-            Assert.assertThat(
+            assertThat(
                 "View must have focus after tap before text typing",
                 editText.hasFocus(),
                 Matchers.`is`(true)
@@ -72,7 +87,7 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
     }
 
     private fun writeText(uiController: UiController, editText: EditText) {
-        assertThat("Hidden API is unavailable", HiddenApiHack.unseal, Matchers.`is`(true))
+        assertThat("Hidden API is unavailable", unseal, Matchers.`is`(true))
 
         val context = (
             ApplicationProvider.getApplicationContext<Application>()
@@ -100,7 +115,7 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
         context.executeMethod("endBatchEdit")
 
         waitMainLoopFor(uiController) {
-            Assert.assertThat(
+            assertThat(
                 "Failed to write text. Typing event has sent but hasn't handled",
                 textChangedAtLeastOnce,
                 Matchers.`is`(true)
