@@ -23,17 +23,17 @@ class StatefulRecyclerViewAdapterTest {
      * For more details look at recycler view adapter inside StatefulRecyclerViewAdapterActivity
      */
     @Test
-    fun adapterState_notAffectedByDynamicRecyclerViewElementFindingLogic_whenProductionCodeAvoidToUsingSideEffectsForFakeViewHolder(
-    ) {
+    fun adapterState_notAffectedByDynamicRecyclerViewElementFindingLogic_whenProductionCodeAvoidToUsingSideEffectsForFakeViewHolder() {
         rule.launchActivity(Intent())
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60").scrollTo()
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("1").scrollTo()
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60").scrollTo()
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("1").scrollTo()
+        with(Screen.statefulRecyclerViewAdapterScreen.list) {
+            cellWithTitle("60").scrollTo()
+            cellWithTitle("1").scrollTo()
+            cellWithTitle("60").scrollTo()
+            cellWithTitle("1").scrollTo()
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("1")
-            .title2.checks.displayedWithText("3")
+            cellWithTitle("1").title2.checks.displayedWithText("3")
+        }
     }
 
     @Test
@@ -49,18 +49,19 @@ class StatefulRecyclerViewAdapterTest {
 
         var expectedBindingsCount = 0
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60").scrollTo().apply {
-            expectedBindingsCount++ // fake binding for finding element
-            expectedBindingsCount++ // real binding for showing element
-        }
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("1").scrollTo()
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60").scrollTo().apply {
-            expectedBindingsCount++ // fake binding for finding element
-            expectedBindingsCount++ // real binding for showing element
-        }
+        with(Screen.statefulRecyclerViewAdapterScreen.list) {
+            cellWithTitle("60").scrollTo().apply {
+                expectedBindingsCount++ // fake binding for finding element
+                expectedBindingsCount++ // real binding for showing element
+            }
+            cellWithTitle("1").scrollTo()
+            cellWithTitle("60").scrollTo().apply {
+                expectedBindingsCount++ // fake binding for finding element
+                expectedBindingsCount++ // real binding for showing element
+            }
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60")
-            .title2.checks.displayedWithText(expectedBindingsCount.toString())
+            cellWithTitle("60").title2.checks.displayedWithText(expectedBindingsCount.toString())
+        }
     }
 
     @Test
@@ -76,18 +77,19 @@ class StatefulRecyclerViewAdapterTest {
 
         var expectedBindingsCount = 0
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60").click().apply {
-            expectedBindingsCount++ // fake binding for finding element
-            expectedBindingsCount++ // real binding for showing element
-        }
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("1").click()
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60").click().apply {
-            expectedBindingsCount++ // fake binding for finding element
-            expectedBindingsCount++ // real binding for showing element
-        }
+        with(Screen.statefulRecyclerViewAdapterScreen.list) {
+            cellWithTitle("60").click().apply {
+                expectedBindingsCount++ // fake binding for finding element
+                expectedBindingsCount++ // real binding for showing element
+            }
+            cellWithTitle("1").click()
+            cellWithTitle("60").click().apply {
+                expectedBindingsCount++ // fake binding for finding element
+                expectedBindingsCount++ // real binding for showing element
+            }
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60")
-            .title2.checks.displayedWithText(expectedBindingsCount.toString())
+            cellWithTitle("60").title2.checks.displayedWithText(expectedBindingsCount.toString())
+        }
     }
 
     @Test
@@ -104,20 +106,21 @@ class StatefulRecyclerViewAdapterTest {
 
         var expectedBindingsCount = 0
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitleCreatedByRecyclerViewInteractionContext("60").click()
-            .apply {
-                expectedBindingsCount++ // fake binding for finding element
-                expectedBindingsCount++ // real binding for showing element
-            }
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitleCreatedByRecyclerViewInteractionContext("1").click()
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitleCreatedByRecyclerViewInteractionContext("60").click()
-            .apply {
-                expectedBindingsCount++ // fake binding for finding element
-                expectedBindingsCount++ // real binding for showing element
-            }
+        with(Screen.statefulRecyclerViewAdapterScreen.list) {
+            cellWithTitleCreatedByRecyclerViewInteractionContext("60").click()
+                .apply {
+                    expectedBindingsCount++ // fake binding for finding element
+                    expectedBindingsCount++ // real binding for showing element
+                }
+            cellWithTitleCreatedByRecyclerViewInteractionContext("1").click()
+            cellWithTitleCreatedByRecyclerViewInteractionContext("60").click()
+                .apply {
+                    expectedBindingsCount++ // fake binding for finding element
+                    expectedBindingsCount++ // real binding for showing element
+                }
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("60")
-            .title2.checks.displayedWithText(expectedBindingsCount.toString())
+            cellWithTitle("60").title2.checks.displayedWithText(expectedBindingsCount.toString())
+        }
     }
 
     @Test
@@ -135,18 +138,19 @@ class StatefulRecyclerViewAdapterTest {
         var expectedBindingsCount = 0
 
         expectedBindingsCount++ // initial binding
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitleCreatedByRecyclerViewInteractionContext("1")
-            .click() // there is no fake binding because item already on the screen
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitleCreatedByRecyclerViewInteractionContext("60")
-            .click() // there is no fake binding because item already on the screen
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitleCreatedByRecyclerViewInteractionContext("1").click()
-            .apply {
-                expectedBindingsCount++ // fake binding for finding element
-                expectedBindingsCount++ // real binding for showing element
-            }
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitleCreatedByRecyclerViewInteractionContext("1").click()
 
-        Screen.statefulRecyclerViewAdapterScreen.list.cellWithTitle("1")
-            .title2.checks.displayedWithText(expectedBindingsCount.toString())
+        with(Screen.statefulRecyclerViewAdapterScreen.list) {
+
+            cellWithTitleCreatedByRecyclerViewInteractionContext("1").click() // there is no fake binding because item already on the screen
+            cellWithTitleCreatedByRecyclerViewInteractionContext("60").click() // there is no fake binding because item already on the screen
+            cellWithTitleCreatedByRecyclerViewInteractionContext("1").click()
+                .apply {
+                    expectedBindingsCount++ // fake binding for finding element
+                    expectedBindingsCount++ // real binding for showing element
+                }
+            cellWithTitleCreatedByRecyclerViewInteractionContext("1").click()
+
+            cellWithTitle("1").title2.checks.displayedWithText(expectedBindingsCount.toString())
+        }
     }
 }

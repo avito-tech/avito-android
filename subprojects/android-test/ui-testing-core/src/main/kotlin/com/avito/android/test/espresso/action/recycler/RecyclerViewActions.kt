@@ -60,7 +60,8 @@ fun <VH : RecyclerView.ViewHolder> itemDoesNotExists(
 ): ViewAction = ViewDoesNotExistInRecyclerCheckHack(
     match = RecyclerItemsMatcher.Match.create(
         position = position,
-        matcher = viewHolderMatcher<VH>(itemViewMatcher)),
+        matcher = viewHolderMatcher<VH>(itemViewMatcher)
+    ),
     viewAction = viewAction
 )
 
@@ -139,11 +140,9 @@ private class ActionOnItemViewAction<VH : RecyclerView.ViewHolder>(
                         uiController.loopMainThreadUntilIdle()
                     }
                     actionOnItemAtPosition<RecyclerView.ViewHolder>(
-                        matchedItem.position,
-                        viewAction
-                    ).perform(
-                        uiController, root
-                    )
+                        position = matchedItem.position,
+                        viewAction = viewAction
+                    ).perform(uiController, root)
                     uiController.loopMainThreadUntilIdle()
                 }
             }
