@@ -1,8 +1,8 @@
 package com.avito.android.test.element.field
 
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.actionWithAssertions
 import androidx.test.espresso.action.ViewActions.clearText
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import com.avito.android.test.InteractionContext
 import com.avito.android.test.action.Actions
@@ -41,9 +41,9 @@ internal class TextFieldAction(
                 TypeText(
                     stringToBeTyped = text
                 )
-            )
+            ),
+            closeSoftKeyboard()
         )
-        Espresso.closeSoftKeyboard()
     }
 
     override fun writeAndPressImeAction(text: String) {
@@ -57,9 +57,9 @@ internal class TextFieldAction(
                     stringToBeTyped = text
                 )
             ),
-            pressImeActionButton()
+            pressImeActionButton(),
+            closeSoftKeyboard()
         )
-        Espresso.closeSoftKeyboard()
     }
 
     override fun clear() {
