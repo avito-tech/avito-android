@@ -8,11 +8,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.util.HumanReadables
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.espresso.EspressoActions
 import com.avito.android.test.util.executeMethod
@@ -52,23 +50,8 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
             return
         }
 
-        try {
-            tapForFocus(uiController = uiController, editText = view)
-        } catch (e: Throwable) {
-            throw PerformException.Builder().withActionDescription(this.toString())
-                .withViewDescription(HumanReadables.describe(view))
-                .withCause(IllegalStateException("Can't get focus to write text: ${e.message}"))
-                .build()
-        }
-
-        try {
-            writeText(uiController = uiController, editText = view)
-        } catch (e: Throwable) {
-            throw PerformException.Builder().withActionDescription(this.toString())
-                .withViewDescription(HumanReadables.describe(view))
-                .withCause(IllegalStateException("Can't write text via custom avito method: ${e.message}"))
-                .build()
-        }
+        tapForFocus(uiController = uiController, editText = view)
+        writeText(uiController = uiController, editText = view)
 
         uiController.loopMainThreadUntilIdle()
     }
