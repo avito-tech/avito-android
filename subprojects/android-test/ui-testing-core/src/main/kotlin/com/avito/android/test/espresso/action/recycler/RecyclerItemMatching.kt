@@ -18,6 +18,7 @@ private const val NEAR_ITEMS_SEARCH_WINDOW_SIZE = 5
 internal class RecyclerItemsMatcher(
     private val recyclerView: RecyclerView
 ) {
+
     internal sealed class Match<VH : RecyclerView.ViewHolder> {
 
         abstract val matcher: TypeSafeMatcher<VH>
@@ -40,16 +41,16 @@ internal class RecyclerItemsMatcher(
                 position: Int?,
                 matcher: TypeSafeMatcher<VH>
             ): Match<VH> {
-                return when {
-                    position == null -> All(matcher)
+                return when (position) {
+                    null -> All(matcher)
                     else -> AtPosition(position, matcher)
-
                 }
             }
         }
     }
 
     internal sealed class Result {
+
         abstract val description: String
 
         /**
@@ -97,7 +98,8 @@ internal class RecyclerItemsMatcher(
                 get() = "No matched item in recycler at position $atPosition. ${createNearItemsDescription()}"
 
             private fun createNearItemsDescription() =
-                "Search near items from $searchFrom to $searchTo ${if (nearMatchedItems.isEmpty()) "doesn't have matches" else "has matches at positions: [${nearMatchedItems.map { it.position }.joinToString()}"}]"
+                "Search near items from $searchFrom to $searchTo ${if (nearMatchedItems.isEmpty()) "doesn't have matches" else "has matches at positions: [${nearMatchedItems.map { it.position }
+                    .joinToString()}"}]"
         }
     }
 
@@ -127,7 +129,7 @@ internal class RecyclerItemsMatcher(
                 position = position,
                 description = HumanReadables.getViewHierarchyErrorMessage(
                     holder.itemView, null,
-                    "\n\n*** Matched ViewHolder item at position: ${position} ***", null
+                    "\n\n*** Matched ViewHolder item at position: $position ***", null
                 )
             )
         )
@@ -217,7 +219,6 @@ internal class RecyclerItemsMatcher(
                 viewHolderCache.put(itemType, viewHolder)
             }
             // Bind data to ViewHolder and apply matcher to view descendants.
-            @Suppress("UNCHECKED_CAST")
             adapter.bindViewHolder(viewHolder, atPosition)
         }
         return viewHolder

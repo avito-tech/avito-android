@@ -55,7 +55,7 @@ object Dependencies {
     val r8 = "com.android.tools:r8:1.6.89"
     val playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
     val appcompat = "androidx.appcompat:appcompat:${Versions.androidX}"
-    val recyclerView = "androidx.recyclerview:recyclerview:${Versions.androidX}"
+    val recyclerView = "androidx.recyclerview:recyclerview:1.1.0"
     val material = "com.google.android.material:material:${Versions.androidX}"
     val androidAnnotations = "androidx.annotation:annotation:1.1.0"
     val freeReflection = "me.weishu:free_reflection:2.2.0"

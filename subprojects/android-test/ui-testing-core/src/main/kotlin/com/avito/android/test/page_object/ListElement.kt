@@ -90,8 +90,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
     class ListActions private constructor(
         private val driver: ActionsDriver,
         private val actions: Actions
-    ) :
-        Actions by actions {
+    ) : Actions by actions {
 
         constructor(driver: ActionsDriver) : this(driver, ActionsImpl(driver))
 
@@ -104,11 +103,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
         }
 
         fun smoothScrollToPosition(position: Int = 0) {
-            driver.perform(
-                SmoothScrollToPositionViewAction(
-                    position
-                )
-            )
+            driver.perform(SmoothScrollToPositionViewAction(position))
         }
 
         fun scrollToEnd() = scrollToPosition(items - 1)
