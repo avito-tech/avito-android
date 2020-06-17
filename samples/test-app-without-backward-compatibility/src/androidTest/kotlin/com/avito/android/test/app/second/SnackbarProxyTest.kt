@@ -2,6 +2,7 @@ package com.avito.android.test.app.second
 
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.test.Screen
+import org.hamcrest.Matchers
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -12,7 +13,9 @@ class SnackbarProxyTest {
     val rule = screenRule<SnackbarProxyTestActivity>()
 
     @get:Rule
-    val snackbarRule = SnackbarProxyRule()
+    val snackbarRule = SnackbarRule()
+
+    val snackbarChecks = snackbarRule.checks
 
     @get:Rule
     val exception: ExpectedException = ExpectedException.none()
@@ -23,7 +26,7 @@ class SnackbarProxyTest {
 
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarRule.isShown("snackbar number 1")
+        snackbarChecks.isShownWithExactlyText("snackbar number 1")
     }
 
     @Test
@@ -33,7 +36,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbar()
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarRule.isShownLast("snackbar number 2")
+        snackbarChecks.isShownLastWithExactlyText("snackbar number 2")
     }
 
     @Test
@@ -43,7 +46,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbar()
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarRule.isShownTimes("snackbar number 1", 1)
+        snackbarChecks.isShownWithTextMatches(Matchers.containsString("snackbar number"), 2)
     }
 
     @Test
@@ -51,7 +54,7 @@ class SnackbarProxyTest {
         rule.launchActivity(null)
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
 
-        snackbarRule.isShown("snackbar number 1")
+        snackbarChecks.isShownWithExactlyText("snackbar number 1")
     }
 
     @Test
@@ -61,7 +64,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
 
-        snackbarRule.isShownLast("snackbar number 3")
+        snackbarChecks.isShownLastWithExactlyText("snackbar number 3")
     }
 
     @Test
@@ -69,9 +72,9 @@ class SnackbarProxyTest {
         rule.launchActivity(null)
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        Thread.sleep(1000L)
+        simulateDelay()
 
-        snackbarRule.isShown("snackbar number 1")
+        snackbarChecks.isShownWithExactlyText("snackbar number 1")
     }
 
     @Test
@@ -80,9 +83,9 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbar()
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        Thread.sleep(1000L)
+        simulateDelay()
 
-        snackbarRule.isShownLast("snackbar number 2")
+        snackbarChecks.isShownLastWithExactlyText("snackbar number 2")
     }
 
     @Test
@@ -90,11 +93,19 @@ class SnackbarProxyTest {
         rule.launchActivity(null)
         Screen.snackbarProxyScreen.clickShowSnackbar()
         val text = "snackbar number 1"
-        snackbarRule.isShownLast(text)
+        snackbarChecks.isShownLastWithExactlyText(text)
         snackbarRule.clear()
 
         exception.expect(java.lang.AssertionError::class.java)
-        exception.expectMessage("Snackbar with text=\"$text\" wasn't shown last")
-        snackbarRule.isShownLast(text)
+        exception.expectMessage("There weren't shown any snackbar")
+        snackbarChecks.isShownLastWithExactlyText(text)
+    }
+
+    /**
+     * We are against using Thread.sleep in tests
+     * In this case we use sleep for testing our framework behaviour
+     */
+    private fun simulateDelay() {
+        Thread.sleep(1000L)
     }
 }
