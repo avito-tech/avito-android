@@ -151,19 +151,17 @@ private fun RecyclerView.scrollItemAtPositionToCenter(
     if (!viewForItemAtPositionExists(position)) {
         scrollToPosition(position)
         uiController.loopMainThreadUntilIdle()
-    } else {
-
-        try {
-            layoutManager
-                ?.findViewByPosition(position)
-                ?.scrollToScrollableParentCenterPosition()
-        } catch (t: Throwable) {
-            // scrollToScrollableParentCenterPosition contains hard logic to find scrollable container,
-            // so we're just trying to scroll to center of scrollable parent. This action is optional
-        }
-
-        uiController.loopMainThreadUntilIdle()
     }
+
+    try {
+        layoutManager?.findViewByPosition(position)
+            ?.scrollToScrollableParentCenterPosition()
+    } catch (t: Throwable) {
+        // scrollToScrollableParentCenterPosition contains hard logic to find scrollable container,
+        // so we're just trying to scroll to center of scrollable parent. This action is optional
+    }
+
+    uiController.loopMainThreadUntilIdle()
 }
 
 private fun RecyclerView.scrollToViewInsideItemAtPositionToCenter(
