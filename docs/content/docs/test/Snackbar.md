@@ -1,4 +1,4 @@
-# Motivation
+# Snackbar
 
 **Why do we need a custom component for snackbar testing?** \
 We can't predict when snackbar will appear or disappear because we have no API to watch that behaviour. \
