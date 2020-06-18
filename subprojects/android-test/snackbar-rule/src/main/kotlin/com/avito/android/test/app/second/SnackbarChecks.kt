@@ -11,15 +11,15 @@ class SnackbarChecks internal constructor(
     private val proxy: SnackbarRule.Proxy
 ) {
 
-    fun isShownWithTextMatches(text: Matcher<String>) {
-        isShownWithTextMatches(text, 1)
+    fun isShownWith(text: Matcher<String>) {
+        isShownWith(text, 1)
     }
 
-    fun isShownWithExactlyText(text: String) {
-        isShownWithTextMatches(Is(text))
+    fun isShownWith(text: String) {
+        isShownWith(Is(text))
     }
 
-    fun isShownLastWithTextMatches(text: Matcher<String>) {
+    fun isShownLastWith(text: Matcher<String>) {
         waitFor {
             val last = proxy.snackbarTexts.lastOrNull() ?: throw AssertionError("There weren't shown any snackbar")
             MatcherAssert.assertThat(
@@ -30,11 +30,11 @@ class SnackbarChecks internal constructor(
         }
     }
 
-    fun isShownLastWithExactlyText(text: String) {
-        isShownLastWithTextMatches(Is(text))
+    fun isShownLastWith(text: String) {
+        isShownLastWith(Is(text))
     }
 
-    fun isShownWithTextMatches(text: Matcher<String>, times: Int) {
+    fun isShownWith(text: Matcher<String>, times: Int) {
         waitFor {
             MatcherAssert.assertThat(
                 "Snackbar with text matches $text wasn't shown $times times",

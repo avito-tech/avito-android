@@ -26,7 +26,7 @@ class SnackbarProxyTest {
 
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarChecks.isShownWithExactlyText("snackbar number 1")
+        snackbarChecks.isShownWith("snackbar number 1")
     }
 
     @Test
@@ -36,7 +36,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbar()
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarChecks.isShownLastWithExactlyText("snackbar number 2")
+        snackbarChecks.isShownLastWith("snackbar number 2")
     }
 
     @Test
@@ -46,7 +46,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbar()
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarChecks.isShownWithTextMatches(Matchers.containsString("snackbar number"), 2)
+        snackbarChecks.isShownWith(Matchers.containsString("snackbar number"), 2)
     }
 
     @Test
@@ -54,7 +54,7 @@ class SnackbarProxyTest {
         rule.launchActivity(null)
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
 
-        snackbarChecks.isShownWithExactlyText("snackbar number 1")
+        snackbarChecks.isShownWith("snackbar number 1")
     }
 
     @Test
@@ -64,7 +64,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
 
-        snackbarChecks.isShownLastWithExactlyText("snackbar number 3")
+        snackbarChecks.isShownLastWith("snackbar number 3")
     }
 
     @Test
@@ -74,7 +74,7 @@ class SnackbarProxyTest {
 
         simulateDelay()
 
-        snackbarChecks.isShownWithExactlyText("snackbar number 1")
+        snackbarChecks.isShownWith("snackbar number 1")
     }
 
     @Test
@@ -85,7 +85,7 @@ class SnackbarProxyTest {
 
         simulateDelay()
 
-        snackbarChecks.isShownLastWithExactlyText("snackbar number 2")
+        snackbarChecks.isShownLastWith("snackbar number 2")
     }
 
     @Test
@@ -93,12 +93,12 @@ class SnackbarProxyTest {
         rule.launchActivity(null)
         Screen.snackbarProxyScreen.clickShowSnackbar()
         val text = "snackbar number 1"
-        snackbarChecks.isShownLastWithExactlyText(text)
+        snackbarChecks.isShownLastWith(text)
         snackbarRule.clear()
 
         exception.expect(java.lang.AssertionError::class.java)
         exception.expectMessage("There weren't shown any snackbar")
-        snackbarChecks.isShownLastWithExactlyText(text)
+        snackbarChecks.isShownLastWith(text)
     }
 
     /**
