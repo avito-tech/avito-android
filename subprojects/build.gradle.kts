@@ -52,6 +52,7 @@ val finalProjectVersion: String = System.getProperty("avito.project.version").le
 
 dependencyAnalysis {
     chatty(false)
+    autoApply(false)
 }
 
 subprojects {

@@ -143,7 +143,7 @@ pluginManagement {
                 // Can't update further
                 // https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/issues/199
                 pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.39.0")
+                    useVersion("0.49.0")
             }
         }
     }
