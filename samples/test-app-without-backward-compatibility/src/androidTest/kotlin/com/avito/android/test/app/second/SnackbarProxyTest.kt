@@ -2,7 +2,6 @@ package com.avito.android.test.app.second
 
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.test.Screen
-import org.hamcrest.Matchers
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
@@ -14,9 +13,7 @@ class SnackbarProxyTest {
 
     @get:Rule
     val snackbarRule = SnackbarRule()
-
-    val snackbarChecks = snackbarRule.checks
-
+    
     @get:Rule
     val exception: ExpectedException = ExpectedException.none()
 
@@ -26,7 +23,7 @@ class SnackbarProxyTest {
 
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarChecks.isShownWith("snackbar number 1")
+        snackbarRule.assertIsShownWith("snackbar number 1")
     }
 
     @Test
@@ -36,17 +33,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbar()
         Screen.snackbarProxyScreen.clickShowSnackbar()
 
-        snackbarChecks.isShownLastWith("snackbar number 2")
-    }
-
-    @Test
-    fun check_snackbar_is_shown_N_times() {
-        rule.launchActivity(null)
-
-        Screen.snackbarProxyScreen.clickShowSnackbar()
-        Screen.snackbarProxyScreen.clickShowSnackbar()
-
-        snackbarChecks.isShownWith(Matchers.containsString("snackbar number"), 2)
+        snackbarRule.assertIsShownLastWith("snackbar number 2")
     }
 
     @Test
@@ -54,7 +41,7 @@ class SnackbarProxyTest {
         rule.launchActivity(null)
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
 
-        snackbarChecks.isShownWith("snackbar number 1")
+        snackbarRule.assertIsShownWith("snackbar number 1")
     }
 
     @Test
@@ -64,7 +51,7 @@ class SnackbarProxyTest {
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
         Screen.snackbarProxyScreen.clickShowSnackbarDelayed()
 
-        snackbarChecks.isShownLastWith("snackbar number 3")
+        snackbarRule.assertIsShownLastWith("snackbar number 3")
     }
 
     @Test
@@ -74,7 +61,7 @@ class SnackbarProxyTest {
 
         simulateDelay()
 
-        snackbarChecks.isShownWith("snackbar number 1")
+        snackbarRule.assertIsShownWith("snackbar number 1")
     }
 
     @Test
@@ -85,7 +72,7 @@ class SnackbarProxyTest {
 
         simulateDelay()
 
-        snackbarChecks.isShownLastWith("snackbar number 2")
+        snackbarRule.assertIsShownLastWith("snackbar number 2")
     }
 
     @Test
@@ -93,12 +80,12 @@ class SnackbarProxyTest {
         rule.launchActivity(null)
         Screen.snackbarProxyScreen.clickShowSnackbar()
         val text = "snackbar number 1"
-        snackbarChecks.isShownLastWith(text)
+        snackbarRule.assertIsShownLastWith(text)
         snackbarRule.clear()
 
         exception.expect(java.lang.AssertionError::class.java)
         exception.expectMessage("There weren't shown any snackbar")
-        snackbarChecks.isShownLastWith(text)
+        snackbarRule.assertIsShownLastWith(text)
     }
 
     /**
