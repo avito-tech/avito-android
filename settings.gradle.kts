@@ -2,19 +2,24 @@
 
 rootProject.name = "avito-android-infra"
 
+val useCompositeBuild: String by settings
+
 include(":samples:test-app")
 include(":samples:test-app-kaspresso")
-include(":samples:test-app-second")
+if (useCompositeBuild.toBoolean()) {
+    include(":samples:test-app-without-backward-compatibility")
+}
 include(":samples:test-app-core")
 
 includeBuild("buildscript")
 
-val useCompositeBuild: String by settings
 if (useCompositeBuild.toBoolean()) {
     includeBuild("subprojects") {
         dependencySubstitution {
             substitute(module("com.avito.android:instrumentation-tests")).with(project(":gradle:instrumentation-tests"))
             substitute(module("com.avito.android:proxy-toast")).with(project(":android-lib:proxy-toast"))
+            substitute(module("com.avito.android:snackbar-proxy")).with(project(":android-lib:snackbar-proxy"))
+            substitute(module("com.avito.android:snackbar-rule")).with(project(":android-test:snackbar-rule"))
             substitute(module("com.avito.android:time")).with(project(":common:time"))
             substitute(module("com.avito.android:test-report")).with(project(":android-test:test-report"))
             substitute(module("com.avito.android:junit-utils")).with(project(":android-test:junit-utils"))
