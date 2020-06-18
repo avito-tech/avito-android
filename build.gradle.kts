@@ -196,7 +196,9 @@ subprojects {
             val credentials = project.kubernetesCredentials
             if (credentials is Service || credentials is KubernetesCredentials.Config) {
 
-                val registry = project.providers.gradleProperty("avito.registry").orNull
+                val registry = project.providers.gradleProperty("avito.registry")
+                    .forUseAtConfigurationTime()
+                    .orNull
 
                 val emulator22 = CloudEmulator(
                     name = "api22",
