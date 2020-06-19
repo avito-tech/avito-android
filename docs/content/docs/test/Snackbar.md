@@ -2,10 +2,10 @@
 
 **Why do we need a custom component for snackbar testing?** \
 We can't predict when snackbar will appear or disappear because we have no API to watch that behaviour. \
-So it's hard to realize our test failed because: there are no snackbars, snackbar have already disappeared or it haven't appeared yet.
+So it's hard to realize our test failed because: there are no snackbars, snackbar has already disappeared or it hasn't appeared yet.
 
 **How our library works?** \
-We remember all snackbar showing through the test and give you an ability to check that snackbar showing history. 
+We remember all snackbar showings through the test and give you an ability to check that snackbar showing history. 
 
 ## How to test snackbars with our library?
 
