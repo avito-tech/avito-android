@@ -19,6 +19,7 @@ import org.hamcrest.Matchers
  * @warning hidden snackbar stays in hierarchy longer than you might expect;
  * if you encounter weird "duplicate snackbars" it's a known issue
  */
+@Deprecated(message = "Has a flaky behaviour", replaceWith = ReplaceWith("SnackbarRule"))
 class SnackbarElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
     constructor() : this(SimpleInteractionContext(snackbarLayoutMatcher())) // TODO: migrate to HandleParentContext
