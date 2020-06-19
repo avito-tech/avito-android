@@ -7,13 +7,12 @@ abstract class AbstractMockApiRule<T : RequestRegistry> : SimpleRule() {
     private var registry: T? = null
 
     override fun after() {
-        with(requireNotNull(registry)) {
-            try {
-                registeredMocks.values.forEach(ApiRequest::verify)
-            } finally {
-                reset()
-                registry = null
-            }
+        val registry = registry ?: return // can be null if another rule failed after us
+        try {
+            registry.registeredMocks.values.forEach(ApiRequest::verify)
+        } finally {
+            registry.reset()
+            this.registry = null
         }
     }
 
