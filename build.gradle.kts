@@ -196,7 +196,9 @@ subprojects {
             val credentials = project.kubernetesCredentials
             if (credentials is Service || credentials is KubernetesCredentials.Config) {
 
-                val registry = project.providers.gradleProperty("avito.registry").orNull
+                val registry = project.providers.gradleProperty("avito.registry")
+                    .forUseAtConfigurationTime()
+                    .orNull
 
                 val emulator22 = CloudEmulator(
                     name = "api22",
@@ -314,4 +316,10 @@ fun emulatorImage(registry: String?, api: Int): String {
     } else {
         "android/emulator-$api"
     }
+}
+
+tasks.withType<Wrapper> {
+    //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
+    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = "6.5"
 }
