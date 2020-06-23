@@ -2,7 +2,6 @@ package com.avito.instrumentation.executing
 
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.report.listener.TestReporter
-import com.avito.runner.service.worker.device.Serial
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.instrumentation.reservation.request.Reservation
@@ -13,6 +12,7 @@ import com.avito.runner.scheduler.TestsRunnerClient
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
+import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.utils.logging.CILogger
 import kotlinx.coroutines.channels.Channel
@@ -63,8 +63,7 @@ interface TestExecutor {
         ) {
             val reservationClient = reservationClientFactory.create(
                 configuration = configuration,
-                executionParameters = executionParameters,
-                testsToRun = testsToRun
+                executionParameters = executionParameters
             )
             val reservations = reservations(
                 runType,

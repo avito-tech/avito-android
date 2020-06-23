@@ -6,7 +6,6 @@ import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.client.local.LocalReservationClient
-import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.runner.logging.Logger
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.gradle.KubernetesCredentials
@@ -17,8 +16,7 @@ import java.io.File
 interface ReservationClientFactory {
     fun create(
         configuration: InstrumentationConfiguration.Data,
-        executionParameters: ExecutionParameters,
-        testsToRun: List<TestWithTarget>
+        executionParameters: ExecutionParameters
     ): ReservationClient
 
     class Impl(
@@ -34,8 +32,7 @@ interface ReservationClientFactory {
 
         override fun create(
             configuration: InstrumentationConfiguration.Data,
-            executionParameters: ExecutionParameters,
-            testsToRun: List<TestWithTarget>
+            executionParameters: ExecutionParameters
         ): ReservationClient {
             val emulatorsLogsReporter = EmulatorsLogsReporter(
                 outputFolder = output,
