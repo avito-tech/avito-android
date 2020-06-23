@@ -34,7 +34,7 @@ headless: true
     - [Troubleshooting]({{< ref "/docs/assemble/Troubleshooting.md" >}})
 - Architecture
     - [Dagger]({{< ref "/docs/architecture/Dagger.md" >}})
-    - [Модули]({{< ref "/docs/architecture/Modules.md" >}})
+    - [Modules]({{< ref "/docs/architecture/Modules.md" >}})
 - [Аналитика]({{< ref "/docs/analytics/Analytics.md" >}})
     - [Statsd]({{< ref "/docs/analytics/Statsd.md" >}})
 - Testing
