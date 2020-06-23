@@ -1,10 +1,10 @@
 package com.avito.instrumentation.scheduling
 
+import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.report.FlakyTestInfo
 import com.avito.instrumentation.report.Report
-import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.check.AllChecks
@@ -28,6 +28,7 @@ internal class PerformanceTestsScheduler(
     override fun schedule(
         buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): TestsScheduler.Result {
+
         val flakyTestInfo = FlakyTestInfo()
         val initialTestSuite = testSuiteProvider.getInitialTestSuite(
             tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())

@@ -12,31 +12,37 @@ import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.utils.logging.CILogger
 import org.funktionale.tries.Try
 
-class FlakyTestReporter(
+interface FlakyTestReporter {
+    fun reportSummary(
+        info: List<FlakyInfo>
+    ): Try<Unit>
+}
+
+class FlakyTestReporterImpl(
     private val slackClient: SlackMessageSender,
     private val summaryChannel: SlackChannel,
     private val messageAuthor: String,
     private val bitbucket: Bitbucket,
     private val sourceCommitHash: String,
     private val reportViewer: ReportViewer,
+    private val buildUrl: String,
+    private val currentBranch: String,
+    private val reportCoordinates: ReportCoordinates,
+    private val targetReportCoordinates: ReportCoordinates,
     private val logger: CILogger
-) {
+) : FlakyTestReporter {
 
     private val emoji = ":open-eye-laugh-crying:"
 
-    fun reportSummary(
-        info: List<FlakyInfo>,
-        buildUrl: String,
-        currentBranch: String,
-        reportCoordinates: ReportCoordinates,
-        targetReportCoordinates: ReportCoordinates
+    override fun reportSummary(
+        info: List<FlakyInfo>
     ): Try<Unit> = Try {
 
         if (info.isNotEmpty()) {
 
             val topBadTests = determineBadTests(info)
 
-            if(topBadTests.isEmpty()) {
+            if (topBadTests.isEmpty()) {
                 return@Try
             }
 
