@@ -26,7 +26,7 @@ import okhttp3.mock.MockInterceptor
  * @param sendRealReport позволяет на время отладки посылать реальные репорты во время тестов,
  *                       чтобы посмотреть как оно отображается
  */
-internal class  ReportRule(
+internal class ReportRule(
     // todo useless because report urls are empty
     val sendRealReport: Boolean = false,
     val mockTimeProvider: TimeProvider = mock(),
