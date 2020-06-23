@@ -5,9 +5,11 @@ import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.executing.FakeTestExecutor
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.executing.TestExecutorFactory
+import com.avito.instrumentation.finalizer.FinalizerFactory
 import com.avito.instrumentation.report.Report.Impl
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.client.ReservationClientFactory
+import com.avito.instrumentation.scheduling.TestsSchedulerFactory
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.instrumentation.suite.dex.createStubInstance
@@ -160,13 +162,20 @@ internal class InstrumentationTestsActionIntegrationTest {
         )
     ) = InstrumentationTestsAction(
         params = params,
-        logger = logger,
-        testExecutorFactory = testExecutorFactory,
-        buildFailer = buildFailer,
-        testSuiteLoader = testSuiteLoader,
-        sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
-        targetReport = Impl(reportsApi, logger, targetReportCoordinates, params.buildId),
-        slackClient = FakeSlackClient()
+        logger = params.logger,
+        scheduler = TestsSchedulerFactory.Impl(
+            params = params,
+            sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
+            targetReport = Impl(reportsApi, logger, targetReportCoordinates, params.buildId),
+            testExecutorFactory = testExecutorFactory,
+            testSuiteLoader = testSuiteLoader
+        ).create(),
+        finalizer = FinalizerFactory.Impl(
+            params = params,
+            sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
+            slackClient = FakeSlackClient(),
+            buildFailer = buildFailer
+        ).create()
     )
 
     private fun params(
@@ -179,6 +188,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         apkOnTargetCommit = apkOnTargetCommit,
         testApkOnTargetCommit = testApkOnTargetCommit,
         reportCoordinates = reportCoordinates,
-        targetReportCoordinates = targetReportCoordinates
+        targetReportCoordinates = targetReportCoordinates,
+        logger = logger
     )
 }

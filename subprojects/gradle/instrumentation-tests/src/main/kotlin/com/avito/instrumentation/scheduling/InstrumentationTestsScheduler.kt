@@ -9,6 +9,7 @@ import com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.check.AllChecks
+import com.avito.instrumentation.suite.filter.FilterInfoWriter
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.utils.logging.CILogger
@@ -26,16 +27,23 @@ class InstrumentationTestsScheduler(
     private val targetReport: Report,
     private val testSuiteProvider: TestSuiteProvider,
     private val testSuiteLoader: TestSuiteLoader,
-    private val gson: Gson
+    private val gson: Gson,
+    private val filterInfoWriter: FilterInfoWriter
 ) : TestsScheduler {
 
     override fun schedule(
         buildOnTargetCommitResult: BuildOnTargetCommitForTest.Result
     ): TestsScheduler.Result {
+        filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
+
         val flakyTestInfo = FlakyTestInfo()
+
         val initialTestSuite = testSuiteProvider.getInitialTestSuite(
             tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
         )
+
+        filterInfoWriter.writeAppliedFilter(initialTestSuite.appliedFilter)
+        filterInfoWriter.writeFilterExcludes(initialTestSuite.skippedTests)
 
         writeInitialTestSuite(initialTestSuite)
 
@@ -53,11 +61,11 @@ class InstrumentationTestsScheduler(
             finalTargetBranchState: Try<List<SimpleRunTest>>?
         ) = when {
             !params.instrumentationConfiguration.tryToReRunOnTargetBranch -> {
-                logger.info("Rerun on target branch disabled")
+                logger.debug("Rerun on target branch disabled")
                 initialTestsResult to null
             }
             initialTestsResult is Try.Failure -> {
-                logger.info("Initial run on source branch cancelled: Can't get rerun on target results")
+                logger.debug("Initial run on source branch cancelled: Can't get rerun on target results")
                 initialTestsResult to null
             }
             else -> {
