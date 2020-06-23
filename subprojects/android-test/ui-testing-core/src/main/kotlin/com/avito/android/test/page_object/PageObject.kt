@@ -11,8 +11,11 @@ abstract class PageObject {
 
     open val interactionContext: InteractionContext by lazy {
         if (this is Screen) {
-            // TODO: try to use Screen.screenId for root matcher
-            SimpleInteractionContext(ViewMatchers.isRoot()) { this.checks.isScreenOpened() }
+            SimpleInteractionContext(ViewMatchers.isRoot()) {
+                if (checks.checkOnEachScreenInteraction) {
+                    checks.isScreenOpened()
+                }
+            }
         } else {
             SimpleInteractionContext(ViewMatchers.isRoot())
         }

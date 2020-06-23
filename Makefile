@@ -41,6 +41,9 @@ module=test-app
 help:
 	./gradlew help $(params)
 
+assembleSamples:
+	./gradlew samples:test-app:assembleAndroidTest samples:test-app-without-backward-compatibility:assembleAndroidTest
+
 sample_app_help:
 	./gradlew samples:$(module):help $(params)
 

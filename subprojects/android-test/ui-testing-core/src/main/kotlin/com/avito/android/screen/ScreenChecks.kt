@@ -6,13 +6,18 @@ import androidx.test.espresso.matcher.ViewMatchers
 import com.avito.android.screen.Screen.Companion.UNKNOWN_ROOT_ID
 import com.avito.android.test.page_object.ViewElement
 
+/**
+ * MBS-7204 Screenchecks Story
+ */
 interface ScreenChecks {
 
+    @Deprecated("Will be deleted in 2020.9")
     val screen: Screen
 
-    // TODO: MBS-7204 Migrate all screens to stricter isDisplayed
-    //  and merge this method with isScreenOpened after that
-    @Deprecated("Use isScreenOpened() instead and ",
+    val checkOnEachScreenInteraction: Boolean
+        get() = false
+
+    @Deprecated("Use isScreenOpened() instead. Will be deleted in 2020.9",
         replaceWith = ReplaceWith("isScreenOpened()")
     )
     @CallSuper
@@ -20,27 +25,24 @@ interface ScreenChecks {
         screen.checkRootId()
     }
 
-    /**
-     * Check whether screen is visible for user.
-     */
-    @CallSuper
     fun isScreenOpened() {
+
     }
 }
 
-// TODO: MBS-7204 Migrate all screens to StrictScreenChecks and delete this class
-@Deprecated("Use StrictScreenChecks instead",
-    replaceWith = ReplaceWith("StrictScreenChecks")
-)
-class SimpleScreenChecks(override val screen: Screen) : ScreenChecks
+open class StrictScreenChecks(
+    override val screen: Screen,
+    override val checkOnEachScreenInteraction: Boolean = true
+) : ScreenChecks {
 
-open class StrictScreenChecks(override val screen: Screen) : ScreenChecks {
-    @SuppressLint("MissingSuperCall")
-    override fun isOpened() = isScreenOpened() // for invokes from tests
-
+    @CallSuper
     override fun isScreenOpened() {
-        super.isScreenOpened()
         screen.checkRootId()
+    }
+
+    @SuppressLint("MissingSuperCall")
+    final override fun isOpened() {
+        isScreenOpened()
     }
 }
 
