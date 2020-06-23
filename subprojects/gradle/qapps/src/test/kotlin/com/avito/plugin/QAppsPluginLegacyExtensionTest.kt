@@ -10,7 +10,7 @@ import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
-internal class QAppsPluginTest {
+internal class QAppsPluginLegacyExtensionTest {
 
     private lateinit var projectDir: File
 
@@ -31,10 +31,8 @@ internal class QAppsPluginTest {
                     "app",
                     plugins = listOf("com.avito.android.qapps"),
                     buildGradleExtra = """
-                        qappsConfig {
-                            serviceUrl.set("/")
-                            comment.set("")
-                            branchName.set("")
+                        qapps {
+                            host = "/"
                         }
                         afterEvaluate {
                             qappsUploadDebug {

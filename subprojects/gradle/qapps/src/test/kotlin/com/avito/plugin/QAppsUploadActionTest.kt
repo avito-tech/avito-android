@@ -102,5 +102,4 @@ class QAppsUploadActionTest {
 
         assertThat(result).isInstanceOf(Try.Success::class.java)
     }
-
 }
