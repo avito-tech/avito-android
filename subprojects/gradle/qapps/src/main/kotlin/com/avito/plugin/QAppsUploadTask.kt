@@ -40,6 +40,9 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
     @Input
     val packageName = objects.property<String>()
 
+    /**
+     * modified by [com.avito.ci.steps.UploadToQapps] in release pipeline
+     */
     @Input
     val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
 
