@@ -143,8 +143,7 @@ interface FinalizerFactory {
                 logger = logger,
                 buildUrl = params.buildUrl,
                 currentBranch = params.currentBranch,
-                reportCoordinates = params.reportCoordinates,
-                targetReportCoordinates = params.targetReportCoordinates
+                reportCoordinates = params.reportCoordinates
             )
         }
     }

@@ -28,12 +28,18 @@ open class PerformanceExtension @Inject constructor(objects: ObjectFactory) {
     val slackHookUrl = objects.property<String>()
 
     /**
+     * build config id used in report coordinates to fetch build on target branch for results comparison
+     */
+    val targetBuildConfigId = objects.property<String>()
+
+    /**
      * Toggle for different strategies of target branch results fetching
+     *
+     * TODO remove after 2020.9
      */
     @Suppress("UnstableApiUsage")
-    val targetBranchResultSource: Property<TargetBranchResultSource> =
-        objects.property<TargetBranchResultSource>()
-            .convention(TargetBranchResultSource.RunInProcess)
+    @Deprecated("ignored, FetchFromOtherBuild will be used anyways")
+    val targetBranchResultSource: Property<TargetBranchResultSource> = objects.property()
 
     sealed class TargetBranchResultSource {
         object RunInProcess : TargetBranchResultSource()
