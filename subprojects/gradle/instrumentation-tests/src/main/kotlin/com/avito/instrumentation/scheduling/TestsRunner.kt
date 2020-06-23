@@ -102,7 +102,21 @@ class TestsRunnerImplementation(
             )
 
             //todo через Report
-            report.getTests()
+            report.getTests().map { runs ->
+                runs.filterNotRelatedRunsToThisInstrumentation(testsToRun)
+            }
+        }
+    }
+
+    private fun List<SimpleRunTest>.filterNotRelatedRunsToThisInstrumentation(
+        testsToRun: List<TestWithTarget>
+    ): List<SimpleRunTest> {
+        return filter { run -> run.isRelatedTo(testsToRun) }
+    }
+
+    fun SimpleRunTest.isRelatedTo(testsToRun: List<TestWithTarget>): Boolean {
+        return testsToRun.any { testWithTarget ->
+            testWithTarget.test.name.name == name && testWithTarget.target.deviceName == deviceName
         }
     }
 }
