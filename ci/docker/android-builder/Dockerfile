@@ -20,22 +20,6 @@ RUN \
 ENV LANG C.UTF-8
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 
-# --------------- Gradle Profiler -----------------
-# https://github.com/gradle/gradle-profiler/releases
-ARG PROFILER_VERSION=0.11.0
-
-# Install gradle-profiler
-RUN \
-  cd /opt/ && \
-  curl https://repo.gradle.org/gradle/ext-releases-local/org/gradle/profiler/gradle-profiler/${PROFILER_VERSION}/gradle-profiler-${PROFILER_VERSION}.zip --progress-bar --location --output gradle-profiler.zip && \
-  unzip gradle-profiler.zip && \
-  mv gradle-profiler-${PROFILER_VERSION} gradle-profiler && \
-  cp -a gradle-profiler/. /usr/local/ && \
-  rm -rf /opt/gradle-profiler && \
-  rm -f /opt/gradle-profiler.zip
-
-ENV PATH $PATH:/usr/local/gradle-profiler/bin
-
 # ----------------- Android SDK -----------------
 ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin
@@ -61,6 +45,23 @@ RUN mkdir $HOME/.android && \
     "extras;google;google_play_services" \
     "extras;google;m2repository" && \
   chmod -R o+rwX ${ANDROID_HOME}
+
+# --------------- Gradle Profiler -----------------
+# https://github.com/gradle/gradle-profiler/releases
+ARG PROFILER_VERSION=0.12.0
+
+# Install gradle-profiler
+RUN \
+  cd /opt/ && \
+  curl https://repo.gradle.org/gradle/ext-releases-local/org/gradle/profiler/gradle-profiler/${PROFILER_VERSION}/gradle-profiler-${PROFILER_VERSION}.zip --progress-bar --location --output gradle-profiler.zip && \
+  unzip gradle-profiler.zip && \
+  mv gradle-profiler-${PROFILER_VERSION} gradle-profiler && \
+  cp -a gradle-profiler/. /usr/local/ && \
+  rm -rf /opt/gradle-profiler && \
+  rm -f /opt/gradle-profiler.zip
+
+ENV PATH $PATH:/usr/local/gradle-profiler/bin
+
 # ----------------------------------------------------------------------------
 
 # Entrypoint script will allow us run as non-root in the container.
