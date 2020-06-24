@@ -23,7 +23,6 @@ dependencies {
     implementation(project(":gradle:git"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:files"))
-    implementation(project(":gradle:build-on-target"))
     implementation(project(":gradle:slack"))
     implementation(project(":gradle:bitbucket"))
     implementation(project(":common:file-storage"))

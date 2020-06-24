@@ -28,7 +28,6 @@ class FlakyTestReporterImpl(
     private val buildUrl: String,
     private val currentBranch: String,
     private val reportCoordinates: ReportCoordinates,
-    private val targetReportCoordinates: ReportCoordinates,
     private val logger: CILogger
 ) : FlakyTestReporter {
 
@@ -53,11 +52,6 @@ class FlakyTestReporterImpl(
                 currentBranch = currentBranch,
                 reportUrl = reportViewer.generateReportUrl(
                     reportCoordinates = reportCoordinates,
-                    onlyFailures = true,
-                    team = Team.UNDEFINED
-                ).toString(),
-                rerunReportUrl = reportViewer.generateReportUrl(
-                    reportCoordinates = targetReportCoordinates,
                     onlyFailures = true,
                     team = Team.UNDEFINED
                 ).toString()
@@ -91,7 +85,6 @@ class FlakyTestReporterImpl(
         badTests: List<FlakyInfo>,
         channel: SlackChannel,
         reportUrl: String,
-        rerunReportUrl: String,
         buildUrl: String,
         currentBranch: String
     ): Try<SlackMessage> {
@@ -108,7 +101,6 @@ ${badTests.stringify()}
 Почините или заигнорьте их :stalin:
 
 <$reportUrl|Отчет о запусках на $currentBranch>
-<$rerunReportUrl|Отчет о запусках на develop>
 """.trimIndent(),
                 emoji = emoji,
                 author = messageAuthor
