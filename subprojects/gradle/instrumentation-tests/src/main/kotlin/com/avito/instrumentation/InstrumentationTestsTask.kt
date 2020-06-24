@@ -5,7 +5,6 @@ import com.avito.bitbucket.bitbucketConfig
 import com.avito.bitbucket.pullRequestId
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.instrumentation.InstrumentationTestsAction.Companion.RUN_ON_TARGET_BRANCH_SLUG
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.executing.ExecutionParameters
@@ -128,8 +127,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
         // https://docs.gradle.org/5.6/userguide/custom_tasks.html#using-the-worker-api
 
         workerExecutor.inMemoryWork {
-            val targetReportCoordinates =
-                reportCoordinates.copy("${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG")
             InstrumentationTestsAction(
                 InstrumentationTestsAction.Params(
                     mainApk = application.orNull?.asFile,
@@ -161,10 +158,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl ?: "http://stub", // stub for inmemory report
                     registry = registry.get(),
                     reportConfig = reportConfig,
-                    targetReportConfig = createReportConfig(targetReportCoordinates),
                     reportFactory = reportFactory,
-                    reportCoordinates = reportCoordinates,
-                    targetReportCoordinates = targetReportCoordinates
+                    reportCoordinates = reportCoordinates
                 )
             ).run()
         }

@@ -166,7 +166,6 @@ internal class InstrumentationTestsActionIntegrationTest {
         scheduler = TestsSchedulerFactory.Impl(
             params = params,
             sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
-            targetReport = Impl(reportsApi, logger, targetReportCoordinates, params.buildId),
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader
         ).create(),
@@ -188,7 +187,6 @@ internal class InstrumentationTestsActionIntegrationTest {
         apkOnTargetCommit = apkOnTargetCommit,
         testApkOnTargetCommit = testApkOnTargetCommit,
         reportCoordinates = reportCoordinates,
-        targetReportCoordinates = targetReportCoordinates,
         logger = logger
     )
 }

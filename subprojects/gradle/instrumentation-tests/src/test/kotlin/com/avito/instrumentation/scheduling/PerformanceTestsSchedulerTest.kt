@@ -1,6 +1,5 @@
 package com.avito.instrumentation.scheduling
 
-import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.report.FakeReport
@@ -59,9 +58,7 @@ internal class PerformanceTestsSchedulerTest {
             )
         )
 
-        val result = scheduler.schedule(
-            buildOnTargetCommitResult = BuildOnTargetCommitForTest.Result.ApksUnavailable
-        )
+        val result = scheduler.schedule()
 
         assertWithMessage("initialTestsResult is values from tests runner")
             .that(result.initialTestsResult)
@@ -71,50 +68,6 @@ internal class PerformanceTestsSchedulerTest {
             .hasSize(1)
         assertWithMessage("Initial tests run called with source applications")
             .that(runner.runTestsRequests.filter { it.mainApk == sourceApk && it.testApk == sourceTestApk })
-            .isNotEmpty()
-    }
-
-    @Test
-    fun `performance scheduler - schedules run on source and target branches - when target apk available`() {
-        val initialRun = listOf(
-            SimpleRunTest.createStubInstance(),
-            SimpleRunTest.createStubInstance()
-        )
-        val targetRun = listOf(
-            SimpleRunTest.createStubInstance(),
-            SimpleRunTest.createStubInstance()
-        )
-        val runner = FakeTestsRunner(
-            results = listOf(Try.Success(initialRun), Try.Success(targetRun))
-        )
-        val scheduler = createPerformanceTestsScheduler(
-            runner = runner,
-            params = InstrumentationTestsAction.Params.createStubInstance(
-                mainApk = sourceApk,
-                testApk = sourceTestApk,
-                apkOnTargetCommit = targetApk,
-                testApkOnTargetCommit = targetTestApk
-            )
-        )
-
-        val result = scheduler.schedule(
-            buildOnTargetCommitResult = BuildOnTargetCommitForTest.Result.OK(
-                mainApk = targetApk,
-                testApk = targetTestApk
-            )
-        )
-
-        assertWithMessage("initialTestsResult is values from tests runner")
-            .that(result.initialTestsResult)
-            .isEqualTo(Try.Success(initialRun))
-        assertWithMessage("TestsRunner has called twice (for initial and target runs)")
-            .that(runner.runTestsRequests)
-            .hasSize(2)
-        assertWithMessage("Initial tests run called with source applications")
-            .that(runner.runTestsRequests.filter { it.mainApk == sourceApk && it.testApk == sourceTestApk })
-            .isNotEmpty()
-        assertWithMessage("Rerun on target branch called with target applications")
-            .that(runner.runTestsRequests.filter { it.mainApk == targetApk && it.testApk == targetTestApk })
             .isNotEmpty()
     }
 
@@ -129,7 +82,10 @@ internal class PerformanceTestsSchedulerTest {
             filterFactory = FilterFactory.create(
                 filterData = params.instrumentationConfiguration.filter,
                 impactAnalysisResult = params.impactAnalysisResult,
-                reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub"),
+                reportConfig = Report.Factory.Config.ReportViewerCoordinates(
+                    ReportCoordinates.createStubInstance(),
+                    "stub"
+                ),
                 factory = object : Report.Factory {
                     override fun createReport(config: Report.Factory.Config): Report {
                         return FakeReport()
@@ -141,16 +97,13 @@ internal class PerformanceTestsSchedulerTest {
 
                 }
             )
-        ),
-        targetCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
+        )
     ): PerformanceTestsScheduler = PerformanceTestsScheduler(
         testsRunner = runner,
         testSuiteProvider = testSuiteProvider,
         params = params,
         testSuiteLoader = FakeTestSuiteLoader(),
         reportCoordinates = reportCoordinates,
-        targetReportCoordinates = targetCoordinates,
-        sourceReport = FakeReport(),
-        targetReport = FakeReport()
+        sourceReport = FakeReport()
     )
 }

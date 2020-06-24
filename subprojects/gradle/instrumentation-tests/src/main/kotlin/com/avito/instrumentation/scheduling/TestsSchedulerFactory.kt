@@ -21,7 +21,6 @@ interface TestsSchedulerFactory {
 
         private val params: InstrumentationTestsAction.Params
         private val sourceReport: Report
-        private val targetReport: Report
         private val gson: Gson
         private val testExecutorFactory: TestExecutorFactory
         private val testSuiteLoader: TestSuiteLoader
@@ -30,14 +29,12 @@ interface TestsSchedulerFactory {
         internal constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            targetReport: Report,
             gson: Gson = GsonBuilder().setPrettyPrinting().create(),
             testExecutorFactory: TestExecutorFactory,
             testSuiteLoader: TestSuiteLoader
         ) {
             this.params = params
             this.sourceReport = sourceReport
-            this.targetReport = targetReport
             this.gson = gson
             this.testExecutorFactory = testExecutorFactory
             this.testSuiteLoader = testSuiteLoader
@@ -46,12 +43,10 @@ interface TestsSchedulerFactory {
         constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            targetReport: Report,
             gson: Gson
         ) : this(
             params = params,
             sourceReport = sourceReport,
-            targetReport = targetReport,
             gson = gson,
             testExecutorFactory = TestExecutorFactory.Implementation(),
             testSuiteLoader = TestSuiteLoaderImpl()
@@ -66,10 +61,8 @@ interface TestsSchedulerFactory {
                     testsRunner = testRunner,
                     params = params,
                     reportCoordinates = params.reportCoordinates,
-                    targetReportCoordinates = params.targetReportCoordinates,
                     testSuiteProvider = testSuiteProvider,
                     sourceReport = sourceReport,
-                    targetReport = targetReport,
                     testSuiteLoader = testSuiteLoader,
                     gson = gson,
                     filterInfoWriter = FilterInfoWriter.Impl(
@@ -84,8 +77,6 @@ interface TestsSchedulerFactory {
                     params = params,
                     reportCoordinates = params.reportCoordinates,
                     sourceReport = sourceReport,
-                    targetReport = targetReport,
-                    targetReportCoordinates = params.targetReportCoordinates,
                     testSuiteProvider = testSuiteProvider,
                     testSuiteLoader = testSuiteLoader
                 )

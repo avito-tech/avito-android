@@ -9,7 +9,7 @@ import org.funktionale.tries.Try
  */
 data class RunId(val commitHash: String, val buildTypeId: String) {
 
-    override fun toString(): String  = "$commitHash$DELIMITER$buildTypeId"
+    override fun toString(): String = "$commitHash$DELIMITER$buildTypeId"
 
     companion object {
 
@@ -18,8 +18,8 @@ data class RunId(val commitHash: String, val buildTypeId: String) {
         fun fromString(runId: String): Try<RunId> {
             val split = runId.split(DELIMITER)
 
-            return when {
-                split.size == 2 -> Try.Success(
+            return when (split.size) {
+                2 -> Try.Success(
                     RunId(
                         commitHash = split.component1(),
                         buildTypeId = split.component2()
@@ -27,7 +27,6 @@ data class RunId(val commitHash: String, val buildTypeId: String) {
                 )
                 else -> Try.Failure(IllegalArgumentException("Invalid runId: $runId"))
             }
-
         }
     }
 }

@@ -2,7 +2,6 @@ package com.avito.instrumentation
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.bitbucket.BitbucketConfig
-import com.avito.buildontarget.BuildOnTargetCommitForTest
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.finalizer.InstrumentationTestActionFinalizer
@@ -12,7 +11,6 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.hasFileContent
 import com.avito.utils.logging.CILogger
 import java.io.File
 import java.io.Serializable
@@ -23,7 +21,7 @@ class InstrumentationTestsAction(
     private val logger: CILogger,
     private val scheduler: TestsScheduler,
     private val finalizer: InstrumentationTestActionFinalizer
-) : Runnable{
+) : Runnable {
 
     /**
      * for Worker API
@@ -42,28 +40,11 @@ class InstrumentationTestsAction(
     override fun run() {
         logger.debug("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
 
-        val testsExecutionResults = scheduler.schedule(
-            buildOnTargetCommitResult = getBuildOnTargetCommitForTest(params)
-        )
+        val testsExecutionResults = scheduler.schedule()
 
         finalizer.finalize(
             testsExecutionResults = testsExecutionResults
         )
-    }
-
-    private fun getBuildOnTargetCommitForTest(params: Params): BuildOnTargetCommitForTest.Result {
-        return if (!params.apkOnTargetCommit.hasFileContent() || !params.testApkOnTargetCommit.hasFileContent()) {
-            BuildOnTargetCommitForTest.Result.ApksUnavailable
-        } else {
-            BuildOnTargetCommitForTest.Result.OK(
-                mainApk = params.apkOnTargetCommit,
-                testApk = params.testApkOnTargetCommit
-            )
-        }
-    }
-
-    companion object {
-        const val RUN_ON_TARGET_BRANCH_SLUG = "rerun"
     }
 
     data class Params(
@@ -97,11 +78,8 @@ class InstrumentationTestsAction(
         val registry: String,
         val reportFactory: Report.Factory,
         val reportConfig: Report.Factory.Config,
-        val targetReportConfig: Report.Factory.Config,
         @Deprecated("Will be removed")
-        val reportCoordinates: ReportCoordinates,
-        @Deprecated("Will be removed")
-        val targetReportCoordinates: ReportCoordinates
+        val reportCoordinates: ReportCoordinates
     ) : Serializable {
         companion object
     }

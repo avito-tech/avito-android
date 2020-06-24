@@ -54,8 +54,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     ),
     statsDConfig: StatsDConfig = StatsDConfig(false, "", "", 0, ""),
     unitToChannelMapping: Map<Team, SlackChannel> = emptyMap(),
-    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
-    targetReportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
+    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
 ) =
     InstrumentationTestsAction.Params(
         mainApk = mainApk,
@@ -90,10 +89,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
             ReportCoordinates.createStubInstance(),
             buildId
         ),
-        targetReportConfig = Report.Factory.Config.ReportViewerCoordinates(
-            ReportCoordinates.createStubInstance(),
-            buildId
-        ),
         reportFactory = object : Report.Factory {
             override fun createReport(config: Report.Factory.Config): Report {
                 return FakeReport()
@@ -103,6 +98,5 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
                 return FakeReport()
             }
         },
-        reportCoordinates = reportCoordinates,
-        targetReportCoordinates = targetReportCoordinates
+        reportCoordinates = reportCoordinates
     )
