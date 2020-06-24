@@ -29,8 +29,7 @@ class PerformanceIntegrationTest {
                     plugins = listOf(
                         "com.avito.android.instrumentation-tests",
                         "com.avito.android.performance",
-                        "com.avito.android.cd",
-                        "com.avito.android.build-on-target"
+                        "com.avito.android.cd"
                     ),
                     customScript = """
                          ${registerUiTestConfigurations(performanceConfigurationName)}
