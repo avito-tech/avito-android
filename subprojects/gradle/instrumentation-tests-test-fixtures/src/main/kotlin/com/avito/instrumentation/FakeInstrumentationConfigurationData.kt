@@ -12,7 +12,6 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name: String = "name",
     performanceType: InstrumentationConfiguration.PerformanceType? = null,
     instrumentationParams: InstrumentationParameters = InstrumentationParameters(),
-    tryToReRunOnTargetBranch: Boolean = false,
     reportSkippedTests: Boolean = true,
     reportFlakyTests: Boolean = false,
     impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off,
@@ -22,14 +21,13 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     previousRunExcluded: Set<RunStatus> = emptySet()
 ): InstrumentationConfiguration.Data = InstrumentationConfiguration.Data(
     name = name,
-    performanceType = performanceType,
     instrumentationParams = instrumentationParams,
-    tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
     reportFlakyTests = reportFlakyTests,
     reportSkippedTests = reportSkippedTests,
     impactAnalysisPolicy = impactAnalysisPolicy,
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
+    performanceType = performanceType,
     enableDeviceDebug = enableDeviceDebug,
     filter = InstrumentationFilter.Data(
         name = "stub",

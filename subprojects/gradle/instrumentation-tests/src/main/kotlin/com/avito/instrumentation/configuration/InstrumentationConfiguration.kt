@@ -20,11 +20,11 @@ abstract class InstrumentationConfiguration(val name: String) {
     enum class PerformanceType { SIMPLE, MDE }
 
     /**
-     * Если тесты на ветке в упали, сразу после пытаемся прогнать эти упавшие тесты на сборке из таргетной ветки (в которую пытаемся смерджиться)
-     * И если там тоже все плохо - списываем все на инфраструктурные проблемы и позволяем смерджить пулл-реквест
+     * com.avito.performance.PerformanceExtension.targetBranchResultSource
      *
-     * Логика для принятия решения о типе падений в [com.avito.instrumentation.rerun.MergeResultsWithTargetBranchRun]
+     * todo remove in 2020.9
      */
+    @Deprecated("unused, performance tests uses separate build")
     var tryToReRunOnTargetBranch = false
 
     var reportFlakyTests = false
@@ -71,10 +71,9 @@ abstract class InstrumentationConfiguration(val name: String) {
         return Data(
             name = name,
             instrumentationParams = mergedInstrumentationParameters,
-            tryToReRunOnTargetBranch = tryToReRunOnTargetBranch,
+            reportFlakyTests = reportFlakyTests,
             reportSkippedTests = reportSkippedTests,
             impactAnalysisPolicy = impactAnalysisPolicy,
-            reportFlakyTests = reportFlakyTests,
             kubernetesNamespace = kubernetesNamespace,
             targets = targets.map {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
@@ -89,7 +88,6 @@ abstract class InstrumentationConfiguration(val name: String) {
     data class Data(
         val name: String,
         val instrumentationParams: InstrumentationParameters,
-        val tryToReRunOnTargetBranch: Boolean,
         val reportFlakyTests: Boolean,
         val reportSkippedTests: Boolean,
         val impactAnalysisPolicy: ImpactAnalysisPolicy,

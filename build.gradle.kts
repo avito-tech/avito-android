@@ -167,7 +167,6 @@ subprojects {
             val customFilter: String = project.getOptionalStringProperty("localFilter", defaultFilter)
 
             configurationsContainer.register("Local") {
-                tryToReRunOnTargetBranch = false
                 reportSkippedTests = true
                 reportFlakyTests = false
                 filter = customFilter
@@ -219,7 +218,6 @@ subprojects {
                 )
 
                 configurationsContainer.register("ui") {
-                    tryToReRunOnTargetBranch = false
                     reportSkippedTests = true
                     reportFlakyTests = true
                     filter = customFilter
@@ -262,7 +260,6 @@ subprojects {
                 }
 
                 configurationsContainer.register("uiDebug") {
-                    tryToReRunOnTargetBranch = false
                     reportSkippedTests = false
                     reportFlakyTests = false
                     enableDeviceDebug = true

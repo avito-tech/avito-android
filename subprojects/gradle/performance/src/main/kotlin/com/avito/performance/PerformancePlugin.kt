@@ -2,7 +2,6 @@ package com.avito.performance
 
 import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
-import com.avito.instrumentation.InstrumentationTestsAction.Companion.RUN_ON_TARGET_BRANCH_SLUG
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.instrumentationTask
 import com.avito.instrumentation.withInstrumentationTests
@@ -136,38 +135,20 @@ open class PerformancePlugin : Plugin<Project> {
                                 reportApiUrl.set(reportViewerConfig.reportApiUrl)
                                 reportApiFallbackUrl.set(reportViewerConfig.reportApiFallbackUrl)
 
-                                when (val targetBranchResultSource = extension.targetBranchResultSource.get()) {
-                                    is PerformanceExtension.TargetBranchResultSource.RunInProcess -> {
-                                        //run on target branch is a part of the same task in `instrumentation plugin`
-                                        dependsOn(sourceBranchResultsCollector)
+                                //there is no need to depend on tests, it is a hack to postpone fetching
+                                dependsOn(sourceBranchResultsCollector)
 
-                                        buildId.set(envArgs.build.id.toString())
+                                //todo probably it's a mistake; but we need to fetch teamcity API otherwise
+                                buildId.set(null as String?)
 
-                                        this.reportCoordinates.set(
-                                            reportCoordinates.copy(
-                                                jobSlug = "${reportCoordinates.jobSlug}-$RUN_ON_TARGET_BRANCH_SLUG"
-                                            )
-                                        )
-                                    }
-                                    is PerformanceExtension.TargetBranchResultSource.FetchFromOtherBuild -> {
-
-                                        //there is no need to depend on tests, it is a hack to postpone fetching
-                                        dependsOn(sourceBranchResultsCollector)
-
-                                        //todo probably it's a mistake; but we need to fetch teamcity API otherwise
-                                        buildId.set(null as String?)
-
-                                        this.reportCoordinates.set(
-                                            reportCoordinates.copy(
-                                                runId = RunId(
-                                                    commitHash = gitState.map { it.targetBranch!!.commit }
-                                                        .get(),
-                                                    buildTypeId = targetBranchResultSource.targetBuildConfigId
-                                                ).toString()
-                                            )
-                                        )
-                                    }
-                                }
+                                this.reportCoordinates.set(
+                                    reportCoordinates.copy(
+                                        runId = RunId(
+                                            commitHash = gitState.map { it.targetBranch!!.commit }.get(),
+                                            buildTypeId = extension.targetBuildConfigId.get()
+                                        ).toString()
+                                    )
+                                )
                             }
 
                         val performanceCompareProvider =

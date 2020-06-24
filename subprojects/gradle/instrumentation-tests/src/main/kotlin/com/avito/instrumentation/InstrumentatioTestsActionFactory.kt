@@ -17,14 +17,12 @@ interface InstrumentatioTestsActionFactory {
 
         private val gson: Gson
         private val sourceReport: Report
-        private val targetReport: Report
         private val schedulerFactory: TestsSchedulerFactory
         private val finalizerFactory: FinalizerFactory
 
         constructor(params: InstrumentationTestsAction.Params) : this(
             params = params,
             sourceReport = params.reportFactory.createReport(params.reportConfig),
-            targetReport = params.reportFactory.createReport(params.targetReportConfig),
             gson = GsonBuilder().setPrettyPrinting().create()
         )
 
@@ -32,16 +30,13 @@ interface InstrumentatioTestsActionFactory {
         internal constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            targetReport: Report,
             gson: Gson
         ) {
             this.gson = gson
             this.sourceReport = sourceReport
-            this.targetReport = targetReport
             this.schedulerFactory = TestsSchedulerFactory.Impl(
                 params = params,
                 sourceReport = sourceReport,
-                targetReport = targetReport,
                 gson = gson
             )
             this.finalizerFactory = FinalizerFactory.Impl(

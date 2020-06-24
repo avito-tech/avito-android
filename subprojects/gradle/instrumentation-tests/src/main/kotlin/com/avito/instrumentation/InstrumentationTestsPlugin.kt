@@ -10,32 +10,21 @@ import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
 import com.avito.android.withArtifacts
-import com.avito.buildontarget.buildOnTargetTask
-import com.avito.buildontarget.hasBuildOnTargetPlugin
 import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
-import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
-import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.executing.ExecutionParameters
-import com.avito.instrumentation.rerun.RunOnTargetCommitCondition
-import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
-import com.avito.kotlin.dsl.toOptional
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
 import com.avito.utils.logging.ciLogger
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -76,14 +65,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 if (!instrumentationConfiguration.isTargetLocalEmulators && project.kubernetesCredentials is KubernetesCredentials.Empty) {
                     throw IllegalStateException("Configuration ${instrumentationConfiguration.name} error: has kubernetes device target without kubernetes credentials")
                 }
-                val configurationOutputFolder =
-                    File(extensionData.output, instrumentationConfiguration.name)
 
-                val runOnTargetCommit = RunOnTargetCommitCondition.evaluate(
-                    instrumentationConfiguration = instrumentationConfiguration,
-                    hasBuildOnTargetPlugin = project.pluginManager.hasBuildOnTargetPlugin(),
-                    buildOnTargetTaskProvider = { project.tasks.buildOnTargetTask() }
-                )
+                val configurationOutputFolder = File(extensionData.output, instrumentationConfiguration.name)
 
                 // see LintWorkerApiWorkaround.md
                 val preInstrumentationTask = project.tasks.register<Task>(
@@ -91,17 +74,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 ) {
                     group = ciTaskGroup
 
-                    if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
-                        dependsOn(runOnTargetCommit.task)
-                    }
-
                     if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
-                        dependsOn(
-                            // todo implicit dependency on impact task
-                            instrumentationConfiguration.impactAnalysisPolicy.getTask(
-                                project
-                            )
-                        )
+                        // todo implicit dependency on impact task
+                        dependsOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project))
                     }
                 }
 
@@ -111,34 +86,16 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     timeout.set(Duration.ofMinutes(100)) //todo move value to extension
                     group = ciTaskGroup
 
-                    if (runOnTargetCommit is RunOnTargetCommitCondition.Result.Yes) {
-                        dependencyOn(runOnTargetCommit.task) { dependentTask ->
-                            apkOnTargetCommit.set(dependentTask.mainApk.toOptional())
-                            testApkOnTargetCommit.set(dependentTask.testApk.toOptional())
-                        }
-                    }
-
-                    when (instrumentationConfiguration.impactAnalysisPolicy) {
-                        is ImpactAnalysisPolicy.On -> {
-                            dependencyOn(
-                                // todo implicit dependency on impact task
-                                instrumentationConfiguration.impactAnalysisPolicy.getTask(
-                                    project
-                                )
-                            ) {
-                                impactAnalysisResult.set(
-                                    instrumentationConfiguration.impactAnalysisPolicy
-                                        .getArtifact(it)
-                                )
-                            }
+                    if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
+                        // todo implicit dependency on impact task
+                        dependencyOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project)) {
+                            impactAnalysisResult.set(instrumentationConfiguration.impactAnalysisPolicy.getArtifact(it))
                         }
                     }
 
                     val isFullTestSuite = gitState.map {
-                        it.isOnDefaultBranch
-                            && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
-                    }
-                        .orElse(false)
+                        it.isOnDefaultBranch && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
+                    }.orElse(false)
 
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
                     this.buildId.set(env.build.id.toString())
