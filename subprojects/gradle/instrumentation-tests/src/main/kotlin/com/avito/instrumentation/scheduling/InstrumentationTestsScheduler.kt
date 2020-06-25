@@ -59,6 +59,7 @@ class InstrumentationTestsScheduler(
     }
 
     private fun writeInitialTestSuite(initialTestSuite: TestSuiteProvider.TestSuite) {
-        File(params.outputDir, "initial-suite.json").writeText(gson.toJson(initialTestSuite.testsToRun.map { it.test }))
+        File(params.outputDir, "initial-suite.json")
+            .writeText(gson.toJson(initialTestSuite.testsToRun.map { it.test }))
     }
 }

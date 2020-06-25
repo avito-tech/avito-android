@@ -56,31 +56,20 @@ interface TestsSchedulerFactory {
             val testRunner: TestsRunner = createTestRunner()
             val testSuiteProvider: TestSuiteProvider = createTestSuiteProvider()
 
-            return if (params.instrumentationConfiguration.performanceType == null) {
-                InstrumentationTestsScheduler(
-                    testsRunner = testRunner,
-                    params = params,
-                    reportCoordinates = params.reportCoordinates,
-                    testSuiteProvider = testSuiteProvider,
-                    sourceReport = sourceReport,
-                    testSuiteLoader = testSuiteLoader,
-                    gson = gson,
-                    filterInfoWriter = FilterInfoWriter.Impl(
-                        outputDir = params.outputDir,
-                        gson = gson
-                    ),
-                    logger = params.logger
-                )
-            } else {
-                PerformanceTestsScheduler(
-                    testsRunner = testRunner,
-                    params = params,
-                    reportCoordinates = params.reportCoordinates,
-                    sourceReport = sourceReport,
-                    testSuiteProvider = testSuiteProvider,
-                    testSuiteLoader = testSuiteLoader
-                )
-            }
+            return InstrumentationTestsScheduler(
+                testsRunner = testRunner,
+                params = params,
+                reportCoordinates = params.reportCoordinates,
+                testSuiteProvider = testSuiteProvider,
+                sourceReport = sourceReport,
+                testSuiteLoader = testSuiteLoader,
+                gson = gson,
+                filterInfoWriter = FilterInfoWriter.Impl(
+                    outputDir = params.outputDir,
+                    gson = gson
+                ),
+                logger = params.logger
+            )
         }
 
         private fun createTestSuiteProvider(): TestSuiteProvider.Impl {
