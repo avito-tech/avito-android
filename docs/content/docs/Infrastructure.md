@@ -104,9 +104,9 @@ Shared modules between android-test and Gradle.
 
 All releases are published to [bintray](https://bintray.com/avito-tech/maven/avito-android).
 
-1. Checkout a release branch with a name equals to `projectVersion`. For example, `2020.3.1`.\
+1. Checkout a release branch with a name equals to `projectVersion`. For example, `2020.9`.\
 This branch must be persistent. It will be used for automation.
-1. Make sure integration tests on release branch passed full integration checks [CI integration tests against avito]({{<relref "#ci-integration-tests-against-avito">}})
+1. Make sure integration tests on release branch passed all integration checks: [CI integration tests against avito]({{<relref "#ci-integration-tests-against-avito">}})
 1. Manually run [Github publish configuration (internal)](http://links.k.avito.ru/releaseAvitoTools) on the release branch.
 1. Make a PR to internal avito repository with the new version of infrastructure
 1. Checkout a new branch and make a PR to github repository:
@@ -133,8 +133,11 @@ If you need to test unmerged code, select a custom build branch.\
 You will see branches from both repositories:
 
 ![](https://user-images.githubusercontent.com/1104540/75977180-e5dd4d80-5eec-11ea-80d3-2f9abd7efd36.png)
- 
+
 - By default, build uses develop from github against develop from avito
 - If you pick a branch from avito, it will run against develop on github
 - If you pick a branch from github, it will run against develop on avito
 - To build both projects of special branch, they should have the same name
+
+If you want to run a real CI build against not published release, 
+you need to publish it manually as a temporary version to the internal Artifactory.
