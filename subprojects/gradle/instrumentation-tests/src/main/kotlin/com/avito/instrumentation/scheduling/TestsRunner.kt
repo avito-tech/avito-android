@@ -114,7 +114,7 @@ class TestsRunnerImplementation(
         return filter { run -> run.isRelatedTo(testsToRun) }
     }
 
-    fun SimpleRunTest.isRelatedTo(testsToRun: List<TestWithTarget>): Boolean {
+    private fun SimpleRunTest.isRelatedTo(testsToRun: List<TestWithTarget>): Boolean {
         return testsToRun.any { testWithTarget ->
             testWithTarget.test.name.name == name && testWithTarget.target.deviceName == deviceName
         }
