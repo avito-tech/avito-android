@@ -33,7 +33,7 @@ interface Screen {
     val rootId: Int
 
     val checks: ScreenChecks
-        get() = SimpleScreenChecks(this) // TODO: replace by StrictScreenChecks MBS-7204
+        get() = StrictScreenChecks(this, false)
 
     companion object {
 
