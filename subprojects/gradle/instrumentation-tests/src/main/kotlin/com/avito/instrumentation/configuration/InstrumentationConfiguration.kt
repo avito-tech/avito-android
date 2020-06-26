@@ -19,14 +19,6 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     enum class PerformanceType { SIMPLE, MDE }
 
-    /**
-     * com.avito.performance.PerformanceExtension.targetBranchResultSource
-     *
-     * todo remove in 2020.9
-     */
-    @Deprecated("unused, performance tests uses separate build")
-    var tryToReRunOnTargetBranch = false
-
     var reportFlakyTests = false
 
     /**

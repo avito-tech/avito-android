@@ -1,7 +1,6 @@
 package com.avito.performance
 
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
@@ -31,18 +30,4 @@ open class PerformanceExtension @Inject constructor(objects: ObjectFactory) {
      * build config id used in report coordinates to fetch build on target branch for results comparison
      */
     val targetBuildConfigId = objects.property<String>()
-
-    /**
-     * Toggle for different strategies of target branch results fetching
-     *
-     * TODO remove after 2020.9
-     */
-    @Suppress("UnstableApiUsage")
-    @Deprecated("ignored, FetchFromOtherBuild will be used anyways")
-    val targetBranchResultSource: Property<TargetBranchResultSource> = objects.property()
-
-    sealed class TargetBranchResultSource {
-        object RunInProcess : TargetBranchResultSource()
-        data class FetchFromOtherBuild(val targetBuildConfigId: String) : TargetBranchResultSource()
-    }
 }

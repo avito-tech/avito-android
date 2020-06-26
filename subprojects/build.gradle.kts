@@ -214,7 +214,7 @@ subprojects {
                 withType<KotlinCompile> {
                     kotlinOptions {
                         jvmTarget = javaVersion.toString()
-                        allWarningsAsErrors = false //todo we use deprecation a lot, and it's a compiler warning
+                        allWarningsAsErrors = false // we use deprecation a lot, and it's a compiler warning
                     }
                 }
             }

@@ -1,4 +1,3 @@
-
 import com.android.build.gradle.ProguardFiles.ProguardFile
 import com.avito.kotlin.dsl.getOptionalStringProperty
 
@@ -16,8 +15,6 @@ android {
         versionCode = 1
         testInstrumentationRunner = "com.avito.android.test.app.core.TestAppRunner"
 
-        // TODO: protect from blank values
-        // TODO: get rid of unnecessary values
         // TODO: describe in docs that they are updated in IDE configuration only after sync!
         testInstrumentationRunnerArguments(
             mapOf(
