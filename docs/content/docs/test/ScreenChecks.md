@@ -2,7 +2,7 @@
 
 `Screen` is abstraction that represents `Activity`, `Fragment` or `View` in tests. \
 `Screen` has a property `checks` of type `ScreenChecks` with single function `isScreenOpened`. \ 
-`ScreenChecks` has a property `checkOnEachScreenInteraction` which is responsible for: If we shall execute `isScreenOpened` on each interaction with `ViewElement` on that `Screen` \
+`ScreenChecks` has a property `checkOnEachScreenInteraction`. It makes automatic execution `isScreenOpened` on each interaction with `ViewElement` on that `Screen`. \
 
 Default behavior is:
 - `Screen.checks` type is `StrictScreenChecks`
