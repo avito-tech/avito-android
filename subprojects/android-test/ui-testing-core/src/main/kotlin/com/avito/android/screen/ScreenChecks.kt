@@ -18,7 +18,7 @@ interface ScreenChecks {
 
 open class StrictScreenChecks(
     protected val screen: Screen,
-    override val checkOnEachScreenInteraction: Boolean = true
+    final override val checkOnEachScreenInteraction: Boolean = true
 ) : ScreenChecks {
 
     @CallSuper

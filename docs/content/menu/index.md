@@ -22,8 +22,7 @@ headless: true
     - [Шаблоны]({{< ref "/docs/ide/Templates.md" >}})
     - [Speedup]({{< ref "/docs/ide/Speedup.md" >}})
     - [Бенчмарки]({{< ref "/docs/ide/Benchmarking.md" >}})
-- Сборка
-    - [Запуск]({{< ref "/docs/ide/Configurations.md" >}})
+- Builds
     - [Типы сборки]({{< ref "/docs/assemble/BuildTypes.md" >}})
     - [Зависимости]({{< ref "/docs/assemble/Dependencies.md" >}})
     - [Минимизация]({{< ref "/docs/assemble/Minimization.md" >}})
@@ -52,6 +51,7 @@ headless: true
     - [Flaky Tests]({{< ref "/docs/test/FlakyTests.md" >}})
     - [Toast]({{< ref "/docs/test/Toast.md" >}})
     - [Snackbar]({{< ref "/docs/test/Snackbar.md" >}})
+    - [Screen checks]({{< ref "/docs/test/ScreenChecks.md" >}})
 - [Test framework]({{< ref "/docs/test_framework/TestFramework.md" >}})
     - [Mocking]({{< ref "/docs/test_framework/Mocking.md" >}})
     - [Internals]({{< ref "/docs/test_framework/Internals.md" >}})
