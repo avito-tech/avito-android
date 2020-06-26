@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:build-metrics"))
     implementation(project(":gradle:sentry-config"))
+    implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:files"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:kotlin-dsl-support"))

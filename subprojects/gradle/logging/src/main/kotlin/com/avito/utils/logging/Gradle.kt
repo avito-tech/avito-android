@@ -1,6 +1,5 @@
 package com.avito.utils.logging
 
-import com.avito.android.sentry.sentry
 import com.avito.android.sentry.sentryConfig
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment

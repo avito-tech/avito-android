@@ -10,7 +10,6 @@ dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:git"))
     implementation(project(":gradle:logging"))
     implementation(project(":common:logger"))
     implementation(Dependencies.funktionaleTry)

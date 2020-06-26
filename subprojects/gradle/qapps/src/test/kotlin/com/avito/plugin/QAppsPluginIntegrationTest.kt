@@ -86,7 +86,7 @@ internal class QAppsPluginIntegrationTest {
                     versionName = "12.3",
                     packageName = "com.qapps.app",
                     buildGradleExtra = """
-                         qappsConfig {
+                         qapps {
                             serviceUrl.set("${mockWebServer.url("/")}")
                             branchName.set("My-feature-branch")
                             comment.set("my awesome apk")
