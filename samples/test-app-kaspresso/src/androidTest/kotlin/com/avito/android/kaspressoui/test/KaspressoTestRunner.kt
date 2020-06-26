@@ -15,7 +15,7 @@ class KaspressoTestRunner : InHouseInstrumentationTestRunner() {
 
     override fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment =
         provideEnvironment(
-//            todo эти параметры должны быть не обязательными
+            //todo should be optional
             apiUrlParameterKey = "unnecessaryUrl",
             mockWebServerUrl = "localhost",
             argumentsProvider = BundleArgsProvider(bundle = arguments)
