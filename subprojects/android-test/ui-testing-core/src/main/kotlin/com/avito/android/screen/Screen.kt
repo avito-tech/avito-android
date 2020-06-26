@@ -33,7 +33,7 @@ interface Screen {
     val rootId: Int
 
     val checks: ScreenChecks
-        get() = StrictScreenChecks(this, false)
+        get() = StrictScreenChecks(screen = this, checkOnEachScreenInteraction = false)
 
     companion object {
 
