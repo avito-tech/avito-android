@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:trace-event"))
     implementation(project(":gradle:gradle-profile"))
+    implementation(project(":gradle:build-environment"))
     implementation(gradleApi())
 
     testImplementation(Dependencies.test.mockitoKotlin)

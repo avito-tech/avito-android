@@ -1,34 +1,21 @@
 package com.avito.plugin
 
 import com.avito.android.withAndroidApp
-import com.avito.git.gitState
-import com.avito.utils.gradle.envArgs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-/**
- * respects [SignServicePlugin]
- */
 class QAppsPlugin : Plugin<Project> {
 
-    private val placeholderForLocalBuild = "Local Build"
+    override fun apply(project: Project) {
 
-    override fun apply(target: Project) {
+        val extension = project.extensions.create<QAppsExtension>("qapps")
 
-        // todo remove legacy extension after 2020.9
-        //  change directed to remove dependency on git and env, and provide parameters from build script
-        val env = target.envArgs
-        val git = target.gitState()
-        val legacyExtension = target.extensions.create<LegacyQAppsExtension>("qapps")
-
-        val extension = target.extensions.create<QAppsExtension>("qappsConfig")
-
-        @Suppress("UnstableApiUsage")
-        target.withAndroidApp { appExtension ->
+        project.withAndroidApp { appExtension ->
             appExtension.applicationVariants.all { variant ->
-                target.tasks.register<QAppsUploadTask>(qappsTaskName(variant.name)) {
+
+                project.tasks.register<QAppsUploadTask>(qappsTaskName(variant.name)) {
                     group = "ci"
                     description = "Upload ${variant.name} to qapps"
 
@@ -36,24 +23,11 @@ class QAppsPlugin : Plugin<Project> {
                     versionCode.set(variant.versionCode.toString())
                     packageName.set(variant.applicationId)
 
-                    host.set(
-                        extension.serviceUrl
-                            .convention(legacyExtension.host)
-                    )
-
-                    comment.set(
-                        extension.comment
-                            .convention(getComment(env.build.number))
-                    )
-
-                    branch.set(extension.branchName
-                        .convention(git.map { it.currentBranch.name }.orElse(placeholderForLocalBuild))
-                    )
+                    host.set(extension.serviceUrl)
+                    comment.set(extension.comment)
+                    branch.set(extension.branchName)
                 }
             }
         }
     }
-
-    private fun getComment(buildNumber: String?) =
-        if (!buildNumber.isNullOrBlank()) "Teamcity build number: $buildNumber" else placeholderForLocalBuild
 }

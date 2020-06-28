@@ -116,7 +116,9 @@ class UploadToQappsTest {
                     ),
                     customScript = """
                             qapps {
-                                host = "${mockWebServer.url("/")}"
+                                serviceUrl = "${mockWebServer.url("/")}"
+                                branchName = "develop"
+                                comment = "build #1"
                             }
                             signService {
                                 host = "stub"

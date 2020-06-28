@@ -15,6 +15,8 @@ dependencies {
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:gradle-profile"))
+    implementation(project(":gradle:build-environment"))
+
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gradle.androidPlugin)
 

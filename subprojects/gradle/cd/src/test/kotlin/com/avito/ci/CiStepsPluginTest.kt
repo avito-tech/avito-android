@@ -49,7 +49,9 @@ class CiStepsPluginTest {
                                 host("https://prosector")
                             }
                             qapps {
-                                host("https://qapps")
+                                serviceUrl.set("https://qapps")
+                                branchName.set("develop")
+                                comment.set("build#1")
                             }
                             android {
                                 buildTypes {
