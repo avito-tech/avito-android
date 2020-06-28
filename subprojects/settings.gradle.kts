@@ -109,6 +109,7 @@ pluginManagement {
             }
             filter {
                 includeGroup("com.gradle")
+                includeGroup("com.gradle.enterprise")
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
                 includeGroup("nebula.integtest")
@@ -145,5 +146,26 @@ pluginManagement {
                     useVersion("0.49.0")
             }
         }
+    }
+}
+
+plugins {
+    id("com.gradle.enterprise") version "3.3.4"
+}
+val isCI = booleanProperty("ci", false)
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishOnFailureIf(isCI)
+    }
+}
+
+fun booleanProperty(name: String, defaultValue: Boolean): Boolean {
+    return if (settings.extra.has("name")) {
+        settings.extra[name]?.toString()?.toBoolean() ?: defaultValue
+    } else {
+        defaultValue
     }
 }
