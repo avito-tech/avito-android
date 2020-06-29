@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-rootProject.name = "avito-android-infra"
+rootProject.name = "avito-android-samples"
 
 val useCompositeBuild: String by settings
 
