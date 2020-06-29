@@ -91,7 +91,7 @@ interface InstrumentationTestActionFinalizer {
 
             when (verdict) {
                 is TestRunResult.Verdict.Success -> logger.debug(verdict.message)
-                is TestRunResult.Verdict.Failed -> buildFailer.failBuild(
+                is TestRunResult.Verdict.Failure -> buildFailer.failBuild(
                     "Instrumentation task failed. Look at verdict in the file: $verdictFile"
                 )
             }

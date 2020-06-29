@@ -19,10 +19,26 @@ data class TestRunResult(
             override val message: String
         ) : Verdict()
 
-        data class Failed(
+        data class Failure(
             override val message: String,
-            val throwable: Throwable
-        ) : Verdict()
+            val prettifiedDetails: Details,
+            val cause: Throwable? = null
+        ) : Verdict() {
+
+            data class Details(
+                val lostTests: Set<Test>,
+                val failedTests: Set<Test>
+            ) {
+                operator fun plus(other: Details): Details {
+                    return Details(
+                        lostTests = lostTests + other.lostTests,
+                        failedTests = failedTests + other.failedTests
+                    )
+                }
+
+                data class Test(val name: String, val devices: Set<String>)
+            }
+        }
     }
 
     val verdict: Verdict
@@ -32,54 +48,85 @@ data class TestRunResult(
             return when {
                 failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success -> {
                     Verdict.Success(
-                        "${failedVerdict.message}. ${notReportedVerdict.message}"
+                        """
+                            |${failedVerdict.message}.
+                            |${notReportedVerdict.message}.""".trimMargin()
                     )
                 }
-                failedVerdict is Verdict.Failed && notReportedVerdict is Verdict.Failed -> {
+                failedVerdict is Verdict.Failure && notReportedVerdict is Verdict.Failure -> {
                     val message = "${failedVerdict.message}. \n ${notReportedVerdict.message}"
-                    Verdict.Failed(
-                        message,
-                        CompositeException(
-                            message,
-                            arrayOf(failedVerdict.throwable, notReportedVerdict.throwable)
-                        )
+                    Verdict.Failure(
+                        message = message,
+                        prettifiedDetails = failedVerdict.prettifiedDetails + notReportedVerdict.prettifiedDetails,
+                        cause = failedVerdict.cause.composeWith(notReportedVerdict.cause)
                     )
                 }
-                failedVerdict is Verdict.Failed -> failedVerdict
-                notReportedVerdict is Verdict.Failed -> notReportedVerdict
+                failedVerdict is Verdict.Failure -> failedVerdict
+                notReportedVerdict is Verdict.Failure -> notReportedVerdict
                 else -> throw IllegalStateException("Must be unreach")
             }
         }
 
     private fun getNotReportedVerdict() = when (notReported) {
         is HasNotReportedTestsDeterminer.Result.AllTestsReported -> Verdict.Success("All tests reported")
-        is HasNotReportedTestsDeterminer.Result.DetermineError -> Verdict.Failed(
-            "Failed. Couldn't determine not reported tests",
-            notReported.exception
+        is HasNotReportedTestsDeterminer.Result.DetermineError -> Verdict.Failure(
+            message = "Failed. Couldn't determine not reported tests",
+            prettifiedDetails = Verdict.Failure.Details(
+                lostTests = emptySet(),
+                failedTests = emptySet()
+            ),
+            cause = notReported.exception
         )
-        is HasNotReportedTestsDeterminer.Result.HasNotReportedTests -> Verdict.Failed(
-            "Failed. There are ${notReported.lostTests.size} not reported tests.",
-            IllegalStateException("Not reported tests:\n ${notReported.lostTests.joinToString { it.name.toString() }}")
+        is HasNotReportedTestsDeterminer.Result.HasNotReportedTests -> Verdict.Failure(
+            message = "Failed. There are ${notReported.lostTests.size} not reported tests.",
+            prettifiedDetails = Verdict.Failure.Details(
+                lostTests = notReported.getLostFailureDetailsTests(),
+                failedTests = emptySet()
+            ),
+            cause = null
         )
     }
 
+    private fun HasNotReportedTestsDeterminer.Result.HasNotReportedTests.getLostFailureDetailsTests(): Set<Verdict.Failure.Details.Test> =
+        lostTests.groupBy({ test -> test.name }, { test -> test.device.name })
+            .map { (testName, devices) ->
+                Verdict.Failure.Details.Test(
+                    name = testName.name,
+                    devices = devices.toSet()
+                )
+            }
+            .toSet()
+
     private fun getFailedVerdict() = when (failed) {
         is HasFailedTestDeterminer.Result.NoFailed -> Verdict.Success("No failed tests")
-        is HasFailedTestDeterminer.Result.DetermineError -> Verdict.Failed(
-            "Failed. Couldn't determine failed tests",
-            failed.throwable
+        is HasFailedTestDeterminer.Result.DetermineError -> Verdict.Failure(
+            message = "Failed. Couldn't determine failed tests",
+            prettifiedDetails = Verdict.Failure.Details(
+                lostTests = emptySet(),
+                failedTests = emptySet()
+            ),
+            cause = failed.throwable
         )
         is HasFailedTestDeterminer.Result.Failed -> {
             if (failed.notSuppressedCount > 0) {
-                Verdict.Failed(
-                    "Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests",
-                    IllegalStateException("Unsuppressed failed tests:\\n${failed.notSuppressed.lineByLine()}")
+                Verdict.Failure(
+                    message = "Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests",
+                    prettifiedDetails = Verdict.Failure.Details(
+                        lostTests = emptySet(),
+                        failedTests = failed.getNotSuppressedFailedDetailsTests()
+                    ),
+                    cause = null
                 )
             } else {
                 Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")
             }
         }
     }
+
+    private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests(): Set<Verdict.Failure.Details.Test> =
+        notSuppressed.groupBy({ test -> test.name }, { test -> test.deviceName })
+            .map { (testName, devices) -> Verdict.Failure.Details.Test(testName, devices.toSet()) }
+            .toSet()
 
     val testsDuration
         get() = reportedTests.sumBy { it.lastAttemptDurationInSeconds }
@@ -95,8 +142,23 @@ data class TestRunResult(
 
     fun notReportedCount(): Int = notReported.lostTests.size
 
-    private fun Iterable<SimpleRunTest>.lineByLine() = joinToString(separator = "\n") { it.name }
+}
 
+private fun Throwable?.composeWith(throwable: Throwable?): Throwable? {
+    return when {
+        this != null -> {
+            if (throwable != null) {
+                val message = "${message}. \n ${throwable.message}"
+                CompositeException(
+                    message,
+                    arrayOf(this, throwable)
+                )
+            } else {
+                this
+            }
+        }
+        else -> throwable
+    }
 }
 
 private class CompositeException(
