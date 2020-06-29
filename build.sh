@@ -11,5 +11,5 @@ docs/check.sh
 runInBuilder "set -e;
     ./gradlew help;
     ./gradlew help -PuseCompositeBuild=false;
-    ./gradlew -p subprojects build --scan ${GRADLE_ARGS};
+    ./gradlew -p subprojects build ${GRADLE_ARGS};
     ./gradlew :samples:test-app:instrumentationUi :samples:test-app-without-backward-compatibility:instrumentationUi ${GRADLE_ARGS}"

@@ -163,7 +163,7 @@ gradleEnterprise {
 }
 
 fun booleanProperty(name: String, defaultValue: Boolean): Boolean {
-    return if (settings.extra.has("name")) {
+    return if (settings.extra.has(name)) {
         settings.extra[name]?.toString()?.toBoolean() ?: defaultValue
     } else {
         defaultValue
