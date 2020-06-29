@@ -29,7 +29,7 @@ open class BuildStepListExtension(internal val name: String, objects: ObjectFact
     internal val steps: ListProperty<BuildStep> = objects.listProperty(BuildStep::class.java).empty()
 
     //todo property
-    var useImpactAnalysis: Boolean = false
+    var useImpactAnalysis: Boolean = true
 
     val taskDescription = objects.property<String>()
 
