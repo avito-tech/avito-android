@@ -16,8 +16,8 @@ interface ScreenChecks {
     fun isScreenOpened()
 }
 
-open class StrictScreenChecks(
-    protected val screen: Screen,
+open class StrictScreenChecks<out T : Screen>(
+    protected val screen: T,
     final override val checkOnEachScreenInteraction: Boolean = true
 ) : ScreenChecks {
 
