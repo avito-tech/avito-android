@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
-import com.avito.android.test.waitFor
+import com.avito.android.waiter.waitFor
 import org.hamcrest.Matcher
 import org.junit.Assert.assertFalse
 

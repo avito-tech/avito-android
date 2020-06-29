@@ -26,5 +26,4 @@ class MapContainsMapMatcher<K, V>(private val map: Map<K, V>) : TypeSafeMatcher<
         }
         return true
     }
-
 }

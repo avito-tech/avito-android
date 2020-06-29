@@ -2,6 +2,7 @@ package com.avito.report
 
 import com.avito.logger.FakeLogger
 import com.avito.test.gradle.fileFromJarResources
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.google.common.truth.Truth
 import okhttp3.mockwebserver.MockResponse
@@ -23,9 +24,11 @@ internal class ReportsFetchApiImplTest {
 
     @Test
     fun `getPerformanceTest - returns ok`() {
-        mockDispatcher.mockResponse(
-            requestMatcher = { true },
-            response = MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getTest.json").readText())
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { true },
+                response = MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getTest.json").readText())
+            )
         )
 
         val result = fetchApi.getPerformanceTest("any")

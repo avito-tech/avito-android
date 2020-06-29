@@ -1,6 +1,7 @@
 package com.avito.http
 
 import com.avito.logger.FakeLogger
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -15,14 +16,18 @@ class RetryWithFallbackTest {
 
     @Test
     fun `retry with fallback`() {
-        mockDispatcher.mockResponse(
-            requestMatcher = { path == "/" },
-            response = MockResponse().setResponseCode(503)
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { path == "/" },
+                response = MockResponse().setResponseCode(503)
+            )
         )
 
-        mockDispatcher.mockResponse(
-            requestMatcher = { path?.contains("fallback") ?: false },
-            response = MockResponse().setBody("ok").setResponseCode(200)
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.contains("fallback") },
+                response = MockResponse().setBody("ok").setResponseCode(200)
+            )
         )
 
         val api = createApi(server.url("/")) {

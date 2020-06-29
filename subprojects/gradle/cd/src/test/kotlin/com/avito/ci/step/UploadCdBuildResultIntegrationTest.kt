@@ -5,12 +5,12 @@ import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
 import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
-import com.avito.ci.bodyContains
 import com.avito.git.Git
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.file
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import okhttp3.Credentials
 import okhttp3.mockwebserver.MockResponse
@@ -34,7 +34,7 @@ class UploadCdBuildResultIntegrationTest {
     private val artifactoryUser = "deployer"
     private val artifactoryPassword = "deployer_password"
     private val reportsApiUrl = "https://reports"
-    private val dispatcher = MockDispatcher(defaultResponse = MockResponse().setResponseCode(200))
+    private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
         .also { dispatcher -> server.dispatcher = dispatcher }
 
     @BeforeEach
@@ -150,14 +150,16 @@ class UploadCdBuildResultIntegrationTest {
         projectDir.file("/app/build/reports/mapping.txt").writeText("1")
 
         val cdBuildResultRequest = dispatcher.captureRequest {
-            method?.contains("PUT") ?: false
+            recordedRequest.method?.contains("PUT") ?: false
                 && path == "/$outputPath"
-                && getHeader("Content-Type")?.startsWith("application/json") ?: false
+                && recordedRequest.getHeader("Content-Type")?.startsWith("application/json") ?: false
         }
 
-        dispatcher.mockResponse(
-            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
-            response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.contains("maven-metadata.xml") },
+                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+            )
         )
 
         val result = ciRun(
@@ -233,9 +235,11 @@ class UploadCdBuildResultIntegrationTest {
         projectDir.file("/app/build/outputs/apk/release/app-release.apk").createNewFile()
         projectDir.file("/app/build/reports/mapping.txt").writeText("1")
 
-        dispatcher.mockResponse(
-            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
-            response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.contains("maven-metadata.xml") },
+                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+            )
         )
 
         val result = ciRun(
@@ -284,17 +288,23 @@ class UploadCdBuildResultIntegrationTest {
         """.trimIndent()
 
     private fun mockingReportApi() {
-        dispatcher.mockResponse(
-            requestMatcher = { bodyContains(""""method":"Run.Create"""") },
-            response = MockResponse().setBody("""{"result": {"id": "$reportId"}}""")
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { bodyContains(""""method":"Run.Create"""") },
+                response = MockResponse().setBody("""{"result": {"id": "$reportId"}}""")
+            )
         )
-        dispatcher.mockResponse(
-            requestMatcher = { bodyContains(""""method":"Run.GetByParams"""") },
-            response = MockResponse().setBody(runGetParamsResponse)
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { bodyContains(""""method":"Run.GetByParams"""") },
+                response = MockResponse().setBody(runGetParamsResponse)
+            )
         )
-        dispatcher.mockResponse(
-            requestMatcher = { bodyContains(""""method":"RunTest.List"""") },
-            response = MockResponse().setBody("""{"result": []}""")
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { bodyContains(""""method":"RunTest.List"""") },
+                response = MockResponse().setBody("""{"result": []}""")
+            )
         )
     }
 

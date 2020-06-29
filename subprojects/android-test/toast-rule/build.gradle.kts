@@ -11,5 +11,5 @@ dependencies {
 
     implementation(project(":android-lib:proxy-toast"))
     implementation(project(":android-test:ui-testing-core"))
-    implementation(project(":android-test:junit-utils"))
+    implementation(project(":common:junit-utils"))
 }

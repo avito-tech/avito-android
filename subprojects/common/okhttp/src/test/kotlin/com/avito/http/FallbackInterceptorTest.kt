@@ -1,5 +1,6 @@
 package com.avito.http
 
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -33,9 +34,11 @@ internal class FallbackInterceptorTest {
 
     @Test
     fun `request success - response is successful`() {
-        mockDispatcher.mockResponse(
-            requestMatcher = { true },
-            response = MockResponse().setResponseCode(200)
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { true },
+                response = MockResponse().setResponseCode(200)
+            )
         )
 
         val result = api.request().execute()
@@ -46,14 +49,18 @@ internal class FallbackInterceptorTest {
 
     @Test
     fun `request failed - fallback is successful`() {
-        mockDispatcher.mockResponse(
-            requestMatcher = { path == "/" },
-            response = MockResponse().setResponseCode(doFallbackOnThisResponseCode)
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { path == "/" },
+                response = MockResponse().setResponseCode(doFallbackOnThisResponseCode)
+            )
         )
 
-        mockDispatcher.mockResponse(
-            requestMatcher = { path == "/fallback" },
-            response = MockResponse().setResponseCode(200)
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { path == "/fallback" },
+                response = MockResponse().setResponseCode(200)
+            )
         )
 
         val fallbackRequest = mockDispatcher.captureRequest { path?.contains("fallback") ?: false }
@@ -68,14 +75,18 @@ internal class FallbackInterceptorTest {
 
     @Test
     fun `request failed - fallback is failed`() {
-        mockDispatcher.mockResponse(
-            requestMatcher = { path == "/" },
-            response = MockResponse().setResponseCode(doFallbackOnThisResponseCode)
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { path == "/" },
+                response = MockResponse().setResponseCode(doFallbackOnThisResponseCode)
+            )
         )
 
-        mockDispatcher.mockResponse(
-            requestMatcher = { path == "/fallback" },
-            response = MockResponse().setResponseCode(doFallbackOnThisResponseCode)
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { path == "/fallback" },
+                response = MockResponse().setResponseCode(doFallbackOnThisResponseCode)
+            )
         )
 
         val fallbackRequest = mockDispatcher.captureRequest { path?.contains("fallback") ?: false }

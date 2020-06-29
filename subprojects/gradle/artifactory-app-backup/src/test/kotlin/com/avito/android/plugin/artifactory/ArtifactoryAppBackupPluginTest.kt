@@ -3,6 +3,7 @@ package com.avito.android.plugin.artifactory
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -60,17 +61,19 @@ internal class ArtifactoryAppBackupPluginTest {
 
         Files.createFile(Paths.get(projectDir.path, moduleName, artifactName))
 
-        val dispatcher = MockDispatcher(defaultResponse = MockResponse().setResponseCode(200))
+        val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
             .also { mockWebServer.dispatcher = it }
 
-        dispatcher.mockResponse(
-            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
-            response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.contains("maven-metadata.xml") },
+                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+            )
         )
 
-        val rootPomRequest = dispatcher.captureRequest { path?.endsWith(".pom") ?: false }
+        val rootPomRequest = dispatcher.captureRequest { path.endsWith(".pom") }
         val putApkRequest =
-            dispatcher.captureRequest { (path?.endsWith(".apk") ?: false) && method?.toLowerCase() == "put" }
+            dispatcher.captureRequest { path.endsWith(".apk") && method.toLowerCase() == "put" }
 
         val result = ciRun(
             projectDir,
@@ -137,19 +140,21 @@ internal class ArtifactoryAppBackupPluginTest {
             Files.createFile(Paths.get(projectDir.path, moduleName, path))
         }
 
-        val dispatcher = MockDispatcher(defaultResponse = MockResponse().setResponseCode(200))
+        val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
             .also { mockWebServer.dispatcher = it }
 
-        dispatcher.mockResponse(
-            requestMatcher = { path?.contains("maven-metadata.xml") ?: false },
-            response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.contains("maven-metadata.xml") },
+                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+            )
         )
 
-        val rootPomRequest = dispatcher.captureRequest { path?.endsWith(".pom") ?: false }
+        val rootPomRequest = dispatcher.captureRequest { path.endsWith(".pom") ?: false }
         val putJsonFileRequests =
             artifacts.map { (id, _) ->
                 dispatcher.captureRequest {
-                    (path?.endsWith("$id.json") ?: false) && method?.toLowerCase() == "put"
+                    path.endsWith("$id.json") && method.toLowerCase() == "put"
                 }
             }
 

@@ -2,6 +2,10 @@ package com.avito.android.mock
 
 import android.annotation.SuppressLint
 import android.util.Log
+import com.avito.test.http.Mock
+import com.avito.test.http.MockDispatcher
+import com.avito.test.http.RequestCapturer
+import com.avito.test.http.RequestData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import okhttp3.mockwebserver.Dispatcher
@@ -9,6 +13,10 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import java.net.URL
 
+@Deprecated(
+    "use same class from common module",
+    replaceWith = ReplaceWith("com.avito.test.http.MockDispatcher")
+)
 class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
     private val logger: (String) -> Unit
@@ -50,6 +58,10 @@ private val gson = Gson()
  * @param fileName указать относительный путь до файла, начиная с директории assets
  *                 например: "assets/mock/seller_x/publish/parameters/ok.json"
  */
+@Deprecated(
+    "use same class from common module",
+    replaceWith = ReplaceWith("com.avito.test.http.setBodyFromFile")
+)
 fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
     val text = textFromAsset<MockDispatcher>(fileName)
     requireNotNull(text) { "$fileName not found, check path" }
@@ -70,11 +82,6 @@ private fun validateJson(json: String): Throwable? {
     } catch (t: Throwable) {
         t
     }
-}
-
-//todo patch json
-fun MockResponse.patchJsonBody(path: String, /*todo типы */ value: String): MockResponse {
-    return this
 }
 
 @SuppressLint("LogNotTimber")

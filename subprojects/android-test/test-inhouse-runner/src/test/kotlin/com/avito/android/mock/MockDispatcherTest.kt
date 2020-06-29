@@ -1,5 +1,8 @@
 package com.avito.android.mock
 
+import com.avito.test.http.Mock
+import com.avito.test.http.MockDispatcher
+import com.avito.test.http.RequestData
 import com.google.common.truth.Truth.assertThat
 import okhttp3.Headers
 import okhttp3.mockwebserver.MockResponse
@@ -17,8 +20,18 @@ class MockDispatcherTest {
     fun `dispatcher - dispatch last matching response - if multiple registered conditions matches`() {
         val sameRequest: RequestData.() -> Boolean = { path.contains("xxx") }
 
-        dispatcher.mocks.add(Mock(sameRequest, MockResponse().setBody("First registered")))
-        dispatcher.mocks.add(Mock(sameRequest, MockResponse().setBody("Second registered")))
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = sameRequest,
+                response = MockResponse().setBody("First registered")
+            )
+        )
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = sameRequest,
+                response = MockResponse().setBody("Second registered")
+            )
+        )
 
         val response = dispatcher.dispatch(buildRequest(path = "xxx"))
 
@@ -27,16 +40,16 @@ class MockDispatcherTest {
 
     @Test
     fun `dispatcher - find matching request - if multiple registered request has same path but different body`() {
-        dispatcher.mocks.add(
+        dispatcher.registerMock(
             Mock(
-                { path.contains("xxx") && body.contains("param1485") },
-                MockResponse().setBody("First registered")
+                requestMatcher = { path.contains("xxx") && body.contains("param1485") },
+                response = MockResponse().setBody("First registered")
             )
         )
-        dispatcher.mocks.add(
+        dispatcher.registerMock(
             Mock(
-                { path.contains("xxx") && body.contains("category89") },
-                MockResponse().setBody("Second registered")
+                requestMatcher = { path.contains("xxx") && body.contains("category89") },
+                response = MockResponse().setBody("Second registered")
             )
         )
 
