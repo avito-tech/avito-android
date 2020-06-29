@@ -4,7 +4,7 @@ import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
 
 @Deprecated(
-    "use same class from common module",
+    "Since 2020.10; Use the same class from common module",
     replaceWith = ReplaceWith("com.avito.test.http.RequestData")
 )
 class RequestData(private val recordedRequest: RecordedRequest) {

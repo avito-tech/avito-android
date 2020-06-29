@@ -14,7 +14,7 @@ import okhttp3.mockwebserver.RecordedRequest
 import java.net.URL
 
 @Deprecated(
-    "use same class from common module",
+    "Since 2020.10; Use the same class from common module",
     replaceWith = ReplaceWith("com.avito.test.http.MockDispatcher")
 )
 class MockDispatcher(
@@ -59,7 +59,7 @@ private val gson = Gson()
  *                 например: "assets/mock/seller_x/publish/parameters/ok.json"
  */
 @Deprecated(
-    "use same class from common module",
+    "Since 2020.10; Use the same class from common module",
     replaceWith = ReplaceWith("com.avito.test.http.setBodyFromFile")
 )
 fun MockResponse.setBodyFromFile(fileName: String): MockResponse {

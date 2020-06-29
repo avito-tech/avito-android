@@ -10,7 +10,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.StringContains
 
 @Deprecated(
-    "use same class from common module",
+    "Since 2020.10; Use the same class from common module",
     replaceWith = ReplaceWith("com.avito.test.http.RequestCapturer")
 )
 class RequestCapturer(val requestMatcher: RequestData.() -> Boolean) {
