@@ -27,18 +27,18 @@ open class PerformanceTestCheck(context: String) : SuppressibleBuildStep(context
             require(configuration.isNotBlank()) { "performance.configuration must be set" }
 
             val instrumentationTask = project.tasks.instrumentationTask(configuration)
-
-            instrumentationTask.get().also { task ->
-                task.suppressFailure.set(this@PerformanceTestCheck.suppressFailures)
-            }
-
             val measurePerformanceTask = project.tasks.measurePerformanceTask(configuration)
 
-            measurePerformanceTask.get().also { measureTask ->
-                measureTask.dependsOn(instrumentationTask)
+            instrumentationTask.configure { task ->
+                task.suppressFailure.set(suppressFailures)
             }
+
+            measurePerformanceTask.configure { task ->
+                task.dependsOn(instrumentationTask)
+            }
+
+            dependsOn(instrumentationTask) // because measure task can be disabled
             dependsOn(measurePerformanceTask)
-            dependsOn(instrumentationTask)
         }
 
         rootTask.dependsOn(checkTask)
