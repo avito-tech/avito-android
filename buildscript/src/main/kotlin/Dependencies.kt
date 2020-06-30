@@ -47,6 +47,7 @@ object Dependencies {
     val kubernetesDsl = "com.fkorotkov:kubernetes-dsl:2.7.1"
     val dexlib = "org.smali:dexlib2:2.3"
     val commonsText = "org.apache.commons:commons-text:1.6"
+    val commonsIo = "commons-io:commons-io:2.7"
     val antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
     val dockerClient = "de.gesellix:docker-client:2019-11-26T12-39-35"
     val asm = "org.ow2.asm:asm:7.1"

@@ -38,6 +38,9 @@ dependencies {
     implementation(Dependencies.retrofit)
     implementation(Dependencies.kotson)
     implementation(Dependencies.funktionaleTry)
+    implementation(Dependencies.commonsIo) {
+        because("LogcatBuffer.Impl.tailer needs to consider Charset (https://issues.apache.org/jira/browse/IO-354)")
+    }
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:logging-test-fixtures"))
