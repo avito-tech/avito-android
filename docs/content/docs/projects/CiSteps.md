@@ -123,7 +123,7 @@ uiTests {
   configurations("configurationName") // list of instrumentation configuration to depends on
   sendStatistics = false // by default
   suppressFailures = false // by default
-  useImpactAnalysis = false // by default
+  useImpactAnalysis = true // by default
   suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
 }
 ```
@@ -136,7 +136,7 @@ uiTests {
   configurations = ["configurationName"] // list of instrumentation configuration to depends on
   sendStatistics = false // by default
   suppressFailures = false // by default
-  useImpactAnalysis = false // by default
+  useImpactAnalysis = true // by default
   suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
 }
 ```
@@ -414,7 +414,6 @@ Step could use [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}}). It i
 ```kotlin
 fastCheck {
     uiTests {
-        useImpactAnalysis = true
     }
 }
 ```
@@ -425,7 +424,6 @@ fastCheck {
 ```groovy
 fastCheck {
     uiTests {
-        useImpactAnalysis = true
     }
 }
 ```
