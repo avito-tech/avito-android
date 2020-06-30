@@ -143,7 +143,7 @@ pluginManagement {
                 // Can't update further
                 // https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/issues/199
                 pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.49.0")
+                    useVersion("0.50.0")
             }
         }
     }
@@ -163,7 +163,7 @@ gradleEnterprise {
 }
 
 fun booleanProperty(name: String, defaultValue: Boolean): Boolean {
-    return if (settings.extra.has("name")) {
+    return if (settings.extra.has(name)) {
         settings.extra[name]?.toString()?.toBoolean() ?: defaultValue
     } else {
         defaultValue

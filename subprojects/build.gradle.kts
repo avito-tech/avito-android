@@ -50,11 +50,6 @@ val finalProjectVersion: String = System.getProperty("avito.project.version").le
     if (env.isNullOrBlank()) projectVersion else env
 }
 
-dependencyAnalysis {
-    chatty(false)
-    autoApply(false)
-}
-
 subprojects {
 
     repositories {
