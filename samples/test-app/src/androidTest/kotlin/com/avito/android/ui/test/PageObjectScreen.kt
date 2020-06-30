@@ -34,7 +34,7 @@ class PageObjectScreen(@IdRes override val rootId: Int) : PageObject(), Screen {
 
     override val checks: ScreenChecks = ScreenChecks()
 
-    inner class ScreenChecks : StrictScreenChecks(this) {
+    inner class ScreenChecks : StrictScreenChecks<PageObjectScreen>(this) {
         override fun isScreenOpened() {
             super.isScreenOpened()
             parentContainer.checks.exists()
