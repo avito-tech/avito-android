@@ -7,9 +7,9 @@ import io.kubernetes.client.util.authenticators.GCPAuthenticator
  * Default [GCPAuthenticator] doesn't able to refresh token
  * https://github.com/kubernetes-client/java/issues/290#issuecomment-480205118
  */
-class CustomGCPAuthenticator(
-    private val credentials: GoogleCredentials
-) : GCPAuthenticator() {
+class CustomGCPAuthenticator : GCPAuthenticator() {
+
+    private val credentials: GoogleCredentials by lazy { GoogleCredentials.getApplicationDefault() }
 
     override fun refresh(config: MutableMap<String, Any>): MutableMap<String, Any> {
         val accessToken = credentials.refreshAccessToken()
