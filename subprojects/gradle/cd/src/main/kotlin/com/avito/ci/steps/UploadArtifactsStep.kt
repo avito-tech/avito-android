@@ -8,8 +8,9 @@ import org.gradle.api.tasks.TaskProvider
 @Suppress("UnstableApiUsage")
 abstract class UploadArtifactsStep(
     context: String,
-    private val artifactsConfiguration: ArtifactsConfiguration
-) : BuildStep(context),
+    private val artifactsConfiguration: ArtifactsConfiguration,
+    name: String
+) : BuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
     ArtifactAware by ArtifactAware.Impl() {
 

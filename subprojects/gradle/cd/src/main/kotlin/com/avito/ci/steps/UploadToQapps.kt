@@ -10,8 +10,11 @@ import org.gradle.api.tasks.TaskProvider
 import java.io.File
 
 @Suppress("UnstableApiUsage")
-class UploadToQapps(context: String, artifactsConfiguration: ArtifactsConfiguration) :
-    UploadArtifactsStep(context, artifactsConfiguration) {
+class UploadToQapps(
+    context: String,
+    artifactsConfiguration: ArtifactsConfiguration,
+    name: String
+) : UploadArtifactsStep(context, artifactsConfiguration, name) {
 
     override fun provideTask(
         project: Project,

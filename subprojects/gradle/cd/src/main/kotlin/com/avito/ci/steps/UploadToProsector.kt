@@ -9,8 +9,9 @@ import java.io.File
 @Suppress("UnstableApiUsage")
 class UploadToProsector(
     context: String,
-    artifactsConfiguration: ArtifactsConfiguration
-) : UploadArtifactsStep(context, artifactsConfiguration) {
+    artifactsConfiguration: ArtifactsConfiguration,
+    name: String
+) : UploadArtifactsStep(context, artifactsConfiguration, name) {
 
     override fun provideTask(
         project: Project,

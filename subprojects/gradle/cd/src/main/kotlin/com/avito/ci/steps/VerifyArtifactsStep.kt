@@ -18,8 +18,9 @@ import java.io.File
 
 open class VerifyArtifactsStep(
     context: String,
-    private val artifactsConfig: ArtifactsConfiguration
-) : BuildStep(context),
+    private val artifactsConfig: ArtifactsConfiguration,
+    name: String
+) : BuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
