@@ -2,6 +2,7 @@ package com.avito.performance
 
 import com.avito.git.gitState
 import com.avito.git.isOnDefaultBranch
+import com.avito.instrumentation.InstrumentationTestsPlugin
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.instrumentationTask
 import com.avito.instrumentation.withInstrumentationTests
@@ -14,6 +15,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.provider.Providers
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
@@ -22,6 +24,10 @@ import java.io.File
 open class PerformancePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
+
+        require(project.plugins.hasPlugin(InstrumentationTestsPlugin::class.java)) {
+            "PerformancePlugin works only with applied ${InstrumentationTestsPlugin::class.java}"
+        }
 
         val extension = project.extensions.create<PerformanceExtension>("performance")
 
@@ -169,7 +175,7 @@ open class PerformancePlugin : Plugin<Project> {
                                 }
                             }
 
-                        val performanceProvider = gitState.map {
+                        val performanceProvider: Provider<Task> = gitState.flatMap {
                             when {
                                 it.isOnDefaultBranch -> sourceBranchResultsCollector
                                 it.targetBranch != null -> performanceCompareProvider
@@ -178,6 +184,7 @@ open class PerformancePlugin : Plugin<Project> {
                         }
 
                         logger.debug("performanceProvider=${performanceProvider.orNull}")
+                        logger.debug("performanceProvider=${performanceProvider.isPresent}")
 
                         project.tasks.register<Task>(measurePerformanceTaskName(performanceConfig.name)) {
                             this.group = TASK_GROUP
