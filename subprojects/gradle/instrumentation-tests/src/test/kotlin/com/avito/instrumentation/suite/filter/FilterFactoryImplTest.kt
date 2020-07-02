@@ -13,7 +13,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.report.model.createStubInstance
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
 import org.junit.Test
 import java.io.File
@@ -21,14 +21,14 @@ import java.io.File
 internal class FilterFactoryImplTest {
 
     @Test
-    fun `when filterData is empty then initial filters always contains ExcludedBySdk and ExcludeAnnotationFilter`() {
+    fun `when filterData is empty then filters always contains ExcludedBySdk and ExcludeAnnotationFilter`() {
         val factory = createFilterFactory(
             filter = InstrumentationFilter.Data.createStub()
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        Truth.assertThat(initialFilter.filters)
+        assertThat(filter.filters)
             .containsExactly(
                 ExcludeBySdkFilter(),
                 ExcludeAnnotationsFilter(setOf(FilterFactory.JUNIT_IGNORE_ANNOTATION))
@@ -36,7 +36,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData contains included annotations then initial filters have IncludeAnnotationFilter`() {
+    fun `when filterData contains included annotations then filters have IncludeAnnotationFilter`() {
         val annotation = "Annotation"
         val factory = createFilterFactory(
             filter = InstrumentationFilter.Data.createStub(
@@ -47,14 +47,14 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        Truth.assertThat(initialFilter.filters)
+        assertThat(filter.filters)
             .containsAtLeastElementsIn(listOf(IncludeAnnotationsFilter(setOf(annotation))))
     }
 
     @Test
-    fun `when filterData contains prefixes then initial filters have IncludeBySignatures, ExcludeBySignatures`() {
+    fun `when filterData contains prefixes then filters have IncludeBySignatures, ExcludeBySignatures`() {
         val includedPrefix = "included_prefix"
         val excludedPrefix = "excluded_prefix"
         val factory = createFilterFactory(
@@ -66,9 +66,9 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        Truth.assertThat(initialFilter.filters)
+        assertThat(filter.filters)
             .containsAtLeastElementsIn(
                 listOf(
                     IncludeByTestSignaturesFilter(
@@ -92,7 +92,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData includePrevious statuses and Report return list without that status then initial filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
+    fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
         val factory = createFilterFactory(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -102,9 +102,9 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        val that = Truth.assertThat(initialFilter.filters)
+        val that = assertThat(filter.filters)
         that.containsAtLeastElementsIn(
             listOf(
                 IncludeByTestSignaturesFilter(
@@ -116,7 +116,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData includePrevious statuses and Report return list then initial filters contain IncludeTestSignaturesFilters#Previous with included statuses`() {
+    fun `when filterData includePrevious statuses and Report return list then filters contain IncludeTestSignaturesFilters#Previous with included statuses`() {
         val report = FakeReport()
         report.getTestsResult = Try.Success(
             listOf(
@@ -147,9 +147,9 @@ internal class FilterFactoryImplTest {
             reportConfig = reportConfig
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        val that = Truth.assertThat(initialFilter.filters)
+        val that = assertThat(filter.filters)
         that.containsAtLeastElementsIn(
             listOf(
                 IncludeByTestSignaturesFilter(
@@ -166,7 +166,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData excludePrevious statuses and Report return list then initial filters contain ExcludeTestSignaturesFilters#Previous with included statuses`() {
+    fun `when filterData excludePrevious statuses and Report return list then filters contain ExcludeTestSignaturesFilters#Previous with included statuses`() {
         val report = FakeReport()
         report.getTestsResult = Try.Success(
             listOf(
@@ -196,9 +196,9 @@ internal class FilterFactoryImplTest {
             reportConfig = reportConfig
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        val that = Truth.assertThat(initialFilter.filters)
+        val that = assertThat(filter.filters)
         that.containsAtLeastElementsIn(
             listOf(
                 ExcludeByTestSignaturesFilter(
@@ -215,7 +215,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData previousStatuses is empty then initial filters don't contain PreviousRun filters`() {
+    fun `when filterData previousStatuses is empty then filters don't contain PreviousRun filters`() {
         val factory = createFilterFactory(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -225,10 +225,10 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        initialFilter.filters.forEach { filter ->
-            val assert = Truth.assertThat(filter)
+        filter.filters.forEach { filter ->
+            val assert = assertThat(filter)
             assert
                 .isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
             assert
@@ -237,15 +237,15 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData report is empty then initial filters don't contain Report filters`() {
+    fun `when filterData report is empty then filters don't contain Report filters`() {
         val factory = createFilterFactory(
             filter = InstrumentationFilter.Data.createStub()
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        initialFilter.filters.forEach { filter ->
-            val assert = Truth.assertThat(filter)
+        filter.filters.forEach { filter ->
+            val assert = assertThat(filter)
             assert
                 .isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
             assert
@@ -254,7 +254,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData report is present and has includes then initial filters contain Report include filter`() {
+    fun `when filterData report is present and has includes then filters contain Report include filter`() {
         val reportId = "reportId"
         val reportConfig = Report.Factory.Config.ReportViewerId(reportId)
         val report = FakeReport()
@@ -288,9 +288,9 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        Truth.assertThat(initialFilter.filters)
+        assertThat(filter.filters)
             .containsAtLeastElementsIn(
                 listOf(
                     IncludeByTestSignaturesFilter(
@@ -307,7 +307,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData report is present and has excludes then initial filters contain Report exclude filter`() {
+    fun `when filterData report is present and has excludes then filters contain Report exclude filter`() {
         val reportId = "reportId"
         val reportConfig = Report.Factory.Config.ReportViewerId(reportId)
         val report = FakeReport()
@@ -341,9 +341,9 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        Truth.assertThat(initialFilter.filters)
+        assertThat(filter.filters)
             .containsAtLeastElementsIn(
                 listOf(
                     ExcludeByTestSignaturesFilter(
@@ -360,7 +360,7 @@ internal class FilterFactoryImplTest {
     }
 
     @Test
-    fun `when filterData report is present and statuses empty then initial filters don't contain Report filter`() {
+    fun `when filterData report is present and statuses empty then filters don't contain Report filter`() {
         val reportId = "reportId"
         val reportConfig = Report.Factory.Config.ReportViewerId(reportId)
         val report = FakeReport()
@@ -394,10 +394,10 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val initialFilter = factory.createInitialFilter() as CompositionFilter
+        val filter = factory.createFilter() as CompositionFilter
 
-        initialFilter.filters.forEach { filter ->
-            val assert = Truth.assertThat(filter)
+        filter.filters.forEach { filter ->
+            val assert = assertThat(filter)
             assert
                 .isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
             assert
@@ -405,7 +405,7 @@ internal class FilterFactoryImplTest {
         }
     }
 
-    fun createFilterFactory(
+    private fun createFilterFactory(
         filter: InstrumentationFilter.Data,
         impactAnalysisFile: File? = null,
         reportsByConfig: Map<Report.Factory.Config, Report> = emptyMap(),

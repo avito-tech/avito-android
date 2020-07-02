@@ -9,7 +9,6 @@ import java.io.Serializable
 open class TargetConfiguration(val name: String) : Serializable {
 
     lateinit var scheduling: SchedulingConfiguration
-    var rerunScheduling: SchedulingConfiguration? = null
 
     lateinit var deviceName: String
 
@@ -31,21 +30,11 @@ open class TargetConfiguration(val name: String) : Serializable {
             }
     }
 
-    fun rerunScheduling(closure: Closure<SchedulingConfiguration>) {
-        rerunScheduling = SchedulingConfiguration()
-            .let {
-                closure.delegate = it
-                closure.call()
-                it
-            }
-    }
-
     fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
 
         return Data(
             name = name,
             reservation = scheduling.data().reservation,
-            rerunReservation = rerunScheduling?.data()?.reservation ?: scheduling.data().reservation,
             deviceName = deviceName,
             instrumentationParams = parentInstrumentationParameters
                 .applyParameters(instrumentationParams)
@@ -57,14 +46,12 @@ open class TargetConfiguration(val name: String) : Serializable {
 
     fun validate() {
         scheduling.validate()
-        rerunScheduling?.validate()
         require(deviceName.isNotBlank()) { "deviceName must be set" }
     }
 
     data class Data(
         val name: String,
         val reservation: Reservation,
-        val rerunReservation: Reservation,
         val deviceName: String,
         val instrumentationParams: InstrumentationParameters
     ) : Serializable {

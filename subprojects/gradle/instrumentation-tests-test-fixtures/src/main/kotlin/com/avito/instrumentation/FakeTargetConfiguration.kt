@@ -21,15 +21,6 @@ fun TargetConfiguration.Data.Companion.createStubInstance(
             minimumFailedCount = 0
         )
     ),
-    rerunReservation = Reservation.StaticReservation(
-        device = Device.CloudEmulator.createStubInstance(),
-        count = 24,
-        quota = QuotaConfiguration.Data(
-            retryCount = 0,
-            minimumSuccessCount = 1,
-            minimumFailedCount = 0
-        )
-    ),
     deviceName = deviceName,
     instrumentationParams = instrumentationParams
 )

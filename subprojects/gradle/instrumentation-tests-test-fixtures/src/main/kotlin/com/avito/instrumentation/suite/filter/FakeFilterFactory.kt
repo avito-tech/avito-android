@@ -19,15 +19,10 @@ fun excludedFilter(reason: TestsFilter.Result.Excluded): TestsFilter {
 }
 
 class FakeFilterFactory(
-    private val initialFilter: TestsFilter = includeAll,
-    private val rerunFilter: TestsFilter = includeAll
+    private val filter: TestsFilter = includeAll
 ) : FilterFactory {
 
-    override fun createInitialFilter(): TestsFilter {
-        return initialFilter
-    }
-
-    override fun createRerunFilter(): TestsFilter {
-        return rerunFilter
+    override fun createFilter(): TestsFilter {
+        return filter
     }
 }

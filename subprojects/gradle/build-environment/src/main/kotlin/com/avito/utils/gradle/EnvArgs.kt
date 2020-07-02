@@ -52,16 +52,11 @@ interface EnvArgs {
 
     }
 
-    val isRerunDisabled: Boolean
-
     val build: Build
 
     class Impl(project: Project) : EnvArgs, Serializable {
 
         override val build: Build
-
-        override val isRerunDisabled: Boolean =
-            project.getBooleanProperty("avito.tests.disableRerunOnTargetBranch", default = false)
 
         init {
             // todo make local by default?

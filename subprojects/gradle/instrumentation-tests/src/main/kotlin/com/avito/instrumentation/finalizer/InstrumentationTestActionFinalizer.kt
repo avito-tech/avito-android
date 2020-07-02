@@ -41,13 +41,13 @@ interface InstrumentationTestActionFinalizer {
             testsExecutionResults: TestsScheduler.Result
         ) {
             val testRunResult = TestRunResult(
-                reportedTests = testsExecutionResults.initialTestsResult.getOrElse { emptyList() },
+                reportedTests = testsExecutionResults.testsResult.getOrElse { emptyList() },
                 failed = hasFailedTestDeterminer.determine(
-                    runResult = testsExecutionResults.testResultsAfterBranchReruns
+                    runResult = testsExecutionResults.testsResult
                 ),
                 notReported = hasNotReportedTestsDeterminer.determine(
-                    runResult = testsExecutionResults.initialTestsResult,
-                    allTests = testsExecutionResults.initialTestSuite.testsToRun.map { it.test }
+                    runResult = testsExecutionResults.testsResult,
+                    allTests = testsExecutionResults.testSuite.testsToRun.map { it.test }
                 )
             )
 

@@ -42,8 +42,6 @@ internal class InstrumentationTestsActionIntegrationTest {
     private val reportsApi = FakeReportsApi()
     private val testSuiteLoader = FakeTestSuiteLoader()
     private val reportCoordinates = ReportCoordinates.createStubInstance()
-    private val targetReportCoordinates =
-        reportCoordinates.copy(jobSlug = reportCoordinates.jobSlug + "-rerun")
     private val testRunner = FakeTestExecutor()
     private val testExecutorFactory = object : TestExecutorFactory {
         override fun createExecutor(
