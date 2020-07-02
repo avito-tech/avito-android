@@ -126,6 +126,7 @@ class UploadToQappsTest {
                             }
                             builds {
                                 release {
+                                    useImpactAnalysis = false
                                     artifacts {
                                         apk("debug", com.avito.cd.BuildVariant.DEBUG, "com.app", "${'$'}buildDir/outputs/apk/debug/app-debug.apk") {}
                                     }

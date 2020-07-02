@@ -7,6 +7,7 @@ localFilter?=
 includePrefix?=
 includeAnnotation?=
 useCompositeBuild=true
+dry_run=false
 
 params?=
 
@@ -28,6 +29,10 @@ endif
 
 ifeq ($(gradle_debug),true)
 params +=-Dorg.gradle.jvmargs='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=5005,suspend=y' --no-daemon
+endif
+
+ifeq ($(dry_run),true)
+params +=--dry-run
 endif
 
 params +=-PtestBuildType=$(test_build_type)
