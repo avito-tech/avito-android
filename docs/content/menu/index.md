@@ -48,7 +48,8 @@ headless: true
     - [Report Viewer]({{< ref "/docs/test/ReportViewer.md" >}})
     - [Troubleshooting]({{< ref "/docs/test/TroubleshootingUI.md" >}})
     - [Work Manager Testing]({{< ref "/docs/test/WorkManager.md" >}})
-    - [Flaky Tests]({{< ref "/docs/test/FlakyTests.md" >}})
+    - [Flaky annotation]({{< ref "/docs/test/FlakyAnnotation.md" >}})
+    - [Нестабильные тесты]({{< ref "docs/test/FlakyTests.md" >}})
     - [Toast]({{< ref "/docs/test/Toast.md" >}})
     - [Snackbar]({{< ref "/docs/test/Snackbar.md" >}})
     - [Screen checks]({{< ref "/docs/test/ScreenChecks.md" >}})
@@ -70,7 +71,5 @@ headless: true
     - [Релиз]({{< ref "/docs/cd/Release.md" >}})
     - [Артефакты сборки]({{< ref "/docs/cd/Artifacts.md" >}})
     - [QApps]({{< ref "/docs/cd/QApps.md" >}})
-- Development
-    - [Работа с флакующими тестами]({{< ref "docs/development/DealingWithFlaky.md" >}})
 - [Infrastructure (Github project)]({{< ref "/docs/Infrastructure.md" >}})
 - [Внешние библиотеки]({{< ref "/docs/ExternalLibraryChangeProcess.md" >}})

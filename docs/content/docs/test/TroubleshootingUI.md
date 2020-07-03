@@ -25,4 +25,4 @@ In some cases test can run without problems. Use a [local test report]({{<relref
 
 ## How to deal with flaky test
 
-[Работа с флакующими тестами]({{< ref "docs/development/DealingWithFlaky.md" >}})
+[Работа с флакующими тестами]({{< ref "docs/test/FlakyTests.md" >}})
