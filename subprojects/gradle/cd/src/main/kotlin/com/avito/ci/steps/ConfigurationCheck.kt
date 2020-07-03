@@ -7,7 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
-class ConfigurationCheck(context: String) : SuppressibleBuildStep(context),
+class ConfigurationCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {

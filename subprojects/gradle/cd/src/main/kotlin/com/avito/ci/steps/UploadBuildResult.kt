@@ -14,7 +14,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-class UploadBuildResult(context: String) : SuppressibleBuildStep(context) {
+class UploadBuildResult(context: String, name: String) : SuppressibleBuildStep(context, name) {
 
     var uiTestConfiguration: String? = null
 

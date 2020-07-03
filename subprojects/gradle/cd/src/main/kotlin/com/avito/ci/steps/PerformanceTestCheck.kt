@@ -9,7 +9,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-open class PerformanceTestCheck(context: String) : SuppressibleBuildStep(context),
+open class PerformanceTestCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
     var configuration: String = ""

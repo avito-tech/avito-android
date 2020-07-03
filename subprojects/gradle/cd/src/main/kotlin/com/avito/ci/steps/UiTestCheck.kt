@@ -10,7 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-open class UiTestCheck(context: String) : SuppressibleBuildStep(context),
+open class UiTestCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
     FlakyAwareBuildStep by FlakyAwareBuildStep.Impl() {
 

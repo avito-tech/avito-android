@@ -17,16 +17,58 @@ import com.avito.ci.steps.UploadToQapps
 import com.avito.ci.steps.VerifyArtifactsStep
 import groovy.lang.Closure
 import org.gradle.api.Action
+import org.gradle.api.Named
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
 import org.gradle.kotlin.dsl.property
 
 @Suppress("UnstableApiUsage")
-open class BuildStepListExtension(internal val name: String, objects: ObjectFactory) {
+open class BuildStepListExtension(
+    internal val buildStepListName: String,
+    objects: ObjectFactory
+): Named {
 
     private val artifactsConfig = ArtifactsConfiguration()
 
-    internal val steps: ListProperty<BuildStep> = objects.listProperty(BuildStep::class.java).empty()
+    override fun getName() = buildStepListName
+
+    internal val steps = objects.polymorphicDomainObjectContainer(BuildStep::class.java).apply {
+        registerFactory(ConfigurationCheck::class.java) { name ->
+            ConfigurationCheck(buildStepListName, name)
+        }
+        registerFactory(UiTestCheck::class.java) { name ->
+            UiTestCheck(buildStepListName, name)
+        }
+        registerFactory(PerformanceTestCheck::class.java) { name ->
+            PerformanceTestCheck(buildStepListName, name)
+        }
+        registerFactory(CompileUiTests::class.java) { name ->
+            CompileUiTests(buildStepListName, name)
+        }
+        registerFactory(UnitTestCheck::class.java) { name ->
+            UnitTestCheck(buildStepListName, name)
+        }
+        registerFactory(LintCheck::class.java) { name ->
+            LintCheck(buildStepListName, name)
+        }
+        registerFactory(UploadToQapps::class.java) { name ->
+            UploadToQapps(buildStepListName, artifactsConfig, name)
+        }
+        registerFactory(UploadToArtifactory::class.java) { name ->
+            UploadToArtifactory(buildStepListName, artifactsConfig, name)
+        }
+        registerFactory(UploadToProsector::class.java) { name ->
+            UploadToProsector(buildStepListName, artifactsConfig, name)
+        }
+        registerFactory(UploadBuildResult::class.java) { name ->
+            UploadBuildResult(buildStepListName, name)
+        }
+        registerFactory(DeployStep::class.java) { name ->
+            DeployStep(buildStepListName, artifactsConfig, name)
+        }
+        registerFactory(VerifyArtifactsStep::class.java) { name ->
+            VerifyArtifactsStep(buildStepListName, artifactsConfig, name)
+        }
+    }
 
     //todo property
     var useImpactAnalysis: Boolean = true
@@ -34,128 +76,126 @@ open class BuildStepListExtension(internal val name: String, objects: ObjectFact
     val taskDescription = objects.property<String>()
 
     fun configuration(closure: Closure<ConfigurationCheck>) {
-        configureAndAdd(ConfigurationCheck(name), closure)
+        configureAndAdd("configuration", closure)
     }
 
     fun configuration(action: Action<ConfigurationCheck>) {
-        configureAndAdd(ConfigurationCheck(name), action)
+        configureAndAdd("configuration", action)
     }
 
     fun uiTests(closure: Closure<UiTestCheck>) {
-        configureAndAdd(UiTestCheck(name), closure)
+        configureAndAdd("uiTests", closure)
     }
 
     fun uiTests(action: Action<UiTestCheck>) {
-        configureAndAdd(UiTestCheck(name), action)
+        configureAndAdd("uiTests", action)
     }
 
     fun performanceTests(closure: Closure<PerformanceTestCheck>) {
-        configureAndAdd(PerformanceTestCheck(name), closure)
+        configureAndAdd("performanceTests", closure)
     }
 
     fun performanceTests(action: Action<PerformanceTestCheck>) {
-        configureAndAdd(PerformanceTestCheck(name), action)
+        configureAndAdd("performanceTests", action)
     }
 
     fun compileUiTests(closure: Closure<CompileUiTests>) {
-        configureAndAdd(CompileUiTests(name), closure)
+        configureAndAdd("compileUiTests", closure)
     }
 
     fun compileUiTests(action: Action<CompileUiTests>) {
-        configureAndAdd(CompileUiTests(name), action)
+        configureAndAdd("compileUiTests", action)
     }
 
     fun unitTests(closure: Closure<UnitTestCheck>) {
-        configureAndAdd(UnitTestCheck(name), closure)
+        configureAndAdd("unitTests", closure)
     }
 
     fun unitTests(action: Action<UnitTestCheck>) {
-        configureAndAdd(UnitTestCheck(name), action)
+        configureAndAdd("unitTests", action)
     }
 
     fun lint(closure: Closure<LintCheck>) {
-        configureAndAdd(LintCheck(name), closure)
+        configureAndAdd("lint", closure)
     }
 
     fun lint(action: Action<LintCheck>) {
-        configureAndAdd(LintCheck(name), action)
+        configureAndAdd("lint", action)
     }
 
     fun uploadToQapps(closure: Closure<UploadToQapps>) {
-        configureAndAdd(UploadToQapps(name, artifactsConfig), closure)
+        configureAndAdd("uploadToQapps", closure)
     }
 
     fun uploadToQapps(action: Action<UploadToQapps>) {
-        configureAndAdd(UploadToQapps(name, artifactsConfig), action)
+        configureAndAdd("uploadToQapps", action)
     }
 
     fun uploadToArtifactory(closure: Closure<UploadToArtifactory>) {
-        configureAndAdd(UploadToArtifactory(name, artifactsConfig), closure)
+        configureAndAdd("uploadToArtifactory", closure)
     }
 
     fun uploadToArtifactory(action: Action<UploadToArtifactory>) {
-        configureAndAdd(UploadToArtifactory(name, artifactsConfig), action)
+        configureAndAdd("uploadToArtifactory", action)
     }
 
     fun uploadToProsector(closure: Closure<UploadToProsector>) {
-        configureAndAdd(UploadToProsector(name, artifactsConfig), closure)
+        configureAndAdd("uploadToProsector", closure)
     }
 
     fun uploadToProsector(action: Action<UploadToProsector>) {
-        configureAndAdd(UploadToProsector(name, artifactsConfig), action)
+        configureAndAdd("uploadToProsector", action)
     }
 
     fun uploadBuildResult(closure: Closure<UploadBuildResult>) {
-        configureAndAdd(UploadBuildResult(name), closure)
+        configureAndAdd("uploadBuildResult", closure)
     }
 
     fun uploadBuildResult(action: Action<UploadBuildResult>) {
-        configureAndAdd(UploadBuildResult(name), action)
+        configureAndAdd("uploadBuildResult", action)
     }
 
     fun deploy(closure: Closure<DeployStep>) {
-        configureAndAdd(DeployStep(name, artifactsConfig), closure)
+        configureAndAdd("deploy", closure)
     }
 
     fun deploy(action: Action<DeployStep>) {
-        configureAndAdd(DeployStep(name, artifactsConfig), action)
+        configureAndAdd("deploy", action)
     }
 
     fun artifacts(closure: Closure<ArtifactsConfiguration>) {
-        val step = VerifyArtifactsStep(name, artifactsConfig)
-        steps.add(step)
-
-        closure.delegate = artifactsConfig
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.call()
-
-        step.useImpactAnalysis = this.useImpactAnalysis
+        artifacts(Action {
+            closure.delegate = artifactsConfig
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure.call()
+        })
     }
 
     fun artifacts(action: Action<ArtifactsConfiguration>) {
-        val step = VerifyArtifactsStep(name, artifactsConfig)
-        steps.add(step)
-
         action.execute(artifactsConfig)
-
+        val step = steps.maybeCreate("artifacts", VerifyArtifactsStep::class.java)
         step.useImpactAnalysis = this.useImpactAnalysis
     }
 
-    private fun <T : BuildStep> configureAndAdd(step: T, configure: Closure<T>) {
-        configure.delegate = step
-        configure.resolveStrategy = Closure.DELEGATE_FIRST
-        configure.call()
-        if (step is ImpactAnalysisAwareBuildStep) {
-            step.useImpactAnalysis = this.useImpactAnalysis
-        }
-        steps.add(step)
+    private inline fun <reified T : BuildStep> configureAndAdd(
+        name: String,
+        configure: Closure<T>
+    ) {
+        configureAndAdd(name, Action<T> { step ->
+            configure.delegate = step
+            configure.resolveStrategy = Closure.DELEGATE_FIRST
+            configure.call()
+        })
     }
 
-    private fun <T : BuildStep> configureAndAdd(step: T, action: Action<T>) {
+    private inline fun <reified T : BuildStep> configureAndAdd(
+        name: String,
+        action: Action<T>
+    ) {
+        val step = steps.maybeCreate(name, T::class.java)
         action.execute(step)
         if (step is ImpactAnalysisAwareBuildStep) {
             step.useImpactAnalysis = this.useImpactAnalysis
         }
-        steps.add(step)
     }
 }
