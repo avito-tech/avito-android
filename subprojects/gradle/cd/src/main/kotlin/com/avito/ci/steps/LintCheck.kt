@@ -11,7 +11,7 @@ import com.avito.android.lint.LintReportTask
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 
-class LintCheck(context: String) : SuppressibleBuildStep(context),
+class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {

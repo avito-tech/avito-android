@@ -16,8 +16,9 @@ import java.io.File
 
 class DeployStep(
     context: String,
-    private val artifacts: ArtifactsConfiguration
-) : SuppressibleBuildStep(context) {
+    private val artifacts: ArtifactsConfiguration,
+    name: String
+) : SuppressibleBuildStep(context, name) {
 
     override fun registerTask(
         project: Project,

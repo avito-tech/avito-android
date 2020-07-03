@@ -24,13 +24,13 @@ class CiStepsPlugin : Plugin<Project> {
 
         buildContainer.all { buildTask ->
 
-            val task = project.tasks.register<Task>(buildTask.name) {
+            val task = project.tasks.register<Task>(buildTask.buildStepListName) {
                 group = taskGroup
                 description = buildTask.taskDescription.orNull
             }
 
             project.gradle.projectsEvaluated {
-                buildTask.steps.get().forEach { step ->
+                buildTask.steps.all { step ->
                     step.registerTask(project, task)
                 }
             }

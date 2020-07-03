@@ -15,8 +15,9 @@ import org.gradle.kotlin.dslx.noOwnerClosureOf
 @Suppress("UnstableApiUsage")
 class UploadToArtifactory(
     context: String,
-    artifactsConfiguration: ArtifactsConfiguration
-) : UploadArtifactsStep(context, artifactsConfiguration) {
+    artifactsConfiguration: ArtifactsConfiguration,
+    name: String
+) : UploadArtifactsStep(context, artifactsConfiguration, name) {
 
     override fun provideTask(
         project: Project,
