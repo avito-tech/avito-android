@@ -70,5 +70,7 @@ headless: true
     - [Релиз]({{< ref "/docs/cd/Release.md" >}})
     - [Артефакты сборки]({{< ref "/docs/cd/Artifacts.md" >}})
     - [QApps]({{< ref "/docs/cd/QApps.md" >}})
+- Development
+    - [Работа с флакующими тестами]({{< ref "docs/development/DealingWithFlaky.md" >}})
 - [Infrastructure (Github project)]({{< ref "/docs/Infrastructure.md" >}})
 - [Внешние библиотеки]({{< ref "/docs/ExternalLibraryChangeProcess.md" >}})
