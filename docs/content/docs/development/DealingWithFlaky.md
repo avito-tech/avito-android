@@ -15,7 +15,7 @@ type: docs
 1. Посмотри в чаты [#android-dev](http://links.k.avito.ru/slackandroiddev) или 
    [#android-autotesting](http://links.k.avito.ru/slackandroidautotesting). Вероятно, проблема уже известна.
 1. Посмотри [статистику стабильности теста]({{< ref "#где-посмотреть-статистику-по-стабильности-тестов" >}})
-1. Для проверки запускай тест в несколько прогонов в [динамической конфигурации]({{< ref "/docs/test/Run.md#custom-run" >}}).
+1. Запусти тест для проверки в несколько прогонов в [динамической конфигурации]({{< ref "/docs/test/Run.md#custom-run" >}}).
 
 ## Отлаживай в IDE
 
