@@ -14,18 +14,16 @@ then
     exit 1;
 fi
 
-DOCS_DIR=$(dirname "$0")
-cd "${DOCS_DIR}/.."
-
-docker build --tag android/docs/local docs
+DOCS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source "$DOCS_DIR"/../ci/_environment.sh
 
 docker run --rm \
-        --volume "$(pwd)":/app \
+        --volume "$DOCS_DIR/..":/app \
         --volume "$HOME/.ssh":/home/user/.ssh \
         --volume "${SSH_AUTH_SOCK:-/dev/null}":/tmp/ssh_auth_sock \
         --env "LOCAL_USER_ID=$(id -u)" \
         --env "GITHUB_GIT_USER_NAME=${GITHUB_GIT_USER_NAME}" \
         --env "GITHUB_GIT_USER_EMAIL=${GITHUB_GIT_USER_EMAIL}" \
         -w="/app" \
-        android/docs/local:latest \
+        ${DOCUMENTATION_IMAGE} \
         sh -c "docs/_publish_internal.sh"

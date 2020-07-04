@@ -1,12 +1,6 @@
-FROM ruby:2.6.5-alpine3.11 AS linter
+FROM ruby:2.6.6-alpine3.12
 # mdl: https://github.com/markdownlint/markdownlint
 RUN gem install mdl -v 0.9.0
-COPY . /docs
-WORKDIR /docs
-RUN mdl /docs/content
-
-
-FROM alpine:3.11.6
 
 RUN apk update \
     && apk add --update \
@@ -18,6 +12,7 @@ RUN apk update \
     # libc libraries are used to overcome https://github.com/gohugoio/hugo/issues/3382 😕
     libc6-compat libstdc++
 
+# TODO: Update
 ARG HUGO_VERSION=0.69.2
 
 RUN curl -L https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.tar.gz --output /tmp/hugo.tar.gz \
