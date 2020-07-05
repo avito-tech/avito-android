@@ -14,7 +14,7 @@ type: docs
 При создании Pull Request'а ваша ветка ребейзится на целевую ветку и автоматически запускается
 [`fastCheck`](http://links.k.avito.ru/PV), объявленный в `avito/build.gradle`:
 - Юнит тесты
-- Инструментальные тесты (кроме помеченных аннотацией [`@Flaky`]({{< ref "/docs/test/FlakyTests.md" >}})):
+- Инструментальные тесты (кроме помеченных аннотацией [`@Flaky`]({{< ref "/docs/test/FlakyAnnotation.md" >}})):
   - Перформанс
   - Компонентные
   - [Скриншотные]({{< ref "/docs/test/ScreenshotTesting.md" >}})
@@ -34,7 +34,7 @@ type: docs
 - [Android Lint]({{< ref "/docs/checks/AndroidLint.md" >}})
 
 {{< hint warning >}}
-Тесты, почеменные как [`@Flaky`]({{< ref "/docs/test/FlakyTests.md" >}}) запускаются, но на результат прогона не влияют.
+Тесты, почеменные как [`@Flaky`]({{< ref "/docs/test/FlakyAnnotation.md" >}}) запускаются, но на результат прогона не влияют.
 {{< /hint >}}
 
 ### Регресс
