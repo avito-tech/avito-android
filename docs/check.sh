@@ -2,13 +2,20 @@
 
 set -e
 
-DOCS_DIR=$(dirname "$0")
-cd "$DOCS_DIR"
+DOCS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-echo "Checking documentation..."
-docker build --tag android/docs/local .
+source "$DOCS_DIR"/../ci/_environment.sh
+
+echo "Lint markdown files..."
 docker run --rm \
-        --volume "$(pwd)":/app \
-        -w="/app" \
-        android/docs/local:latest \
+        --volume "$DOCS_DIR":/docs:ro \
+        -w="/docs" \
+        ${DOCUMENTATION_IMAGE} \
+        mdl content
+
+echo "Dry-run generation..."
+docker run --rm \
+        --volume "$DOCS_DIR":/docs \
+        -w="/docs" \
+        ${DOCUMENTATION_IMAGE} \
         sh -c "hugo --renderToMemory --i18n-warnings --minify --theme book"

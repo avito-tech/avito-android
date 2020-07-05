@@ -10,25 +10,31 @@ git config --global user.email "$GITHUB_GIT_USER_EMAIL";
 mkdir -p "${HOME}"/.ssh
 
 removeGhPagesWorktree() {
+    echo "Deleting worktree..."
     rm -rf gh-pages-generated
     git worktree prune
 }
 
-echo "Deleting old worktree..."
-removeGhPagesWorktree
+removeGeneratedFiles() {
+    echo "Removing generated files..."
+    rm -rf docs/public/
+    rm -rf docs/resources/_gen/
+}
 
-echo "Checking out gh-pages branch into temporary directory..."
-git worktree add -B gh-pages gh-pages-generated origin/gh-pages
+removeGeneratedFiles
 
-echo "Generating site..."
+echo "Generating Hugo site..."
 hugo --cleanDestinationDir --minify --theme book --source docs
 
-echo "Updating gh-pages branch..."
-cd gh-pages-generated
+removeGhPagesWorktree
 
-echo "Removing previously generated files..."
+echo "Checking out gh-pages branch into temporary directory gh-pages-generated..."
+git worktree add -B gh-pages gh-pages-generated origin/gh-pages
+
+echo "Removing previously published files..."
+cd gh-pages-generated
 git rm -r -- *
-echo "Replacing generated files..."
+echo "Moving generated files to gh-pages branch..."
 cp -RT ../docs/public .
 
 touch README.md
@@ -38,8 +44,9 @@ git add --all
 git status
 
 echo "Pushing changes..."
-# Amend history because we don't want to store a huge history of generated files
+# Amend history because we don't want to bloat it by generated files
 git commit --amend -m "auto-generated files" && git push --force-with-lease
 
-echo "Deleting generated files..."
+cd ..
+removeGeneratedFiles
 removeGhPagesWorktree
