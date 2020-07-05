@@ -1,53 +1,63 @@
 ---
-title: Flaky Tests
+title: Нестабильные тесты
 type: docs
 ---
 
-# Flaky Tests
+# Нестабильные тесты
 
-A flaky test is a test that could fail or pass without project changes.\
-One could say this is unstable tests that fail sometimes but not every launch.\
-It happens when: 
-- test relies on an external environment: back-end, database, environment variables etc.
-- test had written incorrect. Mistakes easy to do in async jobs.
-- test framework has bugs
+{{<avito page>}}
 
-Flaky tests make hard:
-- find real failures
-- trust to test failures
-- to react on failures as soon as possible \
+## Что не надо делать
 
-That's why we introduce annotion to mark your test flaky. 
+- Игнорировать тесты в TeamCity. Вы просто "подложите свинью" своим коллегам в будущем.
+- Помечать тест как `@Ignore`. Есть специальная аннотация [`@Flaky`]({{< ref "/docs/test/FlakyAnnotation.md" >}}).
 
-We want:
-- Minimize flakiness
-- Launch as many tests as we can on pull request checks
-- Help to fix common flaky problems
+## Убедись что тест действительно флакует
 
-## `@Flaky` annotation
+1. Посмотри в чаты [#android-dev](http://links.k.avito.ru/slackandroiddev) или 
+   [#android-autotesting](http://links.k.avito.ru/slackandroidautotesting). Вероятно, проблема уже известна.
+1. Посмотри [статистику стабильности теста]({{< ref "#где-посмотреть-статистику-по-стабильности-тестов" >}})
+1. Запусти тест для проверки в несколько прогонов в [динамической конфигурации]({{< ref "/docs/test/Run.md#custom-run" >}}).
 
-Such tests are marked with special annotation - `@Flaky`. You also able to provide an optional reason of flakiness for this test.
+## Отлаживай в IDE
 
-```kotlin
-@Flaky(reason = "Relies on real back-end")
-class MyAwesomeTests {
-    // ...
-}
-```
+В Android Studio должен из коробки работать debug на конкретном тесте.
 
-This annotation can be added both to the whole class and to a separate test:
+https://developer.android.com/studio/debug
 
-```kotlin
-class MyAwesomeTests {
-    @Flaky
-    @Test
-    fun foobar() {
-        // ...
-    }
-}
-```
+### Layout Inspector
 
-## Suppress `@Flaky` test failures
+<br> *Layout inspector использует adb поэтому мы не можем получить состояние экрана в дебажном запуске.* \
+<br> __Как получить экран во время прогона теста?__
+1. Добавить в нужное место `Thread.sleep()`.
+2. Запустить тест без дебага и дождаться пока исполнение попадет в `Thread.sleep()`
+3. Задампить состояние экрана через Layout Inspector
 
-To suppress failures of @Flaky tests just add `suppressFlaky = true` to your `uiTests` step.
-For more information on configuring build steps for the CI Steps plugin, please refer to [this document]({{< ref "/docs/projects/CISteps.md" >}}).
+## Если не удалось найти причину
+
+1. Обратись к автору тесту или юниту, который за него отвечает.
+1. Если тест уже чинят, то можно дождаться фикса.
+1. Если проблема новая, то договоритесь о том, кто поставить аннотацию `@Flaky` на тест.
+1. В аннотации обязательно укажите причину, а лучше задачу, в которой тест будет исправлен. 
+   Можно также приложить ссылку на build или репорт в RV.
+1. Запушьте изменения
+
+## Если проблема никак не решается
+
+1. [Обратись за помощью]({{<ref "/docs/Contacts.md" >}})
+1. Приложи сылку на репорт.
+1. Помогут также логи с ошибками.
+
+## Где посмотреть статистику по стабильности тестов? {#bi}
+
+- [Общая статистика по тестам (internal)](http://links.k.avito.ru/FR)
+- [История нестабильности теста (internal)](http://links.k.avito.ru/5W)
+
+Обратите внимание на параметры фильтрации.
+
+## Когда убирать аннотацию `@Flaky`
+
+Если вы внесли изменения, которые чинят исходную причину флакования теста, то в том же PR 
+необходимо убрать аннотацию с починенных тестов.
+
+Также можно ориентироваться на статистику в [BI](#bi).
