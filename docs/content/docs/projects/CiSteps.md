@@ -406,7 +406,8 @@ configuration {}
 
 ### Using impact analysis in step
 
-Step could use [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}}). It is disabled by default.
+Step can use [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}}). 
+It is enabled by default.
 
 {{< tabs "use impact analysis" >}}
 {{< tab "Kotlin" >}}
