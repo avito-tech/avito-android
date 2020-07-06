@@ -4,10 +4,9 @@
 
 set -euf -o pipefail
 
-DOCS_DIR=$(dirname "$0")
-cd "$DOCS_DIR"
-
-docker build --tag android/docs/local .
+DOCS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source "$DOCS_DIR"/../ci/_environment.sh
+source "$DOCS_DIR"/check.sh
 
 HOST=http://localhost:1313/avito-android
 
@@ -29,8 +28,8 @@ openBrowser
 # You can find them in .dockerignore
 
 docker run -t -i --rm \
-        --volume "$(pwd)":/app \
-        -w="/app" \
+        --volume "${DOCS_DIR}":/docs \
+        -w="/docs" \
         -p 1313:1313 \
-        android/docs/local:latest \
+        ${DOCUMENTATION_IMAGE} \
         sh -c "hugo server --cleanDestinationDir --i18n-warnings --minify $* --bind 0.0.0.0 --baseURL http://localhost:1313/avito-android"

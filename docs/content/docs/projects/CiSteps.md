@@ -124,7 +124,7 @@ uiTests {
   sendStatistics = false // by default
   suppressFailures = false // by default
   useImpactAnalysis = true // by default
-  suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
+  suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyAnnotation.md" >}}).
 }
 ```
 
@@ -137,7 +137,7 @@ uiTests {
   sendStatistics = false // by default
   suppressFailures = false // by default
   useImpactAnalysis = true // by default
-  suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyTests.md" >}}).
+  suppressFlaky = false // by default. [игнорирование падений FlakyTest]({{< ref "/docs/test/FlakyAnnotation.md" >}}).
 }
 ```
 

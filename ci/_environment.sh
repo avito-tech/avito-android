@@ -11,3 +11,4 @@ else
 fi
 
 IMAGE_DOCKER_IN_DOCKER=${DOCKER_REGISTRY}/android/docker-in-docker-image:c2ecce3a3e
+DOCUMENTATION_IMAGE=${DOCKER_REGISTRY}/android/documentation:90a4fdfddf
