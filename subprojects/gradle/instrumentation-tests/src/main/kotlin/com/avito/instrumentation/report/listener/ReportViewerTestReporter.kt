@@ -11,6 +11,7 @@ import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
+import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
 import com.avito.utils.logging.CILogger
@@ -27,7 +28,8 @@ class ReportViewerTestReporter(
     private val report: Report,
     // todo extract write to file
     fileStorageUrl: String,
-    private val logcatDir: File
+    private val logcatDir: File,
+    private val retracer: ProguardRetracer
 ) : TestReporter() {
 
     private val gson: Gson = GsonBuilder()
@@ -153,7 +155,7 @@ class ReportViewerTestReporter(
     private fun uploadLogcat(logcat: List<String>): String {
         return when (val result = remoteStorage.upload(
             Request.ContentRequest(
-                content = logcat.joinToString(separator = "\n"),
+                content = retracer.retrace(logcat.joinToString(separator = "\n")),
                 extension = "log"
             ),
             comment = "logcat"

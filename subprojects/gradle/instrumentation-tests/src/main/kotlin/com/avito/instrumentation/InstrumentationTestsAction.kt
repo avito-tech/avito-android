@@ -79,7 +79,8 @@ class InstrumentationTestsAction(
         val reportFactory: Report.Factory,
         val reportConfig: Report.Factory.Config,
         @Deprecated("Will be removed")
-        val reportCoordinates: ReportCoordinates
+        val reportCoordinates: ReportCoordinates,
+        val proguardMappings: List<File>
     ) : Serializable {
         companion object
     }

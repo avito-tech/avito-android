@@ -98,5 +98,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
                 return FakeReport()
             }
         },
-        reportCoordinates = reportCoordinates
+        reportCoordinates = reportCoordinates,
+        proguardMappings = emptyList()
     )

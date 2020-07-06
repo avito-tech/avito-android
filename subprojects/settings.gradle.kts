@@ -80,6 +80,7 @@ include(":common:statsd-test-fixtures")
 include(":common:logger")
 include(":common:teamcity-common")
 include(":common:test-annotations")
+include(":common:retrace")
 
 include(":android-test:resource-manager-exceptions")
 include(":android-test:websocket-reporter")

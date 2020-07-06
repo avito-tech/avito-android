@@ -54,6 +54,7 @@ object Dependencies {
 
     //https://r8.googlesource.com/r8/
     val r8 = "com.android.tools:r8:1.6.89"
+    val proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
     val playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
     val appcompat = "androidx.appcompat:appcompat:${Versions.androidX}"
     val recyclerView = "androidx.recyclerview:recyclerview:1.1.0"
