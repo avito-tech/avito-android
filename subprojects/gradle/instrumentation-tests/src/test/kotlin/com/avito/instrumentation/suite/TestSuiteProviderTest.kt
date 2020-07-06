@@ -22,10 +22,10 @@ internal class TestSuiteProviderTest {
     )
 
     @Test
-    fun `initial suite - dont skip tests - if rerun enabled, but results unavailable`() {
+    fun `test suite - dont skip tests`() {
         val testSuiteProvider = createTestSuiteProvider()
 
-        val result = testSuiteProvider.getInitialTestSuite(
+        val result = testSuiteProvider.getTestSuite(
             tests = listOf(simpleTestInApk)
         )
 
@@ -33,35 +33,13 @@ internal class TestSuiteProviderTest {
     }
 
     @Test
-    fun `initial suite - dont skip tests - if rerun enabled, but report is empty`() {
-        val testSuiteProvider = createTestSuiteProvider()
-
-        val result = testSuiteProvider.getInitialTestSuite(
-            tests = listOf(simpleTestInApk)
-        )
-
-        assertThat(result.testsToRun.map { it.test.name }).containsExactly(simpleTestInApk.testName)
-    }
-
-    @Test
-    fun `initial suite - dont skip tests - if rerun enabled, but previous report does not contain specific test`() {
-        val testSuiteProvider = createTestSuiteProvider()
-
-        val result = testSuiteProvider.getInitialTestSuite(
-            tests = listOf(simpleTestInApk)
-        )
-
-        assertThat(result.testsToRun.map { it.test.name }).containsExactly(simpleTestInApk.testName)
-    }
-
-    @Test
-    fun `initial suite - skip test - if rerun enabled and test passed in previous run`() {
+    fun `test suite - skip test - if rerun enabled and test passed in previous run`() {
         val report = FakeReport()
         val testSuiteProvider = createTestSuiteProvider(
             report = report,
             reportSkippedTests = true,
             filterFactory = FakeFilterFactory(
-                initialFilter = excludedFilter(
+                filter = excludedFilter(
                     TestsFilter.Result.Excluded.MatchExcludeSignature(
                         name = "",
                         source = TestsFilter.Signatures.Source.PreviousRun
@@ -70,7 +48,7 @@ internal class TestSuiteProviderTest {
             )
         )
 
-        testSuiteProvider.getInitialTestSuite(
+        testSuiteProvider.getTestSuite(
             tests = listOf(simpleTestInApk)
         )
 

@@ -8,11 +8,10 @@ import com.avito.report.model.SimpleRunTest
 import java.io.File
 
 interface FilterFactory {
-    fun createInitialFilter(): TestsFilter
-    fun createRerunFilter(): TestsFilter
+    fun createFilter(): TestsFilter
 
     companion object {
-        internal val JUNIT_IGNORE_ANNOTATION = "org.junit.Ignore"
+        internal const val JUNIT_IGNORE_ANNOTATION = "org.junit.Ignore"
 
         fun create(
             filterData: InstrumentationFilter.Data,
@@ -37,7 +36,7 @@ private class FilterFactoryImpl(
     private val reportConfig: Report.Factory.Config
 ) : FilterFactory {
 
-    override fun createInitialFilter(): TestsFilter {
+    override fun createFilter(): TestsFilter {
         val filters = mutableListOf<TestsFilter>()
         filters.add(ExcludeBySdkFilter())
         filters.addAnnotationFilters()
@@ -45,14 +44,6 @@ private class FilterFactoryImpl(
         filters.addSourcePreviousSignatureFilters()
         filters.addSourceReportSignatureFilters()
         filters.addImpactAnalysisFilter()
-        return CompositionFilter(
-            filters
-        )
-    }
-
-    override fun createRerunFilter(): TestsFilter {
-        val filters = mutableListOf<TestsFilter>()
-        filters.addSourcePreviousSignatureFilters()
         return CompositionFilter(
             filters
         )

@@ -10,9 +10,8 @@ interface TestsScheduler {
     fun schedule(): Result
 
     data class Result(
-        val initialTestSuite: TestSuiteProvider.TestSuite,
-        val initialTestsResult: Try<List<SimpleRunTest>>,
-        val testResultsAfterBranchReruns: Try<List<SimpleRunTest>>,
+        val testSuite: TestSuiteProvider.TestSuite,
+        val testsResult: Try<List<SimpleRunTest>>,
         val flakyInfo: List<FlakyInfo>
     )
 }

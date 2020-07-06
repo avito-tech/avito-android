@@ -33,12 +33,7 @@ interface TestExecutor {
         logcatDir: File
     )
 
-    sealed class RunType {
-        abstract val id: String
-
-        data class Run(override val id: String) : RunType()
-        data class Rerun(override val id: String) : RunType()
-    }
+    data class RunType(val id: String)
 
     class Impl(
         private val logger: CILogger,
@@ -66,7 +61,6 @@ interface TestExecutor {
                 executionParameters = executionParameters
             )
             val reservations = reservations(
-                runType,
                 testsToRun,
                 configurationName = configuration.name
             )
@@ -77,10 +71,7 @@ interface TestExecutor {
             ) { devices ->
                 val testRequests = testsToRun
                     .map { targetTestRun ->
-                        val reservation = when (runType) {
-                            is RunType.Run -> targetTestRun.target.reservation
-                            is RunType.Rerun -> targetTestRun.target.rerunReservation
-                        }
+                        val reservation = targetTestRun.target.reservation
 
                         val quota = reservation.quota
 
@@ -140,7 +131,6 @@ interface TestExecutor {
         ).apply { mkdirs() }
 
         private fun reservations(
-            runType: RunType,
             tests: List<TestWithTarget>,
             configurationName: String
         ): Collection<Reservation.Data> {
@@ -148,10 +138,7 @@ interface TestExecutor {
             val testsGroupedByTargets: Map<TargetGroup, List<TestWithTarget>> = tests.groupBy {
                 TargetGroup(
                     name = it.target.name,
-                    reservation = when (runType) {
-                        is RunType.Run -> it.target.reservation
-                        is RunType.Rerun -> it.target.rerunReservation
-                    }
+                    reservation = it.target.reservation
                 )
             }
 

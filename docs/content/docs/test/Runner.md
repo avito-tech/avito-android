@@ -670,7 +670,6 @@ import com.avito.instrumentation.reservation.request.Device.LocalEmulator
 instrumentation {
     configurations {
         local {
-            tryToReRunOnTargetBranch = false
             targets {
                 api28 {
                     deviceName = "API28"

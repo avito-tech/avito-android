@@ -21,8 +21,7 @@ interface TestSuiteProvider {
         val skippedTests: List<Pair<TestWithTarget, Excluded>>
     )
 
-    fun getInitialTestSuite(tests: List<TestInApk>): TestSuite
-    fun getRerunTestsSuite(tests: List<TestInApk>): TestSuite
+    fun getTestSuite(tests: List<TestInApk>): TestSuite
 
     class Impl(
         private val report: Report,
@@ -31,14 +30,13 @@ interface TestSuiteProvider {
         private val filterFactory: FilterFactory
     ) : TestSuiteProvider {
 
-
-        override fun getInitialTestSuite(
+        override fun getTestSuite(
             tests: List<TestInApk>
         ): TestSuite {
 
             val suite = getTestSuite(
                 tests = tests,
-                filter = filterFactory.createInitialFilter()
+                filter = filterFactory.createFilter()
             )
 
             if (reportSkippedTests) {
@@ -61,13 +59,6 @@ interface TestSuiteProvider {
 
             return suite
         }
-
-        override fun getRerunTestsSuite(
-            tests: List<TestInApk>
-        ): TestSuite = getTestSuite(
-            tests = tests,
-            filter = filterFactory.createRerunFilter()
-        )
 
         private fun getTestSuite(
             tests: List<TestInApk>,

@@ -30,36 +30,35 @@ class InstrumentationTestsScheduler(
 
         val flakyTestInfo = FlakyTestInfo()
 
-        val initialTestSuite = testSuiteProvider.getInitialTestSuite(
+        val testSuite = testSuiteProvider.getTestSuite(
             tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
         )
 
-        filterInfoWriter.writeAppliedFilter(initialTestSuite.appliedFilter)
-        filterInfoWriter.writeFilterExcludes(initialTestSuite.skippedTests)
+        filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
+        filterInfoWriter.writeFilterExcludes(testSuite.skippedTests)
 
-        writeInitialTestSuite(initialTestSuite)
+        writeTestSuite(testSuite)
 
-        val initialTestsResult = testsRunner.runTests(
+        val testsResult = testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
-            runType = TestExecutor.RunType.Run(id = "initialRun"),
+            runType = TestExecutor.RunType(id = "initialRun"),
             reportCoordinates = reportCoordinates,
             report = sourceReport,
-            testsToRun = initialTestSuite.testsToRun
+            testsToRun = testSuite.testsToRun
         )
 
-        flakyTestInfo.addReport(initialTestsResult)
+        flakyTestInfo.addReport(testsResult)
 
         return TestsScheduler.Result(
-            initialTestSuite = initialTestSuite,
-            initialTestsResult = initialTestsResult,
-            testResultsAfterBranchReruns = initialTestsResult,
+            testSuite = testSuite,
+            testsResult = testsResult,
             flakyInfo = flakyTestInfo.getInfo()
         )
     }
 
-    private fun writeInitialTestSuite(initialTestSuite: TestSuiteProvider.TestSuite) {
-        File(params.outputDir, "initial-suite.json")
-            .writeText(gson.toJson(initialTestSuite.testsToRun.map { it.test }))
+    private fun writeTestSuite(testSuite: TestSuiteProvider.TestSuite) {
+        File(params.outputDir, "test-suite.json")
+            .writeText(gson.toJson(testSuite.testsToRun.map { it.test }))
     }
 }
