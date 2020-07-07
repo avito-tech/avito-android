@@ -4,11 +4,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.configuration.sets.isImplementation
 import com.avito.impact.fallback.ImpactFallbackDetector
-import com.avito.impact.util.isLibrary
-import com.avito.impact.util.isPlatform
-import com.avito.impact.util.isUnknown
 import org.funktionale.tries.Try
-import org.gradle.api.attributes.Category
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import java.io.File
 
@@ -61,9 +57,6 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
                 configuration
                     .dependencies
                     .withType(DefaultProjectDependency::class.java)
-            }
-            .filter {
-                it.isUnknown() || it.isLibrary() || it.isPlatform()
             }
             .toSet()
             .map {
