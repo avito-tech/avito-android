@@ -13,6 +13,7 @@ We publish releases to [Bintray](https://bintray.com/avito-tech/maven/avito-andr
 1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2020.9`.\
 This branch must be persistent. It is used for automation.
 1. Manually run [Integration build](http://links.k.avito.ru/ZA) on the `release branch`.
+1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`.
 1. Make a PR to an internal avito repository with the new version of infrastructure
 1. Checkout a new branch and make a PR to github repository:
     - Change `infraVersion` property in the `./gradle.properties` to the new version 
