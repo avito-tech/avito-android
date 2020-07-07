@@ -54,7 +54,7 @@ you need to publish it manually as a temporary version to the internal Artifacto
 
 ## CI integration configurations
 
-- [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request builds
+- [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request's builds
 - [integration check](http://links.k.avito.ru/ZA) - currently, contains the biggest amount of integration checks
 - [nightly integration check](http://links.k.avito.ru/gZ) - the same as `integration check` but uses more Android emulators
 - [Gradle configuration compatibility check](http://links.k.avito.ru/80) - checks the configuration compatibility of our Gradle plugins with Avito repo  
