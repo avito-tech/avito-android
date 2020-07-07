@@ -32,8 +32,5 @@ open class CodeOwnershipExtension(
     }
 }
 
-internal val Project.ownership: CodeOwnershipExtension
-    get() = extensions.findByType() ?: error("ownership should be available for $path")
-
 val ExtensionContainer.ownership: CodeOwnershipExtension
     get() = findByType() ?: error("ownership should be available")

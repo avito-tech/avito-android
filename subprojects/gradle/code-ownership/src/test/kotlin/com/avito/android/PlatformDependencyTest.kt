@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class PlatformDependencyTest {
+class PlatformDependencyTest {
+
     @Test
     fun `code ownership - skip platform module check`(@TempDir projectDir: File) {
         TestProjectGenerator(
@@ -17,14 +18,17 @@ internal class PlatformDependencyTest {
                 "com.avito.android.code-ownership"
             ),
             modules = listOf(
-                KotlinModule("a", dependencies = "compile platform(project(':b'))"),
-                PlatformModule("b")
+                KotlinModule(
+                    "lib",
+                    dependencies = "compile platform(project(':platform'))"
+                ),
+                PlatformModule("platform")
             )
         ).generateIn(projectDir)
 
         gradlew(
             projectDir,
-            ":a:checkProjectDependenciesOwnership",
+            "checkProjectDependenciesOwnership",
             "-Pavito.moduleOwnershipValidationEnabled=true",
             "-PgitBranch=xxx" // todo need for impact plugin
         ).assertThat().buildSuccessful()

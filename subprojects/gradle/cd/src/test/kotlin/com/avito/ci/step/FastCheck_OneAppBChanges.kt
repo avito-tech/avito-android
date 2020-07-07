@@ -1,7 +1,6 @@
 package com.avito.ci.step
 
 import com.avito.ci.assertAffectedModules
-import com.avito.ci.generateProjectWithImpactAnalysis
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.ciRun

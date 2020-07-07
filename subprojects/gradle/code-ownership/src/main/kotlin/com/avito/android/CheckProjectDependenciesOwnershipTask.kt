@@ -3,6 +3,7 @@ package com.avito.android
 import Visibility
 import com.avito.impact.configuration.internalModule
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 
 abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
@@ -28,7 +29,7 @@ abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
     }
 
     private fun checkPrivateDependenciesRule() {
-        project.internalModule.implementationConfiguration.dependencies.forEach {
+        projectDependencies().forEach {
             val codeOwnershipExtensionTo = it.module.project.extensions.ownership
             if (codeOwnershipExtensionTo.visibility == Visibility.PRIVATE) {
                 throwInvalidDependencyOnPrivateVisibleModuleException(
@@ -42,7 +43,7 @@ abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
 
     private fun checkUnitDependencyRuleDependency() {
         val codeOwnershipExtensionFrom = project.extensions.ownership
-        project.internalModule.implementationConfiguration.dependencies.forEach {
+        projectDependencies().forEach {
             val codeOwnershipExtensionTo = it.module.project.extensions.ownership
             if (codeOwnershipExtensionTo.visibility == Visibility.TEAM && codeOwnershipExtensionFrom.team != codeOwnershipExtensionTo.team) {
                 if (codeOwnershipExtensionFrom.allowedDependencies.contains(it.path)) {
@@ -57,6 +58,13 @@ abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
             }
         }
     }
+
+    private fun projectDependencies() = project.internalModule
+        .implementationConfiguration
+        .dependencies
+        .filterNot {
+            it.module.project.pluginManager.hasPlugin("java-platform")
+        }
 
     private fun throwInvalidDependencyOnPrivateVisibleModuleException(
         projectPath: String,

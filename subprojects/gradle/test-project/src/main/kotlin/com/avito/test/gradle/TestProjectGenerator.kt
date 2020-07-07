@@ -211,13 +211,15 @@ class PlatformModule(
 ) : Module {
 
     override fun generateIn(file: File) {
+        val customPlugins = plugins.joinToString(separator = "\n") { "id '$it'" }
+
         file.module(name) {
             build_gradle {
                 writeText(
                     """
 plugins {
     id 'java-platform'
-    ${plugins.joinToString(separator = "\n") { "id '$it'" }}
+    $customPlugins
 }
 
 $buildGradleExtra
@@ -414,7 +416,7 @@ val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") 
 val agpVersion: String by lazy { System.getProperty("androidGradlePluginVersion") }
 val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
 
-private fun File.build_gradle(configuration: File.() -> Unit = {}) = file("build.gradle").apply(configuration)
+private fun File.build_gradle(mutator: File.() -> Unit = {}) = file("build.gradle").apply(mutator)
 
 private fun File.androidManifest(packageName: String) = file(
     "AndroidManifest.xml", """
