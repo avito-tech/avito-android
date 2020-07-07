@@ -2,7 +2,7 @@
 
 {{<avito section>}}
 
-We publish releases to [bintray](https://bintray.com/avito-tech/maven/avito-android).
+We publish releases to [Bintray](https://bintray.com/avito-tech/maven/avito-android).
 
 ## Publishing a new release
 
