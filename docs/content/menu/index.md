@@ -71,5 +71,6 @@ headless: true
     - [Релиз]({{< ref "/docs/cd/Release.md" >}})
     - [Артефакты сборки]({{< ref "/docs/cd/Artifacts.md" >}})
     - [QApps]({{< ref "/docs/cd/QApps.md" >}})
+- [Infra Release]({{< ref "/docs/Release.md" >}})
 - [Infrastructure (Github project)]({{< ref "/docs/Infrastructure.md" >}})
 - [Внешние библиотеки]({{< ref "/docs/ExternalLibraryChangeProcess.md" >}})
