@@ -34,6 +34,9 @@ object InstrumentationPluginConfiguration {
 
         var unitToChannelMap: Map<String, String> = emptyMap()
 
+        var applicationProguardMapping: String? = null
+        var testProguardMapping: String? = null
+
         abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
         abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
@@ -139,7 +142,9 @@ object InstrumentationPluginConfiguration {
                 slackToken = slackToken,
                 unitToChannelMapping = unitToChannelMap
                     .map { (k, v) -> Team(k) to SlackChannel(v) }
-                    .toMap()
+                    .toMap(),
+                applicationProguardMapping = applicationProguardMapping,
+                testProguardMapping = testProguardMapping
             )
         }
 
@@ -153,7 +158,9 @@ object InstrumentationPluginConfiguration {
             val reportViewer: ReportViewer?,
             val registry: String,
             val slackToken: String,
-            val unitToChannelMapping: Map<Team, SlackChannel>
+            val unitToChannelMapping: Map<Team, SlackChannel>,
+            val applicationProguardMapping: String?,
+            val testProguardMapping: String?
         ) : Serializable {
 
             data class ReportViewer(

@@ -1,6 +1,5 @@
 package com.avito.instrumentation
 
-import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
 import com.avito.android.stats.statsdConfig
 import com.avito.bitbucket.bitbucketConfig
 import com.avito.bitbucket.pullRequestId
@@ -10,7 +9,6 @@ import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.Report
-import com.avito.kotlin.dsl.withType
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
@@ -55,6 +53,14 @@ abstract class InstrumentationTestsTask @Inject constructor(
     @Optional
     @InputFile
     val testApkOnTargetCommit: RegularFileProperty = objects.fileProperty()
+
+    @Optional
+    @InputFile
+    val applicationProguardMapping: RegularFileProperty = objects.fileProperty()
+
+    @Optional
+    @InputFile
+    val testProguardMapping: RegularFileProperty = objects.fileProperty()
 
     @Input
     val sendStatistics = objects.property<Boolean>()
@@ -125,10 +131,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
             reportConfig
         )
 
-        val proguardMappings = project.tasks.withType<ProguardConfigurableTask>()
-            .filter { it.mappingFile.isPresent }
-            .map { it.mappingFile.get().asFile }
-
         //todo новое api, когда выйдет в stable
         // https://docs.gradle.org/5.6/userguide/custom_tasks.html#using-the-worker-api
 
@@ -166,7 +168,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     reportConfig = reportConfig,
                     reportFactory = reportFactory,
                     reportCoordinates = reportCoordinates,
-                    proguardMappings = proguardMappings
+                    proguardMappings = listOf(
+                        applicationProguardMapping,
+                        testProguardMapping
+                    ).mapNotNull { it.orNull?.asFile }
                 )
             ).run()
         }

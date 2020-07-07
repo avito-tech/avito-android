@@ -2,9 +2,11 @@
 
 package com.avito.instrumentation
 
+import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.dsl.DefaultConfig
+import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
 import com.avito.android.getApkFile
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
@@ -21,6 +23,7 @@ import com.avito.instrumentation.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
+import com.avito.kotlin.dsl.withType
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
@@ -28,6 +31,7 @@ import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.time.Duration
@@ -148,6 +152,12 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             } else {
                                 task.testApplication.set(File(extensionData.testApplicationApk))
                             }
+
+                            if (extensionData.testProguardMapping == null) {
+                                task.setupProguardMapping(task.testProguardMapping, testVariant)
+                            } else {
+                                task.testProguardMapping.set(File(extensionData.testProguardMapping))
+                            }
                         }
                     }
                 }
@@ -196,6 +206,18 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 } else {
                                     task.testApplication.set(File(extensionData.testApplicationApk))
                                 }
+
+                                if (extensionData.applicationProguardMapping == null) {
+                                    task.setupProguardMapping(task.applicationProguardMapping, testedVariant)
+                                } else {
+                                    task.applicationProguardMapping.set(File(extensionData.applicationProguardMapping))
+                                }
+
+                                if (extensionData.testProguardMapping == null) {
+                                    task.setupProguardMapping(task.testProguardMapping, testVariant)
+                                } else {
+                                    task.testProguardMapping.set(File(extensionData.testProguardMapping))
+                                }
                             }
                         }
                     }
@@ -229,6 +251,20 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         // TODO Need to be set before `afterEvaluate`
         config.testInstrumentationRunnerArguments(filterNotBlankValues(args))
+    }
+
+    private fun InstrumentationTestsTask.setupProguardMapping(
+        mappingProperty: RegularFileProperty,
+        variant: ApkVariant
+    ) {
+        project.tasks.withType<ProguardConfigurableTask>()
+            .matching { it.variantName == variant.name }
+            .firstOrNull()
+            ?.let { proguardTask ->
+                dependencyOn(proguardTask) { dependentTask ->
+                    mappingProperty.set(dependentTask.mappingFile)
+                }
+            }
     }
 
     /**
