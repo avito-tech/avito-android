@@ -12,13 +12,16 @@ interface ProguardRetracer {
     fun retrace(content: String): String
 
     class Impl(
-        private val mappings: List<File>
+        mappings: List<File>
     ) : ProguardRetracer {
+
+        private val retraces: List<ReTrace> = mappings.map {
+            ReTrace(ReTrace.STACK_TRACE_EXPRESSION, false, it)
+        }
 
         override fun retrace(content: String): String {
             var result = content
-            mappings.map { ReTrace(ReTrace.STACK_TRACE_EXPRESSION, false, it) }
-                .forEach { result = it.retrace(result) }
+            retraces.forEach { result = it.retrace(result) }
             return result
         }
 
