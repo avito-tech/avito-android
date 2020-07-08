@@ -16,7 +16,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
 import java.io.File
-import java.lang.Exception
 import java.util.concurrent.Executors
 
 class DeviceWorker(
@@ -135,8 +134,9 @@ class DeviceWorker(
             DeviceTestCaseRun(
                 testCaseRun = TestCaseRun(
                     test = action.test,
-                    result = TestCaseRun.Result.Failed(
-                        stacktrace = "Infrastructure error: ${t.message}"
+                    result = TestCaseRun.Result.Failed.InfrastructureError(
+                        errorMessage = "Unexpected infrastructure error: ${t.message}",
+                        cause = t
                     ),
                     timestampStartedMilliseconds = now,
                     timestampCompletedMilliseconds = now

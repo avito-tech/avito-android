@@ -12,6 +12,13 @@ data class TestCaseRun(
     sealed class Result {
         object Passed : Result()
         object Ignored : Result()
-        data class Failed(val stacktrace: String) : Result()
+        sealed class Failed : Result() {
+            data class InRun(val errorMessage: String) : Failed()
+
+            data class InfrastructureError(
+                val errorMessage: String,
+                val cause: Throwable? = null
+            ) : Failed()
+        }
     }
 }

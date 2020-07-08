@@ -106,7 +106,7 @@ open class MockDevice(
         logger.log(message)
     }
 
-    override fun notifyError(message: String, error: Throwable) {
+    override fun notifyError(message: String, error: Throwable?) {
         logger.notify(message, error)
     }
 

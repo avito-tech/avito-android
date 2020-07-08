@@ -17,7 +17,7 @@ class TestCaseReportTest {
             runResults = listOf(
                 TestCaseRun.Result.Passed,
                 TestCaseRun.Result.Passed,
-                TestCaseRun.Result.Failed("")
+                TestCaseRun.Result.Failed.InRun("")
             )
         )
 
@@ -29,8 +29,8 @@ class TestCaseReportTest {
         val report = createTestCaseReport(
             runResults = listOf(
                 TestCaseRun.Result.Passed,
-                TestCaseRun.Result.Failed(""),
-                TestCaseRun.Result.Failed("")
+                TestCaseRun.Result.Failed.InRun(""),
+                TestCaseRun.Result.Failed.InRun("")
             )
         )
 
@@ -42,8 +42,8 @@ class TestCaseReportTest {
         val report = createTestCaseReport(
             runResults = listOf(
                 TestCaseRun.Result.Passed,
-                TestCaseRun.Result.Failed(""),
-                TestCaseRun.Result.Failed("")
+                TestCaseRun.Result.Failed.InRun(""),
+                TestCaseRun.Result.Failed.InRun("")
             )
         )
 

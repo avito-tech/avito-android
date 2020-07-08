@@ -64,7 +64,7 @@ class TestExecutionStateTest {
         val runs = listOf(
             baseTestCaseRun.copy(
                 testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Failed("")
+                    result = TestCaseRun.Result.Failed.InRun("")
                 )
             )
         )
@@ -124,7 +124,7 @@ class TestExecutionStateTest {
                 add(
                     baseTestCaseRun.copy(
                         testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                            result = TestCaseRun.Result.Failed("")
+                            result = TestCaseRun.Result.Failed.InRun("")
                         )
                     )
                 )
@@ -220,7 +220,7 @@ class TestExecutionStateTest {
                 add(
                     baseTestCaseRun.copy(
                         testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                            result = TestCaseRun.Result.Failed("")
+                            result = TestCaseRun.Result.Failed.InRun("")
                         )
                     )
                 )
@@ -268,7 +268,7 @@ class TestExecutionStateTest {
                 add(
                     baseTestCaseRun.copy(
                         testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                            result = TestCaseRun.Result.Failed("")
+                            result = TestCaseRun.Result.Failed.InRun("")
                         )
                     )
                 )
@@ -324,7 +324,7 @@ class TestExecutionStateTest {
             (verdict as TestExecutionState.Verdict.SendResult).results
 
         assertWithMessage("SendResult verdict must has first 10 failed test events")
-            .that(results.slice((0..9)).all { it.testCaseRun.result is TestCaseRun.Result.Failed })
+            .that(results.slice((0..9)).all { it.testCaseRun.result is TestCaseRun.Result.Failed.InRun })
             .isTrue()
 
         assertWithMessage("SendResult verdict must has last 10 passed test events")
@@ -375,7 +375,7 @@ class TestExecutionStateTest {
         val runs = listOf(
             baseTestCaseRun.copy(
                 testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Failed("")
+                    result = TestCaseRun.Result.Failed.InRun("")
                 )
             )
         )
@@ -449,7 +449,7 @@ class TestExecutionStateTest {
         val runs = listOf(
             baseTestCaseRun.copy(
                 testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Failed("")
+                    result = TestCaseRun.Result.Failed.InRun("")
                 )
             )
         )

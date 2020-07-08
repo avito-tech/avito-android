@@ -17,10 +17,10 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.device.observer.DevicesObserver
 import com.avito.runner.test.NoOpListener
 import com.avito.runner.test.listWithDefault
-import com.avito.runner.test.randomSerial
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.mock.MockDevicesObserver
+import com.avito.runner.test.randomSerial
 import com.avito.runner.test.randomString
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertThat
@@ -553,7 +553,7 @@ class RunnerIntegrationTest {
                     TestCaseRun.Result.Passed
                 ), // First test passed
                 MockActionResult.Success<TestCaseRun.Result>(
-                    TestCaseRun.Result.Failed("Failed")
+                    TestCaseRun.Result.Failed.InRun("Failed")
                 ), // Second test failed
                 MockActionResult.Success<TestCaseRun.Result>(
                     TestCaseRun.Result.Passed
@@ -584,7 +584,7 @@ class RunnerIntegrationTest {
                     deviceTestCaseRun(
                         device = device,
                         test = requests[1].testCase,
-                        result = TestCaseRun.Result.Failed("Failed")
+                        result = TestCaseRun.Result.Failed.InRun("Failed")
                     ), // First try failed
                     deviceTestCaseRun(
                         device = device,
@@ -673,19 +673,19 @@ class RunnerIntegrationTest {
                         TestCaseRun.Result.Passed
                     ), // First test passed by first try
                     MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
+                        TestCaseRun.Result.Failed.InRun("Failed")
                     ), // First test failed by second try
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
                     ), // Second test passed by first try
                     MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
+                        TestCaseRun.Result.Failed.InRun("Failed")
                     ), // Second test failed by second try
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
                     ), // First test passed  by third try
                     MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
+                        TestCaseRun.Result.Failed.InRun("Failed")
                     ), // Second test failed by third try
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
@@ -714,7 +714,7 @@ class RunnerIntegrationTest {
                         deviceTestCaseRun(
                             device = device,
                             test = requests[0].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
+                            result = TestCaseRun.Result.Failed.InRun("Failed")
                         ),
                         deviceTestCaseRun(
                             device = device,
@@ -731,12 +731,12 @@ class RunnerIntegrationTest {
                         deviceTestCaseRun(
                             device = device,
                             test = requests[1].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
+                            result = TestCaseRun.Result.Failed.InRun("Failed")
                         ),
                         deviceTestCaseRun(
                             device = device,
                             test = requests[1].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
+                            result = TestCaseRun.Result.Failed.InRun("Failed")
                         ),
                         deviceTestCaseRun(
                             device = device,
@@ -807,13 +807,13 @@ class RunnerIntegrationTest {
                         TestCaseRun.Result.Passed
                     ), // First test passed by first try
                     MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
+                        TestCaseRun.Result.Failed.InRun("Failed")
                     ), // First test failed by second try
                     MockActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
                     ), // First test passed by second try
                     MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
+                        TestCaseRun.Result.Failed.InRun("Failed")
                     ) // Second test failed by second try
                 )
             )
@@ -839,7 +839,7 @@ class RunnerIntegrationTest {
                         deviceTestCaseRun(
                             device = device,
                             test = requests[0].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
+                            result = TestCaseRun.Result.Failed.InRun("Failed")
                         )
                     ),
                     requests[1] to listOf(
@@ -851,7 +851,7 @@ class RunnerIntegrationTest {
                         deviceTestCaseRun(
                             device = device,
                             test = requests[1].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
+                            result = TestCaseRun.Result.Failed.InRun("Failed")
                         )
                     )
                 )

@@ -199,7 +199,7 @@ class SchedulingBasedRetryManagerTest {
     companion object {
         private val FAILED_RUN = generateDeviceTestCaseRun(
             testCaseRun = generateTestCaseRun(
-                result = TestCaseRun.Result.Failed("failed")
+                result = TestCaseRun.Result.Failed.InRun("failed")
             )
         )
 
