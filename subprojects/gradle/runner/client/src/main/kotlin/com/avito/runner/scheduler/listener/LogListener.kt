@@ -26,17 +26,18 @@ class LogListener : TestListener {
         executionNumber: Int
     ) {
         val status = when (result) {
-            is TestCaseRun.Result.Passed -> "passed"
-            is TestCaseRun.Result.Ignored -> "ignored"
-            is TestCaseRun.Result.Failed -> "failed"
+            is TestCaseRun.Result.Passed -> "PASSED"
+            is TestCaseRun.Result.Ignored -> "IGNORED"
+            is TestCaseRun.Result.Failed.InRun -> "FAILED"
+            is TestCaseRun.Result.Failed.InfrastructureError -> {
+                device.notifyError(result.errorMessage, result.cause)
+                "LOST"
+            }
         }
 
         device.log(
             "Test $status in ${durationMilliseconds.millisecondsToHumanReadableTime()}: " +
                 "${test.className}.${test.methodName}"
         )
-        if (result is TestCaseRun.Result.Failed) {
-            device.log(result.stacktrace)
-        }
     }
 }

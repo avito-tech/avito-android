@@ -12,13 +12,12 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
-import com.avito.runner.service.worker.device.Serial
-import com.avito.utils.getStackTraceString
 import org.funktionale.tries.Try
 import rx.Observable
 import rx.Single
@@ -123,8 +122,8 @@ data class AdbDevice(
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
-                                result = TestCaseRun.Result.Failed(
-                                    stacktrace = it.message
+                                result = TestCaseRun.Result.Failed.InfrastructureError(
+                                    errorMessage = "Failed on start test case: ${it.message}"
                                 ),
                                 timestampStartedMilliseconds = System.currentTimeMillis(),
                                 timestampCompletedMilliseconds = System.currentTimeMillis()
@@ -136,11 +135,9 @@ data class AdbDevice(
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
-                                result = TestCaseRun.Result.Failed(
-                                    stacktrace = """
-                                        ${it.message}
-                                        ${it.throwable.getStackTraceString()}
-                                    """.trimIndent()
+                                result = TestCaseRun.Result.Failed.InfrastructureError(
+                                    errorMessage = "Failed on instrumentation parsing: ${it.message}",
+                                    cause = it.throwable
                                 ),
                                 timestampStartedMilliseconds = System.currentTimeMillis(),
                                 timestampCompletedMilliseconds = System.currentTimeMillis()
@@ -305,8 +302,8 @@ data class AdbDevice(
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         className = test.className,
                         name = test.methodName,
-                        result = TestCaseRun.Result.Failed(
-                            "Timeout"
+                        result = TestCaseRun.Result.Failed.InfrastructureError(
+                            "Failed on Timeout"
                         ),
                         timestampStartedMilliseconds = started,
                         timestampCompletedMilliseconds = started + TimeUnit.MINUTES.toMillis(timeoutMinutes)
@@ -428,7 +425,7 @@ data class AdbDevice(
         logger.log("$TAG $message")
     }
 
-    override fun notifyError(message: String, error: Throwable) {
+    override fun notifyError(message: String, error: Throwable?) {
         logger.notify("$TAG $message", error)
     }
 

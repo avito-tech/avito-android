@@ -17,10 +17,10 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.device.observer.DevicesObserver
 import com.avito.runner.test.NoOpListener
 import com.avito.runner.test.listWithDefault
-import com.avito.runner.test.randomSerial
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.mock.MockDevicesObserver
+import com.avito.runner.test.randomSerial
 import com.avito.runner.test.randomString
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertThat
@@ -43,46 +43,9 @@ class RunnerIntegrationTest {
                 observer = observer
             )
 
-            val requests = listOf(
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest()
-            )
+            val requests = createRunRequests()
 
-            val device = MockDevice(
-                logger = StdOutLogger(),
-                id = randomSerial(),
-                installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any())  // Install test application
-                ),
-                gettingDeviceStatusResults = listWithDefault(
-                    1 + requests.size,
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    )
-                ),
-                clearPackageResults = (0 until requests.size - 1).flatMap {
-                    listOf(
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
-                        ),
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
-                        )
-                    )
-                },
-                runTestsResults = requests.map {
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    )
-                }
-            )
+            val device = createSuccessfulDevice(requests)
 
             GlobalScope.launch {
                 observer.send(device)
@@ -93,17 +56,7 @@ class RunnerIntegrationTest {
             device.verify()
 
             assertThat(result.runs).isEqualTo(
-                requests
-                    .map { request ->
-                        request to listOf(
-                            deviceTestCaseRun(
-                                device = device,
-                                test = request.testCase,
-                                result = TestCaseRun.Result.Passed
-                            )
-                        )
-                    }
-                    .toMap()
+                requests.toPassedRuns(device)
             )
         }
 
@@ -116,12 +69,7 @@ class RunnerIntegrationTest {
                 observer = observer
             )
 
-            val requests = listOf(
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest()
-            )
+            val requests = createRunRequests()
 
             val firstFailedDevice = MockDevice(
                 logger = StdOutLogger(),
@@ -131,43 +79,23 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any())  // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Device status for initializing
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Device status for first test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Device status for second test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Freeze(reason = Exception())
-                    ) // Device status for third test
+                    deviceIsAlive(), // Device status for initializing
+                    deviceIsAlive(), // Device status for first test
+                    deviceIsAlive(), // Device status for second test
+                    deviceIsFreezed() // Device status for third test
                 ),
                 // First request doesn't need clearing package
                 // Third test has freeze status
                 // Last request executing on another device
                 clearPackageResults = (0 until requests.size - 3).flatMap {
                     listOf(
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
-                        ),
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(
-                                Unit
-                            )
-                        )
+                        succeedClearPackage(),
+                        succeedClearPackage()
                     )
                 },
                 runTestsResults = listOf(
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ), // Test result for first test
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    )  // Test result for second test
+                    testPassed(), // Test result for first test
+                    testPassed()  // Test result for second test
                 )
             )
             val secondDevice = MockDevice(
@@ -178,63 +106,31 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any())  // Install test application
                 ),
                 clearPackageResults = listOf(
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)),
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit))
+                    succeedClearPackage(),
+                    succeedClearPackage()
                 ),
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Device status for initializing
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Device status for third test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ) // Device status for fourth test
+                    deviceIsAlive(), // Device status for initializing
+                    deviceIsAlive(), // Device status for third test
+                    deviceIsAlive() // Device status for fourth test
                 ),
                 runTestsResults = listOf(
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ), // Test result for third test
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ) // Test result for fourth test
+                    testPassed(), // Test result for third test
+                    testPassed() // Test result for fourth test
                 )
             )
 
             GlobalScope.launch {
                 observer.send(firstFailedDevice)
-                delay(TimeUnit.SECONDS.toMillis(3)) // Wait for completion 2 tests by first device
+                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for completion 2 tests by first device
                 observer.send(secondDevice)
             }
 
             val result = runner.runTests(requests)
 
-            val resultsByFirstDevice = requests
-                .slice(0..1)
-                .map {
-                    it to listOf(
-                        deviceTestCaseRun(
-                            device = firstFailedDevice,
-                            test = it.testCase,
-                            result = TestCaseRun.Result.Passed
-                        )
-                    )
-                }
-                .toMap()
+            val resultsByFirstDevice = requests.slice(0..1).toPassedRuns(firstFailedDevice)
 
-            val resultsBySecondDevice = requests
-                .slice(2..3)
-                .map {
-                    it to listOf(
-                        deviceTestCaseRun(
-                            device = secondDevice,
-                            test = it.testCase,
-                            result = TestCaseRun.Result.Passed
-                        )
-                    )
-                }
-                .toMap()
+            val resultsBySecondDevice = requests.slice(2..3).toPassedRuns(secondDevice)
 
             firstFailedDevice.verify()
             secondDevice.verify()
@@ -255,57 +151,14 @@ class RunnerIntegrationTest {
                 observer = observer
             )
 
-            val requests = listOf(
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest()
-            )
+            val requests = createRunRequests()
 
-            val successfulDevice = MockDevice(
-                logger = StdOutLogger(),
-                id = randomSerial(),
-                installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
-                ),
-                clearPackageResults = (0 until requests.size - 1).flatMap {
-                    listOf(
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        ),
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        )
-                    )
-                },
-                gettingDeviceStatusResults = listWithDefault(
-                    1 + requests.size,
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    )
-                ),
-                runTestsResults = requests.map {
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    )
-                }
-            )
-            val failedDevice = MockDevice(
-                logger = StdOutLogger(),
-                id = randomSerial(),
-                gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Freeze(
-                            reason = Exception()
-                        )
-                    )
-                )
-            )
+            val successfulDevice = createSuccessfulDevice(requests)
+            val failedDevice = createBrokenDevice(deviceIsFreezed())
 
             GlobalScope.launch {
                 observer.send(failedDevice)
-                delay(TimeUnit.SECONDS.toMillis(3)) // Wait for first device freeze event
+                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for first device freeze event
                 observer.send(successfulDevice)
             }
 
@@ -317,17 +170,7 @@ class RunnerIntegrationTest {
             assertThat(
                 result.runs
             ).isEqualTo(
-                requests
-                    .map {
-                        it to listOf(
-                            deviceTestCaseRun(
-                                device = successfulDevice,
-                                test = it.testCase,
-                                result = TestCaseRun.Result.Passed
-                            )
-                        )
-                    }
-                    .toMap()
+                requests.toPassedRuns(successfulDevice)
             )
         }
 
@@ -340,53 +183,14 @@ class RunnerIntegrationTest {
                 observer = observer
             )
 
-            val requests = listOf(
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest()
-            )
+            val requests = createRunRequests()
 
-            val successfulDevice = MockDevice(
-                logger = StdOutLogger(),
-                id = randomSerial(),
-                installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
-                ),
-                clearPackageResults = (0 until requests.size - 1).flatMap {
-                    listOf(
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        ),
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        )
-                    )
-                },
-                gettingDeviceStatusResults = listWithDefault(
-                    1 + requests.size,
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    )
-                ),
-                runTestsResults = requests.map {
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    )
-                }
-            )
-            val failedDevice = MockDevice(
-                logger = StdOutLogger(),
-                id = randomSerial(),
-                gettingDeviceStatusResults = listOf(
-                    MockActionResult.Failed(Exception())
-                )
-            )
+            val successfulDevice = createSuccessfulDevice(requests)
+            val failedDevice = createBrokenDevice(MockActionResult.Failed(Exception()))
 
             GlobalScope.launch {
                 observer.send(failedDevice)
-                delay(TimeUnit.SECONDS.toMillis(3)) // Wait for first device freeze event
+                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for first device freeze event
                 observer.send(successfulDevice)
             }
 
@@ -398,17 +202,7 @@ class RunnerIntegrationTest {
             assertThat(
                 result.runs
             ).isEqualTo(
-                requests
-                    .map {
-                        it to listOf(
-                            deviceTestCaseRun(
-                                device = successfulDevice,
-                                test = it.testCase,
-                                result = TestCaseRun.Result.Passed
-                            )
-                        )
-                    }
-                    .toMap()
+                requests.toPassedRuns(successfulDevice)
             )
         }
 
@@ -421,52 +215,15 @@ class RunnerIntegrationTest {
                 observer = observer
             )
 
-            val requests = listOf(
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest(),
-                testRunRequest()
-            )
+            val requests = createRunRequests()
 
-            val successfulDevice = MockDevice(
-                logger = StdOutLogger(),
-                id = randomSerial(),
-                installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
-                ),
-                clearPackageResults = (0 until requests.size - 1).flatMap {
-                    listOf(
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        ),
-                        MockActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        )
-                    )
-                },
-                gettingDeviceStatusResults = listWithDefault(
-                    1 + requests.size,
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    )
-                ),
-                runTestsResults = requests.map {
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    )
-                }
-            )
+            val successfulDevice = createSuccessfulDevice(requests)
             val failedDevice = MockDevice(
                 logger = StdOutLogger(),
                 id = randomSerial(),
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Device state for initializing
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    )
+                    deviceIsAlive(), // Device state for initializing
+                    deviceIsAlive()
                 ),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Failed(Exception())
@@ -475,7 +232,7 @@ class RunnerIntegrationTest {
 
             GlobalScope.launch {
                 observer.send(failedDevice)
-                delay(TimeUnit.SECONDS.toMillis(3)) // Wait for first device installation fail event
+                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for first device installation fail event
                 observer.send(successfulDevice)
             }
 
@@ -487,17 +244,7 @@ class RunnerIntegrationTest {
             assertThat(
                 result.runs
             ).isEqualTo(
-                requests
-                    .map {
-                        it to listOf(
-                            deviceTestCaseRun(
-                                device = successfulDevice,
-                                test = it.testCase,
-                                result = TestCaseRun.Result.Passed
-                            )
-                        )
-                    }
-                    .toMap()
+                requests.toPassedRuns(successfulDevice)
             )
         }
 
@@ -528,36 +275,22 @@ class RunnerIntegrationTest {
                 MockActionResult.Success(Any()) // Install test application
             ),
             clearPackageResults = listOf(
-                MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for first try for second test
-                MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for first try for second test
+                succeedClearPackage(), // Clear test package for first try for second test
+                succeedClearPackage(), // Clear application package for first try for second test
 
-                MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for second try for second test
-                MockActionResult.Success<Try<Any>>(Try.Success(Unit)) // Clear application package for second try for second test
+                succeedClearPackage(), // Clear test package for second try for second test
+                succeedClearPackage() // Clear application package for second try for second test
             ),
             gettingDeviceStatusResults = listOf(
-                MockActionResult.Success<Device.DeviceStatus>(
-                    Device.DeviceStatus.Alive
-                ), // Alive status for initializing
-                MockActionResult.Success<Device.DeviceStatus>(
-                    Device.DeviceStatus.Alive
-                ), // Alive status for first test
-                MockActionResult.Success<Device.DeviceStatus>(
-                    Device.DeviceStatus.Alive
-                ), // Alive status for first try for second test
-                MockActionResult.Success<Device.DeviceStatus>(
-                    Device.DeviceStatus.Alive
-                ) // Alive status for second test try for second test
+                deviceIsAlive(), // Alive status for initializing
+                deviceIsAlive(), // Alive status for first test
+                deviceIsAlive(), // Alive status for first try for second test
+                deviceIsAlive() // Alive status for second test try for second test
             ),
             runTestsResults = listOf(
-                MockActionResult.Success<TestCaseRun.Result>(
-                    TestCaseRun.Result.Passed
-                ), // First test passed
-                MockActionResult.Success<TestCaseRun.Result>(
-                    TestCaseRun.Result.Failed("Failed")
-                ), // Second test failed
-                MockActionResult.Success<TestCaseRun.Result>(
-                    TestCaseRun.Result.Passed
-                ) // Second test passed by second try
+                testPassed(), // First test passed
+                testFailed(), // Second test failed
+                testPassed() // Second test passed by second try
             )
         )
 
@@ -573,25 +306,12 @@ class RunnerIntegrationTest {
             result.runs
         ).isEqualTo(
             mapOf(
-                requests[0] to listOf(
-                    deviceTestCaseRun(
-                        device = device,
-                        test = requests[0].testCase,
-                        result = TestCaseRun.Result.Passed
-                    ) // Passed by first try
-                ),
-                requests[1] to listOf(
-                    deviceTestCaseRun(
-                        device = device,
-                        test = requests[1].testCase,
-                        result = TestCaseRun.Result.Failed("Failed")
-                    ), // First try failed
-                    deviceTestCaseRun(
-                        device = device,
-                        test = requests[1].testCase,
-                        result = TestCaseRun.Result.Passed
-                    ) // Second try passed
-                )
+                requests[0].let { request ->
+                    request to listOf(request.toPassedRun(device))  // Passed by first try
+                },
+                requests[1].let { request ->
+                    request to listOf(request.toFailedRun(device), request.toPassedRun(device))
+                }
             )
         )
     }
@@ -624,72 +344,37 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for initializing
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for first try for first test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for second try for first test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for first try for second test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for second try for second test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for third try for first test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for third try for second test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    )  // Alive status for fourth try for second test
+                    deviceIsAlive(), // Alive status for initializing
+                    deviceIsAlive(), // Alive status for first try for first test
+                    deviceIsAlive(), // Alive status for second try for first test
+                    deviceIsAlive(), // Alive status for first try for second test
+                    deviceIsAlive(), // Alive status for second try for second test
+                    deviceIsAlive(), // Alive status for third try for first test
+                    deviceIsAlive(), // Alive status for third try for second test
+                    deviceIsAlive()  // Alive status for fourth try for second test
                 ),
                 clearPackageResults = listOf(
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for second try for first test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for second try for first test
-
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for first try for second test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for first try for second test
-
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for second try for second test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for second try for second test
-
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for first try for third test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for first try for third test
-
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for second try for third test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for second try for third test
-
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for second try for fourth test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)) // Clear application package for second try for fourth test
+                    succeedClearPackage(), // Clear test package for second try for first test
+                    succeedClearPackage(), // Clear application package for second try for first test
+                    succeedClearPackage(), // Clear test package for first try for second test
+                    succeedClearPackage(), // Clear application package for first try for second test
+                    succeedClearPackage(), // Clear test package for second try for second test
+                    succeedClearPackage(), // Clear application package for second try for second test
+                    succeedClearPackage(), // Clear test package for first try for third test
+                    succeedClearPackage(), // Clear application package for first try for third test
+                    succeedClearPackage(), // Clear test package for second try for third test
+                    succeedClearPackage(), // Clear application package for second try for third test
+                    succeedClearPackage(), // Clear test package for second try for fourth test
+                    succeedClearPackage() // Clear application package for second try for fourth test
                 ),
                 runTestsResults = listOf(
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ), // First test passed by first try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
-                    ), // First test failed by second try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ), // Second test passed by first try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
-                    ), // Second test failed by second try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ), // First test passed  by third try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
-                    ), // Second test failed by third try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ) // Second test passed by fourth try
+                    testPassed(), // First test passed by first try
+                    testFailed(), // First test failed by second try
+                    testPassed(), // Second test passed by first try
+                    testFailed(), // Second test failed by second try
+                    testPassed(), // First test passed  by third try
+                    testFailed(), // Second test failed by third try
+                    testPassed() // Second test passed by fourth try
                 )
             )
 
@@ -705,45 +390,21 @@ class RunnerIntegrationTest {
                 result.runs
             ).isEqualTo(
                 mapOf(
-                    requests[0] to listOf( //passed by first try
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[0].testCase,
-                            result = TestCaseRun.Result.Passed
-                        ),
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[0].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
-                        ),
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[0].testCase,
-                            result = TestCaseRun.Result.Passed
+                    requests[0].let { request ->
+                        request to listOf(
+                            request.toPassedRun(device),
+                            request.toFailedRun(device),
+                            request.toPassedRun(device)
                         )
-                    ),
-                    requests[1] to listOf(
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[1].testCase,
-                            result = TestCaseRun.Result.Passed
-                        ),
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[1].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
-                        ),
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[1].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
-                        ),
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[1].testCase,
-                            result = TestCaseRun.Result.Passed
+                    },
+                    requests[1].let { request ->
+                        request to listOf(
+                            request.toPassedRun(device),
+                            request.toFailedRun(device),
+                            request.toFailedRun(device),
+                            request.toPassedRun(device)
                         )
-                    )
+                    }
                 )
             )
         }
@@ -776,45 +437,27 @@ class RunnerIntegrationTest {
                     MockActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for initializing
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for first try for first test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for second try for first test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ), // Alive status for first try for second test
-                    MockActionResult.Success<Device.DeviceStatus>(
-                        Device.DeviceStatus.Alive
-                    ) // Alive status for second try for second test
+                    deviceIsAlive(), // Alive status for initializing
+                    deviceIsAlive(), // Alive status for first try for first test
+                    deviceIsAlive(), // Alive status for second try for first test
+                    deviceIsAlive(), // Alive status for first try for second test
+                    deviceIsAlive() // Alive status for second try for second test
                 ),
                 clearPackageResults = listOf(
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for second try for first test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for second try for first test
+                    succeedClearPackage(), // Clear test package for second try for first test
+                    succeedClearPackage(), // Clear application package for second try for first test
 
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for first try for second test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear application package for first try for second test
+                    succeedClearPackage(), // Clear test package for first try for second test
+                    succeedClearPackage(), // Clear application package for first try for second test
 
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)), // Clear test package for second try for second test
-                    MockActionResult.Success<Try<Any>>(Try.Success(Unit)) // Clear application package for second try for second test
+                    succeedClearPackage(), // Clear test package for second try for second test
+                    succeedClearPackage() // Clear application package for second try for second test
                 ),
                 runTestsResults = listOf(
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ), // First test passed by first try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
-                    ), // First test failed by second try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Passed
-                    ), // First test passed by second try
-                    MockActionResult.Success<TestCaseRun.Result>(
-                        TestCaseRun.Result.Failed("Failed")
-                    ) // Second test failed by second try
+                    testPassed(), // First test passed by first try
+                    testFailed(), // First test failed by second try
+                    testPassed(), // First test passed by second try
+                    testFailed() // Second test failed by second try
                 )
             )
 
@@ -830,33 +473,106 @@ class RunnerIntegrationTest {
                 result.runs
             ).isEqualTo(
                 mapOf(
-                    requests[0] to listOf(
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[0].testCase,
-                            result = TestCaseRun.Result.Passed
-                        ),
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[0].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
-                        )
-                    ),
-                    requests[1] to listOf(
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[1].testCase,
-                            result = TestCaseRun.Result.Passed
-                        ),
-                        deviceTestCaseRun(
-                            device = device,
-                            test = requests[1].testCase,
-                            result = TestCaseRun.Result.Failed("Failed")
-                        )
-                    )
-                )
+                    requests[0].let { request ->
+                        request to listOf(request.toPassedRun(device), request.toFailedRun(device))
+                    },
+                    requests[1].let { request ->
+                        request to listOf(request.toPassedRun(device), request.toFailedRun(device))
+                    })
             )
         }
+
+    private fun createBrokenDevice(
+        failureReason: MockActionResult<Device.DeviceStatus>
+    ): MockDevice {
+        return MockDevice(
+            logger = StdOutLogger(),
+            id = randomSerial(),
+            gettingDeviceStatusResults = listOf(
+                failureReason
+            )
+        )
+    }
+
+    private fun createRunRequests(count: Int = 4): List<TestRunRequest> {
+        return (1..count).map { testRunRequest() }
+    }
+
+    private fun List<TestRunRequest>.toPassedRuns(device: MockDevice): Map<TestRunRequest, List<DeviceTestCaseRun>> {
+        return map { request ->
+            request to listOf(request.toPassedRun(device))
+        }.toMap()
+    }
+
+    private fun TestRunRequest.toPassedRun(
+        device: MockDevice
+    ): DeviceTestCaseRun {
+        return deviceTestCaseRun(
+            device = device,
+            test = testCase,
+            result = TestCaseRun.Result.Passed
+        )
+    }
+
+    private fun TestRunRequest.toFailedRun(
+        device: MockDevice
+    ): DeviceTestCaseRun {
+        return deviceTestCaseRun(
+            device = device,
+            test = testCase,
+            result = TestCaseRun.Result.Failed.InRun("Failed")
+        )
+    }
+
+    private fun deviceIsFreezed(): MockActionResult.Success<Device.DeviceStatus> {
+        return MockActionResult.Success(
+            Device.DeviceStatus.Freeze(reason = Exception())
+        )
+    }
+
+    private fun testFailed(): MockActionResult.Success<TestCaseRun.Result> {
+        return MockActionResult.Success(
+            TestCaseRun.Result.Failed.InRun("Failed")
+        )
+    }
+
+    private fun createSuccessfulDevice(requests: List<TestRunRequest>): MockDevice {
+        return MockDevice(
+            logger = StdOutLogger(),
+            id = randomSerial(),
+            installApplicationResults = mutableListOf(
+                MockActionResult.Success(Any()), // Install application
+                MockActionResult.Success(Any()) // Install test application
+            ),
+            clearPackageResults = (0 until requests.size - 1).flatMap {
+                listOf(
+                    succeedClearPackage(),
+                    succeedClearPackage()
+                )
+            },
+            gettingDeviceStatusResults = listWithDefault(
+                1 + requests.size,
+                deviceIsAlive()
+            ),
+            runTestsResults = requests.map {
+                testPassed()
+            }
+        )
+    }
+
+    private fun testPassed(): MockActionResult.Success<TestCaseRun.Result> {
+        return MockActionResult.Success(
+            TestCaseRun.Result.Passed
+        )
+    }
+
+    private fun succeedClearPackage() = MockActionResult.Success<Try<Any>>(Try.Success(Unit))
+
+    private fun deviceIsAlive(): MockActionResult.Success<Device.DeviceStatus> {
+        return MockActionResult.Success(
+            Device.DeviceStatus.Alive
+        )
+    }
 
     private fun provideRunner(
         observer: DevicesObserver,

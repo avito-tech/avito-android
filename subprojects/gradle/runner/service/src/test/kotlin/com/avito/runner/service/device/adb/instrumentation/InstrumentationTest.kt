@@ -255,8 +255,8 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         className = "com.example.test.TestClass",
                         name = "test1",
-                        result = TestCaseRun.Result.Failed(
-                            stacktrace = """java.net.UnknownHostException: Test Exception
+                        result = TestCaseRun.Result.Failed.InRun(
+                            errorMessage = """java.net.UnknownHostException: Test Exception
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:245)
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:44)
 at com.example.test.TestClass.test1(TestClass.kt:238)
@@ -780,7 +780,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         className = "ru.test.testapplication.ExampleInstrumentedTest",
                         name = "failedTestCrash",
-                        result = TestCaseRun.Result.Failed("Process crashed."),
+                        result = TestCaseRun.Result.Failed.InRun("Process crashed."),
                         timestampStartedMilliseconds = 0,
                         timestampCompletedMilliseconds = 0
                     )
@@ -987,8 +987,8 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         className = "com.avito.android.feature.advert.publish.verticals.AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
                         name = "dataSet5",
-                        result = TestCaseRun.Result.Failed(
-                            stacktrace = ""
+                        result = TestCaseRun.Result.Failed.InRun(
+                            errorMessage = ""
                         ),
                         timestampStartedMilliseconds = 0,
                         timestampCompletedMilliseconds = 0

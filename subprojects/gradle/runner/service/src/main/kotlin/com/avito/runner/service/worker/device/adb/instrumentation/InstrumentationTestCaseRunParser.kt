@@ -99,7 +99,7 @@ interface InstrumentationTestCaseRunParser {
                                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                                         className = it.clazz,
                                         name = it.test,
-                                        result = TestCaseRun.Result.Failed(stacktrace = newEntry.getError()),
+                                        result = TestCaseRun.Result.Failed.InRun(errorMessage = newEntry.getError()),
                                         timestampStartedMilliseconds = now,
                                         timestampCompletedMilliseconds = now
                                     )
@@ -167,8 +167,8 @@ interface InstrumentationTestCaseRunParser {
                         result = when (second.statusCode) {
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok -> TestCaseRun.Result.Passed
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ignored -> TestCaseRun.Result.Ignored
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Failure, InstrumentationEntry.InstrumentationTestEntry.StatusCode.AssumptionFailure -> TestCaseRun.Result.Failed(
-                                stacktrace = second.stack
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Failure, InstrumentationEntry.InstrumentationTestEntry.StatusCode.AssumptionFailure -> TestCaseRun.Result.Failed.InRun(
+                                errorMessage = second.stack
                             )
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Start ->
                                 throw IllegalStateException(

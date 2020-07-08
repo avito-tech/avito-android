@@ -17,25 +17,14 @@ class TestExecutionStateTest {
     @Test
     fun `verdict from state must be SendResult after 1 success run when minimal passed count is 1`() {
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 5,
                 minimalPassedCount = 1
             )
         )
 
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
-                result = TestCaseRun.Result.Passed
-            )
-        )
-
         val runs = listOf(
-            baseTestCaseRun.copy(
-                testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Passed
-                )
-            )
+            createPassedTestCaseRun()
         )
 
         assertWithMessage("Verdict must be SendResult")
@@ -50,23 +39,14 @@ class TestExecutionStateTest {
     @Test
     fun `verdict from state must be ReRun with intention with retry number instrumentation param 1 after 1 failed run when retry quota is 2`() {
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 2,
                 minimalPassedCount = 1
             )
         )
 
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun()
-        )
-
         val runs = listOf(
-            baseTestCaseRun.copy(
-                testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Failed("")
-                )
-            )
+            createFailedTestCaseRun()
         )
 
         state.verdict()
@@ -85,7 +65,6 @@ class TestExecutionStateTest {
     fun `verdict from state must be Run with 10 intentions when retry quota is 20 and minimal passed count is 10`() {
         val minimalPassedCount = 10
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 20,
                 minimalPassedCount = minimalPassedCount
@@ -106,30 +85,18 @@ class TestExecutionStateTest {
     fun `verdict from state must be Run with 1 intentions 2 times when retry quota is 20 and minimal passed count is 10 and 2 runs failed`() {
         val minimalPassedCount = 10
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 20,
                 minimalPassedCount = minimalPassedCount
             )
         )
 
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun()
-        )
-
         state.verdict()
 
-        val failedRuns = mutableListOf<DeviceTestCaseRun>().apply {
-            repeat(2) {
-                add(
-                    baseTestCaseRun.copy(
-                        testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                            result = TestCaseRun.Result.Failed("")
-                        )
-                    )
-                )
-            }
-        }
+        val failedRuns = listOf(
+            createFailedTestCaseRun(),
+            createFailedTestCaseRun()
+        )
 
         failedRuns.forEachIndexed { _, incomingTestCaseRun ->
             val verdict = state.verdict(incomingTestCaseRun = incomingTestCaseRun)
@@ -147,15 +114,10 @@ class TestExecutionStateTest {
     fun `verdict from state must be Run with 0 intentions 2 times when retry quota is 20 and minimal passed count is 10 and 2 runs passed`() {
         val minimalPassedCount = 10
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 20,
                 minimalPassedCount = minimalPassedCount
             )
-        )
-
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun()
         )
 
         val initialVerdict = state.verdict()
@@ -168,17 +130,10 @@ class TestExecutionStateTest {
             .hasSize(10)
 
         val successfulRuns =
-            mutableListOf<DeviceTestCaseRun>().apply {
-                repeat(2) {
-                    add(
-                        baseTestCaseRun.copy(
-                            testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                                result = TestCaseRun.Result.Passed
-                            )
-                        )
-                    )
-                }
-            }
+            listOf(
+                createPassedTestCaseRun(),
+                createPassedTestCaseRun()
+            )
 
         successfulRuns.forEachIndexed { _, incomingTestCaseRun ->
             val verdict = state.verdict(incomingTestCaseRun = incomingTestCaseRun)
@@ -194,16 +149,11 @@ class TestExecutionStateTest {
         val minimalFailedCount = 10
 
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 20,
                 minimalFailedCount = minimalFailedCount,
                 minimalPassedCount = 0
             )
-        )
-
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun()
         )
 
         val initialVerdict = state.verdict()
@@ -215,17 +165,10 @@ class TestExecutionStateTest {
             .that((initialVerdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(10)
 
-        val failedRuns = mutableListOf<DeviceTestCaseRun>().apply {
-            repeat(2) {
-                add(
-                    baseTestCaseRun.copy(
-                        testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                            result = TestCaseRun.Result.Failed("")
-                        )
-                    )
-                )
-            }
-        }
+        val failedRuns = listOf(
+            createFailedTestCaseRun(),
+            createFailedTestCaseRun()
+        )
 
         failedRuns.forEachIndexed { _, incomingTestCaseRun ->
             val verdict = state.verdict(incomingTestCaseRun = incomingTestCaseRun)
@@ -242,16 +185,11 @@ class TestExecutionStateTest {
         val minimalFailedCount = 10
 
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 19,
                 minimalPassedCount = minimalSuccessCount,
                 minimalFailedCount = minimalFailedCount
             )
-        )
-
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun()
         )
 
         val initialVerdict = state.verdict()
@@ -263,17 +201,7 @@ class TestExecutionStateTest {
             .that((initialVerdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(11)
 
-        val failedRuns = mutableListOf<DeviceTestCaseRun>().apply {
-            repeat(10) {
-                add(
-                    baseTestCaseRun.copy(
-                        testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                            result = TestCaseRun.Result.Failed("")
-                        )
-                    )
-                )
-            }
-        }
+        val failedRuns = (1..10).map { createFailedTestCaseRun() }
 
         failedRuns.forEachIndexed { index, incomingTestCaseRun ->
             val verdict = state.verdict(incomingTestCaseRun = incomingTestCaseRun)
@@ -283,17 +211,7 @@ class TestExecutionStateTest {
                 .isInstanceOf(TestExecutionState.Verdict.DoNothing::class.java)
         }
 
-        val successRuns = mutableListOf<DeviceTestCaseRun>().apply {
-            repeat(9) {
-                add(
-                    baseTestCaseRun.copy(
-                        testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                            result = TestCaseRun.Result.Passed
-                        )
-                    )
-                )
-            }
-        }
+        val successRuns = (1..9).map { createPassedTestCaseRun() }
 
         successRuns.forEachIndexed { index, incomingTestCaseRun ->
             val verdict = state.verdict(incomingTestCaseRun = incomingTestCaseRun)
@@ -308,11 +226,7 @@ class TestExecutionStateTest {
         }
 
         val verdict = state.verdict(
-            incomingTestCaseRun = baseTestCaseRun.copy(
-                testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Passed
-                )
-            )
+            incomingTestCaseRun = createPassedTestCaseRun()
         )
 
         assertWithMessage("Last (20th) verdict must be as SendResult")
@@ -324,7 +238,7 @@ class TestExecutionStateTest {
             (verdict as TestExecutionState.Verdict.SendResult).results
 
         assertWithMessage("SendResult verdict must has first 10 failed test events")
-            .that(results.slice((0..9)).all { it.testCaseRun.result is TestCaseRun.Result.Failed })
+            .that(results.slice((0..9)).all { it.testCaseRun.result is TestCaseRun.Result.Failed.InRun })
             .isTrue()
 
         assertWithMessage("SendResult verdict must has last 10 passed test events")
@@ -335,7 +249,6 @@ class TestExecutionStateTest {
     @Test
     fun `verdict must be Run with intention with executionNumber 1`() {
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 2,
                 minimalPassedCount = 1
@@ -361,23 +274,14 @@ class TestExecutionStateTest {
     @Test
     fun `verdict must be Run with intention with executionNumber 2`() {
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 2,
                 minimalPassedCount = 1
             )
         )
 
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun()
-        )
-
         val runs = listOf(
-            baseTestCaseRun.copy(
-                testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Failed("")
-                )
-            )
+            createFailedTestCaseRun()
         )
 
         state.verdict()
@@ -401,7 +305,6 @@ class TestExecutionStateTest {
     @Test
     fun `verdict must be Run with intentions with executionNumbers 1, 2`() {
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 3,
                 minimalPassedCount = 1,
@@ -434,7 +337,6 @@ class TestExecutionStateTest {
     @Test
     fun `verdict must be Run with intention with executionNumber 5`() {
         val state = provideTestExecutionState(
-            request = generateTestRunRequest(),
             retry = provideSchedulingBasedRetryManager(
                 quota = 6,
                 minimalPassedCount = 2,
@@ -442,16 +344,8 @@ class TestExecutionStateTest {
             )
         )
 
-        val baseTestCaseRun = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun()
-        )
-
         val runs = listOf(
-            baseTestCaseRun.copy(
-                testCaseRun = baseTestCaseRun.testCaseRun.copy(
-                    result = TestCaseRun.Result.Failed("")
-                )
-            )
+            createFailedTestCaseRun()
         )
         state.verdict()
         state.verdict(incomingTestCaseRun = runs[0])
@@ -473,6 +367,22 @@ class TestExecutionStateTest {
             .isEqualTo(5)
     }
 
+    private fun createFailedTestCaseRun(): DeviceTestCaseRun {
+        return generateDeviceTestCaseRun(
+            testCaseRun = generateTestCaseRun(
+                result = TestCaseRun.Result.Failed.InRun("")
+            )
+        )
+    }
+
+    private fun createPassedTestCaseRun(): DeviceTestCaseRun {
+        return generateDeviceTestCaseRun(
+            testCaseRun = generateTestCaseRun(
+                result = TestCaseRun.Result.Passed
+            )
+        )
+    }
+
     private fun provideSchedulingBasedRetryManager(
         quota: Int,
         minimalPassedCount: Int = 0,
@@ -487,7 +397,7 @@ class TestExecutionStateTest {
         )
 
     private fun provideTestExecutionState(
-        request: TestRunRequest,
+        request: TestRunRequest = generateTestRunRequest(),
         retry: RetryManager
     ) =
         TestExecutionStateImplementation(
