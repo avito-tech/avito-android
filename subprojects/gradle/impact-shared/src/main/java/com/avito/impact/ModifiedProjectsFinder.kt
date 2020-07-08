@@ -1,7 +1,6 @@
 package com.avito.impact
 
 import com.avito.impact.configuration.internalModule
-import com.avito.impact.configuration.isSupportedByImpactAnalysis
 import com.avito.impact.fallback.ImpactFallbackDetector
 import org.gradle.api.Project
 
@@ -15,13 +14,21 @@ class ModifiedProjectsFinder(
         fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
     }
 
-    val supportedProjects: Set<Project> by lazy {
+    private val supportedProjects: Set<Project> by lazy {
         rootProject
             .subprojects
             .asSequence()
             .filter { it.isSupportedByImpactAnalysis() }
             .toSet()
     }
+
+    private fun Project.isSupportedByImpactAnalysis(): Boolean =
+        with(pluginManager) {
+            hasPlugin("com.android.library")
+                || hasPlugin("com.android.application")
+                || hasPlugin("kotlin")
+                || hasPlugin("java")
+        }
 
     fun findModifiedProjects(reportType: ReportType? = null): Set<ModifiedProject> {
         val reportTypes = if (reportType == null) {

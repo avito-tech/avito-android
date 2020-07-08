@@ -1,4 +1,4 @@
-package com.avito.ci
+package com.avito.ci.step
 
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule

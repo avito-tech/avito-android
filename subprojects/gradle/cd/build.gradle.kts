@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":gradle:upload-to-googleplay"))
 
     testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":gradle:impact-shared-test-fixtures"))
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))
 }

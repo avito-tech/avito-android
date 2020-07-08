@@ -1,7 +1,5 @@
-package com.avito.ci.impact
+package com.avito.impact
 
-import com.avito.ci.assertMarkedModules
-import com.avito.ci.detectChangedModules
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator

@@ -49,14 +49,6 @@ class InternalModule(
 
 var Project.internalModule: InternalModule by ProjectProperty.lateinit()
 
-fun Project.isSupportedByImpactAnalysis(): Boolean =
-    with(pluginManager) {
-        hasPlugin("com.android.library")
-            || hasPlugin("com.android.application")
-            || hasPlugin("kotlin")
-            || hasPlugin("java")
-    }
-
 /**
  * Equality delegated to project
  */
