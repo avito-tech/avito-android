@@ -156,7 +156,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             if (extensionData.testProguardMapping == null) {
                                 task.setupProguardMapping(task.testProguardMapping, testVariant)
                             } else {
-                                task.testProguardMapping.set(File(extensionData.testProguardMapping))
+                                task.testProguardMapping.set(extensionData.testProguardMapping)
                             }
                         }
                     }
@@ -210,13 +210,13 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 if (extensionData.applicationProguardMapping == null) {
                                     task.setupProguardMapping(task.applicationProguardMapping, testedVariant)
                                 } else {
-                                    task.applicationProguardMapping.set(File(extensionData.applicationProguardMapping))
+                                    task.applicationProguardMapping.set(extensionData.applicationProguardMapping)
                                 }
 
                                 if (extensionData.testProguardMapping == null) {
                                     task.setupProguardMapping(task.testProguardMapping, testVariant)
                                 } else {
-                                    task.testProguardMapping.set(File(extensionData.testProguardMapping))
+                                    task.testProguardMapping.set(extensionData.testProguardMapping)
                                 }
                             }
                         }

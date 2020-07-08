@@ -9,6 +9,7 @@ import org.gradle.api.Incubating
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import java.io.File
 import java.io.Serializable
 
 object InstrumentationPluginConfiguration {
@@ -34,8 +35,8 @@ object InstrumentationPluginConfiguration {
 
         var unitToChannelMap: Map<String, String> = emptyMap()
 
-        var applicationProguardMapping: String? = null
-        var testProguardMapping: String? = null
+        var applicationProguardMapping: File? = null
+        var testProguardMapping: File? = null
 
         abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
         abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
@@ -153,14 +154,14 @@ object InstrumentationPluginConfiguration {
             private val pluginInstrumentationParameters: InstrumentationParameters,
             val logcatTags: Collection<String>,
             val output: String,
-            val applicationApk: String?,
-            val testApplicationApk: String?,
+            val applicationApk: String?, // TODO file
+            val testApplicationApk: String?, // TODO file
             val reportViewer: ReportViewer?,
             val registry: String,
             val slackToken: String,
             val unitToChannelMapping: Map<Team, SlackChannel>,
-            val applicationProguardMapping: String?,
-            val testProguardMapping: String?
+            val applicationProguardMapping: File?,
+            val testProguardMapping: File?
         ) : Serializable {
 
             data class ReportViewer(
