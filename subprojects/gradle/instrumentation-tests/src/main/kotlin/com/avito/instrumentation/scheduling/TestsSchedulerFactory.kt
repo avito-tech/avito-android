@@ -9,6 +9,7 @@ import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.instrumentation.suite.filter.FilterInfoWriter
+import com.avito.retrace.ProguardRetracer
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -96,7 +97,8 @@ interface TestsSchedulerFactory {
                         testSuite = testSuite,
                         report = report,
                         fileStorageUrl = params.fileStorageUrl,
-                        logcatDir = outputDir
+                        logcatDir = outputDir,
+                        retracer = ProguardRetracer.Impl(params.proguardMappings)
                     )
                 },
                 buildId = params.buildId,

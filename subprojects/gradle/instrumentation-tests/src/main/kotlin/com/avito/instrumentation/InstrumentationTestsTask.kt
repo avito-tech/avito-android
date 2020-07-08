@@ -54,6 +54,14 @@ abstract class InstrumentationTestsTask @Inject constructor(
     @InputFile
     val testApkOnTargetCommit: RegularFileProperty = objects.fileProperty()
 
+    @Optional
+    @InputFile
+    val applicationProguardMapping: RegularFileProperty = objects.fileProperty()
+
+    @Optional
+    @InputFile
+    val testProguardMapping: RegularFileProperty = objects.fileProperty()
+
     @Input
     val sendStatistics = objects.property<Boolean>()
 
@@ -159,7 +167,11 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     registry = registry.get(),
                     reportConfig = reportConfig,
                     reportFactory = reportFactory,
-                    reportCoordinates = reportCoordinates
+                    reportCoordinates = reportCoordinates,
+                    proguardMappings = listOf(
+                        applicationProguardMapping,
+                        testProguardMapping
+                    ).mapNotNull { it.orNull?.asFile }
                 )
             ).run()
         }

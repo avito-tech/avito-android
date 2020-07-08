@@ -18,6 +18,11 @@ inline fun <reified T : Task> Task.dependencyOn(anotherTaskProvider: TaskProvide
     dependsOn(anotherTaskProvider)
 }
 
+inline fun <reified T : Task> Task.dependencyOn(anotherTask: T, configuration: (T) -> Unit) {
+    configuration.invoke(anotherTask)
+    dependsOn(anotherTask)
+}
+
 
 /**
  * Add Task dependencies based on a project plugins
