@@ -1,7 +1,7 @@
 package com.avito.instrumentation.suite.filter
 
 // it makes [name] instance field. It needs for gson
-internal class ExcludeBySdkFilter : TestsFilter {
+internal class ExcludeBySkipOnSdkFilter : TestsFilter {
 
     override val name = "ExcludeBySdkFilter"
 

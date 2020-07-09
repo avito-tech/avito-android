@@ -2,6 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.suite.dex.AnnotationData
 import com.avito.report.model.DeviceName
+import com.avito.report.model.Flakiness
 import java.io.Serializable
 
 interface TestsFilter {
@@ -14,6 +15,10 @@ interface TestsFilter {
         ) : Result() {
             class HaveSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
                 name, "test has SkipSdk with value sdk=$sdk"
+            )
+
+            class HaveFlakyAnnotation(name: String, sdk: Int) : Excluded(
+                name, "test has Flaky with value sdk=$sdk"
             )
 
             class DoNotHaveIncludeAnnotations(name: String, annotations: Set<String>) :
@@ -42,7 +47,8 @@ interface TestsFilter {
         val name: String,
         val annotations: List<AnnotationData>,
         val deviceName: DeviceName,
-        val api: Int
+        val api: Int,
+        val flakiness: Flakiness
     ) {
         companion object
     }

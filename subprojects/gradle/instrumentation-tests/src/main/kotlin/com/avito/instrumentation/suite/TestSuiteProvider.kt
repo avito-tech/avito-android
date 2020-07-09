@@ -67,15 +67,17 @@ interface TestSuiteProvider {
             val source = targets.flatMap { target ->
                 val deviceName = DeviceName(target.deviceName)
                 tests.map { testInApk ->
+                    val testStaticData = parseTest(testInApk, deviceName, target.reservation.device.api)
                     TestWithTarget(
-                        test = parseTest(testInApk, deviceName),
+                        test = testStaticData,
                         target = target
                     ) to filter.filter(
                         TestsFilter.Test(
                             name = testInApk.testName.name,
                             annotations = testInApk.annotations,
                             deviceName = deviceName,
-                            api = target.reservation.device.api
+                            api = target.reservation.device.api,
+                            flakiness = testStaticData.flakiness
                         )
                     )
                 }

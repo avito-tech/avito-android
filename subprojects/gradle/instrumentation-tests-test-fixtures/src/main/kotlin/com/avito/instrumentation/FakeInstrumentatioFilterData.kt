@@ -14,13 +14,15 @@ fun InstrumentationFilter.Data.Companion.createStub(
     prefixes: Filter.Value<String> = emptyFilter(),
     annotations: Filter.Value<String> = emptyFilter(),
     previousStatuses: Filter.Value<FromRunHistory.RunStatus> = emptyFilter(),
-    report: InstrumentationFilter.Data.FromRunHistory.ReportFilter? = null
+    report: InstrumentationFilter.Data.FromRunHistory.ReportFilter? = null,
+    excludeFlaky: Boolean = false
 ): InstrumentationFilter.Data {
     return InstrumentationFilter.Data(
         name = "stub",
         fromSource = InstrumentationFilter.Data.FromSource(
             prefixes = prefixes,
-            annotations = annotations
+            annotations = annotations,
+            excludeFlaky = excludeFlaky
         ),
         fromRunHistory = InstrumentationFilter.Data.FromRunHistory(
             previousStatuses = previousStatuses,

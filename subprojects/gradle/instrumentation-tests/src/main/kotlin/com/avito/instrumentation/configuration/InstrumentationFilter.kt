@@ -24,6 +24,8 @@ abstract class InstrumentationFilter(val name: String) {
         private val annotations = Filter<String>()
         private val prefixes = Filter<String>()
 
+        var excludeFlaky = false
+
         fun includeByAnnotations(annotations: Set<String>) {
             this.annotations.include(annotations)
         }
@@ -43,7 +45,8 @@ abstract class InstrumentationFilter(val name: String) {
         internal fun toData(): Data.FromSource {
             return Data.FromSource(
                 prefixes = prefixes.value,
-                annotations = annotations.value
+                annotations = annotations.value,
+                excludeFlaky = excludeFlaky
             )
         }
     }
@@ -110,7 +113,8 @@ abstract class InstrumentationFilter(val name: String) {
 
         data class FromSource(
             val prefixes: Filter.Value<String>,
-            val annotations: Filter.Value<String>
+            val annotations: Filter.Value<String>,
+            val excludeFlaky: Boolean
         ) : Serializable
 
         data class FromRunHistory(

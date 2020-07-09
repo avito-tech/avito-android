@@ -39,7 +39,8 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
             annotations = Filter.Value(
                 included = emptySet(),
                 excluded = emptySet()
-            )
+            ),
+            excludeFlaky = false
         ),
         fromRunHistory = InstrumentationFilter.Data.FromRunHistory(
             previousStatuses = Filter.Value(
