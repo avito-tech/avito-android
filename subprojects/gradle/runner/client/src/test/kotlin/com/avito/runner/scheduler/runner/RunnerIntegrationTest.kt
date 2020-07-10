@@ -122,7 +122,7 @@ class RunnerIntegrationTest {
 
             GlobalScope.launch {
                 observer.send(firstFailedDevice)
-                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for completion 2 tests by first device
+                delay(TimeUnit.MILLISECONDS.toMillis(100)) // Wait for completion 2 tests by first device
                 observer.send(secondDevice)
             }
 
