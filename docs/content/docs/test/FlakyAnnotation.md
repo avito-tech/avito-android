@@ -28,14 +28,17 @@ We want:
 
 ## Annotation
 
-Such tests are marked with special annotation - `@Flaky`. You also able to provide an optional reason of flakiness for this test.
+Mark flaky tests with special annotation - `@Flaky`
 
 ```kotlin
-@Flaky(reason = "Relies on real back-end")
+@Flaky(reason = "Relies on real back-end", onSdks = [22, 28])
 class MyAwesomeTests {
     // ...
 }
 ```
+
+- `reason` - description of flakiness. You will see this reason in ReportViewer
+- `onSdks` - specify if your test is flaking only on concrete sdk versions. When it's empty all sdk versions will be marked flaky.
 
 This annotation can be added both to the whole class and to a separate test:
 
@@ -51,5 +54,7 @@ class MyAwesomeTests {
 
 ## Suppress `@Flaky` test failures
 
-To suppress failures of @Flaky tests just add `suppressFlaky = true` to your `uiTests` step.
-For more information on configuring build steps for the CI Steps plugin, please refer to [this document]({{< ref "/docs/projects/CISteps.md" >}}).
+By default `@Flaky` only adds flaky sign to ReportViewer.
+There are two options for changing `@Flaky` tests behavior:
+- [Add `suppressFlaky = true` to the `uiTests` step to suppress step failure because of `@Flaky` tests]({{< ref "/docs/projects/CISteps.md#ui-tests" >}})
+- [Add `excludeFlaky = true` to the filter for excluding `@Flaky` tests from execution]({{< ref "/docs/test/Runner.md#filter-flaky-tests" >}})

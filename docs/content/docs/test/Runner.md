@@ -271,6 +271,35 @@ instrumentation {
 {{< /tab >}}
 {{< /tabs >}}
 
+### Filter flaky tests
+
+{{< tabs "filterFlakyTests" >}}
+{{< tab "Kotlin" >}}
+
+```kotlin
+extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
+    filters.register("filterName") {
+        fromSource.excludeFlaky = true
+    }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+
+```groovy
+instrumentation {
+    filters {
+        filterName {
+            fromSource.excludeFlaky = true       
+        }
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Filter tests by prefix or name
 
 {{< tabs "filterTestsByPrefix" >}}
@@ -731,5 +760,4 @@ Work in progress
     0. Custom POD image
     0. Customize POD cpu and ram
     0. Custom namespace
-
 
