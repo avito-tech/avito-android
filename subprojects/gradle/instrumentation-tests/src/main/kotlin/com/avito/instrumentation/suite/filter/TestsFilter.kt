@@ -2,6 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.suite.dex.AnnotationData
 import com.avito.report.model.DeviceName
+import com.avito.report.model.Flakiness
 import java.io.Serializable
 
 interface TestsFilter {
@@ -12,26 +13,30 @@ interface TestsFilter {
             val byFilter: String,
             val reason: String
         ) : Result() {
-            class HaveSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
+            class HasSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
                 name, "test has SkipSdk with value sdk=$sdk"
             )
 
-            class DoNotHaveIncludeAnnotations(name: String, annotations: Set<String>) :
+            class HasFlakyAnnotation(name: String, sdk: Int) : Excluded(
+                name, "test has Flaky with value sdk=$sdk"
+            )
+
+            class DoesNotHaveIncludeAnnotations(name: String, annotations: Set<String>) :
                 Excluded(name, "test doesn't have any of annotations=$annotations")
 
-            class HaveExcludeAnnotations(name: String, annotations: Set<String>) :
+            class HasExcludeAnnotations(name: String, annotations: Set<String>) :
                 Excluded(name, "test has any of excluded annotations=$annotations")
 
             abstract class BySignatures(name: String, reason: String) : Excluded(name, reason) {
                 abstract val source: Signatures.Source
             }
 
-            class DoNotMatchIncludeSignature(
+            class DoesNotMatchIncludeSignature(
                 name: String,
                 override val source: Signatures.Source
             ) : BySignatures(name, "test doesn't match any of signatures from source=$source")
 
-            class MatchExcludeSignature(
+            class MatchesExcludeSignature(
                 name: String,
                 override val source: Signatures.Source
             ) : BySignatures(name, "test has matched one of signatures from source=$source")
@@ -42,7 +47,8 @@ interface TestsFilter {
         val name: String,
         val annotations: List<AnnotationData>,
         val deviceName: DeviceName,
-        val api: Int
+        val api: Int,
+        val flakiness: Flakiness
     ) {
         companion object
     }

@@ -5,7 +5,6 @@ import com.avito.instrumentation.configuration.InstrumentationFilter.Data.FromRu
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
 import com.avito.instrumentation.createStub
 import com.avito.instrumentation.report.FakeReport
-import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.TestsFilter.Signatures.Source
 import com.avito.instrumentation.suite.filter.TestsFilter.Signatures.TestSignature
@@ -16,21 +15,18 @@ import com.avito.report.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
 import org.junit.Test
-import java.io.File
 
 internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData is empty then filters always contains ExcludedBySdk and ExcludeAnnotationFilter`() {
-        val factory = createFilterFactory(
-            filter = InstrumentationFilter.Data.createStub()
-        )
+        val factory = FilterFactoryFactory.create()
 
         val filter = factory.createFilter() as CompositionFilter
 
         assertThat(filter.filters)
             .containsExactly(
-                ExcludeBySdkFilter(),
+                ExcludeBySkipOnSdkFilter(),
                 ExcludeAnnotationsFilter(setOf(FilterFactory.JUNIT_IGNORE_ANNOTATION))
             )
     }
@@ -38,7 +34,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData contains included annotations then filters have IncludeAnnotationFilter`() {
         val annotation = "Annotation"
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 annotations = Filter.Value(
                     included = setOf(annotation),
@@ -57,7 +53,7 @@ internal class FilterFactoryImplTest {
     fun `when filterData contains prefixes then filters have IncludeBySignatures, ExcludeBySignatures`() {
         val includedPrefix = "included_prefix"
         val excludedPrefix = "excluded_prefix"
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 prefixes = Filter.Value(
                     included = setOf(includedPrefix),
@@ -93,7 +89,7 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = setOf(RunStatus.Failed),
@@ -134,7 +130,7 @@ internal class FilterFactoryImplTest {
         )
 
         val reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = setOf(RunStatus.Success),
@@ -183,7 +179,7 @@ internal class FilterFactoryImplTest {
             )
         )
         val reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = emptySet(),
@@ -216,7 +212,7 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData previousStatuses is empty then filters don't contain PreviousRun filters`() {
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = emptySet(),
@@ -238,7 +234,7 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData report is empty then filters don't contain Report filters`() {
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub()
         )
 
@@ -273,7 +269,7 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
                     reportConfig = reportConfig,
@@ -326,7 +322,7 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
                     reportConfig = Report.Factory.Config.ReportViewerId(reportId),
@@ -379,7 +375,7 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val factory = createFilterFactory(
+        val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
                     reportConfig = Report.Factory.Config.ReportViewerId(reportId),
@@ -403,30 +399,5 @@ internal class FilterFactoryImplTest {
             assert
                 .isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
         }
-    }
-
-    private fun createFilterFactory(
-        filter: InstrumentationFilter.Data,
-        impactAnalysisFile: File? = null,
-        reportsByConfig: Map<Report.Factory.Config, Report> = emptyMap(),
-        reportConfig: Report.Factory.Config = Report.Factory.Config.ReportViewerCoordinates(
-            ReportCoordinates.createStubInstance(),
-            "stub"
-        )
-    ): FilterFactory {
-        return FilterFactory.create(
-            filterData = filter,
-            impactAnalysisResult = impactAnalysisFile,
-            reportConfig = reportConfig,
-            factory = object : Report.Factory {
-                override fun createReport(config: Report.Factory.Config): Report {
-                    TODO("Not yet implemented")
-                }
-
-                override fun createReadReport(config: Report.Factory.Config): ReadReport {
-                    return reportsByConfig[config] ?: throw IllegalArgumentException("No report by config: $config")
-                }
-            }
-        )
     }
 }

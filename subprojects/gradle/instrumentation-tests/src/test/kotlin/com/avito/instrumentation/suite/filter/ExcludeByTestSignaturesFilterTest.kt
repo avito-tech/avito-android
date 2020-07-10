@@ -20,7 +20,7 @@ internal class ExcludeByTestSignaturesFilterTest {
         val actual = filter.filter(test)
 
         Truth.assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.MatchExcludeSignature::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.MatchesExcludeSignature::class.java)
     }
 
     @Test
@@ -36,7 +36,7 @@ internal class ExcludeByTestSignaturesFilterTest {
         val actual = filter.filter(test)
 
         Truth.assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.MatchExcludeSignature::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.MatchesExcludeSignature::class.java)
     }
 
     @Test
@@ -52,7 +52,7 @@ internal class ExcludeByTestSignaturesFilterTest {
         val actual = filter.filter(test)
 
         Truth.assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.MatchExcludeSignature::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.MatchesExcludeSignature::class.java)
     }
 
     @Test

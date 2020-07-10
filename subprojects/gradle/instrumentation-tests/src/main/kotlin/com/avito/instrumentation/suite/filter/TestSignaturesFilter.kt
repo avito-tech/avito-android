@@ -17,7 +17,7 @@ internal data class IncludeByTestSignaturesFilter(
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
             test.matched(signatures) -> TestsFilter.Result.Included
-            else -> TestsFilter.Result.Excluded.DoNotMatchIncludeSignature(
+            else -> TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature(
                 name = name,
                 source = source
             )
@@ -35,7 +35,7 @@ internal data class ExcludeByTestSignaturesFilter(
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return when {
             test.matched(signatures) ->
-                TestsFilter.Result.Excluded.MatchExcludeSignature(
+                TestsFilter.Result.Excluded.MatchesExcludeSignature(
                     name = name,
                     source = source
                 )

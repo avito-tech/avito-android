@@ -38,7 +38,8 @@ private class FilterFactoryImpl(
 
     override fun createFilter(): TestsFilter {
         val filters = mutableListOf<TestsFilter>()
-        filters.add(ExcludeBySdkFilter())
+        filters.add(ExcludeBySkipOnSdkFilter())
+        filters.addFlakyFilter()
         filters.addAnnotationFilters()
         filters.addSourceCodeSignaturesFilters()
         filters.addSourcePreviousSignatureFilters()
@@ -47,6 +48,12 @@ private class FilterFactoryImpl(
         return CompositionFilter(
             filters
         )
+    }
+
+    private fun MutableList<TestsFilter>.addFlakyFilter() {
+        if (filterData.fromSource.excludeFlaky) {
+            add(ExcludeByFlakyFilter())
+        }
     }
 
     private fun MutableList<TestsFilter>.addAnnotationFilters() {

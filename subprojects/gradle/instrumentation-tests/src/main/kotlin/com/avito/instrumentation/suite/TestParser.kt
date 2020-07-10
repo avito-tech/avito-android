@@ -30,7 +30,11 @@ import com.avito.report.model.Kind
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
 
-internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStaticData = TestStaticDataPackage(
+internal fun parseTest(
+    testInApk: TestInApk,
+    deviceName: DeviceName,
+    deviceApi: Int
+): TestStaticData = TestStaticDataPackage(
     name = testInApk.testName,
 
     device = deviceName,
@@ -69,10 +73,7 @@ internal fun parseTest(testInApk: TestInApk, deviceName: DeviceName): TestStatic
 
     kind = determineKind(testInApk.annotations),
 
-    flakiness = testInApk.annotations
-        .find { it.name == Flaky::class.java.canonicalName }
-        ?.let { Flakiness.Flaky(it.getStringValue(FLAKY_REASON_KEY) ?: NO_REASON) } // todo we can't parse annotations default from dex
-        ?: Flakiness.Stable
+    flakiness = determineFlakiness(testInApk.annotations, deviceApi)
 )
 
 private val annotationsToKindMap = mapOf(
@@ -87,6 +88,30 @@ private val annotationsToKindMap = mapOf(
     UIComponentStub::class.java.canonicalName to Kind.UI_COMPONENT_STUB,
     UnitTest::class.java.canonicalName to Kind.UNIT
 )
+
+private fun determineFlakiness(annotations: List<AnnotationData>, api: Int): Flakiness {
+    val flakyAnnotation = annotations.find { it.name == Flaky::class.java.canonicalName }
+    return when {
+        flakyAnnotation != null -> {
+            val flakySdks = flakyAnnotation.getIntArrayValue(FLAKY_SDKS_KEY)
+            // by defaul vararg parameter is initialized by emptyArray
+            val isFlaky = if (flakySdks != null && flakySdks.isNotEmpty()) {
+                flakySdks.contains(api)
+            } else {
+                true
+            }
+            if (isFlaky) {
+                Flakiness.Flaky(
+                    // todo we can't parse annotations default from dex
+                    reason = flakyAnnotation.getStringValue(FLAKY_REASON_KEY) ?: NO_REASON
+                )
+            } else {
+                Flakiness.Stable
+            }
+        }
+        else -> Flakiness.Stable
+    }
+}
 
 private fun determineKind(annotations: List<AnnotationData>): Kind =
     annotations.find { it.name in annotationsToKindMap.keys }
@@ -106,3 +131,5 @@ private const val TAG_ID_VALUE_KEY = "value"
 private const val FEATURE_ID_VALUE_KEY = "value"
 
 private const val FLAKY_REASON_KEY = "reason"
+
+private const val FLAKY_SDKS_KEY = "onSdks"

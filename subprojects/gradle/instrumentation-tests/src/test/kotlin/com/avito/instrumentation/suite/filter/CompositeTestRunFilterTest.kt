@@ -16,7 +16,7 @@ internal class CompositeTestRunFilterTest {
                         get() = TODO("Not yet implemented")
 
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveSkipSdkAnnotation("", 21)
+                        return Excluded.HasSkipSdkAnnotation("", 21)
                     }
                 },
                 object : TestsFilter {
@@ -24,14 +24,14 @@ internal class CompositeTestRunFilterTest {
                         get() = TODO("Not yet implemented")
 
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveExcludeAnnotations("", emptySet())
+                        return Excluded.HasExcludeAnnotations("", emptySet())
                     }
                 }
             )
         )
 
         Truth.assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
-            .isInstanceOf(Excluded.HaveSkipSdkAnnotation::class.java)
+            .isInstanceOf(Excluded.HasSkipSdkAnnotation::class.java)
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class CompositeTestRunFilterTest {
                     override val name: String = ""
 
                     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
-                        return Excluded.HaveExcludeAnnotations("", emptySet())
+                        return Excluded.HasExcludeAnnotations("", emptySet())
                     }
                 }
             )

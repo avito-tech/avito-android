@@ -52,7 +52,7 @@ internal class TestSignaturesFilterTest {
             TestsFilter.Test.createStub("TestClass.method")
         )
         Truth.assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.DoNotMatchIncludeSignature::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 
     @Test
@@ -84,7 +84,7 @@ internal class TestSignaturesFilterTest {
             TestsFilter.Test.createStub("TestClass.method", deviceName = DeviceName("22"))
         )
         Truth.assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.DoNotMatchIncludeSignature::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 
     @Test

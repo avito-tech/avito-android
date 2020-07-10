@@ -1,5 +1,6 @@
 package com.avito.android.runner.annotation.resolver
 
+import android.os.Build
 import com.avito.android.test.annotations.Behavior
 import com.avito.android.test.annotations.CaseId
 import com.avito.android.test.annotations.DataSetNumber
@@ -157,7 +158,12 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
                         tagIds = annotation.value.toList()
                     }
                     is Flaky -> {
-                        flakiness = Flakiness.Flaky(annotation.reason)
+                        flakiness = when {
+                            annotation.onSdks.isEmpty() || annotation.onSdks.contains(Build.VERSION.SDK_INT) ->
+                                Flakiness.Flaky(annotation.reason)
+                            else ->
+                                Flakiness.Stable
+                        }
                     }
                 }
             }
