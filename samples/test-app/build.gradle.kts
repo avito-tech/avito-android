@@ -96,6 +96,7 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestImplementation(Dependencies.gson)
     androidTestImplementation(Dependencies.kotson)
     androidTestImplementation(Dependencies.sentry)
+    androidTestImplementation(Dependencies.test.mockitoCore)
     androidTestImplementation(Dependencies.test.truth)
     androidTestImplementation(Dependencies.test.okhttpMockWebServer)
 })
