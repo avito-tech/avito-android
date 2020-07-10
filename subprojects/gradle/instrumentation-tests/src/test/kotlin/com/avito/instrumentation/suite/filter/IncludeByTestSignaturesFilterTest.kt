@@ -68,7 +68,7 @@ internal class IncludeByTestSignaturesFilterTest {
         val actual = filter.filter(test)
 
         Truth.assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.DoNotMatchIncludeSignature::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 
     @Test
@@ -84,7 +84,7 @@ internal class IncludeByTestSignaturesFilterTest {
         val actual = filter.filter(test)
 
         Truth.assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.DoNotMatchIncludeSignature::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 
     private fun createIncludeTestSignatureFilter(

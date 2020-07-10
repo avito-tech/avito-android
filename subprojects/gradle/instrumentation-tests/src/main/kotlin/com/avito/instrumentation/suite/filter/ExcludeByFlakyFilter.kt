@@ -9,7 +9,7 @@ internal class ExcludeByFlakyFilter : TestsFilter {
 
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         return if (test.flakiness is Flakiness.Flaky) {
-            TestsFilter.Result.Excluded.HaveFlakyAnnotation(
+            TestsFilter.Result.Excluded.HasFlakyAnnotation(
                 name,
                 test.api
             )

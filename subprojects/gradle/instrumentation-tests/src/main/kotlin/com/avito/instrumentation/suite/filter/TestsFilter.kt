@@ -13,30 +13,30 @@ interface TestsFilter {
             val byFilter: String,
             val reason: String
         ) : Result() {
-            class HaveSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
+            class HasSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
                 name, "test has SkipSdk with value sdk=$sdk"
             )
 
-            class HaveFlakyAnnotation(name: String, sdk: Int) : Excluded(
+            class HasFlakyAnnotation(name: String, sdk: Int) : Excluded(
                 name, "test has Flaky with value sdk=$sdk"
             )
 
-            class DoNotHaveIncludeAnnotations(name: String, annotations: Set<String>) :
+            class DoesNotHaveIncludeAnnotations(name: String, annotations: Set<String>) :
                 Excluded(name, "test doesn't have any of annotations=$annotations")
 
-            class HaveExcludeAnnotations(name: String, annotations: Set<String>) :
+            class HasExcludeAnnotations(name: String, annotations: Set<String>) :
                 Excluded(name, "test has any of excluded annotations=$annotations")
 
             abstract class BySignatures(name: String, reason: String) : Excluded(name, reason) {
                 abstract val source: Signatures.Source
             }
 
-            class DoNotMatchIncludeSignature(
+            class DoesNotMatchIncludeSignature(
                 name: String,
                 override val source: Signatures.Source
             ) : BySignatures(name, "test doesn't match any of signatures from source=$source")
 
-            class MatchExcludeSignature(
+            class MatchesExcludeSignature(
                 name: String,
                 override val source: Signatures.Source
             ) : BySignatures(name, "test has matched one of signatures from source=$source")

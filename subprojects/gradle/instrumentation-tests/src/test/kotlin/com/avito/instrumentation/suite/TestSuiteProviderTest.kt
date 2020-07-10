@@ -40,7 +40,7 @@ internal class TestSuiteProviderTest {
             reportSkippedTests = true,
             filterFactory = FakeFilterFactory(
                 filter = excludedFilter(
-                    TestsFilter.Result.Excluded.MatchExcludeSignature(
+                    TestsFilter.Result.Excluded.MatchesExcludeSignature(
                         name = "",
                         source = TestsFilter.Signatures.Source.PreviousRun
                     )

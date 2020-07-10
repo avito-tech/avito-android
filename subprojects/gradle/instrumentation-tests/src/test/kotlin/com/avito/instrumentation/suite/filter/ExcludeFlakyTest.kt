@@ -29,7 +29,7 @@ class ExcludeFlakyTest {
         )
 
         assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.HaveFlakyAnnotation::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.HasFlakyAnnotation::class.java)
     }
 
     @Test
@@ -47,7 +47,7 @@ class ExcludeFlakyTest {
         )
 
         assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.HaveFlakyAnnotation::class.java)
+            .isInstanceOf(TestsFilter.Result.Excluded.HasFlakyAnnotation::class.java)
     }
 
     @Test
