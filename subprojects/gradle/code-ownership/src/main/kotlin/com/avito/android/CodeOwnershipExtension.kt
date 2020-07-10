@@ -33,4 +33,4 @@ open class CodeOwnershipExtension(
 }
 
 val ExtensionContainer.ownership: CodeOwnershipExtension
-    get() = findByType() ?: error("ownership should be available")
+    get() = findByType() ?: CodeOwnershipExtension()
