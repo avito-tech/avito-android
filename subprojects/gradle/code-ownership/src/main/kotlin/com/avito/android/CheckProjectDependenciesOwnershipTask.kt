@@ -3,7 +3,6 @@ package com.avito.android
 import Visibility
 import com.avito.impact.configuration.internalModule
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 
 abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
@@ -29,42 +28,39 @@ abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
     }
 
     private fun checkPrivateDependenciesRule() {
-        projectDependencies().forEach {
-            val codeOwnershipExtensionTo = it.module.project.extensions.ownership
-            if (codeOwnershipExtensionTo.visibility == Visibility.PRIVATE) {
-                throwInvalidDependencyOnPrivateVisibleModuleException(
-                    project.path,
-                    it.module.project.path,
-                    codeOwnershipExtensionTo.team
-                )
-            }
-        }
-    }
-
-    private fun checkUnitDependencyRuleDependency() {
-        val codeOwnershipExtensionFrom = project.extensions.ownership
-        projectDependencies().forEach {
-            val codeOwnershipExtensionTo = it.module.project.extensions.ownership
-            if (codeOwnershipExtensionTo.visibility == Visibility.TEAM && codeOwnershipExtensionFrom.team != codeOwnershipExtensionTo.team) {
-                if (codeOwnershipExtensionFrom.allowedDependencies.contains(it.path)) {
-                    logger.warn("WARNING: ${project.path} has forbidden dependency on ${it.path}, but was allowed explicitly in configuration")
-                } else {
-                    throwInvalidDependencyOnUnitVisibleModuleException(
+        project.internalModule
+            .implementationConfiguration
+            .dependencies.forEach {
+                val codeOwnershipExtensionTo = it.module.project.extensions.ownership
+                if (codeOwnershipExtensionTo.visibility == Visibility.PRIVATE) {
+                    throwInvalidDependencyOnPrivateVisibleModuleException(
                         project.path,
                         it.module.project.path,
                         codeOwnershipExtensionTo.team
                     )
                 }
             }
-        }
     }
 
-    private fun projectDependencies() = project.internalModule
-        .implementationConfiguration
-        .dependencies
-        .filterNot {
-            it.module.project.pluginManager.hasPlugin("java-platform")
-        }
+    private fun checkUnitDependencyRuleDependency() {
+        val codeOwnershipExtensionFrom = project.extensions.ownership
+        project.internalModule
+            .implementationConfiguration
+            .dependencies.forEach {
+                val codeOwnershipExtensionTo = it.module.project.extensions.ownership
+                if (codeOwnershipExtensionTo.visibility == Visibility.TEAM && codeOwnershipExtensionFrom.team != codeOwnershipExtensionTo.team) {
+                    if (codeOwnershipExtensionFrom.allowedDependencies.contains(it.path)) {
+                        logger.warn("WARNING: ${project.path} has forbidden dependency on ${it.path}, but was allowed explicitly in configuration")
+                    } else {
+                        throwInvalidDependencyOnUnitVisibleModuleException(
+                            project.path,
+                            it.module.project.path,
+                            codeOwnershipExtensionTo.team
+                        )
+                    }
+                }
+            }
+    }
 
     private fun throwInvalidDependencyOnPrivateVisibleModuleException(
         projectPath: String,
