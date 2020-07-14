@@ -1,4 +1,3 @@
-
 import com.android.build.gradle.ProguardFiles.ProguardFile
 import com.avito.kotlin.dsl.getOptionalStringProperty
 
@@ -46,7 +45,7 @@ android {
      */
     variantFilter {
         if (name != testBuildType) {
-            setIgnore(true)
+            ignore = true
             logger.debug("Build variant $name is omitted for module: $path")
         }
     }
