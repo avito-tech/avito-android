@@ -22,7 +22,6 @@ Plugins:
 - `:build-properties` - Gradle plugin to deliver custom build parameters to Android assets
 - [`:buildchecks`]({{< ref "/docs/projects/BuildChecks.md" >}}) - Gradle plugin to early detection of build problems
 - [`:cd`]({{< ref "/docs/projects/CISteps.md" >}})
-- `:dependencies-lint` - Gradle plugin to detect unused Gradle dependencies
 - `:design-screenshots` - Gradle plugin, extended tasks to support screenshot testing on top of our `:instrumentation` plugin
 - `:feature-toggles` - Gradle plugin to extract feature toggles values from code and report it as build artifact
 - `:impact`, `:impact-shared` - Gradle plugin to search parts of the project we can avoid testing based on diff. 
