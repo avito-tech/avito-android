@@ -6,6 +6,7 @@ import com.avito.instrumentation.configuration.target.scheduling.reservation.Sta
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.reservation.request.Reservation
 import groovy.lang.Closure
+import org.gradle.api.Action
 import java.io.Serializable
 
 open class SchedulingConfiguration {
@@ -14,19 +15,45 @@ open class SchedulingConfiguration {
     lateinit var quota: QuotaConfiguration
 
     fun staticDevicesReservation(closure: Closure<StaticDeviceReservationConfiguration>) {
-        reservation = getStaticDevicesReservationFromClosure(closure)
+        staticDevicesReservation(Action {
+            closure.delegate = it
+            closure.call()
+        })
     }
 
     fun testsCountBasedReservation(closure: Closure<TestsBasedDevicesReservationConfiguration>) {
-        reservation = getTestCountBasedReservationFromClosure(closure)
+        testsCountBasedReservation(Action {
+            closure.delegate = it
+            closure.call()
+        })
+    }
+
+    fun staticDevicesReservation(action: Action<StaticDeviceReservationConfiguration>) {
+        reservation = StaticDeviceReservationConfiguration().also {
+            action.execute(it)
+            it.validate()
+        }
+    }
+
+    fun testsCountBasedReservation(action: Action<TestsBasedDevicesReservationConfiguration>) {
+        reservation = TestsBasedDevicesReservationConfiguration().also {
+            action.execute(it)
+            it.validate()
+        }
     }
 
     fun quota(closure: Closure<QuotaConfiguration>) {
+        quota(Action {
+            closure.delegate = it
+            closure.call()
+        })
+    }
+
+    fun quota(action: Action<QuotaConfiguration>) {
         quota = QuotaConfiguration()
-            .let {
-                closure.delegate = it
-                closure.call()
-                it
+            .also {
+                action.execute(it)
+                it.validate()
             }
     }
 
@@ -59,29 +86,6 @@ open class SchedulingConfiguration {
             }
         )
     }
-
-    private fun getStaticDevicesReservationFromClosure(
-        closure: Closure<StaticDeviceReservationConfiguration>
-    ): DeviceReservationConfiguration =
-        StaticDeviceReservationConfiguration()
-            .let {
-                closure.delegate = it
-                closure.call()
-                it
-            }
-            .apply { validate() }
-
-    private fun getTestCountBasedReservationFromClosure(
-        closure: Closure<TestsBasedDevicesReservationConfiguration>
-    ): DeviceReservationConfiguration = TestsBasedDevicesReservationConfiguration()
-        .let {
-            closure.delegate = it
-            closure.call()
-            it
-        }
-        .apply {
-            validate()
-        }
 
     data class Data(
         val reservation: Reservation
