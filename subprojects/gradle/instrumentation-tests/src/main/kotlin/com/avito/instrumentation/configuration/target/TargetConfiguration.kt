@@ -4,6 +4,7 @@ import com.avito.instrumentation.configuration.InstrumentationParameters
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
 import com.avito.instrumentation.reservation.request.Reservation
 import groovy.lang.Closure
+import org.gradle.api.Action
 import java.io.Serializable
 
 open class TargetConfiguration(val name: String) : Serializable {
@@ -22,11 +23,17 @@ open class TargetConfiguration(val name: String) : Serializable {
     var instrumentationParams: Map<String, String> = emptyMap()
 
     fun scheduling(closure: Closure<SchedulingConfiguration>) {
+        scheduling(Action {
+            closure.delegate = it
+            closure.call()
+        })
+    }
+
+    fun scheduling(action: Action<SchedulingConfiguration>) {
         scheduling = SchedulingConfiguration()
-            .let {
-                closure.delegate = it
-                closure.call()
-                it
+            .also {
+                action.execute(it)
+                it.validate()
             }
     }
 
