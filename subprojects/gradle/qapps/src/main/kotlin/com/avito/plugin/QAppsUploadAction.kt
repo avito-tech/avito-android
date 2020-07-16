@@ -91,6 +91,10 @@ internal class QAppsUploadAction(
                     override fun critical(msg: String, error: Throwable) {
                         logger.info(msg, error)
                     }
+
+                    override fun warn(msg: String) {
+                        logger.warn(msg)
+                    }
                 }
             )
         )

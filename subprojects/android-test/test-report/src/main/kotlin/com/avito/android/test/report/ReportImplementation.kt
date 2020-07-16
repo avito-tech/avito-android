@@ -65,7 +65,7 @@ class ReportImplementation(
     )
 
     private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
-        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory),
+        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
         remoteStorage = remoteStorage,
         logger = logger
     )

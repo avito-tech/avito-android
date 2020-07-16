@@ -54,6 +54,10 @@ class ReportViewerTestReporter(
                 override fun critical(msg: String, error: Throwable) {
                     logger.critical(msg, error)
                 }
+
+                override fun warn(msg: String) {
+                    logger.warn(msg)
+                }
             })
     // todo переместить ближе к DeviceWorker
     // сюда можно передавать логи как параметр и убрать отсюда все кроме транспорта

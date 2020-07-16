@@ -32,6 +32,10 @@ class PerformanceCollectAction(
             override fun critical(msg: String, error: Throwable) {
                 logger.critical(msg, error)
             }
+
+            override fun warn(msg: String) {
+                logger.warn(msg)
+            }
         },
         verboseHttp = false
     ),

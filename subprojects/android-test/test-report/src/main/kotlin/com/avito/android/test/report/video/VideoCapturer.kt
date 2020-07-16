@@ -11,7 +11,7 @@ import com.avito.android.util.executeMethod
 import com.avito.android.util.getFieldValue
 import java.io.File
 import java.io.IOException
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 interface VideoCapturer {

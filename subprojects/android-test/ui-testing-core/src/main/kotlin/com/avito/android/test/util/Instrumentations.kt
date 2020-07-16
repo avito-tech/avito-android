@@ -7,6 +7,10 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 
 fun getCurrentActivity(): Activity {
+    return getCurrentActivitySafe() ?: throw IllegalStateException("Resumed activity not found")
+}
+
+fun getCurrentActivitySafe(): Activity? {
     var currentActivity: Activity? = null
     val findResumedActivity = {
         val resumedActivities =
@@ -20,7 +24,7 @@ fun getCurrentActivity(): Activity {
     } else {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(findResumedActivity)
     }
-    return currentActivity ?: throw IllegalStateException("Resumed activity not found")
+    return currentActivity
 }
 
 internal fun isMainThread() = Looper.myLooper() == Looper.getMainLooper()

@@ -4,9 +4,12 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Looper
-import com.avito.android.test.util.getCurrentActivity
+import com.avito.android.test.util.getCurrentActivitySafe
 import com.avito.android.util.runOnMainThreadSync
 import com.avito.android.util.toPng
+import com.avito.logger.Logger
+import org.funktionale.option.Option
+import org.funktionale.tries.Try
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -14,40 +17,68 @@ import java.util.UUID
 
 interface ScreenshotCapturer {
 
-    fun captureBitmap(): Bitmap
+    /**
+     * @return Result is absent when there is no RESUMED Activity for screenshooting
+     */
+    fun captureBitmap(): Try<Option<Bitmap>>
 
-    fun captureAsStream(): InputStream
+    /**
+     * @return Result is absent when there is no RESUMED Activity for screenshooting
+     */
+    fun captureAsStream(): Try<Option<InputStream>>
 
-    fun captureToFile(
+    /**
+     * @return Result is absent when there is no RESUMED Activity for screenshooting
+     */
+    fun captureAsFile(
         filename: String = "${UUID.randomUUID()}.png",
         compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
         quality: Int = 100
-    ): File
+    ): Try<Option<File>>
 
     /**
      * Source: https://github.com/square/spoon/blob/master/spoon-client/src/main/java/com/squareup/spoon/Screenshot.java
      */
-    class Impl(private val outputDirectory: Lazy<File>) : ScreenshotCapturer {
+    class Impl(
+        private val outputDirectory: Lazy<File>,
+        private val logger: Logger
+    ) : ScreenshotCapturer {
 
-        override fun captureBitmap(): Bitmap {
+        override fun captureBitmap(): Try<Option<Bitmap>> {
             //todo use di: pass activity getter as constructor argument
-            return drawCanvas(getCurrentActivity())
+            val activity = getCurrentActivitySafe()
+            return if (activity != null) {
+                Try {
+                    Option.Some(drawCanvas(activity))
+                }
+            } else {
+                logger.warn("There are no RESUMED activity when capturingBitmap")
+                Try {
+                    Option.empty<Bitmap>()
+                }
+            }
         }
 
-        override fun captureAsStream(): InputStream {
-            return captureBitmap().toPng()
+        override fun captureAsStream(): Try<Option<InputStream>> {
+            return captureBitmap().map {
+                it.map { bitmap -> bitmap.toPng() }
+            }
         }
 
-        override fun captureToFile(
+        override fun captureAsFile(
             filename: String,
             compressFormat: Bitmap.CompressFormat,
             quality: Int
-        ): File {
-            val file = File(outputDirectory.value, filename)
-            FileOutputStream(file).use {
-                captureBitmap().compress(compressFormat, quality, it)
+        ): Try<Option<File>> {
+            return captureBitmap().map {
+                it.map { bitmap ->
+                    File(outputDirectory.value, filename).also { file ->
+                        FileOutputStream(file).use {
+                            bitmap.compress(compressFormat, quality, it)
+                        }
+                    }
+                }
             }
-            return file
         }
 
         private fun drawCanvas(activity: Activity): Bitmap {

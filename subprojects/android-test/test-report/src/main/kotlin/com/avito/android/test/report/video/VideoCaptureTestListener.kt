@@ -29,13 +29,16 @@ class VideoCaptureTestListener(
         }
 
         override fun exception(msg: String, error: Throwable) {
-            Log.d(LOG_TAG, msg, error)
+            Log.e(LOG_TAG, msg, error)
         }
 
         override fun critical(msg: String, error: Throwable) {
-            Log.d(LOG_TAG, msg, error)
+            Log.e(LOG_TAG, msg, error)
         }
 
+        override fun warn(msg: String) {
+            Log.w(LOG_TAG, msg)
+        }
     }
 
     private val remoteStorage: RemoteStorage = RemoteStorage.create(

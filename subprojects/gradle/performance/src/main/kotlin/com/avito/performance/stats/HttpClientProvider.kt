@@ -26,6 +26,10 @@ internal class HttpClientProvider(private val logger: CILogger) {
                     override fun critical(msg: String, error: Throwable) {
                         logger.debug(msg, error)
                     }
+
+                    override fun warn(msg: String) {
+                        logger.debug(msg)
+                    }
                 }
             )
         )

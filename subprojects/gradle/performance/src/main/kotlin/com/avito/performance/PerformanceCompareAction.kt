@@ -38,6 +38,10 @@ open class PerformanceCompareAction(
             override fun critical(msg: String, error: Throwable) {
                 logger.debug(msg, error)
             }
+
+            override fun warn(msg: String) {
+                logger.debug(msg)
+            }
         },
         verboseHttp = false
     ),

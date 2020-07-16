@@ -20,4 +20,8 @@ private class CILoggerWrapper(
     override fun critical(msg: String, error: Throwable) {
         ciLogger.critical(msg, error)
     }
+
+    override fun warn(msg: String) {
+        ciLogger.warn(msg)
+    }
 }
