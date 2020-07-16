@@ -13,6 +13,7 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
 
 interface VideoCapturer {
     fun start()
@@ -24,10 +25,10 @@ class VideoCapturerImplementation(
     private val outputDirectory: Lazy<File>
 ) : VideoCapturer {
 
-    private var state: State = State.Idling
+    private val state = AtomicReference<State>(State.Idling)
 
     override fun start() {
-        if (state !is State.Idling) {
+        if (state.get() !is State.Idling) {
             throw RuntimeException("Unable to start recording because you're already recording video")
         }
 
@@ -37,17 +38,22 @@ class VideoCapturerImplementation(
 
         executeRecorderCommand("start ${videoFile.absolutePath}", outputFile)
 
-        state = State.Recording(videoFile, outputFile)
+        val recording = State.Recording(videoFile, outputFile)
+
+        // fails if execute start() concurrently
+        require(state.compareAndSet(State.Idling, recording)) {
+            "Record has been started already while we were starting a $recording"
+        }
     }
 
     @SuppressLint("LogNotTimber")
     override fun stop(): File? {
+        val state = state.get()
         if (state !is State.Recording) {
             throw RuntimeException("Unable to stop recording because recording process hasn't started yet")
         }
 
-        val videoFile = (state as State.Recording).video
-        val outputFile = (state as State.Recording).output
+        val (videoFile, outputFile)  = state
 
         executeRecorderCommand("stop", outputFile)
 
@@ -68,21 +74,23 @@ class VideoCapturerImplementation(
             return null
         }
 
-        state = State.Idling
+        this.state.compareAndSet(state, State.Idling)
 
         return videoFile
     }
 
     override fun abort() {
+        val state = state.get()
         if (state is State.Recording) {
-            val videoFile = (state as State.Recording).video
-            val outputFile = (state as State.Recording).output
+            val (videoFile, outputFile) = state
 
             executeRecorderCommand("abort", outputFile)
 
             if (videoFile.exists()) {
                 videoFile.delete()
             }
+
+            this.state.compareAndSet(state, State.Idling)
         }
     }
 
@@ -197,7 +205,7 @@ class VideoCapturerImplementation(
     private sealed class State {
         object Idling : State()
 
-        class Recording(
+        data class Recording(
             val video: File,
             val output: File
         ) : State()
