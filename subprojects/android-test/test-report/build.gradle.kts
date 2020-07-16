@@ -22,6 +22,7 @@ dependencies {
     implementation(Dependencies.sentryAndroid) //todo use common:sentry
 
     testImplementation(project(":android-test:junit-utils"))
+    testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(Dependencies.test.okhttpMock)
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.truth)
