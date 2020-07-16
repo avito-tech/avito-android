@@ -13,84 +13,104 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicReference
 
 interface VideoCapturer {
-    fun start()
-    fun stop(): File?
+
+    fun start(): StartingRecordResult
+
+    fun stop(): RecordResult
+
     fun abort()
+
+    sealed class StartingRecordResult {
+        object Success : StartingRecordResult()
+        data class Error(val message: String, val error: Throwable? = null) : StartingRecordResult()
+    }
+
+    sealed class RecordResult {
+        data class Success(val video: File) : RecordResult()
+        data class Error(val message: String, val error: Throwable? = null) : RecordResult()
+    }
 }
 
-class VideoCapturerImplementation(
+class VideoCapturerImpl(
     private val outputDirectory: Lazy<File>
 ) : VideoCapturer {
 
-    private val state = AtomicReference<State>(State.Idling)
+    private var state: State = State.Idling
 
-    override fun start() {
-        if (state.get() !is State.Idling) {
-            throw RuntimeException("Unable to start recording because you're already recording video")
-        }
-
-        val uuid = UUID.randomUUID().toString()
-        val videoFile = testVideoFile(uuid)
-        val outputFile = outputFile()
-
-        executeRecorderCommand("start ${videoFile.absolutePath}", outputFile)
-
-        val recording = State.Recording(videoFile, outputFile)
-
-        // fails if execute start() concurrently
-        require(state.compareAndSet(State.Idling, recording)) {
-            "Record has been started already while we were starting a $recording"
+    @Synchronized
+    override fun start(): VideoCapturer.StartingRecordResult {
+        // checks if execute start() concurrently
+        return if (state is State.Idling) {
+            val uuid = UUID.randomUUID().toString()
+            val videoFile = testVideoFile(uuid)
+            val outputFile = outputFile()
+            try {
+                executeRecorderCommand("start ${videoFile.absolutePath}", outputFile)
+                state = State.Recording(videoFile, outputFile)
+                VideoCapturer.StartingRecordResult.Success
+            } catch (t: Throwable) {
+                if (videoFile.exists()) {
+                    videoFile.delete()
+                }
+                VideoCapturer.StartingRecordResult.Error("Can't start capture", t)
+            }
+        } else {
+            VideoCapturer.StartingRecordResult.Error("Can't start capture capturer isn't Idling")
         }
     }
 
     @SuppressLint("LogNotTimber")
-    override fun stop(): File? {
-        val state = state.get()
-        if (state !is State.Recording) {
-            throw RuntimeException("Unable to stop recording because recording process hasn't started yet")
-        }
-
-        val (videoFile, outputFile)  = state
-
-        executeRecorderCommand("stop", outputFile)
-
-        try {
-            waitForVideoSaving(videoFile)
-        } catch (t: Throwable) {
-            if (outputFile.exists()) {
-                Log.v(
-                    TAG,
-                    "Something went wrong during test recording. Output: ${outputFile.readText()}. Stacktrace: ${t}"
-                )
+    @Synchronized
+    override fun stop(): VideoCapturer.RecordResult {
+        val state = state
+        val result = when {
+            state is State.Recording -> {
+                val (videoFile, outputFile) = state
+                val result = try {
+                    executeRecorderCommand("stop", outputFile)
+                    waitForVideoSaving(videoFile)
+                    VideoCapturer.RecordResult.Success(videoFile)
+                } catch (t: Throwable) {
+                    if (videoFile.exists()) {
+                        videoFile.delete()
+                    }
+                    val output = if (outputFile.exists()) {
+                        outputFile.readText().also {
+                            outputFile.delete()
+                        }
+                    } else {
+                        "empty"
+                    }
+                    VideoCapturer.RecordResult.Error("Failed when stopping video record. Output: $output", t)
+                }
+                this.state = State.Idling
+                result
             }
-
-            if (videoFile.exists()) {
-                videoFile.delete()
-            }
-
-            return null
+            else -> VideoCapturer.RecordResult.Error("Can't stop capture. Capturer isn't recording")
         }
-
-        this.state.compareAndSet(state, State.Idling)
-
-        return videoFile
+        return result
     }
 
+    @Synchronized
     override fun abort() {
-        val state = state.get()
-        if (state is State.Recording) {
-            val (videoFile, outputFile) = state
+        val state = state
+        when {
+            state is State.Recording -> {
+                val (videoFile, outputFile) = state
 
-            executeRecorderCommand("abort", outputFile)
-
-            if (videoFile.exists()) {
-                videoFile.delete()
+                try {
+                    executeRecorderCommand("abort", outputFile)
+                } catch (t: Throwable) {
+                    Log.w(TAG, "Can't abort capture", t)
+                } finally {
+                    if (videoFile.exists()) {
+                        videoFile.delete()
+                    }
+                    this.state = State.Idling
+                }
             }
-
-            this.state.compareAndSet(state, State.Idling)
         }
     }
 
@@ -162,6 +182,7 @@ class VideoCapturerImplementation(
      * https://android.googlesource.com/platform/frameworks/base.git/+/master/core/java/android/app/UiAutomationConnection.java
      */
     private fun execute(command: String, output: File) {
+        // connect
         val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
         val connection = automation.getFieldValue<Any>("mUiAutomationConnection")
 
@@ -203,6 +224,7 @@ class VideoCapturerImplementation(
     }
 
     private sealed class State {
+
         object Idling : State()
 
         data class Recording(

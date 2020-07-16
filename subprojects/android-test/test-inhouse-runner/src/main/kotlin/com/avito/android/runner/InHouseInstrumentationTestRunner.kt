@@ -73,8 +73,8 @@ abstract class InHouseInstrumentationTestRunner :
             sentry.sendException(error)
         }
 
-        override fun warn(msg: String) {
-            Log.w("TestReport", msg)
+        override fun warn(msg: String, error: Throwable?) {
+            Log.w("TestReport", msg, error)
         }
     }
 

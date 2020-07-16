@@ -9,6 +9,7 @@ import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.utils.getStackTraceString
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
@@ -20,23 +21,7 @@ class PerformanceCollectAction(
     private val reports: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,
-        logger = object : Logger {
-            override fun debug(msg: String) {
-                logger.debug(msg)
-            }
-
-            override fun exception(msg: String, error: Throwable) {
-                logger.critical(msg, error)
-            }
-
-            override fun critical(msg: String, error: Throwable) {
-                logger.critical(msg, error)
-            }
-
-            override fun warn(msg: String) {
-                logger.warn(msg)
-            }
-        },
+        logger = commonLogger(logger),
         verboseHttp = false
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(

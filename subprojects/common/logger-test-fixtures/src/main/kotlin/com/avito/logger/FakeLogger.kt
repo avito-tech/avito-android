@@ -4,7 +4,7 @@ object FakeLogger: Logger {
 
     override fun debug(msg: String) {}
 
-    override fun warn(msg: String) {}
+    override fun warn(msg: String, error: Throwable?) {}
 
     override fun exception(msg: String, error: Throwable) {}
 

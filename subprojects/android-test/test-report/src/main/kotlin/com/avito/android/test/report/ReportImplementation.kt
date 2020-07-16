@@ -1,7 +1,6 @@
 package com.avito.android.test.report
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
 import com.avito.android.test.report.incident.IncidentChain

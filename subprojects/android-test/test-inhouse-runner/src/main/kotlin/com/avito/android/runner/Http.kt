@@ -24,8 +24,8 @@ internal fun createReportHttpClient(): OkHttpClient {
                 Log.v("ReportViewerHttp", msg, error)
             }
 
-            override fun warn(msg: String) {
-                Log.v("ReportViewerHttp", msg)
+            override fun warn(msg: String, error: Throwable?) {
+                Log.v("ReportViewerHttp", msg, error)
             }
         })
     val httpLoggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
