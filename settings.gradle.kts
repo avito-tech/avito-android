@@ -44,6 +44,16 @@ pluginManagement {
     repositories {
         exclusiveContent {
             forRepository {
+                maven {
+                    setUrl("https://kotlin.bintray.com/kotlinx")
+                }
+            }
+            filter {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
+        exclusiveContent {
+            forRepository {
                 mavenLocal()
             }
             forRepository {
