@@ -4,7 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Looper
-import com.avito.android.test.util.getCurrentActivitySafe
+import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
 import com.avito.android.util.toPng
 import com.avito.logger.Logger
@@ -46,13 +46,13 @@ interface ScreenshotCapturer {
 
         override fun captureBitmap(): Try<Option<Bitmap>> {
             //todo use di: pass activity getter as constructor argument
-            val activity = getCurrentActivitySafe()
+            val activity = getCurrentActivityOrNull()
             return if (activity != null) {
                 Try {
                     Option.Some(drawCanvas(activity))
                 }
             } else {
-                logger.warn("There are no RESUMED activity when capturingBitmap")
+                logger.warn("There is no RESUMED activity when capturingBitmap")
                 Try {
                     Option.empty<Bitmap>()
                 }

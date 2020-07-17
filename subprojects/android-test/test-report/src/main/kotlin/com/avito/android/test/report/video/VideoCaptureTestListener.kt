@@ -55,12 +55,12 @@ class VideoCaptureTestListener(
             when (val startingResult = videoCapturer.start()) {
                 is VideoCapturer.StartingRecordResult.Success -> logger.debug("Video recording feature enabled. Recording started")
                 is VideoCapturer.StartingRecordResult.Error -> logger.warn(
-                    "Video recording feature enabled. Failed record starting. Reason: ${startingResult.message}",
+                    "Video recording feature enabled. Failed to start recording. Reason: ${startingResult.message}",
                     startingResult.error
                 )
             }
         } else {
-            logger.debug("Video recording feature disabled. Recording hasn't started")
+            logger.debug("Video recording feature disabled.")
         }
     }
 

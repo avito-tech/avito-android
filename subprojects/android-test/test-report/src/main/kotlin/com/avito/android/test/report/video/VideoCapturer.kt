@@ -54,10 +54,10 @@ class VideoCapturerImpl(
                 if (videoFile.exists()) {
                     videoFile.delete()
                 }
-                VideoCapturer.StartingRecordResult.Error("Can't start capture", t)
+                VideoCapturer.StartingRecordResult.Error("Can't start video capturing", t)
             }
         } else {
-            VideoCapturer.StartingRecordResult.Error("Can't start capture capturer isn't Idling")
+            VideoCapturer.StartingRecordResult.Error("Can't start video capturing. Capturer isn't Idling")
         }
     }
 
@@ -88,7 +88,7 @@ class VideoCapturerImpl(
                 this.state = State.Idling
                 result
             }
-            else -> VideoCapturer.RecordResult.Error("Can't stop capture. Capturer isn't recording")
+            else -> VideoCapturer.RecordResult.Error("Can't stop video capturing. Capturer isn't recording")
         }
         return result
     }

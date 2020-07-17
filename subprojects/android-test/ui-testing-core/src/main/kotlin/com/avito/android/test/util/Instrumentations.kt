@@ -7,10 +7,10 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
 
 fun getCurrentActivity(): Activity {
-    return getCurrentActivitySafe() ?: throw IllegalStateException("Resumed activity not found")
+    return getCurrentActivityOrNull() ?: throw IllegalStateException("Resumed activity not found")
 }
 
-fun getCurrentActivitySafe(): Activity? {
+fun getCurrentActivityOrNull(): Activity? {
     var currentActivity: Activity? = null
     val findResumedActivity = {
         val resumedActivities =
