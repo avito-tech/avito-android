@@ -267,7 +267,7 @@ abstract class InHouseInstrumentationTestRunner :
             report.registerIncident(AppCrashException(incident))
             report.reportTestCase()
         } catch (t: Throwable) {
-            Log.e(tag, "Error during reporting test after global exception handling", t)
+            Log.w(tag, "Can't register and report unexpected incident", t)
         }
     }
 
