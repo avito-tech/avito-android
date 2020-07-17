@@ -40,7 +40,6 @@ import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Kind
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
@@ -72,6 +71,10 @@ abstract class InHouseInstrumentationTestRunner :
         override fun critical(msg: String, error: Throwable) {
             Log.e("TestReport", msg, error)
             sentry.sendException(error)
+        }
+
+        override fun warn(msg: String, error: Throwable?) {
+            Log.w("TestReport", msg, error)
         }
     }
 
@@ -264,7 +267,7 @@ abstract class InHouseInstrumentationTestRunner :
             report.registerIncident(AppCrashException(incident))
             report.reportTestCase()
         } catch (t: Throwable) {
-            Log.e(tag, "Error during reporting test after global exception handling", t)
+            Log.w(tag, "Can't register and report unexpected incident", t)
         }
     }
 

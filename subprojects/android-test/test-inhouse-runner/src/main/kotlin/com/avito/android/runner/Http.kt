@@ -23,6 +23,10 @@ internal fun createReportHttpClient(): OkHttpClient {
             override fun critical(msg: String, error: Throwable) {
                 Log.v("ReportViewerHttp", msg, error)
             }
+
+            override fun warn(msg: String, error: Throwable?) {
+                Log.v("ReportViewerHttp", msg, error)
+            }
         })
     val httpLoggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
         override fun log(message: String) {

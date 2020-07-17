@@ -8,7 +8,6 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import io.sentry.SentryClient
-import okhttp3.HttpUrl
 
 interface Report {
 

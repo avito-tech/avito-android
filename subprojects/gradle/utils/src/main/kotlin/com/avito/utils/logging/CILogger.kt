@@ -13,6 +13,7 @@ import java.io.Serializable
 open class CILogger(
     private val debugHandler: CILoggingHandler,
     private val infoHandler: CILoggingHandler,
+    private val warnHandler: CILoggingHandler,
     private val criticalHandler: CILoggingHandler
 ) : Serializable {
 
@@ -28,9 +29,14 @@ open class CILogger(
         criticalHandler.write(message, error)
     }
 
+    fun warn(message: String, error: Throwable? = null) {
+        warnHandler.write(message, error)
+    }
+
     fun child(tag: String): CILogger = CILogger(
         debugHandler = debugHandler.child(tag),
         infoHandler = infoHandler.child(tag),
+        warnHandler = warnHandler.child(tag),
         criticalHandler = criticalHandler.child(tag)
     )
 
@@ -40,6 +46,9 @@ open class CILogger(
                 destination = StdoutDestination
             ),
             criticalHandler = CILoggingHandlerImplementation(
+                destination = StdoutDestination
+            ),
+            warnHandler = CILoggingHandlerImplementation(
                 destination = StdoutDestination
             ),
             debugHandler = CILoggingHandlerImplementation(

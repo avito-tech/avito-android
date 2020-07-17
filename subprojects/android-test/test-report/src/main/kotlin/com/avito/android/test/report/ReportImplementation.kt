@@ -1,7 +1,6 @@
 package com.avito.android.test.report
 
 import android.annotation.SuppressLint
-import android.util.Log
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
 import com.avito.android.test.report.incident.IncidentChain
@@ -65,7 +64,7 @@ class ReportImplementation(
     )
 
     private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
-        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory),
+        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
         remoteStorage = remoteStorage,
         logger = logger
     )
@@ -196,49 +195,55 @@ class ReportImplementation(
     @Synchronized
     override fun reportTestCase(): ReportState.Initialized.Started =
         methodExecutionTracing("reportTestCase") {
-            val currentState = state
-            if (currentState !is ReportState.Initialized.Started) {
+            val startedState = state
+            if (startedState !is ReportState.Initialized.Started) {
                 throw RuntimeException("Reporter has invalid state. Expected state: Started. Actual state: $state")
             }
+            startedState.endTime = timeProvider.nowInSeconds()
 
-            currentState.apply {
-                currentState.endTime = timeProvider.nowInSeconds()
-                afterTestStop(this)
-            }
-            logger.debug("Start waiting for uploads inside reportTestCase")
-            waitUploads(currentState)
-            logger.debug("Waiting for uploads inside reportTestCase completed")
-
-            currentState.apply {
-                /**
-                 * add early entries to first precondition/step
-                 */
-                val firstPreconditionOrStep =
-                    preconditionStepList.firstOrNull() ?: testCaseStepList.firstOrNull()
-
-                firstPreconditionOrStep?.entryList?.addAll(earlyEntries)
-
-                preconditionStepList.forEach {
-                    it.entryList = it.entryList
-                        .sortedBy { it.timeInSeconds }
-                        .distinctCounted()
-                        .toMutableList()
-                }
-                testCaseStepList.forEach {
-                    it.entryList = it.entryList
-                        .sortedBy { it.timeInSeconds }
-                        .distinctCounted()
-                        .toMutableList()
-                }
+            try {
+                afterTestStop(startedState)
+            } catch (t: Throwable) {
+                logger.exception("Failed while afterTestStop were executing", t)
             }
 
-            currentState.incident?.appendFutureEntries()
-            currentState.performanceJson = performanceTestReporter.getAsJson()
+            waitUploads(startedState)
 
-            writeTestCase(currentState = currentState)
+            startedState.addEarlyEntries(earlyEntries)
+            startedState.sortStepEntries()
 
-            currentState
+            startedState.incident?.appendFutureEntries()
+            startedState.performanceJson = performanceTestReporter.getAsJson()
+
+            writeTestCase(currentState = startedState)
+
+            startedState
         }
+
+    /**
+     * add early entries to first precondition/step
+     */
+    private fun ReportState.Initialized.Started.addEarlyEntries(entries: List<Entry>) {
+        val firstPreconditionOrStep =
+            preconditionStepList.firstOrNull() ?: testCaseStepList.firstOrNull()
+
+        firstPreconditionOrStep?.entryList?.addAll(earlyEntries)
+    }
+
+    private fun ReportState.Initialized.Started.sortStepEntries() {
+        preconditionStepList.forEach {
+            it.entryList = it.entryList
+                .sortedBy { it.timeInSeconds }
+                .distinctCounted()
+                .toMutableList()
+        }
+        testCaseStepList.forEach {
+            it.entryList = it.entryList
+                .sortedBy { it.timeInSeconds }
+                .distinctCounted()
+                .toMutableList()
+        }
+    }
 
     @Synchronized
     override fun startPrecondition(step: StepResult): Unit =
@@ -441,16 +446,12 @@ class ReportImplementation(
 
     private fun writeTestCase(currentState: ReportState.Initialized) =
         methodExecutionTracing("writeTestCase") {
-
             if (currentState !is ReportState.Initialized.Started) {
                 throw RuntimeException("Reporter has invalid state. Expected state: Started.Initialized. Actual state: $state")
             }
 
-            currentState.apply {
-                beforeTestWrite(this)
-                transport.forEach { it.send(currentState) }
-            }
-
+            beforeTestWrite(currentState)
+            transport.forEach { it.send(currentState) }
             state = ReportState.Written
         }
 
@@ -458,27 +459,25 @@ class ReportImplementation(
      * Screenshots/HttpStatic are synchronous, but uploading runs on background thread
      * We have to wait upload completion before sending report packages
      */
-    private fun waitUploads(test: ReportState.Initialized.Started) {
-        test.let {
-            it.testCaseStepList =
-                it.testCaseStepList
-                    .map { it.appendFutureEntries() }
-                    .toMutableList()
+    private fun waitUploads(state: ReportState.Initialized.Started) {
+        state.testCaseStepList =
+            state.testCaseStepList
+                .map { it.appendFutureEntries() }
+                .toMutableList()
 
-            it.preconditionStepList =
-                it.preconditionStepList
-                    .map { it.appendFutureEntries() }
-                    .toMutableList()
+        state.preconditionStepList =
+            state.preconditionStepList
+                .map { it.appendFutureEntries() }
+                .toMutableList()
 
-            earlyEntries.addAll(
-                earlyFuturesUploads.getInitializedEntries()
-            )
-            earlyEntries.sortBy { it.timeInSeconds }
+        earlyEntries.addAll(
+            earlyFuturesUploads.getInitializedEntries()
+        )
+        earlyEntries.sortBy { it.timeInSeconds }
 
-            incidentEntries.addAll(
-                incidentFutureUploads.getInitializedEntries()
-            )
-        }
+        incidentEntries.addAll(
+            incidentFutureUploads.getInitializedEntries()
+        )
     }
 
     private fun wrapInHtml(content: String): String {

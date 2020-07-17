@@ -14,6 +14,7 @@ import com.avito.report.ReportsApi
 import com.avito.report.model.PerformanceTest
 import com.avito.utils.getStackTraceString
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import java.io.File
@@ -26,19 +27,7 @@ open class PerformanceCompareAction(
     private val reports: ReportsApi = ReportsApi.create(
         host = params.reportApiUrl,
         fallbackUrl = params.reportApiFallbackUrl,
-        logger = object : Logger {
-            override fun debug(msg: String) {
-                logger.debug(msg)
-            }
-
-            override fun exception(msg: String, error: Throwable) {
-                logger.debug(msg, error)
-            }
-
-            override fun critical(msg: String, error: Throwable) {
-                logger.debug(msg, error)
-            }
-        },
+        logger = commonLogger(logger),
         verboseHttp = false
     ),
     private val statsSender: StatsDSender = StatsDSender.Impl(

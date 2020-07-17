@@ -46,7 +46,7 @@ class RetryInterceptor constructor(
                 logger.debug("Try: $tryCount. Response: $response")
             } catch (exception: IOException) {
                 error = exception
-                logger.critical("Try: $tryCount. Failed to execute request. Error: ${error.message}", exception)
+                logger.warn("Try: $tryCount. Failed to execute request. Error: ${error.message}", exception)
             }
 
             if (response != null) {

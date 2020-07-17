@@ -16,7 +16,7 @@ object Dependencies {
     val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
     val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib"
     val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect"
-    val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.9"
+    val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.1"
     val kotlinCompilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable"
     val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.2"
     val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
