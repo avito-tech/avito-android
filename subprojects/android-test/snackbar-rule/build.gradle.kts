@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":android-test:junit-utils"))
+    api(project(":common:junit-utils"))
     api(project(":android-lib:snackbar-proxy"))
     implementation(project(":android-test:ui-testing-core"))
 }

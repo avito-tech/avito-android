@@ -15,7 +15,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.espresso.EspressoActions
 import com.avito.android.test.util.executeMethod
 import com.avito.android.test.util.getFieldByReflectionWithAnyField
-import com.avito.android.test.waitFor
+import com.avito.android.waiter.waitFor
 import me.weishu.reflection.Reflection
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat

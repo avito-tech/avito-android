@@ -1,4 +1,4 @@
-package com.avito.android.mock
+package com.avito.test.http
 
 import okhttp3.mockwebserver.MockResponse
 

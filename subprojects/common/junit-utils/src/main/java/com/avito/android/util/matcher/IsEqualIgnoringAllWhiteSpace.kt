@@ -5,7 +5,6 @@ import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import java.lang.Character.isWhitespace
 
-
 class IsEqualIgnoringAllWhiteSpace(private val expectedString: String) : TypeSafeMatcher<String>() {
 
     companion object {

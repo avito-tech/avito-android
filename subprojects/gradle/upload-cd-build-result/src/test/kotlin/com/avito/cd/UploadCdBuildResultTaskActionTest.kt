@@ -2,6 +2,7 @@ package com.avito.cd
 
 import com.avito.git.Branch
 import com.avito.git.GitStateStub
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.google.common.truth.Truth.assertThat
 import okhttp3.Credentials
@@ -42,12 +43,17 @@ class UploadCdBuildResultTaskActionTest {
             artifacts = stubArtifacts,
             gitBranch = gitBranch
         )
-        dispatcher.mockResponse({ true }, MockResponse().setResponseCode(200))
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { true },
+                response = MockResponse().setResponseCode(200)
+            )
+        )
 
         val sendOutputRequest = dispatcher.captureRequest {
-            method?.contains("PUT") ?: false
+            method.contains("PUT") ?: false
                 && path == "/$outputPath"
-                && getHeader("Content-Type")?.startsWith("application/json") ?: false
+                && recordedRequest.getHeader("Content-Type")?.startsWith("application/json") ?: false
         }
 
         action(suppressErrors = false).send(
@@ -71,9 +77,11 @@ class UploadCdBuildResultTaskActionTest {
 
     @Test
     fun `cd build result - failed if error`() {
-        dispatcher.mockResponse(
-            { true },
-            MockResponse().setResponseCode(500)
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { true },
+                response = MockResponse().setResponseCode(500)
+            )
         )
 
         val error = assertThrows(RuntimeException::class.java) {
@@ -94,9 +102,11 @@ class UploadCdBuildResultTaskActionTest {
 
     @Test
     fun `cd build result - success if suppress error`() {
-        dispatcher.mockResponse(
-            { true },
-            MockResponse().setResponseCode(500)
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { true },
+                response = MockResponse().setResponseCode(500)
+            )
         )
 
         action(suppressErrors = true).send(

@@ -3,8 +3,11 @@ package com.avito.android.mock
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.rule.SimpleRule
 import com.avito.android.runner.InHouseInstrumentationTestRunner
+import com.avito.test.http.Mock
+import com.avito.test.http.MockDispatcher
+import com.avito.test.http.RequestCapturer
+import com.avito.test.http.RequestData
 import okhttp3.mockwebserver.MockWebServer
-import okhttp3.mockwebserver.RecordedRequest
 
 class MockWebServerApiRule : SimpleRule() {
 
@@ -19,12 +22,10 @@ class MockWebServerApiRule : SimpleRule() {
     }
 
     fun registerMock(mock: Mock) {
-        mockDispatcher.mocks.add(mock)
+        mockDispatcher.registerMock(mock)
     }
 
     fun captureRequest(requestMatcher: RequestData.() -> Boolean): RequestCapturer {
-        val capturer = RequestCapturer(requestMatcher)
-        mockDispatcher.capturers.add(capturer)
-        return capturer
+        return mockDispatcher.captureRequest(requestMatcher)
     }
 }

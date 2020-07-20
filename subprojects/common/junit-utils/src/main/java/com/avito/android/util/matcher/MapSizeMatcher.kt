@@ -19,5 +19,4 @@ class MapSizeMatcher<K, V>(private val size: Int) : TypeSafeMatcher<Map<K, V>>()
     }
 
     override fun matchesSafely(map: Map<K, V>): Boolean = (map.size == size)
-
 }

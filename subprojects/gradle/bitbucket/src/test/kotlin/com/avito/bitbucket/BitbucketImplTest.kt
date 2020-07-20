@@ -6,6 +6,7 @@ import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
 import com.avito.test.gradle.getCommitHash
 import com.avito.test.gradle.git
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.utils.logging.CILogger
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -20,7 +21,7 @@ internal class BitbucketImplTest {
 
     private val mockWebServer = MockWebServer()
 
-    private val dispatcher = MockDispatcher(defaultResponse = MockResponse().setResponseCode(200))
+    private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
         .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
 
     @Test
@@ -44,13 +45,15 @@ internal class BitbucketImplTest {
             commit("changes")
             val sourceHash = getCommitHash()
 
-            dispatcher.mockResponse(
-                { (path?.contains("rest/insights/1.0") ?: false) && method == "PUT" },
-                MockResponse().setBody("""{ "createdDate": 12345 , "result": "PASS"  }""")
+            dispatcher.registerMock(
+                Mock(
+                    requestMatcher = { path.contains("rest/insights/1.0") && method == "PUT" },
+                    response = MockResponse().setBody("""{ "createdDate": 12345 , "result": "PASS"  }""")
+                )
             )
 
             val addAnnotationsRequest =
-                dispatcher.captureRequest { (path?.contains("rest/insights/1.0") ?: false) && method == "POST" }
+                dispatcher.captureRequest { path.contains("rest/insights/1.0") && method == "POST" }
 
             createBitbucket().addInsights(
                 rootDir = tempDir,

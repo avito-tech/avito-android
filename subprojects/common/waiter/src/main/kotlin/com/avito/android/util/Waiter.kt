@@ -1,7 +1,6 @@
 package com.avito.android.util
 
-import com.avito.android.test.waitFor
-import java.lang.AssertionError
+import com.avito.android.waiter.waitFor
 import java.util.concurrent.TimeUnit
 
 fun <T> waitForAssertion(
@@ -10,6 +9,7 @@ fun <T> waitForAssertion(
     action: () -> T
 ): T = waitFor(
     timeoutMs = timeoutMilliseconds,
+    frequencyMs = frequencyMilliseconds,
     allowedExceptions = setOf(AssertionError::class.java),
     action = action
 )

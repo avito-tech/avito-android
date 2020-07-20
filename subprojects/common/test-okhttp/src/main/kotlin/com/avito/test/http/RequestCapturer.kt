@@ -1,75 +1,65 @@
 package com.avito.test.http
 
-import com.google.common.truth.Truth
-import okhttp3.mockwebserver.MockWebServer
+import com.avito.android.util.waitForAssertion
+import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.RecordedRequest
 import org.hamcrest.Matcher
-import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.StringContains
-import java.util.logging.Level
-import java.util.logging.Logger
 
-private typealias Header = Pair<String, String>
-
-class RequestCapturer(val requestMatcher: RecordedRequest.() -> Boolean) {
-
-    private val logger = Logger.getLogger(MockWebServer::class.java.name)
+class RequestCapturer(val requestMatcher: RequestData.() -> Boolean) {
 
     private val requests = mutableListOf<RecordedRequest>()
 
-    fun capture(recordedRequest: RecordedRequest) {
-        synchronized(this) {
-            requests.add(recordedRequest)
-        }
+    fun capture(recordedRequest: RecordedRequest) = synchronized(this) {
+        requests.add(recordedRequest)
     }
 
     val checks = Checks()
 
     inner class Checks {
-        fun singleRequestCaptured(): RequestChecks {
-            return synchronized(this@RequestCapturer) {
-                Truth.assertWithMessage("request size")
-                    .that(requests.size)
-                    .isEqualTo(1)
-                RequestChecks(requests.first())
+
+        fun singleRequestCaptured(): RequestChecks = waitForAssertion {
+            synchronized(this@RequestCapturer) {
+                assertThat("", requests.size == 1)
+                RequestChecks(RequestData(requests.first()))
             }
         }
     }
 
-    inner class RequestChecks(private val recordedRequest: RecordedRequest) {
-        private val body: String by lazy {
-            val readUtf8 = recordedRequest.body.readUtf8()
-            logger.info("captured request (${recordedRequest.path}) body: $readUtf8")
-            readUtf8
-        }
+    inner class RequestChecks(private val requestData: RequestData) {
 
-        private val headers: List<Header> by lazy {
-            val headers = recordedRequest.headers
-            headers.names().map { name -> name to headers.get(name)!! }
-        }
+        val formUrlEncodedBody: FormUrlEncodedBodyChecks = FormUrlEncodedBodyChecks(
+            recordedRequest = requestData.recordedRequest,
+            stringBody = requestData.body
+        )
 
         fun pathContains(substring: String): RequestChecks {
-            MatcherAssert.assertThat(recordedRequest.path, StringContains(substring))
+            assertThat(requestData.path, StringContains(substring))
             return this
         }
 
-        fun bodyContains(substring: String): RequestChecks {
-            Truth.assertThat(body).contains(substring)
+        fun bodyContains(vararg substrings: String): RequestChecks {
+            substrings.forEach {
+                waitForAssertion {
+                    assertThat(requestData.body, StringContains(it))
+                }
+            }
             return this
         }
 
         fun bodyDoesntContain(substring: String): RequestChecks {
-            Truth.assertThat(body).doesNotContain(substring)
+            assertThat(requestData.body).doesNotContain(substring)
             return this
         }
 
         fun containsHeader(name: String, value: String): RequestChecks {
-            Truth.assertThat(headers).contains(name to value)
+            assertThat(requestData.headers).contains(name to value)
             return this
         }
 
         fun bodyMatches(matcher: Matcher<Any?>): RequestChecks {
-            MatcherAssert.assertThat(body, matcher)
+            assertThat(requestData.body, matcher)
             return this
         }
     }

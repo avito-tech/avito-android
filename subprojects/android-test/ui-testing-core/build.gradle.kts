@@ -18,6 +18,9 @@ dependencies {
     api(Dependencies.recyclerView)
     api(Dependencies.material)
 
+    //todo implementation, waitForAssertion used in app
+    api(project(":common:waiter"))
+
     implementation(Dependencies.test.hamcrestLib)
     implementation(Dependencies.test.junit)
     implementation(Dependencies.freeReflection)

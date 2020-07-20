@@ -16,6 +16,5 @@ object MapMatchers {
     fun <K, V> containsAll(map: Map<K, V>): Matcher<Map<K, V>> {
         return MapContainsMapMatcher(map)
     }
-
 }
 

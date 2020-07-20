@@ -4,6 +4,7 @@ import com.avito.report.internal.model.RpcResult
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.ReportCoordinates
+import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.RequestCapturer
 import com.google.gson.Gson
@@ -19,11 +20,13 @@ class MockReportApi(
 ) {
 
     fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): RequestCapturer.Checks {
-        mockDispatcher.mockResponse(
-            requestMatcher = { true },
-            response = MockResponse()
-                .setResponseCode(200)
-                .setBody(gson.toJson(RpcResult("12345")))
+        mockDispatcher.registerMock(
+            Mock(
+                requestMatcher = { true },
+                response = MockResponse()
+                    .setResponseCode(200)
+                    .setBody(gson.toJson(RpcResult("12345")))
+            )
         )
 
         val request = mockDispatcher.captureRequest { true }.checks

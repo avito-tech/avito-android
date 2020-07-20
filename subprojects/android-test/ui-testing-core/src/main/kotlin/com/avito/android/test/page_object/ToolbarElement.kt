@@ -32,7 +32,7 @@ import com.avito.android.test.matcher.ToolbarSubTitleResMatcher
 import com.avito.android.test.matcher.ToolbarSubtitleMatcher
 import com.avito.android.test.matcher.ToolbarTitleMatcher
 import com.avito.android.test.matcher.ToolbarTitleResMatcher
-import com.avito.android.test.waitFor
+import com.avito.android.waiter.waitFor
 import com.avito.android.test.waitToPerform
 import org.hamcrest.Description
 import org.hamcrest.Matcher

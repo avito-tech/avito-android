@@ -1,7 +1,7 @@
 package com.avito.android.test.internal
 
 import android.content.Context
-import com.avito.android.test.waitFor
+import com.avito.android.waiter.waitFor
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert
 import java.io.File
