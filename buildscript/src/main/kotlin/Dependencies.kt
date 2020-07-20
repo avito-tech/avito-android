@@ -52,8 +52,8 @@ object Dependencies {
     val dockerClient = "de.gesellix:docker-client:2019-11-26T12-39-35"
     val asm = "org.ow2.asm:asm:7.1"
 
-    //https://r8.googlesource.com/r8/
-    val r8 = "com.android.tools:r8:1.6.89"
+    // https://r8.googlesource.com/r8/
+    val r8 = "com.android.tools:r8:2.0.94"
     val proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
     val playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
     val appcompat = "androidx.appcompat:appcompat:${Versions.androidX}"

@@ -1,10 +1,7 @@
 package com.avito.android.plugin
 
-import com.android.build.gradle.api.AndroidSourceSet
-import com.avito.android.withAndroidModule
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
@@ -33,7 +30,6 @@ class KotlinRootConfigPlugin : Plugin<Project> {
             setupKapt(subProject, kaptMapDiagnosticLocations, buildCache, kaptBuildCache)
 
             subProject.plugins.withId("kotlin-android") {
-                setupSourceSets(subProject)
                 applyDefaultKotlinCompileOptions(subProject)
             }
 
@@ -42,20 +38,6 @@ class KotlinRootConfigPlugin : Plugin<Project> {
                 applyDefaultKotlinCompileOptions(subProject)
             }
         }
-    }
-
-    private fun setupSourceSets(target: Project) {
-        target.withAndroidModule { android ->
-            android.sourceSets {
-                it.addKotlinSource("main")
-                it.addKotlinSource("androidTest")
-                it.addKotlinSource("test")
-            }
-        }
-    }
-
-    private fun NamedDomainObjectContainer<AndroidSourceSet>.addKotlinSource(sourceSet: String) {
-        named(sourceSet).configure { it.java.srcDir("src/$sourceSet/kotlin") }
     }
 
     private fun setupParcelize(target: Project) {

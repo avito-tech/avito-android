@@ -45,7 +45,7 @@ android {
      */
     variantFilter {
         if (name != testBuildType) {
-            setIgnore(true)
+            ignore = true
             logger.debug("Build variant $name is omitted for module: $path")
         }
     }
