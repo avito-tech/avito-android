@@ -73,7 +73,7 @@ It helps to configure and build applications faster.
 plugins.withType<LibraryPlugin> {
     variantFilter {
         if (name != "release") {
-            setIgnore(true)
+            ignore = true
         }
     }
 }
