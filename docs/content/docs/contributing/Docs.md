@@ -374,11 +374,6 @@ Checklist for changes:
 
 [Hugo troubleshooting](https://gohugo.io/troubleshooting/faq/)
 
-### Publishing changes
-
-Run manually after changes: `docs/publish.sh`\
-Auto-publishing will be done in MBS-7514 (internal).
-
 ### How to upgrade Hugo
 
 Just change the version in Dockerfile.
