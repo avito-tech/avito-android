@@ -15,6 +15,7 @@ import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -42,19 +43,8 @@ class ReportViewerTestReporter(
     private val remoteStorage: RemoteStorage =
         RemoteStorage.create(
             endpoint = fileStorageUrl,
-            logger = object : Logger {
-                override fun debug(msg: String) {
-                    logger.info(msg)
-                }
-
-                override fun exception(msg: String, error: Throwable) {
-                    logger.critical(msg, error)
-                }
-
-                override fun critical(msg: String, error: Throwable) {
-                    logger.critical(msg, error)
-                }
-            })
+            logger = commonLogger(logger)
+        )
     // todo переместить ближе к DeviceWorker
     // сюда можно передавать логи как параметр и убрать отсюда все кроме транспорта
     private val logcatBuffers = mutableMapOf<Pair<TestCase, Int>, LogcatBuffer>()

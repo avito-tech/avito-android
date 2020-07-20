@@ -61,7 +61,7 @@ subprojects {
                 }
             }
             filter {
-                includeModuleByRegex("org\\.jetbrains\\.kotlinx", "kotlinx-cli.*")
+                includeGroup("org.jetbrains.kotlinx")
             }
         }
         exclusiveContent {

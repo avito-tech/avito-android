@@ -64,6 +64,12 @@ private fun defaultCILogger(
                 destinationFileHandler
             )
         ),
+        warnHandler = CILoggingCombinedHandler(
+            handlers = listOf(
+                stdoutHandler,
+                destinationFileHandler
+            )
+        ),
         criticalHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 stdoutHandler,
@@ -94,18 +100,15 @@ private fun localBuildLogger(debug: Boolean): CILogger {
         NothingLoggingHandler
     }
 
-    val gradleLifecycleLogger = CILoggingHandlerImplementation(
-        destination = StdoutDestination
-    )
-
-    val gradleErrorLogger = CILoggingHandlerImplementation(
+    val stdoutHandler = CILoggingHandlerImplementation(
         destination = StdoutDestination
     )
 
     return CILogger(
         debugHandler = gradleDebugLogger,
-        infoHandler = gradleLifecycleLogger,
-        criticalHandler = gradleErrorLogger
+        infoHandler = stdoutHandler,
+        criticalHandler = stdoutHandler,
+        warnHandler = stdoutHandler
     )
 }
 

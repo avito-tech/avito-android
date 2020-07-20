@@ -12,40 +12,19 @@ class ReportTestListener : RunListener() {
     private val report: Report by lazy { reportInstance }
 
     override fun testStarted(description: Description) {
-        Log.d(TAG, "Receive testStarted event for ${description.displayName}")
-
-        try {
+        processEvent("start", description.displayName) {
             report.startTestCase()
-        } catch (t: Throwable) {
-            Log.e(
-                TAG,
-                "Failed to process testStarted event for ${description.displayName} with error: ${t.message}"
-            )
-            report.sentry.sendException(t)
         }
-
-        Log.d(TAG, "TestStarted event processing completed for ${description.displayName}")
     }
 
     override fun testFinished(description: Description) {
-        Log.d(TAG, "Receive testFinished event for ${description.displayName}")
-
-        try {
+        processEvent("finish", description.displayName) {
             report.reportTestCase()
-        } catch (t: Throwable) {
-            Log.e(
-                TAG,
-                "Failed to send testFinished event for ${description.displayName} with error: ${t.message}"
-            )
-            report.sentry.sendException(t)
         }
-        Log.d(TAG, "TestFinished event processing completed for ${description.displayName}")
     }
 
     override fun testFailure(failure: Failure) {
-        Log.d(TAG, "Receive testFailure event for ${failure.description.displayName}")
-
-        try {
+        processEvent("failure", failure.description.displayName) {
             // we already registered it
             if (failure.exception !is StepException) {
                 report.registerIncident(
@@ -53,18 +32,17 @@ class ReportTestListener : RunListener() {
                     screenshot = report.makeScreenshot("testFailure in listener")
                 )
             }
-        } catch (t: Throwable) {
-            Log.e(
-                TAG,
-                "Failed to process testFailure event for ${failure.description.displayName} with error: ${t.message}"
-            )
-            report.sentry.sendException(t)
         }
+    }
 
-        Log.d(
-            TAG,
-            "TestFailure event processing completed for ${failure.description.displayName}"
-        )
+    private inline fun processEvent(event: String, testName: String, action: () -> Unit) {
+        try {
+            Log.d(TAG, "Receive event: $event for test: $testName")
+            action()
+            Log.d(TAG, "Processed event: $event for test: $testName SUCCESSFULLY")
+        } catch (t: Throwable) {
+            Log.w(TAG, "Processed event: $event for test: $testName UNSUCCESSFULLY", t)
+        }
     }
 
     companion object {

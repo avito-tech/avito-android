@@ -44,6 +44,16 @@ pluginManagement {
     repositories {
         exclusiveContent {
             forRepository {
+                maven {
+                    setUrl("https://kotlin.bintray.com/kotlinx")
+                }
+            }
+            filter {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
+        exclusiveContent {
+            forRepository {
                 mavenLocal()
             }
             forRepository {
@@ -65,6 +75,20 @@ pluginManagement {
             }
             filter {
                 includeModuleByRegex("com\\.avito\\.android", ".*")
+            }
+        }
+        // todo remove after 2020.13
+        if (!artifactoryUrl.isNullOrBlank()) {
+            exclusiveContent {
+                forRepository {
+                    maven {
+                        name = "JCenter Proxy"
+                        setUrl("$artifactoryUrl/jcenter")
+                    }
+                }
+                filter {
+                    includeVersion("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.9")
+                }
             }
         }
         exclusiveContent {

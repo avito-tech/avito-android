@@ -1,8 +1,8 @@
 package com.avito.plugin
 
 import com.avito.http.RetryInterceptor
-import com.avito.logger.Logger
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -79,19 +79,7 @@ internal class QAppsUploadAction(
             RetryInterceptor(
                 retries = 3,
                 allowedMethods = listOf("POST", "GET"),
-                logger = object : Logger {
-                    override fun debug(msg: String) {
-                        logger.info(msg)
-                    }
-
-                    override fun exception(msg: String, error: Throwable) {
-                        logger.info(msg, error)
-                    }
-
-                    override fun critical(msg: String, error: Throwable) {
-                        logger.info(msg, error)
-                    }
-                }
+                logger = commonLogger(logger)
             )
         )
         .addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
