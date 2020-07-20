@@ -7,7 +7,6 @@ import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.base.DefaultFailureHandler
 import androidx.test.platform.app.InstrumentationRegistry
-import com.avito.test.http.MockDispatcher
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
 import com.avito.android.monitoring.createSentry
@@ -38,6 +37,7 @@ import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Kind
+import com.avito.test.http.MockDispatcher
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl.Companion.toHttpUrl
