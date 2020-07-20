@@ -2,12 +2,18 @@
 
 # Based on https://gohugo.io/hosting-and-deployment/hosting-on-github/
 
-set -euf -o
+set -exuf -o
 
 git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 git config --global user.name "$GITHUB_GIT_USER_NAME";
 git config --global user.email "$GITHUB_GIT_USER_EMAIL";
 mkdir -p "${HOME}"/.ssh
+
+echo "Fetching gh-pages branch..."
+# In case of not fetched branch
+# e.g. Teamcity fetches all branches only with `teamcity.git.fetchAllHeads` enabled
+git fetch origin gh-pages
+git show-ref origin/gh-pages
 
 removeGhPagesWorktree() {
     echo "Deleting worktree..."
@@ -45,7 +51,7 @@ git status
 
 echo "Pushing changes..."
 # Amend history because we don't want to bloat it by generated files
-git commit --amend -m "auto-generated files" && git push --force-with-lease
+git commit --amend -m "Auto-generated files" && git push --force-with-lease
 
 cd ..
 removeGeneratedFiles

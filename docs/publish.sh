@@ -1,16 +1,30 @@
 #!/usr/bin/env bash
 
 # Build and publish documentation to github pages
-# Prerequisites:
-# - Valid ssh key to access: https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
-# - export GITHUB_GIT_USER_NAME
-# - export GITHUB_GIT_USER_EMAIL
+#
+# This script is used in "Deploy Github documentation" CI configuration
+# http://links.k.avito.ru/zV
 
 set -euf -o pipefail
 
 if [ "$(git status -s)" ]
 then
-    echo "The working directory is dirty. Please commit pending changes"
+    echo "The working directory is dirty. Please commit pending changes" >&2;
+    exit 1;
+fi
+
+if [[ -z "${SSH_AUTH_SOCK+x}" ]]; then
+    echo "SSH_AUTH_SOCK env is unset. Git via SSH will not work properly." >&2;
+    exit 1;
+fi
+
+if [[ -z "${GITHUB_GIT_USER_NAME+x}" ]]; then
+    echo "GITHUB_GIT_USER_NAME env is unset" >&2;
+    exit 1;
+fi
+
+if [[ -z "${GITHUB_GIT_USER_EMAIL+x}" ]]; then
+    echo "GITHUB_GIT_USER_EMAIL env is unset" >&2;
     exit 1;
 fi
 
@@ -19,8 +33,8 @@ source "$DOCS_DIR"/../ci/_environment.sh
 
 docker run --rm \
         --volume "$DOCS_DIR/..":/app \
-        --volume "$HOME/.ssh":/home/user/.ssh \
         --volume "${SSH_AUTH_SOCK:-/dev/null}":/tmp/ssh_auth_sock \
+        --env "SSH_AUTH_SOCK=/tmp/ssh_auth_sock" \
         --env "LOCAL_USER_ID=$(id -u)" \
         --env "GITHUB_GIT_USER_NAME=${GITHUB_GIT_USER_NAME}" \
         --env "GITHUB_GIT_USER_EMAIL=${GITHUB_GIT_USER_EMAIL}" \
