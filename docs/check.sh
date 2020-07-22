@@ -19,3 +19,5 @@ docker run --rm \
         -w="/docs" \
         ${DOCUMENTATION_IMAGE} \
         sh -c "hugo --renderToMemory --i18n-warnings --minify --theme book"
+
+echo "Everything is OK"

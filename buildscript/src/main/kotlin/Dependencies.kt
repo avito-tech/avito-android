@@ -10,6 +10,7 @@ object Dependencies {
         val androidX = "1.0.0"
         val espresso = "3.2.0"
         val mockito = "3.3.3"
+        val detekt = "1.10.0"
         val androidGradlePlugin = System.getProperty("androidGradlePluginVersion")
     }
 
@@ -51,6 +52,8 @@ object Dependencies {
     val antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
     val dockerClient = "de.gesellix:docker-client:2019-11-26T12-39-35"
     val asm = "org.ow2.asm:asm:7.1"
+    val detektParser = "io.gitlab.arturbosch.detekt:detekt-parser:${Versions.detekt}"
+    val detektCli = "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 
     // https://r8.googlesource.com/r8/
     val r8 = "com.android.tools:r8:2.0.94"

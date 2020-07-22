@@ -45,3 +45,5 @@ How to start:
 
 - [Static Analysis with Android Lint by Tor Norbye (mDevCamp 2019)](https://slideslive.com/38916502) 
 - [Sample project](https://github.com/googlesamples/android-custom-lint-rules)
+- Install [PsiViewer IDE plugin](https://plugins.jetbrains.com/plugin/227-psiviewer/)
+- [KotlinConf 2018 - Writing IntelliJ Plugins for Kotlin by Alec Strong & Egor Andreevici](https://youtu.be/j2tvi4GbOr4): Android Lint and IDE plugins use common abstractions to work with AST.
