@@ -321,6 +321,21 @@ abstract class InHouseInstrumentationTestRunner :
         arguments.putString("newRunListenerMode", "true")
     }
 
+    override fun finish(resultCode: Int, results: Bundle?) {
+        try {
+            super.finish(resultCode, results)
+        } catch (e: IllegalStateException) {
+            // we made a research.
+            // It showed that IllegalStateException("UiAutomation not connected") occurs unrelated to our code.
+            // We use uiAutomation only for VideoCapture but without capturing this exception occurs with same frequency
+            if (e.message?.contains("UiAutomation not connected") != true) {
+                throw e
+            } else {
+                Log.d(tag, "Got UiAutomation not connected when finished")
+            }
+        }
+    }
+
     companion object {
         val instance: InHouseInstrumentationTestRunner by lazy {
             InstrumentationRegistry.getInstrumentation() as InHouseInstrumentationTestRunner
