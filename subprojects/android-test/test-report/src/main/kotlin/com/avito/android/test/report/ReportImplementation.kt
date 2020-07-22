@@ -52,8 +52,7 @@ class ReportImplementation(
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
-    PreconditionLifecycleListener by PreconditionLifecycleNotifier,
-    ReportStateProvider {
+    PreconditionLifecycleListener by PreconditionLifecycleNotifier {
 
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 
@@ -82,9 +81,6 @@ class ReportImplementation(
     override val isFirstStepOrPrecondition: Boolean
         get() = state.isFirstStepOrPrecondition
 
-    // Используется только для тестов todo удалить
-    @Synchronized
-    override fun getCurrentState(): ReportState = state
 
     @Synchronized
     override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
