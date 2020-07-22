@@ -5,7 +5,6 @@ import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import io.sentry.SentryClient
 
@@ -25,8 +24,6 @@ interface Report {
 
     fun startStep(step: StepResult)
 
-    fun updateStep(update: StepResult.() -> Unit)
-
     fun stopStep()
 
     fun updateTestCase(update: ReportState.Initialized.Started.() -> Unit)
@@ -36,8 +33,6 @@ interface Report {
     fun makeScreenshot(comment: String): FutureValue<RemoteStorage.Result>?
 
     fun addComment(comment: String)
-
-    fun addEntry(entry: Entry)
 
     /**
      * Добавляет в отчет к шагу специальное поле с текстом проверяемого условия
