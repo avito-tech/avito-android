@@ -11,13 +11,14 @@ class RequestData(val recordedRequest: RecordedRequest) {
 
     val body: String by lazy {
         val copyBody = Buffer()
+//        recordedRequest.body.snapshot().string(Charsets.UTF_8)
         recordedRequest.body.copyTo(copyBody, 0, recordedRequest.bodySize)
         copyBody.readUtf8()
     }
 
     val headers: List<Pair<String, String>> by lazy {
         val headers = recordedRequest.headers
-        headers.names().map { name -> name to headers.get(name)!! }
+        headers.names().map { name -> name to headers[name]!! }
     }
 
     fun bodyContains(substring: CharSequence): Boolean {
