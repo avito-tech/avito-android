@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":gradle:utils"))
     implementation(project(":gradle:logging"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:impact"))
     implementation(project(":gradle:files"))
     implementation(project(":gradle:kotlin-dsl-support"))
 

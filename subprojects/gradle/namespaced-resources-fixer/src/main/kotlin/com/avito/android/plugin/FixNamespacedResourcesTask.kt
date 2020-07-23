@@ -5,10 +5,8 @@ import com.avito.impact.configuration.internalModule
 import com.avito.impact.util.AndroidManifest
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
@@ -19,9 +17,8 @@ abstract class FixNamespacedResourcesTask @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {
 
-    @Suppress("UnstableApiUsage")
-    @InputFile
-    val file: RegularFileProperty = objects.fileProperty()
+    @Input
+    val filesPath = objects.property<String>()
 
     @Optional
     @Input
@@ -30,7 +27,7 @@ abstract class FixNamespacedResourcesTask @Inject constructor(
     @TaskAction
     fun check() {
         require(modulePath.isPresent) {
-            "Can't find an Android application module with $FILES_PREFIX_PROPERTY=${file.get()} files inside"
+            "Can't find an Android application module with $FILES_PREFIX_PROPERTY=${filesPath.get()} files inside"
         }
 
         val app: Project = requireNotNull(
@@ -63,20 +60,23 @@ abstract class FixNamespacedResourcesTask @Inject constructor(
     }
 
     private fun fixFiles(app: AndroidModule, libraries: List<AndroidModule>) {
-        val file: File = file.get().asFile
-        val files: Set<File> = if (file.isDirectory) {
+        val fixer = FileResourcesFixer()
+        getFiles().forEach { file ->
+            val newContent = fixer.fixMergedResources(file, app, libraries)
+            if (newContent != null) {
+                file.writeText(newContent)
+            }
+        }
+    }
+
+    private fun getFiles(): Set<File> {
+        val file = project.file(filesPath)
+        return if (file.isDirectory) {
             file.walk()
                 .filter { it.extension == "kt" }
                 .toSet()
         } else {
             setOf(file)
-        }
-        val fixer = FileResourcesFixer()
-        files.forEach { file ->
-            val newContent = fixer.fixMergedResources(file, app, libraries)
-            if (newContent != null) {
-                file.writeText(newContent)
-            }
         }
     }
 
