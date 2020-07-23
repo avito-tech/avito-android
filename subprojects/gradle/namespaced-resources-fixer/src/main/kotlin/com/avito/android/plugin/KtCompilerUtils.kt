@@ -4,7 +4,7 @@ import io.github.detekt.parser.KtCompiler
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-// TODO: Find a way to create a PsiElement without file compilation (like in PsiJavaParserFacade)
+// TODO: Find a way to create a PsiElement without file compilation (like in PsiJavaParserFacade, PsiElementFactory)
 internal fun KtCompiler.createKtFile(content: String): KtFile {
     val tempFile = File.createTempFile("synthetic-", ".kt")
     tempFile.deleteOnExit()

@@ -38,14 +38,14 @@ class FileResourcesFixerTest {
         val libraries = emptyList<AndroidModule>()
         val result = fix(
             """
-            import com.avito.android.R
+            import com.app.R
             class Screen {}
         """,
             app, libraries
         )
         assertThat(result).isEqualTo(
             """
-            import com.avito.android.R
+            import com.app.R
             class Screen {}
         """
         )
@@ -53,88 +53,127 @@ class FileResourcesFixerTest {
 
     @Test
     fun `change nothing - ambiguous imports`() {
-        val app = AndroidModule("com.avito.android.R", emptyList())
+        val app = AndroidModule("com.app.R", emptyList())
         val libraries = listOf(
             AndroidModule("com.avito.android.a", listOf("container")),
             AndroidModule("com.avito.android.b", listOf("container"))
         )
         val result = fix(
             """
-            import com.avito.android.R
+            import com.app.R
 
-            class Screen {
-                val id = R.id.container
-            }
-        """,
-            app, libraries
-        )
-        assertThat(result).isEqualTo(
-            """
-            import com.avito.android.R
-
-            class Screen {
-                val id = R.id.container
-            }
-        """
-        )
-    }
-
-    @Test
-    fun `replace library id - simple property`() {
-        val app = AndroidModule("com.avito.android.R", emptyList())
-        val libraries = listOf(
-            AndroidModule("com.avito.android.library", listOf("container"))
-        )
-        val result = fix(
-            """
-            import com.avito.android.R
-
-            class Screen {
-                val id = R.id.container
-            }
+            val id = R.id.container
         """.trimIndent(),
             app, libraries
         )
         assertThat(result).isEqualTo(
             """
-            import com.avito.android.R
-            import com.avito.android.library.R as library_R
+            import com.app.R
 
-            class Screen {
-                val id = library_R.id.container
-            }
+            val id = R.id.container
+        """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `replace library id - simple property`() {
+        val app = AndroidModule("com.app.R", emptyList())
+        val libraries = listOf(
+            AndroidModule("com.library", listOf("container"))
+        )
+        val result = fix(
+            """
+            import com.app.R
+
+            val id = R.id.container
+        """.trimIndent(),
+            app, libraries
+        )
+        assertThat(result).isEqualTo(
+            """
+            import com.app.R
+            import com.library.R as library_R
+
+            val id = library_R.id.container
+        """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `replace library id - simple property with alias to R`() {
+        val app = AndroidModule("com.app.R", emptyList())
+        val libraries = listOf(
+            AndroidModule("com.library", listOf("container"))
+        )
+        val result = fix(
+            """
+            import com.app.R as app_R
+
+            val id = app_R.id.container
+        """.trimIndent(),
+            app, libraries
+        )
+        assertThat(result).isEqualTo(
+            """
+            import com.app.R as app_R
+            import com.library.R as library_R
+
+            val id = library_R.id.container
+        """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `replace library id - two simple properties with the same name`() {
+        val app = AndroidModule("com.app.R", emptyList())
+        val libraries = listOf(
+            AndroidModule("com.library", listOf("container"))
+        )
+        val result = fix(
+            """
+            import com.app.R as app_R
+            import com.library.R as library_R
+
+            val id1 = app_R.id.container
+            val id2 = library_R.id.container
+        """.trimIndent(),
+            app, libraries
+        )
+        assertThat(result).isEqualTo(
+            """
+            import com.app.R as app_R
+            import com.library.R as library_R
+
+            val id1 = library_R.id.container
+            val id2 = library_R.id.container
         """.trimIndent()
         )
     }
 
     @Test
     fun `replace library id - function argument`() {
-        val app = AndroidModule("com.avito.android.R", emptyList())
+        val app = AndroidModule("com.app.R", emptyList())
         val libraries = listOf(
-            AndroidModule("com.avito.android.library", listOf("icon"))
+            AndroidModule("com.library", listOf("icon"))
         )
         val result = fix(
             """
             import androidx.test.espresso.matcher.ViewMatchers
-            import com.avito.android.R
-            import com.avito.android.test.page_object.ViewElement
+            import com.app.R
+            import com.library.ViewElement
 
-            class Element() : ViewElement {
-                val icon = element<ViewElement>(ViewMatchers.withId(R.id.icon))
-            }
+            val icon = element<ViewElement>(ViewMatchers.withId(R.id.icon))
         """.trimIndent(),
             app, libraries
         )
         assertThat(result).isEqualTo(
             """
             import androidx.test.espresso.matcher.ViewMatchers
-            import com.avito.android.R
-            import com.avito.android.test.page_object.ViewElement
-            import com.avito.android.library.R as library_R
+            import com.app.R
+            import com.library.ViewElement
+            import com.library.R as library_R
 
-            class Element() : ViewElement {
-                val icon = element<ViewElement>(ViewMatchers.withId(library_R.id.icon))
-            }
+            val icon = element<ViewElement>(ViewMatchers.withId(library_R.id.icon))
         """.trimIndent()
         )
     }

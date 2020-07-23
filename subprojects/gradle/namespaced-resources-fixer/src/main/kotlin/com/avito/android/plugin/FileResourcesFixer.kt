@@ -128,10 +128,13 @@ internal class FileResourcesFixer {
         val newImports: List<KtImportDirective> = modules.map {
             createImportForModule(it)
         }
-        val importList = requireNotNull(file.children.find { it is KtImportList })
+        val importList: KtImportList = requireNotNull(file.children.find { it is KtImportList }) as KtImportList
         newImports.forEach { newImport ->
-            val imports = importList.children.filterIsInstance<KtImportDirective>()
-            if (!imports.contains(newImport)) {
+            val hasNewImport: Boolean = importList.imports
+                .any {
+                    it.importedReference?.text == newImport.importedReference?.text
+                }
+            if (!hasNewImport) {
                 importList.add(createNewLineElement())
                 importList.add(newImport)
             }
