@@ -17,42 +17,48 @@ class FileResourcesFixerTest {
 
     @Test
     fun `change nothing - has no import with merged R class`() {
-        val app = AndroidModule("com.avito.android.R", emptyList())
-        val libraries = emptyList<AndroidModule>()
+        val app = AndroidModule("com.app.R", emptyList())
+        val libraries = listOf(
+            AndroidModule("com.library", listOf("container"))
+        )
         val result = fix(
             """
-            class Screen {}
-        """,
+            import com.library.R
+            val id = R.id.container
+        """.trimIndent(),
             app, libraries
         )
         assertThat(result).isEqualTo(
             """
-            class Screen {}
-        """
+            import com.library.R
+            val id = R.id.container
+        """.trimIndent()
         )
     }
 
     @Test
-    fun `change nothing - not used import`() {
-        val app = AndroidModule("com.avito.android.R", emptyList())
+    fun `change nothing - not used merged R class`() {
+        val app = AndroidModule("com.app.R", emptyList())
         val libraries = emptyList<AndroidModule>()
         val result = fix(
             """
             import com.app.R
-            class Screen {}
-        """,
+            import com.library.R
+            val id = R.id.container
+        """.trimIndent(),
             app, libraries
         )
         assertThat(result).isEqualTo(
             """
             import com.app.R
-            class Screen {}
-        """
+            import com.library.R
+            val id = R.id.container
+        """.trimIndent()
         )
     }
 
     @Test
-    fun `change nothing - ambiguous imports`() {
+    fun `change nothing - ambiguous resource`() {
         val app = AndroidModule("com.app.R", emptyList())
         val libraries = listOf(
             AndroidModule("com.avito.android.a", listOf("container")),
@@ -76,7 +82,7 @@ class FileResourcesFixerTest {
     }
 
     @Test
-    fun `replace library id - simple property`() {
+    fun `replace library id - in property`() {
         val app = AndroidModule("com.app.R", emptyList())
         val libraries = listOf(
             AndroidModule("com.library", listOf("container"))
@@ -100,58 +106,7 @@ class FileResourcesFixerTest {
     }
 
     @Test
-    fun `replace library id - simple property with alias to R`() {
-        val app = AndroidModule("com.app.R", emptyList())
-        val libraries = listOf(
-            AndroidModule("com.library", listOf("container"))
-        )
-        val result = fix(
-            """
-            import com.app.R as app_R
-
-            val id = app_R.id.container
-        """.trimIndent(),
-            app, libraries
-        )
-        assertThat(result).isEqualTo(
-            """
-            import com.app.R as app_R
-            import com.library.R as library_R
-
-            val id = library_R.id.container
-        """.trimIndent()
-        )
-    }
-
-    @Test
-    fun `replace library id - two simple properties with the same name`() {
-        val app = AndroidModule("com.app.R", emptyList())
-        val libraries = listOf(
-            AndroidModule("com.library", listOf("container"))
-        )
-        val result = fix(
-            """
-            import com.app.R as app_R
-            import com.library.R as library_R
-
-            val id1 = app_R.id.container
-            val id2 = library_R.id.container
-        """.trimIndent(),
-            app, libraries
-        )
-        assertThat(result).isEqualTo(
-            """
-            import com.app.R as app_R
-            import com.library.R as library_R
-
-            val id1 = library_R.id.container
-            val id2 = library_R.id.container
-        """.trimIndent()
-        )
-    }
-
-    @Test
-    fun `replace library id - function argument`() {
+    fun `replace library id - in function argument`() {
         val app = AndroidModule("com.app.R", emptyList())
         val libraries = listOf(
             AndroidModule("com.library", listOf("icon"))
@@ -174,6 +129,84 @@ class FileResourcesFixerTest {
             import com.library.R as library_R
 
             val icon = element<ViewElement>(ViewMatchers.withId(library_R.id.icon))
+        """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `replace library id - merged R has alias`() {
+        val app = AndroidModule("com.app.R", emptyList())
+        val libraries = listOf(
+            AndroidModule("com.library", listOf("container"))
+        )
+        val result = fix(
+            """
+            import com.app.R as custom_alias_R
+
+            val id = custom_alias_R.id.container
+        """.trimIndent(),
+            app, libraries
+        )
+        assertThat(result).isEqualTo(
+            """
+            import com.app.R as custom_alias_R
+            import com.library.R as library_R
+
+            val id = library_R.id.container
+        """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `replace library id - library R has alias`() {
+        val app = AndroidModule("com.app.R", emptyList())
+        val libraries = listOf(
+            AndroidModule("com.library", listOf("container"))
+        )
+        val result = fix(
+            """
+            import com.app.R
+            import com.library.R as custom_alias_R
+
+            val id1 = R.id.container
+            val id2 = custom_alias_R.id.container
+        """.trimIndent(),
+            app, libraries
+        )
+        assertThat(result).isEqualTo(
+            """
+            import com.app.R
+            import com.library.R as custom_alias_R
+
+            val id1 = custom_alias_R.id.container
+            val id2 = custom_alias_R.id.container
+        """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `replace library id - app and library has aliases`() {
+        val app = AndroidModule("com.app.R", emptyList())
+        val libraries = listOf(
+            AndroidModule("com.library", listOf("container"))
+        )
+        val result = fix(
+            """
+            import com.app.R as app_R
+            import com.library.R as library_R
+
+            val id1 = app_R.id.container
+            val id2 = library_R.id.container
+        """.trimIndent(),
+            app, libraries
+        )
+        assertThat(result).isEqualTo(
+            """
+            import com.app.R as app_R
+            import com.library.R as library_R
+
+            val id1 = library_R.id.container
+            val id2 = library_R.id.container
         """.trimIndent()
         )
     }
