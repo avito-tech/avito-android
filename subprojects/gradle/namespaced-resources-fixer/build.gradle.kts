@@ -25,7 +25,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("namespacedResourcesFixer") {
-            id = "com.avito.android.namespacedResourcesFixer"
+            id = "com.avito.android.namespaced-resources-fixer"
             implementationClass = "com.avito.android.plugin.NamespacedResourcesFixerPlugin"
             displayName = "Namespaced resources fixer plugin"
         }
