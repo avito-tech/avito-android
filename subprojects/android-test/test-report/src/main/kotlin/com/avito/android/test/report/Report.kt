@@ -6,13 +6,10 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.report.model.Incident
-import io.sentry.SentryClient
 
 interface Report {
 
     val isFirstStepOrPrecondition: Boolean
-
-    val sentry: SentryClient
 
     fun initTestCase(testMetadata: TestMetadata)
 

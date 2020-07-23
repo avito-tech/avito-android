@@ -27,7 +27,6 @@ import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import io.sentry.SentryClient
 import okhttp3.OkHttpClient
 import java.io.File
 
@@ -43,8 +42,6 @@ class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
     httpClient: OkHttpClient,
     fileStorageUrl: String,
-    // TODO hide sentry
-    override val sentry: SentryClient,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
     private val logger: Logger,
