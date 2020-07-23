@@ -45,7 +45,17 @@ class ReportImplementation(
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
     private val logger: Logger,
-    private val transport: List<Transport>
+    private val transport: List<Transport>,
+    private val remoteStorage: RemoteStorage = RemoteStorage.create(
+        logger = logger,
+        httpClient = httpClient,
+        endpoint = fileStorageUrl
+    ),
+    private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
+        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
+        remoteStorage = remoteStorage,
+        logger = logger
+    )
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
@@ -53,17 +63,6 @@ class ReportImplementation(
 
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 
-    private val remoteStorage: RemoteStorage = RemoteStorage.create(
-        logger = logger,
-        httpClient = httpClient,
-        endpoint = fileStorageUrl
-    )
-
-    private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
-        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
-        remoteStorage = remoteStorage,
-        logger = logger
-    )
 
     /**
      * Entries that occurred before first step/precondition
@@ -275,7 +274,7 @@ class ReportImplementation(
             StepResult(
                 timestamp = timeProvider.nowInSeconds(),
                 number = started.stepNumber++,
-                title = "Syntetic step"
+                title = "Synthetic step"
             )
         }?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(html)
@@ -298,7 +297,7 @@ class ReportImplementation(
             StepResult(
                 timestamp = timeProvider.nowInSeconds(),
                 number = started.stepNumber++,
-                title = "Syntetic step"
+                title = "Synthetic step"
             )
         }?.entryList ?: earlyEntries
         entriesList.add(entry)

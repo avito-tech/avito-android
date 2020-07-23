@@ -12,7 +12,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Rule
 import org.junit.Test
 
-internal class ReportTest {
+class ReportTest {
 
     @get:Rule
     val report = ReportRule()
