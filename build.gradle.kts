@@ -5,9 +5,6 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryPlugin
 import com.avito.instrumentation.InstrumentationTestsPlugin
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -69,8 +66,8 @@ subprojects {
         }
     }
 
-    plugins.withType<com.android.build.gradle.AppPlugin> {
-        configure<com.android.build.gradle.BaseExtension> {
+    plugins.withType<AppPlugin> {
+        configure<BaseExtension> {
             packagingOptions {
                 exclude("META-INF/*.kotlin_module")
             }
@@ -164,13 +161,13 @@ subprojects {
                 targetsContainer.register("api28") {
                     deviceName = "API28"
 
-                    scheduling = SchedulingConfiguration().apply {
-                        quota = QuotaConfiguration().apply {
+                    scheduling {
+                        quota {
                             retryCount = 1
                             minimumSuccessCount = 1
                         }
 
-                        reservation = TestsBasedDevicesReservationConfiguration().apply {
+                        testsCountBasedReservation {
                             // Replace 27 with 28 when 2020.6.1 will be released
                             //device = com.avito.instrumentation.reservation.request.Device.LocalEmulator.device(28, "Android_SDK_built_for_x86_64")
                             device = Device.LocalEmulator.device(27)
@@ -215,13 +212,13 @@ subprojects {
                     targetsContainer.register("api22") {
                         deviceName = "API22"
 
-                        scheduling = SchedulingConfiguration().apply {
-                            quota = QuotaConfiguration().apply {
+                        scheduling {
+                            quota {
                                 retryCount = 1
                                 minimumSuccessCount = 1
                             }
 
-                            reservation = TestsBasedDevicesReservationConfiguration().apply {
+                            testsCountBasedReservation {
                                 device = emulator22
                                 maximum = 50
                                 minimum = 2
@@ -233,13 +230,13 @@ subprojects {
                     targetsContainer.register("api28") {
                         deviceName = "API28"
 
-                        scheduling = SchedulingConfiguration().apply {
-                            quota = QuotaConfiguration().apply {
+                        scheduling {
+                            quota {
                                 retryCount = 1
                                 minimumSuccessCount = 1
                             }
 
-                            reservation = TestsBasedDevicesReservationConfiguration().apply {
+                            testsCountBasedReservation {
                                 device = emulator28
                                 maximum = 50
                                 minimum = 2
@@ -258,13 +255,13 @@ subprojects {
                     targetsContainer.register("api28") {
                         deviceName = "API28"
 
-                        scheduling = SchedulingConfiguration().apply {
-                            quota = QuotaConfiguration().apply {
+                        scheduling {
+                            quota {
                                 retryCount = 1
                                 minimumSuccessCount = 1
                             }
 
-                            reservation = TestsBasedDevicesReservationConfiguration().apply {
+                            testsCountBasedReservation {
                                 device = emulator28
                                 maximum = 1
                                 minimum = 1
