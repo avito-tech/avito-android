@@ -27,7 +27,9 @@ class MockDispatcher(
 
     override fun dispatch(request: RecordedRequest): MockResponse {
 
-        capturers.find { it.requestMatcher.invoke(RequestData(request)) }?.run {
+        val requestData = RequestData(request)
+
+        capturers.find { it.requestMatcher.invoke(requestData) }?.run {
             capture(request)
             logger("request captured: $request")
         }
@@ -37,7 +39,7 @@ class MockDispatcher(
          *
          * @see "MBS-5878"
          */
-        val matchedMock = mocks.findLast { it.requestMatcher.invoke(RequestData(request)) }
+        val matchedMock = mocks.findLast { it.requestMatcher.invoke(requestData) }
         val response = matchedMock?.response ?: unmockedResponse
 
         if (matchedMock?.removeAfterMatched == true) mocks.remove(matchedMock)
