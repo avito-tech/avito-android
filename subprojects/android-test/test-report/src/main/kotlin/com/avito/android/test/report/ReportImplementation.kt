@@ -287,12 +287,12 @@ class ReportImplementation(
 
     @Synchronized
     override fun addComment(comment: String) {
-        addEntry(Entry.Comment(comment, timeProvider.nowInSeconds()))
+        addEntry(Entry.Comment(comment, timeProvider.nowInMillis()))
     }
 
     @Synchronized
     override fun addAssertion(assertionMessage: String) {
-        addEntry(Entry.Check(assertionMessage, timeProvider.nowInSeconds()))
+        addEntry(Entry.Check(assertionMessage, timeProvider.nowInMillis()))
     }
 
     private fun addEntry(entry: Entry) {
@@ -339,7 +339,7 @@ class ReportImplementation(
                 Entry.File(
                     comment = it.comment,
                     fileAddress = it.url,
-                    timeInSeconds = it.timeInSeconds,
+                    timeInMs = it.timeInMs,
                     fileType = when (it.uploadRequest) {
                         is RemoteStorage.Request.FileRequest.Image -> Entry.File.Type.img_png
                         is RemoteStorage.Request.FileRequest.Video -> Entry.File.Type.video

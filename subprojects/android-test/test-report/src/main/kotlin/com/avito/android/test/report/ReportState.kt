@@ -53,13 +53,13 @@ sealed class ReportState {
             internal fun sortStepEntries() {
                 preconditionStepList.forEach {
                     it.entryList = it.entryList
-                        .sortedBy { it.timeInSeconds }
+                        .sortedBy { it.timeInMs }
                         .distinctCounted()
                         .toMutableList()
                 }
                 testCaseStepList.forEach {
                     it.entryList = it.entryList
-                        .sortedBy { it.timeInSeconds }
+                        .sortedBy { it.timeInMs }
                         .distinctCounted()
                         .toMutableList()
                 }

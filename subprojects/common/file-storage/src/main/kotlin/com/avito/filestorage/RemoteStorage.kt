@@ -57,7 +57,7 @@ interface RemoteStorage {
         data class Success(
             val comment: String,
             val url: String,
-            val timeInSeconds: Long,
+            val timeInMs: Long,
             val uploadRequest: Request
         ) : Result()
 
