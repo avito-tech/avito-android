@@ -2,7 +2,7 @@ package com.avito.android.util.matcher
 
 import com.avito.android.util.matcher.IsEqualIgnoringAllWhiteSpace.Companion.equalToIgnoringAllWhiteSpace
 import org.hamcrest.Matcher
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class IsEqualIgnoringAllWhiteSpaceTest : AbstractMatcherTest() {
 

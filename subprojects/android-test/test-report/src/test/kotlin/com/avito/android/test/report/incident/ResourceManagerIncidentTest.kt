@@ -3,7 +3,7 @@ package com.avito.android.test.report.incident
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.IncidentElement
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ResourceManagerIncidentTest {
 
