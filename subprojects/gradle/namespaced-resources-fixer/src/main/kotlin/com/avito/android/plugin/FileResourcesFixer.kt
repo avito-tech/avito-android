@@ -1,13 +1,14 @@
 package com.avito.android.plugin
 
+import com.avito.android.plugin.internal.ElementsFactory
+import com.avito.android.plugin.internal.findImport
+import com.avito.android.plugin.internal.parse
 import io.github.detekt.parser.KtCompiler
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportList
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import java.io.File
 
@@ -17,6 +18,7 @@ import java.io.File
 internal class FileResourcesFixer {
 
     private val compiler = KtCompiler()
+    private val elementsFactory = ElementsFactory()
 
     /**
      * @return new file content or null if nothing changed
@@ -34,28 +36,31 @@ internal class FileResourcesFixer {
 
         val uniqueResources: List<ResourceId> = findUniqueResources(libraries) // TODO: support string, drawable, ...
 
-        val replacedModules = replaceReferences(references, uniqueResources)
-        fixImports(ktFile, replacedModules)
+        replaceReferences(ktFile, references, uniqueResources)
 
         return ktFile.text
     }
 
     private fun replaceReferences(
+        file: KtFile,
         rClassReferences: List<PsiElement>,
         uniqueResources: List<ResourceId>
-    ): Set<AndroidModule> {
-        val replacedModules = mutableSetOf<AndroidModule>()
+    ) {
+        val imports = requireNotNull(file.importList)
+
         rClassReferences.forEach { refElement ->
             val resource = uniqueResources.find { resource ->
                 refElement.text.endsWith(".id.${resource.id}")
             }
             if (resource != null) {
-                val newReference = createElementForResourceRef(resource)
-                refElement.replace(newReference)
-                replacedModules.add(resource.module)
+                val replacement = createReplacementForResource(imports, resource)
+                refElement.replace(replacement.element)
+                if (replacement.importDirective != null) {
+                    imports.add(elementsFactory.createNewLine())
+                    imports.add(replacement.importDirective)
+                }
             }
         }
-        return replacedModules
     }
 
     private class MergedRClassReferencesFinder(
@@ -82,13 +87,6 @@ internal class FileResourcesFixer {
                 && !partialDotReferenceExpression
                 && element.text.startsWith(importElement.referencedClass + ".")
         }
-
-        private val KtImportDirective.referencedClass: String
-            get() = if (aliasName == null) {
-                children.last().children[1].text
-            } else {
-                aliasName!!
-            }
     }
 
     private fun findMergedRImport(file: KtFile, app: AndroidModule): KtImportDirective? {
@@ -124,49 +122,27 @@ internal class FileResourcesFixer {
         return map.filter { it.value == 1 }.keys
     }
 
-    private fun fixImports(file: KtFile, modules: Set<AndroidModule>) {
-        val newImports: List<KtImportDirective> = modules.map {
-            createImportForModule(it)
-        }
-        val importList: KtImportList = requireNotNull(file.children.find { it is KtImportList }) as KtImportList
-        newImports.forEach { newImport ->
-            val hasNewImport: Boolean = importList.imports
-                .any {
-                    it.importedReference?.text == newImport.importedReference?.text
-                }
-            if (!hasNewImport) {
-                importList.add(createNewLineElement())
-                importList.add(newImport)
-            }
-        }
+    private fun createReplacementForResource(
+        imports: KtImportList,
+        resource: ResourceId
+    ): ClassReplacementResolution {
+        val rClassName = resource.module.packageId + ".R"
+        val oldImport = imports.findImport(rClassName)
+        val import = oldImport
+            ?: elementsFactory.createImportDirective(rClassName, resource.module.packageId.substringAfterLast('.') + "_R")
+
+        val element = elementsFactory.createExpression("${import.referencedClass}.id.${resource.id}")
+
+        val newImport = if (oldImport == null) import else null
+        return ClassReplacementResolution(element, newImport)
     }
 
-    private fun createImportForModule(module: AndroidModule): KtImportDirective {
-        val alias = importAliasForResource(module)
-
-        val file = compiler.createKtFile("import ${module.packageId}.R as $alias")
-        return file.children.find { it is KtImportList }!!.children[0] as KtImportDirective
-    }
-
-    private fun createNewLineElement(): PsiWhiteSpace {
-        val file = compiler.createKtFile(
-            """
-
-            import R
-            
-            """.trimIndent()
-        )
-        return file.children.find { it is PsiWhiteSpace }!! as PsiWhiteSpace
-    }
-
-    private fun createElementForResourceRef(resource: ResourceId): PsiElement {
-        val alias = importAliasForResource(resource.module)
-
-        val file = compiler.createKtFile("val id = $alias.id.${resource.id}")
-        return file.children.find { it is KtProperty }!!.children[0]
-    }
-
-    private fun importAliasForResource(module: AndroidModule): String =
-        module.packageId.substringAfterLast('.') + "_R"
-
+    private class ClassReplacementResolution(val element: PsiElement, val importDirective: KtImportDirective?)
 }
+
+private val KtImportDirective.referencedClass: String
+    get() = if (aliasName == null) {
+        children.last().children[1].text
+    } else {
+        aliasName!!
+    }

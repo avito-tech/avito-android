@@ -24,6 +24,9 @@ open class NamespacedResourcesFixerPlugin : Plugin<Project> {
         require(project.isRoot()) {
             "Plugin must be applied to the root project"
         }
+        check(project.pluginManager.hasPlugin("com.avito.android.impact")) {
+            "'com.avito.android.namespacedResourcesFixer' plugin requires 'com.avito.android.impact' plugin"
+        }
 
         val filesPrefix: String =
             project.getOptionalStringProperty(FILES_PREFIX_PROPERTY, nullIfBlank = true) ?: return
@@ -31,7 +34,10 @@ open class NamespacedResourcesFixerPlugin : Plugin<Project> {
         val file = project.file(filesPrefix)
 
         val fixTask = project.tasks.register("fixNamespacedResources", FixNamespacedResourcesTask::class.java) {
-            it.file.set(file)
+            require(file.exists()) {
+                "File $filesPrefix should exist"
+            }
+            it.filesPath.set(filesPrefix)
         }
         project.subprojects
             .forEach { subProject ->
