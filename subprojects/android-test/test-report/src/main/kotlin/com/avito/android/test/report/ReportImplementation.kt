@@ -27,6 +27,7 @@ import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import io.sentry.SentryClient
 import okhttp3.OkHttpClient
 import java.io.File
 
@@ -42,26 +43,31 @@ class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
     httpClient: OkHttpClient,
     fileStorageUrl: String,
+    // TODO hide sentry
+    override val sentry: SentryClient,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
     private val logger: Logger,
-    private val transport: List<Transport>,
+    private val transport: List<Transport>
+) : Report,
+    StepLifecycleListener by StepLifecycleNotifier,
+    TestLifecycleListener by TestLifecycleNotifier,
+    PreconditionLifecycleListener by PreconditionLifecycleNotifier,
+    ReportStateProvider {
+
+    private val timeProvider: TimeProvider = DefaultTimeProvider()
+
     private val remoteStorage: RemoteStorage = RemoteStorage.create(
         logger = logger,
         httpClient = httpClient,
         endpoint = fileStorageUrl
-    ),
+    )
+
     private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
         screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
         remoteStorage = remoteStorage,
         logger = logger
-    ),
-    private val timeProvider: TimeProvider = DefaultTimeProvider()
-) : Report,
-    StepLifecycleListener by StepLifecycleNotifier,
-    TestLifecycleListener by TestLifecycleNotifier,
-    PreconditionLifecycleListener by PreconditionLifecycleNotifier {
-
+    )
 
     /**
      * Entries that occurred before first step/precondition
@@ -69,25 +75,44 @@ class ReportImplementation(
     private val earlyEntries = mutableListOf<Entry>()
     private val earlyFuturesUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
 
+    private val incidentEntries = mutableListOf<Entry>()
     private val incidentFutureUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
 
     private var state: ReportState = ReportState.Nothing
 
     override val isFirstStepOrPrecondition: Boolean
-        get() = state.isFirstStepOrPrecondition
+        get() {
+            val currentState = state
 
+            return currentState is ReportState.Nothing || currentState is ReportState.Initialized ||
+                (currentState is ReportState.Initialized.Started && (currentState.preconditionNumber == 1 ||
+                    // на случай если нет precondition, а сразу начинаем со step
+                    (currentState.preconditionNumber == 0 && currentState.stepNumber == 1)))
+        }
+
+    // Используется только для тестов
+    @Synchronized
+    override fun getCurrentState(): ReportState = state
 
     @Synchronized
     override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
-        checkStateIs<ReportState.Nothing>()
-        state = ReportState.Initialized.NotStarted(testMetadata)
+        val currentState = state
+
+        if (currentState !is ReportState.Nothing) {
+            throw RuntimeException("Reporter has invalid state. Expected state: Nothing. Actual state: $state")
+        }
+
+        state = ReportState.Initialized.WaitingToStart(testMetadata)
     }
 
     @Synchronized
     override fun startTestCase(): Unit = methodExecutionTracing("startTestCase") {
-        val currentState = getCastedState<ReportState.Initialized.NotStarted>()
+        val currentState = state
+        if (currentState !is ReportState.Initialized.WaitingToStart) {
+            throw RuntimeException("Reporter has invalid state. Expected state: Initialized.WaitingToStart. Actual state: $state")
+        }
 
-        val started = ReportState.Initialized.Started(
+        state = ReportState.Initialized.Started(
             testMetadata = currentState.testMetadata,
             currentStep = null,
             incident = null,
@@ -95,17 +120,23 @@ class ReportImplementation(
             preconditionNumber = 0,
             startTime = timeProvider.nowInSeconds()
         )
-        state = started
-        beforeTestStart(started)
+
+        beforeTestStart(state as ReportState.Initialized.Started)
     }
 
     @Synchronized
     override fun updateTestCase(update: ReportState.Initialized.Started.() -> Unit): Unit =
         methodExecutionTracing("updateTestCase") {
-            val currentState = getCastedState<ReportState.Initialized.Started>()
-            beforeTestUpdate(currentState)
-            update(currentState)
-            afterTestUpdate(currentState)
+            val currentState = state
+            if (currentState !is ReportState.Initialized.Started) {
+                throw RuntimeException("Reporter has invalid state. Expected state: Initialized. Actual state: $state")
+            }
+
+            currentState.apply {
+                beforeTestUpdate(this)
+                update(currentState)
+                afterTestUpdate(this)
+            }
         }
 
     @Synchronized
@@ -123,7 +154,10 @@ class ReportImplementation(
         screenshot: FutureValue<RemoteStorage.Result>?,
         type: Incident.Type
     ) = methodExecutionTracing("registerIncident") {
-        val currentState = getCastedState<ReportState.Initialized>()
+        val currentState = state
+        if (currentState !is ReportState.Initialized) {
+            throw RuntimeException("Reporter has invalid state. Expected state: Initialized. Actual state: $state")
+        }
 
         if (currentState.incident == null) {
             val incidentChain = IncidentChain.Impl(
@@ -161,7 +195,10 @@ class ReportImplementation(
     @Synchronized
     override fun reportTestCase(): ReportState.Initialized.Started =
         methodExecutionTracing("reportTestCase") {
-            val startedState = getCastedState<ReportState.Initialized.Started>()
+            val startedState = state
+            if (startedState !is ReportState.Initialized.Started) {
+                throw RuntimeException("Reporter has invalid state. Expected state: Started. Actual state: $state")
+            }
             startedState.endTime = timeProvider.nowInSeconds()
 
             try {
@@ -169,76 +206,133 @@ class ReportImplementation(
             } catch (t: Throwable) {
                 logger.exception("Failed while afterTestStop were executing", t)
             }
-            earlyEntries.addAll(
-                earlyFuturesUploads.getInitializedEntries()
-            )
-            startedState.waitUploads()
+
+            waitUploads(startedState)
+
             startedState.addEarlyEntries(earlyEntries)
             startedState.sortStepEntries()
+
             startedState.incident?.appendFutureEntries()
             startedState.performanceJson = performanceTestReporter.getAsJson()
-            startedState.writeTestCase()
+
+            writeTestCase(currentState = startedState)
+
             startedState
         }
+
+    /**
+     * add early entries to first precondition/step
+     */
+    private fun ReportState.Initialized.Started.addEarlyEntries(entries: List<Entry>) {
+        val firstPreconditionOrStep =
+            preconditionStepList.firstOrNull() ?: testCaseStepList.firstOrNull()
+
+        firstPreconditionOrStep?.entryList?.addAll(earlyEntries)
+    }
+
+    private fun ReportState.Initialized.Started.sortStepEntries() {
+        preconditionStepList.forEach {
+            it.entryList = it.entryList
+                .sortedBy { it.timeInSeconds }
+                .distinctCounted()
+                .toMutableList()
+        }
+        testCaseStepList.forEach {
+            it.entryList = it.entryList
+                .sortedBy { it.timeInSeconds }
+                .distinctCounted()
+                .toMutableList()
+        }
+    }
 
     @Synchronized
     override fun startPrecondition(step: StepResult): Unit =
         methodExecutionTracing("startPrecondition") {
-            val currentState = getCastedState<ReportState.Initialized.Started>()
+            val currentState = state
+            if (currentState !is ReportState.Initialized.Started) {
+                throw RuntimeException("Reporter has invalid state. Expected state: Started. Actual state: $state")
+            }
 
             currentState.currentStep = step
 
-            step.timestamp = timeProvider.nowInSeconds()
-            step.number = currentState.preconditionNumber++
-            beforePreconditionStart(step)
+            step.apply {
+                timestamp = timeProvider.nowInSeconds()
+                number = currentState.preconditionNumber++
+                beforePreconditionStart(this)
+            }
         }
 
     @Synchronized
     override fun stopPrecondition(): Unit = methodExecutionTracing("stopPrecondition") {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = state
+        if (currentState !is ReportState.Initialized.Started) {
+            throw RuntimeException("Reporter has invalid state. Expected state: Started. Actual state: $state")
+        }
 
         val currentStep = currentState.currentStep
         if (currentStep == null) {
             throw RuntimeException("Couldn't stop precondition because it hasn't started yet")
         }
 
-        currentState.preconditionStepList.add(currentStep)
-        afterPreconditionStop(currentStep)
-        currentState.currentStep = null
+        currentStep.apply {
+            currentState.preconditionStepList.add(this)
+            afterPreconditionStop(this)
+        }
     }
 
     @Synchronized
     override fun startStep(step: StepResult): Unit = methodExecutionTracing("startStep") {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = state
+        if (currentState !is ReportState.Initialized.Started) {
+            throw RuntimeException("Reporter has invalid state. Expected state: Started. Actual state: $state")
+        }
+
         currentState.currentStep = step
-        step.timestamp = timeProvider.nowInSeconds()
-        step.number = currentState.stepNumber++
-        beforeStepStart(step)
+
+        step.apply {
+            timestamp = timeProvider.nowInSeconds()
+            number = currentState.stepNumber++
+            beforeStepStart(this)
+        }
     }
 
     @Synchronized
-    override fun stopStep(): Unit = methodExecutionTracing("stopStep") {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
-        val currentStep = requireNotNull(currentState.currentStep) {
-            "Couldn't stop step because it hasn't started yet"
-        }
-
-        currentState.testCaseStepList.add(currentStep)
-        afterStepStop(currentStep)
-        currentState.currentStep = null
-    }
-
-    private fun updateStep(update: StepResult.() -> Unit): Unit =
+    override fun updateStep(update: StepResult.() -> Unit): Unit =
         methodExecutionTracing("updateStep") {
-            val currentState = getCastedState<ReportState.Initialized.Started>()
-            val currentStep = requireNotNull(currentState.currentStep) {
-                "Couldn't upate step because it hasn't started yet"
+            val currentState = state
+            if (currentState !is ReportState.Initialized.Started) {
+                throw RuntimeException("Reporter has invalid state. Expected state: Started. Actual state: $state")
             }
 
-            beforeStepUpdate(currentStep)
-            currentStep.update()
-            afterStepUpdate(currentStep)
+            val currentStep = currentState.currentStep
+            if (currentStep == null) {
+                throw RuntimeException("Couldn't stop precondition because it hasn't started yet")
+            }
+
+            currentStep.apply {
+                beforeStepUpdate(this)
+                update()
+                afterStepUpdate(this)
+            }
         }
+
+    @Synchronized
+    override fun stopStep(): Unit = methodExecutionTracing("stopStep") {
+        val currentState = state
+        if (currentState !is ReportState.Initialized.Started) {
+            throw RuntimeException("Reporter has invalid state. Expected state: Started. Actual state: $state")
+        }
+
+        val currentStep = currentState.currentStep
+        if (currentStep == null) {
+            throw RuntimeException("Couldn't stop precondition because it hasn't started yet")
+        }
+
+        currentStep.apply {
+            currentState.testCaseStepList.add(this)
+            afterStepStop(this)
+        }
+    }
 
     @Synchronized
     override fun makeScreenshot(comment: String): FutureValue<RemoteStorage.Result>? =
@@ -261,24 +355,33 @@ class ReportImplementation(
 
     @Synchronized
     override fun addHtml(label: String, content: String) {
-        val html = remoteStorage.upload(
+        remoteStorage.upload(
             uploadRequest = RemoteStorage.Request.ContentRequest(
                 content = wrapInHtml(content),
                 extension = Entry.File.Type.html.name
             ),
             comment = label
-        )
-        val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val futureUploads = started?.getCurrentStepOrCreate {
-            StepResult(
-                timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
-            )
-        }?.futureUploads ?: earlyFuturesUploads
-        futureUploads.add(html)
+        ).let {
+            val currentState = state
+
+            if (currentState is ReportState.Initialized.Started && currentState.currentStep != null) {
+                currentState.currentStep!!.futureUploads.add(it)
+            } else {
+                earlyFuturesUploads.add(it)
+            }
+        }
     }
 
+    @Synchronized
+    override fun addEntry(entry: Entry) {
+        val currentState = state
+
+        if (currentState is ReportState.Initialized.Started && currentState.currentStep != null) {
+            currentState.currentStep!!.entryList.add(entry)
+        } else {
+            earlyEntries.add(entry)
+        }
+    }
 
     @Synchronized
     override fun addComment(comment: String) {
@@ -290,31 +393,28 @@ class ReportImplementation(
         addEntry(Entry.Check(assertionMessage, timeProvider.nowInSeconds()))
     }
 
-    private fun addEntry(entry: Entry) {
-        val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val entriesList = started?.getCurrentStepOrCreate {
-            StepResult(
-                timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
-            )
-        }?.entryList ?: earlyEntries
-        entriesList.add(entry)
-    }
+    private data class Counted<T>(val t: T, var count: Int = 1)
 
-    private inline fun <reified T : ReportState> checkStateIs() = getCastedState<T>()
-
-    private inline fun <reified T : ReportState> getCastedStateOrNull(): T? {
-        return when (val _state = state) {
-            is T -> _state
-            else -> null
-        }
-    }
-
-    private inline fun <reified T : ReportState> getCastedState(): T {
-        return getCastedStateOrNull()
-            ?: throw IllegalStateException("Invalid state. Expected ${T::class.java} actual $state")
-    }
+    /**
+     * сворачивает встречающиеся подряд одинаковые entry в один, проставляя им в начало лейбла кол-во свернутых элементов
+     */
+    @Suppress("UNCHECKED_CAST")
+    private inline fun <reified T : Entry> List<T>.distinctCounted(): List<T> =
+        fold(listOf<Counted<T>>()) { acc, entry ->
+            val last = acc.lastOrNull()
+            val lastT = last?.t
+            if (entry is Entry.Comment && lastT is Entry.Comment && entry.title == lastT.title) {
+                acc.apply { this.last().count++ }
+            } else {
+                acc + Counted(entry, 1)
+            }
+        }.map { counted: Counted<T> ->
+            if (counted.t is Entry.Comment && counted.count > 1) {
+                counted.t.copy(title = "[x${counted.count}] ${counted.t.title}")
+            } else {
+                counted.t
+            }
+        } as List<T>
 
     private fun StepResult.appendFutureEntries(): StepResult {
         if (futureUploads.isEmpty()) return this
@@ -344,10 +444,14 @@ class ReportImplementation(
             }
             .toList()
 
-    private fun ReportState.Initialized.Started.writeTestCase() =
+    private fun writeTestCase(currentState: ReportState.Initialized) =
         methodExecutionTracing("writeTestCase") {
-            beforeTestWrite(this)
-            transport.forEach { it.send(this) }
+            if (currentState !is ReportState.Initialized.Started) {
+                throw RuntimeException("Reporter has invalid state. Expected state: Started.Initialized. Actual state: $state")
+            }
+
+            beforeTestWrite(currentState)
+            transport.forEach { it.send(currentState) }
             state = ReportState.Written
         }
 
@@ -355,16 +459,25 @@ class ReportImplementation(
      * Screenshots/HttpStatic are synchronous, but uploading runs on background thread
      * We have to wait upload completion before sending report packages
      */
-    private fun ReportState.Initialized.Started.waitUploads() {
-        testCaseStepList =
-            testCaseStepList
+    private fun waitUploads(state: ReportState.Initialized.Started) {
+        state.testCaseStepList =
+            state.testCaseStepList
                 .map { it.appendFutureEntries() }
                 .toMutableList()
 
-        preconditionStepList =
-            preconditionStepList
+        state.preconditionStepList =
+            state.preconditionStepList
                 .map { it.appendFutureEntries() }
                 .toMutableList()
+
+        earlyEntries.addAll(
+            earlyFuturesUploads.getInitializedEntries()
+        )
+        earlyEntries.sortBy { it.timeInSeconds }
+
+        incidentEntries.addAll(
+            incidentFutureUploads.getInitializedEntries()
+        )
     }
 
     private fun wrapInHtml(content: String): String {

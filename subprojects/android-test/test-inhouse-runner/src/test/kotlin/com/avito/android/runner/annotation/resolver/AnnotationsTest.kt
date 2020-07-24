@@ -8,7 +8,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.hasSize
 import org.junit.Assert.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import ru.avito.util.matcher.containsValueWithType
 
 class AnnotationsTest {

@@ -23,7 +23,6 @@ dependencies {
 
     testImplementation(project(":common:junit-utils"))
     testImplementation(project(":common:logger-test-fixtures"))
-    testImplementation(project(":common:time-test-fixtures"))
     testImplementation(Dependencies.test.okhttpMock)
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.truth)

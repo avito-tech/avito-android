@@ -1,7 +1,7 @@
 package com.avito.android.test.report.performance
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class PerformanceTestReporterTest {
 

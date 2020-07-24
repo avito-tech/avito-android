@@ -3,14 +3,11 @@ package com.avito.android.util.matcher
 import com.avito.android.util.matcher.DeepCauseMatcher.Companion.deepCauseMatcher
 import org.junit.Assert
 import org.junit.Rule
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.junit.rules.ExpectedException
 
-@Disabled
 class DeepCauseMatcherTest {
 
-    // Rules don't work at JUNIT5
     @Rule @JvmField
     val exception: ExpectedException = ExpectedException.none()
 

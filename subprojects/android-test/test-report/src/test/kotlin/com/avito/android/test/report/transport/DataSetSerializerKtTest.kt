@@ -4,7 +4,7 @@ package com.avito.android.test.report.transport
 
 import com.avito.android.test.report.model.DataSet
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class DataSetSerializerKtTest : PreTransportMappers {
 

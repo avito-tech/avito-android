@@ -2,7 +2,7 @@ package com.avito.android.test.report.incident
 
 import com.google.gson.JsonPrimitive
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class RequestIncidentPresenterTest {
 

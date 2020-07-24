@@ -3,7 +3,7 @@ package ru.avito.test
 import org.hamcrest.Matchers.hasItems
 import org.hamcrest.Matchers.not
 import org.junit.Assert.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import ru.avito.util.Characters
 import ru.avito.util.Is
 import ru.avito.util.randomInt

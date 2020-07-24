@@ -109,6 +109,7 @@ abstract class InHouseInstrumentationTestRunner :
         }
 
         ReportImplementation(
+            sentry = sentry,
             fileStorageUrl = runEnvironment.fileStorageUrl,
             onDeviceCacheDirectory = runEnvironment.outputDirectory,
             httpClient = reportHttpClient,

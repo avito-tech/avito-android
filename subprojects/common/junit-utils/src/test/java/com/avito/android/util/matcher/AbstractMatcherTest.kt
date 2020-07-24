@@ -1,7 +1,7 @@
 package com.avito.android.util.matcher
 
 import org.hamcrest.Matcher
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 
 abstract class AbstractMatcherTest {

@@ -5,23 +5,17 @@ import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentElement
-import com.avito.time.TimeMachineProvider
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
-import java.util.concurrent.TimeUnit
+import com.nhaarman.mockitokotlin2.whenever
+import org.junit.Rule
+import org.junit.Test
 
-class ReportTest {
+internal class ReportTest {
 
-    private val timeMachine = TimeMachineProvider()
-
-    @JvmField
-    @RegisterExtension
-    val report = ReportTestExtension(
-        timeProvider = timeMachine
-    )
+    @get:Rule
+    val report = ReportRule()
 
     @Test
     fun `report incident - step chain`() {
@@ -58,10 +52,7 @@ class ReportTest {
                 code = 500,
                 type = "external",
                 origin = "resource-manager",
-                data = gson.fromJson(
-                    """{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body": {"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""",
-                    JsonObject::class.java
-                )
+                data = gson.fromJson("""{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body": {"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""", JsonObject::class.java)
             ),
             IncidentElement(
                 message = "Не удалось установить скидку пользователю.",
@@ -76,10 +67,7 @@ class ReportTest {
                 type = "external",
                 origin = "service/pricing-adm",
                 className = "Avito\\QA\\DetailedException\\ExternalServiceException",
-                data = gson.fromJson(
-                    """{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body": {"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""",
-                    JsonObject::class.java
-                )
+                data = gson.fromJson("""{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body": {"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""", JsonObject::class.java)
             )
         )
 
@@ -210,16 +198,18 @@ class ReportTest {
         report.startTestCase()
 
         step("Test step", report, false) {
+
+            whenever(report.mockTimeProvider.nowInSeconds()).thenReturn(100000L)
             report.addComment(
                 "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
             )
-            timeMachine.moveForwardOn(1, TimeUnit.SECONDS)
+            whenever(report.mockTimeProvider.nowInSeconds()).thenReturn(100001L)
             repeat(2) {
                 report.addComment(
                     "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
                 )
             }
-            timeMachine.moveForwardOn(1, TimeUnit.SECONDS)
+            whenever(report.mockTimeProvider.nowInSeconds()).thenReturn(100002L)
             report.addComment(
                 "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
             )

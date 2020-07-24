@@ -5,7 +5,7 @@ import com.avito.report.model.IncidentElement
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.JsonPrimitive
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class IncidentChainTest {
 

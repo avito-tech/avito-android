@@ -1,16 +1,16 @@
 package com.avito.report.model
 
 sealed class Entry(
-    val type: String
+    val type: String,
+    open val timeInSeconds: Long
 ) {
-    abstract val timeInSeconds: Long
 
     data class File(
         val comment: String,
         val fileAddress: String,
         override val timeInSeconds: Long,
         val fileType: Type
-    ) : Entry(type = fileType.name) {
+    ) : Entry(type = fileType.name, timeInSeconds = timeInSeconds) {
 
         @Suppress("EnumEntryName")
         enum class Type {
@@ -24,13 +24,13 @@ sealed class Entry(
     data class Comment(
         val title: String,
         override val timeInSeconds: Long
-    ) : Entry(type = "comment")
+    ) : Entry(type = "comment", timeInSeconds = timeInSeconds)
 
     data class Field(
         val comment: String,
         val value: String,
         override val timeInSeconds: Long
-    ) : Entry(type = "field")
+    ) : Entry(type = "field", timeInSeconds = timeInSeconds)
 
     /**
      * Ничем кроме иконки в ReportViewer не отличается от Comment
@@ -38,5 +38,5 @@ sealed class Entry(
     data class Check(
         val title: String,
         override val timeInSeconds: Long
-    ) : Entry(type = "check")
+    ) : Entry(type = "check", timeInSeconds = timeInSeconds)
 }
