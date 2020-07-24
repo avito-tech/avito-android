@@ -1,6 +1,5 @@
 package com.avito.android.test.report
 
-import com.avito.android.rule.SimpleRule
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.future.MockFutureValue
@@ -19,18 +18,22 @@ import com.avito.time.TimeProvider
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import io.sentry.SentryClientFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.mock.MockInterceptor
+import okhttp3.mock.Rule
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtensionContext
 
 /**
  * @param sendRealReport позволяет на время отладки посылать реальные репорты во время тестов,
  *                       чтобы посмотреть как оно отображается
  */
-internal class ReportRule(
+class ReportTestExtension(
     // todo useless because report urls are empty
     val sendRealReport: Boolean = false,
-    val mockTimeProvider: TimeProvider = mock(),
+    val timeProvider: TimeProvider = mock(),
+    val fileStorageUrl: String = "https://filestorage.com",
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
     private val logger: Logger = FakeLogger,
@@ -41,8 +44,7 @@ internal class ReportRule(
     ),
     private val deviceName: String = "android-test",
     private val report: Report = ReportImplementation(
-        sentry = SentryClientFactory.sentryClient(), // TODO required?
-        fileStorageUrl = "https://stub.ru", // TODO required?
+        fileStorageUrl = fileStorageUrl,
         onDeviceCacheDirectory = lazy { error("nope") },
         httpClient = OkHttpClient.Builder()
             .apply {
@@ -62,11 +64,20 @@ internal class ReportRule(
                 deviceName = DeviceName(deviceName),
                 logger = logger
             )
-        ) else emptyList()
+        ) else emptyList(),
+        screenshotUploader = screenshotUploader,
+        timeProvider = timeProvider
     )
-) : SimpleRule(), Report by report {
+) : BeforeEachCallback, Report by report {
 
-    override fun before() {
+    override fun beforeEach(context: ExtensionContext) {
+        mockInterceptor.addRule(
+            Rule.Builder()
+                .post()
+                .urlStarts(fileStorageUrl)
+                .respond(200)
+                .body(ResponseBody.run { "uri\":\"a\"".toResponseBody() })
+        )
         whenever(screenshotUploader.makeAndUploadScreenshot(any()))
             .thenReturn(
                 MockFutureValue(

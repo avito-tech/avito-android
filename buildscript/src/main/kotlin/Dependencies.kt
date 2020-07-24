@@ -10,6 +10,7 @@ object Dependencies {
         val androidX = "1.0.0"
         val espresso = "3.2.0"
         val mockito = "3.3.3"
+        val detekt = "1.10.0"
         val androidGradlePlugin = System.getProperty("androidGradlePluginVersion")
     }
 
@@ -23,7 +24,7 @@ object Dependencies {
     val retrofitConverterGson = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
     val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     val okhttpLogging = "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
-    val okio = "com.squareup.okio:okio:2.1.0"
+    val okio = "com.squareup.okio:okio:2.7.0"
     val funktionaleTry = "org.funktionale:funktionale-try:1.2"
     val gson = "com.google.code.gson:gson:2.8.5"
     val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
@@ -51,6 +52,8 @@ object Dependencies {
     val antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
     val dockerClient = "de.gesellix:docker-client:2019-11-26T12-39-35"
     val asm = "org.ow2.asm:asm:7.1"
+    val detektParser = "io.gitlab.arturbosch.detekt:detekt-parser:${Versions.detekt}"
+    val detektCli = "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 
     // https://r8.googlesource.com/r8/
     val r8 = "com.android.tools:r8:2.0.94"

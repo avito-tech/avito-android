@@ -6,8 +6,10 @@ plugins {
 }
 
 dependencies {
+    api(
+        project(":gradle:impact-shared")
+    )
     implementation(gradleApi())
-    implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:utils"))
     implementation(project(":gradle:logging"))
     implementation(project(":gradle:files"))

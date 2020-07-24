@@ -1,18 +1,15 @@
-package com.avito.android.mock
+package com.avito.test.http
 
-import com.avito.test.http.Mock
-import com.avito.test.http.MockDispatcher
-import com.avito.test.http.RequestData
 import com.google.common.truth.Truth.assertThat
 import okhttp3.Headers
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.InetAddress
 import java.nio.charset.Charset
 
-class MockDispatcherTest {
+internal class MockDispatcherTest {
 
     private val dispatcher = MockDispatcher(logger = { println(it) })
 

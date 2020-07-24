@@ -52,7 +52,6 @@ interface GooglePlayDeployer {
                     .map { deploy ->
                         val editId = insertEdit(deploy.applicationId)
                         val versionCode = uploadBinary(deploy, editId)
-                        uploadProguard(deploy, editId, versionCode)
                         setTrack(deploy, editId, versionCode)
                         validate(deploy, editId)
                         editId to deploy
@@ -72,7 +71,9 @@ interface GooglePlayDeployer {
         private fun uploadBinary(deploy: GooglePlayDeploy, editId: String): Int {
             return when (deploy.binaryType) {
                 GooglePlayDeploy.BinaryType.APK -> {
-                    uploadApk(deploy, editId)
+                    val versionCode = uploadApk(deploy, editId)
+                    uploadProguard(deploy, editId, versionCode)
+                    versionCode
                 }
                 GooglePlayDeploy.BinaryType.BUNDLE -> {
                     uploadBundle(deploy, editId)

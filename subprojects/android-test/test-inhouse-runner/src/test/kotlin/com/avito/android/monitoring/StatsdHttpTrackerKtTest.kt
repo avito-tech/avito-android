@@ -1,9 +1,8 @@
 package com.avito.android.monitoring
 
 import com.google.common.truth.Truth.assertThat
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class StatsdHttpTrackerKtTest {
 
