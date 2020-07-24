@@ -26,7 +26,7 @@ class NamespacedResourcesFixerPluginTest {
         TestProjectGenerator(
             plugins = listOf(
                 "com.avito.android.impact",
-                "com.avito.android.namespacedResourcesFixer"
+                "com.avito.android.namespaced-resources-fixer"
             ),
             modules = listOf(
                 AndroidAppModule("app",
