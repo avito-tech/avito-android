@@ -5,7 +5,6 @@ import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -69,26 +68,36 @@ class HttpRemoteStorage(
                 }
 
                 override fun onResponse(call: Call<String>, response: Response<String>) {
-                    val result = if (response.isSuccessful) {
-                        val url = response.body()!!
+                    val result = when {
+                        response.isSuccessful && !response.body().isNullOrEmpty()-> {
+                            val url = response.body()!!
 
-                        logUploaded(
-                            uploadRequest = uploadRequest,
-                            url = url
-                        )
+                            logUploaded(
+                                uploadRequest = uploadRequest,
+                                url = url
+                            )
 
-                        RemoteStorage.Result.Success(
-                            comment = comment,
-                            url = url,
-                            timeInSeconds = timestamp,
-                            uploadRequest = uploadRequest
-                        )
-                    } else {
-                        val exception = RuntimeException("Uploading failed with response: ${response.body()}")
-                        logger.critical(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
-                        RemoteStorage.Result.Error(
-                            t = exception
-                        )
+                            RemoteStorage.Result.Success(
+                                comment = comment,
+                                url = url,
+                                timeInSeconds = timestamp,
+                                uploadRequest = uploadRequest
+                            )
+                        }
+                        response.isSuccessful && response.body().isNullOrEmpty() -> {
+                            val exception = IllegalStateException("Uploading failed response body is absent")
+                            logger.critical(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
+                            RemoteStorage.Result.Error(
+                                t = exception
+                            )
+                        }
+                        else -> {
+                            val exception = RuntimeException("Uploading failed with response: ${response.body()}")
+                            logger.critical(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
+                            RemoteStorage.Result.Error(
+                                t = exception
+                            )
+                        }
                     }
 
                     deleteUploadedFile(
