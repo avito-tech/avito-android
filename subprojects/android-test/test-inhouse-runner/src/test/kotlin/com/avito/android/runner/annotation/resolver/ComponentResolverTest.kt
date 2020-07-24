@@ -10,7 +10,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ComponentResolverTest {
 
