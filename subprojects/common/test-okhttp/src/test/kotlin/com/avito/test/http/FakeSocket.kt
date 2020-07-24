@@ -1,4 +1,4 @@
-package com.avito.android.mock
+package com.avito.test.http
 
 import java.net.InetAddress
 import java.net.Socket

@@ -24,7 +24,7 @@ object Dependencies {
     val retrofitConverterGson = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
     val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     val okhttpLogging = "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
-    val okio = "com.squareup.okio:okio:2.1.0"
+    val okio = "com.squareup.okio:okio:2.7.0"
     val funktionaleTry = "org.funktionale:funktionale-try:1.2"
     val gson = "com.google.code.gson:gson:2.8.5"
     val kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
