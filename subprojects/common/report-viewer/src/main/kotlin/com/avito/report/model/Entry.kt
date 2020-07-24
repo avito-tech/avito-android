@@ -3,12 +3,12 @@ package com.avito.report.model
 sealed class Entry(
     val type: String
 ) {
-    abstract val timeInMs: Long
+    abstract val timeInSeconds: Long
 
     data class File(
         val comment: String,
         val fileAddress: String,
-        override val timeInMs: Long,
+        override val timeInSeconds: Long,
         val fileType: Type
     ) : Entry(type = fileType.name) {
 
@@ -23,13 +23,13 @@ sealed class Entry(
 
     data class Comment(
         val title: String,
-        override val timeInMs: Long
+        override val timeInSeconds: Long
     ) : Entry(type = "comment")
 
     data class Field(
         val comment: String,
         val value: String,
-        override val timeInMs: Long
+        override val timeInSeconds: Long
     ) : Entry(type = "field")
 
     /**
@@ -37,6 +37,6 @@ sealed class Entry(
      */
     data class Check(
         val title: String,
-        override val timeInMs: Long
+        override val timeInSeconds: Long
     ) : Entry(type = "check")
 }

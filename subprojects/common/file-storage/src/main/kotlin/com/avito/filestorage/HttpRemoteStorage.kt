@@ -39,7 +39,7 @@ class HttpRemoteStorage(
 
         val futureValue = SettableFutureValue<RemoteStorage.Result>()
 
-        val timestampInMs = timeSource.nowInMillis()
+        val timestamp = timeSource.nowInSeconds()
 
         logUploading(uploadRequest)
 
@@ -80,7 +80,7 @@ class HttpRemoteStorage(
                             RemoteStorage.Result.Success(
                                 comment = comment,
                                 url = url,
-                                timeInMs = timestampInMs,
+                                timeInSeconds = timestamp,
                                 uploadRequest = uploadRequest
                             )
                         }

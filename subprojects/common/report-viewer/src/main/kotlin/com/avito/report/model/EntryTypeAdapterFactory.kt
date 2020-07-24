@@ -35,7 +35,7 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
                 name("type")
                 value(value.type)
                 name("timestamp")
-                value(value.timeInMs)
+                value(value.timeInSeconds)
 
                 when (value) {
                     is Entry.File -> {
@@ -88,31 +88,31 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
                 endObject()
             }
             return when (type) {
-                "comment" -> Entry.Comment(title = title, timeInMs = timestamp)
-                "field" -> Entry.Field(comment = comment, value = value, timeInMs = timestamp)
-                "check" -> Entry.Check(title = title, timeInMs = timestamp)
+                "comment" -> Entry.Comment(title = title, timeInSeconds = timestamp)
+                "field" -> Entry.Field(comment = comment, value = value, timeInSeconds = timestamp)
+                "check" -> Entry.Check(title = title, timeInSeconds = timestamp)
                 "html" -> Entry.File(
                     comment = comment,
                     fileAddress = fileAddress,
-                    timeInMs = timestamp,
+                    timeInSeconds = timestamp,
                     fileType = Entry.File.Type.html
                 )
                 "img_png" -> Entry.File(
                     comment = comment,
                     fileAddress = fileAddress,
-                    timeInMs = timestamp,
+                    timeInSeconds = timestamp,
                     fileType = Entry.File.Type.img_png
                 )
                 "video" -> Entry.File(
                     comment = comment,
                     fileAddress = fileAddress,
-                    timeInMs = timestamp,
+                    timeInSeconds = timestamp,
                     fileType = Entry.File.Type.video
                 )
                 "plain_text" -> Entry.File(
                     comment = comment,
                     fileAddress = fileAddress,
-                    timeInMs = timestamp,
+                    timeInSeconds = timestamp,
                     fileType = Entry.File.Type.plain_text
                 )
                 else -> error("unsupported type: $type")

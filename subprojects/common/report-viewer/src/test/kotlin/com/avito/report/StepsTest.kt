@@ -25,7 +25,7 @@ internal class StepsTest {
                         number = 1,
                         title = "Hello",
                         entryList = listOf(
-                            Entry.Comment(title = "Hello from comment", timeInMs = 1570044922)
+                            Entry.Comment(title = "Hello from comment", timeInSeconds = 1570044922)
                         )
                     )
                 )
