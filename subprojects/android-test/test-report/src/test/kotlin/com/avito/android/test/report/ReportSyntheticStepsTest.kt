@@ -1,14 +1,17 @@
 package com.avito.android.test.report
 
 import com.avito.report.model.Entry
+import com.avito.time.TimeMachineProvider
 import com.google.common.truth.Truth.assertThat
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
+import java.util.concurrent.TimeUnit
 
 class ReportSyntheticStepsTest {
 
-    @get:Rule
-    val report = ReportRule()
+    private val timeMachine = TimeMachineProvider()
+    @JvmField @RegisterExtension
+    val report = ReportTestExtension(timeProvider = timeMachine)
 
     private val comment = "Comment"
     private val assertionMessage = "Assertion"
@@ -81,9 +84,9 @@ class ReportSyntheticStepsTest {
 
     private fun Report.addEntriesOutOfStep() {
         addHtml("label", "content")
-        Thread.sleep(10) // for step ordering
+        timeMachine.moveForwardOn(1, TimeUnit.SECONDS) // for step ordering
         addComment(comment)
-        Thread.sleep(10) // for step ordering
+        timeMachine.moveForwardOn(1, TimeUnit.SECONDS)
         addAssertion(assertionMessage)
     }
 

@@ -4,7 +4,7 @@ package ru.avito.test.matcher
 
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import ru.avito.util.assertThrows
 import ru.avito.util.matcher.containsValueWithType
 

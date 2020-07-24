@@ -14,7 +14,7 @@ import com.avito.report.model.Status
 import com.avito.report.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 internal class FilterFactoryImplTest {
 
@@ -89,13 +89,18 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
+        val reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = setOf(RunStatus.Failed),
                     excluded = emptySet()
                 )
-            )
+            ),
+            reportsByConfig = mapOf(
+                reportConfig to FakeReport()
+            ),
+            reportConfig = reportConfig
         )
 
         val filter = factory.createFilter() as CompositionFilter

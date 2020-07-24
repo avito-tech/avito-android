@@ -1,6 +1,5 @@
 package com.avito.android.test.report
 
-import com.avito.android.rule.SimpleRule
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.future.MockFutureValue
@@ -23,15 +22,17 @@ import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.mock.MockInterceptor
 import okhttp3.mock.Rule
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtensionContext
 
 /**
  * @param sendRealReport позволяет на время отладки посылать реальные репорты во время тестов,
  *                       чтобы посмотреть как оно отображается
  */
-class ReportRule(
+class ReportTestExtension(
     // todo useless because report urls are empty
     val sendRealReport: Boolean = false,
-    val mockTimeProvider: TimeProvider = mock(),
+    val timeProvider: TimeProvider = mock(),
     val fileStorageUrl: String = "https://filestorage.com",
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
@@ -64,11 +65,12 @@ class ReportRule(
                 logger = logger
             )
         ) else emptyList(),
-        screenshotUploader = screenshotUploader
+        screenshotUploader = screenshotUploader,
+        timeProvider = timeProvider
     )
-) : SimpleRule(), Report by report {
+) : BeforeEachCallback, Report by report {
 
-    override fun before() {
+    override fun beforeEach(context: ExtensionContext) {
         mockInterceptor.addRule(
             Rule.Builder()
                 .post()

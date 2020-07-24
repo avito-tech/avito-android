@@ -55,13 +55,12 @@ class ReportImplementation(
         screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
         remoteStorage = remoteStorage,
         logger = logger
-    )
+    ),
+    private val timeProvider: TimeProvider = DefaultTimeProvider()
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
     PreconditionLifecycleListener by PreconditionLifecycleNotifier {
-
-    private val timeProvider: TimeProvider = DefaultTimeProvider()
 
 
     /**
