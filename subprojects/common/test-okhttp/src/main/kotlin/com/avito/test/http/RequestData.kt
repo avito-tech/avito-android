@@ -1,7 +1,6 @@
 package com.avito.test.http
 
 import okhttp3.mockwebserver.RecordedRequest
-import okio.Buffer
 
 class RequestData(val recordedRequest: RecordedRequest) {
 
@@ -10,14 +9,14 @@ class RequestData(val recordedRequest: RecordedRequest) {
     val method: String = recordedRequest.method ?: ""
 
     val body: String by lazy {
-        val copyBody = Buffer()
-        recordedRequest.body.copyTo(copyBody, 0, recordedRequest.bodySize)
-        copyBody.readUtf8()
+        recordedRequest.body
+            .snapshot()
+            .string(Charsets.UTF_8)
     }
 
     val headers: List<Pair<String, String>> by lazy {
         val headers = recordedRequest.headers
-        headers.names().map { name -> name to headers.get(name)!! }
+        headers.names().map { name -> name to headers[name]!! }
     }
 
     fun bodyContains(substring: CharSequence): Boolean {
