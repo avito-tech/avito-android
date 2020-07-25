@@ -145,7 +145,7 @@ pluginManagement {
                     useVersion(kotlinVersion)
 
                 pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.54.0")
+                    useVersion("0.55.0")
             }
         }
     }
