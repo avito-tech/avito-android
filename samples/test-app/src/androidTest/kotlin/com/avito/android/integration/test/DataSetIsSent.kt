@@ -19,13 +19,13 @@ class DataSetIsSent {
     @get:Rule
     val testCase = InfrastructureTestRule {
         assertThat(
-            "Поле data_set должно содержать поля объекта переданного в тест",
+            "Field data_set must be equal to the com.avito.android.test.report.StepKt.dataSet value argument",
             it.dataSet,
             Is<DataSet>(DataSetImpl("messageOne"))
         )
 
         assertThat(
-            "Поле data_set должно содержать поля объекта переданного в тест",
+            "Field dataSetNumber must be taken from com.avito.android.test.annotations.DataSetNumber",
             it.testMetadata.dataSetNumber,
             Is(1)
         )
