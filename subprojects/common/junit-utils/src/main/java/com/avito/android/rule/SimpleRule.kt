@@ -6,7 +6,7 @@ import org.junit.runners.model.Statement
 
 abstract class SimpleRule : TestRule {
 
-    override fun apply(base: Statement, description: Description): Statement =
+    final override fun apply(base: Statement, description: Description): Statement =
         object : Statement() {
             override fun evaluate() {
                 before()

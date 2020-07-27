@@ -1,6 +1,7 @@
 package com.avito.android.test.report
 
 import android.annotation.SuppressLint
+import androidx.annotation.VisibleForTesting
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
 import com.avito.android.test.report.incident.IncidentChain
@@ -72,6 +73,10 @@ class ReportImplementation(
     private val incidentFutureUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
 
     private var state: ReportState = ReportState.Nothing
+
+    @VisibleForTesting
+    val currentState: ReportState
+        get() = state
 
     override val isFirstStepOrPrecondition: Boolean
         get() = state.isFirstStepOrPrecondition
