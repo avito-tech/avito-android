@@ -144,10 +144,8 @@ pluginManagement {
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
                     useVersion(kotlinVersion)
 
-                // Can't update further
-                // https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/issues/199
                 pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.52.0")
+                    useVersion("0.55.0")
             }
         }
     }
