@@ -24,17 +24,17 @@ class DataFromAnnotationIsSent {
     @get:Rule
     val testCase = InfrastructureTestRule { startedReportState ->
         assertThat(
-            "Поле externalId должно быть взято из аннотации",
+            "Field externalId must be taken from com.avito.android.test.annotations.ExternalId",
             startedReportState.testMetadata.externalId,
             Is("6faac31e-655c-4ac2-b18c-ede8e194e472")
         )
         assertThat(
-            "Поле tagId должно быть взято из аннотации",
+            "Field tagId must be taken from com.avito.android.test.annotations.TagId",
             startedReportState.testMetadata.tagIds,
             hasItems(-1, -2, -3)
         )
         assertThat(
-            "Поле description должно быть взято из аннотации",
+            "Field description must be taken from com.avito.android.test.annotations.Description",
             startedReportState.testMetadata.description,
             Is("annotation_data_sent")
         )

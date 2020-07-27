@@ -15,7 +15,7 @@ class DataFromAnnotationMethodIsSent {
     @get:Rule
     val testCase = InfrastructureTestRule {
         assertThat(
-            "Поле description должно быть взято из аннотации",
+            "Field description must be taken from com.avito.android.test.annotations.Description",
             it.testMetadata.description,
             Is("annotation_in_method_data_sent")
         )
