@@ -9,6 +9,7 @@ import com.avito.time.TimeMachineProvider
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.concurrent.TimeUnit
@@ -23,11 +24,14 @@ class ReportTest {
         timeProvider = timeMachine
     )
 
-    @Test
-    fun `report incident - step chain`() {
+    @BeforeEach
+    fun before() {
         report.initTestCaseHelper()
         report.startTestCase()
+    }
 
+    @Test
+    fun `report incident - step chain`() {
         report.registerIncident(
             StepException(
                 false,
@@ -48,8 +52,6 @@ class ReportTest {
 
     @Test
     fun `report incident - resourceManager chain`() {
-        report.initTestCaseHelper()
-        report.startTestCase()
         val gson = Gson()
         val chain = listOf(
             IncidentElement(
@@ -115,9 +117,6 @@ class ReportTest {
 
     @Test
     fun `test assertion reported - no incident`() {
-        report.initTestCaseHelper()
-        report.startTestCase()
-
         step("step description", report, false) {
             assertion("assertion message") {}
         }
@@ -132,9 +131,6 @@ class ReportTest {
 
     @Test
     fun `test assertion reported with multiple preconditions - no incident`() {
-        report.initTestCaseHelper()
-        report.startTestCase()
-
         precondition("first precondition", report, false) {
             assertion("first precondition assertion") {}
         }
@@ -171,9 +167,6 @@ class ReportTest {
 
     @Test
     fun `duplicate entries should be merged - only in consequent groups`() {
-        report.initTestCaseHelper()
-        report.startTestCase()
-
         step("Test step", report, false) {
             repeat(2) {
                 report.addComment(
@@ -206,9 +199,6 @@ class ReportTest {
 
     @Test
     fun `duplicate entries should be merged - consequent entries with different timestamps`() {
-        report.initTestCaseHelper()
-        report.startTestCase()
-
         step("Test step", report, false) {
             report.addComment(
                 "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
