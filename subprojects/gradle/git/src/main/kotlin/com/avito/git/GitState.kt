@@ -22,10 +22,3 @@ interface GitState {
 
 val GitState.isOnDefaultBranch: Boolean
     get() = currentBranch.name.asBranchWithoutOrigin() == this.defaultBranch.asBranchWithoutOrigin()
-
-@Deprecated("Since 2020.4.6; Will be removed")
-val GitState.isOnReleaseBranch: Boolean
-    get() {
-        val branch = currentBranch.name.asBranchWithoutOrigin()
-        return branch.startsWith("release/") || branch.startsWith("domofond-release-")
-    }
