@@ -57,7 +57,8 @@ class ReportImplementation(
         remoteStorage = remoteStorage,
         logger = logger
     ),
-    private val timeProvider: TimeProvider = DefaultTimeProvider()
+    private val timeProvider: TimeProvider = DefaultTimeProvider(),
+    private val isSyntheticStepEnabled: Boolean // todo delete after 2020.15 release
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
@@ -209,7 +210,9 @@ class ReportImplementation(
 
         currentState.preconditionStepList.add(currentStep)
         afterPreconditionStop(currentStep)
-        currentState.currentStep = null
+        if (isSyntheticStepEnabled) {
+            currentState.currentStep = null
+        }
     }
 
     @Synchronized
@@ -230,7 +233,9 @@ class ReportImplementation(
 
         currentState.testCaseStepList.add(currentStep)
         afterStepStop(currentStep)
-        currentState.currentStep = null
+        if (isSyntheticStepEnabled) {
+            currentState.currentStep = null
+        }
     }
 
     private fun updateStep(update: StepResult.() -> Unit): Unit =

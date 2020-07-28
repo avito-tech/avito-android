@@ -10,8 +10,12 @@ import java.util.concurrent.TimeUnit
 class ReportSyntheticStepsTest {
 
     private val timeMachine = TimeMachineProvider()
-    @JvmField @RegisterExtension
-    val report = ReportTestExtension(timeProvider = timeMachine)
+
+    @JvmField
+    @RegisterExtension
+    val report = ReportTestExtension(
+        timeProvider = timeMachine
+    )
 
     private val comment = "Comment"
     private val assertionMessage = "Assertion"
