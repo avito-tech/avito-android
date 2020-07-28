@@ -47,8 +47,8 @@ data class AdbDevice(
                     cast = { it.toInt() }
                 )
             },
-            attemptFailedHandler = { attempt, throwable ->
-                logger.info("Attempt $attempt: reading ro.build.version.sdk failed. Reason: ${throwable.message}")
+            attemptFailedHandler = { attempt, _ ->
+                logger.info("Attempt $attempt: reading ro.build.version.sdk failed")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed reading ro.build.version.sdk", throwable)
@@ -71,8 +71,8 @@ data class AdbDevice(
                 adbDevice.installPackage(application, true)
                 logger.debug("Attempt $attempt: application $application installed")
             },
-            attemptFailedHandler = { attempt, throwable ->
-                logger.info("Attempt $attempt: failed to install application because of ${throwable.message}")
+            attemptFailedHandler = { attempt, _ ->
+                logger.info("Attempt $attempt: failed to install application $application")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed installing application $application", throwable)
@@ -177,8 +177,8 @@ data class AdbDevice(
 
                 Device.DeviceStatus.Alive
             },
-            attemptFailedHandler = { attempt, throwable ->
-                logger.info("Attempt $attempt: device is freezing. Reason: ${throwable.message}")
+            attemptFailedHandler = { attempt, _ ->
+                logger.info("Attempt $attempt: device is freezing")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed reading device status", throwable)
@@ -202,8 +202,8 @@ data class AdbDevice(
                 )
                 logger.debug("Attempt: $attempt: clear package $name completed")
             },
-            attemptFailedHandler = { attempt, throwable ->
-                logger.info("Attempt $attempt: failed to clear package. Reason: ${throwable.message}")
+            attemptFailedHandler = { attempt, _ ->
+                logger.info("Attempt $attempt: failed to clear package $name")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed clearing package $name", throwable)
@@ -236,11 +236,11 @@ data class AdbDevice(
                     )
                 }
             },
-            attemptFailedHandler = { attempt, throwable ->
-                logger.info("Attempt $attempt: failed to pull $from. Reason: ${throwable.message}")
+            attemptFailedHandler = { attempt, _ ->
+                logger.info("Attempt $attempt: failed to pull $from")
             },
             actionFailedHandler = { throwable ->
-                logger.warn("Failed pulling data", throwable)
+                logger.warn("Failed pulling data $from", throwable)
             }
         )
     }
@@ -258,8 +258,8 @@ data class AdbDevice(
                     )
                 )
             },
-            attemptFailedHandler = { attempt, throwable ->
-                logger.info("Attempt $attempt: failed to clear package $remotePath. Reason: ${throwable.message}")
+            attemptFailedHandler = { attempt, _ ->
+                logger.info("Attempt $attempt: failed to clear package $remotePath")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed clearing package $remotePath", throwable)
@@ -279,8 +279,8 @@ data class AdbDevice(
                     )
                 )
             },
-            attemptFailedHandler = { attempt, throwable ->
-                logger.info("Attempt $attempt: failed to list directory $remotePath. Reason: ${throwable.message}")
+            attemptFailedHandler = { attempt, _ ->
+                logger.info("Attempt $attempt: failed to list directory $remotePath")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed listing path $remotePath", throwable)
