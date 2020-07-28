@@ -1,6 +1,6 @@
 package com.avito.http
 
-import com.avito.logger.FakeLogger
+import com.avito.logger.NoOpLogger
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.google.common.truth.Truth.assertThat
@@ -35,7 +35,7 @@ class RetryWithFallbackTest {
                 RetryInterceptor(
                     allowedMethods = listOf("POST"),
                     allowedCodes = listOf(503),
-                    logger = FakeLogger
+                    logger = NoOpLogger
                 )
             )
             addInterceptor(

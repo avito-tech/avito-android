@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.runner.scheduler
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.client.model.ClientTestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunRequest
@@ -37,7 +37,7 @@ class TestExecutionScheduler(
                     }
                     is TestExecutionState.Verdict.Run -> {
                         verdict.intentions.forEach { intention ->
-                            logger.log("Retry intention: $intention")
+                            logger.info("Retry intention: $intention")
                             executionClient.requests.send(
                                 ClientTestRunRequest(
                                     state = testRunResult.state,

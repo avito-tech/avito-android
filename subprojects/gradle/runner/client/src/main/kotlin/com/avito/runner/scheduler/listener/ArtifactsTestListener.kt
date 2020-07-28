@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.listener
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
@@ -63,7 +63,7 @@ class ArtifactsTestListener(
                 remotePath = testMetadataDirectory.toPath()
             ).get()
         } catch (t: Throwable) {
-            logger.notify("Failed to process artifacts from device", t)
+            logger.critical("Failed to process artifacts from device", t)
         }
 
         tempDirectory.delete()

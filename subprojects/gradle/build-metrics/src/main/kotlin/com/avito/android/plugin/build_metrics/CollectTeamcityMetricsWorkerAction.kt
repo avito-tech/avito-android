@@ -46,6 +46,10 @@ abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
                 }
             }
 
+            override fun info(msg: String) {
+                ciLogger.info(msg)
+            }
+
             override fun warn(msg: String, error: Throwable?) {
                 ciLogger.warn(msg, error)
             }

@@ -1,8 +1,10 @@
 package com.avito.logger
 
-object FakeLogger: Logger {
+object NoOpLogger: Logger {
 
     override fun debug(msg: String) {}
+
+    override fun info(msg: String) {}
 
     override fun warn(msg: String, error: Throwable?) {}
 

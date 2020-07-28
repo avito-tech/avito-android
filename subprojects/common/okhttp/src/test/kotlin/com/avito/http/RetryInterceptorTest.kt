@@ -1,7 +1,6 @@
 package com.avito.http
 
-import com.avito.logger.FakeLogger
-import com.avito.logger.Logger
+import com.avito.logger.NoOpLogger
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -103,7 +102,7 @@ internal class RetryInterceptorTest {
                 RetryInterceptor(
                     retries = maxAttempts,
                     delayMs = 1,
-                    logger = FakeLogger,
+                    logger = NoOpLogger,
                     allowedMethods = listOf("GET", "POST"),
                     useIncreasingDelay = false
                 )

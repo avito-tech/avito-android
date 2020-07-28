@@ -25,12 +25,12 @@ open class CILogger(
         infoHandler.write(message, error)
     }
 
-    fun critical(message: String, error: Throwable? = null) {
-        criticalHandler.write(message, error)
-    }
-
     fun warn(message: String, error: Throwable? = null) {
         warnHandler.write(message, error)
+    }
+
+    fun critical(message: String, error: Throwable? = null) {
+        criticalHandler.write(message, error)
     }
 
     fun child(tag: String): CILogger = CILogger(
@@ -42,16 +42,16 @@ open class CILogger(
 
     companion object {
         val allToStdout = CILogger(
-            infoHandler = CILoggingHandlerImplementation(
+            debugHandler = CILoggingHandlerImplementation(
                 destination = StdoutDestination
             ),
-            criticalHandler = CILoggingHandlerImplementation(
+            infoHandler = CILoggingHandlerImplementation(
                 destination = StdoutDestination
             ),
             warnHandler = CILoggingHandlerImplementation(
                 destination = StdoutDestination
             ),
-            debugHandler = CILoggingHandlerImplementation(
+            criticalHandler = CILoggingHandlerImplementation(
                 destination = StdoutDestination
             )
         )

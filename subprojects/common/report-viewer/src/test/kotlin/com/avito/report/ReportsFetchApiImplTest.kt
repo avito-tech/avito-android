@@ -1,6 +1,6 @@
 package com.avito.report
 
-import com.avito.logger.FakeLogger
+import com.avito.logger.NoOpLogger
 import com.avito.test.gradle.fileFromJarResources
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
@@ -19,7 +19,7 @@ internal class ReportsFetchApiImplTest {
     private val fetchApi: ReportsFetchApi = ReportsApi.create(
         host = mockWebServer.url("/").toString(),
         fallbackUrl = "",
-        logger = FakeLogger
+        logger = NoOpLogger
     )
 
     @Test

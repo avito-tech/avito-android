@@ -3,9 +3,9 @@ package com.avito.runner.service.worker.device.adb
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
+import com.avito.logger.Logger
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
-import com.avito.runner.logging.Logger
 import com.avito.runner.retry
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
@@ -422,11 +422,12 @@ data class AdbDevice(
         )
 
     override fun log(message: String) {
-        logger.log("$TAG $message")
+        logger.info("$TAG $message")
     }
 
     override fun notifyError(message: String, error: Throwable?) {
-        logger.notify("$TAG $message", error)
+        val error: Throwable = error ?: java.lang.RuntimeException(message)
+        logger.critical("$TAG $message", error)
     }
 
     override fun toString(): String {

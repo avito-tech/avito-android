@@ -28,7 +28,7 @@ params +=-PinfraVersion=$(infra)
 endif
 
 ifeq ($(gradle_debug),true)
-params +=-Dorg.gradle.jvmargs='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=5005,suspend=y' --no-daemon
+params +=-Dorg.gradle.debug=true --no-daemon
 endif
 
 ifeq ($(dry_run),true)

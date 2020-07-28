@@ -1,5 +1,6 @@
 package com.avito.runner.service
 
+import com.avito.logger.NoOpLogger
 import com.avito.runner.logging.StdOutLogger
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
@@ -226,7 +227,7 @@ class IntentionExecutionServiceTest {
         intentionsRouter: IntentionsRouter
     ) = IntentionExecutionServiceImplementation(
         outputDirectory = File(""),
-        logger = StdOutLogger(),
+        logger = NoOpLogger,
         devicesObserver = devicesObserver,
         intentionsRouter = intentionsRouter,
         listener = NoOpListener

@@ -9,8 +9,13 @@ fun commonLogger(ciLogger: CILogger): Logger {
 private class CILoggerWrapper(
     private val ciLogger: CILogger
 ) : Logger {
+
     override fun debug(msg: String) {
         ciLogger.debug(msg)
+    }
+
+    override fun info(msg: String) {
+        ciLogger.info(msg)
     }
 
     override fun exception(msg: String, error: Throwable) {

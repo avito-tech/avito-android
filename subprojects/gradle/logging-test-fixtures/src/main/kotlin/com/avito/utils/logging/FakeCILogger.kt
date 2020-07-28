@@ -6,7 +6,7 @@ class FakeCILogger(
     val infoHandler: RecordingLoggingHandler = RecordingLoggingHandler(),
     val warnHandler: RecordingLoggingHandler = RecordingLoggingHandler(),
     val criticalHandler: RecordingLoggingHandler = RecordingLoggingHandler()
-) : com.avito.utils.logging.CILogger(
+) : CILogger(
     debugHandler = debugHandler,
     infoHandler = infoHandler,
     warnHandler = warnHandler,
