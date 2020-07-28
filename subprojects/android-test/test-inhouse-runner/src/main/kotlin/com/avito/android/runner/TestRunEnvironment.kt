@@ -85,7 +85,8 @@ sealed class TestRunEnvironment {
         val sentryDsn: String,
         val fileStorageUrl: String,
         val reportConfig: ReportConfig?,
-        val testRunCoordinates: ReportCoordinates
+        val testRunCoordinates: ReportCoordinates,
+        val isSyntheticStepsEnabled: Boolean
     ) : TestRunEnvironment()
 
     companion object {
@@ -150,10 +151,11 @@ fun provideEnvironment(
                 sentryDsn = argumentsProvider.getMandatoryArgument("sentryDsn"),
                 fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
                 testRunCoordinates = coordinates,
-                reportConfig = reportConfig
+                reportConfig = reportConfig,
+                isSyntheticStepsEnabled = argumentsProvider.getOptionalArgument("isSyntheticStepsEnabled")?.toBoolean() ?: false
             )
         } catch (e: Throwable) {
-            TestRunEnvironment.InitError(e.message ?: "Unknown error")
+            TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
         }
     }
 }
