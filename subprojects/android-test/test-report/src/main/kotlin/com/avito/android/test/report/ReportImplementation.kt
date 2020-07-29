@@ -191,9 +191,11 @@ class ReportImplementation(
     override fun startPrecondition(step: StepResult): Unit =
         methodExecutionTracing("startPrecondition") {
             val currentState = getCastedState<ReportState.Initialized.Started>()
-
+            val currentStep = currentState.currentStep
+            require(currentStep == null || currentStep.isSynthetic) {
+                "Can't start precondition when another one exists"
+            }
             currentState.currentStep = step
-
             step.timestamp = timeProvider.nowInSeconds()
             step.number = currentState.preconditionNumber++
             beforePreconditionStart(step)
@@ -202,12 +204,9 @@ class ReportImplementation(
     @Synchronized
     override fun stopPrecondition(): Unit = methodExecutionTracing("stopPrecondition") {
         val currentState = getCastedState<ReportState.Initialized.Started>()
-
-        val currentStep = currentState.currentStep
-        if (currentStep == null) {
-            throw RuntimeException("Couldn't stop precondition because it hasn't started yet")
+        val currentStep = requireNotNull(currentState.currentStep) {
+            "Can't stop precondition because it isn't started"
         }
-
         currentState.preconditionStepList.add(currentStep)
         afterPreconditionStop(currentStep)
         if (isSyntheticStepEnabled) {
@@ -218,6 +217,10 @@ class ReportImplementation(
     @Synchronized
     override fun startStep(step: StepResult): Unit = methodExecutionTracing("startStep") {
         val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentStep = currentState.currentStep
+        require(currentStep == null || currentStep.isSynthetic) {
+            "Can't start step when another one exists"
+        }
         currentState.currentStep = step
         step.timestamp = timeProvider.nowInSeconds()
         step.number = currentState.stepNumber++
@@ -228,9 +231,8 @@ class ReportImplementation(
     override fun stopStep(): Unit = methodExecutionTracing("stopStep") {
         val currentState = getCastedState<ReportState.Initialized.Started>()
         val currentStep = requireNotNull(currentState.currentStep) {
-            "Couldn't stop step because it hasn't started yet"
+            "Can't stop step because it isn't started"
         }
-
         currentState.testCaseStepList.add(currentStep)
         afterStepStop(currentStep)
         if (isSyntheticStepEnabled) {
@@ -281,6 +283,7 @@ class ReportImplementation(
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
         val futureUploads = started?.getCurrentStepOrCreate {
             StepResult(
+                isSynthetic = true,
                 timestamp = timeProvider.nowInSeconds(),
                 number = started.stepNumber++,
                 title = "Synthetic step"
@@ -304,6 +307,7 @@ class ReportImplementation(
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
         val entriesList = started?.getCurrentStepOrCreate {
             StepResult(
+                isSynthetic = true,
                 timestamp = timeProvider.nowInSeconds(),
                 number = started.stepNumber++,
                 title = "Synthetic step"

@@ -114,7 +114,7 @@ class InternalStep(private val isPrecondition: Boolean, private val report: Repo
     private var screenshotBeforeAssertionDone = false
 
     fun stepStart(name: String) {
-        val newStep = StepResult().apply { title = name }
+        val newStep = StepResult(isSynthetic = false).apply { title = name }
         if (isPrecondition) {
             report.startPrecondition(newStep)
         } else {
