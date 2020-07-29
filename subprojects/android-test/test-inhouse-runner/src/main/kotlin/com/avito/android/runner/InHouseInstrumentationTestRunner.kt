@@ -115,8 +115,7 @@ abstract class InHouseInstrumentationTestRunner :
             onIncident = { testIssuesMonitor.onFailure(it) },
             performanceTestReporter = performanceTestReporter,
             transport = transport,
-            logger = testReportLogger,
-            isSyntheticStepEnabled = runEnvironment.isSyntheticStepsEnabled
+            logger = testReportLogger
         )
     }
 

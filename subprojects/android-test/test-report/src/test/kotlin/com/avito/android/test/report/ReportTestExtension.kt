@@ -66,8 +66,7 @@ class ReportTestExtension(
             )
         ) else emptyList(),
         screenshotUploader = screenshotUploader,
-        timeProvider = timeProvider,
-        isSyntheticStepEnabled = true
+        timeProvider = timeProvider
     )
 ) : BeforeEachCallback, Report by report {
 
