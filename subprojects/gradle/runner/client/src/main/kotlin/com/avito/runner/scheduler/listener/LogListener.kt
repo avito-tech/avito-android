@@ -30,7 +30,7 @@ class LogListener : TestListener {
             is TestCaseRun.Result.Ignored -> "IGNORED"
             is TestCaseRun.Result.Failed.InRun -> "FAILED"
             is TestCaseRun.Result.Failed.InfrastructureError -> {
-                device.notifyError(result.errorMessage, result.cause)
+                device.warn(result.errorMessage, result.cause)
                 "LOST"
             }
         }

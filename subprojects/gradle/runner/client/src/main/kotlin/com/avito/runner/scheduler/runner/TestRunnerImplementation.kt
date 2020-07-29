@@ -30,7 +30,7 @@ class TestRunnerImplementation(
         for (result in schedulerCommunication.result) {
             results += result
 
-            logger.info(
+            logger.debug(
                 "Result for test: ${result.request.testCase.testName} " +
                     "received after ${result.result.size} tries. Progress (${results.count()}/$expectedResultsCount)"
             )

@@ -32,14 +32,14 @@ internal class Entrypoint(
 
         reporter.report(summary)
 
-        logger.info(
+        logger.debug(
             "Test run finished. The results: " +
                 "passed = ${summary.successRunsCount}, " +
                 "failed = ${summary.failedRunsCount}, " +
                 "ignored = ${summary.ignoredRunsCount}, " +
                 "took ${summary.durationMilliseconds.millisecondsToHumanReadableTime()}."
         )
-        logger.info(
+        logger.debug(
             "Matching results: " +
                 "matched = ${summary.matchedCount}, " +
                 "mismatched = ${summary.mismatched}, " +

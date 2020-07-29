@@ -106,9 +106,8 @@ open class MockDevice(
         logger.info(message)
     }
 
-    override fun notifyError(message: String, error: Throwable?) {
-        val error: Throwable = error ?: java.lang.RuntimeException(message)
-        logger.critical(message, error)
+    override fun warn(message: String, error: Throwable?) {
+        logger.warn(message, error)
     }
 
     fun verify() {

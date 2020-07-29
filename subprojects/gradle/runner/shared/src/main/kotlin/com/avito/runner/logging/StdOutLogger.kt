@@ -17,10 +17,10 @@ class StdOutLogger : Logger {
     }
 
     override fun exception(msg: String, error: Throwable) {
-        println("ERROR: $msg ${error?.message}")
+        println("ERROR: $msg ${error.message}")
     }
 
     override fun critical(msg: String, error: Throwable) {
-        println("ERROR: $msg ${error?.message}")
+        println("CRITICAL: $msg ${error.message}")
     }
 }

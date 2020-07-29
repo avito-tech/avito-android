@@ -66,7 +66,7 @@ class IntentionExecutionServiceImplementation(
                         logger.debug("Application: ${message.installation.installation.application} installed")
                     }
                     is DeviceWorkerMessage.WorkerFailed -> {
-                        logger.info(
+                        logger.debug(
                             "Received worker failed message during executing intention:" +
                                 " ${message.intention}. Rescheduling..."
                         )

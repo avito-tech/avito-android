@@ -48,7 +48,7 @@ data class AdbDevice(
                 )
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.info("Attempt $attempt: reading ro.build.version.sdk failed")
+                logger.debug("Attempt $attempt: reading ro.build.version.sdk failed")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed reading ro.build.version.sdk", throwable)
@@ -72,7 +72,7 @@ data class AdbDevice(
                 logger.debug("Attempt $attempt: application $application installed")
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.info("Attempt $attempt: failed to install application $application")
+                logger.debug("Attempt $attempt: failed to install application $application")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed installing application $application", throwable)
@@ -178,7 +178,7 @@ data class AdbDevice(
                 Device.DeviceStatus.Alive
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.info("Attempt $attempt: device is freezing")
+                logger.debug("Attempt $attempt: device is freezing")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed reading device status", throwable)
@@ -203,7 +203,7 @@ data class AdbDevice(
                 logger.debug("Attempt: $attempt: clear package $name completed")
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.info("Attempt $attempt: failed to clear package $name")
+                logger.debug("Attempt $attempt: failed to clear package $name")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed clearing package $name", throwable)
@@ -237,7 +237,7 @@ data class AdbDevice(
                 }
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.info("Attempt $attempt: failed to pull $from")
+                logger.debug("Attempt $attempt: failed to pull $from")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed pulling data $from", throwable)
@@ -259,7 +259,7 @@ data class AdbDevice(
                 )
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.info("Attempt $attempt: failed to clear package $remotePath")
+                logger.debug("Attempt $attempt: failed to clear package $remotePath")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed clearing package $remotePath", throwable)
@@ -280,7 +280,7 @@ data class AdbDevice(
                 )
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.info("Attempt $attempt: failed to list directory $remotePath")
+                logger.debug("Attempt $attempt: failed to list directory $remotePath")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed listing path $remotePath", throwable)
@@ -440,9 +440,8 @@ data class AdbDevice(
         logger.info("$TAG $message")
     }
 
-    override fun notifyError(message: String, error: Throwable?) {
-        val error: Throwable = error ?: java.lang.RuntimeException(message)
-        logger.critical("$TAG $message", error)
+    override fun warn(message: String, error: Throwable?) {
+        logger.warn("$TAG $message", error)
     }
 
     override fun toString(): String {

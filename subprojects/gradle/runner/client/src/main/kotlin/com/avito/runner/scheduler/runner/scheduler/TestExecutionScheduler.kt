@@ -37,7 +37,7 @@ class TestExecutionScheduler(
                     }
                     is TestExecutionState.Verdict.Run -> {
                         verdict.intentions.forEach { intention ->
-                            logger.info("Retry intention: $intention")
+                            logger.debug("Retry intention: $intention")
                             executionClient.requests.send(
                                 ClientTestRunRequest(
                                     state = testRunResult.state,

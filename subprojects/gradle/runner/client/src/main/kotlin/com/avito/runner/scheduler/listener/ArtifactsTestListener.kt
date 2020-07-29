@@ -63,7 +63,7 @@ class ArtifactsTestListener(
                 remotePath = testMetadataDirectory.toPath()
             ).get()
         } catch (t: Throwable) {
-            logger.critical("Failed to process artifacts from device", t)
+            logger.warn("Failed to process artifacts from device", t)
         }
 
         tempDirectory.delete()
