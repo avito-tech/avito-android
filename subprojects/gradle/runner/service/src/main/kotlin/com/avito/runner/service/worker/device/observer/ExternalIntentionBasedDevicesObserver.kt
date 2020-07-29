@@ -1,6 +1,6 @@
 package com.avito.runner.service.worker.device.observer
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.Serial
@@ -19,7 +19,7 @@ class ExternalIntentionBasedDevicesObserver(
     override suspend fun observeDevices(): ReceiveChannel<Device> =
         externalIntentionOfSerials
             .map { intentionSerial ->
-                logger.log("Intention for serial: $intentionSerial received")
+                logger.debug("Intention for serial: $intentionSerial received")
 
                 devicesManager.connectedDevices()
                     .find { it.id == intentionSerial }

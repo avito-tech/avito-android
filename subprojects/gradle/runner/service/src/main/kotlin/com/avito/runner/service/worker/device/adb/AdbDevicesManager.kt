@@ -1,8 +1,8 @@
 package com.avito.runner.service.worker.device.adb
 
+import com.avito.logger.Logger
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
-import com.avito.runner.logging.Logger
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DevicesManager
 
@@ -35,7 +35,7 @@ class AdbDevicesManager(
             .retry { retryCount, exception ->
                 val shouldRetry = retryCount < 5 && exception is IllegalStateException
                 if (shouldRetry) {
-                    logger.log("runningEmulators: retrying $exception.")
+                    logger.debug("runningEmulators: retrying $exception.")
                 }
 
                 shouldRetry
@@ -52,7 +52,9 @@ class AdbDevicesManager(
                         ) as Device
                     }.toSet()
             }
-            .doOnError { logger.log("Error on getting adb devices, error = $it") }
+            .doOnError {
+                logger.warn("Error on getting adb devices", it)
+            }
             .toSingle()
             .toBlocking()
             .value()

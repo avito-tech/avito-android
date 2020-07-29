@@ -7,7 +7,6 @@ import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.util.launchGroupedCoroutines
-import com.avito.runner.logging.Logger
 import com.avito.runner.scheduler.TestsRunnerClient
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.runner.model.TestRunRequest
@@ -15,6 +14,7 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.runBlocking
@@ -104,15 +104,7 @@ interface TestExecutor {
                 val runnerArguments = Arguments(
                     outputDirectory = outputFolder(output),
                     devices = devices,
-                    logger = object : Logger {
-                        override fun notify(message: String, error: Throwable?) {
-                            logger.critical(message, error)
-                        }
-
-                        override fun log(message: String) {
-                            logger.info(message)
-                        }
-                    },
+                    logger = commonLogger(logger),
                     listener = testReporter,
                     requests = testRequests
                 )

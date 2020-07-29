@@ -1,6 +1,6 @@
 package com.avito.runner.service
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
@@ -63,10 +63,10 @@ class IntentionExecutionServiceImplementation(
             for (message in messages) {
                 when (message) {
                     is DeviceWorkerMessage.ApplicationInstalled -> {
-                        logger.log("Application: ${message.installation.installation.application} installed")
+                        logger.debug("Application: ${message.installation.installation.application} installed")
                     }
                     is DeviceWorkerMessage.WorkerFailed -> {
-                        logger.log(
+                        logger.debug(
                             "Received worker failed message during executing intention:" +
                                 " ${message.intention}. Rescheduling..."
                         )

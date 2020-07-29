@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.args
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.worker.device.Serial

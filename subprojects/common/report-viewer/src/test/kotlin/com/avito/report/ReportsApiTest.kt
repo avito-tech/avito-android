@@ -1,7 +1,6 @@
 package com.avito.report
 
-import com.avito.logger.FakeLogger
-import com.avito.logger.Logger
+import com.avito.logger.NoOpLogger
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.gradle.fileFromJarResources
@@ -26,7 +25,7 @@ internal class ReportsApiTest {
         reportsApi = ReportsApi.create(
             host = host,
             fallbackUrl = "",
-            logger = FakeLogger
+            logger = NoOpLogger
         )
     }
 

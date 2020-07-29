@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler.runner
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
+import com.avito.logger.NoOpLogger
 import com.avito.runner.logging.StdOutLogger
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.model.TestRunRequest
@@ -577,7 +578,7 @@ class RunnerIntegrationTest {
     private fun provideRunner(
         observer: DevicesObserver,
         testListener: TestListener = NoOpListener,
-        logger: Logger = StdOutLogger(),
+        logger: Logger = NoOpLogger,
         outputDirectory: File = File("")
     ): TestRunner {
         val scheduler = TestExecutionScheduler(

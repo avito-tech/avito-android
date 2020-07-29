@@ -168,9 +168,7 @@ subprojects {
                         }
 
                         testsCountBasedReservation {
-                            // Replace 27 with 28 when 2020.6.1 will be released
-                            //device = com.avito.instrumentation.reservation.request.Device.LocalEmulator.device(28, "Android_SDK_built_for_x86_64")
-                            device = Device.LocalEmulator.device(27)
+                            device = Device.LocalEmulator.device(28, "Android_SDK_built_for_x86_64")
                             maximum = 1
                             minimum = 1
                             testsPerEmulator = 1

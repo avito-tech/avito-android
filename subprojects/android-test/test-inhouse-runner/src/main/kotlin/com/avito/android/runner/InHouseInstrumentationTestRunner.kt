@@ -64,6 +64,14 @@ abstract class InHouseInstrumentationTestRunner :
             Log.d("TestReport", msg)
         }
 
+        override fun info(msg: String) {
+            Log.i("TestReport", msg)
+        }
+
+        override fun warn(msg: String, error: Throwable?) {
+            Log.w("TestReport", msg, error)
+        }
+
         override fun exception(msg: String, error: Throwable) {
             Log.e("TestReport", msg, error)
         }
@@ -71,10 +79,6 @@ abstract class InHouseInstrumentationTestRunner :
         override fun critical(msg: String, error: Throwable) {
             Log.e("TestReport", msg, error)
             sentry.sendException(error)
-        }
-
-        override fun warn(msg: String, error: Throwable?) {
-            Log.w("TestReport", msg, error)
         }
     }
 

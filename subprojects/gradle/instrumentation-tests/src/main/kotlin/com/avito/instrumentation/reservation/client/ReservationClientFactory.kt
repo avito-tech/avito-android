@@ -6,11 +6,11 @@ import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.client.local.LocalReservationClient
-import com.avito.runner.logging.Logger
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.createKubernetesClient
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import java.io.File
 
 interface ReservationClientFactory {
@@ -45,15 +45,7 @@ interface ReservationClientFactory {
             return if (configuration.isTargetLocalEmulators) {
                 LocalReservationClient(
                     androidDebugBridge = androidDebugBridge,
-                    devicesManager = AdbDevicesManager(logger = object : Logger {
-                        override fun notify(message: String, error: Throwable?) {
-                            logger.critical(message, error)
-                        }
-
-                        override fun log(message: String) {
-                            logger.info(message)
-                        }
-                    }),
+                    devicesManager = AdbDevicesManager(logger = commonLogger(logger)),
                     configurationName = configuration.name,
                     logger = logger,
                     emulatorsLogsReporter = emulatorsLogsReporter

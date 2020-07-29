@@ -29,7 +29,7 @@ interface Device {
     fun deviceStatus(): DeviceStatus
 
     fun log(message: String)
-    fun notifyError(message: String, error: Throwable?)
+    fun warn(message: String, error: Throwable?)
 
     sealed class DeviceStatus {
         object Alive : DeviceStatus() {

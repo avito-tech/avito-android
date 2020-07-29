@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.millisecondsToHumanReadableTime
 import com.avito.runner.scheduler.report.Reporter
 import com.avito.runner.scheduler.report.SummaryReportMaker
@@ -32,15 +32,14 @@ internal class Entrypoint(
 
         reporter.report(summary)
 
-        logger.log("Test run finished")
-        logger.log(
-            "Runs results: " +
+        logger.debug(
+            "Test run finished. The results: " +
                 "passed = ${summary.successRunsCount}, " +
                 "failed = ${summary.failedRunsCount}, " +
                 "ignored = ${summary.ignoredRunsCount}, " +
                 "took ${summary.durationMilliseconds.millisecondsToHumanReadableTime()}."
         )
-        logger.log(
+        logger.debug(
             "Matching results: " +
                 "matched = ${summary.matchedCount}, " +
                 "mismatched = ${summary.mismatched}, " +

@@ -58,6 +58,11 @@ private fun defaultCILogger(
     )
 
     val logger = CILogger(
+        debugHandler = CILoggingCombinedHandler(
+            handlers = listOf(
+                destinationFileHandler
+            )
+        ),
         infoHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 stdoutHandler,
@@ -75,11 +80,6 @@ private fun defaultCILogger(
                 stdoutHandler,
                 destinationFileHandler,
                 sentryHandler
-            )
-        ),
-        debugHandler = CILoggingCombinedHandler(
-            handlers = listOf(
-                destinationFileHandler
             )
         )
     )

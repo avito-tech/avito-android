@@ -8,5 +8,6 @@ extra["artifact-id"] = "runner-shared"
 
 dependencies {
     compileOnly(gradleApi())
+    api(project(":common:logger"))
     implementation(Dependencies.rxJava)
 }

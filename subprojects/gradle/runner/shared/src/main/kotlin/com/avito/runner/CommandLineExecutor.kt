@@ -67,15 +67,18 @@ interface CommandLineExecutor {
 
                 reader.close()
 
-                val exitCode = process.waitFor()
-
-                when (exitCode) {
+                when (val exitCode = process.waitFor()) {
                     0 -> {
                         emitter.onNext(ProcessNotification.Exit(buffer.toString()))
                         emitter.onCompleted()
                     }
                     else -> {
-                        emitter.onError(IllegalStateException("Process $commandAndArgs exited with non-zero code $exitCode"))
+                        emitter.onError(
+                            IllegalStateException(
+                                "Process $commandAndArgs exited with non-zero code $exitCode. " +
+                                    "Output: $buffer"
+                            )
+                        )
                     }
                 }
             }, Emitter.BackpressureMode.ERROR

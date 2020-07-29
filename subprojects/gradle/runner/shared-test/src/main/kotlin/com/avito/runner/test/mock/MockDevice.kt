@@ -1,6 +1,6 @@
 package com.avito.runner.test.mock
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
@@ -103,11 +103,11 @@ open class MockDevice(
     }
 
     override fun log(message: String) {
-        logger.log(message)
+        logger.info(message)
     }
 
-    override fun notifyError(message: String, error: Throwable?) {
-        logger.notify(message, error)
+    override fun warn(message: String, error: Throwable?) {
+        logger.warn(message, error)
     }
 
     fun verify() {

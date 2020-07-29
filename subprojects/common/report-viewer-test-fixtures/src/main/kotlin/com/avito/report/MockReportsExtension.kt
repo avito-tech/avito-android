@@ -1,7 +1,6 @@
 package com.avito.report
 
-import com.avito.logger.FakeLogger
-import com.avito.logger.Logger
+import com.avito.logger.NoOpLogger
 import com.avito.test.http.MockDispatcher
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.extension.AfterEachCallback
@@ -23,7 +22,7 @@ class MockReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
                 realApi = ReportsApi.create(
                     host = mockWebServer.url("/").toString(),
                     fallbackUrl = "",
-                    logger = FakeLogger
+                    logger = NoOpLogger
                 ),
                 mockDispatcher = mockDispatcher
             )

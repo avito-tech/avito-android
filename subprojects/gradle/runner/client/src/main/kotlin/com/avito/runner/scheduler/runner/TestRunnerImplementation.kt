@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.runner
 
-import com.avito.runner.logging.Logger
+import com.avito.logger.Logger
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
@@ -30,7 +30,7 @@ class TestRunnerImplementation(
         for (result in schedulerCommunication.result) {
             results += result
 
-            logger.log(
+            logger.debug(
                 "Result for test: ${result.request.testCase.testName} " +
                     "received after ${result.result.size} tries. Progress (${results.count()}/$expectedResultsCount)"
             )

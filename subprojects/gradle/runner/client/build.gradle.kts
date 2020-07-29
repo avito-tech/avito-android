@@ -16,6 +16,7 @@ dependencies {
     implementation(Dependencies.coroutinesCore)
     implementation(Dependencies.gson)
 
+    testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:runner:shared-test"))
     testImplementation(Dependencies.kotlinReflect)

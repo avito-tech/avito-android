@@ -8,7 +8,7 @@ import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.FakeLogger
+import com.avito.logger.NoOpLogger
 import com.avito.logger.Logger
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
@@ -36,7 +36,7 @@ class ReportTestExtension(
     val fileStorageUrl: String = "https://filestorage.com",
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
-    private val logger: Logger = FakeLogger,
+    private val logger: Logger = NoOpLogger,
     private val testRunCoordinates: ReportCoordinates = ReportCoordinates(
         planSlug = "android-test",
         jobSlug = "android-test",

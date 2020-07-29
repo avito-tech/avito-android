@@ -36,7 +36,7 @@ class DeviceWorker(
             checkDeviceAlive()
             device.state()
         } catch (t: Exception) {
-            device.notifyError("Error while checking device initial state", t)
+            device.warn("Error while checking device initial state", t)
             // No intention is lost. DeviceWorkerMessage.WorkerFailed event is unnecessary.
             // Can't use this device any more. ReservationClient will get a new one.
             return@launch
@@ -67,7 +67,7 @@ class DeviceWorker(
 
             } catch (t: Throwable) {
                 // means device worker is die. TODO release device
-                device.notifyError("Error during $intention processing", t)
+                device.warn("Error during $intention processing", t)
 
                 messagesChannel.send(
                     DeviceWorkerMessage.WorkerFailed(
