@@ -9,7 +9,7 @@ import org.junit.runner.notification.RunListener
 @SuppressLint("LogNotTimber")
 class ReportTestListener : RunListener() {
 
-    private val report: Report by lazy { reportInstance }
+    private val report: Report by lazy { TestExecutionState.reportInstance }
 
     override fun testStarted(description: Description) {
         processEvent("start", description.displayName) {

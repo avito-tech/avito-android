@@ -84,6 +84,7 @@ include(":common:teamcity-common")
 include(":common:test-annotations")
 include(":common:junit-utils")
 include(":common:retrace")
+include(":common:truth-extensions")
 
 include(":android-test:resource-manager-exceptions")
 include(":android-test:websocket-reporter")

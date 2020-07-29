@@ -2,7 +2,9 @@ package com.avito.android.test.report
 
 import com.avito.report.model.Entry
 import com.avito.time.TimeMachineProvider
+import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.concurrent.TimeUnit
@@ -20,12 +22,15 @@ class ReportSyntheticStepsTest {
     private val comment = "Comment"
     private val assertionMessage = "Assertion"
 
-    @Test
-    fun `when add Entries after steps than synthetic step will be created`() {
+    @BeforeEach
+    fun before() {
         // given
         report.initTestCaseHelper()
         report.startTestCase()
+    }
 
+    @Test
+    fun `when add Entries after steps than synthetic step will be created`() {
         // when
         step("Real step", report, false) {}
 
@@ -44,10 +49,6 @@ class ReportSyntheticStepsTest {
 
     @Test
     fun `when add htmlEntry before steps than synthetic step will be created`() {
-        // given
-        report.initTestCaseHelper()
-        report.startTestCase()
-
         // when
         report.addEntriesOutOfStep()
 
@@ -65,10 +66,6 @@ class ReportSyntheticStepsTest {
 
     @Test
     fun `when add htmlEntry between steps than synthetic step will be created`() {
-        // given
-        report.initTestCaseHelper()
-        report.startTestCase()
-
         // when
         step("Real step", report, false) {}
 
@@ -121,10 +118,5 @@ class ReportSyntheticStepsTest {
         assertThat<Entry.Check>(syntheticStep.entryList[2]) {
             assertThat(title).isEqualTo(assertionMessage)
         }
-    }
-
-    private inline fun <reified T> assertThat(any: Any, assert: T.() -> Unit) {
-        assertThat(any).isInstanceOf(T::class.java)
-        assert(any as T)
     }
 }
