@@ -26,6 +26,6 @@ dependencies {
     testImplementation(project(":common:time-test-fixtures"))
     testImplementation(Dependencies.test.okhttpMock)
     testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.truth)
     testImplementation(Dependencies.test.jsonPathAssert)
+    testImplementation(project(":common:truth-extensions"))
 }

@@ -6,17 +6,19 @@ import com.avito.android.test.report.model.StepResult
 import com.avito.android.util.ImitateFlagProvider
 
 @PublishedApi
-internal val onlyImitateProvider: ImitateFlagProvider
-    get() = InstrumentationRegistry.getInstrumentation() as ImitateFlagProvider
+internal object TestExecutionState {
 
-@PublishedApi
-internal val reportInstance: Report
-    get() = (InstrumentationRegistry.getInstrumentation() as ReportProvider).report
+    val onlyImitateProvider: ImitateFlagProvider
+        get() = InstrumentationRegistry.getInstrumentation() as ImitateFlagProvider
+
+    val reportInstance: Report
+        get() = (InstrumentationRegistry.getInstrumentation() as ReportProvider).report
+}
 
 inline fun step(
     description: String,
-    report: Report = reportInstance,
-    onlyImitate: Boolean = onlyImitateProvider.isImitate,
+    report: Report = TestExecutionState.reportInstance,
+    onlyImitate: Boolean = TestExecutionState.onlyImitateProvider.isImitate,
     action: TestCaseAssertion.() -> Unit = {}
 ) {
     internalStep(
@@ -30,8 +32,8 @@ inline fun step(
 
 inline fun precondition(
     description: String,
-    report: Report = reportInstance,
-    onlyImitate: Boolean = onlyImitateProvider.isImitate,
+    report: Report = TestExecutionState.reportInstance,
+    onlyImitate: Boolean = TestExecutionState.onlyImitateProvider.isImitate,
     action: TestCaseAssertion.() -> Unit
 ) {
     internalStep(
@@ -45,7 +47,7 @@ inline fun precondition(
 
 inline fun <T : DataSet> dataSet(
     value: T,
-    report: Report = reportInstance,
+    report: Report = TestExecutionState.reportInstance,
     action: (T) -> Unit
 ) {
     report.updateTestCase {
@@ -65,16 +67,19 @@ inline fun <T> internalStep(
     report: Report,
     block: TestCaseAssertion.() -> T
 ) {
-    with(InternalStep(isPrecondition, report)) {
-        stepStart(action)
-        val assertion = TestCaseAssertion(beforeAssertion = { beforeAssertion(it) })
+    with(InternalStep(isPrecondition, report, action)) {
+        // must be out of try because if we fail while starting we don't want to execute stepFailed() stepFinished()
+        stepStart()
         try {
             if (!onlyImitate) {
-                block.invoke(assertion)
+                this.block()
             }
             stepPassed()
+        } catch (t: StepException) {
+            stepFailed(t)
+            throw t
         } catch (t: Throwable) {
-            val stepException = StepException(isPrecondition, action, assertion.assertionMessage, t)
+            val stepException = StepException(isPrecondition, action, null, t)
             stepFailed(stepException)
             throw stepException
         } finally {
@@ -83,26 +88,12 @@ inline fun <T> internalStep(
     }
 }
 
-class StepException(val isPrecondition: Boolean, val action: String, val assertion: String?, cause: Throwable?) :
-    ReporterException(message = title(isPrecondition) + "\n" + data(isPrecondition, action, assertion), cause = cause) {
-
-    companion object {
-        private fun slug(isPrecondition: Boolean) = if (isPrecondition) "precondition" else "шаг"
-
-        fun title(isPrecondition: Boolean) = "Не удалось выполнить ${slug(isPrecondition)}"
-
-        fun data(isPrecondition: Boolean, action: String, assertion: String?): String {
-            return "${slug(isPrecondition).capitalize()}:\n${action.prependIndent()}"
-                .let {
-                    if (assertion != null)
-                        "$it\nПроверка:\n${assertion.prependIndent()}"
-                    else it
-                }
-        }
-    }
-}
-
-class InternalStep(private val isPrecondition: Boolean, private val report: Report) {
+@PublishedApi
+internal class InternalStep(
+    private val isPrecondition: Boolean,
+    private val report: Report,
+    private val stepName: String
+) : TestCaseAssertion {
 
     private val slug = if (isPrecondition) "precondition'ом" else "шагом"
     private val slug2 = if (isPrecondition) "precondition'a" else "шага"
@@ -113,8 +104,8 @@ class InternalStep(private val isPrecondition: Boolean, private val report: Repo
      */
     private var screenshotBeforeAssertionDone = false
 
-    fun stepStart(name: String) {
-        val newStep = StepResult(isSynthetic = false).apply { title = name }
+    fun stepStart() {
+        val newStep = StepResult(isSynthetic = false).apply { title = stepName }
         if (isPrecondition) {
             report.startPrecondition(newStep)
         } else {
@@ -123,6 +114,15 @@ class InternalStep(private val isPrecondition: Boolean, private val report: Repo
 
         if (!report.isFirstStepOrPrecondition) {
             report.makeScreenshot("Screenshot перед $slug")
+        }
+    }
+
+    override fun assertion(assertionMessage: String, action: () -> Unit) {
+        try {
+            beforeAssertion(assertionMessage)
+            action()
+        } catch (t: Throwable) {
+            throw StepException(isPrecondition, stepName, assertionMessage, t)
         }
     }
 
@@ -163,6 +163,32 @@ class InternalStep(private val isPrecondition: Boolean, private val report: Repo
             report.stopPrecondition()
         } else {
             report.stopStep()
+        }
+    }
+}
+
+class StepException(
+    val isPrecondition: Boolean,
+    val action: String,
+    val assertion: String?,
+    cause: Throwable?
+) : ReporterException(
+    message = title(isPrecondition) + "\n" + data(isPrecondition, action, assertion),
+    cause = cause
+) {
+
+    companion object {
+        private fun slug(isPrecondition: Boolean) = if (isPrecondition) "precondition" else "шаг"
+
+        fun title(isPrecondition: Boolean) = "Не удалось выполнить ${slug(isPrecondition)}"
+
+        fun data(isPrecondition: Boolean, action: String, assertion: String?): String {
+            return "${slug(isPrecondition).capitalize()}:\n${action.prependIndent()}"
+                .let {
+                    if (assertion != null)
+                        "$it\nПроверка:\n${assertion.prependIndent()}"
+                    else it
+                }
         }
     }
 }
