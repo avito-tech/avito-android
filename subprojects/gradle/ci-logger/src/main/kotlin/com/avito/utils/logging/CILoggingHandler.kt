@@ -7,21 +7,19 @@ interface CILoggingHandler : Serializable {
     fun child(tag: String): CILoggingHandler
 }
 
-object NothingLoggingHandler : CILoggingHandler {
-    override fun write(message: String, error: Throwable?) {
-    }
-
+internal object NothingLoggingHandler : CILoggingHandler {
+    override fun write(message: String, error: Throwable?) {}
     override fun child(tag: String): CILoggingHandler = this
 }
 
-class CILoggingHandlerImplementation(
+internal class CILoggingHandlerImplementation(
     private val formatter: CILoggingFormatter = NothingLoggingFormatter,
     private val destination: CILoggingDestination
 ) : CILoggingHandler {
 
     override fun write(message: String, error: Throwable?) {
         destination.write(
-            formatter.format(message, error)
+            formatter.format(message), error
         )
     }
 
@@ -31,7 +29,7 @@ class CILoggingHandlerImplementation(
     )
 }
 
-class CILoggingCombinedHandler(
+internal class CILoggingCombinedHandler(
     private val handlers: Collection<CILoggingHandler>
 ) : CILoggingHandler {
 

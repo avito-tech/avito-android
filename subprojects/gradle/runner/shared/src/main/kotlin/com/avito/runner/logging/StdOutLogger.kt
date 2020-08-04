@@ -16,10 +16,6 @@ class StdOutLogger : Logger {
         println("WARN: $msg ${error?.message}")
     }
 
-    override fun exception(msg: String, error: Throwable) {
-        println("ERROR: $msg ${error.message}")
-    }
-
     override fun critical(msg: String, error: Throwable) {
         println("CRITICAL: $msg ${error.message}")
     }

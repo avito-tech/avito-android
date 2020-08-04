@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":common:logger"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gradle.androidPlugin)

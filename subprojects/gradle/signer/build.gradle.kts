@@ -8,7 +8,7 @@ plugins {
 dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:files"))

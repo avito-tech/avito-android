@@ -8,7 +8,5 @@ object NoOpLogger: Logger {
 
     override fun warn(msg: String, error: Throwable?) {}
 
-    override fun exception(msg: String, error: Throwable) {}
-
     override fun critical(msg: String, error: Throwable) {}
 }

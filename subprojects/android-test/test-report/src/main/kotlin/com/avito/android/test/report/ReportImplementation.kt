@@ -172,7 +172,7 @@ class ReportImplementation(
             try {
                 afterTestStop(startedState)
             } catch (t: Throwable) {
-                logger.exception("Failed while afterTestStop were executing", t)
+                logger.warn("Failed while afterTestStop were executing", t)
             }
             earlyEntries.addAll(
                 earlyFuturesUploads.getInitializedEntries()

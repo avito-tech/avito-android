@@ -54,8 +54,6 @@ abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
                 ciLogger.warn(msg, error)
             }
 
-            override fun exception(msg: String, error: Throwable) = ciLogger.info(msg, error)
-
             override fun critical(msg: String, error: Throwable) = ciLogger.critical(msg, error)
         }
         return GraphiteSender.Impl(config, logger)
