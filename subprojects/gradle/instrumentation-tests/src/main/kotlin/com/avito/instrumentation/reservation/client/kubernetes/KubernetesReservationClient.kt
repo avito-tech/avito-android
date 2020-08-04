@@ -66,9 +66,7 @@ class KubernetesReservationClient(
         reservationDeployments: SendChannel<String> // TODO: make this state internal
     ) {
         if (state !is State.Idling) {
-            val error = RuntimeException("Unable to start reservation job. Already started")
-            logger.critical(error.message.orEmpty())
-            throw error
+            throw IllegalStateException("Unable to start reservation job. Already started")
         }
         logger.debug("Starting deployments for configuration: $configurationName...")
         val podsChannel = Channel<Pod>()
@@ -108,7 +106,7 @@ class KubernetesReservationClient(
             .filter { it.status.phase == POD_STATUS_RUNNING }
             .distinctBy { it.metadata.name }
             .forEachAsync { pod ->
-                logger.info("Found new pod: ${pod.metadata.name}")
+                logger.debug("Found new pod: ${pod.metadata.name}")
                 requireNotNull(pod.status.podIP) { "pod has ip after deployment" }
 
                 val serial = emulatorSerialName(
@@ -126,13 +124,13 @@ class KubernetesReservationClient(
                     )
                     serialsChannel.send(serial)
 
-                    logger.info("Pod ${pod.metadata.name} sent outside for further usage")
+                    logger.debug("Pod ${pod.metadata.name} sent outside for further usage")
                 } else {
-                    logger.info("Pod ${pod.metadata.name} can't load device. Disconnect and delete")
+                    logger.warn("Pod ${pod.metadata.name} can't load device. Disconnect and delete")
                     val isDisconnected = device.disconnect().isSuccess()
-                    logger.info("Disconnect device $serial: $isDisconnected. Can't boot it.")
+                    logger.warn("Disconnect device $serial: $isDisconnected. Can't boot it.")
                     val isDeleted = kubernetesClient.pods().withName(pod.metadata.name).delete()
-                    logger.info("Pod ${pod.metadata.name} is deleted: $isDeleted")
+                    logger.warn("Pod ${pod.metadata.name} is deleted: $isDeleted")
                 }
             }
     }
@@ -142,13 +140,12 @@ class KubernetesReservationClient(
     ) {
         if (state !is State.Reserving) {
             // TODO: check on client side beforehand
-            val error = RuntimeException("Unable to stop reservation job. Hasn't started yet")
-            logger.critical(error.message.orEmpty())
-            throw error
+            // TODO this leads to deployment leak
+            throw RuntimeException("Unable to stop reservation job. Hasn't started yet")
         }
         (state as State.Reserving).pods.close()
 
-        logger.info("Releasing devices for configuration: $configurationName...")
+        logger.debug("Releasing devices for configuration: $configurationName...")
 
         reservationDeployments
             .iterateInParallel { _, deploymentName ->
@@ -158,7 +155,7 @@ class KubernetesReservationClient(
                 ).filter { it.status.phase == POD_STATUS_RUNNING }
 
                 if (runningPods.isNotEmpty()) {
-                    logger.info("Save emulators logs for deployment: $deploymentName")
+                    logger.debug("Save emulators logs for deployment: $deploymentName")
                     runningPods
                         .iterateInParallel { _, pod ->
                             val podName = pod.metadata.name
@@ -172,45 +169,45 @@ class KubernetesReservationClient(
                             )
                             check(device is RemoteDevice)
 
-                            logger.info("Saving emulator logs for pod: $podName with serial: $serial...")
+                            logger.debug("Saving emulator logs for pod: $podName with serial: $serial...")
                             try {
                                 val podLogs = kubernetesClient.pods().withName(podName).log
-                                logger.info("Emulators logs saved for pod: $podName with serial: $serial")
+                                logger.debug("Emulators logs saved for pod: $podName with serial: $serial")
 
-                                logger.info("Saving logcat for pod: $podName with serial: $serial...")
+                                logger.debug("Saving logcat for pod: $podName with serial: $serial...")
                                 emulatorsLogsReporter.reportEmulatorLogs(
                                     emulatorName = serial,
                                     log = podLogs
                                 )
-                                logger.info("Logcat saved for pod: $podName with serial: $serial")
+                                logger.debug("Logcat saved for pod: $podName with serial: $serial")
                             } catch (throwable: Throwable) {
                                 // TODO must be fixed after adding affinity to POD
                                 val podDescription = getPodDescription(podName)
                                 logger.critical(
                                     "Get logs from emulator failed; pod=$podName; podDescription=$podDescription; container serial=$serial",
-                                    RuntimeException(podDescription, throwable)
+                                    throwable
                                 )
                             }
 
-                            logger.info("Disconnecting device: $serial")
+                            logger.debug("Disconnecting device: $serial")
                             device.disconnect().fold(
-                                { logger.info("Disconnecting device: $serial successfully completed") },
-                                { logger.info("Failed to disconnect device: $serial") }
+                                { logger.debug("Disconnecting device: $serial successfully completed") },
+                                { logger.warn("Failed to disconnect device: $serial") }
                             )
                         }
-                    logger.info("Emulators logs saved for deployment: $deploymentName")
+                    logger.debug("Emulators logs saved for deployment: $deploymentName")
                 }
 
-                logger.info("Deleting deployment: $deploymentName...")
+                logger.debug("Deleting deployment: $deploymentName...")
                 removeEmulatorsDeployment(
                     deploymentName = deploymentName
                 )
-                logger.info("Deployment: $deploymentName deleted")
+                logger.debug("Deployment: $deploymentName deleted")
             }
 
         state = State.Idling
 
-        logger.info("Devices released for configuration: $configurationName")
+        logger.debug("Devices released for configuration: $configurationName")
     }
 
     private fun getPodDescription(podName: String?): String {
@@ -222,7 +219,7 @@ class KubernetesReservationClient(
                 "pod doesn't exist"
             }
         } catch (e: Exception) {
-            logger.info("Can't get pod info", e)
+            logger.warn("Can't get pod info", e)
             "Error when get pod description, ${e.message}"
         }
     }
@@ -233,7 +230,7 @@ class KubernetesReservationClient(
         try {
             kubernetesClient.apps().deployments().withName(deploymentName).delete()
         } catch (t: Throwable) {
-            logger.critical("Delete deployment $deploymentName", t)
+            logger.warn("Failed to delete deployment $deploymentName", t)
         }
     }
 
@@ -398,7 +395,7 @@ class KubernetesReservationClient(
         count: Int
     ) {
         val isDeploymentDone = waitForCondition(
-            logger = { logger.info(it) },
+            logger = { logger.debug(it) },
             conditionName = "Deployment $deploymentName deployed"
         ) {
             podsFromDeployment(
@@ -406,27 +403,24 @@ class KubernetesReservationClient(
             ).size == count
         }
         if (!isDeploymentDone) {
-            val error =
-                RuntimeException("Something went wrong during deploying deployment: $deploymentName")
-            logger.critical(error.message.orEmpty())
-            throw error
+            throw RuntimeException("Can't create deployment: $deploymentName")
         }
     }
 
     private fun podsFromDeployment(
         deploymentName: String
     ): List<Pod> = try {
-        logger.info("Getting pods for deployment: $deploymentName")
+        logger.debug("Getting pods for deployment: $deploymentName")
         val items = kubernetesClient.pods().withLabel("deploymentName", deploymentName).list().items
         val runningPods = items.filter { it.status.phase == POD_STATUS_RUNNING }
-        logger.info(
+        logger.debug(
             "Getting pods for deployment: $deploymentName completed. " +
                 "Received ${items.size} pods (running: ${runningPods.size})."
         )
 
         items
     } catch (t: Throwable) {
-        logger.info("Failed to get pods for deployment: $deploymentName", t)
+        logger.warn("Failed to get pods for deployment: $deploymentName", t)
         emptyList()
     }
 
