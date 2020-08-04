@@ -163,22 +163,21 @@ data class AdbDevice(
             delaySeconds = 5,
             block = { attempt ->
                 logger.debug("Attempt $attempt: getting boot_completed param")
-                val devicesBooted: Boolean = loadProperty(
+                val bootCompleted: Boolean = loadProperty(
                     key = "sys.boot_completed",
                     cast = { output -> output == "1" }
                 )
-                logger.debug("Attempt $attempt: boot_completed param is $devicesBooted")
+                logger.debug("Attempt $attempt: boot_completed param is $bootCompleted")
 
-                if (!devicesBooted) {
-                    throw RuntimeException(
-                        "Device: $id hasn't booted yet"
-                    )
+                if (!bootCompleted) {
+                    // TODO it's hard to throw exception on each retry
+                    throw IllegalStateException("sys.boot_completed isn't '1'")
                 }
 
                 Device.DeviceStatus.Alive
             },
             attemptFailedHandler = { attempt, _ ->
-                logger.debug("Attempt $attempt: device is freezing")
+                logger.debug("Attempt $attempt: failed to determine the device status")
             },
             actionFailedHandler = { throwable ->
                 logger.warn("Failed reading device status", throwable)
@@ -230,6 +229,7 @@ data class AdbDevice(
                 )
 
                 if (!resultFile.exists()) {
+                    // TODO it's overhead throw exception on each retry
                     throw RuntimeException(
                         "Failed to pull file from ${from.toAbsolutePath()} to ${to.toAbsolutePath()}. " +
                             "Result file: ${resultFile.absolutePath} not found."
@@ -262,7 +262,7 @@ data class AdbDevice(
                 logger.debug("Attempt $attempt: failed to clear package $remotePath")
             },
             actionFailedHandler = { throwable ->
-                logger.warn("Failed clearing package $remotePath", throwable)
+                logger.warn("Failed clearing directory $remotePath", throwable)
             }
         )
     }
@@ -412,7 +412,7 @@ data class AdbDevice(
             timeoutSeconds,
             TimeUnit.SECONDS,
             Observable.error(
-                RuntimeException("Timeout to execute command: $command on device $id")
+                RuntimeException("Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $id")
             )
         )
         .toBlocking()

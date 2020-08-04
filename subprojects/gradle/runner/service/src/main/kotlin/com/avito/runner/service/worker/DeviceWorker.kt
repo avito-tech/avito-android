@@ -33,53 +33,60 @@ class DeviceWorker(
     fun run() = scope.launch {
 
         var state: State = try {
-            checkDeviceAlive()
-            device.state()
-        } catch (t: Exception) {
-            device.warn("Error while checking device initial state", t)
-            // No intention is lost. DeviceWorkerMessage.WorkerFailed event is unnecessary.
-            // Can't use this device any more. ReservationClient will get a new one.
-            return@launch
+            when (val status = device.deviceStatus()) {
+                is Device.DeviceStatus.Alive -> device.state()
+                is Device.DeviceStatus.Freeze -> {
+                // No intention is lost. DeviceWorkerMessage.WorkerFailed event is unnecessary.
+                // Can't use this device any more. TODO Will ReservationClient get a new one?
+                    device.warn("Device wasn't booted. Failed on initial run", status.reason)
+                    return@launch
+                }
+            }
+        } catch (t: Throwable) {
+            throw RuntimeException("Unexpected error when initialize a $device", t)
         }
 
+        // what will happen when worker dies
         for (intention in intentionsRouter.observeIntentions(state)) {
             try {
-                checkDeviceAlive()
-
                 device.log("Receive intention: $intention")
+                when (val status = device.deviceStatus()) {
+                    is Device.DeviceStatus.Alive -> {
+                        device.log("Preparing state: ${intention.state}")
+                        state = prepareDeviceState(currentState = state, intentionState = intention.state).get()
+                        device.log("State prepared")
 
-                device.log("Preparing state: ${intention.state}")
-                state = prepareDeviceState(currentState = state, intentionState = intention.state).get()
-                device.log("State prepared")
-
-                val result = executeAction(action = intention.action)
-                device.log("Worker test run completed for intention")
-                messagesChannel.send(
-                    DeviceWorkerMessage.Result(
-                        intentionResult = IntentionResult(
-                            intention = intention,
-                            actionResult = InstrumentationTestRunActionResult(
-                                testCaseRun = result
+                        val result = executeAction(action = intention.action)
+                        device.log("Worker test run completed for intention")
+                        messagesChannel.send(
+                            DeviceWorkerMessage.Result(
+                                intentionResult = IntentionResult(
+                                    intention = intention,
+                                    actionResult = InstrumentationTestRunActionResult(
+                                        testCaseRun = result
+                                    )
+                                )
                             )
                         )
-                    )
-                )
+                    }
+                    is Device.DeviceStatus.Freeze -> {
+                        // means device worker is die. TODO release device
+                        device.warn("Device died. Can't process intention: $intention", status.reason)
 
+                        messagesChannel.send(
+                            DeviceWorkerMessage.WorkerFailed(
+                                t = status.reason,
+                                intention = intention
+                            )
+                        )
+
+                        return@launch
+                    }
+                }
             } catch (t: Throwable) {
-                // means device worker is die. TODO release device
-                device.warn("Error during $intention processing", t)
-
-                messagesChannel.send(
-                    DeviceWorkerMessage.WorkerFailed(
-                        t = t,
-                        intention = intention
-                    )
-                )
-
-                return@launch
+                throw RuntimeException("Unexpected error while process intention: $intention", t)
             }
         }
-
         device.log("Worker ended with success result")
     }
 
@@ -163,16 +170,6 @@ class DeviceWorker(
             .asSequence()
             .filterIsInstance<State.Layer.InstalledApplication>()
             .forEach { device.clearPackage(it.applicationPackage) }
-    }
-
-    private fun checkDeviceAlive() {
-        device.log("Getting device status")
-        val status = device.deviceStatus()
-        device.log("Device status: $status")
-
-        if (status is Device.DeviceStatus.Freeze) {
-            throw RuntimeException("Device: ${device.id} not answered for a long time")
-        }
     }
 
     private fun Device.state(): State =

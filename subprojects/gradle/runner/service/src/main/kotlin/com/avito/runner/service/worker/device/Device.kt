@@ -38,7 +38,7 @@ interface Device {
 
         class Freeze(val reason: Throwable) :
             DeviceStatus() {
-            override fun toString(): String = "freeze because of: ${reason.message}"
+            override fun toString(): String = "Freeze. Reason: ${reason.message}"
         }
     }
 }
