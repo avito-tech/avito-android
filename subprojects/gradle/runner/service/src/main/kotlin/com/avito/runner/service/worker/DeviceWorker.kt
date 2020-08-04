@@ -50,20 +50,20 @@ class DeviceWorker(
         // what will happen when worker dies
         for (intention in intentionsRouter.observeIntentions(state)) {
             try {
-                device.log("Receive intention: $intention")
+                device.debug("Receive intention: $intention")
                 when (val status = device.deviceStatus()) {
                     is Device.DeviceStatus.Alive -> {
-                        device.log("Preparing state: ${intention.state}")
+                        device.debug("Preparing state: ${intention.state}")
                         val (preparingError, newState) = prepareDeviceState(
                             currentState = state,
                             intentionState = intention.state
                         ).toEither()
                         when {
                             newState != null -> {
-                                device.log("State prepared")
+                                device.debug("State prepared")
                                 state = newState
                                 val result = executeAction(action = intention.action)
-                                device.log("Worker test run completed for intention")
+                                device.debug("Worker test run completed for intention")
                                 messagesChannel.send(
                                     DeviceWorkerMessage.Result(
                                         intentionResult = IntentionResult(
@@ -90,7 +90,7 @@ class DeviceWorker(
                 throw RuntimeException("Unexpected error while process intention: $intention", t)
             }
         }
-        device.log("Worker ended with success result")
+        device.debug("Worker ended with success result")
     }
 
     /**
@@ -114,7 +114,7 @@ class DeviceWorker(
         currentState: State,
         intentionState: State
     ): Try<State> {
-        device.log("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
+        device.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
         if (intentionState.digest == currentState.digest) {
             clearStatePackages(currentState).get()
             return Try.Success(intentionState)
@@ -185,7 +185,7 @@ class DeviceWorker(
     }
 
     private fun clearStatePackages(state: State): Try<Any> = Try {
-        device.log("Clearing packages")
+        device.debug("Clearing packages")
         state.layers
             .asSequence()
             .filterIsInstance<State.Layer.InstalledApplication>()

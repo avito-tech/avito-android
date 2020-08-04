@@ -436,8 +436,13 @@ data class AdbDevice(
             output = redirectOutputTo
         )
 
-    override fun log(message: String) {
-        logger.info("$TAG $message")
+
+    override fun debug(message: String) {
+        logger.debug("$TAG $message")
+    }
+
+    override fun info(message: String) {
+        logger.info(message)
     }
 
     override fun warn(message: String, error: Throwable?) {

@@ -102,7 +102,11 @@ open class MockDevice(
         return gettingDeviceStatusResultsQueue.poll().get()
     }
 
-    override fun log(message: String) {
+    override fun debug(message: String) {
+        logger.debug(message)
+    }
+
+    override fun info(message: String) {
         logger.info(message)
     }
 

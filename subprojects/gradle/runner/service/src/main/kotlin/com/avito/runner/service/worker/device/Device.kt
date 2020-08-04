@@ -28,7 +28,10 @@ interface Device {
 
     fun deviceStatus(): DeviceStatus
 
-    fun log(message: String)
+    fun debug(message: String)
+
+    fun info(message: String)
+
     fun warn(message: String, error: Throwable?)
 
     sealed class DeviceStatus {
