@@ -4,8 +4,7 @@ import android.widget.ImageView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 
-@Deprecated("Use DrawableMatcherImageView")
-class DrawableMatcherImageButton(
+class DrawableMatcherImageView(
     @DrawableRes private val src: Int? = null,
     @ColorRes private val tint: Int? = null
 ) :

@@ -10,6 +10,7 @@ class DrawableBackgroundMatcher(
 ) :
     DrawableMatcher<View>(
         { it.background },
+        { it.backgroundTintList },
         src,
         tint,
         View::class.java

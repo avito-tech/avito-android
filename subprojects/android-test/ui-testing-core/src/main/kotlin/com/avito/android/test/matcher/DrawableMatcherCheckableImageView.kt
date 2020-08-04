@@ -10,6 +10,7 @@ class DrawableMatcherCheckableImageView(
 ) :
     DrawableMatcher<CheckableImageButton>(
         { it.drawable },
+        { it.imageTintList },
         src,
         tint,
         CheckableImageButton::class.java

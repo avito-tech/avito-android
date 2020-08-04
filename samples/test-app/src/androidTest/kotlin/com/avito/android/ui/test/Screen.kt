@@ -58,8 +58,8 @@ object Screen {
     val tabLayoutScreen: TabLayoutScreen
         get() = TabLayoutScreen()
 
-    val backgroundDrawableScreen: BackgroundDrawableScreen
-        get() = BackgroundDrawableScreen()
+    val drawablesScreen: DrawablesScreen
+        get() = DrawablesScreen()
 
     val recyclerWithSingleLongItemScreen: RecyclerWithSingleLongItemScreen
         get() = RecyclerWithSingleLongItemScreen()

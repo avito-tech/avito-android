@@ -1,20 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <View
         android:id="@+id/background_view_color"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@color/red" />
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@color/red"/>
 
     <View
         android:id="@+id/background_view_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/ic_check_black_24dp" />
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/ic_check_black_24dp"/>
+
+    <View
+        android:id="@+id/background_view_image_with_tint"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@android:color/white"
+        android:background="@drawable/ic_check_black_24dp"/>
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_check_black_24dp"
+        tools:ignore="ContentDescription"/>
+
+    <ImageView
+        android:id="@+id/image_view_with_tint"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_check_black_24dp"
+        android:tint="@android:color/white"
+        tools:ignore="ContentDescription"/>
 
 </LinearLayout>
