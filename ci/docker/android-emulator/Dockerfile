@@ -6,7 +6,7 @@ ARG EMULATOR_ARCH
 ENV VERSION=${SDK_VERSION}
 
 # -------------------- Common -------------------
-# socat         For redirecting adb and vnc from emulator to host
+# socat         For redirecting adb and VNC from emulator to host
 # libglu1       For emulators software rendering
 # lib32stdc++6  For mksdcard android sdk tool
 # net-tools     For basic network primitives
@@ -81,9 +81,14 @@ COPY adb_redirect.sh /
 COPY run_emulator.sh /
 COPY entrypoint.sh /
 
+# https://developer.android.com/studio/command-line/adb#howadbworks
+# ADB server port
 EXPOSE 5037
+# Console port
 EXPOSE 5554
+# ADB
 EXPOSE 5555
+# VNC
 EXPOSE 5900
 
 CMD ["/entrypoint.sh"]
