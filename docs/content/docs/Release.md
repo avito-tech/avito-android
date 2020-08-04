@@ -6,15 +6,15 @@ We publish releases to [Bintray](https://bintray.com/avito-tech/maven/avito-andr
 
 ## Publishing a new release
 
-1. Check current status of [Infra Gradle plugins configuration compatibility with Avito](http://links.k.avito.ru/80)
-    1. If it is `Failed` you could release from previous `Succeed` commits or fix compatibility problems
-1. Check current status of [Nightly Avito integration build](http://links.k.avito.ru/gZ)
-    1. If it is `Failed` you could release from previous `Succeed` commits or fix problems
+1. Check current status of [Infra Gradle plugins configuration compatibility with Avito](http://links.k.avito.ru/80).\
+If it is `Failed` you could release from previous `Succeed` commits or fix compatibility problems.
+1. Check current status of [Nightly Avito integration build](http://links.k.avito.ru/gZ).\
+If it is `Failed` you could release from previous `Succeed` commits or fix problems.
 1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2020.9`.\
 This branch must be persistent. It is used for automation.
 1. Manually run [Integration build](http://links.k.avito.ru/ZA) on the `release branch`.
 1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`.
-1. Make a PR to an internal avito repository with the new version of infrastructure
+1. Make a PR to an internal avito repository with the new version of infrastructure.
 1. Checkout a new branch and make a PR to github repository:
     - Change `infraVersion` property in the `./gradle.properties` to the new version 
     - Bump up a `projectVersion` property in the `./subprojects/gradle.properties` to the next version
@@ -25,7 +25,7 @@ You can use a draft release to prepare a description in advance.
 
 ### Using `mavenLocal`
 
-1. Run `./gradlew publishToMavenLocal -PprojectVersion=local` in github repository.
+1. Run `./gradlew publishToMavenLocal -PprojectVersion=local -p subprojects` in github repository.
 1. Run integration tests of your choice in avito with specified test version
 
 ### Using `compositeBuild`

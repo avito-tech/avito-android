@@ -5,6 +5,8 @@ type: docs
 
 # Troubleshooting
 
+{{<avito page>}}
+
 ## Что делать в случае непонятной ошибки?
 
 Ситуация: падает синхронизация проекта или сборка. По ошибке ничего не понятно.
@@ -17,7 +19,7 @@ type: docs
 - Исключи IDE: проверь из консоли
 - Проверь не переопределено ли что-то подозрительное в `~/.gradle/gradle.properties`
 - Убедись что конфигурация проекта проходит успешно: `./gradlew help`
-- Посмотри детальную ошибку: `./gradlew <failed task> --stacktrace
+- Посмотри детальную ошибку: `./gradlew <failed task> --stacktrace`
 - Исключи влияние кеширования: `./gradlew <failed task> --no-build-cache`\
 Очистить кеш можно командой: `./gradlew cleanBuildCache`
 
@@ -41,7 +43,7 @@ type: docs
 
 ## Как искать проблемы с кешированием?
 
-TBD
+[Gradle - Using build cache](https://guides.gradle.org/using-build-cache/)
 
 ## Known issues
 
