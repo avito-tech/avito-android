@@ -25,7 +25,7 @@ You can use a draft release to prepare a description in advance.
 
 ### Using `mavenLocal`
 
-1. Run `./gradlew publishToMavenLocal -PprojectVersion=local` in github repository.
+1. Run `./gradlew publishToMavenLocal -PprojectVersion=local -p subprojects` in github repository.
 1. Run integration tests of your choice in avito with specified test version
 
 ### Using `compositeBuild`
