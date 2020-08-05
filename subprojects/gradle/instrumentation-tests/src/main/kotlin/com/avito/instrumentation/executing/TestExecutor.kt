@@ -114,7 +114,7 @@ interface TestExecutor {
                 runner.run(arguments = runnerArguments)
             }
 
-            logger.info("Worker completed")
+            logger.debug("Worker completed")
         }
 
         private fun outputFolder(output: File): File = File(
