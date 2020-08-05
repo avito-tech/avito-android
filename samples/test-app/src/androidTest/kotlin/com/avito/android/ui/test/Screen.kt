@@ -61,6 +61,9 @@ object Screen {
     val drawablesScreen: DrawablesScreen
         get() = DrawablesScreen()
 
+    val bitmapScreen: BitmapScreen
+        get() = BitmapScreen()
+
     val recyclerWithSingleLongItemScreen: RecyclerWithSingleLongItemScreen
         get() = RecyclerWithSingleLongItemScreen()
 
