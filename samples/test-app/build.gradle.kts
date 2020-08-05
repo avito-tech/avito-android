@@ -24,6 +24,7 @@ android {
     }
 
     buildTypes {
+
         register("staging") {
 
             initWith(named("debug").get())

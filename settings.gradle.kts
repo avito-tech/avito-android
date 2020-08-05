@@ -10,6 +10,7 @@ if (useCompositeBuild.toBoolean()) {
     include(":samples:test-app-without-backward-compatibility")
 }
 include(":samples:test-app-core")
+include(":samples:test-app-screenshot-test")
 
 includeBuild("buildscript")
 
@@ -22,6 +23,7 @@ if (useCompositeBuild.toBoolean()) {
             substitute(module("com.avito.android:snackbar-rule")).with(project(":android-test:snackbar-rule"))
             substitute(module("com.avito.android:time")).with(project(":common:time"))
             substitute(module("com.avito.android:test-report")).with(project(":android-test:test-report"))
+            substitute(module("com.avito.android:test-screenshot")).with(project(":android-test:test-screenshot"))
             substitute(module("com.avito.android:junit-utils")).with(project(":common:junit-utils"))
             substitute(module("com.avito.android:toast-rule")).with(project(":android-test:toast-rule"))
             substitute(module("com.avito.android:test-inhouse-runner")).with(project(":android-test:test-inhouse-runner"))

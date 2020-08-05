@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import SynchronoiusImageUploader
 import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
@@ -70,6 +71,11 @@ class ReportImplementation(
      */
     private val earlyEntries = mutableListOf<Entry>()
     private val earlyFuturesUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
+
+    private val synchronoiusImageUploader: SynchronoiusImageUploader = SynchronoiusImageUploader.Impl(
+        remoteStorage = remoteStorage,
+        logger = logger
+    )
 
     private val incidentFutureUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
 
@@ -268,10 +274,11 @@ class ReportImplementation(
         }
 
     @Synchronized
-    override fun addHtml(label: String, content: String) {
+    override fun addHtml(label: String, content: String, wrapHtml: Boolean, stepName:String) {
+        val wrappedContentIfNeeded = if (wrapHtml) wrapInHtml(content) else content
         val html = remoteStorage.upload(
             uploadRequest = RemoteStorage.Request.ContentRequest(
-                content = wrapInHtml(content),
+                content = wrappedContentIfNeeded,
                 extension = Entry.File.Type.html.name
             ),
             comment = label
@@ -282,7 +289,7 @@ class ReportImplementation(
                 isSynthetic = true,
                 timestamp = timeProvider.nowInSeconds(),
                 number = started.stepNumber++,
-                title = "Synthetic step"
+                title = stepName
             )
         }?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(html)
@@ -297,6 +304,10 @@ class ReportImplementation(
     @Synchronized
     override fun addAssertion(assertionMessage: String) {
         addEntry(Entry.Check(assertionMessage, timeProvider.nowInSeconds()))
+    }
+
+    override fun addImageSynchronously(file: File): String {
+        return synchronoiusImageUploader.upload(file)
     }
 
     private fun addEntry(entry: Entry) {
