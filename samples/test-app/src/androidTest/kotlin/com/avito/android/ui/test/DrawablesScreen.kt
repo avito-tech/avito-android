@@ -12,6 +12,8 @@ class DrawablesScreen : PageObject() {
     val viewWithBackgroundImage: ViewElement = element(withId(R.id.background_view_image))
     val viewWithBackgroundImageWithTint: ViewElement = element(withId(R.id.background_view_image_with_tint))
 
+    val textViewWithDrawable: ViewElement = element(withId(R.id.text_view))
+
     val imageView: ImageViewElement = element(withId(R.id.image_view))
     val imageViewWithTint: ImageViewElement = element(withId(R.id.image_view_with_tint))
 }

@@ -11,7 +11,6 @@ import com.avito.android.test.util.getResourceName
 import com.avito.android.test.util.matchDrawable
 import org.hamcrest.Description
 
-// TODO: add tests
 class CompoundDrawableMatcher(
     @DrawableRes private val left: Int? = null,
     @DrawableRes private val top: Int? = null,

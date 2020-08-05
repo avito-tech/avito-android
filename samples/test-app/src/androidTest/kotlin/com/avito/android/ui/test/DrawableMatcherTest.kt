@@ -29,6 +29,12 @@ class DrawableMatcherTest {
     }
 
     @Test
+    fun textViewDrawable_matches_drawable() {
+        Screen.drawablesScreen.textViewWithDrawable.checks
+            .withIcons(left = R.drawable.ic_check_black_24dp)
+    }
+
+    @Test
     fun drawable_matches_sourceDrawable() {
         Screen.drawablesScreen.imageView.checks
             .withSourceDrawable(R.drawable.ic_check_black_24dp)
