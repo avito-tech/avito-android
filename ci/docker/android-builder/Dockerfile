@@ -24,7 +24,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin
 # https://developer.android.com/studio/index.html#command-tools
-ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
 ARG ANDROID_SDK_FILE_NAME=android-sdk.zip
 
 RUN curl $ANDROID_SDK_URL --progress-bar --location --output $ANDROID_SDK_FILE_NAME && \
@@ -37,6 +37,7 @@ RUN mkdir $HOME/.android && \
   # empty file to mitigate warning
   touch $HOME/.android/repositories.cfg && \
   echo "y" | sdkmanager --verbose \
+    --sdk_root=${ANDROID_HOME} \
     "build-tools;29.0.3" \
     "patcher;v4" \
     "platform-tools" \
