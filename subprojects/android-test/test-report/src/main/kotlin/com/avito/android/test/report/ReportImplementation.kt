@@ -192,7 +192,8 @@ class ReportImplementation(
             val currentState = getCastedState<ReportState.Initialized.Started>()
             val currentStep = currentState.currentStep
             require(currentStep == null || currentStep.isSynthetic) {
-                "Can't start precondition when another one exists"
+                "Can't start precondition \"${step.title}\" when another one exists: \"${currentStep?.title}\"." +
+                    "Preconditions inside steps are not supported."
             }
             currentState.currentStep = step
             step.timestamp = timeProvider.nowInSeconds()
@@ -216,7 +217,8 @@ class ReportImplementation(
         val currentState = getCastedState<ReportState.Initialized.Started>()
         val currentStep = currentState.currentStep
         require(currentStep == null || currentStep.isSynthetic) {
-            "Can't start step when another one exists"
+            "Can't start step \"${step.title}\" when another one exists: \"${currentStep?.title}\". " +
+                "Nested steps are not supported."
         }
         currentState.currentStep = step
         step.timestamp = timeProvider.nowInSeconds()
@@ -239,7 +241,7 @@ class ReportImplementation(
         methodExecutionTracing("updateStep") {
             val currentState = getCastedState<ReportState.Initialized.Started>()
             val currentStep = requireNotNull(currentState.currentStep) {
-                "Couldn't upate step because it hasn't started yet"
+                "Couldn't update step because it hasn't started yet"
             }
 
             beforeStepUpdate(currentStep)
