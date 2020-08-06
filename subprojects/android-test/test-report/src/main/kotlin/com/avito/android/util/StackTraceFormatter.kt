@@ -6,7 +6,7 @@ import java.io.PrintWriter
 /**
  * Prepare stacktrace for report
  */
-fun Throwable.formatStackTrace(): List<String> {
+internal fun Throwable.formatStackTrace(): List<String> {
     val stringBuilder = TextStringBuilder()
     printStackTrace(PrintWriter(stringBuilder.asWriter()))
     return stringBuilder.lines()
