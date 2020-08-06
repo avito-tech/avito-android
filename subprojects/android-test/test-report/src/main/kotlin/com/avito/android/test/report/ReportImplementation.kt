@@ -21,6 +21,7 @@ import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.transport.Transport
+import com.avito.android.util.formatStackTrace
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.Logger
@@ -147,9 +148,7 @@ class ReportImplementation(
                 chain = incidentChain,
                 timestamp = timeProvider.nowInSeconds(),
                 entryList = emptyList(),
-                // don't need trace right now(mb in some debug mode in RV? MBS-2148)
-                // trace = exception?.formatStackTrace() ?: listOf("StackTrace недоступен")
-                trace = emptyList()
+                trace = exception.formatStackTrace()
             )
 
             if (screenshot != null) {
