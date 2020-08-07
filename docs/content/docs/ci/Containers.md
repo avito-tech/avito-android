@@ -165,12 +165,14 @@ adb connect localhost:5555
 
 Для эмулятора нужна более сложная подготовка, поэтому используем отдельные скрипты и образы.
 
+#### 1. Залей образы в приватный Docker registry
+
 {{< tabs "update emulator" >}}
 {{< tab "CI" >}}
 
-1. Собери образ на ветке в teamcity конфигурации [Build android-emulator (internal)](http://links.k.avito.ru/tmctAvitoAndroidEmulatorImageBuilder).  
-Теги новых образов будут в файле в артефактах сборки.
-1. Обнови теги в Devices.kt
+1. Собери образ на ветке в Teamcity конфигурации [Build android-emulator (internal)](http://links.k.avito.ru/Y3).  
+Теги новых образов будут в артефактах сборки.
+1. Обнови теги в build.gradle скриптах.
 1. Запушь изменение в ветку.
 
 {{< /tab >}}
@@ -193,10 +195,24 @@ cd ci/docker
 
 1. Найти новые теги образов.
 См. stdout скрипта или файл `android-emulator/images.txt`
-1. Обнови теги образов в `_main.sh`
+1. Обнови теги образов в build.gradle скриптах.
 
 {{< /tab >}}
 {{< /tabs >}}
+
+#### 2. Залей образы в Docker hub
+
+[hub.docker.com/u/avitotech](https://hub.docker.com/u/avitotech)
+
+1. Залогинься в Docker hub: `docker login --username=avitotech --password=...`
+1. Скачай новый образ из предыдущего шага:\
+`docker pull <DOCKER_REGISTRY>/android/emulator-<API>:<DIGEST>`
+1. Поставь образу такой-же tag, который получился в приватном registry:\
+`docker tag <DIGEST> avitotech/android-emulator-<API>:<DIGEST>`.\
+Tag нужен чтобы ссылаться на образ по одним и тем-же "координатам".
+1. `docker push avitotech/android-emulator-<API>:<DIGEST>`
+
+Задача на автоматизацию: MBS-8773
 
 ### Как проверить регрессию?
 
