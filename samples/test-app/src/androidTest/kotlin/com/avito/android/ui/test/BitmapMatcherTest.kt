@@ -37,7 +37,7 @@ class BitmapMatcherTest {
             Screen.bitmapScreen.imageViewBitmap.checks.withImage(image)
         }
         assertThat(error).hasMessageThat().containsMatch(
-            Pattern.compile("Bitmaps has different sizes: actual \\[\\d+x\\d+\\], compared \\[\\d+x\\d+\\]")
+            "Bitmaps has different sizes: actual \\[\\d+x\\d+\\], compared \\[\\d+x\\d+\\]"
         )
     }
 
@@ -49,6 +49,9 @@ class BitmapMatcherTest {
             Screen.bitmapScreen.imageViewVector.checks.withImage(image)
         }
         assertThat(error).hasMessageThat().contains("Bitmaps are different")
+        assertThat(error).hasMessageThat().contains("Pixel at [0,0]")
+        assertThat(error).hasMessageThat().contains("actual=#FFFF0000") // R.drawable.red
+        assertThat(error).hasMessageThat().contains("expected=#FF0000FF")
     }
 
     private fun getDrawable(@DrawableRes id: Int): Drawable = rule.activity.getDrawable(id)!!
