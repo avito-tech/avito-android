@@ -12,6 +12,7 @@ import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.file
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
+import com.avito.test.http.MockWebServerFactory
 import okhttp3.Credentials
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -25,7 +26,7 @@ import java.nio.file.Path
 class UploadCdBuildResultIntegrationTest {
 
     private lateinit var projectDir: File
-    private val server = MockWebServer()
+    private val server = MockWebServerFactory.create()
     private val mockUrl = server.url("").toString().removeSuffix("/")
     private val uiTestConfigurationName = "regress"
     private val reportId = "123"

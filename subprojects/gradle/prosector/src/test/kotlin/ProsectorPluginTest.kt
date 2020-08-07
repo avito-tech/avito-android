@@ -1,11 +1,11 @@
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
+import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ import java.nio.file.Path
 
 class ProsectorPluginTest {
 
-    private val server = MockWebServer()
+    private val server = MockWebServerFactory.create()
     private val jsonRegex = Regex("(\\{.+})")
 
     private lateinit var projectDir: File

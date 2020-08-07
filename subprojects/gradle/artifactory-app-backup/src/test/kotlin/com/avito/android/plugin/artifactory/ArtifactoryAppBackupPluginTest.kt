@@ -5,8 +5,8 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
+import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -18,7 +18,7 @@ private typealias Artifact = Pair<String, String>
 
 internal class ArtifactoryAppBackupPluginTest {
 
-    private val mockWebServer = MockWebServer()
+    private val mockWebServer = MockWebServerFactory.create()
 
     @Test
     fun `artifactory plugin - captures app parameters`(@TempDir projectDir: File) {
