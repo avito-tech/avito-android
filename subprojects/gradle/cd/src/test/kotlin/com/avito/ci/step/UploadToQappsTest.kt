@@ -4,8 +4,8 @@ import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
+import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +17,7 @@ import java.nio.file.Path
 class UploadToQappsTest {
 
     private lateinit var projectDir: File
-    private val mockWebServer = MockWebServer()
+    private val mockWebServer = MockWebServerFactory.create()
 
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {

@@ -3,16 +3,16 @@ package com.avito.http
 import com.avito.logger.NoOpLogger
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
+import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 class RetryWithFallbackTest {
 
     private val mockDispatcher = MockDispatcher()
-    private val server = MockWebServer().apply { dispatcher = mockDispatcher }
+    private val server = MockWebServerFactory.create().apply { dispatcher = mockDispatcher }
 
     @Test
     fun `retry with fallback`() {

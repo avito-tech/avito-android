@@ -1,6 +1,7 @@
 package com.avito.performance.stats
 
 import com.avito.performance.stats.comparison.ComparedTest
+import com.avito.test.http.MockWebServerFactory
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 internal class StatsApiTest {
 
-    private val mockWebServer = MockWebServer()
+    private val mockWebServer = MockWebServerFactory.create()
     private val logger = CILogger.allToStdout
     private lateinit var statsApi: StatsApi
 

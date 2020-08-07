@@ -4,10 +4,10 @@ import com.avito.git.Branch
 import com.avito.git.GitStateStub
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
+import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.Credentials
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 
 class UploadCdBuildResultTaskActionTest {
 
-    private val mockWebServer = MockWebServer()
+    private val mockWebServer = MockWebServerFactory.create()
     private val dispatcher = MockDispatcher()
     private val gson = Providers.gson
     private val user = "user"

@@ -1,11 +1,11 @@
 package com.avito.plugin
 
+import com.avito.test.http.MockWebServerFactory
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.funktionale.tries.Try
 import org.funktionale.tries.Try.Failure
@@ -20,7 +20,7 @@ class SignViaServiceActionTest {
 
     private lateinit var testProjectDir: File
 
-    private val server = MockWebServer()
+    private val server = MockWebServerFactory.create()
 
     private val apk: File
         get() = File(testProjectDir, "test.apk").apply { createNewFile() }
