@@ -5,7 +5,6 @@ import com.avito.test.http.MockWebServerFactory
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
