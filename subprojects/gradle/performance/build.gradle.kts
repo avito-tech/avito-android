@@ -32,6 +32,7 @@ dependencies {
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:report-viewer-test-fixtures"))
+    testImplementation(project(":common:test-okhttp"))
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.truth)
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ANDROID_BUILDER_TAG=57bdf7686e
+ANDROID_BUILDER_TAG=ccca2800f4
 
 if [[ -z "${DOCKER_REGISTRY+x}" ]]; then
     # using dockerhub for public availability
