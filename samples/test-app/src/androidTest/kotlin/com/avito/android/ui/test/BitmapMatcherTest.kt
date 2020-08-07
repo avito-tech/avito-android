@@ -10,6 +10,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 import ru.avito.util.assertThrows
+import java.util.regex.Pattern
 
 class BitmapMatcherTest {
 
@@ -35,7 +36,9 @@ class BitmapMatcherTest {
         val error = assertThrows<AssertionError> {
             Screen.bitmapScreen.imageViewBitmap.checks.withImage(image)
         }
-        assertThat(error).hasMessageThat().contains("has different sizes: actual [48x48], compared [24x24]")
+        assertThat(error).hasMessageThat().containsMatch(
+            Pattern.compile("Bitmaps has different sizes: actual \\[\\d+x\\d+\\], compared \\[\\d+x\\d+\\]")
+        )
     }
 
     @Test
