@@ -9,19 +9,18 @@ fun <T> retry(
     actionFailedHandler: (throwable: Throwable) -> Unit = { },
     block: (attempt: Int) -> T
 ): T {
-    var throwable: Throwable? = null
-
-    (0 until retriesCount).forEach { attempt ->
+    for (attempt in 0..retriesCount) {
+        if (attempt > 0) TimeUnit.SECONDS.sleep(delaySeconds)
         try {
             return block(attempt)
         } catch (e: Throwable) {
-            throwable = e
-            attemptFailedHandler(attempt, e)
-            TimeUnit.SECONDS.sleep(delaySeconds)
+            if (attempt == retriesCount - 1) {
+                actionFailedHandler(e)
+                throw e
+            } else {
+                attemptFailedHandler(attempt, e)
+            }
         }
     }
-
-    actionFailedHandler(throwable!!)
-
-    throw throwable!!
+    throw IllegalStateException("retry must return value or throw exception")
 }
