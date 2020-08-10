@@ -21,7 +21,13 @@ plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
-    id("com.autonomousapps.dependency-analysis")
+    id("com.autonomousapps.dependency-analysis") apply false
+}
+
+if (gradle.startParameter.taskNames.contains("buildHealth")) {
+    // Reasons to disabling by default:
+    // The plugin schedules heavy LocateDependenciesTask tasks even without analysis
+    apply(plugin ="com.autonomousapps.dependency-analysis")
 }
 
 val artifactoryUrl: String? by project

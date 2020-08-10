@@ -7,9 +7,9 @@ import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.git
 import com.avito.test.gradle.kotlinClass
+import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.AfterEach
@@ -23,7 +23,7 @@ class SignerIntegrationTest {
 
     private lateinit var projectDir: File
 
-    private val webServer = MockWebServer()
+    private val webServer = MockWebServerFactory.create()
 
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {

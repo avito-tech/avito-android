@@ -20,7 +20,7 @@ dependencies {
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:utils"))
-    testCompile(Dependencies.test.okhttpMockWebServer)
+    testImplementation(project(":common:test-okhttp"))
 }
 
 gradlePlugin {
