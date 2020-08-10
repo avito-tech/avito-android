@@ -11,7 +11,7 @@ import com.avito.android.test.checks.Checks
 import com.avito.android.test.checks.ChecksDriver
 import com.avito.android.test.checks.ChecksImpl
 import com.avito.android.test.matcher.BitmapMatcher
-import com.avito.android.test.matcher.DrawableMatcherImageButton
+import com.avito.android.test.matcher.DrawableMatcherImageView
 import com.avito.android.test.matcher.ImageShownMatcher
 import org.hamcrest.Matcher
 
@@ -38,7 +38,7 @@ class ImageViewChecksImpl(private val driver: ChecksDriver) : ImageViewChecks,
     Checks by ChecksImpl(driver) {
 
     override fun withSourceDrawable(@DrawableRes src: Int?, @ColorRes tint: Int?) {
-        driver.check(matches(DrawableMatcherImageButton(src, tint)))
+        driver.check(matches(DrawableMatcherImageView(src, tint)))
     }
 
     override fun withShownImage() {

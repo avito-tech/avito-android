@@ -11,6 +11,7 @@ class DrawableMatcherActionIcon(
     @ColorRes private val tint: Int? = null
 ) : DrawableMatcher<ActionMenuItemView>(
     { it.itemData.icon },
+    { it.itemData.iconTintList },
     src,
     tint,
     ActionMenuItemView::class.java

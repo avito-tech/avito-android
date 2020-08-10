@@ -1,7 +1,7 @@
 package com.avito.android.test.util
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -12,22 +12,59 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 
-internal fun Drawable.isSame(
+internal fun matchDrawable(
     context: Context,
-    @DrawableRes resId: Int,
-    @ColorInt tint: Int? = null
+    source: Drawable?,
+    sourceTint: ColorStateList?,
+    otherId: Int?,
+    @ColorInt otherTint: Int? = null
 ): Boolean {
-    val fromContext = ContextCompat.getDrawable(context, resId)
-    return if (tint != null) {
-        isSame(fromContext?.wrapForTinting(tint))
+    val noOther = (otherId == null || otherId == 0)
+    if (noOther && source == null) return true
+    if (!noOther && source == null) return false
+
+    return if (noOther && otherTint != null) {
+        matchColors(sourceTint, otherTint)
     } else {
-        val tintedFromContext = AppCompatResources.getDrawable(context, resId)
-        this.isSame(fromContext)
-            || this.isSame(tintedFromContext)
+        matchDrawable(context, source!!, sourceTint, otherId!!, otherTint)
+    }
+}
+
+private fun matchColors(left: ColorStateList?, right: Int): Boolean {
+    if (left == null) return false
+    if (left.isStateful) {
+        throw UnsupportedOperationException("Matching for stateful ColorStateList is not supported yet")
+    } else {
+        return left.defaultColor == right
+    }
+}
+
+private fun matchDrawable(
+    context: Context,
+    source: Drawable,
+    sourceTint: ColorStateList?,
+    @DrawableRes otherId: Int,
+    @ColorInt otherTint: Int? = null
+): Boolean {
+    return if (otherTint != null) {
+        val other: Drawable? = ContextCompat.getDrawable(context, otherId)?.wrapForTinting(otherTint)
+        source.sameAs(other)
+    } else {
+        val other = ContextCompat.getDrawable(context, otherId) // AppCompatResources.getDrawable return with tint
+        source.withoutTint(sourceTint).sameAs(other)
+    }
+}
+
+private fun Drawable.withoutTint(originalTint: ColorStateList?): Drawable {
+    return if (originalTint != null) {
+        this.mutate().apply {
+            setTintList(null)
+        }
+    } else {
+        this
     }
 }
 
@@ -38,11 +75,11 @@ internal fun Drawable.wrapForTinting(@ColorInt color: Int): Drawable {
     return drawable
 }
 
-internal fun Drawable.isSame(other: Drawable?): Boolean {
+internal fun Drawable.sameAs(other: Drawable?): Boolean {
     other ?: return false
     when {
         this is StateListDrawable && other is StateListDrawable -> {
-            return current.isSame(other.current)
+            return current.sameAs(other.current)
         }
         this is BitmapDrawable && other is BitmapDrawable -> {
             return bitmap.sameAs(other.bitmap)
@@ -58,18 +95,6 @@ internal fun Int?.getResourceName(resources: Resources): String {
     if (this == null) return ""
     if (this == 0) return "empty"
     return resources.getResourceName(this)
-}
-
-// fixme false negative?
-@SuppressLint("ResourceType")
-internal fun Int?.matchDrawable(
-    context: Context,
-    drawable: Drawable?,
-    @ColorInt tint: Int? = null
-): Boolean {
-    if (this == null) return true
-    if (this == 0 && drawable == null) return true
-    return drawable?.isSame(context, this, tint) ?: false
 }
 
 internal fun Drawable.toBitmap(): Bitmap {
