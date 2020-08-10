@@ -188,7 +188,7 @@ subprojects {
                     name = "api22",
                     api = 22,
                     model = "Android_SDK_built_for_x86",
-                    image = "${emulatorImage(registry, 22)}:116d6ed6c6",
+                    image = "${emulatorImage(registry, 22)}:a3f98ea001",
                     cpuCoresRequest = "1",
                     cpuCoresLimit = "1.3"
                 )
@@ -197,7 +197,7 @@ subprojects {
                     name = "api28",
                     api = 28,
                     model = "Android_SDK_built_for_x86_64",
-                    image = "${emulatorImage(registry, 28)}:37ac40d0fa",
+                    image = "${emulatorImage(registry, 28)}:0824261524",
                     cpuCoresRequest = "1",
                     cpuCoresLimit = "1.3"
                 )
