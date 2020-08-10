@@ -38,7 +38,7 @@ class DeviceWorker(
                 is Device.DeviceStatus.Alive -> device.state()
                 is Device.DeviceStatus.Freeze -> {
                     // No intention is lost. DeviceWorkerMessage.WorkerFailed event is unnecessary.
-                    // Can't use this device any more. TODO Will ReservationClient get a new one?
+                    // Can't use this device any more. TODO MBS-8522 Will ReservationClient get a new one?
                     device.warn("Device wasn't booted. Failed on initial run", status.reason)
                     return@launch
                 }
