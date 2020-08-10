@@ -28,7 +28,10 @@ interface Device {
 
     fun deviceStatus(): DeviceStatus
 
-    fun log(message: String)
+    fun debug(message: String)
+
+    fun info(message: String)
+
     fun warn(message: String, error: Throwable?)
 
     sealed class DeviceStatus {
@@ -38,7 +41,7 @@ interface Device {
 
         class Freeze(val reason: Throwable) :
             DeviceStatus() {
-            override fun toString(): String = "freeze because of: ${reason.message}"
+            override fun toString(): String = "Freeze. Reason: ${reason.message}"
         }
     }
 }
