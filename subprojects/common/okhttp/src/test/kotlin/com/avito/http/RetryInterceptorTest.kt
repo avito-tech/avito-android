@@ -1,6 +1,7 @@
 package com.avito.http
 
 import com.avito.logger.NoOpLogger
+import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -20,7 +21,7 @@ internal class RetryInterceptorTest {
 
     @BeforeEach
     private fun setup() {
-        server = MockWebServer() // can't reuse same server in dynamic tests after shutdown
+        server = MockWebServerFactory.create() // can't reuse same server in dynamic tests after shutdown
         server.start()
     }
 

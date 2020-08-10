@@ -17,7 +17,7 @@ dependencies {
     implementation(Dependencies.okhttpLogging)
 
     testImplementation(project(":gradle:test-project"))
-    testImplementation(Dependencies.test.okhttpMockWebServer)
+    testImplementation(project(":common:test-okhttp"))
 }
 
 gradlePlugin {

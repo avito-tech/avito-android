@@ -4,9 +4,9 @@ import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.gradlew
+import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -17,7 +17,7 @@ class SignServicePluginTest {
     @TempDir
     lateinit var testProjectDir: File
 
-    private val mockWebServer = MockWebServer()
+    private val mockWebServer = MockWebServerFactory.create()
 
     @AfterEach
     fun teardown() {

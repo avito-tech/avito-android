@@ -4,6 +4,7 @@ import com.avito.logger.NoOpLogger
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.gradle.fileFromJarResources
+import com.avito.test.http.MockWebServerFactory
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test
 
 internal class ReportsApiTest {
 
-    private val mockWebServer = MockWebServer()
+    private val mockWebServer = MockWebServerFactory.create()
     private lateinit var reportsApi: ReportsApi
 
     @BeforeEach

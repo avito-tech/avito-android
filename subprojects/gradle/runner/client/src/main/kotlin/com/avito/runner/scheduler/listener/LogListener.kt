@@ -14,7 +14,7 @@ class LogListener : TestListener {
         test: TestCase,
         executionNumber: Int
     ) {
-        device.log("Test started: ${test.className}.${test.methodName}")
+        device.info("Test started: ${test.className}.${test.methodName}")
     }
 
     override fun finished(
@@ -35,7 +35,7 @@ class LogListener : TestListener {
             }
         }
 
-        device.log(
+        device.info(
             "Test $status in ${durationMilliseconds.millisecondsToHumanReadableTime()}: " +
                 "${test.className}.${test.methodName}"
         )

@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":android-test:resource-manager-exceptions"))
     implementation(project(":android-test:websocket-reporter"))
     implementation(Dependencies.okio)
+    implementation(Dependencies.commonsText)
     implementation(Dependencies.kotson)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.okhttp)

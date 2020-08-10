@@ -49,6 +49,7 @@ object Dependencies {
     val dexlib = "org.smali:dexlib2:2.3"
     val commonsText = "org.apache.commons:commons-text:1.6"
     val commonsIo = "commons-io:commons-io:2.7"
+    val commonsLang = "org.apache.commons:commons-lang3:3.8.1"
     val antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
     val dockerClient = "de.gesellix:docker-client:2019-11-26T12-39-35"
     val asm = "org.ow2.asm:asm:7.1"
@@ -56,7 +57,11 @@ object Dependencies {
     val detektCli = "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 
     // https://r8.googlesource.com/r8/
-    val r8 = "com.android.tools:r8:2.0.94"
+    // 1.6.x <-> AGP 3.6.x
+    // 2.0.x <-> AGP 4.0.x
+    // 2.1.x <-> AGP 4.1.x
+    // TODO: MBS-9089 2.0.94
+    val r8 = "com.android.tools:r8:1.6.89"
     val proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
     val playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
     val appcompat = "androidx.appcompat:appcompat:${Versions.androidX}"
