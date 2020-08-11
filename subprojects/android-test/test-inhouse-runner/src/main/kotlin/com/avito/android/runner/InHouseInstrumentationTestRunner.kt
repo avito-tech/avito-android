@@ -72,10 +72,6 @@ abstract class InHouseInstrumentationTestRunner :
             Log.w("TestReport", msg, error)
         }
 
-        override fun exception(msg: String, error: Throwable) {
-            Log.e("TestReport", msg, error)
-        }
-
         override fun critical(msg: String, error: Throwable) {
             Log.e("TestReport", msg, error)
             sentry.sendException(error)

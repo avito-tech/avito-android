@@ -11,7 +11,7 @@ dependencies {
     implementation(Dependencies.gson)
 
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:git"))

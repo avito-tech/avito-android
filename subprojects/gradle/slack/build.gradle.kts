@@ -9,7 +9,7 @@ dependencies {
     api(Dependencies.funktionaleTry)
 
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":common:time"))
     implementation(Dependencies.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(Dependencies.okhttp)

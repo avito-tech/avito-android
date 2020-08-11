@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact-shared"))

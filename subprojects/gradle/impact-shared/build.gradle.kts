@@ -8,7 +8,7 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":gradle:utils"))
     implementation(project(":gradle:process"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:kotlin-dsl-support"))

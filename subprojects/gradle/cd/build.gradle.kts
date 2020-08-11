@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":gradle:impact"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:signer"))
     implementation(project(":gradle:files"))
     implementation(project(":gradle:lint-report"))

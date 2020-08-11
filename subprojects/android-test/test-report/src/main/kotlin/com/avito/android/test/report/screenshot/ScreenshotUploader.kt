@@ -34,7 +34,7 @@ interface ScreenshotUploader {
                         })
                 },
                 { error ->
-                    logger.exception("Unable to make screenshot: ${error.message}", error)
+                    logger.warn("Unable to make screenshot: ${error.message}", error)
                     null
                 })
         }
