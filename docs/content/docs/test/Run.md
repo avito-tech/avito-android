@@ -76,28 +76,28 @@ type: docs
 
 ### Запуск тестов в CI с кастомными параметрами {#custom-run}
 
-В Teamcity есть [конфигурация `instrumentationDynamic`](http://links.k.avito.ru/tmctAvitoAndroidInstrumentationDynamic)
-для запуска тестов со специфическим набором требований.
-
-{{< hint info >}}
-Параметры, помеченные красной *, - это параметры, специфичные для данной конфигурации. Они опциональны.
-{{< /hint >}}
-
-Запускайте и вам будет предложено выбрать:
-- Ветку для запуска (*Changes -> Build branch*)
-- API URL, в который ходят тесты (*Parameters -> Test URL*)
-- Предустановленный набор тестов (*Parameters -> env.DYNAMIC_FILTER*)
-  - `ui` -- компонентные, E2E, скриншотные, интеграционные тесты
-  - `uiNoE2E` -- как `ui`, но без E2E тестов
-  - `regressionNoE2E` -- `uiNoE2E` + ручные тесты
-  - `regression` -- `ui` + ручные тесты
-  - `performanceNoE2E` -- только компонентные перформанс тесты
-  - `performance` -- только функциональные перформанс тесты
-- Фильтр тестов в формате `[com.test.Foo[.someTest]]` (*Parameters -> Package prefix*, по умолчанию фильтр пустой, не
-  применяется)
-- Количество запусков. Полезно для [отладки нестабильных тестов]({{< ref "/docs/test/TroubleshootingUI.md" >}})
-  (*Parameters -> Retry count*)
-- Версии API (*Parameters -> * Api*)
+1. Перейдите на [конфигурацию `instrumentationDynamic`](http://links.k.avito.ru/tmctAvitoAndroidInstrumentationDynamic)
+2. Нажмите `Run` ![](https://user-images.githubusercontent.com/8560287/89888381-86d8de80-dbd8-11ea-8369-55b517b07b39.png)
+3. В появивщемся окне настройте окружение для запуска
+    1. Во вкладке `Changes`
+    ![](https://user-images.githubusercontent.com/8560287/89891426-b6d6b080-dbdd-11ea-8de1-4b68d747d05e.png)
+        - `Build branch` - ветка для запуска тестов
+    1. Во вкладке `Parameters`
+    ![](https://user-images.githubusercontent.com/8560287/89905536-feb40280-dbf2-11ea-8555-9063fe1c272f.png)
+        1. `Test URL` - опциональный. API URL, в который ходят тесты
+        2. `env.DYNAMIC_FILTER` - опциональный. Фильтр по типам тестов
+            - `ui` -- компонентные, E2E, скриншотные, интеграционные тесты
+            - `uiNoE2E` -- как `ui`, но без E2E тестов
+            - `regressionNoE2E` -- `uiNoE2E` + ручные тесты
+            - `regression` -- `ui` + ручные тесты
+            - `performanceNoE2E` -- только компонентные перформанс тесты
+            - `performance` -- только функциональные перформанс тесты
+        3. `Package prefix` - опциональный. Фильтр по имени теста. `package.ClassName.methodName`
+            - `package` - отфильтровать по пакету
+            - `package.ClassName` - отфильтровать по классу
+            - `package.ClassName.methodName` - отфильтровать по методу в классе
+        4. `Retry count` - обязательный. Кол-во запусков. Полезно для [отладки нестабильных тестов]({{< ref "/docs/test/TroubleshootingUI.md" >}})
+        5. `[22, 23, 24, 28] Api` - должен быть выбран минимум 1. На каких API запускать тесты
 
 ### Как прогнать полный набор тестов (как на регрессе) {#all-tests}
 
