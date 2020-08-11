@@ -32,7 +32,7 @@ interface GraphiteSender {
                 }
                 logger.debug("$LOG_TAG: $message")
             } catch (e: Exception) {
-                logger.exception("$LOG_TAG: $message", e)
+                logger.warn("$LOG_TAG: $message", e)
             }
         }
 

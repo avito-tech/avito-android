@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:logging"))
+    api(project(":gradle:ci-logger"))
 }

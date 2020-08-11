@@ -11,6 +11,6 @@ dependencies {
     implementation(project(":gradle:slack"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:kubernetes"))
-    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:test-project"))
 }

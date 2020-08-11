@@ -48,10 +48,16 @@ private fun defaultCILogger(
         formatter = AppendDateTimeFormatter(),
         destination = FileDestination(destinationFile)
     )
-    val stdoutHandler = CILoggingHandlerImplementation(
+    val onlyMessageStdoutHandler = CILoggingHandlerImplementation(
+        formatter = AppendPrefixFormatter(prefix = name),
+        destination = OnlyMessageStdoutDestination
+    )
+
+    val explicitStdoutHandler = CILoggingHandlerImplementation(
         formatter = AppendPrefixFormatter(prefix = name),
         destination = StdoutDestination
     )
+
     val sentryConfig = project.sentryConfig
     val sentryHandler = CILoggingHandlerImplementation(
         destination = SentryDestination(sentryConfig.get())
@@ -65,19 +71,19 @@ private fun defaultCILogger(
         ),
         infoHandler = CILoggingCombinedHandler(
             handlers = listOf(
-                stdoutHandler,
+                onlyMessageStdoutHandler,
                 destinationFileHandler
             )
         ),
         warnHandler = CILoggingCombinedHandler(
             handlers = listOf(
-                stdoutHandler,
+                explicitStdoutHandler,
                 destinationFileHandler
             )
         ),
         criticalHandler = CILoggingCombinedHandler(
             handlers = listOf(
-                stdoutHandler,
+                explicitStdoutHandler,
                 destinationFileHandler,
                 sentryHandler
             )

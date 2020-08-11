@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":gradle:graphite-config"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:teamcity"))
