@@ -78,7 +78,7 @@ type: docs
 
 1. Перейдите на [конфигурацию `instrumentationDynamic`](http://links.k.avito.ru/tmctAvitoAndroidInstrumentationDynamic)
 2. Нажмите `Run` ![](https://user-images.githubusercontent.com/8560287/89888381-86d8de80-dbd8-11ea-8369-55b517b07b39.png)
-3. В появивщемся окне настройте окружение для запуска
+3. В появившемся окне настройте окружение для запуска
     1. Во вкладке `Changes`
     ![](https://user-images.githubusercontent.com/8560287/89891426-b6d6b080-dbdd-11ea-8de1-4b68d747d05e.png)
         - `Build branch` - ветка для запуска тестов
@@ -110,4 +110,3 @@ type: docs
 
 Сейчас в разработке находится механизм локального запуска инструментальных тестов на эмуляторах в кубе. Уже работает для
 тестового приложения в инфре. Подробности [здесь]({{< ref "/docs/test/Runner.md" >}}).
-
