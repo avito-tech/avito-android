@@ -308,7 +308,7 @@ fun Project.configureBintray(vararg publications: String) {
         // Examples of issues:
         // - NoHttpResponseException: api.bintray.com:443 failed to respond (https://github.com/bintray/gradle-bintray-plugin/issues/325)
         // - Could not upload to 'https://api.bintray.com/content/avito/maven/avito-android/2020.16/com/avito/android/runner-service/2020.16/runner-service-2020.16.jar': HTTP/1.1 405 Not Allowed 405 Not Allowed405 Not Allowednginx
-        override = true
+        override = false
         pkg(closureOf<PackageConfig> {
             repo = "maven"
             userOrg = "avito"
