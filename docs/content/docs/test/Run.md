@@ -83,7 +83,7 @@ type: docs
     ![](https://user-images.githubusercontent.com/8560287/89891426-b6d6b080-dbdd-11ea-8de1-4b68d747d05e.png)
         - `Build branch` - ветка для запуска тестов
     1. Во вкладке `Parameters`
-    ![](https://user-images.githubusercontent.com/8560287/89905536-feb40280-dbf2-11ea-8555-9063fe1c272f.png)
+    ![](https://user-images.githubusercontent.com/8560287/89917357-607b6900-dc01-11ea-9241-e9192af6af06.png)
         1. `Test URL` - опциональный. API URL, в который ходят тесты
         2. `env.DYNAMIC_FILTER` - опциональный. Фильтр по типам тестов
             - `ui` -- компонентные, E2E, скриншотные, интеграционные тесты
