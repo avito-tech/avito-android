@@ -18,10 +18,6 @@ private class CILoggerWrapper(
         ciLogger.info(msg)
     }
 
-    override fun exception(msg: String, error: Throwable) {
-        ciLogger.critical(msg, error)
-    }
-
     override fun critical(msg: String, error: Throwable) {
         ciLogger.critical(msg, error)
     }

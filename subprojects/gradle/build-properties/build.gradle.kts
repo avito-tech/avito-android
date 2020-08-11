@@ -10,7 +10,7 @@ dependencies {
 
     implementation(project(":gradle:pre-build"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:kotlin-dsl-support"))
 
     testImplementation(project(":gradle:test-project"))

@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":gradle:instrumentation-test-impact-analysis"))
     implementation(project(":gradle:runner:client"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:statsd-config"))

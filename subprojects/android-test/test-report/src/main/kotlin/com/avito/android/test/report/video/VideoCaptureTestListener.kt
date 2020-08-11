@@ -32,10 +32,6 @@ class VideoCaptureTestListener(
             Log.i(LOG_TAG, msg)
         }
 
-        override fun exception(msg: String, error: Throwable) {
-            Log.e(LOG_TAG, msg, error)
-        }
-
         override fun critical(msg: String, error: Throwable) {
             Log.e(LOG_TAG, msg, error)
         }
