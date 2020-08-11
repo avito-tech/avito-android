@@ -20,10 +20,6 @@ internal fun createReportHttpClient(): OkHttpClient {
                 Log.v("ReportViewerHttp", msg)
             }
 
-            override fun exception(msg: String, error: Throwable) {
-                Log.v("ReportViewerHttp", msg, error)
-            }
-
             override fun critical(msg: String, error: Throwable) {
                 Log.v("ReportViewerHttp", msg, error)
             }

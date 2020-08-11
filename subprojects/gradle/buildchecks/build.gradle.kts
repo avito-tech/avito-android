@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:build-metrics"))

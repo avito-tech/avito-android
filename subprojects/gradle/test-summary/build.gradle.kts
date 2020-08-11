@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":common:report-viewer"))
     implementation(project(":common:statsd"))
     implementation(project(":gradle:utils"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:slack"))
     implementation(Dependencies.coroutinesCore)
     implementation(Dependencies.funktionaleTry)

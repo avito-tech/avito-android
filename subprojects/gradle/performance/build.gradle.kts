@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":gradle:utils"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:files"))
-    implementation(project(":gradle:logging"))
+    implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:instrumentation-tests"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:statsd-config"))
