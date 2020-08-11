@@ -11,13 +11,6 @@ interface CILoggingFormatter : Serializable {
     fun child(tag: String): CILoggingFormatter
 }
 
-internal object NothingLoggingFormatter : CILoggingFormatter {
-
-    override fun format(message: String) = message
-
-    override fun child(tag: String): CILoggingFormatter = this
-}
-
 internal class AppendDateTimeFormatter(
     private val format: DateFormat = SimpleDateFormat.getTimeInstance()
 ) : CILoggingFormatter {

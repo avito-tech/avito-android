@@ -13,18 +13,18 @@ internal object NothingLoggingHandler : CILoggingHandler {
 }
 
 internal class CILoggingHandlerImplementation(
-    private val formatter: CILoggingFormatter = NothingLoggingFormatter,
+    private val formatter: CILoggingFormatter? = null,
     private val destination: CILoggingDestination
 ) : CILoggingHandler {
 
     override fun write(message: String, error: Throwable?) {
         destination.write(
-            formatter.format(message), error
+            formatter?.format(message) ?: message, error
         )
     }
 
     override fun child(tag: String): CILoggingHandler = CILoggingHandlerImplementation(
-        formatter = formatter.child(tag),
+        formatter = formatter?.child(tag),
         destination = destination.child(tag)
     )
 }
