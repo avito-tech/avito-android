@@ -1,6 +1,6 @@
 # Release
 
-{{<avito section>}}
+{{<avito page>}}
 
 We publish releases to [Bintray](https://bintray.com/avito-tech/maven/avito-android).
 
@@ -20,6 +20,46 @@ This branch must be persistent. It is used for automation.
     - Bump up a `projectVersion` property in the `./subprojects/gradle.properties` to the next version
 1. Create a new [release](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository) against the release branch.\
 You can use a draft release to prepare a description in advance.
+
+### Known issues
+
+#### Failed publishing to Bintray
+
+Uploading to Bintray is flaky. You can face different issues:
+
+- NoHttpResponseException: api.bintray.com:443 failed to respond [#325](https://github.com/bintray/gradle-bintray-plugin/issues/325)
+- Could not upload to https://api.bintray.com/...: HTTP/1.1 405 Not Allowed nginx
+
+In this case artifacts can be uploaded partially, only pom for instance.\
+Try to upload it with overriding:
+
+0. Enable `BintrayExtension.override` in a buildscript.
+0. Upload problematic artifact:\
+`./gradlew -p subprojects :<module>:bintrayUpload --no-parallel --stacktrace`
+
+#### Can't find an artifact in an internal Artifactory
+
+How it looks:
+
+- Bintray has [expected artifacts](https://dl.bintray.com/avito/maven/com/avito/android/runner-shared/2020.16/): pom, jar/aar, sources.jar
+- Gradle can't find in Artifactory
+
+```text
+> Could not resolve all artifacts for configuration ':classpath'.
+   > Could not find com.avito.android:runner-shared:2020.16.
+     Searched in the following locations:
+       - file:/home/user/.m2/repository/com/avito/android/runner-shared/2020.16/runner-shared-2020.16.pom
+       - http://<artifactory>/artifactory/bintray-avito-maven/com/avito/android/runner-shared/2020.16/runner-shared-2020.16.pom
+```
+
+Probable reason:
+
+When you use a partially uploaded release, Artifactory might cache the wrong state.
+It seems that Artifactory caches it for some time, but we don't know exactly and how to invalidate it.
+
+Actions:
+
+- Bump up a minor release version and make a new release. 
 
 ## Local integration tests against Avito
 
