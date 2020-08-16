@@ -65,8 +65,7 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
                 e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } -> {
                     throw createExceptionWithPrivateStringConstructor<AppNotIdleException>(
                         "Main thread is busy. " +
-                            "The probable cause is in animations. " +
-                            "Try to find them and suppress by @SuppressAnimationRule"
+                            "The probable cause is in animations."
                     )
                 }
                 // Handle expected errors from UITestConfig.waiterAllowedExceptions
