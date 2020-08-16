@@ -31,7 +31,7 @@ android {
             setMatchingFallbacks("debug")
 
             isMinifyEnabled = true
-            isShrinkResources = true
+            isShrinkResources = false // https://github.com/slackhq/keeper/issues/22
 
             proguardFiles(getDefaultProguardFile(ProguardFile.OPTIMIZE.fileName), "proguard-rules.pro")
         }
