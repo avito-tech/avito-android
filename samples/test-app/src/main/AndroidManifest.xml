@@ -21,11 +21,11 @@
         <activity android:name=".ButtonsOverRecyclerActivity" />
         <activity android:name=".ButtonsOverRecyclerWithCollapsingToolbarActivity" />
         <activity android:name=".DrawableActivity" />
+        <activity android:name=".BitmapActivity" />
         <activity android:name=".TextElementActivity" />
         <activity android:name=".RecyclerAsLayoutActivity" />
         <activity android:name=".LongRecyclerActivity" />
         <activity android:name=".RecyclerInRecyclerActivity" />
-        <activity android:name=".AppBarActivity" />
         <activity android:name=".TabLayoutActivity" />
         <activity android:name=".EditTextActivity" />
         <activity android:name=".RetryActivity" />
