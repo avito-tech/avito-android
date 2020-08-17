@@ -53,7 +53,7 @@ RUN mkdir $HOME/.android && \
     touch $HOME/.android/repositories.cfg && \
     yes | sdkmanager --verbose --channel=3 \
         "platform-tools" \
-        "platforms;android-28" \
+        "platforms;android-29" \
         "emulator" \
         "tools" \
         "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" && \

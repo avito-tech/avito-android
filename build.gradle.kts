@@ -188,16 +188,16 @@ subprojects {
                     name = "api22",
                     api = 22,
                     model = "Android_SDK_built_for_x86",
-                    image = "${emulatorImage(registry, 22)}:a3f98ea001",
+                    image = "${emulatorImage(registry, 22)}:077dc298b1",
                     cpuCoresRequest = "1",
                     cpuCoresLimit = "1.3"
                 )
 
-                val emulator28 = CloudEmulator(
-                    name = "api28",
-                    api = 28,
+                val emulator29 = CloudEmulator(
+                    name = "api29",
+                    api = 29,
                     model = "Android_SDK_built_for_x86_64",
-                    image = "${emulatorImage(registry, 28)}:0824261524",
+                    image = "${emulatorImage(registry, 29)}:2d705bf431",
                     cpuCoresRequest = "1",
                     cpuCoresLimit = "1.3"
                 )
@@ -225,8 +225,8 @@ subprojects {
                         }
                     }
 
-                    targetsContainer.register("api28") {
-                        deviceName = "API28"
+                    targetsContainer.register("api29") {
+                        deviceName = "API29"
 
                         scheduling {
                             quota {
@@ -235,7 +235,7 @@ subprojects {
                             }
 
                             testsCountBasedReservation {
-                                device = emulator28
+                                device = emulator29
                                 maximum = 50
                                 minimum = 2
                                 testsPerEmulator = 3
@@ -250,8 +250,8 @@ subprojects {
                     enableDeviceDebug = true
                     filter = customFilter
 
-                    targetsContainer.register("api28") {
-                        deviceName = "API28"
+                    targetsContainer.register("api29") {
+                        deviceName = "API29"
 
                         scheduling {
                             quota {
@@ -260,7 +260,7 @@ subprojects {
                             }
 
                             testsCountBasedReservation {
-                                device = emulator28
+                                device = emulator29
                                 maximum = 1
                                 minimum = 1
                                 testsPerEmulator = 1
