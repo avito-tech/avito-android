@@ -30,8 +30,8 @@ class DeviceSettingsChecker(private val context: Context) {
     }
 
     private fun checkSupportedApi() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            throw IllegalStateException("Android Q (${Build.VERSION_CODES.Q}) and above is not supported yet")
+        if (Build.VERSION.SDK_INT >= 30) {
+            throw IllegalStateException("Android 11 (API level 30) and above is not supported yet")
         }
     }
 
