@@ -108,7 +108,10 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val androidTestsBytecodeFolders = bytecodeResolver.resolveBytecodeWithoutDependencyToAnotherConfigurations(
             configurationType = ConfigurationType.ANDROID_TESTS
         )
-        val context: Context = contextLoader.load(foldersWithClassesToLoad)
+        require(androidTestsBytecodeFolders.isNotEmpty()) {
+            "`${project.path}` project's androidTest compiled folders are empty"
+        }
+        val context: Context = contextLoader.load(androidTestsBytecodeFolders)
         val invocationGraphResult = getInvocationGraph(
             config = config,
             context = context

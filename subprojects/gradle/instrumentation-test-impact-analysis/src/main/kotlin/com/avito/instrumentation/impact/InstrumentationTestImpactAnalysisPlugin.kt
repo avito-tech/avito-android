@@ -63,7 +63,7 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
         require(!project.isRoot()) { "$PLUGIN_NAME should be applied to the specific project, which produces test apk" }
 
         require(project.rootProject.plugins.hasPlugin("com.avito.android.impact")) {
-            "$PLUGIN_NAME requires impact plugin applied to the project"
+            "$PLUGIN_NAME requires `com.avito.android.impact` plugin applied to the root project"
         }
     }
 }
