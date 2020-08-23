@@ -95,8 +95,11 @@ abstract class AnalyzeTestImpactTask @Inject constructor(
         val node = environmentInfo.node?.take(32) ?: "_"
         val prefix = graphiteSeries(envName, node)
 
-        val percentage = ((testsToRun.size.toFloat() / allTests.size) * 100).roundToInt()
+        // efficiency exists only if we have at least one test
+        if (allTests.isNotEmpty()) {
+            val percentage = ((testsToRun.size.toFloat() / allTests.size) * 100).roundToInt()
 
-        statsd.send(prefix, GaugeMetric("tia.ui_tests_ratio", percentage))
+            statsd.send(prefix, GaugeMetric("tia.ui_tests_ratio", percentage))
+        }
     }
 }
