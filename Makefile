@@ -81,3 +81,6 @@ clear_k8s_deployments_by_namespaces:
 
 clear_k8s_deployments_by_names:
 	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
+
+analyzeImpactOnSampleApp:
+	./gradlew samples:test-app-impact:app:analyzeTestImpact -PtargetBranch=develop $(params)
