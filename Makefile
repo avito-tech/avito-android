@@ -89,3 +89,6 @@ record_sreenshots:
         -Pandroid.testInstrumentationRunnerArguments.annotation=com.avito.android.test.annotations.ScreenshotTest \
         -Pandroid.testInstrumentationRunnerArguments.recordScreenshots=true
 	./gradlew samples:test-app-screenshot-test:recordScreenshots
+
+analyzeImpactOnSampleApp:
+	./gradlew samples:test-app-impact:app:analyzeTestImpact -PtargetBranch=develop $(params)
