@@ -14,9 +14,9 @@ import com.avito.bytecode.invokes.bytecode.tracer.InvokesTracerImpl
 import com.avito.bytecode.report.JsonFileReporter
 import com.avito.bytecode.target.TargetClassesDetector
 import com.avito.impact.BytecodeResolver
+import com.avito.impact.ConfigurationType
 import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
-import com.avito.impact.ReportType
 import com.avito.impact.changes.ChangeType
 import com.avito.impact.configuration.InternalModule
 import com.avito.impact.configuration.internalModule
@@ -105,8 +105,8 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
 
     override fun execute() {
         val contextLoader = ContextLoader()
-        val foldersWithClassesToLoad = bytecodeResolver.resolveBytecodeWithoutDependencyToAnotherConfigurations(
-            reportType = ReportType.ANDROID_TESTS
+        val androidTestsBytecodeFolders = bytecodeResolver.resolveBytecodeWithoutDependencyToAnotherConfigurations(
+            configurationType = ConfigurationType.ANDROID_TESTS
         )
         val context: Context = contextLoader.load(foldersWithClassesToLoad)
         val invocationGraphResult = getInvocationGraph(
@@ -157,7 +157,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject> =
             @Suppress("DEPRECATION")
             finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(
-                reportType = ReportType.ANDROID_TESTS
+                configurationType = ConfigurationType.ANDROID_TESTS
             )
                 .asSequence()
                 .filter { it.project.isAndroid() }

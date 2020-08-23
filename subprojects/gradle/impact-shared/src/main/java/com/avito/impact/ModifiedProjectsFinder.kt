@@ -30,11 +30,11 @@ class ModifiedProjectsFinder(
                 || hasPlugin("java")
         }
 
-    fun findModifiedProjects(reportType: ReportType? = null): Set<ModifiedProject> {
-        val reportTypes = if (reportType == null) {
-            ReportType.values()
+    fun findModifiedProjects(configurationType: ConfigurationType? = null): Set<ModifiedProject> {
+        val reportTypes = if (configurationType == null) {
+            ConfigurationType.values()
         } else {
-            arrayOf(reportType)
+            arrayOf(configurationType)
         }
         return reportTypes
             .flatMap { type ->
@@ -45,16 +45,16 @@ class ModifiedProjectsFinder(
     }
 
     @Deprecated("Используется только для поиска по ReportType.ANDROID_TESTS. Оптимизация для UI тестов, явно игнорируем изменения в реализации, чтобы не сваливаться всегда в fallback")
-    fun findModifiedProjectsWithoutDependencyToAnotherConfigurations(reportType: ReportType): Set<ModifiedProject> =
-        findProjects(reportType) {
-            it.internalModule.getConfiguration(reportType).let { configuration ->
+    fun findModifiedProjectsWithoutDependencyToAnotherConfigurations(configurationType: ConfigurationType): Set<ModifiedProject> =
+        findProjects(configurationType) {
+            it.internalModule.getConfiguration(configurationType).let { configuration ->
                 configuration.dependencies.any { dependency -> dependency.isModified }
                     || configuration.hasChangedFiles
             }
         }
 
     private fun findProjects(
-        reportType: ReportType,
+        configurationType: ConfigurationType,
         predicate: (project: Project) -> Boolean
     ): Set<ModifiedProject> {
         val projects = if (skipAnalysis) {
@@ -67,7 +67,7 @@ class ModifiedProjectsFinder(
             .map {
                 ModifiedProject(
                     project = it,
-                    changedFiles = it.internalModule.getConfiguration(reportType)
+                    changedFiles = it.internalModule.getConfiguration(configurationType)
                         .changedFiles()
                         .getOrElse { emptyList() }
                 )
