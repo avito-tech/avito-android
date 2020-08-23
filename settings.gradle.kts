@@ -10,6 +10,7 @@ if (useCompositeBuild.toBoolean()) {
     include(":samples:test-app-without-backward-compatibility")
 }
 include(":samples:test-app-core")
+include(":samples:test-app-impact:app")
 
 includeBuild("buildscript")
 

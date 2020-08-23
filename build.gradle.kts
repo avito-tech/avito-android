@@ -26,6 +26,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
     id("com.avito.android.instrumentation-tests") apply false
+    id("com.avito.android.impact")
 }
 
 /**
