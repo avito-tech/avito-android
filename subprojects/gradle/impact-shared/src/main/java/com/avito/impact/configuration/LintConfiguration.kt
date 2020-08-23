@@ -24,15 +24,11 @@ class LintConfiguration(module: InternalModule) : SimpleConfiguration(module) {
     }
 
     override val isModified: Boolean by lazy {
-        dependencies.any { it.isModified }
-            || module.androidTestConfiguration.isModified
-            || hasChangedFiles
+        dependencies.any { it.isModified } || hasChangedFiles
     }
 
     override val fullBytecodeSets: Set<File> by lazy {
-        bytecodeSets() +
-            dependencies.flatMap { it.fullBytecodeSets } +
-            module.androidTestConfiguration.fullBytecodeSets
+        bytecodeSets() + dependencies.flatMap { it.fullBytecodeSets }
     }
 
     override fun containsSources(sourceSet: AndroidSourceSet) = false
