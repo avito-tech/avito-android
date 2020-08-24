@@ -12,18 +12,17 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     /**
      * определяем нужно ли к конфигурации применять особую логику для измерения performance во время тестов
-     *
-     * TODO разделить конфигурации MBS-6926
      */
+    @Deprecated("remove after 2020.18")
     var performanceType: PerformanceType? = null
 
+    @Deprecated("remove after 2020.18")
     enum class PerformanceType { SIMPLE, MDE }
 
     var reportFlakyTests = false
 
     /**
      * Отправлять в репорт ignored/skipped тесты, нужно для проверок тестов на ПР c потенцианльно полным сьютом тестов
-     * не нужно для проверок типа performance
      */
     var reportSkippedTests = false
 
@@ -85,6 +84,7 @@ abstract class InstrumentationConfiguration(val name: String) {
         val impactAnalysisPolicy: ImpactAnalysisPolicy,
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
+        @Deprecated("remove after 2020.18")
         val performanceType: PerformanceType?,
         val enableDeviceDebug: Boolean,
         val filter: InstrumentationFilter.Data
