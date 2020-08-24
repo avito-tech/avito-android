@@ -6,14 +6,11 @@ import com.avito.android.test.report.future.MockFutureValue
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotUploader
-import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.NoOpLogger
 import com.avito.logger.Logger
-import com.avito.report.model.DeviceName
+import com.avito.logger.NoOpLogger
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
-import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
@@ -30,41 +27,20 @@ import org.junit.jupiter.api.extension.ExtensionContext
  *                       чтобы посмотреть как оно отображается
  */
 class ReportTestExtension(
-    // todo useless because report urls are empty
-    val sendRealReport: Boolean = false,
     val timeProvider: TimeProvider = mock(),
     val fileStorageUrl: String = "https://filestorage.com",
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
     private val logger: Logger = NoOpLogger,
-    private val testRunCoordinates: ReportCoordinates = ReportCoordinates(
-        planSlug = "android-test",
-        jobSlug = "android-test",
-        runId = "android-test5"
-    ),
-    private val deviceName: String = "android-test",
     private val report: Report = ReportImplementation(
         fileStorageUrl = fileStorageUrl,
         onDeviceCacheDirectory = lazy { error("nope") },
         httpClient = OkHttpClient.Builder()
-            .apply {
-                if (!sendRealReport) {
-                    addInterceptor(mockInterceptor)
-                }
-            }
+            .addInterceptor(mockInterceptor)
             .build(),
         performanceTestReporter = PerformanceTestReporter(),
         logger = logger,
-        transport = if (sendRealReport) listOf(
-            LocalRunTransport(
-                reportApiHost = "", // TODO required?
-                reportFallbackUrl = "", // TODO required
-                reportViewerUrl = "", // TODO required
-                reportCoordinates = testRunCoordinates,
-                deviceName = DeviceName(deviceName),
-                logger = logger
-            )
-        ) else emptyList(),
+        transport = emptyList(),
         screenshotUploader = screenshotUploader,
         timeProvider = timeProvider
     )
