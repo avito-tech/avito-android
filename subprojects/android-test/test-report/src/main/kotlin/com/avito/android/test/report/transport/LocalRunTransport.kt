@@ -13,17 +13,11 @@ import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
 
 class LocalRunTransport(
-    reportApiHost: String,
-    reportFallbackUrl: String,
     reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val deviceName: DeviceName,
     private val logger: Logger,
-    private val reportsApi: ReportsApi = ReportsApi.create(
-        host = reportApiHost,
-        fallbackUrl = reportFallbackUrl,
-        logger = logger
-    )
+    private val reportsApi: ReportsApi
 ) : Transport, PreTransportMappers {
 
     private val localBuildId: String? = null
@@ -84,7 +78,7 @@ class LocalRunTransport(
                 )
             )
 
-            logger.debug(
+            logger.info(
                 "Report link for test ${testName.name}: ${reportViewer.generateSingleTestRunUrl(result.get())}"
             )
 
@@ -93,7 +87,7 @@ class LocalRunTransport(
             }
 
         } catch (e: Exception) {
-            logger.critical("Report send failed", e)
+            logger.warn("Report send failed", e)
         }
     }
 }

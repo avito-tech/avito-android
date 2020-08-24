@@ -61,6 +61,8 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
             host: String,
             fallbackUrl: String,
             logger: Logger,
+            readTimeout: Long = 60,
+            writeTimeout: Long = 10,
             verboseHttp: Boolean = false
         ): ReportsApi {
 
@@ -72,7 +74,9 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
                     httpClient = getHttpClient(
                         verbose = verboseHttp,
                         fallbackUrl = fallbackUrl,
-                        logger = logger
+                        logger = logger,
+                        readTimeout = readTimeout,
+                        writeTimeout = writeTimeout
                     ),
                     gson = gson
                 )
