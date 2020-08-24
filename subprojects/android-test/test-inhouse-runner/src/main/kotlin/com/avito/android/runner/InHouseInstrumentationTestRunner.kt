@@ -34,6 +34,7 @@ import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
 import com.avito.logger.Logger
+import com.avito.report.ReportsApi
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Kind
@@ -88,12 +89,17 @@ abstract class InHouseInstrumentationTestRunner :
                 if (runEnvironment.reportConfig != null) {
                     listOf(
                         LocalRunTransport(
-                            reportApiHost = runEnvironment.reportConfig.reportApiUrl,
-                            reportFallbackUrl = runEnvironment.reportConfig.reportApiFallbackUrl,
                             reportViewerUrl = runEnvironment.reportConfig.reportViewerUrl,
                             reportCoordinates = runEnvironment.testRunCoordinates,
                             deviceName = DeviceName(runEnvironment.deviceName),
-                            logger = testReportLogger
+                            logger = testReportLogger,
+                            reportsApi = ReportsApi.create(
+                                host = runEnvironment.reportConfig.reportApiUrl,
+                                fallbackUrl = runEnvironment.reportConfig.reportApiFallbackUrl,
+                                readTimeout = 10,
+                                writeTimeout = 10,
+                                logger = testReportLogger
+                            )
                         )
                     )
                 } else {

@@ -8,9 +8,16 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import java.util.concurrent.TimeUnit
 
-internal fun getHttpClient(verbose: Boolean, fallbackUrl: String, logger: Logger): OkHttpClient =
+internal fun getHttpClient(
+    verbose: Boolean,
+    fallbackUrl: String,
+    logger: Logger,
+    readTimeout: Long,
+    writeTimeout: Long
+): OkHttpClient =
     OkHttpClient.Builder()
-        .readTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(readTimeout, TimeUnit.SECONDS)
+        .writeTimeout(writeTimeout, TimeUnit.SECONDS)
         .addInterceptor(RetryInterceptor(logger = logger))
         .addInterceptor(
             FallbackInterceptor(
