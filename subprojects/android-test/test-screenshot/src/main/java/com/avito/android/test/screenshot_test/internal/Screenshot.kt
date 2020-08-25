@@ -8,7 +8,7 @@ import android.view.WindowManager
 import java.io.File
 import kotlin.math.roundToInt
 
-class Screenshot(
+internal class Screenshot(
     emulatorSpecification: String,
     name: String,
     extension: String,
@@ -18,7 +18,7 @@ class Screenshot(
     val emulatorSpecificPath = "$emulatorSpecification/$name.$extension"
 }
 
-class ScreenshotDirectory(
+internal class ScreenshotDirectory(
     val emulatorSpecification: String,
     val path: File
 ) {

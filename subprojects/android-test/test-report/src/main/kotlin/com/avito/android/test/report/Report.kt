@@ -6,7 +6,6 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.report.model.Incident
-import java.io.File
 
 interface Report {
 
@@ -44,8 +43,6 @@ interface Report {
      * @param content detailed info about request, accessible via click on label in report
      */
     fun addHtml(label: String, content: String, wrapHtml: Boolean = true)
-
-    fun addImageSynchronously(file: File): String
 
     fun registerIncident(exception: Throwable)
 

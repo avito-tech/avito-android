@@ -1,6 +1,5 @@
 package com.avito.android.test.report
 
-import SynchronoiusImageUploader
 import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
@@ -30,7 +29,6 @@ import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import okhttp3.OkHttpClient
 import java.io.File
 
 /**
@@ -43,17 +41,11 @@ import java.io.File
 @SuppressLint("LogNotTimber")
 class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
-    httpClient: OkHttpClient,
-    fileStorageUrl: String,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
     private val logger: Logger,
     private val transport: List<Transport>,
-    private val remoteStorage: RemoteStorage = RemoteStorage.create(
-        logger = logger,
-        httpClient = httpClient,
-        endpoint = fileStorageUrl
-    ),
+    private val remoteStorage: RemoteStorage,
     private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
         screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
         remoteStorage = remoteStorage,
@@ -71,11 +63,6 @@ class ReportImplementation(
      */
     private val earlyEntries = mutableListOf<Entry>()
     private val earlyFuturesUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
-
-    private val synchronoiusImageUploader: SynchronoiusImageUploader = SynchronoiusImageUploader.Impl(
-        remoteStorage = remoteStorage,
-        logger = logger
-    )
 
     private val incidentFutureUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
 
@@ -304,10 +291,6 @@ class ReportImplementation(
     @Synchronized
     override fun addAssertion(assertionMessage: String) {
         addEntry(Entry.Check(assertionMessage, timeProvider.nowInSeconds()))
-    }
-
-    override fun addImageSynchronously(file: File): String {
-        return synchronoiusImageUploader.upload(file)
     }
 
     private fun addEntry(entry: Entry) {

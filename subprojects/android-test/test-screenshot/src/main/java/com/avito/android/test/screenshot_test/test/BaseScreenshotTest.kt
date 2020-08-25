@@ -14,19 +14,20 @@ import androidx.test.espresso.IdlingPolicies
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.runner.RemoteStorageProvider
 import com.avito.android.test.Device
 import com.avito.android.test.report.ReportProvider
 import com.avito.android.test.screenshot_test.internal.BitmapSaver
-import com.avito.android.test.screenshot_test.internal.Screenshot
+import com.avito.android.test.screenshot_test.internal.ScreenshotComparisonReporter
 import com.avito.android.test.screenshot_test.internal.ScreenshotDirectory
 import com.avito.android.test.screenshot_test.internal.ViewScreenshotMaker
 import com.avito.android.test.screenshot_test.internal.getBitmapFromAsset
 import com.avito.android.test.screenshot_test.internal.getBitmapFromDevice
+import com.avito.filestorage.RemoteStorage
 import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
-import java.io.InputStream
 import java.util.concurrent.TimeUnit
 
 abstract class BaseScreenshotTest<T : View>(
@@ -44,14 +45,24 @@ abstract class BaseScreenshotTest<T : View>(
         ScreenshotDirectory.create(activity, "reference_screenshots")
     }
 
+    private val remoteStorage: RemoteStorage by lazy {
+        (InstrumentationRegistry.getInstrumentation() as RemoteStorageProvider).remoteStorage
+    }
+
+    private val screenshotComparisonReporter: ScreenshotComparisonReporter by lazy {
+        ScreenshotComparisonReporter(
+            remoteStorage = (InstrumentationRegistry.getInstrumentation() as RemoteStorageProvider).remoteStorage,
+            report = (InstrumentationRegistry.getInstrumentation() as ReportProvider).report,
+            context = InstrumentationRegistry.getInstrumentation().targetContext
+        )
+    }
+
     abstract fun createView(
         context: Context,
         styleAttr: Int
     ): T
 
     abstract fun createViewStates(): HashMap<String, (view: T) -> Unit>
-
-    private val report = (InstrumentationRegistry.getInstrumentation() as ReportProvider).report
 
     private val screenshotNames: ArrayList<String> = arrayListOf()
 
@@ -67,14 +78,6 @@ abstract class BaseScreenshotTest<T : View>(
         IdlingRegistry.getInstance().unregister(activity.countingIdlingResource)
     }
 
-    open fun onViewAdded(view: T) {
-        //override if you need callback after view is added
-    }
-
-    open fun onViewRemoved(view: T) {
-        //override if you need callback after view is removed
-    }
-
     fun compareScreenshotsTest() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Device.grantPermissions(
@@ -82,7 +85,7 @@ abstract class BaseScreenshotTest<T : View>(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
             createScreenshots("Light")
-            runOnUiThread {
+            activity.runOnUiThread {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
             InstrumentationRegistry.getInstrumentation().waitForIdleSync()
@@ -156,9 +159,9 @@ abstract class BaseScreenshotTest<T : View>(
 
             if (generatedBitmap.height != referenceBitmap.height || generatedBitmap.width != referenceBitmap.width) {
                 BitmapSaver().save(referenceBitmap, referenceScreenshot)
-                report(
-                    generatedScreenshot = generatedScreenshot,
-                    referenceScreenshot = referenceScreenshot
+                screenshotComparisonReporter.reportScreenshotComparison(
+                    generated = generatedScreenshot,
+                    reference = referenceScreenshot
                 )
                 throw AssertionError(
                     """Bitmaps for $relativeScreenshotFilePath have different sizes (width,height):
@@ -170,9 +173,9 @@ abstract class BaseScreenshotTest<T : View>(
 
             if (!referenceBitmap.sameAs(generatedBitmap)) {
                 BitmapSaver().save(referenceBitmap, referenceScreenshot)
-                report(
-                    generatedScreenshot = generatedScreenshot,
-                    referenceScreenshot = referenceScreenshot
+                screenshotComparisonReporter.reportScreenshotComparison(
+                    generated = generatedScreenshot,
+                    reference = referenceScreenshot
                 )
                 throw AssertionError("Generated bitmap: $relativeScreenshotFilePath doesn't equal to reference bitmap")
             }
@@ -184,50 +187,17 @@ abstract class BaseScreenshotTest<T : View>(
             .getChildAt(0) as LinearLayout
     }
 
-    private fun runOnUiThread(action: (rootView: ViewGroup) -> Unit) {
-        val rootView = getRootView()
-        activity.runOnUiThread {
-            action(rootView)
-        }
-    }
-
     private fun addView(view: T) {
-        runOnUiThread { rootView ->
+        activity.runOnUiThread {
+            val rootView = getRootView()
             rootView.addView(view)
-            onViewAdded(view)
         }
     }
 
     private fun removeView(view: T) {
-        runOnUiThread { rootView ->
-            onViewRemoved(view)
+        activity.runOnUiThread {
+            val rootView = getRootView()
             rootView.removeView(view)
         }
-    }
-
-    private fun report(generatedScreenshot: Screenshot, referenceScreenshot: Screenshot) {
-        val generatedUrl = report.addImageSynchronously(generatedScreenshot.path)
-        val referenceUrl = report.addImageSynchronously(referenceScreenshot.path)
-        val htmlReport = getReportAsString(referenceUrl, generatedUrl)
-        report.addHtml(
-            label = "Press me to see report",
-            content = htmlReport,
-            wrapHtml = false
-        )
-    }
-
-    private fun getReportAsString(referenceUrl: String, generatedUrl: String): String {
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val inputStream: InputStream = targetContext.assets.open("screenshot_test_report.html")
-        val size: Int = inputStream.available()
-        val buffer = ByteArray(size)
-        inputStream.read(buffer)
-        inputStream.close()
-
-        var result = String(buffer)
-        result = result.replace("%referenceImage%", referenceUrl)
-        result = result.replace("%generatedImage%", generatedUrl)
-        return result
-
     }
 }
