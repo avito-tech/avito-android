@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import androidx.test.espresso.idling.CountingIdlingResource
 import com.avito.android.test.screenshot_test.test.IdlieableActivity
 
-
 class ScreenshotTestActivity : IdlieableActivity() {
 
     override val countingIdlingResource = CountingIdlingResource("CountingIdlingResource", true)
@@ -17,7 +16,10 @@ class ScreenshotTestActivity : IdlieableActivity() {
 
         setTheme(android.R.style.Theme_DeviceDefault_DayNight)
 
-        val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        val params = ViewGroup.LayoutParams(
+          ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewGroup.LayoutParams.MATCH_PARENT
+        )
         val layout = LinearLayout(this).apply {
             gravity = Gravity.CENTER
             orientation = LinearLayout.VERTICAL

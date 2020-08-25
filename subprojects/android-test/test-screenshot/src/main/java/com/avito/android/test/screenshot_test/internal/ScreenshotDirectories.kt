@@ -14,7 +14,7 @@ internal class ScreenshotDirectories(private val packageName: String) {
             ?: throw IllegalStateException(
                 "No \$EXTERNAL_STORAGE has been set on the device"
             )
-        val parent = "$externalStorage/$DEFAULT_SDCARD_DIRECTORY/$$packageName.test/"
+        val parent = "$externalStorage/$DEFAULT_SDCARD_DIRECTORY/$packageName.test/"
         val child = "$parent/$type"
         File(parent).mkdirs()
         val dir = File(child)

@@ -8,6 +8,7 @@ includePrefix?=
 includeAnnotation?=
 useCompositeBuild=true
 dry_run=false
+instrumentation=Ui
 
 params?=
 
@@ -56,7 +57,7 @@ publish_to_maven_local:
 	./gradlew -p subprojects publishToMavenLocal -PprojectVersion=local $(log_level)
 
 sample_app_instrumentation:
-	./gradlew samples:$(module):instrumentationUi $(params)
+	./gradlew samples:$(module):instrumentation$(instrumentation) $(params)
 
 sample_app_instrumentation_local:
 	./gradlew samples:$(module):instrumentationLocal $(params)

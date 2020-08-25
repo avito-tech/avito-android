@@ -195,7 +195,7 @@ abstract class BaseScreenshotTest<T : View>(
         )
     }
 
-    private fun getReportAsString(referenceUrl: String?, generatedUrl: String?): String {
+    private fun getReportAsString(referenceUrl: String, generatedUrl: String): String {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
         val inputStream: InputStream = targetContext.assets.open("screenshot_test_report.html")
         val size: Int = inputStream.available()
@@ -204,8 +204,8 @@ abstract class BaseScreenshotTest<T : View>(
         inputStream.close()
 
         var result = String(buffer)
-        result = result.replace("%referenceImage%", referenceUrl ?: "")
-        result = result.replace("%generatedImage%", generatedUrl ?: "")
+        result = result.replace("%referenceImage%", referenceUrl)
+        result = result.replace("%generatedImage%", generatedUrl)
         return result
 
     }

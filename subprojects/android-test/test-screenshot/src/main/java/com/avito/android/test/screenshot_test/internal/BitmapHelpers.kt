@@ -43,5 +43,3 @@ internal fun getFileFromAsset(context: Context, filePath: String): File {
     )
     return File(resultFilePath)
 }
-
-private const val tag = "bitmap_helper"
