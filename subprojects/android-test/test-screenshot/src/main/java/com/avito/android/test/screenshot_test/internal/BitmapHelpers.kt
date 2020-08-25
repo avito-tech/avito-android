@@ -4,42 +4,31 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
 @SuppressLint("SdCardPath")
-internal fun getBitmapFromDevice(context: Context, filePath: String): Bitmap {
-    return FileInputStream(getFileFromDevice(context, filePath)).use {
+internal fun getBitmapFromDevice(file: File): Bitmap {
+    return FileInputStream(file).use {
         BitmapFactory.decodeStream(it)
     }
 }
 
-internal fun getBitmapFromAsset(context: Context, filePath: String): Bitmap {
-    return context.assets.open("screenshots/$filePath.png").use {
+internal fun Context.getBitmapFromAsset(filePath: String): Bitmap {
+    return assets.open(filePath).use {
         BitmapFactory.decodeStream(it)
     }
 }
 
-@SuppressLint("SdCardPath")
-internal fun getFileFromDevice(context: Context, filePath: String): File {
-    return File("/sdcard/screenshots/${context.packageName}.test/$filePath.png")
-}
-
-@SuppressLint("SdCardPath", "SetWorldWritable")
-internal fun getFileFromAsset(context: Context, filePath: String): File {
-    val deviceDirectoryName = DeviceDirectoryName.create(context).name
-    val path = "/sdcard/reference_screenshots/${context.packageName}.test/"
-    File("$path/$deviceDirectoryName").apply {
-        mkdirs()
-        setWritable(true, false)
+internal fun saveBitmap(bitmap: Bitmap, file: File) {
+    FileOutputStream(file).use {
+        bitmap.compress(
+            Bitmap.CompressFormat.PNG,
+            100,
+            it
+        )
+        Log.i("ViewSaver", "successfully save screenshot to ${file.absolutePath}")
     }
-    val resultFilePath = "$path$filePath.png"
-    val fileOutputStream = FileOutputStream(resultFilePath)
-    getBitmapFromAsset(context, filePath).compress(
-        Bitmap.CompressFormat.PNG,
-        100,
-        fileOutputStream
-    )
-    return File(resultFilePath)
 }

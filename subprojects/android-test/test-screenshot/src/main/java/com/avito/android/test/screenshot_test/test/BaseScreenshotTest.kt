@@ -16,12 +16,12 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.Device
 import com.avito.android.test.report.ReportProvider
-import com.avito.android.test.screenshot_test.internal.DeviceDirectoryName
+import com.avito.android.test.screenshot_test.internal.BitmapSaver
+import com.avito.android.test.screenshot_test.internal.Screenshot
+import com.avito.android.test.screenshot_test.internal.ScreenshotDirectory
+import com.avito.android.test.screenshot_test.internal.ViewScreenshotMaker
 import com.avito.android.test.screenshot_test.internal.getBitmapFromAsset
 import com.avito.android.test.screenshot_test.internal.getBitmapFromDevice
-import com.avito.android.test.screenshot_test.internal.getFileFromAsset
-import com.avito.android.test.screenshot_test.internal.getFileFromDevice
-import com.avito.android.test.screenshot_test.internal.saveScreenshot
 import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Assert
@@ -35,6 +35,14 @@ abstract class BaseScreenshotTest<T : View>(
 ) {
 
     abstract val activity: IdlieableActivity
+
+    private val screenshotDir: ScreenshotDirectory by lazy {
+        ScreenshotDirectory.create(activity, "screenshots")
+    }
+
+    private val referenceScreenshotDir: ScreenshotDirectory by lazy {
+        ScreenshotDirectory.create(activity, "reference_screenshots")
+    }
 
     abstract fun createView(
         context: Context,
@@ -90,21 +98,28 @@ abstract class BaseScreenshotTest<T : View>(
         themes.forEach { theme ->
             styleAttrs.forEach { attr ->
                 createViewStates().forEach { (stateName, applyActionToView) ->
-                    initEnvironment(attr, theme, stateName, mode) { context, screenShotFileName ->
+                    initEnvironment(attr, theme, stateName, mode) { context, screenShotName ->
                         val view = createView(context, attr)
                         applyActionToView(view)
                         addView(view)
                         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-                        Espresso.onView(Matchers.allOf(
-                            ViewMatchers.isDisplayed(),
-                            ViewMatchers.isAssignableFrom(view::class.java)
-                        )).check { displayedView, noViewFoundException ->
+                        Espresso.onView(
+                            Matchers.allOf(
+                                ViewMatchers.isDisplayed(),
+                                ViewMatchers.isAssignableFrom(view::class.java)
+                            )
+                        ).check { displayedView, noViewFoundException ->
                             noViewFoundException?.also { throw it }
                             Assert.assertEquals("Added view is displayed", displayedView, view)
                         }
-                        screenshotNames.add(screenShotFileName)
+                        screenshotNames.add(screenShotName)
                         activity.countingIdlingResource.increment()
-                        view.saveScreenshot(activity, screenShotFileName)
+
+                        ViewScreenshotMaker(
+                            activity,
+                            screenshotDir.getScreenshot(screenShotName)
+                        ).makeScreenshot(view)
+
                         activity.countingIdlingResource.decrement()
                         removeView(view)
                     }
@@ -131,18 +146,22 @@ abstract class BaseScreenshotTest<T : View>(
     private fun compareScreens() {
         //the only purpose of this line is to freeze work if countingIdlingResource requires
         Espresso.onIdle()
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
         val context = InstrumentationRegistry.getInstrumentation().context
-        val directoryName = DeviceDirectoryName.create(targetContext).name
-        screenshotNames.forEach { name ->
-            val screenshotFilePath = "$directoryName/$name"
-            val referenceBitmap = getBitmapFromAsset(context, screenshotFilePath)
-            val generatedBitmap = getBitmapFromDevice(targetContext, screenshotFilePath)
+        screenshotNames.forEach { screenshotName ->
+            val generatedScreenshot = screenshotDir.getScreenshot(screenshotName)
+            val relativeScreenshotFilePath = "screenshots/${generatedScreenshot.emulatorSpecificPath}"
+            val generatedBitmap = getBitmapFromDevice(generatedScreenshot.path)
+            val referenceBitmap = context.getBitmapFromAsset(relativeScreenshotFilePath)
+            val referenceScreenshot = referenceScreenshotDir.getScreenshot(screenshotName)
 
             if (generatedBitmap.height != referenceBitmap.height || generatedBitmap.width != referenceBitmap.width) {
-                report(screenshotFilePath)
+                BitmapSaver().save(referenceBitmap, referenceScreenshot)
+                report(
+                    generatedScreenshot = generatedScreenshot,
+                    referenceScreenshot = referenceScreenshot
+                )
                 throw AssertionError(
-                    """Bitmaps for $screenshotFilePath have different sizes (width,height):
+                    """Bitmaps for $relativeScreenshotFilePath have different sizes (width,height):
                 Generated bitmap: (${generatedBitmap.width},${generatedBitmap.height})
                 Reference bitmap: (${referenceBitmap.width},${referenceBitmap.height})
             """.trimIndent()
@@ -150,8 +169,12 @@ abstract class BaseScreenshotTest<T : View>(
             }
 
             if (!referenceBitmap.sameAs(generatedBitmap)) {
-                report(screenshotFilePath)
-                throw AssertionError("Generated bitmap: $screenshotFilePath doesn't equal to reference bitmap")
+                BitmapSaver().save(referenceBitmap, referenceScreenshot)
+                report(
+                    generatedScreenshot = generatedScreenshot,
+                    referenceScreenshot = referenceScreenshot
+                )
+                throw AssertionError("Generated bitmap: $relativeScreenshotFilePath doesn't equal to reference bitmap")
             }
         }
     }
@@ -182,11 +205,9 @@ abstract class BaseScreenshotTest<T : View>(
         }
     }
 
-    private fun report(filePath: String) {
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val referenceUrl = report.addImageSynchronously(getFileFromAsset(context, filePath))
-        val generatedUrl = report.addImageSynchronously(getFileFromDevice(targetContext, filePath))
+    private fun report(generatedScreenshot: Screenshot, referenceScreenshot: Screenshot) {
+        val generatedUrl = report.addImageSynchronously(generatedScreenshot.path)
+        val referenceUrl = report.addImageSynchronously(referenceScreenshot.path)
         val htmlReport = getReportAsString(referenceUrl, generatedUrl)
         report.addHtml(
             label = "Press me to see report",
