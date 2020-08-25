@@ -10,7 +10,7 @@ import com.avito.android.test.screenshot_test.test.IdlieableActivity
 
 class ScreenshotTestActivity : IdlieableActivity() {
 
-    override var countingIdlingResource = CountingIdlingResource("CountingIdlingResource", true)
+    override val countingIdlingResource = CountingIdlingResource("CountingIdlingResource", true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

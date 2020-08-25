@@ -274,7 +274,7 @@ class ReportImplementation(
         }
 
     @Synchronized
-    override fun addHtml(label: String, content: String, wrapHtml: Boolean, stepName:String) {
+    override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
         val wrappedContentIfNeeded = if (wrapHtml) wrapInHtml(content) else content
         val html = remoteStorage.upload(
             uploadRequest = RemoteStorage.Request.ContentRequest(
@@ -289,7 +289,7 @@ class ReportImplementation(
                 isSynthetic = true,
                 timestamp = timeProvider.nowInSeconds(),
                 number = started.stepNumber++,
-                title = stepName
+                title = "Synthetic step"
             )
         }?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(html)

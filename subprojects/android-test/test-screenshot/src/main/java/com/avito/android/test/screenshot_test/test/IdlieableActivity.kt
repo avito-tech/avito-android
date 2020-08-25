@@ -4,5 +4,5 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.test.espresso.idling.CountingIdlingResource
 
 abstract class IdlieableActivity: AppCompatActivity() {
-    abstract var countingIdlingResource: CountingIdlingResource
+    abstract val countingIdlingResource: CountingIdlingResource
 }
