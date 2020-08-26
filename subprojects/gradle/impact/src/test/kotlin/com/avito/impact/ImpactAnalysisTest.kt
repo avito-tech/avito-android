@@ -3,6 +3,7 @@ package com.avito.impact
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.Module
+import com.avito.test.gradle.ParentGradleModule
 import com.avito.test.gradle.PlatformModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
@@ -377,6 +378,46 @@ class ImpactAnalysisTest {
             implementation = setOf("feature", "app"),
             unitTests = setOf("feature", "app"),
             androidTests = setOf("feature", "app")
+        )
+    }
+
+    @Test
+    fun `all child and dependent modules changed - parent module gradle configuration changed`() {
+        generateProject(
+            modules = listOf(
+                AndroidAppModule("standalone_app"),
+                AndroidAppModule(
+                    "app", dependencies = """
+                        implementation project(':parent:feature1')
+                        implementation project(':parent:feature2')
+                    """
+                ),
+                ParentGradleModule(
+                    name = "parent",
+                    modules = listOf(
+                        AndroidLibModule(
+                            "feature1"
+                        ),
+                        AndroidLibModule(
+                            "feature2"
+                        )
+                    )
+                )
+            )
+        )
+
+        with(projectDir) {
+            checkoutSourceBranch()
+            file("parent/build.gradle").appendText("\nprintln('changed')")
+            commit()
+        }
+        val result = detectChanges()
+
+        result.assertMarkedModules(
+            projectDir,
+            implementation = setOf("parent:feature1", "parent:feature12", "app"),
+            unitTests = setOf("parent:feature1", "parent:feature12", "app"),
+            androidTests = setOf("parent:feature1", "parent:feature12", "app")
         )
     }
 
