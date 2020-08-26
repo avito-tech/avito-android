@@ -39,11 +39,8 @@ class ImpactAnalysisPlugin : Plugin<Project> {
                 fallbackDetector = subProject.impactFallbackDetector
             )
         }
-        registerModulesReport(rootProject)
-    }
 
-    private fun registerModulesReport(project: Project) {
-        project.tasks.register<GenerateModulesReport>("generateModulesReport") {
+        rootProject.tasks.register<GenerateModulesReport>("generateModulesReport") {
             group = "impact-analysis"
             description = "Print modified projects to files. For testing purposes only"
         }
