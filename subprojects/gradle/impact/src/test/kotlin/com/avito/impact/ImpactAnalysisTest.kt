@@ -381,6 +381,9 @@ class ImpactAnalysisTest {
         )
     }
 
+    /**
+     * it could be improved, but for now parent/build.gradle is just a fallback
+     */
     @Test
     fun `all child and dependent modules changed - parent module gradle configuration changed`() {
         generateProject(
@@ -415,9 +418,40 @@ class ImpactAnalysisTest {
 
         result.assertMarkedModules(
             projectDir,
-            implementation = setOf("parent:feature1", "parent:feature12", "app"),
-            unitTests = setOf("parent:feature1", "parent:feature12", "app"),
-            androidTests = setOf("parent:feature1", "parent:feature12", "app")
+            implementation = setOf("parent:feature1", "parent:feature2", "app", "standalone_app"),
+            unitTests = setOf("parent:feature1", "parent:feature2", "app", "standalone_app"),
+            androidTests = setOf("parent:feature1", "parent:feature2", "app", "standalone_app")
+        )
+    }
+
+    @Test
+    fun `all modules changed - root gradle configuration changed`() {
+        generateProject(
+            modules = listOf(
+                AndroidAppModule("standalone_app"),
+                AndroidAppModule(
+                    "app", dependencies = """
+                        implementation project(':feature')
+                    """
+                ),
+                AndroidLibModule(
+                    "feature"
+                )
+            )
+        )
+
+        with(projectDir) {
+            checkoutSourceBranch()
+            file("build.gradle").appendText("\nprintln('changed')")
+            commit()
+        }
+        val result = detectChanges()
+
+        result.assertMarkedModules(
+            projectDir,
+            implementation = setOf("feature", "standalone_app", "app"),
+            unitTests = setOf("feature", "standalone_app", "app"),
+            androidTests = setOf("feature", "standalone_app", "app")
         )
     }
 

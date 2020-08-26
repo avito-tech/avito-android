@@ -46,7 +46,7 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
 
     override val dependencies: Set<ImplementationConfiguration> by lazy {
         require(project.configurations.isNotEmpty()) {
-            "configurations of ${project.path} must be available here. \n" +
+            "Configurations of ${project.path} required to continue impact analysis, but nothing found. \n" +
                 "Most likely reasons: \n" +
                 "- Using impact analysis during gradle configuration phase \n" +
                 "- Working with regular directory as with module \n"

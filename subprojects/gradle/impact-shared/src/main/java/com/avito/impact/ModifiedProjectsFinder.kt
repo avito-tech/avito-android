@@ -14,22 +14,6 @@ class ModifiedProjectsFinder(
         fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
     }
 
-    private val supportedProjects: Set<Project> by lazy {
-        rootProject
-            .subprojects
-            .asSequence()
-            .filter { it.isSupportedByImpactAnalysis() }
-            .toSet()
-    }
-
-    private fun Project.isSupportedByImpactAnalysis(): Boolean =
-        with(pluginManager) {
-            hasPlugin("com.android.library")
-                || hasPlugin("com.android.application")
-                || hasPlugin("kotlin")
-                || hasPlugin("java")
-        }
-
     fun findModifiedProjects(reportType: ReportType? = null): Set<ModifiedProject> {
         val reportTypes = if (reportType == null) {
             ReportType.values()
@@ -38,7 +22,7 @@ class ModifiedProjectsFinder(
         }
         return reportTypes
             .flatMap { type ->
-                findProjects(type) {
+                findProjects(rootProject, type) {
                     it.internalModule.isModified(type)
                 }
             }.toSet()
@@ -46,7 +30,7 @@ class ModifiedProjectsFinder(
 
     @Deprecated("Используется только для поиска по ReportType.ANDROID_TESTS. Оптимизация для UI тестов, явно игнорируем изменения в реализации, чтобы не сваливаться всегда в fallback")
     fun findModifiedProjectsWithoutDependencyToAnotherConfigurations(reportType: ReportType): Set<ModifiedProject> =
-        findProjects(reportType) {
+        findProjects(rootProject, reportType) {
             it.internalModule.getConfiguration(reportType).let { configuration ->
                 configuration.dependencies.any { dependency -> dependency.isModified }
                     || configuration.hasChangedFiles
@@ -54,13 +38,14 @@ class ModifiedProjectsFinder(
         }
 
     private fun findProjects(
+        rootProject: Project,
         reportType: ReportType,
         predicate: (project: Project) -> Boolean
     ): Set<ModifiedProject> {
         val projects = if (skipAnalysis) {
-            supportedProjects
+            supportedByImpactAnalysisProjects(rootProject)
         } else {
-            supportedProjects.filter { predicate(it) }
+            supportedByImpactAnalysisProjects(rootProject).filter { predicate(it) }
         }
 
         return projects
@@ -81,5 +66,30 @@ class ModifiedProjectsFinder(
             return ModifiedProjectsFinder(project, project.impactFallbackDetector)
         }
     }
-
 }
+
+internal fun supportedByImpactAnalysisProjects(rootProject: Project): Set<Project> {
+    return rootProject
+        .subprojects
+        .asSequence()
+        .filter { it.isSupportedByImpactAnalysis() }
+        .toSet()
+}
+
+internal fun platformModules(rootProject: Project): Set<Project> {
+    return rootProject
+        .subprojects
+        .asSequence()
+        .filter { it.isPlatformModule() }
+        .toSet()
+}
+
+private fun Project.isPlatformModule(): Boolean = pluginManager.hasPlugin("java-platform")
+
+private fun Project.isSupportedByImpactAnalysis(): Boolean =
+    with(pluginManager) {
+        hasPlugin("com.android.library")
+            || hasPlugin("com.android.application")
+            || hasPlugin("kotlin")
+            || hasPlugin("java")
+    }

@@ -4,13 +4,16 @@ import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.changes.newChangesDetector
+import com.avito.impact.platformModules
 import com.avito.impact.plugin.ImpactAnalysisExtension
+import com.avito.impact.supportedByImpactAnalysisProjects
 import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.findByType
+import java.io.File
 
 @Suppress("UnstableApiUsage")
 class ImpactFallbackDetectorImplementation(
@@ -27,8 +30,22 @@ class ImpactFallbackDetectorImplementation(
             gitState = gitState
         )
 
+        val supportedModulesDirs = supportedByImpactAnalysisProjects(project.rootProject)
+            .map { it.projectDir }
+
+        val platformModulesDirs = platformModules(project.rootProject)
+            .map { it.projectDir }
+
+        /**
+         * - Changes in supported impact analysis modules are going through full impact analysis logic (configurations etc.)
+         * - Platform modules are unsupported, but excluded from fallback, because it is always a dependency for some supported module
+         * - Changes in parent project's build gradle files are full fallback for now (better than false negative here, skipping real changes, but could be optimized in future)
+         */
+        val excludedDirectories = supportedModulesDirs + platformModulesDirs
+
         val unsupportedChangesFound = hasUnsupportedChanges(
-            project = project,
+            rootDir = project.rootDir,
+            excludedDirectories = excludedDirectories,
             changesDetector = newChangesDetector(
                 rootDir = project.rootDir,
                 targetCommit = gitState.orNull?.targetBranch?.commit,
@@ -49,13 +66,12 @@ class ImpactFallbackDetectorImplementation(
     }
 
     private fun hasUnsupportedChanges(
-        project: Project,
+        rootDir: File,
+        excludedDirectories: List<File>,
         changesDetector: ChangesDetector
     ): Boolean {
-        val excludedDirectories = project.subprojects.map { it.projectDir }
-
         return changesDetector
-            .computeChanges(project.rootDir, excludedDirectories)
+            .computeChanges(rootDir, excludedDirectories)
             .onFailure {
                 logger.info("Can't findModifiedProjects changes in the root project; ${it.message}", it.cause)
             }
@@ -63,11 +79,13 @@ class ImpactFallbackDetectorImplementation(
                 val hasChanges = it.isNotEmpty()
                 if (hasChanges) {
                     logger.info(
-                        "Switch to fallback mode. Unknown changes: ${it.joinToString(
-                            prefix = "----\n",
-                            separator = "\n",
-                            postfix = "\n----"
-                        )}"
+                        "Switch to fallback mode. Unknown changes: ${
+                            it.joinToString(
+                                prefix = "----\n",
+                                separator = "\n",
+                                postfix = "\n----"
+                            )
+                        }"
                     )
                 }
                 return@map hasChanges
