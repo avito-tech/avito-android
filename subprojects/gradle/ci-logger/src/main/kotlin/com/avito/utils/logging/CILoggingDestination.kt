@@ -13,7 +13,7 @@ internal object StdoutDestination : CILoggingDestination {
 
     override fun write(message: String, throwable: Throwable?) {
         println(message)
-        println(throwable)
+        throwable?.also { println(it) }
     }
 
     override fun child(tag: String): CILoggingDestination = this
@@ -41,7 +41,7 @@ internal class FileDestination(
         }
 
         file.appendText("$message${System.lineSeparator()}")
-        file.appendText("$throwable${System.lineSeparator()}")
+        throwable?.also { file.appendText("$it${System.lineSeparator()}") }
     }
 
     override fun child(tag: String): CILoggingDestination = FileDestination(
