@@ -57,8 +57,8 @@ class GitChangesDetector(
         ).map { output: String ->
             output.lineSequence()
                 .filterNot { it.isBlank() }
-                .map {
-                    it.parseGitDiffLine().map { it.asChangedFile(gitRootDir) }
+                .map { line ->
+                    line.parseGitDiffLine().map { it.asChangedFile(gitRootDir) }
                 }
                 .filter { it is Try.Success }
                 .map { it as Try.Success<ChangedFile> }

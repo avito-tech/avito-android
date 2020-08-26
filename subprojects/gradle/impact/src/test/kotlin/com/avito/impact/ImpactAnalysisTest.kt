@@ -3,6 +3,7 @@ package com.avito.impact
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.Module
+import com.avito.test.gradle.ParentGradleModule
 import com.avito.test.gradle.PlatformModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
@@ -377,6 +378,80 @@ class ImpactAnalysisTest {
             implementation = setOf("feature", "app"),
             unitTests = setOf("feature", "app"),
             androidTests = setOf("feature", "app")
+        )
+    }
+
+    /**
+     * it could be improved, but for now parent/build.gradle is just a fallback
+     */
+    @Test
+    fun `all child and dependent modules changed - parent module gradle configuration changed`() {
+        generateProject(
+            modules = listOf(
+                AndroidAppModule("standalone_app"),
+                AndroidAppModule(
+                    "app", dependencies = """
+                        implementation project(':parent:feature1')
+                        implementation project(':parent:feature2')
+                    """
+                ),
+                ParentGradleModule(
+                    name = "parent",
+                    modules = listOf(
+                        AndroidLibModule(
+                            "feature1"
+                        ),
+                        AndroidLibModule(
+                            "feature2"
+                        )
+                    )
+                )
+            )
+        )
+
+        with(projectDir) {
+            checkoutSourceBranch()
+            file("parent/build.gradle").appendText("\nprintln('changed')")
+            commit()
+        }
+        val result = detectChanges()
+
+        result.assertMarkedModules(
+            projectDir,
+            implementation = setOf("parent:feature1", "parent:feature2", "app", "standalone_app"),
+            unitTests = setOf("parent:feature1", "parent:feature2", "app", "standalone_app"),
+            androidTests = setOf("parent:feature1", "parent:feature2", "app", "standalone_app")
+        )
+    }
+
+    @Test
+    fun `all modules changed - root gradle configuration changed`() {
+        generateProject(
+            modules = listOf(
+                AndroidAppModule("standalone_app"),
+                AndroidAppModule(
+                    "app", dependencies = """
+                        implementation project(':feature')
+                    """
+                ),
+                AndroidLibModule(
+                    "feature"
+                )
+            )
+        )
+
+        with(projectDir) {
+            checkoutSourceBranch()
+            file("build.gradle").appendText("\nprintln('changed')")
+            commit()
+        }
+        val result = detectChanges()
+
+        result.assertMarkedModules(
+            projectDir,
+            implementation = setOf("feature", "standalone_app", "app"),
+            unitTests = setOf("feature", "standalone_app", "app"),
+            androidTests = setOf("feature", "standalone_app", "app")
         )
     }
 

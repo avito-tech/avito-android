@@ -1,6 +1,7 @@
 package com.avito.impact.fallback
 
 interface ImpactFallbackDetector {
+
     val isFallback: Result
 
     sealed class Result {
