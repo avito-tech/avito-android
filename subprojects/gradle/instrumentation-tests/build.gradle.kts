@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":common:logger"))
     implementation(project(":common:retrace"))
     implementation(project(":common:test-annotations"))
+    implementation(project(":common:composite-exception"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(project(":gradle:worker"))
     implementation(Dependencies.dexlib)

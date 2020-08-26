@@ -2,6 +2,7 @@ package com.avito.android.test.screenshot_test.internal
 
 import android.content.Context
 import com.avito.android.test.report.Report
+import com.avito.composite_exception.composeWith
 import com.avito.filestorage.RemoteStorage
 
 internal class ScreenshotComparisonReporter(
@@ -39,9 +40,15 @@ internal class ScreenshotComparisonReporter(
                 wrapHtml = false
             )
         } else {
-            throw IllegalStateException()
+            throw IllegalStateException(
+                "Can't upload screenshots",
+                generatedScreenshotResult.error.composeWith(referenceScreenshotResult.error)
+            )
         }
     }
+
+    private val RemoteStorage.Result.error: Throwable?
+        get() = (this as? RemoteStorage.Result.Error)?.t
 
     private fun getReportAsString(referenceUrl: String, generatedUrl: String): String {
         context.assets.open("screenshot_test_report.html").use {

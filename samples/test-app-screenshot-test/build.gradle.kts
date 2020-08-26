@@ -51,11 +51,29 @@ plugins.withType<InstrumentationTestsPlugin> {
 
         val credentials = project.kubernetesCredentials
         if (credentials is Service || credentials is KubernetesCredentials.Config) {
+            val emulator27 = CloudEmulator(
+                name = "api27",
+                api = 27,
+                model = "Android_SDK_built_for_x86",
+                image = "${emulatorImage(registry, 27)}:b9877ffc00",
+                cpuCoresRequest = "1",
+                cpuCoresLimit = "1.3"
+            )
+
             val emulator28 = CloudEmulator(
                 name = "api28",
                 api = 28,
                 model = "Android_SDK_built_for_x86_64",
-                image = "${emulatorImage(registry, 28)}:37ac40d0fa",
+                image = "${emulatorImage(registry, 28)}:951e8f56c4",
+                cpuCoresRequest = "1",
+                cpuCoresLimit = "1.3"
+            )
+
+            val emulator29 = CloudEmulator(
+                name = "api29",
+                api = 29,
+                model = "Android_SDK_built_for_x86_64",
+                image = "${emulatorImage(registry, 29)}:915c1f20be",
                 cpuCoresRequest = "1",
                 cpuCoresLimit = "1.3"
             )
@@ -64,17 +82,19 @@ plugins.withType<InstrumentationTestsPlugin> {
                 reportSkippedTests = false
                 reportFlakyTests = false
 
-                targetsContainer.register("api28") {
-                    deviceName = "API28"
+                setOf(emulator27, emulator28, emulator29).forEach { emulator ->
+                    targetsContainer.register(emulator.name) {
+                        deviceName = emulator.name.toUpperCase()
 
-                    scheduling {
-                        quota {
-                            minimumSuccessCount = 1
-                        }
+                        scheduling {
+                            quota {
+                                minimumSuccessCount = 1
+                            }
 
-                        staticDevicesReservation {
-                            device = emulator28
-                            count = 1
+                            staticDevicesReservation {
+                                device = emulator
+                                count = 1
+                            }
                         }
                     }
                 }
@@ -101,12 +121,6 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestRuntimeOnly(Dependencies.playServicesMaps)
     androidTestUtil(Dependencies.androidTest.orchestrator)
 })
-
-gradle.taskGraph.whenReady {
-    tasks.getByName<VerificationTask>("connectedDebugAndroidTest") {
-        ignoreFailures = hasProperty("recordScreenshotsMode")
-    }
-}
 
 //todo registry value not respected here, it's unclear how its used (in fact concatenated in runner)
 //todo pass whole image, and not registry

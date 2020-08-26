@@ -85,6 +85,7 @@ include(":common:test-annotations")
 include(":common:junit-utils")
 include(":common:retrace")
 include(":common:truth-extensions")
+include(":common:composite-exception")
 
 include(":android-test:resource-manager-exceptions")
 include(":android-test:websocket-reporter")

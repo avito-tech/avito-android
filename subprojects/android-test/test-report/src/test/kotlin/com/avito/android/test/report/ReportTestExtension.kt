@@ -33,16 +33,19 @@ class ReportTestExtension(
     private val screenshotUploader: ScreenshotUploader = mock(),
     private val logger: Logger = NoOpLogger,
     private val report: Report = ReportImplementation(
-        fileStorageUrl = fileStorageUrl,
         onDeviceCacheDirectory = lazy { error("nope") },
-        httpClient = OkHttpClient.Builder()
-            .addInterceptor(mockInterceptor)
-            .build(),
         performanceTestReporter = PerformanceTestReporter(),
         logger = logger,
         transport = emptyList(),
         screenshotUploader = screenshotUploader,
-        timeProvider = timeProvider
+        timeProvider = timeProvider,
+        remoteStorage = RemoteStorage.create(
+            endpoint = fileStorageUrl,
+            httpClient = OkHttpClient.Builder()
+                .addInterceptor(mockInterceptor)
+                .build(),
+            logger = logger
+        )
     )
 ) : BeforeEachCallback, Report by report {
 

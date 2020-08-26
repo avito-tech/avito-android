@@ -3,6 +3,7 @@ package com.avito.android.test.screenshot_test.test
 import android.Manifest
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +37,10 @@ abstract class BaseScreenshotTest<T : View>(
 ) {
 
     abstract val activity: IdlieableActivity
+
+    @Suppress("PlatformExtensionReceiverOfInline")
+    private val recordMode: Boolean
+        get() = InstrumentationRegistry.getArguments().getString("recordScreenshots", "false").toBoolean()
 
     private val screenshotDir: ScreenshotDirectory by lazy {
         ScreenshotDirectory.create(activity, "screenshots")
@@ -90,7 +95,9 @@ abstract class BaseScreenshotTest<T : View>(
             }
             InstrumentationRegistry.getInstrumentation().waitForIdleSync()
             createScreenshots("Dark")
-            compareScreens()
+            if (!recordMode) {
+                compareScreens()
+            }
         } else {
             throw IllegalStateException("BaseScreenshotTest supports SDK greater or equal to ${Build.VERSION_CODES.O}. Current is ${Build.VERSION.SDK_INT}")
         }

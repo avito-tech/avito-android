@@ -4,8 +4,7 @@ import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
-import java.io.PrintStream
-import java.io.PrintWriter
+import com.avito.composite_exception.composeWith
 
 data class TestRunResult(
     val reportedTests: List<SimpleRunTest>,
@@ -142,57 +141,4 @@ data class TestRunResult(
 
     fun notReportedCount(): Int = notReported.lostTests.size
 
-}
-
-private fun Throwable?.composeWith(throwable: Throwable?): Throwable? {
-    return when {
-        this != null -> {
-            if (throwable != null) {
-                val message = "${message}. \n ${throwable.message}"
-                CompositeException(
-                    message,
-                    arrayOf(this, throwable)
-                )
-            } else {
-                this
-            }
-        }
-        else -> throwable
-    }
-}
-
-private class CompositeException(
-    message: String,
-    private val throwables: Array<Throwable>
-) : RuntimeException(message) {
-
-    override fun printStackTrace() {
-        if (throwables.isEmpty()) {
-            super.printStackTrace()
-        } else {
-            throwables.forEach {
-                it.printStackTrace()
-            }
-        }
-    }
-
-    override fun printStackTrace(s: PrintStream) {
-        if (throwables.isEmpty()) {
-            super.printStackTrace(s)
-        } else {
-            throwables.forEach {
-                it.printStackTrace(s)
-            }
-        }
-    }
-
-    override fun printStackTrace(s: PrintWriter) {
-        if (throwables.isEmpty()) {
-            super.printStackTrace(s)
-        } else {
-            throwables.forEach {
-                it.printStackTrace(s)
-            }
-        }
-    }
 }
