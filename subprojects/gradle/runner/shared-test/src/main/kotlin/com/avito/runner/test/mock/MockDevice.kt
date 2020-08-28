@@ -114,6 +114,13 @@ open class MockDevice(
         logger.warn(message, error)
     }
 
+    fun isDone(): Boolean {
+        return installApplicationResultsQueue.isEmpty()
+            && gettingDeviceStatusResultsQueue.isEmpty()
+            && runTestsResultsQueue.isEmpty()
+            && clearPackageResultsQueue.isEmpty()
+    }
+
     fun verify() {
         assertWithMessage("Mock device has remains commands in queue: installApplicationResultsQueue")
             .that(installApplicationResultsQueue)

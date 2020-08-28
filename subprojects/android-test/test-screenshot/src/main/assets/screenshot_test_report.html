@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Website Title</title>
+<style type="text/css">
+* {margin: 0; padding: 0;}
+#container {height: 100%; width:50%; font-size: 0; background:#ccc;border-radius:10px;margin:0 auto; margin-top:50px;margin-bottom:50px;}
+#left, #middle, #right {
+	display: block; 
+	zoom: 1; vertical-align: 
+	top; font-size: 12px;
+	padding: 20px;
+	border-color:#cec;
+	min-height: 200px;
+}
+
+#referenceImage { float: right;display: table-cell; }
+#generatedImage { float: right;display: table-cell;}
+#canvas { float: right;display: table-cell;  }
+</style>
+
+<script> 
+
+function getPixelData(img) {
+	var canvas = document.getElementById("canvas");
+	var context = canvas.getContext('2d');
+	canvas.width = img.width;
+	canvas.height = img.height;
+	context.drawImage(img, 0, 0 );
+	return context.getImageData(0, 0, img.width, img.height);
+}
+
+window.addEventListener("load", function(){
+
+	var referenceImage = document.getElementById("referenceImage");
+	var generatedImage = document.getElementById("generatedImage");
+	var resultCanvas = document.getElementById("canvas");
+	var context = resultCanvas.getContext('2d')
+	context.drawImage(referenceImage, 0,0)
+
+	console.log("before")
+	const referencepPixelData = getPixelData(referenceImage).data
+	const generatedPixelData = getPixelData(generatedImage).data
+	console.log("image data" +referencepPixelData[2])
+
+	var newImageData = context.createImageData(getPixelData(referenceImage));
+
+	for (index = 0; index < referencepPixelData.length; index+=4) {
+			var refR = referencepPixelData[index]
+			var genR = generatedPixelData[index]
+			var refG = referencepPixelData[index+1]
+			var genG = generatedPixelData[index+1]
+			var refB = referencepPixelData[index+2]
+			var genB = generatedPixelData[index+2]
+			var refA = referencepPixelData[index+3]
+			var genA = generatedPixelData[index+3]
+			if (refR === genR && refG === genG && refB === genB && refA === genA) {
+				newImageData.data[index] = 255
+				newImageData.data[index+1] = 255
+				newImageData.data[index+2] = 255
+				newImageData.data[index+3] = 255
+			} else {
+				newImageData.data[index] = 255
+				newImageData.data[index+1] = 0
+				newImageData.data[index+2] = 0
+				newImageData.data[index+3] = 255
+				console.log("not equals")
+			}
+	}
+
+	context.putImageData(newImageData, 0, 0);
+	console.log("success")
+
+});
+</script> 
+
+</head>
+<body>
+<div id="container">
+    <div id="left"><h2>Эталонный скриншот</h2><img alt="reference image" id="referenceImage" src = "%referenceImage%"></div>
+    <div id="middle"><h2>Текущий скриншот</h2><img alt="generated image" id="generatedImage" src = "%generatedImage%"></div>
+    <div id="right"><h2>Разница пикселей</h2><canvas id="canvas"></canvas></div>
+</div>
+</body>
+</html>

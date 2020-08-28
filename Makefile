@@ -8,6 +8,7 @@ includePrefix?=
 includeAnnotation?=
 useCompositeBuild=true
 dry_run=false
+instrumentation=Ui
 
 params?=
 
@@ -56,7 +57,7 @@ publish_to_maven_local:
 	./gradlew -p subprojects publishToMavenLocal -PprojectVersion=local $(log_level)
 
 sample_app_instrumentation:
-	./gradlew samples:$(module):instrumentationUi $(params)
+	./gradlew samples:$(module):instrumentation$(instrumentation) $(params)
 
 sample_app_instrumentation_local:
 	./gradlew samples:$(module):instrumentationLocal $(params)
@@ -81,3 +82,10 @@ clear_k8s_deployments_by_namespaces:
 
 clear_k8s_deployments_by_names:
 	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
+
+record_sreenshots:
+	./gradlew samples:test-app-screenshot-test:clearScreenshots
+	./gradlew samples:test-app-screenshot-test:connectedAndroidTest \
+        -Pandroid.testInstrumentationRunnerArguments.annotation=com.avito.android.test.annotations.ScreenshotTest \
+        -Pandroid.testInstrumentationRunnerArguments.recordScreenshots=true
+	./gradlew samples:test-app-screenshot-test:recordScreenshots

@@ -54,6 +54,8 @@ sh file-sizes.sh
     `hw.lcd.height`
     
     `hw.lcd.density`
+
+    `hw.gpu.mode` //по умолчанию  auto, но этот самый auto может [сильно различаться](https://developer.android.com/studio/run/emulator-acceleration)
 - Проверить, что все остальные эмуляторы **выключены**    
 - Перегенерировать скриншоты командой
 

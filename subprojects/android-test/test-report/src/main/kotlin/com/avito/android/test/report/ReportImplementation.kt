@@ -29,7 +29,6 @@ import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import okhttp3.OkHttpClient
 import java.io.File
 
 /**
@@ -42,17 +41,11 @@ import java.io.File
 @SuppressLint("LogNotTimber")
 class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
-    httpClient: OkHttpClient,
-    fileStorageUrl: String,
     private val onIncident: (Throwable) -> Unit = {},
     private val performanceTestReporter: PerformanceTestReporter,
     private val logger: Logger,
     private val transport: List<Transport>,
-    private val remoteStorage: RemoteStorage = RemoteStorage.create(
-        logger = logger,
-        httpClient = httpClient,
-        endpoint = fileStorageUrl
-    ),
+    private val remoteStorage: RemoteStorage,
     private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
         screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
         remoteStorage = remoteStorage,
@@ -268,10 +261,11 @@ class ReportImplementation(
         }
 
     @Synchronized
-    override fun addHtml(label: String, content: String) {
+    override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
+        val wrappedContentIfNeeded = if (wrapHtml) wrapInHtml(content) else content
         val html = remoteStorage.upload(
             uploadRequest = RemoteStorage.Request.ContentRequest(
-                content = wrapInHtml(content),
+                content = wrappedContentIfNeeded,
                 extension = Entry.File.Type.html.name
             ),
             comment = label

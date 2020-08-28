@@ -57,7 +57,7 @@ class HttpRemoteStorage(
         }
             .enqueue(object : Callback<String> {
                 override fun onFailure(call: Call<String>, t: Throwable) {
-                    logger.critical(getUploadRequestErrorMessage(uploadRequest), t)
+                    logger.warn(getUploadRequestErrorMessage(uploadRequest), t)
 
                     deleteUploadedFile(
                         uploadRequest = uploadRequest,
@@ -86,14 +86,14 @@ class HttpRemoteStorage(
                         }
                         response.isSuccessful && response.body().isNullOrEmpty() -> {
                             val exception = IllegalStateException("Uploading failed response body is absent")
-                            logger.critical(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
+                            logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
                             RemoteStorage.Result.Error(
                                 t = exception
                             )
                         }
                         else -> {
                             val exception = RuntimeException("Uploading failed with response: ${response.body()}")
-                            logger.critical(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
+                            logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
                             RemoteStorage.Result.Error(
                                 t = exception
                             )

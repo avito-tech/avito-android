@@ -42,7 +42,7 @@ interface Report {
      * @param label one-liner you see in test step comments
      * @param content detailed info about request, accessible via click on label in report
      */
-    fun addHtml(label: String, content: String)
+    fun addHtml(label: String, content: String, wrapHtml: Boolean = true)
 
     fun registerIncident(exception: Throwable)
 

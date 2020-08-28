@@ -123,7 +123,10 @@ class RunnerIntegrationTest {
 
             GlobalScope.launch {
                 observer.send(firstFailedDevice)
-                delay(TimeUnit.MILLISECONDS.toMillis(150)) // Wait for completion 2 tests by first device
+                // Wait for completion 2 tests by first device
+                while (!firstFailedDevice.isDone()) {
+                    delay(TimeUnit.MILLISECONDS.toMillis(10))
+                }
                 observer.send(secondDevice)
             }
 
@@ -159,7 +162,10 @@ class RunnerIntegrationTest {
 
             GlobalScope.launch {
                 observer.send(failedDevice)
-                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for first device freeze event
+                // Wait for completion 2 tests by first device
+                while (!failedDevice.isDone()) {
+                    delay(TimeUnit.MILLISECONDS.toMillis(10))
+                }
                 observer.send(successfulDevice)
             }
 
@@ -191,7 +197,9 @@ class RunnerIntegrationTest {
 
             GlobalScope.launch {
                 observer.send(failedDevice)
-                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for first device freeze event
+                while (!failedDevice.isDone()) {
+                    delay(TimeUnit.MILLISECONDS.toMillis(10))
+                }
                 observer.send(successfulDevice)
             }
 
@@ -233,7 +241,9 @@ class RunnerIntegrationTest {
 
             GlobalScope.launch {
                 observer.send(failedDevice)
-                delay(TimeUnit.MILLISECONDS.toMillis(50)) // Wait for first device installation fail event
+                while (!failedDevice.isDone()) {
+                    delay(TimeUnit.MILLISECONDS.toMillis(10))
+                }
                 observer.send(successfulDevice)
             }
 

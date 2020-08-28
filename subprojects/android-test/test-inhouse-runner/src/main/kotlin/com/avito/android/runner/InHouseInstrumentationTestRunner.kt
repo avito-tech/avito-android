@@ -33,6 +33,7 @@ import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
+import com.avito.filestorage.RemoteStorage
 import com.avito.logger.Logger
 import com.avito.report.ReportsApi
 import com.avito.report.model.DeviceName
@@ -50,13 +51,23 @@ abstract class InHouseInstrumentationTestRunner :
     InstrumentationTestRunner(),
     ReportProvider,
     PerformanceProvider,
-    ImitateFlagProvider {
+    ImitateFlagProvider,
+    RemoteStorageProvider {
 
     protected val tag = "UITestRunner"
 
     protected val sentry by lazy {
         createSentry(
             sentryDsn = testRunEnvironment.asRunEnvironmentOrThrow().sentryDsn
+        )
+    }
+
+    override val remoteStorage: RemoteStorage by lazy {
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+        RemoteStorage.create(
+            logger = testReportLogger,
+            httpClient = reportHttpClient,
+            endpoint = runEnvironment.fileStorageUrl
         )
     }
 
@@ -115,13 +126,12 @@ abstract class InHouseInstrumentationTestRunner :
         }
 
         ReportImplementation(
-            fileStorageUrl = runEnvironment.fileStorageUrl,
             onDeviceCacheDirectory = runEnvironment.outputDirectory,
-            httpClient = reportHttpClient,
             onIncident = { testIssuesMonitor.onFailure(it) },
             performanceTestReporter = performanceTestReporter,
             transport = transport,
-            logger = testReportLogger
+            logger = testReportLogger,
+            remoteStorage = remoteStorage
         )
     }
 
