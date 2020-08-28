@@ -78,9 +78,14 @@ plugins.withType<InstrumentationTestsPlugin> {
                 cpuCoresLimit = "1.3"
             )
 
+            filters.register("excludeFlaky") {
+                fromSource.excludeFlaky = true
+            }
+
             configurationsContainer.register("screenshot") {
                 reportSkippedTests = false
                 reportFlakyTests = false
+                filter = "excludeFlaky"
 
                 setOf(emulator27, emulator28, emulator29).forEach { emulator ->
                     targetsContainer.register(emulator.name) {
