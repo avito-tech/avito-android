@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.property
 @Suppress("UnstableApiUsage")
 open class InstrumentationTestImpactAnalysisExtension(project: Project) {
 
-    val output: DirectoryProperty = project.objects.directoryProperty()
+    val output: DirectoryProperty = project.objects.directoryProperty().convention(project.layout.buildDirectory)
 
     val screenMarkerClass = project.objects.property<String>()
 

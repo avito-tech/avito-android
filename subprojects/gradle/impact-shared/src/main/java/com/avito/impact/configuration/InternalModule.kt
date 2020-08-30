@@ -1,6 +1,6 @@
 package com.avito.impact.configuration
 
-import com.avito.impact.ReportType
+import com.avito.impact.ConfigurationType
 import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.fallback.ImpactFallbackDetector
 import com.avito.impact.util.Equality
@@ -33,15 +33,15 @@ class InternalModule(
     /**
      * Module has been changed itself or transitively via project dependencies
      */
-    fun isModified(reportType: ReportType): Boolean = getConfiguration(reportType).isModified
+    fun isModified(configurationType: ConfigurationType): Boolean = getConfiguration(configurationType).isModified
 
     fun isModified(): Boolean = configurations.any { it.isModified }
 
-    fun getConfiguration(reportType: ReportType): SimpleConfiguration = when (reportType) {
-        ReportType.IMPLEMENTATION -> implementationConfiguration
-        ReportType.UNIT_TESTS -> testConfiguration
-        ReportType.ANDROID_TESTS -> androidTestConfiguration
-        ReportType.LINT -> lintConfiguration
+    fun getConfiguration(configurationType: ConfigurationType): SimpleConfiguration = when (configurationType) {
+        ConfigurationType.IMPLEMENTATION -> implementationConfiguration
+        ConfigurationType.UNIT_TESTS -> testConfiguration
+        ConfigurationType.ANDROID_TESTS -> androidTestConfiguration
+        ConfigurationType.LINT -> lintConfiguration
     }
 
     override fun toString(): String = "InternalModule[${project.path}]"

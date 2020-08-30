@@ -4,7 +4,7 @@ import com.avito.android.isAndroid
 import com.avito.bytecode.DIRTY_STUB
 import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
-import com.avito.impact.ReportType
+import com.avito.impact.ConfigurationType
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
@@ -73,11 +73,11 @@ internal class AnalyzeTestImpactAction(
 
     fun computeImpact(): ImpactSummary {
         val affectedImplProjects = findModifiedAndroidProjects(
-            finder.findModifiedProjects(ReportType.IMPLEMENTATION)
+            finder.findModifiedProjects(ConfigurationType.IMPLEMENTATION)
         )
         val affectedAndroidTestProjects = findModifiedAndroidProjects(
             @Suppress("DEPRECATION")
-            finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(ReportType.ANDROID_TESTS)
+            finder.findModifiedProjectsWithoutDependencyToAnotherConfigurations(ConfigurationType.ANDROID_TESTS)
         )
 
         val affectedTestsByImpl = getAffectedTestsByChangedModules(
@@ -116,7 +116,7 @@ internal class AnalyzeTestImpactAction(
     ): Set<Test> {
         val isTargetModuleAffected = affectedAndroidTestProjects.any { it.path == targetModule.path }
         val targetModuleHasModifiedAndroidTestDependency =
-            targetModule.internalModule.getConfiguration(ReportType.ANDROID_TESTS).dependencies.any { it.isModified }
+            targetModule.internalModule.getConfiguration(ConfigurationType.ANDROID_TESTS).dependencies.any { it.isModified }
         return if (isTargetModuleAffected && targetModuleHasModifiedAndroidTestDependency) {
             filteredTest
         } else {

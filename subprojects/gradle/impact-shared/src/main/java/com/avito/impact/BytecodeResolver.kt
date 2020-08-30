@@ -7,11 +7,11 @@ import java.io.File
 class BytecodeResolver(
     private val project: Project
 ) {
-    fun resolveBytecode(reportType: ReportType): Set<File> =
-        project.internalModule.getConfiguration(reportType).fullBytecodeSets
+    fun resolveBytecode(configurationType: ConfigurationType): Set<File> =
+        project.internalModule.getConfiguration(configurationType).fullBytecodeSets
 
-    fun resolveBytecodeWithoutDependencyToAnotherConfigurations(reportType: ReportType): Set<File> =
-        project.internalModule.getConfiguration(reportType).let { configuration ->
+    fun resolveBytecodeWithoutDependencyToAnotherConfigurations(configurationType: ConfigurationType): Set<File> =
+        project.internalModule.getConfiguration(configurationType).let { configuration ->
             configuration.bytecodeSets() + configuration.dependencies.flatMap { it.fullBytecodeSets }
         }
 }

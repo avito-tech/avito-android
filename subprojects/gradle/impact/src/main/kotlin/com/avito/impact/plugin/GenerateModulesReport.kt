@@ -1,7 +1,7 @@
 package com.avito.impact.plugin
 
 import com.avito.impact.ModifiedProjectsFinder
-import com.avito.impact.ReportType
+import com.avito.impact.ConfigurationType
 import com.avito.utils.createOrClear
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -34,13 +34,13 @@ abstract class GenerateModulesReport : DefaultTask() {
     fun printReport() {
         val modifiedProjectsFinder = ModifiedProjectsFinder.from(project)
 
-        printReport(implementationModulesReportFile, modifiedProjectsFinder.determineImpact(ReportType.IMPLEMENTATION))
-        printReport(unitTestsModulesReportFile, modifiedProjectsFinder.determineImpact(ReportType.UNIT_TESTS))
-        printReport(androidTestsModulesReportFile, modifiedProjectsFinder.determineImpact(ReportType.ANDROID_TESTS))
+        printReport(implementationModulesReportFile, modifiedProjectsFinder.determineImpact(ConfigurationType.IMPLEMENTATION))
+        printReport(unitTestsModulesReportFile, modifiedProjectsFinder.determineImpact(ConfigurationType.UNIT_TESTS))
+        printReport(androidTestsModulesReportFile, modifiedProjectsFinder.determineImpact(ConfigurationType.ANDROID_TESTS))
     }
 
-    private fun ModifiedProjectsFinder.determineImpact(reportType: ReportType): Set<Project> {
-        return findModifiedProjects(reportType).map { it.project }.toSet()
+    private fun ModifiedProjectsFinder.determineImpact(configurationType: ConfigurationType): Set<Project> {
+        return findModifiedProjects(configurationType).map { it.project }.toSet()
     }
 
     private fun printReport(
