@@ -30,15 +30,14 @@ android {
 }
 
 extensions.configure<InstrumentationTestImpactAnalysisExtension> {
-    screenMarkerClass.set("AnyClass")
-    screenMarkerMetadataField.set("anyField")
+    screenMarkerClass.set("com.avito.android.sample.impact.ImpactScreenMarker")
+    screenMarkerMetadataField.set("id")
 }
 
-/**
- * delegateClosureOf used because kotlin dsl accessor
- * `fun Project.dependencies(configuration: DependencyHandlerScope.() -> Unit)`
- * is somehow unavailable for this and only this module.
- * It probably related to our custom plugins applied, but don't know how to debug this issue right now
- */
-dependencies(delegateClosureOf<DependencyHandler> {
-})
+dependencies {
+    implementation(project(":samples:test-app-impact:feature-one"))
+    implementation(project(":samples:test-app-impact:feature-two"))
+    implementation(Dependencies.appcompat)
+    androidTestImplementation(Dependencies.test.junit)
+    androidTestImplementation(project(":samples:test-app-impact:androidTest-core"))
+}
