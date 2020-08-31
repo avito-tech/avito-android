@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import com.avito.android.test.annotations.Flaky
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.EditTextActivity
 import org.junit.Rule
@@ -42,13 +43,14 @@ class EditTextTest {
         Screen.editTextScreen.editText1.checks.displayedWithText("Hellp my frienf")
     }
 
+    @Flaky(reason = "MBS-9416: Typing event has sent but hasn't handled", onSdks = [29])
     @Test
     fun writesLongText() = with(rule) {
         launchActivity(null)
 
         val superLongText = StringBuilder()
             .apply {
-                (0..100000)
+                (0..100_000)
                     .forEach { _ ->
                         append("a")
                     }
