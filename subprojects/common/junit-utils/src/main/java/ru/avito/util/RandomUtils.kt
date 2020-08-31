@@ -5,17 +5,19 @@ package ru.avito.util
 import java.util.ArrayList
 import java.util.Date
 import java.util.Random
+import java.util.concurrent.ThreadLocalRandom
 
 // TODO: to consider using reflection for automation.
 // For example - https://github.com/mtedone/podam
 
-private val random = Random(System.currentTimeMillis())
+private val random: ThreadLocalRandom
+    get() = ThreadLocalRandom.current()
 
 /**
- * Returns a pseudo-random uniformly distributed int in the half-open range [1, Int.MAX_VALUE)
+ * Returns a pseudo-random uniformly distributed int in the half-open range [0, Int.MAX_VALUE)
  */
 fun randomInt(): Int {
-    return 1 + random.nextInt(Int.MAX_VALUE - 1)
+    return random.nextInt(Int.MAX_VALUE)
 }
 
 fun randomIntAsString(): String {
@@ -27,47 +29,53 @@ fun randomIntAsString(maxValue: Int): String {
 }
 
 /**
- * Delegate of [Random.nextInt] (int)}
+ * Delegate of [ThreadLocalRandom.nextInt] (int)}
  */
 fun randomInt(maxValue: Int): Int {
     return random.nextInt(maxValue)
 }
 
 fun randomInt(min: Int, max: Int): Int {
+    require(max >= min) {
+        "`min` must be lower or equal then `max`"
+    }
     return min + random.nextInt(max - min + 1)
 }
 
 /**
- * Delegate of [Random.nextDouble] ()}
+ * Delegate of [ThreadLocalRandom.nextDouble] ()}
  */
 fun randomDouble(): Double {
     return random.nextDouble()
 }
 
 fun randomDouble(min: Double, max: Double): Double {
-    return min + (max - min) * random.nextDouble()
+    return random.nextDouble(min, max)
 }
 
 /**
- * Delegate of [Random.nextFloat] ()}
+ * Delegate of [ThreadLocalRandom.nextFloat] ()}
  */
 fun randomFloat(): Float {
     return random.nextFloat()
 }
 
 /**
- * Delegate of [Random.nextLong] ()}
+ * @return value [0, Long.MAX_VALUE)
  */
 fun randomLong(): Long {
-    return random.nextLong()
+    return randomLong(min = 0, max = Long.MAX_VALUE)
 }
 
 fun randomLong(min: Long, max: Long): Long {
-    return min + ((random.nextDouble() * (max - min))).toLong()
+    require(max >= min) {
+        "`min` must be lower or equal then `max`"
+    }
+    return random.nextLong(min, max)
 }
 
 /**
- * Delegate of [Random.nextBoolean] ()}
+ * Delegate of [ThreadLocalRandom.nextBoolean] ()}
  */
 fun randomBoolean(): Boolean {
     return random.nextBoolean()
@@ -184,6 +192,15 @@ fun randomPhone(): String {
     return "+7" + randomString(10, Characters.Digits)
 }
 
+@Deprecated("start and end could be negative", replaceWith = ReplaceWith("randomDate(start, end)"))
 fun randomDate(start: Long, end: Long): Date {
     return Date(randomLong(start, end))
 }
+
+fun randomDate(start: Date, end: Date): Date {
+    return Date(randomLong(start.time, end.time))
+}
+
+fun randomDate(): Date = Date(randomLong(min = 0, max = Long.MAX_VALUE))
+
+fun randomDateInMillis(): Long = randomDate().time
