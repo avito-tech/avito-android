@@ -23,7 +23,7 @@ type: docs
 - Исключи влияние кеширования: `./gradlew <failed task> --no-configuration-cache --no-build-cache`\
 Очистить кеш можно командой: `./gradlew cleanBuildCache`
 
-### Если проблема в IDE
+### Если проблема воспроизводится только в IDE
 
 В консоли отработало без ошибок, но в IDE падает или подвисает.
 
@@ -41,6 +41,12 @@ type: docs
 ### Если причина в Mirakle
 
 Возможно из mirakle прилетают некорректные данные. Удали их: `./clean.py -r`
+
+### Если ничего не помогло
+
+- Отправь build scan:\
+`./gradlew <task> --scan` или `./gradlew buildScanPublishPrevious`;
+- Напиши в #android-dev или #speed, приложи ссылку на build scan и все что удалось проверить.
 
 ## Как искать проблемы с кешированием?
 
