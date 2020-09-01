@@ -9,14 +9,14 @@ class AndroidTestConfiguration(module: InternalModule) : SimpleConfiguration(mod
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }
-            || module.testConfiguration.isModified
+            || module.implementationConfiguration.isModified
             || hasChangedFiles
     }
 
     override val fullBytecodeSets: Set<File> by lazy {
         bytecodeSets() +
             dependencies.flatMap { it.fullBytecodeSets } +
-            module.testConfiguration.fullBytecodeSets
+            module.implementationConfiguration.fullBytecodeSets
     }
 
     override val dependencies: Set<ImplementationConfiguration> by lazy {

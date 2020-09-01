@@ -269,7 +269,7 @@ class ImpactAnalysisTest {
             projectDir,
             implementation = setOf("test_utils"),
             unitTests = setOf("test_utils", "feature", "app"),
-            androidTests = setOf("test_utils", "feature", "app")
+            androidTests = setOf("test_utils")
         )
     }
 
