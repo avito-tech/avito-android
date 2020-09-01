@@ -17,6 +17,20 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
+/**
+ * app(
+ *  implementation(":feature")
+ * )
+ *
+ * feature {
+ *  src/
+ *   release/kotlin/Feature.kt
+ *   test/kotlin/FeatureTest.kt
+ *   testRelease/kotlin/FeatureTest.kt
+ *   androidTest/kotlin/ScreenTest.kt
+ *   testUtils/kotlin/SharedTestUtils.kt
+ * }
+ */
 class SourceSetsImpactTest {
 
     private lateinit var projectDir: File
@@ -128,7 +142,7 @@ class SourceSetsImpactTest {
     }
 
     @Test
-    fun `change in unit tests main - detects changes in all tests only in this module`() {
+    fun `change in unit tests main - detects changes in unit tests only in this module`() {
         with(projectDir) {
             git("reset --hard")
             file("feature/src/test/kotlin/FeatureTest.kt").mutate()
@@ -139,12 +153,12 @@ class SourceSetsImpactTest {
             projectDir,
             implementation = emptySet(),
             unitTests = setOf(":feature"),
-            androidTests = setOf(":feature")
+            androidTests = emptySet()
         )
     }
 
     @Test
-    fun `change in unit tests build type - detects changes in all tests only in this module`() {
+    fun `change in unit tests build type - detects changes in unit tests only in this module`() {
         with(projectDir) {
             git("reset --hard")
             file("feature/src/testRelease/kotlin/FeatureTest.kt").mutate()
@@ -155,7 +169,7 @@ class SourceSetsImpactTest {
             projectDir,
             implementation = emptySet(),
             unitTests = setOf(":feature"),
-            androidTests = setOf(":feature")
+            androidTests = emptySet()
         )
     }
 
