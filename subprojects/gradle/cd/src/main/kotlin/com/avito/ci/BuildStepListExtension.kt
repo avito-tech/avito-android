@@ -7,6 +7,7 @@ import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
+import com.avito.ci.steps.MarkReportAsSourceForTMSStep
 import com.avito.ci.steps.PerformanceTestCheck
 import com.avito.ci.steps.UiTestCheck
 import com.avito.ci.steps.UnitTestCheck
@@ -25,7 +26,7 @@ import org.gradle.kotlin.dsl.property
 open class BuildStepListExtension(
     internal val buildStepListName: String,
     objects: ObjectFactory
-): Named {
+) : Named {
 
     private val artifactsConfig = ArtifactsConfiguration()
 
@@ -49,6 +50,9 @@ open class BuildStepListExtension(
         }
         registerFactory(LintCheck::class.java) { name ->
             LintCheck(buildStepListName, name)
+        }
+        registerFactory(MarkReportAsSourceForTMSStep::class.java) { name ->
+            MarkReportAsSourceForTMSStep(buildStepListName, name)
         }
         registerFactory(UploadToQapps::class.java) { name ->
             UploadToQapps(buildStepListName, artifactsConfig, name)
@@ -121,6 +125,14 @@ open class BuildStepListExtension(
 
     fun lint(action: Action<LintCheck>) {
         configureAndAdd("lint", action)
+    }
+
+    fun markReportAsSourceForTMS(closure: Closure<MarkReportAsSourceForTMSStep>) {
+        configureAndAdd("markReportAsSourceForTMS", closure)
+    }
+
+    fun markReportAsSourceForTMS(action: Action<MarkReportAsSourceForTMSStep>) {
+        configureAndAdd("markReportAsSourceForTMS", action)
     }
 
     fun uploadToQapps(closure: Closure<UploadToQapps>) {

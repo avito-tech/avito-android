@@ -1,4 +1,4 @@
-package com.avito.ci.step
+package com.avito.ci.steps
 
 import com.avito.ci.assertAffectedModules
 import com.avito.test.gradle.TestProjectGenerator
@@ -14,12 +14,12 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class FastCheck_ChangesInIndependentModule {
+class FastCheck_ChangesInAndroidTestInAppA {
 
     private lateinit var projectDir: File
 
     private val targetBranch = "develop"
-    private val sourceBranch = "changes-in-${TestProjectGenerator.independentModule}"
+    private val sourceBranch = "changes-in-android-test"
 
     @BeforeEach
     fun setup(@TempDir tempDir: Path) {
@@ -31,16 +31,16 @@ class FastCheck_ChangesInIndependentModule {
             git("checkout -b $targetBranch")
 
             git("checkout -b $sourceBranch $targetBranch")
-            file("${TestProjectGenerator.independentModule}/src/main/kotlin/SomeClass.kt").mutate()
+            file("${TestProjectGenerator.appA}/src/androidTest/java/SomeClass.kt").mutate()
             commit()
         }
     }
 
     @Test
-    fun `fastCheck does not build modules`() {
+    fun `fastCheck triggers assemble task only in $appA`() {
         val result = runTask("fastCheck")
 
-        result.assertAffectedModules("packageDebug", expectedModules = emptySet())
+        result.assertAffectedModules("packageDebug", setOf(":${TestProjectGenerator.appA}"))
     }
 
     private fun runTask(taskName: String): TestResult =

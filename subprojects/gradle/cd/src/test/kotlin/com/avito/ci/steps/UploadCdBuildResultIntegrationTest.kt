@@ -1,4 +1,4 @@
-package com.avito.ci.step
+package com.avito.ci.steps
 
 import com.avito.android.plugin.artifactory.setFakeMavenMetadataBody
 import com.avito.cd.BuildVariant
@@ -15,7 +15,6 @@ import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import okhttp3.Credentials
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

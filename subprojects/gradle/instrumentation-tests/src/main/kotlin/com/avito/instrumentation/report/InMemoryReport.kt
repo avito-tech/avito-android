@@ -51,7 +51,7 @@ class InMemoryReport(private val id: String) : Report {
     }
 
     @Synchronized
-    override fun finish(isFullTestSuite: Boolean) {
+    override fun finish() {
         // empty
     }
 

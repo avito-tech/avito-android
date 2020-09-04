@@ -180,11 +180,11 @@ internal class InstrumentationTestsActionIntegrationTest {
         apkOnTargetCommit: File,
         testApkOnTargetCommit: File
     ) = InstrumentationTestsAction.Params.createStubInstance(
-        instrumentationConfiguration = instrumentationConfiguration,
-        outputDir = outputDir,
         apkOnTargetCommit = apkOnTargetCommit,
         testApkOnTargetCommit = testApkOnTargetCommit,
-        reportCoordinates = reportCoordinates,
-        logger = logger
+        instrumentationConfiguration = instrumentationConfiguration,
+        logger = logger,
+        outputDir = outputDir,
+        reportCoordinates = reportCoordinates
     )
 }

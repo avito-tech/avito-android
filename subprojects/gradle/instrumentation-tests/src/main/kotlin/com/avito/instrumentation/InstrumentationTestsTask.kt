@@ -84,9 +84,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val gitCommit = objects.property<String>()
 
     @Input
-    val fullTestSuite = objects.property<Boolean>()
-
-    @Input
     val gitBranch = objects.property<String>()
 
     @Input
@@ -157,13 +154,13 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     outputDir = output.get().asFile,
                     sendStatistics = sendStatistics.get(),
                     slackToken = slackToken.get(),
-                    isFullTestSuite = fullTestSuite.get(),
                     fileStorageUrl = getFileStorageUrl(),
                     pullRequestId = project.pullRequestId.orNull,
                     bitbucketConfig = project.bitbucketConfig.get(),
                     statsdConfig = project.statsdConfig.get(),
                     unitToChannelMapping = unitToChannelMapping.get(),
-                    reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl ?: "http://stub", // stub for inmemory report
+                    reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
+                        ?: "http://stub", // stub for inmemory report
                     registry = registry.get(),
                     reportConfig = reportConfig,
                     reportFactory = reportFactory,
