@@ -13,9 +13,6 @@ import java.io.File
 abstract class CheckAndroidSdkVersionTask : DefaultTask() {
 
     @get:Input
-    abstract val compileSdkVersion: Property<Int>
-
-    @get:Input
     abstract val revision: Property<Int>
 
     // synthetic output just for up-to-date checks
@@ -55,9 +52,8 @@ abstract class CheckAndroidSdkVersionTask : DefaultTask() {
     }
 
     private fun localRevision(): Int {
-        val sourceProperties: File = project.androidSdk.platformSourceProperties(compileSdkVersion.get())
+        val sourceProperties: File = project.androidSdk.platformSourceProperties
         return requireNotNull(sourceProperties.loadProperties().getProperty("Pkg.Revision", null))
             .toInt()
     }
-
 }

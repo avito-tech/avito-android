@@ -10,7 +10,6 @@ import com.avito.utils.logging.ciLogger
 import com.avito.utils.onBuildFailed
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
@@ -65,8 +64,8 @@ open class VerifyArtifactsStep(
         val verifyOutputsTask = project.tasks.register<VerifyOutputsTask>(verifyTaskName(context)) {
             group = "cd"
             description = "Checks that all defined release artifacts are present"
-            config = artifactsConfig
-            checkSignatures = artifactsConfig.failOnSignatureError
+            config.set(artifactsConfig)
+            checkSignatures.set(artifactsConfig.failOnSignatureError)
             dependsOn(copyTask)
         }
 
@@ -79,11 +78,3 @@ open class VerifyArtifactsStep(
 internal fun verifyTaskName(context: String) = "${context}VerifyArtifacts"
 
 internal fun TaskContainer.verifyTaskProvider(context: String) = typedNamed<VerifyOutputsTask>(verifyTaskName(context))
-
-private fun Gradle.isTaskScheduled(task: Task): Boolean? {
-    return try {
-        this.taskGraph.hasTask(task)
-    } catch (ex: IllegalStateException) {
-        null
-    }
-}

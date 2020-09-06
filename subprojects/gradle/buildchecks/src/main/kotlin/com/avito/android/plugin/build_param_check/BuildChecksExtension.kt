@@ -57,11 +57,11 @@ open class BuildChecksExtension {
 
         open class AndroidSdk : Check(), RequireParameters {
 
+            @Deprecated("not used anymore, remove after 2020.19")
             var compileSdkVersion: Int = -1
             var revision: Int = -1
 
             override fun validate() {
-                check(compileSdkVersion > 0) { "$extensionName.androidSdk.compileSdkVersion must be set" }
                 check(revision > 0) { "$extensionName.androidSdk.minRevision must be set" }
             }
         }

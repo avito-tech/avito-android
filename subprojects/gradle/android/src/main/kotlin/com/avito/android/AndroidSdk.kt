@@ -1,23 +1,10 @@
 package com.avito.android
 
 import com.avito.utils.ExistingDirectory
-import com.avito.utils.ExistingFile
 import com.avito.utils.ProcessRunner
-import org.funktionale.tries.Try
 import org.gradle.api.Project
 import java.io.File
 import java.util.Properties
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
-
-/**
- * Используется для доступа к ресурсам SDK(executables, чтение параметров) из build-скриптов
- */
-@Suppress("unused")
-val Project.androidHome: String
-    get() = System.getenv("ANDROID_HOME")
-        ?: androidHomeFromLocalProperties(rootProject.file("local.properties")) { logger.error(it) }
-        ?: error("Can't resolve ANDROID_HOME")
 
 val Project.androidSdk: AndroidSdk
     get() = AndroidSdk(this, ProcessRunner.Real())
@@ -25,53 +12,47 @@ val Project.androidSdk: AndroidSdk
 class AndroidSdk(
     private val project: Project,
     private val processRunner: ProcessRunner
-) : ApkSigner, Aapt {
-
-    @Suppress("unused")
-    private val targetSdkVersion: Int
-        get() = requireNotNull(System.getProperty("targetSdkVersion").toIntOrNull()) {
-            "targetSdkVersion system property should be set"
-        }
-
-    private val compileSdkVersion: Int
-        get() = requireNotNull(System.getProperty("compileSdkVersion").toIntOrNull()) {
-            "compileSdkVersion system property should be set"
-        }
-
+) {
 
     private val buildToolsVersion: String
         get() {
-            val value = System.getProperty("buildToolsVersion")
-            require(value.hasContent()) { "buildToolsVersion env must be set" }
-            return value
+            require(project.isAndroid()) { "Trying to get android.buildToolsVersion object on non-android project: ${project.path}" }
+            return project.androidBaseExtension.buildToolsVersion
         }
 
-    private val buildToolsPath: ExistingDirectory
+    private val compileSdkVersion: Int
         get() {
-            val dir = File(androidHome.dir, "/build-tools/$buildToolsVersion")
-            require(dir.exists()) {
-                """========= ERROR =========
-                    Android Build tools are not found in ${dir.path}
-                    Please install it or update.
-                """.trimIndent()
-            }
+            require(project.isAndroid()) { "Trying to get android.compileSdkVersion object on non-android project: ${project.path}" }
+            return requireNotNull(
+                value = project.androidBaseExtension.compileSdkVersion,
+                lazyMessage = { "compileSdkVersion is null for project: ${project.path}" }).apply {
+                if (this.isBlank()) {
+                    error("compileSdkVersion not set for project: ${project.path}")
+                }
+            }.toInt()
+        }
+
+    /**
+     * it's not part of android sdk, provided here for convenience
+     */
+    val keytool = KeyTool(processRunner)
+
+    val androidHome: ExistingDirectory
+        get() {
+            val dir = System.getenv("ANDROID_HOME")
+                ?: androidHomeFromLocalProperties(
+                    localPropertiesLocation = project.rootProject.file("local.properties"),
+                    logger = { project.logger.error(it) })
+                ?: error("Can't resolve ANDROID_HOME")
             return ExistingDirectory.Impl(dir)
         }
 
-    private val apkSigner: ApkSigner
-        get() = ApkSigner.Impl(buildToolsPath, processRunner)
-
-    private val aapt: Aapt
-        get() = Aapt.Impl(buildToolsPath, processRunner)
-
-    private val keytool = KeyTool(processRunner)
-
-    val androidHome: ExistingDirectory
-        get() = ExistingDirectory.Impl(project.androidHome)
+    val aapt: Aapt
+        get() = Aapt.Impl(buildToolsPath(buildToolsVersion), processRunner)
 
     val androidJar: File
         get() {
-            val file = File(platformDir, "android.jar")
+            val file = File(platformDir(compileSdkVersion), "android.jar")
             require(file.exists()) {
                 sdkNotFoundMessage(file.path)
             }
@@ -79,28 +60,28 @@ class AndroidSdk(
         }
 
     val platformSourceProperties: File
-        get() = platformSourceProperties()
-
-    fun platformSourceProperties(compileSdkVersion: Int = this.compileSdkVersion): File {
-        val file = File(platformDir(compileSdkVersion), "source.properties")
-        require(file.exists()) {
-            sdkNotFoundMessage(file.path)
+        get() {
+            val file = File(platformDir(compileSdkVersion), "source.properties")
+            require(file.exists()) {
+                sdkNotFoundMessage(file.path)
+            }
+            return file
         }
-        return file
+
+    private fun buildToolsPath(buildToolsVersion: String): ExistingDirectory {
+        val dir = File(androidHome.dir, "/build-tools/$buildToolsVersion")
+        require(dir.exists()) {
+            """========= ERROR =========
+                    Android Build tools are not found in ${dir.path}
+                    Please install it or update.
+                """.trimIndent()
+        }
+        return ExistingDirectory.Impl(dir)
     }
 
-    private fun platformDir(compileSdkVersion: Int = this.compileSdkVersion): File {
+    private fun platformDir(compileSdkVersion: Int): File {
         return File(androidHome.dir, "platforms/android-$compileSdkVersion")
     }
-
-    private val platformDir: File
-        get() = platformDir(compileSdkVersion)
-
-    override fun getApkSha1(apk: ExistingFile): Try<String> = apkSigner.getApkSha1(apk)
-
-    override fun getPackageName(apk: File): Try<String> = aapt.getPackageName(apk)
-
-    fun getBundleSha1(aab: ExistingFile): Try<String> = keytool.getJarSha1(aab)
 
     private fun sdkNotFoundMessage(message: String): String {
         return """========= ERROR =========
@@ -112,16 +93,8 @@ class AndroidSdk(
 }
 
 /**
- * Используем в тестах, когда по какой-то причине не удалось зарезолвить env ANDROID_HOME
- * Нужно только в тех местах где нет доступа к project, в нашем случае это на этапе создания android проекта для
- * Gradle Test kit
- *
- * Все равно остается вариант при котором тесты не заработают:
- * local.properties первый раз генерируется во время открытия проекта avito-android в Android Studio
- * и не хранится под version control, поэтому если у разработчика не установлена ANDROID_HOME и он открывает
- * напрямую проект в любой IDE, его ждет ошибка про "no sdk found"
- *
- * @return path до Android Sdk если получилось найти таким способом
+ * Used in tests, when for any reason ANDROID_HOME environment variable was not resolved
+ * Required in places where is no access to Project, mostly on Gradle Test Kit project creation
  */
 fun androidHomeFromLocalPropertiesFallback(): String {
     val env = System.getenv("ANDROID_HOME")
@@ -145,15 +118,4 @@ private fun androidHomeFromLocalProperties(
         logger.invoke("Can't resolve androidHome from local.properties")
         null
     }
-}
-
-@OptIn(ExperimentalContracts::class)
-private fun String?.hasContent(): Boolean {
-    contract {
-        returns(true) implies (this@hasContent != null)
-    }
-
-    if (isNullOrBlank()) return false
-    if (this == "null") return false
-    return true
 }

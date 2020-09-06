@@ -18,7 +18,7 @@ interface SignVerifier {
     class Impl(private val androidSdk: AndroidSdk) : SignVerifier {
 
         override fun verifyApk(apk: ExistingFile, expectedSha1: String): Result {
-            return androidSdk.getApkSha1(apk)
+            return androidSdk.keytool.getJarSha1(apk)
                 .fold(
                     { actualSha1 ->
                         if (actualSha1 == expectedSha1) {
@@ -31,7 +31,7 @@ interface SignVerifier {
         }
 
         override fun verifyBundle(bundle: ExistingFile, expectedSha1: String): Result {
-            return androidSdk.getBundleSha1(bundle).fold(
+            return androidSdk.keytool.getJarSha1(bundle).fold(
                 { actualSha1 ->
                     if (actualSha1 == expectedSha1) {
                         Result.Ok
