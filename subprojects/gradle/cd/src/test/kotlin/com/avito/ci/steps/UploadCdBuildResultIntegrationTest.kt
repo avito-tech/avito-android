@@ -5,10 +5,10 @@ import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
 import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
+import com.avito.ci.runTask
 import com.avito.git.Git
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.file
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
@@ -162,29 +162,13 @@ class UploadCdBuildResultIntegrationTest {
             )
         )
 
-        val result = ciRun(
+        val result = runTask(
             projectDir,
             ":app:release",
             "-Pcd.build.config.file=$configFileName",
             "-PartifactoryUrl=$mockUrl",
             "-Partifactory_deployer=$artifactoryUser",
             "-Partifactory_deployer_password=$artifactoryPassword",
-            "-PdeviceName=LOCAL",
-            "-PteamcityBuildId=100",
-            "-Papp.versionName=$versionName",
-            "-Papp.versionCode=$versionCode",
-            "-Pavito.bitbucket.url=http://bitbucket",
-            "-Pavito.bitbucket.projectKey=AA",
-            "-Pavito.bitbucket.repositorySlug=android",
-            "-Pavito.fileStorage.url=http://file-storage",
-            "-Pavito.stats.enabled=false",
-            "-Pavito.stats.host=http://stats",
-            "-Pavito.stats.fallbackHost=http://stats",
-            "-Pavito.stats.port=80",
-            "-Pavito.stats.namespace=android",
-            "-PkubernetesToken=stub",
-            "-PkubernetesUrl=stub",
-            "-PkubernetesCaCertData=stub",
             branch = gitBranch.name,
             dryRun = false
         )
@@ -242,29 +226,13 @@ class UploadCdBuildResultIntegrationTest {
             )
         )
 
-        val result = ciRun(
+        val result = runTask(
             projectDir,
             ":app:release",
             "-Pcd.build.config.file=$configFileName",
             "-PartifactoryUrl=$mockUrl",
             "-Partifactory_deployer=$artifactoryUser",
             "-Partifactory_deployer_password=$artifactoryPassword",
-            "-PdeviceName=LOCAL",
-            "-PteamcityBuildId=100",
-            "-Papp.versionName=$versionName",
-            "-Papp.versionCode=$versionCode",
-            "-Pavito.bitbucket.url=http://bitbucket",
-            "-Pavito.bitbucket.projectKey=AA",
-            "-Pavito.bitbucket.repositorySlug=android",
-            "-Pavito.fileStorage.url=http://file-storage",
-            "-Pavito.stats.enabled=false",
-            "-Pavito.stats.host=http://stats",
-            "-Pavito.stats.fallbackHost=http://stats",
-            "-Pavito.stats.port=80",
-            "-Pavito.stats.namespace=android",
-            "-PkubernetesToken=stub",
-            "-PkubernetesUrl=stub",
-            "-PkubernetesCaCertData=stub",
             branch = gitBranch.name,
             dryRun = false
         )

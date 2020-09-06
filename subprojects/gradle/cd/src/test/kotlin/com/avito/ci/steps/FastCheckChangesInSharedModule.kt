@@ -1,6 +1,7 @@
 package com.avito.ci.steps
 
 import com.avito.ci.assertAffectedModules
+import com.avito.ci.generateProjectWithImpactAnalysis
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.commit
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class FastCheck_ChangesInSharedModule {
+class FastCheckChangesInSharedModule {
 
     private lateinit var projectDir: File
 

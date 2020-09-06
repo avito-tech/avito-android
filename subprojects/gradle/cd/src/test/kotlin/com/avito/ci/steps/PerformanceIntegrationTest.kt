@@ -1,5 +1,6 @@
 package com.avito.ci.steps
 
+import com.avito.ci.registerUiTestConfigurations
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
@@ -32,7 +33,7 @@ class PerformanceIntegrationTest {
                         "com.avito.android.cd"
                     ),
                     customScript = """
-                         ${registerUiTestConfigurations(performanceConfigurationName)}
+                         ${registerUiTestConfigurations(performanceConfigurationName, isPerformance = true)}
 
                         performance {
                             output = project.rootProject.file("outputs/app/performance_tests/").path
@@ -55,60 +56,6 @@ class PerformanceIntegrationTest {
         with(projectDir) {
             git("checkout -b $SYNC_BRANCH")
         }
-    }
-
-    private fun registerUiTestConfigurations(vararg names: String): String {
-        val configurations = names.map { name ->
-            """$name {
-                
-                    performanceType = com.avito.instrumentation.configuration.InstrumentationConfiguration.PerformanceType.SIMPLE
-                    
-                    targets {
-                        api22 {
-                            deviceName = "api22"
-
-                            scheduling {
-                                quota {
-                                    minimumSuccessCount = 1
-                                }
-
-                                staticDevicesReservation {
-                                    device = LocalEmulator.device(27)
-                                    count = 1
-                                }
-                            }
-                        }
-                    }
-                }
-                """
-        }
-        return """
-            import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
-
-            android.defaultConfig {
-                testInstrumentationRunner = "no_matter"
-                testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
-            }
-            instrumentation {
-            reportApiUrl = "stub"
-             reportApiFallbackUrl = "stub"
-             reportViewerUrl = "stub"
-             registry = "stub"
-             sentryDsn = "stub"
-             slackToken = "stub"
-             fileStorageUrl = "stub"
-                instrumentationParams = [
-                    "deviceName"    : "regress",
-                    "jobSlug"       : "regress"
-                ]
-
-                output = "/"
-
-                configurations {
-                    $configurations
-                }
-            }
-        """
     }
 
     @Test
