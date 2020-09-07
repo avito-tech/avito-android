@@ -44,7 +44,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             registerRequiredTasks(project, checks)
 
             if (checks.hasInstance<Check.JavaVersion>()) {
-                checkJavaVersion(checks.getInstance<Check.JavaVersion>())
+                checkJavaVersion(checks.getInstance())
             }
             if (checks.hasInstance<Check.GradleProperties>()) {
                 checkGradleProperties(project)
@@ -81,7 +81,6 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                 description =
                     "Checks sdk version in docker against local one to prevent build cache misses"
 
-                compileSdkVersion.set(check.compileSdkVersion)
                 revision.set(check.revision)
                 // don't run task if it is already compared hashes and it's ok
                 // task will be executed next time if either local jar or docker jar(e.g. inputs) changed

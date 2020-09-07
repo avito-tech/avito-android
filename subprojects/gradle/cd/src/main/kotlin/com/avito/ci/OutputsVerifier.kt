@@ -56,7 +56,7 @@ class OutputsVerifier(
     }
 
     fun checkPackageName(apkFile: File, expectedPackage: String) {
-        androidSdk.getPackageName(apkFile).fold(
+        androidSdk.aapt.getPackageName(apkFile).fold(
             { actualPackage ->
                 if (actualPackage != expectedPackage) {
                     errors +=
