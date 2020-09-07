@@ -1,6 +1,7 @@
-package com.avito.ci.step
+package com.avito.ci.steps
 
 import com.avito.ci.assertAffectedModules
+import com.avito.ci.generateProjectWithImpactAnalysis
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.ciRun
@@ -14,12 +15,12 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class FastCheck_OneAppBChanges {
+class FastCheckChangesInIndependentModule {
 
     private lateinit var projectDir: File
 
     private val targetBranch = "develop"
-    private val sourceBranch = "changes-in-the-${TestProjectGenerator.appB}"
+    private val sourceBranch = "changes-in-${TestProjectGenerator.independentModule}"
 
     @BeforeEach
     fun setup(@TempDir tempDir: Path) {
@@ -31,16 +32,16 @@ class FastCheck_OneAppBChanges {
             git("checkout -b $targetBranch")
 
             git("checkout -b $sourceBranch $targetBranch")
-            file("${TestProjectGenerator.appB}/src/main/kotlin/SomeClass.kt").mutate()
+            file("${TestProjectGenerator.independentModule}/src/main/kotlin/SomeClass.kt").mutate()
             commit()
         }
     }
 
     @Test
-    fun `fastCheck triggers build only in appA`() {
+    fun `fastCheck does not build modules`() {
         val result = runTask("fastCheck")
 
-        result.assertAffectedModules("packageDebug", setOf(":${TestProjectGenerator.appB}"))
+        result.assertAffectedModules("packageDebug", expectedModules = emptySet())
     }
 
     private fun runTask(taskName: String): TestResult =

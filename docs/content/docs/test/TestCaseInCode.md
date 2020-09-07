@@ -15,6 +15,40 @@ type: docs
 
 Чтобы это сделать, тесту нужно проставить аннотацию `@ExternalId(UUID)`, где UUID - сгенерированный на клиенте случайный UUID.
 
+## Как происходит синхронизация
+
+{{<mermaid>}}
+sequenceDiagram
+    InstrumentationPlugin->>ReportService: addTest() X times for whole suite
+    InstrumentationPlugin->>ReportService: setFinished()
+    ReportService->>TmsEventProcessor: event
+    loop analyze
+        TmsEventProcessor->>TmsEventProcessor: just regular test run, skip
+    end
+    TmsPlugin->>ReportService: pushPreparedData(<This is source of truth with timestamp>)
+    TmsPlugin->>ReportService: setFinished()
+    ReportService->>TmsEventProcessor: event
+    loop analyze
+        TmsEventProcessor->>TmsEventProcessor: contains fresh(newest date) source of truth
+    end
+    loop analyze
+        TmsEventProcessor->>TmsEventProcessor: parse report and prepare payload for TMS
+    end
+    TmsEventProcessor->>TMS: sendModifiedTestSuite()
+{{</mermaid>}}
+
+Проект требующий синхронизации должен подключить плагин, а также добавить [CI step]({{< ref "/docs/projects/CiSteps.md" >}})
+
+```kotlin
+builds {
+    fullCheck {  // билд, гарантированно содержащий все требующие синхронизации тесты
+        markReportAsSourceForTMS {
+            configuration = "ui" // instrumentation конфигурация, на которую надо завязаться чтобы дождаться всех тестов
+        }
+    }
+}
+```
+
 ## FAQ
 
 Q: Когда происходит синхронизация\

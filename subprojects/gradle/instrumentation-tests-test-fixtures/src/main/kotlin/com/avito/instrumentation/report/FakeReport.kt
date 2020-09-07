@@ -29,7 +29,7 @@ class FakeReport : Report {
         TODO("not implemented")
     }
 
-    override fun finish(isFullTestSuite: Boolean) {
+    override fun finish() {
     }
 
     var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())

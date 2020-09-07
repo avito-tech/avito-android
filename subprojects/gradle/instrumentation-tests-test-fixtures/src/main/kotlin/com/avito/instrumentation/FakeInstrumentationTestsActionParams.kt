@@ -45,7 +45,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     kubernetesRegistry: String = "",
     fileStorageUrl: String = "https://files",
     pullRequestId: Int? = null,
-    isFullTestSuite: Boolean = false,
     bitbucketConfig: BitbucketConfig = BitbucketConfig(
         baseUrl = "http://bitbucket",
         credentials = AtlassianCredentials("xxx", "xxx"),
@@ -79,7 +78,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         slackToken = slackToken,
         fileStorageUrl = fileStorageUrl,
         pullRequestId = pullRequestId,
-        isFullTestSuite = isFullTestSuite,
         bitbucketConfig = bitbucketConfig,
         statsdConfig = statsDConfig,
         unitToChannelMapping = unitToChannelMapping,

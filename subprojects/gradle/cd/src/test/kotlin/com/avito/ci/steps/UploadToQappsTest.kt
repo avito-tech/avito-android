@@ -1,4 +1,4 @@
-package com.avito.ci.step
+package com.avito.ci.steps
 
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
@@ -30,8 +30,11 @@ class UploadToQappsTest {
         generateProject()
 
         gradlew(
-            projectDir, "app:release",
-            "-Pci=true", "-Pavito.build=local", "-Pavito.git.state=local"
+            projectDir,
+            "app:release",
+            "-Pci=true",
+            "-Pavito.build=local",
+            "-Pavito.git.state=local"
         ).assertThat()
             .buildSuccessful()
             .taskWithOutcome(":app:qappsUploadDebug", TaskOutcome.SUCCESS)
@@ -40,33 +43,15 @@ class UploadToQappsTest {
     @Test
     fun `upload to qapps - cd build config with qapps deployment`() {
         generateProject()
-        val configFile = createCdConfig(
-            """
-        {
-            "schema_version": 2,
-            "release_version": "1.0",
-            "output_descriptor": {
-                "path": "http://foo.bar",
-                "skip_upload": true
-            },
-            "deployments": [
-                {
-                    "type": "google-play",
-                    "artifact_type": "apk",
-                    "build_variant": "debug",
-                    "track": "alpha"
-                },
-                {
-                    "type": "qapps"
-                }
-            ]
-        }
-        """
-        )
+        val configFile = createCdConfig(withQapps = true)
 
         gradlew(
-            projectDir, "app:release",
-            "-Pci=true", "-Pavito.build=local", "-Pavito.git.state=local", "-Pcd.build.config.file=$configFile"
+            projectDir,
+            "app:release",
+            "-Pci=true",
+            "-Pavito.build=local",
+            "-Pavito.git.state=local",
+            "-Pcd.build.config.file=$configFile"
         ).assertThat()
             .buildSuccessful()
             .taskWithOutcome(":app:qappsUploadDebug", TaskOutcome.SUCCESS)
@@ -75,30 +60,15 @@ class UploadToQappsTest {
     @Test
     fun `skip upload to qapps - cd build config without qapps deployment`() {
         generateProject()
-        val configFile = createCdConfig(
-            """
-        {
-            "schema_version": 2,
-            "release_version": "1.0",
-            "output_descriptor": {
-                "path": "http://foo.bar",
-                "skip_upload": true
-            },
-            "deployments": [
-                {
-                    "type": "google-play",
-                    "artifact_type": "apk",
-                    "build_variant": "debug",
-                    "track": "alpha"
-                }
-            ]
-        }
-        """
-        )
+        val configFile = createCdConfig(withQapps = false)
 
         gradlew(
-            projectDir, "app:release",
-            "-Pci=true", "-Pavito.build=local", "-Pavito.git.state=local", "-Pcd.build.config.file=$configFile"
+            projectDir,
+            "app:release",
+            "-Pci=true",
+            "-Pavito.build=local",
+            "-Pavito.git.state=local",
+            "-Pcd.build.config.file=$configFile"
         ).assertThat()
             .buildSuccessful()
             .taskWithOutcome(":app:qappsUploadDebug", TaskOutcome.SKIPPED)
@@ -141,7 +111,27 @@ class UploadToQappsTest {
         ).generateIn(projectDir)
     }
 
-    private fun createCdConfig(config: String): String {
+    private fun createCdConfig(withQapps: Boolean): String {
+        val config = """
+        {
+            "schema_version": 2,
+            "release_version": "1.0",
+            "output_descriptor": {
+                "path": "http://foo.bar",
+                "skip_upload": true
+            },
+            "deployments": [
+                {
+                    "type": "google-play",
+                    "artifact_type": "apk",
+                    "build_variant": "debug",
+                    "track": "alpha"
+                }
+                ${if (withQapps) ", { \"type\": \"qapps\" }" else ""}
+            ]
+        }
+        """
+
         val fileName = "cd_config.json"
         val file = projectDir.file(fileName)
         file.createNewFile()

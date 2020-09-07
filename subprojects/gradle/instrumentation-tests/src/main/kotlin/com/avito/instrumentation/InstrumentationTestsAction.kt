@@ -28,9 +28,9 @@ class InstrumentationTestsAction(
      */
     @Suppress("unused")
     @Inject
-    constructor(params: Params) : this(params, InstrumentatioTestsActionFactory.Impl(params))
+    constructor(params: Params) : this(params, InstrumentationTestsActionFactory.Impl(params))
 
-    constructor(params: Params, factory: InstrumentatioTestsActionFactory) : this(
+    constructor(params: Params, factory: InstrumentationTestsActionFactory) : this(
         params = params,
         logger = params.logger,
         scheduler = factory.provideScheduler(),
@@ -68,7 +68,6 @@ class InstrumentationTestsAction(
         val logger: CILogger,
         val outputDir: File,
         val sendStatistics: Boolean,
-        val isFullTestSuite: Boolean,
         val slackToken: String,
         val reportViewerUrl: String,
         val fileStorageUrl: String,
