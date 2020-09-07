@@ -23,7 +23,7 @@ class MarkReportAsSourceAction(
     fun mark(reportCoordinates: ReportCoordinates) {
         val testSuiteVersion = timeProvider.nowInMillis()
 
-        logger.info("This is a new version [$testSuiteVersion] of full test suite for tms")
+        logger.debug("This is a new version [$testSuiteVersion] of full test suite for tms")
 
         val reportId = tryGetId(reportCoordinates)
 
