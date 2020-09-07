@@ -21,16 +21,18 @@ dependencies {
     implementation(project(":gradle:artifactory-app-backup"))
     implementation(project(":gradle:performance"))
     implementation(project(":gradle:qapps"))
+    implementation(project(":gradle:tms"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:prosector"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(project(":gradle:upload-to-googleplay"))
+    implementation(project(":common:report-viewer"))
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:impact-shared-test-fixtures"))
-    testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))
+    testImplementation(project(":common:test-okhttp"))
 }
 
 configurations.all {

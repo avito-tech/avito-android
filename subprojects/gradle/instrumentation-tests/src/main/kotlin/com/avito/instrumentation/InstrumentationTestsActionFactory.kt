@@ -9,11 +9,11 @@ import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
-interface InstrumentatioTestsActionFactory {
+interface InstrumentationTestsActionFactory {
     fun provideFinalizer(): InstrumentationTestActionFinalizer
     fun provideScheduler(): TestsScheduler
 
-    class Impl : InstrumentatioTestsActionFactory {
+    class Impl : InstrumentationTestsActionFactory {
 
         private val gson: Gson
         private val sourceReport: Report

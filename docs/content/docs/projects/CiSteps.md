@@ -381,6 +381,10 @@ deploy {}
 {{< /tab >}}
 {{< /tabs >}}
 
+#### Mark report as source of truth for TMS
+
+See [Test case in code]({{< ref "/docs/test/TestCaseInCode.md" >}})
+
 #### Configuration checks
 
 {{<avito check>}}

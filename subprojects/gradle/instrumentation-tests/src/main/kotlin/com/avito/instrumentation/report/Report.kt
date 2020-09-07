@@ -12,7 +12,6 @@ import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.commonLogger
-import com.github.salomonbrys.kotson.jsonObject
 import org.funktionale.tries.Try
 import java.io.Serializable
 
@@ -159,7 +158,7 @@ interface Report : ReadReport {
 
     fun sendCompletedTest(completedTest: AndroidTest.Completed)
 
-    fun finish(isFullTestSuite: Boolean)
+    fun finish()
 
     fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit>
 
@@ -266,7 +265,7 @@ interface Report : ReadReport {
             )
         }
 
-        override fun finish(isFullTestSuite: Boolean) {
+        override fun finish() {
             val resultsInReport: List<SimpleRunTest> =
                 reportsApi.getTestsForRunId(reportCoordinates = reportCoordinates).fold(
                     { logger.info("Getting test count in report before closing: ${it.size}"); it },
@@ -274,11 +273,6 @@ interface Report : ReadReport {
                 )
 
             if (resultsInReport.isNotEmpty()) {
-                val reportId = tryGetId()
-
-                if (reportId != null && isFullTestSuite) {
-                    markReportAsTmsSourceOfTruth(reportId)
-                }
                 reportsApi.setFinished(reportCoordinates = reportCoordinates).fold(
                     { logger.debug("Test run finished $reportCoordinates") },
                     { error -> logger.critical("Can't finish test run $reportCoordinates", error) }
@@ -298,26 +292,6 @@ interface Report : ReadReport {
 
         override fun getCrossDeviceTestData(): Try<CrossDeviceSuite> {
             return reportsApi.getCrossDeviceTestData(reportCoordinates)
-        }
-
-        /**
-         * TMS будет забирать репорты помеченные особым образом(см. тело функции) как источник правды о тестовой модели
-         */
-        private fun markReportAsTmsSourceOfTruth(reportId: String) {
-            val testSuiteVersion = timeProvider.nowInMillis()
-
-            logger.info("This is a new version [$testSuiteVersion] of full test suite for tms")
-
-            reportsApi.pushPreparedData(
-                reportId = reportId,
-                analyzerKey = "test_suite",
-                preparedData = jsonObject(
-                    "full" to true,
-                    "version" to testSuiteVersion
-                )
-            ).onFailure { error ->
-                logger.critical("Can't push prepared data: testSuite info", error)
-            }
         }
 
         private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) {

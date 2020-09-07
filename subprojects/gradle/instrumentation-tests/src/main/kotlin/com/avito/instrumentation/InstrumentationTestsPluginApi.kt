@@ -11,8 +11,6 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.withType
 
-//API для использования другими плагинами
-
 internal fun instrumentationTaskName(configuration: String): String =
     "instrumentation${configuration.capitalize()}"
 

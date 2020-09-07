@@ -55,9 +55,7 @@ interface InstrumentationTestActionFinalizer {
                 sourceReport.sendLostTests(lostTests = testRunResult.notReported.lostTests)
             }
 
-            sourceReport.finish(
-                isFullTestSuite = params.isFullTestSuite
-            )
+            sourceReport.finish()
 
             if (params.instrumentationConfiguration.reportFlakyTests) {
                 flakyTestReporter.reportSummary(

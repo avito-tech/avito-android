@@ -5,7 +5,10 @@ import com.avito.android.plugin.artifactory.artifactoryPasswordParameterName
 import com.avito.android.plugin.artifactory.artifactoryUserParameterName
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.steps.verifyTaskName
-import com.avito.test.gradle.*
+import com.avito.test.gradle.AndroidAppModule
+import com.avito.test.gradle.AndroidLibModule
+import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.file
 import com.avito.upload_to_googleplay.deployTaskName
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
@@ -339,7 +342,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:signViaService"
         ).map { task ->
-            DynamicTest.dynamicTest("$task should not be triggered on dev build, it's CI only") {
+            dynamicTest("$task should not be triggered on dev build, it's CI only") {
                 result.assertThat().tasksShouldNotBeTriggered(task)
             }
         }
@@ -352,7 +355,7 @@ class CiStepsPluginTest {
         return listOf(
             ":appA:assembleRelease"
         ).map { task ->
-            DynamicTest.dynamicTest("$task should not be triggered on dev build, it's CI only") {
+            dynamicTest("$task should not be triggered on dev build, it's CI only") {
                 result.assertThat().tasksShouldNotBeTriggered(task)
             }
         }
@@ -528,83 +531,17 @@ class CiStepsPluginTest {
         }
     }
 
-    private fun runTask(vararg args: String, dryRun: Boolean = true, expectedFailure: Boolean = false): TestResult {
-        return ciRun(
-            projectDir,
-            *args,
-            "-PartifactoryUrl=http://artifactory",
-            "-P$artifactoryUserParameterName=user",
-            "-P$artifactoryPasswordParameterName=password",
-            "-PdeviceName=LOCAL",
-            "-PteamcityBuildId=0",
-            "-PappA.versionName=1",
-            "-PappA.versionCode=1",
-            "-PappB.versionName=1",
-            "-PappB.versionCode=1",
-            "-Pavito.bitbucket.url=http://bitbucket",
-            "-Pavito.bitbucket.projectKey=AA",
-            "-Pavito.bitbucket.repositorySlug=android",
-            "-Pavito.stats.enabled=false",
-            "-Pavito.stats.host=http://stats",
-            "-Pavito.stats.fallbackHost=http://stats",
-            "-Pavito.stats.port=80",
-            "-Pavito.stats.namespace=android",
-            "-PkubernetesToken=stub",
-            "-PkubernetesUrl=stub",
-            "-PkubernetesCaCertData=stub",
-            dryRun = dryRun,
-            expectFailure = expectedFailure
-        )
-    }
-
-    private fun registerUiTestConfigurations(vararg names: String): String {
-        val configurations = names.map { name ->
-            """$name {
-                    targets {
-                        api22 {
-                            deviceName = "api22"
-
-                            scheduling {
-                                quota {
-                                    minimumSuccessCount = 1
-                                }
-
-                                staticDevicesReservation {
-                                    device = LocalEmulator.device(27)
-                                    count = 1
-                                }
-                            }
-                        }
-                    }
-                }
-                """
-        }
-        return """
-            import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
-
-            android.defaultConfig {
-                testInstrumentationRunner = "no_matter"
-                testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
-            }
-            instrumentation {
-                reportApiUrl = "stub"
-                reportApiFallbackUrl = "stub"
-                reportViewerUrl = "stub"
-                registry = "stub"
-                sentryDsn = "stub"
-                slackToken = "stub"
-                fileStorageUrl = "stub"
-                instrumentationParams = [
-                    "deviceName"    : "regress",
-                    "jobSlug"       : "regress"
-                ]
-
-                output = "/"
-
-                configurations {
-                    $configurations
-                }
-            }
-        """
-    }
+    private fun runTask(
+        vararg args: String,
+        dryRun: Boolean = true,
+        expectedFailure: Boolean = false
+    ) = runTask(
+        projectDir,
+        *args,
+        "-PartifactoryUrl=http://artifactory",
+        "-P$artifactoryUserParameterName=user",
+        "-P$artifactoryPasswordParameterName=password",
+        dryRun = dryRun,
+        expectedFailure = expectedFailure
+    )
 }

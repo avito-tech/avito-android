@@ -97,10 +97,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                         }
                     }
 
-                    val isFullTestSuite = gitState.map {
-                        it.isOnDefaultBranch && instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.Off
-                    }.orElse(false)
-
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
                     this.buildId.set(env.build.id.toString())
                     this.buildType.set(env.build.type)
@@ -108,7 +104,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
                     this.defaultBranch.set(gitState.map { it.defaultBranch })
-                    this.fullTestSuite.set(isFullTestSuite)
                     this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
 
                     // will be changed in [UiTestCheck]

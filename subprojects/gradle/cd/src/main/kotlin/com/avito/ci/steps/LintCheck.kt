@@ -1,15 +1,15 @@
 package com.avito.ci.steps
 
 import com.avito.android.isAndroidApp
+import com.avito.android.lint.LintReportTask
 import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.withType
+import com.avito.utils.gradle.BuildEnvironment
+import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.invoke
-import com.avito.android.lint.LintReportTask
-import com.avito.utils.gradle.BuildEnvironment
-import com.avito.utils.gradle.buildEnvironment
 
 class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
