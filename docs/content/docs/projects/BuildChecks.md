@@ -19,18 +19,6 @@ plugins {
 
 {{%plugins-setup%}}
 
-Some checks will require settings to work properly. 
-You'll get an error about missing settings:
-
-```text
-> ./gradlew
-
-A problem occurred configuring root project
-> buildChecks.androidSdk.compileSdkVersion must be set
-```
-
-After adding missing properties you will get something like this:
-
 {{< tabs "build checks example" >}}
 {{< tab "Kotlin" >}}
 
@@ -39,7 +27,6 @@ After adding missing properties you will get something like this:
 ```kotlin
 buildChecks {
     androidSdk {
-        compileSdkVersion = 29
         revision = 4
     }
     javaVersion {
@@ -59,7 +46,6 @@ buildChecks {
 ```groovy
 buildChecks {
     androidSdk {
-        compileSdkVersion = 29
         revision = 4
     }
     javaVersion {
@@ -149,7 +135,6 @@ buildChecks {
     enableByDefault = false
 
     androidSdk {
-        compileSdkVersion = 29
         revision = 4
     }
 }
@@ -164,7 +149,6 @@ buildChecks {
     enableByDefault = false
 
     androidSdk {
-        compileSdkVersion = 29
         revision = 4
     }
 }
@@ -221,7 +205,6 @@ Different revisions lead to Gradle remote cache misses. This check forces the sa
 ```kotlin
 buildChecks {
     androidSdk {
-        compileSdkVersion = 29
         revision = 4
     }
 }
@@ -234,7 +217,6 @@ buildChecks {
 ```groovy
 buildChecks {
     androidSdk {
-        compileSdkVersion = 29
         revision = 4
     }
 }
