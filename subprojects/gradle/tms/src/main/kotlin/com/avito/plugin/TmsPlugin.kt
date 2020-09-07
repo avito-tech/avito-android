@@ -5,10 +5,10 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-class CthulhuPlugin : Plugin<Project> {
+class TmsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-        val extension = target.extensions.create<CthulhuExtension>("cthulhu")
+        val extension = target.extensions.create<TmsExtension>("tms")
 
         target.tasks.register<MarkReportAsSourceTask>(markReportAsSourceTaskName) {
             reportsHost.set(extension.reportsHost)

@@ -1,6 +1,6 @@
 package com.avito.ci.steps
 
-import com.avito.plugin.cthulhuPluginId
+import com.avito.plugin.tmsPluginId
 import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
@@ -18,7 +18,7 @@ internal class MarkReportAsSourceForTMSStepTest {
                 AndroidAppModule(
                     name = "app",
                     plugins = listOf(
-                        cthulhuPluginId,
+                        tmsPluginId,
                         "com.avito.android.instrumentation-tests",
                         "com.avito.android.cd"
                     ),

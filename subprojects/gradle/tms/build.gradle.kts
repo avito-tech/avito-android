@@ -18,10 +18,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("cthulhu") {
-            id = "com.avito.android.cthulhu"
-            implementationClass = "com.avito.plugin.CthulhuPlugin"
-            displayName = "Cthulhu (Avito TMS) integration plugin"
+        create("tms") {
+            id = "com.avito.android.tms"
+            implementationClass = "com.avito.plugin.TmsPlugin"
+            displayName = "Avito Test Management System integration plugin"
         }
     }
 }

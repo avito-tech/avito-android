@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":gradle:artifactory-app-backup"))
     implementation(project(":gradle:performance"))
     implementation(project(":gradle:qapps"))
-    implementation(project(":gradle:cthulhu"))
+    implementation(project(":gradle:tms"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:prosector"))
     implementation(project(":gradle:git"))

@@ -9,4 +9,4 @@ internal const val markReportAsSourceTaskName = "markReportAsSourceForTMSTask"
 fun TaskContainer.markReportAsSourceTask(): TaskProvider<MarkReportAsSourceTask> =
     typedNamed(markReportAsSourceTaskName)
 
-val cthulhuPluginId = "com.avito.android.cthulhu"
+const val tmsPluginId = "com.avito.android.tms"

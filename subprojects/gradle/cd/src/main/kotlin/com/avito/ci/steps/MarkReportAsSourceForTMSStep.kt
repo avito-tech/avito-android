@@ -3,7 +3,7 @@ package com.avito.ci.steps
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.impact.configuration.internalModule
 import com.avito.instrumentation.instrumentationTask
-import com.avito.plugin.cthulhuPluginId
+import com.avito.plugin.tmsPluginId
 import com.avito.plugin.markReportAsSourceTask
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -15,8 +15,8 @@ class MarkReportAsSourceForTMSStep(context: String, name: String) : BuildStep(co
     var configuration: String = ""
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
-        require(project.pluginManager.hasPlugin(cthulhuPluginId)) {
-            "CthulhuMarkReportAsSourceStep can't be initialized without $cthulhuPluginId plugin applied"
+        require(project.pluginManager.hasPlugin(tmsPluginId)) {
+            "MarkReportAsSourceForTMSStep can't be initialized without $tmsPluginId plugin applied"
         }
         if (useImpactAnalysis && !project.internalModule.isModified()) return
 
