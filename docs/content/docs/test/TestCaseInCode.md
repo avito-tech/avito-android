@@ -17,10 +17,25 @@ type: docs
 
 ## Как происходит синхронизация
 
-[Report Viewer]({{< ref "/docs/test/ReportViewer.md" >}}) реализует механизм отправки событий.\
-Отчет помеченный как `finished` генерирует событие.\
-Сервис на стороне TMS слушает события, содержащие специальную json-метку, сообщающую что текущий отчет является источником правды\
-Плагин `com.avito.android.tms` отвечает за простановку этой метки.
+{{<mermaid>}}
+sequenceDiagram
+    InstrumentationPlugin->>ReportService: addTest() X times for whole suite
+    InstrumentationPlugin->>ReportService: setFinished()
+    ReportService->>TmsEventProcessor: event
+    loop analyze
+        TmsEventProcessor->>TmsEventProcessor: just regular test run, skip
+    end
+    TmsPlugin->>ReportService: pushPreparedData(<This is source of truth with timestamp>)
+    TmsPlugin->>ReportService: setFinished()
+    ReportService->>TmsEventProcessor: event
+    loop analyze
+        TmsEventProcessor->>TmsEventProcessor: contains fresh(newest date) source of truth
+    end
+    loop analyze
+        TmsEventProcessor->>TmsEventProcessor: parse report and prepare payload for TMS
+    end
+    TmsEventProcessor->>TMS: sendModifiedTestSuite()
+{{</mermaid>}}
 
 Проект требующий синхронизации должен подключить плагин, а также добавить [CI step]({{< ref "/docs/projects/CiSteps.md" >}})
 
