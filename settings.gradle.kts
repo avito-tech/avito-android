@@ -83,20 +83,6 @@ pluginManagement {
                 includeModuleByRegex("com\\.avito\\.android", ".*")
             }
         }
-        // todo remove after 2020.13
-        if (!artifactoryUrl.isNullOrBlank()) {
-            exclusiveContent {
-                forRepository {
-                    maven {
-                        name = "JCenter Proxy"
-                        setUrl("$artifactoryUrl/jcenter")
-                    }
-                }
-                filter {
-                    includeVersion("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.9")
-                }
-            }
-        }
         exclusiveContent {
             forRepository {
                 gradlePluginPortal()
