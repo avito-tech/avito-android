@@ -24,7 +24,7 @@ class DeviceSettingsChecker(private val context: Context) {
             Log.e("UITestRunner", "=== ERROR=== \n" +
                 "Emulator has incorrect settings which cause flakiness:\n" +
                 warnings.joinToString(separator = "") { "- $it\n" } +
-                "\nhttps://avito-tech.github.io/avito-android/ci/containers/#android-emulator"
+                "\nSee https://avito-tech.github.io/avito-android/docs/ci/containers/#android-emulator-images"
             )
         }
     }
