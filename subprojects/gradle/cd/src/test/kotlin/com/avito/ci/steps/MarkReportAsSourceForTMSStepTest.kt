@@ -31,6 +31,10 @@ internal class MarkReportAsSourceForTMSStepTest {
                             }
                         }
                         
+                        tms {
+                            reportsHost = "stub"
+                        }
+                        
                         instrumentation {
                             sentryDsn = "stub"
                             slackToken = "stub"

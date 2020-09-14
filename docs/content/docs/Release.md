@@ -1,4 +1,4 @@
-# Release
+# Infrastructure release
 
 {{<avito page>}}
 
@@ -42,7 +42,7 @@ Try to upload it with overriding:
 How it looks:
 
 - Bintray has [expected artifacts](https://dl.bintray.com/avito/maven/com/avito/android/runner-shared/2020.16/): pom, jar/aar, sources.jar
-- Gradle can't find in Artifactory
+- Gradle can't find it in Artifactory
 
 ```text
 > Could not resolve all artifacts for configuration ':classpath'.
@@ -52,14 +52,18 @@ How it looks:
        - http://<artifactory>/artifactory/bintray-avito-maven/com/avito/android/runner-shared/2020.16/runner-shared-2020.16.pom
 ```
 
-Probable reason:
+Probable reasons:
 
-When you use a partially uploaded release, Artifactory might cache the wrong state.
+- The file is not downloaded by Artifactory yet. 
+Such files look in web UI like empty references: `runner-shared-2020.16.jar->     -    -    -    -` (empty size)
+- When you use a partially uploaded release, Artifactory might cache the wrong state.
 It seems that Artifactory caches it for some time, but we don't know exactly and how to invalidate it.
 
 Actions:
 
-- Bump up a minor release version and make a new release. 
+- Download this file manually in the browser or CLI.\
+If the file downloaded successfully, refresh a local cache via `--refresh-dependencies`.
+- If it didn't help, bump up a minor release version and make a new release. 
 
 ## Local integration tests against Avito
 

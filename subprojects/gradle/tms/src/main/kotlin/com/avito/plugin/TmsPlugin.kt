@@ -13,5 +13,9 @@ class TmsPlugin : Plugin<Project> {
         target.tasks.register<MarkReportAsSourceTask>(markReportAsSourceTaskName) {
             reportsHost.set(extension.reportsHost)
         }
+
+        target.afterEvaluate {
+            requireNotNull(extension.reportsHost.orNull) { "tms.reportsHost should be set" }
+        }
     }
 }

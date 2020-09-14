@@ -19,42 +19,46 @@ class MarkReportAsSourceAction(
     private val timeProvider: TimeProvider,
     private val logger: Logger
 ) {
+    private val tag = "TMS"
 
     fun mark(reportCoordinates: ReportCoordinates) {
         val testSuiteVersion = timeProvider.nowInMillis()
 
-        logger.debug("This is a new version [$testSuiteVersion] of full test suite for tms")
+        when (val result = reportsApi.getReport(reportCoordinates)) {
+            is GetReportResult.Found -> {
 
-        val reportId = tryGetId(reportCoordinates)
-
-        if (reportId != null) {
-            reportsApi.pushPreparedData(
-                reportId = reportId,
-                analyzerKey = "test_suite",
-                preparedData = jsonObject(
-                    "full" to true,
-                    "version" to testSuiteVersion
-                )
-            ).onFailure { error ->
-                logger.critical("Can't push prepared data: testSuite info", error)
+                reportsApi.pushPreparedData(
+                    reportId = result.report.id,
+                    analyzerKey = "test_suite",
+                    preparedData = jsonObject(
+                        "full" to true,
+                        "version" to testSuiteVersion
+                    )
+                ).fold(
+                    {
+                        reportsApi.setFinished(reportCoordinates).fold(
+                            {
+                                logger.info(
+                                    "[$tag] Test suite for tms version $testSuiteVersion, " +
+                                        "with id: ${result.report.id}, coordinates: $reportCoordinates marked as source of truth for tms"
+                                )
+                            },
+                            { error ->
+                                logger.critical("[$tag] Can't finish report for coordinates: $reportCoordinates", error)
+                            })
+                    },
+                    { error ->
+                        logger.critical("[$tag] Can't push prepared data: testSuite info", error)
+                    })
             }
-
-            reportsApi.setFinished(reportCoordinates).onFailure { error ->
-                logger.critical("Can't finish report for coordinates: $reportCoordinates", error)
-            }
-        }
-    }
-
-    private fun tryGetId(reportCoordinates: ReportCoordinates): String? {
-        return when (val result = reportsApi.getReport(reportCoordinates)) {
-            is GetReportResult.Found -> result.report.id
             GetReportResult.NotFound -> {
-                logger.warn("Can't find report for runId=${reportCoordinates.runId}")
-                null
+                logger.critical(
+                    "[$tag] Can't get reportId for coordinates: $reportCoordinates",
+                    IllegalStateException("stub")
+                )
             }
             is GetReportResult.Error -> {
-                logger.critical("Can't find report for runId=${reportCoordinates.runId}", result.exception)
-                null
+                logger.critical("[$tag] Can't find report for runId=${reportCoordinates.runId}", result.exception)
             }
         }
     }
