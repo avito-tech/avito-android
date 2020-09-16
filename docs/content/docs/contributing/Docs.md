@@ -277,6 +277,17 @@ Left Content
 Right Content
 {{< /columns >}}
 
+### Details
+
+```tpl
+{{</* details "Title" */>}}
+Markdown content
+{{</* /details */>}}
+```
+
+{{< details "Title">}}
+Markdown content
+{{< /details >}}
 
 ### Expand
 
@@ -372,34 +383,37 @@ Checklist for changes:
 - Search
 - Shortcodes: mermaid, ...
 
-[Hugo troubleshooting](https://gohugo.io/troubleshooting/faq/)
-
-### How to upgrade Hugo
-
-Just change the version in Dockerfile.
-
-### How to upgrade theme
-
-Hugo theme is just a set of files in directory `themes/<theme>`. They are arranged by a specific layout.
-
-To upgrade theme to a new version:
-
-1. Download a source code of a new [theme version](https://github.com/alex-shpak/hugo-book/releases).
-1. Replace `docs/themes/book` files by new ones
-1. Remove useless example files in the `book` folder: 
-    - `.github`
-    - `exampleSite`
-    - `images`
-    - `static/favicon.png`
-1. Remove a mermaid shortcode (`book/static/mermaid.min.js` and `book/layouts/shortcodes/mermaid.html`).
-We have a custom one.
-1. Restart Hugo: `docs/local.sh`
-1. Check locally that everything is working as expected:
-    - [Custom shortcodes]({{< relref "#working-with-custom-shortcodes" >}})
-    - Searching in English and Russian text
-
 ### Working with custom shortcodes
 
 All [custom shortcodes](https://gohugo.io/templates/shortcode-templates/) 
 live in [docs/layouts/shortcodes](https://github.com/avito-tech/avito-android/tree/develop/docs/layouts/shortcodes) folder.\
 You can find them in markdown files by a filename - `layouts/shortcodes/avito.html` is `{{</*avito*/>}}`.
+
+[Hugo troubleshooting](https://gohugo.io/troubleshooting/faq/)
+
+### How to upgrade a theme
+
+Hugo theme is just a set of files in directory `themes/<theme>`. They are arranged by a specific layout.
+
+To upgrade theme to a new version:
+
+0. Download a source code of a new [theme version](https://github.com/alex-shpak/hugo-book/releases);
+0. Replace `docs/themes/book` files by new ones;
+0. Remove useless example files in the `book` folder: 
+    - `.github`
+    - `exampleSite`
+    - `images`
+    - `static/favicon.*`
+0. Keep workaround in `themes/book/i18n/en.yaml` for russian letters (see comments for `bookSearchConfig.translation`);
+0. Remove a mermaid shortcode (`book/static/mermaid.min.js` and `book/layouts/shortcodes/mermaid.html`).
+We have a [custom one]({{< relref "#working-with-custom-shortcodes" >}}).
+0. Restart Hugo: `docs/local.sh`
+0. Check locally that everything is working as expected:
+    - [Custom shortcodes]({{< relref "#working-with-custom-shortcodes" >}})
+    - Searching in English and Russian text
+
+### How to upgrade Hugo
+
+0. Change the version in a [Dockerfile](https://github.com/avito-tech/avito-android/tree/develop/ci/docker/documentation);
+0. Publish the image by [Build documentation docker](http://links.k.avito.ru/9M) configuration;
+0. Update a tag in `ci/_environment.sh` 
