@@ -17,14 +17,15 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
     }
 
     private fun checkAnnotationProcessors() {
-        project.subprojects.forEach { subproject ->
-            if (subproject.hasKotlinKapt && subproject.hasRoomKapt) {
-                mode.get().check(subproject) {
-                    if (RoomIncrementalKaptChecker(subproject).isSupported()) {
-                        CheckResult.Ok
-                    } else {
-                        CheckResult.Failed(collectErrorMessage())
-                    }
+        val subProject = project.subprojects.firstOrNull {
+            it.hasKotlinKapt && it.hasRoomKapt
+        }
+        if (subProject != null) {
+            mode.get().check(subProject) {
+                if (RoomIncrementalKaptChecker(subProject).isSupported()) {
+                    CheckResult.Ok
+                } else {
+                    CheckResult.Failed(collectErrorMessage())
                 }
             }
         }
@@ -32,7 +33,7 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
 
     private fun collectErrorMessage() = """
         Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions. 
-        You have to use JDK embedded in Android Studio 3.5.0-beta02 and higher.
+        You have to use JDK 11 and higher or embedded one in Android Studio 3.5.0-beta02 and higher.
         Current JDK is ${System.getProperty("java.runtime.version")} provided by ${System.getProperty("java.vendor")}.
         https://avito-tech.github.io/avito-android/docs/projects/buildchecks/#room
     """.trimIndent()

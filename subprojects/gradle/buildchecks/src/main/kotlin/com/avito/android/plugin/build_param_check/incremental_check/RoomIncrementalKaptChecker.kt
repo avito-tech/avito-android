@@ -2,6 +2,7 @@ package com.avito.android.plugin.build_param_check.incremental_check
 
 import com.avito.kotlin.dsl.withType
 import com.avito.utils.logging.ciLogger
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import java.net.URLClassLoader
@@ -12,6 +13,9 @@ internal class RoomIncrementalKaptChecker(
 ) {
 
     fun isSupported(): Boolean {
+        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
+            return true
+        }
         val processor = createRoomProcessor()
         val suppressedExceptions = mutableListOf<Exception>()
 
