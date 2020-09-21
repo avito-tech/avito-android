@@ -121,13 +121,14 @@ builds {
 
 ## How to troubleshoot sync issues?
 
+{{< hint info>}}
 Nightly build could be skipped if there are no code changes, keep it in mind while troubleshooting. 
+{{< /hint >}}
 
-Nightly build log should contain line: 
+- Nightly build log should contain line: 
 `[TMS] Test suite for tms version <timestamp>, with id: <id>, coordinates: <reportCoordinates> marked as source of truth for tms`
-
-Check `[TMS]` tag for possible errors
-
-Look at TMS sync service metrics:
- - [Test case count](http://links.k.avito.ru/androidtmscount) (check `aa/avito-android.total`)
- - [Create/Delete events](http://links.k.avito.ru/androidtmsevents) (check `aa/avito-android.created` and `aa/avito-android.deleted`)
+- Check `[TMS]` tag in log for possible errors
+- Check slack alerts channel: [#tms-validation-errors](http://links.k.avito.ru/tmsalerts) 
+- Look at TMS sync service metrics:
+  - [Test case count](http://links.k.avito.ru/androidtmscount) (check `aa/avito-android.total`)
+  - [Create/Delete events](http://links.k.avito.ru/androidtmsevents) (check `aa/avito-android.created` and `aa/avito-android.deleted`)
