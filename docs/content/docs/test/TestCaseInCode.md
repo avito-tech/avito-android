@@ -25,7 +25,7 @@ Test should have this minimal set of annotations:
  - [Kind]({{< ref "#kind" >}})
  
 -- deprecated --
- - `@CaseId(Int)` - TMS id, consider using [test case in code]({{< ref "/docs/test/TestCaseInCode.md#test-case-in-code" >}})
+ - `@CaseId(Int)` - TMS id, consider using [test case in code]({{< ref "#test-case-in-code" >}})
 
 ### Kind
 
