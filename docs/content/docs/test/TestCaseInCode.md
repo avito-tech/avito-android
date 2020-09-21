@@ -56,7 +56,7 @@ This build runs every night, and it is recommended not to run this build manuall
 Please attach:
  - your pull request link
  - nightly build that should trigger sync link
- - test case id link in TMS(if it was edit, not a new one)
+ - test case id link in TMS (if it was edited, not a new one)
 
 ## Stubs: tests without implementation
 
