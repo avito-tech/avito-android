@@ -96,6 +96,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             newTests.set(it.addedTestsFile)
                             modifiedTests.set(it.modifiedTestsFile)
                         }
+                    } else {
+                        impactAnalysisPolicy.set(ImpactAnalysisPolicy.Off)
                     }
 
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
