@@ -12,7 +12,7 @@ object FilterFactoryFactory {
 
     fun create(
         filter: InstrumentationFilter.Data = InstrumentationFilter.Data.createStub(),
-        impactAnalysisFile: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
+        impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
         reportsByConfig: Map<Report.Factory.Config, Report> = emptyMap(),
         reportConfig: Report.Factory.Config = Report.Factory.Config.ReportViewerCoordinates(
             reportCoordinates = ReportCoordinates.createStubInstance(),
@@ -21,7 +21,7 @@ object FilterFactoryFactory {
     ): FilterFactory {
         return FilterFactory.create(
             filterData = filter,
-            impactAnalysisResult = impactAnalysisFile,
+            impactAnalysisResult = impactAnalysisResult,
             reportConfig = reportConfig,
             factory = object : Report.Factory {
                 override fun createReport(config: Report.Factory.Config): Report {

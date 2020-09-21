@@ -1,5 +1,6 @@
 package com.avito.instrumentation.suite.filter
 
+import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.Data.FromRunHistory.ReportFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
@@ -404,5 +405,27 @@ internal class FilterFactoryImplTest {
             assert
                 .isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
         }
+    }
+
+    @Test
+    fun `when impact runAddedTests - affected and modified tests are excluded`() {
+        val filter = FilterFactoryFactory.create(
+            impactAnalysisResult = ImpactAnalysisResult(
+                policy = ImpactAnalysisPolicy.On.RunNewTests,
+                affectedTests = listOf(
+                    "com.test.AffectedTest1",
+                    "com.test.AffectedTest2",
+                    "com.test.AffectedTest3",
+                    "com.test.AffectedTest4"
+                ),
+                addedTests = listOf("com.test.AffectedTest2"),
+                modifiedTests = listOf("com.test.AffectedTest3")
+            )
+        ).createFilter()
+
+        assertThat(filter.filter(TestsFilter.Test.createStub("com.test.AffectedTest1"))).isInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(filter.filter(TestsFilter.Test.createStub("com.test.AffectedTest2"))).isNotInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(filter.filter(TestsFilter.Test.createStub("com.test.AffectedTest3"))).isNotInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(filter.filter(TestsFilter.Test.createStub("com.test.AffectedTest4"))).isInstanceOf(TestsFilter.Result.Included::class.java)
     }
 }
