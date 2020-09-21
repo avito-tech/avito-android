@@ -49,7 +49,7 @@ After test with required annotations merged, next full suite test run will trigg
 
 This build runs every night, and it is recommended not to run this build manually only to sync a bunch of tests, because it's fairly heavy.
 
-## What is my test not synced, but it should?
+## How to find out why a test was not synced
 
 [Let us know]({{< ref "/docs/Contacts.md" >}}) if something seems to go wrong.
 
