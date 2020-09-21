@@ -1,7 +1,7 @@
 package com.avito.report.model
 
 /**
- * https://avito-tech.github.io/avito-android/docs/test/testmanagementsystem/
+ * https://avito-tech.github.io/avito-android/docs/test/testcaseincode/
  */
 enum class Kind(val tmsId: String) {
     UNIT("unit"),

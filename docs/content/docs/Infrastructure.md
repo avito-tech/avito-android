@@ -72,7 +72,7 @@ Code that goes in `androidTestImplementation` configuration and runs on emulator
 - `:junit-utils` - //todo move to common
 - `:mockito-utils` - //todo move to common
 - `:resource-manager-exceptions` - //todo remove
-- `:test-annotations` - annotations to supply meta information for reports and [test management system]({{< ref "/docs/test/TestManagementSystem.md" >}})
+- `:test-annotations` - annotations to supply meta information for reports and [test management system]({{< ref "/docs/test/TestCaseInCode.md" >}})
 - `:test-app` - app we are using to test `:ui-testing-` libraries
 - `:test-inhouse-runner` - custom [android junit runner](https://developer.android.com/reference/android/support/test/runner/AndroidJUnitRunner.html)
 - `:test-report` - client to gather test runtime information for reporting
