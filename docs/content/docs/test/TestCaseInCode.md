@@ -63,7 +63,7 @@ Please attach:
 If you need to sync tests, but you're not ready to automate it, there is a way: stubs.\
 Stubs are tests with all needed meta information (annotations, steps), but without actual implementation and asserts. 
 
-To differentiate stubs from regular tests additional kind annotations added\
+To differentiate stubs from regular tests additional kind annotations were added.\
 Kind `Manual` are special one, to express intention that there are no plans to automate this case.
 
 ### Stubs generation
