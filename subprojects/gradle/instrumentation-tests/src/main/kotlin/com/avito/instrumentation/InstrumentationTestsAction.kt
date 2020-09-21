@@ -7,6 +7,7 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.finalizer.InstrumentationTestActionFinalizer
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.scheduling.TestsScheduler
+import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
@@ -64,7 +65,7 @@ class InstrumentationTestsAction(
         val projectName: String,
         val suppressFailure: Boolean,
         val suppressFlaky: Boolean,
-        val impactAnalysisResult: File?,
+        val impactAnalysisResult: ImpactAnalysisResult,
         val logger: CILogger,
         val outputDir: File,
         val sendStatistics: Boolean,

@@ -5,10 +5,12 @@ import com.avito.bitbucket.bitbucketConfig
 import com.avito.bitbucket.pullRequestId
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
+import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.Report
+import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.model.SlackChannel
@@ -42,9 +44,20 @@ abstract class InstrumentationTestsTask @Inject constructor(
     @InputFile
     val testApplication: RegularFileProperty = objects.fileProperty()
 
+    @Input
+    val impactAnalysisPolicy = objects.property<ImpactAnalysisPolicy>()
+
     @Optional
     @InputFile
-    val impactAnalysisResult: RegularFileProperty = objects.fileProperty()
+    val newTests: RegularFileProperty = objects.fileProperty()
+
+    @Optional
+    @InputFile
+    val modifiedTests: RegularFileProperty = objects.fileProperty()
+
+    @Optional
+    @InputFile
+    val affectedTests: RegularFileProperty = objects.fileProperty()
 
     @Optional
     @InputFile
@@ -130,7 +143,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
 
         //todo новое api, когда выйдет в stable
         // https://docs.gradle.org/5.6/userguide/custom_tasks.html#using-the-worker-api
-
         workerExecutor.inMemoryWork {
             InstrumentationTestsAction(
                 InstrumentationTestsAction.Params(
@@ -149,7 +161,12 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     sourceCommitHash = sourceCommitHash.get(),
                     suppressFailure = suppressFailure.getOrElse(false),
                     suppressFlaky = suppressFlaky.getOrElse(false),
-                    impactAnalysisResult = impactAnalysisResult.asFile.orNull,
+                    impactAnalysisResult = ImpactAnalysisResult.create(
+                        policy = impactAnalysisPolicy.get(),
+                        affectedTestsFile = affectedTests.asFile.orNull,
+                        addedTestsFile = newTests.asFile.orNull,
+                        modifiedTestsFile = modifiedTests.asFile.orNull
+                    ),
                     logger = ciLogger,
                     outputDir = output.get().asFile,
                     sendStatistics = sendStatistics.get(),
