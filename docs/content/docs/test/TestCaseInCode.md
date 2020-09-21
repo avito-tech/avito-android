@@ -3,19 +3,75 @@ title: Test case in code
 type: docs
 ---
 
+{{<avito page>}}
+
 # Test case in code
 
-Правда о тест кейсе исторически хранилась в TMS.\
-Поддерживать актуальной информацию сразу в двух местах не самое достойное занятие, а увеличение кол-ва автоматизированных
-кейсов остро поставило вопрос о стоимости этого занятия.
+Avito uses in-house TMS: [Internal docs](http://links.k.avito.ru/h)
 
-Чтобы упростить поддержку, появилась возможность держать источник правды в коде, синхронизируя всю информацию в TMS.
+TMS was a source of truth about test cases in avito since the very early days.\
+While company shifted to test automation, manual synchronization between test cases in TMS and code in autotests became a problem.\
 
-## Как синхронизировать свой тест с TMS?
+To simplify this process "test cases in code" concept was born.\
+Now only code contains truth about test cases, and automated ones are read-only in TMS.
 
-Чтобы это сделать, тесту нужно проставить аннотацию `@ExternalId(UUID)`, где UUID - сгенерированный на клиенте случайный UUID.
+## How to synchronize your test with TMS?
 
-## Как происходит синхронизация
+Test should have this minimal set of annotations:
+ - `@ExternalId(UUID)` UUID - random generated uuid (use any tool, for example online generator)
+ - `@Description` - testcase title
+ - `@FeatureId(IntArray)` - specify test's place in global features tree
+ - `@TagId(IntArray)` - specify id's of team tag cloud
+ - [Kind]({{< ref "#kind" >}})
+ 
+-- deprecated --
+ - `@CaseId(Int)` - TMS id, consider using [test case in code]({{< ref "#test-case-in-code" >}})
+
+### Kind
+
+Kind has to be specified to map tests on test pyramid in TMS, see `com.avito.report.model.Kind`
+
+These annotations also used to filter tests for different suites.
+ - @E2ETest - e2e functional tests
+ - @UIComponentTest - UI tests without(or minimal) e2e networking
+ - @IntegrationTest - Instrumentation tests without UI
+ - @UnitTest - Classical unit tests that should be synced with TMS
+ - [@ManualTest]({{< ref "#stubs-tests-without-implementation" >}})
+ - [@UIComponentStub]({{< ref "#stubs-tests-without-implementation" >}})
+ - [@E2EStub]({{< ref "#stubs-tests-without-implementation" >}})
+ - [@ScreenshotTest]({{< ref "/docs/test/ScreenshotTesting.md" >}})
+
+## When will my tests appear in TMS?
+
+After test with required annotations merged, next full suite test run will trigger sync process.
+
+[Internal Teamcity configuration](http://links.k.avito.ru/androidnightly)
+
+This build runs every night, and it is recommended not to run this build manually only to sync a bunch of tests, because it's fairly heavy.
+
+## How to find out why a test was not synced
+
+[Let us know]({{< ref "/docs/Contacts.md" >}}) if something seems to go wrong.
+
+Please attach:
+ - your pull request link
+ - nightly build that should trigger sync link
+ - test case id link in TMS (if it was edited, not a new one)
+
+## Stubs: tests without implementation
+
+If you need to sync tests, but you're not ready to automate it, there is a way: stubs.\
+Stubs are tests with all needed meta information (annotations, steps), but without actual implementation and asserts. 
+
+To differentiate stubs from regular tests additional kind annotations were added.\
+Kind `Manual` are a special one, to express intention that there are no plans to automate this case.
+
+### How to generate a stub test
+
+To get help with moving test cases, check internal module's `:test:generator` readme. \
+This project will generate test stubs from TMS id's.
+
+## How synchronization works
 
 {{<mermaid>}}
 sequenceDiagram
@@ -37,39 +93,42 @@ sequenceDiagram
     TmsEventProcessor->>TMS: sendModifiedTestSuite()
 {{</mermaid>}}
 
-Проект требующий синхронизации должен подключить плагин, а также добавить [CI step]({{< ref "/docs/projects/CiSteps.md" >}})
+## TMS Gradle plugin
+
+Project should apply and configure the plugin:
+
+```kotlin
+plugins {
+    id("com.avito.android.tms")
+}
+
+tms {
+    reportsHost.set("<report viewer host>")
+}
+```
+
+And also add a [CI step]({{< ref "/docs/projects/CiSteps.md" >}})
 
 ```kotlin
 builds {
-    fullCheck {  // билд, гарантированно содержащий все требующие синхронизации тесты
+    release {  // build that contains full test suite
         markReportAsSourceForTMS {
-            configuration = "ui" // instrumentation конфигурация, на которую надо завязаться чтобы дождаться всех тестов
+            configuration = "ui" // instrumentation configuration to wait for
         }
     }
 }
 ```
 
-## FAQ
+## How to troubleshoot sync issues?
 
-Q: Когда происходит синхронизация\
-A: После попадания кода в ветку develop
+{{< hint info>}}
+Nightly build could be skipped if there are no code changes, keep it in mind while troubleshooting. 
+{{< /hint >}}
 
-Q: Как выглядит такие тесты в TMS\
-A: Становятся read-only
-
-## Stubs: tests without implementation
-
-Если тестами хочется управлять из кода уже сейчас, а их написание отложить, то можно просто создать стабы. \
-Стабы это тесты со всей нужной информацией (аннотации, шаги), но не выполняющие никаких действий и проверок.
-
-Чтобы на уровне TMS отличать автоматизированные тесты, от стабов, добавлены специальные типы с приставкой `-stub`
-(см. `com.avito.report.model.Kind`)
-
-Тип `manual` - специально для указания ручных тестов, которые не планируется автоматизировать,
-но хочется держать рядом с автотестами в коде.
-
-### Stubs generation
-
-> TODO вынести в opensource для демонстрации
-
-Для упрощения переноса в проекте есть модуль `:test-generator`, который по указанию списка id тесткейсов генерирует код тестов-стабов.
+- Nightly build log should contain line: 
+`[TMS] Test suite for tms version <timestamp>, with id: <id>, coordinates: <reportCoordinates> marked as source of truth for tms`
+- Check `[TMS]` tag in log for possible errors
+- Check slack alerts channel: [#tms-validation-errors](http://links.k.avito.ru/tmsalerts) 
+- Look at TMS sync service metrics:
+    - [Test case count](http://links.k.avito.ru/androidtmscount) (check `aa/avito-android.total`)
+    - [Create/Delete events](http://links.k.avito.ru/androidtmsevents) (check `aa/avito-android.created` and `aa/avito-android.deleted`)
