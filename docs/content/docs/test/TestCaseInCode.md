@@ -66,7 +66,7 @@ Stubs are tests with all needed meta information (annotations, steps), but witho
 To differentiate stubs from regular tests additional kind annotations were added.\
 Kind `Manual` are a special one, to express intention that there are no plans to automate this case.
 
-### Stubs generation
+### How to generate a stub test
 
 To get help with moving test cases, check internal module's `:test:generator` readme. \
 This project will generate test stubs from TMS id's.
