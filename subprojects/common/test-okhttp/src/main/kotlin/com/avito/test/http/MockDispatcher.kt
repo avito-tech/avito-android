@@ -5,15 +5,16 @@ import com.google.gson.JsonElement
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
+import java.util.Collections
 
 class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
     private val logger: (String) -> Unit = {}
 ) : Dispatcher() {
 
-    private val mocks = mutableListOf<Mock>()
+    private val mocks = Collections.synchronizedList(mutableListOf<Mock>())
 
-    private val capturers = mutableListOf<RequestCapturer>()
+    private val capturers = Collections.synchronizedList(mutableListOf<RequestCapturer>())
 
     fun registerMock(mock: Mock) {
         mocks.add(mock)
@@ -29,17 +30,21 @@ class MockDispatcher(
 
         val requestData = RequestData(request)
 
-        capturers.find { it.requestMatcher.invoke(requestData) }?.run {
-            capture(request)
-            logger("request captured: $request")
+        synchronized(capturers) {
+            capturers.find { it.requestMatcher.invoke(requestData) }?.run {
+                capture(request)
+                logger("request captured: $request")
+            }
         }
 
         /**
-         * last - чтобы иметь возможность перезаписывать моки, последний записанный должен выигрывать
+         * to be able to replace mocks (last one wins) (see MBS-5878)
          *
-         * @see "MBS-5878"
+         * synchronized because of concurrent iterator access (see MBS-7636)
          */
-        val matchedMock = mocks.findLast { it.requestMatcher.invoke(requestData) }
+        val matchedMock = synchronized(mocks) {
+            mocks.findLast { it.requestMatcher.invoke(requestData) }
+        }
         val response = matchedMock?.response ?: unmockedResponse
 
         if (matchedMock?.removeAfterMatched == true) mocks.remove(matchedMock)
@@ -53,10 +58,10 @@ class MockDispatcher(
 private val gson = Gson()
 
 /**
- * Содержимое файла как тело запроса
+ * Use file contents as response body
  *
- * @param fileName указать относительный путь до файла, начиная с директории assets
- *                 например: "assets/mock/seller_x/publish/parameters/ok.json"
+ * @param fileName specify file path, relative to assets dir
+ *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
  */
 fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
     val text = textFromAsset<MockDispatcher>(fileName)
