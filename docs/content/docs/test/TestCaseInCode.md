@@ -130,5 +130,5 @@ Nightly build could be skipped if there are no code changes, keep it in mind whi
 - Check `[TMS]` tag in log for possible errors
 - Check slack alerts channel: [#tms-validation-errors](http://links.k.avito.ru/tmsalerts) 
 - Look at TMS sync service metrics:
-  - [Test case count](http://links.k.avito.ru/androidtmscount) (check `aa/avito-android.total`)
-  - [Create/Delete events](http://links.k.avito.ru/androidtmsevents) (check `aa/avito-android.created` and `aa/avito-android.deleted`)
+    - [Test case count](http://links.k.avito.ru/androidtmscount) (check `aa/avito-android.total`)
+    - [Create/Delete events](http://links.k.avito.ru/androidtmsevents) (check `aa/avito-android.created` and `aa/avito-android.deleted`)
