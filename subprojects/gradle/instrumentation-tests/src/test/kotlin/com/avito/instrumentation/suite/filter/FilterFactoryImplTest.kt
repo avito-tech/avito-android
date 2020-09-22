@@ -411,7 +411,7 @@ internal class FilterFactoryImplTest {
     fun `when impact runAddedTests - affected and modified tests are excluded`() {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
-                policy = ImpactAnalysisPolicy.On.RunNewTests,
+                policy = ImpactAnalysisPolicy.On.RunAffectedTests,
                 affectedTests = listOf(
                     "com.test.AffectedTest1",
                     "com.test.AffectedTest2",
