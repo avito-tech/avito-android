@@ -8,6 +8,7 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.FakeReport
 import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
+import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.report.model.createStubInstance
@@ -34,7 +35,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     projectName: String = "testProject",
     suppressFailure: Boolean = false,
     suppressFlaky: Boolean = false,
-    impactAnalysisResult: File? = null,
+    impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
     logger: CILogger = CILogger.allToStdout,
     sendStatistics: Boolean = false,
     slackToken: String = "slack",

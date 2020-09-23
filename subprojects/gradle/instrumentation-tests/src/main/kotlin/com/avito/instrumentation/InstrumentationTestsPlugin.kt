@@ -14,7 +14,6 @@ import com.avito.android.withAndroidModule
 import com.avito.android.withArtifacts
 import com.avito.git.GitState
 import com.avito.git.gitState
-import com.avito.git.isOnDefaultBranch
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
@@ -91,10 +90,14 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     group = ciTaskGroup
 
                     if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {
-                        // todo implicit dependency on impact task
                         dependencyOn(instrumentationConfiguration.impactAnalysisPolicy.getTask(project)) {
-                            impactAnalysisResult.set(instrumentationConfiguration.impactAnalysisPolicy.getArtifact(it))
+                            impactAnalysisPolicy.set(instrumentationConfiguration.impactAnalysisPolicy)
+                            affectedTests.set(it.testsToRunFile)
+                            newTests.set(it.addedTestsFile)
+                            modifiedTests.set(it.modifiedTestsFile)
                         }
+                    } else {
+                        impactAnalysisPolicy.set(ImpactAnalysisPolicy.Off)
                     }
 
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
