@@ -2,7 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.createStub
 import com.avito.report.model.DeviceName
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class TestSignaturesFilterTest {
@@ -14,7 +14,7 @@ internal class TestSignaturesFilterTest {
         val signature = TestsFilter.Signatures.TestSignature(
             name = testName
         )
-        Truth.assertThat(test.matched(setOf(signature))).isTrue()
+        assertThat(test.matched(setOf(signature))).isTrue()
     }
 
     @Test
@@ -25,7 +25,7 @@ internal class TestSignaturesFilterTest {
         val signature = TestsFilter.Signatures.TestSignature(
             name = className
         )
-        Truth.assertThat(test.matched(setOf(signature))).isTrue()
+        assertThat(test.matched(setOf(signature))).isTrue()
     }
 
     @Test
@@ -40,7 +40,7 @@ internal class TestSignaturesFilterTest {
             name = className,
             deviceName = "22"
         )
-        Truth.assertThat(test.matched(setOf(signature))).isFalse()
+        assertThat(test.matched(setOf(signature))).isFalse()
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method")
         )
-        Truth.assertThat(result)
+        assertThat(result)
             .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 
@@ -67,7 +67,7 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method")
         )
-        Truth.assertThat(result).isInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(result).isInstanceOf(TestsFilter.Result.Included::class.java)
     }
 
     @Test
@@ -83,7 +83,7 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method", deviceName = DeviceName("22"))
         )
-        Truth.assertThat(result)
+        assertThat(result)
             .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 
@@ -99,6 +99,6 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method", deviceName = DeviceName("22"))
         )
-        Truth.assertThat(result).isInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(result).isInstanceOf(TestsFilter.Result.Included::class.java)
     }
 }

@@ -1,11 +1,11 @@
 package com.avito.instrumentation.suite.filter
 
+import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.report.model.SimpleRunTest
-import java.io.File
 
 interface FilterFactory {
     fun createFilter(): TestsFilter
@@ -15,7 +15,7 @@ interface FilterFactory {
 
         fun create(
             filterData: InstrumentationFilter.Data,
-            impactAnalysisResult: File?,
+            impactAnalysisResult: ImpactAnalysisResult,
             reportConfig: Report.Factory.Config,
             factory: Report.Factory
         ): FilterFactory {
@@ -31,7 +31,7 @@ interface FilterFactory {
 
 private class FilterFactoryImpl(
     private val filterData: InstrumentationFilter.Data,
-    private val impactAnalysisResult: File?,
+    private val impactAnalysisResult: ImpactAnalysisResult,
     private val factory: Report.Factory,
     private val reportConfig: Report.Factory.Config
 ) : FilterFactory {
@@ -169,12 +169,30 @@ private class FilterFactoryImpl(
     }
 
     private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
-        if (impactAnalysisResult != null && impactAnalysisResult.exists()) {
-            val testNames = impactAnalysisResult.readLines()
+        return when (impactAnalysisResult.policy) {
+            is ImpactAnalysisPolicy.Off -> {
+                // do nothing
+            }
+            is ImpactAnalysisPolicy.On.RunAffectedTests -> {
+                addImpactTests(impactAnalysisResult.affectedTests)
+                removeImpactTests(impactAnalysisResult.addedTests)
+                removeImpactTests(impactAnalysisResult.modifiedTests)
+            }
+            is ImpactAnalysisPolicy.On.RunNewTests -> {
+                addImpactTests(impactAnalysisResult.addedTests)
+            }
+            is ImpactAnalysisPolicy.On.RunModifiedTests -> {
+                addImpactTests(impactAnalysisResult.modifiedTests)
+            }
+        }
+    }
+
+    private fun MutableList<TestsFilter>.addImpactTests(tests: List<String>) {
+        if (tests.isNotEmpty()) {
             add(
                 IncludeByTestSignaturesFilter(
                     source = TestsFilter.Signatures.Source.ImpactAnalysis,
-                    signatures = testNames.map { name ->
+                    signatures = tests.map { name ->
                         TestsFilter.Signatures.TestSignature(
                             name = name
                         )
@@ -184,4 +202,18 @@ private class FilterFactoryImpl(
         }
     }
 
+    private fun MutableList<TestsFilter>.removeImpactTests(tests: List<String>) {
+        if (tests.isNotEmpty()) {
+            add(
+                ExcludeByTestSignaturesFilter(
+                    source = TestsFilter.Signatures.Source.ImpactAnalysis,
+                    signatures = tests.map { name ->
+                        TestsFilter.Signatures.TestSignature(
+                            name = name
+                        )
+                    }.toSet()
+                )
+            )
+        }
+    }
 }

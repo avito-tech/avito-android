@@ -2,7 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.createStub
 import com.avito.report.model.DeviceName
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class IncludeByTestSignaturesFilterTest {
@@ -19,7 +19,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        Truth.assertThat(actual)
+        assertThat(actual)
             .isInstanceOf(TestsFilter.Result.Included::class.java)
     }
 
@@ -35,7 +35,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        Truth.assertThat(actual)
+        assertThat(actual)
             .isInstanceOf(TestsFilter.Result.Included::class.java)
     }
 
@@ -51,7 +51,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        Truth.assertThat(actual)
+        assertThat(actual)
             .isInstanceOf(TestsFilter.Result.Included::class.java)
     }
 
@@ -67,7 +67,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        Truth.assertThat(actual)
+        assertThat(actual)
             .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 
@@ -83,7 +83,7 @@ internal class IncludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        Truth.assertThat(actual)
+        assertThat(actual)
             .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
     }
 

@@ -2,7 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.createStub
 import com.avito.instrumentation.suite.filter.TestsFilter.Result.Excluded
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class CompositeTestRunFilterTest {
@@ -30,7 +30,7 @@ internal class CompositeTestRunFilterTest {
             )
         )
 
-        Truth.assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
+        assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
             .isInstanceOf(Excluded.HasSkipSdkAnnotation::class.java)
     }
 
@@ -55,7 +55,7 @@ internal class CompositeTestRunFilterTest {
             )
         )
 
-        Truth.assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
+        assertThat(compositionFilter.filter(TestsFilter.Test.createStub()))
             .isInstanceOf(Excluded::class.java)
     }
 }
