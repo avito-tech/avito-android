@@ -4,6 +4,7 @@ import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.io.TempDir
@@ -30,6 +31,7 @@ internal class IncrementalKaptTaskTest {
             )
     }
 
+    @Disabled("Can't change java version in tests, see commit message [MBS-9506]")
     @Test
     fun `build success with warning - unsupported Java version`() {
         generateProject(mode = "warning")
@@ -42,6 +44,7 @@ internal class IncrementalKaptTaskTest {
             )
     }
 
+    @Disabled("Can't change java version in tests, see commit message [MBS-9506]")
     @Test
     fun `build fail - unsupported Java version`() {
         generateProject(mode = "fail")
