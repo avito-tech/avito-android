@@ -97,7 +97,7 @@ internal class IncrementalKaptTaskTest {
         ":checkIncrementalKapt",
         "-ParchPersistenceVersion=2.2.4",
         "-Pkapt.incremental.apt=true",
-        "-Djava.runtime.version=$javaVersion",
+        "-Djava.version=$javaVersion",
         "-Djava.vendor=Avito",
         expectFailure = expectFailure
     )
