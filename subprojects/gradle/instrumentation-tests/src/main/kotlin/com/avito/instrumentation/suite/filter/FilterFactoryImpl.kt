@@ -45,9 +45,7 @@ private class FilterFactoryImpl(
         filters.addSourcePreviousSignatureFilters()
         filters.addSourceReportSignatureFilters()
         filters.addImpactAnalysisFilter()
-        return CompositionFilter(
-            filters
-        )
+        return CompositionFilter(filters)
     }
 
     private fun MutableList<TestsFilter>.addFlakyFilter() {
@@ -188,18 +186,16 @@ private class FilterFactoryImpl(
     }
 
     private fun MutableList<TestsFilter>.addImpactTests(tests: List<String>) {
-        if (tests.isNotEmpty()) {
-            add(
-                IncludeByTestSignaturesFilter(
-                    source = TestsFilter.Signatures.Source.ImpactAnalysis,
-                    signatures = tests.map { name ->
-                        TestsFilter.Signatures.TestSignature(
-                            name = name
-                        )
-                    }.toSet()
-                )
+        add(
+            IncludeByTestSignaturesFilter(
+                source = TestsFilter.Signatures.Source.ImpactAnalysis,
+                signatures = tests.map { name ->
+                    TestsFilter.Signatures.TestSignature(
+                        name = name
+                    )
+                }.toSet()
             )
-        }
+        )
     }
 
     private fun MutableList<TestsFilter>.removeImpactTests(tests: List<String>) {
