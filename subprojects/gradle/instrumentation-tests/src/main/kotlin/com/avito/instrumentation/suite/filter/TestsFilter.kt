@@ -8,11 +8,16 @@ import java.io.Serializable
 interface TestsFilter {
 
     sealed class Result {
+
         object Included : Result()
+
         abstract class Excluded(
             val byFilter: String,
             val reason: String
         ) : Result() {
+
+            override fun toString(): String = "test has been excluded because: $reason"
+
             class HasSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
                 name, "test has SkipSdk with value sdk=$sdk"
             )
