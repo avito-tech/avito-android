@@ -28,7 +28,5 @@ interface ReportsFetchApi {
 
     fun getTestsForReportId(reportId: String): Try<List<SimpleRunTest>>
 
-    fun getPerformanceTest(id: String): Try<PerformanceTest>
-
     fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Try<CrossDeviceSuite>
 }

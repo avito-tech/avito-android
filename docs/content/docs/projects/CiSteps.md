@@ -144,33 +144,6 @@ uiTests {
 {{< /tab >}}
 {{< /tabs >}}
 
-#### Performance tests
-
-Runs performance tests.
-
-{{< tabs "performance tests" >}}
-{{< tab "Kotlin" >}}
-
-```kotlin
-performanceTests {
-  configuration("configuration name") // performance configuration from Instrumentation plugin
-  enabled = true // true by default
-}
-```
-
-{{< /tab >}}
-{{< tab "Groovy" >}}
-
-```groovy
-performanceTests {
-  configuration = "configuration name" // performance configuration from Instrumentation plugin
-  enabled = true // true by default
-}
-```
-
-{{< /tab >}}
-{{< /tabs >}}
-
 #### Android lint
 
 Run [Android lint]({{< ref "/docs/checks/AndroidLint.md" >}}) tasks.

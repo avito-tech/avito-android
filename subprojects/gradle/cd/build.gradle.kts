@@ -19,7 +19,6 @@ dependencies {
     implementation(project(":gradle:lint-report"))
     implementation(project(":gradle:instrumentation-tests"))
     implementation(project(":gradle:artifactory-app-backup"))
-    implementation(project(":gradle:performance"))
     implementation(project(":gradle:qapps"))
     implementation(project(":gradle:tms"))
     implementation(project(":gradle:teamcity"))

@@ -4,7 +4,6 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.future.MockFutureValue
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.Logger
@@ -22,19 +21,14 @@ import okhttp3.mock.Rule
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
-/**
- * @param sendRealReport позволяет на время отладки посылать реальные репорты во время тестов,
- *                       чтобы посмотреть как оно отображается
- */
 class ReportTestExtension(
     val timeProvider: TimeProvider = mock(),
-    val fileStorageUrl: String = "https://filestorage.com",
+    private val fileStorageUrl: String = "https://filestorage.com",
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
     private val logger: Logger = NoOpLogger,
     private val report: Report = ReportImplementation(
         onDeviceCacheDirectory = lazy { error("nope") },
-        performanceTestReporter = PerformanceTestReporter(),
         logger = logger,
         transport = emptyList(),
         screenshotUploader = screenshotUploader,
@@ -77,8 +71,6 @@ class ReportTestExtension(
         externalId: String? = null,
         tagIds: List<Int> = emptyList(),
         featureIds: List<Int> = emptyList(),
-        featuresFromAnnotation: List<String> = emptyList(),
-        featuresFromPackage: List<String> = emptyList(),
         priority: TestCasePriority? = null,
         behavior: TestCaseBehavior? = null,
         flakiness: Flakiness = Flakiness.Stable

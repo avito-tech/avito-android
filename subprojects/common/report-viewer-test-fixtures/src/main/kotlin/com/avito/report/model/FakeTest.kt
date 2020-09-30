@@ -34,7 +34,6 @@ fun TestStaticDataPackage.Companion.createStubInstance(
 fun TestRuntimeDataPackage.Companion.createStubInstance(
     incident: Incident? = null,
     dataSetData: Map<String, String> = emptyMap(),
-    performanceJson: String? = null,
     preconditions: List<Step> = emptyList(),
     startTime: Long = 0,
     endTime: Long = 0,
@@ -43,7 +42,6 @@ fun TestRuntimeDataPackage.Companion.createStubInstance(
 ) = TestRuntimeDataPackage(
     incident = incident,
     dataSetData = dataSetData,
-    performanceJson = performanceJson,
     preconditions = preconditions,
     startTime = startTime,
     endTime = endTime,

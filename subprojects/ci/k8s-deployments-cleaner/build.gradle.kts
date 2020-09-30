@@ -22,7 +22,7 @@ if (project.getOptionalStringProperty("ci", "false").toBoolean()) {
             "--kubernetesToken", project.getMandatoryStringProperty("kubernetesToken"),
             "--kubernetesUrl", project.getMandatoryStringProperty("kubernetesUrl"),
             "--kubernetesCaCert", project.getMandatoryStringProperty("kubernetesCaCertData"),
-            "--namespaces", "android-emulator,android-performance"
+            "--namespaces", "android-emulator"
         )
     }
     tasks.register("deleteByNames", JavaExec::class.java) {

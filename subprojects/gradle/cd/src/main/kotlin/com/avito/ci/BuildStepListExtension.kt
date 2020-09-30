@@ -8,7 +8,6 @@ import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.MarkReportAsSourceForTMSStep
-import com.avito.ci.steps.PerformanceTestCheck
 import com.avito.ci.steps.UiTestCheck
 import com.avito.ci.steps.UnitTestCheck
 import com.avito.ci.steps.UploadBuildResult
@@ -38,9 +37,6 @@ open class BuildStepListExtension(
         }
         registerFactory(UiTestCheck::class.java) { name ->
             UiTestCheck(buildStepListName, name)
-        }
-        registerFactory(PerformanceTestCheck::class.java) { name ->
-            PerformanceTestCheck(buildStepListName, name)
         }
         registerFactory(CompileUiTests::class.java) { name ->
             CompileUiTests(buildStepListName, name)
@@ -93,14 +89,6 @@ open class BuildStepListExtension(
 
     fun uiTests(action: Action<UiTestCheck>) {
         configureAndAdd("uiTests", action)
-    }
-
-    fun performanceTests(closure: Closure<PerformanceTestCheck>) {
-        configureAndAdd("performanceTests", closure)
-    }
-
-    fun performanceTests(action: Action<PerformanceTestCheck>) {
-        configureAndAdd("performanceTests", action)
     }
 
     fun compileUiTests(closure: Closure<CompileUiTests>) {

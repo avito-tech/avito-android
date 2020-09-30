@@ -29,8 +29,7 @@ sealed class ReportState {
             var startTime: Long,
             var endTime: Long = 0,
             var preconditionStepList: MutableList<StepResult> = mutableListOf(),
-            var testCaseStepList: MutableList<StepResult> = mutableListOf(),
-            var performanceJson: String? = null
+            var testCaseStepList: MutableList<StepResult> = mutableListOf()
         ) : Initialized() {
 
             override val isFirstStepOrPrecondition: Boolean
