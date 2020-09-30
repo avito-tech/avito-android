@@ -86,7 +86,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                 val instrumentationTask = project.tasks.register<InstrumentationTestsTask>(
                     instrumentationTaskName(instrumentationConfiguration.name)
                 ) {
-                    timeout.set(Duration.ofMinutes(100)) //todo move value to extension
+                    timeout.set(Duration.ofSeconds(instrumentationConfiguration.timeoutInSeconds))
                     group = ciTaskGroup
 
                     if (instrumentationConfiguration.impactAnalysisPolicy is ImpactAnalysisPolicy.On) {

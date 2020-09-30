@@ -21,6 +21,8 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     var kubernetesNamespace = "android-emulator"
 
+    var timeoutInSeconds: Long = 6000L // 100min
+
     var enableDeviceDebug: Boolean = false
 
     var filter = "default"
@@ -61,6 +63,7 @@ abstract class InstrumentationConfiguration(val name: String) {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
             },
             enableDeviceDebug = enableDeviceDebug,
+            timeoutInSeconds = timeoutInSeconds,
             filter = filters.singleOrNull { it.name == filter }
                 ?: throw IllegalStateException("Can't find filter=$filter")
         )
@@ -75,6 +78,7 @@ abstract class InstrumentationConfiguration(val name: String) {
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
         val enableDeviceDebug: Boolean,
+        val timeoutInSeconds: Long,
         val filter: InstrumentationFilter.Data
     ) : Serializable {
 

@@ -17,6 +17,7 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     kubernetesNamespace: String = "kubernetesNamespace",
     targets: List<TargetConfiguration.Data> = emptyList(),
     enableDeviceDebug: Boolean = false,
+    timeoutInSecond: Long = 100,
     previousRunExcluded: Set<RunStatus> = emptySet()
 ): InstrumentationConfiguration.Data = InstrumentationConfiguration.Data(
     name = name,
@@ -27,6 +28,7 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
     enableDeviceDebug = enableDeviceDebug,
+    timeoutInSeconds = timeoutInSecond,
     filter = InstrumentationFilter.Data(
         name = "stub",
         fromSource = InstrumentationFilter.Data.FromSource(
