@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Test
 
 internal class ImpactAnalysisFilterFactoryTest {
 
+    private val test1 = "com.test.Test1"
+    private val test2 = "com.test.Test2"
+    private val test3 = "com.test.Test3"
+    private val test4 = "com.test.Test4"
+
     @Test
     fun `noImpactAnalysis - filters nothing`() {
         val filter = FilterFactoryFactory.create(
@@ -21,7 +26,7 @@ internal class ImpactAnalysisFilterFactoryTest {
             )
         ).createFilter()
 
-        filter.assertIncluded("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+        filter.assertIncluded(test1, test2, test3, test4)
     }
 
     @Test
@@ -29,13 +34,13 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.Off,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
-                addedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
-                modifiedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+                affectedTests = listOf(test1, test2, test3, test4),
+                addedTests = listOf(test1, test2, test3, test4),
+                modifiedTests = listOf(test1, test2, test3, test4)
             )
         ).createFilter()
 
-        filter.assertIncluded("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+        filter.assertIncluded(test1, test2, test3, test4)
     }
 
     @Test
@@ -43,14 +48,14 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunAffectedTests,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
-                addedTests = listOf("com.test.Test2"),
-                modifiedTests = listOf("com.test.Test3")
+                affectedTests = listOf(test1, test2, test3, test4),
+                addedTests = listOf(test2),
+                modifiedTests = listOf(test3)
             )
         ).createFilter()
 
-        filter.assertIncluded("com.test.Test1", "com.test.Test4")
-        filter.assertNotIncluded("com.test.Test2", "com.test.Test3")
+        filter.assertIncluded(test1, test4)
+        filter.assertNotIncluded(test2, test3)
     }
 
     @Test
@@ -58,13 +63,13 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunAffectedTests,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
+                affectedTests = listOf(test1, test2, test3, test4),
                 addedTests = emptyList(),
                 modifiedTests = emptyList()
             )
         ).createFilter()
 
-        filter.assertIncluded("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+        filter.assertIncluded(test1, test2, test3, test4)
     }
 
     @Test
@@ -78,7 +83,7 @@ internal class ImpactAnalysisFilterFactoryTest {
             )
         ).createFilter()
 
-        filter.assertNotIncluded("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+        filter.assertNotIncluded(test1, test2, test3, test4)
     }
 
     @Test
@@ -87,12 +92,12 @@ internal class ImpactAnalysisFilterFactoryTest {
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunAffectedTests,
                 affectedTests = emptyList(),
-                addedTests = listOf("com.test.Test2"),
-                modifiedTests = listOf("com.test.Test3")
+                addedTests = listOf(test2),
+                modifiedTests = listOf(test3)
             )
         ).createFilter()
 
-        filter.assertNotIncluded("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+        filter.assertNotIncluded(test1, test2, test3, test4)
     }
 
     @Test
@@ -100,13 +105,13 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunNewTests,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
+                affectedTests = listOf(test1, test2, test3, test4),
                 addedTests = emptyList(),
                 modifiedTests = emptyList()
             )
         ).createFilter()
 
-        filter.assertNotIncluded("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+        filter.assertNotIncluded(test1, test2, test3, test4)
     }
 
     @Test
@@ -114,14 +119,14 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunNewTests,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
-                addedTests = listOf("com.test.Test2", "com.test.Test4"),
+                affectedTests = listOf(test1, test2, test3, test4),
+                addedTests = listOf(test2, test4),
                 modifiedTests = emptyList()
             )
         ).createFilter()
 
-        filter.assertIncluded("com.test.Test2", "com.test.Test4")
-        filter.assertNotIncluded("com.test.Test1", "com.test.Test3")
+        filter.assertIncluded(test2, test4)
+        filter.assertNotIncluded(test1, test3)
     }
 
     @Test
@@ -129,14 +134,14 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunNewTests,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
-                addedTests = listOf("com.test.Test2", "com.test.Test4"),
-                modifiedTests = listOf("com.test.Test3")
+                affectedTests = listOf(test1, test2, test3, test4),
+                addedTests = listOf(test2, test4),
+                modifiedTests = listOf(test3)
             )
         ).createFilter()
 
-        filter.assertIncluded("com.test.Test2", "com.test.Test4")
-        filter.assertNotIncluded("com.test.Test1", "com.test.Test3")
+        filter.assertIncluded(test2, test4)
+        filter.assertNotIncluded(test1, test3)
     }
 
     @Test
@@ -144,14 +149,14 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunModifiedTests,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
+                affectedTests = listOf(test1, test2, test3, test4),
                 addedTests = emptyList(),
-                modifiedTests = listOf("com.test.Test1", "com.test.Test3")
+                modifiedTests = listOf(test1, test3)
             )
         ).createFilter()
 
-        filter.assertIncluded("com.test.Test1", "com.test.Test3")
-        filter.assertNotIncluded("com.test.Test2", "com.test.Test4")
+        filter.assertIncluded(test1, test3)
+        filter.assertNotIncluded(test2, test4)
     }
 
     @Test
@@ -159,13 +164,13 @@ internal class ImpactAnalysisFilterFactoryTest {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult(
                 policy = ImpactAnalysisPolicy.On.RunModifiedTests,
-                affectedTests = listOf("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4"),
-                addedTests = listOf("com.test.Test1", "com.test.Test3"),
+                affectedTests = listOf(test1, test2, test3, test4),
+                addedTests = listOf(test1, test3),
                 modifiedTests = emptyList()
             )
         ).createFilter()
 
-        filter.assertNotIncluded("com.test.Test1", "com.test.Test2", "com.test.Test3", "com.test.Test4")
+        filter.assertNotIncluded(test1, test2, test3, test4)
     }
 
     private fun TestsFilter.assertIncluded(vararg name: String) {
