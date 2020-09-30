@@ -24,7 +24,6 @@ class ExternalStorageTransport(private val gson: Gson) : Transport, PreTransport
         val testRuntimeDataPackage = TestRuntimeDataPackage(
             incident = state.incident,
             dataSetData = state.dataSet?.serialize() ?: emptyMap(),
-            performanceJson = state.performanceJson,
             video = state.video,
             preconditions = transformStepList(state.preconditionStepList),
             steps = transformStepList(state.testCaseStepList),

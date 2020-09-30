@@ -41,7 +41,6 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         status = Status.Skipped(test.skipReason),
                         stdout = "",
                         stderr = "",
-                        performance = null,
                         incident = null,
                         video = null,
                         startTime = null,
@@ -57,7 +56,6 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         status = Status.Lost,
                         stdout = test.stdout,
                         stderr = test.stderr,
-                        performance = null,
                         incident = null,
                         video = null,
                         startTime = test.startTime,
@@ -73,7 +71,6 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         status = null, //определяется на бэке для success/fail по наличию incident, отправляем остальные статусы самостоятельно
                         stdout = test.stdout,
                         stderr = test.stderr,
-                        performance = test.performanceJson,
                         incident = test.incident,
                         video = test.video,
                         startTime = test.startTime,
@@ -105,7 +102,6 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
         status: Status?,
         stdout: String,
         stderr: String,
-        performance: String?,
         incident: Incident?,
         video: Video?,
         startTime: Long?,
@@ -184,8 +180,6 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
 
         val behavior = test.behavior
         preparedData["behavior_id"] = behavior?.tmsValue ?: TestCaseBehavior.UNDEFINED.tmsValue
-
-        if (!performance.isNullOrBlank()) preparedData["performance"] = performance
 
         if (status is Status.Skipped) {
             // посылаем в 2 места skipReason, message_list нужен для отображения,

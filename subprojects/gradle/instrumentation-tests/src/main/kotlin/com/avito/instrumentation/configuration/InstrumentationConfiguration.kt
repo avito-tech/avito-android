@@ -10,15 +10,6 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     var instrumentationParams: Map<String, String> = emptyMap()
 
-    /**
-     * определяем нужно ли к конфигурации применять особую логику для измерения performance во время тестов
-     */
-    @Deprecated("remove after 2020.18")
-    var performanceType: PerformanceType? = null
-
-    @Deprecated("remove after 2020.18")
-    enum class PerformanceType { SIMPLE, MDE }
-
     var reportFlakyTests = false
 
     /**
@@ -71,7 +62,6 @@ abstract class InstrumentationConfiguration(val name: String) {
             targets = targets.map {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
             },
-            performanceType = performanceType,
             enableDeviceDebug = enableDeviceDebug,
             timeoutInSeconds = timeoutInSeconds,
             filter = filters.singleOrNull { it.name == filter }
@@ -87,8 +77,6 @@ abstract class InstrumentationConfiguration(val name: String) {
         val impactAnalysisPolicy: ImpactAnalysisPolicy,
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
-        @Deprecated("remove after 2020.18")
-        val performanceType: PerformanceType?,
         val enableDeviceDebug: Boolean,
         val timeoutInSeconds: Long,
         val filter: InstrumentationFilter.Data

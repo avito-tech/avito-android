@@ -27,26 +27,11 @@ private val regressionNoE2EAnnotations = uiNoE2EAnnotations + manualAnnotations
 
 private val regressionAnnotations = uiAnnotations + manualAnnotations
 
-@Deprecated("remove after 2020.18")
-private val performanceNoE2EAnnotations =
-    setOf("com.avito.android.test.annotations.PerformanceComponentTest")
-
-@Deprecated("remove after 2020.18")
-private val performanceAnnotations =
-    performanceNoE2EAnnotations + "com.avito.android.test.annotations.PerformanceFunctionalTest"
-
 enum class TestsFilter(val annotatedWith: Set<String>) {
     uiNoE2E(uiNoE2EAnnotations),
     ui(uiAnnotations),
     regressionNoE2E(regressionNoE2EAnnotations),
     regression(regressionAnnotations),
-
-    @Deprecated("remove after 2020.18")
-    performanceNoE2E(performanceNoE2EAnnotations),
-
-    @Deprecated("remove after 2020.18")
-
-    performance(performanceAnnotations),
     empty(emptySet()),
     manual(manualAnnotations)
 }

@@ -1,11 +1,8 @@
 package com.avito.ci
 
-internal fun registerUiTestConfigurations(vararg names: String, isPerformance: Boolean = false): String {
+internal fun registerUiTestConfigurations(vararg names: String): String {
     val configurations = names.map { name ->
         """$name {
-            
-            ${if (isPerformance) "performanceType = com.avito.instrumentation.configuration.InstrumentationConfiguration.PerformanceType.SIMPLE" else ""}
-            
             targets {
                 api22 {
                     deviceName = "api22"

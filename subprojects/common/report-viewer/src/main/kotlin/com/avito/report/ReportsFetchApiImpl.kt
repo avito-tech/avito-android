@@ -18,20 +18,17 @@ import com.avito.report.model.FailureOnDevice
 import com.avito.report.model.Flakiness
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.Kind
-import com.avito.report.model.PerformanceTest
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
 import com.avito.report.model.TestName
-import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import org.funktionale.tries.Try
 
 /**
- * TODO
- * Move test status logic to [com.avito.instrumentation.report.TestStatusFinalizer]
+ * TODO Move test status logic to [com.avito.instrumentation.report.TestStatusFinalizer]
  */
 internal class ReportsFetchApiImpl(
     private val requestProvider: JsonRpcRequestProvider,
@@ -90,27 +87,6 @@ internal class ReportsFetchApiImpl(
                 }
             }
         )
-    }
-
-    override fun getPerformanceTest(id: String): Try<PerformanceTest> {
-        return try {
-            val test = getTest(id)
-            val performanceAttempts = test.runTestResult
-                .mapNotNull {
-                    it.preparedData["performance"]?.toString()
-                }.flatMap {
-                    gson.fromJson<List<Map<String, Double>>>(it)
-                }
-            Try.Success(
-                PerformanceTest(
-                    test.testName,
-                    test.id,
-                    convert(performanceAttempts)
-                )
-            )
-        } catch (e: Exception) {
-            Try.Failure(e)
-        }
     }
 
     override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Try<List<SimpleRunTest>> {
@@ -271,10 +247,16 @@ internal class ReportsFetchApiImpl(
             }
             reportModel.successCount > reportModel.attemptsCount -> {
                 logger.debug("success count > attempts count?? $reportModel")
-                Stability.Stable(reportModel.attemptsCount, reportModel.successCount) // на самом деле не совсем, репортим эту ситуацию как невероятную
+                Stability.Stable(
+                    reportModel.attemptsCount,
+                    reportModel.successCount
+                ) // на самом деле не совсем, репортим эту ситуацию как невероятную
             }
             reportModel.successCount == 0 -> Stability.Failing(reportModel.attemptsCount)
-            reportModel.successCount == reportModel.attemptsCount -> Stability.Stable(reportModel.attemptsCount, reportModel.successCount)
+            reportModel.successCount == reportModel.attemptsCount -> Stability.Stable(
+                reportModel.attemptsCount,
+                reportModel.successCount
+            )
             // FIXME тут может быть ошибка, т.к. attempt может быть skipped или какой-то другой не-success статус
             reportModel.successCount < reportModel.attemptsCount -> Stability.Flaky(
                 reportModel.attemptsCount,
@@ -334,11 +316,6 @@ internal class ReportsFetchApiImpl(
             Flakiness.Stable
         }
     } ?: Flakiness.Stable
-
-    private fun convert(performanceAttempts: List<Map<String, Double>>): Map<String, List<Double>> {
-        return performanceAttempts.flatMap { it.entries }
-            .groupBy({ it.key }, { it.value })
-    }
 
     private fun List<SimpleRunTest>.deviceFailures(): List<FailureOnDevice> {
         return this.filter { it.status is Status.Failure }

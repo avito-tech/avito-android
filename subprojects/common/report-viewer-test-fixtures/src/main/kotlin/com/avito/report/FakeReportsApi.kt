@@ -95,11 +95,6 @@ class FakeReportsApi(
         return testsForRunId[reportCoordinates] ?: error("no stub ready for $reportCoordinates")
     }
 
-    @Synchronized
-    override fun getPerformanceTest(id: String): Try<PerformanceTest> {
-        TODO("not implemented")
-    }
-
     lateinit var finished: Try<Unit>
 
     @Synchronized

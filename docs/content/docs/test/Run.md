@@ -90,8 +90,6 @@ type: docs
             - `uiNoE2E` -- как `ui`, но без E2E тестов
             - `regressionNoE2E` -- `uiNoE2E` + ручные тесты
             - `regression` -- `ui` + ручные тесты
-            - `performanceNoE2E` -- только компонентные перформанс тесты
-            - `performance` -- только функциональные performance тесты
         3. `Package prefix` - опциональный. Фильтр по имени теста. `package.ClassName.methodName`
             - `package` - отфильтровать по пакету
             - `package.ClassName` - отфильтровать по классу

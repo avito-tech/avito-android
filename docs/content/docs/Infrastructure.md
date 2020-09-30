@@ -31,7 +31,6 @@ Plugins:
 - `:lint-report` - Gradle plugin merging lint reports from different modules
 - `:module-types` - Gradle plugin to prevent modules go to wrong configurations (android-test module as an app's implementation dependency for example) 
 - `:code-ownership` - Gradle plugin to prevent dependency on other team's private modules
-- `:performance` - Gradle plugin, extended tasks to support performance testing on top of our `:instrumentation` plugin
 - `:prosector` - Gradle plugin and client for security service
 - `:qapps` - Gradle plugin to deliver apps to internal distribution service, see [QApps]({{< ref "/docs/cd/QApps.md" >}})
 - `:robolectric`- Gradle plugin to configure [robolectrtic](http://robolectric.org/) for internal project

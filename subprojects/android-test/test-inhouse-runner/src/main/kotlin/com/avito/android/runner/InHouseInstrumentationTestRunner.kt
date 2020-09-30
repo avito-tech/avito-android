@@ -25,8 +25,6 @@ import com.avito.android.test.report.ReportViewerWebsocketReporter
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.performance.PerformanceProvider
-import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.transport.ExternalStorageTransport
 import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.android.test.report.transport.Transport
@@ -50,7 +48,6 @@ import java.util.concurrent.TimeUnit
 abstract class InHouseInstrumentationTestRunner :
     InstrumentationTestRunner(),
     ReportProvider,
-    PerformanceProvider,
     ImitateFlagProvider,
     RemoteStorageProvider {
 
@@ -90,8 +87,6 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    override val performanceTestReporter = PerformanceTestReporter()
-
     override val report: Report by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
@@ -128,7 +123,6 @@ abstract class InHouseInstrumentationTestRunner :
         ReportImplementation(
             onDeviceCacheDirectory = runEnvironment.outputDirectory,
             onIncident = { testIssuesMonitor.onFailure(it) },
-            performanceTestReporter = performanceTestReporter,
             transport = transport,
             logger = testReportLogger,
             remoteStorage = remoteStorage

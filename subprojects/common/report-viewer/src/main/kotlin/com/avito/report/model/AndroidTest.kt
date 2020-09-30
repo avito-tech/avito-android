@@ -141,7 +141,6 @@ sealed class AndroidTest : TestStaticData {
     class Completed(
         override val incident: Incident?,
         override val dataSetData: Map<String, String>,
-        override val performanceJson: String?,
         override val video: Video?,
         override val preconditions: List<Step>,
         override val steps: List<Step>,
@@ -183,7 +182,6 @@ sealed class AndroidTest : TestStaticData {
                 kind = testStaticData.kind,
                 incident = testRuntimeData.incident,
                 dataSetData = testRuntimeData.dataSetData,
-                performanceJson = testRuntimeData.performanceJson,
                 video = testRuntimeData.video,
                 preconditions = testRuntimeData.preconditions,
                 steps = testRuntimeData.steps,
@@ -228,9 +226,6 @@ interface TestRuntimeData {
      */
     val endTime: Long
     val dataSetData: Map<String, String>
-    val performanceJson: String?
-
-    //todo see [PerformanceTest]
     val video: Video?
     val preconditions: List<Step>
     val steps: List<Step>
@@ -241,7 +236,6 @@ data class TestRuntimeDataPackage(
     override val startTime: Long,
     override val endTime: Long,
     override val dataSetData: Map<String, String>,
-    override val performanceJson: String?,
     override val video: Video?,
     override val preconditions: List<Step>,
     override val steps: List<Step>

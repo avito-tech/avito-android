@@ -17,7 +17,6 @@ import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.performance.PerformanceTestReporter
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.transport.Transport
@@ -42,7 +41,6 @@ import java.io.File
 class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
     private val onIncident: (Throwable) -> Unit = {},
-    private val performanceTestReporter: PerformanceTestReporter,
     private val logger: Logger,
     private val transport: List<Transport>,
     private val remoteStorage: RemoteStorage,
@@ -173,7 +171,6 @@ class ReportImplementation(
             startedState.addEarlyEntries(earlyEntries)
             startedState.sortStepEntries()
             startedState.incident?.appendFutureEntries()
-            startedState.performanceJson = performanceTestReporter.getAsJson()
             startedState.writeTestCase()
             startedState
         }

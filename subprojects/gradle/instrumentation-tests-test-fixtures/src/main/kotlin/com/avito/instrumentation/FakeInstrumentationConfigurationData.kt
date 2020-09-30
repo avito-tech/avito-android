@@ -10,7 +10,6 @@ import com.avito.instrumentation.suite.filter.Filter
 
 fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name: String = "name",
-    performanceType: InstrumentationConfiguration.PerformanceType? = null,
     instrumentationParams: InstrumentationParameters = InstrumentationParameters(),
     reportSkippedTests: Boolean = true,
     reportFlakyTests: Boolean = false,
@@ -28,7 +27,6 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     impactAnalysisPolicy = impactAnalysisPolicy,
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
-    performanceType = performanceType,
     enableDeviceDebug = enableDeviceDebug,
     timeoutInSeconds = timeoutInSecond,
     filter = InstrumentationFilter.Data(

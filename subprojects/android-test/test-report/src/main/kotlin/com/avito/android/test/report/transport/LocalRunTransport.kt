@@ -65,7 +65,6 @@ class LocalRunTransport(
                     testRuntimeData = TestRuntimeDataPackage(
                         incident = state.incident,
                         dataSetData = state.dataSet?.serialize() ?: emptyMap(),
-                        performanceJson = state.performanceJson,
                         video = state.video,
                         preconditions = transformStepList(state.preconditionStepList),
                         steps = transformStepList(state.testCaseStepList),
@@ -82,6 +81,7 @@ class LocalRunTransport(
                 "Report link for test ${testName.name}: ${reportViewer.generateSingleTestRunUrl(result.get())}"
             )
 
+            @Suppress("ControlFlowWithEmptyBody")
             if (reportCoordinates.runId.contains("local", ignoreCase = true)) {
                 //todo find a way to display info in user context, it's a secret knowledge about logcat line
             }
