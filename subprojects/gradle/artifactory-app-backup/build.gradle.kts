@@ -10,7 +10,6 @@ dependencies {
     implementation(project(":gradle:signer"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:upload-cd-build-result"))
-    implementation(Dependencies.gradle.androidPlugin)
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))

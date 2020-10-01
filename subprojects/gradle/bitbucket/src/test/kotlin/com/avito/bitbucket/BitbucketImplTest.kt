@@ -1,6 +1,6 @@
 package com.avito.bitbucket
 
-import com.avito.test.gradle.KotlinModule
+import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file

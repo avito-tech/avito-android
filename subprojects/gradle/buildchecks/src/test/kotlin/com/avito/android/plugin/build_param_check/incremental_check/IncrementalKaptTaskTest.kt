@@ -1,12 +1,11 @@
 package com.avito.android.plugin.build_param_check.incremental_check
 
-import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
@@ -100,7 +99,6 @@ internal class IncrementalKaptTaskTest {
         ":checkIncrementalKapt",
         "-ParchPersistenceVersion=2.2.4",
         "-Pkapt.incremental.apt=true",
-        "-Djava.version=$javaVersion",
         "-Djava.runtime.version=$javaVersion",
         "-Djava.vendor=Avito",
         expectFailure = expectFailure
@@ -124,7 +122,6 @@ internal class IncrementalKaptTaskTest {
                 AndroidAppModule(
                     name = "room-test",
                     plugins = listOfNotNull(
-                        "kotlin-android",
                         "kotlin-kapt",
                         if (applyRoomPlugin) "com.avito.android.room-config" else null
                     )

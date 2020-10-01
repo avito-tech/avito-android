@@ -1,16 +1,16 @@
 package com.avito.impact
 
-import com.avito.test.gradle.AndroidAppModule
-import com.avito.test.gradle.AndroidLibModule
-import com.avito.test.gradle.Module
-import com.avito.test.gradle.ParentGradleModule
-import com.avito.test.gradle.PlatformModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.module.Module
+import com.avito.test.gradle.module.ParentGradleModule
+import com.avito.test.gradle.module.PlatformModule
 import com.avito.test.gradle.mutate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -134,7 +134,7 @@ class ImpactAnalysisTest {
         )
         with(projectDir) {
             checkoutSourceBranch()
-            file("app/$KOTLIN_SOURCE_SET/SomeClass.kt").mutate()
+            file("app/$KOTLIN_SOURCE_SET/com/app/SomeClass.kt").mutate()
         }
         val result = detectChanges()
 

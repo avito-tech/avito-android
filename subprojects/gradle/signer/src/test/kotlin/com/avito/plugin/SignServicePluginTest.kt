@@ -1,9 +1,9 @@
 package com.avito.plugin
 
-import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -116,6 +116,7 @@ class SignServicePluginTest {
             modules = listOf(
                 AndroidAppModule(
                     "app",
+                    enableKotlinAndroidPlugin = false,
                     versionCode = "100",
                     versionName = "22.1",
                     plugins = listOf("com.avito.android.signer"),

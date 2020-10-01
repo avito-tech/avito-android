@@ -1,7 +1,7 @@
 package com.avito.android
 
-import com.avito.test.gradle.KotlinModule
-import com.avito.test.gradle.PlatformModule
+import com.avito.test.gradle.module.KotlinModule
+import com.avito.test.gradle.module.PlatformModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test

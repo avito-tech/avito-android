@@ -1,14 +1,14 @@
 package com.avito.instrumentation.impact.util
 
-import com.avito.test.gradle.AndroidAppModule
-import com.avito.test.gradle.AndroidLibModule
-import com.avito.test.gradle.KotlinModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.append
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.git
 import com.avito.test.gradle.kotlinClass
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.module.KotlinModule
 import java.io.File
 
 const val projectToChange = "application"

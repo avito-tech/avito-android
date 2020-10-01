@@ -1,6 +1,6 @@
 package com.avito.instrumentation
 
-import com.avito.test.gradle.AndroidAppModule
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew

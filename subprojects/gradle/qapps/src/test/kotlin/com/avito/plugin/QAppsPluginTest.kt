@@ -1,8 +1,8 @@
 package com.avito.plugin
 
-import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -60,6 +60,7 @@ internal class QAppsPluginTest {
             modules = listOf(
                 AndroidAppModule(
                     "app",
+                    enableKotlinAndroidPlugin = false,
                     plugins = listOf("com.avito.android.qapps"),
                     buildGradleExtra = """
                         qapps {

@@ -1,8 +1,8 @@
 package com.avito.android.plugin.artifactory
 
-import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -31,6 +31,7 @@ internal class ArtifactoryAppBackupPluginTest {
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
+                    enableKotlinAndroidPlugin = false,
                     versionCode = "90",
                     versionName = "10",
                     name = moduleName,
@@ -109,6 +110,7 @@ internal class ArtifactoryAppBackupPluginTest {
         TestProjectGenerator(
             modules = listOf(
                 AndroidAppModule(
+                    enableKotlinAndroidPlugin = false,
                     versionCode = "90",
                     versionName = "10",
                     name = moduleName,

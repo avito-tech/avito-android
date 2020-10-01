@@ -1,9 +1,22 @@
 package com.avito.test.gradle
 
 import com.avito.android.androidHomeFromLocalPropertiesFallback
+import com.avito.test.gradle.files.build_gradle
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.module.Module
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Properties
+
+internal val sdkVersion: Int by lazy { System.getProperty("compileSdkVersion").toInt() }
+internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
+internal val agpVersion: String by lazy { System.getProperty("androidGradlePluginVersion") }
+internal val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
+
+interface Generator {
+    fun generateIn(file: File)
+}
 
 /**
  * Кастомизируемый многомодульный проект для тестирования in-house плагинов
@@ -36,15 +49,6 @@ class TestProjectGenerator(
         const val appB = "appB"
         const val sharedModule = "shared"
         const val independentModule = "independent"
-        const val transitiveModule = "transitive"
-
-        val allModules = setOf(
-            appA,
-            appB,
-            sharedModule,
-            independentModule,
-            transitiveModule
-        )
     }
 
     override fun generateIn(file: File) {
@@ -55,6 +59,7 @@ class TestProjectGenerator(
                 writeText(
                     """
         plugins {
+            id 'com.android.application' apply false
             id "org.jetbrains.kotlin.jvm" version "$kotlinVersion" apply false
             ${plugins.joinToString(separator = "\n") { "id '$it'" }}
         }
@@ -135,316 +140,3 @@ private fun generateIncludes(modules: List<Module>, prefix: String): String =
         "include('$prefix:${it.name}')" + "\n" + generateIncludes(it.modules, "$prefix:${it.name}")
     }
 
-interface Module : Generator {
-    val name: String
-    val plugins: List<String>
-    val buildGradleExtra: String
-    val modules: List<Module>
-}
-
-interface AndroidModule : Module {
-    val packageName: String
-}
-
-class KotlinModule(
-    override val name: String,
-    override val plugins: List<String> = emptyList(),
-    override val buildGradleExtra: String = "",
-    override val modules: List<Module> = emptyList(),
-    private val dependencies: String = "",
-    private val mutator: File.() -> Unit = {}
-) : Module {
-
-    override fun generateIn(file: File) {
-        file.module(name) {
-
-            build_gradle {
-                writeText(
-                    """
-plugins {
-    id 'kotlin'
-    ${plugins.joinToString(separator = "\n") { "id '$it'" }}
-}
-
-$buildGradleExtra
-
-dependencies {
-    $dependencies
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-}
-    """.trimIndent()
-                )
-            }
-            dir("src/main") {
-                dir("kotlin") {
-                    kotlinClass("SomeClass")
-                }
-            }
-            this.mutator()
-        }
-    }
-}
-
-/**
- * никакой полезной нагрузки, только контейнер для других модулей
- * :test:utils <- как тут test
- */
-class EmptyModule(
-    override val name: String,
-    override val modules: List<Module>,
-    override val plugins: List<String> = emptyList(),
-    override val buildGradleExtra: String = ""
-) : Module {
-
-    override fun generateIn(file: File) {
-        file.module(name) {
-            modules.forEach { it.generateIn(this) }
-        }
-    }
-}
-
-/**
- * Пустой модуль для настройки gradle всех дочерних для него модулей
- */
-class ParentGradleModule(
-    override val name: String,
-    override val modules: List<Module>,
-    override val plugins: List<String> = emptyList(),
-    override val buildGradleExtra: String = ""
-) : Module {
-
-    override fun generateIn(file: File) {
-        file.module(name) {
-            build_gradle {
-                writeText(
-                    "subprojects { afterEvaluate { println(\"\$name project configuration was altered by parent module's build.gradle\") }}".trimIndent()
-                )
-            }
-            modules.forEach { it.generateIn(this) }
-        }
-    }
-}
-
-class PlatformModule(
-    override val name: String,
-    override val plugins: List<String> = emptyList(),
-    override val modules: List<Module> = emptyList(),
-    override val buildGradleExtra: String = ""
-) : Module {
-
-    override fun generateIn(file: File) {
-        val customPlugins = plugins.joinToString(separator = "\n") { "id '$it'" }
-
-        file.module(name) {
-            build_gradle {
-                writeText(
-                    """
-plugins {
-    id 'java-platform'
-    $customPlugins
-}
-
-$buildGradleExtra
-"""
-                )
-            }
-        }
-    }
-}
-
-class AndroidLibModule(
-    override val name: String,
-    override val packageName: String = "com.$name",
-    override val plugins: List<String> = emptyList(),
-    override val buildGradleExtra: String = "",
-    override val modules: List<Module> = emptyList(),
-    private val dependencies: String = "",
-    private val mutator: File.() -> Unit = {}
-) : AndroidModule {
-
-    override fun generateIn(file: File) {
-        file.module(name) {
-
-            build_gradle {
-                writeText(
-                    """
-plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-    ${plugins.joinToString(separator = "\n") { "id '$it'" }}
-}
-
-$buildGradleExtra
-
-android {
-    compileSdkVersion $sdkVersion
-    buildToolsVersion "$buildToolsVersion"
-}
-
-dependencies {
-    $dependencies
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-}
-    """.trimIndent()
-                )
-            }
-            dir("src/main") {
-                androidManifest(packageName = packageName)
-                dir("kotlin") {
-                    kotlinClass("SomeClass")
-                }
-                dir("res") {
-                    dir("layout") {
-                        file(
-                            "lib.xml", content = """<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:duplicateParentState="true"
-        tools:text="Title" />
-                            """.trimIndent()
-                        )
-                    }
-                }
-            }
-            this.mutator()
-        }
-    }
-}
-
-interface Generator {
-    fun generateIn(file: File)
-}
-
-class InstrumentationTest(val className: String) : Generator {
-    override fun generateIn(file: File) {
-        file.kotlinClass(className, content = {
-            """
-            import org.junit.Test
-
-            class $className {
-
-                @Test
-                fun test() {
-                    //success
-                }
-            }
-        """.trimIndent()
-        })
-    }
-}
-
-class AndroidAppModule(
-    override val name: String,
-    override val packageName: String = "com.$name",
-    override val plugins: List<String> = emptyList(),
-    override val buildGradleExtra: String = "",
-    override val modules: List<Module> = emptyList(),
-    private val instrumentationTests: List<InstrumentationTest> = emptyList(),
-    private val dependencies: String = "",
-    private val versionName: String = "",
-    private val versionCode: String = "",
-    private val customScript: String = "",
-    private val imports: List<String> = emptyList(),
-    private val mutator: File.() -> Unit = {}
-) : AndroidModule {
-
-    override fun generateIn(file: File) {
-        file.module(name) {
-            dir("src") {
-                dir("main") {
-                    androidManifest(packageName = packageName)
-                    dir("kotlin") {
-                        kotlinClass("SomeClass")
-                    }
-                    dir("res") {
-                        dir("values") {
-                            file(
-                                "id.xml", content = """<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="some_id" type="id" />
-</resources>
-                            """.trimIndent()
-                            )
-                        }
-                    }
-                }
-                dir("androidTest") {
-                    dir("java") {
-                        kotlinClass("SomeClass")
-                        instrumentationTests.forEach { it.generateIn(this) }
-                    }
-                }
-            }
-
-            file(
-                "proguard.pro", """
--ignorewarnings
--keep public class * {
-    public protected *;
-}
-""".trimIndent()
-            )
-
-            build_gradle {
-                writeText(
-                    """${imports.joinToString(separator = "\n")}
-plugins {
-    id 'com.android.application'
-${plugins.joinToString(separator = "\n") { "    id '$it'" }}
-}
-
-$buildGradleExtra
-
-android {
-    compileSdkVersion $sdkVersion
-    buildToolsVersion "$buildToolsVersion"
-    defaultConfig {
-        applicationId "$packageName"
-        versionCode $versionCode
-        versionName "$versionName"
-    }
-    buildTypes {
-        release {}
-        debug {}
-        staging {
-            initWith(debug)
-            matchingFallbacks = ["debug"]
-        }
-    }
-}
-
-afterEvaluate{
-    tasks.named("lintVitalRelease").configure { onlyIf { false } }
-}
-
-dependencies {
-    $dependencies
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-}
-
-$customScript
-""".trimIndent()
-                )
-            }
-            this.mutator()
-        }
-    }
-}
-
-val sdkVersion: Int by lazy { System.getProperty("compileSdkVersion").toInt() }
-val buildToolsVersion: String by lazy { System.getProperty("buildToolsVersion") }
-val agpVersion: String by lazy { System.getProperty("androidGradlePluginVersion") }
-val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
-
-private fun File.build_gradle(mutator: File.() -> Unit = {}) = file("build.gradle").apply(mutator)
-
-private fun File.androidManifest(packageName: String) = file(
-    "AndroidManifest.xml", """
-    <manifest package="$packageName"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-    </manifest>
-""".trimIndent()
-)
