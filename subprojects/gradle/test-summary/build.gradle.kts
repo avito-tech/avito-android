@@ -11,6 +11,8 @@ dependencies {
     implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:slack"))
+    implementation(project(":gradle:bitbucket"))
+    implementation(project(":gradle:statsd-config"))
     implementation(Dependencies.coroutinesCore)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.okhttp)

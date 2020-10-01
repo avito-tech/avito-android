@@ -2,6 +2,7 @@ package com.avito.instrumentation.report
 
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
+import com.avito.test.summary.FlakyInfo
 import org.funktionale.tries.Try
 
 class FlakyTestInfo {
@@ -41,9 +42,3 @@ class FlakyTestInfo {
             }
     }
 }
-
-data class FlakyInfo(
-    val testName: TestName,
-    val attempts: Int,
-    val wastedTimeEstimateInSec: Int
-)

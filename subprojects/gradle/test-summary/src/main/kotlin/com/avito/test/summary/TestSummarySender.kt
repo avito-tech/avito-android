@@ -19,7 +19,7 @@ import com.avito.test.summary.compose.SlackSummaryComposer
 import com.avito.test.summary.compose.SlackSummaryComposerImpl
 import com.avito.utils.logging.CILogger
 
-interface TestSummarySender {
+internal interface TestSummarySender {
 
     fun send(suite: CrossDeviceSuite, reportId: String)
 }
@@ -27,16 +27,17 @@ interface TestSummarySender {
 /**
  * @param reserveSlackChannel на случай ошибок, чтобы не терять репорты
  */
-class TestSummarySenderImplementation(
+internal class TestSummarySenderImpl(
     slackClient: SlackClient,
     reportViewer: ReportViewer,
     private val logger: CILogger,
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
-    private val globalSummaryChannel: SlackChannel = summaryChannel,
+    private val globalSummaryChannel: SlackChannel,
     private val unitToChannelMapping: Map<Team, SlackChannel>,
-    private val mentionOnFailures: Set<Team> = setOf(Team("buyer-x")), //todo move to config
-    private val reserveSlackChannel: SlackChannel = SlackChannel("#speed-testing-team") //todo move to config
+    private val mentionOnFailures: Set<Team>,
+    private val reserveSlackChannel: SlackChannel,
+    private val slackUserName: String
 ) : TestSummarySender {
 
     private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewer)
@@ -50,7 +51,7 @@ class TestSummarySenderImplementation(
         updater = slackMessageUpdater,
         condition = ConjunctionMessageUpdateCondition(
             listOf(
-                SameAuthorUpdateCondition(SLACK_USER_NAME),
+                SameAuthorUpdateCondition(slackUserName),
                 TextContainsStringCondition(reportCoordinates.runId)
             )
         ),
@@ -81,7 +82,7 @@ class TestSummarySenderImplementation(
                             SlackSendMessageRequest(
                                 channel = channel,
                                 text = message,
-                                author = SLACK_USER_NAME,
+                                author = slackUserName,
                                 emoji = slackEmojiProvider.emojiName(unitSuite.percentSuccessOfAutomated)
                             )
                         )
@@ -106,20 +107,13 @@ class TestSummarySenderImplementation(
                     SlackSendMessageRequest(
                         channel = globalSummaryChannel,
                         text = it,
-                        author = SLACK_USER_NAME,
+                        author = slackUserName,
                         emoji = slackEmojiProvider.emojiName(suite.percentSuccessOfAutomated)
                     )
                 )
             }.onFailure { throwable ->
-                logger.critical(
-                    "Can't compose slack message for summary: buildUrl=$buildUrl",
-                    throwable
-                )
+                logger.critical("Can't compose slack message for summary: buildUrl=$buildUrl", throwable)
             }
         }
     }
 }
-
-val summaryChannel = SlackChannel("#android-test-summary")
-
-private const val SLACK_USER_NAME = "Test Analyzer"

@@ -17,6 +17,8 @@ import java.io.Serializable
 
 interface Report : ReadReport {
 
+    val reportApi: ReportsApi
+
     interface Factory : Serializable {
 
         sealed class Config : Serializable {
@@ -174,6 +176,8 @@ interface Report : ReadReport {
         private val timeProvider: TimeProvider = DefaultTimeProvider(),
         private val batchSize: Int = 400
     ) : Report {
+
+        override val reportApi: ReportsApi = reportsApi
 
         override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
             return when (val result = reportsApi.create(reportCoordinates, buildId, apiUrl, gitBranch, gitCommit)) {

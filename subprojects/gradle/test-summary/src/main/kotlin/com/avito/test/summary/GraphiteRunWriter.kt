@@ -24,7 +24,6 @@ class GraphiteRunWriter(private val statsSender: StatsDSender) {
         //statsSender.send(prefix, GaugeMetric("flaky", testData.success))
         //statsSender.send(prefix, GaugeMetric("stable", testData.success))
 
-
         //todo научится отправлять сначала в репорт
         //statsSender.send(prefix, GaugeMetric("lost", testData.inconsistentCount))
     }
