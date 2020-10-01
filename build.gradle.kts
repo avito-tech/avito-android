@@ -27,6 +27,7 @@ plugins {
     id("com.android.application") apply false
     id("com.avito.android.instrumentation-tests") apply false
     id("com.avito.android.impact")
+    // if(ci) id("com.avito.android.build-verdict")
 }
 
 /**
