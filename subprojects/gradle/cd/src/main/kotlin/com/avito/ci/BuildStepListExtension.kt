@@ -5,6 +5,7 @@ import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.DeployStep
+import com.avito.ci.steps.FlakyReportStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.MarkReportAsSourceForTMSStep
@@ -53,6 +54,9 @@ open class BuildStepListExtension(
         }
         registerFactory(TestSummaryStep::class.java) { name ->
             TestSummaryStep(buildStepListName, name)
+        }
+        registerFactory(FlakyReportStep::class.java) { name ->
+            FlakyReportStep(buildStepListName, name)
         }
         registerFactory(UploadToQapps::class.java) { name ->
             UploadToQapps(buildStepListName, artifactsConfig, name)
@@ -133,6 +137,14 @@ open class BuildStepListExtension(
 
     fun testSummary(action: Action<TestSummaryStep>) {
         configureAndAdd("testSummary", action)
+    }
+
+    fun flakyReport(closure: Closure<FlakyReportStep>) {
+        configureAndAdd("flakyReport", closure)
+    }
+
+    fun flakyReport(action: Action<FlakyReportStep>) {
+        configureAndAdd("flakyReport", action)
     }
 
     fun uploadToQapps(closure: Closure<UploadToQapps>) {

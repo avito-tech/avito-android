@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class TestSummaryStepTest {
+internal class FlakyReportStepTest {
 
     @Test
     fun test(@TempDir projectDir: File) {
@@ -64,7 +64,7 @@ internal class TestSummaryStepTest {
                         
                         builds {
                             fullCheck {
-                                testSummary {
+                                flakyReport {
                                     configuration = "ui"
                                 }
                             }
@@ -83,7 +83,7 @@ internal class TestSummaryStepTest {
             .buildSuccessful()
             .tasksShouldBeTriggered(
                 ":app:instrumentationUi",
-                ":app:testSummary",
+                ":app:flakyReport",
                 ":app:fullCheck"
             )
             .inOrder()

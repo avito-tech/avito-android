@@ -14,7 +14,6 @@ open class TestSummaryExtension @Inject constructor(objects: ObjectFactory) {
 
     val reportsHost = objects.property<String>()
 
-    // todo was "#android-test-summary"
     val summaryChannel = objects.property<SlackChannel>()
 
     val buildUrl = objects.property<String>()
@@ -25,12 +24,9 @@ open class TestSummaryExtension @Inject constructor(objects: ObjectFactory) {
 
     val unitToChannelMapping = objects.mapProperty<String, String>()
 
-    // todo was setOf(Team("buyer-x"))
     val mentionOnFailures = objects.setProperty(String::class.java)
 
-    // todo was "#speed-testing-team"
     val reserveSlackChannel = objects.property<SlackChannel>()
 
-    // todo was "Test Analyzer"
     val slackUserName = objects.property<String>()
 }
