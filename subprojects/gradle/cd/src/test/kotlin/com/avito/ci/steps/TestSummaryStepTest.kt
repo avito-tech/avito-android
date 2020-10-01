@@ -12,7 +12,58 @@ import java.io.File
 internal class TestSummaryStepTest {
 
     @Test
-    fun test(@TempDir projectDir: File) {
+    fun testSummary(@TempDir projectDir: File) {
+        generateProject(
+            projectDir,
+            """
+            testSummary {
+                configuration = "ui"
+            }
+            """.trimIndent()
+        )
+
+        ciRun(
+            projectDir,
+            "fullCheck",
+            dryRun = true
+        )
+            .assertThat()
+            .buildSuccessful()
+            .tasksShouldBeTriggered(
+                ":app:instrumentationUi",
+                ":app:testSummary",
+                ":app:fullCheck"
+            )
+            .inOrder()
+    }
+
+    @Test
+    fun flakyReport(@TempDir projectDir: File) {
+        generateProject(
+            projectDir,
+            """
+            flakyReport {
+                configuration = "ui"
+            }
+            """.trimIndent()
+        )
+
+        ciRun(
+            projectDir,
+            "fullCheck",
+            dryRun = true
+        )
+            .assertThat()
+            .buildSuccessful()
+            .tasksShouldBeTriggered(
+                ":app:instrumentationUi",
+                ":app:flakyReport",
+                ":app:fullCheck"
+            )
+            .inOrder()
+    }
+
+    private fun generateProject(projectDir: File, step: String) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.impact"),
             modules = listOf(
@@ -64,28 +115,12 @@ internal class TestSummaryStepTest {
                         
                         builds {
                             fullCheck {
-                                testSummary {
-                                    configuration = "ui"
-                                }
+                                $step
                             }
                         }
                     """.trimIndent()
                 )
             )
         ).generateIn(projectDir)
-
-        ciRun(
-            projectDir,
-            "fullCheck",
-            dryRun = true
-        )
-            .assertThat()
-            .buildSuccessful()
-            .tasksShouldBeTriggered(
-                ":app:instrumentationUi",
-                ":app:testSummary",
-                ":app:fullCheck"
-            )
-            .inOrder()
     }
 }
