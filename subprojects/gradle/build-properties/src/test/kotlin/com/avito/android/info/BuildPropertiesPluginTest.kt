@@ -1,8 +1,8 @@
 package com.avito.android.info
 
-import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,6 +26,7 @@ class BuildPropertiesPluginTest {
             modules = listOf(
                 AndroidAppModule(
                     "app",
+                    enableKotlinAndroidPlugin = false,
                     plugins = listOf("com.avito.android.build-properties"),
                     buildGradleExtra = """
                         buildProperties {
@@ -51,6 +52,7 @@ class BuildPropertiesPluginTest {
             modules = listOf(
                 AndroidAppModule(
                     "app",
+                    enableKotlinAndroidPlugin = false,
                     plugins = listOf("com.avito.android.build-properties"),
                     buildGradleExtra = """
                         buildInfo {

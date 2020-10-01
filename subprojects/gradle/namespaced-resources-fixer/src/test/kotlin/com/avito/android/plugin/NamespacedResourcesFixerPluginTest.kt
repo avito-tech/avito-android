@@ -1,7 +1,7 @@
 package com.avito.android.plugin
 
-import com.avito.test.gradle.AndroidAppModule
-import com.avito.test.gradle.AndroidLibModule
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew

@@ -3,8 +3,8 @@ package com.avito.android
 import Visibility
 import com.avito.android.CodeOwnershipValidationTest.Case.NegativeCase
 import com.avito.android.CodeOwnershipValidationTest.Case.PositiveCase
-import com.avito.test.gradle.AndroidAppModule
-import com.avito.test.gradle.AndroidLibModule
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.ManualTempFolder
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew

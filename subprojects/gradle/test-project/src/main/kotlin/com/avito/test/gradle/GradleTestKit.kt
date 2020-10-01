@@ -3,7 +3,7 @@ package com.avito.test.gradle
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.gradle.testkit.runner.UnexpectedBuildFailure
+import org.gradle.testkit.runner.UnexpectedBuildResultException
 import java.io.File
 
 /**
@@ -18,7 +18,8 @@ fun gradlew(
     projectDir: File,
     vararg args: String,
     dryRun: Boolean = false,
-    expectFailure: Boolean = false
+    expectFailure: Boolean = false,
+    useModuleClasspath: Boolean = true
 ): TestResult {
 
     val defaultArguments = mutableListOf(
@@ -41,7 +42,7 @@ fun gradlew(
         val builder = GradleRunner.create()
             .withProjectDir(projectDir)
             .withArguments(finalArgs)
-            .withPluginClasspath()
+            .apply { if(useModuleClasspath) withPluginClasspath() }
             /**
              * WARNING! it breaks classpath and causes failures in AGP's tasks
              * see. MBS-5462
@@ -59,8 +60,8 @@ fun gradlew(
         } else {
             TestResult.Success(builder.build(), dryRun)
         }
-    } catch (e: UnexpectedBuildFailure) {
-        throw AssertionError("Build failed unexpectedly", e)
+    } catch (e: UnexpectedBuildResultException) {
+        throw AssertionError("Unexpected build result", e)
     }
 }
 

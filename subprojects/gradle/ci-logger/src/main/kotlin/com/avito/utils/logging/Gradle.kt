@@ -33,7 +33,7 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
             )
         }.logger
     } else {
-        localBuildLogger(project.gradle.startParameter.logLevel < LogLevel.LIFECYCLE)
+        localBuildLogger(project.gradle.startParameter.logLevel < LogLevel.LIFECYCLE, loggerName)
     }
 }
 
@@ -96,10 +96,14 @@ private fun defaultCILogger(
     )
 }
 
-private fun localBuildLogger(debug: Boolean): CILogger {
+private fun localBuildLogger(
+    debug: Boolean,
+    name: String
+): CILogger {
 
     val gradleDebugLogger = if (debug) {
         CILoggingHandlerImplementation(
+            formatter = AppendPrefixFormatter(name),
             destination = StdoutDestination
         )
     } else {
@@ -107,6 +111,7 @@ private fun localBuildLogger(debug: Boolean): CILogger {
     }
 
     val stdoutHandler = CILoggingHandlerImplementation(
+        formatter = AppendPrefixFormatter(name),
         destination = StdoutDestination
     )
 

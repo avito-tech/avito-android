@@ -1,6 +1,6 @@
 package com.avito.ci.steps
 
-import com.avito.test.gradle.AndroidAppModule
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew

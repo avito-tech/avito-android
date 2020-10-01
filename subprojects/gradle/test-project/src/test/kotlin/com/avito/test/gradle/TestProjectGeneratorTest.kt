@@ -1,5 +1,11 @@
 package com.avito.test.gradle
 
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.module.FolderModule
+import com.avito.test.gradle.module.KotlinModule
+import com.avito.test.gradle.module.ParentGradleModule
+import com.avito.test.gradle.module.PlatformModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,10 +33,10 @@ class TestProjectGeneratorTest {
     fun `settings include generated for inner module`() {
         TestProjectGenerator(
             modules = listOf(
-                EmptyModule(
+                FolderModule(
                     "one",
                     modules = listOf(
-                        EmptyModule(
+                        FolderModule(
                             "two",
                             modules = emptyList()
                         )
@@ -50,13 +56,13 @@ class TestProjectGeneratorTest {
     fun `settings include generated for inner inner module`() {
         TestProjectGenerator(
             modules = listOf(
-                EmptyModule(
+                FolderModule(
                     "one",
                     modules = listOf(
-                        EmptyModule(
+                        FolderModule(
                             "two",
                             modules = listOf(
-                                EmptyModule(
+                                FolderModule(
                                     "three",
                                     modules = emptyList()
                                 )
@@ -73,5 +79,65 @@ class TestProjectGeneratorTest {
             "include(':one:two')",
             "include(':one:two:three')"
         )
+    }
+
+    @Test
+    fun `generating default test project is successful`() {
+        TestProjectGenerator().generateIn(projectDir)
+        gradlew(
+            projectDir,
+            "help",
+            useModuleClasspath = false
+        ).assertThat()
+            .buildSuccessful()
+    }
+
+    @Test
+    fun `generating empty test project is successful`() {
+        TestProjectGenerator(
+            modules = emptyList()
+        ).generateIn(projectDir)
+        gradlew(
+            projectDir,
+            "help",
+            useModuleClasspath = false
+        ).assertThat()
+            .buildSuccessful()
+    }
+
+    @Test
+    fun `generating test project with all module types is successful`() {
+        val androidApp = AndroidAppModule("app", dependencies = """
+            implementation project(':parent:empty:library')
+            implementation project(':parent:empty:kotlin')
+            implementation project(':parent:empty:platform')
+        """.trimIndent())
+        val androidLibrary = AndroidLibModule("library")
+        val platform = PlatformModule("platform")
+        val kotlin = KotlinModule("kotlin")
+        val empty = FolderModule(
+            name = "empty",
+            modules = listOf(
+                androidApp,
+                androidLibrary,
+                kotlin,
+                platform
+            )
+        )
+        val parent = ParentGradleModule(
+            name = "parent",
+            modules = listOf(empty)
+        )
+        TestProjectGenerator(
+            modules = listOf(
+                parent
+            )
+        ).generateIn(projectDir)
+        gradlew(
+            projectDir,
+            "assembleDebug",
+            useModuleClasspath = false
+        ).assertThat()
+            .buildSuccessful()
     }
 }

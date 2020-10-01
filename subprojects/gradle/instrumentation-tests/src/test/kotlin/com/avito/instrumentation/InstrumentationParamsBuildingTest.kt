@@ -2,7 +2,7 @@ package com.avito.instrumentation
 
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.report.model.RunId
-import com.avito.test.gradle.AndroidAppModule
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.file

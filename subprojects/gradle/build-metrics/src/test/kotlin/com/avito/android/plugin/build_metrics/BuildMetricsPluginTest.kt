@@ -1,10 +1,10 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.git.Git
-import com.avito.test.gradle.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +14,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+
+private const val rootAppName = "root"
+private const val loggerPrefix = "[$rootAppName] statsd:"
 
 class BuildMetricsPluginTest {
 
@@ -26,6 +29,7 @@ class BuildMetricsPluginTest {
     fun setup(@TempDir tempDir: File) {
         this.tempDir = tempDir
         TestProjectGenerator(
+            name = rootAppName,
             plugins = listOf("com.avito.android.build-metrics"),
             modules = listOf(
                 AndroidAppModule(name = "app")
@@ -162,5 +166,3 @@ class BuildMetricsPluginTest {
     }
 
 }
-
-private const val loggerPrefix = "statsd:"

@@ -1,8 +1,8 @@
 package com.avito.instrumentation
 
-import com.avito.test.gradle.AndroidAppModule
-import com.avito.test.gradle.AndroidLibModule
-import com.avito.test.gradle.Module
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import org.junit.jupiter.api.Test

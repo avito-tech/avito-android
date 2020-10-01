@@ -1,7 +1,5 @@
 package com.avito.impact
 
-import com.avito.test.gradle.AndroidAppModule
-import com.avito.test.gradle.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.commit
@@ -10,6 +8,8 @@ import com.avito.test.gradle.file
 import com.avito.test.gradle.git
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.mutate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -97,7 +97,7 @@ class SourceSetsImpactTest {
     fun `change in the implementation main - detects changes in all tests and dependant projects`() {
         with(projectDir) {
             git("reset --hard")
-            file("feature/src/main/kotlin/SomeClass.kt").mutate()
+            file("feature/src/main/kotlin/com/feature/SomeClass.kt").mutate()
         }
         val result = detectChanges()
 

@@ -7,7 +7,7 @@ import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.runTask
 import com.avito.git.Git
-import com.avito.test.gradle.AndroidAppModule
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.http.Mock
