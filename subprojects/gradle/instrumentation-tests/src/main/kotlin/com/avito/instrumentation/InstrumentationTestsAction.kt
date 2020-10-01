@@ -1,7 +1,5 @@
 package com.avito.instrumentation
 
-import com.avito.android.stats.StatsDConfig
-import com.avito.bitbucket.BitbucketConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.finalizer.InstrumentationTestActionFinalizer
@@ -9,8 +7,6 @@ import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.scheduling.TestsScheduler
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
-import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.CILogger
 import java.io.File
@@ -58,7 +54,6 @@ class InstrumentationTestsAction(
         val executionParameters: ExecutionParameters,
         val buildId: String,
         val buildType: String,
-        val pullRequestId: Int?,
         val buildUrl: String,
         val currentBranch: String,
         val sourceCommitHash: String,
@@ -73,9 +68,6 @@ class InstrumentationTestsAction(
         val slackToken: String,
         val reportViewerUrl: String,
         val fileStorageUrl: String,
-        val bitbucketConfig: BitbucketConfig,
-        val statsdConfig: StatsDConfig,
-        val unitToChannelMapping: Map<Team, SlackChannel>,
         val registry: String,
         val reportFactory: Report.Factory,
         val reportConfig: Report.Factory.Config,

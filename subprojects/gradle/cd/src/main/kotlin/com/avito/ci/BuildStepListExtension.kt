@@ -8,6 +8,7 @@ import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.MarkReportAsSourceForTMSStep
+import com.avito.ci.steps.TestSummaryStep
 import com.avito.ci.steps.UiTestCheck
 import com.avito.ci.steps.UnitTestCheck
 import com.avito.ci.steps.UploadBuildResult
@@ -49,6 +50,9 @@ open class BuildStepListExtension(
         }
         registerFactory(MarkReportAsSourceForTMSStep::class.java) { name ->
             MarkReportAsSourceForTMSStep(buildStepListName, name)
+        }
+        registerFactory(TestSummaryStep::class.java) { name ->
+            TestSummaryStep(buildStepListName, name)
         }
         registerFactory(UploadToQapps::class.java) { name ->
             UploadToQapps(buildStepListName, artifactsConfig, name)
@@ -121,6 +125,14 @@ open class BuildStepListExtension(
 
     fun markReportAsSourceForTMS(action: Action<MarkReportAsSourceForTMSStep>) {
         configureAndAdd("markReportAsSourceForTMS", action)
+    }
+
+    fun testSummary(closure: Closure<TestSummaryStep>) {
+        configureAndAdd("testSummary", closure)
+    }
+
+    fun testSummary(action: Action<TestSummaryStep>) {
+        configureAndAdd("testSummary", action)
     }
 
     fun uploadToQapps(closure: Closure<UploadToQapps>) {

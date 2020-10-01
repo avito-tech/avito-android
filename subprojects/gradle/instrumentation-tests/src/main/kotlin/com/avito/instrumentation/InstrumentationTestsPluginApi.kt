@@ -23,6 +23,13 @@ internal const val preInstrumentationTaskName: String = "preInstrumentation"
 fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
     typedNamed(instrumentationTaskName(configuration))
 
+@Suppress("UnstableApiUsage")
+fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates() = flatMap { task ->
+    task.instrumentationConfiguration.map { config ->
+        config.instrumentationParams.reportCoordinates()
+    }
+}
+
 fun TaskContainer.preInstrumentationTask(configuration: String): TaskProvider<Task> =
     typedNamed(preInstrumentationTaskName(configuration))
 

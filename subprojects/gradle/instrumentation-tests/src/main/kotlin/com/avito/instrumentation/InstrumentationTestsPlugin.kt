@@ -117,7 +117,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                         this.reportViewerConfig.set(extensionData.reportViewer)
                     }
                     this.registry.set(extensionData.registry)
-                    this.unitToChannelMapping.set(extensionData.unitToChannelMapping)
                     this.kubernetesCredentials.set(project.kubernetesCredentials)
                 }
 

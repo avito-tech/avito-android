@@ -1,8 +1,5 @@
 package com.avito.instrumentation
 
-import com.avito.android.stats.StatsDConfig
-import com.avito.bitbucket.AtlassianCredentials
-import com.avito.bitbucket.BitbucketConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.FakeReport
@@ -10,9 +7,7 @@ import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
 import com.avito.report.model.createStubInstance
-import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.CILogger
 import java.io.File
@@ -45,15 +40,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     reportViewerUrl: String = "https://reports",
     kubernetesRegistry: String = "",
     fileStorageUrl: String = "https://files",
-    pullRequestId: Int? = null,
-    bitbucketConfig: BitbucketConfig = BitbucketConfig(
-        baseUrl = "http://bitbucket",
-        credentials = AtlassianCredentials("xxx", "xxx"),
-        projectKey = "AA",
-        repositorySlug = "android"
-    ),
-    statsDConfig: StatsDConfig = StatsDConfig(false, "", "", 0, ""),
-    unitToChannelMapping: Map<Team, SlackChannel> = emptyMap(),
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
 ) =
     InstrumentationTestsAction.Params(
@@ -78,10 +64,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         sendStatistics = sendStatistics,
         slackToken = slackToken,
         fileStorageUrl = fileStorageUrl,
-        pullRequestId = pullRequestId,
-        bitbucketConfig = bitbucketConfig,
-        statsdConfig = statsDConfig,
-        unitToChannelMapping = unitToChannelMapping,
         reportViewerUrl = reportViewerUrl,
         registry = kubernetesRegistry,
         reportConfig = Report.Factory.Config.ReportViewerCoordinates(

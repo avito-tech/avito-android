@@ -12,7 +12,6 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name: String = "name",
     instrumentationParams: InstrumentationParameters = InstrumentationParameters(),
     reportSkippedTests: Boolean = true,
-    reportFlakyTests: Boolean = false,
     impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off,
     kubernetesNamespace: String = "kubernetesNamespace",
     targets: List<TargetConfiguration.Data> = emptyList(),
@@ -22,7 +21,6 @@ fun InstrumentationConfiguration.Data.Companion.createStubInstance(
 ): InstrumentationConfiguration.Data = InstrumentationConfiguration.Data(
     name = name,
     instrumentationParams = instrumentationParams,
-    reportFlakyTests = reportFlakyTests,
     reportSkippedTests = reportSkippedTests,
     impactAnalysisPolicy = impactAnalysisPolicy,
     kubernetesNamespace = kubernetesNamespace,

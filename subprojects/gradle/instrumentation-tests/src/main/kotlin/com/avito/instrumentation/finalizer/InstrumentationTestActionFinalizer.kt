@@ -2,7 +2,6 @@ package com.avito.instrumentation.finalizer
 
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.TestRunResult
-import com.avito.test.summary.FlakyTestReporter
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter

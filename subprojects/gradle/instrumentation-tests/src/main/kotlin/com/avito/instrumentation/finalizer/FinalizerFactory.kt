@@ -6,7 +6,6 @@ import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
 import com.avito.instrumentation.report.Report
 import com.avito.report.ReportViewer
-import com.avito.slack.SlackClient
 import com.avito.utils.BuildFailer
 import com.avito.utils.logging.CILogger
 import com.google.common.annotations.VisibleForTesting
@@ -18,12 +17,9 @@ interface FinalizerFactory {
     fun create(): InstrumentationTestActionFinalizer
 
     class Impl : FinalizerFactory {
-
-
         private val params: InstrumentationTestsAction.Params
         private val sourceReport: Report
         private val gson: Gson
-        private val slackClient: SlackClient
         private val buildFailer: BuildFailer
 
         // todo Make generic. Need two realization for InMemory and ReportViewer
@@ -35,13 +31,11 @@ interface FinalizerFactory {
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
             gson: Gson = GsonBuilder().setPrettyPrinting().create(),
-            buildFailer: BuildFailer,
-            slackClient: SlackClient
+            buildFailer: BuildFailer
         ) {
             this.params = params
             this.sourceReport = sourceReport
             this.gson = gson
-            this.slackClient = slackClient
             this.reportViewer = ReportViewer.Impl(params.reportViewerUrl)
             this.logger = params.logger
             this.buildFailer = buildFailer
@@ -55,8 +49,7 @@ interface FinalizerFactory {
             params = params,
             sourceReport = sourceReport,
             gson = gson,
-            buildFailer = BuildFailer.RealFailer(),
-            slackClient = SlackClient.Impl(params.slackToken, workspace = "avito")
+            buildFailer = BuildFailer.RealFailer()
         )
 
         override fun create(): InstrumentationTestActionFinalizer {

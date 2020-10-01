@@ -10,10 +10,12 @@ import com.avito.report.model.Team
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.ciLogger
-import com.avito.utils.logging.commonLogger
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
 abstract class TestSummaryTask : DefaultTask() {
@@ -22,28 +24,16 @@ abstract class TestSummaryTask : DefaultTask() {
     abstract val reportCoordinates: Property<ReportCoordinates>
 
     @get:Input
-    abstract val slackToken: Property<String>
-
-    @get:Input
-    abstract val slackWorkspace: Property<String>
-
-    @get:Input
-    abstract val reportsHost: Property<String>
-
-    @get:Input
     abstract val summaryChannel: Property<SlackChannel>
 
     @get:Input
     abstract val buildUrl: Property<String>
 
     @get:Input
-    abstract val reportViewerUrl: Property<String>
+    abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
 
     @get:Input
-    abstract val unitToChannelMapping: Property<Map<Team, SlackChannel>>
-
-    @get:Input
-    abstract val mentionOnFailures: Property<Set<Team>>
+    abstract val mentionOnFailures: SetProperty<Team>
 
     @get:Input
     abstract val reserveSlackChannel: Property<SlackChannel>
@@ -51,22 +41,22 @@ abstract class TestSummaryTask : DefaultTask() {
     @get:Input
     abstract val slackUserName: Property<String>
 
+    @get:Internal
+    abstract val slackClient: Property<SlackClient>
+
+    @get:Internal
+    abstract val reportsApi: Property<ReportsApi>
+
+    @get:Internal
+    abstract val reportViewer: Property<ReportViewer>
+
     @TaskAction
     fun doWork() {
-        val logger = commonLogger(ciLogger)
-
         val action: SendStatisticsAction = SendStatisticsActionImpl(
-            reportApi = ReportsApi.create(
-                host = reportsHost.get(),
-                fallbackUrl = reportsHost.get(),
-                logger = logger
-            ),
+            reportApi = reportsApi.get(),
             testSummarySender = TestSummarySenderImpl(
-                slackClient = createSlackClient(
-                    slackToken = slackToken.get(),
-                    slackWorkspace = slackWorkspace.get()
-                ),
-                reportViewer = createReportViewer(reportViewerUrl.get()),
+                slackClient = slackClient.get(),
+                reportViewer = reportViewer.get(),
                 logger = ciLogger,
                 buildUrl = buildUrl.get(),
                 reportCoordinates = reportCoordinates.get(),
@@ -81,17 +71,6 @@ abstract class TestSummaryTask : DefaultTask() {
         )
 
         action.send(reportCoordinates.get())
-    }
-
-    private fun createSlackClient(slackToken: String, slackWorkspace: String): SlackClient {
-        return SlackClient.Impl(
-            token = slackToken,
-            workspace = slackWorkspace
-        )
-    }
-
-    private fun createReportViewer(reportViewerUrl: String): ReportViewer {
-        return ReportViewer.Impl(reportViewerUrl)
     }
 
     private fun createStatsDSender(statsDConfig: StatsDConfig): StatsDSender {

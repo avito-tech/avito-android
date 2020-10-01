@@ -1,11 +1,10 @@
-package com.avito.instrumentation.report
+package com.avito.test.summary
 
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
-import com.avito.test.summary.FlakyInfo
 import org.funktionale.tries.Try
 
-class FlakyTestInfo {
+internal class FlakyTestInfo {
 
     private val info: MutableList<FlakyInfo> = mutableListOf()
 
