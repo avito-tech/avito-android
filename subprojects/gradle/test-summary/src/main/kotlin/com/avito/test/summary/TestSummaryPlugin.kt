@@ -24,6 +24,7 @@ class TestSummaryPlugin : Plugin<Project> {
 
         val logger = commonLogger(target.ciLogger)
 
+        @Suppress("UnstableApiUsage")
         val slackClient: Provider<SlackClient> =
             extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
                 createSlackClient(token, workspace)
@@ -37,12 +38,14 @@ class TestSummaryPlugin : Plugin<Project> {
 
         // report coordinates provided in TestSummaryStep
         // this plugin only works via steps for now
-
         target.tasks.register<TestSummaryTask>(testSummaryTaskName) {
             summaryChannel.set(extension.summaryChannel)
             buildUrl.set(extension.buildUrl)
+
+            @Suppress("UnstableApiUsage")
             unitToChannelMapping.set(extension.unitToChannelMapping
                 .map { map -> map.map { (key, value) -> Team(key) to SlackChannel(value) }.toMap() })
+
             mentionOnFailures.set(extension.mentionOnFailures
                 .map { set -> set.map { Team(it) }.toSet() })
             reserveSlackChannel.set(extension.reserveSlackChannel)
