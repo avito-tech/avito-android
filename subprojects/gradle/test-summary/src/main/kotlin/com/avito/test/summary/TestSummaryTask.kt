@@ -29,6 +29,7 @@ abstract class TestSummaryTask : DefaultTask() {
     @get:Input
     abstract val buildUrl: Property<String>
 
+    @Suppress("UnstableApiUsage")
     @get:Input
     abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
 
