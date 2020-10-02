@@ -1,7 +1,9 @@
 package com.avito.test.summary
 
 import com.avito.report.ReportViewer
+import com.avito.report.ReportsApi
 import com.avito.report.model.CrossDeviceSuite
+import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.ConjunctionMessageUpdateCondition
@@ -21,7 +23,7 @@ import com.avito.utils.logging.CILogger
 
 internal interface TestSummarySender {
 
-    fun send(suite: CrossDeviceSuite, reportId: String)
+    fun send(reportCoordinates: ReportCoordinates)
 }
 
 /**
@@ -30,6 +32,7 @@ internal interface TestSummarySender {
 internal class TestSummarySenderImpl(
     slackClient: SlackClient,
     reportViewer: ReportViewer,
+    private val reportsApi: ReportsApi,
     private val logger: CILogger,
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
@@ -64,7 +67,14 @@ internal class TestSummarySenderImpl(
 
     private val slackEmojiProvider = SlackEmojiProvider()
 
-    override fun send(suite: CrossDeviceSuite, reportId: String) {
+    override fun send(reportCoordinates: ReportCoordinates) {
+        reportsApi.getCrossDeviceTestData(reportCoordinates).fold(
+            { suite -> send(suite, requireNotNull(reportsApi.tryGetId(reportCoordinates))) },
+            { throwable -> logger.critical("Can't get suite report", throwable) }
+        )
+    }
+
+    private fun send(suite: CrossDeviceSuite, reportId: String) {
         slackBulkSender.sendBulk {
             unitToChannelMapping.entries.map { (team, channel) ->
                 val unitSuite = suite.filterTeam(team)
@@ -113,6 +123,20 @@ internal class TestSummarySenderImpl(
                 )
             }.onFailure { throwable ->
                 logger.critical("Can't compose slack message for summary: buildUrl=$buildUrl", throwable)
+            }
+        }
+    }
+
+    private fun ReportsApi.tryGetId(reportCoordinates: ReportCoordinates): String? {
+        return when (val result = getReport(reportCoordinates)) {
+            is GetReportResult.Found -> result.report.id
+            GetReportResult.NotFound -> {
+                logger.critical("Can't find report for runId=${reportCoordinates.runId}")
+                null
+            }
+            is GetReportResult.Error -> {
+                logger.critical("Can't find report for runId=${reportCoordinates.runId}", result.exception)
+                null
             }
         }
     }

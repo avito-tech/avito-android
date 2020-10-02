@@ -92,8 +92,7 @@ abstract class FlakyReportTask : DefaultTask() {
             reportViewer = reportViewer,
             buildUrl = buildUrl,
             currentBranch = currentBranch,
-            reportCoordinates = reportCoordinates,
-            logger = logger
+            reportCoordinates = reportCoordinates
         )
     }
 }

@@ -7,7 +7,6 @@ import com.avito.slack.SlackMessageSender
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import com.avito.utils.logging.CILogger
 import org.funktionale.tries.Try
 
 internal class FlakyTestReporterImpl(
@@ -17,8 +16,7 @@ internal class FlakyTestReporterImpl(
     private val reportViewer: ReportViewer,
     private val buildUrl: String,
     private val currentBranch: String,
-    private val reportCoordinates: ReportCoordinates,
-    private val logger: CILogger
+    private val reportCoordinates: ReportCoordinates
 ) : FlakyTestReporter {
 
     private val emoji = ":open-eye-laugh-crying:"

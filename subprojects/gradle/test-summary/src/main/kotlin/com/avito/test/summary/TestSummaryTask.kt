@@ -1,8 +1,5 @@
 package com.avito.test.summary
 
-import com.avito.android.stats.StatsDConfig
-import com.avito.android.stats.StatsDSender
-import com.avito.android.stats.statsdConfig
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
@@ -53,37 +50,20 @@ abstract class TestSummaryTask : DefaultTask() {
 
     @TaskAction
     fun doWork() {
-        val action: SendStatisticsAction = SendStatisticsActionImpl(
-            reportApi = reportsApi.get(),
-            testSummarySender = TestSummarySenderImpl(
-                slackClient = slackClient.get(),
-                reportViewer = reportViewer.get(),
-                logger = ciLogger,
-                buildUrl = buildUrl.get(),
-                reportCoordinates = reportCoordinates.get(),
-                globalSummaryChannel = summaryChannel.get(),
-                unitToChannelMapping = unitToChannelMapping.get(),
-                mentionOnFailures = mentionOnFailures.get(),
-                reserveSlackChannel = reserveSlackChannel.get(),
-                slackUserName = slackUserName.get()
-            ),
-            graphiteRunWriter = GraphiteRunWriter(createStatsDSender(project.statsdConfig.get())),
-            ciLogger = ciLogger
+        val testSummarySender: TestSummarySender = TestSummarySenderImpl(
+            slackClient = slackClient.get(),
+            reportViewer = reportViewer.get(),
+            reportsApi = reportsApi.get(),
+            logger = ciLogger,
+            buildUrl = buildUrl.get(),
+            reportCoordinates = reportCoordinates.get(),
+            globalSummaryChannel = summaryChannel.get(),
+            unitToChannelMapping = unitToChannelMapping.get(),
+            mentionOnFailures = mentionOnFailures.get(),
+            reserveSlackChannel = reserveSlackChannel.get(),
+            slackUserName = slackUserName.get()
         )
 
-        action.send(reportCoordinates.get())
-    }
-
-    private fun createStatsDSender(statsDConfig: StatsDConfig): StatsDSender {
-        return StatsDSender.Impl(
-            config = statsDConfig,
-            logger = { message, error ->
-                if (error != null) {
-                    logger.info(message, error)
-                } else {
-                    logger.debug(message)
-                }
-            }
-        )
+        testSummarySender.send(reportCoordinates.get())
     }
 }
