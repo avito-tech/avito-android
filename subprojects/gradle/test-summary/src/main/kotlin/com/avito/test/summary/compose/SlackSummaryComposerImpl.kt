@@ -9,7 +9,7 @@ import com.avito.slack.SlackStringFormat
 import com.avito.test.summary.analysis.analyzeFailures
 import org.funktionale.tries.Try
 
-class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) : SlackSummaryComposer {
+internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) : SlackSummaryComposer {
 
     private val insightLimitLength = 400
 

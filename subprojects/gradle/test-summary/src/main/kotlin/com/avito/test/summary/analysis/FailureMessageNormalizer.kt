@@ -3,7 +3,7 @@ package com.avito.test.summary.analysis
 /**
  * Removes all changing data from failure messages to group it afterwards
  */
-interface FailureMessageNormalizer {
+internal interface FailureMessageNormalizer {
 
     fun normalize(failureMessage: String): String
 }
@@ -15,7 +15,7 @@ interface FailureMessageNormalizer {
  * was   : LinearLayout$LayoutParams@1aeef385
  * become: LinearLayout$LayoutParams
  */
-class RegexFailureMessageNormalizer(
+internal class RegexFailureMessageNormalizer(
     private val regex: Regex,
     private val replacement: String = ""
 ) : FailureMessageNormalizer {
@@ -26,7 +26,7 @@ class RegexFailureMessageNormalizer(
 /**
  * @paran pattern string with {1} {2} ... etc placeholders, will be replaced by [regex] matches one by one
  */
-class RegexToPatternMessageNormalizer(
+internal class RegexToPatternMessageNormalizer(
     private val regex: Regex,
     private val pattern: String
 ) : FailureMessageNormalizer {
@@ -45,7 +45,7 @@ class RegexToPatternMessageNormalizer(
     }
 }
 
-object DuplicateFailureMessageNormalizer : FailureMessageNormalizer {
+internal object DuplicateFailureMessageNormalizer : FailureMessageNormalizer {
 
     override fun normalize(failureMessage: String): String {
         val parts = failureMessage.split("\n\n")

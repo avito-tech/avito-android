@@ -5,7 +5,7 @@ import com.avito.android.stats.StatsDSender
 import com.avito.report.model.CrossDeviceSuite
 import org.funktionale.tries.Try
 
-class GraphiteRunWriter(private val statsSender: StatsDSender) {
+internal class GraphiteRunWriter(private val statsSender: StatsDSender) {
 
     private val prefix = "avito.test.instrumentation.run"
 
