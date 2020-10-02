@@ -10,7 +10,6 @@ dependencies {
     implementation(project(":common:statsd"))
     implementation(project(":common:time"))
     implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:instrumentation-tests"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:slack"))
     implementation(project(":gradle:statsd-config"))
