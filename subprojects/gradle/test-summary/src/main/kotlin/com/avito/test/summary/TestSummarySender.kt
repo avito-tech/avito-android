@@ -23,7 +23,7 @@ import com.avito.utils.logging.CILogger
 
 internal interface TestSummarySender {
 
-    fun send(reportCoordinates: ReportCoordinates)
+    fun send()
 }
 
 /**
@@ -67,7 +67,7 @@ internal class TestSummarySenderImpl(
 
     private val slackEmojiProvider = SlackEmojiProvider()
 
-    override fun send(reportCoordinates: ReportCoordinates) {
+    override fun send() {
         reportsApi.getCrossDeviceTestData(reportCoordinates).fold(
             { suite -> send(suite, requireNotNull(reportsApi.tryGetId(reportCoordinates))) },
             { throwable -> logger.critical("Can't get suite report", throwable) }

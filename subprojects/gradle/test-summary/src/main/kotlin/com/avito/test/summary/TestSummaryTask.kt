@@ -64,6 +64,6 @@ abstract class TestSummaryTask : DefaultTask() {
             slackUserName = slackUserName.get()
         )
 
-        testSummarySender.send(reportCoordinates.get())
+        testSummarySender.send()
     }
 }
