@@ -1,6 +1,5 @@
 package com.avito.instrumentation.report
 
-import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
@@ -14,9 +13,6 @@ class InMemoryReport(private val id: String) : Report {
     private val time = DefaultTimeProvider()
     private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
-
-    override val reportApi: ReportsApi
-        get() = TODO("Not yet implemented")
 
     override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
         gitInfo = "$apiUrl;$gitBranch$;$gitCommit"

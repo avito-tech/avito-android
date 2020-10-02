@@ -1,6 +1,5 @@
 package com.avito.instrumentation.report
 
-import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
@@ -8,9 +7,6 @@ import com.avito.report.model.TestStaticData
 import org.funktionale.tries.Try
 
 class FakeReport : Report {
-
-    override val reportApi: ReportsApi
-        get() = TODO("Not yet implemented")
 
     var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
     var reportedMissingTests: Collection<AndroidTest.Lost>? = null
