@@ -16,7 +16,6 @@ interface ReadReport {
         override fun getTests(): Try<List<SimpleRunTest>> {
             return reportsFetchApi.getTestsForReportId(id)
         }
-
     }
 
     class ReportCoordinates(
@@ -27,6 +26,5 @@ interface ReadReport {
         override fun getTests(): Try<List<SimpleRunTest>> {
             return reportsFetchApi.getTestsForRunId(coordinates)
         }
-
     }
 }

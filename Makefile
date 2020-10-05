@@ -3,7 +3,7 @@ infra?=
 ci?=false
 log_level?=-q
 kubernetesContext?=beta
-localFilter?=
+testFilter?=
 includePrefix?=
 includeAnnotation?=
 useCompositeBuild=true
@@ -12,8 +12,8 @@ instrumentation=Ui
 
 params?=
 
-ifdef localFilter
-params +=-PlocalFilter=$(localFilter)
+ifdef testFilter
+params +=-PcustomFilter=$(testFilter)
 endif
 
 ifdef includePrefix

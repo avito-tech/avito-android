@@ -5,7 +5,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import org.funktionale.tries.Try
 
-interface SlackSummaryComposer {
+internal interface SlackSummaryComposer {
 
     fun composeMessage(
         testData: CrossDeviceSuite,

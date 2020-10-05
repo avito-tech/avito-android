@@ -2,7 +2,6 @@ package com.avito.instrumentation.scheduling
 
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.executing.TestExecutor
-import com.avito.instrumentation.report.FlakyTestInfo
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
@@ -28,8 +27,6 @@ class InstrumentationTestsScheduler(
     override fun schedule(): TestsScheduler.Result {
         filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
 
-        val flakyTestInfo = FlakyTestInfo()
-
         val testSuite = testSuiteProvider.getTestSuite(
             tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
         )
@@ -48,12 +45,9 @@ class InstrumentationTestsScheduler(
             testsToRun = testSuite.testsToRun
         )
 
-        flakyTestInfo.addReport(testsResult)
-
         return TestsScheduler.Result(
             testSuite = testSuite,
-            testsResult = testsResult,
-            flakyInfo = flakyTestInfo.getInfo()
+            testsResult = testsResult
         )
     }
 

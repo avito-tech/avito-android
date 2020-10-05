@@ -16,9 +16,7 @@ open class UiTestCheck(context: String, name: String) : SuppressibleBuildStep(co
 
     var configurations = mutableListOf<String>()
 
-    /**
-     * нам пока нужна отправка только по запуску на всех устройствах
-     */
+    @Deprecated("remove after 2020.23")
     var sendStatistics: Boolean = false
 
     fun configurations(vararg configs: String) {
@@ -55,6 +53,8 @@ open class UiTestCheck(context: String, name: String) : SuppressibleBuildStep(co
                 uiTestTask.get().also { task ->
                     task.suppressFailure.set(this@UiTestCheck.suppressFailures)
                     task.suppressFlaky.set(this@UiTestCheck.suppressFlaky)
+
+                    //todo remove after 2020.23
                     task.sendStatistics.set(this@UiTestCheck.sendStatistics)
 
                     // TODO: how to switch off impact analysis?

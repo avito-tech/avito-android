@@ -1,7 +1,6 @@
 package com.avito.instrumentation.configuration
 
 import com.avito.report.model.Team
-import com.avito.slack.model.SlackChannel
 import com.google.common.annotations.VisibleForTesting
 import groovy.lang.Closure
 import org.gradle.api.Action
@@ -141,9 +140,6 @@ object InstrumentationPluginConfiguration {
                 reportViewer = reportViewer,
                 registry = registry,
                 slackToken = slackToken,
-                unitToChannelMapping = unitToChannelMap
-                    .map { (k, v) -> Team(k) to SlackChannel(v) }
-                    .toMap(),
                 applicationProguardMapping = applicationProguardMapping,
                 testProguardMapping = testProguardMapping
             )
@@ -159,7 +155,6 @@ object InstrumentationPluginConfiguration {
             val reportViewer: ReportViewer?,
             val registry: String,
             val slackToken: String,
-            val unitToChannelMapping: Map<Team, SlackChannel>,
             val applicationProguardMapping: File?,
             val testProguardMapping: File?
         ) : Serializable {

@@ -10,6 +10,7 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     var instrumentationParams: Map<String, String> = emptyMap()
 
+    @Deprecated("remove after 2020.23")
     var reportFlakyTests = false
 
     /**
@@ -55,7 +56,6 @@ abstract class InstrumentationConfiguration(val name: String) {
         return Data(
             name = name,
             instrumentationParams = mergedInstrumentationParameters,
-            reportFlakyTests = reportFlakyTests,
             reportSkippedTests = reportSkippedTests,
             impactAnalysisPolicy = impactAnalysisPolicy,
             kubernetesNamespace = kubernetesNamespace,
@@ -72,7 +72,6 @@ abstract class InstrumentationConfiguration(val name: String) {
     data class Data(
         val name: String,
         val instrumentationParams: InstrumentationParameters,
-        val reportFlakyTests: Boolean,
         val reportSkippedTests: Boolean,
         val impactAnalysisPolicy: ImpactAnalysisPolicy,
         val kubernetesNamespace: String,

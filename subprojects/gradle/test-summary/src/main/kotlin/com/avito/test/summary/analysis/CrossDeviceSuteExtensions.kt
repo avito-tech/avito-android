@@ -4,7 +4,7 @@ import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.FailureOnDevice
 import com.avito.report.model.HasFailures
 
-fun CrossDeviceSuite.analyzeFailures(): Map<String, List<FailureOnDevice>> {
+internal fun CrossDeviceSuite.analyzeFailures(): Map<String, List<FailureOnDevice>> {
     return this.crossDeviceRuns
         .filter { it.status is HasFailures }
         .flatMap { (it.status as HasFailures).failures }
@@ -12,16 +12,15 @@ fun CrossDeviceSuite.analyzeFailures(): Map<String, List<FailureOnDevice>> {
         .groupBy { it.failureMessage }
 }
 
+//visible for testing
+internal fun normalize(failureMessage: String): String {
+    return DEFAULT_FAILURE_MESSAGE_NORMALIZERS
+        .fold(failureMessage, { message, normalizer -> normalizer.normalize(message) })
+}
 
 private fun FailureOnDevice.normalized(): FailureOnDevice {
     val normalizedMessage = normalize(this.failureMessage)
     return FailureOnDevice(this.device, normalizedMessage)
-}
-
-//visible for testing
-fun normalize(failureMessage: String): String {
-    return DEFAULT_FAILURE_MESSAGE_NORMALIZERS
-        .fold(failureMessage, { message, normalizer -> normalizer.normalize(message) })
 }
 
 private val DEFAULT_FAILURE_MESSAGE_NORMALIZERS = listOf(

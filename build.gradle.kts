@@ -151,8 +151,12 @@ subprojects {
                 }
             }
 
+            filters.register("ci") {
+                fromSource.excludeFlaky = true
+            }
+
             val defaultFilter = "default"
-            val customFilter: String = project.getOptionalStringProperty("localFilter", defaultFilter)
+            val customFilter: String = project.getOptionalStringProperty("customFilter", defaultFilter)
 
             configurationsContainer.register("Local") {
                 reportSkippedTests = true

@@ -1,8 +1,5 @@
 package com.avito.instrumentation
 
-import com.avito.android.stats.statsdConfig
-import com.avito.bitbucket.bitbucketConfig
-import com.avito.bitbucket.pullRequestId
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
@@ -13,7 +10,6 @@ import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
-import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
@@ -26,7 +22,6 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
@@ -121,9 +116,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val registry = objects.property<String>()
 
     @Internal
-    val unitToChannelMapping = objects.mapProperty<Team, SlackChannel>()
-
-    @Internal
     val kubernetesCredentials = objects.property<KubernetesCredentials>()
 
     @OutputDirectory
@@ -172,10 +164,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     sendStatistics = sendStatistics.get(),
                     slackToken = slackToken.get(),
                     fileStorageUrl = getFileStorageUrl(),
-                    pullRequestId = project.pullRequestId.orNull,
-                    bitbucketConfig = project.bitbucketConfig.get(),
-                    statsdConfig = project.statsdConfig.get(),
-                    unitToChannelMapping = unitToChannelMapping.get(),
                     reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
                         ?: "http://stub", // stub for inmemory report
                     registry = registry.get(),

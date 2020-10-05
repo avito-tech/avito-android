@@ -2,12 +2,10 @@ package com.avito.instrumentation.finalizer
 
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.TestRunResult
-import com.avito.instrumentation.report.FlakyTestReporter
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.report.SendStatisticsAction
 import com.avito.instrumentation.scheduling.TestsScheduler
 import com.avito.report.ReportViewer
 import com.avito.utils.BuildFailer
@@ -28,12 +26,10 @@ interface InstrumentationTestActionFinalizer {
         private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer,
         private val sourceReport: Report,
         private val params: InstrumentationTestsAction.Params,
-        private val flakyTestReporter: FlakyTestReporter,
         private val reportViewer: ReportViewer,
         private val jUnitReportWriter: JUnitReportWriter,
         private val buildFailer: BuildFailer,
         private val gson: Gson,
-        private val sendStatisticsAction: SendStatisticsAction,
         private val logger: CILogger
     ) : InstrumentationTestActionFinalizer {
 
@@ -56,14 +52,6 @@ interface InstrumentationTestActionFinalizer {
             }
 
             sourceReport.finish()
-
-            if (params.instrumentationConfiguration.reportFlakyTests) {
-                flakyTestReporter.reportSummary(
-                    info = testsExecutionResults.flakyInfo
-                ).onFailure { logger.critical("Can't send flaky test report", it) }
-            }
-
-            sendStatistics()
 
             val reportViewerUrl = reportViewer.generateReportUrl(
                 params.reportCoordinates,
@@ -112,13 +100,5 @@ interface InstrumentationTestActionFinalizer {
          * teamcity XML report processing
          */
         private fun junitFile(outputDir: File): File = File(outputDir, "junit-report.xml")
-
-        private fun sendStatistics() {
-            if (params.sendStatistics) {
-                sendStatisticsAction.send()
-            } else {
-                logger.debug("Send statistics disabled")
-            }
-        }
     }
 }

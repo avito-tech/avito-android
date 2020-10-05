@@ -21,7 +21,6 @@ import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
-import com.avito.slack.FakeSlackClient
 import com.avito.utils.FakeBuildFailer
 import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.FakeCILogger
@@ -170,7 +169,6 @@ internal class InstrumentationTestsActionIntegrationTest {
         finalizer = FinalizerFactory.Impl(
             params = params,
             sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
-            slackClient = FakeSlackClient(),
             buildFailer = buildFailer
         ).create()
     )
