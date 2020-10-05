@@ -122,7 +122,7 @@ internal class TestSummarySenderImpl(
                     )
                 )
             }.onFailure { throwable ->
-                logger.critical("Can't compose slack message for summary: buildUrl=$buildUrl", throwable)
+                logger.warn("Can't compose slack message for summary: buildUrl=$buildUrl", throwable)
             }
         }
     }
@@ -131,11 +131,11 @@ internal class TestSummarySenderImpl(
         return when (val result = getReport(reportCoordinates)) {
             is GetReportResult.Found -> result.report.id
             GetReportResult.NotFound -> {
-                logger.critical("Can't find report for runId=${reportCoordinates.runId}")
+                logger.warn("Can't find report for runId=${reportCoordinates.runId}")
                 null
             }
             is GetReportResult.Error -> {
-                logger.critical("Can't find report for runId=${reportCoordinates.runId}", result.exception)
+                logger.warn("Can't find report for runId=${reportCoordinates.runId}", result.exception)
                 null
             }
         }
