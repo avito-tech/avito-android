@@ -96,7 +96,7 @@ You will see branches from both repositories:
 - To build both projects of special branch, they should have the same name
 
 If you want to run a real CI build against not published release, 
-you need to publish it manually as a temporary version to the internal Artifactory:
+you could publish it manually as a temporary version to the internal Artifactory:
 
 ```text
 ./gradlew -p subprojects publishToArtifactory -PprojectVersion=<projectVersion>-integration-01  -Dorg.gradle.internal.publish.checksums.insecure=true
