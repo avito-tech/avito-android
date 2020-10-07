@@ -64,6 +64,7 @@ class InstrumentationTestsAction(
         val impactAnalysisResult: ImpactAnalysisResult,
         val logger: CILogger,
         val outputDir: File,
+        val verdictFile: File,
         val sendStatistics: Boolean,
         val slackToken: String,
         val reportViewerUrl: String,

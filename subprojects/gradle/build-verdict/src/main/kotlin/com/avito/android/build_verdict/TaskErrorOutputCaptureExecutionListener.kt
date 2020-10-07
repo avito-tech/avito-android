@@ -44,6 +44,15 @@ internal class TaskErrorOutputCaptureExecutionListener(
     override fun afterExecute(task: Task, state: TaskState) {
         if (state.failure == null) {
             logs.remove(Path.path(task.path))
+        } else {
+            when (task) {
+                is BuildVerdictTask -> {
+                    task.ciLogger.debug("Get a verdict from the task ${task.path}")
+                    logs.getOrPut(Path.path(task.path), { StringBuilder() })
+                        .append(task.verdict)
+                }
+
+            }
         }
     }
 
