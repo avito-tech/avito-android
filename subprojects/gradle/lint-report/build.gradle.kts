@@ -6,6 +6,8 @@ plugins {
 }
 
 dependencies {
+    api(project(":gradle:build-verdict-tasks-api"))
+
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gradle.androidPlugin)
     implementation(Dependencies.kotlinHtml)

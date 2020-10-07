@@ -1,5 +1,6 @@
 package com.avito.android.lint
 
+import com.avito.android.build_verdict.BuildVerdictTask
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.Severity
 import com.avito.git.gitState
@@ -18,7 +19,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
-abstract class LintReportTask : DefaultTask() {
+abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
 
     @get:Input
     abstract val abortOnError: Property<Boolean>
@@ -31,6 +32,12 @@ abstract class LintReportTask : DefaultTask() {
 
     @OutputDirectory
     val reportsDir: File = project.file(project.buildDir.path + "/reports/lint/modules")
+
+    private var _verdict: String? = null
+
+    @get:Internal
+    override val verdict: String
+        get() = _verdict ?: "Lint has no errors"
 
     @TaskAction
     fun makeReport() {
@@ -142,9 +149,11 @@ abstract class LintReportTask : DefaultTask() {
             it.projectRelativePath.removePrefix("/")
                 .replace('/', ':')
         }
+        val verdict = "Lint found errors in the projects $modulePath; aborting build. \n" +
+            "See full report: ${report.path}"
+        _verdict = verdict
         throw GradleException(
-            "Lint found errors in the projects $modulePath; aborting build. \n" +
-                "See full report: ${report.path}"
+            verdict
         )
     }
 }
