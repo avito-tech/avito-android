@@ -83,6 +83,7 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.slack.test.channel=$SLACK_TEST_CHANNEL \\
              -Pavito.slack.test.token=$SLACK_TEST_TOKEN \\
              -Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE \\
+             -Pavito.build-verdict.enabled=true \\
              -Pavito.bitbucket.enabled=true"
 
 function runInBuilder() {
