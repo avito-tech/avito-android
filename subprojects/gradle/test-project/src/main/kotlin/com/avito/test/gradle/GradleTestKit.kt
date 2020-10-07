@@ -19,6 +19,7 @@ fun gradlew(
     vararg args: String,
     dryRun: Boolean = false,
     expectFailure: Boolean = false,
+    environment: Map<String, String>? = null,
     useModuleClasspath: Boolean = true
 ): TestResult {
 
@@ -42,6 +43,7 @@ fun gradlew(
         val builder = GradleRunner.create()
             .withProjectDir(projectDir)
             .withArguments(finalArgs)
+            .withEnvironment(environment)
             .apply { if(useModuleClasspath) withPluginClasspath() }
             /**
              * WARNING! it breaks classpath and causes failures in AGP's tasks

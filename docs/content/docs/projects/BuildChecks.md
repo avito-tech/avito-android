@@ -27,7 +27,8 @@ plugins {
 ```kotlin
 buildChecks {
     androidSdk {
-        revision = 4
+        compileSdkVersion = 29
+        revision = 5
     }
     javaVersion {
         version = JavaVersion.VERSION_1_8
@@ -46,7 +47,8 @@ buildChecks {
 ```groovy
 buildChecks {
     androidSdk {
-        revision = 4
+        compileSdkVersion = 29
+        revision = 5
     }
     javaVersion {
         version = JavaVersion.VERSION_1_8
@@ -135,7 +137,8 @@ buildChecks {
     enableByDefault = false
 
     androidSdk {
-        revision = 4
+        compileSdkVersion = 29
+        revision = 5
     }
 }
 ```
@@ -149,7 +152,8 @@ buildChecks {
     enableByDefault = false
 
     androidSdk {
-        revision = 4
+        compileSdkVersion = 29
+        revision = 5
     }
 }
 ```
@@ -205,7 +209,8 @@ Different revisions lead to Gradle remote cache misses. This check forces the sa
 ```kotlin
 buildChecks {
     androidSdk {
-        revision = 4
+        compileSdkVersion = 29
+        revision = 5
     }
 }
 ```
@@ -217,7 +222,8 @@ buildChecks {
 ```groovy
 buildChecks {
     androidSdk {
-        revision = 4
+        compileSdkVersion = 29
+        revision = 5
     }
 }
 ```

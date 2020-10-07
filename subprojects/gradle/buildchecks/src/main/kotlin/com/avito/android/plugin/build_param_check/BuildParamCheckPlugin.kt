@@ -1,6 +1,6 @@
 package com.avito.android.plugin.build_param_check
 
-import com.avito.android.androidSdk
+import com.avito.android.AndroidSdk
 import com.avito.android.plugin.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check
 import com.avito.android.plugin.build_param_check.incremental_check.IncrementalKaptTask
@@ -78,10 +78,10 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             val check = checks.getInstance<Check.AndroidSdk>()
             val task = project.tasks.register<CheckAndroidSdkVersionTask>("checkAndroidSdkVersion") {
                 group = "verification"
-                description =
-                    "Checks sdk version in docker against local one to prevent build cache misses"
+                description = "Checks sdk version in docker against local one to prevent build cache misses"
 
-                revision.set(check.revision)
+                compileSdkVersion.set(check.compileSdkVersion)
+                platformRevision.set(check.revision)
                 // don't run task if it is already compared hashes and it's ok
                 // task will be executed next time if either local jar or docker jar(e.g. inputs) changed
                 outputs.upToDateWhen { outputs.files.singleFile.exists() }
@@ -236,7 +236,7 @@ BuildEnvironment: ${project.buildEnvironment}
 ${startParametersDescription(project.gradle)}
 java=${javaInfo()}
 JAVA_HOME=${System.getenv("JAVA_HOME")}
-ANDROID_HOME=${project.androidSdk.androidHome}
+ANDROID_HOME=${AndroidSdk.fromProject(project).androidHome}
 org.gradle.caching=$isBuildCachingEnabled
 android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
 android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}
