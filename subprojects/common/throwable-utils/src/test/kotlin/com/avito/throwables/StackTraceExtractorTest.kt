@@ -1,5 +1,6 @@
-package com.avito.utils
+package com.avito.throwables
 
+import com.avito.utils.getStackTraceString
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

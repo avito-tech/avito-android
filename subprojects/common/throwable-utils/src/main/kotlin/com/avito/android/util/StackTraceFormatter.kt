@@ -4,9 +4,9 @@ import org.apache.commons.text.TextStringBuilder
 import java.io.PrintWriter
 
 /**
- * Prepare stacktrace for report
+ * Get stacktrace as list of lines from throwable
  */
-internal fun Throwable.formatStackTrace(): List<String> {
+fun Throwable.formatStackTrace(): List<String> {
     val stringBuilder = TextStringBuilder()
     printStackTrace(PrintWriter(stringBuilder.asWriter()))
     return stringBuilder.lines()

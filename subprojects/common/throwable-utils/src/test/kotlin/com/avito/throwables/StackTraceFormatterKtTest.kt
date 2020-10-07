@@ -1,5 +1,6 @@
-package com.avito.android.util
+package com.avito.throwables
 
+import com.avito.android.util.formatStackTrace
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -12,7 +13,7 @@ internal class StackTraceFormatterKtTest {
 
         assertThat(result).containsAtLeast(
             "java.lang.IllegalStateException: Something went wrong",
-            "\tat com.avito.android.util.StackTraceFormatterKtTest.formatStackTrace result - contains first two lines of exception stacktrace(StackTraceFormatterKtTest.kt:10)"
+            "\tat com.avito.throwables.StackTraceFormatterKtTest.formatStackTrace result - contains first two lines of exception stacktrace(StackTraceFormatterKtTest.kt:11)"
         ).inOrder()
     }
 }
