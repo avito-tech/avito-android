@@ -9,8 +9,9 @@ dependencies {
     implementation(gradleApi())
     implementation(Dependencies.gradle.kotlinPlugin)
     implementation(Dependencies.gradle.androidPlugin) {
-        because("without error occurs in tests")
+        because("Ad-hoc TODO add documentation MBS-9695")
     }
+    implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:ci-logger"))
     implementation(Dependencies.gson)

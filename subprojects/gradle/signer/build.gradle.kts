@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":common:okhttp"))
+    implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:files"))
 

@@ -1,13 +1,15 @@
 package com.avito.android.build_verdict
 
-import com.avito.android.build_verdict.BuildFailureListener.Companion.buildVerdictFileName
+import com.avito.android.build_verdict.BuildVerdictWriter.Companion.buildVerdictFileName
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module.AndroidAppModule
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.google.gson.GsonBuilder
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -16,10 +18,12 @@ class BuildVerdictPluginTest {
 
     @field:TempDir
     lateinit var temp: File
+
+    private val buildVerdict by lazy { File(temp, "outputs/build-verdict/$buildVerdictFileName") }
     private val gson = GsonBuilder().create()
 
     @Test
-    fun `When kotlin compilation fails Then build-verdict contains kotlin compile info`() {
+    fun `kotlin compilation fails - build-verdict contains kotlin compile info`() {
         generateProject {}
 
         File(temp, "app/src/main/kotlin").kotlinClass("Uncompiled") { "incorrect syntax" }
@@ -33,13 +37,15 @@ class BuildVerdictPluginTest {
 
         assertBuildVerdict(
             failedTask = "compileDebugKotlin",
-            errorOutput = "e: /private$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration\n" +
-                "e: /private$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
+            errorOutput = listOf(
+                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
+                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
+            )
         )
     }
 
     @Test
-    fun `When kapt stubs generating fails Then build-verdict contains kapt info`() {
+    fun `kapt stubs generating fails - build-verdict contains kapt info`() {
         generateProject(enableKapt = true) {}
 
         File(temp, "app/src/main/kotlin").kotlinClass("Uncompiled") { "incorrect syntax" }
@@ -53,13 +59,15 @@ class BuildVerdictPluginTest {
 
         assertBuildVerdict(
             failedTask = "kaptGenerateStubsDebugKotlin",
-            errorOutput = "e: /private$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration\n" +
-                "e: /private$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
+            errorOutput = listOf(
+                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
+                "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
+            )
         )
     }
 
     @Test
-    fun `When kapt fails Then build-verdict contains kapt info`() {
+    fun `kapt fails - build-verdict contains kapt info`() {
         generateProject(enableKapt = true) { module ->
             dir("src/main/kotlin/") {
                 kotlinClass("DaggerComponent", module.packageName) {
@@ -86,16 +94,20 @@ class BuildVerdictPluginTest {
 
         assertBuildVerdict(
             failedTask = "kaptDebugKotlin",
-            errorOutput = """/private$temp/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.
+            errorOutput = listOf(
+                "$temp/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.",
+                """
 public abstract interface DaggerComponent {
                 ^
       CoffeeMaker is requested at
           DaggerComponent.maker()"""
+
+            )
         )
     }
 
     @Test
-    fun `When unit test fails Then build-verdict contains test info`() {
+    fun `unit test fails - build-verdict contains test info`() {
         generateProject { module ->
             dir("src/test/kotlin/") {
                 kotlinClass("AppTest", module.packageName) {
@@ -130,17 +142,37 @@ public abstract interface DaggerComponent {
 
         assertBuildVerdict(
             failedTask = "testDebugUnitTest",
-            errorOutput = """FAILED tests:
+            errorOutput = listOf(
+                """FAILED tests:
 	AppTest.test assert true
 	AppTest.test runtime exception"""
+            )
         )
     }
 
-    fun `When lint fails Then build-verdict contains lint info`() {
+    @Test
+    fun `build success - no verdict file`() {
+        generateProject()
+
+        val result = gradlew(
+            temp,
+            ":app:assembleDebug",
+            expectFailure = false
+        )
+
+        result.assertThat()
+            .buildSuccessful()
+
+        assertBuildVerdictFileExist(false)
+    }
+
+    @Disabled("TODO add when logic is ready")
+    fun `lint fails - build-verdict contains lint info`() {
 
     }
 
-    fun `When instrumentation tests fail Then build-verdict contains tests info`() {
+    @Disabled("TODO add when logic is ready")
+    fun `instrumentation tests fail - build-verdict contains tests info`() {
 
     }
 
@@ -163,29 +195,34 @@ public abstract interface DaggerComponent {
     private fun assertBuildVerdict(
         failedApp: String = appName,
         failedTask: String,
-        errorOutput: String
+        errorOutput: List<String>
     ) {
-        val buildVerdict = File(temp, "outputs/build-verdict/$buildVerdictFileName")
-
-        Truth.assertWithMessage("outputs/build-verdict/$buildVerdictFileName exist")
-            .that(buildVerdict.exists())
-            .isTrue()
+        assertBuildVerdictFileExist(true)
 
         val actualBuildVerdict = gson.fromJson(buildVerdict.readText(), BuildVerdict::class.java)
 
-        Truth.assertThat(actualBuildVerdict.failedTasks)
+        assertThat(actualBuildVerdict.failedTasks)
             .hasSize(1)
 
         val task = actualBuildVerdict.failedTasks[0]
 
-        Truth.assertThat(task.name)
+        assertThat(task.name)
             .isEqualTo(failedTask)
 
-        Truth.assertThat(task.projectPath)
+        assertThat(task.projectPath)
             .isEqualTo(":$failedApp")
+        errorOutput.forEach { line ->
+            assertThat(task.errorOutput)
+                .contains(line)
+        }
+    }
 
-        Truth.assertThat(task.errorOutput)
-            .contains(errorOutput)
+    private fun assertBuildVerdictFileExist(
+        exist: Boolean
+    ) {
+        assertWithMessage("outputs/build-verdict/$buildVerdictFileName exist is $exist")
+            .that(buildVerdict.exists())
+            .isEqualTo(exist)
     }
 
     companion object {
