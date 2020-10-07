@@ -1,5 +1,6 @@
 package com.avito.instrumentation
 
+import com.avito.android.build_verdict.BuildVerdictTask
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
@@ -9,7 +10,6 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.Team
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
@@ -30,7 +30,7 @@ import javax.inject.Inject
 abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
-) : DefaultTask() {
+) : DefaultTask(), BuildVerdictTask {
 
     @Optional
     @InputFile
@@ -121,6 +121,12 @@ abstract class InstrumentationTestsTask @Inject constructor(
     @OutputDirectory
     val output: DirectoryProperty = objects.directoryProperty()
 
+    private val verdictFile = objects.fileProperty().convention(output.file("verdict.json"))
+
+    @get:Internal
+    override val verdict: String
+        get() = verdictFile.asFile.get().readText()
+
     @TaskAction
     fun doWork() {
         val configuration = instrumentationConfiguration.get()
@@ -161,6 +167,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     ),
                     logger = ciLogger,
                     outputDir = output.get().asFile,
+                    verdictFile = verdictFile.get().asFile,
                     sendStatistics = sendStatistics.get(),
                     slackToken = slackToken.get(),
                     fileStorageUrl = getFileStorageUrl(),

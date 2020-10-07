@@ -9,7 +9,6 @@ import com.avito.test.gradle.module.AndroidAppModule
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import com.google.gson.GsonBuilder
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -166,18 +165,54 @@ public abstract interface DaggerComponent {
         assertBuildVerdictFileExist(false)
     }
 
-    @Disabled("TODO add when logic is ready")
-    fun `lint fails - build-verdict contains lint info`() {
+    @Test
+    fun `buildVerdictTask fails - build-verdict contains task's verdict info`() {
+        //language=Groovy
+        generateProject(
+            buildGradleExtra = """
+                import com.avito.android.build_verdict.BuildVerdictTask
+                
+                class CustomTask extends DefaultTask implements BuildVerdictTask {
+                
+                    private verdict = null
+                    
+                    @Override
+                    String getVerdict() {
+                        return verdict
+                    }
+                    
+                    @TaskAction 
+                    void sayGreeting() {
+                        verdict = "Custom verdict"
+                        throw new RuntimeException("Surprise") 
+                    }
+                }
+                
+                tasks.register("customTask", CustomTask)
+            """.trimIndent()
+        )
 
-    }
+        val result = gradlew(
+            temp,
+            ":app:customTask",
+            expectFailure = true
+        )
 
-    @Disabled("TODO add when logic is ready")
-    fun `instrumentation tests fail - build-verdict contains tests info`() {
+        result
+            .assertThat()
+            .buildFailed()
 
+        assertBuildVerdict(
+            failedTask = "customTask",
+            errorOutput = listOf(
+                "Custom verdict"
+            )
+        )
     }
 
     private fun generateProject(
         enableKapt: Boolean = false,
+        buildGradleExtra: String = "",
         mutator: File.(AndroidAppModule) -> Unit = {}
     ) {
         TestProjectGenerator(
@@ -186,6 +221,7 @@ public abstract interface DaggerComponent {
                 AndroidAppModule(
                     name = appName,
                     enableKapt = enableKapt,
+                    buildGradleExtra = buildGradleExtra,
                     mutator = mutator
                 )
             )

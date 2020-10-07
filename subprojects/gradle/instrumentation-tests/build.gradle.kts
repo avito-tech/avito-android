@@ -8,6 +8,7 @@ plugins {
 dependencies {
     api(project(":gradle:kubernetes"))
     api(project(":common:time"))
+    api(project(":gradle:build-verdict-tasks-api"))
 
     implementation(Dependencies.commonsIo) {
         because("LogcatBuffer.Impl.tailer needs to consider Charset (https://issues.apache.org/jira/browse/IO-354)")

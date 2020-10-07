@@ -72,7 +72,7 @@ interface InstrumentationTestActionFinalizer {
             logger.info("Report url $reportViewerUrl")
 
             val verdict = testRunResult.verdict
-            val verdictFile = File(params.outputDir, "verdict.json")
+            val verdictFile = params.verdictFile
             verdictFile.writeText(gson.toJson(verdict))
 
             when (verdict) {
