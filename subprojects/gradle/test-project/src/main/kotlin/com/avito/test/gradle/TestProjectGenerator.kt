@@ -41,7 +41,8 @@ class TestProjectGenerator(
         AndroidLibModule(sharedModule),
         AndroidLibModule(independentModule)
     ),
-    val localBuildCache: File? = null
+    val localBuildCache: File? = null,
+    val androidHome: String? = null
 ) : Module {
 
     companion object {
@@ -122,7 +123,7 @@ buildCache {
                  * заэскейпить пути в windows
                  */
                 Properties().run {
-                    setProperty("sdk.dir", androidHomeFromLocalPropertiesFallback())
+                    setProperty("sdk.dir", androidHome ?: androidHomeFromLocalPropertiesFallback())
                     store(file, null)
                 }
             }

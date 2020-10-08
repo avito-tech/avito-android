@@ -1,35 +1,41 @@
 package com.avito.android.plugin.build_param_check
 
-import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class ConfigurationTest {
+class ConfigurationTest {
 
     @Test
-    fun `empty dsl`(@TempDir projectDir: File) {
-        TestProjectGenerator(
-            plugins = listOf("com.avito.android.buildchecks"),
-            modules = emptyList(),
-            buildGradleExtra = """
-                buildChecks {
-                    enableByDefault = false
-                }
-            """.trimIndent()
-        ).generateIn(projectDir)
-
-        gradlew(
+    fun `all checks disabled by default - no side effects`(@TempDir projectDir: File) {
+        val result = BuildChecksTestProjectRunner(
             projectDir,
-            "help",
-            //todo make params optional
-            "-Pavito.stats.host=localhost",
-            "-Pavito.stats.fallbackHost=localhost",
-            "-Pavito.stats.port=80",
-            "-Pavito.stats.namespace=stub"
-        )
-            .assertThat()
-            .buildSuccessful()
+            buildChecksExtension = """
+                enableByDefault = false
+            """
+        ).runChecks()
+
+        result.assertThat().buildSuccessful()
+    }
+
+    @Test
+    fun `all checks disabled explicitly - no side effects`(@TempDir projectDir: File) {
+        val result = BuildChecksTestProjectRunner(
+            projectDir,
+            buildChecksExtension = """
+                enableByDefault = true
+                javaVersion { enabled = false }
+                androidSdk { enabled = false }
+                macOSLocalhost { enabled = false }
+                dynamicDependencies { enabled = false }
+                uniqueRClasses { enabled = false }
+                gradleDaemon { enabled = false }
+                moduleTypes { enabled = false }
+                gradleProperties { enabled = false }
+                incrementalKapt { enabled = false }
+            """
+        ).runChecks()
+
+        result.assertThat().buildSuccessful()
     }
 }

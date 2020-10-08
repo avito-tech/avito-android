@@ -3,92 +3,73 @@ package com.avito.android
 import com.avito.utils.ExistingDirectory
 import com.avito.utils.ProcessRunner
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import java.io.File
 import java.util.Properties
 
 val Project.androidSdk: AndroidSdk
-    get() = AndroidSdk(this, ProcessRunner.Real())
+    get() = AndroidSdk.fromAndroidProject(this)
 
-class AndroidSdk(
-    private val project: Project,
-    private val processRunner: ProcessRunner
+open class BaseAndroidSdk(
+    val androidHome: File,
+    protected val processRunner: ProcessRunner
 ) {
-
-    private val buildToolsVersion: String
-        get() {
-            require(project.isAndroid()) { "Trying to get android.buildToolsVersion object on non-android project: ${project.path}" }
-            return project.androidBaseExtension.buildToolsVersion
-        }
-
-    private val compileSdkVersion: Int
-        get() {
-            require(project.isAndroid()) { "Trying to get android.compileSdkVersion object on non-android project: ${project.path}" }
-            return requireNotNull(
-                value = project.androidBaseExtension.compileSdkVersion,
-                lazyMessage = { "compileSdkVersion is null for project: ${project.path}" }).apply {
-                if (this.isBlank()) {
-                    error("compileSdkVersion not set for project: ${project.path}")
-                }
-            }.toInt()
-        }
-
     /**
-     * it's not part of android sdk, provided here for convenience
+     * It's not a part of android sdk, provided here for convenience
      */
     val keytool = KeyTool(processRunner)
 
-    val androidHome: ExistingDirectory
-        get() {
-            val dir = System.getenv("ANDROID_HOME")
-                ?: androidHomeFromLocalProperties(
-                    localPropertiesLocation = project.rootProject.file("local.properties"),
-                    logger = { project.logger.error(it) })
-                ?: error("Can't resolve ANDROID_HOME")
-            return ExistingDirectory.Impl(dir)
-        }
+    fun buildTools(buildToolsVersion: String) = File(androidHome, "/build-tools/$buildToolsVersion")
+
+    fun platform(compileSdkVersion: Int) = File(androidHome, "platforms/android-$compileSdkVersion")
+}
+
+class AndroidSdk(
+    androidHome: File,
+    processRunner: ProcessRunner,
+    private val buildToolsVersion: String
+) : BaseAndroidSdk(androidHome, processRunner) {
 
     val aapt: Aapt
-        get() = Aapt.Impl(buildToolsPath(buildToolsVersion), processRunner)
+        get() = Aapt.Impl(ExistingDirectory.Impl(buildTools(buildToolsVersion)), processRunner)
 
-    val androidJar: File
-        get() {
-            val file = File(platformDir(compileSdkVersion), "android.jar")
-            require(file.exists()) {
-                sdkNotFoundMessage(file.path)
+    companion object {
+
+        @JvmStatic
+        fun fromAndroidProject(project: Project): AndroidSdk {
+            require(project.isAndroid()) {
+                "Trying to get Android SDK on non-android project: ${project.path}"
             }
-            return file
+            val buildToolsVersion = project.androidBaseExtension.buildToolsVersion
+
+            return AndroidSdk(
+                androidHome(project.rootDir, project.logger),
+                ProcessRunner.Real(),
+                buildToolsVersion
+            )
         }
 
-    val platformSourceProperties: File
-        get() {
-            val file = File(platformDir(compileSdkVersion), "source.properties")
-            require(file.exists()) {
-                sdkNotFoundMessage(file.path)
+        @JvmStatic
+        fun fromProject(project: Project): BaseAndroidSdk {
+            return BaseAndroidSdk(
+                androidHome(project.rootDir, project.logger),
+                ProcessRunner.Real()
+            )
+        }
+
+        private fun androidHome(projectRootDir: File, logger: Logger): File {
+            val path = System.getenv("ANDROID_HOME").ifBlank { null }
+                ?: androidHomeFromLocalProperties(
+                    localPropertiesLocation = File(projectRootDir, "local.properties"),
+                    logger = { logger.error(it) })
+                ?: error("Can't resolve ANDROID_HOME")
+
+            val dir = File(path)
+            require(dir.exists()) {
+                "ANDROID_HOME is not found in $path"
             }
-            return file
+            return dir
         }
-
-    private fun buildToolsPath(buildToolsVersion: String): ExistingDirectory {
-        val dir = File(androidHome.dir, "/build-tools/$buildToolsVersion")
-        require(dir.exists()) {
-            """========= ERROR =========
-                    Android Build tools are not found in ${dir.path}
-                    Please install it or update.
-                """.trimIndent()
-        }
-        return ExistingDirectory.Impl(dir)
-    }
-
-    private fun platformDir(compileSdkVersion: Int): File {
-        return File(androidHome.dir, "platforms/android-$compileSdkVersion")
-    }
-
-    private fun sdkNotFoundMessage(message: String): String {
-        return """========= ERROR =========
-                  Android SDK tools are not found.
-                  Please install it or update.
-                  $message
-                """.trimIndent()
     }
 }
 

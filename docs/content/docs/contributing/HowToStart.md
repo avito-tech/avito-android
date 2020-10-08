@@ -14,7 +14,7 @@ type: docs
 
 ## 1. Установи Java
 
-Поддерживаем только Java 8.
+Поддерживаем только Java 11.
 
 ## 2. Установи Intellij IDEA или Android Studio
 
