@@ -289,18 +289,6 @@ Markdown content
 Markdown content
 {{< /details >}}
 
-### Expand
-
-```tpl
-{{</* expand "Title" */>}}
-Markdown content
-{{</* /expand */>}}
-```
-
-{{< expand "Title">}}
-Markdown content
-{{< /expand >}}
-
 ### Math
 
 [KaTeX](https://katex.org/)
