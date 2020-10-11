@@ -65,7 +65,7 @@ buildChecks {
 That's all for a configuration. Run it manually to verify that it works:
 
 ```text
-> ./gradlew checkBuildEnvironment
+./gradlew checkBuildEnvironment
 ```
 
 The plugin will run it automatically on every build.
