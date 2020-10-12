@@ -6,7 +6,7 @@ API=$2
 if [ -n "$BUILD_DIRECTORY" ] && [ -n "$API" ]; then
     echo "building image for API=$API"
 else
-    echo "'BUILD_DIRECTORY' and 'API' parameters should be provided. Example ./publish_emulator android_emulator 22. See available API's in ./android_emulator/hardware/"
+    echo "'BUILD_DIRECTORY' and 'API' parameters should be provided. Example ./publish_emulator android-emulator 22. See available API's in ./android-emulator/hardware/"
     exit 1
 fi
 
