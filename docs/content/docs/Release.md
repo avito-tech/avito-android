@@ -18,7 +18,8 @@ This branch must be persistent. It is used for automation.
 1. Checkout a new branch and make a PR to github repository:
     - Change `infraVersion` property in the `./gradle.properties` to the new version 
     - Bump up a `projectVersion` property in the `./subprojects/gradle.properties` to the next version
-1. Create a new [release](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository) against the release branch.\
+1. Create [a new release](https://github.com/avito-tech/avito-android/releases/new) against the release branch. 
+([Managing releases in a repository](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository))\
 You can use a draft release to prepare a description in advance.
 
 ### Known issues
@@ -95,7 +96,13 @@ You will see branches from both repositories:
 - To build both projects of special branch, they should have the same name
 
 If you want to run a real CI build against not published release, 
-you need to publish it manually as a temporary version to the internal Artifactory.
+you could publish it manually as a temporary version to the internal Artifactory:
+
+```text
+./gradlew -p subprojects publishToArtifactory -PprojectVersion=<projectVersion>-integration-01  -Dorg.gradle.internal.publish.checksums.insecure=true
+```
+
+Or using [Publish to Artifactory](http://links.k.avito.ru/publishToArtifactoryConfiguration) CI configuration.
 
 ## CI integration configurations
 
