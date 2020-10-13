@@ -27,7 +27,7 @@ plugins {
     id("com.android.application") apply false
     id("com.avito.android.instrumentation-tests") apply false
     id("com.avito.android.impact")
-    // TODO uncomment after release 2020.24 id("com.avito.android.build-verdict")
+    id("com.avito.android.build-verdict")
 }
 
 /**

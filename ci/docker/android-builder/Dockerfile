@@ -1,3 +1,4 @@
+# TODO: use lighter base image
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -49,7 +50,7 @@ RUN mkdir $HOME/.android && \
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
-ARG PROFILER_VERSION=0.12.0
+ARG PROFILER_VERSION=0.15.0
 
 # Install gradle-profiler
 RUN \
