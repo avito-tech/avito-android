@@ -56,6 +56,8 @@ Without it the script will stop after building.
 {{< /tab >}}
 
 {{< /tabs >}}
+
+1. [Upload the image to Docker Hub](#uploading-image-to-docker-hub)
 1. Update image hash in `IMAGE_ANDROID_BUILDER` variable in ci shell scripts:
     - In github repo: `ci/_environment.sh` 
     - In internal avito repository: `ci/_main.sh`
@@ -202,17 +204,7 @@ cd ci/docker
 
 #### 2. Залей образы в Docker hub
 
-[hub.docker.com/u/avitotech](https://hub.docker.com/u/avitotech)
-
-1. Залогинься в Docker hub: `docker login --username=avitotech --password=...`
-1. Скачай новый образ из предыдущего шага:\
-`docker pull <DOCKER_REGISTRY>/android/emulator-<API>:<DIGEST>`
-1. Поставь образу такой-же tag, который получился в приватном registry:\
-`docker tag <DIGEST> avitotech/android-emulator-<API>:<DIGEST>`.\
-Tag нужен чтобы ссылаться на образ по одним и тем-же "координатам".
-1. `docker push avitotech/android-emulator-<API>:<DIGEST>`
-
-Задача на автоматизацию: MBS-8773
+[Uploading image to Docker Hub](#uploading-image-to-docker-hub)
 
 ### Как проверить регрессию?
 
@@ -239,6 +231,60 @@ sudo docker run \
 ```
 
 В CI смотрим в метрики куба.
+
+## Docker Hub
+
+Образы публикуем в [hub.docker.com/u/avitotech](https://hub.docker.com/u/avitotech).
+
+### Uploading image to Docker Hub
+
+Пока что заливаем вручную, задача на автоматизацию: MBS-8773.
+
+1. Залогинься в Docker hub
+
+```bash
+docker login --username=avitotech --password=...
+```
+
+2. Скачай новый образ из приватного registry
+
+```bash
+docker pull <DOCKER_REGISTRY>/android/<image>:<DIGEST>
+```
+
+Пример: 
+
+```bash
+docker pull registry/android/android-emulator-29:c0de63a4cd
+```
+
+3. Поставь образу tag равный digest из приватного registry
+
+```bash
+docker tag <DIGEST> avitotech/android-emulator-<API>:<DIGEST>
+```
+
+Пример: 
+
+```bash
+docker tag c0de63a4cd avitotech/android-emulator-29:c0de63a4cd`
+```
+
+Tag нужен чтобы ссылаться на образ по одним и тем-же координатам. 
+Digest в разных registry может не совпадать 
+([images ID does not match registry manifest digest](https://github.com/docker/distribution/issues/1662#issuecomment-213079540)).
+
+4. Залей образ
+
+```bash
+docker push avitotech/android-emulator-<API>:<DIGEST>`
+```
+
+Пример: 
+
+```bash
+docker push avitotech/android-emulator-29:c0de63a4cd
+```
 
 ## Best practices
 
