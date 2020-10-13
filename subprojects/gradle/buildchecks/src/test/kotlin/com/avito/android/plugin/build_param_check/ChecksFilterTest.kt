@@ -13,7 +13,7 @@ class ChecksFilterTest {
         val extension = BuildChecksExtension().apply {
             enableByDefault = false
         }
-        val checks = ChecksFilter(extension).checks()
+        val checks = ChecksFilter(extension).enabledChecks()
 
         assertThat(checks).isEmpty()
     }
@@ -21,7 +21,7 @@ class ChecksFilterTest {
     @Test
     fun `all default checks are enabled - default config`() {
         val extension = BuildChecksExtension()
-        val checks = ChecksFilter(extension).checks()
+        val checks = ChecksFilter(extension).enabledChecks()
 
         assertHasInstance<Check.MacOSLocalhost>(checks)
         assertHasInstance<Check.DynamicDependencies>(checks)
@@ -40,7 +40,7 @@ class ChecksFilterTest {
             enableByDefault = false
             androidSdk(Action { })
         }
-        val checks = ChecksFilter(extension).checks()
+        val checks = ChecksFilter(extension).enabledChecks()
 
         assertThat(checks).hasSize(1)
         assertHasInstance<Check.AndroidSdk>(checks)
@@ -53,7 +53,7 @@ class ChecksFilterTest {
                 it.enabled = false
             })
         }
-        val checks = ChecksFilter(extension).checks()
+        val checks = ChecksFilter(extension).enabledChecks()
 
         assertNoInstance<Check.AndroidSdk>(checks)
 
