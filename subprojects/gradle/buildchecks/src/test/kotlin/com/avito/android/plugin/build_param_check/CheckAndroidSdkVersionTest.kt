@@ -11,7 +11,7 @@ import java.nio.file.Path
 
 class CheckAndroidSdkVersionTest {
 
-    private lateinit var androidHome: File
+    private var androidHome: File? = null
     private lateinit var projectDir: File
 
     @BeforeEach
@@ -22,8 +22,24 @@ class CheckAndroidSdkVersionTest {
     }
 
     @Test
-    fun `fail - no android sdk`() {
-        androidHome.delete()
+    fun `fail - no android sdk specified`() {
+        androidHome?.delete()
+        androidHome = null
+
+        val result = runCheck(
+            """
+                    compileSdkVersion = 29
+                    revision = 5
+                    """,
+            expectFailure = true
+        )
+        result.assertThat()
+            .buildFailed("Can't find ANDROID_HOME")
+    }
+
+    @Test
+    fun `fail - no android sdk in specified path`() {
+        androidHome?.delete()
 
         val result = runCheck(
             """
@@ -127,7 +143,7 @@ class CheckAndroidSdkVersionTest {
     }
 
     private fun givenAndroidSdkPlatform(version: Int, revision: Int) {
-        androidHome
+        requireNotNull(androidHome)
             .dir("platforms")
             .dir("android-$version")
             .file(

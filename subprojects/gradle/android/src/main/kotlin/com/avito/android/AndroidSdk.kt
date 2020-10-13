@@ -58,11 +58,15 @@ class AndroidSdk(
         }
 
         private fun androidHome(projectRootDir: File, logger: Logger): File {
-            val path = System.getenv("ANDROID_HOME").ifBlank { null }
-                ?: androidHomeFromLocalProperties(
+            val fromEnv: String? = System.getenv("ANDROID_HOME")
+            val path = if (fromEnv.isNullOrBlank()) {
+                androidHomeFromLocalProperties(
                     localPropertiesLocation = File(projectRootDir, "local.properties"),
                     logger = { logger.error(it) })
-                ?: error("Can't resolve ANDROID_HOME")
+                    ?: error("Can't find ANDROID_HOME")
+            } else {
+                fromEnv
+            }
 
             val dir = File(path)
             require(dir.exists()) {
