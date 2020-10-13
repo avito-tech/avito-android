@@ -153,7 +153,8 @@ open class BuildParamCheckPlugin : Plugin<Project> {
     }
 
     private fun isMac(): Boolean {
-        return System.getProperty("os.name", "").contains("mac", ignoreCase = true)
+        return System.getProperty("os.name", "").orEmpty()
+            .contains("mac", ignoreCase = true)
     }
 
     private val validationErrors = mutableListOf<String>()

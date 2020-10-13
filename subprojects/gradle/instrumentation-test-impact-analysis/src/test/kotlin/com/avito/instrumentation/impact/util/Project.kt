@@ -16,7 +16,7 @@ const val androidModuleTestDependency = "androidModuleDependency"
 const val kotlinModuleTestDependency = "kotlinModuleDependency"
 const val markerClass = "kotlinModule.marker.Screen"
 const val markerField = "rootId"
-private val artifactoryUrl = System.getProperty("artifactoryUrl")
+private val artifactoryUrl: String? = System.getProperty("artifactoryUrl")
 
 private fun generateBaseStubProject(dir: File, output: File): File {
     TestProjectGenerator(

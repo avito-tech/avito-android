@@ -39,7 +39,7 @@ interface EnvArgs {
             }
 
             companion object {
-                private val userName = System.getProperty("user.name")
+                private val userName: String? = System.getProperty("user.name")
             }
         }
 

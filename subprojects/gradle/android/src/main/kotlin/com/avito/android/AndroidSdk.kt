@@ -82,12 +82,12 @@ class AndroidSdk(
  * Required in places where is no access to Project, mostly on Gradle Test Kit project creation
  */
 fun androidHomeFromLocalPropertiesFallback(): String {
-    val env = System.getenv("ANDROID_HOME")
+    val env: String? = System.getenv("ANDROID_HOME")
     if (!env.isNullOrBlank()) {
         return env
     }
 
-    val rootDir = System.getProperty("rootDir")
+    val rootDir: String? = System.getProperty("rootDir")
 
     return androidHomeFromLocalProperties(File("$rootDir/local.properties"))
         ?: error("Can't resolve android sdk: env ANDROID_HOME and $rootDir/local.properties is not available")
