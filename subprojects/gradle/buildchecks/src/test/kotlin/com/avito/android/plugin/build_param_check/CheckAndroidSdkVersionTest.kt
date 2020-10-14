@@ -1,5 +1,7 @@
 package com.avito.android.plugin.build_param_check
 
+import com.avito.android.plugin.build_param_check.BuildChecksTestProjectRunner.AndroidHomeLocation
+import com.avito.android.plugin.build_param_check.BuildChecksTestProjectRunner.AndroidHomeLocation.Custom
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -11,7 +13,7 @@ import java.nio.file.Path
 
 class CheckAndroidSdkVersionTest {
 
-    private lateinit var androidHome: File
+    private var androidHome: File? = null
     private lateinit var projectDir: File
 
     @BeforeEach
@@ -22,11 +24,28 @@ class CheckAndroidSdkVersionTest {
     }
 
     @Test
-    fun `fail - no android sdk`() {
-        androidHome.delete()
+    fun `fail - no android sdk specified`() {
+        androidHome?.delete()
+        androidHome = null
 
         val result = runCheck(
-            """
+            androidHomeLocation = AndroidHomeLocation.Absent,
+            extension = """
+                    compileSdkVersion = 29
+                    revision = 5
+                    """,
+            expectFailure = true
+        )
+        result.assertThat()
+            .buildFailed("Can't find ANDROID_HOME")
+    }
+
+    @Test
+    fun `fail - no android sdk in specified path`() {
+        androidHome?.delete()
+
+        val result = runCheck(
+            extension = """
                     compileSdkVersion = 29
                     revision = 5
                     """,
@@ -39,7 +58,7 @@ class CheckAndroidSdkVersionTest {
     @Test
     fun `fail - not specified versions`() {
         val result = runCheck(
-            """
+            extension = """
                     // no versions
                     """,
             expectFailure = true
@@ -53,7 +72,7 @@ class CheckAndroidSdkVersionTest {
         givenAndroidSdkPlatform(version = 28, revision = 1)
 
         val result = runCheck(
-            """
+            extension = """
                     compileSdkVersion = 29
                     revision = 5
                     """,
@@ -70,7 +89,7 @@ class CheckAndroidSdkVersionTest {
         givenAndroidSdkPlatform(version = 29, revision = 4)
 
         val result = runCheck(
-            """
+            extension = """
                     compileSdkVersion = 29
                     revision = 5
                     """,
@@ -88,7 +107,7 @@ class CheckAndroidSdkVersionTest {
         givenAndroidSdkPlatform(version = 29, revision = 5)
 
         val result = runCheck(
-            """
+            extension = """
                     compileSdkVersion = 29
                     revision = 5
                     """
@@ -101,7 +120,7 @@ class CheckAndroidSdkVersionTest {
         givenAndroidSdkPlatform(version = 29, revision = 6)
 
         val result = runCheck(
-            """
+            extension = """
                     compileSdkVersion = 29
                     revision = 5
                     """
@@ -113,9 +132,13 @@ class CheckAndroidSdkVersionTest {
             )
     }
 
-    private fun runCheck(extension: String, expectFailure: Boolean = false): TestResult {
+    private fun runCheck(
+        androidHomeLocation: AndroidHomeLocation = Custom(requireNotNull(androidHome)),
+        extension: String,
+        expectFailure: Boolean = false
+    ): TestResult {
         return BuildChecksTestProjectRunner(
-            projectDir, androidHome,
+            projectDir, androidHomeLocation,
             buildChecksExtension = """
                 enableByDefault = false
                 androidSdk { 
@@ -127,7 +150,7 @@ class CheckAndroidSdkVersionTest {
     }
 
     private fun givenAndroidSdkPlatform(version: Int, revision: Int) {
-        androidHome
+        requireNotNull(androidHome)
             .dir("platforms")
             .dir("android-$version")
             .file(

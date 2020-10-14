@@ -28,13 +28,15 @@ open class BuildParamCheckPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create<BuildChecksExtension>(extensionName)
 
-        printBuildEnvironment(project)
-
         check(project.isRoot()) {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
+        if (!project.pluginIsEnabled) return
+
+        printBuildEnvironment(project)
+
         project.afterEvaluate {
-            val checks = ChecksFilter(extension).checks()
+            val checks = ChecksFilter(extension).enabledChecks()
             checks
                 .filterIsInstance<BuildChecksExtension.RequireParameters>()
                 .forEach {
@@ -56,6 +58,13 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             showErrorsIfAny(project)
         }
     }
+
+    private val Project.pluginIsEnabled: Boolean
+        get() = providers
+            .gradleProperty(enabledProp)
+            .forUseAtConfigurationTime()
+            .map { it.toBoolean() }
+            .getOrElse(true)
 
     private fun checkJavaVersion(check: Check.JavaVersion) {
         check(JavaVersion.current() == check.version) {
@@ -144,7 +153,8 @@ open class BuildParamCheckPlugin : Plugin<Project> {
     }
 
     private fun isMac(): Boolean {
-        return System.getProperty("os.name", "").contains("mac", ignoreCase = true)
+        return System.getProperty("os.name", "").orEmpty()
+            .contains("mac", ignoreCase = true)
     }
 
     private val validationErrors = mutableListOf<String>()
@@ -267,3 +277,4 @@ javaIncrementalCompilation=$javaIncrementalCompilation
 }
 
 private const val pluginName = "BuildParamCheckPlugin"
+private const val enabledProp = "avito.build-checks.enabled"

@@ -7,7 +7,7 @@ internal class ChecksFilter(
     private val extension: BuildChecksExtension
 ) {
 
-    fun checks(): List<Check> {
+    fun enabledChecks(): List<Check> {
         val changedByUser = extension.checks
         val enabledByUser = changedByUser.filter { it.enabled }
         return if (extension.enableByDefault) {
