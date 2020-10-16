@@ -35,65 +35,59 @@ internal class LocalReservationClient(
     private var state: State = State.Idling
 
     override suspend fun claim(
-        reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<Serial>,
-        reservationDeployments: SendChannel<String> // TODO: make this state internal
-    ) {
+        reservations: Collection<Reservation.Data>
+    ): ReservationClient.ClaimResult {
         if (state !is State.Idling) {
             val error = RuntimeException("Unable to start reservation job. Already started")
             logger.critical(error.message.orEmpty())
             throw error
         }
         logger.debug("Starting reservations for the configuration: $configurationName...")
-
+        val serialsChannel = Channel<Serial>(Channel.UNLIMITED)
         val devicesChannel = Channel<WorkerDevice>(Channel.UNLIMITED)
         state = State.Reserving(devices = devicesChannel)
 
         reservations.forEach { reservation ->
-            val fakeDeploymentName = "local-stub"
-            reservationDeployments.send(fakeDeploymentName)
-
-            logger.debug("Starting deployment: $fakeDeploymentName")
             check(reservation.device is RequestedDevice.LocalEmulator) {
                 "Non-local emulator ${reservation.device} is unsupported in local reservation"
             }
-            logger.debug("Deployment created: $fakeDeploymentName")
-
             listenEmulators(reservation, devicesChannel)
         }
-
         //todo use Flow
-        for (workerDevice in devicesChannel
-            .distinctBy { it.id }) {
-            scope.launch {
-                logger.info("Found new emulator: ${workerDevice.id}")
+        scope.launch {
+            for (workerDevice in devicesChannel
+                .distinctBy { it.id }) {
+                scope.launch {
+                    logger.info("Found new emulator: ${workerDevice.id}")
 
-                val serial = workerDevice.id
-                val device = androidDebugBridge.getDevice(serial)
-                val isReady = device.waitForBoot()
-                if (isReady) {
-                    emulatorsLogsReporter.redirectLogcat(
-                        emulatorName = serial,
-                        device = device
-                    )
-                    serialsChannel.send(serial)
+                    val serial = workerDevice.id
+                    val device = androidDebugBridge.getDevice(serial)
+                    val isReady = device.waitForBoot()
+                    if (isReady) {
+                        emulatorsLogsReporter.redirectLogcat(
+                            emulatorName = serial,
+                            device = device
+                        )
+                        serialsChannel.send(serial)
 
-                    logger.info("Device $serial is reserved for further usage")
-                } else {
-                    logger.info("Device $serial can't be used")
+                        logger.info("Device $serial is reserved for further usage")
+                    } else {
+                        logger.info("Device $serial can't be used")
+                    }
                 }
             }
         }
+        return ReservationClient.ClaimResult(
+            serials = serialsChannel
+        )
     }
 
-    override suspend fun release(
-        reservationDeployments: Collection<String>
-    ) {
+    override suspend fun release() {
         try {
             if (state !is State.Reserving) {
                 // TODO: check the state on client side beforehand
                 val error = RuntimeException("Unable to stop reservation job. Hasn't started yet")
-                logger.critical(error.message.orEmpty())
+                logger.warn(error.message.orEmpty())
                 throw error
             }
             (state as State.Reserving).devices.close()

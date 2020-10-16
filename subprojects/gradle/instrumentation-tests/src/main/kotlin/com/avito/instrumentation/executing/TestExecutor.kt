@@ -6,7 +6,6 @@ import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.client.ReservationClientFactory
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.suite.model.TestWithTarget
-import com.avito.instrumentation.util.launchGroupedCoroutines
 import com.avito.runner.scheduler.TestsRunnerClient
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.runner.model.TestRunRequest
@@ -15,8 +14,7 @@ import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.commonLogger
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.toList
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -155,36 +153,26 @@ interface TestExecutor {
             client: ReservationClient,
             configurationName: String,
             reservations: Collection<Reservation.Data>,
-            action: (devices: Channel<Serial>) -> Unit
+            action: (devices: ReceiveChannel<Serial>) -> Unit
         ) {
-            val reservationDeployments = Channel<String>(reservations.size)
             try {
-                val serialsChannel = Channel<Serial>(Channel.UNLIMITED)
-
-                launchGroupedCoroutines {
-                    launch(blocking = false) {
-                        logger.info("Devices: Starting reservation job for configuration: $configurationName...")
-                        client.claim(
-                            reservations = reservations,
-                            serialsChannel = serialsChannel,
-                            reservationDeployments = reservationDeployments
-                        )
-                        logger.info("Devices: Reservation job completed for configuration: $configurationName")
-                    }
-                    launch {
-                        logger.info("Devices: Starting action for configuration: $configurationName...")
-                        action(serialsChannel)
-                        logger.info("Devices: Action completed for configuration: $configurationName")
-                    }
+                runBlocking {
+                    logger.info("Devices: Starting reservation job for configuration: $configurationName...")
+                    val result = client.claim(
+                        reservations = reservations
+                    )
+                    logger.info("Devices: Reservation job completed for configuration: $configurationName")
+                    logger.info("Devices: Starting action for configuration: $configurationName...")
+                    action(result.serials)
+                    logger.info("Devices: Action completed for configuration: $configurationName")
                 }
 
             } catch (e: Throwable) {
                 logger.critical("Error during starting reservation job", e)
             } finally {
-                reservationDeployments.close()
                 logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
                 runBlocking {
-                    client.release(reservationDeployments = reservationDeployments.toList())
+                    client.release()
                 }
                 logger.info("Devices: Devices released for configuration: $configurationName")
             }

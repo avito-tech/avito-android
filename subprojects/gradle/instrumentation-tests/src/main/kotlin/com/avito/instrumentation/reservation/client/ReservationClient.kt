@@ -2,14 +2,17 @@ package com.avito.instrumentation.reservation.client
 
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.runner.service.worker.device.Serial
-import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 interface ReservationClient {
-    suspend fun claim(
-        reservations: Collection<Reservation.Data>,
-        serialsChannel: SendChannel<Serial>,
-        reservationDeployments: SendChannel<String>
+
+    class ClaimResult(
+        val serials: ReceiveChannel<Serial>
     )
 
-    suspend fun release(reservationDeployments: Collection<String>)
+    suspend fun claim(
+        reservations: Collection<Reservation.Data>
+    ): ClaimResult
+
+    suspend fun release()
 }
