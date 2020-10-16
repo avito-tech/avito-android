@@ -5,15 +5,16 @@ import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.adb.RemoteDevice
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Reservation
-import com.avito.instrumentation.util.forEachAsync
-import com.avito.instrumentation.util.iterateInParallel
 import com.avito.instrumentation.util.waitForCondition
 import com.avito.runner.service.worker.device.Serial
 import com.avito.utils.logging.CILogger
 import io.fabric8.kubernetes.api.model.Pod
 import io.fabric8.kubernetes.api.model.apps.Deployment
 import io.fabric8.kubernetes.client.KubernetesClient
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.distinctBy
@@ -30,6 +31,8 @@ class KubernetesReservationClient(
     private val logger: CILogger,
     private val reservationDeploymentFactory: ReservationDeploymentFactory
 ) : ReservationClient {
+
+    private val scope = CoroutineScope(Dispatchers.IO + Job())
 
     private var state: State = State.Idling
 
@@ -61,14 +64,13 @@ class KubernetesReservationClient(
         }
 
         //todo use Flow
-        @Suppress("DEPRECATION")
-        podsChannel
+        for (pod in podsChannel
             .filter { it.status.phase == POD_STATUS_RUNNING }
-            .distinctBy { it.metadata.name }
-            .forEachAsync { pod ->
+            .distinctBy { it.metadata.name }) {
+            scope.launch {
                 val podName = pod.metadata.name
                 logger.debug("Found new pod: $podName")
-                val device= getDevice(pod)
+                val device = getDevice(pod)
                 val serial = device.serial
                 val isReady = device.waitForBoot()
                 if (isReady) {
@@ -87,63 +89,66 @@ class KubernetesReservationClient(
                     logger.warn("Pod $podName is deleted: $isDeleted")
                 }
             }
+        }
     }
 
     override suspend fun release(
         reservationDeployments: Collection<String>
     ) {
-        if (state !is State.Reserving) {
-            // TODO: check on client side beforehand
-            // TODO this leads to deployment leak
-            throw RuntimeException("Unable to stop reservation job. Hasn't started yet")
-        }
-        (state as State.Reserving).pods.close()
+        try {
+            if (state !is State.Reserving) {
+                // TODO: check on client side beforehand
+                // TODO this leads to deployment leak
+                throw RuntimeException("Unable to stop reservation job. Hasn't started yet")
+            }
+            (state as State.Reserving).pods.close()
+            for (deploymentName in reservationDeployments) {
+                scope.launch {
+                    val runningPods = podsFromDeployment(
+                        deploymentName = deploymentName
+                    ).filter { it.status.phase == POD_STATUS_RUNNING }
 
-        reservationDeployments
-            .iterateInParallel { _, deploymentName ->
+                    if (runningPods.isNotEmpty()) {
+                        logger.debug("Save emulators logs for deployment: $deploymentName")
+                        for (pod in runningPods) {
+                            launch {
+                                val podName = pod.metadata.name
+                                val device = getDevice(pod)
+                                val serial = device.serial
+                                try {
+                                    logger.debug("Saving emulator logs for pod: $podName with serial: $serial...")
+                                    val podLogs = kubernetesClient.pods().withName(podName).log
+                                    logger.debug("Emulators logs saved for pod: $podName with serial: $serial")
 
-                val runningPods = podsFromDeployment(
-                    deploymentName = deploymentName
-                ).filter { it.status.phase == POD_STATUS_RUNNING }
+                                    logger.debug("Saving logcat for pod: $podName with serial: $serial...")
+                                    emulatorsLogsReporter.reportEmulatorLogs(
+                                        emulatorName = serial,
+                                        log = podLogs
+                                    )
+                                    logger.debug("Logcat saved for pod: $podName with serial: $serial")
+                                } catch (throwable: Throwable) {
+                                    // TODO must be fixed after adding affinity to POD
+                                    val podDescription = getPodDescription(podName)
+                                    logger.warn(
+                                        "Get logs from emulator failed; pod=$podName; podDescription=$podDescription; container serial=$serial",
+                                        throwable
+                                    )
+                                }
 
-                if (runningPods.isNotEmpty()) {
-                    logger.debug("Save emulators logs for deployment: $deploymentName")
-                    runningPods
-                        .iterateInParallel { _, pod ->
-                            val podName = pod.metadata.name
-                            val device= getDevice(pod)
-                            val serial = device.serial
-                            try {
-                                logger.debug("Saving emulator logs for pod: $podName with serial: $serial...")
-                                val podLogs = kubernetesClient.pods().withName(podName).log
-                                logger.debug("Emulators logs saved for pod: $podName with serial: $serial")
-
-                                logger.debug("Saving logcat for pod: $podName with serial: $serial...")
-                                emulatorsLogsReporter.reportEmulatorLogs(
-                                    emulatorName = serial,
-                                    log = podLogs
-                                )
-                                logger.debug("Logcat saved for pod: $podName with serial: $serial")
-                            } catch (throwable: Throwable) {
-                                // TODO must be fixed after adding affinity to POD
-                                val podDescription = getPodDescription(podName)
-                                logger.warn(
-                                    "Get logs from emulator failed; pod=$podName; podDescription=$podDescription; container serial=$serial",
-                                    throwable
+                                logger.debug("Disconnecting device: $serial")
+                                device.disconnect().fold(
+                                    { logger.debug("Disconnecting device: $serial successfully completed") },
+                                    { logger.warn("Failed to disconnect device: $serial") }
                                 )
                             }
-
-                            logger.debug("Disconnecting device: $serial")
-                            device.disconnect().fold(
-                                { logger.debug("Disconnecting device: $serial successfully completed") },
-                                { logger.warn("Failed to disconnect device: $serial") }
-                            )
                         }
+                    }
                 }
-                removeEmulatorsDeployment(deploymentName)
             }
-
-        state = State.Idling
+            state = State.Idling
+        } finally {
+            scope.cancel()
+        }
     }
 
     private fun getDevice(pod: Pod): RemoteDevice {
@@ -228,8 +233,7 @@ class KubernetesReservationClient(
         deploymentName: String,
         podsChannel: SendChannel<Pod>
     ) {
-        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
-        GlobalScope.launch {
+        scope.launch {
             logger.debug("Start listening devices for $deploymentName")
             var pods = podsFromDeployment(deploymentName)
 
