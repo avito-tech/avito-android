@@ -5,6 +5,7 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
+import com.avito.instrumentation.reservation.client.kubernetes.ReservationDeploymentFactory
 import com.avito.instrumentation.reservation.client.local.LocalReservationClient
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.gradle.KubernetesCredentials
@@ -57,13 +58,16 @@ interface ReservationClientFactory {
                         kubernetesCredentials = kubernetesCredentials,
                         namespace = executionParameters.namespace
                     ),
-                    configurationName = configuration.name,
-                    projectName = projectName,
+                    reservationDeploymentFactory = ReservationDeploymentFactory(
+                        configurationName = configuration.name,
+                        projectName = projectName,
+                        buildId = buildId,
+                        buildType = buildType,
+                        registry = registry,
+                        logger = logger
+                    ),
                     logger = logger,
-                    buildId = buildId,
-                    buildType = buildType,
-                    emulatorsLogsReporter = emulatorsLogsReporter,
-                    registry = registry
+                    emulatorsLogsReporter = emulatorsLogsReporter
                 )
             }
         }
