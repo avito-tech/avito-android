@@ -8,7 +8,7 @@ import org.funktionale.tries.Try
 import java.io.File
 
 abstract class Device(
-    protected val serial: Serial,
+    val serial: Serial,
     protected val logger: (String) -> Unit = {}
 ) {
     private val androidHome: String? = System.getenv("ANDROID_HOME")
