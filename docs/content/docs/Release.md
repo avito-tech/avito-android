@@ -18,7 +18,10 @@ This branch must be persistent. It is used for automation.
 1. Checkout a new branch and make a PR to github repository:
     - Change `infraVersion` property in the `./gradle.properties` to the new version 
     - Bump up a `projectVersion` property in the `./subprojects/gradle.properties` to the next version
-1. Create [a new release](https://github.com/avito-tech/avito-android/releases/new) against the release branch. 
+1. Install [`gh`](https://github.com/cli/cli#installation) and login via `gh auth login`
+1. Run `./ci/release.sh` against release branch. Go to github link from command output.
+1. Edit release draft and publish it.
+ 
 ([Managing releases in a repository](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository))\
 You can use a draft release to prepare a description in advance.
 
