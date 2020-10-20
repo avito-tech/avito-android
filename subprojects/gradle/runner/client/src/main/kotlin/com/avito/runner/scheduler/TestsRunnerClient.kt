@@ -12,8 +12,6 @@ import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.IntentionExecutionServiceImplementation
 import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
-import com.avito.runner.service.worker.device.adb.AdbDevicesManager
-import com.avito.runner.service.worker.device.observer.ExternalIntentionBasedDevicesObserver
 
 class TestsRunnerClient {
 
@@ -26,13 +24,7 @@ class TestsRunnerClient {
             client = TestExecutionClient(),
             service = IntentionExecutionServiceImplementation(
                 outputDirectory = arguments.outputDirectory,
-                devicesObserver = ExternalIntentionBasedDevicesObserver(
-                    devicesManager = AdbDevicesManager(
-                        logger = arguments.logger
-                    ),
-                    externalIntentionOfSerials = arguments.devices,
-                    logger = arguments.logger
-                ),
+                devices = arguments.devices,
                 logger = arguments.logger,
                 listener = setupListener(arguments)
             ),
