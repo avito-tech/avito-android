@@ -1,16 +1,14 @@
 package com.avito.instrumentation.executing
 
-import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.report.listener.TestReporter
-import com.avito.instrumentation.reservation.client.ReservationClient
-import com.avito.instrumentation.reservation.client.ReservationClientFactory
+import com.avito.instrumentation.reservation.devices.provider.DevicesProvider
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.runner.scheduler.TestsRunnerClient
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
-import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.commonLogger
@@ -25,18 +23,16 @@ interface TestExecutor {
         testApplication: File,
         testsToRun: List<TestWithTarget>,
         executionParameters: ExecutionParameters,
-        configuration: InstrumentationConfiguration.Data,
-        runType: RunType,
-        output: File,
-        logcatDir: File
+        output: File
     )
 
     data class RunType(val id: String)
 
     class Impl(
-        private val logger: CILogger,
-        private val reservationClientFactory: ReservationClientFactory,
-        private val testReporter: TestReporter?
+        private val devicesProvider: DevicesProvider,
+        private val testReporter: TestReporter,
+        private val configurationName: String,
+        private val logger: CILogger
     ) : TestExecutor {
 
         private val runner = TestsRunnerClient()
@@ -49,23 +45,10 @@ interface TestExecutor {
             testApplication: File,
             testsToRun: List<TestWithTarget>,
             executionParameters: ExecutionParameters,
-            configuration: InstrumentationConfiguration.Data,
-            runType: RunType,
-            output: File,
-            logcatDir: File
+            output: File
         ) {
-            val reservationClient = reservationClientFactory.create(
-                configuration = configuration,
-                executionParameters = executionParameters
-            )
-            val reservations = reservations(
-                testsToRun,
-                configurationName = configuration.name
-            )
             withDevices(
-                client = reservationClient,
-                configurationName = configuration.name,
-                reservations = reservations
+                reservations = reservations(testsToRun)
             ) { devices ->
                 val testRequests = testsToRun
                     .map { targetTestRun ->
@@ -121,8 +104,7 @@ interface TestExecutor {
         ).apply { mkdirs() }
 
         private fun reservations(
-            tests: List<TestWithTarget>,
-            configurationName: String
+            tests: List<TestWithTarget>
         ): Collection<Reservation.Data> {
 
             val testsGroupedByTargets: Map<TargetGroup, List<TestWithTarget>> = tests.groupBy {
@@ -150,31 +132,21 @@ interface TestExecutor {
         // TODO: extract and delegate this channels orchestration.
         // It's overcomplicated for local client
         private fun withDevices(
-            client: ReservationClient,
-            configurationName: String,
             reservations: Collection<Reservation.Data>,
-            action: (devices: ReceiveChannel<Serial>) -> Unit
+            action: (devices: ReceiveChannel<Device>) -> Unit
         ) {
-            try {
-                runBlocking {
-                    logger.info("Devices: Starting reservation job for configuration: $configurationName...")
-                    val result = client.claim(
-                        reservations = reservations
-                    )
-                    logger.info("Devices: Reservation job completed for configuration: $configurationName")
-                    logger.info("Devices: Starting action for configuration: $configurationName...")
-                    action(result.serials)
+            runBlocking {
+                try {
+                    logger.info("Devices: Starting action job for configuration: $configurationName...")
+                    action(devicesProvider.provideFor(reservations, this))
                     logger.info("Devices: Action completed for configuration: $configurationName")
+                } catch (e: Throwable) {
+                    logger.critical("Error during action in $configurationName job", e)
+                } finally {
+                    logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
+                    devicesProvider.releaseDevices()
+                    logger.info("Devices: Devices released for configuration: $configurationName")
                 }
-
-            } catch (e: Throwable) {
-                logger.critical("Error during starting reservation job", e)
-            } finally {
-                logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
-                runBlocking {
-                    client.release()
-                }
-                logger.info("Devices: Devices released for configuration: $configurationName")
             }
         }
 

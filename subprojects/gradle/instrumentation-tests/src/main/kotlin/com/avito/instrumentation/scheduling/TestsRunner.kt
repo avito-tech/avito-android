@@ -6,7 +6,7 @@ import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.listener.TestReporter
-import com.avito.instrumentation.reservation.client.ReservationClientFactory
+import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.suite.model.transformTestsWithNewJobSlug
 import com.avito.report.model.ReportCoordinates
@@ -34,7 +34,7 @@ interface TestsRunner {
 class TestsRunnerImplementation(
     private val testExecutorFactory: TestExecutorFactory,
     private val kubernetesCredentials: KubernetesCredentials,
-    private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter?,
+    private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter,
     private val logger: CILogger,
     private val buildId: String,
     private val buildType: String,
@@ -48,7 +48,7 @@ class TestsRunnerImplementation(
     override fun runTests(
         mainApk: File?,
         testApk: File,
-        runType: TestExecutor.RunType,
+        runType: TestExecutor.RunType, // todo delete runtype
         reportCoordinates: ReportCoordinates,
         report: Report,
         testsToRun: List<TestWithTarget>
@@ -72,22 +72,24 @@ class TestsRunnerImplementation(
                 report
             )
             val logger = logger.child(runType.id)
-            // TODO: pass through constructor and isolate k8s
-            val reservationClientFactory = ReservationClientFactory.Impl(
-                logger = logger,
-                buildId = buildId,
-                buildType = buildType,
-                projectName = projectName,
-                kubernetesCredentials = kubernetesCredentials,
-                registry = registry,
-                output = output,
-                logcatDir = logcatDir
-            )
             // TODO: pass through constructor
+            val initialRunConfiguration =
+                instrumentationConfiguration.copy(name = "${instrumentationConfiguration.name}-${runType.id}")
             val executor = testExecutorFactory.createExecutor(
-                logger = logger,
-                reservationClientFactory = reservationClientFactory,
-                testReporter = testReporter
+                devicesProviderFactory = DevicesProviderFactory.Impl(
+                    kubernetesCredentials = kubernetesCredentials,
+                    buildId = buildId,
+                    buildType = buildType,
+                    projectName = projectName,
+                    registry = registry,
+                    output = output,
+                    logcatDir = logcatDir,
+                    logger = logger
+                ),
+                configuration = initialRunConfiguration,
+                executionParameters = executionParameters,
+                testReporter = testReporter,
+                logger = logger
             )
 
             executor.execute(
@@ -95,10 +97,7 @@ class TestsRunnerImplementation(
                 testApplication = testApk,
                 testsToRun = testsToRun.transformTestsWithNewJobSlug(reportCoordinates.jobSlug),
                 executionParameters = executionParameters,
-                configuration = instrumentationConfiguration.copy(name = "${instrumentationConfiguration.name}-${runType.id}"),
-                output = output,
-                runType = runType,
-                logcatDir = logcatDir
+                output = output
             )
 
             //todo через Report

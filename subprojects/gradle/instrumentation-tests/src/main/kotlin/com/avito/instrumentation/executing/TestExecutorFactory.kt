@@ -1,7 +1,8 @@
 package com.avito.instrumentation.executing
 
+import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.report.listener.TestReporter
-import com.avito.instrumentation.reservation.client.ReservationClientFactory
+import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
 import com.avito.utils.logging.CILogger
 
 /**
@@ -10,22 +11,27 @@ import com.avito.utils.logging.CILogger
 interface TestExecutorFactory {
 
     fun createExecutor(
-        logger: CILogger,
-        reservationClientFactory: ReservationClientFactory,
-        testReporter: TestReporter?
+        devicesProviderFactory: DevicesProviderFactory,
+        testReporter: TestReporter,
+        configuration: InstrumentationConfiguration.Data,
+        executionParameters: ExecutionParameters,
+        logger: CILogger
     ): TestExecutor
 
     class Implementation : TestExecutorFactory {
 
         override fun createExecutor(
-            logger: CILogger,
-            reservationClientFactory: ReservationClientFactory,
-            testReporter: TestReporter?
+            devicesProviderFactory: DevicesProviderFactory,
+            testReporter: TestReporter,
+            configuration: InstrumentationConfiguration.Data,
+            executionParameters: ExecutionParameters,
+            logger: CILogger
         ): TestExecutor {
             return TestExecutor.Impl(
-                logger = logger,
-                reservationClientFactory = reservationClientFactory,
-                testReporter = testReporter
+                devicesProvider = devicesProviderFactory.create(configuration, executionParameters),
+                testReporter = testReporter,
+                configurationName = configuration.name,
+                logger = logger
             )
         }
     }

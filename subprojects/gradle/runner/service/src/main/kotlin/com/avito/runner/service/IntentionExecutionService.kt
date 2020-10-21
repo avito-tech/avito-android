@@ -6,7 +6,7 @@ import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
-import com.avito.runner.service.worker.device.observer.DevicesObserver
+import com.avito.runner.service.worker.device.Device
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -27,7 +27,7 @@ interface IntentionExecutionService {
 class IntentionExecutionServiceImplementation(
     private val outputDirectory: File,
     private val logger: Logger,
-    private val devicesObserver: DevicesObserver,
+    private val devices: ReceiveChannel<Device>,
     private val intentionsRouter: IntentionsRouter = IntentionsRouter(),
     private val listener: TestListener
 ) : IntentionExecutionService {
@@ -42,7 +42,7 @@ class IntentionExecutionServiceImplementation(
     override fun start(): IntentionExecutionService.Communication {
         // TODO: Don't use global scope. Unconfined coroutines lead to leaks
         GlobalScope.launch {
-            for (device in devicesObserver.observeDevices()) {
+            for (device in devices) {
                 DeviceWorker(
                     intentionsRouter = intentionsRouter,
                     device = device,

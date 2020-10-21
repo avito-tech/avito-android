@@ -15,17 +15,17 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.getData
-import com.avito.runner.service.worker.device.observer.DevicesObserver
 import com.avito.runner.test.NoOpListener
 import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
-import com.avito.runner.test.mock.MockDevicesObserver
 import com.avito.runner.test.randomSerial
 import com.avito.runner.test.randomString
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
@@ -38,10 +38,9 @@ class RunnerIntegrationTest {
     @Test
     fun `all tests passed - for 1 successful device`() =
         runBlockingWithTimeout {
-            val observer = MockDevicesObserver()
-
+            val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
-                observer = observer
+                devices = devices
             )
 
             val requests = createRunRequests()
@@ -49,7 +48,7 @@ class RunnerIntegrationTest {
             val device = createSuccessfulDevice(requests)
 
             GlobalScope.launch {
-                observer.send(device)
+                devices.send(device)
             }
 
             val result = runner.runTests(tests = requests)
@@ -64,10 +63,9 @@ class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first and second devices - for first device that complete half of tests and failed and second connected later device that complete all remaining tests`() =
         runBlockingWithTimeout {
-            val observer = MockDevicesObserver()
-
+            val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
-                observer = observer
+                devices = devices
             )
 
             val requests = createRunRequests()
@@ -122,12 +120,12 @@ class RunnerIntegrationTest {
             )
 
             GlobalScope.launch {
-                observer.send(firstFailedDevice)
+                devices.send(firstFailedDevice)
                 // Wait for completion 2 tests by first device
                 while (!firstFailedDevice.isDone()) {
                     delay(TimeUnit.MILLISECONDS.toMillis(10))
                 }
-                observer.send(secondDevice)
+                devices.send(secondDevice)
             }
 
             val result = runner.runTests(requests)
@@ -149,10 +147,9 @@ class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first device - for 1 successful and 1 freeze device`() =
         runBlockingWithTimeout {
-            val observer = MockDevicesObserver()
-
+            val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
-                observer = observer
+                devices = devices
             )
 
             val requests = createRunRequests()
@@ -161,12 +158,12 @@ class RunnerIntegrationTest {
             val failedDevice = createBrokenDevice(deviceIsFreezed())
 
             GlobalScope.launch {
-                observer.send(failedDevice)
+                devices.send(failedDevice)
                 // Wait for completion 2 tests by first device
                 while (!failedDevice.isDone()) {
                     delay(TimeUnit.MILLISECONDS.toMillis(10))
                 }
-                observer.send(successfulDevice)
+                devices.send(successfulDevice)
             }
 
             val result = runner.runTests(requests)
@@ -184,10 +181,9 @@ class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first device - for 1 successful and 1 failed to get status device`() =
         runBlockingWithTimeout {
-            val observer = MockDevicesObserver()
-
+            val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
-                observer = observer
+                devices = devices
             )
 
             val requests = createRunRequests()
@@ -196,11 +192,11 @@ class RunnerIntegrationTest {
             val failedDevice = createBrokenDevice(MockActionResult.Failed(Exception()))
 
             GlobalScope.launch {
-                observer.send(failedDevice)
+                devices.send(failedDevice)
                 while (!failedDevice.isDone()) {
                     delay(TimeUnit.MILLISECONDS.toMillis(10))
                 }
-                observer.send(successfulDevice)
+                devices.send(successfulDevice)
             }
 
             val result = runner.runTests(requests)
@@ -218,10 +214,9 @@ class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first device - when second device failed on application installing`() =
         runBlockingWithTimeout {
-            val observer = MockDevicesObserver()
-
+            val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
-                observer = observer
+                devices = devices
             )
 
             val requests = createRunRequests()
@@ -240,11 +235,11 @@ class RunnerIntegrationTest {
             )
 
             GlobalScope.launch {
-                observer.send(failedDevice)
+                devices.send(failedDevice)
                 while (!failedDevice.isDone()) {
                     delay(TimeUnit.MILLISECONDS.toMillis(10))
                 }
-                observer.send(successfulDevice)
+                devices.send(successfulDevice)
             }
 
             val result = runner.runTests(requests)
@@ -261,7 +256,10 @@ class RunnerIntegrationTest {
 
     @Test
     fun `test passed after retry of failed test`() = runBlockingWithTimeout {
-        val observer = MockDevicesObserver()
+        val devices = Channel<Device>(Channel.UNLIMITED)
+        val runner = provideRunner(
+            devices = devices
+        )
 
         val scheduling = TestRunRequest.Scheduling(
             retryCount = 1,
@@ -269,9 +267,6 @@ class RunnerIntegrationTest {
             minimumFailedCount = 0
         )
 
-        val runner = provideRunner(
-            observer = observer
-        )
 
         val requests = listOf(
             testRunRequest(scheduling = scheduling),
@@ -306,7 +301,7 @@ class RunnerIntegrationTest {
         )
 
         GlobalScope.launch {
-            observer.send(device)
+            devices.send(device)
         }
 
         val result = runner.runTests(requests)
@@ -330,16 +325,15 @@ class RunnerIntegrationTest {
     @Test
     fun `test passed after retry of failed test when minimal passed count is 2 and retry quota is 4`() =
         runBlockingWithTimeout {
-            val observer = MockDevicesObserver()
+            val devices = Channel<Device>(Channel.UNLIMITED)
+            val runner = provideRunner(
+                devices = devices
+            )
 
             val scheduling = TestRunRequest.Scheduling(
                 retryCount = 4,
                 minimumSuccessCount = 2,
                 minimumFailedCount = 0
-            )
-
-            val runner = provideRunner(
-                observer = observer
             )
 
             val requests = listOf(
@@ -390,7 +384,7 @@ class RunnerIntegrationTest {
             )
 
             GlobalScope.launch {
-                observer.send(device)
+                devices.send(device)
             }
 
             val result = runner.runTests(requests)
@@ -423,16 +417,15 @@ class RunnerIntegrationTest {
     @Test
     fun `test completed after 1 success and 1 fail for that requirements with retryCount 4`() =
         runBlockingWithTimeout {
-            val observer = MockDevicesObserver()
+            val devices = Channel<Device>(Channel.UNLIMITED)
+            val runner = provideRunner(
+                devices = devices
+            )
 
             val scheduling = TestRunRequest.Scheduling(
                 retryCount = 4,
                 minimumSuccessCount = 1,
                 minimumFailedCount = 1
-            )
-
-            val runner = provideRunner(
-                observer = observer
             )
 
             val requests = listOf(
@@ -473,7 +466,7 @@ class RunnerIntegrationTest {
             )
 
             GlobalScope.launch {
-                observer.send(device)
+                devices.send(device)
             }
 
             val result = runner.runTests(requests)
@@ -586,7 +579,7 @@ class RunnerIntegrationTest {
     }
 
     private fun provideRunner(
-        observer: DevicesObserver,
+        devices: ReceiveChannel<Device>,
         testListener: TestListener = NoOpListener,
         logger: Logger = NoOpLogger,
         outputDirectory: File = File("")
@@ -598,7 +591,7 @@ class RunnerIntegrationTest {
         val service = IntentionExecutionServiceImplementation(
             outputDirectory = outputDirectory,
             logger = logger,
-            devicesObserver = observer,
+            devices = devices,
             listener = testListener
         )
 

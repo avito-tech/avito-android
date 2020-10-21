@@ -2,13 +2,14 @@ package com.avito.instrumentation
 
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
-import com.avito.instrumentation.executing.FakeTestExecutor
+import com.avito.instrumentation.executing.ExecutionParameters
+import com.avito.instrumentation.executing.StubTestExecutor
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.finalizer.FinalizerFactory
 import com.avito.instrumentation.report.Report.Impl
 import com.avito.instrumentation.report.listener.TestReporter
-import com.avito.instrumentation.reservation.client.ReservationClientFactory
+import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.scheduling.TestsSchedulerFactory
 import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
 import com.avito.instrumentation.suite.dex.TestInApk
@@ -41,12 +42,14 @@ internal class InstrumentationTestsActionIntegrationTest {
     private val reportsApi = FakeReportsApi()
     private val testSuiteLoader = FakeTestSuiteLoader()
     private val reportCoordinates = ReportCoordinates.createStubInstance()
-    private val testRunner = FakeTestExecutor()
+    private val testRunner = StubTestExecutor()
     private val testExecutorFactory = object : TestExecutorFactory {
         override fun createExecutor(
-            logger: CILogger,
-            reservationClientFactory: ReservationClientFactory,
-            testReporter: TestReporter?
+            devicesProviderFactory: DevicesProviderFactory,
+            testReporter: TestReporter,
+            configuration: InstrumentationConfiguration.Data,
+            executionParameters: ExecutionParameters,
+            logger: CILogger
         ): TestExecutor {
             return testRunner
         }

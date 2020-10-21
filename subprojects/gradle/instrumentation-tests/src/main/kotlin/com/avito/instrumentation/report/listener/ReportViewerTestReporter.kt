@@ -5,7 +5,6 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorage.Request
 import com.avito.filestorage.RemoteStorage.Result
 import com.avito.instrumentation.report.Report
-import com.avito.logger.Logger
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.TestRuntimeData
