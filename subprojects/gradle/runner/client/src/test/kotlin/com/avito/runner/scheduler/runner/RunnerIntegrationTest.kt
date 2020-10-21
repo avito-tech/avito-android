@@ -23,7 +23,6 @@ import com.avito.runner.test.randomSerial
 import com.avito.runner.test.randomString
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
@@ -35,10 +34,11 @@ import java.util.concurrent.TimeUnit
 
 class RunnerIntegrationTest {
 
+    private val devices = Channel<Device>(Channel.UNLIMITED)
+
     @Test
     fun `all tests passed - for 1 successful device`() =
         runBlockingWithTimeout {
-            val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
                 devices = devices
             )
@@ -47,12 +47,9 @@ class RunnerIntegrationTest {
 
             val device = createSuccessfulDevice(requests)
 
-            GlobalScope.launch {
-                devices.send(device)
-            }
+            devices.send(device)
 
-            val result = runner.runTests(tests = requests)
-
+            val result = runner.runTests(tests = requests, scope = this)
             device.verify()
 
             assertThat(result.runs).isEqualTo(
@@ -63,7 +60,6 @@ class RunnerIntegrationTest {
     @Test
     fun `all tests passed by first and second devices - for first device that complete half of tests and failed and second connected later device that complete all remaining tests`() =
         runBlockingWithTimeout {
-            val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
                 devices = devices
             )
@@ -119,7 +115,7 @@ class RunnerIntegrationTest {
                 )
             )
 
-            GlobalScope.launch {
+            launch {
                 devices.send(firstFailedDevice)
                 // Wait for completion 2 tests by first device
                 while (!firstFailedDevice.isDone()) {
@@ -128,8 +124,7 @@ class RunnerIntegrationTest {
                 devices.send(secondDevice)
             }
 
-            val result = runner.runTests(requests)
-
+            val result = runner.runTests(requests, this)
             val resultsByFirstDevice = requests.slice(0..1).toPassedRuns(firstFailedDevice)
 
             val resultsBySecondDevice = requests.slice(2..3).toPassedRuns(secondDevice)
@@ -157,7 +152,7 @@ class RunnerIntegrationTest {
             val successfulDevice = createSuccessfulDevice(requests)
             val failedDevice = createBrokenDevice(deviceIsFreezed())
 
-            GlobalScope.launch {
+            launch {
                 devices.send(failedDevice)
                 // Wait for completion 2 tests by first device
                 while (!failedDevice.isDone()) {
@@ -166,8 +161,7 @@ class RunnerIntegrationTest {
                 devices.send(successfulDevice)
             }
 
-            val result = runner.runTests(requests)
-
+            val result = runner.runTests(requests, this)
             successfulDevice.verify()
             failedDevice.verify()
 
@@ -191,7 +185,7 @@ class RunnerIntegrationTest {
             val successfulDevice = createSuccessfulDevice(requests)
             val failedDevice = createBrokenDevice(MockActionResult.Failed(Exception()))
 
-            GlobalScope.launch {
+            launch {
                 devices.send(failedDevice)
                 while (!failedDevice.isDone()) {
                     delay(TimeUnit.MILLISECONDS.toMillis(10))
@@ -199,8 +193,7 @@ class RunnerIntegrationTest {
                 devices.send(successfulDevice)
             }
 
-            val result = runner.runTests(requests)
-
+            val result = runner.runTests(requests, this)
             successfulDevice.verify()
             failedDevice.verify()
 
@@ -234,7 +227,7 @@ class RunnerIntegrationTest {
                 )
             )
 
-            GlobalScope.launch {
+            launch {
                 devices.send(failedDevice)
                 while (!failedDevice.isDone()) {
                     delay(TimeUnit.MILLISECONDS.toMillis(10))
@@ -242,8 +235,7 @@ class RunnerIntegrationTest {
                 devices.send(successfulDevice)
             }
 
-            val result = runner.runTests(requests)
-
+            val result = runner.runTests(requests, this)
             successfulDevice.verify()
             failedDevice.verify()
 
@@ -300,12 +292,9 @@ class RunnerIntegrationTest {
             )
         )
 
-        GlobalScope.launch {
-            devices.send(device)
-        }
+        devices.send(device)
 
-        val result = runner.runTests(requests)
-
+        val result = runner.runTests(requests, this)
         device.verify()
 
         assertThat(
@@ -383,12 +372,10 @@ class RunnerIntegrationTest {
                 )
             )
 
-            GlobalScope.launch {
-                devices.send(device)
-            }
+            devices.send(device)
 
-            val result = runner.runTests(requests)
 
+            val result = runner.runTests(requests, this)
             device.verify()
 
             assertThat(
@@ -465,12 +452,10 @@ class RunnerIntegrationTest {
                 )
             )
 
-            GlobalScope.launch {
-                devices.send(device)
-            }
 
-            val result = runner.runTests(requests)
+            devices.send(device)
 
+            val result = runner.runTests(requests, this)
             device.verify()
 
             assertThat(

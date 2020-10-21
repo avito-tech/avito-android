@@ -6,6 +6,7 @@ import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.IntentionExecutionService
+import kotlinx.coroutines.CoroutineScope
 
 class TestRunnerImplementation(
     private val scheduler: TestExecutionScheduler,
@@ -14,14 +15,16 @@ class TestRunnerImplementation(
     private val logger: Logger
 ) : TestRunner {
 
-    override suspend fun runTests(tests: List<TestRunRequest>): TestRunnerResult {
-        val serviceCommunication = service.start()
+    override suspend fun runTests(tests: List<TestRunRequest>, scope: CoroutineScope): TestRunnerResult {
+        val serviceCommunication = service.start(scope)
         val clientCommunication = client.start(
-            executionServiceCommunication = serviceCommunication
+            executionServiceCommunication = serviceCommunication,
+            scope = scope
         )
         val schedulerCommunication = scheduler.start(
             requests = tests,
-            executionClient = clientCommunication
+            executionClient = clientCommunication,
+            scope = scope
         )
 
         val expectedResultsCount = tests.count()

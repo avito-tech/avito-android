@@ -6,7 +6,8 @@ import com.avito.runner.scheduler.runner.client.model.ClientTestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.scheduler.retry.SchedulingBasedRetryManager
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
@@ -19,13 +20,11 @@ class TestExecutionScheduler(
 
     fun start(
         requests: List<TestRunRequest>,
-        executionClient: TestExecutionClient.Communication
+        executionClient: TestExecutionClient.Communication,
+        scope: CoroutineScope
     ): Communication {
-
-        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
-        GlobalScope.launch {
+        scope.launch(Dispatchers.Default) {
             for (testRunResult in executionClient.results) {
-
                 when (val verdict = testRunResult.state.verdict(testRunResult.incomingTestCaseRun)) {
                     is TestExecutionState.Verdict.SendResult -> {
                         resultChannel.send(
@@ -49,9 +48,7 @@ class TestExecutionScheduler(
                 }
             }
         }
-
-        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
-        GlobalScope.launch {
+        scope.launch(Dispatchers.Default) {
             for (request in requests) {
                 val testState =
                     TestExecutionStateImplementation(
