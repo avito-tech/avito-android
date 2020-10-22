@@ -115,7 +115,7 @@ class EntrypointTest {
 
     private fun givenTestRuns(runs: TestRunnerResult) =
         runBlocking {
-            whenever(testRunner.runTests(any())).thenReturn(runs)
+            whenever(testRunner.runTests(any(), any())).thenReturn(runs)
         }
 
     private fun run() {

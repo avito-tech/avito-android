@@ -32,10 +32,11 @@ class IntentionExecutionServiceTest {
         runBlockingWithTimeout {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val intentionsRouter = IntentionsRouter()
-            val communication = provideIntentionExecutionService(
+            val executionService = provideIntentionExecutionService(
                 devices = devices,
                 intentionsRouter = intentionsRouter
-            ).start()
+            )
+            val communication = executionService.start(this)
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
@@ -97,10 +98,10 @@ class IntentionExecutionServiceTest {
             devices.send(successfulDevice)
             intentions.forEach { communication.intentions.send(it) }
 
-            delay(TimeUnit.SECONDS.toMillis(2))
+            delay(TimeUnit.SECONDS.toMillis(4))
 
             val results = communication.results.receiveAvailable()
-
+            executionService.stop()
             successfulDevice.verify()
 
             assertWithMessage("Received results for all input intentions")
@@ -122,10 +123,11 @@ class IntentionExecutionServiceTest {
         runBlockingWithTimeout {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val intentionsRouter = IntentionsRouter()
-            val communication = provideIntentionExecutionService(
+            val executionService = provideIntentionExecutionService(
                 devices = devices,
                 intentionsRouter = intentionsRouter
-            ).start()
+            )
+            val communication = executionService.start(this)
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
@@ -203,7 +205,7 @@ class IntentionExecutionServiceTest {
             delay(TimeUnit.SECONDS.toMillis(2))
 
             val results = communication.results.receiveAvailable()
-
+            executionService.stop()
             successfulDevice.verify()
 
             assertWithMessage("Received results for all input intentions")

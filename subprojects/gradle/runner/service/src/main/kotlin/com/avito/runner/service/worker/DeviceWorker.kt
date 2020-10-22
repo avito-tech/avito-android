@@ -11,6 +11,7 @@ import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.getData
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
@@ -26,25 +27,22 @@ class DeviceWorker(
     private val outputDirectory: File,
     private val listener: TestListener
 ) {
+    private val dispatcher: CoroutineDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
-    private val scope = CoroutineScope(
-        Executors.newSingleThreadExecutor().asCoroutineDispatcher()
-    )
-
-    fun run() = scope.launch {
+    fun run(scope: CoroutineScope) = scope.launch(dispatcher) {
 
         var state: State = try {
             when (val status = device.deviceStatus()) {
                 is Device.DeviceStatus.Alive -> device.state()
                 is Device.DeviceStatus.Freeze -> {
-                    // No intention is lost. DeviceWorkerMessage.WorkerFailed event is unnecessary.
-                    // Can't use this device any more. TODO MBS-8522 Will ReservationClient get a new one?
-                    device.warn("Device wasn't booted. Failed on initial run", status.reason)
+                    // TODO MBS-8522 Will ReservationClient get a new one?
+                    onDeviceDie("DeviceWorker died. Device status is `Freeze`", reason = status.reason)
                     return@launch
                 }
             }
         } catch (t: Throwable) {
-            throw RuntimeException("Unexpected error when initialize a $device", t)
+            onDeviceDie("DeviceWorked died. Can't get status on start", reason = t)
+            return@launch
         }
 
         // what will happen when worker dies
@@ -87,27 +85,34 @@ class DeviceWorker(
                     }
                 }
             } catch (t: Throwable) {
-                throw RuntimeException("Unexpected error while process intention: $intention", t)
+                onDeviceDie(intention, t)
+                return@launch
             }
         }
         device.debug("Worker ended with success result")
     }
 
-    /**
-     * DeviceWorker is die. TODO release device
-     */
     private suspend fun onDeviceDie(
         intention: Intention,
         reason: Throwable
     ) {
-        device.warn("DeviceWorker died. Can't process intention: $intention", reason)
-
+        onDeviceDie("DeviceWorker died. Can't process intention: $intention", reason)
         messagesChannel.send(
             DeviceWorkerMessage.WorkerFailed(
                 t = reason,
                 intention = intention
             )
         )
+    }
+
+    private suspend fun onDeviceDie(
+        message: String,
+        reason: Throwable
+    ) {
+        /**
+         * DeviceWorker is die. TODO release device
+         */
+        device.warn(message, reason)
     }
 
     private suspend fun prepareDeviceState(

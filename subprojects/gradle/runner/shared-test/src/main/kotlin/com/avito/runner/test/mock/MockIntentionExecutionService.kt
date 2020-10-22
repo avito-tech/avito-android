@@ -7,7 +7,7 @@ import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.test.generateDeviceTestCaseRun
 import com.avito.runner.test.generateTestCaseRun
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import java.util.ArrayDeque
@@ -23,9 +23,9 @@ class MockIntentionExecutionService(
     private val intentions: Channel<Intention> = Channel(Channel.UNLIMITED)
     private val results: Channel<IntentionResult> = Channel(Channel.UNLIMITED)
 
-    override fun start(): IntentionExecutionService.Communication {
+    override fun start(scope: CoroutineScope): IntentionExecutionService.Communication {
         // TODO: Don't use global scope. Unconfined coroutines lead to leaks
-        GlobalScope.launch {
+        scope.launch {
             for (intention in intentions) {
                 if (testIntentionExecutionResultsQueue.isEmpty()) {
                     throw IllegalArgumentException(
@@ -54,5 +54,8 @@ class MockIntentionExecutionService(
         )
     }
 
-    override fun stop() {}
+    override fun stop() {
+        intentions.close()
+        results.close()
+    }
 }

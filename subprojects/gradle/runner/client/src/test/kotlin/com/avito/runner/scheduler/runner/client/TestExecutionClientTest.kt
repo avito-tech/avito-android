@@ -11,9 +11,7 @@ import com.avito.runner.test.mock.MockIntentionExecutionService
 import com.avito.runner.test.receiveAvailable
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertWithMessage
-import kotlinx.coroutines.delay
 import org.junit.jupiter.api.Test
-import java.util.concurrent.TimeUnit
 
 class TestExecutionClientTest {
 
@@ -54,16 +52,16 @@ class TestExecutionClientTest {
                     TestCaseRun.Result.Passed
                 }
             )
-            val serviceCommunication = service.start()
+            val serviceCommunication = service.start(this)
 
             val client = TestExecutionClient()
-            val clientCommunication = client.start(serviceCommunication)
+            val clientCommunication = client.start(serviceCommunication, this)
 
             requests.forEach { clientCommunication.requests.send(it) }
 
-            delay(TimeUnit.SECONDS.toMillis(3))
-
             val results = clientCommunication.results.receiveAvailable()
+            service.stop()
+            client.stop()
 
             assertWithMessage("Results received for every request")
                 .that(

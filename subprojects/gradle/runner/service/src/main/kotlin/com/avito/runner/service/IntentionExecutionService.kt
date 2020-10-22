@@ -7,7 +7,7 @@ import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 interface IntentionExecutionService {
-    fun start(): Communication
+    fun start(scope: CoroutineScope): Communication
     fun stop()
 
     class Communication(
@@ -39,42 +39,43 @@ class IntentionExecutionServiceImplementation(
     private val messages: Channel<DeviceWorkerMessage> =
         Channel(Channel.UNLIMITED)
 
-    override fun start(): IntentionExecutionService.Communication {
-        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
-        GlobalScope.launch {
-            for (device in devices) {
-                DeviceWorker(
-                    intentionsRouter = intentionsRouter,
-                    device = device,
-                    outputDirectory = outputDirectory,
-                    messagesChannel = messages,
-                    listener = listener
-                ).run()
+    override fun start(scope: CoroutineScope): IntentionExecutionService.Communication {
+        scope.launch {
+            launch {
+                for (device in devices) {
+                    DeviceWorker(
+                        intentionsRouter = intentionsRouter,
+                        device = device,
+                        outputDirectory = outputDirectory,
+                        messagesChannel = messages,
+                        listener = listener
+                    ).run(scope)
+                }
             }
-        }
-        // TODO: Don't use global scope. Unconfined coroutines lead to leaks
-        GlobalScope.launch {
-            for (intention in intentions) {
-                intentionsRouter.sendIntention(intention = intention)
+
+            launch {
+                for (intention in intentions) {
+                    intentionsRouter.sendIntention(intention = intention)
+                }
             }
-        }
 
-        GlobalScope.launch {
-            for (message in messages) {
-                when (message) {
-                    is DeviceWorkerMessage.ApplicationInstalled -> {
-                        logger.debug("Application: ${message.installation.installation.application} installed")
-                    }
-                    is DeviceWorkerMessage.WorkerFailed -> {
-                        logger.debug(
-                            "Received worker failed message during executing intention:" +
-                                " ${message.intention}. Rescheduling..."
-                        )
+            launch {
+                for (message in messages) {
+                    when (message) {
+                        is DeviceWorkerMessage.ApplicationInstalled -> {
+                            logger.debug("Application: ${message.installation.installation.application} installed")
+                        }
+                        is DeviceWorkerMessage.WorkerFailed -> {
+                            logger.debug(
+                                "Received worker failed message during executing intention:" +
+                                    " ${message.intention}. Rescheduling..."
+                            )
 
-                        intentionsRouter.sendIntention(intention = message.intention)
-                    }
-                    is DeviceWorkerMessage.Result -> {
-                        results.send(message.intentionResult)
+                            intentionsRouter.sendIntention(intention = message.intention)
+                        }
+                        is DeviceWorkerMessage.Result -> {
+                            results.send(message.intentionResult)
+                        }
                     }
                 }
             }
@@ -90,5 +91,7 @@ class IntentionExecutionServiceImplementation(
         intentionsRouter.close()
         intentions.close()
         results.close()
+        messages.close()
+        devices.cancel()
     }
 }

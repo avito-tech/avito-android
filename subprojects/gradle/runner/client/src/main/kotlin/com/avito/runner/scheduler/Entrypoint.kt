@@ -21,7 +21,8 @@ internal class Entrypoint(
 
         val runResult: TestRunnerResult = runBlocking {
             testRunner.runTests(
-                tests = requests
+                tests = requests,
+                scope = this
             )
         }
 

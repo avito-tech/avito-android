@@ -102,7 +102,7 @@ class DeviceWorkerTest {
                 results = resultsChannel,
                 device = successfulDevice,
                 router = router
-            ).run()
+            ).run(this)
 
             // Wait before all intentions will be processed
             delay(TimeUnit.SECONDS.toMillis(3))
@@ -151,10 +151,8 @@ class DeviceWorkerTest {
                 results = resultsChannel,
                 device = freezeDevice,
                 router = router
-            ).run()
+            ).run(this)
 
-            // Wait before all intentions will be processed
-            delay(TimeUnit.SECONDS.toMillis(3))
             router.close()
             worker.join()
 
@@ -214,7 +212,7 @@ class DeviceWorkerTest {
                 results = resultsChannel,
                 device = freezeDevice,
                 router = router
-            ).run()
+            ).run(this)
 
             // Wait before all intentions will be processed
             delay(TimeUnit.SECONDS.toMillis(3))
