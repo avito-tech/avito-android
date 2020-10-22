@@ -1,14 +1,14 @@
 package com.avito.instrumentation.reservation.client
 
 import com.avito.instrumentation.reservation.request.Reservation
-import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.DeviceCoordinate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 
 interface ReservationClient {
 
     class ClaimResult(
-        val serials: ReceiveChannel<Serial>
+        val deviceCoordinates: ReceiveChannel<DeviceCoordinate>
     )
 
     fun claim(

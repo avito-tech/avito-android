@@ -19,7 +19,7 @@ import com.avito.runner.test.NoOpListener
 import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
-import com.avito.runner.test.randomSerial
+import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.randomString
 import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertThat
@@ -68,7 +68,7 @@ class RunnerIntegrationTest {
 
             val firstFailedDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
                     MockActionResult.Success(Any())  // Install test application
@@ -95,7 +95,7 @@ class RunnerIntegrationTest {
             )
             val secondDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
                     MockActionResult.Success(Any())  // Install test application
@@ -217,7 +217,7 @@ class RunnerIntegrationTest {
             val successfulDevice = createSuccessfulDevice(requests)
             val failedDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 gettingDeviceStatusResults = listOf(
                     deviceIsAlive(), // Device state for initializing
                     deviceIsAlive()
@@ -267,7 +267,7 @@ class RunnerIntegrationTest {
 
         val device = MockDevice(
             logger = StdOutLogger(),
-            id = randomSerial(),
+            coordinate = randomDeviceCoordinate(),
             installApplicationResults = listOf(
                 MockActionResult.Success(Any()), // Install application
                 MockActionResult.Success(Any()) // Install test application
@@ -332,7 +332,7 @@ class RunnerIntegrationTest {
 
             val device = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
                     MockActionResult.Success(Any()), // Install application
                     MockActionResult.Success(Any()) // Install test application
@@ -422,7 +422,7 @@ class RunnerIntegrationTest {
 
             val device = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
                     MockActionResult.Success(Any()), // Install application
                     MockActionResult.Success(Any()) // Install test application
@@ -476,7 +476,7 @@ class RunnerIntegrationTest {
     ): MockDevice {
         return MockDevice(
             logger = StdOutLogger(),
-            id = randomSerial(),
+            coordinate = randomDeviceCoordinate(),
             gettingDeviceStatusResults = listOf(
                 failureReason
             )
@@ -528,7 +528,7 @@ class RunnerIntegrationTest {
     private fun createSuccessfulDevice(requests: List<TestRunRequest>): MockDevice {
         return MockDevice(
             logger = StdOutLogger(),
-            id = randomSerial(),
+            coordinate = randomDeviceCoordinate(),
             installApplicationResults = mutableListOf(
                 MockActionResult.Success(Any()), // Install application
                 MockActionResult.Success(Any()) // Install test application

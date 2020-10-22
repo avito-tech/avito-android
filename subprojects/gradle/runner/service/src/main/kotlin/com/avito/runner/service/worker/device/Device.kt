@@ -8,7 +8,7 @@ import java.io.File
 import java.nio.file.Path
 
 interface Device {
-    val id: Serial
+    val coordinate: DeviceCoordinate
     val online: Boolean
     val model: String
     val api: Int
