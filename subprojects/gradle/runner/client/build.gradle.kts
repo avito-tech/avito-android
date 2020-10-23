@@ -22,4 +22,5 @@ dependencies {
     testImplementation(Dependencies.kotlinReflect)
     testImplementation(Dependencies.test.mockitoKotlin)
     testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.test.coroutinesTest)
 }

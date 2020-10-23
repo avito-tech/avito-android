@@ -82,10 +82,12 @@ class KubernetesReservationClient(
                                 emulatorName = serial,
                                 device = device
                             )
-                            serialsChannel.send(DeviceCoordinate.Kubernetes(
-                                serial = serial,
-                                podName = podName
-                            ))
+                            serialsChannel.send(
+                                DeviceCoordinate.Kubernetes(
+                                    serial = serial,
+                                    podName = podName
+                                )
+                            )
 
                             logger.debug("Pod $podName sent outside for further usage")
                         } else {
@@ -103,6 +105,12 @@ class KubernetesReservationClient(
         return ReservationClient.ClaimResult(
             deviceCoordinates = serialsChannel
         )
+    }
+
+    override suspend fun remove(podName: String, scope: CoroutineScope) {
+        scope.launch(Dispatchers.IO) {
+            kubernetesClient.pods().withName(podName).delete()
+        }
     }
 
     override suspend fun release() = withContext(Dispatchers.IO) {

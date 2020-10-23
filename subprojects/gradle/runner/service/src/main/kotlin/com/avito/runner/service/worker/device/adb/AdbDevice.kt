@@ -341,7 +341,7 @@ data class AdbDevice(
             Duration.ofSeconds(DDMLIB_SOCKET_TIME_OUT_SECONDS).toMillis().toInt()
         )
 
-        val bridge = AndroidDebugBridge.createBridge(adb.adb, false)
+        val bridge = AndroidDebugBridge.createBridge(adb.adbPath, false)
         waitForAdb(bridge)
 
         return bridge.devices.find {
@@ -431,7 +431,7 @@ data class AdbDevice(
         redirectOutputTo: File? = null
     ): Observable<ProcessNotification> =
         commandLine.executeProcess(
-            command = adb.adb,
+            command = adb.adbPath,
             args = listOf("-s", coordinate.serial.value) + command,
             output = redirectOutputTo
         )

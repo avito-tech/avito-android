@@ -11,6 +11,7 @@ object Dependencies {
         val espresso = "3.2.0"
         val mockito = "3.3.3"
         val detekt = "1.10.0"
+        val coroutines = "1.2.2"
         val androidGradlePlugin = System.getProperty("androidGradlePluginVersion")
     }
 
@@ -19,7 +20,7 @@ object Dependencies {
     val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect"
     val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.1"
     val kotlinCompilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable"
-    val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.2.2"
+    val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     val retrofitConverterGson = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
     val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
@@ -111,5 +112,6 @@ object Dependencies {
         val junitPlatformRunner = "org.junit.platform:junit-platform-runner:${Versions.junit5Platform}"
         val junitPlatformLauncher = "org.junit.platform:junit-platform-launcher:${Versions.junit5Platform}"
         val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junit5}"
+        val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     }
 }

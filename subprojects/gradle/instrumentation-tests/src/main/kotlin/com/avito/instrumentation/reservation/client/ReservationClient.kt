@@ -16,5 +16,10 @@ interface ReservationClient {
         scope: CoroutineScope
     ): ClaimResult
 
+    suspend fun remove(
+        podName: String,
+        scope: CoroutineScope
+    )
+
     suspend fun release()
 }

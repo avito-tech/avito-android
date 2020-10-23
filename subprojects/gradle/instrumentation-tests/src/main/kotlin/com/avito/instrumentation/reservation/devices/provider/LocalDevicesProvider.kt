@@ -65,6 +65,10 @@ class LocalDevicesProvider(
         return devices.distinctBy { it.coordinate }.take(devicesRequired)
     }
 
+    override suspend fun releaseDevice(coordinate: DeviceCoordinate, scope: CoroutineScope) {
+        // empty
+    }
+
     private fun findDevices(
         reservation: Reservation.Data,
         acquiredDevices: Set<DeviceCoordinate>

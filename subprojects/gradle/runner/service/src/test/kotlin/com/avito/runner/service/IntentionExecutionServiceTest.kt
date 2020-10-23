@@ -7,6 +7,7 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.test.NoOpListener
+import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
@@ -15,28 +16,28 @@ import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.receiveAvailable
-import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertWithMessage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.concurrent.TimeUnit
 
+@ExperimentalCoroutinesApi
 class IntentionExecutionServiceTest {
 
     @Test
     fun `schedule all tests to supported devices`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val intentionsRouter = IntentionsRouter()
             val executionService = provideIntentionExecutionService(
                 devices = devices,
                 intentionsRouter = intentionsRouter
             )
-            val communication = executionService.start(this)
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
@@ -96,14 +97,14 @@ class IntentionExecutionServiceTest {
             )
 
             devices.send(successfulDevice)
-            intentions.forEach { communication.intentions.send(it) }
-
-            delay(TimeUnit.SECONDS.toMillis(4))
+            val communication = executionService.start(this)
+            intentions.forEach {
+                communication.intentions.send(it)
+            }
 
             val results = communication.results.receiveAvailable()
             executionService.stop()
             successfulDevice.verify()
-
             assertWithMessage("Received results for all input intentions")
                 .that(results.map { it.intention })
                 .isEqualTo(intentions)
@@ -120,7 +121,7 @@ class IntentionExecutionServiceTest {
 
     @Test
     fun `reschedule test to another device - when device is broken while processing intention`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val intentionsRouter = IntentionsRouter()
             val executionService = provideIntentionExecutionService(
@@ -195,15 +196,7 @@ class IntentionExecutionServiceTest {
 
             devices.send(freezeDevice)
             intentions.forEach { communication.intentions.send(it) }
-
-            // Wait for device failed with infrastructure problems
-            delay(TimeUnit.SECONDS.toMillis(2))
-
             devices.send(successfulDevice)
-
-            // Wait for tests passed
-            delay(TimeUnit.SECONDS.toMillis(2))
-
             val results = communication.results.receiveAvailable()
             executionService.stop()
             successfulDevice.verify()
@@ -231,6 +224,7 @@ class IntentionExecutionServiceTest {
         logger = NoOpLogger,
         devices = devices,
         intentionsRouter = intentionsRouter,
-        listener = NoOpListener
+        listener = NoOpListener,
+        deviceWorkersDispatcher = TestDispatcher
     )
 }

@@ -3,6 +3,7 @@ package com.avito.runner.scheduler.runner
 import com.avito.logger.Logger
 import com.avito.logger.NoOpLogger
 import com.avito.runner.logging.StdOutLogger
+import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
@@ -16,29 +17,34 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.test.NoOpListener
+import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.randomString
-import com.avito.runner.test.runBlockingWithTimeout
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 
+@ExperimentalCoroutinesApi
 class RunnerIntegrationTest {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
     @Test
     fun `all tests passed - for 1 successful device`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val runner = provideRunner(
                 devices = devices
             )
@@ -59,7 +65,7 @@ class RunnerIntegrationTest {
 
     @Test
     fun `all tests passed by first and second devices - for first device that complete half of tests and failed and second connected later device that complete all remaining tests`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val runner = provideRunner(
                 devices = devices
             )
@@ -141,7 +147,7 @@ class RunnerIntegrationTest {
 
     @Test
     fun `all tests passed by first device - for 1 successful and 1 freeze device`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
                 devices = devices
@@ -174,7 +180,7 @@ class RunnerIntegrationTest {
 
     @Test
     fun `all tests passed by first device - for 1 successful and 1 failed to get status device`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
                 devices = devices
@@ -206,7 +212,7 @@ class RunnerIntegrationTest {
 
     @Test
     fun `all tests passed by first device - when second device failed on application installing`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
                 devices = devices
@@ -247,7 +253,7 @@ class RunnerIntegrationTest {
         }
 
     @Test
-    fun `test passed after retry of failed test`() = runBlockingWithTimeout {
+    fun `test passed after retry of failed test`() = runBlockingTest {
         val devices = Channel<Device>(Channel.UNLIMITED)
         val runner = provideRunner(
             devices = devices
@@ -313,7 +319,7 @@ class RunnerIntegrationTest {
 
     @Test
     fun `test passed after retry of failed test when minimal passed count is 2 and retry quota is 4`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
                 devices = devices
@@ -364,9 +370,9 @@ class RunnerIntegrationTest {
                 runTestsResults = listOf(
                     testPassed(), // First test passed by first try
                     testFailed(), // First test failed by second try
-                    testPassed(), // Second test passed by first try
-                    testFailed(), // Second test failed by second try
                     testPassed(), // First test passed  by third try
+                    testFailed(), // Second test failed by first try
+                    testPassed(), // Second test passed by second try
                     testFailed(), // Second test failed by third try
                     testPassed() // Second test passed by fourth try
                 )
@@ -375,11 +381,11 @@ class RunnerIntegrationTest {
             devices.send(device)
 
 
-            val result = runner.runTests(requests, this)
+            val actualResult = runner.runTests(requests, this)
             device.verify()
 
             assertThat(
-                result.runs
+                actualResult.runs
             ).isEqualTo(
                 mapOf(
                     requests[0].let { request ->
@@ -391,8 +397,8 @@ class RunnerIntegrationTest {
                     },
                     requests[1].let { request ->
                         request to listOf(
-                            request.toPassedRun(device),
                             request.toFailedRun(device),
+                            request.toPassedRun(device),
                             request.toFailedRun(device),
                             request.toPassedRun(device)
                         )
@@ -403,7 +409,7 @@ class RunnerIntegrationTest {
 
     @Test
     fun `test completed after 1 success and 1 fail for that requirements with retryCount 4`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
             val runner = provideRunner(
                 devices = devices
@@ -570,21 +576,28 @@ class RunnerIntegrationTest {
         outputDirectory: File = File("")
     ): TestRunner {
         val scheduler = TestExecutionScheduler(
-            logger = logger
+            logger = logger,
+            dispatcher = TestCoroutineDispatcher()
         )
-        val client = TestExecutionClient()
+        val client = TestExecutionClient(TestCoroutineDispatcher())
         val service = IntentionExecutionServiceImplementation(
             outputDirectory = outputDirectory,
             logger = logger,
             devices = devices,
-            listener = testListener
+            listener = testListener,
+            deviceWorkersDispatcher = TestDispatcher
         )
 
         return TestRunnerImplementation(
             scheduler = scheduler,
             client = client,
             service = service,
-            logger = logger
+            logger = logger,
+            reservationWatcher = object : DeviceReservationWatcher {
+                override fun watch(deviceSignals: ReceiveChannel<Device.Signal>, scope: CoroutineScope) {
+                    // empty
+                }
+            }
         )
     }
 

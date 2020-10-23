@@ -40,7 +40,7 @@ class AdbDevicesManager(
 
     private fun adbDevices(): Single<String> {
         return commandLine.executeProcess(
-            command = adb.adb,
+            command = adb.adbPath,
             args = listOf("devices", "-l")
         )
             .ofType(ProcessNotification.Exit::class.java)

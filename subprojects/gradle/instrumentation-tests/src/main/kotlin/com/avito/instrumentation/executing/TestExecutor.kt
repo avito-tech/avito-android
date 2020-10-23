@@ -87,7 +87,8 @@ interface TestExecutor {
                     devices = devices,
                     logger = commonLogger(logger),
                     listener = testReporter,
-                    requests = testRequests
+                    requests = testRequests,
+                    reservation = devicesProvider
                 )
 
                 logger.debug("Arguments: $runnerArguments")

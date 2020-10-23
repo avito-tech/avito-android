@@ -1,5 +1,6 @@
 package com.avito.runner.service
 
+import com.avito.coroutines.extensions.Dispatchers
 import com.avito.logger.Logger
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.intention.Intention
@@ -20,7 +21,8 @@ interface IntentionExecutionService {
 
     class Communication(
         val intentions: SendChannel<Intention>,
-        val results: ReceiveChannel<IntentionResult>
+        val results: ReceiveChannel<IntentionResult>,
+        val deviceSignals: ReceiveChannel<Device.Signal>
     )
 }
 
@@ -29,7 +31,8 @@ class IntentionExecutionServiceImplementation(
     private val logger: Logger,
     private val devices: ReceiveChannel<Device>,
     private val intentionsRouter: IntentionsRouter = IntentionsRouter(),
-    private val listener: TestListener
+    private val listener: TestListener,
+    private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread
 ) : IntentionExecutionService {
 
     private val intentions: Channel<Intention> =
@@ -37,6 +40,8 @@ class IntentionExecutionServiceImplementation(
     private val results: Channel<IntentionResult> =
         Channel(Channel.UNLIMITED)
     private val messages: Channel<DeviceWorkerMessage> =
+        Channel(Channel.UNLIMITED)
+    private val deviceSignals: Channel<Device.Signal> =
         Channel(Channel.UNLIMITED)
 
     override fun start(scope: CoroutineScope): IntentionExecutionService.Communication {
@@ -48,7 +53,8 @@ class IntentionExecutionServiceImplementation(
                         device = device,
                         outputDirectory = outputDirectory,
                         messagesChannel = messages,
-                        listener = listener
+                        listener = listener,
+                        dispatchers = deviceWorkersDispatcher
                     ).run(scope)
                 }
             }
@@ -65,7 +71,7 @@ class IntentionExecutionServiceImplementation(
                         is DeviceWorkerMessage.ApplicationInstalled -> {
                             logger.debug("Application: ${message.installation.installation.application} installed")
                         }
-                        is DeviceWorkerMessage.WorkerFailed -> {
+                        is DeviceWorkerMessage.FailedIntentionProcessing -> {
                             logger.debug(
                                 "Received worker failed message during executing intention:" +
                                     " ${message.intention}. Rescheduling..."
@@ -76,6 +82,9 @@ class IntentionExecutionServiceImplementation(
                         is DeviceWorkerMessage.Result -> {
                             results.send(message.intentionResult)
                         }
+                        is DeviceWorkerMessage.WorkerDied -> {
+                            deviceSignals.send(Device.Signal.Died(message.coordinate))
+                        }
                     }
                 }
             }
@@ -83,7 +92,8 @@ class IntentionExecutionServiceImplementation(
 
         return IntentionExecutionService.Communication(
             intentions = intentions,
-            results = results
+            results = results,
+            deviceSignals = deviceSignals
         )
     }
 
@@ -93,5 +103,6 @@ class IntentionExecutionServiceImplementation(
         results.close()
         messages.close()
         devices.cancel()
+        deviceSignals.close()
     }
 }
