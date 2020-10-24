@@ -23,6 +23,8 @@ interface Git {
 
     fun resetHard(revision: String): Try<Unit>
 
+    fun log(beginTag: String, endTag: String): Try<String>
+
     /**
      * @param abbrevRef Use a non-ambiguous short name of the objects name
      */
@@ -53,6 +55,8 @@ interface Git {
         override fun resetHard(revision: String): Try<Unit> = git("reset --hard $revision").map { Unit }
 
         override fun config(option: String): Try<String> = git("config $option")
+
+        override fun log(beginTag: String, endTag: String): Try<String> = git("log --pretty=format:\"%s\" $beginTag...$endTag")
 
         override fun tryParseRev(branchName: String, abbrevRef: Boolean): Try<String> {
             val abbrevRefOption = if (abbrevRef) "--abbrev-ref" else ""
