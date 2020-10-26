@@ -6,6 +6,7 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
+import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.DeviceData
@@ -59,14 +60,14 @@ fun generateDeviceTestCaseRun(
         device = deviceData
     )
 
-fun randomSerial(): Serial = Serial.Local(randomString())
+fun randomDeviceCoordinate(): DeviceCoordinate = DeviceCoordinate.Local(Serial.Local(randomString()))
 
 fun <T : Any> listWithDefault(size: Int, value: T): List<T> {
     return (0 until size).map { value }
 }
 
 fun generateDeviceData(
-    serial: Serial = randomSerial(),
+    serial: Serial = randomDeviceCoordinate().serial,
     configuration: DeviceConfiguration = generateDeviceConfiguration()
 ): DeviceData = DeviceData(
     serial = serial,

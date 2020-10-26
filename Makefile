@@ -77,6 +77,9 @@ sample_app_instrumentation_dynamic: dynamic_properties
 unit_tests:
 	./gradlew -p subprojects test $(log_level)
 
+compile_tests:
+	./gradlew -p subprojects compileTestKotlin $(log_level)
+
 clear_k8s_deployments_by_namespaces:
 	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
 

@@ -8,7 +8,10 @@ import java.io.File
 import java.nio.file.Path
 
 interface Device {
-    val id: Serial
+    sealed class Signal {
+        data class Died(val coordinate: DeviceCoordinate): Signal()
+    }
+    val coordinate: DeviceCoordinate
     val online: Boolean
     val model: String
     val api: Int

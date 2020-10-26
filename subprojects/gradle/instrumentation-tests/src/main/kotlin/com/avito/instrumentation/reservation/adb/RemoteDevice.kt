@@ -1,13 +1,15 @@
 package com.avito.instrumentation.reservation.adb
 
 import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.utils.runCommand
 import org.funktionale.tries.Try
 
-internal class RemoteDevice(
-    serial: Serial,
+class RemoteDevice(
+    override val serial: Serial.Remote,
+    override val adb: Adb,
     logger: (String) -> Unit = {}
-): Device(serial, logger) {
+) : Device(logger) {
 
     fun disconnect(): Try<String> = runCommand(
         command = "$adb disconnect $serial",

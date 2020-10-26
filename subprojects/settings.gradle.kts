@@ -89,6 +89,7 @@ include(":common:retrace")
 include(":common:truth-extensions")
 include(":common:composite-exception")
 include(":common:throwable-utils")
+include(":common:coroutines-extension")
 
 include(":android-test:resource-manager-exceptions")
 include(":android-test:websocket-reporter")

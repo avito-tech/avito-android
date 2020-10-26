@@ -3,6 +3,7 @@ package com.avito.plugin
 import com.android.build.gradle.api.ApplicationVariant
 import com.avito.runner.ProcessNotification
 import com.avito.runner.logging.StdOutLogger
+import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.logging.CILogger
 import org.gradle.api.DefaultTask
@@ -24,7 +25,7 @@ open class PullScreenshotsTask : DefaultTask() {
     @TaskAction
     fun pullScreenshots() {
         val applicationId = variant.get().testVariant.applicationId
-        val adbDevicesManager = AdbDevicesManager(StdOutLogger())
+        val adbDevicesManager = AdbDevicesManager(StdOutLogger(), adb = Adb())
         val adbDeviceHandler =  AdbDeviceHandlerLocal(ciLogger)
         val deviceSearch = DeviceSearchLocal(adbDevicesManager)
         val currentDevice = adbDeviceHandler.resolve(deviceSearch.getDevice())

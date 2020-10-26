@@ -55,7 +55,7 @@ class ReportViewerTestReporter(
     ) {
         super.started(test, device, executionNumber)
 
-        val logcatFile = File(logcatDir, "${device.id}.txt")
+        val logcatFile = File(logcatDir, "${device.coordinate.serial}.txt")
 
         val key = test to executionNumber
         logcatBuffers[key] = LogcatBuffer.Impl(

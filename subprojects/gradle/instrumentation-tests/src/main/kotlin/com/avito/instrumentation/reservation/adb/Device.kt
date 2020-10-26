@@ -2,23 +2,17 @@ package com.avito.instrumentation.reservation.adb
 
 import com.avito.instrumentation.util.waitForCondition
 import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.utils.runCommand
 import com.avito.utils.spawnProcess
 import org.funktionale.tries.Try
 import java.io.File
 
 abstract class Device(
-    val serial: Serial,
     protected val logger: (String) -> Unit = {}
 ) {
-    private val androidHome: String? = System.getenv("ANDROID_HOME")
-    protected val adb: String = "$androidHome/platform-tools/adb"
-
-    init {
-        requireNotNull(androidHome) {
-            "Can't find env ANDROID_HOME. It needs to run 'adb'"
-        }
-    }
+    protected abstract val adb: Adb
+    abstract val serial: Serial
 
     fun redirectLogcatToFile(
         file: File,
