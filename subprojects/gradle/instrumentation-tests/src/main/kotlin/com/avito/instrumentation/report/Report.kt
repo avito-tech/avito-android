@@ -20,6 +20,7 @@ interface Report : ReadReport {
     interface Factory : Serializable {
 
         sealed class Config : Serializable {
+
             data class ReportViewerCoordinates(
                 val reportCoordinates: ReportCoordinates,
                 val buildId: String
@@ -99,7 +100,7 @@ interface Report : ReadReport {
                 return when (config) {
                     is Config.ReportViewerCoordinates -> {
                         ensureInitializedReportsApi()
-                        Report.Impl(
+                        Impl(
                             reportsApi = reportsApi,
                             logger = ciLogger,
                             reportCoordinates = config.reportCoordinates,
