@@ -11,7 +11,7 @@ object Dependencies {
         val espresso = "3.2.0"
         val mockito = "3.3.3"
         val detekt = "1.10.0"
-        val coroutines = "1.2.2"
+        val coroutines = "1.3.7"
         val androidGradlePlugin = System.getProperty("androidGradlePluginVersion")
     }
 
