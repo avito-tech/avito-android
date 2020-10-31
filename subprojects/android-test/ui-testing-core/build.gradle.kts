@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    api(Dependencies.androidTest.core)
-    api(Dependencies.androidTest.espressoCore)
-    api(Dependencies.androidTest.espressoWeb)
-    api(Dependencies.androidTest.espressoIntents)
-    api(Dependencies.androidTest.uiAutomator)
+    api(Dependencies.AndroidTest.core)
+    api(Dependencies.AndroidTest.espressoCore)
+    api(Dependencies.AndroidTest.espressoWeb)
+    api(Dependencies.AndroidTest.espressoIntents)
+    api(Dependencies.AndroidTest.uiAutomator)
 
-    api(Dependencies.androidTest.espressoDescendantActions)
+    api(Dependencies.AndroidTest.espressoDescendantActions)
 
     api(Dependencies.appcompat)
     api(Dependencies.recyclerView)
@@ -21,7 +21,7 @@ dependencies {
     //todo implementation, waitForAssertion used in app
     api(project(":common:waiter"))
 
-    implementation(Dependencies.test.hamcrestLib)
-    implementation(Dependencies.test.junit)
+    implementation(Dependencies.Test.hamcrestLib)
+    implementation(Dependencies.Test.junit)
     implementation(Dependencies.freeReflection)
 }

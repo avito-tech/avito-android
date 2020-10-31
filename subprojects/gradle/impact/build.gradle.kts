@@ -17,13 +17,13 @@ dependencies {
     implementation(project(":gradle:git"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.antPattern)
-    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.Gradle.kotlinPlugin)
 
     testImplementation(project(":gradle:impact-shared-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:logging-test-fixtures"))
     testImplementation(project(":gradle:git-test-fixtures"))
-    testImplementation(Dependencies.test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoKotlin)
 }
 
 gradlePlugin {

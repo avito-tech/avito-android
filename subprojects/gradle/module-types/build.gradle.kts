@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":gradle:pre-build"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:impact"))
-    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.Gradle.kotlinPlugin)
 
     testImplementation(project(":gradle:test-project"))
 }

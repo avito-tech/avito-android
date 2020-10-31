@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 
     implementation(project(":gradle:pre-build"))
     implementation(project(":gradle:utils"))

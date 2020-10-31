@@ -8,5 +8,5 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:test-project"))
-    implementation(Dependencies.test.truth)
+    implementation(Dependencies.Test.truth)
 }
