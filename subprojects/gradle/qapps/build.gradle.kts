@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:android"))
     implementation(project(":common:okhttp"))
-    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:build-failer"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":common:logger"))
     implementation(Dependencies.funktionaleTry)

@@ -2,6 +2,7 @@ package com.avito.utils
 
 import org.gradle.api.Project
 
+@Suppress("unused")
 val Project.buildFailer: BuildFailer
     get() = BuildFailer.RealFailer()
 

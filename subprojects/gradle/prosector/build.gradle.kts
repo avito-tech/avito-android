@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:kotlin-dsl-support"))

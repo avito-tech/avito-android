@@ -4,7 +4,6 @@ import com.avito.android.androidSdk
 import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.Output
 import com.avito.plugin.SignVerifier
-import com.avito.utils.exhaustive
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
@@ -66,7 +65,7 @@ abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFactory) : D
                         outputsVerifier.checkBundleSignature(it, output.signature!!)
                     }
                 }
-            }.exhaustive()
+            }
         }
 
         if (outputsVerifier.errors.isNotEmpty()) {

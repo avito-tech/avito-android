@@ -5,11 +5,10 @@ import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.plugin.signedApkTaskProvider
 import com.avito.plugin.signedBundleTaskProvider
-import com.avito.utils.exhaustive
 import com.avito.utils.logging.ciLogger
-import com.avito.utils.onBuildFailed
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
@@ -27,7 +26,6 @@ open class VerifyArtifactsStep(
 
         rootTask.configure { task ->
             artifactsConfig.outputs.forEach { (_, output) ->
-                @Suppress("IMPLICIT_CAST_TO_ANY")
                 when (output) {
                     is Output.ApkOutput -> {
                         task.dependsOn(project.tasks.signedApkTaskProvider(output.variantName))
@@ -39,7 +37,7 @@ open class VerifyArtifactsStep(
                     is Output.FileOutput -> {
                         // do nothing
                     }
-                }.exhaustive()
+                }
             }
         }
 
@@ -78,3 +76,13 @@ open class VerifyArtifactsStep(
 internal fun verifyTaskName(context: String) = "${context}VerifyArtifacts"
 
 internal fun TaskContainer.verifyTaskProvider(context: String) = typedNamed<VerifyOutputsTask>(verifyTaskName(context))
+
+private fun Gradle.onBuildFailed(block: () -> Unit) {
+    buildFinished { buildResult ->
+        if (buildResult.failure != null && buildResult.action == ACTION_BUILD) {
+            block()
+        }
+    }
+}
+
+private const val ACTION_BUILD = "Build"

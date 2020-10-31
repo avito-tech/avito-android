@@ -11,7 +11,6 @@ dependencies {
     implementation(project(":gradle:impact"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:git"))
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:files"))
     implementation(project(":gradle:sentry-config"))
