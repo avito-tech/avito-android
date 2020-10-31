@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(Dependencies.test.truth)
+    api(Dependencies.Test.truth)
 }

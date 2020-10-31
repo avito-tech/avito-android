@@ -18,10 +18,10 @@ dependencies {
     implementation(project(":gradle:build-environment"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(project(":gradle:git"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:graphite-test-fixtures"))

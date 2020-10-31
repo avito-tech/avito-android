@@ -8,11 +8,11 @@ extra["artifact-id"] = "runner-shared-test"
 
 dependencies {
     compileOnly(gradleApi())
-    api(Dependencies.test.coroutinesTest)
+    api(Dependencies.Test.coroutinesTest)
     implementation(Dependencies.coroutinesCore)
-    implementation(Dependencies.test.junitJupiterApi)
+    implementation(Dependencies.Test.junitJupiterApi)
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.test.truth)
+    implementation(Dependencies.Test.truth)
     implementation(project(":gradle:runner:service"))
     implementation(project(":gradle:runner:shared"))
     implementation(project(":gradle:test-project"))

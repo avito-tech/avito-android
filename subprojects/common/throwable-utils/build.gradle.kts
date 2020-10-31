@@ -6,5 +6,5 @@ plugins {
 
 dependencies {
     implementation(Dependencies.commonsText)
-    testImplementation(Dependencies.test.truth)
+    testImplementation(Dependencies.Test.truth)
 }

@@ -7,8 +7,8 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(Dependencies.gradle.kotlinPlugin)
-    implementation(Dependencies.gradle.androidPlugin) {
+    implementation(Dependencies.Gradle.kotlinPlugin)
+    implementation(Dependencies.Gradle.androidPlugin) {
         because("Ad-hoc TODO add documentation MBS-9695")
     }
     implementation(project(":common:throwable-utils"))

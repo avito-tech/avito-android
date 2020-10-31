@@ -7,5 +7,5 @@ plugins {
 dependencies {
     implementation(Dependencies.proguardRetrace)
 
-    testImplementation(Dependencies.test.junit)
+    testImplementation(Dependencies.Test.junit)
 }
