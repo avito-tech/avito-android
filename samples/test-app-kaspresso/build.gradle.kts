@@ -72,9 +72,9 @@ dependencies(delegateClosureOf<DependencyHandler> {
 
     androidTestImplementation("com.avito.android:test-inhouse-runner")
 
-    androidTestImplementation(Dependencies.androidTest.runner)
-    androidTestImplementation(Dependencies.androidTest.kaspresso)
-    androidTestUtil(Dependencies.androidTest.orchestrator)
+    androidTestImplementation(Dependencies.AndroidTest.runner)
+    androidTestImplementation(Dependencies.AndroidTest.kaspresso)
+    androidTestUtil(Dependencies.AndroidTest.orchestrator)
 
-    androidTestImplementation(Dependencies.test.junit)
+    androidTestImplementation(Dependencies.Test.junit)
 })

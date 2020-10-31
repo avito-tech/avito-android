@@ -13,5 +13,5 @@ dependencies {
 
 
     testImplementation(project(":gradle:test-project"))
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
 }

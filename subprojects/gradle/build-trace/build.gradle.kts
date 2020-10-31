@@ -14,8 +14,8 @@ dependencies {
     implementation(project(":gradle:build-environment"))
     implementation(gradleApi())
 
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(project(":gradle:test-project"))
 }
 

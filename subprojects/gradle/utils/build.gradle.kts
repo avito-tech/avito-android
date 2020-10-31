@@ -8,6 +8,6 @@ dependencies {
     api(gradleApi())
     api(project(":gradle:kotlin-dsl-support"))
 
-    testImplementation(Dependencies.test.truth)
-    testImplementation(Dependencies.test.mockitoKotlin)
+    testImplementation(Dependencies.Test.truth)
+    testImplementation(Dependencies.Test.mockitoKotlin)
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(Dependencies.gradle.androidPlugin)
+    api(Dependencies.Gradle.androidPlugin)
 
     implementation(gradleApi())
     implementation(project(":gradle:files"))

@@ -13,11 +13,11 @@ dependencies {
     implementation(project(":gradle:files"))
     implementation(project(":gradle:kotlin-dsl-support"))
 
-    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.Gradle.kotlinPlugin)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.detektParser)
     implementation(Dependencies.detektCli)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 
     testImplementation(project(":gradle:test-project"))
 }

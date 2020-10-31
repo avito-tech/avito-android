@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":gradle:files"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
     implementation(Dependencies.okhttp)
     implementation(Dependencies.okhttpLogging)
 

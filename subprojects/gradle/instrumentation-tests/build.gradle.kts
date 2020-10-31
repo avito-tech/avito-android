@@ -47,9 +47,9 @@ dependencies {
     testImplementation(project(":gradle:utils-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-test-fixtures"))
     testImplementation(project(":common:report-viewer-test-fixtures"))
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
-    testImplementation(Dependencies.test.okhttpMockWebServer)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.okhttpMockWebServer)
 }
 
 gradlePlugin {

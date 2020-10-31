@@ -47,5 +47,5 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestImplementation("com.avito.android:ui-testing-core")
     androidTestImplementation("com.avito.android:snackbar-rule")
     androidTestImplementation(project(":samples:test-app-core"))
-    androidTestUtil(Dependencies.androidTest.orchestrator)
+    androidTestUtil(Dependencies.AndroidTest.orchestrator)
 })

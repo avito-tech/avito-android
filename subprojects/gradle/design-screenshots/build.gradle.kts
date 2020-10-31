@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":gradle:runner:service"))
     implementation(project(":gradle:runner:shared"))
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 }
 
 gradlePlugin {

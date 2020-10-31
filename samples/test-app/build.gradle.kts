@@ -88,8 +88,8 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestImplementation("com.avito.android:okhttp")
     androidTestImplementation("com.avito.android:time")
 
-    androidTestImplementation(Dependencies.androidTest.runner)
-    androidTestUtil(Dependencies.androidTest.orchestrator)
+    androidTestImplementation(Dependencies.AndroidTest.runner)
+    androidTestUtil(Dependencies.AndroidTest.orchestrator)
 
     androidTestImplementation(Dependencies.okhttp)
     androidTestImplementation(Dependencies.okhttpLogging)
@@ -97,7 +97,7 @@ dependencies(delegateClosureOf<DependencyHandler> {
     androidTestImplementation(Dependencies.gson)
     androidTestImplementation(Dependencies.kotson)
     androidTestImplementation(Dependencies.sentry)
-    androidTestImplementation(Dependencies.test.mockitoCore)
-    androidTestImplementation(Dependencies.test.truth)
-    androidTestImplementation(Dependencies.test.okhttpMockWebServer)
+    androidTestImplementation(Dependencies.Test.mockitoCore)
+    androidTestImplementation(Dependencies.Test.truth)
+    androidTestImplementation(Dependencies.Test.okhttpMockWebServer)
 })
