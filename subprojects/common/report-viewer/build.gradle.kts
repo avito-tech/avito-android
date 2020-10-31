@@ -18,6 +18,6 @@ dependencies {
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":common:report-viewer-test-fixtures"))
-    testImplementation(Dependencies.test.okhttpMockWebServer)
-    testImplementation(Dependencies.test.jsonPathAssert)
+    testImplementation(Dependencies.Test.okhttpMockWebServer)
+    testImplementation(Dependencies.Test.jsonPathAssert)
 }

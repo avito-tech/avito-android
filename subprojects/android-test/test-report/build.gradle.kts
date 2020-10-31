@@ -25,8 +25,8 @@ dependencies {
     testImplementation(project(":common:junit-utils"))
     testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":common:time-test-fixtures"))
-    testImplementation(Dependencies.test.okhttpMock)
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.jsonPathAssert)
+    testImplementation(Dependencies.Test.okhttpMock)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.jsonPathAssert)
     testImplementation(project(":common:truth-extensions"))
 }

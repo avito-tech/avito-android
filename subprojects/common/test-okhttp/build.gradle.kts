@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    api(Dependencies.test.okhttpMockWebServer)
+    api(Dependencies.Test.okhttpMockWebServer)
 
-    implementation(Dependencies.test.truth)
+    implementation(Dependencies.Test.truth)
     implementation(Dependencies.gson)
     implementation(Dependencies.commonsLang)
 

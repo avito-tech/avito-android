@@ -9,10 +9,10 @@ dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
 }
 
 gradlePlugin {

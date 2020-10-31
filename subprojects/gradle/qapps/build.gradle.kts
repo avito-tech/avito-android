@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":gradle:ci-logger"))
     implementation(project(":common:logger"))
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)
     implementation(Dependencies.okhttpLogging)
