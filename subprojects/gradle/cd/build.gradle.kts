@@ -27,7 +27,6 @@ dependencies {
     implementation(project(":gradle:tms"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(project(":gradle:upload-to-googleplay"))
-    implementation(project(":gradle:utils"))
 
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))

@@ -9,7 +9,6 @@ dependencies {
     api(gradleTestKit())
 
     implementation(project(":gradle:process"))
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:android"))
 
     implementation(Dependencies.kotlinReflect)

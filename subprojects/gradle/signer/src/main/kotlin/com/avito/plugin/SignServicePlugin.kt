@@ -8,7 +8,6 @@ import com.avito.android.bundleTaskProvider
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.hasTasks
-import com.avito.utils.hasContent
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
@@ -20,6 +19,8 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dslx.closureOf
 import org.gradle.util.Path
 import java.io.File
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * Подписываем apk при помощи собственного сервиса.
@@ -197,4 +198,15 @@ class SignServicePlugin : Plugin<Project> {
             requireNotNull(signTokens[buildTypeName]) { "[SignServicePlugin] can't sign $buildTypeName, token is not set" }
         }
     }
+}
+
+@OptIn(ExperimentalContracts::class)
+private fun String?.hasContent(): Boolean {
+    contract {
+        returns(true) implies (this@hasContent != null)
+    }
+
+    if (isNullOrBlank()) return false
+    if (this == "null") return false
+    return true
 }

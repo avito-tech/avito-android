@@ -5,5 +5,5 @@ plugins {
 }
 
 dependencies {
-    implementation(Dependencies.gson)
+    api(gradleApi())
 }

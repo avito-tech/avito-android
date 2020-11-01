@@ -9,7 +9,6 @@ dependencies {
 
     implementation(gradleApi())
     implementation(project(":common:okhttp"))
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)

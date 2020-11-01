@@ -14,7 +14,6 @@ dependencies {
     implementation(Dependencies.okhttp)
 
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:impact-shared"))

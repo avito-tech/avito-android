@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))

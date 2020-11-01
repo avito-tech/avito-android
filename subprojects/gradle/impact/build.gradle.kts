@@ -10,7 +10,6 @@ dependencies {
         project(":gradle:impact-shared")
     )
     implementation(gradleApi())
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:files"))
     implementation(project(":gradle:android"))

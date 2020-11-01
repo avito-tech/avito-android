@@ -10,7 +10,6 @@ dependencies {
     compileOnly(gradleApi())
     api(project(":common:coroutines-extension"))
     implementation(project(":gradle:runner:shared"))
-    implementation(project(":gradle:utils"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.AndroidTest.ddmlib)
     implementation(Dependencies.rxJava)
