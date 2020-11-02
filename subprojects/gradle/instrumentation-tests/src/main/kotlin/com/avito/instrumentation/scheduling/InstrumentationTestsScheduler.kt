@@ -27,8 +27,11 @@ class InstrumentationTestsScheduler(
     override fun schedule(): TestsScheduler.Result {
         filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
 
+        val tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
+
         val testSuite = testSuiteProvider.getTestSuite(
-            tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
+            // runtime error here if something wrong in loadTestSuite()
+            tests = tests.get()
         )
 
         filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
