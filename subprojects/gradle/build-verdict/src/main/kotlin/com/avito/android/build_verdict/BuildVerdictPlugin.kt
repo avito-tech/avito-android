@@ -22,19 +22,28 @@ class BuildVerdictPlugin : Plugin<ProjectInternal> {
         if (project.pluginIsEnabled) {
             val logs = mutableMapOf<Path, StringBuilder>()
             val extension = project.extensions.create<BuildVerdictPluginExtension>("buildVerdict")
-            project.gradle.addListener(TaskErrorOutputCaptureExecutionListener(logs))
+            project.gradle.addListener(TaskErrorOutputCaptureExecutionListener(logs, project.ciLogger))
             project.gradle.taskGraph.whenReady { graph ->
+                val outputDir = extension.outputDir.get().asFile
                 project.gradle.buildFinished(
                     BuildFailureListener(
                         graph = graph,
                         logs = logs,
-                        writer = BuildVerdictWriter.Impl(
-                            buildVerdictDir = extension.outputDir.get().asFile,
-                            ciLogger = project.ciLogger,
-                            gson = GsonBuilder()
-                                .disableHtmlEscaping()
-                                .setPrettyPrinting()
-                                .create()
+                        writer = CompositeBuildVerdictWriter(
+                            writers = listOf(
+                                RawBuildVerdictWriter(
+                                    buildVerdictDir = outputDir,
+                                    logger = project.ciLogger,
+                                    gson = GsonBuilder()
+                                        .disableHtmlEscaping()
+                                        .setPrettyPrinting()
+                                        .create()
+                                ),
+                                PlainTextBuildVerdictWriter(
+                                    buildVerdictDir = outputDir,
+                                    logger = project.ciLogger
+                                )
+                            )
                         )
                     )
                 )
