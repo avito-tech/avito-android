@@ -54,18 +54,7 @@ class AndroidAppModule(
                 dir("androidTest") {
                     if(enableKotlinAndroidPlugin || enableKapt) {
                         dir("kotlin") {
-                            kotlinClass("SomeTestClass", packageName) {
-                                """
-package $packageName
-
-class SomeTestClass {
-    
-    @org.junit.Test
-    fun test() {
-    }
-}
-                                """.trimIndent()
-                            }
+                            kotlinClass("SomeTestClass", packageName)
                             instrumentationTests.forEach { it.generateIn(this) }
                         }
                     }

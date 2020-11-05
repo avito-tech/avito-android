@@ -8,7 +8,9 @@ import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.runTask
 import com.avito.git.Git
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
+import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
@@ -44,20 +46,17 @@ class UploadCdBuildResultIntegrationTest {
         mockingReportApi()
         mockFileStorageApi()
 
-        TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
-            modules = listOf(
-                AndroidAppModule(
-                    versionCode = versionCode,
-                    versionName = versionName,
-                    name = "app",
-                    plugins = listOf(
-                        "com.avito.android.signer",
-                        "com.avito.android.instrumentation-tests",
-                        "com.avito.android.artifactory-app-backup",
-                        "com.avito.android.cd"
-                    ),
-                    customScript = """
+        val androidAppModule = AndroidAppModule(
+            versionCode = versionCode,
+            versionName = versionName,
+            name = "app",
+            plugins = listOf(
+                "com.avito.android.signer",
+                "com.avito.android.instrumentation-tests",
+                "com.avito.android.artifactory-app-backup",
+                "com.avito.android.cd"
+            ),
+            customScript = """
                             import com.avito.cd.BuildVariant
                             ${registerUiTestConfigurations("regress")}
                             signService {
@@ -82,9 +81,30 @@ class UploadCdBuildResultIntegrationTest {
                                 }
                             }
                         """.trimIndent()
-                )
-            )
+        )
+
+
+        TestProjectGenerator(
+            plugins = listOf("com.avito.android.impact"),
+            modules = listOf(androidAppModule)
         ).generateIn(projectDir)
+
+        with(projectDir) {
+            dir("${androidAppModule.name}/src/androidTest/kotlin/test") {
+                kotlinClass("RealTest") {
+                    """
+package ${androidAppModule.packageName}
+
+class RealTest {
+    
+    @org.junit.Test
+    fun test() {
+    }
+}
+                                """.trimIndent()
+                }
+            }
+        }
     }
 
     @Test
@@ -296,7 +316,7 @@ class UploadCdBuildResultIntegrationTest {
     "result": [
         {
             "id": "21w12e21e1e12e12r12",
-            "test_name": "com.app.SomeTestClass::test",
+            "test_name": "com.app.RealTest::test",
             "status": 1,
             "environment": "api22",
             "attempts_count": 1,
