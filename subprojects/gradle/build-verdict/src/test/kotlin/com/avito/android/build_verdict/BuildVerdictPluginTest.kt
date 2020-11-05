@@ -1,6 +1,5 @@
 package com.avito.android.build_verdict
 
-import com.avito.android.build_verdict.BuildVerdictWriter.Companion.buildVerdictFileName
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.gradlew
@@ -12,13 +11,14 @@ import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import com.avito.android.build_verdict.RawBuildVerdictWriter.Companion.buildVerdictFileName as rawBuildVerdictFileName
 
 class BuildVerdictPluginTest {
 
     @field:TempDir
     lateinit var temp: File
 
-    private val buildVerdict by lazy { File(temp, "outputs/build-verdict/$buildVerdictFileName") }
+    private val buildVerdict by lazy { File(temp, "outputs/build-verdict/$rawBuildVerdictFileName") }
     private val gson = GsonBuilder().create()
 
     @Test
@@ -256,7 +256,7 @@ public abstract interface DaggerComponent {
     private fun assertBuildVerdictFileExist(
         exist: Boolean
     ) {
-        assertWithMessage("outputs/build-verdict/$buildVerdictFileName exist is $exist")
+        assertWithMessage("outputs/build-verdict/$rawBuildVerdictFileName exist is $exist")
             .that(buildVerdict.exists())
             .isEqualTo(exist)
     }

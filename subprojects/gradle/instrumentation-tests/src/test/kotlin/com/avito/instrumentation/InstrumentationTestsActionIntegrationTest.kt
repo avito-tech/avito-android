@@ -147,8 +147,6 @@ internal class InstrumentationTestsActionIntegrationTest {
 
         assertWithMessage("inconsistent test run should fail build").that(buildFailer.lastReason)
             .isNotNull()
-        assertWithMessage("we should be notified about inconsistency").that(logger.criticalHandler.lastMessage)
-            .isEqualTo("There were lost tests:\ncom.Test.test2 (api22)")
     }
 
     private fun createAction(
