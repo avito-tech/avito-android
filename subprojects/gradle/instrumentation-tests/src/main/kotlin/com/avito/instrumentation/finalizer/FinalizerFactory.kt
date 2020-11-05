@@ -8,6 +8,7 @@ import com.avito.instrumentation.report.Report
 import com.avito.report.ReportViewer
 import com.avito.utils.BuildFailer
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -61,7 +62,7 @@ interface FinalizerFactory {
 
             return InstrumentationTestActionFinalizer.Impl(
                 hasFailedTestDeterminer = hasFailedTestDeterminer,
-                hasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
+                hasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(commonLogger(logger)),
                 sourceReport = sourceReport,
                 params = params,
                 reportViewer = reportViewer,

@@ -18,6 +18,9 @@ class TestRunnerImplementation(
 ) : TestRunner {
 
     override suspend fun runTests(tests: List<TestRunRequest>, scope: CoroutineScope): TestRunnerResult {
+
+        log("started")
+
         val serviceCommunication = service.start(scope)
         reservationWatcher.watch(serviceCommunication.deviceSignals, scope)
         val clientCommunication = client.start(
@@ -36,7 +39,7 @@ class TestRunnerImplementation(
         for (result in schedulerCommunication.result) {
             results += result
 
-            logger.debug(
+            log(
                 "Result for test: ${result.request.testCase.testName} " +
                     "received after ${result.result.size} tries. Progress (${results.count()}/$expectedResultsCount)"
             )
@@ -57,5 +60,9 @@ class TestRunnerImplementation(
                 }
                 .toMap()
         )
+    }
+
+    private fun log(message: String) {
+        logger.debug("TestRunner: $message")
     }
 }

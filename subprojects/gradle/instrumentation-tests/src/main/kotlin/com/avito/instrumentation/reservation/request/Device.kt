@@ -29,6 +29,26 @@ sealed class Device : Serializable {
         }
     }
 
+    class MockEmulator(
+        override val name: String,
+        override val model: String,
+        override val api: Int
+    ) : Device() {
+
+        override val description: String = "mock-$name"
+
+        companion object {
+
+            @JvmStatic
+            @JvmOverloads
+            fun create(api: Int, model: String = "Android_SDK_built_for_x86"): MockEmulator = MockEmulator(
+                name = "Mock",
+                model = model,
+                api = api
+            )
+        }
+    }
+
     class CloudEmulator(
         override val name: String,
         override val api: Int,

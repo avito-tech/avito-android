@@ -33,7 +33,6 @@ class LocalDevicesProvider(
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     override fun provideFor(reservations: Collection<Reservation.Data>, scope: CoroutineScope): ReceiveChannel<Device> {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
@@ -45,8 +44,11 @@ class LocalDevicesProvider(
                 launch {
                     do {
                         val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
-                        val findDevices = findDevices(reservation, acquiredCoordinates)
-                        findDevices.forEach { device ->
+                        val adbDevices = findDevices(reservation, acquiredCoordinates)
+
+                        logger.info("Found local devices: $adbDevices")
+
+                        adbDevices.forEach { device ->
                             val coordinate = device.coordinate
                             check(coordinate is DeviceCoordinate.Local)
                             emulatorsLogsReporter.redirectLogcat(

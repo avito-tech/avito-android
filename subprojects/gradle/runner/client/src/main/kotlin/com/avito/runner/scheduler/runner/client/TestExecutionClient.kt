@@ -1,5 +1,6 @@
 package com.avito.runner.scheduler.runner.client
 
+import com.avito.logger.Logger
 import com.avito.runner.scheduler.runner.client.model.ClientTestRunRequest
 import com.avito.runner.scheduler.runner.client.model.ClientTestRunResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionState
@@ -14,7 +15,8 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 
 class TestExecutionClient(
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val logger: Logger
 ) {
 
     private val statesMapping: MutableMap<Intention, TestExecutionState> = mutableMapOf()
@@ -30,6 +32,7 @@ class TestExecutionClient(
             scope.launch {
                 for (request in requests) {
                     statesMapping[request.intention] = request.state
+                    log("sending intention: ${request.intention}")
                     executionServiceCommunication.intentions.send(request.intention)
                 }
             }
@@ -58,6 +61,10 @@ class TestExecutionClient(
     fun stop() {
         requests.close()
         results.close()
+    }
+
+    private fun log(message: String) {
+        logger.debug("TestExecutionClient: $message")
     }
 
     class Communication(

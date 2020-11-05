@@ -82,14 +82,19 @@ abstract class InstrumentationConfiguration(val name: String) {
     ) : Serializable {
 
         val isTargetLocalEmulators: Boolean
+        val isMockEmulator: Boolean
 
         init {
             val hasLocal = targets.any { it.reservation.device is Device.LocalEmulator }
             val hasKubernetes = targets.any { it.reservation.device is Device.CloudEmulator }
+            val hasMockEmulator = targets.any { it.reservation.device is Device.MockEmulator }
             if (hasLocal && hasKubernetes) {
-                throw IllegalStateException("Targeting to local and kubernetes emulators at the same configuration $name is not supported yet")
+                throw IllegalStateException("Targeting local and kubernetes emulators at the same configuration $name is not supported")
+            } else if (hasMockEmulator && (hasLocal || hasKubernetes)) {
+                throw IllegalStateException("Targeting mock emulators and has local or kubernetes emulators at the same configuration $name is not supported")
             } else {
                 isTargetLocalEmulators = hasLocal
+                isMockEmulator = hasMockEmulator
             }
         }
 

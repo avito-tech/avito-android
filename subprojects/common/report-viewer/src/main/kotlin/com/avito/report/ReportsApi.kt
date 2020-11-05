@@ -75,8 +75,8 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
                         verbose = verboseHttp,
                         fallbackUrl = fallbackUrl,
                         logger = logger,
-                        readTimeout = readTimeout,
-                        writeTimeout = writeTimeout
+                        readTimeoutSec = readTimeout,
+                        writeTimeoutSec = writeTimeout
                     ),
                     gson = gson
                 )

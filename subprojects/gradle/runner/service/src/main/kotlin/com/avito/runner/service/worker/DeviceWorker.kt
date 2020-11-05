@@ -1,6 +1,7 @@
 package com.avito.runner.service.worker
 
 import com.avito.coroutines.extensions.Dispatchers
+import com.avito.logger.Logger
 import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -24,6 +25,7 @@ class DeviceWorker(
     private val messagesChannel: Channel<DeviceWorkerMessage>,
     private val device: Device,
     private val outputDirectory: File,
+    private val logger: Logger,
     private val listener: TestListener,
     dispatchers: Dispatchers
 ) {
@@ -46,9 +48,12 @@ class DeviceWorker(
             return@launch
         }
 
+        log("$state")
+
         for (intention in intentionsRouter.observeIntentions(state)) {
             try {
-                device.debug("Receive intention: $intention")
+                log("Received intention: $intention")
+                device.debug("Received intention: $intention")
                 when (val status = device.deviceStatus()) {
                     is Device.DeviceStatus.Alive -> {
                         device.debug("Preparing state: ${intention.state}")
@@ -109,6 +114,7 @@ class DeviceWorker(
         message: String,
         reason: Throwable
     ) {
+        log("device died: $message, $reason")
         device.warn(message, reason)
         messagesChannel.send(
             DeviceWorkerMessage.WorkerDied(
@@ -122,6 +128,7 @@ class DeviceWorker(
         currentState: State,
         intentionState: State
     ): Try<State> {
+        log("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
         device.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
         if (intentionState.digest == currentState.digest) {
             clearStatePackages(currentState).get()
@@ -207,4 +214,8 @@ class DeviceWorker(
                 State.Layer.Model(model = model)
             )
         )
+
+    private fun log(message: String) {
+        logger.debug("DeviceWorker: $message")
+    }
 }

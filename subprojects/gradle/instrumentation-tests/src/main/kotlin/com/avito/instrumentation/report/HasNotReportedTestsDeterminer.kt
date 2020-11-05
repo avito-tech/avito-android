@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.logger.Logger
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
@@ -27,16 +28,18 @@ interface HasNotReportedTestsDeterminer {
         data class DetermineError(val exception: Throwable) : Result()
     }
 
-    class Impl : HasNotReportedTestsDeterminer {
+    class Impl(private val logger: Logger) : HasNotReportedTestsDeterminer {
 
         override fun determine(
             runResult: Try<List<SimpleRunTest>>,
             allTests: List<TestStaticData>
-        ): Result =
-
-            runResult.fold(
+        ): Result {
+            return runResult.fold(
                 { reportedTest ->
                     val allReportedTests = reportedTest.map { TestStaticDataPackage.fromSimpleRunTest(it) }
+
+                    log("allTests: $allTests")
+                    log("allReportedTest: $allReportedTests")
 
                     val notReportedTests = allTests.subtract(allReportedTests)
                         .map { testMetadata ->
@@ -58,6 +61,10 @@ interface HasNotReportedTestsDeterminer {
                 },
                 { exception -> Result.DetermineError(exception = exception) }
             )
-    }
+        }
 
+        private fun log(message: String) {
+            logger.debug("HasNotReportedTestsDeterminer: $message")
+        }
+    }
 }

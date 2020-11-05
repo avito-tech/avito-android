@@ -45,37 +45,43 @@ interface DevicesProviderFactory {
                 logcatDir = logcatDir
             )
             val devicesManager = AdbDevicesManager(adb = adb, logger = commonLogger(logger))
-            return if (configuration.isTargetLocalEmulators) {
-                LocalDevicesProvider(
-                    androidDebugBridge = androidDebugBridge,
-                    devicesManager = devicesManager,
-                    emulatorsLogsReporter = emulatorsLogsReporter,
-                    adb = adb,
-                    logger = logger
-                )
-            } else {
-                KubernetesDevicesProvider(
-                    client = KubernetesReservationClient(
+            return when {
+                configuration.isMockEmulator -> {
+                    MockDevicesProvider(logger)
+                }
+                configuration.isTargetLocalEmulators -> {
+                    LocalDevicesProvider(
                         androidDebugBridge = androidDebugBridge,
-                        kubernetesClient = createKubernetesClient(
-                            kubernetesCredentials = kubernetesCredentials,
-                            namespace = executionParameters.namespace
+                        devicesManager = devicesManager,
+                        emulatorsLogsReporter = emulatorsLogsReporter,
+                        adb = adb,
+                        logger = logger
+                    )
+                }
+                else -> {
+                    KubernetesDevicesProvider(
+                        client = KubernetesReservationClient(
+                            androidDebugBridge = androidDebugBridge,
+                            kubernetesClient = createKubernetesClient(
+                                kubernetesCredentials = kubernetesCredentials,
+                                namespace = executionParameters.namespace
+                            ),
+                            reservationDeploymentFactory = ReservationDeploymentFactory(
+                                configurationName = configuration.name,
+                                projectName = projectName,
+                                buildId = buildId,
+                                buildType = buildType,
+                                registry = registry,
+                                logger = logger
+                            ),
+                            logger = logger,
+                            emulatorsLogsReporter = emulatorsLogsReporter
                         ),
-                        reservationDeploymentFactory = ReservationDeploymentFactory(
-                            configurationName = configuration.name,
-                            projectName = projectName,
-                            buildId = buildId,
-                            buildType = buildType,
-                            registry = registry,
-                            logger = logger
-                        ),
-                        logger = logger,
-                        emulatorsLogsReporter = emulatorsLogsReporter
-                    ),
-                    adbDevicesManager = devicesManager,
-                    adb = adb,
-                    logger = logger
-                )
+                        adbDevicesManager = devicesManager,
+                        adb = adb,
+                        logger = logger
+                    )
+                }
             }
         }
     }
