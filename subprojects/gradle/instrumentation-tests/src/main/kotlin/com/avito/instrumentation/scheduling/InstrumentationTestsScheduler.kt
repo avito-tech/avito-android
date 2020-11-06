@@ -4,12 +4,14 @@ import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.TestSuiteProvider
+import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.check.AllChecks
 import com.avito.instrumentation.suite.filter.FilterInfoWriter
 import com.avito.report.model.ReportCoordinates
 import com.avito.utils.logging.CILogger
 import com.google.gson.Gson
+import org.funktionale.tries.Try
 import java.io.File
 
 class InstrumentationTestsScheduler(
@@ -29,8 +31,9 @@ class InstrumentationTestsScheduler(
 
         val tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
 
+        writeParsedTests(tests)
+
         val testSuite = testSuiteProvider.getTestSuite(
-            // runtime error here if something wrong in loadTestSuite()
             tests = tests.get()
         )
 
@@ -51,6 +54,14 @@ class InstrumentationTestsScheduler(
         return TestsScheduler.Result(
             testSuite = testSuite,
             testsResult = testsResult
+        )
+    }
+
+    private fun writeParsedTests(parsedTests: Try<List<TestInApk>>) {
+        val file = File(params.outputDir, "parsed-tests.json")
+        parsedTests.fold(
+            { tests -> file.writeText(gson.toJson(tests)) },
+            { t -> file.writeText("There was an error while parsing tests:\n $t") }
         )
     }
 
