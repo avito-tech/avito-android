@@ -122,6 +122,7 @@ afterEvaluate{
 dependencies {
     $dependencies
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    androidTestImplementation("junit:junit:4.13")
     testImplementation("junit:junit:4.13")
     ${if(enableKapt) """
     implementation("com.google.dagger:dagger:2.29.1")

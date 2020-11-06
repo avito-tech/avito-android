@@ -90,7 +90,7 @@ interface Report : ReadReport {
             val reportApiUrl: String,
             val reportApiFallbackUrl: String,
             val ciLogger: CILogger,
-            val verboseHttp: Boolean = false
+            val verboseHttp: Boolean
         ) : Factory {
 
             @Transient

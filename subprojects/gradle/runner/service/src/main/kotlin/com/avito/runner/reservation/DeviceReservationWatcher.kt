@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 
 interface DeviceReservationWatcher {
+
     fun watch(deviceSignals: ReceiveChannel<Device.Signal>, scope: CoroutineScope)
 
     class Impl(

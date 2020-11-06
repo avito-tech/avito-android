@@ -19,6 +19,8 @@ internal class Entrypoint(
     fun run(requests: List<TestRunRequest>) {
         val startTime = System.currentTimeMillis()
 
+        log("Test run started. requests = $requests")
+
         val runResult: TestRunnerResult = runBlocking {
             testRunner.runTests(
                 tests = requests,
@@ -33,18 +35,22 @@ internal class Entrypoint(
 
         reporter.report(summary)
 
-        logger.debug(
+        log(
             "Test run finished. The results: " +
                 "passed = ${summary.successRunsCount}, " +
                 "failed = ${summary.failedRunsCount}, " +
                 "ignored = ${summary.ignoredRunsCount}, " +
                 "took ${summary.durationMilliseconds.millisecondsToHumanReadableTime()}."
         )
-        logger.debug(
+        log(
             "Matching results: " +
                 "matched = ${summary.matchedCount}, " +
                 "mismatched = ${summary.mismatched}, " +
                 "ignored = ${summary.ignoredCount}."
         )
+    }
+
+    private fun log(message: String) {
+        logger.debug("Entrypoint: $message")
     }
 }

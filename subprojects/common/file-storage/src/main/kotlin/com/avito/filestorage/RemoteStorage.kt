@@ -17,9 +17,9 @@ interface RemoteStorage {
             endpoint: String,
             logger: Logger,
             timeSource: TimeProvider = DefaultTimeProvider(),
-            httpClient: OkHttpClient = OkHttpClient()
+            httpClient: OkHttpClient
         ): RemoteStorage = HttpRemoteStorage(
-            endpoint = requireNotNull(endpoint.toHttpUrl()) ,
+            endpoint = requireNotNull(endpoint.toHttpUrl()),
             httpClient = httpClient,
             logger = logger,
             timeSource = timeSource

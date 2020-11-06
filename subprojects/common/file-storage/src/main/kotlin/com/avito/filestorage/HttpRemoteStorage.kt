@@ -69,7 +69,7 @@ class HttpRemoteStorage(
 
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     val result = when {
-                        response.isSuccessful && !response.body().isNullOrEmpty()-> {
+                        response.isSuccessful && !response.body().isNullOrEmpty() -> {
                             val url = response.body()!!
 
                             logUploaded(
@@ -164,10 +164,10 @@ class HttpRemoteStorage(
     ) =
         when (uploadRequest) {
             is RemoteStorage.Request.FileRequest ->
-                "RemoteStorage: Filed to upload file: ${uploadRequest.file.absolutePath}" +
+                "RemoteStorage: Failed to upload file: ${uploadRequest.file.absolutePath}" +
                     if (body != null) " with body: $body" else ""
             is RemoteStorage.Request.ContentRequest ->
-                "RemoteStorage: Filed to upload content with size: ${uploadRequest.content.length} " +
+                "RemoteStorage: Failed to upload content with size: ${uploadRequest.content.length} " +
                     "as ${uploadRequest.extension}" +
                     if (body != null) " with body: $body" else ""
         }

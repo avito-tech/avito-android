@@ -85,7 +85,7 @@ class VideoCaptureTestListener(
                 }
                 is VideoCapturer.RecordResult.Error -> {
                     logger.warn(
-                        "Video uploading enabled. Filed to upload video for ${state.testMetadata.className}.${state.testMetadata.methodName}. Reason: ${result.message}",
+                        "Video uploading enabled. Failed to upload video for ${state.testMetadata.className}.${state.testMetadata.methodName}. Reason: ${result.message}",
                         result.error
                     )
                 }

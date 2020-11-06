@@ -37,6 +37,8 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
     }
 }
 
+private val isInvokedFromIde = System.getProperty("isInvokedFromIde")?.toBoolean() ?: false
+
 private fun defaultCILogger(
     project: Project,
     name: String
@@ -67,7 +69,13 @@ private fun defaultCILogger(
         debugHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 destinationFileHandler
-            )
+            ).let {
+                if (isInvokedFromIde) {
+                    it.plus(onlyMessageStdoutHandler)
+                } else {
+                    it
+                }
+            }
         ),
         infoHandler = CILoggingCombinedHandler(
             handlers = listOf(

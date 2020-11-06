@@ -22,7 +22,7 @@ class TestsRunnerClient {
             scheduler = TestExecutionScheduler(
                 logger = arguments.logger
             ),
-            client = TestExecutionClient(),
+            client = TestExecutionClient(logger = arguments.logger),
             service = IntentionExecutionServiceImplementation(
                 outputDirectory = arguments.outputDirectory,
                 devices = arguments.devices,

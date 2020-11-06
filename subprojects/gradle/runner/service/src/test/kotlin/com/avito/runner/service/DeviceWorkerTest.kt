@@ -1,5 +1,6 @@
 package com.avito.runner.service
 
+import com.avito.logger.NoOpLogger
 import com.avito.runner.logging.StdOutLogger
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
@@ -28,6 +29,8 @@ import java.io.File
 
 @ExperimentalCoroutinesApi
 class DeviceWorkerTest {
+
+    val logger = NoOpLogger
 
     @Test
     fun `returns application installed event and 4 passed intentions for 4 tests with of 2 applications`() =
@@ -96,7 +99,7 @@ class DeviceWorkerTest {
             val resultsChannel: Channel<DeviceWorkerMessage> =
                 Channel(Channel.UNLIMITED)
 
-            val router = IntentionsRouter().apply {
+            val router = IntentionsRouter(logger = logger).apply {
                 intentions.forEach { sendIntention(it) }
             }
 
@@ -145,7 +148,7 @@ class DeviceWorkerTest {
             )
 
             val resultsChannel = Channel<DeviceWorkerMessage>(Channel.UNLIMITED)
-            val router = IntentionsRouter()
+            val router = IntentionsRouter(logger = logger)
 
             val worker = provideDeviceWorker(
                 results = resultsChannel,
@@ -209,7 +212,7 @@ class DeviceWorkerTest {
 
             val resultsChannel: Channel<DeviceWorkerMessage> =
                 Channel(Channel.UNLIMITED)
-            val router = IntentionsRouter().apply {
+            val router = IntentionsRouter(logger = logger).apply {
                 intentions.forEach { sendIntention(it) }
             }
 
@@ -249,6 +252,7 @@ class DeviceWorkerTest {
         device = device,
         outputDirectory = File(""),
         listener = NoOpListener,
-        dispatchers = TestDispatcher
+        dispatchers = TestDispatcher,
+        logger = logger
     )
 }

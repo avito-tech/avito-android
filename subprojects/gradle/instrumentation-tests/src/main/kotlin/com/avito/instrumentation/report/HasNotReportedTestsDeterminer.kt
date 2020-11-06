@@ -32,9 +32,8 @@ interface HasNotReportedTestsDeterminer {
         override fun determine(
             runResult: Try<List<SimpleRunTest>>,
             allTests: List<TestStaticData>
-        ): Result =
-
-            runResult.fold(
+        ): Result {
+            return runResult.fold(
                 { reportedTest ->
                     val allReportedTests = reportedTest.map { TestStaticDataPackage.fromSimpleRunTest(it) }
 
@@ -58,6 +57,6 @@ interface HasNotReportedTestsDeterminer {
                 },
                 { exception -> Result.DetermineError(exception = exception) }
             )
+        }
     }
-
 }

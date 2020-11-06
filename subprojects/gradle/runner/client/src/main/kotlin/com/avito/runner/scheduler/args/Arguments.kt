@@ -15,4 +15,11 @@ class Arguments(
     val logger: Logger,
     val listener: TestLifecycleListener,
     val reservation: DeviceReservation
-)
+) {
+
+    override fun toString(): String {
+        return buildString {
+            appendln(requests)
+        }
+    }
+}

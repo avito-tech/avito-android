@@ -8,26 +8,30 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import java.util.concurrent.TimeUnit
 
-internal fun getHttpClient(
+fun getHttpClient(
     verbose: Boolean,
-    fallbackUrl: String,
+    fallbackUrl: String? = null,
     logger: Logger,
-    readTimeout: Long,
-    writeTimeout: Long
+    readTimeoutSec: Long,
+    writeTimeoutSec: Long
 ): OkHttpClient =
     OkHttpClient.Builder()
-        .readTimeout(readTimeout, TimeUnit.SECONDS)
-        .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+        .readTimeout(readTimeoutSec, TimeUnit.SECONDS)
+        .writeTimeout(writeTimeoutSec, TimeUnit.SECONDS)
         .addInterceptor(RetryInterceptor(logger = logger))
-        .addInterceptor(
-            FallbackInterceptor(
-                fallbackRequest = { request ->
-                    request.newBuilder()
-                        .url(fallbackUrl)
-                        .build()
-                },
-                onFallback = { logger.debug("Fallback to ingress") })
-        )
+        .apply {
+            if (fallbackUrl != null) {
+                addInterceptor(
+                    FallbackInterceptor(
+                        fallbackRequest = { request ->
+                            request.newBuilder()
+                                .url(fallbackUrl)
+                                .build()
+                        },
+                        onFallback = { logger.debug("Fallback to ingress") })
+                )
+            }
+        }
         .apply {
             if (verbose) {
                 addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
