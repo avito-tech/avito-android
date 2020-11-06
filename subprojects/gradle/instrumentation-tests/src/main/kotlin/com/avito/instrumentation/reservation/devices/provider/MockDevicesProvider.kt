@@ -29,11 +29,8 @@ class MockDevicesProvider(private val logger: CILogger) : DevicesProvider {
         scope.launch(Dispatchers.IO) {
             reservations.forEach { reservation ->
                 check(reservation.device is MockEmulator) {
-                    "Non-mock emulator ${reservation.device} is unsupported in local reservation"
+                    "Non-mock emulator ${reservation.device} is unsupported in mock reservation"
                 }
-
-                delay(TimeUnit.SECONDS.toMillis(1))
-
                 launch {
                     do {
                         val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
@@ -44,7 +41,6 @@ class MockDevicesProvider(private val logger: CILogger) : DevicesProvider {
                         )
                         devices.send(acquiredDevice)
                         acquiredCoordinates.add(acquiredDevice.coordinate)
-                        delay(TimeUnit.SECONDS.toMillis(5))
                     } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
                 }
             }
