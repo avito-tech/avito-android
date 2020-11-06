@@ -12,7 +12,9 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.time.Duration
+import java.util.Locale
 
+@ExperimentalStdlibApi
 class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
 
     private lateinit var modifiedProjectsFinder: ModifiedProjectsFinder
@@ -39,8 +41,10 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
                 group = TASK_GROUP
                 description = "Analyze androidTest bytecode to collect maps: [Screen:Test], [Screen:RootId]"
 
-                //todo we should also support flavors here
-                dependsOn("${project.path}:compile${it.testBuildType.capitalize()}AndroidTestKotlin")
+                val testBuildVariant = extension.testBuildVariant.convention(it.testBuildType)
+                    .map { "${project.path}:compile${it.capitalize(Locale.getDefault())}AndroidTestKotlin" }
+
+                dependsOn(testBuildVariant)
             }
 
             project.tasks.register<AnalyzeTestImpactTask>(

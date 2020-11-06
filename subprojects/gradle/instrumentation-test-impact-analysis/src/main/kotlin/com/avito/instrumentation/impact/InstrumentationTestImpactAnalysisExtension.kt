@@ -16,4 +16,6 @@ open class InstrumentationTestImpactAnalysisExtension(project: Project) {
     val unknownRootId = project.objects.property<Int>().also { it.set(-1) }
 
     var packageFilter = project.objects.property<String>()
+
+    val testBuildVariant = project.objects.property<String>()
 }
