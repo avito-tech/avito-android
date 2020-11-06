@@ -46,7 +46,7 @@ class LocalDevicesProvider(
                         val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
                         val adbDevices = findDevices(reservation, acquiredCoordinates)
 
-                        logger.info("Found local devices: $adbDevices")
+                        logger.debug("Found local devices: $adbDevices")
 
                         adbDevices.forEach { device ->
                             val coordinate = device.coordinate
@@ -60,7 +60,6 @@ class LocalDevicesProvider(
                         }
                         delay(TimeUnit.SECONDS.toMillis(5))
                     } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
-                    logger.info("Find local device")
                 }
             }
         }

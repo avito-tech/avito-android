@@ -23,12 +23,7 @@ import java.util.Queue
 
 open class MockDevice(
     override val coordinate: DeviceCoordinate = randomDeviceCoordinate(),
-    private val logger: Logger = object : Logger {
-        override fun debug(msg: String) {}
-        override fun info(msg: String) {}
-        override fun warn(msg: String, error: Throwable?) {}
-        override fun critical(msg: String, error: Throwable) {}
-    },
+    private val logger: Logger,
     installApplicationResults: List<MockActionResult<Any>> = emptyList(),
     gettingDeviceStatusResults: List<MockActionResult<Device.DeviceStatus>> = emptyList(),
     runTestsResults: List<MockActionResult<TestCaseRun.Result>> = emptyList(),

@@ -81,24 +81,26 @@ abstract class InstrumentationConfiguration(val name: String) {
         val filter: InstrumentationFilter.Data
     ) : Serializable {
 
-        val isTargetLocalEmulators: Boolean
-        val isMockEmulator: Boolean
+        val requestedDeviceType: DevicesType = determineRequestedDeviceType(targets.map { it.reservation.device })
 
-        init {
-            val hasLocal = targets.any { it.reservation.device is Device.LocalEmulator }
-            val hasKubernetes = targets.any { it.reservation.device is Device.CloudEmulator }
-            val hasMockEmulator = targets.any { it.reservation.device is Device.MockEmulator }
-            if (hasLocal && hasKubernetes) {
-                throw IllegalStateException("Targeting local and kubernetes emulators at the same configuration $name is not supported")
-            } else if (hasMockEmulator && (hasLocal || hasKubernetes)) {
-                throw IllegalStateException("Targeting mock emulators and has local or kubernetes emulators at the same configuration $name is not supported")
-            } else {
-                isTargetLocalEmulators = hasLocal
-                isMockEmulator = hasMockEmulator
+        override fun toString(): String = "$name, targets: $targets, filter: $filter "
+
+        private fun determineRequestedDeviceType(requestedDevices: List<Device>): DevicesType {
+            return when {
+                requestedDevices.all { it is Device.LocalEmulator } -> DevicesType.LOCAL
+                requestedDevices.all { it is Device.CloudEmulator } -> DevicesType.CLOUD
+                requestedDevices.all { it is Device.MockEmulator } -> DevicesType.MOCK
+                else -> {
+                    val deviceTypesNames = DevicesType.values().map { it.name }
+                    throw IllegalStateException(
+                        "Targeting different type of emulators($deviceTypesNames) in the same configuration is not supported; " +
+                            "Affected configuration: $name"
+                    )
+                }
             }
         }
 
-        override fun toString(): String = "$name, targets: $targets, filter: $filter "
+        enum class DevicesType { CLOUD, LOCAL, MOCK }
 
         companion object
     }

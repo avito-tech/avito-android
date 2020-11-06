@@ -1,6 +1,9 @@
 package com.avito.instrumentation.reservation.devices.provider
 
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
+import com.avito.instrumentation.configuration.InstrumentationConfiguration.Data.DevicesType.CLOUD
+import com.avito.instrumentation.configuration.InstrumentationConfiguration.Data.DevicesType.LOCAL
+import com.avito.instrumentation.configuration.InstrumentationConfiguration.Data.DevicesType.MOCK
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
@@ -45,11 +48,11 @@ interface DevicesProviderFactory {
                 logcatDir = logcatDir
             )
             val devicesManager = AdbDevicesManager(adb = adb, logger = commonLogger(logger))
-            return when {
-                configuration.isMockEmulator -> {
+            return when (configuration.requestedDeviceType) {
+                MOCK -> {
                     MockDevicesProvider(logger)
                 }
-                configuration.isTargetLocalEmulators -> {
+                LOCAL -> {
                     LocalDevicesProvider(
                         androidDebugBridge = androidDebugBridge,
                         devicesManager = devicesManager,
@@ -58,7 +61,7 @@ interface DevicesProviderFactory {
                         logger = logger
                     )
                 }
-                else -> {
+                CLOUD -> {
                     KubernetesDevicesProvider(
                         client = KubernetesReservationClient(
                             androidDebugBridge = androidDebugBridge,
