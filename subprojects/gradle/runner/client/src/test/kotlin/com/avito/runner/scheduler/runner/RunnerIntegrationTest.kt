@@ -42,6 +42,8 @@ class RunnerIntegrationTest {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
+    private val logger = NoOpLogger
+
     @Test
     fun `all tests passed - for 1 successful device`() =
         runBlockingTest {
@@ -579,7 +581,7 @@ class RunnerIntegrationTest {
             logger = logger,
             dispatcher = TestCoroutineDispatcher()
         )
-        val client = TestExecutionClient(TestCoroutineDispatcher())
+        val client = TestExecutionClient(TestCoroutineDispatcher(), logger)
         val service = IntentionExecutionServiceImplementation(
             outputDirectory = outputDirectory,
             logger = logger,

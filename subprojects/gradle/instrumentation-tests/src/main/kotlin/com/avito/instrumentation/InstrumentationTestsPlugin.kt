@@ -15,6 +15,7 @@ import com.avito.android.withArtifacts
 import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
+import com.avito.instrumentation.configuration.InstrumentationConfiguration.Data.DevicesType.CLOUD
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.executing.ExecutionParameters
@@ -65,7 +66,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withInstrumentationExtensionData { extensionData ->
             extensionData.configurations.forEach { instrumentationConfiguration ->
-                if (!instrumentationConfiguration.isTargetLocalEmulators && project.kubernetesCredentials is KubernetesCredentials.Empty) {
+                if (instrumentationConfiguration.requestedDeviceType == CLOUD && project.kubernetesCredentials is KubernetesCredentials.Empty) {
                     throw IllegalStateException("Configuration ${instrumentationConfiguration.name} error: has kubernetes device target without kubernetes credentials")
                 }
 

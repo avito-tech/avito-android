@@ -36,6 +36,7 @@ internal interface FileStorageClient {
     fun uploadMp4(@Body content: RequestBody): Call<String>
 
     companion object {
+
         fun create(
             endpoint: HttpUrl,
             httpClient: OkHttpClient

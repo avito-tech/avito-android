@@ -18,7 +18,14 @@ type: docs
 
 ## How to start
 
-- Установи вручную или скриптом: `benchmarks/profiler.py --install`
+- Установи с помощью [sdkman](https://sdkman.io/):
+
+```shell script
+sdk install gradleprofiler
+```
+
+или скачай готовые бинарники: [Installing](https://github.com/gradle/gradle-profiler#installing).
+
 - Опиши свой сценарий. 
 Возьми за основу один из готовых из `ci/profiler/benchmarks.scenarios` и посмотри какие [операции](https://github.com/gradle/gradle-profiler#advanced-profiling-scenarios) необходимы.
 

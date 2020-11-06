@@ -101,9 +101,17 @@ class TestsRunnerImplementation(
             )
 
             //todo через Report
-            report.getTests().map { runs ->
+            val raw = report.getTests()
+
+            log("test results: $raw")
+
+            val filtered = raw.map { runs ->
                 runs.filterNotRelatedRunsToThisInstrumentation(testsToRun)
             }
+
+            log("filtered results: $filtered")
+
+            filtered
         }
     }
 
@@ -117,5 +125,9 @@ class TestsRunnerImplementation(
         return testsToRun.any { testWithTarget ->
             testWithTarget.test.name.name == name && testWithTarget.target.deviceName == deviceName
         }
+    }
+
+    private fun log(message: String) {
+        logger.debug("TestsRunner: $message")
     }
 }

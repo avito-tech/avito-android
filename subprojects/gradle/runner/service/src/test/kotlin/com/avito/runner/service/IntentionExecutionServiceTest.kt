@@ -20,7 +20,6 @@ import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
@@ -29,11 +28,13 @@ import java.io.File
 @ExperimentalCoroutinesApi
 class IntentionExecutionServiceTest {
 
+    val logger = NoOpLogger
+
     @Test
     fun `schedule all tests to supported devices`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter()
+            val intentionsRouter = IntentionsRouter(logger = logger)
             val executionService = provideIntentionExecutionService(
                 devices = devices,
                 intentionsRouter = intentionsRouter
@@ -123,7 +124,7 @@ class IntentionExecutionServiceTest {
     fun `reschedule test to another device - when device is broken while processing intention`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter()
+            val intentionsRouter = IntentionsRouter(logger = logger)
             val executionService = provideIntentionExecutionService(
                 devices = devices,
                 intentionsRouter = intentionsRouter
