@@ -10,20 +10,19 @@ dependencies {
         project(":gradle:impact-shared")
     )
     implementation(gradleApi())
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:files"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.antPattern)
-    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.Gradle.kotlinPlugin)
 
     testImplementation(project(":gradle:impact-shared-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:logging-test-fixtures"))
     testImplementation(project(":gradle:git-test-fixtures"))
-    testImplementation(Dependencies.test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoKotlin)
 }
 
 gradlePlugin {

@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:graphite-config"))
     implementation(project(":gradle:statsd-config"))
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:impact-shared"))
@@ -18,10 +17,10 @@ dependencies {
     implementation(project(":gradle:build-environment"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(project(":gradle:git"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:graphite-test-fixtures"))

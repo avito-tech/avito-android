@@ -1,6 +1,6 @@
 package com.avito.android.build_verdict
 
-import com.avito.utils.logging.ciLogger
+import com.avito.utils.logging.CILogger
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Task
@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.gradle.internal.KaptTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal class TaskErrorOutputCaptureExecutionListener(
-    private val logs: MutableMap<Path, StringBuilder>
+    private val logs: MutableMap<Path, StringBuilder>,
+    private val logger: CILogger
 ) : TaskExecutionListener, BuildAdapter() {
 
     override fun beforeExecute(task: Task) {
         when (task) {
             is Test -> {
-                task.ciLogger.debug("Add error listener to the task ${task.path}")
+                logger.debug("Add error listener to the task ${task.path}")
                 task.addTestListener(object : DefaultTestListener() {
                     override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
                         if (result.resultType == TestResult.ResultType.FAILURE) {
@@ -32,7 +33,7 @@ internal class TaskErrorOutputCaptureExecutionListener(
             }
             is KaptTask,
             is KotlinCompile -> {
-                task.ciLogger.debug("Add error listener to the task ${task.path}")
+                logger.debug("Add error listener to the task ${task.path}")
                 task.logging.addStandardErrorListener { error ->
                     logs.getOrPut(Path.path(task.path), { StringBuilder() })
                         .append(error)
@@ -47,7 +48,7 @@ internal class TaskErrorOutputCaptureExecutionListener(
         } else {
             when (task) {
                 is BuildVerdictTask -> {
-                    task.ciLogger.debug("Get a verdict from the task ${task.path}")
+                    logger.debug("Get a verdict from the task ${task.path}")
                     logs.getOrPut(Path.path(task.path), { StringBuilder() })
                         .append(task.verdict)
                 }

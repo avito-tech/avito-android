@@ -72,6 +72,41 @@ The plugin will run it automatically on every build.
 
 ## Configuration
 
+### Enable single check
+
+{{< tabs "Enable single check" >}}
+{{< tab "Kotlin" >}}
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    enableByDefault = false
+
+    androidSdk {
+        compileSdkVersion = 29
+        revision = 5
+    }
+}
+```
+
+{{< /tab >}}
+{{< tab "Groovy" >}}
+`build.gradle`
+
+```groovy
+buildChecks {
+    enableByDefault = false
+
+    androidSdk {
+        compileSdkVersion = 29
+        revision = 5
+    }
+}
+```
+
+{{< /tab >}}
+{{< /tabs >}}
+
 ### Disable single check
 
 {{< tabs "Disable single check" >}}
@@ -126,40 +161,14 @@ buildChecks {
 {{< /tab >}}
 {{< /tabs >}}
 
-### Enable single check
+### Disable plugin
 
-{{< tabs "Enable single check" >}}
-{{< tab "Kotlin" >}}
-`build.gradle.kts`
+To completely disable the plugin add a Gradle property:
 
-```kotlin
-buildChecks {
-    enableByDefault = false
-
-    androidSdk {
-        compileSdkVersion = 29
-        revision = 5
-    }
-}
+```properties
+avito.build-checks.enabled=false
 ```
 
-{{< /tab >}}
-{{< tab "Groovy" >}}
-`build.gradle`
-
-```groovy
-buildChecks {
-    enableByDefault = false
-
-    androidSdk {
-        compileSdkVersion = 29
-        revision = 5
-    }
-}
-```
-
-{{< /tab >}}
-{{< /tabs >}}
 
 ## Checks
 

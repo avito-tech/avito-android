@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:trace-event"))
@@ -14,8 +13,8 @@ dependencies {
     implementation(project(":gradle:build-environment"))
     implementation(gradleApi())
 
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(project(":gradle:test-project"))
 }
 

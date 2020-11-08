@@ -117,14 +117,14 @@ plugins.withType<InstrumentationTestsPlugin> {
  */
 dependencies(delegateClosureOf<DependencyHandler> {
     implementation(Dependencies.material)
-    implementation(Dependencies.androidTest.espressoCore)
+    implementation(Dependencies.AndroidTest.espressoCore)
     implementation("com.avito.android:test-screenshot")
 
     androidTestImplementation(project(":samples:test-app-core"))
     androidTestImplementation("com.avito.android:test-annotations")
 
     androidTestRuntimeOnly(Dependencies.playServicesMaps)
-    androidTestUtil(Dependencies.androidTest.orchestrator)
+    androidTestUtil(Dependencies.AndroidTest.orchestrator)
 })
 
 //todo registry value not respected here, it's unclear how its used (in fact concatenated in runner)

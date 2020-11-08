@@ -10,7 +10,6 @@ dependencies {
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:module-types"))
     implementation(project(":gradle:pre-build"))
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:kotlin-dsl-support"))
 
     testImplementation(project(":gradle:test-project"))

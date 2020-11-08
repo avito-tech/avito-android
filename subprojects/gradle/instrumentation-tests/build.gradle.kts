@@ -36,20 +36,21 @@ dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:runner:client"))
+    implementation(project(":gradle:runner:shared-test"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:upload-cd-build-result"))
-    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:build-failer"))
     implementation(project(":gradle:worker"))
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:logging-test-fixtures"))
     testImplementation(project(":gradle:slack-test-fixtures"))
-    testImplementation(project(":gradle:utils-test-fixtures"))
+    testImplementation(project(":gradle:build-failer-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-test-fixtures"))
     testImplementation(project(":common:report-viewer-test-fixtures"))
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
-    testImplementation(Dependencies.test.okhttpMockWebServer)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.okhttpMockWebServer)
 }
 
 gradlePlugin {

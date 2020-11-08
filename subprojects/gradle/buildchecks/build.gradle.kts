@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:build-failer"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:impact-shared"))
@@ -16,9 +16,9 @@ dependencies {
     implementation(project(":gradle:files"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:kotlin-dsl-support"))
-    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.Gradle.kotlinPlugin)
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 
     //for test
     implementation(project(":gradle:module-types"))

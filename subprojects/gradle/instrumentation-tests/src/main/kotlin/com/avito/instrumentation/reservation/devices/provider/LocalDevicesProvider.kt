@@ -4,9 +4,13 @@ import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.adb.Adb
+import com.avito.runner.service.worker.device.adb.AdbDevice
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,12 +27,12 @@ class LocalDevicesProvider(
     private val androidDebugBridge: AndroidDebugBridge,
     private val devicesManager: AdbDevicesManager,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
+    private val adb: Adb,
     private val logger: CILogger
 ) : DevicesProvider {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
-    @ObsoleteCoroutinesApi
     @ExperimentalCoroutinesApi
     override fun provideFor(reservations: Collection<Reservation.Data>, scope: CoroutineScope): ReceiveChannel<Device> {
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
@@ -39,34 +43,52 @@ class LocalDevicesProvider(
                 }
                 launch {
                     do {
-                        val acquiredSerials = mutableSetOf<Serial>()
-                        val findDevices = findDevices(reservation, acquiredSerials)
-                        findDevices.forEach { device ->
+                        val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
+                        val adbDevices = findDevices(reservation, acquiredCoordinates)
+
+                        logger.debug("Found local devices: $adbDevices")
+
+                        adbDevices.forEach { device ->
+                            val coordinate = device.coordinate
+                            check(coordinate is DeviceCoordinate.Local)
                             emulatorsLogsReporter.redirectLogcat(
-                                emulatorName = device.id,
-                                device = androidDebugBridge.getDevice(device.id)
+                                emulatorName = coordinate.serial,
+                                device = androidDebugBridge.getLocalDevice(coordinate.serial)
                             )
                             devices.send(device)
-                            acquiredSerials.add(device.id)
+                            acquiredCoordinates.add(coordinate)
                         }
                         delay(TimeUnit.SECONDS.toMillis(5))
-                    } while (!devices.isClosedForSend && acquiredSerials.size != devicesRequired)
-                    logger.info("Find local device")
+                    } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
                 }
             }
         }
-        return devices.distinctBy { it.id }.take(devicesRequired)
+        return devices.distinctBy { it.coordinate }.take(devicesRequired)
+    }
+
+    override suspend fun releaseDevice(coordinate: DeviceCoordinate, scope: CoroutineScope) {
+        // empty
     }
 
     private fun findDevices(
         reservation: Reservation.Data,
-        acquiredDevices: Set<Serial>
+        acquiredDevices: Set<DeviceCoordinate>
     ): Set<Device> {
         return try {
             logger.debug("Getting local emulators")
             val devices = devicesManager.connectedDevices()
                 .asSequence()
-                .filter { !acquiredDevices.contains(it.id) }
+                .filter { it.id is Serial.Local }
+                .map { adbDeviceParams ->
+                    AdbDevice(
+                        coordinate = DeviceCoordinate.Local(adbDeviceParams.id as Serial.Local),
+                        model = adbDeviceParams.model,
+                        online = adbDeviceParams.online,
+                        logger = commonLogger(logger),
+                        adb = adb
+                    )
+                }
+                .filter { !acquiredDevices.contains(it.coordinate) }
                 .filter { fitsReservation(it, reservation) }
                 .filter { isBooted(it) }
                 .toSet()

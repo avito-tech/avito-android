@@ -1,5 +1,6 @@
 package com.avito.runner.scheduler
 
+import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.listener.ArtifactsTestListener
 import com.avito.runner.scheduler.listener.LogListener
@@ -21,13 +22,14 @@ class TestsRunnerClient {
             scheduler = TestExecutionScheduler(
                 logger = arguments.logger
             ),
-            client = TestExecutionClient(),
+            client = TestExecutionClient(logger = arguments.logger),
             service = IntentionExecutionServiceImplementation(
                 outputDirectory = arguments.outputDirectory,
                 devices = arguments.devices,
                 logger = arguments.logger,
                 listener = setupListener(arguments)
             ),
+            reservationWatcher = DeviceReservationWatcher.Impl(arguments.reservation),
             logger = arguments.logger
         )
 
@@ -54,15 +56,12 @@ class TestsRunnerClient {
         CompositeListener(
             listeners = mutableListOf<TestListener>().apply {
                 add(LogListener())
-
-                if (arguments.listener != null) {
-                    add(
-                        ArtifactsTestListener(
-                            lifecycleListener = arguments.listener,
-                            logger = arguments.logger
-                        )
+                add(
+                    ArtifactsTestListener(
+                        lifecycleListener = arguments.listener,
+                        logger = arguments.logger
                     )
-                }
+                )
             }
         )
 }

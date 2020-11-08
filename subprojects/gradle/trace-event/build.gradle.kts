@@ -6,5 +6,4 @@ plugins {
 
 dependencies {
     implementation(Dependencies.gson)
-    implementation(project(":gradle:utils"))
 }

@@ -10,9 +10,6 @@ import com.avito.instrumentation.suite.filter.TestsFilter.Signatures
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.report.model.DeviceName
 
-/**
- * todo MBS-8045 сделать подмножество конфига для фильтров, сейчас тащим сюда огромный объект InstrumentationTestsAction.Params
- */
 interface TestSuiteProvider {
 
     data class TestSuite(
@@ -30,9 +27,7 @@ interface TestSuiteProvider {
         private val filterFactory: FilterFactory
     ) : TestSuiteProvider {
 
-        override fun getTestSuite(
-            tests: List<TestInApk>
-        ): TestSuite {
+        override fun getTestSuite(tests: List<TestInApk>): TestSuite {
 
             val suite = getTestSuite(
                 tests = tests,
@@ -42,14 +37,9 @@ interface TestSuiteProvider {
             if (reportSkippedTests) {
                 report.sendSkippedTests(
                     skippedTests = suite.skippedTests
-                        /**
-                         * Не репортим скипы по причине "тест уже прошел на этом коммите" т.к репорт вьювер финальным статусом теста
-                         * считает его последний статус. Так, в итоге, в репорт вьювере у нас отображаются все прошедшие тесты как
-                         * заскипанные.
-                         */
+                        // do not report skip here, to prevent final test status rewrite (green from last run - ok)
                         .filter { (_, verdict) ->
-                            (verdict !is Excluded.BySignatures) ||
-                                    (verdict.source != Signatures.Source.PreviousRun)
+                            (verdict !is Excluded.BySignatures) || (verdict.source != Signatures.Source.PreviousRun)
                         }
                         .map { (targetTest, verdict) ->
                             targetTest.test to verdict.reason

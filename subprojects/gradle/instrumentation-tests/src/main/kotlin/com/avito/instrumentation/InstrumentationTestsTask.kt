@@ -240,7 +240,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
                 Report.Factory.Config.ReportViewerCoordinates::class.java, Report.Factory.ReportViewerFactory(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
                     reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
-                    ciLogger = ciLogger
+                    ciLogger = ciLogger,
+                    verboseHttp = true
                 )
             )
         }

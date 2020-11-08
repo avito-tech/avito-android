@@ -263,8 +263,8 @@ subprojects {
     plugins.withId("java-test-fixtures") {
 
         dependencies {
-            "testFixturesImplementation"(Dependencies.test.junitJupiterApi)
-            "testFixturesImplementation"(Dependencies.test.truth)
+            "testFixturesImplementation"(Dependencies.Test.junitJupiterApi)
+            "testFixturesImplementation"(Dependencies.Test.truth)
         }
     }
 
@@ -276,7 +276,7 @@ subprojects {
 tasks.withType<Wrapper> {
     //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.6"
+    gradleVersion = "6.7"
 }
 
 val Project.sourceSets: SourceSetContainer
@@ -329,13 +329,13 @@ fun Project.configureBintray(vararg publications: String) {
 
 fun Project.configureJunit5Tests() {
     dependencies {
-        "testImplementation"(Dependencies.test.junitJupiterApi)
+        "testImplementation"(Dependencies.Test.junitJupiterApi)
 
-        "testRuntimeOnly"(Dependencies.test.junitPlatformRunner)
-        "testRuntimeOnly"(Dependencies.test.junitPlatformLauncher)
-        "testRuntimeOnly"(Dependencies.test.junitJupiterEngine)
+        "testRuntimeOnly"(Dependencies.Test.junitPlatformRunner)
+        "testRuntimeOnly"(Dependencies.Test.junitPlatformLauncher)
+        "testRuntimeOnly"(Dependencies.Test.junitJupiterEngine)
 
-        "testImplementation"(Dependencies.test.truth)
+        "testImplementation"(Dependencies.Test.truth)
     }
 
     tasks.withType<Test> {

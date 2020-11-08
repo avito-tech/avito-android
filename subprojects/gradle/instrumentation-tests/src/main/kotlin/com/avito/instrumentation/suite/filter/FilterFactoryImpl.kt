@@ -7,29 +7,7 @@ import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.report.model.SimpleRunTest
 
-interface FilterFactory {
-    fun createFilter(): TestsFilter
-
-    companion object {
-        internal const val JUNIT_IGNORE_ANNOTATION = "org.junit.Ignore"
-
-        fun create(
-            filterData: InstrumentationFilter.Data,
-            impactAnalysisResult: ImpactAnalysisResult,
-            reportConfig: Report.Factory.Config,
-            factory: Report.Factory
-        ): FilterFactory {
-            return FilterFactoryImpl(
-                filterData = filterData,
-                impactAnalysisResult = impactAnalysisResult,
-                reportConfig = reportConfig,
-                factory = factory
-            )
-        }
-    }
-}
-
-private class FilterFactoryImpl(
+internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilter.Data,
     private val impactAnalysisResult: ImpactAnalysisResult,
     private val factory: Report.Factory,
@@ -112,7 +90,6 @@ private class FilterFactoryImpl(
                         source = TestsFilter.Signatures.Source.PreviousRun,
                         signatures = previousRunTests.filterBy(previousStatuses.included)
                     )
-
                 )
             }
             if (previousStatuses.excluded.isNotEmpty()) {
@@ -121,7 +98,6 @@ private class FilterFactoryImpl(
                         source = TestsFilter.Signatures.Source.PreviousRun,
                         signatures = previousRunTests.filterBy(previousStatuses.excluded)
                     )
-
                 )
             }
         }

@@ -6,18 +6,17 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:utils"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:impact"))
     implementation(project(":gradle:files"))
     implementation(project(":gradle:kotlin-dsl-support"))
 
-    implementation(Dependencies.gradle.kotlinPlugin)
+    implementation(Dependencies.Gradle.kotlinPlugin)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.detektParser)
     implementation(Dependencies.detektCli)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
 
     testImplementation(project(":gradle:test-project"))
 }

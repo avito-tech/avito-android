@@ -18,7 +18,18 @@ type: docs
 
 https://guides.gradle.org/creating-build-scans/
 
-Запусти сборку с аргументом `--scan`.  
+Запусти сборку с аргументом `--scan`:
+
+```shell script
+./gradlew build --scan
+```
+
+Либо отправь с последней сборки:
+
+```shell script
+./gradlew buildScanPublishPrevious
+```
+
 В конце лога будет ссылка на отчет.
 
 ![](https://guides.gradle.org/creating-build-scans/images/build_scan_page.png)
@@ -29,10 +40,7 @@ https://guides.gradle.org/creating-build-scans/
 напиши в help@gradle.com, приложи ссылку.
 - `This build scan cannot be viewed. A permanent error occurred processing the data.`   
 Скорее всего уперлись в лимит на размер скана. Нет способа проверить это заранее.   
-Попробуй собрать что-то более мелкое.
-- Завышено время исполнения задач ([#8630](https://github.com/gradle/gradle/issues/8630))   
-Это видно по косвенным признакам. 
-На графике задача завершается сразу после завершения другой задачи из этого же модуля.
+Попробуй собрать что-то более мелкое и напиши в поддержку.
 
 ## Avito build trace
 

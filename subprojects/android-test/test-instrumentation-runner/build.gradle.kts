@@ -6,6 +6,6 @@ plugins {
 }
 
 dependencies {
-    api(Dependencies.androidTest.runner)
-    implementation(Dependencies.androidTest.uiAutomator)
+    api(Dependencies.AndroidTest.runner)
+    implementation(Dependencies.AndroidTest.uiAutomator)
 }

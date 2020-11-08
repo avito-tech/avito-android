@@ -5,6 +5,7 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorage.Request
 import com.avito.filestorage.RemoteStorage.Result
 import com.avito.instrumentation.report.Report
+import com.avito.report.internal.getHttpClient
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.TestRuntimeData
@@ -32,9 +33,18 @@ class ReportViewerTestReporter(
     private val retracer: ProguardRetracer
 ) : TestReporter() {
 
+    private val httpTimeoutSec = 30L
+
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapterFactory(EntryTypeAdapterFactory())
         .create()
+
+    private val httpClient = getHttpClient(
+        verbose = true,
+        logger = commonLogger(logger),
+        readTimeoutSec = httpTimeoutSec,
+        writeTimeoutSec = httpTimeoutSec
+    )
 
     /**
      * todo need implementation for in memory report
@@ -42,8 +52,10 @@ class ReportViewerTestReporter(
     private val remoteStorage: RemoteStorage =
         RemoteStorage.create(
             endpoint = fileStorageUrl,
-            logger = commonLogger(logger)
+            logger = commonLogger(logger),
+            httpClient = httpClient
         )
+
     // todo переместить ближе к DeviceWorker
     // сюда можно передавать логи как параметр и убрать отсюда все кроме транспорта
     private val logcatBuffers = mutableMapOf<Pair<TestCase, Int>, LogcatBuffer>()
@@ -55,7 +67,7 @@ class ReportViewerTestReporter(
     ) {
         super.started(test, device, executionNumber)
 
-        val logcatFile = File(logcatDir, "${device.id}.txt")
+        val logcatFile = File(logcatDir, "${device.coordinate.serial}.txt")
 
         val key = test to executionNumber
         logcatBuffers[key] = LogcatBuffer.Impl(
@@ -142,15 +154,20 @@ class ReportViewerTestReporter(
 
     //todo coroutine
     private fun uploadLogcat(logcat: List<String>): String {
-        return when (val result = remoteStorage.upload(
-            Request.ContentRequest(
-                content = retracer.retrace(logcat.joinToString(separator = "\n")),
-                extension = "log"
-            ),
-            comment = "logcat"
-        ).get()) {
-            is Result.Success -> remoteStorage.fullUrl(result)
-            is Result.Error -> "Failed to upload logcat: ${result.t.message}"
+        return if (logcat.isEmpty()) {
+            logger.warn("Logcat is empty")
+            ""
+        } else {
+            when (val result = remoteStorage.upload(
+                Request.ContentRequest(
+                    content = retracer.retrace(logcat.joinToString(separator = "\n")),
+                    extension = "log"
+                ),
+                comment = "logcat"
+            ).get()) {
+                is Result.Success -> remoteStorage.fullUrl(result)
+                is Result.Error -> "Failed to upload logcat: ${result.t.message}"
+            }
         }
     }
 

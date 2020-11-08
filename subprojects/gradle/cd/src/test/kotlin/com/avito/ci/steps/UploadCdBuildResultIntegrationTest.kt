@@ -7,9 +7,11 @@ import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.runTask
 import com.avito.git.Git
-import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
+import com.avito.test.gradle.kotlinClass
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -40,21 +42,21 @@ class UploadCdBuildResultIntegrationTest {
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         projectDir = tempPath.toFile()
+
         mockingReportApi()
-        TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
-            modules = listOf(
-                AndroidAppModule(
-                    versionCode = versionCode,
-                    versionName = versionName,
-                    name = "app",
-                    plugins = listOf(
-                        "com.avito.android.signer",
-                        "com.avito.android.instrumentation-tests",
-                        "com.avito.android.artifactory-app-backup",
-                        "com.avito.android.cd"
-                    ),
-                    customScript = """
+        mockFileStorageApi()
+
+        val androidAppModule = AndroidAppModule(
+            versionCode = versionCode,
+            versionName = versionName,
+            name = "app",
+            plugins = listOf(
+                "com.avito.android.signer",
+                "com.avito.android.instrumentation-tests",
+                "com.avito.android.artifactory-app-backup",
+                "com.avito.android.cd"
+            ),
+            customScript = """
                             import com.avito.cd.BuildVariant
                             ${registerUiTestConfigurations("regress")}
                             signService {
@@ -79,9 +81,30 @@ class UploadCdBuildResultIntegrationTest {
                                 }
                             }
                         """.trimIndent()
-                )
-            )
+        )
+
+
+        TestProjectGenerator(
+            plugins = listOf("com.avito.android.impact"),
+            modules = listOf(androidAppModule)
         ).generateIn(projectDir)
+
+        with(projectDir) {
+            dir("${androidAppModule.name}/src/androidTest/kotlin/test") {
+                kotlinClass("RealTest") {
+                    """
+package ${androidAppModule.packageName}
+
+class RealTest {
+    
+    @org.junit.Test
+    fun test() {
+    }
+}
+                                """.trimIndent()
+                }
+            }
+        }
     }
 
     @Test
@@ -255,6 +278,15 @@ class UploadCdBuildResultIntegrationTest {
             }
         """.trimIndent()
 
+    private fun mockFileStorageApi() {
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { path.contains("file/addBinary") },
+                response = MockResponse().setBody("file/uploaded")
+            )
+        )
+    }
+
     private fun mockingReportApi() {
         dispatcher.registerMock(
             Mock(
@@ -268,10 +300,37 @@ class UploadCdBuildResultIntegrationTest {
                 response = MockResponse().setBody(runGetParamsResponse)
             )
         )
+
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { bodyContains(""""method":"Run.SetFinished"""") },
+                response = MockResponse().setBody("""{"result": "ok!"}""")
+            )
+        )
+
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { bodyContains(""""method":"RunTest.List"""") },
-                response = MockResponse().setBody("""{"result": []}""")
+                response = MockResponse().setBody(
+                    """{
+    "result": [
+        {
+            "id": "21w12e21e1e12e12r12",
+            "test_name": "com.app.RealTest::test",
+            "status": 1,
+            "environment": "api22",
+            "attempts_count": 1,
+            "success_count": 1
+        }
+    ]
+}"""
+                )
+            )
+        )
+        dispatcher.registerMock(
+            Mock(
+                requestMatcher = { bodyContains(""""method":"RunTest.AddFull"""") },
+                response = MockResponse().setBody("""{"result": "ok!"}""")
             )
         )
     }
@@ -290,7 +349,7 @@ class UploadCdBuildResultIntegrationTest {
                                 }
 
                                 staticDevicesReservation {
-                                    device = LocalEmulator.device(27)
+                                    device = MockEmulator.create(22)
                                     count = 1
                                 }
                             }
@@ -300,7 +359,7 @@ class UploadCdBuildResultIntegrationTest {
                 """
         }
         return """
-            import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
+            import static com.avito.instrumentation.reservation.request.Device.MockEmulator
 
             android.defaultConfig {
                 testInstrumentationRunner = "no_matter"
@@ -311,7 +370,7 @@ class UploadCdBuildResultIntegrationTest {
                  reportApiFallbackUrl = "stub"
                  sentryDsn = "stub"
                  slackToken = "stub"
-                 fileStorageUrl = "stub"
+                 fileStorageUrl = "$mockUrl"
                  registry = "stub"
                  reportApiUrl = "$mockUrl"
                  instrumentationParams = [

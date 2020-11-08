@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
-    implementation(project(":gradle:utils"))
+    implementation(project(":gradle:build-failer"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:throwable-utils"))
@@ -15,12 +15,11 @@ dependencies {
     implementation(project(":gradle:files"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gradle.androidPlugin)
+    implementation(Dependencies.Gradle.androidPlugin)
     implementation(Dependencies.okhttp)
     implementation(Dependencies.okhttpLogging)
 
     testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":gradle:utils"))
     testImplementation(project(":common:test-okhttp"))
 }
 

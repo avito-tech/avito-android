@@ -1,5 +1,6 @@
 package com.avito.runner.service
 
+import com.avito.logger.NoOpLogger
 import com.avito.runner.logging.StdOutLogger
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
@@ -8,28 +9,32 @@ import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.test.NoOpListener
+import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
 import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
-import com.avito.runner.test.randomSerial
+import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.receiveAvailable
-import com.avito.runner.test.runBlockingWithTimeout
+import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.runBlockingTest
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.concurrent.TimeUnit
 
+@ExperimentalCoroutinesApi
 class DeviceWorkerTest {
+
+    val logger = NoOpLogger
 
     @Test
     fun `returns application installed event and 4 passed intentions for 4 tests with of 2 applications`() =
-        runBlockingWithTimeout {
+        runBlockingTest {
             val compatibleWithDeviceState = State(
                 layers = listOf(
                     State.Layer.Model(model = "model"),
@@ -58,7 +63,7 @@ class DeviceWorkerTest {
             )
             val successfulDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 apiResult = MockActionResult.Success(22),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
@@ -94,7 +99,7 @@ class DeviceWorkerTest {
             val resultsChannel: Channel<DeviceWorkerMessage> =
                 Channel(Channel.UNLIMITED)
 
-            val router = IntentionsRouter().apply {
+            val router = IntentionsRouter(logger = logger).apply {
                 intentions.forEach { sendIntention(it) }
             }
 
@@ -104,8 +109,6 @@ class DeviceWorkerTest {
                 router = router
             ).run(this)
 
-            // Wait before all intentions will be processed
-            delay(TimeUnit.SECONDS.toMillis(3))
             router.close()
             worker.join()
 
@@ -127,11 +130,11 @@ class DeviceWorkerTest {
         }
 
     @Test
-    fun `fail with no events - device is freeze before processing intentions`() =
-        runBlockingWithTimeout {
+    fun `fail with device died event - device is freeze before processing intentions`() =
+        runBlockingTest {
             val freezeDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 apiResult = MockActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
@@ -145,7 +148,7 @@ class DeviceWorkerTest {
             )
 
             val resultsChannel = Channel<DeviceWorkerMessage>(Channel.UNLIMITED)
-            val router = IntentionsRouter()
+            val router = IntentionsRouter(logger = logger)
 
             val worker = provideDeviceWorker(
                 results = resultsChannel,
@@ -158,14 +161,19 @@ class DeviceWorkerTest {
 
             freezeDevice.verify()
 
+            val actualResults = resultsChannel.receiveAvailable()
+
             assertWithMessage("Received no messages")
-                .that(resultsChannel.isEmpty)
-                .isTrue()
+                .that(actualResults)
+                .hasSize(1)
+
+            assertThat(actualResults[0])
+                .isInstanceOf(DeviceWorkerMessage.WorkerDied::class.java)
         }
 
     @Test
-    fun `returns failed message  - device is freeze while processing first intention`() =
-        runBlockingWithTimeout {
+    fun `returns failed message - device is freeze while processing first intention`() =
+        runBlockingTest {
             val compatibleWithDeviceState = State(
                 layers = listOf(
                     State.Layer.Model(model = "model"),
@@ -186,7 +194,7 @@ class DeviceWorkerTest {
             )
             val freezeDevice = MockDevice(
                 logger = StdOutLogger(),
-                id = randomSerial(),
+                coordinate = randomDeviceCoordinate(),
                 apiResult = MockActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
@@ -204,7 +212,7 @@ class DeviceWorkerTest {
 
             val resultsChannel: Channel<DeviceWorkerMessage> =
                 Channel(Channel.UNLIMITED)
-            val router = IntentionsRouter().apply {
+            val router = IntentionsRouter(logger = logger).apply {
                 intentions.forEach { sendIntention(it) }
             }
 
@@ -214,8 +222,6 @@ class DeviceWorkerTest {
                 router = router
             ).run(this)
 
-            // Wait before all intentions will be processed
-            delay(TimeUnit.SECONDS.toMillis(3))
             router.close()
             worker.join()
 
@@ -225,11 +231,15 @@ class DeviceWorkerTest {
 
             assertWithMessage("Received only one message from worker")
                 .that(results)
-                .hasSize(1)
+                .hasSize(2)
 
             assertWithMessage("Received only Worker failed message for freeze device")
                 .that(results[0])
-                .isInstanceOf(DeviceWorkerMessage.WorkerFailed::class.java)
+                .isInstanceOf(DeviceWorkerMessage.WorkerDied::class.java)
+
+            assertWithMessage("Received only Worker failed message for freeze device")
+                .that(results[1])
+                .isInstanceOf(DeviceWorkerMessage.FailedIntentionProcessing::class.java)
         }
 
     private fun provideDeviceWorker(
@@ -241,6 +251,8 @@ class DeviceWorkerTest {
         messagesChannel = results,
         device = device,
         outputDirectory = File(""),
-        listener = NoOpListener
+        listener = NoOpListener,
+        dispatchers = TestDispatcher,
+        logger = logger
     )
 }

@@ -9,6 +9,7 @@ import java.io.Serializable
 abstract class InstrumentationFilter(val name: String) {
 
     val fromSource = FromSource()
+
     val fromRunHistory = FromRunHistory()
 
     fun fromSource(action: Action<FromSource>) {
@@ -126,10 +127,8 @@ abstract class InstrumentationFilter(val name: String) {
                 val reportConfig: Report.Factory.Config.ReportViewerId,
                 val statuses: Filter.Value<InstrumentationFilter.FromRunHistory.RunStatus>
             ) : Serializable
-
         }
 
         companion object
     }
-
 }

@@ -9,7 +9,7 @@ data class DeviceData(
 )
 
 fun Device.getData(): DeviceData = DeviceData(
-    serial = id,
+    serial = coordinate.serial,
     configuration = DeviceConfiguration(
         api = api,
         model = model

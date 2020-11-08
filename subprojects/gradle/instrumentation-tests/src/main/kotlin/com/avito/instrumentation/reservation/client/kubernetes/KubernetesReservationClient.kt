@@ -6,6 +6,7 @@ import com.avito.instrumentation.reservation.adb.RemoteDevice
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.util.waitForCondition
+import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
 import com.avito.utils.logging.CILogger
 import io.fabric8.kubernetes.api.model.Pod
@@ -38,7 +39,7 @@ class KubernetesReservationClient(
         reservations: Collection<Reservation.Data>,
         scope: CoroutineScope
     ): ReservationClient.ClaimResult {
-        val serialsChannel = Channel<Serial>(Channel.UNLIMITED)
+        val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
         scope.launch(Dispatchers.IO) {
             if (state !is State.Idling) {
                 throw IllegalStateException("Unable to start reservation job. Already started")
@@ -81,7 +82,12 @@ class KubernetesReservationClient(
                                 emulatorName = serial,
                                 device = device
                             )
-                            serialsChannel.send(serial)
+                            serialsChannel.send(
+                                DeviceCoordinate.Kubernetes(
+                                    serial = serial,
+                                    podName = podName
+                                )
+                            )
 
                             logger.debug("Pod $podName sent outside for further usage")
                         } else {
@@ -97,8 +103,14 @@ class KubernetesReservationClient(
 
         }
         return ReservationClient.ClaimResult(
-            serials = serialsChannel
+            deviceCoordinates = serialsChannel
         )
+    }
+
+    override suspend fun remove(podName: String, scope: CoroutineScope) {
+        scope.launch(Dispatchers.IO) {
+            kubernetesClient.pods().withName(podName).delete()
+        }
     }
 
     override suspend fun release() = withContext(Dispatchers.IO) {
@@ -163,10 +175,9 @@ class KubernetesReservationClient(
         val serial = emulatorSerialName(
             name = pod.status.podIP
         )
-        val device = androidDebugBridge.getDevice(
+        val device = androidDebugBridge.getRemoteDevice(
             serial = serial
         )
-        check(device is RemoteDevice)
         return device
     }
 
@@ -254,7 +265,7 @@ class KubernetesReservationClient(
         logger.debug("Finish listening devices for $deploymentName")
     }
 
-    private fun emulatorSerialName(name: String): Serial = Serial.Remote("$name:$ADB_DEFAULT_PORT")
+    private fun emulatorSerialName(name: String): Serial.Remote = Serial.Remote("$name:$ADB_DEFAULT_PORT")
 
     private sealed class State {
         class Reserving(

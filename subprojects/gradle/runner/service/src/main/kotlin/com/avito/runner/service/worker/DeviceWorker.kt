@@ -1,5 +1,7 @@
 package com.avito.runner.service.worker
 
+import com.avito.coroutines.extensions.Dispatchers
+import com.avito.logger.Logger
 import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -13,21 +15,22 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.getData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
 import java.io.File
-import java.util.concurrent.Executors
 
 class DeviceWorker(
     private val intentionsRouter: IntentionsRouter,
     private val messagesChannel: Channel<DeviceWorkerMessage>,
     private val device: Device,
     private val outputDirectory: File,
-    private val listener: TestListener
+    private val logger: Logger,
+    private val listener: TestListener,
+    dispatchers: Dispatchers
 ) {
-    private val dispatcher: CoroutineDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
+    private val dispatcher: CoroutineDispatcher = dispatchers.dispatcher()
 
     fun run(scope: CoroutineScope) = scope.launch(dispatcher) {
 
@@ -45,10 +48,12 @@ class DeviceWorker(
             return@launch
         }
 
-        // what will happen when worker dies
+        log("$state")
+
         for (intention in intentionsRouter.observeIntentions(state)) {
             try {
-                device.debug("Receive intention: $intention")
+                log("Received intention: $intention")
+                device.debug("Received intention: $intention")
                 when (val status = device.deviceStatus()) {
                     is Device.DeviceStatus.Alive -> {
                         device.debug("Preparing state: ${intention.state}")
@@ -74,31 +79,31 @@ class DeviceWorker(
                                 )
                             }
                             preparingError != null -> {
-                                onDeviceDie(intention, preparingError)
+                                onDeviceDieOnIntention(intention, preparingError)
                                 return@launch
                             }
                         }
                     }
                     is Device.DeviceStatus.Freeze -> {
-                        onDeviceDie(intention, status.reason)
+                        onDeviceDieOnIntention(intention, status.reason)
                         return@launch
                     }
                 }
             } catch (t: Throwable) {
-                onDeviceDie(intention, t)
+                onDeviceDieOnIntention(intention, t)
                 return@launch
             }
         }
         device.debug("Worker ended with success result")
     }
 
-    private suspend fun onDeviceDie(
+    private suspend fun onDeviceDieOnIntention(
         intention: Intention,
         reason: Throwable
     ) {
         onDeviceDie("DeviceWorker died. Can't process intention: $intention", reason)
         messagesChannel.send(
-            DeviceWorkerMessage.WorkerFailed(
+            DeviceWorkerMessage.FailedIntentionProcessing(
                 t = reason,
                 intention = intention
             )
@@ -109,16 +114,21 @@ class DeviceWorker(
         message: String,
         reason: Throwable
     ) {
-        /**
-         * DeviceWorker is die. TODO release device
-         */
+        log("device died: $message, $reason")
         device.warn(message, reason)
+        messagesChannel.send(
+            DeviceWorkerMessage.WorkerDied(
+                t = reason,
+                coordinate = device.coordinate
+            )
+        )
     }
 
     private suspend fun prepareDeviceState(
         currentState: State,
         intentionState: State
     ): Try<State> {
+        log("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
         device.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
         if (intentionState.digest == currentState.digest) {
             clearStatePackages(currentState).get()
@@ -204,4 +214,8 @@ class DeviceWorker(
                 State.Layer.Model(model = model)
             )
         )
+
+    private fun log(message: String) {
+        logger.debug("DeviceWorker: $message")
+    }
 }

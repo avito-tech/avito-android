@@ -1,11 +1,13 @@
 package com.avito.instrumentation.reservation.adb
 
 import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.adb.Adb
 
-internal class LocalDevice(
-    serial: Serial,
+class LocalDevice(
+    override val serial: Serial.Local,
+    override val adb: Adb,
     logger: (String) -> Unit = {}
-) : Device(serial, logger) {
+) : Device(logger) {
 
     override suspend fun waitForBoot() = waitForCommand(
         runner = { isBootCompleted() },

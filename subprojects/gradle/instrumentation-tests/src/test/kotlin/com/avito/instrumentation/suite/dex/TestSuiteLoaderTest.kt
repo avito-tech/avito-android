@@ -1,9 +1,11 @@
 package com.avito.instrumentation.suite.dex
 
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.isInstanceOf
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import org.funktionale.tries.Try
 import org.jf.dexlib2.iface.Annotation
 import org.jf.dexlib2.iface.AnnotationElement
 import org.jf.dexlib2.iface.ClassDef
@@ -17,6 +19,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.quality.Strictness
+import java.io.File
 
 @ExtendWith(MockitoExtension::class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -30,6 +33,12 @@ class TestSuiteLoaderTest {
     @BeforeEach
     fun setUp() {
         testSuiteLoader = TestSuiteLoaderImpl(dexFileExtractor)
+    }
+
+    @Test
+    fun `load test suite - returns error - on incorrect file`() {
+        val tests = testSuiteLoader.loadTestSuite(File("."))
+        assertThat(tests).isInstanceOf<Try.Failure<*>>()
     }
 
     @Test
@@ -65,9 +74,9 @@ class TestSuiteLoaderTest {
             }
         )
 
-        val tests = loadTestSuite()
+        val tests = testSuiteLoader.loadTestSuite(mock())
 
-        assertThat(tests).isEmpty()
+        assertThat(tests).isInstanceOf<Try.Failure<*>>()
     }
 
     @Test
@@ -265,7 +274,7 @@ class TestSuiteLoaderTest {
     }
 
     private fun loadTestSuite(): List<TestInApk> {
-        return testSuiteLoader.loadTestSuite(mock())
+        return testSuiteLoader.loadTestSuite(mock()).get()
     }
 
     private fun createClass(type: String, block: ClassDef.() -> Unit = {}): ClassDef {

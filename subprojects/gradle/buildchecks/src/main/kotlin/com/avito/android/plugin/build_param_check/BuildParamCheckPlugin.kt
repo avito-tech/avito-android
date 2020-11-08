@@ -13,6 +13,7 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.logging.ciLogger
+import org.gradle.StartParameter
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -78,10 +79,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             it.group = "verification"
             it.description = "Check typical build problems"
         }
-        project.gradle.startParameter.setTaskNames(
-            // getter returns defencive copy
-            project.gradle.startParameter.taskNames + "checkBuildEnvironment"
-        )
+        project.gradle.startParameter.addTaskNames(":checkBuildEnvironment")
 
         if (checks.hasInstance<Check.AndroidSdk>()) {
             val check = checks.getInstance<Check.AndroidSdk>()
@@ -150,6 +148,11 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
+    }
+
+    private fun StartParameter.addTaskNames(vararg names: String) {
+        // getter returns defencive copy
+        setTaskNames(taskNames + names.toList())
     }
 
     private fun isMac(): Boolean {

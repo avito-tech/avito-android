@@ -1,7 +1,10 @@
 package com.avito.plugin
 
-import com.avito.utils.*
+import com.avito.utils.ExistingFile
+import com.avito.utils.createOrClear
+import com.avito.utils.getStackTraceString
 import com.avito.utils.logging.CILogger
+import com.avito.utils.toExisting
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -102,5 +105,29 @@ internal class SignViaServiceAction(
 
             error("Sign service returned: ${this.code}, body: $stringBody")
         }
+    }
+
+    private fun <T> retry(
+        retriesCount: Int,
+        delaySeconds: Long = 1,
+        attemptFailedHandler: (attempt: Int, throwable: Throwable) -> Unit = { _, _ -> },
+        actionFailedHandler: (throwable: Throwable) -> Unit = { },
+        block: (attempt: Int) -> T
+    ): T {
+        var throwable: Throwable? = null
+
+        (1..retriesCount).forEach { attempt ->
+            try {
+                return block(attempt)
+            } catch (e: Throwable) {
+                throwable = e
+                attemptFailedHandler(attempt, e)
+                TimeUnit.SECONDS.sleep(delaySeconds)
+            }
+        }
+
+        actionFailedHandler(throwable!!)
+
+        throw throwable!!
     }
 }

@@ -20,6 +20,7 @@ interface Report : ReadReport {
     interface Factory : Serializable {
 
         sealed class Config : Serializable {
+
             data class ReportViewerCoordinates(
                 val reportCoordinates: ReportCoordinates,
                 val buildId: String
@@ -89,7 +90,7 @@ interface Report : ReadReport {
             val reportApiUrl: String,
             val reportApiFallbackUrl: String,
             val ciLogger: CILogger,
-            val verboseHttp: Boolean = false
+            val verboseHttp: Boolean
         ) : Factory {
 
             @Transient
@@ -99,7 +100,7 @@ interface Report : ReadReport {
                 return when (config) {
                     is Config.ReportViewerCoordinates -> {
                         ensureInitializedReportsApi()
-                        Report.Impl(
+                        Impl(
                             reportsApi = reportsApi,
                             logger = ciLogger,
                             reportCoordinates = config.reportCoordinates,
@@ -230,31 +231,24 @@ interface Report : ReadReport {
         }
 
         override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {
-            logger.critical(
-                "There were lost tests:" + lostTests.joinToString(
-                    prefix = "\n",
-                    separator = "\n",
-                    transform = { "${it.name} (${it.device.name})" })
-            )
-
             if (lostTests.isEmpty()) {
-                logger.info("No lost tests to report")
+                logger.debug("No lost tests to report")
                 return
             }
 
             lostTests.actionOnBatches { index, lostTestsBatch ->
-                logger.info("Reporting ${lostTestsBatch.size} lost tests for batch: $index")
+                logger.debug("Reporting ${lostTestsBatch.size} lost tests for batch: $index")
 
                 reportsApi.addTests(
                     buildId = buildId,
                     reportCoordinates = reportCoordinates,
                     tests = lostTestsBatch
                 ).fold(
-                    { logger.info("Lost tests successfully reported") },
-                    { logger.critical("Can't report lost tests", it) }
+                    { logger.debug("Lost tests successfully reported") },
+                    { logger.warn("Can't report lost tests", it) }
                 )
 
-                logger.info("Reporting lost tests for batch: $index completed")
+                logger.debug("Reporting lost tests for batch: $index completed")
             }
         }
 

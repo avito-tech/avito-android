@@ -12,7 +12,7 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
-import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
@@ -27,10 +27,10 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 data class AdbDevice(
-    override val id: Serial,
+    override val coordinate: DeviceCoordinate,
     override val model: String,
     override val online: Boolean,
-    private val adb: String,
+    private val adb: Adb,
     private val logger: Logger,
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
@@ -297,7 +297,7 @@ data class AdbDevice(
         timeoutMinutes: Long,
         enableDeviceDebug: Boolean
     ): Single<InstrumentationTestCaseRun> {
-        val logsDir = File(File(outputDir, "logs"), id.value)
+        val logsDir = File(File(outputDir, "logs"), coordinate.serial.value)
             .apply { mkdirs() }
         val started = System.currentTimeMillis()
 
@@ -341,12 +341,12 @@ data class AdbDevice(
             Duration.ofSeconds(DDMLIB_SOCKET_TIME_OUT_SECONDS).toMillis().toInt()
         )
 
-        val bridge = AndroidDebugBridge.createBridge(adb, false)
+        val bridge = AndroidDebugBridge.createBridge(adb.adbPath, false)
         waitForAdb(bridge)
 
         return bridge.devices.find {
-            it.serialNumber == id.value
-        } ?: throw RuntimeException("Device $id not found")
+            it.serialNumber == coordinate.serial.value
+        } ?: throw RuntimeException("Device $coordinate not found")
     }
 
     private fun waitForAdb(
@@ -412,7 +412,7 @@ data class AdbDevice(
             timeoutSeconds,
             TimeUnit.SECONDS,
             Observable.error(
-                RuntimeException("Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $id")
+                RuntimeException("Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $coordinate")
             )
         )
         .toBlocking()
@@ -431,8 +431,8 @@ data class AdbDevice(
         redirectOutputTo: File? = null
     ): Observable<ProcessNotification> =
         commandLine.executeProcess(
-            command = adb,
-            args = listOf("-s", id.value) + command,
+            command = adb.adbPath,
+            args = listOf("-s", coordinate.serial.value) + command,
             output = redirectOutputTo
         )
 
@@ -454,7 +454,7 @@ data class AdbDevice(
     }
 
     // MBS-8531: don't use ADB here to avoid possible recursion
-    private val TAG: String = "[$id]"
+    private val TAG: String = "[${coordinate.serial}]"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L

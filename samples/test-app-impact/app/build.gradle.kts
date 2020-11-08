@@ -38,6 +38,6 @@ dependencies {
     implementation(project(":samples:test-app-impact:feature-one"))
     implementation(project(":samples:test-app-impact:feature-two"))
     implementation(Dependencies.appcompat)
-    androidTestImplementation(Dependencies.test.junit)
+    androidTestImplementation(Dependencies.Test.junit)
     androidTestImplementation(project(":samples:test-app-impact:androidTest-core"))
 }

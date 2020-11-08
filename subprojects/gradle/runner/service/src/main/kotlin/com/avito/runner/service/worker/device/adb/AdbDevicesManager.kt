@@ -3,7 +3,6 @@ package com.avito.runner.service.worker.device.adb
 import com.avito.logger.Logger
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
-import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.Serial
 import rx.Single
@@ -11,28 +10,16 @@ import java.util.Optional
 
 class AdbDevicesManager(
     private val logger: Logger,
-    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl()
+    private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
+    private val adbParser: AdbDeviceParser = AdbDeviceParser(),
+    private val adb: Adb
 ) : DevicesManager {
-    private val androidHome: String? = System.getenv("ANDROID_HOME")
-    private val adb: String = "$androidHome/platform-tools/adb"
 
-    init {
-        requireNotNull(androidHome) {
-            "Can't find env ANDROID_HOME. It needs to run 'adb'"
-        }
-    }
-
-    override fun findDevice(coordinate: Serial): Optional<Device> {
+    override fun findDevice(coordinate: Serial): Optional<AdbDeviceParams> {
         return adbDevices().map { output ->
-            AdbDeviceParser().findDeviceInOrNull(coordinate, output)?.let { params ->
+            adbParser.findDeviceInOrNull(coordinate, output)?.let { params ->
                 Optional.of(
-                    AdbDevice(
-                        id = params.id,
-                        model = params.model,
-                        online = params.online,
-                        adb = adb,
-                        logger = logger
-                    ) as Device
+                    params
                 )
             } ?: Optional.empty()
         }
@@ -40,19 +27,10 @@ class AdbDevicesManager(
             .value()
     }
 
-    override fun connectedDevices(): Set<Device> =
+    override fun connectedDevices(): Set<AdbDeviceParams> =
         adbDevices()
             .map { output ->
-                AdbDeviceParser().parse(output)
-                    .map { params ->
-                        AdbDevice(
-                            id = params.id,
-                            model = params.model,
-                            online = params.online,
-                            adb = adb,
-                            logger = logger
-                        )
-                    }.toSet()
+                adbParser.parse(output)
             }
             .doOnError {
                 logger.warn("Error on getting adb devices", it)
@@ -62,7 +40,7 @@ class AdbDevicesManager(
 
     private fun adbDevices(): Single<String> {
         return commandLine.executeProcess(
-            command = adb,
+            command = adb.adbPath,
             args = listOf("devices", "-l")
         )
             .ofType(ProcessNotification.Exit::class.java)

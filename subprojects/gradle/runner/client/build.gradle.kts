@@ -20,6 +20,7 @@ dependencies {
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:runner:shared-test"))
     testImplementation(Dependencies.kotlinReflect)
-    testImplementation(Dependencies.test.mockitoKotlin)
-    testImplementation(Dependencies.test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
+    testImplementation(Dependencies.Test.coroutinesTest)
 }

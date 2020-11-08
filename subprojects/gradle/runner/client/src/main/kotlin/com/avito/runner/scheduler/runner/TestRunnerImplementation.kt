@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler.runner
 
 import com.avito.logger.Logger
+import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
@@ -12,11 +13,16 @@ class TestRunnerImplementation(
     private val scheduler: TestExecutionScheduler,
     private val client: TestExecutionClient,
     private val service: IntentionExecutionService,
+    private val reservationWatcher: DeviceReservationWatcher,
     private val logger: Logger
 ) : TestRunner {
 
     override suspend fun runTests(tests: List<TestRunRequest>, scope: CoroutineScope): TestRunnerResult {
+
+        log("started")
+
         val serviceCommunication = service.start(scope)
+        reservationWatcher.watch(serviceCommunication.deviceSignals, scope)
         val clientCommunication = client.start(
             executionServiceCommunication = serviceCommunication,
             scope = scope
@@ -33,7 +39,7 @@ class TestRunnerImplementation(
         for (result in schedulerCommunication.result) {
             results += result
 
-            logger.debug(
+            log(
                 "Result for test: ${result.request.testCase.testName} " +
                     "received after ${result.result.size} tries. Progress (${results.count()}/$expectedResultsCount)"
             )
@@ -54,5 +60,9 @@ class TestRunnerImplementation(
                 }
                 .toMap()
         )
+    }
+
+    private fun log(message: String) {
+        logger.debug("TestRunner: $message")
     }
 }

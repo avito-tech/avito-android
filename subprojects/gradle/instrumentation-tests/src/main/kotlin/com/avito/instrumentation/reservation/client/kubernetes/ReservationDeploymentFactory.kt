@@ -53,6 +53,9 @@ class ReservationDeploymentFactory(
                 deploymentName = deploymentName,
                 count = reservation.count
             )
+            is Device.MockEmulator -> throw IllegalStateException(
+                "Mock emulator ${reservation.device} is unsupported in kubernetes reservation"
+            )
         }
     }
 
@@ -218,7 +221,6 @@ class ReservationDeploymentFactory(
             "device" to device.description
         )
     }
-
 
 
     private fun generateDeploymentName(namespace: String): String =
