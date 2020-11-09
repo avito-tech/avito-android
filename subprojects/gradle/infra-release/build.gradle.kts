@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("java-gradle-plugin")
     id("kotlin")
@@ -20,5 +22,14 @@ gradlePlugin {
             implementationClass = "com.avito.android.InfraReleasePlugin"
             displayName = "Infra Release"
         }
+    }
+}
+
+/**
+ * For internal modules only for now
+ */
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
     }
 }

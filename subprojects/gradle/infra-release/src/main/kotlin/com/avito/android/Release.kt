@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.avito.git.Branch
 import com.avito.git.Git
 import com.avito.logger.Logger
 
@@ -31,5 +32,33 @@ class Release(
         )
 
         //gh release create
+    }
+
+    private fun checkPreconditions(): Result<Unit> {
+        TODO()
+    }
+
+    private fun checkIsOnDefaultBranch(): Result<Unit> {
+        TODO()
+    }
+
+    private fun createReleaseBranch(): Result<Branch> {
+        TODO()
+    }
+
+    private fun runIntegrationTests(): Result<Unit> {
+        TODO()
+    }
+
+    private fun publish(): Result<Unit> {
+        TODO()
+    }
+
+    private fun pushBranch(): Result<Unit> {
+        TODO()
+    }
+
+    private fun draftGithubRelease(): Result<Unit> {
+        TODO()
     }
 }

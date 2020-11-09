@@ -13,6 +13,7 @@ internal class ReleaseTaskTest {
     fun test(@TempDir projectDir: File) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.infra-release"),
+            modules = listOf(),
             buildGradleExtra = """
                 infraRelease {
                     releaseTag = "2020.26"
@@ -23,13 +24,14 @@ internal class ReleaseTaskTest {
 
         with(projectDir) {
             git("init --quiet")
-            git("checkout -b 2020.26")
+            git("checkout -b develop")
         }
 
         gradlew(
             projectDir,
             "infraRelease",
             "-Pavito.git.state=local"
-        ).assertThat().buildSuccessful()
+        ).assertThat()
+            .buildSuccessful()
     }
 }
