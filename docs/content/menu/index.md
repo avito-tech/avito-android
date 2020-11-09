@@ -24,7 +24,7 @@ headless: true
     - [Бенчмарки]({{< ref "/docs/ide/Benchmarking.md" >}})
 - Builds
     - [Типы сборки]({{< ref "/docs/assemble/BuildTypes.md" >}})
-    - [Зависимости]({{< ref "/docs/assemble/Dependencies.md" >}})
+    - [Dependencies]({{< ref "/docs/assemble/Dependencies.md" >}})
     - [Минимизация]({{< ref "/docs/assemble/Minimization.md" >}})
     - [Бенчмарки]({{< ref "/docs/assemble/Benchmarks.md" >}})
     - [Профилирование]({{< ref "/docs/assemble/Profiling.md" >}})
