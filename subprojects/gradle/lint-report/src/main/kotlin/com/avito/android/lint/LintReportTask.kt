@@ -6,6 +6,8 @@ import com.avito.bitbucket.Severity
 import com.avito.git.gitState
 import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.slack.SlackClient
+import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.ciLogger
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -27,8 +29,14 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
     @get:Input
     abstract val buildId: Property<Int>
 
+    @get:Input
+    abstract val slackReportChannel: Property<String>
+
     @get:Internal
     abstract val bitbucket: Property<Bitbucket>
+
+    @get:Internal
+    abstract val slackClient: Property<SlackClient>
 
     @OutputDirectory
     val reportsDir: File = project.file(project.buildDir.path + "/reports/lint/modules")
@@ -45,8 +53,18 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
         copyReports()
         val models = parseReports()
         sendToBitbucket(models)
+        if (slackReportChannel.isPresent) {
+            createLintSlackAlert().report(models, SlackChannel(slackReportChannel.get()))
+        }
         val report = mergeReports(models)
         failIfNeeded(models, report)
+    }
+
+    private fun createLintSlackAlert(): LintSlackReporter {
+        return LintSlackReporter.Impl(
+            slackClient = slackClient.get(),
+            logger = ciLogger
+        )
     }
 
     private fun cleanOldReports() {
@@ -87,11 +105,12 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
     private fun parseReports(): List<LintReportModel> = LintResultsParser(reportsDir, project.ciLogger).parse()
 
     private fun mergeReports(models: List<LintReportModel>): File {
-        val report = project.file(project.buildDir.path + "/reports/lint/lint-merge.html")
-        LintReportMerger(models, report).write()
+        val reportFile = project.file(project.buildDir.path + "/reports/lint/lint-merge.html")
+        val mergedReport = LintReportMerger().merge(models, reportFile)
+        reportFile.writeText(mergedReport)
 
-        project.ciLogger.debug("Wrote HTML report to file://${report.canonicalPath}")
-        return report
+        project.ciLogger.debug("Wrote HTML report to file://${reportFile.canonicalPath}")
+        return reportFile
     }
 
     private fun sendToBitbucket(reports: List<LintReportModel>) {

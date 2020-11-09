@@ -6,7 +6,7 @@ import java.io.InputStream
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
 
-internal class LintResultsParser(
+class LintResultsParser(
     private val reportsDir: File,
     private val log: CILogger
 ) {
@@ -34,6 +34,8 @@ internal class LintResultsParser(
     }
 
     private data class MutableLintIssue(
+        var id: String = "",
+        var summary: String = "",
         var message: String = "",
         var severity: LintIssue.Severity = LintIssue.Severity.UNKNOWN,
         var path: String = "",
@@ -63,6 +65,8 @@ internal class LintResultsParser(
 
                     if (startElement.name.localPart == "issue") {
                         issue = MutableLintIssue()
+                        issue.id = requireNotNull(startElement.getAttributeByName(QName("id"))?.value)
+                        issue.summary = requireNotNull(startElement.getAttributeByName(QName("summary"))?.value)
                         issue.message = startElement.getAttributeByName(QName("message"))?.value ?: "No message"
                         issue.severity = when (startElement.getAttributeByName(QName("severity"))?.value) {
                             "Error" -> LintIssue.Severity.ERROR
@@ -84,7 +88,9 @@ internal class LintResultsParser(
                     if (endElement.name.localPart == "issue") {
                         issues.add(
                             LintIssue(
-                                message = issue!!.message,
+                                id = issue!!.id,
+                                summary = issue.summary,
+                                message = issue.message,
                                 severity = issue.severity,
                                 line = issue.line,
                                 path = issue.path.replace("../", "")

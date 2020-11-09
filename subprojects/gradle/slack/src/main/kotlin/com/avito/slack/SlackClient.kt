@@ -14,8 +14,9 @@ import com.github.seratch.jslack.api.methods.request.chat.ChatPostMessageRequest
 import com.github.seratch.jslack.api.methods.request.chat.ChatUpdateRequest
 import com.github.seratch.jslack.api.model.Channel
 import org.funktionale.tries.Try
+import java.io.File
 
-interface SlackClient : SlackMessageSender {
+interface SlackClient : SlackMessageSender, SlackFileUploader {
 
     fun updateMessage(
         channel: SlackChannel,
@@ -60,6 +61,18 @@ interface SlackClient : SlackMessageSender {
                         threadId = response.message.threadTs
                     )
                 }
+        }
+
+        override fun uploadHtml(channel: SlackChannel, message: String, file: File): Try<Unit> {
+            return findChannelByName(channel.strippedName).flatMap { channelInfo ->
+                methodsClient.filesUpload {
+                    it.file(file)
+                    it.channels(listOf(channelInfo.id))
+                    it.filename(file.name)
+                    it.initialComment(message)
+                    it.token(token)
+                }.toTry()
+            }.map { Unit }
         }
 
         override fun updateMessage(
@@ -149,7 +162,6 @@ private fun <T : SlackApiResponse> T.toTry(): Try<T> {
     return if (this.isOk) {
         Try.Success(this)
     } else {
-        Try.Failure(RuntimeException("Slack request failed: ${this.error}"))
+        Try.Failure(RuntimeException("Slack request failed; error=${this.error} [needed=${this.needed}; provided=${this.provided}]"))
     }
 }
-
