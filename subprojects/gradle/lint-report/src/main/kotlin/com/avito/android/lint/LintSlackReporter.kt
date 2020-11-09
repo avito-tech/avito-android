@@ -4,9 +4,9 @@ import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.CILogger
 
-interface LintSlackAlert {
+interface LintSlackReporter {
 
-    fun alert(
+    fun report(
         models: List<LintReportModel>,
         channel: SlackChannel
     )
@@ -14,18 +14,18 @@ interface LintSlackAlert {
     class Impl(
         private val slackClient: SlackClient,
         private val logger: CILogger
-    ) : LintSlackAlert {
+    ) : LintSlackReporter {
 
         private val tag = "LintSlackAlert"
 
-        override fun alert(
+        override fun report(
             models: List<LintReportModel>,
             channel: SlackChannel
         ) {
-            logger.debug("$tag: Sending lint alert...")
-
             models.forEach { model ->
                 if (shouldSendAlert(model)) {
+                    logger.debug("$tag: Sending lint alert...")
+
                     slackClient.uploadHtml(
                         channel = channel,
                         message = buildSlackMessage(model),

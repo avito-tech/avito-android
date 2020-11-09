@@ -54,14 +54,14 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
         val models = parseReports()
         sendToBitbucket(models)
         if (slackReportChannel.isPresent) {
-            createLintSlackAlert().alert(models, SlackChannel(slackReportChannel.get()))
+            createLintSlackAlert().report(models, SlackChannel(slackReportChannel.get()))
         }
         val report = mergeReports(models)
         failIfNeeded(models, report)
     }
 
-    private fun createLintSlackAlert(): LintSlackAlert {
-        return LintSlackAlert.Impl(
+    private fun createLintSlackAlert(): LintSlackReporter {
+        return LintSlackReporter.Impl(
             slackClient = slackClient.get(),
             logger = ciLogger
         )
