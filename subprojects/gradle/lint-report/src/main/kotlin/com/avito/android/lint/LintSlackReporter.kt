@@ -46,7 +46,7 @@ interface LintSlackReporter {
 
         private fun buildSlackMessage(model: LintReportModel): String {
             return buildString {
-                appendln("*Critical lint problems detected in develop!*")
+                appendln("*Critical lint problems detected!*")
                 appendln("for project: ${model.projectRelativePath}")
 
                 if (model is LintReportModel.Valid) {
