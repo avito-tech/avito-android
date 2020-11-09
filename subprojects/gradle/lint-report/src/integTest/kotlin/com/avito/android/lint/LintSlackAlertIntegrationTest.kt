@@ -20,8 +20,8 @@ internal class LintSlackAlertIntegrationTest {
 
         val reportModels = parser.parse()
 
-        val lintSlackAlert: LintSlackAlert = LintSlackAlert.Impl(slackClient, logger)
+        val lintSlackReporter: LintSlackReporter = LintSlackReporter.Impl(slackClient, logger)
 
-        lintSlackAlert.alert(reportModels, testChannel)
+        lintSlackReporter.report(reportModels, testChannel)
     }
 }
