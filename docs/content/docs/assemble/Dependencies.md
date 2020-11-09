@@ -3,31 +3,16 @@ title: Dependencies
 type: docs
 ---
 
-# Зависимости
+# Dependencies
 
-## Как подключить внешнюю зависимость?
+## Artifactory
 
-Все зависимости объявляем в одном файле - Dependencies.kt.\
-На них ссылаемся в build.gradle модуля:
+Free version of [Artifactory](https://jfrog.com/artifactory/) used in Avito Android development to be a proxy for every 3-rd party dependency.
 
-```groovy
-dependencies {
-    implementation(Dependencies.supportAnnotations)
-```
+Dependency resolving performance and artifacts availability is crucial for our CI/CD pipelines and developers local work.
 
-## Как зафорсить версию зависимости?
+[[Internal Avito instance]](http://links.k.avito.ru/artifactory-speed)
 
-Конфигурация проекта упадет, если в транзитивных зависимостях прилетают разные версии одной и той-же библиотеки:
+### Adding new proxy repositories
 
-```none
-> Conflict(s) found for the following module(s):
-       - com.google.android.gms:play-services-measurement-api between versions 17.2.1 and 17.0.0
-Run with:
-     --scan or
-     :avito:dependencyInsight --configuration debugRuntimeClasspath --dependency com.google.android.gms:play-services-measurement-api
-     to get more insight on how to solve the conflict.
-```
-
-В приложении должна быть только одна версия.\
-Выбери подходящую версию (обычно берем старшую) и добавь зависимость в `Dependencies`.\
-Автоматически форсим версии для всех зависимостей из `Dependencies` (см. `applyDefaultResolutionStrategy`).
+If you have new dependency, which is not listed in available proxies, please [contact]({{< ref "/docs/Contacts.md" >}}) our team.
