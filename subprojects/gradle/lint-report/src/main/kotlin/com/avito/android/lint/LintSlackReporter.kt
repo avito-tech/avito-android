@@ -46,8 +46,8 @@ interface LintSlackReporter {
 
         private fun buildSlackMessage(model: LintReportModel): String {
             return buildString {
-                appendln("*Critical lint problems detected!*")
-                appendln("for project: ${model.projectRelativePath}")
+                appendln("*Critical lint problems detected for project ${model.projectRelativePath}!*")
+                appendln()
 
                 if (model is LintReportModel.Valid) {
                     val errors = model.issues.filter { it.severity == LintIssue.Severity.ERROR }
