@@ -72,4 +72,7 @@ object Screen {
 
     val overlapScreen: OverlapScreen
         get() = OverlapScreen()
+
+    val dialogScreen: DialogScreen
+        get() = DialogScreen()
 }

@@ -39,5 +39,6 @@
         <activity android:name=".RecyclerDescendantLevelsActivity" />
         <activity android:name=".ToastActivity" />
         <activity android:name=".OverlapActivity" />
+        <activity android:name=".DialogActivity" />
     </application>
 </manifest>
