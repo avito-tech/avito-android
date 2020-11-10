@@ -1,13 +1,15 @@
 package com.avito.android.lint
 
 import com.avito.android.build_verdict.BuildVerdictTask
+import com.avito.android.lint.html.LintReportMerger
+import com.avito.android.lint.model.LintIssue
+import com.avito.android.lint.model.LintReportModel
+import com.avito.android.lint.model.hasErrors
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.Severity
 import com.avito.git.gitState
 import com.avito.impact.configuration.internalModule
 import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.ciLogger
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -17,7 +19,6 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -30,15 +31,8 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
     @get:Input
     abstract val buildId: Property<Int>
 
-    @get:Optional
-    @get:Input
-    abstract val slackReportChannel: Property<String>
-
     @get:Internal
     abstract val bitbucket: Property<Bitbucket>
-
-    @get:Internal
-    abstract val slackClient: Property<SlackClient>
 
     @OutputDirectory
     val reportsDir: File = project.file(project.buildDir.path + "/reports/lint/modules")
@@ -51,22 +45,13 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
 
     @TaskAction
     fun makeReport() {
-        cleanOldReports()
-        copyReports()
-        val models = parseReports()
-        sendToBitbucket(models)
-        if (slackReportChannel.isPresent) {
-            createLintSlackAlert().report(models, SlackChannel(slackReportChannel.get()))
-        }
-        val report = mergeReports(models)
-        failIfNeeded(models, report)
-    }
-
-    private fun createLintSlackAlert(): LintSlackReporter {
-        return LintSlackReporter.Impl(
-            slackClient = slackClient.get(),
-            logger = ciLogger
-        )
+        //todo revisit this task after "per module lint" research
+//        cleanOldReports()
+//        copyReports()
+//        val models = LintResultsParser(reportsDir, project.ciLogger).parse()
+//        sendToBitbucket(models)
+//        val report = mergeReports(models)
+//        failIfNeeded(models, report)
     }
 
     private fun cleanOldReports() {
@@ -103,8 +88,6 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
             file.copyTo(File(destination, file.name))
         }
     }
-
-    private fun parseReports(): List<LintReportModel> = LintResultsParser(reportsDir, project.ciLogger).parse()
 
     private fun mergeReports(models: List<LintReportModel>): File {
         val reportFile = project.file(project.buildDir.path + "/reports/lint/lint-merge.html")

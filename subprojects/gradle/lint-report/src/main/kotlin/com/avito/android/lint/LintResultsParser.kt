@@ -1,36 +1,32 @@
 package com.avito.android.lint
 
+import com.avito.android.lint.model.LintIssue
+import com.avito.android.lint.model.LintReportModel
 import com.avito.utils.logging.CILogger
 import java.io.File
 import java.io.InputStream
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
 
-class LintResultsParser(
-    private val reportsDir: File,
-    private val log: CILogger
-) {
+class LintResultsParser(private val log: CILogger) {
 
-    fun parse(): List<LintReportModel> {
-        return reportsDir.walk()
-            .filter { it.extension == "xml" && it.name.startsWith("lint-results") }
-            .map { xmlReport ->
-                val dir = xmlReport.parentFile
-                val htmlReport = File(dir, xmlReport.nameWithoutExtension + ".html")
+    fun parse(
+        projectPath: String,
+        lintXml: File,
+        lintHtml: File
+    ): LintReportModel {
 
-                val projectPath = ":" + dir.toRelativeString(reportsDir)
-                    .replace('/', ':')
-                try {
-                    val issues = readXmlLintReport(xmlReport.inputStream())
-                    LintReportModel.Valid(projectPath, htmlReport, issues)
-                } catch (error: UnsupportedFormatVersion) {
-                    throw error
-                } catch (error: Exception) {
-                    log.info("Invalid lint report: ", error)
-                    LintReportModel.Invalid(projectPath, htmlReport, error)
-                }
-            }
-            .toList()
+        val dir = lintXml.parentFile
+
+        return try {
+            val issues = readXmlLintReport(lintXml.inputStream())
+            LintReportModel.Valid(projectPath, lintHtml, issues)
+        } catch (error: UnsupportedFormatVersion) {
+            throw error
+        } catch (error: Exception) {
+            log.info("Invalid lint report: ", error)
+            LintReportModel.Invalid(projectPath, lintHtml, error)
+        }
     }
 
     private data class MutableLintIssue(
@@ -42,7 +38,6 @@ class LintResultsParser(
         var line: Int = 0
     )
 
-    @Throws(UnsupportedFormatVersion::class)
     private fun readXmlLintReport(report: InputStream): List<LintIssue> {
         val xmlInputFactory = XMLInputFactory.newInstance()
         val issues = mutableListOf<LintIssue>()

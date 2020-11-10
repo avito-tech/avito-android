@@ -1,5 +1,7 @@
-package com.avito.android.lint
+package com.avito.android.lint.slack
 
+import com.avito.android.lint.model.LintIssue
+import com.avito.android.lint.model.LintReportModel
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.CILogger
@@ -7,7 +9,7 @@ import com.avito.utils.logging.CILogger
 interface LintSlackReporter {
 
     fun report(
-        models: List<LintReportModel>,
+        lintReport: LintReportModel,
         channel: SlackChannel
     )
 
@@ -19,24 +21,22 @@ interface LintSlackReporter {
         private val tag = "LintSlackAlert"
 
         override fun report(
-            models: List<LintReportModel>,
+            lintReport: LintReportModel,
             channel: SlackChannel
         ) {
-            models.forEach { model ->
-                if (shouldSendAlert(model)) {
-                    logger.debug("$tag: Sending lint alert...")
+            if (shouldSendAlert(lintReport)) {
+                logger.debug("$tag: Sending lint alert...")
 
-                    slackClient.uploadHtml(
-                        channel = channel,
-                        message = buildSlackMessage(model),
-                        file = model.htmlFile
-                    ).fold(
-                        { logger.debug("$tag: Report sent successfully") },
-                        { error -> logger.critical("$tag: Can't send report ${error.message}") }
-                    )
-                } else {
-                    logger.debug("$tag Skip sending lint alert")
-                }
+                slackClient.uploadHtml(
+                    channel = channel,
+                    message = buildSlackMessage(lintReport),
+                    file = lintReport.htmlFile
+                ).fold(
+                    { logger.debug("$tag: Report sent successfully") },
+                    { error -> logger.critical("$tag: Can't send report ${error.message}") }
+                )
+            } else {
+                logger.debug("$tag Skip sending lint alert")
             }
         }
 
