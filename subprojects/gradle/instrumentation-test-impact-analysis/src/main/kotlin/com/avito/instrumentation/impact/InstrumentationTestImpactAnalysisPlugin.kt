@@ -12,9 +12,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.time.Duration
-import java.util.Locale
 
-@ExperimentalStdlibApi
 class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
 
     private lateinit var modifiedProjectsFinder: ModifiedProjectsFinder
@@ -42,7 +40,7 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
                 description = "Analyze androidTest bytecode to collect maps: [Screen:Test], [Screen:RootId]"
 
                 val testBuildVariant = extension.testBuildVariant.convention(it.testBuildType)
-                    .map { "${project.path}:compile${it.capitalize(Locale.getDefault())}AndroidTestKotlin" }
+                    .map { "${project.path}:compile${it.capitalize()}AndroidTestKotlin" }
 
                 dependsOn(testBuildVariant)
             }
