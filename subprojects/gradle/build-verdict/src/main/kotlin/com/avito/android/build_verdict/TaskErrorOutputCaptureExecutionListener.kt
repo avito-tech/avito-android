@@ -10,8 +10,6 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.util.Path
-import org.jetbrains.kotlin.gradle.internal.KaptTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal class TaskErrorOutputCaptureExecutionListener(
     private val logs: MutableMap<Path, StringBuilder>,
@@ -21,7 +19,6 @@ internal class TaskErrorOutputCaptureExecutionListener(
     override fun beforeExecute(task: Task) {
         when (task) {
             is Test -> {
-                logger.debug("Add error listener to the task ${task.path}")
                 task.addTestListener(object : DefaultTestListener() {
                     override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
                         if (result.resultType == TestResult.ResultType.FAILURE) {
@@ -31,9 +28,7 @@ internal class TaskErrorOutputCaptureExecutionListener(
                     }
                 })
             }
-            is KaptTask,
-            is KotlinCompile -> {
-                logger.debug("Add error listener to the task ${task.path}")
+            else -> {
                 task.logging.addStandardErrorListener { error ->
                     logs.getOrPut(Path.path(task.path), { StringBuilder() })
                         .append(error)
@@ -52,7 +47,6 @@ internal class TaskErrorOutputCaptureExecutionListener(
                     logs.getOrPut(Path.path(task.path), { StringBuilder() })
                         .append(task.verdict)
                 }
-
             }
         }
     }
