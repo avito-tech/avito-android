@@ -2,7 +2,7 @@ package com.avito.android.lint
 
 import java.io.File
 
-internal sealed class LintReportModel(val projectRelativePath: String, val htmlFile: File) {
+sealed class LintReportModel(val projectRelativePath: String, val htmlFile: File) {
 
     class Valid(
         projectRelativePath: String,
@@ -17,7 +17,9 @@ internal sealed class LintReportModel(val projectRelativePath: String, val htmlF
     ) : LintReportModel(projectRelativePath, htmlFile)
 }
 
-internal class LintIssue(
+class LintIssue(
+    val id: String,
+    val summary: String,
     val message: String,
     val path: String,
     val line: Int,

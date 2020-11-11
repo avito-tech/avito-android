@@ -3,6 +3,7 @@ plugins {
     id("java-gradle-plugin")
     `maven-publish`
     id("com.jfrog.bintray")
+    id("nebula.integtest")
 }
 
 dependencies {
@@ -13,14 +14,15 @@ dependencies {
     implementation(Dependencies.kotlinHtml)
     implementation(Dependencies.okhttp)
 
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:ci-logger"))
     implementation(project(":common:okhttp"))
-    implementation(project(":gradle:impact-shared"))
     implementation(project(":common:sentry"))
-    implementation(project(":gradle:git"))
+    implementation(project(":gradle:android"))
     implementation(project(":gradle:bitbucket"))
+    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:git"))
+    implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:slack"))
 
     testImplementation(project(":gradle:logging-test-fixtures"))
 }

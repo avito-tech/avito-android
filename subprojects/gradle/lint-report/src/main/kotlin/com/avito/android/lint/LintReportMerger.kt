@@ -22,14 +22,10 @@ import kotlinx.html.tr
 import kotlinx.html.unsafe
 import java.io.File
 
-internal class LintReportMerger(
-    private val reports: List<LintReportModel>,
-    private val mergedReport: File
-) {
+class LintReportMerger {
 
-    fun write() {
-        val document = createHtmlDocument(sort(reports))
-        mergedReport.writeText(document)
+    fun merge(reports: List<LintReportModel>, mergedReport: File): String {
+        return createHtmlDocument(sort(reports), mergedReport)
     }
 
     private fun sort(models: List<LintReportModel>): List<LintReportModel> {
@@ -43,7 +39,7 @@ internal class LintReportMerger(
         return invalidReports + validReports.sortedWith(sortComparator)
     }
 
-    private fun createHtmlDocument(reports: List<LintReportModel>): String {
+    private fun createHtmlDocument(reports: List<LintReportModel>, mergedReport: File): String {
         return createHTML().html {
             head {
                 meta {
@@ -84,7 +80,7 @@ internal class LintReportMerger(
                     }
                     main("mdl-layout__content") {
                         div("page-content") {
-                            generatePageContent(this, reports)
+                            generatePageContent(this, reports, mergedReport)
                         }
                     }
                 }
@@ -92,7 +88,7 @@ internal class LintReportMerger(
         }
     }
 
-    private fun generatePageContent(container: HtmlBlockTag, reports: List<LintReportModel>) {
+    private fun generatePageContent(container: HtmlBlockTag, reports: List<LintReportModel>, mergedReport: File) {
         container.table("mdl-data-table mdl-shadow--2dp") {
             thead {
                 tr {

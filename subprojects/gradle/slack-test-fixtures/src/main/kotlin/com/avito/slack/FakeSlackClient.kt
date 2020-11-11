@@ -6,6 +6,7 @@ import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.slack.model.createStubInstance
 import org.funktionale.tries.Try
+import java.io.File
 
 class FakeSlackClient : SlackClient {
 
@@ -56,5 +57,9 @@ class FakeSlackClient : SlackClient {
         updatedMessageText = text
         updatedMessageTimestamp = messageTimestamp
         return Try.Success(SlackMessage.createStubInstance())
+    }
+
+    override fun uploadHtml(channel: SlackChannel, message: String, file: File): Try<Unit> {
+        TODO("Not yet implemented")
     }
 }

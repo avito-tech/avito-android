@@ -5,6 +5,7 @@ import com.avito.android.withAndroidApp
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.atlassianCredentials
 import com.avito.bitbucket.bitbucketConfig
+import com.avito.slack.SlackClient
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
@@ -13,7 +14,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
 
@@ -23,7 +26,20 @@ open class LintReportPlugin : Plugin<Project> {
     override fun apply(app: Project) {
         check(app.isAndroidApp()) { "Plugin must be applied to an application but was applied to ${app.path}" }
 
+        val extension = app.extensions.create<LintReportExtension>("lintReport")
+
+        @Suppress("UnstableApiUsage")
+        val slackClientProvider: Provider<SlackClient> =
+            extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
+                SlackClient.Impl(
+                    token = token,
+                    workspace = workspace
+                )
+            }
+
         val reportTask = app.tasks.register<LintReportTask>("lintReport") {
+
+            this.slackClient.set(slackClientProvider)
 
             val atlassianCredentials = app.atlassianCredentials
             if (atlassianCredentials.isPresent) {
