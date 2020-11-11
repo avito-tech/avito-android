@@ -1,5 +1,8 @@
-package com.avito.android.lint
+package com.avito.android.lint.html
 
+import com.avito.android.lint.model.LintIssue
+import com.avito.android.lint.model.LintReportModel
+import com.avito.android.lint.model.hasErrors
 import kotlinx.html.HtmlBlockTag
 import kotlinx.html.a
 import kotlinx.html.body
