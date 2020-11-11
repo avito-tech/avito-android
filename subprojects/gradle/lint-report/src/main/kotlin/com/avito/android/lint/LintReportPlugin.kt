@@ -5,42 +5,26 @@ import com.avito.android.withAndroidApp
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.atlassianCredentials
 import com.avito.bitbucket.bitbucketConfig
-import com.avito.slack.SlackClient
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.UnknownTaskException
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
 
-// TODO: support build variants
 open class LintReportPlugin : Plugin<Project> {
 
     override fun apply(app: Project) {
         check(app.isAndroidApp()) { "Plugin must be applied to an application but was applied to ${app.path}" }
 
-        val extension = app.extensions.create<LintReportExtension>("lintReport")
+        app.extensions.create<LintReportExtension>("lintReport")
 
-        @Suppress("UnstableApiUsage")
-        val slackClientProvider: Provider<SlackClient> =
-            extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
-                SlackClient.Impl(
-                    token = token,
-                    workspace = workspace
-                )
-            }
-
+        //not used for now, see [com.avito.android.lint.slack.LintReportToSlackTaskFactory] and [LintCheck] in ci steps
         val reportTask = app.tasks.register<LintReportTask>("lintReport") {
-
-            this.slackClient.set(slackClientProvider)
-
             val atlassianCredentials = app.atlassianCredentials
             if (atlassianCredentials.isPresent) {
                 bitbucket.set(
@@ -68,14 +52,17 @@ open class LintReportPlugin : Plugin<Project> {
     }
 
     private fun setupDependencies(app: Project, reportTask: TaskProvider<LintReportTask>) {
+        val androidLintAccessor = AndroidLintAccessor(app)
+
         reportTask.configure {
-            it.dependsOn(app.lintTask())
+            it.dependsOn(androidLintAccessor.taskProvider())
         }
+
         app.withAndroidApp { appExtension ->
 
             appExtension.testVariants.all { _ ->
 
-                app.lintTask().configure {
+                androidLintAccessor.taskProvider().configure {
 
                     // see LintWorkerApiWorkaround.md
                     it.mustRunAfter("preInstrumentation")
@@ -87,26 +74,18 @@ open class LintReportPlugin : Plugin<Project> {
     private fun setupOnlyOrdering(app: Project, reportTask: TaskProvider<LintReportTask>) {
         app.gradle.projectsEvaluated {
             app.rootProject.subprojects { module ->
+                val androidLintAccessor = AndroidLintAccessor(module)
                 module.pluginManager.withPlugin("com.android.library") {
                     reportTask {
-                        mustRunAfter(module.lintTask())
+                        mustRunAfter(androidLintAccessor.taskProvider())
                     }
                 }
                 module.pluginManager.withPlugin("com.android.application") {
                     reportTask {
-                        mustRunAfter(module.lintTask())
+                        mustRunAfter(androidLintAccessor.taskProvider())
                     }
                 }
             }
         }
     }
-
-    private fun Project.lintTask(): TaskProvider<out Task> {
-        return try {
-            tasks.named("lintRelease")
-        } catch (ex: UnknownTaskException) {
-            tasks.named("lint")
-        }
-    }
-
 }

@@ -1,4 +1,4 @@
-package com.avito.android.lint
+package com.avito.android.lint.html
 
 import kotlinx.html.CommonAttributeGroupFacadeFlowSectioningContent
 import kotlinx.html.HTMLTag

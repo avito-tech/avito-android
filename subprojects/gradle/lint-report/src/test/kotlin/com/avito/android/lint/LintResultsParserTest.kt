@@ -1,5 +1,7 @@
 package com.avito.android.lint
 
+import com.avito.android.lint.model.LintIssue
+import com.avito.android.lint.model.LintReportModel
 import com.avito.utils.logging.FakeCILogger
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -10,16 +12,19 @@ import java.nio.file.Path
 
 class LintResultsParserTest {
 
-    private lateinit var rootDir: File
+    private lateinit var tempDir: File
+
+    private val logger = FakeCILogger()
 
     @BeforeEach
     fun setup(@TempDir dir: Path) {
-        rootDir = dir.toFile()
+        tempDir = dir.toFile()
     }
 
     @Test
     fun `report with warnings and errors contains expected issues`() {
-        val report = """
+        val model = parse(
+            xmlContent = """
             <?xml version="1.0" encoding="UTF-8"?>
             <issues by="lint 3.3.2" format="5">
 
@@ -52,16 +57,7 @@ class LintResultsParserTest {
                 </issue>
             </issues>
             """.trimIndent()
-        makeStubFiles("module", report)
-
-        val models = LintResultsParser(rootDir, FakeCILogger()).parse()
-
-        assertThat(models).hasSize(1)
-        val model = models[0]
-
-        if (model is LintReportModel.Invalid) {
-            println(model.error.message)
-        }
+        )
 
         assertThat(model is LintReportModel.Valid)
         model as LintReportModel.Valid
@@ -78,16 +74,15 @@ class LintResultsParserTest {
 
     @Test
     fun `report with unsupported format version - must fail with explanation`() {
-        val report = """
+        var readingError: Exception? = null
+        try {
+            parse(
+                xmlContent = """
             <?xml version="1.0" encoding="UTF-8"?>
             <issues format="6" by="lint 4.0.0">
             </issues>
             """.trimIndent()
-        makeStubFiles("module", report)
-
-        var readingError: Exception? = null
-        try {
-            LintResultsParser(rootDir, FakeCILogger()).parse()
+            )
         } catch (error: Exception) {
             readingError = error
         }
@@ -98,20 +93,20 @@ class LintResultsParserTest {
 
     @Test
     fun `invalid report file - invalid model`() {
-        makeStubFiles("module", "invalid xml file")
-        val logger = FakeCILogger()
+        val model = parse(
+            xmlContent = "invalid xml file"
+        )
 
-        val model = LintResultsParser(rootDir, logger).parse()
-
-        assertThat(model).hasSize(1)
-        assertThat(model[0]).isInstanceOf(LintReportModel.Invalid::class.java)
+        assertThat(model).isInstanceOf(LintReportModel.Invalid::class.java)
     }
 
-    private fun makeStubFiles(relativePath: String, report: String) {
-        val moduleDir = File(rootDir, relativePath)
-        moduleDir.mkdirs()
-
-        File(moduleDir, "lint-results.xml").writeText(report)
-        File(moduleDir, "lint-results.html").writeText("<html/>")
-    }
+    private fun parse(
+        xmlContent: String,
+        htmlContent: String = "some html file content",
+        projectPath: String = ":app"
+    ): LintReportModel = LintResultsParser(logger).parse(
+        projectPath = projectPath,
+        lintXml = File(tempDir, "lint-report.xml").apply { writeText(xmlContent) },
+        lintHtml = File(tempDir, "lint-report.html").apply { writeText(htmlContent) }
+    )
 }
