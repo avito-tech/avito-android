@@ -1,10 +1,13 @@
 package com.avito.impact.configuration
 
 import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.internal.tasks.SourceSetsTask
+import com.avito.android.androidBaseExtension
+import com.avito.android.isAndroid
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.util.Equality
 import org.funktionale.tries.Try
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -37,15 +40,16 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
     }
 
     fun sourceSets(): Set<File> {
-        val sourcesTaskRaw = project.tasks.findByPath("sourceSets") ?: return setOf(project.projectDir)
-
-        return (sourcesTaskRaw as SourceSetsTask).extension
-            .sourceSets
-            .filter { containsSources(it) }
-            .flatMap { it.java.srcDirs }
-            .map { File(it.canonicalPath.substringBeforeLast("java")) }
-            .filter { it.exists() }
-            .toSet()
+        return if (project.isAndroid()) {
+            project.androidBaseExtension.sourceSets
+                .filter { containsSources(it) }
+                .flatMap { it.java.srcDirs }
+                .map { File(it.canonicalPath.substringBeforeLast("java")) }
+                .filter { it.exists() }
+                .toSet()
+        } else {
+            setOf(project.projectDir) // TODO find source sets
+        }
     }
 
     open fun changedFiles(): Try<List<ChangedFile>> {
@@ -78,4 +82,23 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
 
     protected abstract fun containsBytecode(bytecodeDirectory: File): Boolean
     protected abstract fun containsSources(sourceSet: AndroidSourceSet): Boolean
+}
+
+internal fun SimpleConfiguration.dependencies(filter: (Configuration) -> Boolean): Set<ImplementationConfiguration> {
+    return module.project.configurations
+        .filter(filter)
+        .flatMap { configuration ->
+            configuration
+                .dependencies
+                .withType(DefaultProjectDependency::class.java)
+        }
+        .toSet()
+        .map {
+            it.dependencyProject
+                .internalModule
+                .implementationConfiguration
+        }
+        .toMutableSet().apply {
+            remove(this@dependencies)
+        }
 }

@@ -20,20 +20,7 @@ class AndroidTestConfiguration(module: InternalModule) : SimpleConfiguration(mod
     }
 
     override val dependencies: Set<ImplementationConfiguration> by lazy {
-        project.configurations
-            .filter { it.isAndroidTest() }
-            .flatMap { configuration ->
-                configuration
-                    .dependencies
-                    .withType(DefaultProjectDependency::class.java)
-            }
-            .toSet()
-            .map {
-                it.dependencyProject
-                    .internalModule
-                    .implementationConfiguration
-            }
-            .toSet()
+        dependencies { it.isAndroidTest() }
     }
 
     override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isAndroidTest()
