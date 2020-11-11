@@ -163,6 +163,12 @@ class KubernetesReservationClient(
                             }
                         }
                     }
+
+                    logger.debug("Deleting deployment: $deploymentName...")
+                    removeEmulatorsDeployment(
+                        deploymentName = deploymentName
+                    )
+                    logger.debug("Deployment: $deploymentName deleted")
                 }
             }
             this@KubernetesReservationClient.state = State.Idling
