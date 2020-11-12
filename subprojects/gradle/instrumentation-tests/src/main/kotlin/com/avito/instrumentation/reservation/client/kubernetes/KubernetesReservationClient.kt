@@ -181,10 +181,10 @@ class KubernetesReservationClient(
         val serial = emulatorSerialName(
             name = pod.status.podIP
         )
-        val device = androidDebugBridge.getRemoteDevice(
+
+        return androidDebugBridge.getRemoteDevice(
             serial = serial
         )
-        return device
     }
 
     private fun getPodDescription(podName: String?): String {
@@ -238,15 +238,51 @@ class KubernetesReservationClient(
     private fun podsFromDeployment(
         deploymentName: String
     ): List<Pod> = try {
+
         logger.debug("Getting pods for deployment: $deploymentName")
-        val items = kubernetesClient.pods().withLabel("deploymentName", deploymentName).list().items
-        val runningPods = items.filter { it.status.phase == POD_STATUS_RUNNING }
+
+        val pods = kubernetesClient.pods()
+            .withLabel("deploymentName", deploymentName)
+            .list()
+            .items
+
+        val runningPods = pods.filter { it.status.phase == POD_STATUS_RUNNING }
+
+        val pendingPods = pods.filter { it.status.phase == POD_STATUS_PENDING }
+
+        if (pendingPods.isNotEmpty()) {
+
+            val containerState = pendingPods.firstOrNull()
+                ?.status
+                ?.containerStatuses
+                ?.firstOrNull()
+                ?.state
+
+            val waitingMessage = containerState
+                ?.waiting
+                ?.message
+
+            // waiting means pod can't start on this node
+            // https://kubernetes.io/docs/tasks/debug-application-cluster/debug-application/#my-pod-stays-waiting
+            if (!waitingMessage.isNullOrBlank()) {
+                logger.warn("Can't start pod on this node: $waitingMessage")
+            }
+
+            val terminatedMessage = containerState
+                ?.terminated
+                ?.message
+
+            if (!terminatedMessage.isNullOrBlank()) {
+                logger.warn("Pod terminated with message: $terminatedMessage")
+            }
+        }
+
         logger.debug(
             "Getting pods for deployment: $deploymentName completed. " +
-                "Received ${items.size} pods (running: ${runningPods.size})."
+                "Received ${pods.size} pods (running: ${runningPods.size})."
         )
 
-        items
+        pods
     } catch (t: Throwable) {
         logger.warn("Failed to get pods for deployment: $deploymentName", t)
         emptyList()
@@ -285,3 +321,4 @@ class KubernetesReservationClient(
 
 private const val ADB_DEFAULT_PORT = 5555
 private const val POD_STATUS_RUNNING = "Running"
+private const val POD_STATUS_PENDING = "Pending"
