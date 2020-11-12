@@ -10,9 +10,11 @@ import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
 import com.android.build.api.variant.Variant
 import com.android.build.api.artifact.ArtifactType
+import com.avito.android.bundleTaskProvider
 import org.gradle.kotlin.dsl.register
 import com.avito.android.taskName
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dslx.closureOf
 import org.gradle.util.Path
@@ -132,6 +134,14 @@ class SignServicePlugin : Plugin<Project> {
                 val bundleToken: String? = signExtension.bundleSignTokens[buildTypeName]
 
                 variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
+
+                target.tasks.signedApkTaskProvider(variant.name).configure {
+                    it.dependsOn(variant.packageApplicationProvider)
+                }
+
+                target.tasks.signedBundleTaskProvider(variant.name).configure {
+                    it.dependsOn(target.tasks.bundleTaskProvider(variant))
+                }
             }
         }
 
