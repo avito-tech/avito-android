@@ -7,6 +7,7 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
+import com.avito.android.androidCommonExtension
 import com.avito.android.getApkFile
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib

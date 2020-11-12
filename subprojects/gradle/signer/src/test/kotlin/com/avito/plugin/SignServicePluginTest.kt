@@ -26,13 +26,15 @@ class SignServicePluginTest {
 
     @Test
     fun `plugin apply - fails - configuration without host`() {
-        generateTestProject(signServiceExtension = """
+        generateTestProject(
+            signServiceExtension = """
              signService {
                 // host
                 apk(android.buildTypes.release, "signToken")
                 bundle(android.buildTypes.release, "signToken")
              }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val result = ciRun(
             testProjectDir,
@@ -71,9 +73,7 @@ class SignServicePluginTest {
     }
 
     /**
-     * Проверка :android [com.avito.android.bundleFileProvider]. Здесь, т.к. signer - единственный потребительно этого метода
-     * Путь к bundle не смогли достать из API AGP, строим из пути к APK и уже поймали баг на обновлении до AGP 3.5
-     * (к пути добавился buildVariant, которого не было в 3.4)
+     * TODO: check whether this contract actual or not for a service or CI outputs
      */
     @Test
     fun `bundle path check`() {
@@ -109,6 +109,23 @@ class SignServicePluginTest {
             ":app:packageRelease",
             ":app:signApkViaServiceRelease"
         ).inOrder()
+    }
+
+    @Test
+    fun `bundle signing task - replaces original file by signed version (HACK)`() {
+        generateTestProject()
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("SIGNED_CONTENT"))
+
+        gradlew(
+            testProjectDir,
+            ":app:signBundleViaServiceRelease",
+            "-PsignToken=12345"
+        )
+
+        // See explanation for this hack inside SignTask
+        val resultArtifact = File(testProjectDir, "app/build/outputs/bundle/release/app-release.aab")
+        assertThat(resultArtifact.exists()).isTrue()
+        assertThat(resultArtifact.readText()).isEqualTo("SIGNED_CONTENT")
     }
 
     private fun generateTestProject(signServiceExtension: String = defaultExtension) {
