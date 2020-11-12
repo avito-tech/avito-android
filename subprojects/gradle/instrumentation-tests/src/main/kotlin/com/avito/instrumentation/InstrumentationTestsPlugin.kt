@@ -123,8 +123,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                 project.withAndroidLib { libExtension ->
 
-                    val runner = libExtension.defaultConfig.testInstrumentationRunner
-                    require(runner.isNotBlank()) { "testInstrumentationRunner must be set" }
+                    val runner: String = libExtension.defaultConfig.getTestInstrumentationRunnerOrThrow()
 
                     libExtension.testVariants.all { testVariant: TestVariant ->
                         val testApkProvider = testVariant.packageApplicationProvider
@@ -167,8 +166,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                         testVariant.withArtifacts { testVariantPackageTask, testedVariantPackageTask ->
 
-                            val runner = appExtension.defaultConfig.testInstrumentationRunner
-                            require(runner.isNotBlank()) { "testInstrumentationRunner must be set" }
+                            val runner: String = appExtension.defaultConfig.getTestInstrumentationRunnerOrThrow()
 
                             val runFunctionalTestsParameters = ExecutionParameters(
                                 applicationPackageName = testedVariant.applicationId,
@@ -293,3 +291,13 @@ private fun filterNotBlankValues(map: Map<String, Any?>) =
 
 private fun resolveLocalInstrumentationRunId(): String =
     "LOCAL-${TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis())}"
+
+private fun DefaultConfig.getTestInstrumentationRunnerOrThrow(): String {
+    val runner: String = requireNotNull(testInstrumentationRunner) {
+        "testInstrumentationRunner must be set"
+    }
+    require(runner.isNotBlank()) {
+        "testInstrumentationRunner must be set. Current value: $runner"
+    }
+    return runner
+}

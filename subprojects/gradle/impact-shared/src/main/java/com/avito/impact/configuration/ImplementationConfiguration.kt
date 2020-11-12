@@ -51,20 +51,7 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
                 "- Using impact analysis during gradle configuration phase \n" +
                 "- Working with regular directory as with module \n"
         }
-        project.configurations
-            .filter { it.isImplementation() }
-            .flatMap { configuration ->
-                configuration
-                    .dependencies
-                    .withType(DefaultProjectDependency::class.java)
-            }
-            .toSet()
-            .map {
-                it.dependencyProject
-                    .internalModule
-                    .implementationConfiguration
-            }
-            .toSet()
+        dependencies { it.isImplementation() }
     }
 
     override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isImplementation()
