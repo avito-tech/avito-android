@@ -11,10 +11,7 @@ import org.gradle.api.execution.TaskExecutionGraph
 import com.android.build.api.variant.Variant
 import com.android.build.api.artifact.ArtifactType
 import com.avito.android.bundleTaskProvider
-import org.gradle.kotlin.dsl.register
-import com.avito.android.taskName
 import org.gradle.api.tasks.TaskContainer
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dslx.closureOf
 import org.gradle.util.Path
@@ -93,6 +90,7 @@ class SignServicePlugin : Plugin<Project> {
 
                 registerTask(
                     tasks = target.tasks,
+                    type = SignApkTask::class.java,
                     variant = this,
                     taskName = signApkTaskName(variant),
                     serviceUrl = signExtension.host.orEmpty(),
@@ -101,6 +99,7 @@ class SignServicePlugin : Plugin<Project> {
 
                 registerTask(
                     tasks = target.tasks,
+                    type = SignBundleTask::class.java,
                     variant = this,
                     taskName = signBundleTaskName(variant),
                     serviceUrl = signExtension.host.orEmpty(),
@@ -114,15 +113,15 @@ class SignServicePlugin : Plugin<Project> {
 
                 artifacts.use(target.tasks.signedApkTaskProvider(this))
                     .wiredWithDirectories(
-                        taskInput = SignTask::unsignedDirProperty,
-                        taskOutput = SignTask::signedDirProperty
+                        taskInput = SignApkTask::unsignedDirProperty,
+                        taskOutput = SignApkTask::signedDirProperty
                     )
                     .toTransform(ArtifactType.APK)
 
                 artifacts.use(target.tasks.signedBundleTaskProvider(this))
                     .wiredWithFiles(
-                        taskInput = SignTask::unsignedFileProperty,
-                        taskOutput = SignTask::signedFileProperty
+                        taskInput = SignBundleTask::unsignedFileProperty,
+                        taskOutput = SignBundleTask::signedFileProperty
                     )
                     .toTransform(ArtifactType.BUNDLE)
             }
@@ -158,8 +157,10 @@ class SignServicePlugin : Plugin<Project> {
         }
     }
 
+    // TODO: extract to factory
     private fun registerTask(
         tasks: TaskContainer,
+        type: Class<out SignArtifactTask>,
         variant: Variant<*>,
         taskName: String,
         serviceUrl: String,
@@ -170,14 +171,14 @@ class SignServicePlugin : Plugin<Project> {
 
         val isSignNeeded: Boolean = token.hasContent()
 
-        tasks.register<SignTask>(taskName) {
-            group = taskGroup
-            description = "Sign ${variant.name} with in-house service"
+        tasks.register(taskName, type) {
+            it.group = taskGroup
+            it.description = "Sign ${variant.name} with in-house service"
 
-            this.serviceUrl.set(serviceUrl)
-            tokenProperty.set(token)
+            it.serviceUrl.set(serviceUrl)
+            it.tokenProperty.set(token)
 
-            onlyIf { isSignNeeded }
+            it.onlyIf { isSignNeeded }
         }
     }
 

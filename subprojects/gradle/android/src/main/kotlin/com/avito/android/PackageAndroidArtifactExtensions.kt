@@ -9,19 +9,25 @@ import java.io.File
 fun PackageAndroidArtifact.apkDirectory(): DirectoryProperty = outputDirectory
 
 fun Directory.getApk(): File? {
-    val apks = asFile.listFiles()
+    val dir = asFile
+    val apks = dir.listFiles().orEmpty()
         .filter {
             it.extension == "apk"
         }
 
     require(apks.size < 2) {
-        "Multiple APK are not supported. Dir: ${asFile}"
+        "Multiple APK are not supported: ${dir.dumpFiles()}"
     }
     return apks.firstOrNull()
 }
 
 fun Directory.getApkOrThrow(): File {
     return requireNotNull(getApk()) {
-        "APK not found in ${asFile}. Files in dir: ${asFile.listFiles().joinToString()}"
+        "APK not found in ${asFile}. Files in dir: ${asFile.dumpFiles()}"
     }
+}
+
+private fun File.dumpFiles(): String {
+    return listFiles().orEmpty()
+        .joinToString(prefix = "[", postfix = "]") { it.path }
 }

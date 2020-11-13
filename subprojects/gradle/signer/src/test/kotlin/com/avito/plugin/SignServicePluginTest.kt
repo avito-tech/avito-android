@@ -6,6 +6,7 @@ import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -112,7 +113,27 @@ class SignServicePluginTest {
     }
 
     @Test
-    fun `bundle signing task - replaces original file by signed version (HACK)`() {
+    fun `apk signing task - adds signed version to outputs`() {
+        generateTestProject()
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("SIGNED_CONTENT"))
+
+        gradlew(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            "-PsignToken=12345"
+        )
+
+        val unsignedApk = File(testProjectDir, "app/build/outputs/apk/release/app-release-unsigned.apk")
+        assertWithMessage("Preserve original unsigned APK").that(unsignedApk.exists()).isTrue()
+
+        val signedApk = File(testProjectDir, "app/build/outputs/apk/release/app-release.apk")
+        assertWithMessage("Copy signed APK to outputs. See explanation for this hack inside SignTask")
+            .that(signedApk.exists()).isTrue()
+        assertThat(signedApk.readText()).isEqualTo("SIGNED_CONTENT")
+    }
+
+    @Test
+    fun `bundle signing task - replaces original output by signed version (HACK)`() {
         generateTestProject()
         mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("SIGNED_CONTENT"))
 
