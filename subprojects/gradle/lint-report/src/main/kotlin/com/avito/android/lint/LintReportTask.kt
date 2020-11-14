@@ -5,14 +5,12 @@ import com.avito.android.lint.html.LintReportMerger
 import com.avito.android.lint.model.LintIssue
 import com.avito.android.lint.model.LintReportModel
 import com.avito.android.lint.model.hasErrors
+import com.avito.android.lint.teamcity.TeamcityBuildLinkAccessor
 import com.avito.bitbucket.Bitbucket
 import com.avito.bitbucket.Severity
 import com.avito.git.gitState
 import com.avito.impact.configuration.internalModule
-import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.utils.logging.ciLogger
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -27,9 +25,6 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
 
     @get:Input
     abstract val abortOnError: Property<Boolean>
-
-    @get:Input
-    abstract val buildId: Property<Int>
 
     @get:Internal
     abstract val bitbucket: Property<Bitbucket>
@@ -100,6 +95,7 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
 
     private fun sendToBitbucket(reports: List<LintReportModel>) {
         val git = project.gitState()
+        val teamcityBuildLinkAccessor: TeamcityBuildLinkAccessor = TeamcityBuildLinkAccessor.Impl(project)
 
         if (!git.isPresent || !bitbucket.isPresent) {
             project.ciLogger.info("Sending to bitbucket skipped")
@@ -117,7 +113,7 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
                         targetCommitHash = targetBranch.commit,
                         key = "android-lint",
                         title = "Android Lint",
-                        link = mergedReportLink(),
+                        link = teamcityBuildLinkAccessor.getLink(),
                         issues = reports
                             .filterIsInstance<LintReportModel.Valid>()
                             .flatMap { it.issues }
@@ -137,11 +133,6 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
                     .onFailure { project.ciLogger.critical("Can't create lint report", it) }
             }
         }
-    }
-
-    private fun mergedReportLink(): HttpUrl {
-        val teamcityUrl = project.getMandatoryStringProperty("teamcityUrl").removeSuffix("/")
-        return "${teamcityUrl}/repository/download/AvitoAndroid_Build/${buildId.get()}:id/${project.name}/build/reports/lint-results-release.html".toHttpUrl()
     }
 
     private fun failIfNeeded(reports: List<LintReportModel>, report: File) {
