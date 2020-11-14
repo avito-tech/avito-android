@@ -113,7 +113,7 @@ abstract class LintReportTask : DefaultTask(), BuildVerdictTask {
                         targetCommitHash = targetBranch.commit,
                         key = "android-lint",
                         title = "Android Lint",
-                        link = teamcityBuildLinkAccessor.getLink(),
+                        link = teamcityBuildLinkAccessor.getLintArtifactUrl(),
                         issues = reports
                             .filterIsInstance<LintReportModel.Valid>()
                             .flatMap { it.issues }

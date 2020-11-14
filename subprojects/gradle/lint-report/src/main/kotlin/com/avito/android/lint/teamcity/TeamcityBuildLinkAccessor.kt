@@ -8,14 +8,22 @@ import org.gradle.api.Project
 
 interface TeamcityBuildLinkAccessor {
 
-    fun getLink(): HttpUrl
+    fun getBuildUrl(): HttpUrl
+
+    fun getLintArtifactUrl(): HttpUrl
 
     class Impl(private val project: Project) : TeamcityBuildLinkAccessor {
 
-        override fun getLink(): HttpUrl {
-            val buildId = project.envArgs.build.id
-            val teamcityUrl = project.getMandatoryStringProperty("teamcityUrl").removeSuffix("/")
-            return "${teamcityUrl}/repository/download/AvitoAndroid_Build/${buildId}:id/${project.name}/build/reports/lint-results-release.html".toHttpUrl()
+        private val buildId = project.envArgs.build.id
+
+        private val teamcityUrl = project.getMandatoryStringProperty("teamcityUrl").removeSuffix("/")
+
+        override fun getBuildUrl(): HttpUrl {
+            return "$teamcityUrl/viewLog.html?buildId=$buildId".toHttpUrl()
+        }
+
+        override fun getLintArtifactUrl(): HttpUrl {
+            return "$teamcityUrl/repository/download/AvitoAndroid_Build/$buildId:id/${project.name}/build/reports/lint-results-release.html".toHttpUrl()
         }
     }
 }

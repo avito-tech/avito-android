@@ -4,6 +4,7 @@ import com.avito.android.lint.slack.LintSlackReporter
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.CILogger
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -27,7 +28,11 @@ internal class LintSlackAlertIntegrationTest {
 
         val lintSlackReporter: LintSlackReporter = LintSlackReporter.Impl(slackClient, logger)
 
-        lintSlackReporter.report(reportModels, testChannel)
+        lintSlackReporter.report(
+            lintReport = reportModels,
+            channel = testChannel,
+            buildUrl = "https://stubbuildurl".toHttpUrl()
+        )
     }
 }
 
