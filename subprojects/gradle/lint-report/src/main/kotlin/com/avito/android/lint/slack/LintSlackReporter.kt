@@ -6,12 +6,14 @@ import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.CILogger
 import okhttp3.HttpUrl
+import java.io.File
 
 interface LintSlackReporter {
 
     fun report(
         lintReport: LintReportModel,
-        channel: SlackChannel,
+        channelForDevs: SlackChannel,
+        channelForLintBugs: SlackChannel,
         buildUrl: HttpUrl
     )
 
@@ -24,44 +26,113 @@ interface LintSlackReporter {
 
         override fun report(
             lintReport: LintReportModel,
-            channel: SlackChannel,
+            channelForDevs: SlackChannel,
+            channelForLintBugs: SlackChannel,
             buildUrl: HttpUrl
         ) {
-            if (shouldSendAlert(lintReport)) {
-                logger.debug("$tag: Sending lint alert...")
+            when (lintReport) {
+                is LintReportModel.Valid -> {
+                    val (errors, everythingElse) = lintReport.issues.partition { it.severity == LintIssue.Severity.ERROR }
+                    val (warnings, unknowns) = everythingElse.partition { it.severity == LintIssue.Severity.WARNING }
+                    val (fatalErrors, regularErrors) = errors.partition { it.isFatal }
 
-                slackClient.uploadHtml(
-                    channel = channel,
-                    message = buildSlackMessage(lintReport, buildUrl),
-                    file = lintReport.htmlFile
-                ).fold(
-                    { logger.debug("$tag: Report sent successfully") },
-                    { error -> logger.critical("$tag: Can't send report ${error.message}") }
-                )
-            } else {
-                logger.debug("$tag Skip sending lint alert")
+                    var isMessageSent = false
+
+                    if (regularErrors.isNotEmpty()) {
+                        sendReport(
+                            channel = channelForDevs,
+                            message = buildSlackMessageToDevs(
+                                projectPath = lintReport.projectRelativePath,
+                                errors = regularErrors,
+                                warnings = warnings,
+                                buildUrl = buildUrl
+                            ),
+                            htmlReport = lintReport.htmlFile
+                        )
+
+                        isMessageSent = true
+                    }
+
+                    if (fatalErrors.isNotEmpty() || unknowns.isNotEmpty()) {
+                        sendReport(
+                            channel = channelForLintBugs,
+                            message = buildSlackMessageAboutLintBugs(
+                                projectPath = lintReport.projectRelativePath,
+                                fatalErrors = fatalErrors,
+                                unknownErrors = unknowns,
+                                buildUrl = buildUrl
+                            ),
+                            htmlReport = lintReport.htmlFile
+                        )
+
+                        isMessageSent = true
+                    }
+
+                    if (!isMessageSent) {
+                        logger.debug("$tag Not sending any reports")
+                    }
+                }
+                is LintReportModel.Invalid -> {
+                    logger.critical("$tag Not sending report: can't parse", lintReport.error)
+                }
             }
         }
 
-        private fun shouldSendAlert(model: LintReportModel): Boolean {
-            return (model is LintReportModel.Valid) && model.issues.any { it.severity == LintIssue.Severity.ERROR }
+        private fun sendReport(
+            channel: SlackChannel,
+            message: String,
+            htmlReport: File
+        ) {
+            slackClient.uploadHtml(
+                channel = channel,
+                message = message,
+                file = htmlReport
+            ).fold(
+                { logger.debug("$tag: Report sent successfully to $channel") },
+                { error -> logger.critical("$tag: Can't send report to $channel", error) }
+            )
         }
 
-        private fun buildSlackMessage(model: LintReportModel, buildUrl: HttpUrl): String {
+        private fun buildSlackMessageToDevs(
+            projectPath: String,
+            errors: List<LintIssue>,
+            warnings: List<LintIssue>,
+            buildUrl: HttpUrl
+        ): String {
             return buildString {
-                appendln("*Critical lint problems detected for project ${model.projectRelativePath}*")
+                appendln("*Critical lint problems detected for project ${projectPath}*")
                 appendln("Build: <$buildUrl|link>")
                 appendln()
 
-                if (model is LintReportModel.Valid) {
-                    val errors = model.issues.filter { it.severity == LintIssue.Severity.ERROR }
-                    val groupedErrors = errors.groupBy { it.summary }
-                    groupedErrors.forEach { (summary, issue) ->
-                        appendln(":red_circle: [${issue.size}x] $summary")
-                    }
-                    appendln(":warning: also ${model.issues.count { it.severity == LintIssue.Severity.WARNING }} warnings")
+                val groupedErrors = errors.groupBy { it.summary }
+                groupedErrors.forEach { (summary, issue) ->
+                    appendln(":red_circle: [${issue.size}x] $summary")
+                }
+                appendln()
+                if (warnings.isEmpty()) {
+                    appendln(":green_flag: No warnings!")
                 } else {
-                    logger.critical("LintSlackAlerter: There is a problem with report: ${model.htmlFile.path}")
+                    appendln(":warning: also ${warnings.count()} warnings")
+                }
+            }
+        }
+
+        private fun buildSlackMessageAboutLintBugs(
+            projectPath: String,
+            fatalErrors: List<LintIssue>,
+            unknownErrors: List<LintIssue>,
+            buildUrl: HttpUrl
+        ): String {
+            return buildString {
+                appendln("*Lint encountered a problem on project $projectPath*")
+                appendln("Build: <$buildUrl|link>")
+                appendln()
+
+                if (fatalErrors.isNotEmpty()) {
+                    appendln(":skull: [${fatalErrors.size}] Lint fatal errors")
+                }
+                if (unknownErrors.isNotEmpty()) {
+                    appendln(":alien: [${unknownErrors.size}] Unknown type issues")
                 }
             }
         }
