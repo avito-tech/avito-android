@@ -7,7 +7,6 @@ import com.avito.bitbucket.atlassianCredentials
 import com.avito.bitbucket.bitbucketConfig
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -37,8 +36,6 @@ open class LintReportPlugin : Plugin<Project> {
                     }
                 )
             }
-
-            buildId.set(project.envArgs.build.id)
         }
 
         if (app.buildEnvironment is BuildEnvironment.CI) {
