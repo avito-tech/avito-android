@@ -63,6 +63,8 @@ class LocalDevicesProvider(
                 }
             }
         }
+        //todo use flow
+        @Suppress("DEPRECATION")
         return devices.distinctBy { it.coordinate }.take(devicesRequired)
     }
 

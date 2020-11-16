@@ -23,12 +23,11 @@ class FragmentGoogleMapProvider(
 
         val mapFragment: MapFragment? =
             activity.supportFragmentManager.findFragmentById(id) as? MapFragment?
-                ?: activity.fragmentManager.findFragmentById(id) as? MapFragment?
 
         val mapSupportFragment: SupportMapFragment? =
             activity.supportFragmentManager.findFragmentById(id) as? SupportMapFragment?
-                ?: activity.fragmentManager.findFragmentById(id) as? SupportMapFragment?
 
+        @Suppress("DEPRECATION")
         if (mapFragment == null && mapSupportFragment == null) {
             throw RuntimeException(
                 "MapFragment should be on foreground activity for communication with map"

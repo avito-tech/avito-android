@@ -17,12 +17,12 @@ import com.avito.android.test.internal.Cache
 import com.avito.android.test.internal.SQLiteDB
 import com.avito.android.test.internal.SharedPreferences
 import com.avito.android.test.page_object.KeyboardElement
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 
 /**
  * Abstraction of android phone from user's perspective

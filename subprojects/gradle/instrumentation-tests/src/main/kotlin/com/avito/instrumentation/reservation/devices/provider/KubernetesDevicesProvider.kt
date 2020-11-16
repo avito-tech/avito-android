@@ -23,6 +23,7 @@ class KubernetesDevicesProvider(
     override fun provideFor(reservations: Collection<Reservation.Data>, scope: CoroutineScope): ReceiveChannel<Device> {
         val claim = client.claim(reservations, scope)
         // TODO parallel device getting
+        @Suppress("DEPRECATION")
         return claim.deviceCoordinates.map { coordinate ->
             val adbDeviceParams = adbDevicesManager.findDevice(coordinate.serial)
                 .orElseGet { throw IllegalStateException("Can't find device connected adb device ${coordinate.serial}") }

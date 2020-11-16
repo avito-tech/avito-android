@@ -16,8 +16,6 @@ class LintResultsParser(private val log: CILogger) {
         lintHtml: File
     ): LintReportModel {
 
-        val dir = lintXml.parentFile
-
         return try {
             val issues = readXmlLintReport(lintXml.inputStream())
             LintReportModel.Valid(projectPath, lintHtml, issues)

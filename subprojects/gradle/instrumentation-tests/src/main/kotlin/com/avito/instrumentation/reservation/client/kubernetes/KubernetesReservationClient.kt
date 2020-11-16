@@ -66,8 +66,9 @@ class KubernetesReservationClient(
                 }
             }
 
-            //todo use Flow
             launch {
+                //todo use Flow
+                @Suppress("DEPRECATION")
                 for (pod in podsChannel
                     .filter { it.status.phase == POD_STATUS_RUNNING }
                     .distinctBy { it.metadata.name }) {

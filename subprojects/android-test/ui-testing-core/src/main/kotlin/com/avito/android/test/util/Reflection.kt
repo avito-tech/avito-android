@@ -9,7 +9,7 @@ internal fun <T> Any.getFieldByReflection(fieldName: String): T =
 internal fun Any.getFieldByReflectionWithAnyField(fieldName: String): Any =
     this::class.java.getDeclaredField(fieldName)
         .also { it.isAccessible = true }
-        .get(this)
+        .get(this)!!
 
 internal fun Any.executeMethod(method: String, vararg arguments: Any?) =
     javaClass.methods

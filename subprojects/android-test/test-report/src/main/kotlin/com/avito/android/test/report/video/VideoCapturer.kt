@@ -132,11 +132,11 @@ class VideoCapturerImpl(
         return binary.absolutePath
     }
 
-    fun File.createOrClear() {
+    private fun File.createOrClear() {
         if (exists()) {
             writer().use { it.write("") }
         } else {
-            parentFile.mkdirs()
+            parentFile?.mkdirs()
             createNewFile()
         }
     }

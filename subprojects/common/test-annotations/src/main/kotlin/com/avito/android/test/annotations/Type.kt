@@ -5,7 +5,9 @@ package com.avito.android.test.annotations
 @Deprecated("Use Kind")
 annotation class Type(val type: TestCaseType)
 
-@Deprecated("Use Kind")
+/**
+ * Use Kind instead
+ */
 enum class TestCaseType {
     E2E_UI,
     COMPONENT_UI,

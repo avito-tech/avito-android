@@ -63,14 +63,12 @@ class InstrumentationTestsAction(
         val logger: CILogger,
         val outputDir: File,
         val verdictFile: File,
-        val sendStatistics: Boolean,
         val slackToken: String,
         val reportViewerUrl: String,
         val fileStorageUrl: String,
         val registry: String,
         val reportFactory: Report.Factory,
         val reportConfig: Report.Factory.Config,
-        @Deprecated("Will be removed")
         val reportCoordinates: ReportCoordinates,
         val proguardMappings: List<File>
     ) : Serializable {

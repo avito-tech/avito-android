@@ -2,8 +2,8 @@ package com.avito.android.test.internal
 
 import android.content.Context
 import com.avito.android.waiter.waitFor
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.Assert
 import java.io.File
 
 internal class Cache(private val appContext: Context) {
@@ -12,7 +12,7 @@ internal class Cache(private val appContext: Context) {
         val cacheDir = appContext.cacheDir
         if (cacheDir.list() != null) {
             waitFor(frequencyMs = DELETE_FREQUENCY_MS, timeoutMs = DELETE_TIMEOUT_MS) {
-                Assert.assertThat(
+                assertThat(
                     "Can't delete ${cacheDir.path}",
                     deleteRecursive(cacheDir),
                     `is`(true)
@@ -29,7 +29,7 @@ internal class Cache(private val appContext: Context) {
         if (directory.isDirectory) {
             directory.list()?.forEach { content ->
                 waitFor(frequencyMs = DELETE_FREQUENCY_MS, timeoutMs = DELETE_TIMEOUT_MS) {
-                    Assert.assertThat(
+                    assertThat(
                         "Can't delete file $content in ${directory.path}",
                         deleteRecursive(File(directory, content), *excludes),
                         `is`(true)

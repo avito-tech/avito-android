@@ -1,3 +1,6 @@
+@file:Suppress("DEPRECATION")
+//todo use new api?
+
 package com.avito.impact.configuration.sets
 
 import com.android.build.gradle.api.AndroidSourceSet
