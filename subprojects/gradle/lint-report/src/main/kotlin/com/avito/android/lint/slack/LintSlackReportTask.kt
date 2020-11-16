@@ -1,6 +1,7 @@
 package com.avito.android.lint.slack
 
 import com.avito.android.lint.LintResultsParser
+import com.avito.android.lint.teamcity.TeamcityBuildLinkAccessor
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.utils.logging.ciLogger
@@ -34,15 +35,20 @@ abstract class LintSlackReportTask : DefaultTask() {
             lintHtml = lintHtml.get().asFile
         )
 
+        val teamcityBuildLinkAccessor = createTeamcityBuildLinkAccessor()
+
         createLintSlackAlert().report(
             lintReport = models,
-            channel = SlackChannel(slackReportChannel.get())
+            channel = SlackChannel(slackReportChannel.get()),
+            buildUrl = teamcityBuildLinkAccessor.getBuildUrl()
         )
     }
 
     private fun createLintParser(): LintResultsParser = LintResultsParser(
         log = project.ciLogger
     )
+
+    private fun createTeamcityBuildLinkAccessor(): TeamcityBuildLinkAccessor = TeamcityBuildLinkAccessor.Impl(project)
 
     private fun createLintSlackAlert(): LintSlackReporter = LintSlackReporter.Impl(
         slackClient = slackClient.get(),
