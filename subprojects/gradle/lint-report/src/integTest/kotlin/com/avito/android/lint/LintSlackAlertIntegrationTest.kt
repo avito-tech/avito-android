@@ -31,9 +31,17 @@ internal class LintSlackAlertIntegrationTest {
         lintSlackReporter.report(
             lintReport = reportModels,
             channel = testChannel,
+            channelForLintBugs = testChannel,
             buildUrl = "https://stubbuildurl".toHttpUrl()
         )
     }
 }
 
-inline fun <reified C> fileFromJarResources(name: String) = File(C::class.java.classLoader.getResource(name).file)
+inline fun <reified C> fileFromJarResources(name: String): File {
+    val file = C::class.java.classLoader
+        ?.getResource(name)
+        ?.file
+        ?.let { File(it) }
+
+    return requireNotNull(file) { "$name not found in resources" }
+}

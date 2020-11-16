@@ -9,4 +9,9 @@ class LintIssue(
     val severity: Severity
 ) {
     enum class Severity { UNKNOWN, WARNING, ERROR }
+
+    /**
+     * "lint failed to parse file" type of errors
+     */
+    val isFatal: Boolean = id == "LintError"
 }
