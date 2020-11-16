@@ -236,18 +236,14 @@ abstract class InstrumentationTestsTask @Inject constructor(
         val reportViewerConfig = reportViewerConfig.orNull
         val factories = mutableMapOf<Class<out Report.Factory.Config>, Report.Factory>()
         if (reportViewerConfig != null) {
-            factories.put(
-                Report.Factory.Config.ReportViewerCoordinates::class.java, Report.Factory.ReportViewerFactory(
-                    reportApiUrl = reportViewerConfig.reportApiUrl,
-                    reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
-                    ciLogger = ciLogger,
-                    verboseHttp = true
-                )
+            factories[Report.Factory.Config.ReportViewerCoordinates::class.java] = Report.Factory.ReportViewerFactory(
+                reportApiUrl = reportViewerConfig.reportApiUrl,
+                reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
+                ciLogger = ciLogger,
+                verboseHttp = false // do not enable for production, generates a ton logs
             )
         }
-        factories.put(
-            Report.Factory.Config.InMemory::class.java, Report.Factory.InMemoryReportFactory()
-        )
+        factories[Report.Factory.Config.InMemory::class.java] = Report.Factory.InMemoryReportFactory()
         return Report.Factory.StrategyFactory(
             factories = factories.toMap()
         )
