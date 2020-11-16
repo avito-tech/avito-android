@@ -9,4 +9,5 @@ open class LintReportExtension @Inject constructor(objects: ObjectFactory) {
     //todo some global slack settings?
     val slackToken = objects.property<String>()
     val slackWorkspace = objects.property<String>()
+    val slackChannelToReportLintBugs = objects.property<String>()
 }
