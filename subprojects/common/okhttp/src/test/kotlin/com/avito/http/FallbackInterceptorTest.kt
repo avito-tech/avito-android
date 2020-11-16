@@ -64,7 +64,7 @@ internal class FallbackInterceptorTest {
             )
         )
 
-        val fallbackRequest = mockDispatcher.captureRequest { path?.contains("fallback") ?: false }
+        val fallbackRequest = mockDispatcher.captureRequest { path.contains("fallback") }
 
         val result = api.request().execute()
 
@@ -90,7 +90,7 @@ internal class FallbackInterceptorTest {
             )
         )
 
-        val fallbackRequest = mockDispatcher.captureRequest { path?.contains("fallback") ?: false }
+        val fallbackRequest = mockDispatcher.captureRequest { path.contains("fallback") }
 
         val result = api.request().execute()
 

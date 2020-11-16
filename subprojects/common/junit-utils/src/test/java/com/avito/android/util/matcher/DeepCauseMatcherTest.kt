@@ -1,7 +1,7 @@
 package com.avito.android.util.matcher
 
 import com.avito.android.util.matcher.DeepCauseMatcher.Companion.deepCauseMatcher
-import org.junit.Assert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -9,7 +9,7 @@ class DeepCauseMatcherTest {
 
     @Test
     fun `deepCauseMatcher - matches - first level cause`() {
-        Assert.assertThat(
+        assertThat(
             Exception(Error("text")),
             deepCauseMatcher<Error>("text")
         )
@@ -17,7 +17,7 @@ class DeepCauseMatcherTest {
 
     @Test
     fun `deepCauseMatcher - matches - N level cause`() {
-        Assert.assertThat(
+        assertThat(
             Exception(Exception(Exception(IllegalArgumentException("text")))),
             deepCauseMatcher<IllegalArgumentException>("text")
         )
@@ -26,7 +26,7 @@ class DeepCauseMatcherTest {
     @Test
     fun `deepCauseMatcher - fails - maxDepth + 1 level cause`() {
         Assertions.assertThrows(AssertionError::class.java, {
-            Assert.assertThat(
+            assertThat(
                 Exception(Exception(Exception(Exception(IndexOutOfBoundsException("text"))))),
                 deepCauseMatcher<IllegalArgumentException>("text", maxDepth = 3)
             )
@@ -36,7 +36,7 @@ class DeepCauseMatcherTest {
     @Test
     fun `deepCauseMatcher - fails - no class match`() {
         Assertions.assertThrows(AssertionError::class.java, {
-            Assert.assertThat(
+            assertThat(
                 Exception((IndexOutOfBoundsException("text"))),
                 deepCauseMatcher<IllegalArgumentException>("text", maxDepth = 3)
             )
@@ -46,7 +46,7 @@ class DeepCauseMatcherTest {
     @Test
     fun `deepCauseMatcher - fails - no text match`() {
         Assertions.assertThrows(AssertionError::class.java, {
-            Assert.assertThat(
+            assertThat(
                 Exception((IndexOutOfBoundsException("text"))),
                 deepCauseMatcher<IndexOutOfBoundsException>("wrong", maxDepth = 3)
             )

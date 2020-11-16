@@ -4,10 +4,10 @@ import com.test.fixtures.TestAnnotation1
 import com.test.fixtures.TestAnnotation2
 import com.test.fixtures.TestAnnotation3
 import com.test.fixtures.TestAnnotation4
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.hasSize
-import org.junit.Assert.assertThat
 import org.junit.jupiter.api.Test
 import ru.avito.util.matcher.containsValueWithType
 

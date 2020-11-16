@@ -152,7 +152,7 @@ internal class ArtifactoryAppBackupPluginTest {
             )
         )
 
-        val rootPomRequest = dispatcher.captureRequest { path.endsWith(".pom") ?: false }
+        val rootPomRequest = dispatcher.captureRequest { path.endsWith(".pom") }
         val putJsonFileRequests =
             artifacts.map { (id, _) ->
                 dispatcher.captureRequest {
