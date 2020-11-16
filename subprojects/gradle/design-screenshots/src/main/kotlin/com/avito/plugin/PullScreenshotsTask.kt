@@ -25,10 +25,10 @@ open class PullScreenshotsTask : DefaultTask() {
     @TaskAction
     fun pullScreenshots() {
         val applicationId = variant.get().testVariant.applicationId
-        val adbDevicesManager = AdbDevicesManager(StdOutLogger(), adb = Adb())
-        val adbDeviceHandler =  AdbDeviceHandlerLocal(ciLogger)
-        val deviceSearch = DeviceSearchLocal(adbDevicesManager)
-        val currentDevice = adbDeviceHandler.resolve(deviceSearch.getDevice())
+        val adb = Adb()
+        val adbDevicesManager = AdbDevicesManager(StdOutLogger(), adb = adb)
+        val currentDevice = DeviceProviderLocal(adb, adbDevicesManager, ciLogger).getDevice()
+        
         val referencePath =
             Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
