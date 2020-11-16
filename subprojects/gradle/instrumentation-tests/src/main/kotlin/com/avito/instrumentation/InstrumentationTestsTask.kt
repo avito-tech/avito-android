@@ -240,7 +240,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                 reportApiUrl = reportViewerConfig.reportApiUrl,
                 reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
                 ciLogger = ciLogger,
-                verboseHttp = false // do not enable for production, generates a ton logs
+                verboseHttp = false // do not enable for production, generates a ton of logs
             )
         }
         factories[Report.Factory.Config.InMemory::class.java] = Report.Factory.InMemoryReportFactory()
