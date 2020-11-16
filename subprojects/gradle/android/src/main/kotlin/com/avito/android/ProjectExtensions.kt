@@ -1,5 +1,8 @@
 package com.avito.android
 
+import com.android.build.api.component.ComponentIdentity
+import com.android.build.api.dsl.AndroidSourceSet
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
@@ -26,6 +29,10 @@ fun Project.withAndroidModule(block: (testedExtension: TestedExtension) -> Unit)
     withAndroidLib(block)
 }
 
+@Suppress("UnstableApiUsage")
+val Project.androidCommonExtension
+    get() = extensions.getByType(CommonExtension::class.java)
+
 val Project.androidBaseExtension: BaseExtension
     get() = extensions.getByName<BaseExtension>("android")
 
@@ -44,5 +51,10 @@ fun Project.isAndroidApp(): Boolean =
 fun Project.isAndroidLibrary(): Boolean =
     plugins.hasPlugin("com.android.library")
 
+@Suppress("DefaultLocale")
 fun TaskContainer.bundleTaskProvider(variant: ApplicationVariant): TaskProvider<*> =
     named("bundle${variant.name.capitalize()}")
+
+@Suppress("DefaultLocale", "UnstableApiUsage")
+fun taskName(prefix: String, component: ComponentIdentity) =
+    prefix + component.flavorName.capitalize() + component.buildType.orEmpty().capitalize()

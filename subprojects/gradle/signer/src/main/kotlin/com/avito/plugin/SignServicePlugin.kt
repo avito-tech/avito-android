@@ -1,24 +1,21 @@
 package com.avito.plugin
 
 import com.android.build.gradle.api.ApplicationVariant
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.avito.android.apkFileProvider
-import com.avito.android.bundleFileProvider
-import com.avito.android.bundleTaskProvider
+import com.avito.android.androidCommonExtension
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.hasTasks
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
-import org.gradle.api.provider.Provider
+import com.android.build.api.variant.Variant
+import com.android.build.api.artifact.ArtifactType
+import com.avito.android.bundleTaskProvider
 import org.gradle.api.tasks.TaskContainer
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dslx.closureOf
 import org.gradle.util.Path
-import java.io.File
+import java.util.Objects.requireNonNull
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -88,29 +85,62 @@ class SignServicePlugin : Plugin<Project> {
 
         target.withAndroidApp { appExtension ->
 
-            appExtension.applicationVariants.all { variant: ApplicationVariant ->
+            target.androidCommonExtension.onVariants {
+                val variant = this
 
                 registerTask(
                     tasks = target.tasks,
-                    variant = variant,
-                    taskName = signApkTaskName(variant.name),
+                    type = SignApkTask::class.java,
+                    variant = this,
+                    taskName = signApkTaskName(variant),
                     serviceUrl = signExtension.host.orEmpty(),
-                    archiveProvider = variant.apkFileProvider(),
-                    providingTask = variant.packageApplicationProvider,
                     signTokensMap = signExtension.apkSignTokens
                 )
 
                 registerTask(
                     tasks = target.tasks,
-                    variant = variant,
-                    taskName = signBundleTaskName(variant.name),
+                    type = SignBundleTask::class.java,
+                    variant = this,
+                    taskName = signBundleTaskName(variant),
                     serviceUrl = signExtension.host.orEmpty(),
-                    archiveProvider = variant.bundleFileProvider(),
-                    providingTask = target.tasks.bundleTaskProvider(variant),
                     signTokensMap = signExtension.bundleSignTokens
                 )
 
-                registeredBuildTypes[variant.name] = variant.buildType.name
+                registeredBuildTypes[variant.name] = requireNotNull(variant.buildType)
+            }
+
+            target.androidCommonExtension.onVariantProperties {
+
+                artifacts.use(target.tasks.signedApkTaskProvider(this))
+                    .wiredWithDirectories(
+                        taskInput = SignApkTask::unsignedDirProperty,
+                        taskOutput = SignApkTask::signedDirProperty
+                    )
+                    .toTransform(ArtifactType.APK)
+
+                artifacts.use(target.tasks.signedBundleTaskProvider(this))
+                    .wiredWithFiles(
+                        taskInput = SignBundleTask::unsignedFileProperty,
+                        taskOutput = SignBundleTask::signedFileProperty
+                    )
+                    .toTransform(ArtifactType.BUNDLE)
+            }
+
+            appExtension.applicationVariants.all { variant: ApplicationVariant ->
+
+                val buildTypeName = variant.buildType.name
+                val apkToken: String? = signExtension.apkSignTokens[buildTypeName]
+                val bundleToken: String? = signExtension.bundleSignTokens[buildTypeName]
+
+                variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
+
+                target.tasks.signedApkTaskProvider(variant.name).configure {
+                    it.dependsOn(variant.packageApplicationProvider)
+                }
+
+                target.tasks.signedBundleTaskProvider(variant.name).configure {
+                    it.dependsOn(target.tasks.bundleTaskProvider(variant))
+                }
             }
         }
 
@@ -127,39 +157,28 @@ class SignServicePlugin : Plugin<Project> {
         }
     }
 
+    // TODO: extract to factory
     private fun registerTask(
         tasks: TaskContainer,
-        variant: ApplicationVariant,
+        type: Class<out SignArtifactTask>,
+        variant: Variant<*>,
         taskName: String,
         serviceUrl: String,
-        archiveProvider: Provider<File>,
-        providingTask: TaskProvider<*>,
         signTokensMap: Map<String, String?>
     ) {
-        val buildTypeName = variant.buildType.name
+        val buildTypeName = requireNonNull(variant.buildType)
         val token: String? = signTokensMap[buildTypeName]
 
         val isSignNeeded: Boolean = token.hasContent()
 
-        // сигнал для AGP что мы будем подписывать самостоятельно
-        // todo не понятно как оно себя ведет с bundle
-        variant.outputsAreSigned = isSignNeeded
+        tasks.register(taskName, type) {
+            it.group = taskGroup
+            it.description = "Sign ${variant.name} with in-house service"
 
-        tasks.register<SignTask>(taskName) {
-            group = taskGroup
-            description = "Sign ${variant.name} with in-house service"
+            it.serviceUrl.set(serviceUrl)
+            it.tokenProperty.set(token)
 
-            val archiveFile = archiveProvider.get()
-            // перезаписываем тот же файл
-            unsignedFileProperty.set(archiveFile)
-            signedFileProperty.set(archiveFile)
-
-            this.serviceUrl.set(serviceUrl)
-            tokenProperty.set(token)
-
-            onlyIf { isSignNeeded }
-        }.also {
-            it.dependsOn(providingTask)
+            it.onlyIf { isSignNeeded }
         }
     }
 

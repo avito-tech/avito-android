@@ -169,7 +169,6 @@ class RealTest {
 
         val configFile = projectDir.file(configFileName)
         configFile.writeText(cdBuildConfig)
-        projectDir.file("/app/build/outputs/apk/release/app-release.apk").createNewFile()
         projectDir.file("/app/build/reports/mapping.txt").writeText("1")
 
         val cdBuildResultRequest = dispatcher.captureRequest {
@@ -239,7 +238,6 @@ class RealTest {
 
         val configFile = projectDir.file(configFileName)
         configFile.writeText(cdBuildConfig)
-        projectDir.file("/app/build/outputs/apk/release/app-release.apk").createNewFile()
         projectDir.file("/app/build/reports/mapping.txt").writeText("1")
 
         dispatcher.registerMock(

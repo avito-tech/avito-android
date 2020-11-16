@@ -63,7 +63,7 @@ object Dependencies {
     // 1.6.x <-> AGP 3.6.x
     // 2.0.x <-> AGP 4.0.x
     // 2.1.x <-> AGP 4.1.x
-    const val r8 = "com.android.tools:r8:2.0.94"
+    const val r8 = "com.android.tools:r8:2.1.80"
     const val proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
     const val playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
     const val appcompat = "androidx.appcompat:appcompat:${Versions.androidX}"

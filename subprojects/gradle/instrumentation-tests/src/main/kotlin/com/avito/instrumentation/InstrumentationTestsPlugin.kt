@@ -7,7 +7,7 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
-import com.avito.android.getApkFile
+import com.avito.android.apkDirectory
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
@@ -144,7 +144,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                             if (extensionData.testApplicationApk == null) {
                                 task.dependencyOn(testApkProvider) { dependentTask ->
-                                    task.testApplication.set(dependentTask.getApkFile())
+                                    task.testApplication.set(dependentTask.apkDirectory())
                                 }
                             } else {
                                 task.testApplication.set(File(extensionData.testApplicationApk))
@@ -189,7 +189,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 if (extensionData.applicationApk == null) {
                                     task.dependencyOn(testedVariantPackageTask) { dependentTask ->
-                                        task.application.set(dependentTask.getApkFile())
+                                        task.application.set(dependentTask.apkDirectory())
                                     }
                                 } else {
                                     task.application.set(File(extensionData.applicationApk))
@@ -197,7 +197,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                                 if (extensionData.testApplicationApk == null) {
                                     task.dependencyOn(testVariantPackageTask) { dependentTask ->
-                                        task.testApplication.set(dependentTask.getApkFile())
+                                        task.testApplication.set(dependentTask.apkDirectory())
                                     }
                                 } else {
                                     task.testApplication.set(File(extensionData.testApplicationApk))
