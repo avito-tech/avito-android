@@ -30,7 +30,7 @@ internal class LintSlackAlertIntegrationTest {
 
         lintSlackReporter.report(
             lintReport = reportModels,
-            channelForDevs = testChannel,
+            channel = testChannel,
             channelForLintBugs = testChannel,
             buildUrl = "https://stubbuildurl".toHttpUrl()
         )

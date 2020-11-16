@@ -12,7 +12,7 @@ interface LintSlackReporter {
 
     fun report(
         lintReport: LintReportModel,
-        channelForDevs: SlackChannel,
+        channel: SlackChannel,
         channelForLintBugs: SlackChannel,
         buildUrl: HttpUrl
     )
@@ -26,7 +26,7 @@ interface LintSlackReporter {
 
         override fun report(
             lintReport: LintReportModel,
-            channelForDevs: SlackChannel,
+            channel: SlackChannel,
             channelForLintBugs: SlackChannel,
             buildUrl: HttpUrl
         ) {
@@ -40,8 +40,8 @@ interface LintSlackReporter {
 
                     if (regularErrors.isNotEmpty()) {
                         sendReport(
-                            channel = channelForDevs,
-                            message = buildSlackMessageToDevs(
+                            channel = channel,
+                            message = buildSlackMessage(
                                 projectPath = lintReport.projectRelativePath,
                                 errors = regularErrors,
                                 warnings = warnings,
@@ -93,7 +93,7 @@ interface LintSlackReporter {
             )
         }
 
-        private fun buildSlackMessageToDevs(
+        private fun buildSlackMessage(
             projectPath: String,
             errors: List<LintIssue>,
             warnings: List<LintIssue>,

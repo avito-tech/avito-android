@@ -42,7 +42,7 @@ abstract class LintSlackReportTask : DefaultTask() {
 
         createLintSlackAlert().report(
             lintReport = models,
-            channelForDevs = SlackChannel(slackReportChannel.get()),
+            channel = SlackChannel(slackReportChannel.get()),
             channelForLintBugs = SlackChannel(slackChannelForLintBugs.get()),
             buildUrl = teamcityBuildLinkAccessor.getBuildUrl()
         )
