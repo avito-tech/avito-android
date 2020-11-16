@@ -6,7 +6,7 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.gradle.api.Project
 
-interface TeamcityBuildLinkAccessor {
+internal interface TeamcityBuildLinkAccessor {
 
     fun getBuildUrl(): HttpUrl
 

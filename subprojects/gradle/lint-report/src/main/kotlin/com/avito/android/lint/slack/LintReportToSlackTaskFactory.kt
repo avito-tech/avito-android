@@ -19,10 +19,12 @@ class LintReportToSlackTaskFactory(
     private val androidLintAccessor: AndroidLintAccessor = AndroidLintAccessor(project)
 ) {
 
+    private val extension: LintReportExtension by lazy {
+        project.extensions.getByType<LintReportExtension>()
+    }
+
     @Suppress("UnstableApiUsage")
     private val slackClientProvider: Provider<SlackClient> by lazy {
-        val extension = project.extensions.getByType<LintReportExtension>()
-
         extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
             SlackClient.Impl(
                 token = token,
@@ -53,6 +55,7 @@ class LintReportToSlackTaskFactory(
                 }
 
                 slackReportChannel.set(slackChannel)
+                slackChannelForLintBugs.set(extension.slackChannelToReportLintBugs)
 
                 slackClient.set(slackClientProvider)
             }

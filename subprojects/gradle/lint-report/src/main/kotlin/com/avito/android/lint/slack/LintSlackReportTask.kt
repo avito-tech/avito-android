@@ -18,6 +18,9 @@ abstract class LintSlackReportTask : DefaultTask() {
     @get:Input
     abstract val slackReportChannel: Property<String>
 
+    @get:Input
+    abstract val slackChannelForLintBugs: Property<String>
+
     @get:InputFile
     abstract val lintXml: RegularFileProperty
 
@@ -40,6 +43,7 @@ abstract class LintSlackReportTask : DefaultTask() {
         createLintSlackAlert().report(
             lintReport = models,
             channel = SlackChannel(slackReportChannel.get()),
+            channelForLintBugs = SlackChannel(slackChannelForLintBugs.get()),
             buildUrl = teamcityBuildLinkAccessor.getBuildUrl()
         )
     }
