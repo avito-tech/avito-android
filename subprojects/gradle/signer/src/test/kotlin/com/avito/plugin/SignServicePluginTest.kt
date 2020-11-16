@@ -6,6 +6,7 @@ import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -26,13 +27,15 @@ class SignServicePluginTest {
 
     @Test
     fun `plugin apply - fails - configuration without host`() {
-        generateTestProject(signServiceExtension = """
+        generateTestProject(
+            signServiceExtension = """
              signService {
                 // host
                 apk(android.buildTypes.release, "signToken")
                 bundle(android.buildTypes.release, "signToken")
              }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val result = ciRun(
             testProjectDir,
@@ -71,9 +74,7 @@ class SignServicePluginTest {
     }
 
     /**
-     * Проверка :android [com.avito.android.bundleFileProvider]. Здесь, т.к. signer - единственный потребительно этого метода
-     * Путь к bundle не смогли достать из API AGP, строим из пути к APK и уже поймали баг на обновлении до AGP 3.5
-     * (к пути добавился buildVariant, которого не было в 3.4)
+     * TODO: check whether this contract actual or not for a service or CI outputs
      */
     @Test
     fun `bundle path check`() {
@@ -109,6 +110,43 @@ class SignServicePluginTest {
             ":app:packageRelease",
             ":app:signApkViaServiceRelease"
         ).inOrder()
+    }
+
+    @Test
+    fun `apk signing task - adds signed version to outputs`() {
+        generateTestProject()
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("SIGNED_CONTENT"))
+
+        gradlew(
+            testProjectDir,
+            ":app:signApkViaServiceRelease",
+            "-PsignToken=12345"
+        )
+
+        val unsignedApk = File(testProjectDir, "app/build/outputs/apk/release/app-release-unsigned.apk")
+        assertWithMessage("Preserve original unsigned APK").that(unsignedApk.exists()).isTrue()
+
+        val signedApk = File(testProjectDir, "app/build/outputs/apk/release/app-release.apk")
+        assertWithMessage("Copy signed APK to outputs. See explanation for this hack inside SignTask")
+            .that(signedApk.exists()).isTrue()
+        assertThat(signedApk.readText()).isEqualTo("SIGNED_CONTENT")
+    }
+
+    @Test
+    fun `bundle signing task - replaces original output by signed version (HACK)`() {
+        generateTestProject()
+        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("SIGNED_CONTENT"))
+
+        gradlew(
+            testProjectDir,
+            ":app:signBundleViaServiceRelease",
+            "-PsignToken=12345"
+        )
+
+        // See explanation for this hack inside SignTask
+        val resultArtifact = File(testProjectDir, "app/build/outputs/bundle/release/app-release.aab")
+        assertThat(resultArtifact.exists()).isTrue()
+        assertThat(resultArtifact.readText()).isEqualTo("SIGNED_CONTENT")
     }
 
     private fun generateTestProject(signServiceExtension: String = defaultExtension) {

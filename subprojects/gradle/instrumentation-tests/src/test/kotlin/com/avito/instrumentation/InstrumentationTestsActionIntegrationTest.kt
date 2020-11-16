@@ -82,11 +82,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         )
         reportsApi.enqueueTestsForRunId(reportCoordinates, Try.Success(emptyList()))
 
-        createAction(
-            configuration = configuration,
-            apkOnTargetCommit = apk,
-            testApkOnTargetCommit = apk
-        ).run()
+        createAction(configuration = configuration).run()
 
         assertThat(buildFailer.lastReason).isNull()
     }
@@ -151,12 +147,8 @@ internal class InstrumentationTestsActionIntegrationTest {
 
     private fun createAction(
         configuration: InstrumentationConfiguration.Data,
-        apkOnTargetCommit: File = File(""),
-        testApkOnTargetCommit: File = File(""),
         params: InstrumentationTestsAction.Params = params(
-            configuration,
-            apkOnTargetCommit,
-            testApkOnTargetCommit
+            configuration
         )
     ) = InstrumentationTestsAction(
         params = params,
@@ -175,12 +167,8 @@ internal class InstrumentationTestsActionIntegrationTest {
     )
 
     private fun params(
-        instrumentationConfiguration: InstrumentationConfiguration.Data,
-        apkOnTargetCommit: File,
-        testApkOnTargetCommit: File
+        instrumentationConfiguration: InstrumentationConfiguration.Data
     ) = InstrumentationTestsAction.Params.createStubInstance(
-        apkOnTargetCommit = apkOnTargetCommit,
-        testApkOnTargetCommit = testApkOnTargetCommit,
         instrumentationConfiguration = instrumentationConfiguration,
         logger = logger,
         outputDir = outputDir,

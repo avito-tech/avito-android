@@ -9,6 +9,7 @@ includeAnnotation?=
 useCompositeBuild=true
 dry_run=false
 instrumentation=Ui
+stacktrace?=
 
 params?=
 
@@ -28,6 +29,12 @@ ifdef infra
 params +=-PinfraVersion=$(infra)
 endif
 
+params +=-PtestBuildType=$(test_build_type)
+params +=-Pci=$(ci)
+params +=$(log_level)
+params +=-PkubernetesContext=$(kubernetesContext)
+params +=-PuseCompositeBuild=$(useCompositeBuild)
+
 ifeq ($(gradle_debug),true)
 params +=-Dorg.gradle.debug=true --no-daemon
 endif
@@ -36,13 +43,9 @@ ifeq ($(dry_run),true)
 params +=--dry-run
 endif
 
-params +=-PtestBuildType=$(test_build_type)
-params +=-Pci=$(ci)
-params +=$(log_level)
-params +=-PkubernetesContext=$(kubernetesContext)
-params +=-PuseCompositeBuild=$(useCompositeBuild)
-
-module=test-app
+ifdef stacktrace
+params +=--stacktrace
+endif
 
 help:
 	./gradlew help $(params)

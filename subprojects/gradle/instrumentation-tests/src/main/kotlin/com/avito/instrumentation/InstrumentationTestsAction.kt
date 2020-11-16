@@ -48,8 +48,6 @@ class InstrumentationTestsAction(
     data class Params(
         val mainApk: File?,
         val testApk: File,
-        val apkOnTargetCommit: File?,
-        val testApkOnTargetCommit: File?,
         val instrumentationConfiguration: InstrumentationConfiguration.Data,
         val executionParameters: ExecutionParameters,
         val buildId: String,

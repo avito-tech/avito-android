@@ -15,8 +15,6 @@ import java.io.File
 fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     mainApk: File = File(""),
     testApk: File = File(""),
-    apkOnTargetCommit: File = File(""),
-    testApkOnTargetCommit: File = File(""),
     instrumentationConfiguration: InstrumentationConfiguration.Data = InstrumentationConfiguration.Data.createStubInstance(),
     executionParameters: ExecutionParameters = ExecutionParameters.createStubInstance(),
     buildId: String = "33456",
@@ -46,8 +44,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     InstrumentationTestsAction.Params(
         mainApk = mainApk,
         testApk = testApk,
-        apkOnTargetCommit = apkOnTargetCommit,
-        testApkOnTargetCommit = testApkOnTargetCommit,
         instrumentationConfiguration = instrumentationConfiguration,
         executionParameters = executionParameters,
         buildId = buildId,

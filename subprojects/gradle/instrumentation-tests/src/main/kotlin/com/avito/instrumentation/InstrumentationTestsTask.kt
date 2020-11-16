@@ -1,6 +1,8 @@
 package com.avito.instrumentation
 
 import com.avito.android.build_verdict.BuildVerdictTask
+import com.avito.android.getApk
+import com.avito.android.getApkOrThrow
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
@@ -16,12 +18,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.property
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
@@ -33,11 +30,11 @@ abstract class InstrumentationTestsTask @Inject constructor(
 ) : DefaultTask(), BuildVerdictTask {
 
     @Optional
-    @InputFile
-    val application: RegularFileProperty = objects.fileProperty()
+    @InputDirectory
+    val application: DirectoryProperty = objects.directoryProperty()
 
-    @InputFile
-    val testApplication: RegularFileProperty = objects.fileProperty()
+    @InputDirectory
+    val testApplication: DirectoryProperty = objects.directoryProperty()
 
     @Input
     val impactAnalysisPolicy = objects.property<ImpactAnalysisPolicy>()
@@ -53,14 +50,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
     @Optional
     @InputFile
     val affectedTests: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
-    val apkOnTargetCommit: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
-    val testApkOnTargetCommit: RegularFileProperty = objects.fileProperty()
 
     @Optional
     @InputFile
@@ -144,10 +133,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
         workerExecutor.inMemoryWork {
             InstrumentationTestsAction(
                 InstrumentationTestsAction.Params(
-                    mainApk = application.orNull?.asFile,
-                    testApk = testApplication.get().asFile,
-                    apkOnTargetCommit = apkOnTargetCommit.orNull?.asFile,
-                    testApkOnTargetCommit = testApkOnTargetCommit.orNull?.asFile,
+                    mainApk = application.orNull?.getApk(),
+                    testApk = testApplication.get().getApkOrThrow(),
                     instrumentationConfiguration = configuration,
                     executionParameters = parameters.get(),
                     buildId = buildId.get(),
