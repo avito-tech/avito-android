@@ -23,10 +23,10 @@ open class ClearScreenshotsTask : DefaultTask() {
     @TaskAction
     fun clearScreenshots() {
         val applicationId = variant.get().applicationId
-        val adbDevicesManager = AdbDevicesManager(StdOutLogger(), adb = Adb())
-        val adbDeviceHandler =  AdbDeviceHandlerLocal(ciLogger)
-        val deviceSearch = DeviceSearchLocal(adbDevicesManager)
-        val currentDevice = adbDeviceHandler.resolve(deviceSearch.getDevice())
+        val adb = Adb()
+        val adbDevicesManager = AdbDevicesManager(StdOutLogger(), adb = adb)
+        val currentDevice = DeviceProviderLocal(adb, adbDevicesManager, ciLogger).getDevice()
+
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
         currentDevice.clearDirectory(remotePath).onSuccess {
             ciLogger.info("Screenshot directory is cleared up")
