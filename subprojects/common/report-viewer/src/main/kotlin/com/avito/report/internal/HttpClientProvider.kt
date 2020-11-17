@@ -27,8 +27,7 @@ fun getHttpClient(
                             request.newBuilder()
                                 .url(fallbackUrl)
                                 .build()
-                        },
-                        onFallback = { logger.debug("Fallback to ingress") })
+                        })
                 )
             }
         }

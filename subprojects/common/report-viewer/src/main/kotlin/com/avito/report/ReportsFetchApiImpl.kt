@@ -194,21 +194,6 @@ internal class ReportsFetchApiImpl(
         }
     }
 
-    /**
-     * RunTest.Get
-     * получение результата конкретного теста по id
-     */
-    private fun getTest(id: String): RunTest {
-        return requestProvider.jsonRpcRequest<RpcResult<RunTest>>(
-            RfcRpcRequest(
-                method = "RunTest.Get",
-                params = mapOf(
-                    "id" to id
-                )
-            )
-        ).result
-    }
-
     private fun deserializeStatus(reportModel: ListResult): Status {
         return when (reportModel.status) {
             TestStatus.OK -> Status.Success

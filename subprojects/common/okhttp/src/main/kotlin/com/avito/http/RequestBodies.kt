@@ -34,6 +34,7 @@ fun isPlaintext(buffer: Buffer): Boolean {
         val prefix = Buffer()
         val byteCount = if (buffer.size < 64) buffer.size else 64
         buffer.copyTo(prefix, 0, byteCount)
+        @Suppress("UnusedPrivateMember")
         for (i in 0..15) {
             if (prefix.exhausted()) {
                 break

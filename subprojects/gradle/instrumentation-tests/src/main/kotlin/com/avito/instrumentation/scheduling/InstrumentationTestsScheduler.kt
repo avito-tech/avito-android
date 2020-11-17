@@ -9,14 +9,12 @@ import com.avito.instrumentation.suite.dex.TestSuiteLoader
 import com.avito.instrumentation.suite.dex.check.AllChecks
 import com.avito.instrumentation.suite.filter.FilterInfoWriter
 import com.avito.report.model.ReportCoordinates
-import com.avito.utils.logging.CILogger
 import com.google.gson.Gson
 import org.funktionale.tries.Try
 import java.io.File
 
 class InstrumentationTestsScheduler(
     private val testsRunner: TestsRunner,
-    private val logger: CILogger,
     private val params: InstrumentationTestsAction.Params,
     private val reportCoordinates: ReportCoordinates,
     private val sourceReport: Report,

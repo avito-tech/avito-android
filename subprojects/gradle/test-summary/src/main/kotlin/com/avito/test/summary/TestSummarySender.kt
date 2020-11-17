@@ -39,7 +39,6 @@ internal class TestSummarySenderImpl(
     private val globalSummaryChannel: SlackChannel,
     private val unitToChannelMapping: Map<Team, SlackChannel>,
     private val mentionOnFailures: Set<Team>,
-    private val reserveSlackChannel: SlackChannel,
     private val slackUserName: String
 ) : TestSummarySender {
 

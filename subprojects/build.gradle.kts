@@ -4,9 +4,11 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
 import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -18,10 +20,12 @@ buildscript {
 }
 
 plugins {
+    base
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
     id("com.autonomousapps.dependency-analysis") apply false
+    id("io.gitlab.arturbosch.detekt") version "1.15.0-RC1"
 }
 
 if (gradle.startParameter.taskNames.contains("buildHealth")) {
@@ -54,6 +58,21 @@ val publishReleaseTaskName = "publishRelease"
 
 val finalProjectVersion: String = System.getProperty("avito.project.version").let { env ->
     if (env.isNullOrBlank()) projectVersion else env
+}
+
+repositories {
+    exclusiveContent {
+        forRepository {
+            jcenter()
+        }
+        filter {
+            //all for detekt
+            includeGroup("io.gitlab.arturbosch.detekt")
+            includeGroupByRegex("org.jetbrains.*")
+            includeModule("com.beust", "jcommander")
+            includeModule("org.yaml", "snakeyaml")
+        }
+    }
 }
 
 subprojects {
@@ -359,3 +378,21 @@ fun Project.configureJunit5Tests() {
         maxParallelForks = 8
     }
 }
+
+val detektAll by tasks.registering(Detekt::class) {
+    description = "Runs over whole code base without the starting overhead for each module."
+    parallel = true
+    buildUponDefaultConfig = false
+    setSource(files(projectDir))
+    config.setFrom(files(project.rootDir.resolve("detekt.yml")))
+    include("**/*.kt")
+    include("**/*.kts")
+    exclude("**/resources/**")
+    exclude("**/build/**")
+    reports {
+        xml.enabled = false
+        html.enabled = false
+    }
+}
+
+tasks.named("check").dependsOn(detektAll)
