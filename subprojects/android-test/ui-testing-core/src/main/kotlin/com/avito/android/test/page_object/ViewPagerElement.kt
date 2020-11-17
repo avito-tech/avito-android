@@ -41,10 +41,10 @@ open class ViewPagerElement(
     /**
      * Hide parent method [PageObject.element]
      */
-    protected inline fun <reified T : PageObjectElement> element(matcher: Matcher<View>): T =
+    protected inline fun <reified T : PageObjectElement> element(@Suppress("UNUSED_PARAMETER") matcher: Matcher<View>): T =
         throw RuntimeException(
             "Use currentPageElement(Matcher<View>) instead for getting page of view pager" +
-                    "and then use element(Matcher<View>) for getting child"
+                "and then use element(Matcher<View>) for getting child"
         )
 
     /**
@@ -53,7 +53,7 @@ open class ViewPagerElement(
     protected inline fun <reified T : PageObjectElement> element(): T =
         throw RuntimeException(
             "Use currentPageElement(Matcher<View>) instead for getting page of view pager" +
-                    "and then use element(Matcher<View>) for getting child"
+                "and then use element(Matcher<View>) for getting child"
         )
 }
 

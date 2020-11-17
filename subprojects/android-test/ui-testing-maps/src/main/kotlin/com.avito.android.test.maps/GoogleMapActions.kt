@@ -5,7 +5,7 @@ import com.avito.android.test.maps.provider.GoogleMapProvider
 import com.avito.android.test.waitFor
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
-import org.junit.Assert
+import org.hamcrest.MatcherAssert.assertThat
 
 interface GoogleMapActions {
     fun movePinTo(position: LatLng)
@@ -27,7 +27,7 @@ class GoogleMapActionsImpl(
 
             waitFor(timeoutMs = timeoutMs) {
                 UiThreadStatement.runOnUiThread {
-                    Assert.assertThat(
+                    assertThat(
                         map.cameraPosition.target,
                         hasTheSameCoordinatesAs(position)
                     )

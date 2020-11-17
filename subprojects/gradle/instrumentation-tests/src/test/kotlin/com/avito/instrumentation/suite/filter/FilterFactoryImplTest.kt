@@ -226,14 +226,13 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val filter = factory.createFilter() as CompositionFilter
+        val compositionFilter = factory.createFilter() as CompositionFilter
 
-        filter.filters.forEach { filter ->
-            val assert = assertThat(filter)
-            assert
-                .isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
-            assert
-                .isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
+        compositionFilter.filters.forEach { filter ->
+            assertThat(filter).run {
+                isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
+                isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
+            }
         }
     }
 
@@ -243,14 +242,13 @@ internal class FilterFactoryImplTest {
             filter = InstrumentationFilter.Data.createStub()
         )
 
-        val filter = factory.createFilter() as CompositionFilter
+        val compositionFilter = factory.createFilter() as CompositionFilter
 
-        filter.filters.forEach { filter ->
-            val assert = assertThat(filter)
-            assert
-                .isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
-            assert
-                .isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
+        compositionFilter.filters.forEach { filter ->
+            assertThat(filter).run {
+                isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
+                isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
+            }
         }
     }
 
@@ -395,14 +393,13 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val filter = factory.createFilter() as CompositionFilter
+        val compositionFilter = factory.createFilter() as CompositionFilter
 
-        filter.filters.forEach { filter ->
-            val assert = assertThat(filter)
-            assert
-                .isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
-            assert
-                .isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
+        compositionFilter.filters.forEach { filter ->
+            assertThat(filter).run {
+                isNotInstanceOf(IncludeByTestSignaturesFilter::class.java)
+                isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
+            }
         }
     }
 }

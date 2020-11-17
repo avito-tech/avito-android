@@ -27,7 +27,7 @@ plugins {
 if (gradle.startParameter.taskNames.contains("buildHealth")) {
     // Reasons to disabling by default:
     // The plugin schedules heavy LocateDependenciesTask tasks even without analysis
-    apply(plugin ="com.autonomousapps.dependency-analysis")
+    apply(plugin = "com.autonomousapps.dependency-analysis")
 }
 
 val artifactoryUrl: String? by project
@@ -216,7 +216,8 @@ subprojects {
                 withType<KotlinCompile> {
                     kotlinOptions {
                         jvmTarget = javaVersion.toString()
-                        allWarningsAsErrors = false // we use deprecation a lot, and it's a compiler warning
+                        allWarningsAsErrors = true
+                        freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
                     }
                 }
             }

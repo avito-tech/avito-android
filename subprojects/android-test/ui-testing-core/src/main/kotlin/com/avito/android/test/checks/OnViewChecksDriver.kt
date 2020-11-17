@@ -9,7 +9,9 @@ import com.avito.android.test.interceptor.AssertionInterceptor
 import com.avito.android.test.waitForCheck
 import org.hamcrest.Matcher
 
-@Deprecated("todo use InteractionContext")
+/**
+ * use interactionContext instead
+ */
 class OnViewChecksDriver(private val matcher: Matcher<View>) : ChecksDriver {
 
     private val interaction: ViewInteraction

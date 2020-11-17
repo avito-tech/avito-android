@@ -20,10 +20,12 @@ open class ViewElement : PageObjectElement, Actions {
     override val actions: Actions
     override val checks: Checks
 
-    // TODO: make this constructor private and remove matcher
-    @Deprecated("Don't use this constructor. It leads to actions and checks in a wrong screen. " +
-        "Inside [PageObject] use [element] to create an instance with child interaction context. " +
-        "From custom class use ViewElement(interactionContext)")
+    /**
+     * TODO: make this constructor private and remove matcher
+     * Don't use this constructor. It leads to actions and checks in a wrong screen. " +
+    "Inside [PageObject] use [element] to create an instance with child interaction context. " +
+    "From custom class use ViewElement(interactionContext)
+     */
     constructor(
         matcher: Matcher<View>,
         interactionContext: InteractionContext = SimpleInteractionContext(matcher),
@@ -53,7 +55,8 @@ open class ViewElement : PageObjectElement, Actions {
 
     override fun scrollTo() = actions.scrollTo()
 
-    override fun swipe(direction: SwipeDirection, speed: Swiper, precision: PrecisionDescriber) = actions.swipe(direction, speed, precision)
+    override fun swipe(direction: SwipeDirection, speed: Swiper, precision: PrecisionDescriber) =
+        actions.swipe(direction, speed, precision)
 
     override fun read(allowBlank: Boolean) = actions.read(allowBlank)
 }

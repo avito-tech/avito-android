@@ -1,8 +1,8 @@
 package ru.avito.test
 
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItems
 import org.hamcrest.Matchers.not
-import org.junit.Assert.assertThat
 import org.junit.jupiter.api.Test
 import ru.avito.util.Characters
 import ru.avito.util.Is

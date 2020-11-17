@@ -1,3 +1,6 @@
+@file:Suppress("DEPRECATION")
+//todo use new slack api
+
 package com.avito.slack
 
 import com.avito.slack.model.FoundMessage

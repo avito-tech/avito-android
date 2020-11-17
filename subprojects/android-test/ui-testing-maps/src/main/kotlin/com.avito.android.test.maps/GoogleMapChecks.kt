@@ -4,7 +4,7 @@ import androidx.test.internal.runner.junit4.statement.UiThreadStatement
 import com.avito.android.test.maps.provider.GoogleMapProvider
 import com.avito.android.test.waitFor
 import com.google.android.gms.maps.model.LatLng
-import org.junit.Assert
+import org.hamcrest.MatcherAssert.assertThat
 
 interface GoogleMapChecks {
     fun pinAtPosition(position: LatLng)
@@ -19,7 +19,7 @@ class GoogleMapChecksImpl(
 
         waitFor(timeoutMs = timeoutMs) {
             UiThreadStatement.runOnUiThread {
-                Assert.assertThat(
+                assertThat(
                     map.cameraPosition.target,
                     hasTheSameCoordinatesAs(position)
                 )

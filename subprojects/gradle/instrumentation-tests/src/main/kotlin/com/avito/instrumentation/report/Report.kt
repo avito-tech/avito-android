@@ -63,9 +63,6 @@ interface Report : ReadReport {
             // TODO problems with serialization
             @Synchronized
             override fun createReport(config: Config): Report {
-                if (reports == null) {
-                    reports = mutableMapOf()
-                }
                 return when (config) {
                     is Config.InMemory -> reports.getOrPut(config, { InMemoryReport(config.id) })
                     is Config.ReportViewerCoordinates -> TODO("Unsupported type")
@@ -75,9 +72,6 @@ interface Report : ReadReport {
 
             @Synchronized
             override fun createReadReport(config: Config): ReadReport {
-                if (reports == null) {
-                    reports = mutableMapOf()
-                }
                 return when (config) {
                     is Config.InMemory -> reports.getOrPut(config, { InMemoryReport(config.id) })
                     is Config.ReportViewerCoordinates -> TODO("Unsupported type")

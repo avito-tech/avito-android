@@ -109,9 +109,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
                     this.defaultBranch.set(gitState.map { it.defaultBranch })
                     this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
-
-                    // will be changed in [UiTestCheck]
-                    this.sendStatistics.set(false)
                     this.slackToken.set(extensionData.slackToken)
                     this.output.set(configurationOutputFolder)
                     if (extensionData.reportViewer != null) {

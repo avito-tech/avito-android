@@ -6,7 +6,7 @@ import com.avito.android.runner.annotation.resolver.MethodStringRepresentation.R
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation.Resolution.ParseError
 import com.test.fixtures.ClassWithMethod
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertThat
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 
 class MethodStringRepresentationTest {

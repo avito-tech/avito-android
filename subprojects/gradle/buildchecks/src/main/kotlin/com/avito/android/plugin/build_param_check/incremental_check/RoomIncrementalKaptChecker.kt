@@ -13,6 +13,7 @@ internal class RoomIncrementalKaptChecker(
 ) {
 
     fun isSupported(): Boolean {
+        @Suppress("UnstableApiUsage")
         if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_11)) {
             return true
         }
@@ -41,8 +42,9 @@ internal class RoomIncrementalKaptChecker(
     }
 
     private fun createRoomProcessor(): AbstractProcessor =
-        getKaptClassLoader().loadClass("androidx.room.RoomProcessor").newInstance() as AbstractProcessor
-
+        getKaptClassLoader().loadClass("androidx.room.RoomProcessor")
+            .getDeclaredConstructor()
+            .newInstance() as AbstractProcessor
 
     private fun getKaptClassLoader(): ClassLoader {
         val task = project.tasks.withType<KaptGenerateStubsTask>().firstOrNull {

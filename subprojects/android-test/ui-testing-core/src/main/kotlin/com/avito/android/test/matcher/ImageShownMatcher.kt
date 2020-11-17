@@ -5,13 +5,13 @@ import android.widget.ImageView
 import androidx.test.espresso.matcher.BoundedMatcher
 import org.hamcrest.Description
 
-class ImageShownMatcher :
-    BoundedMatcher<View, ImageView>(ImageView::class.java) {
+class ImageShownMatcher : BoundedMatcher<View, ImageView>(ImageView::class.java) {
 
     override fun describeTo(description: Description) {
         description.appendText("with shown image: ")
     }
 
+    @Suppress("DEPRECATION")
     override fun matchesSafely(layout: ImageView): Boolean {
         layout.isDrawingCacheEnabled = true
 

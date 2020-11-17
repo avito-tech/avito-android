@@ -88,11 +88,11 @@ class ChecksImpl(private val driver: ChecksDriver) : Checks,
     }
 
     override fun isLeftOf(matcher: Matcher<View>) {
-        driver.check(PositionAssertions.isLeftOf(matcher))
+        driver.check(PositionAssertions.isCompletelyLeftOf(matcher))
     }
 
     override fun isRightOf(matcher: Matcher<View>) {
-        driver.check(PositionAssertions.isRightOf(matcher))
+        driver.check(PositionAssertions.isCompletelyRightOf(matcher))
     }
 
     override fun isLeftAlignedWith(matcher: Matcher<View>) {
@@ -104,11 +104,11 @@ class ChecksImpl(private val driver: ChecksDriver) : Checks,
     }
 
     override fun isAbove(matcher: Matcher<View>) {
-        driver.check(PositionAssertions.isAbove(matcher))
+        driver.check(PositionAssertions.isCompletelyAbove(matcher))
     }
 
     override fun isBelow(matcher: Matcher<View>) {
-        driver.check(PositionAssertions.isBelow(matcher))
+        driver.check(PositionAssertions.isCompletelyBelow(matcher))
     }
 
     override fun isBottomAlignedWith(matcher: Matcher<View>) {

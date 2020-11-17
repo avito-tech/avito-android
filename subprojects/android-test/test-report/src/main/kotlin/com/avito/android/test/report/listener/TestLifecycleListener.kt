@@ -17,7 +17,7 @@ interface TestLifecycleListener {
         //do nothing
     }
 
-    fun afterTestStop(result: ReportState.Initialized.Started) {
+    fun afterTestStop(state: ReportState.Initialized.Started) {
         //do nothing
     }
 
@@ -55,8 +55,8 @@ object TestLifecycleNotifier : TestLifecycleListener {
         listeners.forEach { it.afterTestUpdate(state) }
     }
 
-    override fun afterTestStop(result: ReportState.Initialized.Started) {
-        listeners.forEach { it.afterTestStop(result) }
+    override fun afterTestStop(state: ReportState.Initialized.Started) {
+        listeners.forEach { it.afterTestStop(state) }
     }
 
     override fun beforeTestWrite(state: ReportState.Initialized.Started) {

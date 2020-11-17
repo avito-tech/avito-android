@@ -18,7 +18,13 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
@@ -58,9 +64,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
     @Optional
     @InputFile
     val testProguardMapping: RegularFileProperty = objects.fileProperty()
-
-    @Input
-    val sendStatistics = objects.property<Boolean>()
 
     @Input
     val slackToken = objects.property<String>()
@@ -155,7 +158,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     logger = ciLogger,
                     outputDir = output.get().asFile,
                     verdictFile = verdictFile.get().asFile,
-                    sendStatistics = sendStatistics.get(),
                     slackToken = slackToken.get(),
                     fileStorageUrl = getFileStorageUrl(),
                     reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
