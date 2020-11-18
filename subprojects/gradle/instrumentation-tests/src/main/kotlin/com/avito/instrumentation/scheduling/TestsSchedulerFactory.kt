@@ -61,15 +61,14 @@ interface TestsSchedulerFactory {
                 testsRunner = testRunner,
                 params = params,
                 reportCoordinates = params.reportCoordinates,
-                testSuiteProvider = testSuiteProvider,
                 sourceReport = sourceReport,
+                testSuiteProvider = testSuiteProvider,
                 testSuiteLoader = testSuiteLoader,
                 gson = gson,
                 filterInfoWriter = FilterInfoWriter.Impl(
                     outputDir = params.outputDir,
                     gson = gson
-                ),
-                logger = params.logger
+                )
             )
         }
 

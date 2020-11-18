@@ -22,13 +22,14 @@ internal class FallbackInterceptorTest {
         ) {
             addInterceptor(
                 FallbackInterceptor(
-                    doFallbackOnTheseCodes = listOf(doFallbackOnThisResponseCode),
                     fallbackRequest = { request ->
                         request.newBuilder()
                             .url(request.url.newBuilder().addPathSegment("fallback").build())
                             .addHeader("X-FALLBACK", "true")
                             .build()
-                    })
+                    },
+                    doFallbackOnTheseCodes = listOf(doFallbackOnThisResponseCode)
+                )
             )
         }
     }

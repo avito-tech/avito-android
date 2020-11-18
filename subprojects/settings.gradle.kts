@@ -124,6 +124,7 @@ pluginManagement {
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
                 includeGroup("nebula.integtest")
+                includeGroup("io.gitlab.arturbosch.detekt")
                 includeGroup("com.autonomousapps.dependency-analysis")
             }
         }

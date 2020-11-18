@@ -60,7 +60,6 @@ abstract class TestSummaryTask : DefaultTask() {
             globalSummaryChannel = summaryChannel.get(),
             unitToChannelMapping = unitToChannelMapping.get(),
             mentionOnFailures = mentionOnFailures.get(),
-            reserveSlackChannel = reserveSlackChannel.get(),
             slackUserName = slackUserName.get()
         )
 
