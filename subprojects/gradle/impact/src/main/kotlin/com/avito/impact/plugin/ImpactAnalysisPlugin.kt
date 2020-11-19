@@ -44,6 +44,11 @@ class ImpactAnalysisPlugin : Plugin<Project> {
             group = "impact-analysis"
             description = "Print modified projects to files. For testing purposes only"
         }
+
+        rootProject.tasks.register<ImpactReportTask>("impactReport") {
+            group = "impact-analysis"
+            description = "Print impact report"
+        }
     }
 }
 

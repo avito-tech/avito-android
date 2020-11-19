@@ -67,7 +67,6 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
         ): ReportsApi {
 
             return ReportsApiImpl(
-                gson = gson,
                 logger = logger,
                 requestProvider = JsonRpcRequestProvider(
                     host = host,

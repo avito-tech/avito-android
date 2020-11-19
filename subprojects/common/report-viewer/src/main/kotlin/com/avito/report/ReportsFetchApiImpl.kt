@@ -9,7 +9,6 @@ import com.avito.report.internal.model.ListResult
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.internal.model.Run
-import com.avito.report.internal.model.RunTest
 import com.avito.report.internal.model.TestStatus
 import com.avito.report.model.CrossDeviceRunTest
 import com.avito.report.model.CrossDeviceStatus
@@ -24,7 +23,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
 import com.avito.report.model.TestName
-import com.google.gson.Gson
 import org.funktionale.tries.Try
 
 /**
@@ -32,7 +30,6 @@ import org.funktionale.tries.Try
  */
 internal class ReportsFetchApiImpl(
     private val requestProvider: JsonRpcRequestProvider,
-    private val gson: Gson,
     private val logger: Logger
 ) : ReportsFetchApi {
 
