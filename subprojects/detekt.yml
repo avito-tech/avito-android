@@ -315,7 +315,7 @@ formatting:
     SpacingAroundDoubleColon:
         active: true
     SpacingAroundKeyword:
-        active: false
+        active: true
     SpacingAroundOperators:
         active: false
     SpacingAroundParens:
