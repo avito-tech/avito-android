@@ -252,6 +252,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     @CallSuper
+    @Suppress("MagicNumber")
     open fun initUITestConfig() {
         with(UITestConfig) {
             waiterTimeoutMs = TimeUnit.SECONDS.toMillis(12)

@@ -92,7 +92,7 @@ internal class TestSummarySenderImpl(
                                 channel = channel,
                                 text = message,
                                 author = slackUserName,
-                                emoji = slackEmojiProvider.emojiName(unitSuite.percentSuccessOfAutomated)
+                                emoji = slackEmojiProvider.emojiName(unitSuite.percentSuccessOfAutomated.toInt())
                             )
                         )
                     }.onFailure { throwable ->
@@ -117,7 +117,7 @@ internal class TestSummarySenderImpl(
                         channel = globalSummaryChannel,
                         text = it,
                         author = slackUserName,
-                        emoji = slackEmojiProvider.emojiName(suite.percentSuccessOfAutomated)
+                        emoji = slackEmojiProvider.emojiName(suite.percentSuccessOfAutomated.toInt())
                     )
                 )
             }.onFailure { throwable ->

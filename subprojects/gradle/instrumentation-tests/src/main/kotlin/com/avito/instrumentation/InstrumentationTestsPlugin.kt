@@ -61,7 +61,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
             group = ciTaskGroup
             description = "Executed when all inputs of all instrumentation tasks in the module are ready"
 
-            delayMillis.set(500L)
+            delayMillis.set(MAGIC_DELAY)
         }
 
         project.withInstrumentationExtensionData { extensionData ->
@@ -298,3 +298,9 @@ private fun DefaultConfig.getTestInstrumentationRunnerOrThrow(): String {
     }
     return runner
 }
+
+/**
+ * Some empirical value that seems to solve project lock problem
+ * see LintWorkerApiWorkaround.md
+ */
+private const val MAGIC_DELAY = 500L

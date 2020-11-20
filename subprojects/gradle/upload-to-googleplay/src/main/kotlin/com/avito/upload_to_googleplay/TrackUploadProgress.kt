@@ -1,8 +1,8 @@
 package com.avito.upload_to_googleplay
 
+import com.avito.android.percent
 import com.google.api.client.googleapis.media.MediaHttpUploader
 import com.google.api.services.androidpublisher.AndroidPublisherRequest
-import kotlin.math.roundToInt
 
 /**
  * Copy-paste driven development
@@ -12,14 +12,14 @@ internal fun <T> AndroidPublisherRequest<T>.trackUploadProgress(
     thing: String
 ): AndroidPublisherRequest<T> {
     mediaHttpUploader?.apply {
-        chunkSize = 4 * MediaHttpUploader.MINIMUM_CHUNK_SIZE // 1 MB
+        chunkSize = CHUNK_SIZE
         setProgressListener {
             @Suppress("NON_EXHAUSTIVE_WHEN")
             when (it.uploadState) {
                 MediaHttpUploader.UploadState.INITIATION_STARTED ->
                     println("Starting $thing upload")
                 MediaHttpUploader.UploadState.MEDIA_IN_PROGRESS ->
-                    println("Uploading $thing: ${(it.progress * 100).roundToInt()}% complete")
+                    println("Uploading $thing: ${it.progress.percent().toInt()}% complete")
                 MediaHttpUploader.UploadState.MEDIA_COMPLETE ->
                     println("${thing.capitalize()} upload complete")
             }
@@ -27,3 +27,8 @@ internal fun <T> AndroidPublisherRequest<T>.trackUploadProgress(
     }
     return this
 }
+
+/**
+ * 1 mb
+ */
+private const val CHUNK_SIZE = 4 * MediaHttpUploader.MINIMUM_CHUNK_SIZE

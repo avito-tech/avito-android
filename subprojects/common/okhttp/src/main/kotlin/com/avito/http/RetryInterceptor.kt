@@ -14,11 +14,11 @@ class RetryInterceptor constructor(
     private val retries: Int = 5,
     private val allowedMethods: List<String> = listOf("GET"),
     private val allowedCodes: List<Int> = listOf(
-        408, // client timeout
-        500, // internal error
-        502, // bad gateway
-        503, // unavailable
-        504 // gateway timeout
+        HttpCodes.CLIENT_TIMEOUT,
+        HttpCodes.INTERNAL_ERROR,
+        HttpCodes.BAD_GATEWAY,
+        HttpCodes.UNAVAILABLE,
+        HttpCodes.GATEWAY_TIMEOUT
     ),
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,

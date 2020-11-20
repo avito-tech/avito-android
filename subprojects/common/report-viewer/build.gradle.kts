@@ -9,6 +9,7 @@ dependencies {
     api(Dependencies.gson)
 
     api(project(":common:okhttp"))
+    api(project(":common:percent"))
 
     implementation(project(":common:logger"))
     implementation(Dependencies.okhttpLogging)

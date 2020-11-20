@@ -20,7 +20,6 @@ import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.take
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class LocalDevicesProvider(
     private val androidDebugBridge: AndroidDebugBridge,
@@ -31,6 +30,8 @@ class LocalDevicesProvider(
 ) : DevicesProvider {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
+
+    private val adbQueryIntervalMs = 5000L
 
     @ExperimentalCoroutinesApi
     override fun provideFor(reservations: Collection<Reservation.Data>, scope: CoroutineScope): ReceiveChannel<Device> {
@@ -57,7 +58,7 @@ class LocalDevicesProvider(
                             devices.send(device)
                             acquiredCoordinates.add(coordinate)
                         }
-                        delay(TimeUnit.SECONDS.toMillis(5))
+                        delay(adbQueryIntervalMs)
                     } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
                 }
             }

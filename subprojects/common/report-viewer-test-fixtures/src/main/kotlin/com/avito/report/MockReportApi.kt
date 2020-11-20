@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.http.HttpCodes
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
@@ -24,7 +25,7 @@ class MockReportApi(
             Mock(
                 requestMatcher = { true },
                 response = MockResponse()
-                    .setResponseCode(200)
+                    .setResponseCode(HttpCodes.OK)
                     .setBody(gson.toJson(RpcResult("12345")))
             )
         )

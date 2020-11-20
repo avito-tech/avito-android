@@ -39,6 +39,7 @@ private fun extractDiffTypeCode(parts: List<String>): Char {
     return parts[0].first()
 }
 
+@Suppress("MagicNumber")
 private fun isSyntaxCorrect(parts: List<String>, changeType: ChangeType): Boolean {
     return when (changeType) {
         ChangeType.ADDED, ChangeType.MODIFIED, ChangeType.DELETED -> {

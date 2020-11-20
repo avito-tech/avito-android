@@ -611,18 +611,19 @@ style:
     LoopWithTooManyJumpStatements:
         active: true
         maxJumpCount: 1
+    # https://detekt.github.io/detekt/style.html#magicnumber
     MagicNumber:
-        active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        active: true
+        excludes: [ '**/build.gradle.kts', '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         ignoreNumbers: [ '-1', '0', '1', '2' ]
         ignoreHashCodeFunction: true
-        ignorePropertyDeclaration: false
+        ignorePropertyDeclaration: true
         ignoreLocalVariableDeclaration: false
         ignoreConstantDeclaration: true
         ignoreCompanionObjectPropertyDeclaration: true
         ignoreAnnotation: false
         ignoreNamedArgument: true
-        ignoreEnums: false
+        ignoreEnums: true
         ignoreRanges: false
     MandatoryBracesIfStatements:
         active: false

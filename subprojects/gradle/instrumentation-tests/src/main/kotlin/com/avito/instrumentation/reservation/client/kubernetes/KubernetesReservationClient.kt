@@ -22,7 +22,6 @@ import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 class KubernetesReservationClient(
@@ -34,6 +33,8 @@ class KubernetesReservationClient(
 ) : ReservationClient {
 
     private var state: State = State.Idling
+
+    private val podsQueryIntervalMs = 5000L
 
     override fun claim(
         reservations: Collection<Reservation.Data>,
@@ -300,7 +301,7 @@ class KubernetesReservationClient(
                 podsChannel.send(pod)
             }
 
-            delay(TimeUnit.SECONDS.toMillis(5))
+            delay(podsQueryIntervalMs)
 
             pods = podsFromDeployment(deploymentName)
         }

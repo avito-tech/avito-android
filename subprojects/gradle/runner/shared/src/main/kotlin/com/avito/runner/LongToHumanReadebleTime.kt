@@ -2,6 +2,7 @@ package com.avito.runner
 
 import java.util.concurrent.TimeUnit
 
+@Suppress("MagicNumber")
 fun Long.millisecondsToHumanReadableTime(): String {
     var seconds: Long = TimeUnit.MILLISECONDS.toSeconds(this)
     var minutes: Long = (seconds / 60).apply {
