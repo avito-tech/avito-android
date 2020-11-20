@@ -40,26 +40,34 @@ output-reports:
     # - 'HtmlOutputReport'
 
 comments:
-    active: false
+    active: true
     excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+    # https://detekt.github.io/detekt/comments.html#absentorwrongfilelicense
+    # we don't use licenses per file, only root one
     AbsentOrWrongFileLicense:
         active: false
         licenseTemplateFile: 'license.template'
+    # https://detekt.github.io/detekt/comments.html#commentoverprivatefunction
     CommentOverPrivateFunction:
         active: false
+    # https://detekt.github.io/detekt/comments.html#commentoverprivateproperty
     CommentOverPrivateProperty:
         active: false
+    # https://detekt.github.io/detekt/comments.html#endofsentenceformat
     EndOfSentenceFormat:
         active: false
         endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'
+    # https://detekt.github.io/detekt/comments.html#undocumentedpublicclass
     UndocumentedPublicClass:
         active: false
-        searchInNestedClass: true
-        searchInInnerClass: true
-        searchInInnerObject: true
-        searchInInnerInterface: true
+        searchInNestedClass: false
+        searchInInnerClass: false
+        searchInInnerObject: false
+        searchInInnerInterface: false
+    # https://detekt.github.io/detekt/comments.html#undocumentedpublicfunction
     UndocumentedPublicFunction:
         active: false
+    # https://detekt.github.io/detekt/comments.html#undocumentedpublicproperty
     UndocumentedPublicProperty:
         active: false
 
