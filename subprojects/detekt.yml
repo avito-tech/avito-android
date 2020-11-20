@@ -360,8 +360,9 @@ naming:
         active: false
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         classPattern: '[A-Z][a-zA-Z0-9]*'
+    # https://detekt.github.io/detekt/naming.html#constructorparameternaming
     ConstructorParameterNaming:
-        active: false
+        active: true
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         parameterPattern: '[a-z][A-Za-z0-9]*'
         privateParameterPattern: '[a-z][A-Za-z0-9]*'
@@ -379,10 +380,12 @@ naming:
         active: false
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         maximumFunctionNameLength: 30
+    # blocked by `Is` functions
     FunctionMinLength:
         active: false
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         minimumFunctionNameLength: 3
+    # blocked by `Is` functions
     FunctionNaming:
         active: false
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
@@ -404,6 +407,7 @@ naming:
     MatchingDeclarationName:
         active: true
         mustBeFirst: true
+    # https://detekt.github.io/detekt/naming.html#membernameequalsclassname
     MemberNameEqualsClassName:
         active: false
         ignoreOverridden: true
