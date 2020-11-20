@@ -302,8 +302,9 @@ formatting:
     ParameterListWrapping:
         active: false
         indentSize: 4
+    # https://ktlint.github.io/#rule-spacing
     SpacingAroundColon:
-        active: false
+        active: true
     SpacingAroundComma:
         active: false
     SpacingAroundCurly:

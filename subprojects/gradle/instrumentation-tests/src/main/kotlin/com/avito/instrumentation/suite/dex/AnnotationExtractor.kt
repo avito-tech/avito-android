@@ -29,7 +29,7 @@ data class AnnotationData(
     fun getIntArrayValue(key: String): List<Int>? = values[key] as? List<Int>
 
     @Suppress("UNCHECKED_CAST")
-    fun getEnumValue(key:String): String? = values[key] as? String
+    fun getEnumValue(key: String): String? = values[key] as? String
 }
 
 /**
