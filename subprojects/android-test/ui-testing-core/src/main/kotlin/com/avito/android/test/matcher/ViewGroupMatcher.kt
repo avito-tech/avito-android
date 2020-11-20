@@ -30,8 +30,9 @@ class ViewGroupMatcher {
             }
 
             override fun matchesSafely(view: View): Boolean {
-                if (view.parent !is ViewGroup)
+                if (view.parent !is ViewGroup) {
                     return false
+                }
 
                 val parent = view.parent as ViewGroup
 

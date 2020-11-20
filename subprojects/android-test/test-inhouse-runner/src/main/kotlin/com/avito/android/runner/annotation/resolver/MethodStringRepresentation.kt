@@ -14,10 +14,9 @@ object MethodStringRepresentation {
     }
 
     fun parseString(stringRepresentation: String): Resolution {
-        if (stringRepresentation.trim().isEmpty())
-            return Resolution.ParseError(
-                "Method string representation is empty string"
-            )
+        if (stringRepresentation.trim().isEmpty()) {
+            return Resolution.ParseError("Method string representation is empty string")
+        }
 
         val testTargetString = stringRepresentation.split("#")
 

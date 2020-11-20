@@ -271,7 +271,7 @@ formatting:
     ModifierOrdering:
         active: true
     MultiLineIfElse:
-        active: false
+        active: true
     NoBlankLineBeforeRbrace:
         active: false
     # https://ktlint.github.io/#rule-blank
