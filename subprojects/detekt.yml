@@ -298,8 +298,9 @@ formatting:
     NoMultipleSpaces:
         active: true
         autoCorrect: false
+    # https://detekt.github.io/detekt/formatting.html#nosemicolons
     NoSemicolons:
-        active: false
+        active: true
         autoCorrect: false
     NoTrailingSpaces:
         active: false
