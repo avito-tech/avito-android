@@ -172,10 +172,12 @@ empty-blocks:
     EmptyFunctionBlock:
         active: false
         ignoreOverridden: false
+    # https://detekt.github.io/detekt/empty-blocks.html#emptyifblock
     EmptyIfBlock:
         active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptyinitblock
     EmptyInitBlock:
-        active: false
+        active: true
     EmptyKtFile:
         active: false
     EmptySecondaryConstructor:
