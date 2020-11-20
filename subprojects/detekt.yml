@@ -190,8 +190,9 @@ empty-blocks:
     # https://detekt.github.io/detekt/empty-blocks.html#emptywhenblock
     EmptyWhenBlock:
         active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptywhileblock
     EmptyWhileBlock:
-        active: false
+        active: true
 
 exceptions:
     active: false
