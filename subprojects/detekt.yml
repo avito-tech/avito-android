@@ -356,8 +356,9 @@ formatting:
 
 naming:
     active: true
+    # https://detekt.github.io/detekt/naming.html#classnaming
     ClassNaming:
-        active: false
+        active: true
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         classPattern: '[A-Z][a-zA-Z0-9]*'
     # https://detekt.github.io/detekt/naming.html#constructorparameternaming
