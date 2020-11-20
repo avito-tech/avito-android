@@ -628,8 +628,9 @@ style:
     # https://detekt.github.io/detekt/style.html#mandatorybracesifstatements
     MandatoryBracesIfStatements:
         active: true
+    # https://detekt.github.io/detekt/style.html#mandatorybracesloops
     MandatoryBracesLoops:
-        active: false
+        active: true
     MaxLineLength:
         active: false
         maxLineLength: 120
