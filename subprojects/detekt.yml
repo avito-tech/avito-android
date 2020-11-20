@@ -452,13 +452,13 @@ potential-bugs:
     Deprecation:
         active: false
     DuplicateCaseInWhenExpression:
-        active: true
+        active: false
     EqualsAlwaysReturnsTrueOrFalse:
-        active: true
+        active: false
     EqualsWithHashCodeExist:
-        active: true
+        active: false
     ExplicitGarbageCollectionCall:
-        active: true
+        active: false
     HasPlatformType:
         active: false
     IgnoredReturnValue:
@@ -471,11 +471,11 @@ potential-bugs:
         active: false
         allowExplicitReturnType: true
     InvalidRange:
-        active: true
+        active: false
     IteratorHasNextCallsNextMethod:
-        active: true
+        active: false
     IteratorNotThrowingNoSuchElementException:
-        active: true
+        active: false
     LateinitUsage:
         active: false
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
@@ -484,12 +484,12 @@ potential-bugs:
     MapGetWithNotNullAssertionOperator:
         active: false
     MissingWhenCase:
-        active: true
+        active: false
         allowElseExpression: true
     NullableToStringCall:
         active: false
     RedundantElseInWhen:
-        active: true
+        active: false
     UnconditionalJumpStatementInLoop:
         active: false
     UnnecessaryNotNullOperator:
@@ -497,15 +497,15 @@ potential-bugs:
     UnnecessarySafeCall:
         active: false
     UnreachableCode:
-        active: true
+        active: false
     UnsafeCallOnNullableType:
-        active: true
+        active: false
     UnsafeCast:
         active: false
     UselessPostfixExpression:
         active: false
     WrongEqualsTypeParameter:
-        active: true
+        active: false
 
 style:
     active: true
