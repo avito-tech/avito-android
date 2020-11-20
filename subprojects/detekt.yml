@@ -144,39 +144,40 @@ coroutines:
         active: false
 
 empty-blocks:
-    active: false
+    active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptycatchblock
     EmptyCatchBlock:
         active: true
         allowedExceptionNameRegex: '_|(ignore|expected).*'
     EmptyClassBlock:
-        active: true
+        active: false
     EmptyDefaultConstructor:
-        active: true
+        active: false
     EmptyDoWhileBlock:
-        active: true
+        active: false
     EmptyElseBlock:
-        active: true
+        active: false
     EmptyFinallyBlock:
-        active: true
+        active: false
     EmptyForBlock:
-        active: true
+        active: false
     EmptyFunctionBlock:
-        active: true
+        active: false
         ignoreOverridden: false
     EmptyIfBlock:
-        active: true
+        active: false
     EmptyInitBlock:
-        active: true
+        active: false
     EmptyKtFile:
-        active: true
+        active: false
     EmptySecondaryConstructor:
-        active: true
+        active: false
     EmptyTryBlock:
-        active: true
+        active: false
     EmptyWhenBlock:
-        active: true
+        active: false
     EmptyWhileBlock:
-        active: true
+        active: false
 
 exceptions:
     active: false
