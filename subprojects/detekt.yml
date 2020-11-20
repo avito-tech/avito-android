@@ -241,6 +241,7 @@ formatting:
         active: true
     ArgumentListWrapping:
         active: true
+    # questionable rule; && and || goes to the end of line, instead of beginning a new line as we do right now
     ChainWrapping:
         active: false
     CommentSpacing:
