@@ -184,8 +184,9 @@ empty-blocks:
     # https://detekt.github.io/detekt/empty-blocks.html#emptysecondaryconstructor
     EmptySecondaryConstructor:
         active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptytryblock
     EmptyTryBlock:
-        active: false
+        active: true
     EmptyWhenBlock:
         active: false
     EmptyWhileBlock:
