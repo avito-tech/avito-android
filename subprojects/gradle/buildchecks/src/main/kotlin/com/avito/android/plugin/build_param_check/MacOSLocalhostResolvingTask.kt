@@ -77,6 +77,5 @@ abstract class MacOSLocalhostResolvingTask @Inject constructor(
         }
 
         private fun resolveLocalhost() = InetAddress.getLocalHost().hostName
-
     }
 }

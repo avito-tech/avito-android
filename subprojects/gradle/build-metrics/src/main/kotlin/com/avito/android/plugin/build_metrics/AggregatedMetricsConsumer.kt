@@ -183,7 +183,6 @@ internal class AggregatedMetricsConsumer(
                 "outcome:${state.outcome}"
         )
     }
-
 }
 
 private const val considerableTimeMs = 100

@@ -55,5 +55,4 @@ class CollectTeamcityMetricsActionTest {
     }
 
     private val buildId = "BUILD_ID"
-
 }

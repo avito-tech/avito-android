@@ -131,5 +131,4 @@ class ReportViewerWebsocketReporter(private val reportProvider: ReportProvider) 
         class RpcRequest(val id: String, val method: String, override val prettyJson: String) : OutgoingMessage()
         class Unknown(override val prettyJson: String) : OutgoingMessage()
     }
-
 }

@@ -16,5 +16,4 @@ abstract class AbstractMatcherTest {
     fun `test copes with unknown types`() {
         createMatcher().matches(UnknownType())
     }
-
 }

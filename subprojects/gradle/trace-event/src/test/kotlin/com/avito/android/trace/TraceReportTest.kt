@@ -67,5 +67,4 @@ class TraceReportTest {
 
         assertThat(deserialized).isEqualTo(report)
     }
-
 }

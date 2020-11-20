@@ -23,7 +23,6 @@ class NestedStepsTest {
         val error = assertThrows(StepException::class.java) {
             step("Outer step", report, false) {
                 step("Inner step", report, false) {
-
                 }
             }
         }
@@ -38,7 +37,6 @@ class NestedStepsTest {
         val error = assertThrows(StepException::class.java) {
             step("Outer step", report, false) {
                 precondition("precondition", report, false) {
-
                 }
             }
         }

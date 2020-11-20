@@ -140,5 +140,4 @@ data class TestRunResult(
     fun failureCount(): Int = failed.count()
 
     fun notReportedCount(): Int = notReported.lostTests.size
-
 }

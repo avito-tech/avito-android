@@ -21,5 +21,4 @@ enum class ChangeType(val code: Char) {
                 ?: Try.Failure(IllegalArgumentException("Cannot parse diff type with code $code"))
         }
     }
-
 }

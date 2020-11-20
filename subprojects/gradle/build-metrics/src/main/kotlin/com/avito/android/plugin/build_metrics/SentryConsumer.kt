@@ -64,7 +64,6 @@ internal class SentryConsumer(
         }
         sentry.get().sendException(error)
     }
-
 }
 
 private class DefaultSendCallback(
@@ -87,7 +86,6 @@ private class DefaultSendCallback(
             ": " + exception.cause?.message
         log.warn("$logTag Can't send error: $cause. \nCheck your connection.")
     }
-
 }
 
 private const val logTag = "[sentry]"

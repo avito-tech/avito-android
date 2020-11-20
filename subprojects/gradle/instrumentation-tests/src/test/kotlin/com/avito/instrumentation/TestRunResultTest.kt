@@ -89,5 +89,4 @@ internal class TestRunResultTest {
 }""".trimIndent()
             )
     }
-
 }

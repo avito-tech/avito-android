@@ -101,7 +101,6 @@ class KubernetesReservationClient(
                     }
                 }
             }
-
         }
         return ReservationClient.ClaimResult(
             deviceCoordinates = serialsChannel

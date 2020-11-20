@@ -54,6 +54,5 @@ class GitLocalStateImpl(repoDir: File, targetBranch: String?) : GitLocalState {
             val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
             return GitLocalStateImpl(project.rootProject.rootDir, targetBranch)
         }
-
     }
 }

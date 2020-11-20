@@ -94,7 +94,6 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                         .build()
 
                     methodsClient.chatUpdate(request).toTry()
-
                 }.map {
                     SlackMessage(
                         workspace = workspace,

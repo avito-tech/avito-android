@@ -72,5 +72,4 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
     }
 
     override fun hashCode(): Int = project.hashCode()
-
 }

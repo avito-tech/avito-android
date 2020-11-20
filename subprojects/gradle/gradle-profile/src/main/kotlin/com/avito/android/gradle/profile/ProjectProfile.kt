@@ -43,5 +43,4 @@ class ProjectProfile(
 
     override val description: String
         get() = path
-
 }

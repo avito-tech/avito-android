@@ -169,5 +169,4 @@ class BuildMetricsPluginTest {
             dryRun = dryRun
         )
     }
-
 }

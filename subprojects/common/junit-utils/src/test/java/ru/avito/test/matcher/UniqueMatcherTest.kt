@@ -34,6 +34,5 @@ class UniqueMatcherTest {
         }
 
         assertThat(error.message, containsString("contains duplicated item: <1>"))
-
     }
 }

@@ -35,5 +35,4 @@ interface ProguardRetracer {
             return resultWriter.toString()
         }
     }
-
 }

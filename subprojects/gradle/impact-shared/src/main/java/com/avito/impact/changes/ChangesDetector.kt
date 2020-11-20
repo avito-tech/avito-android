@@ -12,7 +12,6 @@ interface ChangesDetector {
      * @return list of changed files; could fail on git problems
      */
     fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File> = emptyList()): Try<List<ChangedFile>>
-
 }
 
 class ChangesDetectorStub(private val reason: String) : ChangesDetector {

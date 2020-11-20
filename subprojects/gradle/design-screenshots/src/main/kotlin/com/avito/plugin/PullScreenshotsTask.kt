@@ -50,7 +50,6 @@ open class PullScreenshotsTask : DefaultTask() {
         }.onFailure {
             ciLogger.info("Cannot list screenshot directory")
         }
-
     }
 
     private fun clearOutputFiles() {

@@ -17,5 +17,4 @@ object SlackStringFormat {
     fun link(label: String, url: String): String = "<$url|$label>"
 
     fun link(label: String, url: HttpUrl): String = "<$url|$label>"
-
 }

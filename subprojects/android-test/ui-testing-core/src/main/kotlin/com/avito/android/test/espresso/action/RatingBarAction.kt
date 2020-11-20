@@ -18,5 +18,4 @@ class RatingBarAction(private val rating: Float) : ViewAction {
         ratingBar.rating = rating
         uiController.loopMainThreadUntilIdle()
     }
-
 }

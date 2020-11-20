@@ -35,5 +35,4 @@ open class BuildTracePlugin : Plugin<Project> {
             || (project.gradle.startParameter.isProfile)
             || (project.getBooleanProperty("android.enableProfileJson", default = false))
     }
-
 }

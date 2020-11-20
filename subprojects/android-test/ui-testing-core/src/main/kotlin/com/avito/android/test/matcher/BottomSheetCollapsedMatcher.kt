@@ -14,5 +14,4 @@ class BottomSheetCollapsedMatcher : BoundedMatcher<View, View>(View::class.java)
 
     override fun matchesSafely(view: View): Boolean =
         BottomSheetBehavior.from(view).state == STATE_COLLAPSED
-
 }

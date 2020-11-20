@@ -63,5 +63,4 @@ error: cannot connect to daemon"""
         }
         assertThat(error).hasMessageThat().contains("cannot connect to daemon")
     }
-
 }

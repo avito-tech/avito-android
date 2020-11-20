@@ -48,7 +48,6 @@ interface EnvArgs {
             override val number: String,
             override val type: String
         ) : Build()
-
     }
 
     val build: Build
@@ -75,6 +74,5 @@ interface EnvArgs {
                 else -> throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
             }
         }
-
     }
 }

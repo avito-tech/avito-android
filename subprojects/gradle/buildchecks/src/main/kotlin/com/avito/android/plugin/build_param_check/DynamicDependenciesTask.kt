@@ -39,7 +39,6 @@ abstract class DynamicDependenciesTask : DefaultTask() {
             ).toString()
         }
     }
-
 }
 
 /**

@@ -65,7 +65,6 @@ internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) 
                 if (rareFailuresCount > 0) {
                     appendln("И еще *$rareFailuresCount* более редких падений из-за различных причин.")
                 }
-
             }.toString()
         }
     }

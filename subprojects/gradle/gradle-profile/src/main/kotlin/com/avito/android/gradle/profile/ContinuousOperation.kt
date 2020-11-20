@@ -23,5 +23,4 @@ open class ContinuousOperation(override val description: String) : Operation() {
         this.finish = finish
         return this
     }
-
 }

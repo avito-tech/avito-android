@@ -63,7 +63,6 @@ internal class BuildTraceConsumer(
         threadId = unknownThreadId,
         eventName = "execution end"
     )
-
 }
 
 internal const val unknownProcessId = "_"

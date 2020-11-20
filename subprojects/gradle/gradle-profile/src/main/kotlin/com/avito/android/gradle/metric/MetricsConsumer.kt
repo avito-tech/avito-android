@@ -10,7 +10,6 @@ interface MetricsConsumer : com.avito.android.gradle.profile.TaskExecutionListen
     fun onOutput(output: CharSequence)
 
     fun buildFinished(buildResult: BuildResult, profile: BuildProfile)
-
 }
 
 abstract class AbstractMetricsConsumer : MetricsConsumer {

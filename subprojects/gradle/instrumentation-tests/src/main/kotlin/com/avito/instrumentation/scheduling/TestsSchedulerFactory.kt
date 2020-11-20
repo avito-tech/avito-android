@@ -110,6 +110,5 @@ interface TestsSchedulerFactory {
                 registry = params.registry
             )
         }
-
     }
 }

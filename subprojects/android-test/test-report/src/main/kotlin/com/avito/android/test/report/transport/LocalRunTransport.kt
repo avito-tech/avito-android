@@ -85,7 +85,6 @@ class LocalRunTransport(
             if (reportCoordinates.runId.contains("local", ignoreCase = true)) {
                 // todo find a way to display info in user context, it's a secret knowledge about logcat line
             }
-
         } catch (e: Exception) {
             logger.warn("Report send failed", e)
         }

@@ -74,5 +74,4 @@ class DeviceSettingsChecker(private val context: Context) {
             null
         }
     }
-
 }

@@ -38,7 +38,6 @@ abstract class PageObject {
         val constructor = T::class.java.getConstructor(InteractionContext::class.java)
         return constructor.newInstance(this.interactionContext)
     }
-
 }
 
 /**

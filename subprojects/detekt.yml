@@ -273,7 +273,7 @@ formatting:
     MultiLineIfElse:
         active: true
     NoBlankLineBeforeRbrace:
-        active: false
+        active: true
     # https://ktlint.github.io/#rule-blank
     NoConsecutiveBlankLines:
         active: true

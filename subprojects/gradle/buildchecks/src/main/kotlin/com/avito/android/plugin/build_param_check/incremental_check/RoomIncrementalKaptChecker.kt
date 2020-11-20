@@ -71,7 +71,6 @@ internal class RoomIncrementalKaptChecker(
         }
         return method.invoke(processor) as Boolean
     }
-
 }
 
 private const val ISOLATING_ANNOTATION_PROCESSORS_INDICATOR = "org.gradle.annotation.processing.isolating"

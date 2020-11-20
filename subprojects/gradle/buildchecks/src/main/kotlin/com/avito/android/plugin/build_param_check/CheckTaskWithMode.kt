@@ -8,5 +8,4 @@ internal abstract class CheckTaskWithMode : DefaultTask() {
 
     @get:Input
     abstract val mode: Property<CheckMode>
-
 }

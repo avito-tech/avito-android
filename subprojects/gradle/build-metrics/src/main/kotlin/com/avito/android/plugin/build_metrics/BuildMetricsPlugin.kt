@@ -40,5 +40,4 @@ open class BuildMetricsPlugin : Plugin<Project> {
         val graphiteClient = BuildMetricTracker(project.environmentInfo(), project.statsd)
         return AggregatedMetricsConsumer(project, graphiteClient)
     }
-
 }

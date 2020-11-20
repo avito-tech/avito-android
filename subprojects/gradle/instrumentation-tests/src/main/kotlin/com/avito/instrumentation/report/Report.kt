@@ -139,7 +139,6 @@ interface Report : ReadReport {
                     )
                 }
             }
-
         }
     }
 

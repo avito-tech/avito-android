@@ -47,7 +47,6 @@ fun assertUnknownTypeSafe(matcher: Matcher<*>) {
     } catch (e: Exception) {
         Assert.fail("Matcher was not unknown type safe, because: " + e)
     }
-
 }
 
 private fun <T> mismatchDescription(matcher: Matcher<in T>, arg: T): String {
