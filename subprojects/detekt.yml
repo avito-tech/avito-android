@@ -321,7 +321,7 @@ formatting:
     SpacingAroundParens:
         active: true
     SpacingAroundRangeOperator:
-        active: false
+        active: true
     SpacingBetweenDeclarationsWithAnnotations:
         active: false
     SpacingBetweenDeclarationsWithComments:
