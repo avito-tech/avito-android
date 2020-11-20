@@ -641,8 +641,9 @@ style:
     # https://detekt.github.io/detekt/style.html#maybeconst
     MayBeConst:
         active: true
+    # https://detekt.github.io/detekt/style.html#modifierorder
     ModifierOrder:
-        active: false
+        active: true
     NestedClassesVisibility:
         active: false
     NewLineAtEndOfFile:
