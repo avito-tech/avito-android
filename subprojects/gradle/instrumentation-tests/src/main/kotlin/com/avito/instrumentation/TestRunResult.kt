@@ -1,10 +1,10 @@
 package com.avito.instrumentation
 
+import com.avito.composite_exception.composeWith
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
-import com.avito.composite_exception.composeWith
 
 data class TestRunResult(
     val reportedTests: List<SimpleRunTest>,

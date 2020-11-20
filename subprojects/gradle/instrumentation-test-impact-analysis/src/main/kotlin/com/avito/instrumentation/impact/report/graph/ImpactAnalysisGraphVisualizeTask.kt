@@ -1,9 +1,9 @@
 package com.avito.instrumentation.impact.report.graph
 
-import com.avito.instrumentation.impact.report.graph.html.cytoscapeGraphHtml
 import com.avito.instrumentation.impact.report.graph.html.CytoscapeEdgeData
 import com.avito.instrumentation.impact.report.graph.html.CytoscapeNode
 import com.avito.instrumentation.impact.report.graph.html.CytoscapeNodeData
+import com.avito.instrumentation.impact.report.graph.html.cytoscapeGraphHtml
 import com.avito.instrumentation.impact.report.model.ModuleNode
 import com.avito.utils.createOrClear
 import com.google.gson.Gson

@@ -1,7 +1,6 @@
 package com.avito.android.gradle.profile
 
 import org.gradle.util.CollectionUtils
-
 import java.util.HashMap
 
 class ProjectProfile(
@@ -9,6 +8,7 @@ class ProjectProfile(
 ) : Operation() {
 
     private val tasks = HashMap<String, TaskExecution>()
+
     /**
      * Returns the configuration time of this project.
      */

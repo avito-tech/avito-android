@@ -1,12 +1,12 @@
 package com.avito.ci.steps
 
-import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.git
 import com.avito.test.gradle.kotlinClass
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse

@@ -1,10 +1,10 @@
 package com.avito.android.test.espresso.action
 
+import android.view.View
+import androidx.appcompat.widget.AppCompatRatingBar
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.appcompat.widget.AppCompatRatingBar
-import android.view.View
 import org.hamcrest.Matcher
 
 class RatingBarAction(private val rating: Float) : ViewAction {

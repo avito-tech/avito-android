@@ -19,7 +19,6 @@ package org.gradle.kotlin.dsl
 import org.gradle.api.Incubating
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.plugins.ExtensionContainer
-
 import kotlin.reflect.KProperty
 
 /**

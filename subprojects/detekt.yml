@@ -246,8 +246,10 @@ formatting:
         active: false
     CommentSpacing:
         active: true
+    # duplicate of naming:EnumNaming
     EnumEntryNameCase:
         active: false
+    # todo what is it?
     Filename:
         active: false
     # https://detekt.github.io/detekt/formatting.html#finalnewline
@@ -255,7 +257,7 @@ formatting:
         active: true
         insertFinalNewLine: false
     ImportOrdering:
-        active: false
+        active: true
         layout: 'idea'
     # blocked by bugs: https://github.com/pinterest/ktlint/issues?q=is%3Aissue+is%3Aopen+Indentation
     Indentation:

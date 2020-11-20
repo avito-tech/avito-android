@@ -1,11 +1,11 @@
 package com.avito.bitbucket
 
-import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
 import com.avito.test.gradle.getCommitHash
 import com.avito.test.gradle.git
+import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory

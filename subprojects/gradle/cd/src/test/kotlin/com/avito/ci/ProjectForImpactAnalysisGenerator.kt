@@ -1,8 +1,8 @@
 package com.avito.ci
 
+import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
-import com.avito.test.gradle.TestProjectGenerator
 import java.io.File
 
 internal fun generateProjectWithImpactAnalysis(rootDir: File) {
