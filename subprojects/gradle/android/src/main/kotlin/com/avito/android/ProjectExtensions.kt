@@ -1,7 +1,6 @@
 package com.avito.android
 
 import com.android.build.api.component.ComponentIdentity
-import com.android.build.api.dsl.AndroidSourceSet
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin

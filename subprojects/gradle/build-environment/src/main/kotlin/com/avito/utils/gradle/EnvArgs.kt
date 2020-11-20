@@ -4,7 +4,6 @@ package com.avito.utils.gradle
 
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
-import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty

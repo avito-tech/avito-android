@@ -1,6 +1,5 @@
 package com.avito.instrumentation.configuration
 
-import com.avito.report.model.Team
 import com.google.common.annotations.VisibleForTesting
 import groovy.lang.Closure
 import org.gradle.api.Action

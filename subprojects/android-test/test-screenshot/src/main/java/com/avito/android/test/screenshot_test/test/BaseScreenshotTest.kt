@@ -3,7 +3,6 @@ package com.avito.android.test.screenshot_test.test
 import android.Manifest
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup

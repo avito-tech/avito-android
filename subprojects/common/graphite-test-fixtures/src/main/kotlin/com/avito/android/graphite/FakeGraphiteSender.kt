@@ -1,8 +1,6 @@
 package com.avito.android.graphite
 
-import com.avito.android.graphite.GraphiteSender
-
-class FakeGraphiteSender: GraphiteSender {
+class FakeGraphiteSender : GraphiteSender {
 
     val metrics = mutableListOf<GraphiteMetric>()
 

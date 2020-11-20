@@ -6,7 +6,6 @@ import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers
 import com.avito.android.test.InteractionContext
-import com.avito.android.test.SimpleInteractionContext
 import com.avito.android.test.action.ActionsDriver
 import org.hamcrest.Matcher
 

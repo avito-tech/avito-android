@@ -3,11 +3,9 @@ package com.avito.report.internal
 import com.avito.report.internal.model.RfcRpcRequest
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 internal class JsonRpcRequestProvider(

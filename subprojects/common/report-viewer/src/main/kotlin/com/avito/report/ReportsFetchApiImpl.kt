@@ -9,7 +9,6 @@ import com.avito.report.internal.model.ListResult
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.internal.model.Run
-import com.avito.report.internal.model.RunTest
 import com.avito.report.internal.model.TestStatus
 import com.avito.report.model.CrossDeviceRunTest
 import com.avito.report.model.CrossDeviceStatus

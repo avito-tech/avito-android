@@ -8,7 +8,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.util.HumanReadables
 import com.avito.android.test.InteractionContext
-import com.avito.android.test.SimpleInteractionContext
 import com.avito.android.test.action.ActionsDriver
 import com.avito.android.test.checks.Checks
 import com.avito.android.test.checks.ChecksDriver

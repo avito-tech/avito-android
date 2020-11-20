@@ -309,8 +309,9 @@ formatting:
     NoUnitReturn:
         active: false
         autoCorrect: false
+    # https://detekt.github.io/detekt/formatting.html#nounusedimports
     NoUnusedImports:
-        active: false
+        active: true
         autoCorrect: false
     NoWildcardImports:
         active: false
