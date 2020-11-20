@@ -625,8 +625,9 @@ style:
         ignoreNamedArgument: true
         ignoreEnums: true
         ignoreRanges: false
+    # https://detekt.github.io/detekt/style.html#mandatorybracesifstatements
     MandatoryBracesIfStatements:
-        active: false
+        active: true
     MandatoryBracesLoops:
         active: false
     MaxLineLength:

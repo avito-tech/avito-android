@@ -40,13 +40,17 @@ android {
     compileSdkVersion $sdkVersion
     buildToolsVersion "$buildToolsVersion"
     ${
-                        if (enableKotlinAndroidPlugin) """
-    sourceSets {
-        main {
-            java.srcDir("src/main/kotlin")
-        }
-    }
-    """.trimIndent() else ""
+                        if (enableKotlinAndroidPlugin) {
+                            """
+                            sourceSets {
+                                main {
+                                    java.srcDir("src/main/kotlin")
+                                }
+                            }
+                            """.trimIndent()
+                        } else {
+                            ""
+                        }
                     }
 }
 

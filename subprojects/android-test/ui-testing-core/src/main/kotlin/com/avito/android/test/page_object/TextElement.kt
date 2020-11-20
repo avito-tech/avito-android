@@ -106,8 +106,11 @@ private fun getTextCenterProvider(textView: TextView, start: Int, end: Int): Coo
     val endLine = layout.getLineForOffset(end)
     val lines = endLine - startLine + 1
 
-    val textWidth = if (lines == 1) maxOf(endOffset - startOffset, 0f)
-    else layout.getLineRight(startLine) - startOffset
+    val textWidth = if (lines == 1) {
+        maxOf(endOffset - startOffset, 0f)
+    } else {
+        layout.getLineRight(startLine) - startOffset
+    }
 
     val lineHeight = layout.getLineBottom(startLine) - layout.getLineTop(startLine)
 
