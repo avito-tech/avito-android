@@ -571,6 +571,8 @@ style:
         active: false
         values: [ 'TODO:', 'FIXME:', 'STOPSHIP:' ]
         allowedPatterns: ''
+    # https://detekt.github.io/detekt/style.html#forbiddenimport
+    # todo maybe use it to ban junit 4 in test code
     ForbiddenImport:
         active: false
         imports: [ ]
