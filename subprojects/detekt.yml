@@ -325,7 +325,7 @@ formatting:
     SpacingBetweenDeclarationsWithAnnotations:
         active: true
     SpacingBetweenDeclarationsWithComments:
-        active: false
+        active: true
 
     StringTemplate:
         active: false

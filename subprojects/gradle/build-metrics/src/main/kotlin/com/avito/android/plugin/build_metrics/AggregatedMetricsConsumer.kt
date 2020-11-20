@@ -187,6 +187,7 @@ internal class AggregatedMetricsConsumer(
 }
 
 private const val considerableTimeMs = 100
+
 /**
  * Добавляются неявно к каждой сборке, зашумляют метрики.
  */
