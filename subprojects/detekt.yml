@@ -305,6 +305,7 @@ formatting:
     # https://detekt.github.io/detekt/formatting.html#nowildcardimports
     NoWildcardImports:
         active: true
+    # duplicate of naming:PackageNaming rule
     PackageName:
         active: false
     ParameterListWrapping:
