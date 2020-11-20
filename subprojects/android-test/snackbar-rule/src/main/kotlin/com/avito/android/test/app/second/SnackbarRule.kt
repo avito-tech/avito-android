@@ -20,7 +20,7 @@ interface SnackbarAsserts {
     fun assertIsShownLastWith(text: Matcher<String>)
 }
 
-class SnackbarRule() : SimpleRule(), SnackbarAsserts {
+class SnackbarRule : SimpleRule(), SnackbarAsserts {
 
     private val proxy = Proxy()
 

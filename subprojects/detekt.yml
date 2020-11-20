@@ -152,8 +152,9 @@ empty-blocks:
     # https://detekt.github.io/detekt/empty-blocks.html#emptyclassblock
     EmptyClassBlock:
         active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptydefaultconstructor
     EmptyDefaultConstructor:
-        active: false
+        active: true
     EmptyDoWhileBlock:
         active: false
     EmptyElseBlock:
