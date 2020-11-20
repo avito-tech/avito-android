@@ -651,8 +651,9 @@ style:
     # https://detekt.github.io/detekt/style.html#newlineatendoffile
     NewLineAtEndOfFile:
         active: true
+    # https://detekt.github.io/detekt/style.html#notabs
     NoTabs:
-        active: false
+        active: true
     OptionalAbstractKeyword:
         active: false
     OptionalUnit:
