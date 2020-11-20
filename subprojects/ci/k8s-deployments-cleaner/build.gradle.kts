@@ -9,7 +9,7 @@ dependencies {
 }
 
 // todo add if ci
-//if(project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
+// if(project.buildEnvironment is com.avito.utils.gradle.BuildEnvironment.CI) {
 if (project.getOptionalStringProperty("ci", "false").toBoolean()) {
     tasks.register("clearByNamespaces", JavaExec::class.java) {
         main = "com.avito.ci.ClearK8SDeploymentsMain"

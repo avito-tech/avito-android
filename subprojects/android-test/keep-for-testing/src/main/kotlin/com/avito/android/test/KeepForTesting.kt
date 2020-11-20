@@ -1,6 +1,6 @@
 package com.avito.android.test
 
-//see TestMinimized.md
+// see TestMinimized.md
 
 /**
  * An analog of [androidx.annotation.Keep]

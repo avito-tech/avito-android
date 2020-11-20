@@ -71,7 +71,7 @@ repositories {
             jcenter()
         }
         filter {
-            //all for detekt
+            // all for detekt
             includeGroup("io.gitlab.arturbosch.detekt")
             includeGroupByRegex("org.jetbrains.*")
             includeModule("com.beust", "jcommander")
@@ -191,7 +191,7 @@ subprojects {
         extensions.getByType<PublishingExtension>().run {
 
             publications {
-                //todo should not depend on ordering
+                // todo should not depend on ordering
                 if (plugins.hasPlugin("kotlin")) {
                     val publicationName = "maven"
 
@@ -251,7 +251,7 @@ subprojects {
         configureJunit5Tests()
     }
 
-    //todo more precise configuration for gradle plugins, no need for gradle testing in common kotlin modules
+    // todo more precise configuration for gradle plugins, no need for gradle testing in common kotlin modules
     plugins.withId("kotlin") {
 
         configureJunit5Tests()
@@ -309,7 +309,7 @@ subprojects {
 }
 
 tasks.withType<Wrapper> {
-    //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
+    // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = "6.7"
 }
@@ -331,7 +331,7 @@ fun Project.getOptionalExtra(key: String): String? {
 fun Project.configureBintray(vararg publications: String) {
     extensions.findByType<BintrayExtension>()?.run {
 
-        //todo fail fast with meaningful error message
+        // todo fail fast with meaningful error message
         user = getOptionalExtra("avito.bintray.user")
         key = getOptionalExtra("avito.bintray.key")
 

@@ -46,8 +46,8 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         startTime = null,
                         endTime = null,
                         dataSetData = null,
-                        preconditionList = emptyList(), //todo в теории можем достать проанализировав код теста,
-                        stepList = emptyList() //todo в теории можем достать проанализировав код теста
+                        preconditionList = emptyList(), // todo в теории можем достать проанализировав код теста,
+                        stepList = emptyList() // todo в теории можем достать проанализировав код теста
                     )
                     is AndroidTest.Lost -> createAddFullRequest(
                         reportCoordinates = reportCoordinates,
@@ -61,14 +61,14 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         startTime = test.startTime,
                         endTime = test.lastSignalTime,
                         dataSetData = null,
-                        preconditionList = emptyList(), //todo в теории можем достать проанализировав код теста,
-                        stepList = emptyList() //todo в теории можем достать проанализировав код теста
+                        preconditionList = emptyList(), // todo в теории можем достать проанализировав код теста,
+                        stepList = emptyList() // todo в теории можем достать проанализировав код теста
                     )
                     is AndroidTest.Completed -> createAddFullRequest(
                         reportCoordinates = reportCoordinates,
                         buildId = buildId,
                         test = test,
-                        status = null, //определяется на бэке для success/fail по наличию incident, отправляем остальные статусы самостоятельно
+                        status = null, // определяется на бэке для success/fail по наличию incident, отправляем остальные статусы самостоятельно
                         stdout = test.stdout,
                         stderr = test.stderr,
                         incident = test.incident,
@@ -94,7 +94,7 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
         return addTests(reportCoordinates, buildId, listOf(test)).map { it.first() }
     }
 
-    //todo use only AndroidTest
+    // todo use only AndroidTest
     private fun createAddFullRequest(
         reportCoordinates: ReportCoordinates,
         buildId: String?,
@@ -150,7 +150,7 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
             if (test.testCaseId == null) {
                 report["grouping_key"] = test.name.className
             }
-            //Для консистентности можно также посылать здесь testCaseId, но бэкенд умеет обрабатывать это
+            // Для консистентности можно также посылать здесь testCaseId, но бэкенд умеет обрабатывать это
         }
 
         require(!(test.dataSetNumber == null && !dataSetData.isNullOrEmpty())) { "DataSet data without DataSetNumber doesn't make sense!" }
@@ -208,10 +208,10 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
             "run_id" to reportCoordinates.runId,
             "environment" to test.device.name,
             "report" to report,
-            //тут происходит магия "с помощью оператора добавляется в массив новое значение билда"
-            //todo узнать у Жени как можно это лучше сделать
+            // тут происходит магия "с помощью оператора добавляется в массив новое значение билда"
+            // todo узнать у Жени как можно это лучше сделать
             "report_data" to reportData,
-            //todo onlyIf present
+            // todo onlyIf present
             "console" to mapOf(
                 "stdout" to stdout,
                 "stderr" to stderr

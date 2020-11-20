@@ -127,7 +127,7 @@ interface TeamcityApi {
 
             when (branchSpec) {
                 BranchSpec.DefaultBranch -> {
-                    //do nothing
+                    // do nothing
                 }
                 BranchSpec.AllBranches -> buildLocator.withAllBranches()
                 is BranchSpec.SpecificBranch -> buildLocator.withBranch(branchSpec.branchName)

@@ -63,7 +63,7 @@ class ReservationDeploymentFactory(
         count: Int,
         phone: Device.Phone,
         deploymentName: String,
-        kubernetesNodeName: String = "avi-training06" //temporary node, remove later
+        kubernetesNodeName: String = "avi-training06" // temporary node, remove later
     ): Deployment {
         return deviceDeployment(
             deploymentMatchLabels = deviceMatchLabels(phone),

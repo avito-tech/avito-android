@@ -66,9 +66,9 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
                 )
             ).execute()
 
-            //todo prosector service not so stable now, should not fail build
-            //require(result.isSuccessful) { "${result.message()} ${result.errorBody()?.string()}" }
-            //require(result.body()?.result == "ok") { "Service should return {result:ok} normally" }
+            // todo prosector service not so stable now, should not fail build
+            //  require(result.isSuccessful) { "${result.message()} ${result.errorBody()?.string()}" }
+            //  require(result.body()?.result == "ok") { "Service should return {result:ok} normally" }
 
             ciLogger.info(
                 "isSuccessful = ${result.isSuccessful}; body = ${result.body()?.result}; errorBody = ${

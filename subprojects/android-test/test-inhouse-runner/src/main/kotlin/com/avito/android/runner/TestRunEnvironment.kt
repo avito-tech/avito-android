@@ -131,7 +131,7 @@ fun provideEnvironment(
                 buildCommit = argumentsProvider.getMandatoryArgument("buildCommit"),
                 testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY) as TestMetadata,
                 networkType = argumentsProvider.getMandatorySerializableArgument(NETWORKING_TYPE_KEY) as NetworkingType,
-                //todo url'ы не обязательные параметры
+                // todo url'ы не обязательные параметры
                 apiUrl = provideApiUrl(
                     argumentsProvider = argumentsProvider,
                     apiUrlParameterKey = apiUrlParameterKey

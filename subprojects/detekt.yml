@@ -242,7 +242,7 @@ formatting:
     ChainWrapping:
         active: false
     CommentSpacing:
-        active: false
+        active: true
     EnumEntryNameCase:
         active: false
     Filename:

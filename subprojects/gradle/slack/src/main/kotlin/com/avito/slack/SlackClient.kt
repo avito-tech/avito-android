@@ -1,5 +1,5 @@
 @file:Suppress("DEPRECATION")
-//todo use new slack api
+// todo use new slack api
 
 package com.avito.slack
 

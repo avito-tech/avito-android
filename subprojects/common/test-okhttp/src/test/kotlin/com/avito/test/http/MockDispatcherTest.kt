@@ -14,7 +14,7 @@ import java.nio.charset.Charset
 
 internal class MockDispatcherTest {
 
-    //todo create TestLogger for it
+    // todo create TestLogger for it
     private val devNull = PrintStream(object : OutputStream() {
         override fun write(b: Int) {
         }

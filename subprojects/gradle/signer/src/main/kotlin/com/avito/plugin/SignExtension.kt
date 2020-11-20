@@ -8,7 +8,7 @@ open class SignExtension {
 
     internal val bundleSignTokens = mutableMapOf<String, String?>()
 
-    //todo rename to url
+    // todo rename to url
     var host: String? = null
 
     fun apk(variant: BuildType, token: String?) {

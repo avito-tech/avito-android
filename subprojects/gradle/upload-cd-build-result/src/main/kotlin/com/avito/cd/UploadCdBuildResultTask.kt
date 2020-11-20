@@ -15,7 +15,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
 
-//TODO internal?
+// TODO internal?
 
 const val uploadCdBuildResultTaskName = "uploadCdBuildResult"
 

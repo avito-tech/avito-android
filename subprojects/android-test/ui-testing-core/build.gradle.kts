@@ -18,7 +18,7 @@ dependencies {
     api(Dependencies.recyclerView)
     api(Dependencies.material)
 
-    //todo implementation, waitForAssertion used in app
+    // todo implementation, waitForAssertion used in app
     api(project(":common:waiter"))
 
     implementation(Dependencies.Test.hamcrestLib)

@@ -2,7 +2,7 @@ package com.avito.runner.service.model.intention
 
 data class State(
     val layers: List<Layer>,
-    val digest: String = layers.hashCode().toString() //layers order matter
+    val digest: String = layers.hashCode().toString() // layers order matter
 ) {
 
     sealed class Layer {

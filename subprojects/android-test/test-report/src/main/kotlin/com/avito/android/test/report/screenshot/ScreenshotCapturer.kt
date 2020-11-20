@@ -45,7 +45,7 @@ interface ScreenshotCapturer {
     ) : ScreenshotCapturer {
 
         override fun captureBitmap(): Try<Option<Bitmap>> {
-            //todo use di: pass activity getter as constructor argument
+            // todo use di: pass activity getter as constructor argument
             val activity = getCurrentActivityOrNull()
             return if (activity != null) {
                 Try {

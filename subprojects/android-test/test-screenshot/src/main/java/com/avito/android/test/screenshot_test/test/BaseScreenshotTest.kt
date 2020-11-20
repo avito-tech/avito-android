@@ -153,7 +153,7 @@ abstract class BaseScreenshotTest<T : View>(
     }
 
     private fun compareScreens() {
-        //the only purpose of this line is to freeze work if countingIdlingResource requires
+        // the only purpose of this line is to freeze work if countingIdlingResource requires
         Espresso.onIdle()
         val context = InstrumentationRegistry.getInstrumentation().context
         screenshotNames.forEach { screenshotName ->

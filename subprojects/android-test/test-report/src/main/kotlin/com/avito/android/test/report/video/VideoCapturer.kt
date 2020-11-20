@@ -218,7 +218,7 @@ class VideoCapturerImpl(
         try {
             outputDescriptor.close()
         } catch (ignore: IOException) {
-            //ignore
+            // ignore
         }
     }
 

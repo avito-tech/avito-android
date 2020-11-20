@@ -41,7 +41,7 @@ internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) 
 
                 appendln("*Автотесты*: ${testData.automatedCount}")
 
-                //todo адекватная разбивка по flaky
+                // todo адекватная разбивка по flaky
                 appendln(":green_heart: *Зеленые тесты*: ${testData.success} (${testData.percentSuccessOfAutomated}%)")
                 appendln(":warning: *Тесты упали только на некоторых девайсах*: ${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated}%)")
                 appendln(":red_circle: *Тесты упали на всех девайсах*: ${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated}%)")

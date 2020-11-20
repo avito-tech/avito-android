@@ -159,8 +159,8 @@ interface Report : ReadReport {
 
     fun getCrossDeviceTestData(): Try<CrossDeviceSuite>
 
-    //todo новый инстанс на каждый reportCoordinates, сейчас уже неверно шарится между rerun report и основным
-    //todo перенести логику с батчами в reportsApi
+    // todo новый инстанс на каждый reportCoordinates, сейчас уже неверно шарится между rerun report и основным
+    // todo перенести логику с батчами в reportsApi
     class Impl(
         private val reportsApi: ReportsApi,
         private val logger: CILogger,
@@ -178,7 +178,7 @@ interface Report : ReadReport {
             }
         }
 
-        //todo закешировать после разделения инстансов
+        // todo закешировать после разделения инстансов
         override fun tryGetId(): String? {
             return when (val result = reportsApi.getReport(reportCoordinates)) {
                 is GetReportResult.Found -> result.report.id

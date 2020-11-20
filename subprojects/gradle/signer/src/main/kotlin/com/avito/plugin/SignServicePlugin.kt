@@ -65,14 +65,14 @@ class SignServicePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val signExtension = target.extensions.create<SignExtension>("signService")
 
-        //todo rename to `avito.signer.disable`
+        // todo rename to `avito.signer.disable`
         if (target.getBooleanProperty("disableSignService")) {
             return
         }
 
-        //todo explain why do we have multiple options to skip signing
-        // disableSignService (avito.signer.disable) + avito.signer.allowSkip
-        // Is it feasible to have only one?
+        // todo explain why do we have multiple options to skip signing
+        //  disableSignService (avito.signer.disable) + avito.signer.allowSkip
+        //  Is it feasible to have only one?
         val skipSigning: Boolean = target.getBooleanProperty("avito.signer.allowSkip")
 
         target.afterEvaluate {

@@ -19,7 +19,7 @@ internal fun preInstrumentationTaskName(configuration: String): String =
 
 internal const val preInstrumentationTaskName: String = "preInstrumentation"
 
-//todo доступен только afterEvaluate и то ненадежно MBS-6926
+// todo доступен только afterEvaluate и то ненадежно MBS-6926
 fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
     typedNamed(instrumentationTaskName(configuration))
 

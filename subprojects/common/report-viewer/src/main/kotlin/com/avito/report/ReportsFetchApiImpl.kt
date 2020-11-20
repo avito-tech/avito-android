@@ -201,7 +201,7 @@ internal class ReportsFetchApiImpl(
                 } else {
                     val verdict = reportModel.preparedData?.lastOrNull()?.verdict
                     if (verdict.isNullOrBlank()) {
-                        //todo fallback
+                        // todo fallback
                         logger.debug("Can't get verdict for test: $reportModel")
                         Status.Failure(
                             "Can't get verdict",
@@ -214,7 +214,7 @@ internal class ReportsFetchApiImpl(
             }
             TestStatus.OTHER, TestStatus.PANIC, TestStatus.LOST, null -> Status.Lost
             TestStatus.MANUAL -> Status.Manual
-            TestStatus.SKIP -> Status.Skipped("test ignored") //todo нужен более подробный reason
+            TestStatus.SKIP -> Status.Skipped("test ignored") // todo нужен более подробный reason
         }
     }
 

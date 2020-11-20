@@ -52,7 +52,7 @@ inline fun <T : DataSet> dataSet(
 ) {
     report.updateTestCase {
         dataSet = value
-        //todo почему -1 это вообще валидное значение? попробовать использовать unsigned тип данных
+        // todo почему -1 это вообще валидное значение? попробовать использовать unsigned тип данных
         require(testMetadata.dataSetNumber != null && testMetadata.dataSetNumber != -1) {
             "Please specify @DataSetNumber(Int) for test ${testMetadata.className}.${testMetadata.methodName}"
         }

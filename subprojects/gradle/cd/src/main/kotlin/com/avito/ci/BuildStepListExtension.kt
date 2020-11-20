@@ -78,7 +78,7 @@ open class BuildStepListExtension(
         }
     }
 
-    //todo property
+    // todo property
     var useImpactAnalysis: Boolean = true
 
     val taskDescription = objects.property<String>()

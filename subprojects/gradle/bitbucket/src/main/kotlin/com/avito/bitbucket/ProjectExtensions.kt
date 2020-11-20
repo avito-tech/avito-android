@@ -56,7 +56,7 @@ val Project.bitbucketConfig: Provider<BitbucketConfig>
         }
     }
 
-//todo добавить префиксы avito.
+// todo добавить префиксы avito.
 private fun atlassianCredentials(project: Project): AtlassianCredentials = AtlassianCredentials(
     project.getMandatoryStringProperty("atlassianUser"),
     project.getMandatoryStringProperty("atlassianPassword")

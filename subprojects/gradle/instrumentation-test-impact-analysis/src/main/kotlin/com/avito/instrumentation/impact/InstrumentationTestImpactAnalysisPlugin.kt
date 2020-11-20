@@ -59,7 +59,7 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
     }
 
     private fun checkPreconditions(project: Project) {
-        //todo should work with library tests as well
+        // todo should work with library tests as well
         require(project.isAndroidApp()) { "$PLUGIN_NAME must be applied only in Android Application module type" }
 
         require(!project.isRoot()) { "$PLUGIN_NAME should be applied to the specific project, which produces test apk" }

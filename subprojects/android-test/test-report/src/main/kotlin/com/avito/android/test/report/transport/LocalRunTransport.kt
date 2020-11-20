@@ -71,7 +71,7 @@ class LocalRunTransport(
                         startTime = state.startTime,
                         endTime = state.endTime
                     ),
-                    //local runs already has logcat in place
+                    // local runs already has logcat in place
                     stdout = "",
                     stderr = ""
                 )
@@ -83,7 +83,7 @@ class LocalRunTransport(
 
             @Suppress("ControlFlowWithEmptyBody")
             if (reportCoordinates.runId.contains("local", ignoreCase = true)) {
-                //todo find a way to display info in user context, it's a secret knowledge about logcat line
+                // todo find a way to display info in user context, it's a secret knowledge about logcat line
             }
 
         } catch (e: Exception) {

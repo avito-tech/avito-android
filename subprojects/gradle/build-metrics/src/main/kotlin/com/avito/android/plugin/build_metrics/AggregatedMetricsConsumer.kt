@@ -98,7 +98,7 @@ internal class AggregatedMetricsConsumer(
             .filterNot { defaultBuildTasks.contains(it) }
             .map { it.removePrefix(":") }
 
-        //todo тут правильно смотреть макс длину события, вместе с тегами сейчас 1000
+        // todo тут правильно смотреть макс длину события, вместе с тегами сейчас 1000
         val canBeTooLongForGraphite = tasks.size > 2
         val tasksShorthand = if (canBeTooLongForGraphite) {
             "_"

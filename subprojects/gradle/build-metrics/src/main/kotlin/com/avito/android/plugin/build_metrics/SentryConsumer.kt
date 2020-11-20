@@ -12,7 +12,7 @@ import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 
-//todo вынести в фабрику знания про project
+// todo вынести в фабрику знания про project
 internal class SentryConsumer(
     project: Project
 ) : AbstractMetricsConsumer() {
