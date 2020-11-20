@@ -178,8 +178,9 @@ empty-blocks:
     # https://detekt.github.io/detekt/empty-blocks.html#emptyinitblock
     EmptyInitBlock:
         active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptyktfile
     EmptyKtFile:
-        active: false
+        active: true
     EmptySecondaryConstructor:
         active: false
     EmptyTryBlock:
