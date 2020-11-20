@@ -14,18 +14,16 @@ open class AnnotationResolver<T : Annotation>(
     override fun resolve(test: String): TestMetadataResolver.Resolution =
         when (val parseResolution = MethodStringRepresentation.parseString(test)) {
 
-            is MethodStringRepresentation.Resolution.ClassOnly -> {
+            is MethodStringRepresentation.Resolution.ClassOnly ->
                 parseResolution.aClass.resolveClassAnnotation(test)
-            }
 
             is MethodStringRepresentation.Resolution.Method ->
                 parseResolution.method.getAnnotation(annotationClass)
                     ?.let { annotationResolutionGetter.invoke(it) }
                     ?: parseResolution.aClass.resolveClassAnnotation(test)
 
-            is MethodStringRepresentation.Resolution.ParseError -> TestMetadataResolver.Resolution.NothingToChange(
-                parseResolution.message
-            )
+            is MethodStringRepresentation.Resolution.ParseError ->
+                TestMetadataResolver.Resolution.NothingToChange(parseResolution.message)
         }
 
     private fun Class<*>.resolveClassAnnotation(test: String): TestMetadataResolver.Resolution =

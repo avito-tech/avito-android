@@ -1088,12 +1088,10 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
 
     private fun List<InstrumentationTestCaseRun>.eraseDuration() = map {
         when (it) {
-            is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
-                it.copy(
-                    timestampStartedMilliseconds = 0,
-                    timestampCompletedMilliseconds = 0
-                )
-            }
+            is InstrumentationTestCaseRun.CompletedTestCaseRun -> it.copy(
+                timestampStartedMilliseconds = 0,
+                timestampCompletedMilliseconds = 0
+            )
             else -> it
         }
     }

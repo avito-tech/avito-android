@@ -18,9 +18,7 @@ interface DeviceReservationWatcher {
             scope.launch(Dispatchers.Default) {
                 for (signal in deviceSignals) {
                     when (signal) {
-                        is Device.Signal.Died -> {
-                            reservation.releaseDevice(signal.coordinate, scope)
-                        }
+                        is Device.Signal.Died -> reservation.releaseDevice(signal.coordinate, scope)
                     }
                 }
             }

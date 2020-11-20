@@ -24,26 +24,23 @@ abstract class CheckProjectDependenciesTypeTask : DefaultTask() {
         val componentTestDependenciesInAndroidTest = androidTestImplementationsByType(ModuleType.COMPONENT_TEST)
 
         val wrongDependenciesInImplementationConfiguration = when (moduleType) {
-            ModuleType.TEST_LIB -> {
-                androidTestDependenciesInImplementation +
-                    componentTestDependenciesInImplementation
-            }
-            ModuleType.ANDROID_TEST_LIB -> {
+            ModuleType.TEST_LIB ->
+                androidTestDependenciesInImplementation + componentTestDependenciesInImplementation
+
+            ModuleType.ANDROID_TEST_LIB ->
                 componentTestDependenciesInImplementation
-            }
-            ModuleType.IMPLEMENTATION -> {
+
+            ModuleType.IMPLEMENTATION ->
                 testDependenciesInImplementation +
                     androidTestDependenciesInImplementation +
                     componentTestDependenciesInImplementation
-            }
-            ModuleType.COMPONENT_TEST -> {
-                emptyList()
-            }
-            null -> {
+
+            ModuleType.COMPONENT_TEST -> emptyList()
+
+            null ->
                 testDependenciesInImplementation +
                     androidTestDependenciesInImplementation +
                     componentTestDependenciesInImplementation
-            }
         }
 
         @Suppress("UnnecessaryVariable")

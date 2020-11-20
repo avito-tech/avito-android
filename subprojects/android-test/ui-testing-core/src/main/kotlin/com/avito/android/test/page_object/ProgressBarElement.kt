@@ -35,13 +35,12 @@ class ProgressBarChecksImpl(
         driver.check(
             ViewAssertion { view, _ ->
                 when (view) {
-                    is ProgressBar -> {
+                    is ProgressBar ->
                         if (view.progress != progress) {
                             throw AssertionFailedError(
                                 "Current progress is: ${view.progress}. Checked is $progress"
                             )
                         }
-                    }
                     else -> throw AssertionFailedError("Matched view with is not ProgressBar")
                 }
             }

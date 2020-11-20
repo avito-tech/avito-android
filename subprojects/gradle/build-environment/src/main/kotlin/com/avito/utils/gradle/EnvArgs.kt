@@ -69,10 +69,11 @@ interface EnvArgs {
                         type = "teamcity-${project.getMandatoryStringProperty("teamcityBuildType")}"
                     )
                 }
-                "local" -> {
+                "local" ->
                     Build.Local(Build.Local.Id.FOR_LOCAL_KUBERNETES_RUN)
-                }
-                else -> throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
+
+                else ->
+                    throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
             }
         }
     }

@@ -654,12 +654,15 @@ style:
     # https://detekt.github.io/detekt/style.html#notabs
     NoTabs:
         active: true
+    # https://detekt.github.io/detekt/style.html#optionalabstractkeyword
     OptionalAbstractKeyword:
-        active: false
+        active: true
+    # https://detekt.github.io/detekt/style.html#optionalunit
     OptionalUnit:
         active: false
+    # https://detekt.github.io/detekt/style.html#optionalwhenbraces
     OptionalWhenBraces:
-        active: false
+        active: true
     PreferToOverPairSyntax:
         active: false
     ProtectedMemberInFinalClass:

@@ -201,9 +201,8 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                 preparedData["is_flaky"] = true
                 preparedData["flaky_reason"] = flakiness.reason
             }
-            is Flakiness.Stable -> {
+            is Flakiness.Stable ->
                 preparedData["is_flaky"] = false
-            }
         }
 
         val params = mutableMapOf(

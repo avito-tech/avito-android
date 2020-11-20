@@ -78,9 +78,7 @@ interface LintSlackReporter {
                         logger.debug("$tag Not sending any reports")
                     }
                 }
-                is LintReportModel.Invalid -> {
-                    logger.critical("$tag Not sending report: can't parse", lintReport.error)
-                }
+                is LintReportModel.Invalid -> logger.critical("$tag Not sending report: can't parse", lintReport.error)
             }
         }
 

@@ -34,7 +34,7 @@ class ClearK8SDeploymentsByNamespaces(
     private val Deployment.isLeaked: Boolean
         get() {
             return when (val env = environment) {
-                is DeploymentEnvironment.Teamcity -> {
+                is DeploymentEnvironment.Teamcity ->
                     when (teamcity.getBuild(env.buildId).state) {
                         BuildState.FINISHED,
                         BuildState.DELETED,
@@ -42,7 +42,6 @@ class ClearK8SDeploymentsByNamespaces(
                         BuildState.QUEUED,
                         BuildState.RUNNING -> false
                     }
-                }
                 is DeploymentEnvironment.Local -> {
                     val now = Date(System.currentTimeMillis())
                     val hourInMillis = TimeUnit.HOURS.toMillis(1)

@@ -156,12 +156,11 @@ internal class FilterFactoryImpl(
                 removeImpactTests(impactAnalysisResult.addedTests)
                 removeImpactTests(impactAnalysisResult.modifiedTests)
             }
-            is ImpactAnalysisPolicy.On.RunNewTests -> {
+            is ImpactAnalysisPolicy.On.RunNewTests ->
                 addImpactTests(impactAnalysisResult.addedTests)
-            }
-            is ImpactAnalysisPolicy.On.RunModifiedTests -> {
+
+            is ImpactAnalysisPolicy.On.RunModifiedTests ->
                 addImpactTests(impactAnalysisResult.modifiedTests)
-            }
         }
     }
 

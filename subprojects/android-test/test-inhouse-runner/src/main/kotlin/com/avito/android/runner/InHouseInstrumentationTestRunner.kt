@@ -91,7 +91,7 @@ abstract class InHouseInstrumentationTestRunner :
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
         val transport: List<Transport> = when {
-            isLocalRun -> {
+            isLocalRun ->
                 if (runEnvironment.reportConfig != null) {
                     listOf(
                         LocalRunTransport(
@@ -111,7 +111,6 @@ abstract class InHouseInstrumentationTestRunner :
                 } else {
                     emptyList()
                 }
-            }
             else -> {
                 val gson: Gson = GsonBuilder()
                     .registerTypeAdapterFactory(EntryTypeAdapterFactory())

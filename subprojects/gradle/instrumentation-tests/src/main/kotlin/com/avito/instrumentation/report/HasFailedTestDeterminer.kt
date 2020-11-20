@@ -63,7 +63,7 @@ interface HasFailedTestDeterminer {
                     val hasFailedTests = failedTests.isNotEmpty()
 
                     when {
-                        hasFailedTests -> {
+                        hasFailedTests ->
                             when {
                                 suppressFailure -> {
                                     Result.Failed(
@@ -83,7 +83,6 @@ interface HasFailedTestDeterminer {
                                 }
                                 else -> Result.Failed(failed = failedTests)
                             }
-                        }
                         else -> Result.NoFailed
                     }
                 },

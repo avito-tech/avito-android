@@ -45,13 +45,12 @@ data class TestRunResult(
             val failedVerdict = getFailedVerdict()
             val notReportedVerdict = getNotReportedVerdict()
             return when {
-                failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success -> {
+                failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success ->
                     Verdict.Success(
                         """
-                            |${failedVerdict.message}.
-                            |${notReportedVerdict.message}.""".trimMargin()
+                        |${failedVerdict.message}.
+                        |${notReportedVerdict.message}.""".trimMargin()
                     )
-                }
                 failedVerdict is Verdict.Failure && notReportedVerdict is Verdict.Failure -> {
                     val message = "${failedVerdict.message}. \n ${notReportedVerdict.message}"
                     Verdict.Failure(
@@ -109,7 +108,7 @@ data class TestRunResult(
             ),
             cause = failed.throwable
         )
-        is HasFailedTestDeterminer.Result.Failed -> {
+        is HasFailedTestDeterminer.Result.Failed ->
             if (failed.notSuppressedCount > 0) {
                 Verdict.Failure(
                     message = "Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests",
@@ -122,7 +121,6 @@ data class TestRunResult(
             } else {
                 Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")
             }
-        }
     }
 
     private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests() =

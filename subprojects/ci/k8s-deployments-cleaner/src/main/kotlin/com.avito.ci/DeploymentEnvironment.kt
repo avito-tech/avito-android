@@ -19,18 +19,16 @@ val Deployment.environment: DeploymentEnvironment
         return when {
             type != null && type.startsWith("service") -> DeploymentEnvironment.Service
             type != null && type.startsWith("local") -> DeploymentEnvironment.Local
-            type != null && type.startsWith("teamcity") -> {
+            type != null && type.startsWith("teamcity") ->
                 DeploymentEnvironment.Teamcity(
                     buildId = requireNotNull(metadata.labels["id"])
                 )
-            }
             // todo remove after 2020.3.4 release
             type == null && metadata.name.split('-')
-                .run { size > 0 && get(0).toLongOrNull() != null } -> {
+                .run { size > 0 && get(0).toLongOrNull() != null } ->
                 DeploymentEnvironment.Teamcity(
                     buildId = metadata.name.split('-')[0]
                 )
-            }
             else -> DeploymentEnvironment.Unknown
         }
     }

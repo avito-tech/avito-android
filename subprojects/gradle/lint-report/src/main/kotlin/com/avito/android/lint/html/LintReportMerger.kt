@@ -128,9 +128,7 @@ class LintReportMerger {
     private fun LintReportModel.issuesDescription(severity: LintIssue.Severity): String {
         return when (this) {
             is LintReportModel.Invalid -> "INVALID"
-            is LintReportModel.Valid -> {
-                issues.count { it.severity == severity }.toString()
-            }
+            is LintReportModel.Valid -> issues.count { it.severity == severity }.toString()
         }
     }
 }

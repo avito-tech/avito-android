@@ -15,13 +15,12 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
     override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
         val entryTypeAdapter = EntryTypeAdapter()
         return when {
-            type.rawType.isAssignableFrom(List::class.java) -> {
+            type.rawType.isAssignableFrom(List::class.java) ->
                 if ((type.type as ParameterizedType).actualTypeArguments[0] == Entry::class.java) {
                     ListEntryTypeAdapter(entryTypeAdapter) as TypeAdapter<T>
                 } else {
                     null
                 }
-            }
             type.rawType.isAssignableFrom(Entry::class.java) -> entryTypeAdapter as TypeAdapter<T>
             else -> null
         }

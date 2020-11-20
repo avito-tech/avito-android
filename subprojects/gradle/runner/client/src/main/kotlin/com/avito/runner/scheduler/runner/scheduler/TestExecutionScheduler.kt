@@ -28,15 +28,15 @@ class TestExecutionScheduler(
         scope.launch(dispatcher) {
             for (testRunResult in executionClient.results) {
                 when (val verdict = testRunResult.state.verdict(testRunResult.incomingTestCaseRun)) {
-                    is TestExecutionState.Verdict.SendResult -> {
+                    is TestExecutionState.Verdict.SendResult ->
                         resultChannel.send(
                             TestRunResult(
                                 request = testRunResult.state.request,
                                 result = verdict.results
                             )
                         )
-                    }
-                    is TestExecutionState.Verdict.Run -> {
+
+                    is TestExecutionState.Verdict.Run ->
                         verdict.intentions.forEach { intention ->
                             logger.debug("Retry intention: $intention")
                             executionClient.requests.send(
@@ -46,7 +46,6 @@ class TestExecutionScheduler(
                                 )
                             )
                         }
-                    }
                 }
             }
         }
@@ -61,7 +60,7 @@ class TestExecutionScheduler(
                     )
 
                 when (val verdict = testState.verdict()) {
-                    is TestExecutionState.Verdict.Run -> {
+                    is TestExecutionState.Verdict.Run ->
                         verdict.intentions.forEach { intention ->
                             executionClient.requests.send(
                                 ClientTestRunRequest(
@@ -70,10 +69,9 @@ class TestExecutionScheduler(
                                 )
                             )
                         }
-                    }
-                    is TestExecutionState.Verdict.SendResult -> {
+
+                    is TestExecutionState.Verdict.SendResult ->
                         throw RuntimeException("Trying to send empty result")
-                    }
                 }
             }
         }

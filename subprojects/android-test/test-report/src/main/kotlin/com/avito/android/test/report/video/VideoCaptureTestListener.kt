@@ -86,7 +86,7 @@ class VideoCaptureTestListener(
                     logger.debug("Video uploading enabled. Video uploaded")
                     waitUploads(state = state, video = video)
                 }
-                is VideoCapturer.RecordResult.Error -> {
+                is VideoCapturer.RecordResult.Error ->
                     logger.warn(
                         "Video uploading enabled. " +
                             "Failed to upload video for " +
@@ -94,7 +94,6 @@ class VideoCaptureTestListener(
                             "Reason: ${result.message}",
                         result.error
                     )
-                }
             }
         } else {
             videoCapturer.abort()

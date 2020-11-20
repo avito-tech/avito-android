@@ -13,18 +13,16 @@ internal object DeploymentDeserializer : JsonDeserializer<CdBuildConfig.Deployme
         context: JsonDeserializationContext
     ): CdBuildConfig.Deployment {
         return when (val type = json.asJsonObject.get("type").asString) {
-            "google-play" -> {
+            "google-play" ->
                 context.deserialize<CdBuildConfig.Deployment.GooglePlay>(
                     json,
                     CdBuildConfig.Deployment.GooglePlay::class.java
                 )
-            }
-            "qapps" -> {
+            "qapps" ->
                 context.deserialize<CdBuildConfig.Deployment.Qapps>(
                     json,
                     CdBuildConfig.Deployment.Qapps::class.java
                 )
-            }
             else -> CdBuildConfig.Deployment.Unknown(type)
         }
     }

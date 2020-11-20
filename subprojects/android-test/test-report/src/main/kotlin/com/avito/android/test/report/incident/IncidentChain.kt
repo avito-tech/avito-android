@@ -39,13 +39,12 @@ internal interface IncidentChain {
                         "can handle ${this::class.java.name}, " +
                         "than could lead to undesirable behavior. Please narrow canCustomize expressions"
                 )
-                canCustomize.size == 1 -> {
+                canCustomize.size == 1 ->
                     when (val result = canCustomize[0].customize(this)) {
                         is IncidentPresenter.Result.OK -> result.chain
                         is IncidentPresenter.Result.Fail ->
                             customizeByFallback(CustomizeFailException(result.exception, this))
                     }
-                }
                 else -> customizeByFallback(this)
             }
         }

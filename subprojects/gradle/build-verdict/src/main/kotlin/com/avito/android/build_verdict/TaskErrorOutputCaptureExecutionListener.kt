@@ -18,7 +18,7 @@ internal class TaskErrorOutputCaptureExecutionListener(
 
     override fun beforeExecute(task: Task) {
         when (task) {
-            is Test -> {
+            is Test ->
                 task.addTestListener(
                     object : DefaultTestListener() {
                         override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
@@ -29,13 +29,11 @@ internal class TaskErrorOutputCaptureExecutionListener(
                         }
                     }
                 )
-            }
-            else -> {
+            else ->
                 task.logging.addStandardErrorListener { error ->
                     logs.getOrPut(Path.path(task.path), { StringBuilder() })
                         .append(error)
                 }
-            }
         }
     }
 

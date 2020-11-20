@@ -75,9 +75,8 @@ interface GooglePlayDeployer {
                     uploadProguard(deploy, editId, versionCode)
                     versionCode
                 }
-                GooglePlayDeploy.BinaryType.BUNDLE -> {
+                GooglePlayDeploy.BinaryType.BUNDLE ->
                     uploadBundle(deploy, editId)
-                }
             }
         }
 

@@ -27,12 +27,8 @@ open class VerifyArtifactsStep(
         rootTask.configure { task ->
             artifactsConfig.outputs.forEach { (_, output) ->
                 when (output) {
-                    is Output.ApkOutput -> {
-                        task.dependsOn(project.tasks.signedApkTaskProvider(output.variantName))
-                    }
-                    is Output.BundleOutput -> {
-                        task.dependsOn(project.tasks.signedBundleTaskProvider(output.variantName))
-                    }
+                    is Output.ApkOutput -> task.dependsOn(project.tasks.signedApkTaskProvider(output.variantName))
+                    is Output.BundleOutput -> task.dependsOn(project.tasks.signedBundleTaskProvider(output.variantName))
                     is Output.ProguardMapping,
                     is Output.FileOutput -> {
                         // do nothing

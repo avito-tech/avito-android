@@ -112,48 +112,42 @@ data class AdbDevice(
         )
             .map {
                 when (it) {
-                    is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
-                        DeviceTestCaseRun(
-                            testCaseRun = TestCaseRun(
-                                test = TestCase(
-                                    className = it.className,
-                                    methodName = it.name,
-                                    deviceName = action.test.deviceName
-                                ),
-                                result = it.result,
-                                timestampStartedMilliseconds = it.timestampStartedMilliseconds,
-                                timestampCompletedMilliseconds = it.timestampCompletedMilliseconds
+                    is InstrumentationTestCaseRun.CompletedTestCaseRun -> DeviceTestCaseRun(
+                        testCaseRun = TestCaseRun(
+                            test = TestCase(
+                                className = it.className,
+                                methodName = it.name,
+                                deviceName = action.test.deviceName
                             ),
-                            device = this.getData()
-                        )
-                    }
-                    is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
-                        DeviceTestCaseRun(
-                            testCaseRun = TestCaseRun(
-                                test = action.test,
-                                result = TestCaseRun.Result.Failed.InfrastructureError(
-                                    errorMessage = "Failed on start test case: ${it.message}"
-                                ),
-                                timestampStartedMilliseconds = System.currentTimeMillis(),
-                                timestampCompletedMilliseconds = System.currentTimeMillis()
+                            result = it.result,
+                            timestampStartedMilliseconds = it.timestampStartedMilliseconds,
+                            timestampCompletedMilliseconds = it.timestampCompletedMilliseconds
+                        ),
+                        device = this.getData()
+                    )
+                    is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> DeviceTestCaseRun(
+                        testCaseRun = TestCaseRun(
+                            test = action.test,
+                            result = TestCaseRun.Result.Failed.InfrastructureError(
+                                errorMessage = "Failed on start test case: ${it.message}"
                             ),
-                            device = this.getData()
-                        )
-                    }
-                    is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
-                        DeviceTestCaseRun(
-                            testCaseRun = TestCaseRun(
-                                test = action.test,
-                                result = TestCaseRun.Result.Failed.InfrastructureError(
-                                    errorMessage = "Failed on instrumentation parsing: ${it.message}",
-                                    cause = it.throwable
-                                ),
-                                timestampStartedMilliseconds = System.currentTimeMillis(),
-                                timestampCompletedMilliseconds = System.currentTimeMillis()
+                            timestampStartedMilliseconds = System.currentTimeMillis(),
+                            timestampCompletedMilliseconds = System.currentTimeMillis()
+                        ),
+                        device = this.getData()
+                    )
+                    is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> DeviceTestCaseRun(
+                        testCaseRun = TestCaseRun(
+                            test = action.test,
+                            result = TestCaseRun.Result.Failed.InfrastructureError(
+                                errorMessage = "Failed on instrumentation parsing: ${it.message}",
+                                cause = it.throwable
                             ),
-                            device = this.getData()
-                        )
-                    }
+                            timestampStartedMilliseconds = System.currentTimeMillis(),
+                            timestampCompletedMilliseconds = System.currentTimeMillis()
+                        ),
+                        device = this.getData()
+                    )
                 }
             }
             .toBlocking()
