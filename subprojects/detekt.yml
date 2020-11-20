@@ -235,36 +235,27 @@ formatting:
     autoCorrect: false
     AnnotationOnSeparateLine:
         active: false
-        autoCorrect: false
     AnnotationSpacing:
         active: false
-        autoCorrect: false
     ArgumentListWrapping:
         active: false
-        autoCorrect: false
     ChainWrapping:
         active: false
-        autoCorrect: false
     CommentSpacing:
         active: false
-        autoCorrect: false
     EnumEntryNameCase:
         active: false
-        autoCorrect: false
     Filename:
         active: false
     # https://detekt.github.io/detekt/formatting.html#finalnewline
     FinalNewline:
         active: true
-        autoCorrect: false
         insertFinalNewLine: false
     ImportOrdering:
         active: false
-        autoCorrect: false
         layout: 'idea'
     Indentation:
         active: false
-        autoCorrect: false
         indentSize: 4
         continuationIndentSize: 4
     MaximumLineLength:
@@ -272,93 +263,66 @@ formatting:
         maxLineLength: 120
     ModifierOrdering:
         active: false
-        autoCorrect: false
     MultiLineIfElse:
         active: false
-        autoCorrect: false
     NoBlankLineBeforeRbrace:
         active: false
-        autoCorrect: false
     NoConsecutiveBlankLines:
         active: false
-        autoCorrect: false
     NoEmptyClassBody:
         active: false
-        autoCorrect: false
     NoEmptyFirstLineInMethodBlock:
         active: false
-        autoCorrect: false
     NoLineBreakAfterElse:
         active: false
-        autoCorrect: false
     NoLineBreakBeforeAssignment:
         active: false
-        autoCorrect: false
     # https://detekt.github.io/detekt/formatting.html#nomultiplespaces
     NoMultipleSpaces:
         active: true
-        autoCorrect: false
     # https://detekt.github.io/detekt/formatting.html#nosemicolons
     NoSemicolons:
         active: true
-        autoCorrect: false
     # https://detekt.github.io/detekt/formatting.html#notrailingspaces
     NoTrailingSpaces:
         active: true
-        autoCorrect: false
     NoUnitReturn:
-        active: false
-        autoCorrect: false
+        active: true
     # https://detekt.github.io/detekt/formatting.html#nounusedimports
     NoUnusedImports:
         active: true
-        autoCorrect: false
     # https://detekt.github.io/detekt/formatting.html#nowildcardimports
     NoWildcardImports:
         active: true
     PackageName:
         active: false
-        autoCorrect: false
     ParameterListWrapping:
         active: false
-        autoCorrect: false
         indentSize: 4
     SpacingAroundColon:
         active: false
-        autoCorrect: false
     SpacingAroundComma:
         active: false
-        autoCorrect: false
     SpacingAroundCurly:
         active: false
-        autoCorrect: false
     SpacingAroundDot:
         active: false
-        autoCorrect: false
     SpacingAroundDoubleColon:
         active: false
-        autoCorrect: false
     SpacingAroundKeyword:
         active: false
-        autoCorrect: false
     SpacingAroundOperators:
         active: false
-        autoCorrect: false
     SpacingAroundParens:
         active: false
-        autoCorrect: false
     SpacingAroundRangeOperator:
         active: false
-        autoCorrect: false
     SpacingBetweenDeclarationsWithAnnotations:
         active: false
-        autoCorrect: false
     SpacingBetweenDeclarationsWithComments:
         active: false
-        autoCorrect: false
     StringTemplate:
         active: false
-        autoCorrect: false
 
 naming:
     active: true
