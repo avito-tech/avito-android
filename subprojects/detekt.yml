@@ -551,8 +551,9 @@ style:
     # https://detekt.github.io/detekt/style.html#equalsnullcall
     EqualsNullCall:
         active: true
+    # https://detekt.github.io/detekt/style.html#equalsonsignatureline
     EqualsOnSignatureLine:
-        active: false
+        active: true
     ExplicitCollectionElementAccessMethod:
         active: false
     ExplicitItLambdaParameter:
