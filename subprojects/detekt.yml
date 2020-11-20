@@ -167,11 +167,13 @@ empty-blocks:
     # https://detekt.github.io/detekt/empty-blocks.html#emptyforblock
     EmptyForBlock:
         active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptyfunctionblock
+    # todo enable, 26 errors
     EmptyFunctionBlock:
         active: false
         ignoreOverridden: false
     EmptyIfBlock:
-        active: false
+        active: true
     EmptyInitBlock:
         active: false
     EmptyKtFile:
