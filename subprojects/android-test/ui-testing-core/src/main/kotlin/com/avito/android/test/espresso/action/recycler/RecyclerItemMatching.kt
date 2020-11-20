@@ -98,8 +98,12 @@ internal class RecyclerItemsMatcher(
                 get() = "No matched item in recycler at position $atPosition. ${createNearItemsDescription()}"
 
             private fun createNearItemsDescription() =
-                "Search near items from $searchFrom to $searchTo ${if (nearMatchedItems.isEmpty()) "doesn't have matches" else "has matches at positions: [${nearMatchedItems.map { it.position }
-                    .joinToString()}"}]"
+                "Search near items from $searchFrom to $searchTo ${
+                    if (nearMatchedItems.isEmpty()) "doesn't have matches" else "has matches at positions: [${
+                        nearMatchedItems.map { it.position }
+                            .joinToString()
+                    }"
+                }]"
         }
     }
 
@@ -193,7 +197,6 @@ internal class RecyclerItemsMatcher(
             }
         }
     }
-
 
     private fun getViewHolder(atPosition: Int): RecyclerView.ViewHolder {
         var viewHolder = recyclerView.findViewHolderForAdapterPosition(atPosition)

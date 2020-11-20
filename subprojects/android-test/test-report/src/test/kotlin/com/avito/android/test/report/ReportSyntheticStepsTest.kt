@@ -91,7 +91,6 @@ class ReportSyntheticStepsTest {
         addAssertion(assertionMessage)
     }
 
-
     private fun ReportState.Initialized.Started.assertThat(
         stepsCount: Int,
         syntheticStepIndex: Int,

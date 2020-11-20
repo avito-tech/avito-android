@@ -28,4 +28,3 @@ internal class FakeProcessingEnvironment(
 
     private fun <T> supposeNotUsed(): T? = null
 }
-

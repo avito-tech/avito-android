@@ -35,4 +35,3 @@ open class UnitTestCheck(context: String, name: String) : BuildStep(context, nam
     }
 
 }
-

@@ -100,4 +100,3 @@ object ManualTempFolder {
         }
     }
 }
-

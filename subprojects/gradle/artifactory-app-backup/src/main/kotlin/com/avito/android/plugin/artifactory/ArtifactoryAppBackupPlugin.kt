@@ -87,4 +87,3 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
         }
     }
 }
-

@@ -4,7 +4,6 @@ import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 import org.junit.Assert
 
-
 fun <T> assertMatches(matcher: Matcher<T>, arg: T) {
     assertMatches("Expected match, but mismatched", matcher, arg)
 }

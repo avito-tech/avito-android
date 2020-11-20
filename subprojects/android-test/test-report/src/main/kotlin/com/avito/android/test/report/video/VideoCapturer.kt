@@ -141,7 +141,6 @@ class VideoCapturerImpl(
         }
     }
 
-
     private fun testVideoFile(testName: String) = File(
         outputDirectory.value,
         "$testName.mp4"

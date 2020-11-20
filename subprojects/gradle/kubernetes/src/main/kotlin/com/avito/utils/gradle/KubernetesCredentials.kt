@@ -35,4 +35,3 @@ private fun requireUserHome(): String {
     require(!userHome.isNullOrBlank()) { "system property 'user.home' is not set" }
     return userHome
 }
-

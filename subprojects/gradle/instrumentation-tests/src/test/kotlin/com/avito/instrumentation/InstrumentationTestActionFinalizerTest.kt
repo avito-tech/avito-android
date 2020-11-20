@@ -3,7 +3,6 @@ package com.avito.instrumentation
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
-
 class InstrumentationTestActionFinalizerTest {
 
     @Test

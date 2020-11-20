@@ -12,7 +12,6 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.TypeSafeMatcher
 
-
 private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> constructor(
     private val match: RecyclerItemsMatcher.Match<VH>,
     private val viewAction: ViewAction

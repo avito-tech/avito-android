@@ -134,7 +134,6 @@ internal class ReportsFetchApiImpl(
                         runs.deviceFailures()
                     )
 
-
                     else -> CrossDeviceStatus.Inconsistent
                 }
                 CrossDeviceRunTest(TestName(testName), status)

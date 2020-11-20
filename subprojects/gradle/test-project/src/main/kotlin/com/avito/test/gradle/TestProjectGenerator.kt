@@ -140,4 +140,3 @@ private fun generateIncludes(modules: List<Module>, prefix: String): String =
     modules.joinToString(separator = "\n") {
         "include('$prefix:${it.name}')" + "\n" + generateIncludes(it.modules, "$prefix:${it.name}")
     }
-

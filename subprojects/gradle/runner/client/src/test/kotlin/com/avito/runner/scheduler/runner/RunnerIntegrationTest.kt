@@ -267,7 +267,6 @@ class RunnerIntegrationTest {
             minimumFailedCount = 0
         )
 
-
         val requests = listOf(
             testRunRequest(scheduling = scheduling),
             testRunRequest(scheduling = scheduling)
@@ -382,7 +381,6 @@ class RunnerIntegrationTest {
 
             devices.send(device)
 
-
             val actualResult = runner.runTests(requests, this)
             device.verify()
 
@@ -459,7 +457,6 @@ class RunnerIntegrationTest {
                     testFailed() // Second test failed by second try
                 )
             )
-
 
             devices.send(device)
 

@@ -4,7 +4,6 @@ import com.avito.logger.Logger
 import java.io.DataOutputStream
 import java.net.Socket
 
-
 interface GraphiteSender {
 
     /**

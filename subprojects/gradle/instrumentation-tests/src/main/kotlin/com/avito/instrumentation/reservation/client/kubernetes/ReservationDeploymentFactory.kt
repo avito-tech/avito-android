@@ -222,7 +222,6 @@ class ReservationDeploymentFactory(
         )
     }
 
-
     private fun generateDeploymentName(namespace: String): String =
         "${namespace}-${UUID.randomUUID()}"
             .kubernetesName()

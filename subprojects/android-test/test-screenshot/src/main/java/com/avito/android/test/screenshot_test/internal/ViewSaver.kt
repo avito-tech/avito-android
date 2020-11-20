@@ -9,7 +9,6 @@ import android.view.PixelCopy
 import android.view.View
 import androidx.annotation.RequiresApi
 
-
 internal class ViewScreenshotMaker(
     private val activity: Activity,
     private val screenshot: Screenshot,

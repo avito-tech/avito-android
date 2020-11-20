@@ -436,7 +436,6 @@ data class AdbDevice(
             output = redirectOutputTo
         )
 
-
     override fun debug(message: String) {
         logger.debug("$tag $message")
     }

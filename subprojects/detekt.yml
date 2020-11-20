@@ -268,8 +268,9 @@ formatting:
         active: false
     NoBlankLineBeforeRbrace:
         active: false
+    # https://ktlint.github.io/#rule-blank
     NoConsecutiveBlankLines:
-        active: false
+        active: true
     # https://ktlint.github.io/#rule-empty-class-body
     NoEmptyClassBody:
         active: true

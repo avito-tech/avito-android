@@ -22,7 +22,6 @@ import org.gradle.api.plugins.ExtensionContainer
 
 import kotlin.reflect.KProperty
 
-
 /**
  * Looks for the extension of a given name. If none found it will throw an exception.
  *
@@ -34,7 +33,6 @@ import kotlin.reflect.KProperty
  */
 operator fun ExtensionContainer.get(name: String): Any =
     getByName(name)
-
 
 /**
  * Looks for the extension of a given name and casts it to the expected type [T].
@@ -52,16 +50,15 @@ inline fun <reified T : Any> ExtensionContainer.getByName(name: String) =
     getByName(name).let {
         it as? T
             ?: throw IllegalStateException(
-                "Element '$name' of type '${it::class.java.name}' from container '$this' cannot be cast to '${T::class.qualifiedName}'.")
+                "Element '$name' of type '${it::class.java.name}' from container '$this' cannot be cast to '${T::class.qualifiedName}'."
+            )
     }
-
 
 /**
  * Delegated property getter that locates extensions.
  */
 inline operator fun <reified T : Any> ExtensionContainer.getValue(thisRef: Any?, property: KProperty<*>): T =
     getByName<T>(property.name)
-
 
 /**
  * Adds a new extension to this container.
@@ -80,7 +77,6 @@ inline fun <reified T : Any> ExtensionContainer.add(name: String, extension: T) 
     add(typeOf<T>(), name, extension)
 }
 
-
 /**
  * Creates and adds a new extension to this container.
  *
@@ -95,7 +91,6 @@ inline fun <reified T : Any> ExtensionContainer.add(name: String, extension: T) 
 inline fun <reified T : Any> ExtensionContainer.create(name: String, vararg constructionArguments: Any): T =
     create(name, T::class.java, *constructionArguments)
 
-
 /**
  * Looks for the extension of a given type.
  *
@@ -109,7 +104,6 @@ inline fun <reified T : Any> ExtensionContainer.create(name: String, vararg cons
 inline fun <reified T : Any> ExtensionContainer.getByType(): T =
     getByType(typeOf<T>())
 
-
 /**
  * Looks for the extension of a given type.
  *
@@ -121,7 +115,6 @@ inline fun <reified T : Any> ExtensionContainer.getByType(): T =
 @Incubating
 inline fun <reified T : Any> ExtensionContainer.findByType(): T? =
     findByType(typeOf<T>())
-
 
 /**
  * Looks for the extension of the specified type and configures it with the supplied action.

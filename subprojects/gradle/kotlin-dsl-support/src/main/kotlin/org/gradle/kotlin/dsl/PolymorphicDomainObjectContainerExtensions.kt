@@ -12,7 +12,6 @@ import org.gradle.api.PolymorphicDomainObjectContainer
 inline fun <reified T : Any> PolymorphicDomainObjectContainer<in T>.register(name: String): NamedDomainObjectProvider<T> =
     register(name, T::class.java)
 
-
 /**
  * Defines and configure a new object, which will be created when it is required.
  *

@@ -2,7 +2,6 @@ package com.avito.android.runner.annotation.resolver
 
 import java.lang.reflect.Method
 
-
 object Annotations {
 
     /**
