@@ -599,12 +599,17 @@ style:
         ignoreOverridableFunction: true
         excludedFunctions: 'describeContents'
         excludeAnnotatedFunction: [ 'dagger.Provides' ]
+    # https://detekt.github.io/detekt/style.html#librarycodemustspecifyreturntype
+    # todo enable expicit api https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors
     LibraryCodeMustSpecifyReturnType:
         active: false
+    # https://detekt.github.io/detekt/style.html#libraryentitiesshouldnotbepublic
+    # todo enable expicit api https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors
     LibraryEntitiesShouldNotBePublic:
         active: false
+    # https://detekt.github.io/detekt/style.html#loopwithtoomanyjumpstatements
     LoopWithTooManyJumpStatements:
-        active: false
+        active: true
         maxJumpCount: 1
     MagicNumber:
         active: false
