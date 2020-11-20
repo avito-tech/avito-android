@@ -280,10 +280,11 @@ formatting:
     # https://ktlint.github.io/#rule-empty-class-body
     NoEmptyClassBody:
         active: true
+    # questionable rule, it is good idea to have some visual space after function declaration
     NoEmptyFirstLineInMethodBlock:
         active: false
     NoLineBreakAfterElse:
-        active: false
+        active: true
     NoLineBreakBeforeAssignment:
         active: false
     # https://detekt.github.io/detekt/formatting.html#nomultiplespaces
