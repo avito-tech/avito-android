@@ -712,8 +712,9 @@ style:
         active: false
     UnnecessaryLet:
         active: false
+    # https://detekt.github.io/detekt/style.html#unnecessaryparentheses
     UnnecessaryParentheses:
-        active: false
+        active: true
     UntilInsteadOfRangeTo:
         active: false
     # https://detekt.github.io/detekt/style.html#unusedimports

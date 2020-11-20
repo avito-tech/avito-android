@@ -83,8 +83,8 @@ private class ActionOnItemAtPositionViewAction<VH : RecyclerView.ViewHolder>(
         allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
 
     override fun getDescription(): String =
-        ("actionOnItemAtPosition performing ViewAction: " + viewAction.description +
-            " on item at position: " + position)
+        "actionOnItemAtPosition performing ViewAction: " + viewAction.description +
+            " on item at position: " + position
 
     override fun perform(uiController: UiController, view: View) {
         val recyclerView = view as RecyclerView
@@ -188,7 +188,7 @@ class ViewActionOnItemAtPosition<VH : RecyclerView.ViewHolder>(
         allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
 
     override fun getDescription(): String =
-        ("performing ViewAction: " + viewAction.description + " on item at position: " + position)
+        "performing ViewAction: " + viewAction.description + " on item at position: " + position
 
     override fun perform(uiController: UiController, view: View) {
         val recyclerView = view as RecyclerView

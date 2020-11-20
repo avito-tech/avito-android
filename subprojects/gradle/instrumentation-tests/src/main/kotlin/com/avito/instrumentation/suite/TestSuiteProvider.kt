@@ -39,7 +39,7 @@ interface TestSuiteProvider {
                     skippedTests = suite.skippedTests
                         // do not report skip here, to prevent final test status rewrite (green from last run - ok)
                         .filter { (_, verdict) ->
-                            (verdict !is Excluded.BySignatures) || (verdict.source != Signatures.Source.PreviousRun)
+                            verdict !is Excluded.BySignatures || verdict.source != Signatures.Source.PreviousRun
                         }
                         .map { (targetTest, verdict) ->
                             targetTest.test to verdict.reason

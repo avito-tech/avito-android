@@ -17,7 +17,7 @@ import java.io.File
 class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(module) {
 
     override val isModified: Boolean by lazy {
-        (module.fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip)
+        module.fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
             || dependencies.any { it.isModified }
             || hasChangedFiles
     }

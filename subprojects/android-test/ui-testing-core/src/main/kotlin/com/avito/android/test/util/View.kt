@@ -79,7 +79,7 @@ private fun <T> findViewsInParentRecursively(
 internal fun walkOverVisibleViewsWithHigherZOrder(view: View, list: MutableList<View>) {
     val parentViewGroup = view.parent as? ViewGroup ?: return
     val index = parentViewGroup.indexOfChild(view)
-    for (i in (index + 1) until parentViewGroup.childCount) {
+    for (i in index + 1 until parentViewGroup.childCount) {
         val child = parentViewGroup.getChildAt(i)
         if (child.visibility == View.VISIBLE) {
             list.add(child)

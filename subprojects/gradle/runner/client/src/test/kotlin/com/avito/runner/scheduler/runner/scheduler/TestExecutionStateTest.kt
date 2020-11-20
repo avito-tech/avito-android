@@ -242,11 +242,11 @@ class TestExecutionStateTest {
             (verdict as TestExecutionState.Verdict.SendResult).results
 
         assertWithMessage("SendResult verdict must has first 10 failed test events")
-            .that(results.slice((0..9)).all { it.testCaseRun.result is TestCaseRun.Result.Failed.InRun })
+            .that(results.slice(0..9).all { it.testCaseRun.result is TestCaseRun.Result.Failed.InRun })
             .isTrue()
 
         assertWithMessage("SendResult verdict must has last 10 passed test events")
-            .that(results.slice((10..19)).all { it.testCaseRun.result is TestCaseRun.Result.Passed })
+            .that(results.slice(10..19).all { it.testCaseRun.result is TestCaseRun.Result.Passed })
             .isTrue()
     }
 

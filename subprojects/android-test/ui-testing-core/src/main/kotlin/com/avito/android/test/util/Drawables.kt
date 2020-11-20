@@ -22,7 +22,7 @@ internal fun matchDrawable(
     otherId: Int?,
     @ColorInt otherTint: Int? = null
 ): Boolean {
-    val noOther = (otherId == null || otherId == 0)
+    val noOther = otherId == null || otherId == 0
     if (noOther && source == null) return true
     if (!noOther && source == null) return false
 

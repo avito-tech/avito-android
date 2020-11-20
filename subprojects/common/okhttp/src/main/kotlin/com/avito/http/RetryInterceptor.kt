@@ -57,7 +57,7 @@ class RetryInterceptor constructor(
                 }
             }
 
-            TimeUnit.MILLISECONDS.sleep(if (useIncreasingDelay) (tryCount * delayMs) else delayMs)
+            TimeUnit.MILLISECONDS.sleep(if (useIncreasingDelay) tryCount * delayMs else delayMs)
         }
 
         if (response == null) {
@@ -74,6 +74,6 @@ class RetryInterceptor constructor(
 
     private fun Response?.shouldTry(): Boolean = when {
         this == null -> true
-        else -> (request.method in allowedMethods) && (code in allowedCodes)
+        else -> request.method in allowedMethods && code in allowedCodes
     }
 }

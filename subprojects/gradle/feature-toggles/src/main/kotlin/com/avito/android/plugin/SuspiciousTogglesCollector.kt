@@ -48,8 +48,8 @@ internal class SuspiciousTogglesCollector(
             }
             .filterNotNull()
             .filter {
-                (it.isOn && it.changeDate < turnedOnDateAgo)
-                    || (!it.isOn && it.changeDate < turnedOffDateAgo)
+                it.isOn && it.changeDate < turnedOnDateAgo
+                    || !it.isOn && it.changeDate < turnedOffDateAgo
             }
             .filterNot { excludedToggles.contains(it.toggleName) }
             .toList()

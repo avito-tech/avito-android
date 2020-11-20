@@ -77,7 +77,7 @@ fun Project.getOptionalFloatProperty(name: String, default: Float? = null): Floa
 @Suppress("UnstableApiUsage")
 fun Project.fileProperty(file: File): RegularFileProperty = objects.fileProperty().apply { set { file } }
 
-fun Project.isRoot() = (project == project.rootProject)
+fun Project.isRoot() = project == project.rootProject
 
 object ProjectProperty {
 

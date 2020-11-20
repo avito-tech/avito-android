@@ -11,8 +11,8 @@ open class CodeOwnershipExtension(
 ) {
 
     fun checkProjectOwnershipSettings(projectPath: String) {
-        if ((team == null && visibility == Visibility.PRIVATE) ||
-            (team == null && visibility == Visibility.TEAM)
+        if (team == null && visibility == Visibility.PRIVATE ||
+            team == null && visibility == Visibility.TEAM
         ) {
             throwInvalidOwnershipSettingsException(projectPath, visibility)
         }

@@ -167,9 +167,9 @@ private fun provideApiUrl(
     argumentsProvider: ArgsProvider,
     apiUrlParameterKey: String
 ): HttpUrl {
-    val host = (argumentsProvider.getOptionalArgument(HostAnnotationResolver.KEY)
+    val host = argumentsProvider.getOptionalArgument(HostAnnotationResolver.KEY)
         ?: argumentsProvider.getOptionalArgument(apiUrlParameterKey)
-        ?: "https://localhost")
+        ?: "https://localhost"
 
     return host.toHttpUrl()
 }

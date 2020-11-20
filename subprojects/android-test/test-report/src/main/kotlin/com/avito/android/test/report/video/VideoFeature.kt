@@ -23,7 +23,7 @@ class VideoFeatureImplementation(
     override fun videoUploadingEnabled(shouldRecord: Boolean, incident: Incident?): Boolean =
         videoRecordingEnabled(shouldRecord) &&
             (videoFeatureValue is VideoFeatureValue.Enabled.All ||
-                (videoFeatureValue is VideoFeatureValue.Enabled.OnlyFailed && incident != null))
+                videoFeatureValue is VideoFeatureValue.Enabled.OnlyFailed && incident != null)
 }
 
 sealed class VideoFeatureValue {

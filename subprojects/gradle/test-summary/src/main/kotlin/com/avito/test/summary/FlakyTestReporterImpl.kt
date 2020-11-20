@@ -83,7 +83,7 @@ ${badTests.stringify()}
 
     private fun determineBadTests(info: List<FlakyInfo>): List<FlakyInfo> {
         return info
-            .filter { (it.attempts > 2 && it.wastedTimeEstimateInSec > 240) || it.attempts > 5 }
+            .filter { it.attempts > 2 && it.wastedTimeEstimateInSec > 240 || it.attempts > 5 }
             .sortedByDescending { it.wastedTimeEstimateInSec }
             .take(10)
     }
