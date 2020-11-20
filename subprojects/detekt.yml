@@ -327,8 +327,9 @@ formatting:
     SpacingBetweenDeclarationsWithComments:
         active: true
 
+    # https://ktlint.github.io/#rule-string-template
     StringTemplate:
-        active: false
+        active: true
 
 naming:
     active: true

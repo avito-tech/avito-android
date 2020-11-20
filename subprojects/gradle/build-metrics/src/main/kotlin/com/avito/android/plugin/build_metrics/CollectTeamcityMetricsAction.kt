@@ -28,11 +28,11 @@ class CollectTeamcityMetricsAction(
 
         // We use a redundant structure only for compatibility reasons
         val path = "ci.builds.teamcity.duration" +
-            ".build_type_id.${buildTypeId}" +
-            ".id.${buildId}" +
+            ".build_type_id.$buildTypeId" +
+            ".id.$buildId" +
             ".agent._" +
             ".state._" +
-            ".status.${buildStatus}" +
+            ".status.$buildStatus" +
             "._._._._"
         graphite.send(GraphiteMetric(path, duration.seconds.toString(), build.startDateTime!!.toEpochSecond()))
     }

@@ -100,7 +100,7 @@ internal class UploadCdBuildResultTaskAction(
 
         val response = client.newCall(request).execute()
         if (!suppressErrors && !response.isSuccessful) {
-            throw RuntimeException("Upload build result failed: ${response.code} ${response.body.toString()}")
+            throw RuntimeException("Upload build result failed: ${response.code} ${response.body}")
         }
     }
 }

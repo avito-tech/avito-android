@@ -223,7 +223,7 @@ class ReservationDeploymentFactory(
     }
 
     private fun generateDeploymentName(namespace: String): String =
-        "${namespace}-${UUID.randomUUID()}"
+        "$namespace-${UUID.randomUUID()}"
             .kubernetesName()
 
     private fun String.kubernetesName(): String = replace("_", "-").toLowerCase()

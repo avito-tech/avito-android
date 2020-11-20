@@ -31,7 +31,7 @@ interface EnvArgs {
             override val id = id.id
             override val url = "No url. This is local build"
             override val number = "local"
-            override val type = "local-${userName}"
+            override val type = "local-$userName"
 
             internal enum class Id(val id: Int) {
                 FOR_LOCAL_KUBERNETES_RUN(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt())

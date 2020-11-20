@@ -22,12 +22,12 @@ sealed class KubernetesCredentials : Serializable {
 // TODO: get rid of this default. autoConfig is enabled by default
 private val kubeConfigDefaultPath: String by lazy {
     val userHome: String = requireUserHome()
-    "${userHome}/.kube/config"
+    "$userHome/.kube/config"
 }
 
 private val kubeDefaultCaCertFile: String by lazy {
     val userHome: String = requireUserHome()
-    "${userHome}/.kube/avito_ca.crt"
+    "$userHome/.kube/avito_ca.crt"
 }
 
 private fun requireUserHome(): String {

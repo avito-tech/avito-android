@@ -78,7 +78,7 @@ internal class ArtifactoryAppBackupPluginTest {
 
         val result = ciRun(
             projectDir,
-            ":$moduleName:${artifactoryAppBackupTaskName}",
+            ":$moduleName:$artifactoryAppBackupTaskName",
             "-PartifactoryUrl=${mockWebServer.url("/")}",
             "-Partifactory_deployer=xxx",
             "-Partifactory_deployer_password=xxx"
@@ -164,7 +164,7 @@ internal class ArtifactoryAppBackupPluginTest {
 
         val result = ciRun(
             projectDir,
-            ":$moduleName:${artifactoryAppBackupTaskName}",
+            ":$moduleName:$artifactoryAppBackupTaskName",
             "-PartifactoryUrl=${mockWebServer.url("/")}",
             "-Partifactory_deployer=xxx",
             "-Partifactory_deployer_password=xxx"

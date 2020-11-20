@@ -31,7 +31,7 @@ class AndroidManifest(
     private val packageParser = AndroidManifestPackageParser
 
     fun getPackage(): String {
-        val manifest = File("${projectDir}/src/$sourceSet/AndroidManifest.xml")
+        val manifest = File("$projectDir/src/$sourceSet/AndroidManifest.xml")
 
         return packageParser.parse(manifest)
             ?: error("Project $projectDir doesn't have AndroidManifest or package in it")

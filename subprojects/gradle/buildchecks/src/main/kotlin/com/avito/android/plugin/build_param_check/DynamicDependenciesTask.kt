@@ -32,7 +32,7 @@ abstract class DynamicDependenciesTask : DefaultTask() {
             FailedCheckMessage(
                 BuildChecksExtension::dynamicDependencies,
                 """
-            Module ${module.path} has dynamic dependency ${dependency.name}:${version}.
+            Module ${module.path} has dynamic dependency ${dependency.name}:$version.
             It leads to non-reproducible builds and slower configuration time.
             Please use exact version.
             """
