@@ -306,7 +306,7 @@ formatting:
     SpacingAroundColon:
         active: true
     SpacingAroundComma:
-        active: false
+        active: true
     SpacingAroundCurly:
         active: false
     SpacingAroundDot:
@@ -325,6 +325,7 @@ formatting:
         active: false
     SpacingBetweenDeclarationsWithComments:
         active: false
+
     StringTemplate:
         active: false
 
