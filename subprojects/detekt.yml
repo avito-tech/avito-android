@@ -587,6 +587,8 @@ style:
     ForbiddenPublicDataClass:
         active: false
         ignorePackages: [ '*.internal', '*.internal.*' ]
+    # https://detekt.github.io/detekt/style.html#forbiddenvoid
+    # needs type resolution config https://github.com/detekt/detekt/issues/2259
     ForbiddenVoid:
         active: false
         ignoreOverridden: false
