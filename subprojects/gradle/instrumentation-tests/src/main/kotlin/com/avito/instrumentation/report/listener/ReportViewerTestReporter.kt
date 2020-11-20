@@ -91,8 +91,7 @@ class ReportViewerTestReporter(
         executionNumber: Int
     ) {
 
-        val testFromSuite = requireNotNull(testSuite[test])
-        { "Can't find test in suite: ${test.testName}" }
+        val testFromSuite = requireNotNull(testSuite[test]) { "Can't find test in suite: ${test.testName}" }
 
         val key = test to executionNumber
         artifacts.fold(

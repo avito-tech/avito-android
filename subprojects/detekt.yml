@@ -308,7 +308,7 @@ formatting:
     SpacingAroundComma:
         active: true
     SpacingAroundCurly:
-        active: false
+        active: true
     SpacingAroundDot:
         active: false
     SpacingAroundDoubleColon:
