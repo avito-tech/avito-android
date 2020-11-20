@@ -439,8 +439,9 @@ naming:
         active: false
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         minimumVariableNameLength: 1
+    # https://detekt.github.io/detekt/naming.html#variablenaming
     VariableNaming:
-        active: false
+        active: true
         excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         variablePattern: '[a-z][A-Za-z0-9]*'
         privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'

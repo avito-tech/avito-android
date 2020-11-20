@@ -438,7 +438,7 @@ data class AdbDevice(
 
 
     override fun debug(message: String) {
-        logger.debug("$TAG $message")
+        logger.debug("$tag $message")
     }
 
     override fun info(message: String) {
@@ -446,15 +446,15 @@ data class AdbDevice(
     }
 
     override fun warn(message: String, error: Throwable?) {
-        logger.warn("$TAG $message", error)
+        logger.warn("$tag $message", error)
     }
 
     override fun toString(): String {
-        return "Device $TAG"
+        return "Device $tag"
     }
 
     // MBS-8531: don't use ADB here to avoid possible recursion
-    private val TAG: String = "[${coordinate.serial}]"
+    private val tag: String = "[${coordinate.serial}]"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L
