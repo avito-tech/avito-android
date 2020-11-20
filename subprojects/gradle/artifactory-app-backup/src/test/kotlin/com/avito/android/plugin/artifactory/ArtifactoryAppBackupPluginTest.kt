@@ -123,14 +123,16 @@ internal class ArtifactoryAppBackupPluginTest {
                                 name = "$backupName"
                                 type = "$backupType"
                                 version = "$backupVersion"
-                                ${artifacts.map { (id, path) ->
-                        """
+                                ${
+                        artifacts.map { (id, path) ->
+                            """
                                 artifact {
                                     id = "$id"
                                     path = "$path"
                                 }    
-                                """.trimIndent()
-                    }.joinToString(separator = "\n")}
+                            """.trimIndent()
+                        }.joinToString(separator = "\n")
+                    }
                             }
                         }
                     """.trimIndent()

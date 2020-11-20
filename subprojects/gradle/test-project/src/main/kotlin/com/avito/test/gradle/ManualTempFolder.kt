@@ -64,7 +64,8 @@ object ManualTempFolder {
 
                     return FileVisitResult.CONTINUE
                 }
-            })
+            }
+            )
             return failures
         }
 
@@ -76,8 +77,8 @@ object ManualTempFolder {
                 .collect(joining(", "))
             val exception = IOException(
                 "Failed to delete temp directory " + dir.toAbsolutePath()
-                        + ". The following paths could not be deleted (see suppressed exceptions for details): "
-                        + joinedPaths
+                    + ". The following paths could not be deleted (see suppressed exceptions for details): "
+                    + joinedPaths
             )
             failures.values.forEach(Consumer<IOException> { exception.addSuppressed(it) })
             return exception

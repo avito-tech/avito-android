@@ -107,11 +107,13 @@ class TestProjectGeneratorTest {
 
     @Test
     fun `generating test project with all module types is successful`() {
-        val androidApp = AndroidAppModule("app", dependencies = """
+        val androidApp = AndroidAppModule(
+            "app", dependencies = """
             implementation project(':parent:empty:library')
             implementation project(':parent:empty:kotlin')
             implementation project(':parent:empty:platform')
-        """.trimIndent())
+        """.trimIndent()
+        )
         val androidLibrary = AndroidLibModule("library")
         val platform = PlatformModule("platform")
         val kotlin = KotlinModule("kotlin")

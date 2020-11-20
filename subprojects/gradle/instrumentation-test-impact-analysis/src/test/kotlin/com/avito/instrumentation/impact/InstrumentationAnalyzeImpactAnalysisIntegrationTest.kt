@@ -48,7 +48,7 @@ class InstrumentationAnalyzeImpactAnalysisIntegrationTest {
                             @Test
                             fun newAddedTest() { }
                         }
-                        """.trimIndent()
+                    """.trimIndent()
                 }
             }
 

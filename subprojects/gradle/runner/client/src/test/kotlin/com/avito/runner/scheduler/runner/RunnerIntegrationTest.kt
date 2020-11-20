@@ -475,7 +475,8 @@ class RunnerIntegrationTest {
                     },
                     requests[1].let { request ->
                         request to listOf(request.toPassedRun(device), request.toFailedRun(device))
-                    })
+                    }
+                )
             )
         }
 

@@ -8,13 +8,13 @@ import com.avito.test.gradle.module
 import java.io.File
 
 class KotlinModule(
-  override val name: String,
-  val packageName: String = "com.$name",
-  override val plugins: List<String> = emptyList(),
-  override val buildGradleExtra: String = "",
-  override val modules: List<Module> = emptyList(),
-  private val dependencies: String = "",
-  private val mutator: File.() -> Unit = {}
+    override val name: String,
+    val packageName: String = "com.$name",
+    override val plugins: List<String> = emptyList(),
+    override val buildGradleExtra: String = "",
+    override val modules: List<Module> = emptyList(),
+    private val dependencies: String = "",
+    private val mutator: File.() -> Unit = {}
 ) : Module {
 
     override fun generateIn(file: File) {
@@ -34,7 +34,7 @@ dependencies {
     $dependencies
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }
-    """.trimIndent()
+""".trimIndent()
                 )
             }
             dir("src/main") {

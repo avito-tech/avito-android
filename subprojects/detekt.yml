@@ -254,6 +254,7 @@ formatting:
     ImportOrdering:
         active: false
         layout: 'idea'
+    # blocked by bugs: https://github.com/pinterest/ktlint/issues?q=is%3Aissue+is%3Aopen+Indentation
     Indentation:
         active: false
         indentSize: 4

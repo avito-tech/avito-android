@@ -87,7 +87,7 @@ internal fun cytoscapeGraphHtml(
                             #search::placeholder {
                                 color: #ddd;
                             }
-                    """.trimIndent()
+                        """.trimIndent()
                     )
                 }
             }

@@ -44,10 +44,10 @@ class TestSummaryPlugin : Plugin<Project> {
 
             @Suppress("UnstableApiUsage")
             unitToChannelMapping.set(extension.unitToChannelMapping
-                .map { map -> map.map { (key, value) -> Team(key) to SlackChannel(value) }.toMap() })
+                .map { map -> map.map { (key, value) -> Team(key) to SlackChannel(value) }.toMap() }
+            )
 
-            mentionOnFailures.set(extension.mentionOnFailures
-                .map { set -> set.map { Team(it) }.toSet() })
+            mentionOnFailures.set(extension.mentionOnFailures.map { set -> set.map { Team(it) }.toSet() })
             reserveSlackChannel.set(extension.reserveSlackChannel)
             slackUserName.set(extension.slackUserName)
 

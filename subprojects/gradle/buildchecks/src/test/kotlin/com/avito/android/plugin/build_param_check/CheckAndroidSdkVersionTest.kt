@@ -153,10 +153,6 @@ class CheckAndroidSdkVersionTest {
         requireNotNull(androidHome)
             .dir("platforms")
             .dir("android-$version")
-            .file(
-                "source.properties", """
-                    Pkg.Revision=$revision
-                """.trimIndent()
-            )
+            .file("source.properties", """Pkg.Revision=$revision""".trimIndent())
     }
 }

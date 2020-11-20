@@ -19,7 +19,7 @@ internal class MetadataParserTest {
                 
                     val rootId: Int = R.id.something_root
                 }
-            """.trimIndent()
+                """.trimIndent()
             )
         }
 
@@ -44,7 +44,7 @@ internal class MetadataParserTest {
                     val rootId: Int
                         get() = R.id.something_root
                 }
-            """.trimIndent()
+                """.trimIndent()
             )
         }
 

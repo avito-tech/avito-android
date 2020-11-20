@@ -8,10 +8,10 @@ import java.io.File
  * Empty module. It setups build.gradle for all child modules
  */
 class ParentGradleModule(
-  override val name: String,
-  override val modules: List<Module>,
-  override val plugins: List<String> = emptyList(),
-  override val buildGradleExtra: String = ""
+    override val name: String,
+    override val modules: List<Module>,
+    override val plugins: List<String> = emptyList(),
+    override val buildGradleExtra: String = ""
 ) : Module {
 
     override fun generateIn(file: File) {
