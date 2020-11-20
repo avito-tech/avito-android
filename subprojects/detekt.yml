@@ -264,6 +264,7 @@ formatting:
         active: false
         indentSize: 4
         continuationIndentSize: 4
+    # todo fix and enable
     MaximumLineLength:
         active: false
         maxLineLength: 120
@@ -307,7 +308,7 @@ formatting:
     PackageName:
         active: false
     ParameterListWrapping:
-        active: false
+        active: true
         indentSize: 4
 
     # https://ktlint.github.io/#rule-spacing

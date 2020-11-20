@@ -13,7 +13,8 @@ import kotlinx.cli.required
 object ClearK8SDeploymentsMain {
     @OptIn(ExperimentalCli::class)
     abstract class ClearDeployments(
-        name: String, description: String
+        name: String,
+        description: String
     ) : Subcommand(name, description) {
         protected val teamcityUrl: String by option(type = ArgType.String)
             .required()
