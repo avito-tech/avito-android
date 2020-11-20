@@ -149,8 +149,9 @@ empty-blocks:
     EmptyCatchBlock:
         active: true
         allowedExceptionNameRegex: '_|(ignore|expected).*'
+    # https://detekt.github.io/detekt/empty-blocks.html#emptyclassblock
     EmptyClassBlock:
-        active: false
+        active: true
     EmptyDefaultConstructor:
         active: false
     EmptyDoWhileBlock:
