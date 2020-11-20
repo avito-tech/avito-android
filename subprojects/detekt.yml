@@ -638,8 +638,9 @@ style:
         excludePackageStatements: true
         excludeImportStatements: true
         excludeCommentStatements: false
+    # https://detekt.github.io/detekt/style.html#maybeconst
     MayBeConst:
-        active: false
+        active: true
     ModifierOrder:
         active: false
     NestedClassesVisibility:

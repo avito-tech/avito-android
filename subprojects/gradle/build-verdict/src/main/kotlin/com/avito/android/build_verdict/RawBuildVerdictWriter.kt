@@ -23,6 +23,6 @@ internal class RawBuildVerdictWriter(
     }
 
     companion object {
-        val buildVerdictFileName = "raw-build-verdict.json"
+        const val buildVerdictFileName = "raw-build-verdict.json"
     }
 }

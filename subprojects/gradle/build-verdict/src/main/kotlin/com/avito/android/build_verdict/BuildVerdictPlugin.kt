@@ -59,6 +59,6 @@ class BuildVerdictPlugin : Plugin<ProjectInternal> {
     }
 
     internal companion object {
-        val enabledProp = "avito.build-verdict.enabled"
+        const val enabledProp = "avito.build-verdict.enabled"
     }
 }

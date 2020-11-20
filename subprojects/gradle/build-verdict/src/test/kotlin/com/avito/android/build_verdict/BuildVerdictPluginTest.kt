@@ -263,6 +263,6 @@ public abstract interface DaggerComponent {
     }
 
     companion object {
-        val appName = "app"
+        const val appName = "app"
     }
 }
