@@ -727,8 +727,9 @@ style:
     UnusedPrivateMember:
         active: true
         allowedNames: '(_|ignored|expected|serialVersionUID)'
+    # https://detekt.github.io/detekt/style.html#usearrayliteralsinannotations
     UseArrayLiteralsInAnnotations:
-        active: false
+        active: true
     UseCheckNotNull:
         active: false
     UseCheckOrError:
