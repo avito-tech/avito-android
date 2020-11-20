@@ -19,9 +19,12 @@ internal class AnnotationExtractorTest {
     fun `extract array of strings`() {
         val key = "x"
         val annotation: Annotation = ImmutableAnnotation(
-            AnnotationVisibility.RUNTIME, "Lcom.avito.Whatever;", setOf(
+            AnnotationVisibility.RUNTIME,
+            "Lcom.avito.Whatever;",
+            setOf(
                 ImmutableAnnotationElement(
-                    key, ImmutableArrayEncodedValue(
+                    key,
+                    ImmutableArrayEncodedValue(
                         ImmutableList.of(
                             ImmutableStringEncodedValue("one"),
                             ImmutableStringEncodedValue("two"),
@@ -42,9 +45,12 @@ internal class AnnotationExtractorTest {
     fun `extract array of ints`() {
         val key = "x"
         val annotation: Annotation = ImmutableAnnotation(
-            AnnotationVisibility.RUNTIME, "Lcom.avito.Whatever;", setOf(
+            AnnotationVisibility.RUNTIME,
+            "Lcom.avito.Whatever;",
+            setOf(
                 ImmutableAnnotationElement(
-                    key, ImmutableArrayEncodedValue(
+                    key,
+                    ImmutableArrayEncodedValue(
                         ImmutableList.of(
                             ImmutableIntEncodedValue(1),
                             ImmutableIntEncodedValue(2),
@@ -65,9 +71,12 @@ internal class AnnotationExtractorTest {
     fun `extract enum`() {
         val key = "x"
         val annotation: Annotation = ImmutableAnnotation(
-            AnnotationVisibility.RUNTIME, "Lcom.avito.Whatever;", setOf(
+            AnnotationVisibility.RUNTIME,
+            "Lcom.avito.Whatever;",
+            setOf(
                 ImmutableAnnotationElement(
-                    key, ImmutableEnumEncodedValue(
+                    key,
+                    ImmutableEnumEncodedValue(
                         ImmutableFieldReference("", "major", "")
                     )
                 )

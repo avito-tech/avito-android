@@ -4,7 +4,7 @@ import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.gradle.api.Project
 import java.io.File
 
-interface GitLocalState: GitState
+interface GitLocalState : GitState
 
 class GitLocalStateImpl(repoDir: File, targetBranch: String?) : GitLocalState {
 
@@ -54,6 +54,5 @@ class GitLocalStateImpl(repoDir: File, targetBranch: String?) : GitLocalState {
             val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
             return GitLocalStateImpl(project.rootProject.rootDir, targetBranch)
         }
-
     }
 }

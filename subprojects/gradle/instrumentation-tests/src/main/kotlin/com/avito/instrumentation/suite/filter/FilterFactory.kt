@@ -8,7 +8,7 @@ interface FilterFactory {
     fun createFilter(): TestsFilter
 
     companion object {
-        
+
         internal const val JUNIT_IGNORE_ANNOTATION = "org.junit.Ignore"
 
         fun create(

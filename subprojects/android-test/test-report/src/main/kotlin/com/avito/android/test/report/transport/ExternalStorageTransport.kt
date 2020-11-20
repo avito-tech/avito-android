@@ -51,7 +51,7 @@ class ExternalStorageTransport(private val gson: Gson) : Transport, PreTransport
     }
 
     companion object {
-        //todo наверное можно прокинуть в instrumentation params
+        // todo наверное можно прокинуть в instrumentation params
         private const val RUNNER_OUTPUT_FOLDER = "runner"
         private const val REPORT_FILE_NAME = "report.json"
         private const val TAG = "StorageJsonTransport"

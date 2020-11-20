@@ -59,8 +59,10 @@ class SuspiciousTogglesCollectorTest {
         )
 
         val toggles = collector.collectSuspiciousToggles(
-            jsonTogglesList, blameCodeLinesList,
-            turnedOnDateAgo = monthAgo, turnedOffDateAgo = quarterAgo
+            jsonTogglesList = jsonTogglesList,
+            blameCodeLinesList = blameCodeLinesList,
+            turnedOnDateAgo = monthAgo,
+            turnedOffDateAgo = quarterAgo
         )
 
         verifyNoMoreInteractions(logger)

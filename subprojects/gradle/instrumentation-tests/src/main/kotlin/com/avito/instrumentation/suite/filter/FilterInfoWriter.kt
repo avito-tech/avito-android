@@ -41,7 +41,8 @@ interface FilterInfoWriter {
                                 "testName" to test.test.name.name,
                                 "device" to test.test.device.name
                             )
-                        })
+                        }
+                    )
                 )
             )
         }

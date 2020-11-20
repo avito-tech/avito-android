@@ -7,6 +7,6 @@ plugins {
 dependencies {
     api(Dependencies.funktionaleTry)
 
-    //todo used only for Commandline.translateCommandline(source)
+    // todo used only for Commandline.translateCommandline(source)
     implementation(gradleApi())
 }

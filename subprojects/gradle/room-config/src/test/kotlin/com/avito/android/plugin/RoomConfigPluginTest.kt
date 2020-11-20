@@ -1,8 +1,8 @@
 package com.avito.android.plugin
 
-import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidLibModule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File

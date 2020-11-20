@@ -82,12 +82,16 @@ internal class QAppsUploadAction(
                 logger = commonLogger(logger)
             )
         )
-        .addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-            override fun log(message: String) {
-                logger.info(message)
+        .addInterceptor(
+            HttpLoggingInterceptor(
+                object : HttpLoggingInterceptor.Logger {
+                    override fun log(message: String) {
+                        logger.info(message)
+                    }
+                }
+            ).apply {
+                level = HttpLoggingInterceptor.Level.BASIC
             }
-        }).apply {
-            level = HttpLoggingInterceptor.Level.BASIC
-        })
+        )
         .build()
 }

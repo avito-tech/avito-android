@@ -19,7 +19,8 @@ internal class CILoggingHandlerImplementation(
 
     override fun write(message: String, error: Throwable?) {
         destination.write(
-            formatter?.format(message) ?: message, error
+            formatter?.format(message) ?: message,
+            error
         )
     }
 

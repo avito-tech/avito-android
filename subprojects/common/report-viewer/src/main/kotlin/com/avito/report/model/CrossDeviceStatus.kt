@@ -14,7 +14,6 @@ sealed class CrossDeviceStatus {
     object Inconsistent : CrossDeviceStatus()
 }
 
-
 interface HasFailures {
     val failures: List<FailureOnDevice>
 }

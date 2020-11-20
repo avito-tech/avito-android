@@ -185,31 +185,39 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
          * Refreshes recycler view by pressing in it's center and pulling down. Note: it does not perform
          * [scrollToPosition] operation before - developer should do it himself!
          */
-        fun pullToRefresh() = actions.swipe(object : SwipeDirection {
-            override fun toCoordinateProvider(): Pair<CoordinatesProvider, CoordinatesProvider> {
-                return GeneralLocation.CENTER to GeneralLocation.BOTTOM_CENTER
-            }
-        }, Swipe.SLOW, Press.FINGER)
+        fun pullToRefresh() = actions.swipe(
+            object : SwipeDirection {
+                override fun toCoordinateProvider(): Pair<CoordinatesProvider, CoordinatesProvider> {
+                    return GeneralLocation.CENTER to GeneralLocation.BOTTOM_CENTER
+                }
+            },
+            Swipe.SLOW,
+            Press.FINGER
+        )
 
         override fun swipe(
             direction: SwipeDirection,
             speed: Swiper,
             precision: PrecisionDescriber
         ) {
-            actions.swipe(object : SwipeDirection {
-                override fun toCoordinateProvider():
-                    Pair<CoordinatesProvider, CoordinatesProvider> {
-                    return when (direction) {
-                        TOP_TO_BOTTOM -> GeneralLocation.CENTER to GeneralLocation.BOTTOM_CENTER
-                        BOTTOM_TO_TOP -> GeneralLocation.CENTER to GeneralLocation.TOP_CENTER
-                        LEFT_TO_RIGHT -> GeneralLocation.CENTER to GeneralLocation.CENTER_RIGHT
-                        RIGHT_TO_LEFT -> GeneralLocation.CENTER to GeneralLocation.CENTER_LEFT
-                        else -> throw IllegalArgumentException(
-                            "Can't do \"swipe\". Argument $direction is not supported"
-                        )
+            actions.swipe(
+                object : SwipeDirection {
+                    override fun toCoordinateProvider():
+                        Pair<CoordinatesProvider, CoordinatesProvider> {
+                        return when (direction) {
+                            TOP_TO_BOTTOM -> GeneralLocation.CENTER to GeneralLocation.BOTTOM_CENTER
+                            BOTTOM_TO_TOP -> GeneralLocation.CENTER to GeneralLocation.TOP_CENTER
+                            LEFT_TO_RIGHT -> GeneralLocation.CENTER to GeneralLocation.CENTER_RIGHT
+                            RIGHT_TO_LEFT -> GeneralLocation.CENTER to GeneralLocation.CENTER_LEFT
+                            else -> throw IllegalArgumentException(
+                                "Can't do \"swipe\". Argument $direction is not supported"
+                            )
+                        }
                     }
-                }
-            }, Swipe.FAST, Press.FINGER)
+                },
+                Swipe.FAST,
+                Press.FINGER
+            )
         }
 
         /**

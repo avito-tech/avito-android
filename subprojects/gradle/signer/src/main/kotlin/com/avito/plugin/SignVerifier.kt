@@ -27,7 +27,8 @@ interface SignVerifier {
                             Result.WrongSignature(expectedSha1, actualSha1)
                         }
                     },
-                    { error -> Result.VerificationError(error) })
+                    { error -> Result.VerificationError(error) }
+                )
         }
 
         override fun verifyBundle(bundle: ExistingFile, expectedSha1: String): Result {

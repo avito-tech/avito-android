@@ -17,7 +17,6 @@ fun TestResult.assertAffectedModules(taskName: String, expectedModules: Set<Stri
         .map { it.substringBefore(":$taskName ") }
         .toSet()
 
-
     assertWithMessage("Task $taskName has executed for modules: $expectedModules")
         .that(actualModules)
         .containsExactlyElementsIn(expectedModules)

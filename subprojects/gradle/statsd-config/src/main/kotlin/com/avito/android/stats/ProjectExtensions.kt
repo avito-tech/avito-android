@@ -15,15 +15,17 @@ import org.gradle.api.provider.Provider
 val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
     val logger = project.ciLogger
 
-    Providers.of<StatsDSender>(StatsDSender.Impl(
-        config = config(project),
-        logger = { message, error ->
-            if (error != null) logger.info(
-                message,
-                error
-            ) else logger.debug(message)
-        }
-    ))
+    Providers.of<StatsDSender>(
+        StatsDSender.Impl(
+            config = config(project),
+            logger = { message, error ->
+                if (error != null) logger.info(
+                    message,
+                    error
+                ) else logger.debug(message)
+            }
+        )
+    )
 }
 
 val Project.statsdConfig: Provider<StatsDConfig> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->

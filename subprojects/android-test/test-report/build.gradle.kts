@@ -20,7 +20,7 @@ dependencies {
     implementation(Dependencies.kotson)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.okhttp)
-    implementation(Dependencies.sentryAndroid) //todo use common:sentry
+    implementation(Dependencies.sentryAndroid) // todo use common:sentry
 
     testImplementation(project(":common:junit-utils"))
     testImplementation(project(":common:logger-test-fixtures"))

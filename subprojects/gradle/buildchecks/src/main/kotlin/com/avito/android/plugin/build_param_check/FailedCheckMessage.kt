@@ -9,7 +9,8 @@ internal class FailedCheckMessage(
     extensionMethodReference: KFunction<Any>,
     private val message: String
 ) {
-    override fun toString() = """
+    override fun toString() =
+"""
 ERROR: '$checkExtensionName' build check is failed.
 ${message.trimIndent()}
 This check can be disabled by extension:

@@ -69,7 +69,7 @@ fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
     if (fileName.endsWith(".json")) {
         val exception = validateJson(text)
         if (exception != null) {
-            throw  IllegalArgumentException("$fileName contains invalid json", exception)
+            throw IllegalArgumentException("$fileName contains invalid json", exception)
         }
     }
     setBody(text)

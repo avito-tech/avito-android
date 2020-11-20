@@ -96,8 +96,6 @@ abstract class FixNamespacedResourcesTask @Inject constructor(
     }
 }
 
-
 internal data class AndroidModule(val packageId: String, val ids: List<String>)
 
 internal data class ResourceId(val id: String, val module: AndroidModule)
-

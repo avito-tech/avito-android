@@ -52,7 +52,7 @@ inline fun <T : DataSet> dataSet(
 ) {
     report.updateTestCase {
         dataSet = value
-        //todo почему -1 это вообще валидное значение? попробовать использовать unsigned тип данных
+        // todo почему -1 это вообще валидное значение? попробовать использовать unsigned тип данных
         require(testMetadata.dataSetNumber != null && testMetadata.dataSetNumber != -1) {
             "Please specify @DataSetNumber(Int) for test ${testMetadata.className}.${testMetadata.methodName}"
         }
@@ -185,9 +185,11 @@ class StepException(
         fun data(isPrecondition: Boolean, action: String, assertion: String?): String {
             return "${slug(isPrecondition).capitalize()}:\n${action.prependIndent()}"
                 .let {
-                    if (assertion != null)
+                    if (assertion != null) {
                         "$it\nПроверка:\n${assertion.prependIndent()}"
-                    else it
+                    } else {
+                        it
+                    }
                 }
         }
     }

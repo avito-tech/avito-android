@@ -6,11 +6,11 @@ import com.avito.android.ModuleType.IMPLEMENTATION
 import com.avito.android.ModuleType.TEST_LIB
 import com.avito.android.ModuleTypesRules.Case.NegativeCase
 import com.avito.android.ModuleTypesRules.Case.PositiveCase
-import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.ManualTempFolder
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidLibModule
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 
@@ -116,9 +116,11 @@ class ModuleTypesRules {
             dependentModuleDependencyType: DependencyType,
             dependentModuleType: ModuleType
         ) : Case(
-            "${featureModuleType.name} ALLOWED to have " +
+            name = "${featureModuleType.name} ALLOWED to have " +
                 "${dependentModuleDependencyType.name} dependency on ${dependentModuleType.name}",
-            featureModuleType, dependentModuleDependencyType, dependentModuleType
+            featureModuleType = featureModuleType,
+            dependentModuleDependencyType = dependentModuleDependencyType,
+            dependentModuleType = dependentModuleType
         )
 
         class NegativeCase(
@@ -126,9 +128,11 @@ class ModuleTypesRules {
             dependentModuleDependencyType: DependencyType,
             dependentModuleType: ModuleType
         ) : Case(
-            "${featureModuleType.name} RESTRICTED to have " +
+            name = "${featureModuleType.name} RESTRICTED to have " +
                 "${dependentModuleDependencyType.name} dependency on ${dependentModuleType.name}",
-            featureModuleType, dependentModuleDependencyType, dependentModuleType
+            featureModuleType = featureModuleType,
+            dependentModuleDependencyType = dependentModuleDependencyType,
+            dependentModuleType = dependentModuleType
         )
     }
 

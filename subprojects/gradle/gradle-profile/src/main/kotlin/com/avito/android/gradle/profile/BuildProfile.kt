@@ -166,5 +166,4 @@ class BuildProfile {
     fun setBuildFinished(buildFinished: Long) {
         this.buildFinished = buildFinished
     }
-
 }

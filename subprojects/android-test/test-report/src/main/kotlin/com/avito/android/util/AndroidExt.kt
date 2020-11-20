@@ -25,4 +25,3 @@ fun Bitmap.toPng(): InputStream {
     val png = outputStream.toByteArray()
     return ByteArrayInputStream(png)
 }
-

@@ -4,7 +4,6 @@ import com.avito.git.GitLocalState
 import com.avito.git.GitState
 import com.avito.impact.configuration.isBranchProtected
 import com.avito.impact.plugin.ImpactAnalysisExtension
-import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.provider.Provider
 
 sealed class IsAnalysisNeededResult {

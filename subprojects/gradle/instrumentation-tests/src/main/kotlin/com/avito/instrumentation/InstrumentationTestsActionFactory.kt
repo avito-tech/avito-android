@@ -49,6 +49,5 @@ interface InstrumentationTestsActionFactory {
         override fun provideScheduler() = schedulerFactory.create()
 
         override fun provideFinalizer() = finalizerFactory.create()
-
     }
 }

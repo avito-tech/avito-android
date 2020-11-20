@@ -100,7 +100,7 @@ interface LintSlackReporter {
             buildUrl: HttpUrl
         ): String {
             return buildString {
-                appendln("*Critical lint problems detected for project ${projectPath}*")
+                appendln("*Critical lint problems detected for project $projectPath*")
                 appendln("Build: <$buildUrl|link>")
                 appendln()
 

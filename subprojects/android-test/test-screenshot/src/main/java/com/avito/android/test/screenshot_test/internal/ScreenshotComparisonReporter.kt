@@ -59,6 +59,5 @@ internal class ScreenshotComparisonReporter(
                 .replace("%referenceImage%", referenceUrl)
                 .replace("%generatedImage%", generatedUrl)
         }
-
     }
 }

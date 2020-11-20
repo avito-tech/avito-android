@@ -7,12 +7,14 @@ interface TraceEvent {
      * The name of the event, as displayed in Trace Viewer
      */
     val eventName: String
+
     /**
      * The event categories.
      * This is a comma separated list of categories for the event.
      * The categories can be used to hide events in the Trace Viewer UI.
      */
     val categories: String?
+
     /**
      * The event type.
      * This is a single character which changes depending on the type of event being output
@@ -20,15 +22,18 @@ interface TraceEvent {
     val phase: Char
     val processId: String
     val threadId: String?
+
     /**
      * The tracing clock timestamp of the event.
      * Somehow `displayTimeUnit` doesn't affect this time unit.
      */
     val timestampMicroseconds: Long
+
     /**
      * A fixed color name: https://github.com/catapult-project/catapult/blob/master/tracing/tracing/base/color_scheme.html
      */
     val color: String?
+
     /**
      * Any arguments provided for the event.
      * Some of the event types have required argument fields, otherwise, you can put any information you wish in here.
@@ -59,7 +64,7 @@ data class DurationEvent(
     // If you provide args to both the Begin and End events then the arguments will be merged.
     // If there is a duplicate argument value provided the E event argument will be taken and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
-): TraceEvent {
+) : TraceEvent {
     companion object {
         const val PHASE_BEGIN = 'B'
         const val PHASE_END = 'E'
@@ -88,7 +93,7 @@ data class CompleteEvent(
     // If you provide args to both the Begin and End events then the arguments will be merged.
     // If there is a duplicate argument value provided the E event argument will be taken and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
-): TraceEvent {
+) : TraceEvent {
     companion object {
         const val PHASE = 'X'
     }
@@ -118,7 +123,7 @@ data class InstantEvent(
     // If you provide args to both the Begin and End events then the arguments will be merged.
     // If there is a duplicate argument value provided the E event argument will be taken and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
-): TraceEvent {
+) : TraceEvent {
     companion object {
         const val PHASE = 'i'
         const val SCOPE_THREAD = "t"

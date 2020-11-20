@@ -1,7 +1,6 @@
 package com.avito.android
 
 import Visibility
-import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.kotlin.dsl.findByType
 

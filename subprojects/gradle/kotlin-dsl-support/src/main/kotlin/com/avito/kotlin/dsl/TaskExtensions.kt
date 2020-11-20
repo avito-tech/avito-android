@@ -23,7 +23,6 @@ inline fun <reified T : Task> Task.dependencyOn(anotherTask: T, configuration: (
     dependsOn(anotherTask)
 }
 
-
 /**
  * Add Task dependencies based on a project plugins
  * @param project pairs of pluginId, task.name (ex: "com.android.application" to "testDebugUnitTest")
@@ -61,4 +60,3 @@ inline fun <T : Task> NamedDomainObjectProvider<T>.finalizeByProjectsTasks(
         }
     }
 }
-

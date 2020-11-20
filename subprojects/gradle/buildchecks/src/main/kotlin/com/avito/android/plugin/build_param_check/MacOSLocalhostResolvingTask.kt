@@ -54,10 +54,11 @@ abstract class MacOSLocalhostResolvingTask @Inject constructor(
             if (resolveTimeMs > 100) {
                 throw GradleException(
                     FailedCheckMessage(
-                        BuildChecksExtension::macOSLocalhost, """
+                        BuildChecksExtension::macOSLocalhost,
+                        """
                             Localhost resolution took $resolveTimeMs ms.
                             This is a bug in JVM on macOS. Please fix it: https://thoeni.io/post/macos-sierra-java/
-                            """
+                        """
                     ).toString()
                 )
             } else {
@@ -76,7 +77,5 @@ abstract class MacOSLocalhostResolvingTask @Inject constructor(
         }
 
         private fun resolveLocalhost() = InetAddress.getLocalHost().hostName
-
     }
 }
-

@@ -26,7 +26,8 @@ class FileResourcesFixerTest {
             import com.library.R
             val id = R.id.container
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """
@@ -46,7 +47,8 @@ class FileResourcesFixerTest {
             import com.library.R
             val id = R.id.container
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """
@@ -70,7 +72,8 @@ class FileResourcesFixerTest {
 
             val id = R.id.container
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """
@@ -93,7 +96,8 @@ class FileResourcesFixerTest {
 
             val id = R.id.container
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """
@@ -119,7 +123,8 @@ class FileResourcesFixerTest {
 
             val icon = element<ViewElement>(ViewMatchers.withId(R.id.icon))
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """
@@ -145,7 +150,8 @@ class FileResourcesFixerTest {
 
             val id = custom_alias_R.id.container
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """
@@ -171,7 +177,8 @@ class FileResourcesFixerTest {
             val id1 = R.id.container
             val id2 = custom_alias_R.id.container
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """
@@ -198,7 +205,8 @@ class FileResourcesFixerTest {
             val id1 = app_R.id.container
             val id2 = library_R.id.container
         """.trimIndent(),
-            app, libraries
+            app,
+            libraries
         )
         assertThat(result).isEqualTo(
             """

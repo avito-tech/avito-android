@@ -10,7 +10,6 @@ import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.lazyProperty
 import io.sentry.SentryClient
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.gradle.api.Project
 import org.gradle.api.internal.provider.Providers

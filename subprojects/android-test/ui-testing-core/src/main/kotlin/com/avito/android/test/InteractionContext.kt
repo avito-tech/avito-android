@@ -38,12 +38,14 @@ class SimpleInteractionContext(
     override fun perform(vararg actions: ViewAction) {
         runPrecondition()
 
-        interaction.waitToPerform(actions.map { action ->
-            ActionInterceptor.Proxy(
-                action,
-                UITestConfig.actionInterceptors
-            )
-        })
+        interaction.waitToPerform(
+            actions.map { action ->
+                ActionInterceptor.Proxy(
+                    action,
+                    UITestConfig.actionInterceptors
+                )
+            }
+        )
     }
 
     override fun check(assertion: ViewAssertion) {

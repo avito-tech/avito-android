@@ -91,8 +91,7 @@ class ReportViewerTestReporter(
         executionNumber: Int
     ) {
 
-        val testFromSuite = requireNotNull(testSuite[test])
-        { "Can't find test in suite: ${test.testName}" }
+        val testFromSuite = requireNotNull(testSuite[test]) { "Can't find test in suite: ${test.testName}" }
 
         val key = test to executionNumber
         artifacts.fold(
@@ -102,7 +101,7 @@ class ReportViewerTestReporter(
                 try {
                     val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(FileReader(reportJson))
 
-                    //отправляем только для упавших тестов
+                    // отправляем только для упавших тестов
                     val (stdout: String, stderr: String) = if (testRuntimeData.incident != null) {
                         logcatBuffers.getLogcat(key)
                     } else {
@@ -129,8 +128,8 @@ class ReportViewerTestReporter(
                     listOf(
                         AndroidTest.Lost.fromTestMetadata(
                             testFromSuite,
-                            startTime = 0, //todo попробовать достать
-                            lastSignalTime = 0, //todo попробовать достать
+                            startTime = 0, // todo попробовать достать
+                            lastSignalTime = 0, // todo попробовать достать
                             stdout = stdout,
                             stderr = stderr
                         )
@@ -152,7 +151,7 @@ class ReportViewerTestReporter(
         }
     }
 
-    //todo coroutine
+    // todo coroutine
     private fun uploadLogcat(logcat: List<String>): String {
         return if (logcat.isEmpty()) {
             logger.warn("Logcat is empty")

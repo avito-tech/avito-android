@@ -97,7 +97,6 @@ class LintResultsParser(private val log: CILogger) {
         }
         return issues
     }
-
 }
 
 internal class UnsupportedFormatVersion(message: String) : RuntimeException(message)

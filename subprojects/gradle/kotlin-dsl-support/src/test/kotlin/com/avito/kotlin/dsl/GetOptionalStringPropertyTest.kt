@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 internal class GetOptionalStringPropertyTest {
 
-    //todo null by default
+    // todo null by default
     @Test
     fun `getOptionalStringProperty - returns empty string - on empty string by default`() {
         val project = ProjectBuilder.builder().build()

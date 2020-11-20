@@ -8,5 +8,4 @@ internal interface ImpactAnalysisAwareBuildStep {
     class Impl : ImpactAnalysisAwareBuildStep {
         override var useImpactAnalysis: Boolean = false
     }
-
 }

@@ -141,7 +141,6 @@ class VideoCapturerImpl(
         }
     }
 
-
     private fun testVideoFile(testName: String) = File(
         outputDirectory.value,
         "$testName.mp4"
@@ -219,7 +218,7 @@ class VideoCapturerImpl(
         try {
             outputDescriptor.close()
         } catch (ignore: IOException) {
-            //ignore
+            // ignore
         }
     }
 

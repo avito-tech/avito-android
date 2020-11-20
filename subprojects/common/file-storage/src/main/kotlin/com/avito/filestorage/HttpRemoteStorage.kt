@@ -55,59 +55,61 @@ class HttpRemoteStorage(
                 content = uploadRequest.content
             )
         }
-            .enqueue(object : Callback<String> {
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    logger.warn(getUploadRequestErrorMessage(uploadRequest), t)
+            .enqueue(
+                object : Callback<String> {
+                    override fun onFailure(call: Call<String>, t: Throwable) {
+                        logger.warn(getUploadRequestErrorMessage(uploadRequest), t)
 
-                    deleteUploadedFile(
-                        uploadRequest = uploadRequest,
-                        deleteOnUpload = deleteOnUpload
-                    )
+                        deleteUploadedFile(
+                            uploadRequest = uploadRequest,
+                            deleteOnUpload = deleteOnUpload
+                        )
 
-                    futureValue.set(RemoteStorage.Result.Error(t))
-                }
-
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    val result = when {
-                        response.isSuccessful && !response.body().isNullOrEmpty() -> {
-                            val url = response.body()!!
-
-                            logUploaded(
-                                uploadRequest = uploadRequest,
-                                url = url
-                            )
-
-                            RemoteStorage.Result.Success(
-                                comment = comment,
-                                url = url,
-                                timeInSeconds = timestamp,
-                                uploadRequest = uploadRequest
-                            )
-                        }
-                        response.isSuccessful && response.body().isNullOrEmpty() -> {
-                            val exception = IllegalStateException("Uploading failed response body is absent")
-                            logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
-                            RemoteStorage.Result.Error(
-                                t = exception
-                            )
-                        }
-                        else -> {
-                            val exception = RuntimeException("Uploading failed with response: ${response.body()}")
-                            logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
-                            RemoteStorage.Result.Error(
-                                t = exception
-                            )
-                        }
+                        futureValue.set(RemoteStorage.Result.Error(t))
                     }
 
-                    deleteUploadedFile(
-                        uploadRequest = uploadRequest,
-                        deleteOnUpload = deleteOnUpload
-                    )
+                    override fun onResponse(call: Call<String>, response: Response<String>) {
+                        val result = when {
+                            response.isSuccessful && !response.body().isNullOrEmpty() -> {
+                                val url = response.body()!!
 
-                    futureValue.set(result)
+                                logUploaded(
+                                    uploadRequest = uploadRequest,
+                                    url = url
+                                )
+
+                                RemoteStorage.Result.Success(
+                                    comment = comment,
+                                    url = url,
+                                    timeInSeconds = timestamp,
+                                    uploadRequest = uploadRequest
+                                )
+                            }
+                            response.isSuccessful && response.body().isNullOrEmpty() -> {
+                                val exception = IllegalStateException("Uploading failed response body is absent")
+                                logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
+                                RemoteStorage.Result.Error(
+                                    t = exception
+                                )
+                            }
+                            else -> {
+                                val exception = RuntimeException("Uploading failed with response: ${response.body()}")
+                                logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
+                                RemoteStorage.Result.Error(
+                                    t = exception
+                                )
+                            }
+                        }
+
+                        deleteUploadedFile(
+                            uploadRequest = uploadRequest,
+                            deleteOnUpload = deleteOnUpload
+                        )
+
+                        futureValue.set(result)
+                    }
                 }
-            })
+            )
 
         return futureValue
     }

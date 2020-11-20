@@ -26,5 +26,4 @@ class OverlapMatcher : TypeSafeMatcher<View>() {
             higherZOrderView.getRect().intersect(viewRect)
         }
     }
-
 }

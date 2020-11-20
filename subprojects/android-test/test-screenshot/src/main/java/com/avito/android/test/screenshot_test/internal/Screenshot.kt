@@ -63,7 +63,7 @@ internal class ScreenshotDirectory(
 
         @SuppressLint("SetWorldWritable")
         private fun setWorldWriteable(dir: File) {
-            dir.setWritable( /* writeable = */true,  /* ownerOnly = */false)
+            dir.setWritable( /* writeable = */true, /* ownerOnly = */false)
         }
 
         private fun Context.getResolution(): String {

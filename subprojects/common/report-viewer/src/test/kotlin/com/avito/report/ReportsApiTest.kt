@@ -8,7 +8,6 @@ import com.avito.test.http.MockWebServerFactory
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

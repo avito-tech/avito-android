@@ -18,7 +18,7 @@ interface SlackBulkSender {
     fun sendBulk(body: Bulk.() -> Unit)
 }
 
-//todo use Flow API
+// todo use Flow API
 @OptIn(ObsoleteCoroutinesApi::class)
 class CoroutinesSlackBulkSender(
     private val sender: SlackMessageSender,
@@ -32,7 +32,7 @@ class CoroutinesSlackBulkSender(
     private val ticker = kotlinx.coroutines.channels.ticker(delayMillis = 1500L, initialDelayMillis = 0L)
 
     init {
-        //todo use Flow
+        // todo use Flow
         @Suppress("DEPRECATION")
         val tickedQueue = requestQueue.zip(ticker) { request, _ -> request }
         // TODO: Don't use global scope. Unconfined coroutines lead to leaks

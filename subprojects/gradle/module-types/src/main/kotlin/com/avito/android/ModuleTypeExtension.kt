@@ -6,6 +6,6 @@ open class ModuleTypeExtension(
     var type: ModuleType = ModuleType.IMPLEMENTATION
 )
 
-//todo правда должен быть nullable?
+// todo правда должен быть nullable?
 inline val ExtensionContainer.moduleType
     get() = findByType(ModuleTypeExtension::class.java)

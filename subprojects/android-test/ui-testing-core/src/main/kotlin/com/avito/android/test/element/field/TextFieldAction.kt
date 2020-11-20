@@ -25,7 +25,6 @@ interface FieldActions : Actions {
     fun append(text: String)
 }
 
-
 internal class TextFieldAction(
     private val interactionContext: InteractionContext
 ) : FieldActions,

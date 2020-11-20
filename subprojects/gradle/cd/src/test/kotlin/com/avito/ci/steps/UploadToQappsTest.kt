@@ -1,9 +1,9 @@
 package com.avito.ci.steps
 
-import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.MockResponse
 import org.gradle.testkit.runner.TaskOutcome
@@ -143,5 +143,4 @@ class UploadToQappsTest {
     fun teardown() {
         mockWebServer.shutdown()
     }
-
 }

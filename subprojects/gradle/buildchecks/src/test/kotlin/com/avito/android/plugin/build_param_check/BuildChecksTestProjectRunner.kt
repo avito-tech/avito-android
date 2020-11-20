@@ -53,7 +53,7 @@ class BuildChecksTestProjectRunner(
         }
         val arguments = mutableListOf(
             "help",
-            //todo make params optional
+            // todo make params optional
             "-Pavito.stats.host=localhost",
             "-Pavito.stats.fallbackHost=localhost",
             "-Pavito.stats.port=80",

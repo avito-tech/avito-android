@@ -74,7 +74,6 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
         } finally {
             connection.disconnect()
         }
-
     }
 
     private fun buildReportText(sortedToggles: List<TeamTogglesList>): String {

@@ -71,13 +71,19 @@ repositories {
             jcenter()
         }
         filter {
-            //all for detekt
+            // all for detekt
             includeGroup("io.gitlab.arturbosch.detekt")
+            includeGroup("com.pinterest.ktlint")
+            includeGroup("org.ec4j.core")
             includeGroupByRegex("org.jetbrains.*")
             includeModule("com.beust", "jcommander")
             includeModule("org.yaml", "snakeyaml")
         }
     }
+}
+
+dependencies {
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0-RC1")
 }
 
 subprojects {
@@ -97,9 +103,6 @@ subprojects {
         exclusiveContent {
             forRepository {
                 google()
-            }
-            forRepository {
-                mavenCentral()
             }
             filter {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
@@ -196,7 +199,7 @@ subprojects {
         extensions.getByType<PublishingExtension>().run {
 
             publications {
-                //todo should not depend on ordering
+                // todo should not depend on ordering
                 if (plugins.hasPlugin("kotlin")) {
                     val publicationName = "maven"
 
@@ -256,7 +259,7 @@ subprojects {
         configureJunit5Tests()
     }
 
-    //todo more precise configuration for gradle plugins, no need for gradle testing in common kotlin modules
+    // todo more precise configuration for gradle plugins, no need for gradle testing in common kotlin modules
     plugins.withId("kotlin") {
 
         configureJunit5Tests()
@@ -276,8 +279,10 @@ subprojects {
                  * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
                  * используется в `:test-project`
                  */
-                systemProperty("isInvokedFromIde",
-                    gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null)
+                systemProperty(
+                    "isInvokedFromIde",
+                    gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
+                )
             }
         }
 
@@ -314,7 +319,7 @@ subprojects {
 }
 
 tasks.withType<Wrapper> {
-    //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
+    // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
     gradleVersion = "6.7"
 }
@@ -336,7 +341,7 @@ fun Project.getOptionalExtra(key: String): String? {
 fun Project.configureBintray(vararg publications: String) {
     extensions.findByType<BintrayExtension>()?.run {
 
-        //todo fail fast with meaningful error message
+        // todo fail fast with meaningful error message
         user = getOptionalExtra("avito.bintray.user")
         key = getOptionalExtra("avito.bintray.key")
 
@@ -349,17 +354,21 @@ fun Project.configureBintray(vararg publications: String) {
         // - NoHttpResponseException: api.bintray.com:443 failed to respond (https://github.com/bintray/gradle-bintray-plugin/issues/325)
         // - Could not upload to 'https://api.bintray.com/...': HTTP/1.1 405 Not Allowed 405 Not Allowed405 Not Allowednginx
         override = false
-        pkg(closureOf<PackageConfig> {
-            repo = "maven"
-            userOrg = "avito"
-            name = "avito-android"
-            setLicenses("mit")
-            vcsUrl = "https://github.com/avito-tech/avito-android.git"
+        pkg(
+            closureOf<PackageConfig> {
+                repo = "maven"
+                userOrg = "avito"
+                name = "avito-android"
+                setLicenses("mit")
+                vcsUrl = "https://github.com/avito-tech/avito-android.git"
 
-            version(closureOf<VersionConfig> {
-                name = finalProjectVersion
-            })
-        })
+                version(
+                    closureOf<VersionConfig> {
+                        name = finalProjectVersion
+                    }
+                )
+            }
+        )
     }
 
     tasks.named(publishReleaseTaskName).configure {

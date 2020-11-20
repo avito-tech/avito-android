@@ -35,7 +35,6 @@ class GetTestResultsActionTest {
                     )
                 )
             )
-
     }
 
     private fun createGetTestResultsAction(

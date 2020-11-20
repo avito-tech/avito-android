@@ -11,7 +11,7 @@ interface InvokesTracer {
     fun trace(context: Context, listener: InvokesListener)
 }
 
-class InvokesTracerImpl: InvokesTracer {
+class InvokesTracerImpl : InvokesTracer {
 
     override fun trace(context: Context, listener: InvokesListener) {
         context.classes.values.parallelStream()

@@ -10,7 +10,5 @@ internal interface FlakyAwareBuildStep {
     class Impl : FlakyAwareBuildStep {
 
         override var suppressFlaky: Boolean = false
-
     }
-
 }

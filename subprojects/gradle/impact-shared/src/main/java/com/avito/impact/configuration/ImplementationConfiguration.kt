@@ -1,5 +1,5 @@
 @file:Suppress("DEPRECATION")
-//todo use new api?
+// todo use new api?
 
 package com.avito.impact.configuration
 
@@ -72,5 +72,4 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
     }
 
     override fun hashCode(): Int = project.hashCode()
-
 }

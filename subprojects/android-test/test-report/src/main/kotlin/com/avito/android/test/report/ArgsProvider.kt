@@ -3,7 +3,7 @@ package com.avito.android.test.report
 import android.os.Bundle
 import java.io.Serializable
 
-//TODO: consider of using as a wrapper above "bundle" to protect from collisions, empty values, ...
+// TODO: consider of using as a wrapper above "bundle" to protect from collisions, empty values, ...
 interface ArgsProvider {
 
     /**
@@ -37,7 +37,7 @@ class BundleArgsProvider(
         val result: String? = bundle.getString(name)
         if (result == null || result.isBlank()) {
             throw ReporterException(
-                "$name is a mandatory argument; all values=${bundle}"
+                "$name is a mandatory argument; all values=$bundle"
             )
         } else {
             return result

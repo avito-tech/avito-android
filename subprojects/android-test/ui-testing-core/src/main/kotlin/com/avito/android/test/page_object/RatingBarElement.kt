@@ -7,7 +7,6 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.matcher.ViewMatchers
 import com.avito.android.test.InteractionContext
-import com.avito.android.test.SimpleInteractionContext
 import com.avito.android.test.action.ActionsDriver
 import com.avito.android.test.checks.Checks
 import com.avito.android.test.checks.ChecksDriver
@@ -46,18 +45,20 @@ class RatingBarChecksImpl(
     Checks by ChecksImpl(driver) {
 
     override fun withRating(rating: Float) {
-        driver.check(ViewAssertion { view, _ ->
-            when (view) {
-                is RatingBar -> {
-                    if (view.rating != rating) {
-                        throw AssertionFailedError(
-                            "Current rating is: ${view.rating}. Checked is $rating"
-                        )
+        driver.check(
+            ViewAssertion { view, _ ->
+                when (view) {
+                    is RatingBar -> {
+                        if (view.rating != rating) {
+                            throw AssertionFailedError(
+                                "Current rating is: ${view.rating}. Checked is $rating"
+                            )
+                        }
                     }
+                    else -> throw AssertionFailedError("Matched view with is not RatingBar")
                 }
-                else -> throw AssertionFailedError("Matched view with is not RatingBar")
             }
-        })
+        )
     }
 }
 

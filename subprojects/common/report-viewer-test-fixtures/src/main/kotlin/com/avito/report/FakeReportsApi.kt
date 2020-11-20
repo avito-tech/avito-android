@@ -4,7 +4,6 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.GetReportResult
-import com.avito.report.model.PerformanceTest
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest

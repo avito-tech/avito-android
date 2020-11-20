@@ -7,4 +7,3 @@ internal data class ModuleConfiguration(
     val isPrimaryModified: Boolean,
     val modifiedReason: String?
 )
-

@@ -4,7 +4,6 @@ package com.avito.utils.gradle
 
 import com.avito.kotlin.dsl.ProjectProperty
 import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
-import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -32,7 +31,7 @@ interface EnvArgs {
             override val id = id.id
             override val url = "No url. This is local build"
             override val number = "local"
-            override val type = "local-${userName}"
+            override val type = "local-$userName"
 
             internal enum class Id(val id: Int) {
                 FOR_LOCAL_KUBERNETES_RUN(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt())
@@ -49,7 +48,6 @@ interface EnvArgs {
             override val number: String,
             override val type: String
         ) : Build()
-
     }
 
     val build: Build
@@ -76,6 +74,5 @@ interface EnvArgs {
                 else -> throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
             }
         }
-
     }
 }

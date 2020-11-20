@@ -299,7 +299,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     private fun validateEnvironment(@Suppress("UNUSED_PARAMETER") runEnvironment: TestRunEnvironment.RunEnvironment) {
-        //todo validate
+        // todo validate
     }
 
     private fun initTestCase(runEnvironment: TestRunEnvironment.RunEnvironment) {

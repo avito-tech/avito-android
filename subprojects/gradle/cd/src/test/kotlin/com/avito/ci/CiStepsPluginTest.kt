@@ -5,10 +5,10 @@ import com.avito.android.plugin.artifactory.artifactoryPasswordParameterName
 import com.avito.android.plugin.artifactory.artifactoryUserParameterName
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.steps.verifyTaskName
-import com.avito.test.gradle.module.AndroidAppModule
-import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.upload_to_googleplay.deployTaskName
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
@@ -333,7 +333,6 @@ class CiStepsPluginTest {
             }
         }
     }
-
 
     @TestFactory
     fun `assembleDebug should not trigger CI tasks`(): List<DynamicTest> {

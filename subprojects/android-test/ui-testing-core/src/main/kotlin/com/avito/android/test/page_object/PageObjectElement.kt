@@ -14,4 +14,3 @@ abstract class PageObjectElement : PageObject(), Actions {
     abstract val actions: Actions
     abstract val checks: Checks
 }
-

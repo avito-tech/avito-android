@@ -74,7 +74,5 @@ class SnackbarRule() : SimpleRule(), SnackbarAsserts {
         // look at snackbar.setText
         private val Snackbar.text: String
             get() = view.findViewById<TextView>(google_R.id.snackbar_text).text.toString()
-
     }
-
 }

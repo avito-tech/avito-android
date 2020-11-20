@@ -32,7 +32,7 @@ class OutputsVerifier(
     fun checkApkSignature(apkFile: ExistingFile, expectedSha1: String) {
         when (val result = signVerifier.verifyApk(apkFile, expectedSha1)) {
             is SignVerifier.Result.Ok -> {
-                //do nothing
+                // do nothing
             }
             is SignVerifier.Result.WrongSignature -> errors +=
                 "${apkFile.relativeToOutputsPath} signature doesn't match:\n" +
@@ -45,7 +45,7 @@ class OutputsVerifier(
     fun checkBundleSignature(bundleFile: ExistingFile, expectedSha1: String) {
         when (val result = signVerifier.verifyBundle(bundleFile, expectedSha1)) {
             SignVerifier.Result.Ok -> {
-                //do nothing
+                // do nothing
             }
             is SignVerifier.Result.WrongSignature -> errors +=
                 "${bundleFile.relativeToOutputsPath} signature doesn't match:\n" +

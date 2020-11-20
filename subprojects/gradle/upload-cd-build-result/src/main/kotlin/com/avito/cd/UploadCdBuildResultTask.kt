@@ -15,12 +15,11 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
 
-//TODO internal?
+// TODO internal?
 
 const val uploadCdBuildResultTaskName = "uploadCdBuildResult"
 
-abstract class UploadCdBuildResultTask
-@Inject constructor(
+abstract class UploadCdBuildResultTask @Inject constructor(
     private val uiTestConfiguration: String,
     private val user: String,
     private val password: String,
@@ -40,7 +39,7 @@ abstract class UploadCdBuildResultTask
             client = Providers.client(
                 user = user,
                 password = password,
-                logger = object: HttpLoggingInterceptor.Logger  {
+                logger = object : HttpLoggingInterceptor.Logger {
                     override fun log(message: String) {
                         project.ciLogger.info(message)
                     }
@@ -101,7 +100,7 @@ internal class UploadCdBuildResultTaskAction(
 
         val response = client.newCall(request).execute()
         if (!suppressErrors && !response.isSuccessful) {
-            throw RuntimeException("Upload build result failed: ${response.code} ${response.body.toString()}")
+            throw RuntimeException("Upload build result failed: ${response.code} ${response.body}")
         }
     }
 }

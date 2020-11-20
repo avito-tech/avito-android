@@ -95,7 +95,9 @@ internal class JUnitReportWriterTest {
             runId = "49.0.275.32855"
         )
         JUnitReportWriter(FakeReportViewer(reportViewerUrl)).write(
-            runIdentifier, testRunResult, file
+            reportCoordinates = runIdentifier,
+            testRunResult = testRunResult,
+            destination = file
         )
     }
 }

@@ -17,7 +17,7 @@ internal class GetMandatoryStringPropertyTest {
         }
     }
 
-    //todo throw by default
+    // todo throw by default
     @Test
     fun `getMandatoryStringProperty - returns empty value - on empty string value by default`() {
         val project = ProjectBuilder.builder().build()

@@ -79,7 +79,7 @@ class RunnerIntegrationTest {
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any())  // Install test application
+                    MockActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
                     deviceIsAlive(), // Device status for initializing
@@ -98,7 +98,7 @@ class RunnerIntegrationTest {
                 },
                 runTestsResults = listOf(
                     testPassed(), // Test result for first test
-                    testPassed()  // Test result for second test
+                    testPassed() // Test result for second test
                 )
             )
             val secondDevice = MockDevice(
@@ -106,7 +106,7 @@ class RunnerIntegrationTest {
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
                     MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any())  // Install test application
+                    MockActionResult.Success(Any()) // Install test application
                 ),
                 clearPackageResults = listOf(
                     succeedClearPackage(),
@@ -267,7 +267,6 @@ class RunnerIntegrationTest {
             minimumFailedCount = 0
         )
 
-
         val requests = listOf(
             testRunRequest(scheduling = scheduling),
             testRunRequest(scheduling = scheduling)
@@ -310,7 +309,7 @@ class RunnerIntegrationTest {
         ).isEqualTo(
             mapOf(
                 requests[0].let { request ->
-                    request to listOf(request.toPassedRun(device))  // Passed by first try
+                    request to listOf(request.toPassedRun(device)) // Passed by first try
                 },
                 requests[1].let { request ->
                     request to listOf(request.toFailedRun(device), request.toPassedRun(device))
@@ -353,7 +352,7 @@ class RunnerIntegrationTest {
                     deviceIsAlive(), // Alive status for second try for second test
                     deviceIsAlive(), // Alive status for third try for first test
                     deviceIsAlive(), // Alive status for third try for second test
-                    deviceIsAlive()  // Alive status for fourth try for second test
+                    deviceIsAlive() // Alive status for fourth try for second test
                 ),
                 clearPackageResults = listOf(
                     succeedClearPackage(), // Clear test package for second try for first test
@@ -381,7 +380,6 @@ class RunnerIntegrationTest {
             )
 
             devices.send(device)
-
 
             val actualResult = runner.runTests(requests, this)
             device.verify()
@@ -460,7 +458,6 @@ class RunnerIntegrationTest {
                 )
             )
 
-
             devices.send(device)
 
             val result = runner.runTests(requests, this)
@@ -475,7 +472,8 @@ class RunnerIntegrationTest {
                     },
                     requests[1].let { request ->
                         request to listOf(request.toPassedRun(device), request.toFailedRun(device))
-                    })
+                    }
+                )
             )
         }
 

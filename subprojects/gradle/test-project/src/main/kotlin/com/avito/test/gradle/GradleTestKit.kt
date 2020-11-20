@@ -44,7 +44,7 @@ fun gradlew(
             .withProjectDir(projectDir)
             .withArguments(finalArgs)
             .withEnvironment(environment)
-            .apply { if(useModuleClasspath) withPluginClasspath() }
+            .apply { if (useModuleClasspath) withPluginClasspath() }
             /**
              * WARNING! it breaks classpath and causes failures in AGP's tasks
              * see. MBS-5462

@@ -1,4 +1,5 @@
 @file:JvmName("Kubernetes")
+
 package com.avito.utils.gradle
 
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -33,7 +34,7 @@ fun createKubernetesClient(
             require(configFile.exists() && configFile.length() > 0) { "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable" }
 
             val configContents = configFile.readText()
-            
+
             Config.fromKubeconfig(kubernetesCredentials.context, configContents, "").apply {
                 if (!kubernetesCredentials.caCertFile.isNullOrBlank()) {
                     caCertFile = kubernetesCredentials.caCertFile

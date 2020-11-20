@@ -26,7 +26,7 @@ interface LogcatBuffer {
         private val tailerListener = object : TailerListenerAdapter() {
             override fun handle(line: String?) {
                 if (line != null) {
-                    //todo более надежное определение что есть ошибка
+                    // todo более надежное определение что есть ошибка
                     if (line.contains(" E ") || line.startsWith("E/")) {
                         stderrBuffer.add(line)
                     } else {

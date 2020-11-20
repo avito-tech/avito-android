@@ -19,7 +19,7 @@ class DeleteK8SDeploymentsByNames(
                         .withName(deployment)
                         .delete()
                 } catch (e: Throwable) {
-                    throw RuntimeException("Error when delete deployment=${deployment}", e)
+                    throw RuntimeException("Error when delete deployment=$deployment", e)
                 }
             }
         } catch (e: Throwable) {

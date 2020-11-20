@@ -90,5 +90,4 @@ class SignViaServiceActionTest {
 
         assertThat(result).isInstanceOf(Try.Success::class.java)
     }
-
 }

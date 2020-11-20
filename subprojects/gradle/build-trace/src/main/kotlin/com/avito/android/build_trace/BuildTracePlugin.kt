@@ -18,11 +18,7 @@ open class BuildTracePlugin : Plugin<Project> {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
         if (isBuildTraceEnabled(project)) {
-            GradleCollector.initialize(
-                project, listOf(
-                    buildTraceConsumer(project)
-                )
-            )
+            GradleCollector.initialize(project, listOf(buildTraceConsumer(project)))
         }
     }
 
@@ -39,5 +35,4 @@ open class BuildTracePlugin : Plugin<Project> {
             || (project.gradle.startParameter.isProfile)
             || (project.getBooleanProperty("android.enableProfileJson", default = false))
     }
-
 }

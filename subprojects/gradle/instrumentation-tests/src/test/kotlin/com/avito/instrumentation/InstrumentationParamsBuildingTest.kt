@@ -2,11 +2,11 @@ package com.avito.instrumentation
 
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.report.model.RunId
-import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
+import com.avito.test.gradle.module.AndroidAppModule
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -183,7 +183,6 @@ class InstrumentationParamsBuildingTest {
             .use {
                 it.readObject() as Data
             }
-
 
         val pluginConfigurationInstrumentationParameters = data.checkPluginLevelInstrumentationParameters()
 

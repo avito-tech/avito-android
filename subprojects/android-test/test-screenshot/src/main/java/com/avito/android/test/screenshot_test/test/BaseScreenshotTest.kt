@@ -3,7 +3,6 @@ package com.avito.android.test.screenshot_test.test
 import android.Manifest
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
@@ -154,7 +153,7 @@ abstract class BaseScreenshotTest<T : View>(
     }
 
     private fun compareScreens() {
-        //the only purpose of this line is to freeze work if countingIdlingResource requires
+        // the only purpose of this line is to freeze work if countingIdlingResource requires
         Espresso.onIdle()
         val context = InstrumentationRegistry.getInstrumentation().context
         screenshotNames.forEach { screenshotName ->

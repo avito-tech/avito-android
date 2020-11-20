@@ -4,7 +4,7 @@ fun Throwable?.composeWith(throwable: Throwable?): Throwable? {
     return when {
         this != null -> {
             if (throwable != null) {
-                val message = "${message}. \n ${throwable.message}"
+                val message = "$message. \n ${throwable.message}"
                 CompositeException(
                     message,
                     arrayOf(this, throwable)

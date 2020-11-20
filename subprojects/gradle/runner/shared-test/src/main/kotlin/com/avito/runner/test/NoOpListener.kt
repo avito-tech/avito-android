@@ -5,7 +5,7 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 
-object NoOpListener: TestListener {
+object NoOpListener : TestListener {
     override fun started(device: Device, targetPackage: String, test: TestCase, executionNumber: Int) {
         // empty
     }

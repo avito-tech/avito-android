@@ -49,9 +49,7 @@ class ChecksFilterTest {
     @Test
     fun `disable single check`() {
         val extension = BuildChecksExtension().apply {
-            androidSdk(Action {
-                it.enabled = false
-            })
+            androidSdk(Action { it.enabled = false })
         }
         val checks = ChecksFilter(extension).enabledChecks()
 

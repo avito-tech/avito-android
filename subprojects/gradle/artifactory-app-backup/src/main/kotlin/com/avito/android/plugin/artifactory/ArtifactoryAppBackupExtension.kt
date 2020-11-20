@@ -61,7 +61,6 @@ private class DefaultBackupBuilder(
             )
         )
     }
-
 }
 
 interface ArtifactoryBackupExtension {

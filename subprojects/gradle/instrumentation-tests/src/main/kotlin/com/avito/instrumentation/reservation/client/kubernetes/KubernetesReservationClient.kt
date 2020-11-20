@@ -67,7 +67,7 @@ class KubernetesReservationClient(
             }
 
             launch {
-                //todo use Flow
+                // todo use Flow
                 @Suppress("DEPRECATION")
                 for (pod in podsChannel
                     .filter { it.status.phase == POD_STATUS_RUNNING }
@@ -101,7 +101,6 @@ class KubernetesReservationClient(
                     }
                 }
             }
-
         }
         return ReservationClient.ClaimResult(
             deviceCoordinates = serialsChannel

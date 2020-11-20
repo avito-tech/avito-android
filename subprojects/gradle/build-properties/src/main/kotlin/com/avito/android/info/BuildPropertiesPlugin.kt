@@ -37,5 +37,4 @@ open class BuildPropertiesPlugin : Plugin<Project> {
         }
         project.addPreBuildTasks(task)
     }
-
 }

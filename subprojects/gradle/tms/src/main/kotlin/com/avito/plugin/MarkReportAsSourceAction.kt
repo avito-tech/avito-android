@@ -45,11 +45,13 @@ class MarkReportAsSourceAction(
                             },
                             { error ->
                                 logger.critical("[$tag] Can't finish report for coordinates: $reportCoordinates", error)
-                            })
+                            }
+                        )
                     },
                     { error ->
                         logger.critical("[$tag] Can't push prepared data: testSuite info", error)
-                    })
+                    }
+                )
             }
             GetReportResult.NotFound -> {
                 logger.critical(

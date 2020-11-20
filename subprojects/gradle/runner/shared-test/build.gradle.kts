@@ -8,7 +8,7 @@ extra["artifact-id"] = "runner-shared-test"
 
 dependencies {
     api(Dependencies.Test.coroutinesTest)
-    
+
     compileOnly(gradleApi())
 
     implementation(Dependencies.coroutinesCore)

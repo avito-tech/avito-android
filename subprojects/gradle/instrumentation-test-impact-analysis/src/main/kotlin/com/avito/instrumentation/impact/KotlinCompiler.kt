@@ -27,8 +27,13 @@ internal class KotlinCompiler(
     }
 
     private fun createKtFile(content: String, path: Path) = psiFileFactory.createFileFromText(
-        path.fileName.toString(), KotlinLanguage.INSTANCE, StringUtilRt.convertLineSeparators(content),
-        true, true, false, LightVirtualFile(path.toString())
+        path.fileName.toString(),
+        KotlinLanguage.INSTANCE,
+        StringUtilRt.convertLineSeparators(content),
+        true,
+        true,
+        false,
+        LightVirtualFile(path.toString())
     ) as KtFile
 
     private fun String.determineLineSeparator(): String {

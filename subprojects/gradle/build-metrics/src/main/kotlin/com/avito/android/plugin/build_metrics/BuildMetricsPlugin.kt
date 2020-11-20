@@ -25,7 +25,8 @@ open class BuildMetricsPlugin : Plugin<Project> {
             return
         }
         GradleCollector.initialize(
-            project, listOf(
+            project,
+            listOf(
                 aggregatedConsumer(project),
                 SentryConsumer(project)
             )
@@ -39,5 +40,4 @@ open class BuildMetricsPlugin : Plugin<Project> {
         val graphiteClient = BuildMetricTracker(project.environmentInfo(), project.statsd)
         return AggregatedMetricsConsumer(project, graphiteClient)
     }
-
 }

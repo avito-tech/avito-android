@@ -22,5 +22,4 @@ interface QAppsUploadApi {
         @Part release_chain: MultipartBody.Part,
         @Part apk: MultipartBody.Part
     ): Call<Void>
-
 }

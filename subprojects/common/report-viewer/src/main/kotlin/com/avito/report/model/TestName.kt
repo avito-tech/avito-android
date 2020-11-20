@@ -16,7 +16,7 @@ data class TestName(val className: String, val methodName: String) {
     override fun toString(): String = name
 }
 
-//todo дать возможность указать юнит в аннотации
+// todo дать возможность указать юнит в аннотации
 val TestName.team: Team
     get() = when {
         packageName.startsWith(domofondPrefix) -> Team("domofond")
@@ -31,7 +31,7 @@ val TestName.team: Team
         else -> Team.UNDEFINED
     }
 
-//todo убрать определение features из пакета, будут явно указаны в аннотации к тесту
+// todo убрать определение features из пакета, будут явно указаны в аннотации к тесту
 val TestName.features: List<String>
     get() = when {
         packageName.startsWith(domofondPrefix) -> {

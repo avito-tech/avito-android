@@ -8,6 +8,12 @@ import org.gradle.api.Task
 import org.gradle.api.logging.LogLevel
 import java.io.File
 
+val Task.ciLogger: CILogger
+    get() = provideLogger(project, loggerName = getShortenedTaskPath(this))
+
+val Project.ciLogger: CILogger
+    get() = provideLogger(project, loggerName = name)
+
 internal object CILoggerRegistry {
 
     val loggersCache: MutableMap<String, Entity> = mutableMapOf()
@@ -17,12 +23,6 @@ internal object CILoggerRegistry {
         val destinationFile: File?
     )
 }
-
-val Task.ciLogger: CILogger
-    get() = provideLogger(project, loggerName = getShortenedTaskPath(this))
-
-val Project.ciLogger: CILogger
-    get() = provideLogger(project, loggerName = name)
 
 private fun provideLogger(project: Project, loggerName: String): CILogger {
     return if (project.buildEnvironment is BuildEnvironment.CI && !project.buildEnvironment.inGradleTestKit) {

@@ -18,7 +18,7 @@ data class SlackMessage(
 ) {
     val link: HttpUrl
         get() {
-            val source = StringBuilder("https://${workspace}.slack.com/archives/$channelId/p$id")
+            val source = StringBuilder("https://$workspace.slack.com/archives/$channelId/p$id")
             if (threadId != null) {
                 source.append("?thread_ts=$threadId&cid=$channelId")
             }

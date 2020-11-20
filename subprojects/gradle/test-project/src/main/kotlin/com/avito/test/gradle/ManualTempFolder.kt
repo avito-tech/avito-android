@@ -45,26 +45,29 @@ object ManualTempFolder {
 
         private fun deleteAllFilesAndDirectories(): SortedMap<Path, IOException> {
             val failures = TreeMap<Path, IOException>()
-            Files.walkFileTree(dir, object : SimpleFileVisitor<Path>() {
+            Files.walkFileTree(
+                dir,
+                object : SimpleFileVisitor<Path>() {
 
-                override fun visitFile(file: Path, attributes: BasicFileAttributes): FileVisitResult {
-                    return deleteAndContinue(file)
-                }
-
-                override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
-                    return deleteAndContinue(dir)
-                }
-
-                private fun deleteAndContinue(path: Path): FileVisitResult {
-                    try {
-                        Files.delete(path)
-                    } catch (ex: IOException) {
-                        failures[path] = ex
+                    override fun visitFile(file: Path, attributes: BasicFileAttributes): FileVisitResult {
+                        return deleteAndContinue(file)
                     }
 
-                    return FileVisitResult.CONTINUE
+                    override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+                        return deleteAndContinue(dir)
+                    }
+
+                    private fun deleteAndContinue(path: Path): FileVisitResult {
+                        try {
+                            Files.delete(path)
+                        } catch (ex: IOException) {
+                            failures[path] = ex
+                        }
+
+                        return FileVisitResult.CONTINUE
+                    }
                 }
-            })
+            )
             return failures
         }
 
@@ -76,8 +79,8 @@ object ManualTempFolder {
                 .collect(joining(", "))
             val exception = IOException(
                 "Failed to delete temp directory " + dir.toAbsolutePath()
-                        + ". The following paths could not be deleted (see suppressed exceptions for details): "
-                        + joinedPaths
+                    + ". The following paths could not be deleted (see suppressed exceptions for details): "
+                    + joinedPaths
             )
             failures.values.forEach(Consumer<IOException> { exception.addSuppressed(it) })
             return exception
@@ -99,4 +102,3 @@ object ManualTempFolder {
         }
     }
 }
-

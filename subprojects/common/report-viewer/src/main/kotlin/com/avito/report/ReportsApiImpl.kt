@@ -106,7 +106,8 @@ internal class ReportsApiImpl(
         return Try {
             requestProvider.jsonRpcRequest<Unit>(
                 RfcRpcRequest(
-                    method = "Run.PushPreparedData", params = mapOf(
+                    method = "Run.PushPreparedData",
+                    params = mapOf(
                         "id" to reportId,
                         "analyzer_key" to analyzerKey,
                         "prepared_data" to preparedData

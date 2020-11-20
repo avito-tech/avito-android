@@ -100,7 +100,7 @@ class TestsRunnerImplementation(
                 output = output
             )
 
-            //todo через Report
+            // todo через Report
             val raw = report.getTests()
 
             log("test results: $raw")

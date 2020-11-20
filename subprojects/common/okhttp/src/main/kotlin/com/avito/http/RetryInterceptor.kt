@@ -18,7 +18,7 @@ class RetryInterceptor constructor(
         500, // internal error
         502, // bad gateway
         503, // unavailable
-        504  // gateway timeout
+        504 // gateway timeout
     ),
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,

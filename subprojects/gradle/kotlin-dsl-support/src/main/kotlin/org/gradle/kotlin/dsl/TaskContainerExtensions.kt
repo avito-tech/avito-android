@@ -13,7 +13,6 @@ import org.gradle.api.tasks.TaskProvider
 inline fun <reified T : Task> TaskContainer.register(name: String): TaskProvider<T> =
     register(name, T::class.java)
 
-
 /**
  * Defines and configure a new object, which will be created when it is required.
  *

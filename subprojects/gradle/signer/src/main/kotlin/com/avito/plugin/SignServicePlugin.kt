@@ -1,16 +1,16 @@
 package com.avito.plugin
 
+import com.android.build.api.artifact.ArtifactType
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.api.ApplicationVariant
 import com.avito.android.androidCommonExtension
+import com.avito.android.bundleTaskProvider
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.hasTasks
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.execution.TaskExecutionGraph
-import com.android.build.api.variant.Variant
-import com.android.build.api.artifact.ArtifactType
-import com.avito.android.bundleTaskProvider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dslx.closureOf
@@ -65,14 +65,14 @@ class SignServicePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val signExtension = target.extensions.create<SignExtension>("signService")
 
-        //todo rename to `avito.signer.disable`
+        // todo rename to `avito.signer.disable`
         if (target.getBooleanProperty("disableSignService")) {
             return
         }
 
-        //todo explain why do we have multiple options to skip signing
-        // disableSignService (avito.signer.disable) + avito.signer.allowSkip
-        // Is it feasible to have only one?
+        // todo explain why do we have multiple options to skip signing
+        //  disableSignService (avito.signer.disable) + avito.signer.allowSkip
+        //  Is it feasible to have only one?
         val skipSigning: Boolean = target.getBooleanProperty("avito.signer.allowSkip")
 
         target.afterEvaluate {
@@ -145,15 +145,17 @@ class SignServicePlugin : Plugin<Project> {
         }
 
         if (!skipSigning) {
-            target.gradle.taskGraph.whenReady(closureOf<TaskExecutionGraph> {
-                failOnMissingToken(
-                    projectPath = target.path,
-                    variantToBuildType = registeredBuildTypes,
-                    taskExecutionGraph = this,
-                    apkSignTokens = signExtension.apkSignTokens,
-                    bundleSignTokens = signExtension.bundleSignTokens
-                )
-            })
+            target.gradle.taskGraph.whenReady(
+                closureOf<TaskExecutionGraph> {
+                    failOnMissingToken(
+                        projectPath = target.path,
+                        variantToBuildType = registeredBuildTypes,
+                        taskExecutionGraph = this,
+                        apkSignTokens = signExtension.apkSignTokens,
+                        bundleSignTokens = signExtension.bundleSignTokens
+                    )
+                }
+            )
         }
     }
 
