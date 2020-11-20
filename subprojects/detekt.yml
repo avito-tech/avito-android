@@ -294,8 +294,9 @@ formatting:
     NoLineBreakBeforeAssignment:
         active: false
         autoCorrect: false
+    # https://detekt.github.io/detekt/formatting.html#nomultiplespaces
     NoMultipleSpaces:
-        active: false
+        active: true
         autoCorrect: false
     NoSemicolons:
         active: false

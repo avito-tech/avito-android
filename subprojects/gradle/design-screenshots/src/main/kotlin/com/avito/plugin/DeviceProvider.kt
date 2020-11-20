@@ -25,7 +25,7 @@ internal class DeviceProviderLocal(
 
         val serial: Serial.Local = when {
             adbDeviceParams.id is Serial.Local -> adbDeviceParams.id as Serial.Local
-            adbDeviceParams.id is Serial.Remote ->  Serial.Local(adbDeviceParams.id.value) // TODO: support model of locally connected device
+            adbDeviceParams.id is Serial.Remote -> Serial.Local(adbDeviceParams.id.value) // TODO: support model of locally connected device
             else -> throw RuntimeException("Unsupported device id: " + adbDeviceParams.id)
         }
 

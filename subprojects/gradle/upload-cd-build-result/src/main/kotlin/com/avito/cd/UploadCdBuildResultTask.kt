@@ -40,7 +40,7 @@ abstract class UploadCdBuildResultTask
             client = Providers.client(
                 user = user,
                 password = password,
-                logger = object: HttpLoggingInterceptor.Logger  {
+                logger = object : HttpLoggingInterceptor.Logger {
                     override fun log(message: String) {
                         project.ciLogger.info(message)
                     }

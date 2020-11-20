@@ -46,7 +46,7 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         startTime = null,
                         endTime = null,
                         dataSetData = null,
-                        preconditionList = emptyList(),  //todo в теории можем достать проанализировав код теста,
+                        preconditionList = emptyList(), //todo в теории можем достать проанализировав код теста,
                         stepList = emptyList() //todo в теории можем достать проанализировав код теста
                     )
                     is AndroidTest.Lost -> createAddFullRequest(
@@ -61,7 +61,7 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         startTime = test.startTime,
                         endTime = test.lastSignalTime,
                         dataSetData = null,
-                        preconditionList = emptyList(),  //todo в теории можем достать проанализировав код теста,
+                        preconditionList = emptyList(), //todo в теории можем достать проанализировав код теста,
                         stepList = emptyList() //todo в теории можем достать проанализировав код теста
                     )
                     is AndroidTest.Completed -> createAddFullRequest(
