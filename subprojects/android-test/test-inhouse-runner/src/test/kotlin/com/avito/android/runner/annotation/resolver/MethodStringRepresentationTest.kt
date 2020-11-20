@@ -30,7 +30,8 @@ class MethodStringRepresentationTest {
     @Test
     fun `parseString - resolution method - for class#method string`() {
         assertResolution(
-            "com.test.fixtures.ClassWithMethod#method", Method(
+            "com.test.fixtures.ClassWithMethod#method",
+            Method(
                 ClassWithMethod::class.java,
                 ClassWithMethod::class.java.getMethod("method")
             )

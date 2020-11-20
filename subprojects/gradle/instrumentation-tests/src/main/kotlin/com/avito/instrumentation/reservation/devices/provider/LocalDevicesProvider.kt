@@ -14,7 +14,6 @@ import com.avito.utils.logging.commonLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.distinctBy
@@ -63,7 +62,7 @@ class LocalDevicesProvider(
                 }
             }
         }
-        //todo use flow
+        // todo use flow
         @Suppress("DEPRECATION")
         return devices.distinctBy { it.coordinate }.take(devicesRequired)
     }

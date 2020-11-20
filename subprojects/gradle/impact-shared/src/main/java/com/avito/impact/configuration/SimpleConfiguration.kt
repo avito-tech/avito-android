@@ -1,5 +1,5 @@
 @file:Suppress("DEPRECATION")
-//todo use new api?
+// todo use new api?
 
 package com.avito.impact.configuration
 

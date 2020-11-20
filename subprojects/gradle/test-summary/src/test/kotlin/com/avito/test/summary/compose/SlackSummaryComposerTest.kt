@@ -70,7 +70,7 @@ internal class SlackSummaryComposerTest {
         val message = compose(crossDeviceSuite)
 
         assertThat(message).isInstanceOf(Try.Success::class.java)
-        assertThat(message.get()).contains(":green_heart: *Зеленые тесты*: 3 (60%)") //не 50% потому что manual не берется в расчет
+        assertThat(message.get()).contains(":green_heart: *Зеленые тесты*: 3 (60%)") // не 50% потому что manual не берется в расчет
     }
 
     @Test

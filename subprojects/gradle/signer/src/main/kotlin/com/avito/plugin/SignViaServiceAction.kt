@@ -57,11 +57,13 @@ internal class SignViaServiceAction(
         .writeTimeout(1, TimeUnit.MINUTES)
         .readTimeout(1, TimeUnit.MINUTES)
         .addInterceptor(
-            HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                override fun log(message: String) {
-                    ciLogger.info(message)
+            HttpLoggingInterceptor(
+                object : HttpLoggingInterceptor.Logger {
+                    override fun log(message: String) {
+                        ciLogger.info(message)
+                    }
                 }
-            }).setLevel(HttpLoggingInterceptor.Level.BASIC)
+            ).setLevel(HttpLoggingInterceptor.Level.BASIC)
         )
         .build()
 

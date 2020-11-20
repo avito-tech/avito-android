@@ -11,7 +11,7 @@ import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
-    //todo хреново что для локального запуска нужно здесь ENV задавать
+    // todo хреново что для локального запуска нужно здесь ENV задавать
     private val testChannel = SlackChannel(requireNotNull(System.getProperty("avito.slack.test.channel")))
     private val testToken = requireNotNull(System.getProperty("avito.slack.test.token"))
     private val slackClient: SlackClient =
@@ -43,7 +43,7 @@ internal class SlackConditionalSenderIntegrationTest {
         assertThat(message).isInstanceOf(Try.Success::class.java)
         assertThat(message.get().text).contains("second message")
 
-        //todo assert thread message
+        // todo assert thread message
     }
 
     @Test

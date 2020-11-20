@@ -4,11 +4,11 @@ import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.And
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.DynamicDependencies
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.GradleDaemon
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.GradleProperties
-import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.JavaVersion
-import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.ModuleTypes
-import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.MacOSLocalhost
-import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.UniqueRClasses
 import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.IncrementalKapt
+import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.JavaVersion
+import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.MacOSLocalhost
+import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.ModuleTypes
+import com.avito.android.plugin.build_param_check.BuildChecksExtension.Check.UniqueRClasses
 import org.gradle.api.Action
 
 open class BuildChecksExtension {

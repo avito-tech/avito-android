@@ -42,7 +42,6 @@ inline fun <reified T : Any> Project.the(): T =
             ?: convention.getByType(type)
     }
 
-
 /**
  * Returns the plugin convention or extension of the specified type.
  */
@@ -62,13 +61,11 @@ fun <T : Any> Project.the(extensionType: KClass<T>): T =
 fun Project.repositories(configuration: RepositoryHandler.() -> Unit) =
     repositories.configuration()
 
-
 /**
  * Configures the repositories for the script dependencies.
  */
 fun ScriptHandler.repositories(configuration: RepositoryHandler.() -> Unit) =
     repositories.configuration()
-
 
 /**
  * Creates a container for managing named objects of the specified type.
@@ -85,7 +82,6 @@ fun ScriptHandler.repositories(configuration: RepositoryHandler.() -> Unit) =
  */
 inline fun <reified T> Project.container(): NamedDomainObjectContainer<T> =
     container(T::class.java)
-
 
 /**
  * Creates a container for managing named objects of the specified type.

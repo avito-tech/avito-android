@@ -46,6 +46,6 @@ class ExternalIdDuplicateCheck(override val onViolation: (String) -> Unit) : Tes
     }
 }
 
-//visible in test
+// visible in test
 internal const val EXTERNAL_ID_ANNOTATION_TYPE = "com.avito.android.test.annotations.ExternalId"
 internal const val DATA_SET_ANNOTATION_TYPE = "com.avito.android.test.annotations.DataSetNumber"

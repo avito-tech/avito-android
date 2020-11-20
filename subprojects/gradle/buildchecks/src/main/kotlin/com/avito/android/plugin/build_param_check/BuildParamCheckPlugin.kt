@@ -223,7 +223,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                                     "Actual: ${mismatch.actual}"
                             )
                             val safeParamName = mismatch.name.replace(".", "-")
-                            tracker.track(CountMetric("configuration.mismatch.${safeParamName}"))
+                            tracker.track(CountMetric("configuration.mismatch.$safeParamName"))
                         }
                     }
                     .onFailure {

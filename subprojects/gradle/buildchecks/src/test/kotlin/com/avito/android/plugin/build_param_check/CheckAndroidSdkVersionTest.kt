@@ -138,7 +138,8 @@ class CheckAndroidSdkVersionTest {
         expectFailure: Boolean = false
     ): TestResult {
         return BuildChecksTestProjectRunner(
-            projectDir, androidHomeLocation,
+            projectDir = projectDir,
+            androidHome = androidHomeLocation,
             buildChecksExtension = """
                 enableByDefault = false
                 androidSdk { 
@@ -153,10 +154,6 @@ class CheckAndroidSdkVersionTest {
         requireNotNull(androidHome)
             .dir("platforms")
             .dir("android-$version")
-            .file(
-                "source.properties", """
-                    Pkg.Revision=$revision
-                """.trimIndent()
-            )
+            .file("source.properties", """Pkg.Revision=$revision""".trimIndent())
     }
 }

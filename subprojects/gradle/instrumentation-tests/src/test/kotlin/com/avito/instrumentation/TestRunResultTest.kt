@@ -32,7 +32,7 @@ internal class TestRunResultTest {
 
         Truth.assertThat(gson.toJson(verdict))
             .isEqualTo(
-"""
+                """
 {
   "message": "Failed. There are 1 unsuppressed failed tests",
   "prettifiedDetails": {
@@ -49,7 +49,6 @@ internal class TestRunResultTest {
 }""".trimIndent()
             )
     }
-
 
     @Test
     fun `has 1 unsuppresed test with 2 apis`() {
@@ -90,5 +89,4 @@ internal class TestRunResultTest {
 }""".trimIndent()
             )
     }
-
 }

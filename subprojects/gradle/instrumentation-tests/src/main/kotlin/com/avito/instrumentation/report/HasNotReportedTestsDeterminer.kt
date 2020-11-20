@@ -41,7 +41,7 @@ interface HasNotReportedTestsDeterminer {
                         .map { testMetadata ->
                             AndroidTest.Lost.fromTestMetadata(
                                 testStaticData = testMetadata,
-                                //todo это норм разве?
+                                // todo это норм разве?
                                 startTime = 0,
                                 lastSignalTime = 0,
                                 stdout = "",

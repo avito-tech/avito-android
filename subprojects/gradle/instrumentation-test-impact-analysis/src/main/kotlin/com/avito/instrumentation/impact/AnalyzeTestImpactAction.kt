@@ -2,9 +2,9 @@ package com.avito.instrumentation.impact
 
 import com.avito.android.isAndroid
 import com.avito.bytecode.DIRTY_STUB
+import com.avito.impact.ConfigurationType
 import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
-import com.avito.impact.ConfigurationType
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.util.AndroidPackage
 import com.avito.impact.util.AndroidProject
@@ -136,7 +136,7 @@ internal class AnalyzeTestImpactAction(
             .testsByScreen
             .flatMap { (screen, tests) ->
                 when (screen) {
-                    //We couldn't determine screen to test relation, so we will run all of these tests
+                    // We couldn't determine screen to test relation, so we will run all of these tests
                     DIRTY_STUB -> tests
                     else -> {
                         val screenToModuleMaps = screenToModulePaths

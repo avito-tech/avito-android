@@ -4,7 +4,6 @@ import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
 import kotlin.reflect.KClass
 
-
 class ContainsValueWithTypeMatcher<T : Any>(private val klass: KClass<T>) : TypeSafeMatcher<Iterable<Any>>() {
 
     override fun matchesSafely(item: Iterable<Any>): Boolean {

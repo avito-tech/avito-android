@@ -152,11 +152,13 @@ interface GooglePlayDeployer {
                     deploy.track,
                     Track().also { track ->
                         track.track = deploy.track
-                        track.releases = listOf(TrackRelease()
-                            .also { release ->
-                                release.versionCodes = listOf(versionCode.toLong())
-                                release.status = "completed"
-                            })
+                        track.releases = listOf(
+                            TrackRelease()
+                                .also { release ->
+                                    release.versionCodes = listOf(versionCode.toLong())
+                                    release.status = "completed"
+                                }
+                        )
                     }
                 ).execute()
             logger.info("Updated track is $track")

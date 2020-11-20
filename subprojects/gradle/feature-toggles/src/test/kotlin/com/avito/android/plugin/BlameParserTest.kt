@@ -41,7 +41,6 @@ class BlameParserTest {
     }
 
     fun String.toLocalDate() = Instant.ofEpochSecond(this.toLong()).atZone(ZoneId.of("Europe/Moscow")).toLocalDate()
-
 }
 
 val correctBlame =

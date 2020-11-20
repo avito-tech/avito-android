@@ -37,7 +37,7 @@ interface TestExecutor {
 
         private val runner = TestsRunnerClient()
 
-        //todo hi Juno!
+        // todo hi Juno!
         private val outputDirectoryName = "composer"
 
         override fun execute(

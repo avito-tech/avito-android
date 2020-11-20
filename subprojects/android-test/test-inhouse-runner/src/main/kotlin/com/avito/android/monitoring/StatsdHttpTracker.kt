@@ -14,7 +14,7 @@ class StatsdHttpTracker(private val statsd: StatsDSender) : HttpTracker {
         val urlKey = convertUrlToMetricKey(response.request.url)
 
         statsd.send(
-            "test.http.${urlKey}",
+            "test.http.$urlKey",
             CountMetric(response.code.toString())
         )
         statsd.send(

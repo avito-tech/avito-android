@@ -21,7 +21,6 @@ class FailureMessageNormalizerTest {
         )
     }
 
-
     @Test
     fun regex_with_pattern_replacement() {
         val normalizer = RegexToPatternMessageNormalizer(

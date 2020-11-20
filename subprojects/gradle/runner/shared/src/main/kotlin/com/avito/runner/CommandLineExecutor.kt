@@ -81,7 +81,8 @@ interface CommandLineExecutor {
                         )
                     }
                 }
-            }, Emitter.BackpressureMode.ERROR
+            },
+            Emitter.BackpressureMode.ERROR
         )
 
         private fun prepareOutputFile(

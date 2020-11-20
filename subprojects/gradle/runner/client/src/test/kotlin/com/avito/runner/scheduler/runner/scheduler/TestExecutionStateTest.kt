@@ -233,7 +233,6 @@ class TestExecutionStateTest {
             .that(verdict)
             .isInstanceOf(TestExecutionState.Verdict.SendResult::class.java)
 
-
         val results =
             (verdict as TestExecutionState.Verdict.SendResult).results
 

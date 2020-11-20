@@ -71,5 +71,4 @@ abstract class CheckGradleDaemonTask : DefaultTask() {
             load(input)
         }
     }
-
 }

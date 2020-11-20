@@ -5,5 +5,4 @@ open class BuildInfoExtension {
     var gitCommit: String? = null
     var gitBranch: String? = null
     var buildNumber: String? = null
-
 }

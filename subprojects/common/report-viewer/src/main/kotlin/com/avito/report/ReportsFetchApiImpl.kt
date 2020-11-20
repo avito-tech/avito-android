@@ -9,7 +9,6 @@ import com.avito.report.internal.model.ListResult
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.internal.model.Run
-import com.avito.report.internal.model.RunTest
 import com.avito.report.internal.model.TestStatus
 import com.avito.report.model.CrossDeviceRunTest
 import com.avito.report.model.CrossDeviceStatus
@@ -135,7 +134,6 @@ internal class ReportsFetchApiImpl(
                         runs.deviceFailures()
                     )
 
-
                     else -> CrossDeviceStatus.Inconsistent
                 }
                 CrossDeviceRunTest(TestName(testName), status)
@@ -203,7 +201,7 @@ internal class ReportsFetchApiImpl(
                 } else {
                     val verdict = reportModel.preparedData?.lastOrNull()?.verdict
                     if (verdict.isNullOrBlank()) {
-                        //todo fallback
+                        // todo fallback
                         logger.debug("Can't get verdict for test: $reportModel")
                         Status.Failure(
                             "Can't get verdict",
@@ -216,7 +214,7 @@ internal class ReportsFetchApiImpl(
             }
             TestStatus.OTHER, TestStatus.PANIC, TestStatus.LOST, null -> Status.Lost
             TestStatus.MANUAL -> Status.Manual
-            TestStatus.SKIP -> Status.Skipped("test ignored") //todo нужен более подробный reason
+            TestStatus.SKIP -> Status.Skipped("test ignored") // todo нужен более подробный reason
         }
     }
 

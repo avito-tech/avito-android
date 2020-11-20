@@ -102,9 +102,11 @@ internal class FileResourcesFixer {
             .unique()
 
         return uniqueIds.map { id ->
-            val module = requireNotNull(modules.find { module ->
-                module.ids.contains(id)
-            })
+            val module = requireNotNull(
+                modules.find { module ->
+                    module.ids.contains(id)
+                }
+            )
             ResourceId(id, module)
         }
     }
@@ -129,7 +131,10 @@ internal class FileResourcesFixer {
         val rClassName = resource.module.packageId + ".R"
         val oldImport = imports.findImport(rClassName)
         val import = oldImport
-            ?: elementsFactory.createImportDirective(rClassName, resource.module.packageId.substringAfterLast('.') + "_R")
+            ?: elementsFactory.createImportDirective(
+                rClassName,
+                resource.module.packageId.substringAfterLast('.') + "_R"
+            )
 
         val element = elementsFactory.createExpression("${import.referencedClass}.id.${resource.id}")
 

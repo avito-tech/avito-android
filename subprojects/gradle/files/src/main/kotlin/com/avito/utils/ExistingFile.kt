@@ -25,7 +25,7 @@ interface ExistingFile {
         override fun toString(): String = file.toString()
     }
 
-    //todo move to test source
+    // todo move to test source
     object Stub : ExistingFile {
         override val file: File
             get() = TODO("not implemented")
@@ -60,7 +60,7 @@ interface ExistingDirectory {
         override fun toString(): String = dir.toString()
     }
 
-    //todo move to test source
+    // todo move to test source
     object Stub : ExistingDirectory {
         override val dir: File
             get() = TODO("not implemented")

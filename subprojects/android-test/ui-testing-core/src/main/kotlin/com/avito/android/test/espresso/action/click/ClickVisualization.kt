@@ -39,7 +39,6 @@ internal class ClickVisualization(
     private fun Int.toPx(): Float = this * Resources.getSystem().displayMetrics.density
 }
 
-
 private class VisualizationDrawable(
     val originalForeground: Drawable?,
     val x: Float,

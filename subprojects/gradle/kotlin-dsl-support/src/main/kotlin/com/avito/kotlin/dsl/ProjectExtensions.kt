@@ -5,7 +5,7 @@ import org.gradle.api.file.RegularFileProperty
 import java.io.File
 import kotlin.reflect.KProperty
 
-//TODO these methods should return Property<X>
+// TODO these methods should return Property<X>
 
 /**
  * @param nullIfBlank we accept cases when user passes empty string to override

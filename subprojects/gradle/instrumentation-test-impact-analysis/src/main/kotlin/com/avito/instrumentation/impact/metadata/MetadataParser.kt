@@ -48,9 +48,9 @@ class MetadataParser(
                                 if (property.name == fieldName) {
 
                                     val expression =
-                                        property.getter?.bodyExpression ?:
-                                        property.children.filterIsInstance<KtExpression>().firstOrNull()
-                                        ?: error("Can't parse $fieldName value, only direct value initialization or property getter supported")
+                                        property.getter?.bodyExpression
+                                            ?: property.children.filterIsInstance<KtExpression>().firstOrNull()
+                                            ?: error("Can't parse $fieldName value, only direct value initialization or property getter supported")
 
                                     val importLines = ktFile.importDirectives.map { it.importedFqName.toString() }
                                     result[fullClassName] = getPackageName(expression.text, importLines)!!

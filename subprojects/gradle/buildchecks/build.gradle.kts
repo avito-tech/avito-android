@@ -20,7 +20,7 @@ dependencies {
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.Gradle.androidPlugin)
 
-    //for test
+    // for test
     implementation(project(":gradle:module-types"))
     implementation(project(":gradle:room-config"))
 

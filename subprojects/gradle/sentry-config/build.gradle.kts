@@ -13,4 +13,3 @@ dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)
 }
-

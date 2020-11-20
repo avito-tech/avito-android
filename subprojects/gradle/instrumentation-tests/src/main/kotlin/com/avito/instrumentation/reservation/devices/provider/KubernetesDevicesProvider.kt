@@ -14,10 +14,10 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
 
 class KubernetesDevicesProvider(
-  private val client: KubernetesReservationClient,
-  private val adbDevicesManager: AdbDevicesManager,
-  private val logger: CILogger,
-  private val adb: Adb
+    private val client: KubernetesReservationClient,
+    private val adbDevicesManager: AdbDevicesManager,
+    private val logger: CILogger,
+    private val adb: Adb
 ) : DevicesProvider {
 
     override fun provideFor(reservations: Collection<Reservation.Data>, scope: CoroutineScope): ReceiveChannel<Device> {

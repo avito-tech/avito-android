@@ -31,12 +31,14 @@ interface ScreenshotUploader {
                                 ),
                                 comment = comment
                             )
-                        })
+                        }
+                    )
                 },
                 { error ->
                     logger.warn("Unable to make screenshot: ${error.message}", error)
                     null
-                })
+                }
+            )
         }
     }
 }

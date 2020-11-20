@@ -6,35 +6,35 @@ import com.avito.report.model.Incident
 interface TestLifecycleListener {
 
     fun beforeTestStart(state: ReportState.Initialized.Started) {
-        //do nothing
+        // do nothing
     }
 
     fun beforeTestUpdate(state: ReportState.Initialized.Started) {
-        //do nothing
+        // do nothing
     }
 
     fun afterTestUpdate(state: ReportState.Initialized.Started) {
-        //do nothing
+        // do nothing
     }
 
     fun afterTestStop(state: ReportState.Initialized.Started) {
-        //do nothing
+        // do nothing
     }
 
     fun beforeTestWrite(state: ReportState.Initialized.Started) {
-        //do nothing
+        // do nothing
     }
 
     fun testWriteError(error: Throwable) {
-        //do nothing
+        // do nothing
     }
 
     fun afterIncident(incident: Incident) {
-        //do nothing
+        // do nothing
     }
 
     fun screenshotUploadError(error: Throwable) {
-        //do nothing
+        // do nothing
     }
 }
 

@@ -7,5 +7,4 @@ open class BuildPropertiesExtension {
     fun buildProperty(name: String, value: String) {
         properties[name] = value
     }
-
 }

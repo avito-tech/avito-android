@@ -34,6 +34,4 @@ internal class PrintStreamMessager(
     ) {
         printMessage(kind, msg)
     }
-
 }
-

@@ -149,12 +149,9 @@ interface InstrumentationTestCaseRunParser {
                     .subList(index + 1, this.size)
                     .firstOrNull {
                         first.clazz == it.clazz
-                            &&
-                            first.test == it.test
-                            &&
-                            first.current == it.current
-                            &&
-                            first.statusCode != it.statusCode
+                            && first.test == it.test
+                            && first.current == it.current
+                            && first.statusCode != it.statusCode
                     }
 
                 if (second == null) null else first to second

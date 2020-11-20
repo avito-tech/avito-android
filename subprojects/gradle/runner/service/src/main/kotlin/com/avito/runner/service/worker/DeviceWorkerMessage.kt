@@ -23,5 +23,5 @@ sealed class DeviceWorkerMessage {
     data class WorkerDied(
         val t: Throwable,
         val coordinate: DeviceCoordinate
-    ): DeviceWorkerMessage()
+    ) : DeviceWorkerMessage()
 }

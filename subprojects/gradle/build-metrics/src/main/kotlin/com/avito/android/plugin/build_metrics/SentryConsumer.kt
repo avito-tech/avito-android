@@ -12,7 +12,7 @@ import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 
-//todo вынести в фабрику знания про project
+// todo вынести в фабрику знания про project
 internal class SentryConsumer(
     project: Project
 ) : AbstractMetricsConsumer() {
@@ -64,7 +64,6 @@ internal class SentryConsumer(
         }
         sentry.get().sendException(error)
     }
-
 }
 
 private class DefaultSendCallback(
@@ -75,9 +74,9 @@ private class DefaultSendCallback(
     override fun onSuccess(event: Event) {
         val hash = event.id.toString().replace("-", "")
         if (sentryUrl.isNullOrBlank()) {
-            log.lifecycle("${logTag} Error sent")
+            log.lifecycle("$logTag Error sent")
         } else {
-            log.lifecycle("${logTag} Error sent: $sentryUrl?query=$hash")
+            log.lifecycle("$logTag Error sent: $sentryUrl?query=$hash")
         }
     }
 
@@ -85,9 +84,8 @@ private class DefaultSendCallback(
         val cause = exception.javaClass.simpleName +
             " ← " + exception.cause?.javaClass?.name +
             ": " + exception.cause?.message
-        log.warn("${logTag} Can't send error: $cause. \nCheck your connection.")
+        log.warn("$logTag Can't send error: $cause. \nCheck your connection.")
     }
-
 }
 
 private const val logTag = "[sentry]"

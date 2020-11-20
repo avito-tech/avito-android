@@ -43,7 +43,8 @@ class SourceSetsImpactTest {
             plugins = listOf("com.avito.android.impact"),
             modules = listOf(
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                     implementation(project(":feature"))
                 """.trimIndent()
                 ),

@@ -9,7 +9,7 @@ import java.util.Base64
 
 class ReportViewerQuery {
 
-    //todo use a universal encoder (android / jvm)
+    // todo use a universal encoder (android / jvm)
     private val encoder by lazy { Base64.getEncoder() }
 
     /**

@@ -83,7 +83,7 @@ private sealed class TaskResult {
 
     class FAILED(val error: Throwable?) : TaskResult() {
         override fun toString(): String {
-            return "${this.javaClass.simpleName} ${error.toString()}" // TODO: extract clean stacktrace
+            return "${this.javaClass.simpleName} $error" // TODO: extract clean stacktrace
         }
     }
 

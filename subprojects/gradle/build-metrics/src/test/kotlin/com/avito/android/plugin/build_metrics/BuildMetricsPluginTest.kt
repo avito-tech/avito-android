@@ -105,21 +105,25 @@ class BuildMetricsPluginTest {
             val metricName: String
         )
         return listOf(
-            Case("build app",
-                arrayOf(":app:assemble"),
-                "build-tasks.app_assemble"
+            Case(
+                description = "build app",
+                tasks = arrayOf(":app:assemble"),
+                metricName = "build-tasks.app_assemble"
             ),
-            Case("run instrumentation tests",
-                arrayOf(":app:assembleDebug", ":app:assembleDebugAndroidTest"),
-                "build-tasks.app_assembleDebug_app_assembleDebugAndroidTest"
+            Case(
+                description = "run instrumentation tests",
+                tasks = arrayOf(":app:assembleDebug", ":app:assembleDebugAndroidTest"),
+                metricName = "build-tasks.app_assembleDebug_app_assembleDebugAndroidTest"
             ),
-            Case("stable tasks order",
-                arrayOf(":app:assembleDebugAndroidTest", ":app:assembleDebug"),
-                "build-tasks.app_assembleDebug_app_assembleDebugAndroidTest"
+            Case(
+                description = "stable tasks order",
+                tasks = arrayOf(":app:assembleDebugAndroidTest", ":app:assembleDebug"),
+                metricName = "build-tasks.app_assembleDebug_app_assembleDebugAndroidTest"
             ),
-            Case("up to three tasks",
-                arrayOf(":app:preBuild", ":app:assembleDebug", ":app:assembleDebugAndroidTest"),
-                "build-tasks._"
+            Case(
+                description = "up to three tasks",
+                tasks = arrayOf(":app:preBuild", ":app:assembleDebug", ":app:assembleDebugAndroidTest"),
+                metricName = "build-tasks._"
             )
         ).map {
             dynamicTest("send build tasks - " + it.description) {
@@ -153,7 +157,8 @@ class BuildMetricsPluginTest {
     }
 
     private fun build(vararg tasks: String, dryRun: Boolean = false): TestResult {
-        return gradlew(tempDir, *tasks,
+        return gradlew(
+            tempDir, *tasks,
             "-Pavito.build.metrics.enabled=true",
             "-Pavito.stats.enabled=false",
             "-Pavito.stats.host=http://stats",
@@ -164,5 +169,4 @@ class BuildMetricsPluginTest {
             dryRun = dryRun
         )
     }
-
 }

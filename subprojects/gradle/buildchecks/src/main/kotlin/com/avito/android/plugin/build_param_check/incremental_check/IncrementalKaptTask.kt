@@ -45,5 +45,4 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
         get() = configurations.findByName("kapt")?.dependencies?.any {
             it.group == "androidx.room" && it.name == "room-compiler"
         } ?: false
-
 }

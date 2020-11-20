@@ -23,7 +23,7 @@ fun Directory.getApk(): File? {
 
 fun Directory.getApkOrThrow(): File {
     return requireNotNull(getApk()) {
-        "APK not found in ${asFile}. Files in dir: ${asFile.dumpFiles()}"
+        "APK not found in $asFile. Files in dir: ${asFile.dumpFiles()}"
     }
 }
 

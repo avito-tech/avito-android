@@ -4,7 +4,6 @@ import com.avito.logger.Logger
 import java.io.DataOutputStream
 import java.net.Socket
 
-
 interface GraphiteSender {
 
     /**
@@ -30,9 +29,9 @@ interface GraphiteSender {
                     val dos = DataOutputStream(socket.getOutputStream())
                     dos.writeBytes(message)
                 }
-                logger.debug("$LOG_TAG: $message")
+                logger.debug("$tag: $message")
             } catch (e: Exception) {
-                logger.warn("$LOG_TAG: $message", e)
+                logger.warn("$tag: $message", e)
             }
         }
 
@@ -51,6 +50,6 @@ interface GraphiteSender {
 
         private fun socket(): Socket = Socket(config.host, config.port)
 
-        private val LOG_TAG = "graphite"
+        private val tag = "graphite"
     }
 }

@@ -3,11 +3,11 @@ package com.avito.android
 import Visibility
 import com.avito.android.CodeOwnershipValidationTest.Case.NegativeCase
 import com.avito.android.CodeOwnershipValidationTest.Case.PositiveCase
-import com.avito.test.gradle.module.AndroidAppModule
-import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.ManualTempFolder
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -70,10 +70,18 @@ class CodeOwnershipValidationTest {
             ManualTempFolder.runIn { projectDir ->
 
                 val featureAllowedDependencies = case.featureOwnership.allowedDependencies.joinToString(
-                    separator = " ,", prefix = "[", postfix = "]", transform = { "'$it'" })
+                    separator = " ,",
+                    prefix = "[",
+                    postfix = "]",
+                    transform = { "'$it'" }
+                )
 
                 val dependentAllowedDependencies = case.dependentOwnership.allowedDependencies.joinToString(
-                    separator = " ,", prefix = "[", postfix = "]", transform = { "'$it'" })
+                    separator = " ,",
+                    prefix = "[",
+                    postfix = "]",
+                    transform = { "'$it'" }
+                )
 
                 TestProjectGenerator(
                     plugins = listOf(

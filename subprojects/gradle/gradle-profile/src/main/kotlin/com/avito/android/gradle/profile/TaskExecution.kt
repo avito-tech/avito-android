@@ -14,5 +14,4 @@ class TaskExecution(val path: String) : ContinuousOperation(path) {
         this.state = state
         return this
     }
-
 }

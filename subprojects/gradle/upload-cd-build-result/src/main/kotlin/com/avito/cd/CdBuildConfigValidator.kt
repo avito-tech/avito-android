@@ -30,7 +30,7 @@ internal class CdBuildConfigValidator(private val config: CdBuildConfig) {
         require(deployments.size <= 1) {
             "Must be one Qapps deployment, but was: $deployments"
         }
-        if(deployments.isNotEmpty()){
+        if (deployments.isNotEmpty()) {
             require(config.schemaVersion >= 2) {
                 "Qapps deployments is supported only in the 2'nd version of contract"
             }

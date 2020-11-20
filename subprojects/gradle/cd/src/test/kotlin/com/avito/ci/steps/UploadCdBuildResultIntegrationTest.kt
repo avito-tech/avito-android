@@ -83,7 +83,6 @@ class UploadCdBuildResultIntegrationTest {
                         """.trimIndent()
         )
 
-
         TestProjectGenerator(
             plugins = listOf("com.avito.android.impact"),
             modules = listOf(androidAppModule)

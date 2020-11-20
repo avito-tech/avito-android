@@ -105,9 +105,9 @@ class DeployStep(
             .filterIsInstance<O>()
             .filter(predicate)
 
-        outputs.ifEmpty { throw IllegalStateException("Cant' find output ${O::class.java} in ${this}") }
+        outputs.ifEmpty { throw IllegalStateException("Cant' find output ${O::class.java} in $this") }
 
         return outputs.singleOrNull()
-            ?: throw IllegalStateException("Too many outputs: $outputs of type ${O::class.java} in ${this}")
+            ?: throw IllegalStateException("Too many outputs: $outputs of type ${O::class.java} in $this")
     }
 }

@@ -9,7 +9,6 @@ import android.view.PixelCopy
 import android.view.View
 import androidx.annotation.RequiresApi
 
-
 internal class ViewScreenshotMaker(
     private val activity: Activity,
     private val screenshot: Screenshot,
@@ -31,7 +30,9 @@ internal class ViewScreenshotMaker(
                 locationOfViewInWindow[1],
                 locationOfViewInWindow[0] + width,
                 locationOfViewInWindow[1] + height
-            ), bitmap, { copyResult ->
+            ),
+            bitmap,
+            { copyResult ->
                 if (copyResult == PixelCopy.SUCCESS) {
                     bitmapSaver.save(bitmap, screenshot)
                 } else {

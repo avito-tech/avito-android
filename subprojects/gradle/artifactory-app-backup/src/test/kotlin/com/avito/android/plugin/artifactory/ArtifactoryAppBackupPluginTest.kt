@@ -78,7 +78,7 @@ internal class ArtifactoryAppBackupPluginTest {
 
         val result = ciRun(
             projectDir,
-            ":$moduleName:${artifactoryAppBackupTaskName}",
+            ":$moduleName:$artifactoryAppBackupTaskName",
             "-PartifactoryUrl=${mockWebServer.url("/")}",
             "-Partifactory_deployer=xxx",
             "-Partifactory_deployer_password=xxx"
@@ -123,14 +123,16 @@ internal class ArtifactoryAppBackupPluginTest {
                                 name = "$backupName"
                                 type = "$backupType"
                                 version = "$backupVersion"
-                                ${artifacts.map { (id, path) ->
-                        """
+                                ${
+                        artifacts.map { (id, path) ->
+                            """
                                 artifact {
                                     id = "$id"
                                     path = "$path"
                                 }    
-                                """.trimIndent()
-                    }.joinToString(separator = "\n")}
+                            """.trimIndent()
+                        }.joinToString(separator = "\n")
+                    }
                             }
                         }
                     """.trimIndent()
@@ -162,7 +164,7 @@ internal class ArtifactoryAppBackupPluginTest {
 
         val result = ciRun(
             projectDir,
-            ":$moduleName:${artifactoryAppBackupTaskName}",
+            ":$moduleName:$artifactoryAppBackupTaskName",
             "-PartifactoryUrl=${mockWebServer.url("/")}",
             "-Partifactory_deployer=xxx",
             "-Partifactory_deployer_password=xxx"

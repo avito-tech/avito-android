@@ -1,6 +1,6 @@
 package com.avito.logger
 
-object NoOpLogger: Logger {
+object NoOpLogger : Logger {
 
     override fun debug(msg: String) {}
 

@@ -3,8 +3,8 @@ package com.avito.android.test
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import androidx.test.platform.app.InstrumentationRegistry
 import android.util.Log
+import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.runner.checkPlayServices
 import com.avito.android.test.util.getCurrentActivity
 import org.junit.rules.TestRule

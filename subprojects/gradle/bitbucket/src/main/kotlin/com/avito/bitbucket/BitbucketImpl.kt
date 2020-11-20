@@ -67,7 +67,7 @@ class BitbucketImpl(
         link: HttpUrl,
         issues: List<Bitbucket.InsightIssue>
     ): Try<Unit> =
-        //todo extract
+        // todo extract
         newChangesDetector(
             rootDir = rootDir,
             targetCommit = targetCommitHash,
@@ -98,7 +98,7 @@ class BitbucketImpl(
                     insightKey = key,
                     insightReportCreateRequest = InsightReportCreateRequest(
                         title = title,
-                        details = "", //todo lint version?
+                        details = "", // todo lint version?
                         data = emptyList(),
                         link = link.toString()
                     )
@@ -147,7 +147,7 @@ class BitbucketImpl(
             .handleError(link = link)
     }
 
-    //todo generic solution
+    // todo generic solution
     private fun <T> retrofit2.Response<T>.handleError(link: HttpUrl? = null, issueSize: Int = 0) {
         if (!isSuccessful) {
 

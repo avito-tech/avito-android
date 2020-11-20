@@ -1,5 +1,5 @@
 @file:Suppress("DEPRECATION")
-//todo use new slack api
+// todo use new slack api
 
 package com.avito.slack
 
@@ -94,7 +94,6 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                         .build()
 
                     methodsClient.chatUpdate(request).toTry()
-
                 }.map {
                     SlackMessage(
                         workspace = workspace,

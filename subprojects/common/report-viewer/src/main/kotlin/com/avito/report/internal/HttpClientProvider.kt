@@ -27,17 +27,22 @@ fun getHttpClient(
                             request.newBuilder()
                                 .url(fallbackUrl)
                                 .build()
-                        })
+                        }
+                    )
                 )
             }
         }
         .apply {
             if (verbose) {
-                addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                    override fun log(message: String) {
-                        logger.debug(message)
-                    }
-                }).setLevel(Level.BODY))
+                addInterceptor(
+                    HttpLoggingInterceptor(
+                        object : HttpLoggingInterceptor.Logger {
+                            override fun log(message: String) {
+                                logger.debug(message)
+                            }
+                        }
+                    ).setLevel(Level.BODY)
+                )
             }
         }
         .build()

@@ -37,7 +37,7 @@ internal class GetTestResultsAction(
 
     private fun getReportId(): String? {
         report.tryCreate(
-            apiUrl = "", //todo
+            apiUrl = "", // todo
             gitBranch = gitBranch,
             gitCommit = gitCommit
         )

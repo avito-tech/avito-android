@@ -38,7 +38,8 @@ class ReportTest {
                 "Тапнуть по кнопка",
                 null,
                 AssertionError("No views in hierarchy found matching: with id: com.avito.android.dev:id/variant_list")
-            ), null
+            ),
+            null
         )
 
         val reportPackage = report.reportTestCase()

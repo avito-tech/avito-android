@@ -8,4 +8,3 @@ data class InvocationTo(
     val fullName: String
         get() = "$className.$methodNameWithArguments"
 }
-

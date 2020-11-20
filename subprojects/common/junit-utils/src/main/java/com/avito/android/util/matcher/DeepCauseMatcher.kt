@@ -79,7 +79,8 @@ class DeepCauseMatcher<T>(
 
             return DeepCauseMatcher(
                 CoreMatchers.instanceOf(type),
-                containsString(partOfExpectedMessage), maxDepth
+                containsString(partOfExpectedMessage),
+                maxDepth
             )
         }
     }

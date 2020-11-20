@@ -17,7 +17,6 @@ package org.gradle.kotlin.dsl
 
 import org.gradle.api.reflect.TypeOf
 
-
 /**
  * Creates an instance of [TypeOf] for the given parameterized type.
  *

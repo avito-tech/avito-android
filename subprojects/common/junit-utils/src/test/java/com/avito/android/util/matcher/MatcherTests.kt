@@ -4,7 +4,6 @@ import org.hamcrest.Matcher
 import org.hamcrest.StringDescription
 import org.junit.Assert
 
-
 fun <T> assertMatches(matcher: Matcher<T>, arg: T) {
     assertMatches("Expected match, but mismatched", matcher, arg)
 }
@@ -48,7 +47,6 @@ fun assertUnknownTypeSafe(matcher: Matcher<*>) {
     } catch (e: Exception) {
         Assert.fail("Matcher was not unknown type safe, because: " + e)
     }
-
 }
 
 private fun <T> mismatchDescription(matcher: Matcher<in T>, arg: T): String {

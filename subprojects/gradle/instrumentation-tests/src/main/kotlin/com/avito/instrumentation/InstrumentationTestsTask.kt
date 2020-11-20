@@ -131,8 +131,6 @@ abstract class InstrumentationTestsTask @Inject constructor(
             reportConfig
         )
 
-        //todo новое api, когда выйдет в stable
-        // https://docs.gradle.org/5.6/userguide/custom_tasks.html#using-the-worker-api
         workerExecutor.inMemoryWork {
             InstrumentationTestsAction(
                 InstrumentationTestsAction.Params(

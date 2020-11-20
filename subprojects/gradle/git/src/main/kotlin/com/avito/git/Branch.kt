@@ -22,6 +22,6 @@ internal fun String.asOriginBranch(): String {
     return if (startsWith("$defaultRemote/")) {
         this
     } else {
-        "${defaultRemote}/${this}"
+        "$defaultRemote/$this"
     }
 }

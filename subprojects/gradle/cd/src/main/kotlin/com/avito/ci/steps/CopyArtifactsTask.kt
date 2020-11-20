@@ -29,7 +29,7 @@ abstract class CopyArtifactsTask : DefaultTask() {
             if (entry.exists()) {
                 val relativeEntryPath = entry.relativeTo(sourceDir.get().asFile).path
                 val destination = File(destinationDir.get().asFile, relativeEntryPath)
-                project.ciLogger.info("Copying ${entry.path} to ${destination}")
+                project.ciLogger.info("Copying ${entry.path} to $destination")
                 entry.copyTo(destination, overwrite = true) // TODO: убрать перезапись после MBS-5491
             } else {
                 project.ciLogger.info("Can't copy ${entry.path} it does not exist")

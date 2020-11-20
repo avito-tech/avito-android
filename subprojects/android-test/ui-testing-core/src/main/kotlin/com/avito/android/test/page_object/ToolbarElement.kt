@@ -32,8 +32,8 @@ import com.avito.android.test.matcher.ToolbarSubTitleResMatcher
 import com.avito.android.test.matcher.ToolbarSubtitleMatcher
 import com.avito.android.test.matcher.ToolbarTitleMatcher
 import com.avito.android.test.matcher.ToolbarTitleResMatcher
-import com.avito.android.waiter.waitFor
 import com.avito.android.test.waitToPerform
+import com.avito.android.waiter.waitFor
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
@@ -102,7 +102,8 @@ open class ToolbarElement(interactionContext: InteractionContext) :
 
         override val checks
             get() = OverflowMenuChecksImpl(
-                toolbarMatcher, titleMatcher,
+                toolbarMatcher,
+                titleMatcher,
                 ChecksImpl(OverflowMenuDriver(toolbarMatcher, titleMatcher, overflowMenuButton))
             )
 

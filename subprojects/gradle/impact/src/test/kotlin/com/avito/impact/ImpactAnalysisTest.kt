@@ -75,10 +75,11 @@ class ImpactAnalysisTest {
         with(projectDir) {
             checkoutSourceBranch()
             file(
-                ".tia_ignore", """
-                    .tia_ignore
-                    *.md
-                    ignored_directory/*
+                name = ".tia_ignore",
+                content = """
+                .tia_ignore
+                *.md
+                ignored_directory/*
                 """.trimIndent()
             )
             file("README.md")
@@ -176,7 +177,8 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         implementation project(':feature_a')
                         implementation project(':feature_b')
                     """
@@ -206,18 +208,21 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         implementation project(':feature_a')
                         implementation project(':feature_b')
                     """
                 ),
                 AndroidLibModule(
-                    "feature_a", dependencies = """
+                    name = "feature_a",
+                    dependencies = """
                         implementation project(':core')
                     """
                 ),
                 AndroidLibModule(
-                    "feature_b", dependencies = """
+                    name = "feature_b",
+                    dependencies = """
                         implementation project(':core')
                     """
                 ),
@@ -245,13 +250,15 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         implementation project(':feature')
                         testImplementation project(':test_utils')
                     """
                 ),
                 AndroidLibModule(
-                    "feature", dependencies = """
+                    name = "feature",
+                    dependencies = """
                         testImplementation project(':test_utils')
                     """
                 ),
@@ -279,12 +286,14 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         androidTestImplementation project(':android_test_utils')
                     """
                 ),
                 AndroidLibModule(
-                    "android_test_utils", dependencies = """
+                    name = "android_test_utils",
+                    dependencies = """
                         implementation project(':core_test_utils')
                     """
                 ),
@@ -315,18 +324,21 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         implementation project(':feature')
                         androidTestImplementation project(':android_test_feature')
                     """
                 ),
                 AndroidLibModule(
-                    "feature", dependencies = """
+                    name = "feature",
+                    dependencies = """
                         androidTestImplementation project(':android_test_feature')
                     """
                 ),
                 AndroidLibModule(
-                    "android_test_feature", dependencies = """
+                    name = "android_test_feature",
+                    dependencies = """
                         implementation project(':feature')
                     """
                 )
@@ -353,13 +365,15 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         api platform(project(':platform'))
                         implementation project(':feature')
                     """
                 ),
                 AndroidLibModule(
-                    "feature", dependencies = """
+                    name = "feature",
+                    dependencies = """
                         api platform(project(':platform'))
                     """
                 ),
@@ -390,7 +404,8 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         implementation project(':parent:feature1')
                         implementation project(':parent:feature2')
                     """
@@ -430,7 +445,8 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         implementation project(':feature')
                     """
                 ),
@@ -461,7 +477,8 @@ class ImpactAnalysisTest {
             modules = listOf(
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
-                    "app", dependencies = """
+                    name = "app",
+                    dependencies = """
                         androidTestImplementation platform(project(':platform'))
                     """
                 ),

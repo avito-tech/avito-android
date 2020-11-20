@@ -55,7 +55,6 @@ class ReportImplementation(
     TestLifecycleListener by TestLifecycleNotifier,
     PreconditionLifecycleListener by PreconditionLifecycleNotifier {
 
-
     /**
      * Entries that occurred before first step/precondition
      */
@@ -72,7 +71,6 @@ class ReportImplementation(
 
     override val isFirstStepOrPrecondition: Boolean
         get() = state.isFirstStepOrPrecondition
-
 
     @Synchronized
     override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
@@ -278,7 +276,6 @@ class ReportImplementation(
         }?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(html)
     }
-
 
     @Synchronized
     override fun addComment(comment: String) {

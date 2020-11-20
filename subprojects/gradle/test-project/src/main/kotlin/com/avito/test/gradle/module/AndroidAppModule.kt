@@ -34,7 +34,7 @@ class AndroidAppModule(
             dir("src") {
                 dir("main") {
                     androidManifest(packageName = packageName)
-                    if(enableKotlinAndroidPlugin || enableKapt) {
+                    if (enableKotlinAndroidPlugin || enableKapt) {
                         dir("kotlin") {
                             kotlinClass("SomeClass", packageName)
                         }
@@ -42,17 +42,18 @@ class AndroidAppModule(
                     dir("res") {
                         dir("values") {
                             file(
-                                "id.xml", content = """<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="some_id" type="id" />
-</resources>
+                                name = "id.xml",
+                                content = """<?xml version="1.0" encoding="utf-8"?>
+                                <resources>
+                                    <item name="some_id" type="id" />
+                                </resources>
                             """.trimIndent()
                             )
                         }
                     }
                 }
                 dir("androidTest") {
-                    if(enableKotlinAndroidPlugin || enableKapt) {
+                    if (enableKotlinAndroidPlugin || enableKapt) {
                         dir("kotlin") {
                             kotlinClass("SomeTestClass", packageName)
                             instrumentationTests.forEach { it.generateIn(this) }
@@ -62,12 +63,13 @@ class AndroidAppModule(
             }
 
             file(
-                "proguard.pro", """
--ignorewarnings
--keep public class * {
-    public protected *;
-}
-""".trimIndent()
+                name = "proguard.pro",
+                content = """
+                -ignorewarnings
+                -keep public class * {
+                    public protected *;
+                }
+                """.trimIndent()
             )
 
             build_gradle {
@@ -77,8 +79,8 @@ class AndroidAppModule(
 
 plugins {
     id 'com.android.application'
-    ${if(enableKotlinAndroidPlugin || enableKapt) "id 'kotlin-android'" else ""}
-    ${if(enableKapt) "id 'kotlin-kapt'" else ""}
+    ${if (enableKotlinAndroidPlugin || enableKapt) "id 'kotlin-android'" else ""}
+    ${if (enableKapt) "id 'kotlin-kapt'" else ""}
 ${plugins.joinToString(separator = "\n") { "    id '$it'" }}
 }
 
@@ -100,7 +102,8 @@ android {
             matchingFallbacks = ["debug"]
         }
     }
-    ${if(enableKotlinAndroidPlugin || enableKapt) """
+    ${
+                        if (enableKotlinAndroidPlugin || enableKapt) """
         sourceSets {
         main {
             java.srcDir("src/main/kotlin")
@@ -112,7 +115,8 @@ android {
             java.srcDir("src/androidTest/kotlin")
         }
     }
-    """.trimIndent() else ""}
+    """.trimIndent() else ""
+                    }
 }
 
 afterEvaluate{
@@ -124,10 +128,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     androidTestImplementation("junit:junit:4.13")
     testImplementation("junit:junit:4.13")
-    ${if(enableKapt) """
+    ${
+                        if (enableKapt) """
     implementation("com.google.dagger:dagger:2.29.1")
     kapt("com.google.dagger:dagger-compiler:2.29.1")
-    """.trimIndent() else ""}
+    """.trimIndent() else ""
+                    }
 }
 
 $customScript

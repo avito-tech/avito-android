@@ -12,7 +12,7 @@ internal fun CrossDeviceSuite.analyzeFailures(): Map<String, List<FailureOnDevic
         .groupBy { it.failureMessage }
 }
 
-//visible for testing
+// visible for testing
 internal fun normalize(failureMessage: String): String {
     return DEFAULT_FAILURE_MESSAGE_NORMALIZERS
         .fold(failureMessage, { message, normalizer -> normalizer.normalize(message) })

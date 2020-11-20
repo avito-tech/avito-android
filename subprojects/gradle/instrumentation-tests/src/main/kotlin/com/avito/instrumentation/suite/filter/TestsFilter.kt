@@ -19,32 +19,38 @@ interface TestsFilter {
             override fun toString(): String = "test has been excluded because: $reason"
 
             class HasSkipSdkAnnotation(name: String, sdk: Int) : Excluded(
-                name, "test has SkipSdk with value sdk=$sdk"
+                byFilter = name,
+                reason = "test has SkipSdk with value sdk=$sdk"
             )
 
             class HasFlakyAnnotation(name: String, sdk: Int) : Excluded(
-                name, "test has Flaky with value sdk=$sdk"
+                byFilter = name,
+                reason = "test has Flaky with value sdk=$sdk"
             )
 
-            class DoesNotHaveIncludeAnnotations(name: String, annotations: Set<String>) :
-                Excluded(name, "test doesn't have any of annotations=$annotations")
+            class DoesNotHaveIncludeAnnotations(name: String, annotations: Set<String>) : Excluded(
+                byFilter = name,
+                reason = "test doesn't have any of annotations=$annotations"
+            )
 
-            class HasExcludeAnnotations(name: String, annotations: Set<String>) :
-                Excluded(name, "test has any of excluded annotations=$annotations")
+            class HasExcludeAnnotations(name: String, annotations: Set<String>) : Excluded(
+                byFilter = name,
+                reason = "test has any of excluded annotations=$annotations"
+            )
 
             abstract class BySignatures(name: String, reason: String) : Excluded(name, reason) {
                 abstract val source: Signatures.Source
             }
 
-            class DoesNotMatchIncludeSignature(
-                name: String,
-                override val source: Signatures.Source
-            ) : BySignatures(name, "test doesn't match any of signatures from source=$source")
+            class DoesNotMatchIncludeSignature(name: String, override val source: Signatures.Source) : BySignatures(
+                name = name,
+                reason = "test doesn't match any of signatures from source=$source"
+            )
 
-            class MatchesExcludeSignature(
-                name: String,
-                override val source: Signatures.Source
-            ) : BySignatures(name, "test has matched one of signatures from source=$source")
+            class MatchesExcludeSignature(name: String, override val source: Signatures.Source) : BySignatures(
+                name = name,
+                reason = "test has matched one of signatures from source=$source"
+            )
         }
     }
 

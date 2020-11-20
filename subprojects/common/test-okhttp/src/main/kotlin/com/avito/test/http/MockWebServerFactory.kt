@@ -17,5 +17,4 @@ class MockWebServerFactory {
     companion object {
         fun create(): MockWebServer = MockWebServerFactory().create()
     }
-
 }

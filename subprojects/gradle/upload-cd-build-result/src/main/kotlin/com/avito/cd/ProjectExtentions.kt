@@ -41,7 +41,6 @@ private class CdBuildConfigFactory : (Project) -> Provider<CdBuildConfig> {
     }
 }
 
-
 val Project.isCdBuildConfigPresent
     get() = cdBuildConfig.isPresent
 

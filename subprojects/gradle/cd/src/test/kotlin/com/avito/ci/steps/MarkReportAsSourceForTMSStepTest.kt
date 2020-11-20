@@ -1,9 +1,9 @@
 package com.avito.ci.steps
 
 import com.avito.plugin.tmsPluginId
-import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
+import com.avito.test.gradle.module.AndroidAppModule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File

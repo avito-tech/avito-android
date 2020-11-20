@@ -50,7 +50,6 @@ fun generateInstrumentationTestAction(
         enableDeviceDebug = enableDeviceDebug
     )
 
-
 fun generateDeviceTestCaseRun(
     testCaseRun: TestCaseRun = generateTestCaseRun(),
     deviceData: DeviceData = generateDeviceData()

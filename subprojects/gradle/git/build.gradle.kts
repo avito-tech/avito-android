@@ -11,7 +11,6 @@ dependencies {
     implementation(Dependencies.funktionaleTry)
     api(project(":gradle:build-environment")) // project.buildEnvironment only
 
-
     testImplementation(project(":gradle:test-project"))
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)
 }

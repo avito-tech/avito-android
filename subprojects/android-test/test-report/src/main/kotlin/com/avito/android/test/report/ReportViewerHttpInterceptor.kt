@@ -4,7 +4,13 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.http.isPlaintext
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.GsonBuilder
-import okhttp3.*
+import okhttp3.Headers
+import okhttp3.HttpUrl
+import okhttp3.Interceptor
+import okhttp3.MediaType
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.ResponseBody
 import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import java.nio.charset.Charset
@@ -90,11 +96,7 @@ class ReportViewerHttpInterceptor(
         while (requestHeadersIndex < requestHeadersCount) {
             val name = headers.name(requestHeadersIndex)
             // Skip headers from the request body as they are explicitly logged above.
-            if (!"Content-Type".equals(name, ignoreCase = true) && !"Content-Length".equals(
-                    name,
-                    ignoreCase = true
-                )
-            ) {
+            if (!"Content-Type".equals(name, ignoreCase = true) && !"Content-Length".equals(name, ignoreCase = true)) {
                 result.appendln(name + ": " + headers.value(requestHeadersIndex))
             }
             requestHeadersIndex++

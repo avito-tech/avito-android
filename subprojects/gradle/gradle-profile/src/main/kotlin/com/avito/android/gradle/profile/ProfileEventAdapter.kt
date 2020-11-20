@@ -108,5 +108,4 @@ class ProfileEventAdapter(
 
         listener.afterExecute(task, taskExecution)
     }
-
 }

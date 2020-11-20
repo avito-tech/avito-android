@@ -14,10 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
-import java.util.concurrent.TimeUnit
 
 class MockDevicesProvider(private val logger: CILogger) : DevicesProvider {
 

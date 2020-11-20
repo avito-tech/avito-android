@@ -1,6 +1,6 @@
 package com.avito.report.model
 
-//todo extends CompletedTest?
+// todo extends CompletedTest?
 class PerformanceTest(
     val testName: String,
     val id: String,

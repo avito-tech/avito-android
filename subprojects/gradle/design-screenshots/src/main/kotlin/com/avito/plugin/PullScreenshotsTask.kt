@@ -28,9 +28,8 @@ open class PullScreenshotsTask : DefaultTask() {
         val adb = Adb()
         val adbDevicesManager = AdbDevicesManager(StdOutLogger(), adb = adb)
         val currentDevice = DeviceProviderLocal(adb, adbDevicesManager, ciLogger).getDevice()
-        
-        val referencePath =
-            Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
+
+        val referencePath = Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
         currentDevice.list(remotePath.toString()).onSuccess { result ->
             if (result is ProcessNotification.Exit) {
@@ -51,7 +50,6 @@ open class PullScreenshotsTask : DefaultTask() {
         }.onFailure {
             ciLogger.info("Cannot list screenshot directory")
         }
-
     }
 
     private fun clearOutputFiles() {

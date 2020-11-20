@@ -98,7 +98,7 @@ internal class AggregatedMetricsConsumer(
             .filterNot { defaultBuildTasks.contains(it) }
             .map { it.removePrefix(":") }
 
-        //todo тут правильно смотреть макс длину события, вместе с тегами сейчас 1000
+        // todo тут правильно смотреть макс длину события, вместе с тегами сейчас 1000
         val canBeTooLongForGraphite = tasks.size > 2
         val tasksShorthand = if (canBeTooLongForGraphite) {
             "_"
@@ -183,10 +183,10 @@ internal class AggregatedMetricsConsumer(
                 "outcome:${state.outcome}"
         )
     }
-
 }
 
 private const val considerableTimeMs = 100
+
 /**
  * Добавляются неявно к каждой сборке, зашумляют метрики.
  */
