@@ -326,8 +326,9 @@ formatting:
     # https://ktlint.github.io/#rule-import
     NoUnusedImports:
         active: true
+    # DUPLICATE of style WildcardImports
     NoWildcardImports:
-        active: true
+        active: false
 
     # DUPLICATE of naming:PackageNaming rule
     PackageName:
@@ -663,16 +664,21 @@ style:
     # https://detekt.github.io/detekt/style.html#optionalwhenbraces
     OptionalWhenBraces:
         active: true
+    # https://detekt.github.io/detekt/style.html#prefertooverpairsyntax
     PreferToOverPairSyntax:
-        active: false
+        active: true
+    # https://detekt.github.io/detekt/style.html#protectedmemberinfinalclass
     ProtectedMemberInFinalClass:
-        active: false
+        active: true
     RedundantExplicitType:
         active: false
     RedundantHigherOrderMapUsage:
         active: false
+    # https://detekt.github.io/detekt/style.html#redundantvisibilitymodifierrule
     RedundantVisibilityModifierRule:
-        active: false
+        active: true
+    # https://detekt.github.io/detekt/style.html#returncount
+    # todo enable (11 errors)
     ReturnCount:
         active: false
         max: 2
@@ -680,6 +686,7 @@ style:
         excludeLabeled: false
         excludeReturnFromLambda: true
         excludeGuardClauses: false
+    # https://detekt.github.io/detekt/style.html#safecast
     SafeCast:
         active: false
     SerialVersionUIDInSerializableClass:
@@ -740,9 +747,11 @@ style:
         active: false
     UtilityClassWithPublicConstructor:
         active: false
+    # https://detekt.github.io/detekt/style.html#varcouldbeval
     VarCouldBeVal:
-        active: false
+        active: true
+    # https://detekt.github.io/detekt/style.html#wildcardimport
     WildcardImport:
-        active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
-        excludeImports: [ 'java.util.*', 'kotlinx.android.synthetic.*' ]
+        active: true
+        excludes: [ ]
+        excludeImports: [ ]
