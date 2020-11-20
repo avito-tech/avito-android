@@ -644,8 +644,9 @@ style:
     # https://detekt.github.io/detekt/style.html#modifierorder
     ModifierOrder:
         active: true
+    # https://detekt.github.io/detekt/style.html#nestedclassesvisibility
     NestedClassesVisibility:
-        active: false
+        active: true
     NewLineAtEndOfFile:
         active: false
     NoTabs:
