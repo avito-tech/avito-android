@@ -226,6 +226,7 @@ internal class ExternalIdDuplicateCheckTest {
         assertThat(detected).isFalse()
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `detector - detects duplicate - for two different test methods one with dataSetNumber and class has externalId`() {
 

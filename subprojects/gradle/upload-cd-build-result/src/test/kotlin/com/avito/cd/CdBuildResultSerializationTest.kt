@@ -5,6 +5,7 @@ import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 
+@Suppress("MaxLineLength")
 private val expected = """
     {
       "schema_version": 1,
@@ -58,7 +59,9 @@ class CdBuildResultSerializationTest {
                 releaseVersion = "52.0",
                 testResults = CdBuildResult.TestResultsLink(
                     reportId = "123",
-                    reportUrl = "https://report/run/5cab53abc0c8b00001f03453?q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxfX0%3D",
+                    reportUrl =
+                    "https://report/run/5cab53abc0c8b00001f03453?" +
+                        "q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxfX0%3D",
                     reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
                         planSlug = "AvitoAndroid",
                         jobSlug = "Regress",

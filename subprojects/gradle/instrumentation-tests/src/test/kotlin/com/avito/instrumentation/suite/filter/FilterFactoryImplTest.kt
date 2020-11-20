@@ -87,6 +87,7 @@ internal class FilterFactoryImplTest {
             )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
         val reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
@@ -116,6 +117,7 @@ internal class FilterFactoryImplTest {
         )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `when filterData includePrevious statuses and Report return list then filters contain IncludeTestSignaturesFilters#Previous with included statuses`() {
         val report = FakeReport()
@@ -166,6 +168,7 @@ internal class FilterFactoryImplTest {
         )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `when filterData excludePrevious statuses and Report return list then filters contain ExcludeTestSignaturesFilters#Previous with included statuses`() {
         val report = FakeReport()

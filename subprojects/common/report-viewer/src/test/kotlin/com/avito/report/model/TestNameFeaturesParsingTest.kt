@@ -12,13 +12,17 @@ internal class TestNameFeaturesParsingTest {
 
     @Test
     fun `testName features - returns single feature`() {
-        assertThat(TestName(name = "com.avito.android.test.geo.my_feature.MyTest.test").features).containsExactly("my_feature")
+        assertThat(TestName(name = "com.avito.android.test.geo.my_feature.MyTest.test").features)
+            .containsExactly("my_feature")
     }
 
     @Test
     fun `testName features - returns multiple feature`() {
-        assertThat(TestName(name = "com.avito.android.test.geo.my_feature.my_inner_feature.my_inner_inner_feature.MyTest.test").features)
-            .containsExactly("my_feature", "my_inner_feature", "my_inner_inner_feature")
+        assertThat(
+            TestName(
+                name = "com.avito.android.test.geo.my_feature.my_inner_feature.my_inner_inner_feature.MyTest.test"
+            ).features
+        ).containsExactly("my_feature", "my_inner_feature", "my_inner_inner_feature")
     }
 
     @Test

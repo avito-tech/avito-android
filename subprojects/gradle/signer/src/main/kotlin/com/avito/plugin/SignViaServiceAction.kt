@@ -31,7 +31,9 @@ internal class SignViaServiceAction(
                 retriesCount = 6,
                 delaySeconds = 0,
                 attemptFailedHandler = { attempt, throwable ->
-                    ciLogger.critical("Attempt $attempt: failed to sign apk via service ${throwable.getStackTraceString()}")
+                    ciLogger.critical(
+                        "Attempt $attempt: failed to sign apk via service ${throwable.getStackTraceString()}"
+                    )
                 },
                 actionFailedHandler = { throwable ->
                     val message = "Failed to sign apk via service: " + throwable.getStackTraceString()

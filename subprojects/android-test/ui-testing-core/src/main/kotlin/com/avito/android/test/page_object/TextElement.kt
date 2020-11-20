@@ -56,7 +56,12 @@ class ClickOnTextAction(private val textToClick: String) : ViewAction {
         if (count != 1) {
             throw throw PerformException.Builder().withActionDescription(this.toString())
                 .withViewDescription(HumanReadables.describe(view))
-                .withCause(IllegalStateException("Zero or more than 1 matches for given text in TextView. Please specify text to click more accurately"))
+                .withCause(
+                    IllegalStateException(
+                        "Zero or more than 1 matches for given text in TextView. " +
+                            "Please specify text to click more accurately"
+                    )
+                )
                 .build()
         }
 

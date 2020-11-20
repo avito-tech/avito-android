@@ -3,6 +3,7 @@ package com.avito.instrumentation.configuration
 import com.avito.android.withAndroidModule
 import com.avito.git.gitState
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.report.model.RunId
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.logging.ciLogger
@@ -12,7 +13,7 @@ import org.gradle.kotlin.dsl.getByType
 
 internal fun Project.createInstrumentationPluginExtension() {
     val extension =
-        extensions.create<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>(
+        extensions.create<GradleInstrumentationPluginConfiguration>(
             "instrumentation",
             this
         )
@@ -27,10 +28,10 @@ internal fun Project.createInstrumentationPluginExtension() {
  * поведение. Например, наличие динамической конфигурации с помощью NamedDomainObjectContainer
  * мешает нормально сериализации объекта для дальнейшей передачи в воркеры.
  */
-internal fun Project.withInstrumentationExtensionData(action: (InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data) -> Unit) {
+internal fun Project.withInstrumentationExtensionData(action: (GradleInstrumentationPluginConfiguration.Data) -> Unit) {
     withAndroidModule { androidBaseExtension ->
         afterEvaluate {
-            val extension = extensions.getByType<InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration>()
+            val extension = extensions.getByType<GradleInstrumentationPluginConfiguration>()
             val env = project.envArgs
             val runId = project.gitState { project.ciLogger.info(it) }
                 .map { gitState ->

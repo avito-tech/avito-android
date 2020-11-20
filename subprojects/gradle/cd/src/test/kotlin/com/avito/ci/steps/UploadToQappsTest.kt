@@ -74,6 +74,7 @@ class UploadToQappsTest {
             .taskWithOutcome(":app:qappsUploadDebug", TaskOutcome.SKIPPED)
     }
 
+    @Suppress("MaxLineLength")
     private fun generateProject() {
         TestProjectGenerator(
             modules = listOf(

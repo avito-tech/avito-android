@@ -66,8 +66,13 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
         project.withInstrumentationExtensionData { extensionData ->
             extensionData.configurations.forEach { instrumentationConfiguration ->
-                if (instrumentationConfiguration.requestedDeviceType == CLOUD && project.kubernetesCredentials is KubernetesCredentials.Empty) {
-                    throw IllegalStateException("Configuration ${instrumentationConfiguration.name} error: has kubernetes device target without kubernetes credentials")
+                if (instrumentationConfiguration.requestedDeviceType == CLOUD
+                    && project.kubernetesCredentials is KubernetesCredentials.Empty
+                ) {
+                    throw IllegalStateException(
+                        "Configuration ${instrumentationConfiguration.name} error: " +
+                            "has kubernetes device target without kubernetes credentials"
+                    )
                 }
 
                 val configurationOutputFolder = File(extensionData.output, instrumentationConfiguration.name)

@@ -151,7 +151,9 @@ class KubernetesReservationClient(
                                     // TODO must be fixed after adding affinity to POD
                                     val podDescription = getPodDescription(podName)
                                     logger.warn(
-                                        "Get logs from emulator failed; pod=$podName; podDescription=$podDescription; container serial=$serial",
+                                        "Get logs from emulator failed; pod=$podName; " +
+                                            "podDescription=$podDescription; " +
+                                            "container serial=$serial",
                                         throwable
                                     )
                                 }

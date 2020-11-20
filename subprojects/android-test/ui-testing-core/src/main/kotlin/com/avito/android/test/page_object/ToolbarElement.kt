@@ -72,7 +72,8 @@ open class ToolbarElement(interactionContext: InteractionContext) :
 
     val overflowMenuButton = ViewElement(overflowButtonMatcher)
 
-    constructor() : this(SimpleInteractionContext(isAssignableFrom(Toolbar::class.java))) // TODO: migrate to HandleParentContext
+    // TODO: migrate to HandleParentContext
+    constructor() : this(SimpleInteractionContext(isAssignableFrom(Toolbar::class.java)))
 
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 

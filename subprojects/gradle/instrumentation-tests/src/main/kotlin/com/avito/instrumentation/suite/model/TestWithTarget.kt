@@ -8,7 +8,8 @@ data class TestWithTarget(
     val target: TargetConfiguration.Data
 )
 
-// todo чето как-то уродливо, кажется проблема в том что targetTestRun слишком много знает, и нужно стркутуру саму поменять
+// todo чето как-то уродливо, кажется проблема в том что targetTestRun слишком много знает,
+//  и нужно стркутуру саму поменять
 fun List<TestWithTarget>.transformTestsWithNewJobSlug(newJobSlug: String): List<TestWithTarget> {
     return map {
         TestWithTarget(

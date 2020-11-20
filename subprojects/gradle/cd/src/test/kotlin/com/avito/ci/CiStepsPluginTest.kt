@@ -23,6 +23,7 @@ class CiStepsPluginTest {
 
     private lateinit var projectDir: File
 
+    @Suppress("MaxLineLength")
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         projectDir = tempPath.toFile()

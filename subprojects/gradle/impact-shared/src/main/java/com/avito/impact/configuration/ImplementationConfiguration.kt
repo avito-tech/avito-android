@@ -11,7 +11,8 @@ import org.funktionale.tries.Try
 import java.io.File
 
 /**
- * todo надо переименовать, кажется что речь про configuration: implementation, а по факту это гораздо большее число конфигураций
+ * todo надо переименовать, кажется что речь про configuration: implementation,
+ *  а по факту это гораздо большее число конфигураций
  */
 class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(module) {
 

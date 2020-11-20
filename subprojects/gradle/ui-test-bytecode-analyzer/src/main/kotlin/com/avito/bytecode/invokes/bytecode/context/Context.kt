@@ -53,9 +53,12 @@ class Context(
         }
 
         if (
-            calledClass == null || // method or class not found in sources (outside analyser's scope)
-            calledMethod == null || // method or class not found in sources (outside analyser's scope)
-            calledMethod.isAbstract && !calledClass.isAbstract && !calledClass.isInterface // method is abstract but class isn't (it is possible when we implement it through parent implicitly)
+        // method or class not found in sources (outside analyser's scope)
+            calledClass == null ||
+            // method or class not found in sources (outside analyser's scope)
+            calledMethod == null ||
+            // method is abstract but class isn't (it is possible when we implement it through parent implicitly)
+            calledMethod.isAbstract && !calledClass.isAbstract && !calledClass.isInterface
         ) {
             result.add(
                 FoundMethod(

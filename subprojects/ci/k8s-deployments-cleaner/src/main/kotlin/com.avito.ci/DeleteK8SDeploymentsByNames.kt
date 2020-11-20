@@ -23,7 +23,10 @@ class DeleteK8SDeploymentsByNames(
                 }
             }
         } catch (e: Throwable) {
-            throw RuntimeException("Error when delete deployments. namespace=$namespace; deployments=$deploymentNames", e)
+            throw RuntimeException(
+                "Error when delete deployments. namespace=$namespace; deployments=$deploymentNames",
+                e
+            )
         }
     }
 }

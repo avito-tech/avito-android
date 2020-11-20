@@ -39,10 +39,15 @@ internal class ReportsApiTest {
         mockWebServer.enqueue(
             MockResponse()
                 .setResponseCode(500)
-                .setBody("{\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32603,\"message\":\"Internal error\",\"data\":\"not found\"},\"id\":1}")
+                .setBody(
+                    "{\"jsonrpc\":\"2.0\"," +
+                        "\"error\":{\"code\":-32603,\"message\":\"Internal error\",\"data\":\"not found\"},\"id\":1}"
+                )
         )
 
-        val result = reportsApi.getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345"))
+        val result = reportsApi.getReport(
+            ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
+        )
 
         assertThat(result).isInstanceOf(GetReportResult.NotFound::class.java)
     }
@@ -51,14 +56,19 @@ internal class ReportsApiTest {
     fun `getReport - returns Error - when throws exception with no data`() {
         mockWebServer.enqueue(MockResponse().setResponseCode(500))
 
-        val result = reportsApi.getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345"))
+        val result = reportsApi.getReport(
+            ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
+        )
 
         assertThat(result).isInstanceOf(GetReportResult.Error::class.java)
     }
 
     @Test
     fun `getReport - returns Report`() {
-        mockWebServer.enqueue(MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getReport.json").readText()))
+        mockWebServer.enqueue(
+            MockResponse()
+                .setBody(fileFromJarResources<ReportsApiTest>("getReport.json").readText())
+        )
 
         val result = reportsApi.getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", ""))
 
@@ -72,10 +82,16 @@ internal class ReportsApiTest {
 
     @Test
     fun `getTestsForRunId - returns ok`() {
-        mockWebServer.enqueue(MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getReport.json").readText()))
-        mockWebServer.enqueue(MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getTestsForRunId.json").readText()))
+        mockWebServer.enqueue(
+            MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getReport.json").readText())
+        )
+        mockWebServer.enqueue(
+            MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getTestsForRunId.json").readText())
+        )
 
-        val result = reportsApi.getTestsForRunId(ReportCoordinates("AvitoAndroid", "FunctionalTests", ""))
+        val result = reportsApi.getTestsForRunId(
+            ReportCoordinates("AvitoAndroid", "FunctionalTests", "")
+        )
 
         assertThat(result).isInstanceOf(Try.Success::class.java)
 
@@ -86,7 +102,9 @@ internal class ReportsApiTest {
 
     @Test
     fun `pushPreparedData - returns ok`() {
-        mockWebServer.enqueue(MockResponse().setBody(fileFromJarResources<ReportsApiTest>("pushPreparedData.json").readText()))
+        mockWebServer.enqueue(
+            MockResponse().setBody(fileFromJarResources<ReportsApiTest>("pushPreparedData.json").readText())
+        )
 
         val result = reportsApi.pushPreparedData("any", "any", jsonObject("any" to "any"))
 

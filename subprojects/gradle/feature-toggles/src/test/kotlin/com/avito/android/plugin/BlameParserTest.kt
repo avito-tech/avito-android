@@ -43,7 +43,8 @@ class BlameParserTest {
     fun String.toLocalDate() = Instant.ofEpochSecond(this.toLong()).atZone(ZoneId.of("Europe/Moscow")).toLocalDate()
 }
 
-val correctBlame =
+@Suppress("MaxLineLength")
+private const val correctBlame =
     """f738698526f avito/src/main/kotlin/com/avito/android/Features.kt  (<dkostyrev@avito.ru>     1455703948 +0300   1) package com.avito.android
 f738698526f avito/src/main/kotlin/com/avito/android/Features.kt  (<dkostyrev@avito.ru>     1455703948 +0300   2)
 a83712b013e avito/src/main/java/com/avito/android/Features.kt    (<ekrivobokov@avito.ru>   1484325718 +0300   3) import com.avito.android.toggle.Feature"""

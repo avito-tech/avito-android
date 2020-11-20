@@ -38,7 +38,8 @@ class OutputsVerifier(
                 "${apkFile.relativeToOutputsPath} signature doesn't match:\n" +
                     "${result.actualSha1} <- actual\n" +
                     "${result.expectedSha1} <- should be"
-            is SignVerifier.Result.VerificationError -> errors += "cannot check ${apkFile.relativeToOutputsPath} signature, ${result.exception.message}"
+            is SignVerifier.Result.VerificationError ->
+                errors += "cannot check ${apkFile.relativeToOutputsPath} signature, ${result.exception.message}"
         }
     }
 
@@ -51,7 +52,8 @@ class OutputsVerifier(
                 "${bundleFile.relativeToOutputsPath} signature doesn't match:\n" +
                     "${result.actualSha1} <- actual\n" +
                     "${result.expectedSha1} <- should be"
-            is SignVerifier.Result.VerificationError -> errors += "cannot check ${bundleFile.relativeToOutputsPath} signature, ${result.exception.message}"
+            is SignVerifier.Result.VerificationError ->
+                errors += "cannot check ${bundleFile.relativeToOutputsPath} signature, ${result.exception.message}"
         }
     }
 

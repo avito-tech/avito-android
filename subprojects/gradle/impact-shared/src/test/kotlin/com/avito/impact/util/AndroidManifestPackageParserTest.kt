@@ -9,6 +9,7 @@ internal class AndroidManifestPackageParserTest {
 
     data class Case(val name: String, val file: File, val expectedPackage: String)
 
+    @Suppress("MaxLineLength")
     @TestFactory
     fun `parse - success - valid files`() = listOf(
         createCase(

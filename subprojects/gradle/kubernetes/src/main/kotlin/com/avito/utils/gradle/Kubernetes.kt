@@ -31,7 +31,9 @@ fun createKubernetesClient(
             require(kubernetesCredentials.context.isNotBlank()) { "kubernetes.context should be set" }
 
             val configFile = File(kubernetesCredentials.configFile)
-            require(configFile.exists() && configFile.length() > 0) { "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable" }
+            require(configFile.exists() && configFile.length() > 0) {
+                "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable"
+            }
 
             val configContents = configFile.readText()
 

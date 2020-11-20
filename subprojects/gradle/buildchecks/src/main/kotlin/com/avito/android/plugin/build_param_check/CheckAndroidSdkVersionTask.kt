@@ -48,7 +48,8 @@ abstract class CheckAndroidSdkVersionTask : DefaultTask() {
                     BuildChecksExtension::androidSdk,
                     """
                     You have an old Android SDK Platform version.
-                    API level: ${compileSdkVersion.get()}, actual revision $localRevision, expected revision: $expectedRevision.
+                    API level: ${compileSdkVersion.get()}, 
+                    (actual revision $localRevision, expected revision: $expectedRevision).
                     It breaks build caching (https://issuetracker.google.com/issues/117789774).
                     
                     Please, install or update Android SDK Platform.
@@ -62,7 +63,8 @@ abstract class CheckAndroidSdkVersionTask : DefaultTask() {
                     BuildChecksExtension::androidSdk,
                     """
                     You have a newer Android SDK Platform version.
-                    API level: ${compileSdkVersion.get()}, actual revision $localRevision, expected revision: $expectedRevision.
+                    API level: ${compileSdkVersion.get()}, 
+                    (actual revision $localRevision, expected revision: $expectedRevision).
                     It breaks build caching (https://issuetracker.google.com/issues/117789774).
                     
                     Please, update it in buildChecks config or in build environment.

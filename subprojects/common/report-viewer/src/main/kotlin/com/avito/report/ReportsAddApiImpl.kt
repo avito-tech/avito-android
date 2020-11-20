@@ -68,7 +68,9 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         reportCoordinates = reportCoordinates,
                         buildId = buildId,
                         test = test,
-                        status = null, // определяется на бэке для success/fail по наличию incident, отправляем остальные статусы самостоятельно
+                        // определяется на бэке для success/fail по наличию incident,
+                        // отправляем остальные статусы самостоятельно
+                        status = null,
                         stdout = test.stdout,
                         stderr = test.stderr,
                         incident = test.incident,
@@ -153,7 +155,9 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
             // Для консистентности можно также посылать здесь testCaseId, но бэкенд умеет обрабатывать это
         }
 
-        require(!(test.dataSetNumber == null && !dataSetData.isNullOrEmpty())) { "DataSet data without DataSetNumber doesn't make sense!" }
+        require(!(test.dataSetNumber == null && !dataSetData.isNullOrEmpty())) {
+            "DataSet data without DataSetNumber doesn't make sense!"
+        }
 
         if (test.dataSetNumber != null) {
             report["data_set_number"] = test.dataSetNumber.toString()

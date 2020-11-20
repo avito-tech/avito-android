@@ -96,6 +96,7 @@ class TestSuiteLoaderIntegrationTest {
         assertThat(expectedTests).containsAtLeastElementsIn(actualTests.toTypedArray())
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `get tests - pass - when parsed apk contains test classes without CaseId annotation and missed case if is allowed`() {
         testSuiteLoader = TestSuiteLoaderImpl(dexFileExtractor)

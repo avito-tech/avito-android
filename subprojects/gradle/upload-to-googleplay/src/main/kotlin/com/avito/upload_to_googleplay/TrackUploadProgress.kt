@@ -4,10 +4,6 @@ import com.avito.android.percent
 import com.google.api.client.googleapis.media.MediaHttpUploader
 import com.google.api.services.androidpublisher.AndroidPublisherRequest
 
-/**
- * Copy-paste driven development
- * <a href="https://github.com/Triple-T/gradle-play-publisher/blob/master/plugin/src/main/kotlin/com/github/triplet/gradle/play/internal/Progress.kt">original</a>
- */
 internal fun <T> AndroidPublisherRequest<T>.trackUploadProgress(
     thing: String
 ): AndroidPublisherRequest<T> {

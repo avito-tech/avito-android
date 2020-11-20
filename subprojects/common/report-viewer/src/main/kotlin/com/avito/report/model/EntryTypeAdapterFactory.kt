@@ -72,7 +72,9 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
             var fileAddress = ""
 
             with(`in`) {
-                check(peek() == JsonToken.BEGIN_OBJECT) { "Expected ${JsonToken.BEGIN_OBJECT} but was ${peek()} at $this" }
+                check(peek() == JsonToken.BEGIN_OBJECT) {
+                    "Expected ${JsonToken.BEGIN_OBJECT} but was ${peek()} at $this"
+                }
 
                 beginObject()
                 while (hasNext()) {
@@ -135,7 +137,9 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
         override fun read(`in`: JsonReader): List<Entry> {
             val result = mutableListOf<Entry>()
             with(`in`) {
-                check(peek() == JsonToken.BEGIN_ARRAY) { "Expected ${JsonToken.BEGIN_ARRAY} but was ${peek()} at $this" }
+                check(peek() == JsonToken.BEGIN_ARRAY) {
+                    "Expected ${JsonToken.BEGIN_ARRAY} but was ${peek()} at $this"
+                }
 
                 beginArray()
                 while (hasNext()) {

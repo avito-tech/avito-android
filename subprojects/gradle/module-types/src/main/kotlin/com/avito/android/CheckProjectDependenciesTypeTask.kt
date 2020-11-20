@@ -75,13 +75,22 @@ abstract class CheckProjectDependenciesTypeTask : DefaultTask() {
         val message = StringBuilder()
         message.appendln("${project.path} has wrong dependencies:")
         if (wrongDependenciesInImplementation.isNotEmpty()) {
-            message.appendln("'implementation' configuration contains the following non-implementation dependencies: ${wrongDependenciesInImplementation.joinToString { it.module.project.path }}")
+            message.appendln(
+                "'implementation' configuration contains the following non-implementation dependencies: " +
+                    wrongDependenciesInImplementation.joinToString { it.module.project.path }
+            )
         }
         if (wrongDependenciesInTest.isNotEmpty()) {
-            message.appendln("'testImplementation' configuration contains the following non-test dependencies: ${wrongDependenciesInTest.joinToString { it.module.project.path }}")
+            message.appendln(
+                "'testImplementation' configuration contains the following non-test dependencies: " +
+                    wrongDependenciesInTest.joinToString { it.module.project.path }
+            )
         }
         if (wrongDependenciesInAndroidTest.isNotEmpty()) {
-            message.appendln("'androidTestImplementation' configuration contains the following non-android-test dependencies: ${wrongDependenciesInAndroidTest.joinToString { it.module.project.path }}")
+            message.appendln(
+                "'androidTestImplementation' configuration contains the following non-android-test dependencies: " +
+                    wrongDependenciesInAndroidTest.joinToString { it.module.project.path }
+            )
         }
         return message.toString()
     }

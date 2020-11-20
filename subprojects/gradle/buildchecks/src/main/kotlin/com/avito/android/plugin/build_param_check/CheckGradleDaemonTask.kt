@@ -32,7 +32,8 @@ abstract class CheckGradleDaemonTask : DefaultTask() {
 
         assertSameProperty("distributionUrl", rootProperties, buildSrcWrapperProperties) {
             "Different distributions of Gradle in root project and buildSrc " +
-                "which may cause two daemons to be spawned when running buildSrc separately (e.g. inside that directory). " +
+                "which may cause two daemons to be spawned when running buildSrc separately " +
+                "(e.g. inside that directory). " +
                 "Use the same distribution for both builds."
         }
     }
@@ -51,7 +52,8 @@ abstract class CheckGradleDaemonTask : DefaultTask() {
 
         assertSameProperty("org.gradle.jvmargs", rootProperties, buildSrcProperties) {
             "gradle.properties and buildSrc/gradle.properties have different org.gradle.jvmargs " +
-                "which may cause two daemons to be spawned when running buildSrc separately (e.g. inside that directory). " +
+                "which may cause two daemons to be spawned when running buildSrc separately " +
+                "(e.g. inside that directory). " +
                 "Use the same org.gradle.jvmargs for both builds."
         }
     }

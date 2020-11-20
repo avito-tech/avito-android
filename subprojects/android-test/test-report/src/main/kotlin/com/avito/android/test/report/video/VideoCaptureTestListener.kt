@@ -53,11 +53,14 @@ class VideoCaptureTestListener(
         if (videoFeature.videoRecordingEnabled(shouldRecord)) {
             logger.debug("Video recording feature enabled. Recording starting")
             when (val startingResult = videoCapturer.start()) {
-                is VideoCapturer.StartingRecordResult.Success -> logger.debug("Video recording feature enabled. Recording started")
-                is VideoCapturer.StartingRecordResult.Error -> logger.warn(
-                    "Video recording feature enabled. Failed to start recording. Reason: ${startingResult.message}",
-                    startingResult.error
-                )
+                is VideoCapturer.StartingRecordResult.Success ->
+                    logger.debug("Video recording feature enabled. Recording started")
+                is VideoCapturer.StartingRecordResult.Error ->
+                    logger.warn(
+                        "Video recording feature enabled. Failed to start recording. " +
+                            "Reason: ${startingResult.message}",
+                        startingResult.error
+                    )
             }
         } else {
             logger.debug("Video recording feature disabled.")
@@ -85,7 +88,10 @@ class VideoCaptureTestListener(
                 }
                 is VideoCapturer.RecordResult.Error -> {
                     logger.warn(
-                        "Video uploading enabled. Failed to upload video for ${state.testMetadata.className}.${state.testMetadata.methodName}. Reason: ${result.message}",
+                        "Video uploading enabled. " +
+                            "Failed to upload video for " +
+                            "${state.testMetadata.className}.${state.testMetadata.methodName}. " +
+                            "Reason: ${result.message}",
                         result.error
                     )
                 }

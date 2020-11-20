@@ -78,8 +78,9 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
     /**
      * Hide parent method [PageObject.element]
      */
-    protected inline fun <reified T : PageObjectElement> element(@Suppress("UNUSED_PARAMETER") matcher: Matcher<View>): T =
-        throw RuntimeException("Use listElement(Matcher<View>) instead of element(Matcher<View>)")
+    protected inline fun <reified T : PageObjectElement> element(
+        @Suppress("UNUSED_PARAMETER") matcher: Matcher<View>
+    ): T = throw RuntimeException("Use listElement(Matcher<View>) instead of element(Matcher<View>)")
 
     /**
      * Hide parent method [PageObject.element]

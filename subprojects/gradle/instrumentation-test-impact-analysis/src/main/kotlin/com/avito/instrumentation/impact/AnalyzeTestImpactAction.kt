@@ -114,9 +114,14 @@ internal class AnalyzeTestImpactAction(
     private fun getAffectedTestsByAndroidTest(
         affectedAndroidTestProjects: List<AndroidProject>
     ): Set<Test> {
+
         val isTargetModuleAffected = affectedAndroidTestProjects.any { it.path == targetModule.path }
-        val targetModuleHasModifiedAndroidTestDependency =
-            targetModule.internalModule.getConfiguration(ConfigurationType.ANDROID_TESTS).dependencies.any { it.isModified }
+
+        val targetModuleHasModifiedAndroidTestDependency = targetModule.internalModule
+            .getConfiguration(ConfigurationType.ANDROID_TESTS)
+            .dependencies
+            .any { it.isModified }
+
         return if (isTargetModuleAffected && targetModuleHasModifiedAndroidTestDependency) {
             filteredTest
         } else {
@@ -150,11 +155,15 @@ internal class AnalyzeTestImpactAction(
                             }
                             else -> when {
                                 changedModules.map { it.path }.contains(screensModule.path) -> {
-                                    ciLogger.info("Module $screensModule for screen $screen changed, will run its tests")
+                                    ciLogger.info(
+                                        "Module $screensModule for screen $screen changed, will run its tests"
+                                    )
                                     tests
                                 }
                                 else -> {
-                                    ciLogger.info("Module $screensModule for screen $screen not changed, won't run it tests")
+                                    ciLogger.info(
+                                        "Module $screensModule for screen $screen not changed, won't run it tests"
+                                    )
                                     emptySet()
                                 }
                             }

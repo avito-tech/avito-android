@@ -16,7 +16,8 @@ internal interface IncidentChain {
             val badPresenters = customViewPresenters.filter { presenter -> presenter.canCustomize(genericException) }
             require(badPresenters.isEmpty()) {
                 "Custom view presenter(s): ${badPresenters.map { it::class.java.name }} handles generic exception. " +
-                    "It means incident chain may contain errors, because any custom exception can be handled by these presenters"
+                    "It means incident chain may contain errors, " +
+                    "because any custom exception can be handled by these presenters"
             }
         }
 
@@ -34,7 +35,8 @@ internal interface IncidentChain {
             val canCustomize = customViewPresenters.filter { presenter -> presenter.canCustomize(this) }
             return when {
                 canCustomize.size > 1 -> error(
-                    "Multiple presenters ${canCustomize.map { it::class.java.name }} can handle ${this::class.java.name}, " +
+                    "Multiple presenters ${canCustomize.map { it::class.java.name }} " +
+                        "can handle ${this::class.java.name}, " +
                         "than could lead to undesirable behavior. Please narrow canCustomize expressions"
                 )
                 canCustomize.size == 1 -> {

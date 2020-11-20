@@ -28,8 +28,13 @@ class ModifiedProjectsFinder(
             }.toSet()
     }
 
-    @Deprecated("Используется только для поиска по ReportType.ANDROID_TESTS. Оптимизация для UI тестов, явно игнорируем изменения в реализации, чтобы не сваливаться всегда в fallback")
-    fun findModifiedProjectsWithoutDependencyToAnotherConfigurations(configurationType: ConfigurationType): Set<ModifiedProject> =
+    @Deprecated(
+        "Используется только для поиска по ReportType.ANDROID_TESTS. " +
+            "Оптимизация для UI тестов, явно игнорируем изменения в реализации, чтобы не сваливаться всегда в fallback"
+    )
+    fun findModifiedProjectsWithoutDependencyToAnotherConfigurations(
+        configurationType: ConfigurationType
+    ): Set<ModifiedProject> =
         findProjects(rootProject, configurationType) {
             it.internalModule.getConfiguration(configurationType).let { configuration ->
                 configuration.dependencies.any { dependency -> dependency.isModified }

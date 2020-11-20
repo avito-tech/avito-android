@@ -37,7 +37,7 @@ import kotlin.contracts.contract
  *
  * signService {
  *
- *          buildType                         String токен сервиса             sha1 от подписи для проверки перед отправкой
+ *          buildType                     String токен сервиса       sha1 от подписи для проверки перед отправкой
  *
  *   apk(android.buildTypes.release, project.properties.get("avitoSignToken"), "<sha1 checksum>")
  *   bundle(android.buildTypes.release, project.properties.get("avitoSignBundleToken"), "<sha1 checksum>")
@@ -51,7 +51,8 @@ import kotlin.contracts.contract
  *
  * Если какой-то таске требуется получить подписанную apk/bundle, следует указать dependsOn(signXXX)
 
- * Локально таски молча скипнутся если не предоставить нужный для варианта token, на CI есть механизм защиты от этого, [failOnMissingToken]
+ * Локально таски молча скипнутся если не предоставить нужный для варианта token,
+ * на CI есть механизм защиты от этого, [failOnMissingToken]
  *
  * Плагин соблюдает неявный контракт: apk и aab файлы заменяются после подписи по тому же пути где лежали неподписанными
  *
@@ -216,7 +217,9 @@ class SignServicePlugin : Plugin<Project> {
         val isSignIntended = signTokens.containsKey(buildTypeName)
 
         if (isSignIntended && taskExecutionGraph.hasTasks(setOf(signTaskPath))) {
-            requireNotNull(signTokens[buildTypeName]) { "[SignServicePlugin] can't sign $buildTypeName, token is not set" }
+            requireNotNull(signTokens[buildTypeName]) {
+                "[SignServicePlugin] can't sign $buildTypeName, token is not set"
+            }
         }
     }
 }

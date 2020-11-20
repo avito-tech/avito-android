@@ -14,7 +14,10 @@ import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
-private typealias Deployments = MixedOperation<Deployment, DeploymentList, DoneableDeployment, RollableScalableResource<Deployment, DoneableDeployment>>
+private typealias Deployments = MixedOperation<Deployment,
+    DeploymentList,
+    DoneableDeployment,
+    RollableScalableResource<Deployment, DoneableDeployment>>
 
 class ClearK8SDeploymentsByNamespaces(
     private val teamcity: TeamcityApi,
@@ -50,8 +53,12 @@ class ClearK8SDeploymentsByNamespaces(
                     )
                     creationTime.before(hourAgo)
                 }
-                is DeploymentEnvironment.Service -> false
-                is DeploymentEnvironment.Unknown -> throw IllegalStateException("Unknown environment in deployment:$description")
+
+                is DeploymentEnvironment.Service ->
+                    false
+
+                is DeploymentEnvironment.Unknown ->
+                    throw IllegalStateException("Unknown environment in deployment:$description")
             }
         }
 
@@ -72,7 +79,8 @@ class ClearK8SDeploymentsByNamespaces(
                     }
             } catch (e: Throwable) {
                 throw RuntimeException(
-                    "Error when checked leak in namespace=$namespace. If reason wasn't clear read previous discussion http://links.k.avito.ru/Az",
+                    "Error when checked leak in namespace=$namespace. " +
+                        "If reason wasn't clear read previous discussion http://links.k.avito.ru/Az",
                     e
                 )
             }

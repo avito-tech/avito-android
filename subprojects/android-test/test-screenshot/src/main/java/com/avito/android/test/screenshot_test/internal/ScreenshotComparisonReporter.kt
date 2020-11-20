@@ -32,7 +32,9 @@ internal class ScreenshotComparisonReporter(
         )
         val generatedScreenshotResult = generatedScreenshotFuture.get()
         val referenceScreenshotResult = referenceScreenshotFuture.get()
-        if (generatedScreenshotResult is RemoteStorage.Result.Success && referenceScreenshotResult is RemoteStorage.Result.Success) {
+        if (generatedScreenshotResult is RemoteStorage.Result.Success
+            && referenceScreenshotResult is RemoteStorage.Result.Success
+        ) {
             val htmlReport = getReportAsString(
                 referenceUrl = referenceScreenshotResult.url,
                 generatedUrl = generatedScreenshotResult.url

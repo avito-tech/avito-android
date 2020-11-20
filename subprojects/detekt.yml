@@ -287,7 +287,7 @@ formatting:
         active: false
         indentSize: 4
         continuationIndentSize: 4
-    # todo fix and enable
+    # DUPLICATE of style:MaxLineLength
     MaximumLineLength:
         active: false
         maxLineLength: 120
@@ -328,7 +328,7 @@ formatting:
     NoWildcardImports:
         active: true
 
-    # duplicate of naming:PackageNaming rule
+    # DUPLICATE of naming:PackageNaming rule
     PackageName:
         active: false
     ParameterListWrapping:
@@ -631,8 +631,9 @@ style:
     # https://detekt.github.io/detekt/style.html#mandatorybracesloops
     MandatoryBracesLoops:
         active: true
+    # https://detekt.github.io/detekt/style.html#maxlinelength
     MaxLineLength:
-        active: false
+        active: true
         maxLineLength: 120
         excludePackageStatements: true
         excludeImportStatements: true

@@ -37,9 +37,12 @@ class ImpactFallbackDetectorImplementation(
             .map { it.projectDir }
 
         /**
-         * - Changes in supported impact analysis modules are going through full impact analysis logic (configurations etc.)
-         * - Platform modules are unsupported, but excluded from fallback, because it is always a dependency for some supported module
-         * - Changes in parent project's build gradle files are full fallback for now (better than false negative here, skipping real changes, but could be optimized in future)
+         * - Changes in supported impact analysis modules are going through full impact analysis logic
+         *   (configurations etc.)
+         * - Platform modules are unsupported, but excluded from fallback,
+         *   because it is always a dependency for some supported module
+         * - Changes in parent project's build gradle files are full fallback for now
+         *   (better than false negative here, skipping real changes, but could be optimized in future)
          */
         val excludedDirectories = supportedModulesDirs + platformModulesDirs
 
@@ -58,10 +61,17 @@ class ImpactFallbackDetectorImplementation(
         }
 
         return@lazy when {
-            unsupportedChangesFound -> ImpactFallbackDetector.Result.Skip(reason = "Unsupported changes found")
-            isAnalysisNeededResult is IsAnalysisNeededResult.Run -> ImpactFallbackDetector.Result.Run
-            isAnalysisNeededResult is IsAnalysisNeededResult.Skip -> ImpactFallbackDetector.Result.Skip(reason = isAnalysisNeededResult.reason)
-            else -> throw RuntimeException("Failed to detect fallback mode for impact analysis")
+            unsupportedChangesFound ->
+                ImpactFallbackDetector.Result.Skip(reason = "Unsupported changes found")
+
+            isAnalysisNeededResult is IsAnalysisNeededResult.Run ->
+                ImpactFallbackDetector.Result.Run
+
+            isAnalysisNeededResult is IsAnalysisNeededResult.Skip ->
+                ImpactFallbackDetector.Result.Skip(reason = isAnalysisNeededResult.reason)
+
+            else ->
+                throw RuntimeException("Failed to detect fallback mode for impact analysis")
         }
     }
 

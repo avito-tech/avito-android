@@ -23,7 +23,8 @@ internal interface TeamcityBuildLinkAccessor {
         }
 
         override fun getLintArtifactUrl(): HttpUrl {
-            return "$teamcityUrl/repository/download/AvitoAndroid_Build/$buildId:id/${project.name}/build/reports/lint-results-release.html".toHttpUrl()
+            return ("$teamcityUrl/repository/download/AvitoAndroid_Build/" +
+                "$buildId:id/${project.name}/build/reports/lint-results-release.html").toHttpUrl()
         }
     }
 }

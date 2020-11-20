@@ -17,7 +17,9 @@ interface InstrumentationTestCaseRunParser {
         }
 
         @VisibleForTesting
-        internal fun readInstrumentationOutput(output: Observable<ProcessNotification.Output>): Observable<InstrumentationEntry> {
+        internal fun readInstrumentationOutput(
+            output: Observable<ProcessNotification.Output>
+        ): Observable<InstrumentationEntry> {
             data class Result(val buffer: String = "", val readyForProcessing: Boolean = false)
 
             return output.map { it.line }
@@ -31,10 +33,9 @@ interface InstrumentationTestCaseRunParser {
                         false -> "${previousResult.buffer}${System.lineSeparator()}$newLine"
                     }
 
-                    val isEntryEnd =
-                        newLine.startsWith("INSTRUMENTATION_STATUS_CODE") || newLine.startsWith("INSTRUMENTATION_CODE") || newLine.startsWith(
-                            "Error:"
-                        )
+                    val isEntryEnd = newLine.startsWith("INSTRUMENTATION_STATUS_CODE")
+                        || newLine.startsWith("INSTRUMENTATION_CODE")
+                        || newLine.startsWith("Error:")
 
                     Result(buffer = buffer, readyForProcessing = isEntryEnd)
                 }
@@ -81,11 +82,16 @@ interface InstrumentationTestCaseRunParser {
 
             return this
                 .scan(Result()) { previousResult, newEntry ->
-                    val entries =
-                        if (newEntry is InstrumentationEntry.InstrumentationTestEntry) previousResult.entries + newEntry else previousResult.entries
+                    val entries = if (newEntry is InstrumentationEntry.InstrumentationTestEntry) {
+                        previousResult.entries + newEntry
+                    } else {
+                        previousResult.entries
+                    }
 
                     val tests: List<InstrumentationTestCaseRun> =
-                        if (newEntry is InstrumentationEntry.InstrumentationResultEntry && newEntry.statusCode == InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error) {
+                        if (newEntry is InstrumentationEntry.InstrumentationResultEntry
+                            && newEntry.statusCode == InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error
+                        ) {
                             if (entries.isEmpty()) {
                                 listOf(
                                     InstrumentationTestCaseRun.FailedOnStartTestCaseRun(
@@ -162,11 +168,16 @@ interface InstrumentationTestCaseRunParser {
                         className = first.clazz,
                         name = first.test,
                         result = when (second.statusCode) {
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok -> TestCaseRun.Result.Passed
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ignored -> TestCaseRun.Result.Ignored
-                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Failure, InstrumentationEntry.InstrumentationTestEntry.StatusCode.AssumptionFailure -> TestCaseRun.Result.Failed.InRun(
-                                errorMessage = second.stack
-                            )
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ok ->
+                                TestCaseRun.Result.Passed
+
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Ignored ->
+                                TestCaseRun.Result.Ignored
+
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.Failure,
+                            InstrumentationEntry.InstrumentationTestEntry.StatusCode.AssumptionFailure ->
+                                TestCaseRun.Result.Failed.InRun(errorMessage = second.stack)
+
                             InstrumentationEntry.InstrumentationTestEntry.StatusCode.Start ->
                                 throw IllegalStateException(
                                     "Unexpected status code [${second.statusCode}] " +

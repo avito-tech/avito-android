@@ -42,11 +42,31 @@ internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) 
                 appendln("*Автотесты*: ${testData.automatedCount}")
 
                 // todo адекватная разбивка по flaky
-                appendln(":green_heart: *Зеленые тесты*: ${testData.success} (${testData.percentSuccessOfAutomated}%)")
-                appendln(":warning: *Тесты упали только на некоторых девайсах*: ${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated}%)")
-                appendln(":red_circle: *Тесты упали на всех девайсах*: ${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated}%)")
-                appendln(":white_circle: *Пропущенные тесты (например, заигнорен) на всех девайсах*: ${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated}%)")
-                appendln(":black_circle: *Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: ${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated}%)")
+                appendln(
+                    ":green_heart: " +
+                        "*Зеленые тесты*: " +
+                        "${testData.success} (${testData.percentSuccessOfAutomated}%)"
+                )
+                appendln(
+                    ":warning: " +
+                        "*Тесты упали только на некоторых девайсах*: " +
+                        "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated}%)"
+                )
+                appendln(
+                    ":red_circle: " +
+                        "*Тесты упали на всех девайсах*: " +
+                        "${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated}%)"
+                )
+                appendln(
+                    ":white_circle: " +
+                        "*Пропущенные тесты (например, заигнорен) на всех девайсах*: " +
+                        "${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated}%)"
+                )
+                appendln(
+                    ":black_circle: " +
+                        "*Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: " +
+                        "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated}%)"
+                )
 
                 val hasFailures = testData.failedOnSomeDevicesCount + testData.failedOnAllDevicesCount > 0
 

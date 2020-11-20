@@ -40,7 +40,8 @@ class MarkReportAsSourceAction(
                             {
                                 logger.info(
                                     "[$tag] Test suite for tms version $testSuiteVersion, " +
-                                        "with id: ${result.report.id}, coordinates: $reportCoordinates marked as source of truth for tms"
+                                        "with id: ${result.report.id}, " +
+                                        "coordinates: $reportCoordinates marked as source of truth for tms"
                                 )
                             },
                             { error ->

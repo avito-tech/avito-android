@@ -54,7 +54,8 @@ class ModuleTypesRules {
                             AndroidLibModule(
                                 "feature",
                                 plugins = listOf("com.avito.android.module-types"),
-                                dependencies = "${case.dependentModuleDependencyType.configuration} project(':dependent_test_module')",
+                                dependencies = "${case.dependentModuleDependencyType.configuration} " +
+                                    "project(':dependent_test_module')",
                                 buildGradleExtra = if (case.featureModuleType != IMPLEMENTATION) {
                                     """
                                     module {
@@ -104,7 +105,8 @@ class ModuleTypesRules {
                             ).assertThat()
                                 .buildFailed(
                                     "'${case.dependentModuleDependencyType.configuration}' configuration " +
-                                        "contains the following ${case.dependentModuleDependencyType.errorSlug} dependencies: :dependent_test_module"
+                                        "contains the following ${case.dependentModuleDependencyType.errorSlug} " +
+                                        "dependencies: :dependent_test_module"
                                 )
                         }
                     }

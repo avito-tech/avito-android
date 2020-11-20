@@ -141,7 +141,9 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     buildId = buildId.get(),
                     buildType = buildType.get(),
                     buildUrl = buildUrl.get(),
-                    kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) { "you need to provide kubernetesCredentials" },
+                    kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
+                        "you need to provide kubernetesCredentials"
+                    },
                     projectName = project.name,
                     currentBranch = gitBranch.get(),
                     sourceCommitHash = sourceCommitHash.get(),
@@ -212,7 +214,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
                 gitCommit = gitCommit.get()
             )
             // todo move that logic to task output. Instrumentation task mustn't know about Upload CD models
-            // todo Extract Instrumentation contract to module. Upload cd task will depend on it and consume Instrumentation result
+            // todo Extract Instrumentation contract to module.
+            //  Upload cd task will depend on it and consume Instrumentation result
             val buildOutput = project.buildOutput.get()
             val testResults = getTestResultsAction.getTestResults()
             buildOutput.testResults[configuration.name] = testResults

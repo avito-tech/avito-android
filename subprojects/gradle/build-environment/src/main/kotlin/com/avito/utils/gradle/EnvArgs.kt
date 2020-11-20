@@ -63,7 +63,8 @@ interface EnvArgs {
                     val teamcityBuildId = project.getMandatoryIntProperty("teamcityBuildId")
                     Build.Teamcity(
                         id = teamcityBuildId,
-                        url = "${project.getMandatoryStringProperty("teamcityUrl")}/viewLog.html?buildId=$teamcityBuildId&tab=buildLog",
+                        url = project.getMandatoryStringProperty("teamcityUrl") +
+                            "/viewLog.html?buildId=$teamcityBuildId&tab=buildLog",
                         number = project.getMandatoryStringProperty("buildNumber"),
                         type = "teamcity-${project.getMandatoryStringProperty("teamcityBuildType")}"
                     )

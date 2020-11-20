@@ -89,7 +89,7 @@ data class TestRunResult(
         )
     }
 
-    private fun HasNotReportedTestsDeterminer.Result.HasNotReportedTests.getLostFailureDetailsTests(): Set<Verdict.Failure.Details.Test> =
+    private fun HasNotReportedTestsDeterminer.Result.HasNotReportedTests.getLostFailureDetailsTests() =
         lostTests.groupBy({ test -> test.name }, { test -> test.device.name })
             .map { (testName, devices) ->
                 Verdict.Failure.Details.Test(
@@ -125,7 +125,7 @@ data class TestRunResult(
         }
     }
 
-    private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests(): Set<Verdict.Failure.Details.Test> =
+    private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests() =
         notSuppressed.groupBy({ test -> test.name }, { test -> test.deviceName })
             .map { (testName, devices) -> Verdict.Failure.Details.Test(testName, devices.toSet()) }
             .toSet()

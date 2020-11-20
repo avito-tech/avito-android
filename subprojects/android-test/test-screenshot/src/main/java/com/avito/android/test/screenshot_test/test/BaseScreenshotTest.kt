@@ -98,7 +98,10 @@ abstract class BaseScreenshotTest<T : View>(
                 compareScreens()
             }
         } else {
-            throw IllegalStateException("BaseScreenshotTest supports SDK greater or equal to ${Build.VERSION_CODES.O}. Current is ${Build.VERSION.SDK_INT}")
+            throw IllegalStateException(
+                "BaseScreenshotTest supports SDK greater or equal to ${Build.VERSION_CODES.O}. " +
+                    "Current is ${Build.VERSION.SDK_INT}"
+            )
         }
     }
 

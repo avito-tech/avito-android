@@ -27,6 +27,7 @@ class SignerIntegrationTest {
 
     private val SYNC_BRANCH = "develop"
 
+    @Suppress("MaxLineLength")
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         webServer.start()

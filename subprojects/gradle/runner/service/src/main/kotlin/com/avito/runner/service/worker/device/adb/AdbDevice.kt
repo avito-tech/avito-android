@@ -413,7 +413,9 @@ data class AdbDevice(
             timeoutSeconds,
             TimeUnit.SECONDS,
             Observable.error(
-                RuntimeException("Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $coordinate")
+                RuntimeException(
+                    "Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $coordinate"
+                )
             )
         )
         .toBlocking()

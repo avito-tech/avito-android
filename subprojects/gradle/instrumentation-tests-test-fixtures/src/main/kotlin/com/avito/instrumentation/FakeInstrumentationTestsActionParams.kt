@@ -15,7 +15,8 @@ import java.io.File
 fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     mainApk: File = File(""),
     testApk: File = File(""),
-    instrumentationConfiguration: InstrumentationConfiguration.Data = InstrumentationConfiguration.Data.createStubInstance(),
+    instrumentationConfiguration: InstrumentationConfiguration.Data =
+        InstrumentationConfiguration.Data.createStubInstance(),
     executionParameters: ExecutionParameters = ExecutionParameters.createStubInstance(),
     buildId: String = "33456",
     buildType: String = "teamcity",

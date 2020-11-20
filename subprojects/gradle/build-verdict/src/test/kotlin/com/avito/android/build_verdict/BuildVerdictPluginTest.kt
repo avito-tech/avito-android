@@ -91,6 +91,7 @@ class BuildVerdictPluginTest {
         result.assertThat()
             .buildFailed()
 
+        @Suppress("MaxLineLength")
         assertBuildVerdict(
             failedTask = "kaptDebugKotlin",
             errorOutput = listOf(
