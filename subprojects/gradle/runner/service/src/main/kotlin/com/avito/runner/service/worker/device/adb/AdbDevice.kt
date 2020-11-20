@@ -36,6 +36,9 @@ data class AdbDevice(
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
 ) : Device {
 
+    // MBS-8531: don't use ADB here to avoid possible recursion
+    private val tag: String = "[${coordinate.serial}]"
+
     override val api: Int by lazy {
         retry(
             retriesCount = 5,
@@ -449,9 +452,6 @@ data class AdbDevice(
     override fun toString(): String {
         return "Device $tag"
     }
-
-    // MBS-8531: don't use ADB here to avoid possible recursion
-    private val tag: String = "[${coordinate.serial}]"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L

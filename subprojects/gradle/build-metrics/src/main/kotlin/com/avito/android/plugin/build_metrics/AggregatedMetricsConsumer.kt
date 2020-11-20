@@ -30,6 +30,16 @@ internal class AggregatedMetricsConsumer(
     private val BuildResult.isBuildAction
         get() = action == "Build"
 
+    private val TaskExecution.internalState: TaskStateInternal
+        get() = try {
+            state as TaskStateInternal
+        } catch (e: Exception) {
+            error(
+                "Task $path has unsupported class $javaClass. " +
+                    "You can disable build-metrics plugin by project property 'avito.build.metrics.enabled=false'"
+            )
+        }
+
     init {
         check(project.isRoot()) { "Project ${project.path} must be root" }
 
@@ -162,16 +172,6 @@ internal class AggregatedMetricsConsumer(
             }
         stats.track(buildResult, TimeMetric("tasks.executed.$module.$name.total", task.elapsedTime))
     }
-
-    private val TaskExecution.internalState: TaskStateInternal
-        get() = try {
-            state as TaskStateInternal
-        } catch (e: Exception) {
-            error(
-                "Task $path has unsupported class $javaClass. " +
-                    "You can disable build-metrics plugin by project property 'avito.build.metrics.enabled=false'"
-            )
-        }
 
     @Suppress("unused")
     private fun dump(task: TaskExecution) {

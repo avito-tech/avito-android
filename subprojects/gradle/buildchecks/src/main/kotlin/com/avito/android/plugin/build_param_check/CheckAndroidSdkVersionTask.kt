@@ -22,6 +22,21 @@ abstract class CheckAndroidSdkVersionTask : DefaultTask() {
     @OutputFile
     val output: File = File(project.buildDir, "reports/checkAndroidSdkVersionTask.out")
 
+    private val platformSourceProperties: File
+        get() = File(platform, "source.properties")
+
+    private val platform: File
+        get() {
+            val dir = sdk().platform(compileSdkVersion.get())
+            require(dir.exists()) {
+                """========= ERROR =========
+               Android SDK platform ${compileSdkVersion.get()} is not found in ${dir.canonicalPath}.
+               Please install it or update.
+                """.trimIndent()
+            }
+            return dir
+        }
+
     @TaskAction
     fun check() {
         val localRevision = localRevision()
@@ -63,21 +78,6 @@ abstract class CheckAndroidSdkVersionTask : DefaultTask() {
         return requireNotNull(sourceProperties.loadProperties().getProperty("Pkg.Revision", null))
             .toInt()
     }
-
-    private val platformSourceProperties: File
-        get() = File(platform, "source.properties")
-
-    private val platform: File
-        get() {
-            val dir = sdk().platform(compileSdkVersion.get())
-            require(dir.exists()) {
-                """========= ERROR =========
-               Android SDK platform ${compileSdkVersion.get()} is not found in ${dir.canonicalPath}.
-               Please install it or update.
-                """.trimIndent()
-            }
-            return dir
-        }
 
     private fun sdk() = AndroidSdk.fromProject(project)
 }

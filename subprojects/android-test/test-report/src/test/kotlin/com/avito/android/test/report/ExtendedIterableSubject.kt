@@ -4,26 +4,13 @@ import com.google.common.collect.FluentIterable
 import com.google.common.truth.Fact
 import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
+import com.google.common.truth.Subject.Factory
 import com.google.common.truth.Truth
 
 class ExtendedIterableSubject<T>(
     failureMetadata: FailureMetadata,
     val actual: Iterable<T>
-) :
-    Subject(failureMetadata, actual) {
-
-    companion object {
-
-        inline fun <reified T> iterable() = Factory { metadata, actual: Iterable<T> ->
-            ExtendedIterableSubject(
-                metadata,
-                actual
-            )
-        }
-
-        inline fun <reified T> assertIterable(iterable: Iterable<T>): ExtendedIterableSubject<T> =
-            Truth.assertAbout(iterable<T>()).that(iterable)
-    }
+) : Subject(failureMetadata, actual) {
 
     @Suppress("PROTECTED_CALL_FROM_PUBLIC_INLINE") // для удобства API
     inline fun <reified T> containsExactlyOne(condition: (T) -> Boolean) {
@@ -36,5 +23,18 @@ class ExtendedIterableSubject<T>(
                 failWithActual(Fact.simpleFact("contains exactly one instance satisfied by condition"))
             }
         }
+    }
+
+    companion object {
+
+        inline fun <reified T> iterable() = Factory { metadata, actual: Iterable<T> ->
+            ExtendedIterableSubject(
+                metadata,
+                actual
+            )
+        }
+
+        inline fun <reified T> assertIterable(iterable: Iterable<T>): ExtendedIterableSubject<T> =
+            Truth.assertAbout(iterable<T>()).that(iterable)
     }
 }

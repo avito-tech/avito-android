@@ -11,6 +11,12 @@ import org.junit.jupiter.api.Test
 
 class CdBuildConfigDeserializationTest {
 
+    private val gson = GsonBuilder().run {
+        setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        registerTypeAdapter(CdBuildConfig.Deployment::class.java, DeploymentDeserializer)
+        create()
+    }
+
     @Test
     fun `build config deserialized correctly`() {
         val config = """
@@ -75,11 +81,5 @@ class CdBuildConfigDeserializationTest {
                 )
             )
         )
-    }
-
-    private val gson = GsonBuilder().run {
-        setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        registerTypeAdapter(CdBuildConfig.Deployment::class.java, DeploymentDeserializer)
-        create()
     }
 }

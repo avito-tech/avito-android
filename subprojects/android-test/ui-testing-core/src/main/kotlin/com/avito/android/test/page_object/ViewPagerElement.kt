@@ -21,10 +21,10 @@ open class ViewPagerElement(
 ) : ViewElement(interactionContext),
     ViewPagerActions by ViewPagerActionsImpl(interactionContext) {
 
+    override val checks: ViewPagerChecks = ViewPagerChecksImpl(interactionContext)
+
     // TODO: Use element()
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
-    override val checks: ViewPagerChecks = ViewPagerChecksImpl(interactionContext)
 
     protected inline fun <reified T : PageObjectElement> currentPageElement(matcher: Matcher<View>): T =
         T::class.java.getConstructor(InteractionContext::class.java)

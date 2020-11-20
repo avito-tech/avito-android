@@ -8,6 +8,14 @@ import org.gradle.api.tasks.TaskAction
 
 internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
 
+    private val Project.hasKotlinKapt: Boolean
+        get() = plugins.hasPlugin("kotlin-kapt")
+
+    private val Project.hasRoomKapt: Boolean
+        get() = configurations.findByName("kapt")?.dependencies?.any {
+            it.group == "androidx.room" && it.name == "room-compiler"
+        } ?: false
+
     @TaskAction
     fun check() {
         val incrementalKaptEnabled = project.getBooleanProperty("kapt.incremental.apt", default = false)
@@ -37,12 +45,4 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
         Current JDK is ${System.getProperty("java.runtime.version")} provided by ${System.getProperty("java.vendor")}.
         https://avito-tech.github.io/avito-android/docs/projects/buildchecks/#room
     """.trimIndent()
-
-    private val Project.hasKotlinKapt: Boolean
-        get() = plugins.hasPlugin("kotlin-kapt")
-
-    private val Project.hasRoomKapt: Boolean
-        get() = configurations.findByName("kapt")?.dependencies?.any {
-            it.group == "androidx.room" && it.name == "room-compiler"
-        } ?: false
 }

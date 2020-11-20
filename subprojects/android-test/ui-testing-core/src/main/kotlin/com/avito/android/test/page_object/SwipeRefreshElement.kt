@@ -23,11 +23,12 @@ class SwipeRefreshElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext) {
 
+    override val checks: SwipeRefreshChecks = SwipeRefreshChecksImpl(interactionContext)
+
+    override val actions: SwipeRefreshActions = SwipeRefreshActionsImpl(interactionContext)
+
     // TODO: remove this constructor and use element fabric method to create an instance
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
-    override val checks: SwipeRefreshChecks = SwipeRefreshChecksImpl(interactionContext)
-    override val actions: SwipeRefreshActions = SwipeRefreshActionsImpl(interactionContext)
 }
 
 interface SwipeRefreshActions : Actions {
@@ -76,7 +77,7 @@ class SwipeRefreshTolerantAction : ViewAction {
 
     override fun getDescription() =
         "SwipeRefreshLayout performing ViewAction: ${action.description} " +
-                "with tolerance $VIEW_DISPLAY_PERCENTAGE"
+            "with tolerance $VIEW_DISPLAY_PERCENTAGE"
 
     override fun getConstraints(): Matcher<View> = isDisplayingAtLeast(VIEW_DISPLAY_PERCENTAGE)
 

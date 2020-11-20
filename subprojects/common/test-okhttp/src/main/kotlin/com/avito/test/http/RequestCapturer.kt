@@ -11,11 +11,11 @@ class RequestCapturer(val requestMatcher: RequestData.() -> Boolean) {
 
     private val requests = mutableListOf<RecordedRequest>()
 
+    val checks = Checks()
+
     fun capture(recordedRequest: RecordedRequest) = synchronized(this) {
         requests.add(recordedRequest)
     }
-
-    val checks = Checks()
 
     inner class Checks {
 

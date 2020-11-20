@@ -35,6 +35,16 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
             .getOrElse { true }
     }
 
+    override val dependencies: Set<ImplementationConfiguration> by lazy {
+        require(project.configurations.isNotEmpty()) {
+            "Configurations of ${project.path} required to continue impact analysis, but nothing found. \n" +
+                "Most likely reasons: \n" +
+                "- Using impact analysis during gradle configuration phase \n" +
+                "- Working with regular directory as with module \n"
+        }
+        dependencies { it.isImplementation() }
+    }
+
     override fun changedFiles(): Try<List<ChangedFile>> {
         val excludes = (module.testConfiguration.sourceSets() +
             module.androidTestConfiguration.sourceSets())
@@ -46,17 +56,8 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
         )
     }
 
-    override val dependencies: Set<ImplementationConfiguration> by lazy {
-        require(project.configurations.isNotEmpty()) {
-            "Configurations of ${project.path} required to continue impact analysis, but nothing found. \n" +
-                "Most likely reasons: \n" +
-                "- Using impact analysis during gradle configuration phase \n" +
-                "- Working with regular directory as with module \n"
-        }
-        dependencies { it.isImplementation() }
-    }
-
     override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isImplementation()
+
     override fun containsBytecode(bytecodeDirectory: File): Boolean = bytecodeDirectory.isImplementation()
 
     override fun toString(): String {

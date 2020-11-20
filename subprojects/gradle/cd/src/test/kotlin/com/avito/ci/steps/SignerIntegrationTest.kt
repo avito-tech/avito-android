@@ -25,6 +25,8 @@ class SignerIntegrationTest {
 
     private val webServer = MockWebServerFactory.create()
 
+    private val SYNC_BRANCH = "develop"
+
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         webServer.start()
@@ -93,6 +95,4 @@ class SignerIntegrationTest {
 
     private fun fullCheck(expectFailure: Boolean = true): TestResult =
         ciRun(projectDir, "app:fullCheck", "--info", expectFailure = expectFailure)
-
-    private val SYNC_BRANCH = "develop"
 }

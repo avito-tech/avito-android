@@ -28,6 +28,22 @@ sealed class AndroidTest : TestStaticData {
         val stderr: String
     ) : AndroidTest() {
 
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Lost) return false
+
+            if (name != other.name) return false
+            if (device != other.device) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = name.hashCode()
+            result = 31 * result + device.hashCode()
+            return result
+        }
+
         companion object {
             fun fromTestMetadata(
                 testStaticData: TestStaticData,
@@ -54,22 +70,6 @@ sealed class AndroidTest : TestStaticData {
                 stderr = stderr
             )
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Lost) return false
-
-            if (name != other.name) return false
-            if (device != other.device) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = name.hashCode()
-            result = 31 * result + device.hashCode()
-            return result
-        }
     }
 
     /**
@@ -91,6 +91,22 @@ sealed class AndroidTest : TestStaticData {
         val skipReason: String,
         val reportTime: Long
     ) : AndroidTest() {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Skipped) return false
+
+            if (name != other.name) return false
+            if (device != other.device) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = name.hashCode()
+            result = 31 * result + device.hashCode()
+            return result
+        }
 
         companion object {
             /**
@@ -116,22 +132,6 @@ sealed class AndroidTest : TestStaticData {
                 skipReason = skipReason,
                 reportTime = reportTime
             )
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Skipped) return false
-
-            if (name != other.name) return false
-            if (device != other.device) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = name.hashCode()
-            result = 31 * result + device.hashCode()
-            return result
         }
     }
 
@@ -161,6 +161,22 @@ sealed class AndroidTest : TestStaticData {
         val stdout: String,
         val stderr: String
     ) : AndroidTest(), TestRuntimeData {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Completed) return false
+
+            if (name != other.name) return false
+            if (device != other.device) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = name.hashCode()
+            result = 31 * result + device.hashCode()
+            return result
+        }
 
         companion object {
             fun create(
@@ -192,22 +208,6 @@ sealed class AndroidTest : TestStaticData {
                 stderr = stderr
             )
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Completed) return false
-
-            if (name != other.name) return false
-            if (device != other.device) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = name.hashCode()
-            result = 31 * result + device.hashCode()
-            return result
-        }
     }
 }
 
@@ -221,6 +221,7 @@ interface TestRuntimeData {
      * Must be in seconds
      */
     val startTime: Long
+
     /**
      * Must be in seconds
      */
@@ -277,6 +278,22 @@ data class TestStaticDataPackage(
     override val flakiness: Flakiness
 ) : TestStaticData {
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TestStaticData) return false
+
+        if (name != other.name) return false
+        if (device != other.device) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + device.hashCode()
+        return result
+    }
+
     companion object {
 
         fun fromSimpleRunTest(simpleRunTest: SimpleRunTest) = TestStaticDataPackage(
@@ -293,21 +310,5 @@ data class TestStaticDataPackage(
             kind = simpleRunTest.kind,
             flakiness = simpleRunTest.flakiness
         )
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is TestStaticData) return false
-
-        if (name != other.name) return false
-        if (device != other.device) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + device.hashCode()
-        return result
     }
 }

@@ -61,14 +61,14 @@ abstract class BaseScreenshotTest<T : View>(
         )
     }
 
+    private val screenshotNames: ArrayList<String> = arrayListOf()
+
     abstract fun createView(
         context: Context,
         styleAttr: Int
     ): T
 
     abstract fun createViewStates(): HashMap<String, (view: T) -> Unit>
-
-    private val screenshotNames: ArrayList<String> = arrayListOf()
 
     @Before
     fun onBefore() {

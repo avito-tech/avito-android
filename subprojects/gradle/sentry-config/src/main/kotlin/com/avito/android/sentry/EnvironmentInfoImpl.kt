@@ -6,8 +6,7 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 
-internal class EnvironmentInfoImpl(private val project: Project, private val git: Git) :
-    EnvironmentInfo {
+internal class EnvironmentInfoImpl(private val project: Project, private val git: Git) : EnvironmentInfo {
 
     override val node: String? by lazy {
         when (environment) {
@@ -29,17 +28,6 @@ internal class EnvironmentInfoImpl(private val project: Project, private val git
         }
     }
 
-    private fun userName(): String? = System.getProperty("user.name")
-
-    private fun teamcityAgentName(): String? {
-        return System.getenv("TEAMCITY_AGENT_NAME")
-            ?: System.getProperty("TEAMCITY_AGENT_NAME", null)
-    }
-    // todo to one place
-    override fun teamcityBuildId(): String? {
-        return project.rootProject.getOptionalStringProperty("teamcityBuildId")
-    }
-
     private val gitUserEmail: String? by lazy {
         if (hasGit) {
             git.config("user.email").toOption().orNull()?.substringBefore('@')
@@ -56,6 +44,18 @@ internal class EnvironmentInfoImpl(private val project: Project, private val git
         } else {
             null
         }
+    }
+
+    private fun userName(): String? = System.getProperty("user.name")
+
+    private fun teamcityAgentName(): String? {
+        return System.getenv("TEAMCITY_AGENT_NAME")
+            ?: System.getProperty("TEAMCITY_AGENT_NAME", null)
+    }
+
+    // todo to one place
+    override fun teamcityBuildId(): String? {
+        return project.rootProject.getOptionalStringProperty("teamcityBuildId")
     }
 
     override fun isInvokedFromIde() = project.hasProperty("android.injected.invoked.from.ide")

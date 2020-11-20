@@ -12,6 +12,45 @@ import java.util.UUID
 
 internal class PropertyExtensionsKtTest {
 
+    private var Project.simpleProperty: String by ProjectProperty.lateinit(fallbackValue = "default")
+
+    private val Project.perProjectProperty: String
+        by ProjectProperty.lazy(scope = PropertyScope.PER_PROJECT) { UUID.randomUUID().toString() }
+
+    private val Project.singleProperty: String
+        by ProjectProperty.lazy(scope = PropertyScope.ROOT_PROJECT) { UUID.randomUUID().toString() }
+
+    private val Project.intProperty: Int by ProjectProperty.lazy { project ->
+        project.property("intProperty").toString().toInt()
+    }
+
+    private val Project.transformedProviderProperty: Provider<String> by ProjectProperty.lazy { project ->
+        Providers.of(UUID.randomUUID().toString() + project.providerProperty.get())
+    }
+
+    private val Project.mappedProviderProperty: Provider<String> by ProjectProperty.lazy { project ->
+        project.providerProperty.map { UUID.randomUUID().toString() }
+    }
+
+    // use this form to achieve single value for every Provider.get() call
+    private val Project.providerProperty: Provider<String> by ProjectProperty.lazy {
+        Providers.of(UUID.randomUUID().toString())
+    }
+
+    // properties below will create new instance on every Provider.get() call
+
+    private val Project.providersProperty: Provider<String> by ProjectProperty.lazy { project ->
+        project.providers.provider { UUID.randomUUID().toString() }
+    }
+
+    private val Project.providersShortcutProperty: Provider<String> by ProjectProperty.lazy { project ->
+        project.provider { UUID.randomUUID().toString() }
+    }
+
+    private val Project.providersOfUnitProperty: Provider<String> by ProjectProperty.lazy {
+        Providers.of(Unit).map { UUID.randomUUID().toString() }
+    }
+
     @Test
     fun `late initialization - lazy project property`() {
         val project = childProject()
@@ -143,44 +182,5 @@ internal class PropertyExtensionsKtTest {
         assertThat(project.rootProject).isSameInstanceAs(rootProject)
 
         return project
-    }
-
-    private var Project.simpleProperty: String by ProjectProperty.lateinit(fallbackValue = "default")
-
-    private val Project.perProjectProperty: String
-        by ProjectProperty.lazy(scope = PropertyScope.PER_PROJECT) { UUID.randomUUID().toString() }
-
-    private val Project.singleProperty: String
-        by ProjectProperty.lazy(scope = PropertyScope.ROOT_PROJECT) { UUID.randomUUID().toString() }
-
-    private val Project.intProperty: Int by ProjectProperty.lazy { project ->
-        project.property("intProperty").toString().toInt()
-    }
-
-    private val Project.transformedProviderProperty: Provider<String> by ProjectProperty.lazy { project ->
-        Providers.of(UUID.randomUUID().toString() + project.providerProperty.get())
-    }
-
-    private val Project.mappedProviderProperty: Provider<String> by ProjectProperty.lazy { project ->
-        project.providerProperty.map { UUID.randomUUID().toString() }
-    }
-
-    // use this form to achieve single value for every Provider.get() call
-    private val Project.providerProperty: Provider<String> by ProjectProperty.lazy {
-        Providers.of(UUID.randomUUID().toString())
-    }
-
-    // properties below will create new instance on every Provider.get() call
-
-    private val Project.providersProperty: Provider<String> by ProjectProperty.lazy { project ->
-        project.providers.provider { UUID.randomUUID().toString() }
-    }
-
-    private val Project.providersShortcutProperty: Provider<String> by ProjectProperty.lazy { project ->
-        project.provider { UUID.randomUUID().toString() }
-    }
-
-    private val Project.providersOfUnitProperty: Provider<String> by ProjectProperty.lazy {
-        Providers.of(Unit).map { UUID.randomUUID().toString() }
     }
 }

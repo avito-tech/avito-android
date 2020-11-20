@@ -107,6 +107,16 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
         editText.removeTextChangedListener(textWatcher)
     }
 
+    private fun waitMainLoopFor(uiController: UiController, action: () -> Unit) = waitFor(
+        frequencyMs = 100,
+        timeoutMs = TimeUnit.SECONDS.toMillis(3),
+        allowedExceptions = setOf(Throwable::class.java),
+        sleepAction = { delay -> uiController.loopMainThreadForAtLeast(delay) },
+        action = action
+    )
+
+    override fun getDescription(): String = "type text $stringToBeTyped"
+
     private companion object HiddenApiHack {
 
         /**
@@ -119,16 +129,6 @@ internal class TypeText(private val stringToBeTyped: String) : ViewAction {
             0 == Reflection.unseal(InstrumentationRegistry.getInstrumentation().targetContext)
         }
     }
-
-    private fun waitMainLoopFor(uiController: UiController, action: () -> Unit) = waitFor(
-        frequencyMs = 100,
-        timeoutMs = TimeUnit.SECONDS.toMillis(3),
-        allowedExceptions = setOf(Throwable::class.java),
-        sleepAction = { delay -> uiController.loopMainThreadForAtLeast(delay) },
-        action = action
-    )
-
-    override fun getDescription(): String = "type text $stringToBeTyped"
 }
 
 internal open class SimpleTextWatcher : TextWatcher {

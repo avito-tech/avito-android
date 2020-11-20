@@ -11,6 +11,19 @@ import org.junit.Assert.assertFalse
 
 class TextViewReadAction : ViewAction {
 
+    private var result: String? = null
+
+    override fun getConstraints(): Matcher<View> =
+        ViewMatchers.isAssignableFrom(TextView::class.java)
+
+    override fun getDescription(): String = "getting text from a TextView"
+
+    override fun perform(uiController: UiController, view: View) {
+        result = view.readText()
+    }
+
+    private fun View.readText(): String = (this as TextView).text.toString()
+
     companion object {
 
         /**
@@ -27,7 +40,7 @@ class TextViewReadAction : ViewAction {
                     perform(action)
                     assertFalse(
                         "read() waited, but view.text still has empty string value; " +
-                                "use read(allowBlank=true) if you really need it",
+                            "use read(allowBlank=true) if you really need it",
                         action.result.isNullOrBlank()
                     )
                 }
@@ -35,17 +48,4 @@ class TextViewReadAction : ViewAction {
             }
         }
     }
-
-    private var result: String? = null
-
-    override fun getConstraints(): Matcher<View> =
-        ViewMatchers.isAssignableFrom(TextView::class.java)
-
-    override fun getDescription(): String = "getting text from a TextView"
-
-    override fun perform(uiController: UiController, view: View) {
-        result = view.readText()
-    }
-
-    private fun View.readText(): String = (this as TextView).text.toString()
 }

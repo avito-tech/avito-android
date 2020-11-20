@@ -11,6 +11,13 @@ internal class SuspiciousTogglesCollector(
     private val developerToTeam: Map<DeveloperEmail, Team>
 ) {
 
+    private val excludedToggles = listOf(
+        "stetho",
+        "certificate_pinning",
+        "leak_canary",
+        "schema_check"
+    )
+
     fun collectSuspiciousToggles(
         jsonTogglesList: List<JsonToggle>,
         blameCodeLinesList: List<CodeElement>,
@@ -50,11 +57,4 @@ internal class SuspiciousTogglesCollector(
 
     private fun resolveTeam(lastChangeCodeItem: CodeElement): Team =
         developerToTeam[lastChangeCodeItem.email] ?: "undefined"
-
-    private val excludedToggles = listOf(
-        "stetho",
-        "certificate_pinning",
-        "leak_canary",
-        "schema_check"
-    )
 }

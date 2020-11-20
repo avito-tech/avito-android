@@ -13,6 +13,10 @@ class BuildMetricTracker(
     private val sender: Provider<StatsDSender>
 ) {
 
+    private val node by lazy {
+        env.get().node?.take(32) ?: "unknown"
+    }
+
     fun track(buildResult: BuildResult, metric: StatsMetric) {
         val prefix = graphiteSeries(
             env.get().environment.publicName,
@@ -34,9 +38,5 @@ class BuildMetricTracker(
 
     private fun buildStatus(buildResult: BuildResult): String {
         return if (buildResult.failure == null) "success" else "fail"
-    }
-
-    private val node by lazy {
-        env.get().node?.take(32) ?: "unknown"
     }
 }

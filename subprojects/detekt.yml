@@ -532,8 +532,9 @@ potential-bugs:
 
 style:
     active: true
+    # https://detekt.github.io/detekt/style.html#classordering
     ClassOrdering:
-        active: false
+        active: true
     CollapsibleIfStatements:
         active: false
     DataClassContainsFunctions:

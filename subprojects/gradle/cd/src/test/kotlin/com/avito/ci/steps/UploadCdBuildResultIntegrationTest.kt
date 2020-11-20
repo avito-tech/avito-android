@@ -39,6 +39,19 @@ class UploadCdBuildResultIntegrationTest {
     private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
         .also { dispatcher -> server.dispatcher = dispatcher }
 
+    private val runGetParamsResponse =
+        """
+            {
+                "result": {
+                    "id": "$reportId",
+                    "planSlug": "AvitoAndroid",
+                    "jobSlug": "$uiTestConfigurationName",
+                    "runId": "xxx",
+                    "isFinished": true
+                }
+            }
+        """.trimIndent()
+
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         projectDir = tempPath.toFile()
@@ -261,19 +274,6 @@ class RealTest {
             .buildSuccessful()
             .taskWithOutcome(":app:$uploadCdBuildResultTaskName", TaskOutcome.SKIPPED)
     }
-
-    private val runGetParamsResponse =
-        """
-            {
-                "result": {
-                    "id": "$reportId",
-                    "planSlug": "AvitoAndroid",
-                    "jobSlug": "$uiTestConfigurationName",
-                    "runId": "xxx",
-                    "isFinished": true
-                }
-            }
-        """.trimIndent()
 
     private fun mockFileStorageApi() {
         dispatcher.registerMock(

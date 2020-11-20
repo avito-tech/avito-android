@@ -20,36 +20,9 @@ class ClearK8SDeploymentsByNamespaces(
     private val teamcity: TeamcityApi,
     private val kubernetesClient: DefaultKubernetesClient
 ) {
+
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("Moscow")
-    }
-
-    fun clear(namespaces: List<String>) {
-        namespaces.forEach { namespace ->
-            try {
-                val deployments = kubernetesClient.inNamespace(namespace)
-                    .apps()
-                    .deployments()
-                deployments
-                    .list()
-                    .items
-                    .forEach { deployment ->
-                        deployments.checkDeploymentLeak(deployment)
-                    }
-            } catch (e: Throwable) {
-                throw RuntimeException("Error when checked leak in namespace=$namespace. If reason wasn't clear read previous discussion http://links.k.avito.ru/Az", e)
-            }
-        }
-    }
-
-    private fun Deployments.checkDeploymentLeak(deployment: Deployment) {
-        try {
-            if (deployment.isLeaked) {
-                delete(deployment)
-            }
-        } catch (e: Throwable) {
-            throw RuntimeException("Error when checked deployment=${deployment.description} leak", e)
-        }
     }
 
     private val Deployment.description: String
@@ -84,4 +57,35 @@ class ClearK8SDeploymentsByNamespaces(
 
     private val Deployment.creationTime: Date
         get() = dateFormat.parse(metadata.creationTimestamp)
+
+    fun clear(namespaces: List<String>) {
+        namespaces.forEach { namespace ->
+            try {
+                val deployments = kubernetesClient.inNamespace(namespace)
+                    .apps()
+                    .deployments()
+                deployments
+                    .list()
+                    .items
+                    .forEach { deployment ->
+                        deployments.checkDeploymentLeak(deployment)
+                    }
+            } catch (e: Throwable) {
+                throw RuntimeException(
+                    "Error when checked leak in namespace=$namespace. If reason wasn't clear read previous discussion http://links.k.avito.ru/Az",
+                    e
+                )
+            }
+        }
+    }
+
+    private fun Deployments.checkDeploymentLeak(deployment: Deployment) {
+        try {
+            if (deployment.isLeaked) {
+                delete(deployment)
+            }
+        } catch (e: Throwable) {
+            throw RuntimeException("Error when checked deployment=${deployment.description} leak", e)
+        }
+    }
 }

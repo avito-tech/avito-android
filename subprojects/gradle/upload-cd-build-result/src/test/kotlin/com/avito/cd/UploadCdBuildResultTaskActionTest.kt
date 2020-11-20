@@ -21,6 +21,52 @@ class UploadCdBuildResultTaskActionTest {
     private val user = "user"
     private val password = "password"
     private val outputPath = "file_path"
+    private val teamcityUrl = "xxx/viewLog.html?buildId=100&tab=buildLog"
+    private val schemaVersion: Long = 2
+    private val releaseVersion = "249.0"
+    private val versionCode = "100"
+    private val gitBranch = CdBuildResult.GitBranch(
+        name = "branchName",
+        commitHash = "commitHash"
+    )
+    private val gitState = GitStateStub(
+        currentBranch = Branch(
+            gitBranch.name,
+            gitBranch.commitHash
+        )
+    )
+    private val uiTestConfiguration = "regression"
+    private val stubTestResults = mapOf(
+        uiTestConfiguration to CdBuildResult.TestResultsLink(
+            reportId = "123",
+            reportUrl = "no matter url",
+            reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
+                planSlug = "2",
+                jobSlug = "3",
+                runId = "4"
+            )
+        )
+    )
+    private val stubArtifacts = listOf(
+        CdBuildResult.Artifact.AndroidBinary(
+            "apk",
+            "release.apk",
+            "${mockWebServer.url("")}/apps-release-local/appA-android/appA/1-1-100/release.apk",
+            BuildVariant.RELEASE
+        ),
+        CdBuildResult.Artifact.FileArtifact(
+            "featureToggles",
+            "1.json",
+            "${mockWebServer.url("")}/apps-release-local/appA-android/appA/1-1-100/1.json"
+        )
+    )
+    private val cdBuildConfig = CdBuildConfig(
+        schemaVersion = schemaVersion,
+        project = NupokatiProject.AVITO,
+        releaseVersion = releaseVersion,
+        outputDescriptor = CdBuildConfig.OutputDescriptor("${mockWebServer.url("")}$outputPath", true),
+        deployments = emptyList()
+    )
 
     @BeforeEach
     fun setup() {
@@ -129,52 +175,5 @@ class UploadCdBuildResultTaskActionTest {
             password = password
         ),
         suppressErrors = suppressErrors
-    )
-
-    private val teamcityUrl = "xxx/viewLog.html?buildId=100&tab=buildLog"
-    private val schemaVersion: Long = 2
-    private val releaseVersion = "249.0"
-    private val versionCode = "100"
-    private val gitBranch = CdBuildResult.GitBranch(
-        name = "branchName",
-        commitHash = "commitHash"
-    )
-    private val gitState = GitStateStub(
-        currentBranch = Branch(
-            gitBranch.name,
-            gitBranch.commitHash
-        )
-    )
-    private val uiTestConfiguration = "regression"
-    private val stubTestResults = mapOf(
-        uiTestConfiguration to CdBuildResult.TestResultsLink(
-            reportId = "123",
-            reportUrl = "no matter url",
-            reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
-                planSlug = "2",
-                jobSlug = "3",
-                runId = "4"
-            )
-        )
-    )
-    private val stubArtifacts = listOf(
-        CdBuildResult.Artifact.AndroidBinary(
-            "apk",
-            "release.apk",
-            "${mockWebServer.url("")}/apps-release-local/appA-android/appA/1-1-100/release.apk",
-            BuildVariant.RELEASE
-        ),
-        CdBuildResult.Artifact.FileArtifact(
-            "featureToggles",
-            "1.json",
-            "${mockWebServer.url("")}/apps-release-local/appA-android/appA/1-1-100/1.json"
-        )
-    )
-    private val cdBuildConfig = CdBuildConfig(
-        schemaVersion = schemaVersion,
-        project = NupokatiProject.AVITO,
-        releaseVersion = releaseVersion,
-        outputDescriptor = CdBuildConfig.OutputDescriptor("${mockWebServer.url("")}$outputPath", true),
-        deployments = emptyList()
     )
 }

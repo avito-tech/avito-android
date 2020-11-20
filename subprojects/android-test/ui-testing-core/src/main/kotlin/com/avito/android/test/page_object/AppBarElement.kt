@@ -14,10 +14,10 @@ import org.hamcrest.Matcher
 
 class AppBarElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
+    override val actions: AppBarActions = AppBarActionsImpl(interactionContext)
+
     // TODO: remove this constructor and use element fabric method to create an instance
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
-    override val actions: AppBarActions = AppBarActionsImpl(interactionContext)
 }
 
 interface AppBarActions : Actions {
@@ -25,8 +25,7 @@ interface AppBarActions : Actions {
     fun expand()
 }
 
-class AppBarActionsImpl(private val driver: ActionsDriver) : AppBarActions,
-    Actions by ActionsImpl(driver) {
+class AppBarActionsImpl(private val driver: ActionsDriver) : AppBarActions, Actions by ActionsImpl(driver) {
 
     override fun collapse() {
         driver.perform(SetExpandedAction(isExpanded = false))

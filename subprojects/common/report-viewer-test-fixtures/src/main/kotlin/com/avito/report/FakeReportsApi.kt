@@ -17,9 +17,23 @@ class FakeReportsApi(
     reportListResults: List<Try<List<Report>>> = emptyList()
 ) : ReportsApi {
 
+    private val reportListResultsQueue: Queue<Try<List<Report>>> = ArrayDeque(reportListResults)
+
+    private val testsForReportId = mutableMapOf<String, Try<List<SimpleRunTest>>>()
+
+    private val markAsSuccessfulRequests = mutableListOf<MarkAsRequest>()
+
+    private val testsForRunId = mutableMapOf<ReportCoordinates, Try<List<SimpleRunTest>>>()
+
     lateinit var createResult: CreateResult
 
     lateinit var getReportResult: GetReportResult
+
+    lateinit var finished: Try<Unit>
+
+    lateinit var crossDeviceTestData: Try<CrossDeviceSuite>
+
+    val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
 
     @Synchronized
     override fun create(
@@ -31,13 +45,9 @@ class FakeReportsApi(
         tmsBranch: String
     ): CreateResult = createResult
 
-    private val reportListResultsQueue: Queue<Try<List<Report>>> = ArrayDeque(reportListResults)
-
     override fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): Try<String> {
         TODO("not implemented")
     }
-
-    private val testsForReportId = mutableMapOf<String, Try<List<SimpleRunTest>>>()
 
     fun enqueueTestsForReportId(reportId: String, value: Try<List<SimpleRunTest>>) {
         testsForReportId[reportId] = value
@@ -47,8 +57,6 @@ class FakeReportsApi(
         return testsForReportId[reportId] ?: error("you need to enqueue result by reportId: $reportId")
     }
 
-    val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
-
     override fun addTests(
         reportCoordinates: ReportCoordinates,
         buildId: String?,
@@ -57,12 +65,6 @@ class FakeReportsApi(
         addTestsRequests.add(AddTestsRequest(reportCoordinates, buildId, tests))
         return Try.Success(emptyList())
     }
-
-    data class AddTestsRequest(
-        val reportCoordinates: ReportCoordinates,
-        val buildId: String?,
-        val tests: Collection<AndroidTest>
-    )
 
     @Synchronized
     override fun getReportsList(planSlug: String, jobSlug: String, pageNumber: Int): Try<List<Report>> {
@@ -74,16 +76,12 @@ class FakeReportsApi(
         return reportListResultsQueue.poll()
     }
 
-    lateinit var crossDeviceTestData: Try<CrossDeviceSuite>
-
     @Synchronized
     override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Try<CrossDeviceSuite> =
         crossDeviceTestData
 
     @Synchronized
     override fun getReport(reportCoordinates: ReportCoordinates): GetReportResult = getReportResult
-
-    private val testsForRunId = mutableMapOf<ReportCoordinates, Try<List<SimpleRunTest>>>()
 
     fun enqueueTestsForRunId(reportCoordinates: ReportCoordinates, value: Try<List<SimpleRunTest>>) {
         testsForRunId[reportCoordinates] = value
@@ -94,14 +92,8 @@ class FakeReportsApi(
         return testsForRunId[reportCoordinates] ?: error("no stub ready for $reportCoordinates")
     }
 
-    lateinit var finished: Try<Unit>
-
     @Synchronized
     override fun setFinished(reportCoordinates: ReportCoordinates): Try<Unit> = finished
-
-    private val markAsSuccessfulRequests = mutableListOf<MarkAsRequest>()
-
-    data class MarkAsRequest(val testRunId: String, val author: String, val comment: String)
 
     fun getLastMarkAsSuccessfulRequest(): MarkAsRequest? = markAsSuccessfulRequests.lastOrNull()
 
@@ -125,4 +117,16 @@ class FakeReportsApi(
     override fun pushPreparedData(reportId: String, analyzerKey: String, preparedData: JsonElement): Try<Unit> {
         TODO("not implemented")
     }
+
+    data class MarkAsRequest(
+        val testRunId: String,
+        val author: String,
+        val comment: String
+    )
+
+    data class AddTestsRequest(
+        val reportCoordinates: ReportCoordinates,
+        val buildId: String?,
+        val tests: Collection<AndroidTest>
+    )
 }

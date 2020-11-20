@@ -17,6 +17,12 @@ class FloatingViewChecksImpl(
     private val interactionContext: InteractionContext
 ) : Checks by ChecksImpl(interactionContext) {
 
+    private val translationY
+        get() = ViewGetTranslationYAction().also { interactionContext.perform(it) }.translationY
+
+    private val height
+        get() = ViewGetHeightAction().also { interactionContext.perform(it) }.height
+
     override fun isDisplayed() {
         assertThat(translationY, lessThan(height.toFloat()))
     }
@@ -24,10 +30,4 @@ class FloatingViewChecksImpl(
     override fun isNotDisplayed() {
         assertThat(translationY, greaterThanOrEqualTo(height.toFloat()))
     }
-
-    private val translationY
-        get() = ViewGetTranslationYAction().also { interactionContext.perform(it) }.translationY
-
-    private val height
-        get() = ViewGetHeightAction().also { interactionContext.perform(it) }.height
 }

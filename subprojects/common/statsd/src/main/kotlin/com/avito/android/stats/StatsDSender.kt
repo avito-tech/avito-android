@@ -17,6 +17,10 @@ interface StatsDSender {
         private val logger: (String, Throwable?) -> Unit
     ) : StatsDSender {
 
+        private val errorHandler = StatsDClientErrorHandler {
+            logger.invoke("statsd error", it)
+        }
+
         private val client: StatsDClient by lazy {
             if (!config.isEnabled) {
                 NoOpStatsDClient()
@@ -47,10 +51,6 @@ interface StatsDSender {
                 is GaugeMetric -> client.gauge(path, metric.value)
             } as Unit
             logger.invoke("statsd:${metric.type}:${config.namespace}.$path:${metric.value}", null)
-        }
-
-        private val errorHandler = StatsDClientErrorHandler {
-            logger.invoke("statsd error", it)
         }
     }
 }

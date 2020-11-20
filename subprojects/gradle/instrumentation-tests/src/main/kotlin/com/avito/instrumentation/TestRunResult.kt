@@ -66,6 +66,9 @@ data class TestRunResult(
             }
         }
 
+    val testsDuration
+        get() = reportedTests.sumBy { it.lastAttemptDurationInSeconds }
+
     private fun getNotReportedVerdict() = when (notReported) {
         is HasNotReportedTestsDeterminer.Result.AllTestsReported -> Verdict.Success("All tests reported")
         is HasNotReportedTestsDeterminer.Result.DetermineError -> Verdict.Failure(
@@ -126,9 +129,6 @@ data class TestRunResult(
         notSuppressed.groupBy({ test -> test.name }, { test -> test.deviceName })
             .map { (testName, devices) -> Verdict.Failure.Details.Test(testName, devices.toSet()) }
             .toSet()
-
-    val testsDuration
-        get() = reportedTests.sumBy { it.lastAttemptDurationInSeconds }
 
     fun testCount(): Int = reportedTests.size + notReported.lostTests.size
 
