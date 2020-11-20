@@ -16,11 +16,13 @@ class OnViewActionsDriver(private val matcher: Matcher<View>) : ActionsDriver {
         get() = Espresso.onView(matcher)
 
     override fun perform(vararg actions: ViewAction) {
-        interaction.waitToPerform(actions.map { action ->
-            ActionInterceptor.Proxy(
-                action,
-                UITestConfig.actionInterceptors
-            )
-        })
+        interaction.waitToPerform(
+            actions.map { action ->
+                ActionInterceptor.Proxy(
+                    action,
+                    UITestConfig.actionInterceptors
+                )
+            }
+        )
     }
 }

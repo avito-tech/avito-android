@@ -42,10 +42,11 @@ class AndroidAppModule(
                     dir("res") {
                         dir("values") {
                             file(
-                                "id.xml", content = """<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="some_id" type="id" />
-</resources>
+                                name = "id.xml",
+                                content = """<?xml version="1.0" encoding="utf-8"?>
+                                <resources>
+                                    <item name="some_id" type="id" />
+                                </resources>
                             """.trimIndent()
                             )
                         }
@@ -62,12 +63,13 @@ class AndroidAppModule(
             }
 
             file(
-                "proguard.pro", """
--ignorewarnings
--keep public class * {
-    public protected *;
-}
-""".trimIndent()
+                name = "proguard.pro",
+                content = """
+                -ignorewarnings
+                -keep public class * {
+                    public protected *;
+                }
+                """.trimIndent()
             )
 
             build_gradle {

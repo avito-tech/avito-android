@@ -30,7 +30,9 @@ internal class ViewScreenshotMaker(
                 locationOfViewInWindow[1],
                 locationOfViewInWindow[0] + width,
                 locationOfViewInWindow[1] + height
-            ), bitmap, { copyResult ->
+            ),
+            bitmap,
+            { copyResult ->
                 if (copyResult == PixelCopy.SUCCESS) {
                     bitmapSaver.save(bitmap, screenshot)
                 } else {

@@ -119,6 +119,8 @@ class GitStateFromEnvironmentTest {
             repoDir = localRepo,
             gitBranch = gitBranch,
             targetBranch = targetBranch,
-            originalCommitHash = null, logger = {})
+            originalCommitHash = null,
+            logger = {}
+        )
     }
 }

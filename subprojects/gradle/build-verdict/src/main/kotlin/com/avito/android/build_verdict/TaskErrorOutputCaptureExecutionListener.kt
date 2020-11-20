@@ -19,14 +19,16 @@ internal class TaskErrorOutputCaptureExecutionListener(
     override fun beforeExecute(task: Task) {
         when (task) {
             is Test -> {
-                task.addTestListener(object : DefaultTestListener() {
-                    override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
-                        if (result.resultType == TestResult.ResultType.FAILURE) {
-                            logs.getOrPut(Path.path(task.path), { StringBuilder("FAILED tests:\n") })
-                                .appendln("\t${testDescriptor.className}.${testDescriptor.displayName}")
+                task.addTestListener(
+                    object : DefaultTestListener() {
+                        override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+                            if (result.resultType == TestResult.ResultType.FAILURE) {
+                                logs.getOrPut(Path.path(task.path), { StringBuilder("FAILED tests:\n") })
+                                    .appendln("\t${testDescriptor.className}.${testDescriptor.displayName}")
+                            }
                         }
                     }
-                })
+                )
             }
             else -> {
                 task.logging.addStandardErrorListener { error ->

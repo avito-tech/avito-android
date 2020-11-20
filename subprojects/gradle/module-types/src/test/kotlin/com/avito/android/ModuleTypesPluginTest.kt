@@ -1,10 +1,10 @@
 package com.avito.android
 
-import com.avito.test.gradle.module.AndroidAppModule
-import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.AndroidLibModule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -46,7 +46,8 @@ class ModuleTypesPluginTest {
         }
 
         val result = gradlew(
-            projectDir, "assemble",
+            projectDir,
+            "assemble",
             "-Pavito.moduleTypeValidationEnabled=true",
             "-PgitBranch=xxx", // todo need for impact plugin
             dryRun = true

@@ -188,11 +188,13 @@ open class BuildStepListExtension(
     }
 
     fun artifacts(closure: Closure<ArtifactsConfiguration>) {
-        artifacts(Action {
-            closure.delegate = artifactsConfig
-            closure.resolveStrategy = Closure.DELEGATE_FIRST
-            closure.call()
-        })
+        artifacts(
+            Action {
+                closure.delegate = artifactsConfig
+                closure.resolveStrategy = Closure.DELEGATE_FIRST
+                closure.call()
+            }
+        )
     }
 
     fun artifacts(action: Action<ArtifactsConfiguration>) {
@@ -205,11 +207,14 @@ open class BuildStepListExtension(
         name: String,
         configure: Closure<T>
     ) {
-        configureAndAdd(name, Action<T> { step ->
-            configure.delegate = step
-            configure.resolveStrategy = Closure.DELEGATE_FIRST
-            configure.call()
-        })
+        configureAndAdd(
+            name,
+            Action<T> { step ->
+                configure.delegate = step
+                configure.resolveStrategy = Closure.DELEGATE_FIRST
+                configure.call()
+            }
+        )
     }
 
     private inline fun <reified T : BuildStep> configureAndAdd(

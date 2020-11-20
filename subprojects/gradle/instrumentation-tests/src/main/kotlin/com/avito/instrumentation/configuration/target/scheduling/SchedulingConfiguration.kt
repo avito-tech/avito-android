@@ -15,17 +15,21 @@ open class SchedulingConfiguration {
     lateinit var quota: QuotaConfiguration
 
     fun staticDevicesReservation(closure: Closure<StaticDeviceReservationConfiguration>) {
-        staticDevicesReservation(Action {
-            closure.delegate = it
-            closure.call()
-        })
+        staticDevicesReservation(
+            Action {
+                closure.delegate = it
+                closure.call()
+            }
+        )
     }
 
     fun testsCountBasedReservation(closure: Closure<TestsBasedDevicesReservationConfiguration>) {
-        testsCountBasedReservation(Action {
-            closure.delegate = it
-            closure.call()
-        })
+        testsCountBasedReservation(
+            Action {
+                closure.delegate = it
+                closure.call()
+            }
+        )
     }
 
     fun staticDevicesReservation(action: Action<StaticDeviceReservationConfiguration>) {
@@ -43,10 +47,12 @@ open class SchedulingConfiguration {
     }
 
     fun quota(closure: Closure<QuotaConfiguration>) {
-        quota(Action {
-            closure.delegate = it
-            closure.call()
-        })
+        quota(
+            Action {
+                closure.delegate = it
+                closure.call()
+            }
+        )
     }
 
     fun quota(action: Action<QuotaConfiguration>) {

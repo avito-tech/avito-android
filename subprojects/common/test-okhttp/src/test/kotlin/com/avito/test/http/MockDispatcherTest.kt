@@ -15,10 +15,12 @@ import java.nio.charset.Charset
 internal class MockDispatcherTest {
 
     // todo create TestLogger for it
-    private val devNull = PrintStream(object : OutputStream() {
-        override fun write(b: Int) {
+    private val devNull = PrintStream(
+        object : OutputStream() {
+            override fun write(b: Int) {
+            }
         }
-    })
+    )
 
     private val isLocalRun: Boolean by lazy {
         val command: String? = System.getProperty("sun.java.command")
@@ -125,9 +127,10 @@ private fun buildRequest(
         body = if (body == null) Buffer() else Buffer().writeString(body, Charset.forName("UTF-8")),
         sequenceNumber = -1,
         socket = FakeSocket(
-            InetAddress.getByAddress(
+            inetAddress = InetAddress.getByAddress(
                 "127.0.0.1",
                 byteArrayOf(127, 0, 0, 1)
-            ), 80
+            ),
+            localPort = 80
         )
     )

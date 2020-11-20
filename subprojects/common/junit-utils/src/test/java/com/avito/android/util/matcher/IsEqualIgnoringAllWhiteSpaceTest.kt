@@ -53,7 +53,8 @@ class IsEqualIgnoringAllWhiteSpaceTest : AbstractMatcherTest() {
     fun `has a readable description`() {
         assertDescription(
             "a string equal to \" Hello World$THIN_SPACE  how\n" +
-                    " are we? \" ignoring all white spaces", matcher
+                " are we? \" ignoring all white spaces",
+            matcher
         )
     }
 }

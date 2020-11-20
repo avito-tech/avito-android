@@ -195,9 +195,7 @@ data class AdbDevice(
             delaySeconds = 2,
             block = { attempt ->
                 executeBlockingShellCommand(
-                    command = listOf(
-                        "pm", "clear", name
-                    )
+                    command = listOf("pm", "clear", name)
                 )
                 logger.debug("Attempt: $attempt: clear package $name completed")
             },

@@ -24,24 +24,30 @@ class SnackbarElement(interactionContext: InteractionContext) : ViewElement(inte
 
     constructor() : this(SimpleInteractionContext(snackbarLayoutMatcher())) // TODO: migrate to HandleParentContext
 
-    constructor(textMatcher: Matcher<String>? = null) : this(SimpleInteractionContext(
-        if (textMatcher == null) {
-            snackbarLayoutMatcher()
-        } else {
-            Matchers.allOf(
-                snackbarLayoutMatcher(),
-                ViewMatchers.hasDescendant(ViewMatchers.withText(textMatcher))
-            )
-        }
-    ))
+    constructor(textMatcher: Matcher<String>? = null) : this(
+        SimpleInteractionContext(
+            if (textMatcher == null) {
+                snackbarLayoutMatcher()
+            } else {
+                Matchers.allOf(
+                    snackbarLayoutMatcher(),
+                    ViewMatchers.hasDescendant(ViewMatchers.withText(textMatcher))
+                )
+            }
+        )
+    )
 
-    val message = ViewElement(interactionContext.provideChildContext(
-        ViewMatchers.withId(R.id.snackbar_text)
-    ))
+    val message = ViewElement(
+        interactionContext.provideChildContext(
+            ViewMatchers.withId(R.id.snackbar_text)
+        )
+    )
 
-    val button = ViewElement(interactionContext.provideChildContext(
-        ViewMatchers.withId(R.id.snackbar_action)
-    ))
+    val button = ViewElement(
+        interactionContext.provideChildContext(
+            ViewMatchers.withId(R.id.snackbar_action)
+        )
+    )
 
     fun swipeOut() = EspressoActions.swipe(RIGHT_TO_LEFT)
 }

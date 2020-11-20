@@ -9,13 +9,15 @@ interface DuplicateIdChecker {
     class Impl(private val unknownId: Int) : DuplicateIdChecker {
 
         override fun check(screenToId: Set<ScreenToId>): Result =
-            Result(screenToId
-                .groupBy(
-                    keySelector = { it.rootViewRId },
-                    valueTransform = { it.screenClass })
-                .filter { it.key != unknownId.toString() && it.value.size > 1 }
-                .map { DuplicateId(it.key, it.value) }
-                .toSet()
+            Result(
+                screenToId
+                    .groupBy(
+                        keySelector = { it.rootViewRId },
+                        valueTransform = { it.screenClass }
+                    )
+                    .filter { it.key != unknownId.toString() && it.value.size > 1 }
+                    .map { DuplicateId(it.key, it.value) }
+                    .toSet()
             )
     }
 

@@ -34,9 +34,11 @@ object Providers {
                         .build()
                 )
             }
-            .addInterceptor(HttpLoggingInterceptor(logger).apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            .addInterceptor(
+                HttpLoggingInterceptor(logger).apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+            )
             .build()
     }
 }

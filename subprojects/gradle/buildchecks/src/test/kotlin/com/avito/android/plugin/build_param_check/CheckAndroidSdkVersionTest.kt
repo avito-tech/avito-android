@@ -138,7 +138,8 @@ class CheckAndroidSdkVersionTest {
         expectFailure: Boolean = false
     ): TestResult {
         return BuildChecksTestProjectRunner(
-            projectDir, androidHomeLocation,
+            projectDir = projectDir,
+            androidHome = androidHomeLocation,
             buildChecksExtension = """
                 enableByDefault = false
                 androidSdk { 

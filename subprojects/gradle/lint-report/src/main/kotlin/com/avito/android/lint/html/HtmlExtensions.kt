@@ -8,7 +8,8 @@ import kotlinx.html.attributesMapOf
 import kotlinx.html.visit
 
 internal fun SectioningOrFlowContent.main(classes: String? = null, block: MAIN.() -> Unit = {}): Unit = MAIN(
-    attributesMapOf("class", classes), consumer
+    attributesMapOf("class", classes),
+    consumer
 ).visit(block)
 
 internal open class MAIN(initialAttributes: Map<String, String>, override val consumer: TagConsumer<*>) :

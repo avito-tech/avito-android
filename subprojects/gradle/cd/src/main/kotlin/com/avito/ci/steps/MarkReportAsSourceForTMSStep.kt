@@ -33,11 +33,13 @@ class MarkReportAsSourceForTMSStep(context: String, name: String) : BuildStep(co
             it.dependsOn(instrumentationTask)
 
             @Suppress("UnstableApiUsage")
-            it.reportCoordinates.set(instrumentationTask.flatMap { task ->
-                task.instrumentationConfiguration.map { config ->
-                    config.instrumentationParams.reportCoordinates()
+            it.reportCoordinates.set(
+                instrumentationTask.flatMap { task ->
+                    task.instrumentationConfiguration.map { config ->
+                        config.instrumentationParams.reportCoordinates()
+                    }
                 }
-            })
+            )
         }
 
         rootTask.dependsOn(markReportAsSourceTask)

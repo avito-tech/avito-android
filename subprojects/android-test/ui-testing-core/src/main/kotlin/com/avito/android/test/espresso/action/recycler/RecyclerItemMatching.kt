@@ -132,8 +132,10 @@ internal class RecyclerItemsMatcher(
             item = MatchedItem(
                 position = position,
                 description = HumanReadables.getViewHierarchyErrorMessage(
-                    holder.itemView, null,
-                    "\n\n*** Matched ViewHolder item at position: $position ***", null
+                    holder.itemView,
+                    null,
+                    "\n\n*** Matched ViewHolder item at position: $position ***",
+                    null
                 )
             )
         )
@@ -156,8 +158,10 @@ internal class RecyclerItemsMatcher(
                         item = MatchedItem(
                             position = atPosition,
                             description = HumanReadables.getViewHierarchyErrorMessage(
-                                viewHolderAtPosition.itemView, null,
-                                "\n\n*** Matched ViewHolder item at position: $atPosition ***", null
+                                viewHolderAtPosition.itemView,
+                                null,
+                                "\n\n*** Matched ViewHolder item at position: $atPosition ***",
+                                null
                             )
                         )
                     )
@@ -176,8 +180,10 @@ internal class RecyclerItemsMatcher(
                             MatchedItem(
                                 position = position,
                                 description = HumanReadables.getViewHierarchyErrorMessage(
-                                    holder.itemView, null,
-                                    "\n\n*** Matched ViewHolder item at position: $atPosition ***", null
+                                    holder.itemView,
+                                    null,
+                                    "\n\n*** Matched ViewHolder item at position: $atPosition ***",
+                                    null
                                 )
                             )
                         }
@@ -186,8 +192,10 @@ internal class RecyclerItemsMatcher(
                     Result.NoItemAtPosition(
                         atPosition = atPosition,
                         itemAtPosition = HumanReadables.getViewHierarchyErrorMessage(
-                            viewHolderAtPosition.itemView, null,
-                            "\n\n*** Matched ViewHolder item at position: $atPosition ***", null
+                            viewHolderAtPosition.itemView,
+                            null,
+                            "\n\n*** Matched ViewHolder item at position: $atPosition ***",
+                            null
                         ),
                         nearMatchedItems = nearMatchedItems,
                         searchFrom = searchFrom,

@@ -10,7 +10,8 @@ import java.util.concurrent.TimeUnit
 
 @SuppressLint("LogNotTimber")
 internal fun createReportHttpClient(): OkHttpClient {
-    val retryInterceptor = RetryInterceptor(allowedMethods = listOf("GET", "POST"),
+    val retryInterceptor = RetryInterceptor(
+        allowedMethods = listOf("GET", "POST"),
         logger = object : Logger {
             override fun debug(msg: String) {
                 Log.v("ReportViewerHttp", msg)
@@ -27,12 +28,15 @@ internal fun createReportHttpClient(): OkHttpClient {
             override fun warn(msg: String, error: Throwable?) {
                 Log.v("ReportViewerHttp", msg, error)
             }
-        })
-    val httpLoggingInterceptor = HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-        override fun log(message: String) {
-            Log.v("ReportViewerHttp", message)
         }
-    }).apply {
+    )
+    val httpLoggingInterceptor = HttpLoggingInterceptor(
+        object : HttpLoggingInterceptor.Logger {
+            override fun log(message: String) {
+                Log.v("ReportViewerHttp", message)
+            }
+        }
+    ).apply {
         level = HttpLoggingInterceptor.Level.BASIC
     }
 

@@ -233,12 +233,14 @@ formatting:
     active: true
     android: true
     autoCorrect: false
+
+    # todo rise an issue: false positive on kotlin @file annotations
     AnnotationOnSeparateLine:
         active: false
     AnnotationSpacing:
-        active: false
+        active: true
     ArgumentListWrapping:
-        active: false
+        active: true
     ChainWrapping:
         active: false
     CommentSpacing:

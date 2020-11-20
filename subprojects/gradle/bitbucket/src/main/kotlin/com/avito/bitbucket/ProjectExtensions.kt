@@ -47,9 +47,7 @@ val Project.bitbucketConfig: Provider<BitbucketConfig>
                 BitbucketConfig(
                     baseUrl = "http://disable",
                     projectKey = "disable",
-                    credentials = AtlassianCredentials(
-                        "disabled", "disabled"
-                    ),
+                    credentials = AtlassianCredentials("disabled", "disabled"),
                     repositorySlug = "disabled"
                 )
             }

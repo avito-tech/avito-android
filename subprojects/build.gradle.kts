@@ -271,8 +271,10 @@ subprojects {
                  * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
                  * используется в `:test-project`
                  */
-                systemProperty("isInvokedFromIde",
-                    gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null)
+                systemProperty(
+                    "isInvokedFromIde",
+                    gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
+                )
             }
         }
 
@@ -344,17 +346,21 @@ fun Project.configureBintray(vararg publications: String) {
         // - NoHttpResponseException: api.bintray.com:443 failed to respond (https://github.com/bintray/gradle-bintray-plugin/issues/325)
         // - Could not upload to 'https://api.bintray.com/...': HTTP/1.1 405 Not Allowed 405 Not Allowed405 Not Allowednginx
         override = false
-        pkg(closureOf<PackageConfig> {
-            repo = "maven"
-            userOrg = "avito"
-            name = "avito-android"
-            setLicenses("mit")
-            vcsUrl = "https://github.com/avito-tech/avito-android.git"
+        pkg(
+            closureOf<PackageConfig> {
+                repo = "maven"
+                userOrg = "avito"
+                name = "avito-android"
+                setLicenses("mit")
+                vcsUrl = "https://github.com/avito-tech/avito-android.git"
 
-            version(closureOf<VersionConfig> {
-                name = finalProjectVersion
-            })
-        })
+                version(
+                    closureOf<VersionConfig> {
+                        name = finalProjectVersion
+                    }
+                )
+            }
+        )
     }
 
     tasks.named(publishReleaseTaskName).configure {

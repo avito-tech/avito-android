@@ -67,7 +67,8 @@ dependencies {
                 dir("res") {
                     dir("layout") {
                         file(
-                            "lib.xml", content = """<?xml version="1.0" encoding="utf-8"?>
+                            name = "lib.xml",
+                            content = """<?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/title"

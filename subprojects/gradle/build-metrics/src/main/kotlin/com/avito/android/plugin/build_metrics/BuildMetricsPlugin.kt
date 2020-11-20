@@ -25,7 +25,8 @@ open class BuildMetricsPlugin : Plugin<Project> {
             return
         }
         GradleCollector.initialize(
-            project, listOf(
+            project,
+            listOf(
                 aggregatedConsumer(project),
                 SentryConsumer(project)
             )

@@ -39,13 +39,17 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
             .client(
                 OkHttpClient.Builder().apply {
                     if (debug) {
-                        addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                            override fun log(message: String) {
-                                project.ciLogger.info(message)
+                        addInterceptor(
+                            HttpLoggingInterceptor(
+                                object : HttpLoggingInterceptor.Logger {
+                                    override fun log(message: String) {
+                                        project.ciLogger.info(message)
+                                    }
+                                }
+                            ).apply {
+                                level = HttpLoggingInterceptor.Level.BODY
                             }
-                        }).apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        })
+                        )
                     }
                 }
                     .build()

@@ -23,10 +23,12 @@ android {
     }
 }
 
-dependencies(delegateClosureOf<DependencyHandler> {
+dependencies(
+    delegateClosureOf<DependencyHandler> {
 
-    implementation(Dependencies.appcompat)
+        implementation(Dependencies.appcompat)
 
-    androidTestImplementation(project(":android-test:ui-testing-core"))
-    androidTestUtil(Dependencies.AndroidTest.orchestrator)
-})
+        androidTestImplementation(project(":android-test:ui-testing-core"))
+        androidTestUtil(Dependencies.AndroidTest.orchestrator)
+    }
+)

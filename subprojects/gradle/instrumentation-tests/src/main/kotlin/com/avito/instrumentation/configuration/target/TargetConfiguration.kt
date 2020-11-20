@@ -23,10 +23,12 @@ open class TargetConfiguration(val name: String) : Serializable {
     var instrumentationParams: Map<String, String> = emptyMap()
 
     fun scheduling(closure: Closure<SchedulingConfiguration>) {
-        scheduling(Action {
-            closure.delegate = it
-            closure.call()
-        })
+        scheduling(
+            Action {
+                closure.delegate = it
+                closure.call()
+            }
+        )
     }
 
     fun scheduling(action: Action<SchedulingConfiguration>) {

@@ -43,8 +43,9 @@ class TestSummaryPlugin : Plugin<Project> {
             buildUrl.set(extension.buildUrl)
 
             @Suppress("UnstableApiUsage")
-            unitToChannelMapping.set(extension.unitToChannelMapping
-                .map { map -> map.map { (key, value) -> Team(key) to SlackChannel(value) }.toMap() }
+            unitToChannelMapping.set(
+                extension.unitToChannelMapping
+                    .map { map -> map.map { (key, value) -> Team(key) to SlackChannel(value) }.toMap() }
             )
 
             mentionOnFailures.set(extension.mentionOnFailures.map { set -> set.map { Team(it) }.toSet() })

@@ -62,7 +62,8 @@ class AndroidSdk(
             val path = if (fromEnv.isNullOrBlank()) {
                 androidHomeFromLocalProperties(
                     localPropertiesLocation = File(projectRootDir, "local.properties"),
-                    logger = { logger.error(it) })
+                    logger = { logger.error(it) }
+                )
                     ?: error("Can't find ANDROID_HOME")
             } else {
                 fromEnv

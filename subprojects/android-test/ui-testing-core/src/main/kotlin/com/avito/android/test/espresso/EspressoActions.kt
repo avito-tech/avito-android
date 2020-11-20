@@ -6,6 +6,7 @@ import android.view.View
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.CoordinatesProvider
 import androidx.test.espresso.action.GeneralClickAction
 import androidx.test.espresso.action.GeneralSwipeAction
 import androidx.test.espresso.action.PrecisionDescriber
@@ -16,7 +17,6 @@ import androidx.test.espresso.action.Swiper
 import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.actionWithAssertions
-import androidx.test.espresso.action.CoordinatesProvider
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.element.field.actions.TypeText
 import com.avito.android.test.espresso.action.ActionOnClickableElement
@@ -89,7 +89,8 @@ object EspressoActions {
                 }
 
                 is UITestConfig.ClickType.EspressoClick.ClickRollbackPolicy.Fail -> defaultEspressoClickAction(
-                    coordinatesProvider, object : ViewAction {
+                    coordinatesProvider,
+                    object : ViewAction {
                         override fun getDescription(): String =
                             "fake fail action after click interpreted as long click"
 

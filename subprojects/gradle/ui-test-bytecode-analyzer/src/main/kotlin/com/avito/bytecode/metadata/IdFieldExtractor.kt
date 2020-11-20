@@ -2,7 +2,6 @@ package com.avito.bytecode.metadata
 
 import com.avito.bytecode.invokes.bytecode.context.Context
 import org.apache.bcel.classfile.JavaClass
-import java.lang.RuntimeException
 
 interface IdFieldExtractor {
 
@@ -32,7 +31,8 @@ interface IdFieldExtractor {
                                 )
                             } catch (t: Throwable) {
                                 throw RuntimeException(
-                                    "Failed to get field value: $fieldName from class: ${clazz.className}", t
+                                    "Failed to get field value: $fieldName from class: ${clazz.className}",
+                                    t
                                 )
                             }
                         }
@@ -42,4 +42,5 @@ interface IdFieldExtractor {
     }
 }
 
-fun Set<IdFieldExtractor.ScreenToId>.toMap(): Map<String, Int> = map { it.screenClass to it.rootViewRId.toInt() }.toMap()
+fun Set<IdFieldExtractor.ScreenToId>.toMap(): Map<String, Int> =
+    map { it.screenClass to it.rootViewRId.toInt() }.toMap()

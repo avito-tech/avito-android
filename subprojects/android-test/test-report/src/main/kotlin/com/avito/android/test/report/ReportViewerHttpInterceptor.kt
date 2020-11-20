@@ -96,11 +96,7 @@ class ReportViewerHttpInterceptor(
         while (requestHeadersIndex < requestHeadersCount) {
             val name = headers.name(requestHeadersIndex)
             // Skip headers from the request body as they are explicitly logged above.
-            if (!"Content-Type".equals(name, ignoreCase = true) && !"Content-Length".equals(
-                    name,
-                    ignoreCase = true
-                )
-            ) {
+            if (!"Content-Type".equals(name, ignoreCase = true) && !"Content-Length".equals(name, ignoreCase = true)) {
                 result.appendln(name + ": " + headers.value(requestHeadersIndex))
             }
             requestHeadersIndex++

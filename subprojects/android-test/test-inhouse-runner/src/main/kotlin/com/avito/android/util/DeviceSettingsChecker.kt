@@ -21,10 +21,12 @@ class DeviceSettingsChecker(private val context: Context) {
         )
         if (warnings.isNotEmpty()) {
             // TODO: Try to fix them of fail MBS-7355
-            Log.e("UITestRunner", "=== ERROR=== \n" +
-                "Emulator has incorrect settings which cause flakiness:\n" +
-                warnings.joinToString(separator = "") { "- $it\n" } +
-                "\nSee https://avito-tech.github.io/avito-android/docs/ci/containers/#android-emulator-images"
+            Log.e(
+                "UITestRunner",
+                "=== ERROR=== \n" +
+                    "Emulator has incorrect settings which cause flakiness:\n" +
+                    warnings.joinToString(separator = "") { "- $it\n" } +
+                    "\nSee https://avito-tech.github.io/avito-android/docs/ci/containers/#android-emulator-images"
             )
         }
     }
@@ -44,7 +46,13 @@ class DeviceSettingsChecker(private val context: Context) {
     }
 
     private fun checkTransitionAnimationScale(): String? {
-        return if (Settings.Global.getFloat(context.contentResolver, Settings.Global.TRANSITION_ANIMATION_SCALE, 1f) > 0) {
+        return if (
+            Settings.Global.getFloat(
+                context.contentResolver,
+                Settings.Global.TRANSITION_ANIMATION_SCALE,
+                1f
+            ) > 0
+        ) {
             "Transition animation scale must be turned off"
         } else {
             null

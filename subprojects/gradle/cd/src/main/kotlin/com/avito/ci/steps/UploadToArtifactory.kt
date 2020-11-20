@@ -31,17 +31,21 @@ class UploadToArtifactory(
         val androidAppExtension = project.androidAppExtension
         val defaultConfig = androidAppExtension.defaultConfig
         val projectType = project.cdBuildConfig.orNull?.project?.id ?: "local"
-        project.appBackupExtension.backup(noOwnerClosureOf {
-            name = "${project.name}-android"
-            type = projectType
-            version = "${defaultConfig.versionName}-${defaultConfig.versionCode}-${project.envArgs.build.number}"
-            artifactsMap.forEach { key, output ->
-                artifact(noOwnerClosureOf {
-                    id = key
-                    path = output.path
-                })
+        project.appBackupExtension.backup(
+            noOwnerClosureOf {
+                name = "${project.name}-android"
+                type = projectType
+                version = "${defaultConfig.versionName}-${defaultConfig.versionCode}-${project.envArgs.build.number}"
+                artifactsMap.forEach { key, output ->
+                    artifact(
+                        noOwnerClosureOf {
+                            id = key
+                            path = output.path
+                        }
+                    )
+                }
             }
-        })
+        )
 
         val backupTask = project.tasks.artifactoryAppBackupTask()
 
