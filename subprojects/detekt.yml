@@ -317,7 +317,7 @@ formatting:
     SpacingAroundKeyword:
         active: true
     SpacingAroundOperators:
-        active: false
+        active: true
     SpacingAroundParens:
         active: false
     SpacingAroundRangeOperator:
