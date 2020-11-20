@@ -14,7 +14,7 @@ class ImpactMetricsSender(
     private val prefix by lazy {
         val envName = environmentInfo.environment.publicName
         val node = environmentInfo.node?.take(32) ?: "_"
-        val buildId = environmentInfo.teamcityBuildId() ?: "nobuildid"
+        val buildId = environmentInfo.teamcityBuildId() ?: "_"
         graphiteSeries(envName, node, buildId)
     }
 
