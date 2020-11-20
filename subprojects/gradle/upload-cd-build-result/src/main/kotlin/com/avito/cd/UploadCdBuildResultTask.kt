@@ -19,8 +19,7 @@ import javax.inject.Inject
 
 const val uploadCdBuildResultTaskName = "uploadCdBuildResult"
 
-abstract class UploadCdBuildResultTask
-@Inject constructor(
+abstract class UploadCdBuildResultTask @Inject constructor(
     private val uiTestConfiguration: String,
     private val user: String,
     private val password: String,

@@ -323,7 +323,7 @@ formatting:
     SpacingAroundRangeOperator:
         active: true
     SpacingBetweenDeclarationsWithAnnotations:
-        active: false
+        active: true
     SpacingBetweenDeclarationsWithComments:
         active: false
 
