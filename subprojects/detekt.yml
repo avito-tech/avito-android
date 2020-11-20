@@ -560,9 +560,11 @@ style:
     # https://detekt.github.io/detekt/style.html#explicititlambdaparameter
     ExplicitItLambdaParameter:
         active: true
+    # https://detekt.github.io/detekt/style.html#expressionbodysyntax
+    # sometimes it's harder to read
     ExpressionBodySyntax:
         active: false
-        includeLineWrapping: false
+        includeLineWrapping: true
     ForbiddenComment:
         active: false
         values: [ 'TODO:', 'FIXME:', 'STOPSHIP:' ]
