@@ -253,8 +253,9 @@ formatting:
         autoCorrect: false
     Filename:
         active: false
+    # https://detekt.github.io/detekt/formatting.html#finalnewline
     FinalNewline:
-        active: false
+        active: true
         autoCorrect: false
         insertFinalNewLine: false
     ImportOrdering:

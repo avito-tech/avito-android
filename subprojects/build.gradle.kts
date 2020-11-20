@@ -80,20 +80,13 @@ repositories {
     }
 }
 
-subprojects {
+dependencies {
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0-RC1")
+}
 
+allprojects {
     repositories {
         jcenter()
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrl("https://kotlin.bintray.com/kotlinx")
-                }
-            }
-            filter {
-                includeGroup("org.jetbrains.kotlinx")
-            }
-        }
         exclusiveContent {
             forRepository {
                 google()
@@ -109,7 +102,9 @@ subprojects {
             }
         }
     }
+}
 
+subprojects {
     group = "com.avito.android"
     version = finalProjectVersion
 
