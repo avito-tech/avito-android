@@ -554,8 +554,9 @@ style:
     # https://detekt.github.io/detekt/style.html#equalsonsignatureline
     EqualsOnSignatureLine:
         active: true
+    # https://detekt.github.io/detekt/style.html#explicitcollectionelementaccessmethod
     ExplicitCollectionElementAccessMethod:
-        active: false
+        active: true
     ExplicitItLambdaParameter:
         active: false
     ExpressionBodySyntax:
