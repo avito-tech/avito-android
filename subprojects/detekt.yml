@@ -557,8 +557,9 @@ style:
     # https://detekt.github.io/detekt/style.html#explicitcollectionelementaccessmethod
     ExplicitCollectionElementAccessMethod:
         active: true
+    # https://detekt.github.io/detekt/style.html#explicititlambdaparameter
     ExplicitItLambdaParameter:
-        active: false
+        active: true
     ExpressionBodySyntax:
         active: false
         includeLineWrapping: false
