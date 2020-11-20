@@ -9,8 +9,6 @@ import java.io.Serializable
 
 object SerializeUtils {
 
-    val isShort: Int = 11
-
     @Throws(Exception::class)
     fun <T : Serializable?> serializeDeserialize(value: T?): T? {
         val storage = ByteArrayOutputStream()

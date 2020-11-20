@@ -252,7 +252,6 @@ formatting:
     # todo what is it?
     Filename:
         active: false
-    # https://detekt.github.io/detekt/formatting.html#finalnewline
     FinalNewline:
         active: true
         insertFinalNewLine: false
@@ -288,23 +287,23 @@ formatting:
         active: true
     NoLineBreakBeforeAssignment:
         active: true
-    # https://detekt.github.io/detekt/formatting.html#nomultiplespaces
     NoMultipleSpaces:
         active: true
-    # https://detekt.github.io/detekt/formatting.html#nosemicolons
+    # https://ktlint.github.io/#rule-semi
     NoSemicolons:
         active: true
-    # https://detekt.github.io/detekt/formatting.html#notrailingspaces
+    # https://ktlint.github.io/#rule-trailing-whitespaces
     NoTrailingSpaces:
         active: true
     NoUnitReturn:
         active: true
-    # https://detekt.github.io/detekt/formatting.html#nounusedimports
+
+    # https://ktlint.github.io/#rule-import
     NoUnusedImports:
         active: true
-    # https://detekt.github.io/detekt/formatting.html#nowildcardimports
     NoWildcardImports:
         active: true
+
     # duplicate of naming:PackageNaming rule
     PackageName:
         active: false

@@ -7,8 +7,8 @@ import com.avito.android.test.Intents.stubEverything
 
 internal class ActivityRule<T : Activity>(aClass: Class<T>) : ActivityTestRule<T>(
     aClass,
-    true,
-    false
+    true, // initialTouchMode
+    false // launchActivity
 ) {
 
     override fun afterActivityLaunched() {
