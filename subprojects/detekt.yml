@@ -270,8 +270,9 @@ formatting:
         active: false
     NoConsecutiveBlankLines:
         active: false
+    # https://ktlint.github.io/#rule-empty-class-body
     NoEmptyClassBody:
-        active: false
+        active: true
     NoEmptyFirstLineInMethodBlock:
         active: false
     NoLineBreakAfterElse:

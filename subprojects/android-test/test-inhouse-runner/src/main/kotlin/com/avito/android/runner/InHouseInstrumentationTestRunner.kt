@@ -108,7 +108,7 @@ abstract class InHouseInstrumentationTestRunner :
                             )
                         )
                     )
-                } else {
+                } else{
                     emptyList()
                 }
             }
