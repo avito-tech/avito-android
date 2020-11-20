@@ -720,8 +720,10 @@ style:
     # https://detekt.github.io/detekt/style.html#unusedimports
     UnusedImports:
         active: true
+    # https://detekt.github.io/detekt/style.html#unusedprivateclass
     UnusedPrivateClass:
-        active: false
+        active: true
+    # https://detekt.github.io/detekt/style.html#unusedprivatemember
     UnusedPrivateMember:
         active: true
         allowedNames: '(_|ignored|expected|serialVersionUID)'
