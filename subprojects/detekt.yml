@@ -286,7 +286,7 @@ formatting:
     NoLineBreakAfterElse:
         active: true
     NoLineBreakBeforeAssignment:
-        active: false
+        active: true
     # https://detekt.github.io/detekt/formatting.html#nomultiplespaces
     NoMultipleSpaces:
         active: true
