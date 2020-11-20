@@ -548,8 +548,9 @@ style:
     # todo probably a good idea to enable it
     DataClassShouldBeImmutable:
         active: false
+    # https://detekt.github.io/detekt/style.html#equalsnullcall
     EqualsNullCall:
-        active: false
+        active: true
     EqualsOnSignatureLine:
         active: false
     ExplicitCollectionElementAccessMethod:
