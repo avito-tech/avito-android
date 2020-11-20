@@ -593,6 +593,7 @@ style:
         active: false
         ignoreOverridden: false
         ignoreUsageInGenerics: false
+    # https://detekt.github.io/detekt/style.html#functiononlyreturningconstant
     FunctionOnlyReturningConstant:
         active: false
         ignoreOverridableFunction: true
