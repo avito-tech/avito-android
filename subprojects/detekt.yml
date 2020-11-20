@@ -535,11 +535,17 @@ style:
     # https://detekt.github.io/detekt/style.html#classordering
     ClassOrdering:
         active: true
+    # https://detekt.github.io/detekt/style.html#collapsibleifstatements
+    # questionable rule, no need for now
     CollapsibleIfStatements:
         active: false
+    # https://detekt.github.io/detekt/style.html#dataclasscontainsfunctions
+    # probably a good idea, but seems too strict
     DataClassContainsFunctions:
         active: false
         conversionFunctionPrefix: 'to'
+    # https://detekt.github.io/detekt/style.html#dataclassshouldbeimmutable
+    # todo probably a good idea to enable it
     DataClassShouldBeImmutable:
         active: false
     EqualsNullCall:
