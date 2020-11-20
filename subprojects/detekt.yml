@@ -158,10 +158,12 @@ empty-blocks:
     # https://detekt.github.io/detekt/empty-blocks.html#emptydowhileblock
     EmptyDoWhileBlock:
         active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptyelseblock
     EmptyElseBlock:
-        active: false
+        active: true
+    # https://detekt.github.io/detekt/empty-blocks.html#emptyfinallyblock
     EmptyFinallyBlock:
-        active: false
+        active: true
     EmptyForBlock:
         active: false
     EmptyFunctionBlock:
