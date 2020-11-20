@@ -313,7 +313,7 @@ formatting:
     SpacingAroundDot:
         active: true
     SpacingAroundDoubleColon:
-        active: false
+        active: true
     SpacingAroundKeyword:
         active: false
     SpacingAroundOperators:
