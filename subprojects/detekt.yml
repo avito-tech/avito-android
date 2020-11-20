@@ -276,8 +276,9 @@ formatting:
     # todo what is it?
     Filename:
         active: false
+    # DUPLICATE of style:NewLineAtEndOfFile
     FinalNewline:
-        active: true
+        active: false
         insertFinalNewLine: false
     ImportOrdering:
         active: true
@@ -647,8 +648,9 @@ style:
     # https://detekt.github.io/detekt/style.html#nestedclassesvisibility
     NestedClassesVisibility:
         active: true
+    # https://detekt.github.io/detekt/style.html#newlineatendoffile
     NewLineAtEndOfFile:
-        active: false
+        active: true
     NoTabs:
         active: false
     OptionalAbstractKeyword:
