@@ -73,6 +73,8 @@ repositories {
         filter {
             // all for detekt
             includeGroup("io.gitlab.arturbosch.detekt")
+            includeGroup("com.pinterest.ktlint")
+            includeGroup("org.ec4j.core")
             includeGroupByRegex("org.jetbrains.*")
             includeModule("com.beust", "jcommander")
             includeModule("org.yaml", "snakeyaml")
@@ -84,15 +86,23 @@ dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0-RC1")
 }
 
-allprojects {
+subprojects {
+
     repositories {
         jcenter()
         exclusiveContent {
             forRepository {
-                google()
+                maven {
+                    setUrl("https://kotlin.bintray.com/kotlinx")
+                }
             }
+            filter {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
+        exclusiveContent {
             forRepository {
-                mavenCentral()
+                google()
             }
             filter {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
@@ -102,9 +112,7 @@ allprojects {
             }
         }
     }
-}
 
-subprojects {
     group = "com.avito.android"
     version = finalProjectVersion
 
