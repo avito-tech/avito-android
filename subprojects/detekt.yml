@@ -323,9 +323,9 @@ formatting:
     NoUnitReturn:
         active: true
 
-    # https://ktlint.github.io/#rule-import
+    # DUPLICATE of style UnusedImports
     NoUnusedImports:
-        active: true
+        active: false
     # DUPLICATE of style WildcardImports
     NoWildcardImports:
         active: false
@@ -716,8 +716,9 @@ style:
         active: false
     UntilInsteadOfRangeTo:
         active: false
+    # https://detekt.github.io/detekt/style.html#unusedimports
     UnusedImports:
-        active: false
+        active: true
     UnusedPrivateClass:
         active: false
     UnusedPrivateMember:
