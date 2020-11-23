@@ -19,10 +19,9 @@ class ReportViewerQuery {
         val query = jsonObject()
 
         if (onlyFailures) {
-            query += "error" to 1
-            query += "fail" to 1
-            query += "other" to 1
+            query += "success" to 0
         }
+        query += "skip" to 0
 
         if (team != Team.UNDEFINED && team != Team("domofond")) {
             query += jsonObject("groups" to jsonArray(team.name))
