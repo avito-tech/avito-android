@@ -22,7 +22,7 @@ import org.hamcrest.Matchers.allOf
 
 interface InteractionContext : ActionsDriver, ChecksDriver {
 
-    fun provideChildContext(matcher: Matcher<View>): InteractionContext
+    fun provideChildContext(childMatcher: Matcher<View>): InteractionContext
 }
 
 class SimpleInteractionContext(
@@ -56,8 +56,8 @@ class SimpleInteractionContext(
         )
     }
 
-    override fun provideChildContext(matcher: Matcher<View>): InteractionContext =
-        SimpleInteractionContext(allOf(isDescendantOfA(this.matcher), matcher), precondition)
+    override fun provideChildContext(childMatcher: Matcher<View>): InteractionContext =
+        SimpleInteractionContext(allOf(isDescendantOfA(this.matcher), childMatcher), precondition)
 
     private fun runPrecondition() {
         if (!inPrecondition) {
@@ -70,8 +70,7 @@ class SimpleInteractionContext(
 
 class RecyclerViewInteractionContext(
     private val interactionContext: InteractionContext,
-    private val cellMatcher: Matcher<View>,
-    private val childMatcher: Matcher<View>,
+    private val matcher: Matcher<View>,
     private val position: Int?,
     private val needScroll: Boolean
 ) : InteractionContext {
@@ -80,8 +79,8 @@ class RecyclerViewInteractionContext(
         val groupedAction = GroupedViewAction(actions.toList())
 
         val actionOnItem = actionOnItem<RecyclerView.ViewHolder>(
-            itemViewMatcher = cellMatcher,
-            viewAction = performDescendantAction(childMatcher, groupedAction),
+            itemViewMatcher = matcher,
+            viewAction = performDescendantAction(matcher, groupedAction),
             position = position,
             needScroll = needScroll
         )
@@ -100,16 +99,16 @@ class RecyclerViewInteractionContext(
         if (assertion.isDoesntExistAssertion()) {
             interactionContext.perform(
                 itemDoesNotExists<RecyclerView.ViewHolder>(
-                    itemViewMatcher = cellMatcher,
-                    viewAction = checkDescendantViewAction(childMatcher, intercepted),
+                    itemViewMatcher = matcher,
+                    viewAction = checkDescendantViewAction(matcher, intercepted),
                     position = position
                 )
             )
         } else {
             interactionContext.perform(
                 actionOnItem<RecyclerView.ViewHolder>(
-                    itemViewMatcher = cellMatcher,
-                    viewAction = checkDescendantViewAction(childMatcher, intercepted),
+                    itemViewMatcher = matcher,
+                    viewAction = checkDescendantViewAction(matcher, intercepted),
                     position = position,
                     needScroll = needScroll
                 )
@@ -117,11 +116,10 @@ class RecyclerViewInteractionContext(
         }
     }
 
-    override fun provideChildContext(matcher: Matcher<View>): InteractionContext =
+    override fun provideChildContext(childMatcher: Matcher<View>): InteractionContext =
         RecyclerViewInteractionContext(
             interactionContext = interactionContext,
-            cellMatcher = cellMatcher,
-            childMatcher = allOf(isDescendantOfA(childMatcher), matcher),
+            matcher = allOf(isDescendantOfA(matcher), childMatcher),
             position = position,
             needScroll = needScroll
         )

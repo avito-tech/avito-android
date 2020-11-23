@@ -15,7 +15,6 @@ import androidx.test.espresso.action.SwipeDirections.RIGHT_TO_LEFT
 import androidx.test.espresso.action.SwipeDirections.TOP_TO_BOTTOM
 import androidx.test.espresso.action.Swiper
 import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import com.avito.android.test.InteractionContext
 import com.avito.android.test.RecyclerViewInteractionContext
 import com.avito.android.test.SimpleInteractionContext
@@ -43,7 +42,6 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.TypeSafeMatcher
-import org.hamcrest.core.AnyOf.anyOf
 
 open class ListElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
@@ -68,8 +66,7 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             .newInstance(
                 RecyclerViewInteractionContext(
                     interactionContext = interactionContext,
-                    cellMatcher = anyOf(hasDescendant(matcher), matcher),
-                    childMatcher = matcher,
+                    matcher = matcher,
                     position = position,
                     needScroll = needScroll
                 )

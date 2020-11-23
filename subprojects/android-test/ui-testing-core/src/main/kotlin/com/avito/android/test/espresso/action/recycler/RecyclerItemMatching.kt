@@ -5,6 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.intent.Checks.checkArgument
 import androidx.test.espresso.util.HumanReadables
+import com.avito.android.test.matcher.DescendantViewMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
@@ -236,17 +237,20 @@ internal class RecyclerItemsMatcher(
     }
 }
 
-fun <VH : RecyclerView.ViewHolder> viewHolderMatcher(itemViewMatcher: Matcher<View>) =
-    object : TypeSafeMatcher<VH>() {
-        override fun matchesSafely(viewHolder: VH): Boolean {
-            return itemViewMatcher.matches(viewHolder.itemView)
-        }
+fun <VH : RecyclerView.ViewHolder> viewHolderMatcher(
+    itemViewMatcher: Matcher<View>
+) = object : TypeSafeMatcher<VH>() {
+    private val matcher = DescendantViewMatcher(itemViewMatcher)
 
-        override fun describeTo(description: Description) {
-            description.appendText("holder with view: ")
-            itemViewMatcher.describeTo(description)
-        }
+    override fun matchesSafely(viewHolder: VH): Boolean {
+        return matcher.matches(viewHolder.itemView)
     }
+
+    override fun describeTo(description: Description) {
+        description.appendText("holder with view: ")
+        description.appendDescriptionOf(matcher)
+    }
+}
 
 internal class MatchedItem(
     val position: Int,
