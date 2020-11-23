@@ -6,6 +6,8 @@ We publish releases to [Bintray](https://bintray.com/avito-tech/maven/avito-andr
 
 ## Publishing a new release
 
+1. Check if [diff against the last release](https://github.com/avito-tech/avito-android/compare/2020.%3CSELECT_HERE_THE_LAST_RELEASE%3E...develop) contains any changes for users.
+If not, then probably there are no reasons to make a release.
 1. Check current status of [Infra Gradle plugins configuration compatibility with Avito](http://links.k.avito.ru/80).\
 If it is `Failed` you could release from previous `Succeed` commits or fix compatibility problems.
 1. Check current status of [Nightly Avito integration build](http://links.k.avito.ru/gZ).\
