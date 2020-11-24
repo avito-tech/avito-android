@@ -175,8 +175,9 @@ avito.build-checks.enabled=false
 ### Java version
 
 The Java version can influence the output of the Java compiler. 
-It leads to Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss).\
-This check forces the same version for all builds.
+It leads to Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss) 
+due to [Java version tracking](https://docs.gradle.org/nightly/userguide/common_caching_problems.html#java_version_tracking).\
+This check forces the same major version for all builds.
 
 {{< tabs "Java version" >}}
 {{< tab "Kotlin" >}}
