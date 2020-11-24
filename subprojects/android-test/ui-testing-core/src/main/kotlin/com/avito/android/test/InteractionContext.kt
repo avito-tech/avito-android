@@ -86,11 +86,6 @@ class RecyclerViewInteractionContext(
             needScroll = needScroll
         )
 
-        ActionInterceptor.Proxy(
-            source = actionOnItem,
-            interceptors = UITestConfig.actionInterceptors
-        )
-
         interactionContext.perform(actionOnItem)
     }
 
