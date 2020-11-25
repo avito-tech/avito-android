@@ -95,7 +95,7 @@ clear_k8s_deployments_by_namespaces:
 clear_k8s_deployments_by_names:
 	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
 
-record_sreenshots:
+record_screenshots:
 	./gradlew samples:test-app-screenshot-test:clearScreenshots
 	./gradlew samples:test-app-screenshot-test:connectedAndroidTest \
         -Pandroid.testInstrumentationRunnerArguments.annotation=com.avito.android.test.annotations.ScreenshotTest \
