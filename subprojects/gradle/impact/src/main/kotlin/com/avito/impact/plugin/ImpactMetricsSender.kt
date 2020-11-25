@@ -22,7 +22,7 @@ class ImpactMetricsSender(
 
     private val prefix by lazy {
         val envName = environmentInfo.environment.publicName
-        val node = environmentInfo.node?.take(32) ?: "_"
+        val node = environmentInfo.node?.take(GRAPHITE_SERIES_LIMIT) ?: "_"
         val buildId = requireNotNull(environmentInfo.teamcityBuildId()) {
             "ImpactMetricsSender should run only if teamcityBuildInfo available"
         }
@@ -46,3 +46,8 @@ class ImpactMetricsSender(
         )
     }
 }
+
+/**
+ * todo check if this is a real reason
+ */
+private const val GRAPHITE_SERIES_LIMIT = 32
