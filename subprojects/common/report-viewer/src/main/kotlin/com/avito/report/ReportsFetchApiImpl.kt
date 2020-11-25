@@ -23,7 +23,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
 import com.avito.report.model.TestName
-import com.google.gson.Gson
 import org.funktionale.tries.Try
 
 /**
@@ -31,7 +30,6 @@ import org.funktionale.tries.Try
  */
 internal class ReportsFetchApiImpl(
     private val requestProvider: JsonRpcRequestProvider,
-    private val gson: Gson,
     private val logger: Logger
 ) : ReportsFetchApi {
 
