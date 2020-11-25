@@ -41,15 +41,16 @@ class ImpactAnalysisPlugin : Plugin<Project> {
         }
 
         rootProject.tasks.register<GenerateModulesReport>("generateModulesReport") {
-            group = "impact-analysis"
+            group = tasksGroup
             description = "Print modified projects to files. For testing purposes only"
         }
 
-        rootProject.tasks.register<ImpactReportTask>("impactReport") {
-            group = "impact-analysis"
-            description = "Print impact report"
+        rootProject.tasks.register<ImpactMetricsTask>("impactMetrics") {
+            group = tasksGroup
+            description = "Sends impact analysis metrics to graphite"
         }
     }
 }
 
+private const val tasksGroup = "impact-analysis"
 private const val pluginName = "ImpactAnalysisPlugin"

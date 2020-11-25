@@ -6,7 +6,7 @@ import com.avito.impact.ModifiedProjectsFinder
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-abstract class ImpactReportTask : DefaultTask() {
+abstract class ImpactMetricsTask : DefaultTask() {
 
     @TaskAction
     fun doWork() {
