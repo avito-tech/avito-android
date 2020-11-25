@@ -11,21 +11,6 @@ import java.io.File
 
 interface RemoteStorage {
 
-    companion object {
-
-        fun create(
-            endpoint: String,
-            logger: Logger,
-            timeSource: TimeProvider = DefaultTimeProvider(),
-            httpClient: OkHttpClient
-        ): RemoteStorage = HttpRemoteStorage(
-            endpoint = requireNotNull(endpoint.toHttpUrl()),
-            httpClient = httpClient,
-            logger = logger,
-            timeSource = timeSource
-        )
-    }
-
     fun upload(
         uploadRequest: Request,
         comment: String,
@@ -68,5 +53,20 @@ interface RemoteStorage {
         data class Error(
             val t: Throwable
         ) : Result()
+    }
+
+    companion object {
+
+        fun create(
+            endpoint: String,
+            logger: Logger,
+            timeSource: TimeProvider = DefaultTimeProvider(),
+            httpClient: OkHttpClient
+        ): RemoteStorage = HttpRemoteStorage(
+            endpoint = requireNotNull(endpoint.toHttpUrl()),
+            httpClient = httpClient,
+            logger = logger,
+            timeSource = timeSource
+        )
     }
 }

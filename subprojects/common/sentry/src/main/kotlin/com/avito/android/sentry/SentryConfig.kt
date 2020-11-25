@@ -8,10 +8,10 @@ import java.io.Serializable
 
 fun sentryClient(config: SentryConfig): SentryClient {
     return when (config) {
-        is SentryConfig.Disabled -> {
+        is SentryConfig.Disabled ->
             SentryClient(NoopConnection(), ThreadLocalContextManager())
-        }
-        is SentryConfig.Enabled -> {
+
+        is SentryConfig.Enabled ->
             SentryClientFactory.sentryClient(config.dsn).apply {
                 environment = config.environment
                 serverName = config.serverName
@@ -20,7 +20,6 @@ fun sentryClient(config: SentryConfig): SentryClient {
                     addTag(key, value)
                 }
             }
-        }
     }
 }
 

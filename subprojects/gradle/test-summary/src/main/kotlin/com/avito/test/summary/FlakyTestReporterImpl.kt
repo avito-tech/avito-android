@@ -58,7 +58,7 @@ internal class FlakyTestReporterImpl(
             SlackSendMessageRequest(
                 channel = channel,
                 text =
-"""<$buildUrl|Билд на ветке $currentBranch> шел дольше чем нужно, и виноваты эти тесты:
+                """<$buildUrl|Билд на ветке $currentBranch> шел дольше чем нужно, и виноваты эти тесты:
 ```
 ${badTests.stringify()}
 ```
@@ -75,12 +75,15 @@ ${badTests.stringify()}
 
     private fun List<FlakyInfo>.stringify(): String = joinToString(
         separator = "\n",
-        transform = { "${it.testName} пришлось запустить ${it.attempts} раз; занял суммарно ${formatTime(it.wastedTimeEstimateInSec)}" }
+        transform = {
+            "${it.testName} пришлось запустить ${it.attempts} раз; " +
+                "занял суммарно ${formatTime(it.wastedTimeEstimateInSec)}"
+        }
     )
 
     private fun determineBadTests(info: List<FlakyInfo>): List<FlakyInfo> {
         return info
-            .filter { (it.attempts > 2 && it.wastedTimeEstimateInSec > 240) || it.attempts > 5 }
+            .filter { it.attempts > 2 && it.wastedTimeEstimateInSec > 240 || it.attempts > 5 }
             .sortedByDescending { it.wastedTimeEstimateInSec }
             .take(10)
     }

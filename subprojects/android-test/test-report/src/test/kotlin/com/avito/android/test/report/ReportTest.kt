@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.concurrent.TimeUnit
 
+@Suppress("MaxLineLength")
 class ReportTest {
 
     private val timeMachine = TimeMachineProvider()

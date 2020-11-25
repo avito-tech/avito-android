@@ -48,13 +48,12 @@ class RatingBarChecksImpl(
         driver.check(
             ViewAssertion { view, _ ->
                 when (view) {
-                    is RatingBar -> {
+                    is RatingBar ->
                         if (view.rating != rating) {
                             throw AssertionFailedError(
                                 "Current rating is: ${view.rating}. Checked is $rating"
                             )
                         }
-                    }
                     else -> throw AssertionFailedError("Matched view with is not RatingBar")
                 }
             }

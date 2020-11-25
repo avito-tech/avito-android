@@ -31,6 +31,7 @@ internal fun generateProjectWithImpactAnalysis(rootDir: File) {
     ).generateIn(rootDir)
 }
 
+@Suppress("MaxLineLength")
 private fun appModule(name: String, dependencies: String) = AndroidAppModule(
     name = name,
     dependencies = dependencies,

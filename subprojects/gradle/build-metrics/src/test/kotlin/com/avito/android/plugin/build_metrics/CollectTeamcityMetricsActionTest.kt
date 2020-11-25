@@ -20,6 +20,8 @@ import java.time.ZonedDateTime
 @Suppress("UnstableApiUsage")
 class CollectTeamcityMetricsActionTest {
 
+    private val buildId = "BUILD_ID"
+
     @Test
     fun `send build metric`() {
         val teamcity: TeamcityApi = mock()
@@ -53,6 +55,4 @@ class CollectTeamcityMetricsActionTest {
         assertThat(metric.value).isEqualTo("90")
         assertThat(metric.timestamp).isEqualTo(0)
     }
-
-    private val buildId = "BUILD_ID"
 }

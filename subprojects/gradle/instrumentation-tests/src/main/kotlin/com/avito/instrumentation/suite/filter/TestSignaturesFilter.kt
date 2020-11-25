@@ -2,9 +2,8 @@ package com.avito.instrumentation.suite.filter
 
 internal fun TestsFilter.Test.matched(signatures: Set<TestsFilter.Signatures.TestSignature>): Boolean {
     return signatures.any { signature ->
-        name.startsWith(signature.name) && (signature.deviceName?.equals(
-            deviceName.name
-        ) ?: true)
+        name.startsWith(signature.name)
+            && signature.deviceName?.equals(deviceName.name) ?: true
     }
 }
 

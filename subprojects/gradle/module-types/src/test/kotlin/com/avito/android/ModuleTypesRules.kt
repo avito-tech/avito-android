@@ -54,21 +54,30 @@ class ModuleTypesRules {
                             AndroidLibModule(
                                 "feature",
                                 plugins = listOf("com.avito.android.module-types"),
-                                dependencies = "${case.dependentModuleDependencyType.configuration} project(':dependent_test_module')",
-                                buildGradleExtra = if (case.featureModuleType != IMPLEMENTATION) """
-                                module {
-                                    type com.avito.android.ModuleType.${case.featureModuleType.name}
+                                dependencies = "${case.dependentModuleDependencyType.configuration} " +
+                                    "project(':dependent_test_module')",
+                                buildGradleExtra = if (case.featureModuleType != IMPLEMENTATION) {
+                                    """
+                                    module {
+                                        type com.avito.android.ModuleType.${case.featureModuleType.name}
+                                    }
+                                    """.trimIndent()
+                                } else {
+                                    ""
                                 }
-                                """.trimIndent() else ""
                             ),
                             AndroidLibModule(
                                 "dependent_test_module",
                                 plugins = listOf("com.avito.android.module-types"),
-                                buildGradleExtra = if (case.dependentModuleType != IMPLEMENTATION) """
-                                module {
-                                    type com.avito.android.ModuleType.${case.dependentModuleType.name}
+                                buildGradleExtra = if (case.dependentModuleType != IMPLEMENTATION) {
+                                    """
+                                    module {
+                                        type com.avito.android.ModuleType.${case.dependentModuleType.name}
+                                    }
+                                    """.trimIndent()
+                                } else {
+                                    ""
                                 }
-                                """.trimIndent() else ""
                             )
                         )
                     ).generateIn(projectDir)
@@ -96,7 +105,8 @@ class ModuleTypesRules {
                             ).assertThat()
                                 .buildFailed(
                                     "'${case.dependentModuleDependencyType.configuration}' configuration " +
-                                        "contains the following ${case.dependentModuleDependencyType.errorSlug} dependencies: :dependent_test_module"
+                                        "contains the following ${case.dependentModuleDependencyType.errorSlug} " +
+                                        "dependencies: :dependent_test_module"
                                 )
                         }
                     }

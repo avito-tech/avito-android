@@ -19,10 +19,11 @@ val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope = ROOT_
         StatsDSender.Impl(
             config = config(project),
             logger = { message, error ->
-                if (error != null) logger.info(
-                    message,
-                    error
-                ) else logger.debug(message)
+                if (error != null) {
+                    logger.info(message, error)
+                } else {
+                    logger.debug(message)
+                }
             }
         )
     )

@@ -168,6 +168,7 @@ class InstrumentationParamsBuildingTest {
         }
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `plugin instrumentation params has entries from android plugin configuration and environment override by root plugin configuration`() {
         val result = runGradle(
@@ -201,6 +202,7 @@ class InstrumentationParamsBuildingTest {
             )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `functional configuration instrumentation params has entries from plugin configuration override by functional configuration`() {
         val result = runGradle(
@@ -232,6 +234,7 @@ class InstrumentationParamsBuildingTest {
             )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `target configuration instrumentation params has entries from instrumentation configuration override by target configuration`() {
         val result = runGradle(

@@ -31,8 +31,6 @@ open class BuildStepListExtension(
 
     private val artifactsConfig = ArtifactsConfiguration()
 
-    override fun getName() = buildStepListName
-
     internal val steps = objects.polymorphicDomainObjectContainer(BuildStep::class.java).apply {
         registerFactory(ConfigurationCheck::class.java) { name ->
             ConfigurationCheck(buildStepListName, name)
@@ -82,6 +80,8 @@ open class BuildStepListExtension(
     var useImpactAnalysis: Boolean = true
 
     val taskDescription = objects.property<String>()
+
+    override fun getName() = buildStepListName
 
     fun configuration(closure: Closure<ConfigurationCheck>) {
         configureAndAdd("configuration", closure)

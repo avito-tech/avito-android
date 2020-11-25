@@ -152,6 +152,7 @@ class TestSuiteLoaderTest {
         )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `load test suite - returns test cases with class annotation - multiple methods in class with custom annotation`() {
         givenClasses(
@@ -236,6 +237,7 @@ class TestSuiteLoaderTest {
         )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `load tests - returns test case - class with annotation and include annotation filter contains this + other annotation`() {
         givenClasses(

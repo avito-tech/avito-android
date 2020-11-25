@@ -17,7 +17,7 @@ class HintMatcher(val hint: String) : TypeSafeMatcher<View>() {
         when (view) {
             is EditText -> {
                 val textInputLayout = view.findParentTextInputLayoutRecursively()
-                (view.hint == hint) || (textInputLayout?.hint == hint)
+                view.hint == hint || textInputLayout?.hint == hint
             }
             is TextView -> view.hint == hint
             else -> false
@@ -29,5 +29,5 @@ class HintMatcher(val hint: String) : TypeSafeMatcher<View>() {
 private fun View.findParentTextInputLayoutRecursively(): TextInputLayout? {
     val view = this.parent as? View
     val textInput = view ?: return null
-    return (textInput as? TextInputLayout ?: textInput.findParentTextInputLayoutRecursively())
+    return textInput as? TextInputLayout ?: textInput.findParentTextInputLayoutRecursively()
 }

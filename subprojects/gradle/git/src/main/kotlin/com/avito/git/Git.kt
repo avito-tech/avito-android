@@ -66,7 +66,7 @@ interface Git {
         }
 
         private fun git(command: String): Try<String> {
-            val calledFrom = Thread.currentThread().stackTrace[3]
+            val calledFrom = Thread.currentThread().stackTrace[CALLER_STACK_TRACE_DEPTH]
             logger("GIT running: git $command (${calledFrom.fileName}:${calledFrom.lineNumber})")
 
             return runCommand(
@@ -82,3 +82,5 @@ interface Git {
         private fun escapeGitMessage(message: String) = message.replace("\\s+".toRegex()) { "_" }
     }
 }
+
+private const val CALLER_STACK_TRACE_DEPTH = 3

@@ -34,6 +34,10 @@ class SignViaServiceActionTest {
             CILogger.allToStdout
         )
 
+    private val failedResponse = MockResponse().setResponseCode(500)
+
+    private val successResponse = MockResponse().setResponseCode(200)
+
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         testProjectDir = tempPath.toFile()
@@ -44,9 +48,6 @@ class SignViaServiceActionTest {
     fun tearDown() {
         server.shutdown()
     }
-
-    private val failedResponse = MockResponse().setResponseCode(500)
-    private val successResponse = MockResponse().setResponseCode(200)
 
     @Test
     fun `action failed - when http request failed all attempts`() {

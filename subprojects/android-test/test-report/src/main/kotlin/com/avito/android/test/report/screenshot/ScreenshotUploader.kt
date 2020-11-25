@@ -18,7 +18,8 @@ interface ScreenshotUploader {
 
         override fun makeAndUploadScreenshot(comment: String): FutureValue<RemoteStorage.Result>? {
 
-            // используем файл а не inputStream, потому что okhttp может понадобиться несколько раз отправить файл (retry)
+            // используем файл а не inputStream,
+            // потому что okhttp может понадобиться несколько раз отправить файл (retry)
             return screenshotCapturer.captureAsFile().fold(
                 { optionalScreenshot ->
                     optionalScreenshot.fold(

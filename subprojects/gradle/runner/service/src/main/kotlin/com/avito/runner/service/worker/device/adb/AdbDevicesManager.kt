@@ -52,7 +52,7 @@ class AdbDevicesManager(
                 }
             }
             .retry { retryCount, exception ->
-                val shouldRetry = retryCount < 5 && exception is IllegalStateException
+                val shouldRetry = retryCount < ADB_RETRY_COUNT && exception is IllegalStateException
                 if (shouldRetry) {
                     logger.debug("runningEmulators: retrying $exception.")
                 }
@@ -62,3 +62,5 @@ class AdbDevicesManager(
             .toSingle()
     }
 }
+
+private const val ADB_RETRY_COUNT = 5

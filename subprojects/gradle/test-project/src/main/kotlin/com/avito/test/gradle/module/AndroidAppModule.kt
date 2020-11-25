@@ -103,7 +103,8 @@ android {
         }
     }
     ${
-                        if (enableKotlinAndroidPlugin || enableKapt) """
+                        if (enableKotlinAndroidPlugin || enableKapt) {
+                            """
         sourceSets {
         main {
             java.srcDir("src/main/kotlin")
@@ -115,7 +116,10 @@ android {
             java.srcDir("src/androidTest/kotlin")
         }
     }
-    """.trimIndent() else ""
+    """.trimIndent()
+                        } else {
+                            ""
+                        }
                     }
 }
 
@@ -129,10 +133,14 @@ dependencies {
     androidTestImplementation("junit:junit:4.13")
     testImplementation("junit:junit:4.13")
     ${
-                        if (enableKapt) """
-    implementation("com.google.dagger:dagger:2.29.1")
-    kapt("com.google.dagger:dagger-compiler:2.29.1")
-    """.trimIndent() else ""
+                        if (enableKapt) {
+                            """
+                            implementation("com.google.dagger:dagger:2.29.1")
+                            kapt("com.google.dagger:dagger-compiler:2.29.1")
+                            """.trimIndent()
+                        } else {
+                            ""
+                        }
                     }
 }
 

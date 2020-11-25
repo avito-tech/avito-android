@@ -1,6 +1,6 @@
 package com.avito.report.model
 
-sealed class Stability() {
+sealed class Stability {
 
     abstract val attemptsCount: Int
     abstract val successCount: Int

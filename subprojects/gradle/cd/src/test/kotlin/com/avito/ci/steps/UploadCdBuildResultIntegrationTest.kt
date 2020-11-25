@@ -39,6 +39,20 @@ class UploadCdBuildResultIntegrationTest {
     private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
         .also { dispatcher -> server.dispatcher = dispatcher }
 
+    private val runGetParamsResponse =
+        """
+            {
+                "result": {
+                    "id": "$reportId",
+                    "planSlug": "AvitoAndroid",
+                    "jobSlug": "$uiTestConfigurationName",
+                    "runId": "xxx",
+                    "isFinished": true
+                }
+            }
+        """.trimIndent()
+
+    @Suppress("MaxLineLength")
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         projectDir = tempPath.toFile()
@@ -57,29 +71,29 @@ class UploadCdBuildResultIntegrationTest {
                 "com.avito.android.cd"
             ),
             customScript = """
-                            import com.avito.cd.BuildVariant
-                            ${registerUiTestConfigurations("regress")}
-                            signService {
-                                bundle(android.buildTypes.release, "no_matter")
-                                host("https://signer/")
-                            }
-                            builds {
-                                release {
-                                    uiTests { configurations "$uiTestConfigurationName" }
+                        import com.avito.cd.BuildVariant
+                        ${registerUiTestConfigurations("regress")}
+                        signService {
+                            bundle(android.buildTypes.release, "no_matter")
+                            host("https://signer/")
+                        }
+                        builds {
+                            release {
+                                uiTests { configurations "$uiTestConfigurationName" }
 
-                                    artifacts {
-                                        apk("releaseApk", BuildVariant.RELEASE, "com.app", "${'$'}{project.buildDir}/outputs/apk/release/app-release-unsigned.apk") {}
-                                        mapping("releaseMapping", BuildVariant.RELEASE, "${'$'}{project.buildDir}/reports/mapping.txt")
-                                    }
+                                artifacts {
+                                    apk("releaseApk", BuildVariant.RELEASE, "com.app", "${'$'}{project.buildDir}/outputs/apk/release/app-release-unsigned.apk") {}
+                                    mapping("releaseMapping", BuildVariant.RELEASE, "${'$'}{project.buildDir}/reports/mapping.txt")
+                                }
 
-                                    uploadToArtifactory {
-                                        artifacts = ['releaseApk']
-                                    }
-                                    uploadBuildResult {
-                                        uiTestConfiguration = "$uiTestConfigurationName"
-                                    }
+                                uploadToArtifactory {
+                                    artifacts = ['releaseApk']
+                                }
+                                uploadBuildResult {
+                                    uiTestConfiguration = "$uiTestConfigurationName"
                                 }
                             }
+                        }
                         """.trimIndent()
         )
 
@@ -151,7 +165,8 @@ class RealTest {
             CdBuildResult.Artifact.AndroidBinary(
                 "apk",
                 "$nupokatiProject-11-12-100-releaseApk.apk",
-                "$mockUrl/apps-release-local/app-android/$nupokatiProject/11-12-100/$nupokatiProject-11-12-100-releaseApk.apk",
+                "$mockUrl/apps-release-local/app-android/" +
+                    "$nupokatiProject/11-12-100/$nupokatiProject-11-12-100-releaseApk.apk",
                 BuildVariant.RELEASE
             )
         )
@@ -261,19 +276,6 @@ class RealTest {
             .buildSuccessful()
             .taskWithOutcome(":app:$uploadCdBuildResultTaskName", TaskOutcome.SKIPPED)
     }
-
-    private val runGetParamsResponse =
-        """
-            {
-                "result": {
-                    "id": "$reportId",
-                    "planSlug": "AvitoAndroid",
-                    "jobSlug": "$uiTestConfigurationName",
-                    "runId": "xxx",
-                    "isFinished": true
-                }
-            }
-        """.trimIndent()
 
     private fun mockFileStorageApi() {
         dispatcher.registerMock(

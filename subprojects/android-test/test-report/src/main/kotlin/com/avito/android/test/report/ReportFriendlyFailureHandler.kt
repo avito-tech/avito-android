@@ -62,12 +62,11 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
                         "AsyncTask is still running in background. Thread dump:\n$threadDump"
                     )
                 }
-                e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } -> {
+                e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } ->
                     throw createExceptionWithPrivateStringConstructor<AppNotIdleException>(
                         "Main thread is busy. " +
                             "The probable cause is in animations."
                     )
-                }
                 // Handle expected errors from UITestConfig.waiterAllowedExceptions
                 // TODO: make this contract explicit
                 e is PerformException -> {
@@ -84,21 +83,11 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
                         .withCause(e)
                         .build()
                 }
-                e is AssertionFailedError -> {
-                    throw AssertionFailedError(e.normalizedMessage())
-                }
-                e is NoMatchingRootException -> {
-                    throw e.toNormalizedException()
-                }
-                e is NoMatchingViewException -> {
-                    throw e.toNormalizedException()
-                }
-                e is EspressoException -> {
-                    throw e
-                }
-                else -> {
-                    throw e
-                }
+                e is AssertionFailedError -> throw AssertionFailedError(e.normalizedMessage())
+                e is NoMatchingRootException -> throw e.toNormalizedException()
+                e is NoMatchingViewException -> throw e.toNormalizedException()
+                e is EspressoException -> throw e
+                else -> throw e
             }
         }
     }

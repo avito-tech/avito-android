@@ -351,8 +351,10 @@ fun Project.configureBintray(vararg publications: String) {
         publish = true
         // You can use override for inconsistently uploaded artifacts
         // Examples of issues:
-        // - NoHttpResponseException: api.bintray.com:443 failed to respond (https://github.com/bintray/gradle-bintray-plugin/issues/325)
-        // - Could not upload to 'https://api.bintray.com/...': HTTP/1.1 405 Not Allowed 405 Not Allowed405 Not Allowednginx
+        // - NoHttpResponseException: api.bintray.com:443 failed to respond
+        //   (https://github.com/bintray/gradle-bintray-plugin/issues/325)
+        // - Could not upload to 'https://api.bintray.com/...':
+        //   HTTP/1.1 405 Not Allowed 405 Not Allowed405 Not Allowednginx
         override = false
         pkg(
             closureOf<PackageConfig> {

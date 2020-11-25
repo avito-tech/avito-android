@@ -62,7 +62,7 @@ object AvitoPositionAssertions {
         assertThat(
             failDescription.toString(),
             abs(location1.absoluteLocation - location2.absoluteLocation)
-                    < PIXEL_COMPARISON_TOLERANCE,
+                < PIXEL_COMPARISON_TOLERANCE,
             equalTo(true)
         )
     }
@@ -76,10 +76,6 @@ object AvitoPositionAssertions {
         private val view: View,
         override val description: String = "vertical center"
     ) : ScreenLocation {
-        constructor(viewMatcher: Matcher<View>, root: View?) : this(
-            findView(viewMatcher, root),
-            "vertical center of $viewMatcher"
-        )
 
         override val absoluteLocation: Int
             get() {
@@ -87,16 +83,17 @@ object AvitoPositionAssertions {
                 view.getLocationOnScreen(location)
                 return location[1] + view.height / 2
             }
+
+        constructor(viewMatcher: Matcher<View>, root: View?) : this(
+            findView(viewMatcher, root),
+            "vertical center of $viewMatcher"
+        )
     }
 
     private class Bottom(
         private val view: View,
         override val description: String = "bottom"
     ) : ScreenLocation {
-        constructor(viewMatcher: Matcher<View>, root: View?) : this(
-            findView(viewMatcher, root),
-            "bottom of $viewMatcher"
-        )
 
         override val absoluteLocation: Int
             get() {
@@ -104,6 +101,11 @@ object AvitoPositionAssertions {
                 view.getLocationOnScreen(location)
                 return location[1] + view.height
             }
+
+        constructor(viewMatcher: Matcher<View>, root: View?) : this(
+            findView(viewMatcher, root),
+            "bottom of $viewMatcher"
+        )
     }
 
     private fun getTopViewGroup(view: View): ViewGroup? {

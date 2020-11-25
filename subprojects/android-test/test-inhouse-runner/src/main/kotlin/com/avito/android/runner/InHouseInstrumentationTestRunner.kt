@@ -91,7 +91,7 @@ abstract class InHouseInstrumentationTestRunner :
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
         val transport: List<Transport> = when {
-            isLocalRun -> {
+            isLocalRun ->
                 if (runEnvironment.reportConfig != null) {
                     listOf(
                         LocalRunTransport(
@@ -111,7 +111,6 @@ abstract class InHouseInstrumentationTestRunner :
                 } else {
                     emptyList()
                 }
-            }
             else -> {
                 val gson: Gson = GsonBuilder()
                     .registerTypeAdapterFactory(EntryTypeAdapterFactory())
@@ -166,9 +165,9 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val reportHttpClient: OkHttpClient by lazy { createReportHttpClient() }
 
-    abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
-
     protected abstract val metadataToBundleInjector: TestMetadataInjector
+
+    abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
 
     private fun injectTestMetadata(arguments: Bundle) {
         val isRealRun = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
@@ -252,6 +251,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     @CallSuper
+    @Suppress("MagicNumber")
     open fun initUITestConfig() {
         with(UITestConfig) {
             waiterTimeoutMs = TimeUnit.SECONDS.toMillis(12)

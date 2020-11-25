@@ -67,7 +67,8 @@ sealed class ReportState {
             private data class Counted<T>(val t: T, var count: Int = 1)
 
             /**
-             * сворачивает встречающиеся подряд одинаковые entry в один, проставляя им в начало лейбла кол-во свернутых элементов
+             * сворачивает встречающиеся подряд одинаковые entry в один,
+             * проставляя им в начало лейбла кол-во свернутых элементов
              */
             @Suppress("UNCHECKED_CAST")
             private inline fun <reified T : Entry> List<T>.distinctCounted(): List<T> =

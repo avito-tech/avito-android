@@ -20,6 +20,7 @@ class ModuleTypesPluginTest {
         projectDir = tempPath.toFile()
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `android application - having library dependencies in implementation configuration in library module - has checkProjectDependenciesTypeTask scheduled`() {
         TestProjectGenerator(

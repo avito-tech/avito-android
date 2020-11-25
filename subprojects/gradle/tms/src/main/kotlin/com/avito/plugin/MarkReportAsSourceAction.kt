@@ -25,8 +25,7 @@ class MarkReportAsSourceAction(
         val testSuiteVersion = timeProvider.nowInMillis()
 
         when (val result = reportsApi.getReport(reportCoordinates)) {
-            is GetReportResult.Found -> {
-
+            is GetReportResult.Found ->
                 reportsApi.pushPreparedData(
                     reportId = result.report.id,
                     analyzerKey = "test_suite",
@@ -40,7 +39,8 @@ class MarkReportAsSourceAction(
                             {
                                 logger.info(
                                     "[$tag] Test suite for tms version $testSuiteVersion, " +
-                                        "with id: ${result.report.id}, coordinates: $reportCoordinates marked as source of truth for tms"
+                                        "with id: ${result.report.id}, " +
+                                        "coordinates: $reportCoordinates marked as source of truth for tms"
                                 )
                             },
                             { error ->
@@ -52,16 +52,13 @@ class MarkReportAsSourceAction(
                         logger.critical("[$tag] Can't push prepared data: testSuite info", error)
                     }
                 )
-            }
-            GetReportResult.NotFound -> {
+            GetReportResult.NotFound ->
                 logger.critical(
                     "[$tag] Can't get reportId for coordinates: $reportCoordinates",
                     IllegalStateException("stub")
                 )
-            }
-            is GetReportResult.Error -> {
+            is GetReportResult.Error ->
                 logger.critical("[$tag] Can't find report for runId=${reportCoordinates.runId}", result.exception)
-            }
         }
     }
 }

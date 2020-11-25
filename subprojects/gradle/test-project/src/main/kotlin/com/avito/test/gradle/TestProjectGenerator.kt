@@ -45,13 +45,6 @@ class TestProjectGenerator(
     val androidHome: String? = null
 ) : Module {
 
-    companion object {
-        const val appA = "appA"
-        const val appB = "appB"
-        const val sharedModule = "shared"
-        const val independentModule = "independent"
-    }
-
     override fun generateIn(file: File) {
         with(file) {
             modules.forEach { it.generateIn(file) }
@@ -133,6 +126,13 @@ buildCache {
             git("init --quiet")
             commit("initial_state")
         }
+    }
+
+    companion object {
+        const val appA = "appA"
+        const val appB = "appB"
+        const val sharedModule = "shared"
+        const val independentModule = "independent"
     }
 }
 

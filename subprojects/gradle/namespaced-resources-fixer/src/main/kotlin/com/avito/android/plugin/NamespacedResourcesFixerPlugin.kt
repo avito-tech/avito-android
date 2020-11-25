@@ -15,8 +15,8 @@ import org.gradle.api.tasks.TaskProvider
  * This is a proof of concept. It will be deleted or replaced by an IDE plugin later.
  *
  * Usage:
- * ./gradlew fixNamespacedResources --Pavito.fixNamespacedResources.filesPrefix=avito/src/androidTest/kotlin/com/avito/android/ScreenElement.kt
- *
+ * ./gradlew fixNamespacedResources
+ * --Pavito.fixNamespacedResources.filesPrefix=avito/src/androidTest/kotlin/com/avito/android/ScreenElement.kt
  */
 open class NamespacedResourcesFixerPlugin : Plugin<Project> {
 

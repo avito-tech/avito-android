@@ -24,6 +24,6 @@ class RecyclerViewVerticalOffsetAction : ViewAction {
         ViewMatchers.isAssignableFrom(RecyclerView::class.java)
 
     override fun perform(uiController: UiController, view: View) {
-        result = ((view as RecyclerView).computeVerticalScrollOffset())
+        result = (view as RecyclerView).computeVerticalScrollOffset()
     }
 }

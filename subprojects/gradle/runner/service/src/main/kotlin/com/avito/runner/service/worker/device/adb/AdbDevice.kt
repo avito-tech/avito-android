@@ -36,6 +36,9 @@ data class AdbDevice(
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
 ) : Device {
 
+    // MBS-8531: don't use ADB here to avoid possible recursion
+    private val tag: String = "[${coordinate.serial}]"
+
     override val api: Int by lazy {
         retry(
             retriesCount = 5,
@@ -109,48 +112,42 @@ data class AdbDevice(
         )
             .map {
                 when (it) {
-                    is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
-                        DeviceTestCaseRun(
-                            testCaseRun = TestCaseRun(
-                                test = TestCase(
-                                    className = it.className,
-                                    methodName = it.name,
-                                    deviceName = action.test.deviceName
-                                ),
-                                result = it.result,
-                                timestampStartedMilliseconds = it.timestampStartedMilliseconds,
-                                timestampCompletedMilliseconds = it.timestampCompletedMilliseconds
+                    is InstrumentationTestCaseRun.CompletedTestCaseRun -> DeviceTestCaseRun(
+                        testCaseRun = TestCaseRun(
+                            test = TestCase(
+                                className = it.className,
+                                methodName = it.name,
+                                deviceName = action.test.deviceName
                             ),
-                            device = this.getData()
-                        )
-                    }
-                    is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
-                        DeviceTestCaseRun(
-                            testCaseRun = TestCaseRun(
-                                test = action.test,
-                                result = TestCaseRun.Result.Failed.InfrastructureError(
-                                    errorMessage = "Failed on start test case: ${it.message}"
-                                ),
-                                timestampStartedMilliseconds = System.currentTimeMillis(),
-                                timestampCompletedMilliseconds = System.currentTimeMillis()
+                            result = it.result,
+                            timestampStartedMilliseconds = it.timestampStartedMilliseconds,
+                            timestampCompletedMilliseconds = it.timestampCompletedMilliseconds
+                        ),
+                        device = this.getData()
+                    )
+                    is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> DeviceTestCaseRun(
+                        testCaseRun = TestCaseRun(
+                            test = action.test,
+                            result = TestCaseRun.Result.Failed.InfrastructureError(
+                                errorMessage = "Failed on start test case: ${it.message}"
                             ),
-                            device = this.getData()
-                        )
-                    }
-                    is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
-                        DeviceTestCaseRun(
-                            testCaseRun = TestCaseRun(
-                                test = action.test,
-                                result = TestCaseRun.Result.Failed.InfrastructureError(
-                                    errorMessage = "Failed on instrumentation parsing: ${it.message}",
-                                    cause = it.throwable
-                                ),
-                                timestampStartedMilliseconds = System.currentTimeMillis(),
-                                timestampCompletedMilliseconds = System.currentTimeMillis()
+                            timestampStartedMilliseconds = System.currentTimeMillis(),
+                            timestampCompletedMilliseconds = System.currentTimeMillis()
+                        ),
+                        device = this.getData()
+                    )
+                    is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> DeviceTestCaseRun(
+                        testCaseRun = TestCaseRun(
+                            test = action.test,
+                            result = TestCaseRun.Result.Failed.InfrastructureError(
+                                errorMessage = "Failed on instrumentation parsing: ${it.message}",
+                                cause = it.throwable
                             ),
-                            device = this.getData()
-                        )
-                    }
+                            timestampStartedMilliseconds = System.currentTimeMillis(),
+                            timestampCompletedMilliseconds = System.currentTimeMillis()
+                        ),
+                        device = this.getData()
+                    )
                 }
             }
             .toBlocking()
@@ -410,7 +407,9 @@ data class AdbDevice(
             timeoutSeconds,
             TimeUnit.SECONDS,
             Observable.error(
-                RuntimeException("Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $coordinate")
+                RuntimeException(
+                    "Timeout: $timeoutSeconds seconds. Failed to execute command: $command on device $coordinate"
+                )
             )
         )
         .toBlocking()
@@ -449,9 +448,6 @@ data class AdbDevice(
     override fun toString(): String {
         return "Device $tag"
     }
-
-    // MBS-8531: don't use ADB here to avoid possible recursion
-    private val tag: String = "[${coordinate.serial}]"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L

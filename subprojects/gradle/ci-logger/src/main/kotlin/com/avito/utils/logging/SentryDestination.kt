@@ -8,7 +8,8 @@ import io.sentry.event.EventBuilder
 import io.sentry.event.interfaces.ExceptionInterface
 
 /**
- * @param config can't pass SentryClient directly here, even if it's already created, because CILogger instance should be serializable
+ * @param config can't pass SentryClient directly here, even if it's already created,
+ *               because CILogger instance should be serializable
  */
 internal class SentryDestination(private val config: SentryConfig) : CILoggingDestination {
 

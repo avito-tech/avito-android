@@ -51,7 +51,7 @@ abstract class MacOSLocalhostResolvingTask @Inject constructor(
         override fun execute() {
             val resolveTimeMs = averageTimeMs(count = 3) { resolveLocalhost() }
 
-            if (resolveTimeMs > 100) {
+            if (resolveTimeMs > RESOLUTION_THRESHOLD_MS) {
                 throw GradleException(
                     FailedCheckMessage(
                         BuildChecksExtension::macOSLocalhost,
@@ -79,3 +79,5 @@ abstract class MacOSLocalhostResolvingTask @Inject constructor(
         private fun resolveLocalhost() = InetAddress.getLocalHost().hostName
     }
 }
+
+private const val RESOLUTION_THRESHOLD_MS = 100

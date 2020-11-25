@@ -25,11 +25,11 @@ interface HasFailedTestDeterminer {
             val suppression: Suppression = Suppression.NoSuppressed
         ) : Result() {
 
-            override fun count(): Int = failed.size
-
             val notSuppressed = failed.minus(suppression.tests)
 
             val notSuppressedCount = notSuppressed.size
+
+            override fun count(): Int = failed.size
 
             sealed class Suppression(val tests: List<SimpleRunTest>) {
 
@@ -63,7 +63,7 @@ interface HasFailedTestDeterminer {
                     val hasFailedTests = failedTests.isNotEmpty()
 
                     when {
-                        hasFailedTests -> {
+                        hasFailedTests ->
                             when {
                                 suppressFailure -> {
                                     Result.Failed(
@@ -83,7 +83,6 @@ interface HasFailedTestDeterminer {
                                 }
                                 else -> Result.Failed(failed = failedTests)
                             }
-                        }
                         else -> Result.NoFailed
                     }
                 },

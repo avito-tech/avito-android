@@ -6,15 +6,16 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:sentry-config"))
-    implementation(project(":gradle:graphite-config"))
-    implementation(project(":gradle:statsd-config"))
-    implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:kotlin-dsl-support"))
-    implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:teamcity"))
-    implementation(project(":gradle:gradle-profile"))
+    implementation(project(":common:percent"))
     implementation(project(":gradle:build-environment"))
+    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-profile"))
+    implementation(project(":gradle:graphite-config"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:sentry-config"))
+    implementation(project(":gradle:statsd-config"))
+    implementation(project(":gradle:teamcity"))
 
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.Gradle.androidPlugin)

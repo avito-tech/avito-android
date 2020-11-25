@@ -24,7 +24,7 @@ internal fun LintReportModel.hasErrors(): Boolean {
     return when {
         this is LintReportModel.Invalid -> true
         this is LintReportModel.Valid &&
-            (issues.any { it.severity == LintIssue.Severity.ERROR }) -> true
+            issues.any { it.severity == LintIssue.Severity.ERROR } -> true
         else -> false
     }
 }

@@ -35,6 +35,6 @@ ${
     }
 
     companion object {
-        val buildVerdictFileName = "pretty-build-verdict.txt"
+        const val buildVerdictFileName = "pretty-build-verdict.txt"
     }
 }

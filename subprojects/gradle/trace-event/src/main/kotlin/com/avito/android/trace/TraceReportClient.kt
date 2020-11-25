@@ -8,10 +8,16 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.lang.reflect.Type
 
 class TraceReportClient {
+
+    private val gson: Gson by lazy {
+        GsonBuilder()
+            .registerTypeAdapter(TraceEvent::class.java, TraceEventSerializer())
+            .registerTypeAdapter(TraceEvent::class.java, TraceEventDeserializer())
+            .create()
+    }
 
     fun writeTo(file: File, report: TraceReport) {
         file.writeText(gson.toJson(report))
@@ -19,13 +25,6 @@ class TraceReportClient {
 
     fun readFrom(file: File): TraceReport {
         return gson.fromJson(file.bufferedReader(), TraceReport::class.java)
-    }
-
-    private val gson: Gson by lazy {
-        GsonBuilder()
-            .registerTypeAdapter(TraceEvent::class.java, TraceEventSerializer())
-            .registerTypeAdapter(TraceEvent::class.java, TraceEventDeserializer())
-            .create()
     }
 
     private class TraceEventDeserializer : JsonDeserializer<TraceEvent> {

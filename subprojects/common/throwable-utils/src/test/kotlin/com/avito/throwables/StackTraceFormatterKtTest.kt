@@ -13,7 +13,8 @@ internal class StackTraceFormatterKtTest {
 
         assertThat(result).containsAtLeast(
             "java.lang.IllegalStateException: Something went wrong",
-            "\tat com.avito.throwables.StackTraceFormatterKtTest.formatStackTrace result - contains first two lines of exception stacktrace(StackTraceFormatterKtTest.kt:11)"
+            "\tat com.avito.throwables.StackTraceFormatterKtTest.formatStackTrace result - " +
+                "contains first two lines of exception stacktrace(StackTraceFormatterKtTest.kt:11)"
         ).inOrder()
     }
 }

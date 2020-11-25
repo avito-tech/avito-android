@@ -27,6 +27,16 @@ internal class QAppsUploadAction(
     private val logger: CILogger
 ) {
 
+    private val apiClient by lazy {
+        Retrofit.Builder()
+            .baseUrl(host)
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .client(httpClient())
+            .validateEagerly(true)
+            .build()
+            .create(QAppsUploadApi::class.java)
+    }
+
     fun upload(): Try<Unit> = Try {
         val response = uploadRequest().execute()
         if (!response.isSuccessful) {
@@ -59,16 +69,6 @@ internal class QAppsUploadAction(
                 apk.asRequestBody(null)
             )
         )
-    }
-
-    private val apiClient by lazy {
-        Retrofit.Builder()
-            .baseUrl(host)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
-            .client(httpClient())
-            .validateEagerly(true)
-            .build()
-            .create(QAppsUploadApi::class.java)
     }
 
     private fun httpClient() = OkHttpClient.Builder()

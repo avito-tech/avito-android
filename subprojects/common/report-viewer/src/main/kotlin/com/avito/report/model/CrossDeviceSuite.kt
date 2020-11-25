@@ -1,5 +1,8 @@
 package com.avito.report.model
 
+import com.avito.android.Percent
+import com.avito.android.percentOf
+
 data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>) {
 
     private val consistentData: List<CrossDeviceRunTest>
@@ -20,28 +23,26 @@ data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>) {
     val lostOnSomeDevicesCount: Int
         get() = consistentData.count { it.status is CrossDeviceStatus.LostOnSomeDevices }
 
-    val percentLostOnSomeDevicesOfAutomated: Int
+    val percentLostOnSomeDevicesOfAutomated: Percent
         get() = lostOnSomeDevicesCount.percentOf(automatedCount)
 
     val inconsistentCount: Int
         get() = crossDeviceRuns.count { it.status is CrossDeviceStatus.Inconsistent }
 
-    val percentSuccessOfAutomated: Int = success.percentOf(automatedCount)
+    val percentSuccessOfAutomated: Percent = success.percentOf(automatedCount)
 
-    val percentSkippedOnAllDevicesOfAutomated: Int = skippedOnAllDevicesCount.percentOf(automatedCount)
+    val percentSkippedOnAllDevicesOfAutomated: Percent = skippedOnAllDevicesCount.percentOf(automatedCount)
 
     val failedOnAllDevicesCount: Int
         get() = consistentData.count { it.status is CrossDeviceStatus.FailedOnAllDevices }
 
-    val percentFailedOnAllDevicesOfAutomated: Int = failedOnAllDevicesCount.percentOf(automatedCount)
+    val percentFailedOnAllDevicesOfAutomated: Percent = failedOnAllDevicesCount.percentOf(automatedCount)
 
     val failedOnSomeDevicesCount: Int
         get() = consistentData.count { it.status is CrossDeviceStatus.FailedOnSomeDevices }
 
-    val percentFailedOnSomeDevicesOfAutomated: Int = failedOnSomeDevicesCount.percentOf(automatedCount)
+    val percentFailedOnSomeDevicesOfAutomated: Percent = failedOnSomeDevicesCount.percentOf(automatedCount)
 
     fun filterTeam(team: Team): CrossDeviceSuite =
         CrossDeviceSuite(crossDeviceRuns.filter { it.name.team == team })
-
-    private fun Int.percentOf(sum: Int): Int = Math.round((toFloat() / sum * 100))
 }

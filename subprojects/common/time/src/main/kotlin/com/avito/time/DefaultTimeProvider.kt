@@ -21,7 +21,7 @@ class DefaultTimeProvider : TimeProvider {
     override fun now(): Date = toDate(nowInSeconds())
 
     override fun toDate(seconds: Long): Date {
-        val millis = seconds * 1000
+        val millis = TimeUnit.SECONDS.toMillis(seconds)
         return Date(millis)
     }
 

@@ -47,9 +47,6 @@ import org.hamcrest.TypeSafeMatcher
 open class ToolbarElement(interactionContext: InteractionContext) :
     ViewElement(interactionContext) {
 
-    constructor() : this(SimpleInteractionContext(isAssignableFrom(Toolbar::class.java))) // TODO: migrate to HandleParentContext
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
     override val checks: ToolbarElementChecks = ToolbarElementChecksImpl(interactionContext)
 
     /**
@@ -74,6 +71,11 @@ open class ToolbarElement(interactionContext: InteractionContext) :
     )
 
     val overflowMenuButton = ViewElement(overflowButtonMatcher)
+
+    // TODO: migrate to HandleParentContext
+    constructor() : this(SimpleInteractionContext(isAssignableFrom(Toolbar::class.java)))
+
+    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 
     protected fun overflowMenuItem(titleMatcher: Matcher<String>) =
         MenuItem(isAssignableFrom(Toolbar::class.java), titleMatcher, overflowMenuButton)

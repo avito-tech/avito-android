@@ -12,6 +12,8 @@ import org.hamcrest.Matchers
 
 object Intents {
 
+    val checks = Checks()
+
     fun resultOK(resultData: Intent? = null) =
         Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
 
@@ -23,8 +25,6 @@ object Intents {
 
     fun stubEverything() =
         Intents.intending(IntentMatchers.anyIntent()).respondWith(resultCanceled())
-
-    val checks = Checks()
 
     class Checks {
 

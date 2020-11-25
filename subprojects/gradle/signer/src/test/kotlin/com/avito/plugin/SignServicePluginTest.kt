@@ -20,6 +20,14 @@ class SignServicePluginTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
+    private val defaultExtension = """
+         signService {
+            host = "${mockWebServer.url("/")}"
+            apk(android.buildTypes.release, project.properties.get("signToken"))
+            bundle(android.buildTypes.release, project.properties.get("signToken"))
+         }
+    """.trimIndent()
+
     @AfterEach
     fun teardown() {
         mockWebServer.shutdown()
@@ -163,12 +171,4 @@ class SignServicePluginTest {
             )
         ).generateIn(testProjectDir)
     }
-
-    private val defaultExtension = """
-         signService {
-            host = "${mockWebServer.url("/")}"
-            apk(android.buildTypes.release, project.properties.get("signToken"))
-            bundle(android.buildTypes.release, project.properties.get("signToken"))
-         }
-    """.trimIndent()
 }

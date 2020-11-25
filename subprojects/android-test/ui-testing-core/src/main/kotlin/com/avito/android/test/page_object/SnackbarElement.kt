@@ -22,6 +22,18 @@ import org.hamcrest.Matchers
 @Deprecated(message = "Has a flaky behaviour", replaceWith = ReplaceWith("SnackbarRule"))
 class SnackbarElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
+    val message = ViewElement(
+        interactionContext.provideChildContext(
+            ViewMatchers.withId(R.id.snackbar_text)
+        )
+    )
+
+    val button = ViewElement(
+        interactionContext.provideChildContext(
+            ViewMatchers.withId(R.id.snackbar_action)
+        )
+    )
+
     constructor() : this(SimpleInteractionContext(snackbarLayoutMatcher())) // TODO: migrate to HandleParentContext
 
     constructor(textMatcher: Matcher<String>? = null) : this(
@@ -34,18 +46,6 @@ class SnackbarElement(interactionContext: InteractionContext) : ViewElement(inte
                     ViewMatchers.hasDescendant(ViewMatchers.withText(textMatcher))
                 )
             }
-        )
-    )
-
-    val message = ViewElement(
-        interactionContext.provideChildContext(
-            ViewMatchers.withId(R.id.snackbar_text)
-        )
-    )
-
-    val button = ViewElement(
-        interactionContext.provideChildContext(
-            ViewMatchers.withId(R.id.snackbar_action)
         )
     )
 

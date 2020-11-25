@@ -30,9 +30,7 @@ interface CommandLineExecutor {
             { emitter ->
                 val outputFile: File? = when {
                     output == null -> null
-                    output.isDirectory -> {
-                        prepareOutputFile(command, output)
-                    }
+                    output.isDirectory -> prepareOutputFile(command, output)
                     else -> output
                 }
                 outputFile?.apply { parentFile?.mkdirs() }
@@ -72,14 +70,13 @@ interface CommandLineExecutor {
                         emitter.onNext(ProcessNotification.Exit(buffer.toString()))
                         emitter.onCompleted()
                     }
-                    else -> {
+                    else ->
                         emitter.onError(
                             IllegalStateException(
                                 "Process $commandAndArgs exited with non-zero code $exitCode. " +
                                     "Output: $buffer"
                             )
                         )
-                    }
                 }
             },
             Emitter.BackpressureMode.ERROR

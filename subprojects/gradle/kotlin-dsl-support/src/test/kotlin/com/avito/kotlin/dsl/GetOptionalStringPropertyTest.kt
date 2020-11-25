@@ -49,6 +49,7 @@ internal class GetOptionalStringPropertyTest {
         assertThat(value).isEqualTo("4321")
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `getOptionalStringProperty - returns empty string instead of default - on empty value with defaultIfBlank=false`() {
         val project = ProjectBuilder.builder().build()

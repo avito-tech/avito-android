@@ -91,6 +91,7 @@ class BuildVerdictPluginTest {
         result.assertThat()
             .buildFailed()
 
+        @Suppress("MaxLineLength")
         assertBuildVerdict(
             failedTask = "kaptDebugKotlin",
             errorOutput = listOf(
@@ -262,6 +263,6 @@ public abstract interface DaggerComponent {
     }
 
     companion object {
-        val appName = "app"
+        const val appName = "app"
     }
 }

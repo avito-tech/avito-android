@@ -39,24 +39,17 @@ private fun extractDiffTypeCode(parts: List<String>): Char {
     return parts[0].first()
 }
 
+@Suppress("MagicNumber")
 private fun isSyntaxCorrect(parts: List<String>, changeType: ChangeType): Boolean {
     return when (changeType) {
-        ChangeType.ADDED, ChangeType.MODIFIED, ChangeType.DELETED -> {
-            parts.size == 2
-        }
-        ChangeType.COPIED, ChangeType.RENAMED -> {
-            parts.size == 3
-        }
+        ChangeType.ADDED, ChangeType.MODIFIED, ChangeType.DELETED -> parts.size == 2
+        ChangeType.COPIED, ChangeType.RENAMED -> parts.size == 3
     }
 }
 
 private fun extractFilePath(parts: List<String>, changeType: ChangeType): String {
     return when (changeType) {
-        ChangeType.ADDED, ChangeType.MODIFIED, ChangeType.DELETED -> {
-            parts[1]
-        }
-        ChangeType.COPIED, ChangeType.RENAMED -> {
-            parts[2]
-        }
+        ChangeType.ADDED, ChangeType.MODIFIED, ChangeType.DELETED -> parts[1]
+        ChangeType.COPIED, ChangeType.RENAMED -> parts[2]
     }
 }

@@ -13,12 +13,12 @@ import androidx.annotation.VisibleForTesting
  */
 interface ProxyToast {
 
+    fun show(toast: Toast)
+
     companion object {
         @VisibleForTesting
         var instance: ProxyToast = PlatformProxyToast()
     }
-
-    fun show(toast: Toast)
 }
 
 /**

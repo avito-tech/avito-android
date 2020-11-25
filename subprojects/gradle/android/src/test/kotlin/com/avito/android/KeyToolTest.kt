@@ -10,6 +10,7 @@ internal class KeyToolTest {
 
     private val irrelevant = ExistingFile.Stub
 
+    @Suppress("MaxLineLength")
     @Test
     fun `parseBundleSignature - returns lowercased SHA-1 from keytool output`() {
         val keytoolOutput = """

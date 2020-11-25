@@ -10,15 +10,8 @@ class Filter<T : Serializable> {
     ) : Serializable
 
     private var included = emptySet<T>()
+
     private var excluded = emptySet<T>()
-
-    fun include(values: Set<T>) {
-        included = values
-    }
-
-    fun exclude(values: Set<T>) {
-        excluded = values
-    }
 
     internal val value: Value<T>
         get() {
@@ -27,4 +20,12 @@ class Filter<T : Serializable> {
                 excluded = excluded.toSet()
             )
         }
+
+    fun include(values: Set<T>) {
+        included = values
+    }
+
+    fun exclude(values: Set<T>) {
+        excluded = values
+    }
 }

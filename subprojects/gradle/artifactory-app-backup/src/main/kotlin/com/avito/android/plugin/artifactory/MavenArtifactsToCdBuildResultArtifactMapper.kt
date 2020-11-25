@@ -19,8 +19,19 @@ class MavenArtifactsToCdBuildResultArtifactMapper(
     version: String,
     private val buildVariantByClassifier: Map<String, BuildVariant>
 ) {
+
     private val publicationRootPath = URI.create("$artifactoryUri$groupId/$artifactId/$version")
+
     private val artifactsFileNamePrefix = "$artifactId-$version"
+
+    private val MavenArtifact.fileUri
+        get() = "$publicationRootPath/$fileName"
+
+    private val MavenArtifact.fileName
+        get() = "$artifactsFileNamePrefix-$classifier.$fileExtension"
+
+    private val MavenArtifact.fileExtension
+        get() = file.extension
 
     fun mapToCdBuildResultArtifacts(
         mavenArtifacts: Set<MavenArtifact>
@@ -60,13 +71,4 @@ class MavenArtifactsToCdBuildResultArtifactMapper(
             uri = fileUri
         )
     }
-
-    private val MavenArtifact.fileUri
-        get() = "$publicationRootPath/$fileName"
-
-    private val MavenArtifact.fileName
-        get() = "$artifactsFileNamePrefix-$classifier.$fileExtension"
-
-    private val MavenArtifact.fileExtension
-        get() = file.extension
 }

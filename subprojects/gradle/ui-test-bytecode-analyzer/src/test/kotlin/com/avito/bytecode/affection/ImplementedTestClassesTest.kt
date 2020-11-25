@@ -21,6 +21,7 @@ class ImplementedTestClassesTest {
             .contains("$IMPLEMENTED_TEST_CLASS.should_use_page1_on_implementation_test_class")
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `target class usage detected - when it called test method from abstraction class through abstraction target class`() {
         val invocations = findInvocations()

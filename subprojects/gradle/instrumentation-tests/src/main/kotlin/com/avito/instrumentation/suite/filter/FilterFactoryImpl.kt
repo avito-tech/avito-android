@@ -5,6 +5,7 @@ import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
+import com.avito.instrumentation.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.report.model.SimpleRunTest
 
 internal class FilterFactoryImpl(
@@ -55,7 +56,7 @@ internal class FilterFactoryImpl(
                     source = TestsFilter.Signatures.Source.Code,
                     signatures = prefixes.included
                         .map {
-                            TestsFilter.Signatures.TestSignature(
+                            TestSignature(
                                 name = it
                             )
                         }.toSet()
@@ -68,7 +69,7 @@ internal class FilterFactoryImpl(
                     source = TestsFilter.Signatures.Source.Code,
                     signatures = prefixes.excluded
                         .map {
-                            TestsFilter.Signatures.TestSignature(
+                            TestSignature(
                                 name = it
                             )
                         }.toSet()
@@ -105,7 +106,10 @@ internal class FilterFactoryImpl(
 
     private fun MutableList<TestsFilter>.addSourceReportSignatureFilters() {
         val reportFilter = filterData.fromRunHistory.reportFilter
-        if (reportFilter != null && (reportFilter.statuses.included.isNotEmpty() || reportFilter.statuses.excluded.isNotEmpty())) {
+        if (reportFilter != null
+            && (reportFilter.statuses.included.isNotEmpty()
+                || reportFilter.statuses.excluded.isNotEmpty())
+        ) {
             val statuses = reportFilter.statuses
             val previousRunTests = factory.createReadReport(reportFilter.reportConfig)
                 .getTests()
@@ -131,11 +135,11 @@ internal class FilterFactoryImpl(
         }
     }
 
-    private fun List<SimpleRunTest>.filterBy(statuses: Set<FromRunHistory.RunStatus>): Set<TestsFilter.Signatures.TestSignature> {
+    private fun List<SimpleRunTest>.filterBy(statuses: Set<FromRunHistory.RunStatus>): Set<TestSignature> {
         return asSequence()
             .filter { testRun -> statuses.any { it.statusClass.isInstance(testRun.status) } }
             .map { testRun ->
-                TestsFilter.Signatures.TestSignature(
+                TestSignature(
                     name = testRun.name,
                     deviceName = testRun.deviceName
                 )
@@ -152,12 +156,11 @@ internal class FilterFactoryImpl(
                 removeImpactTests(impactAnalysisResult.addedTests)
                 removeImpactTests(impactAnalysisResult.modifiedTests)
             }
-            is ImpactAnalysisPolicy.On.RunNewTests -> {
+            is ImpactAnalysisPolicy.On.RunNewTests ->
                 addImpactTests(impactAnalysisResult.addedTests)
-            }
-            is ImpactAnalysisPolicy.On.RunModifiedTests -> {
+
+            is ImpactAnalysisPolicy.On.RunModifiedTests ->
                 addImpactTests(impactAnalysisResult.modifiedTests)
-            }
         }
     }
 
@@ -166,7 +169,7 @@ internal class FilterFactoryImpl(
             IncludeByTestSignaturesFilter(
                 source = TestsFilter.Signatures.Source.ImpactAnalysis,
                 signatures = tests.map { name ->
-                    TestsFilter.Signatures.TestSignature(
+                    TestSignature(
                         name = name
                     )
                 }.toSet()
@@ -180,7 +183,7 @@ internal class FilterFactoryImpl(
                 ExcludeByTestSignaturesFilter(
                     source = TestsFilter.Signatures.Source.ImpactAnalysis,
                     signatures = tests.map { name ->
-                        TestsFilter.Signatures.TestSignature(
+                        TestSignature(
                             name = name
                         )
                     }.toSet()

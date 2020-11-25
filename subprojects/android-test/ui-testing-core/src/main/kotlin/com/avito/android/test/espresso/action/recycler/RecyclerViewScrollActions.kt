@@ -104,9 +104,8 @@ internal class ScrollToViewAction<VH : RecyclerView.ViewHolder>(
             when (val matchResult = RecyclerItemsMatcher(recyclerView).match(match)) {
                 is RecyclerItemsMatcher.Result.NoItem,
                 is RecyclerItemsMatcher.Result.IndexOutOfBound,
-                is RecyclerItemsMatcher.Result.NoItemAtPosition -> {
+                is RecyclerItemsMatcher.Result.NoItemAtPosition ->
                     throw AssertionError(matchResult.description)
-                }
                 is RecyclerItemsMatcher.Result.Found -> {
                     val matchedItem = matchResult.item
                     scrollToPosition(matchedItem.position).perform(

@@ -61,14 +61,14 @@ abstract class BaseScreenshotTest<T : View>(
         )
     }
 
+    private val screenshotNames: ArrayList<String> = arrayListOf()
+
     abstract fun createView(
         context: Context,
         styleAttr: Int
     ): T
 
     abstract fun createViewStates(): HashMap<String, (view: T) -> Unit>
-
-    private val screenshotNames: ArrayList<String> = arrayListOf()
 
     @Before
     fun onBefore() {
@@ -98,7 +98,10 @@ abstract class BaseScreenshotTest<T : View>(
                 compareScreens()
             }
         } else {
-            throw IllegalStateException("BaseScreenshotTest supports SDK greater or equal to ${Build.VERSION_CODES.O}. Current is ${Build.VERSION.SDK_INT}")
+            throw IllegalStateException(
+                "BaseScreenshotTest supports SDK greater or equal to ${Build.VERSION_CODES.O}. " +
+                    "Current is ${Build.VERSION.SDK_INT}"
+            )
         }
     }
 

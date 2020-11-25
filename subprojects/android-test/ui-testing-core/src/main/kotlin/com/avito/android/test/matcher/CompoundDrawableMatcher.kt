@@ -36,10 +36,31 @@ class CompoundDrawableMatcher(
             null
         }
 
-        return matchDrawable(context, source = compoundDrawables[LEFT], sourceTint = tintList, otherId = left, otherTint = tint) &&
-            matchDrawable(context, source = compoundDrawables[RIGHT], sourceTint = tintList, otherId = right, otherTint = tint) &&
-            matchDrawable(context, source = compoundDrawables[TOP], sourceTint = tintList, otherId = top, otherTint = tint) &&
-            matchDrawable(context, source = compoundDrawables[BOTTOM], sourceTint = tintList, otherId = bottom, otherTint = tint)
+        return matchDrawable(
+            context,
+            source = compoundDrawables[LEFT],
+            sourceTint = tintList,
+            otherId = left,
+            otherTint = tint
+        ) && matchDrawable(
+            context,
+            source = compoundDrawables[RIGHT],
+            sourceTint = tintList,
+            otherId = right,
+            otherTint = tint
+        ) && matchDrawable(
+            context,
+            source = compoundDrawables[TOP],
+            sourceTint = tintList,
+            otherId = top,
+            otherTint = tint
+        ) && matchDrawable(
+            context,
+            source = compoundDrawables[BOTTOM],
+            sourceTint = tintList,
+            otherId = bottom,
+            otherTint = tint
+        )
     }
 
     private fun getDescription(resources: Resources): String {

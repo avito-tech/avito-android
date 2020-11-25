@@ -32,7 +32,7 @@ class DeviceSettingsChecker(private val context: Context) {
     }
 
     private fun checkSupportedApi() {
-        if (Build.VERSION.SDK_INT >= 30) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             throw IllegalStateException("Android 11 (API level 30) and above is not supported yet")
         }
     }
@@ -68,10 +68,15 @@ class DeviceSettingsChecker(private val context: Context) {
     }
 
     private fun checkLongPressDuration(): String? {
-        return if (ViewConfiguration.getLongPressTimeout() < 1500) {
+        return if (ViewConfiguration.getLongPressTimeout() < RECOMMENDED_LONG_PRESS_DURATION) {
             "Long press duration must be at least 1500 ms"
         } else {
             null
         }
     }
 }
+
+/**
+ * default android 500 leads to flaky press/long-press detection
+ */
+private const val RECOMMENDED_LONG_PRESS_DURATION = 1500

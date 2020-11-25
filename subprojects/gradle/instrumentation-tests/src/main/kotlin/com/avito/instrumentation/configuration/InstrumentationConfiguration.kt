@@ -93,7 +93,8 @@ abstract class InstrumentationConfiguration(val name: String) {
                 else -> {
                     val deviceTypesNames = DevicesType.values().map { it.name }
                     throw IllegalStateException(
-                        "Targeting different type of emulators($deviceTypesNames) in the same configuration is not supported; " +
+                        "Targeting different type of emulators($deviceTypesNames) " +
+                            "in the same configuration is not supported; " +
                             "Affected configuration: $name"
                     )
                 }

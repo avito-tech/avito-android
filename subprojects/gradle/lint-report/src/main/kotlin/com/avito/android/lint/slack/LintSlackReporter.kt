@@ -32,9 +32,15 @@ interface LintSlackReporter {
         ) {
             when (lintReport) {
                 is LintReportModel.Valid -> {
-                    val (errors, everythingElse) = lintReport.issues.partition { it.severity == LintIssue.Severity.ERROR }
-                    val (warnings, unknowns) = everythingElse.partition { it.severity == LintIssue.Severity.WARNING }
-                    val (fatalErrors, regularErrors) = errors.partition { it.isFatal }
+                    val (errors, everythingElse) = lintReport.issues.partition {
+                        it.severity == LintIssue.Severity.ERROR
+                    }
+                    val (warnings, unknowns) = everythingElse.partition {
+                        it.severity == LintIssue.Severity.WARNING
+                    }
+                    val (fatalErrors, regularErrors) = errors.partition {
+                        it.isFatal
+                    }
 
                     var isMessageSent = false
 
@@ -72,9 +78,7 @@ interface LintSlackReporter {
                         logger.debug("$tag Not sending any reports")
                     }
                 }
-                is LintReportModel.Invalid -> {
-                    logger.critical("$tag Not sending report: can't parse", lintReport.error)
-                }
+                is LintReportModel.Invalid -> logger.critical("$tag Not sending report: can't parse", lintReport.error)
             }
         }
 

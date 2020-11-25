@@ -65,6 +65,7 @@ class RunnerIntegrationTest {
             )
         }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `all tests passed by first and second devices - for first device that complete half of tests and failed and second connected later device that complete all remaining tests`() =
         runBlockingTest {

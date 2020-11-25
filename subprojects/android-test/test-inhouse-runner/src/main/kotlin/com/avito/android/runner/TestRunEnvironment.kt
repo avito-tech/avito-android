@@ -67,14 +67,16 @@ sealed class TestRunEnvironment {
         val networkType: NetworkingType,
         /**
          * Основное место где определяется apiUrl для тестов
-         * Будет использоваться как для всех запросов приложения, так и для всех сервисов ресурсов (RM, messenger, integration...)
+         * Будет использоваться как для всех запросов приложения,
+         * так и для всех сервисов ресурсов (RM, messenger, integration...)
          *
          * TestApplication подхватит значение из бандла, который там доступен в статике,
          * putString здесь как раз переопредяет его чтобы оно не оказалось пустым
          *
          * Ресурсы инциализируются в графе даггера и получают этот инстанс HttpUrl
          *
-         * 1. Аннотация имеет главный приоритет см. [com.avito.android.runner.annotation.resolver.AnnotationResolver] и [HostAnnotationResolver] в частности
+         * 1. Аннотация имеет главный приоритет см. [com.avito.android.runner.annotation.resolver.AnnotationResolver]
+         *    и [HostAnnotationResolver] в частности
          * 2. далее instrumentation аргумент [apiUrlParameterKey]
          */
         val apiUrl: HttpUrl,
@@ -146,13 +148,14 @@ fun provideEnvironment(
                         null
                     )[0]
                 },
-                // from [com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration]
+                // from GradleInstrumentationPluginConfiguration
                 slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
                 sentryDsn = argumentsProvider.getMandatoryArgument("sentryDsn"),
                 fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
                 testRunCoordinates = coordinates,
                 reportConfig = reportConfig,
-                isSyntheticStepsEnabled = argumentsProvider.getOptionalArgument("isSyntheticStepsEnabled")?.toBoolean() ?: false
+                isSyntheticStepsEnabled =
+                argumentsProvider.getOptionalArgument("isSyntheticStepsEnabled")?.toBoolean() ?: false
             )
         } catch (e: Throwable) {
             TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
@@ -164,9 +167,9 @@ private fun provideApiUrl(
     argumentsProvider: ArgsProvider,
     apiUrlParameterKey: String
 ): HttpUrl {
-    val host = (argumentsProvider.getOptionalArgument(HostAnnotationResolver.KEY)
+    val host = argumentsProvider.getOptionalArgument(HostAnnotationResolver.KEY)
         ?: argumentsProvider.getOptionalArgument(apiUrlParameterKey)
-        ?: "https://localhost")
+        ?: "https://localhost"
 
     return host.toHttpUrl()
 }

@@ -47,12 +47,14 @@ class AffectTargetClassAbstractionTest {
         assertThat(invocations).doesNotContainKey(PAGE_4)
 
         assertThat(invocations).containsKey(PAGE_4_FIRST_IMPLEMENTATION)
-        assertThat(invocations[PAGE_4_FIRST_IMPLEMENTATION])
-            .contains("$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page4_implementations_without_abstract")
+        assertThat(invocations[PAGE_4_FIRST_IMPLEMENTATION]).contains(
+            "$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page4_implementations_without_abstract"
+        )
 
         assertThat(invocations).containsKey(PAGE_4_SECOND_IMPLEMENTATION)
-        assertThat(invocations[PAGE_4_SECOND_IMPLEMENTATION])
-            .contains("$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page4_implementations_without_abstract")
+        assertThat(invocations[PAGE_4_SECOND_IMPLEMENTATION]).contains(
+            "$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page4_implementations_without_abstract"
+        )
     }
 
     @Test
@@ -60,19 +62,23 @@ class AffectTargetClassAbstractionTest {
         val invocations = findInvocations()
 
         assertThat(invocations).containsKey(PAGE_3_FIRST_IMPLEMENTATION)
-        assertThat(invocations[PAGE_3_FIRST_IMPLEMENTATION] as Set<String>)
-            .contains("$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special")
+        assertThat(invocations[PAGE_3_FIRST_IMPLEMENTATION] as Set<String>).contains(
+            "$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special"
+        )
 
         assertThat(invocations).containsKey(PAGE_3_SECOND_IMPLEMENTATION)
-        assertThat(invocations[PAGE_3_SECOND_IMPLEMENTATION] as Set<String>)
-            .contains("$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special")
+        assertThat(invocations[PAGE_3_SECOND_IMPLEMENTATION] as Set<String>).contains(
+            "$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special"
+        )
 
         assertThat(invocations).containsKey(SUPER_PAGE_3_FIRST_IMPLEMENTATION)
-        assertThat(invocations[SUPER_PAGE_3_FIRST_IMPLEMENTATION] as Set<String>)
-            .contains("$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special")
+        assertThat(invocations[SUPER_PAGE_3_FIRST_IMPLEMENTATION] as Set<String>).contains(
+            "$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special"
+        )
 
         assertThat(invocations).containsKey(SUPER_PAGE_3_SECOND_IMPLEMENTATION)
-        assertThat(invocations[SUPER_PAGE_3_SECOND_IMPLEMENTATION] as Set<String>)
-            .contains("$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special")
+        assertThat(invocations[SUPER_PAGE_3_SECOND_IMPLEMENTATION] as Set<String>).contains(
+            "$ABSTRACT_TARGET_CLASS_AFFECT_TEST_CLASS.should_affect_all_page3_implementations_include_special"
+        )
     }
 }

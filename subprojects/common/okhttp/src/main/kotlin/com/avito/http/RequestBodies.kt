@@ -29,6 +29,7 @@ fun RequestBody.toPlainText(): String? {
  * Returns true if the body probably contains human readable text. Uses a small sample
  * of code points to detect unicode control characters commonly used in binary file signatures.
  */
+@Suppress("MagicNumber")
 fun isPlaintext(buffer: Buffer): Boolean {
     try {
         val prefix = Buffer()

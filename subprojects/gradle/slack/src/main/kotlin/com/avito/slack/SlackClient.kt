@@ -164,6 +164,11 @@ private fun <T : SlackApiResponse> T.toTry(): Try<T> {
     return if (this.isOk) {
         Try.Success(this)
     } else {
-        Try.Failure(RuntimeException("Slack request failed; error=${this.error} [needed=${this.needed}; provided=${this.provided}]"))
+        Try.Failure(
+            RuntimeException(
+                "Slack request failed; error=${this.error} [needed=${this.needed}; " +
+                    "provided=${this.provided}]"
+            )
+        )
     }
 }

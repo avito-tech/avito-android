@@ -18,20 +18,20 @@ fun createKubernetesClient(
     namespace: String
 ): KubernetesClient {
     val config = when (kubernetesCredentials) {
-        is KubernetesCredentials.Service -> {
-            ConfigBuilder()
-                .withCaCertData(kubernetesCredentials.caCertData)
-                .withMasterUrl(kubernetesCredentials.url)
-                .withOauthToken(kubernetesCredentials.token)
-                .withNamespace(namespace)
-                .build()
-        }
+        is KubernetesCredentials.Service -> ConfigBuilder()
+            .withCaCertData(kubernetesCredentials.caCertData)
+            .withMasterUrl(kubernetesCredentials.url)
+            .withOauthToken(kubernetesCredentials.token)
+            .withNamespace(namespace)
+            .build()
         is KubernetesCredentials.Config -> {
             // todo move validation to configuration phase
             require(kubernetesCredentials.context.isNotBlank()) { "kubernetes.context should be set" }
 
             val configFile = File(kubernetesCredentials.configFile)
-            require(configFile.exists() && configFile.length() > 0) { "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable" }
+            require(configFile.exists() && configFile.length() > 0) {
+                "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable"
+            }
 
             val configContents = configFile.readText()
 
@@ -48,9 +48,8 @@ fun createKubernetesClient(
                 requestConfig.oauthTokenProvider = oauthTokenProvider(configFile)
             }
         }
-        is KubernetesCredentials.Empty -> {
+        is KubernetesCredentials.Empty ->
             throw IllegalStateException("Can't create kubernetesClient without credentials")
-        }
     }
 
     return DefaultKubernetesClient(config)

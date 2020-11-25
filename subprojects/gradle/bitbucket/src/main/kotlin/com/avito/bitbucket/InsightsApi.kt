@@ -10,6 +10,7 @@ import retrofit2.http.Path
 /**
  * https://docs.atlassian.com/bitbucket-server/rest/latest/bitbucket-code-insights-rest.html
  */
+@Suppress("MaxLineLength")
 internal interface InsightsApi {
 
     @PUT("/rest/insights/1.0/projects/{projectKey}/repos/{repositorySlug}/commits/{commitId}/reports/{insightKey}")

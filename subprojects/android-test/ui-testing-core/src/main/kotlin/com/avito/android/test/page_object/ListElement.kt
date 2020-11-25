@@ -47,13 +47,13 @@ import org.hamcrest.core.AnyOf.anyOf
 
 open class ListElement(interactionContext: InteractionContext) : ViewElement(interactionContext) {
 
-    // TODO: remove this constructor and use element fabric method to create an instance
-    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
     @Suppress("LeakingThis") // no problem with leaking this here
     override val checks = CheckLibrary(interactionContext)
 
     override val actions = ListActions(interactionContext)
+
+    // TODO: remove this constructor and use element fabric method to create an instance
+    constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
 
     /**
      * @param position if null search until first matching by [matcher]
@@ -78,8 +78,9 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
     /**
      * Hide parent method [PageObject.element]
      */
-    protected inline fun <reified T : PageObjectElement> element(@Suppress("UNUSED_PARAMETER") matcher: Matcher<View>): T =
-        throw RuntimeException("Use listElement(Matcher<View>) instead of element(Matcher<View>)")
+    protected inline fun <reified T : PageObjectElement> element(
+        @Suppress("UNUSED_PARAMETER") matcher: Matcher<View>
+    ): T = throw RuntimeException("Use listElement(Matcher<View>) instead of element(Matcher<View>)")
 
     /**
      * Hide parent method [PageObject.element]
@@ -91,6 +92,18 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
         private val driver: ActionsDriver,
         private val actions: Actions
     ) : Actions by actions {
+
+        val translationY
+            get() = ViewGetTranslationYAction().also { driver.perform(it) }.translationY
+
+        val items: Int
+            get() = RecyclerViewItemsCountAction().also { driver.perform(it) }.result
+
+        val verticalOffset: Int
+            get() = RecyclerViewVerticalOffsetAction().also { driver.perform(it) }.result
+
+        val horizontalOffset: Int
+            get() = RecyclerViewHorizontalOffsetAction().also { driver.perform(it) }.result
 
         constructor(driver: ActionsDriver) : this(driver, ActionsImpl(driver))
 
@@ -166,20 +179,8 @@ open class ListElement(interactionContext: InteractionContext) : ViewElement(int
             )
         }
 
-        val translationY
-            get() = ViewGetTranslationYAction().also { driver.perform(it) }.translationY
-
-        val items: Int
-            get() = RecyclerViewItemsCountAction().also { driver.perform(it) }.result
-
         @Deprecated("Use getItems instead")
         fun countItems() = RecyclerViewItemsCountAction().also { driver.perform(it) }.result
-
-        val verticalOffset: Int
-            get() = RecyclerViewVerticalOffsetAction().also { driver.perform(it) }.result
-
-        val horizontalOffset: Int
-            get() = RecyclerViewHorizontalOffsetAction().also { driver.perform(it) }.result
 
         /**
          * Refreshes recycler view by pressing in it's center and pulling down. Note: it does not perform

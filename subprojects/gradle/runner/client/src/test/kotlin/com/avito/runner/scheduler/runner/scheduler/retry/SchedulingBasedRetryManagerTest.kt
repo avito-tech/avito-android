@@ -128,6 +128,7 @@ class SchedulingBasedRetryManagerTest {
         )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `0 remaining retries - remaining retries is not enough for passing minimalFailedCount and minimalPassedCount`() {
         val manager = provideSchedulingBasedRetryManager(quota = 3, minimalPassedCount = 2, minimalFailedCount = 2)

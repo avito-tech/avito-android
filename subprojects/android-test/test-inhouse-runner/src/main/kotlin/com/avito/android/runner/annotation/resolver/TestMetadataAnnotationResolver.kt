@@ -80,9 +80,8 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
                 )
             }
 
-            is MethodStringRepresentation.Resolution.ParseError -> {
+            is MethodStringRepresentation.Resolution.ParseError ->
                 throw RuntimeException("Failed to parse annotations from $test")
-            }
         }
 
         var kind: Kind = Kind.UNKNOWN
@@ -100,70 +99,30 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
         annotationsExtractingResult
             .forEach { annotation ->
                 when (annotation) {
-                    is UIComponentTest -> {
-                        kind = Kind.UI_COMPONENT
-                    }
-                    is E2ETest -> {
-                        kind = Kind.E2E
-                    }
-                    is IntegrationTest -> {
-                        kind = Kind.INTEGRATION
-                    }
-                    is ManualTest -> {
-                        kind = Kind.MANUAL
-                    }
-                    is UIComponentStub -> {
-                        kind = Kind.UI_COMPONENT_STUB
-                    }
-                    is E2EStub -> {
-                        kind = Kind.E2E_STUB
-                    }
-                    is UnitTest -> {
-                        kind = Kind.UNIT
-                    }
-                    is PerformanceFunctionalTest -> {
-                        kind = Kind.E2E
-                    }
-                    is SyntheticMonitoringTest -> {
-                        kind = Kind.E2E
-                    }
-                    is PerformanceComponentTest -> {
-                        kind = Kind.UI_COMPONENT
-                    }
-                    is ScreenshotTest -> {
-                        kind = Kind.UI_COMPONENT
-                    }
-                    is CaseId -> {
-                        caseId = annotation.value
-                    }
-                    is Description -> {
-                        description = annotation.value
-                    }
-                    is Priority -> {
-                        priority = annotation.priority
-                    }
-                    is Behavior -> {
-                        behavior = annotation.behavior
-                    }
-                    is DataSetNumber -> {
-                        dataSetNumber = annotation.value
-                    }
-                    is ExternalId -> {
-                        externalId = annotation.value
-                    }
-                    is FeatureId -> {
-                        featureIds = annotation.value.toList()
-                    }
-                    is TagId -> {
-                        tagIds = annotation.value.toList()
-                    }
-                    is Flaky -> {
-                        flakiness = when {
-                            annotation.onSdks.isEmpty() || annotation.onSdks.contains(Build.VERSION.SDK_INT) ->
-                                Flakiness.Flaky(annotation.reason)
-                            else ->
-                                Flakiness.Stable
-                        }
+                    is UIComponentTest -> kind = Kind.UI_COMPONENT
+                    is E2ETest -> kind = Kind.E2E
+                    is IntegrationTest -> kind = Kind.INTEGRATION
+                    is ManualTest -> kind = Kind.MANUAL
+                    is UIComponentStub -> kind = Kind.UI_COMPONENT_STUB
+                    is E2EStub -> kind = Kind.E2E_STUB
+                    is UnitTest -> kind = Kind.UNIT
+                    is PerformanceFunctionalTest -> kind = Kind.E2E
+                    is SyntheticMonitoringTest -> kind = Kind.E2E
+                    is PerformanceComponentTest -> kind = Kind.UI_COMPONENT
+                    is ScreenshotTest -> kind = Kind.UI_COMPONENT
+                    is CaseId -> caseId = annotation.value
+                    is Description -> description = annotation.value
+                    is Priority -> priority = annotation.priority
+                    is Behavior -> behavior = annotation.behavior
+                    is DataSetNumber -> dataSetNumber = annotation.value
+                    is ExternalId -> externalId = annotation.value
+                    is FeatureId -> featureIds = annotation.value.toList()
+                    is TagId -> tagIds = annotation.value.toList()
+                    is Flaky -> flakiness = when {
+                        annotation.onSdks.isEmpty() || annotation.onSdks.contains(Build.VERSION.SDK_INT) ->
+                            Flakiness.Flaky(annotation.reason)
+                        else ->
+                            Flakiness.Stable
                     }
                 }
             }

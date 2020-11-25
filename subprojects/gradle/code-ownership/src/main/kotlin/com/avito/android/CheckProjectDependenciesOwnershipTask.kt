@@ -48,9 +48,14 @@ abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
             .implementationConfiguration
             .dependencies.forEach {
                 val codeOwnershipExtensionTo = it.module.project.extensions.ownership
-                if (codeOwnershipExtensionTo.visibility == Visibility.TEAM && codeOwnershipExtensionFrom.team != codeOwnershipExtensionTo.team) {
+                if (codeOwnershipExtensionTo.visibility == Visibility.TEAM
+                    && codeOwnershipExtensionFrom.team != codeOwnershipExtensionTo.team
+                ) {
                     if (codeOwnershipExtensionFrom.allowedDependencies.contains(it.path)) {
-                        logger.warn("WARNING: ${project.path} has forbidden dependency on ${it.path}, but was allowed explicitly in configuration")
+                        logger.warn(
+                            "WARNING: ${project.path} has forbidden dependency on ${it.path}, " +
+                                "but was allowed explicitly in configuration"
+                        )
                     } else {
                         throwInvalidDependencyOnUnitVisibleModuleException(
                             project.path,

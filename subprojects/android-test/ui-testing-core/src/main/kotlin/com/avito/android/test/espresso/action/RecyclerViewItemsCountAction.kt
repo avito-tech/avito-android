@@ -24,6 +24,6 @@ class RecyclerViewItemsCountAction : ViewAction {
         ViewMatchers.isAssignableFrom(RecyclerView::class.java)
 
     override fun perform(uiController: UiController, view: View) {
-        result = ((view as RecyclerView).adapter!!.itemCount)
+        result = (view as RecyclerView).adapter!!.itemCount
     }
 }

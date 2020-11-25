@@ -19,7 +19,9 @@ class ImpactAnalysisPlugin : Plugin<Project> {
         check(rootProject.isRoot()) { "Plugin $pluginName should be applied to the root project" }
 
         rootProject.afterEvaluate {
-            check(rootProject.subprojects.size > 0) { "Plugin $pluginName does not support single root-module projects" }
+            check(rootProject.subprojects.size > 0) {
+                "Plugin $pluginName does not support single root-module projects"
+            }
         }
 
         rootProject.extensions.create<ImpactAnalysisExtension>("impactAnalysis")

@@ -14,6 +14,13 @@ internal data class TaskPath(val value: String)
 @Suppress("UnstableApiUsage")
 class BuildVerdictPlugin : Plugin<ProjectInternal> {
 
+    internal val Project.pluginIsEnabled: Boolean
+        get() = providers
+            .gradleProperty(enabledProp)
+            .forUseAtConfigurationTime()
+            .map { it.toBoolean() }
+            .getOrElse(true)
+
     override fun apply(project: ProjectInternal) {
         require(project.isRoot()) {
             "build-verdict plugin must be applied to the root project"
@@ -51,14 +58,7 @@ class BuildVerdictPlugin : Plugin<ProjectInternal> {
         }
     }
 
-    internal val Project.pluginIsEnabled: Boolean
-        get() = providers
-            .gradleProperty(enabledProp)
-            .forUseAtConfigurationTime()
-            .map { it.toBoolean() }
-            .getOrElse(true)
-
     internal companion object {
-        val enabledProp = "avito.build-verdict.enabled"
+        const val enabledProp = "avito.build-verdict.enabled"
     }
 }

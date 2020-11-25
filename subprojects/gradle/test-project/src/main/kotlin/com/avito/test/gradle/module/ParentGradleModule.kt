@@ -18,7 +18,11 @@ class ParentGradleModule(
         file.module(name) {
             build_gradle {
                 writeText(
-                    "subprojects { afterEvaluate { println(\"\$name project configuration was altered by parent module's build.gradle\") }}".trimIndent()
+                    "subprojects { " +
+                        "afterEvaluate { " +
+                        "println(\"\$name project configuration was altered by parent module's build.gradle\") " +
+                        "}" +
+                        "}"
                 )
             }
             modules.forEach { it.generateIn(this) }

@@ -9,4 +9,4 @@ import org.gradle.api.plugins.ExtensionAware
  */
 @Suppress("UNCHECKED_CAST")
 fun modulesGroup(gradle: Gradle, name: String): Set<String> =
-    ((gradle as ExtensionAware).extensions.extraProperties[name] as Set<String>)
+    (gradle as ExtensionAware).extensions.extraProperties[name] as Set<String>
