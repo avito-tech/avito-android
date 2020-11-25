@@ -15,17 +15,17 @@ class ImpactMetricsSender(
 ) {
 
     init {
-        require(environmentInfo.environment is Environment.CI)
-        { "ImpactMetricsSender should run only in CI environment" }
-
-        requireNotNull(environmentInfo.teamcityBuildId())
-        { "ImpactMetricsSender should run only if teamcityBuildInfo available" }
+        require(environmentInfo.environment is Environment.CI) {
+            "ImpactMetricsSender should run only in CI environment"
+        }
     }
 
     private val prefix by lazy {
         val envName = environmentInfo.environment.publicName
         val node = environmentInfo.node?.take(32) ?: "_"
-        val buildId = environmentInfo.teamcityBuildId() ?: "_"
+        val buildId = requireNotNull(environmentInfo.teamcityBuildId()) {
+            "ImpactMetricsSender should run only if teamcityBuildInfo available"
+        }
         graphiteSeries(envName, node, buildId)
     }
 
