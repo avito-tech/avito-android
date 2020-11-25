@@ -1,5 +1,6 @@
 package com.avito.impact.plugin
 
+import com.avito.android.sentry.Environment
 import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.StatsDSender
@@ -12,6 +13,14 @@ class ImpactMetricsSender(
     private val statsDSender: StatsDSender,
     private val environmentInfo: EnvironmentInfo
 ) {
+
+    init {
+        require(environmentInfo.environment is Environment.CI)
+        { "ImpactMetricsSender should run only in CI environment" }
+
+        requireNotNull(environmentInfo.teamcityBuildId())
+        { "ImpactMetricsSender should run only if teamcityBuildInfo available" }
+    }
 
     private val prefix by lazy {
         val envName = environmentInfo.environment.publicName
