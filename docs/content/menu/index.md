@@ -29,7 +29,7 @@ headless: true
     - [Бенчмарки]({{< ref "/docs/assemble/Benchmarks.md" >}})
     - [Профилирование]({{< ref "/docs/assemble/Profiling.md" >}})
     - [Метрики]({{< ref "/docs/assemble/BuildMetrics.md" >}})
-    - [Mirakle]({{< ref "/docs/assemble/Mirakle.md" >}})
+    - [Удаленная сборка (Mirakle)]({{< ref "/docs/assemble/RemoteBuild.md" >}})
     - [Кеширование]({{< ref "/docs/assemble/BuildCaching.md" >}})
     - [Troubleshooting]({{< ref "/docs/assemble/Troubleshooting.md" >}})
 - Architecture
