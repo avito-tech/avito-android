@@ -21,11 +21,10 @@ abstract class ImpactReportTask : DefaultTask() {
         modifiedProjectsFinder.getProjects().forEach { (type, projects) ->
             val (modified, unmodified) = projects.partition { it.project.internalModule.isModified(type) }
 
-            logger.lifecycle("For type: $type; Modules: ${projects.size}; modified: ${modified.size}; unmodified: ${unmodified.size}")
+            logger.lifecycle("For type: $type; Modules: ${projects.size}; modified: ${modified.size}")
 
             impactMetricsSender.send(type, "all", projects.size)
             impactMetricsSender.send(type, "modified", modified.size)
-            impactMetricsSender.send(type, "unmodified", unmodified.size)
         }
     }
 }
