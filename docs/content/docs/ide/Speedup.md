@@ -13,7 +13,7 @@ To increase IDE performance you need to disable all unnecessary stuff and tune s
 
 ## Enable remote build
 
-[Mirakle]({{< ref "/docs/assemble/Mirakle.md" >}})
+[Удаленная сборка (Mirakle)]({{< ref "/docs/assemble/RemoteBuild.md" >}})
 
 ## Disable unnecessary modules
 
