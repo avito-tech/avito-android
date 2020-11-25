@@ -9,6 +9,6 @@ internal class ReportViewerQueryTest {
     @Test
     fun test() {
         assertThat(ReportViewerQuery().createQuery(onlyFailures = true, team = Team("messenger")))
-            .isEqualTo("?q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxLCJncm91cHMiOlsibWVzc2VuZ2VyIl19fQ==")
+            .isEqualTo("?q=eyJmaWx0ZXIiOnsic3VjY2VzcyI6MCwic2tpcCI6MCwiZ3JvdXBzIjpbIm1lc3NlbmdlciJdfX0=")
     }
 }

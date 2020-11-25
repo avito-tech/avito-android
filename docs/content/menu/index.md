@@ -30,6 +30,7 @@ headless: true
     - [Профилирование]({{< ref "/docs/assemble/Profiling.md" >}})
     - [Метрики]({{< ref "/docs/assemble/BuildMetrics.md" >}})
     - [Mirakle]({{< ref "/docs/assemble/Mirakle.md" >}})
+    - [Кеширование]({{< ref "/docs/assemble/BuildCaching.md" >}})
     - [Troubleshooting]({{< ref "/docs/assemble/Troubleshooting.md" >}})
 - Architecture
     - [Dagger]({{< ref "/docs/architecture/Dagger.md" >}})

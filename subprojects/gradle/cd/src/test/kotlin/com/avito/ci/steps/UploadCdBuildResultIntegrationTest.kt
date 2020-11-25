@@ -154,7 +154,7 @@ class RealTest {
         val runId = "runId"
         val uiTestConfiguration = CdBuildResult.TestResultsLink(
             reportId = reportId,
-            reportUrl = "$reportsApiUrl/report/AvitoAndroid/regress/$runId",
+            reportUrl = "$reportsApiUrl/report/AvitoAndroid/regress/$runId?q=eyJmaWx0ZXIiOnsic2tpcCI6MH19",
             reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
                 planSlug = "AvitoAndroid",
                 jobSlug = uiTestConfigurationName,
