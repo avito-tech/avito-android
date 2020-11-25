@@ -53,15 +53,16 @@ interface InstrumentationTestActionFinalizer {
 
             sourceReport.finish()
 
-            val reportViewerUrl = reportViewer.generateReportUrl(
-                params.reportCoordinates,
-                onlyFailures = testRunResult.failed !is HasFailedTestDeterminer.Result.NoFailed
-            )
-
             jUnitReportWriter.write(
                 reportCoordinates = params.reportCoordinates,
                 testRunResult = testRunResult,
                 destination = junitFile(params.outputDir)
+            )
+
+            val verdict = testRunResult.verdict
+            val reportViewerUrl = reportViewer.generateReportUrl(
+                params.reportCoordinates,
+                onlyFailures = verdict is TestRunResult.Verdict.Failure
             )
 
             writeReportViewerLinkFile(
@@ -69,14 +70,9 @@ interface InstrumentationTestActionFinalizer {
                 reportViewerFile(params.outputDir)
             )
 
-            logger.info("Report url $reportViewerUrl")
-
-            val verdict = testRunResult.verdict
-
-            logger.debug("Verdict = $verdict")
-
             val verdictFile = params.verdictFile
-            verdictFile.writeText(gson.toJson(verdict))
+            verdictFile.appendText("Report url $reportViewerUrl\n")
+            verdictFile.appendText(gson.toJson(verdict))
 
             when (verdict) {
                 is TestRunResult.Verdict.Success -> logger.debug(verdict.message)
