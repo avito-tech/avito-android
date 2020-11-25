@@ -1,5 +1,7 @@
 package com.avito.android
 
+import java.text.DecimalFormat
+
 @Suppress("MagicNumber")
 fun Int.percentOf(sum: Int): Percent = NumberPercent(toFloat() / sum * 100)
 
@@ -32,7 +34,9 @@ interface Percent {
 
 internal class NumberPercent(val value: Number) : Percent {
 
-    override fun twoDigitsString(): String = String.format("%.2f", value)
+    private val decimalFormat = DecimalFormat("0.##'%'")
+
+    override fun twoDigitsString(): String = decimalFormat.format(value)
 
     override fun toInt(): Int = value.toInt()
 
