@@ -30,7 +30,8 @@ interface TraceEvent {
     val timestampMicroseconds: Long
 
     /**
-     * A fixed color name: https://github.com/catapult-project/catapult/blob/master/tracing/tracing/base/color_scheme.html
+     * A fixed color name:
+     * https://github.com/catapult-project/catapult/blob/master/tracing/tracing/base/color_scheme.html
      */
     val color: String?
 
@@ -62,7 +63,8 @@ data class DurationEvent(
     @SerializedName("cat") override val categories: String? = null,
     @SerializedName("cname") override val color: String? = null,
     // If you provide args to both the Begin and End events then the arguments will be merged.
-    // If there is a duplicate argument value provided the E event argument will be taken and the B event argument will be discarded.
+    // If there is a duplicate argument value provided the E event argument will be taken
+    // and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
 ) : TraceEvent {
     companion object {
@@ -91,7 +93,8 @@ data class CompleteEvent(
     @SerializedName("cat") override val categories: String? = null,
     @SerializedName("cname") override val color: String? = null,
     // If you provide args to both the Begin and End events then the arguments will be merged.
-    // If there is a duplicate argument value provided the E event argument will be taken and the B event argument will be discarded.
+    // If there is a duplicate argument value provided the E event argument will be taken
+    // and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
 ) : TraceEvent {
     companion object {
@@ -121,7 +124,8 @@ data class InstantEvent(
     @SerializedName("cat") override val categories: String? = null,
     @SerializedName("cname") override val color: String? = null,
     // If you provide args to both the Begin and End events then the arguments will be merged.
-    // If there is a duplicate argument value provided the E event argument will be taken and the B event argument will be discarded.
+    // If there is a duplicate argument value provided the E event argument will be taken
+    // and the B event argument will be discarded.
     @SerializedName("args") override val args: Map<String, Any>? = null
 ) : TraceEvent {
     companion object {

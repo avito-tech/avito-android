@@ -30,9 +30,9 @@ open class BuildTracePlugin : Plugin<Project> {
 
     // TODO: enable by a project extension
     private fun isBuildTraceEnabled(project: Project): Boolean {
-        return (project.buildEnvironment is BuildEnvironment.CI)
-            || (project.gradle.startParameter.isBuildScan)
-            || (project.gradle.startParameter.isProfile)
-            || (project.getBooleanProperty("android.enableProfileJson", default = false))
+        return project.buildEnvironment is BuildEnvironment.CI
+            || project.gradle.startParameter.isBuildScan
+            || project.gradle.startParameter.isProfile
+            || project.getBooleanProperty("android.enableProfileJson", default = false)
     }
 }

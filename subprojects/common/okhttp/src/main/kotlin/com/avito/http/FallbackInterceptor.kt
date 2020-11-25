@@ -12,7 +12,12 @@ import java.io.IOException
  */
 class FallbackInterceptor(
     private val fallbackRequest: (Request) -> Request,
-    private val doFallbackOnTheseCodes: List<Int> = listOf(404, 503, 502, 504)
+    private val doFallbackOnTheseCodes: List<Int> = listOf(
+        HttpCodes.NOT_FOUND,
+        HttpCodes.UNAVAILABLE,
+        HttpCodes.BAD_GATEWAY,
+        HttpCodes.GATEWAY_TIMEOUT
+    )
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {

@@ -171,9 +171,15 @@ interface Report : ReadReport {
 
         override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
             return when (val result = reportsApi.create(reportCoordinates, buildId, apiUrl, gitBranch, gitCommit)) {
-                is CreateResult.Created -> logger.info("Report created, id=${result.id}")
-                CreateResult.AlreadyCreated -> logger.info("Can't tryCreate report, already created, it's ok if we call it N(=release configurations) times")
-                is CreateResult.Failed -> logger.critical("Can't tryCreate report", result.exception)
+                is CreateResult.Created ->
+                    logger.info("Report created, id=${result.id}")
+                CreateResult.AlreadyCreated ->
+                    logger.info(
+                        "Can't tryCreate report, already created, " +
+                            "it's ok if we call it N(=release configurations) times"
+                    )
+                is CreateResult.Failed ->
+                    logger.critical("Can't tryCreate report", result.exception)
             }
         }
 

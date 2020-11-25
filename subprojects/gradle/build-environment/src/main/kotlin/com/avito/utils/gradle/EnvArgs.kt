@@ -63,15 +63,17 @@ interface EnvArgs {
                     val teamcityBuildId = project.getMandatoryIntProperty("teamcityBuildId")
                     Build.Teamcity(
                         id = teamcityBuildId,
-                        url = "${project.getMandatoryStringProperty("teamcityUrl")}/viewLog.html?buildId=$teamcityBuildId&tab=buildLog",
+                        url = project.getMandatoryStringProperty("teamcityUrl") +
+                            "/viewLog.html?buildId=$teamcityBuildId&tab=buildLog",
                         number = project.getMandatoryStringProperty("buildNumber"),
                         type = "teamcity-${project.getMandatoryStringProperty("teamcityBuildType")}"
                     )
                 }
-                "local" -> {
+                "local" ->
                     Build.Local(Build.Local.Id.FOR_LOCAL_KUBERNETES_RUN)
-                }
-                else -> throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
+
+                else ->
+                    throw IllegalStateException("property avito.build must be 'teamcity' or 'local'")
             }
         }
     }

@@ -16,6 +16,8 @@ interface GraphiteSender {
         private val logger: Logger
     ) : GraphiteSender {
 
+        private val tag = "graphite"
+
         override fun send(metric: GraphiteMetric) {
             if (!config.isEnabled) return
 
@@ -49,7 +51,5 @@ interface GraphiteSender {
         }
 
         private fun socket(): Socket = Socket(config.host, config.port)
-
-        private val tag = "graphite"
     }
 }

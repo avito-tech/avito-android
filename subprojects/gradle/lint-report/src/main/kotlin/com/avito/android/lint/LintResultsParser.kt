@@ -52,7 +52,9 @@ class LintResultsParser(private val log: CILogger) {
                     if (startElement.name.localPart == "issues") {
                         val formatVersion = startElement.getAttributeByName(QName("format")).value
                         if (formatVersion != supportedFormatVersion) {
-                            throw UnsupportedFormatVersion("Lint xml report for version $formatVersion is not supported")
+                            throw UnsupportedFormatVersion(
+                                "Lint xml report for version $formatVersion is not supported"
+                            )
                         }
                     }
 
@@ -70,7 +72,9 @@ class LintResultsParser(private val log: CILogger) {
 
                     if (startElement.name.localPart == "location") {
                         issue!!.path =
-                            requireNotNull(startElement.getAttributeByName(QName("file"))?.value) { "Lint issue must have a file path" }
+                            requireNotNull(startElement.getAttributeByName(QName("file"))?.value) {
+                                "Lint issue must have a file path"
+                            }
 
                         issue.line = startElement.getAttributeByName(QName("line"))?.value?.toInt() ?: 0
                     }

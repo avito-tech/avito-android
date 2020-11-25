@@ -8,10 +8,6 @@ import java.util.jar.JarFile
 
 class ContextLoader : EmptyVisitor() {
 
-    companion object {
-        private const val CLASS_FILE_POSTFIX = "class"
-    }
-
     private val result: MutableMap<String, JavaClass> = mutableMapOf()
 
     fun load(directories: Collection<File>): Context {
@@ -50,5 +46,9 @@ class ContextLoader : EmptyVisitor() {
 
     override fun visitJavaClass(javaClass: JavaClass) {
         result[javaClass.className] = javaClass
+    }
+
+    companion object {
+        private const val CLASS_FILE_POSTFIX = "class"
     }
 }

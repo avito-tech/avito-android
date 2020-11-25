@@ -23,9 +23,10 @@ val Project.appBackupExtension: ArtifactoryBackupExtension
 fun TaskContainer.artifactoryAppBackupTask(): TaskProvider<Task> =
     named(artifactoryAppBackupTaskName)
 
-val Project.artifactoryAndroidArtifactsBuildVariants: MapProperty<String, BuildVariant> by ProjectProperty.lazy { project ->
-    project.objects.mapProperty(String::class.java, BuildVariant::class.java)
-}
+val Project.artifactoryAndroidArtifactsBuildVariants: MapProperty<String, BuildVariant>
+    by ProjectProperty.lazy { project ->
+        project.objects.mapProperty(String::class.java, BuildVariant::class.java)
+    }
 
 const val artifactoryUserParameterName = "artifactory_deployer"
 

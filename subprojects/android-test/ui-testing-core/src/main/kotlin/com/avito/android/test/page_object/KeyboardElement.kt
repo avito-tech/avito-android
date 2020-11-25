@@ -34,11 +34,6 @@ class KeyboardElement : PageObject() {
      * https://issuetracker.google.com/u/1/issues/68137674
      */
     class CheckLibrary {
-        companion object {
-            // not a bad name for private const
-            @Suppress("VariableMaxLength")
-            private const val KEYBOARD_MINIMUM_HEIGHT_PERCENTAGE = .30f
-        }
 
         fun isDisplayed(activity: Activity) {
             // FIXME(MBS-1301)
@@ -117,6 +112,12 @@ class KeyboardElement : PageObject() {
 
             return "${getStatusMessage(!displayed, true)} $doesNotMatch" +
                 " $expected ${getStatusMessage(displayed, false)}"
+        }
+
+        companion object {
+            // not a bad name for private const
+            @Suppress("VariableMaxLength")
+            private const val KEYBOARD_MINIMUM_HEIGHT_PERCENTAGE = .30f
         }
     }
 }

@@ -2,7 +2,7 @@ package com.avito.composite_exception
 
 fun Throwable?.composeWith(throwable: Throwable?): Throwable? {
     return when {
-        this != null -> {
+        this != null ->
             if (throwable != null) {
                 val message = "$message. \n ${throwable.message}"
                 CompositeException(
@@ -12,7 +12,6 @@ fun Throwable?.composeWith(throwable: Throwable?): Throwable? {
             } else {
                 this
             }
-        }
         else -> throwable
     }
 }

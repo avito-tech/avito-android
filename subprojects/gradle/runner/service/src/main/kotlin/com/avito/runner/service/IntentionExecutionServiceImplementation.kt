@@ -59,9 +59,9 @@ class IntentionExecutionServiceImplementation(
                 for (message in messages) {
                     log("received message: $message")
                     when (message) {
-                        is DeviceWorkerMessage.ApplicationInstalled -> {
+                        is DeviceWorkerMessage.ApplicationInstalled ->
                             log("Application: ${message.installation.installation.application} installed")
-                        }
+
                         is DeviceWorkerMessage.FailedIntentionProcessing -> {
                             log(
                                 "Received worker failed message during executing intention:" +
@@ -70,12 +70,12 @@ class IntentionExecutionServiceImplementation(
 
                             intentionsRouter.sendIntention(intention = message.intention)
                         }
-                        is DeviceWorkerMessage.Result -> {
+
+                        is DeviceWorkerMessage.Result ->
                             results.send(message.intentionResult)
-                        }
-                        is DeviceWorkerMessage.WorkerDied -> {
+
+                        is DeviceWorkerMessage.WorkerDied ->
                             deviceSignals.send(Device.Signal.Died(message.coordinate))
-                        }
                     }
                 }
             }

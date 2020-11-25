@@ -24,6 +24,6 @@ class RecyclerViewHorizontalOffsetAction : ViewAction {
         ViewMatchers.isAssignableFrom(RecyclerView::class.java)
 
     override fun perform(uiController: UiController, view: View) {
-        result = ((view as RecyclerView).computeHorizontalScrollOffset())
+        result = (view as RecyclerView).computeHorizontalScrollOffset()
     }
 }

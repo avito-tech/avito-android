@@ -102,6 +102,7 @@ class CdBuildConfigValidatorTest {
         val error = assertThrows<RuntimeException> {
             CdBuildConfigValidator(config).validate()
         }
-        assertThat(error).hasMessageThat().contains("Qapps deployments is supported only in the 2'nd version of contract")
+        assertThat(error).hasMessageThat()
+            .contains("Qapps deployments is supported only in the 2'nd version of contract")
     }
 }

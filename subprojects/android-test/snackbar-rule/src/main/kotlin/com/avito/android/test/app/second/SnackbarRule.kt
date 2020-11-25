@@ -20,7 +20,7 @@ interface SnackbarAsserts {
     fun assertIsShownLastWith(text: Matcher<String>)
 }
 
-class SnackbarRule() : SimpleRule(), SnackbarAsserts {
+class SnackbarRule : SimpleRule(), SnackbarAsserts {
 
     private val proxy = Proxy()
 
@@ -63,6 +63,11 @@ class SnackbarRule() : SimpleRule(), SnackbarAsserts {
 
     @SuppressLint("VisibleForTests")
     internal class Proxy : SnackbarProxy {
+
+        // look at snackbar.setText
+        private val Snackbar.text: String
+            get() = view.findViewById<TextView>(google_R.id.snackbar_text).text.toString()
+
         val snackbarTexts = mutableListOf<String>()
 
         override fun shown(snackbar: Snackbar) {
@@ -70,9 +75,5 @@ class SnackbarRule() : SimpleRule(), SnackbarAsserts {
                 snackbar.text
             )
         }
-
-        // look at snackbar.setText
-        private val Snackbar.text: String
-            get() = view.findViewById<TextView>(google_R.id.snackbar_text).text.toString()
     }
 }

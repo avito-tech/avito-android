@@ -9,9 +9,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.invoke
 
 /**
- * По мотивам ревью. Не очень очевидный у gradle синтаксис связывания тасок: input таски цепляется за output другой и магически выставляет dependsOn
- *
- * @see [gradle docs](https://docs.gradle.org/5.2.1/userguide/lazy_configuration.html#sec:working_with_task_dependencies_in_lazy_properties)
+ * По мотивам ревью. Не очень очевидный у gradle синтаксис связывания тасок:
+ * input таски цепляется за output другой и магически выставляет dependsOn
  */
 inline fun <reified T : Task> Task.dependencyOn(anotherTaskProvider: TaskProvider<T>, configuration: (T) -> Unit) {
     configuration.invoke(anotherTaskProvider.get())

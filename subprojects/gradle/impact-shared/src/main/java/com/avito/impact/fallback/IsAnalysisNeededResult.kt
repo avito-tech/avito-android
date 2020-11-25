@@ -47,7 +47,7 @@ fun isAnalysisNeeded(
         )
     }
 
-    if (targetBranch.name == currentBranch.name && (git !is GitLocalState)) {
+    if (targetBranch.name == currentBranch.name && git !is GitLocalState) {
         return IsAnalysisNeededResult.Skip("running on target branch $targetBranch")
     }
 

@@ -22,7 +22,7 @@ internal fun matchDrawable(
     otherId: Int?,
     @ColorInt otherTint: Int? = null
 ): Boolean {
-    val noOther = (otherId == null || otherId == 0)
+    val noOther = otherId == null || otherId == 0
     if (noOther && source == null) return true
     if (!noOther && source == null) return false
 
@@ -78,15 +78,14 @@ internal fun Drawable.wrapForTinting(@ColorInt color: Int): Drawable {
 internal fun Drawable.sameAs(other: Drawable?): Boolean {
     other ?: return false
     when {
-        this is StateListDrawable && other is StateListDrawable -> {
+        this is StateListDrawable && other is StateListDrawable ->
             return current.sameAs(other.current)
-        }
-        this is BitmapDrawable && other is BitmapDrawable -> {
+
+        this is BitmapDrawable && other is BitmapDrawable ->
             return bitmap.sameAs(other.bitmap)
-        }
-        this is ColorDrawable && other is ColorDrawable -> {
+
+        this is ColorDrawable && other is ColorDrawable ->
             return color == other.color
-        }
     }
     return this.toBitmap().sameAs(other.toBitmap())
 }

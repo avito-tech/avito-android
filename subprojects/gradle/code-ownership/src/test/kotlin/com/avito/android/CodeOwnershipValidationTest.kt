@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 
+@Suppress("MaxLineLength")
 class CodeOwnershipValidationTest {
 
     @TestFactory

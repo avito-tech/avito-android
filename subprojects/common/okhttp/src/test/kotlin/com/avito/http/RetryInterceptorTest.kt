@@ -19,6 +19,13 @@ internal class RetryInterceptorTest {
 
     private lateinit var server: MockWebServer
 
+    private val errorResponseCases = mapOf<String, MockResponse>(
+        "500" to MockResponse().setResponseCode(500),
+        "DISCONNECT_AT_START" to MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
+    )
+
+    private val successfulResponse = MockResponse()
+
     @BeforeEach
     private fun setup() {
         server = MockWebServerFactory.create() // can't reuse same server in dynamic tests after shutdown
@@ -29,13 +36,6 @@ internal class RetryInterceptorTest {
     fun tearDown() {
         server.shutdown()
     }
-
-    private val errorResponseCases = mapOf<String, MockResponse>(
-        "500" to MockResponse().setResponseCode(500),
-        "DISCONNECT_AT_START" to MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
-    )
-
-    private val successfulResponse = MockResponse()
 
     @Test
     fun `request success - response is successful`() {

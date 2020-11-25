@@ -14,6 +14,9 @@ class ProjectProfile(
      */
     val configurationOperation: ContinuousOperation = ContinuousOperation(path)
 
+    override val description: String
+        get() = path
+
     override val elapsedTime: Long
         get() = getTasks().elapsedTime
 
@@ -40,7 +43,4 @@ class ProjectProfile(
     override fun toString(): String {
         return path
     }
-
-    override val description: String
-        get() = path
 }

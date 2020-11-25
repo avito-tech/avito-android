@@ -49,7 +49,7 @@ internal object DuplicateFailureMessageNormalizer : FailureMessageNormalizer {
 
     override fun normalize(failureMessage: String): String {
         val parts = failureMessage.split("\n\n")
-        return if (parts.size > 1 && (parts[0].trim() == parts[1].trim())) {
+        return if (parts.size > 1 && parts[0].trim() == parts[1].trim()) {
             parts[0]
         } else {
             failureMessage

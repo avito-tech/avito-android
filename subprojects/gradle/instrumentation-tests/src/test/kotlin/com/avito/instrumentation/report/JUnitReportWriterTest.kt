@@ -76,7 +76,8 @@ internal class JUnitReportWriterTest {
             TestRunResult(
                 reportedTests = listOf(
                     SimpleRunTest.createStubInstance(
-                        name = "com.avito.android.deep_linking.DeepLinkingActivityIntentFilterTest.resolve_advert_legacyFormat"
+                        name =
+                        "com.avito.android.deep_linking.DeepLinkingActivityIntentFilterTest.resolve_advert_legacyFormat"
                     )
                 ),
                 failed = HasFailedTestDeterminer.Result.NoFailed,

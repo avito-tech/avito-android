@@ -72,11 +72,9 @@ class TestSuiteLoaderImpl(
     private fun Set<Annotation>.filterUtilityAnnotations(): List<Annotation> =
         filter { annotation -> utilityAnnotations.none { annotation.type.contains(it) } }
 
-    private fun ClassDef.isAbstract() =
-        (this.accessFlags.and(ACC_ABSTRACT) != 0)
+    private fun ClassDef.isAbstract() = this.accessFlags.and(ACC_ABSTRACT) != 0
 
-    private fun ClassDef.hasTestMethods() =
-        methods.find { it.hasTestAnnotation() } != null
+    private fun ClassDef.hasTestMethods() = methods.find { it.hasTestAnnotation() } != null
 
     private fun Method.hasTestAnnotation() =
         annotationExtractor.hasAnnotation(this, AnnotationType(TEST_ANNOTATION))

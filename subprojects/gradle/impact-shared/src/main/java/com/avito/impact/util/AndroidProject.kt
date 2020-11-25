@@ -24,9 +24,6 @@ class AndroidManifest(
     private val projectDir: File,
     private val sourceSet: String = "main"
 ) {
-    companion object {
-        fun from(project: Project): AndroidManifest = AndroidManifest(project.projectDir)
-    }
 
     private val packageParser = AndroidManifestPackageParser
 
@@ -35,5 +32,9 @@ class AndroidManifest(
 
         return packageParser.parse(manifest)
             ?: error("Project $projectDir doesn't have AndroidManifest or package in it")
+    }
+
+    companion object {
+        fun from(project: Project): AndroidManifest = AndroidManifest(project.projectDir)
     }
 }

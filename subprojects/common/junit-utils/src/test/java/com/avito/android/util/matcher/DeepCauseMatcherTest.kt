@@ -37,7 +37,7 @@ class DeepCauseMatcherTest {
     fun `deepCauseMatcher - fails - no class match`() {
         Assertions.assertThrows(AssertionError::class.java, {
             assertThat(
-                Exception((IndexOutOfBoundsException("text"))),
+                Exception(IndexOutOfBoundsException("text")),
                 deepCauseMatcher<IllegalArgumentException>("text", maxDepth = 3)
             )
         }, "Throwable cause at level: 3 is null")
@@ -47,7 +47,7 @@ class DeepCauseMatcherTest {
     fun `deepCauseMatcher - fails - no text match`() {
         Assertions.assertThrows(AssertionError::class.java, {
             assertThat(
-                Exception((IndexOutOfBoundsException("text"))),
+                Exception(IndexOutOfBoundsException("text")),
                 deepCauseMatcher<IndexOutOfBoundsException>("wrong", maxDepth = 3)
             )
         }, "Throwable cause at level: 3 is null")

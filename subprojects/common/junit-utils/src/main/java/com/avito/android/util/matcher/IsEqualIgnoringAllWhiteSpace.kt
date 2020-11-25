@@ -7,12 +7,6 @@ import java.lang.Character.isWhitespace
 
 class IsEqualIgnoringAllWhiteSpace(private val expectedString: String) : TypeSafeMatcher<String>() {
 
-    companion object {
-        fun equalToIgnoringAllWhiteSpace(expectedString: String): Matcher<String> {
-            return IsEqualIgnoringAllWhiteSpace(expectedString)
-        }
-    }
-
     override fun matchesSafely(item: String): Boolean {
         return expectedString.stripSpace() == item.stripSpace()
     }
@@ -26,4 +20,10 @@ class IsEqualIgnoringAllWhiteSpace(private val expectedString: String) : TypeSaf
     }
 
     fun String.stripSpace() = this.filter { !isWhitespace(it) }
+
+    companion object {
+        fun equalToIgnoringAllWhiteSpace(expectedString: String): Matcher<String> {
+            return IsEqualIgnoringAllWhiteSpace(expectedString)
+        }
+    }
 }

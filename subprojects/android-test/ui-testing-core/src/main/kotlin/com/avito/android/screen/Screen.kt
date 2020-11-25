@@ -24,7 +24,8 @@ interface Screen {
      * if apps's screen is in separate module, there can be multiple equal id's, like:
      *  com.avito.android.authorization.R.id
      *  com.avito.android.R.id
-     * Even worse, if there is a name clash (ex: id.root in multiple modules) LAST ONE! ends up in com.avito.android.R.id
+     * Even worse, if there is a name clash (ex: id.root in multiple modules) LAST ONE!
+     *  ends up in com.avito.android.R.id
      * Last one means last module in resource merge process
      * We could get different isOpened results based on module merge ordering :crazy:
      * So you better import fully qualified package name for R class of your module in Screen implementation

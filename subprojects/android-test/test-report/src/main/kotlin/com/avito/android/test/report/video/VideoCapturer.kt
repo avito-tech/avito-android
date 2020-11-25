@@ -251,6 +251,7 @@ private const val RECORDER_BINARY_NAME = "recorder"
  *
  * Вот так.
  */
+@Suppress("MaxLineLength")
 private const val RECORDER_BINARY_CONTENT = """
 logging() {
     echo ${'$'}1

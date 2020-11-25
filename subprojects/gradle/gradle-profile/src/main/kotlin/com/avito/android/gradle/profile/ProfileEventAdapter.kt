@@ -56,9 +56,10 @@ class ProfileEventAdapter(
     }
 
     override fun buildFinished(result: BuildResult) {
-        buildProfile!!.isSuccessful = (result.failure == null)
+        buildProfile!!.isSuccessful = result.failure == null
 
-        // We complete profiling here because it's too late to remove Gradle listeners in org.gradle.initialization.BuildCompletionListener.completed()
+        // We complete profiling here because it's too late to remove Gradle listeners
+        // in org.gradle.initialization.BuildCompletionListener.completed()
         complete(result)
     }
 

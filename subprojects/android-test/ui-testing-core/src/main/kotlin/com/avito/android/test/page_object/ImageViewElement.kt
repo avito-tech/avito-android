@@ -19,10 +19,10 @@ open class ImageViewElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext) {
 
+    override val checks: ImageViewChecks = ImageViewChecksImpl(interactionContext)
+
     // TODO: remove this constructor and use element fabric method to create an instance
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
-    override val checks: ImageViewChecks = ImageViewChecksImpl(interactionContext)
 }
 
 interface ImageViewChecks : Checks {

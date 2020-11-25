@@ -36,6 +36,7 @@ class TestExecutionStateTest {
             )
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `verdict from state must be ReRun with intention with retry number instrumentation param 1 after 1 failed run when retry quota is 2`() {
         val state = provideTestExecutionState(
@@ -81,6 +82,7 @@ class TestExecutionStateTest {
         }
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `verdict from state must be Run with 1 intentions 2 times when retry quota is 20 and minimal passed count is 10 and 2 runs failed`() {
         val minimalPassedCount = 10
@@ -110,6 +112,7 @@ class TestExecutionStateTest {
         }
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `verdict from state must be Run with 0 intentions 2 times when retry quota is 20 and minimal passed count is 10 and 2 runs passed`() {
         val minimalPassedCount = 10
@@ -144,6 +147,7 @@ class TestExecutionStateTest {
         }
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `verdict from state must be Run with 0 intentions 2 times when retry quota is 20 and minimal failed count is 10 and 2 runs failed`() {
         val minimalFailedCount = 10
@@ -179,6 +183,7 @@ class TestExecutionStateTest {
         }
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `dont have redundant intentions when have minimalFailedCount = 10 minimalPassedCount = 10 and retryQuota = 19`() {
         val minimalSuccessCount = 10
@@ -237,11 +242,11 @@ class TestExecutionStateTest {
             (verdict as TestExecutionState.Verdict.SendResult).results
 
         assertWithMessage("SendResult verdict must has first 10 failed test events")
-            .that(results.slice((0..9)).all { it.testCaseRun.result is TestCaseRun.Result.Failed.InRun })
+            .that(results.slice(0..9).all { it.testCaseRun.result is TestCaseRun.Result.Failed.InRun })
             .isTrue()
 
         assertWithMessage("SendResult verdict must has last 10 passed test events")
-            .that(results.slice((10..19)).all { it.testCaseRun.result is TestCaseRun.Result.Passed })
+            .that(results.slice(10..19).all { it.testCaseRun.result is TestCaseRun.Result.Passed })
             .isTrue()
     }
 

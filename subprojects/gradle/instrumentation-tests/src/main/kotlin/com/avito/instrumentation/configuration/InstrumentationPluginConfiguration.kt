@@ -90,7 +90,11 @@ object InstrumentationPluginConfiguration {
                     fileStorageUrl = reportViewer.fileStorageUrl
                 )
             } else {
-                if (reportApiFallbackUrl.isNotEmpty() && reportViewerUrl.isNotEmpty() && reportApiUrl.isNotEmpty() && fileStorageUrl.isNotEmpty()) {
+                if (reportApiFallbackUrl.isNotEmpty()
+                    && reportViewerUrl.isNotEmpty()
+                    && reportApiUrl.isNotEmpty()
+                    && fileStorageUrl.isNotEmpty()
+                ) {
                     Data.ReportViewer(
                         reportApiUrl = reportApiUrl,
                         reportApiFallbackUrl = reportApiFallbackUrl,

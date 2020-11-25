@@ -6,16 +6,17 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":common:percent"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:impact"))
-    implementation(project(":gradle:teamcity"))
-    implementation(project(":gradle:git"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:files"))
+    implementation(project(":gradle:git"))
+    implementation(project(":gradle:impact"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:statsd-config"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:ui-test-bytecode-analyzer"))
     implementation(project(":gradle:worker"))
     implementation(Dependencies.kotlinCompilerEmbeddable)

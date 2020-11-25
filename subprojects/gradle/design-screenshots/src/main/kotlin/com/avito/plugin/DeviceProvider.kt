@@ -23,9 +23,10 @@ internal class DeviceProviderLocal(
     override fun getDevice(): AdbDevice {
         val adbDeviceParams = connectedDeviceParams()
 
-        val serial: Serial.Local = when {
-            adbDeviceParams.id is Serial.Local -> adbDeviceParams.id as Serial.Local
-            adbDeviceParams.id is Serial.Remote -> Serial.Local(adbDeviceParams.id.value) // TODO: support model of locally connected device
+        val serial: Serial.Local = when (adbDeviceParams.id) {
+            is Serial.Local -> adbDeviceParams.id as Serial.Local
+            // TODO: support model of locally connected device
+            is Serial.Remote -> Serial.Local(adbDeviceParams.id.value)
             else -> throw RuntimeException("Unsupported device id: " + adbDeviceParams.id)
         }
 

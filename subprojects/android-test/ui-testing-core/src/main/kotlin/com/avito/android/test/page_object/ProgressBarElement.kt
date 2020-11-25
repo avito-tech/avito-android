@@ -15,10 +15,10 @@ class ProgressBarElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext) {
 
+    override val checks: ProgressBarChecks = ProgressBarChecksImpl(interactionContext)
+
     // TODO: remove this constructor and use element fabric method to create an instance
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
-    override val checks: ProgressBarChecks = ProgressBarChecksImpl(interactionContext)
 }
 
 interface ProgressBarChecks : Checks {
@@ -35,13 +35,12 @@ class ProgressBarChecksImpl(
         driver.check(
             ViewAssertion { view, _ ->
                 when (view) {
-                    is ProgressBar -> {
+                    is ProgressBar ->
                         if (view.progress != progress) {
                             throw AssertionFailedError(
                                 "Current progress is: ${view.progress}. Checked is $progress"
                             )
                         }
-                    }
                     else -> throw AssertionFailedError("Matched view with is not ProgressBar")
                 }
             }

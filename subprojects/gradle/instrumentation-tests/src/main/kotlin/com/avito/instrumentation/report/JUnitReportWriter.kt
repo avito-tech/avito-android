@@ -49,7 +49,11 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
 
                 if (test.stability is Stability.Flaky) {
                     appendln("<system-out>")
-                    appendEscapedLine("Flaky test. Success runs: ${(test.stability as Stability.Flaky).successCount} out of ${(test.stability as Stability.Flaky).attemptsCount}")
+                    appendEscapedLine(
+                        "Flaky test. " +
+                            "Success runs: ${(test.stability as Stability.Flaky).successCount} " +
+                            "out of ${(test.stability as Stability.Flaky).attemptsCount}"
+                    )
                     appendln("</system-out>")
                 }
 

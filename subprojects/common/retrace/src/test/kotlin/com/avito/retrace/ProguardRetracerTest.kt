@@ -35,6 +35,7 @@ com.avito.android.ui.Crasher -> b.a.a.a.a:
     5:5:void crash() -> a
 """
 
+@Suppress("MaxLineLength")
 private const val STACKTRACE = """
 07-06 13:15:56.784  4604  4604 E ReportUncaughtHandler: Application crash captured by global handler
 07-06 13:15:56.784  4604  4604 E ReportUncaughtHandler: java.lang.RuntimeException: Ooops

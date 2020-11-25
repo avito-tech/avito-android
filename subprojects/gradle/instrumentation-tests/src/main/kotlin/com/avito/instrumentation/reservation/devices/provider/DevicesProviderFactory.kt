@@ -49,10 +49,10 @@ interface DevicesProviderFactory {
             )
             val devicesManager = AdbDevicesManager(adb = adb, logger = commonLogger(logger))
             return when (configuration.requestedDeviceType) {
-                MOCK -> {
+                MOCK ->
                     MockDevicesProvider(logger)
-                }
-                LOCAL -> {
+
+                LOCAL ->
                     LocalDevicesProvider(
                         androidDebugBridge = androidDebugBridge,
                         devicesManager = devicesManager,
@@ -60,8 +60,8 @@ interface DevicesProviderFactory {
                         adb = adb,
                         logger = logger
                     )
-                }
-                CLOUD -> {
+
+                CLOUD ->
                     KubernetesDevicesProvider(
                         client = KubernetesReservationClient(
                             androidDebugBridge = androidDebugBridge,
@@ -84,7 +84,6 @@ interface DevicesProviderFactory {
                         adb = adb,
                         logger = logger
                     )
-                }
             }
         }
     }

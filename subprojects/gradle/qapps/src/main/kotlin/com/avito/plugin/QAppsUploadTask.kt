@@ -19,9 +19,6 @@ import javax.inject.Inject
 @Suppress("UnstableApiUsage")
 abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
 
-    @InputFile
-    abstract fun getApk(): RegularFileProperty // setup in ci build step
-
     @Input
     val comment = objects.property<String>()
 
@@ -45,6 +42,9 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
      */
     @Input
     val releaseChain: Property<Boolean> = objects.property<Boolean>().convention(false)
+
+    @InputFile
+    abstract fun getApk(): RegularFileProperty // setup in ci build step
 
     @TaskAction
     fun upload() {

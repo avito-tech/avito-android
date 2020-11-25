@@ -7,11 +7,14 @@ import com.avito.android.stats.graphiteSeries
 import org.gradle.BuildResult
 import org.gradle.api.provider.Provider
 
-@Suppress("UnstableApiUsage")
 class BuildMetricTracker(
     private val env: Provider<EnvironmentInfo>,
     private val sender: Provider<StatsDSender>
 ) {
+
+    private val node by lazy {
+        env.get().node?.take(32) ?: "unknown"
+    }
 
     fun track(buildResult: BuildResult, metric: StatsMetric) {
         val prefix = graphiteSeries(
@@ -34,9 +37,5 @@ class BuildMetricTracker(
 
     private fun buildStatus(buildResult: BuildResult): String {
         return if (buildResult.failure == null) "success" else "fail"
-    }
-
-    private val node by lazy {
-        env.get().node?.take(32) ?: "unknown"
     }
 }

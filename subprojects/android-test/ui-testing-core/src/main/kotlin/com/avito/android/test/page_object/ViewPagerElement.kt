@@ -21,10 +21,10 @@ open class ViewPagerElement(
 ) : ViewElement(interactionContext),
     ViewPagerActions by ViewPagerActionsImpl(interactionContext) {
 
+    override val checks: ViewPagerChecks = ViewPagerChecksImpl(interactionContext)
+
     // TODO: Use element()
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
-    override val checks: ViewPagerChecks = ViewPagerChecksImpl(interactionContext)
 
     protected inline fun <reified T : PageObjectElement> currentPageElement(matcher: Matcher<View>): T =
         T::class.java.getConstructor(InteractionContext::class.java)
@@ -41,11 +41,12 @@ open class ViewPagerElement(
     /**
      * Hide parent method [PageObject.element]
      */
-    protected inline fun <reified T : PageObjectElement> element(@Suppress("UNUSED_PARAMETER") matcher: Matcher<View>): T =
-        throw RuntimeException(
-            "Use currentPageElement(Matcher<View>) instead for getting page of view pager" +
-                "and then use element(Matcher<View>) for getting child"
-        )
+    protected inline fun <reified T : PageObjectElement> element(
+        @Suppress("UNUSED_PARAMETER") matcher: Matcher<View>
+    ): T = throw RuntimeException(
+        "Use currentPageElement(Matcher<View>) instead for getting page of view pager" +
+            "and then use element(Matcher<View>) for getting child"
+    )
 
     /**
      * Hide parent method [PageObject.element]

@@ -330,7 +330,10 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             .map { (screen, packageName) ->
                 val project = androidModules.find { it.manifest.getPackage() == packageName }
                 if (project == null) {
-                    ciLogger.critical("packageName=$packageName not found in project, available packages=${androidModules.map { it.name to it.manifest.getPackage() }}")
+                    ciLogger.critical(
+                        "packageName=$packageName not found in project, " +
+                            "available packages=${androidModules.map { it.name to it.manifest.getPackage() }}"
+                    )
                     null
                 } else {
                     ScreenToModulePath(screen, Path.path(project.path))

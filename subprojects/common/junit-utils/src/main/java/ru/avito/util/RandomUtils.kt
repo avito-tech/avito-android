@@ -13,6 +13,8 @@ import java.util.concurrent.ThreadLocalRandom
 private val random: ThreadLocalRandom
     get() = ThreadLocalRandom.current()
 
+private const val DEFAULT_MAX_INT = 10
+
 /**
  * Returns a pseudo-random uniformly distributed int in the half-open range [0, Int.MAX_VALUE)
  */
@@ -89,7 +91,7 @@ fun randomUrlString(): String {
     return "https://example.com/" + randomString()
 }
 
-fun randomStringList(capacity: Int = randomInt(10)): List<String> {
+fun randomStringList(capacity: Int = randomInt(DEFAULT_MAX_INT)): List<String> {
     val list = ArrayList<String>(capacity)
     for (i in 0 until capacity) {
         list.add(randomString())
@@ -98,7 +100,7 @@ fun randomStringList(capacity: Int = randomInt(10)): List<String> {
 }
 
 fun randomLongArray(): LongArray {
-    val array = LongArray(randomInt(10))
+    val array = LongArray(randomInt(DEFAULT_MAX_INT))
     for (i in array.indices) {
         array[i] = randomInt().toLong()
     }
@@ -145,13 +147,14 @@ sealed class Characters(val chars: List<Char>) {
     )
 }
 
+@Suppress("MagicNumber")
 fun randomNullableString(): String? {
     val random = Random()
     val isNullable = random.nextInt(3) == 0
-    if (isNullable) {
-        return null
+    return if (isNullable) {
+        null
     } else {
-        return randomString()
+        randomString()
     }
 }
 
@@ -165,16 +168,16 @@ fun randomString(length: Int, symbols: Characters = Characters.Alphanumeric): St
     return builder.toString()
 }
 
-fun randomIntArray(): IntArray = IntArray(randomInt(10)).map { randomInt() }.toIntArray()
+fun randomIntArray(): IntArray = IntArray(randomInt(DEFAULT_MAX_INT)).map { randomInt() }.toIntArray()
 
-fun randomByteArray(): ByteArray = ByteArray(randomInt(10)).apply { random.nextBytes(this) }
+fun randomByteArray(): ByteArray = ByteArray(randomInt(DEFAULT_MAX_INT)).apply { random.nextBytes(this) }
 
 inline fun <reified T : Any> List<T>.randomElement(): T = this[randomInt(this.size)]
 
 inline fun <reified T : Any> Array<T>.randomElement(): T = this[randomInt(this.size)]
 
 fun randomPassword(charLength: Int): String {
-    return randomString(charLength, Characters.Alphabetic) + randomInt(10)
+    return randomString(charLength, Characters.Alphabetic) + randomInt(DEFAULT_MAX_INT)
 }
 
 /**
@@ -184,10 +187,12 @@ fun randomPassword(charLength: Int): String {
  *
  * @return random e-mail address in @avito-test.ru domain
  */
+@Suppress("MagicNumber")
 fun randomEmail(): String {
     return randomString(6, Characters.AlphabeticLowercase) + "@avito-test.ru"
 }
 
+@Suppress("MagicNumber")
 fun randomPhone(): String {
     return "+7" + randomString(10, Characters.Digits)
 }

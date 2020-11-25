@@ -35,7 +35,7 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
                 modifiedProjectsFinder,
                 modulesBytecodeResolver
             ) {
-                timeout.set(Duration.ofMinutes(20))
+                timeout.set(Duration.ofMinutes(ANALYZE_TASK_TIMEOUT_MINUTES))
                 group = TASK_GROUP
                 description = "Analyze androidTest bytecode to collect maps: [Screen:Test], [Screen:RootId]"
 
@@ -70,6 +70,7 @@ class InstrumentationTestImpactAnalysisPlugin : Plugin<Project> {
     }
 }
 
+private const val ANALYZE_TASK_TIMEOUT_MINUTES = 20L
 private const val TASK_GROUP = "impact-analysis"
 private const val PLUGIN_NAME = "InstrumentationTestImpactAnalysisPlugin"
 internal const val TASK_ANALYZE_TEST_IMPACT_ANALYSIS = "analyzeTestImpact"

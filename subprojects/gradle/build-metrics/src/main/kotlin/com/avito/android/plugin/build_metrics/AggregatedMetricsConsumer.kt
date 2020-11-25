@@ -4,6 +4,7 @@ import com.avito.android.gradle.metric.AbstractMetricsConsumer
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.Operation
 import com.avito.android.gradle.profile.TaskExecution
+import com.avito.android.percentOf
 import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.TimeMetric
 import com.avito.android.stats.graphiteSeriesElement
@@ -29,6 +30,16 @@ internal class AggregatedMetricsConsumer(
 
     private val BuildResult.isBuildAction
         get() = action == "Build"
+
+    private val TaskExecution.internalState: TaskStateInternal
+        get() = try {
+            state as TaskStateInternal
+        } catch (e: Exception) {
+            error(
+                "Task $path has unsupported class $javaClass. " +
+                    "You can disable build-metrics plugin by project property 'avito.build.metrics.enabled=false'"
+            )
+        }
 
     init {
         check(project.isRoot()) { "Project ${project.path} must be root" }
@@ -127,7 +138,7 @@ internal class AggregatedMetricsConsumer(
         val hits = tasks.count {
             it.internalState.outcome == FROM_CACHE
         }
-        val missedPercentages = ((executed.toFloat() / (executed + hits)) * 100).toLong()
+        val missedPercentages = executed.percentOf(executed + hits).toLong()
         stats.track(buildResult, GaugeMetric("tasks.from_cache.miss", missedPercentages))
 
         // Other states are not needed yet
@@ -145,7 +156,7 @@ internal class AggregatedMetricsConsumer(
                     && it.elapsedTime > considerableTimeMs
             }
             .sortedWith(Operation.slowestFirst())
-            .take(256)
+            .take(TRACKING_LIMIT)
             .forEach {
                 trackExecutedTask(buildResult, it)
             }
@@ -163,16 +174,6 @@ internal class AggregatedMetricsConsumer(
         stats.track(buildResult, TimeMetric("tasks.executed.$module.$name.total", task.elapsedTime))
     }
 
-    private val TaskExecution.internalState: TaskStateInternal
-        get() = try {
-            state as TaskStateInternal
-        } catch (e: Exception) {
-            error(
-                "Task $path has unsupported class $javaClass. " +
-                    "You can disable build-metrics plugin by project property 'avito.build.metrics.enabled=false'"
-            )
-        }
-
     @Suppress("unused")
     private fun dump(task: TaskExecution) {
         val state = task.internalState
@@ -184,6 +185,11 @@ internal class AggregatedMetricsConsumer(
         )
     }
 }
+
+/**
+ * There are a lot (A LOT!) of tasks, and we need only this amount of slowest tasks to track
+ */
+private const val TRACKING_LIMIT = 256
 
 private const val considerableTimeMs = 100
 

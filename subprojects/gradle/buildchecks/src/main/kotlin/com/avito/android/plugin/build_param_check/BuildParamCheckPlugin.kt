@@ -26,6 +26,15 @@ import org.gradle.tooling.BuildException
 @Suppress("unused")
 open class BuildParamCheckPlugin : Plugin<Project> {
 
+    private val validationErrors = mutableListOf<String>()
+
+    private val Project.pluginIsEnabled: Boolean
+        get() = providers
+            .gradleProperty(enabledProp)
+            .forUseAtConfigurationTime()
+            .map { it.toBoolean() }
+            .getOrElse(true)
+
     override fun apply(project: Project) {
         val extension = project.extensions.create<BuildChecksExtension>(extensionName)
 
@@ -59,13 +68,6 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             showErrorsIfAny(project)
         }
     }
-
-    private val Project.pluginIsEnabled: Boolean
-        get() = providers
-            .gradleProperty(enabledProp)
-            .forUseAtConfigurationTime()
-            .map { it.toBoolean() }
-            .getOrElse(true)
 
     private fun checkJavaVersion(check: Check.JavaVersion) {
         check(JavaVersion.current() == check.version) {
@@ -159,8 +161,6 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         return System.getProperty("os.name", "").orEmpty()
             .contains("mac", ignoreCase = true)
     }
-
-    private val validationErrors = mutableListOf<String>()
 
     private fun checkModuleHasRequiredPlugins(project: Project) {
         project.subprojects { subproject ->

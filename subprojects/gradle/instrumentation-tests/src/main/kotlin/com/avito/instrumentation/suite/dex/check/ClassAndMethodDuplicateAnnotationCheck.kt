@@ -12,7 +12,10 @@ class ClassAndMethodDuplicateAnnotationCheck(override val onViolation: (String) 
     ) {
         val duplicateAnnotations = classAnnotations.map { it.name }.intersect(methodAnnotations.map { it.name })
         if (duplicateAnnotations.isNotEmpty()) {
-            onViolation("method: $methodName and it's class: $className has duplicate annotations: $duplicateAnnotations")
+            onViolation(
+                "method: $methodName and it's class: $className " +
+                    "has duplicate annotations: $duplicateAnnotations"
+            )
         }
     }
 }

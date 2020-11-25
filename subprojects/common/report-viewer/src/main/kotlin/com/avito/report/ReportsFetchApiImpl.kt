@@ -112,27 +112,33 @@ internal class ReportsFetchApiImpl(
             .groupBy { it.name }
             .map { (testName, runs) ->
                 val status: CrossDeviceStatus = when {
-                    runs.any { it.status is Status.Lost } -> CrossDeviceStatus.LostOnSomeDevices
-                    runs.all { it.status is Status.Skipped } -> CrossDeviceStatus.SkippedOnAllDevices
-                    runs.all { it.status is Status.Manual } -> CrossDeviceStatus.Manual
+                    runs.any { it.status is Status.Lost } ->
+                        CrossDeviceStatus.LostOnSomeDevices
+
+                    runs.all { it.status is Status.Skipped } ->
+                        CrossDeviceStatus.SkippedOnAllDevices
+
+                    runs.all { it.status is Status.Manual } ->
+                        CrossDeviceStatus.Manual
 
                     /**
                      * Успешным прогоном является при соблюдении 2 условий:
                      *  - Все тесты прошли (имеют Success статус)
-                     *  - Есть пропущенные тесты (скипнули на каком-то SDK например), но все остальные являются успешными
-                     *    (как минимум 1)
+                     *  - Есть пропущенные тесты (скипнули на каком-то SDK например),
+                     *    но все остальные являются успешными (как минимум 1)
                      */
                     runs.any { it.status is Status.Success } &&
-                        runs.all { it.status is Status.Success || it.status is Status.Skipped } -> CrossDeviceStatus.Success
+                        runs.all { it.status is Status.Success || it.status is Status.Skipped } ->
+                        CrossDeviceStatus.Success
 
-                    runs.all { it.status is Status.Failure } -> CrossDeviceStatus.FailedOnAllDevices(
-                        runs.deviceFailures()
-                    )
-                    runs.any { it.status is Status.Failure } -> CrossDeviceStatus.FailedOnSomeDevices(
-                        runs.deviceFailures()
-                    )
+                    runs.all { it.status is Status.Failure } ->
+                        CrossDeviceStatus.FailedOnAllDevices(runs.deviceFailures())
 
-                    else -> CrossDeviceStatus.Inconsistent
+                    runs.any { it.status is Status.Failure } ->
+                        CrossDeviceStatus.FailedOnSomeDevices(runs.deviceFailures())
+
+                    else ->
+                        CrossDeviceStatus.Inconsistent
                 }
                 CrossDeviceRunTest(TestName(testName), status)
             }
@@ -140,7 +146,8 @@ internal class ReportsFetchApiImpl(
     }
 
     /**
-     * todo выпилить и падать если не находим прямо тут после того как история уедет вперед достаточно чтобы не ловить эти падения
+     * todo выпилить и падать если не находим прямо тут
+     * после того как история уедет вперед достаточно чтобы не ловить эти падения
      */
     private fun tryToGetBuildBranch(run: Run): String? {
         return run.reportData?.appBranch ?: run.reportData?.tags
@@ -161,7 +168,9 @@ internal class ReportsFetchApiImpl(
                     id = listResult.id,
                     reportId = reportId,
                     name = testName,
-                    deviceName = requireNotNull(listResult.environment) { "deviceName(environment) is null for test $testName, that's illegal!" },
+                    deviceName = requireNotNull(listResult.environment) {
+                        "deviceName(environment) is null for test $testName, that's illegal!"
+                    },
                     testCaseId = getTestCaseId(listResult),
                     className = listResult.className,
                     methodName = listResult.methodName,
@@ -224,14 +233,16 @@ internal class ReportsFetchApiImpl(
             }
             reportModel.attemptsCount < 1 -> {
                 logger.debug("test without attempts? $reportModel")
-                Stability.Failing(reportModel.attemptsCount) // на самом деле не совсем, репортим эту ситуацию как невероятную
+                // на самом деле не совсем, репортим эту ситуацию как невероятную
+                Stability.Failing(reportModel.attemptsCount)
             }
             reportModel.successCount > reportModel.attemptsCount -> {
                 logger.debug("success count > attempts count?? $reportModel")
+                // на самом деле не совсем, репортим эту ситуацию как невероятную
                 Stability.Stable(
                     reportModel.attemptsCount,
                     reportModel.successCount
-                ) // на самом деле не совсем, репортим эту ситуацию как невероятную
+                )
             }
             reportModel.successCount == 0 -> Stability.Failing(reportModel.attemptsCount)
             reportModel.successCount == reportModel.attemptsCount -> Stability.Stable(

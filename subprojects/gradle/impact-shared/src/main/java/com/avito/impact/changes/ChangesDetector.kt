@@ -86,7 +86,7 @@ class GitChangesDetector(
                 }
                 .filterNot { changedFile ->
                     val pattern = ignoreSettings.match(changedFile.relativePath)
-                    val isPathIgnored = (pattern != null)
+                    val isPathIgnored = pattern != null
                     if (isPathIgnored) {
                         logger.debug("File ${changedFile.relativePath} is ignored due to pattern $pattern")
                     }

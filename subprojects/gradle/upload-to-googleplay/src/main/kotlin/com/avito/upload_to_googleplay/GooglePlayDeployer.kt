@@ -75,9 +75,8 @@ interface GooglePlayDeployer {
                     uploadProguard(deploy, editId, versionCode)
                     versionCode
                 }
-                GooglePlayDeploy.BinaryType.BUNDLE -> {
+                GooglePlayDeploy.BinaryType.BUNDLE ->
                     uploadBundle(deploy, editId)
-                }
             }
         }
 
@@ -186,7 +185,7 @@ interface GooglePlayDeployer {
 
         companion object {
 
-            val MIME_TYPE_STREAM = "application/octet-stream"
+            const val MIME_TYPE_STREAM = "application/octet-stream"
 
             private val timeout = TimeUnit.MINUTES.toMillis(5).toInt()
 

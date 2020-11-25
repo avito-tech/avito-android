@@ -17,19 +17,20 @@ internal class TestNameUnitParsingTest {
 
     @Test
     fun `unit parsed with subpackages`() {
-        assertThat(TestName(name = "com.avito.android.test.auto.some_feature.MyTest.test").team).isEqualTo(Team("auto"))
+        assertThat(TestName(name = "com.avito.android.test.auto.some_feature.MyTest.test").team)
+            .isEqualTo(Team("auto"))
     }
 
     @Test
     fun `unit parsed with underscore`() {
-        assertThat(TestName(name = "com.avito.android.test.seller_x.some_feature.MyTest.test").team).isEqualTo(Team("seller-x"))
+        assertThat(TestName(name = "com.avito.android.test.seller_x.some_feature.MyTest.test").team)
+            .isEqualTo(Team("seller-x"))
     }
 
     @Test
     fun `unit parsed with underscore with multiple subpackages`() {
-        assertThat(TestName(name = "com.avito.android.test.seller_x.some_feature.some_inner_feature.MyTest.test").team).isEqualTo(
-            Team("seller-x")
-        )
+        assertThat(TestName(name = "com.avito.android.test.seller_x.some_feature.some_inner_feature.MyTest.test").team)
+            .isEqualTo(Team("seller-x"))
     }
 
     @Test

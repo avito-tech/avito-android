@@ -99,10 +99,14 @@ internal class RecyclerItemsMatcher(
 
             private fun createNearItemsDescription() =
                 "Search near items from $searchFrom to $searchTo ${
-                    if (nearMatchedItems.isEmpty()) "doesn't have matches" else "has matches at positions: [${
-                        nearMatchedItems.map { it.position }
-                            .joinToString()
-                    }"
+                    if (nearMatchedItems.isEmpty()) {
+                        "doesn't have matches"
+                    } else {
+                        "has matches at positions: [${
+                            nearMatchedItems.map { it.position }
+                                .joinToString()
+                        }"
+                    }
                 }]"
         }
     }

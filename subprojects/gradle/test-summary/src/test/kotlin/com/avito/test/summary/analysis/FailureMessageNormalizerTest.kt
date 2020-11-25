@@ -38,8 +38,8 @@ class FailureMessageNormalizerTest {
 
     @Test
     fun `no views in hierarchy - replaced with short message with view id`() {
-        val verdict =
-            "[test run] В [testCase] Не удалось выполнить шаг No views in hierarchy found matching: with id: com.avito.android.dev:id/advert_duplicate_screen_root\\n\\nView Hiera"
+        val verdict = "[test run] В [testCase] Не удалось выполнить шаг No views in hierarchy found matching: " +
+            "with id: com.avito.android.dev:id/advert_duplicate_screen_root\\n\\nView Hiera"
 
         val result = normalize(verdict)
 

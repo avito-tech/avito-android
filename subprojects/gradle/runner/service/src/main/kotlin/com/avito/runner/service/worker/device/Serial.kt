@@ -20,9 +20,11 @@ sealed class Serial {
 
     companion object {
         fun from(value: String): Serial {
-            return if (isRemote(value)) Remote(
-                value
-            ) else Local(value)
+            return if (isRemote(value)) {
+                Remote(value)
+            } else {
+                Local(value)
+            }
         }
 
         @Suppress("UnstableApiUsage")

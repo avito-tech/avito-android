@@ -1,5 +1,6 @@
 package com.avito.instrumentation.impact
 
+import com.avito.android.percentOf
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.graphiteSeries
@@ -24,7 +25,6 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @Suppress("UnstableApiUsage")
 abstract class AnalyzeTestImpactTask @Inject constructor(
@@ -92,14 +92,19 @@ abstract class AnalyzeTestImpactTask @Inject constructor(
         testsToRun: Set<Test>
     ) {
         val envName = environmentInfo.environment.publicName
-        val node = environmentInfo.node?.take(32) ?: "_"
+        val node = environmentInfo.node?.take(GRAPHITE_SERIES_LIMIT) ?: "_"
         val prefix = graphiteSeries(envName, node)
 
         // efficiency exists only if we have at least one test
         if (allTests.isNotEmpty()) {
-            val percentage = ((testsToRun.size.toFloat() / allTests.size) * 100).roundToInt()
+            val percentage = testsToRun.size.percentOf(allTests.size)
 
-            statsd.send(prefix, GaugeMetric("tia.ui_tests_ratio", percentage))
+            statsd.send(prefix, GaugeMetric("tia.ui_tests_ratio", percentage.toInt()))
         }
     }
 }
+
+/**
+ * todo check if this is a real reason
+ */
+private const val GRAPHITE_SERIES_LIMIT = 32

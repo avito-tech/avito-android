@@ -9,8 +9,12 @@ import org.funktionale.tries.Try
 class FakeReport : Report {
 
     var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
+
     var reportedMissingTests: Collection<AndroidTest.Lost>? = null
+
     var reportId: String? = null
+
+    var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())
 
     override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
     }
@@ -32,7 +36,6 @@ class FakeReport : Report {
     override fun finish() {
     }
 
-    var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())
     override fun getTests(): Try<List<SimpleRunTest>> {
         return getTestsResult
     }

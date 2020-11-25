@@ -78,8 +78,10 @@ internal class BitbucketImplTest {
                 )
             )
 
-            addAnnotationsRequest.checks.singleRequestCaptured()
-                .bodyContains("""{"annotations":[{"path":"$fileToBeModifiedPath","line":6,"message":"Unsafe use of nullable receiver of type URL?","severity":"MEDIUM"}]}""")
+            @Suppress("MaxLineLength")
+            addAnnotationsRequest.checks.singleRequestCaptured().bodyContains(
+                """{"annotations":[{"path":"$fileToBeModifiedPath","line":6,"message":"Unsafe use of nullable receiver of type URL?","severity":"MEDIUM"}]}"""
+            )
         }
     }
 

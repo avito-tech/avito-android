@@ -9,8 +9,9 @@ import org.gradle.api.PolymorphicDomainObjectContainer
  * @see [PolymorphicDomainObjectContainer.register]
  */
 @Suppress("extension_shadowed_by_member")
-inline fun <reified T : Any> PolymorphicDomainObjectContainer<in T>.register(name: String): NamedDomainObjectProvider<T> =
-    register(name, T::class.java)
+inline fun <reified T : Any> PolymorphicDomainObjectContainer<in T>.register(
+    name: String
+): NamedDomainObjectProvider<T> = register(name, T::class.java)
 
 /**
  * Defines and configure a new object, which will be created when it is required.
@@ -20,5 +21,4 @@ inline fun <reified T : Any> PolymorphicDomainObjectContainer<in T>.register(nam
 inline fun <reified T : Any> PolymorphicDomainObjectContainer<in T>.register(
     name: String,
     noinline configuration: T.() -> Unit
-): NamedDomainObjectProvider<T> =
-    register(name, T::class.java, configuration)
+): NamedDomainObjectProvider<T> = register(name, T::class.java, configuration)

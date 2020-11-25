@@ -4,8 +4,8 @@ import org.funktionale.tries.Try
 
 /**
  * Универсальный runId для идентификации сьюта тестов
- * - build config teamcity домешан, чтобы отличать прогон на одном API на develop(там так же как в релизе нет targetBranch)
- * от buildRelease
+ * - build config teamcity домешан, чтобы отличать прогон на одном API на develop
+ *  (там так же как в релизе нет targetBranch) от buildRelease
  */
 data class RunId(val commitHash: String, val buildTypeId: String) {
 

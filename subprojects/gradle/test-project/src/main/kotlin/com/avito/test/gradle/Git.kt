@@ -33,7 +33,7 @@ fun File.commit(message: String = "changes") {
 fun randomCommitHash(): String =
     MessageDigest.getInstance("SHA-1")
         .digest(random.nextLong().toString().toByteArray())
-        .fold("") { str, it -> str + "%02x".format(it) }
+        .fold("") { str, bytes -> str + "%02x".format(bytes) }
 
 private fun String.escape() = replace("\\s+".toRegex()) { "_" }
 

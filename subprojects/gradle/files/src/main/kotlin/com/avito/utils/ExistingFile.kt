@@ -13,14 +13,14 @@ interface ExistingFile {
 
     class Impl(file: File) : ExistingFile {
 
-        constructor(directory: ExistingDirectory, fileName: String) : this(File(directory.dir, fileName))
-
         override val file = file
             get() {
                 require(field.exists()) { "${field.path} must exists" }
                 require(field.isFile) { "${field.path} must be a file" }
                 return field
             }
+
+        constructor(directory: ExistingDirectory, fileName: String) : this(File(directory.dir, fileName))
 
         override fun toString(): String = file.toString()
     }
@@ -42,14 +42,14 @@ interface ExistingDirectory {
 
     class Impl(dir: File) : ExistingDirectory {
 
-        constructor(path: String) : this(File(path))
-
         override val dir = dir
             get() {
                 require(field.exists()) { "${field.path} must exists" }
                 require(field.isDirectory) { "${field.path} must be a directory" }
                 return field
             }
+
+        constructor(path: String) : this(File(path))
 
         override operator fun plus(path: String): ExistingDirectory =
             Impl(File(dir, path))

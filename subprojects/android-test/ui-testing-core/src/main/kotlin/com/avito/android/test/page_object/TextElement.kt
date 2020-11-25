@@ -56,7 +56,12 @@ class ClickOnTextAction(private val textToClick: String) : ViewAction {
         if (count != 1) {
             throw throw PerformException.Builder().withActionDescription(this.toString())
                 .withViewDescription(HumanReadables.describe(view))
-                .withCause(IllegalStateException("Zero or more than 1 matches for given text in TextView. Please specify text to click more accurately"))
+                .withCause(
+                    IllegalStateException(
+                        "Zero or more than 1 matches for given text in TextView. " +
+                            "Please specify text to click more accurately"
+                    )
+                )
                 .build()
         }
 
@@ -106,8 +111,11 @@ private fun getTextCenterProvider(textView: TextView, start: Int, end: Int): Coo
     val endLine = layout.getLineForOffset(end)
     val lines = endLine - startLine + 1
 
-    val textWidth = if (lines == 1) maxOf(endOffset - startOffset, 0f)
-    else layout.getLineRight(startLine) - startOffset
+    val textWidth = if (lines == 1) {
+        maxOf(endOffset - startOffset, 0f)
+    } else {
+        layout.getLineRight(startLine) - startOffset
+    }
 
     val lineHeight = layout.getLineBottom(startLine) - layout.getLineTop(startLine)
 

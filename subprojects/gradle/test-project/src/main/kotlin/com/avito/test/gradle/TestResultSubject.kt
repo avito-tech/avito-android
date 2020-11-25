@@ -14,16 +14,6 @@ class TestResultSubject private constructor(
     private val subject: TestResult
 ) : Subject(failureMetadata, subject) {
 
-    companion object {
-        private val SUBJECT_FACTORY =
-            Factory<TestResultSubject, TestResult> { metadata, actual ->
-                TestResultSubject(metadata, actual)
-            }
-
-        fun assertThat(subject: TestResult): TestResultSubject =
-            Truth.assertAbout(SUBJECT_FACTORY).that(subject)
-    }
-
     fun buildSuccessful(): TestResultSubject {
         check("buildSuccessful").that(subject).isInstanceOf<TestResult.Success>()
         return this
@@ -61,5 +51,15 @@ class TestResultSubject private constructor(
 
     fun moduleTaskShouldNotBeTriggered(vararg modulePaths: String) {
         check("modules tasks should not be triggered").that(subject.triggeredModules).containsNoneIn(modulePaths)
+    }
+
+    companion object {
+        private val SUBJECT_FACTORY =
+            Factory<TestResultSubject, TestResult> { metadata, actual ->
+                TestResultSubject(metadata, actual)
+            }
+
+        fun assertThat(subject: TestResult): TestResultSubject =
+            Truth.assertAbout(SUBJECT_FACTORY).that(subject)
     }
 }

@@ -26,7 +26,9 @@ class KubernetesDevicesProvider(
         @Suppress("DEPRECATION")
         return claim.deviceCoordinates.map { coordinate ->
             val adbDeviceParams = adbDevicesManager.findDevice(coordinate.serial)
-                .orElseGet { throw IllegalStateException("Can't find device connected adb device ${coordinate.serial}") }
+                .orElseGet {
+                    throw IllegalStateException("Can't find device connected adb device ${coordinate.serial}")
+                }
             logger.debug("Reserve Device ${coordinate.serial}")
             AdbDevice(
                 coordinate = coordinate,

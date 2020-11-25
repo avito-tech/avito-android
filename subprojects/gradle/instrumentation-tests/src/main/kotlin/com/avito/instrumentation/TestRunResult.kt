@@ -45,13 +45,12 @@ data class TestRunResult(
             val failedVerdict = getFailedVerdict()
             val notReportedVerdict = getNotReportedVerdict()
             return when {
-                failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success -> {
+                failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success ->
                     Verdict.Success(
                         """
-                            |${failedVerdict.message}.
-                            |${notReportedVerdict.message}.""".trimMargin()
+                        |${failedVerdict.message}.
+                        |${notReportedVerdict.message}.""".trimMargin()
                     )
-                }
                 failedVerdict is Verdict.Failure && notReportedVerdict is Verdict.Failure -> {
                     val message = "${failedVerdict.message}. \n ${notReportedVerdict.message}"
                     Verdict.Failure(
@@ -65,6 +64,9 @@ data class TestRunResult(
                 else -> throw IllegalStateException("Must be unreach")
             }
         }
+
+    val testsDuration
+        get() = reportedTests.sumBy { it.lastAttemptDurationInSeconds }
 
     private fun getNotReportedVerdict() = when (notReported) {
         is HasNotReportedTestsDeterminer.Result.AllTestsReported -> Verdict.Success("All tests reported")
@@ -86,7 +88,7 @@ data class TestRunResult(
         )
     }
 
-    private fun HasNotReportedTestsDeterminer.Result.HasNotReportedTests.getLostFailureDetailsTests(): Set<Verdict.Failure.Details.Test> =
+    private fun HasNotReportedTestsDeterminer.Result.HasNotReportedTests.getLostFailureDetailsTests() =
         lostTests.groupBy({ test -> test.name }, { test -> test.device.name })
             .map { (testName, devices) ->
                 Verdict.Failure.Details.Test(
@@ -106,7 +108,7 @@ data class TestRunResult(
             ),
             cause = failed.throwable
         )
-        is HasFailedTestDeterminer.Result.Failed -> {
+        is HasFailedTestDeterminer.Result.Failed ->
             if (failed.notSuppressedCount > 0) {
                 Verdict.Failure(
                     message = "Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests",
@@ -119,16 +121,12 @@ data class TestRunResult(
             } else {
                 Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")
             }
-        }
     }
 
-    private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests(): Set<Verdict.Failure.Details.Test> =
+    private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests() =
         notSuppressed.groupBy({ test -> test.name }, { test -> test.deviceName })
             .map { (testName, devices) -> Verdict.Failure.Details.Test(testName, devices.toSet()) }
             .toSet()
-
-    val testsDuration
-        get() = reportedTests.sumBy { it.lastAttemptDurationInSeconds }
 
     fun testCount(): Int = reportedTests.size + notReported.lostTests.size
 

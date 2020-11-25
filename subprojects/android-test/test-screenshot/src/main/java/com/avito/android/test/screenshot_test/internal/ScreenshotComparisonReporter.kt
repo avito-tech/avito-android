@@ -11,6 +11,9 @@ internal class ScreenshotComparisonReporter(
     private val context: Context
 ) {
 
+    private val RemoteStorage.Result.error: Throwable?
+        get() = (this as? RemoteStorage.Result.Error)?.t
+
     fun reportScreenshotComparison(
         generated: Screenshot,
         reference: Screenshot
@@ -29,7 +32,9 @@ internal class ScreenshotComparisonReporter(
         )
         val generatedScreenshotResult = generatedScreenshotFuture.get()
         val referenceScreenshotResult = referenceScreenshotFuture.get()
-        if (generatedScreenshotResult is RemoteStorage.Result.Success && referenceScreenshotResult is RemoteStorage.Result.Success) {
+        if (generatedScreenshotResult is RemoteStorage.Result.Success
+            && referenceScreenshotResult is RemoteStorage.Result.Success
+        ) {
             val htmlReport = getReportAsString(
                 referenceUrl = referenceScreenshotResult.url,
                 generatedUrl = generatedScreenshotResult.url
@@ -46,9 +51,6 @@ internal class ScreenshotComparisonReporter(
             )
         }
     }
-
-    private val RemoteStorage.Result.error: Throwable?
-        get() = (this as? RemoteStorage.Result.Error)?.t
 
     private fun getReportAsString(referenceUrl: String, generatedUrl: String): String {
         context.assets.open("screenshot_test_report.html").use {

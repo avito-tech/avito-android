@@ -18,10 +18,10 @@ class ToolbarMenuElement(
     interactionContext: InteractionContext
 ) : ViewElement(interactionContext) {
 
+    override val checks: ToolbarMenuElementChecks = ToolbarMenuElementChecksImpl(interactionContext)
+
     // TODO: use element() and remove this constructor
     constructor(matcher: Matcher<View>) : this(SimpleInteractionContext(matcher))
-
-    override val checks: ToolbarMenuElementChecks = ToolbarMenuElementChecksImpl(interactionContext)
 }
 
 interface ToolbarMenuElementChecks : Checks

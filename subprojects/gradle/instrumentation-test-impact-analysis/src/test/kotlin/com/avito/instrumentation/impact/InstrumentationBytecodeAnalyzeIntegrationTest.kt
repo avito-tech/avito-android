@@ -16,7 +16,9 @@ class InstrumentationBytecodeAnalyzeIntegrationTest {
     private val targetBranch = "develop"
 
     @Test
-    fun `screens to tests mapping file contains tests connected with screen in single module project`(@TempDir testProjectDir: File) {
+    fun `screens to tests mapping file contains tests connected with screen in single module project`(
+        @TempDir testProjectDir: File
+    ) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,
@@ -60,7 +62,9 @@ class InstrumentationBytecodeAnalyzeIntegrationTest {
     }
 
     @Test
-    fun `screens to tests mapping file contains tests connected with screen in multi module project`(@TempDir testProjectDir: File) {
+    fun `screens to tests mapping file contains tests connected with screen in multi module project`(
+        @TempDir testProjectDir: File
+    ) {
         val outputDir = Paths.get(
             "$testProjectDir",
             projectToChange,
