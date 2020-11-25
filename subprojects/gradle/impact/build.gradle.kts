@@ -6,15 +6,17 @@ plugins {
 }
 
 dependencies {
-    api(
-        project(":gradle:impact-shared")
-    )
+    api(project(":gradle:impact-shared"))
+
     implementation(gradleApi())
+    implementation(project(":gradle:android"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:files"))
-    implementation(project(":gradle:android"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:sentry-config"))
+    implementation(project(":gradle:statsd-config"))
+
     implementation(Dependencies.antPattern)
     implementation(Dependencies.Gradle.kotlinPlugin)
 

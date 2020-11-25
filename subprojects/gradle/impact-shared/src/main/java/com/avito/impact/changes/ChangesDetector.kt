@@ -6,6 +6,7 @@ import org.funktionale.tries.Try
 import java.io.File
 
 interface ChangesDetector {
+
     /**
      * Determines changed files(relative paths) under provided [targetDirectory], minus [excludedDirectories]
      *
@@ -15,6 +16,7 @@ interface ChangesDetector {
 }
 
 class ChangesDetectorStub(private val reason: String) : ChangesDetector {
+
     override fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File>): Try<List<ChangedFile>> {
         return Try.Failure(IllegalStateException(reason))
     }

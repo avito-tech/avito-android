@@ -12,17 +12,15 @@ import com.avito.report.model.CreateResult.Created
 import com.avito.report.model.CreateResult.Failed
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
-import com.google.gson.Gson
 import com.google.gson.JsonElement
 import org.funktionale.tries.Try
 
 internal class ReportsApiImpl(
-    private val gson: Gson,
     private val logger: Logger,
     private val requestProvider: JsonRpcRequestProvider
 ) : ReportsApi,
     ReportsAddApi by ReportsAddApiImpl(requestProvider),
-    ReportsFetchApi by ReportsFetchApiImpl(requestProvider, gson, logger) {
+    ReportsFetchApi by ReportsFetchApiImpl(requestProvider, logger) {
 
     override fun create(
         reportCoordinates: ReportCoordinates,

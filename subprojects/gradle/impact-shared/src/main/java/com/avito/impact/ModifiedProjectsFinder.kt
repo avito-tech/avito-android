@@ -14,6 +14,18 @@ class ModifiedProjectsFinder(
         fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
     }
 
+    fun getProjects(): Map<ConfigurationType, Set<ModifiedProject>> {
+        return ConfigurationType.values()
+            .map { type -> type to findProjects(rootProject, type, predicate = { true }) }
+            .toMap()
+    }
+
+    /**
+     * @param configurationType narrow search by configuration type
+     *                          null - modified by any configuration
+     *
+     * @return only modified projects by [configurationType]
+     */
     fun findModifiedProjects(configurationType: ConfigurationType? = null): Set<ModifiedProject> {
         val reportTypes = if (configurationType == null) {
             ConfigurationType.values()
