@@ -1,5 +1,6 @@
-package com.avito.android.build_verdict
+package com.avito.android.build_verdict.internal
 
+import com.avito.android.build_verdict.internal.writer.BuildVerdictWriter
 import com.avito.utils.getStackTraceString
 import org.gradle.BuildResult
 import org.gradle.api.Action
@@ -8,7 +9,7 @@ import org.gradle.util.Path
 
 internal class BuildFailureListener(
     private val graph: TaskExecutionGraph,
-    private val logs: Map<Path, StringBuilder>,
+    private val logs: Map<Path, LogsTextBuilder>,
     private val writer: BuildVerdictWriter
 ) : Action<BuildResult> {
 
@@ -33,7 +34,7 @@ internal class BuildFailureListener(
                     FailedTask(
                         name = task.name,
                         projectPath = task.project.path,
-                        errorOutput = logs[Path.path(task.path)].toString(),
+                        errorOutput = logs[Path.path(task.path)]?.build() ?: "No error logs",
                         originalError = task.state.failure!!.let { error ->
                             Error(
                                 message = error.localizedMessage,

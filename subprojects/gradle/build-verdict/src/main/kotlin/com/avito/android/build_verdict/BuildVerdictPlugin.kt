@@ -1,15 +1,16 @@
 package com.avito.android.build_verdict
 
+import com.avito.android.build_verdict.internal.BuildVerdictPluginServices
 import com.avito.kotlin.dsl.isRoot
 import com.avito.utils.logging.ciLogger
-import com.google.gson.GsonBuilder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.internal.logging.LoggingManagerInternal
+import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.kotlin.dsl.create
-import org.gradle.util.Path
-
-internal data class TaskPath(val value: String)
+import org.gradle.kotlin.dsl.support.serviceOf
 
 @Suppress("UnstableApiUsage")
 class BuildVerdictPlugin : Plugin<ProjectInternal> {
@@ -27,34 +28,24 @@ class BuildVerdictPlugin : Plugin<ProjectInternal> {
         }
 
         if (project.pluginIsEnabled) {
-            val logs = mutableMapOf<Path, StringBuilder>()
             val extension = project.extensions.create<BuildVerdictPluginExtension>("buildVerdict")
-            project.gradle.addListener(TaskErrorOutputCaptureExecutionListener(logs, project.ciLogger))
+            val services = BuildVerdictPluginServices()
+            project.gradle.addListener(services.gradleTaskExecutionListener())
+            project.gradle.addLogEventListener(services.gradleLogEventListener())
             project.gradle.taskGraph.whenReady { graph ->
                 val outputDir = extension.outputDir.get().asFile
-                project.gradle.buildFinished(
-                    BuildFailureListener(
-                        graph = graph,
-                        logs = logs,
-                        writer = CompositeBuildVerdictWriter(
-                            writers = listOf(
-                                RawBuildVerdictWriter(
-                                    buildVerdictDir = outputDir,
-                                    logger = project.ciLogger,
-                                    gson = GsonBuilder()
-                                        .disableHtmlEscaping()
-                                        .setPrettyPrinting()
-                                        .create()
-                                ),
-                                PlainTextBuildVerdictWriter(
-                                    buildVerdictDir = outputDir,
-                                    logger = project.ciLogger
-                                )
-                            )
-                        )
-                    )
-                )
+                project.gradle.buildFinished(services.gradleBuildFinishedListener(graph, outputDir, project.ciLogger))
             }
+        }
+    }
+
+    private fun GradleInternal.addLogEventListener(
+        gradleLogEventListener: OutputEventListener
+    ) {
+        val loggingManager = serviceOf<LoggingManagerInternal>()
+        loggingManager.addOutputEventListener(gradleLogEventListener)
+        buildFinished { _ ->
+            loggingManager.removeOutputEventListener(gradleLogEventListener)
         }
     }
 

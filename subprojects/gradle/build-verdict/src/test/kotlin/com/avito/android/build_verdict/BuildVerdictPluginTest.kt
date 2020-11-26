@@ -1,5 +1,6 @@
 package com.avito.android.build_verdict
 
+import com.avito.android.build_verdict.internal.BuildVerdict
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.gradlew
@@ -11,7 +12,7 @@ import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import com.avito.android.build_verdict.RawBuildVerdictWriter.Companion.buildVerdictFileName as rawBuildVerdictFileName
+import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter.Companion.buildVerdictFileName as rawBuildVerdictFileName
 
 class BuildVerdictPluginTest {
 
@@ -36,7 +37,7 @@ class BuildVerdictPluginTest {
 
         assertBuildVerdict(
             failedTask = "compileDebugKotlin",
-            errorOutput = listOf(
+            expectedErrorLines = listOf(
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
             )
@@ -58,7 +59,7 @@ class BuildVerdictPluginTest {
 
         assertBuildVerdict(
             failedTask = "kaptGenerateStubsDebugKotlin",
-            errorOutput = listOf(
+            expectedErrorLines = listOf(
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
             )
@@ -94,14 +95,12 @@ class BuildVerdictPluginTest {
         @Suppress("MaxLineLength")
         assertBuildVerdict(
             failedTask = "kaptDebugKotlin",
-            errorOutput = listOf(
+            expectedErrorLines = listOf(
                 "$temp/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.",
-                """
-public abstract interface DaggerComponent {
-                ^
-      CoffeeMaker is requested at
-          DaggerComponent.maker()"""
-
+                "public abstract interface DaggerComponent {",
+                "                ^",
+                "      CoffeeMaker is requested at",
+                "          DaggerComponent.maker()"
             )
         )
     }
@@ -142,10 +141,10 @@ public abstract interface DaggerComponent {
 
         assertBuildVerdict(
             failedTask = "testDebugUnitTest",
-            errorOutput = listOf(
-                """FAILED tests:
-	AppTest.test assert true
-	AppTest.test runtime exception"""
+            expectedErrorLines = listOf(
+                "FAILED tests:",
+                "\tAppTest.test assert true",
+                "\tAppTest.test runtime exception"
             )
         )
     }
@@ -205,7 +204,7 @@ public abstract interface DaggerComponent {
 
         assertBuildVerdict(
             failedTask = "customTask",
-            errorOutput = listOf(
+            expectedErrorLines = listOf(
                 "Custom verdict"
             )
         )
@@ -232,7 +231,7 @@ public abstract interface DaggerComponent {
     private fun assertBuildVerdict(
         failedApp: String = appName,
         failedTask: String,
-        errorOutput: List<String>
+        expectedErrorLines: List<String>
     ) {
         assertBuildVerdictFileExist(true)
 
@@ -248,9 +247,15 @@ public abstract interface DaggerComponent {
 
         assertThat(task.projectPath)
             .isEqualTo(":$failedApp")
-        errorOutput.forEach { line ->
-            assertThat(task.errorOutput)
-                .contains(line)
+
+        val actualErrorLines = task.errorOutput.lines()
+
+        assertThat(actualErrorLines)
+            .hasSize(expectedErrorLines.size)
+
+        actualErrorLines.forEachIndexed { index, actualErrorLine ->
+            assertThat(actualErrorLine)
+                .contains(expectedErrorLines[index])
         }
     }
 

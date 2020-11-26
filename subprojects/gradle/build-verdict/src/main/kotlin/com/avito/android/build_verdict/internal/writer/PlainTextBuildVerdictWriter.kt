@@ -1,5 +1,6 @@
-package com.avito.android.build_verdict
+package com.avito.android.build_verdict.internal.writer
 
+import com.avito.android.build_verdict.internal.BuildVerdict
 import com.avito.utils.logging.CILogger
 import java.io.File
 
