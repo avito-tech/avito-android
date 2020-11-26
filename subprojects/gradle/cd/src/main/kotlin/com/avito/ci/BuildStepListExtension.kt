@@ -7,6 +7,7 @@ import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.DeployStep
 import com.avito.ci.steps.FlakyReportStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
+import com.avito.ci.steps.ImpactMetrics
 import com.avito.ci.steps.LintCheck
 import com.avito.ci.steps.MarkReportAsSourceForTMSStep
 import com.avito.ci.steps.TestSummaryStep
@@ -40,6 +41,9 @@ open class BuildStepListExtension(
         }
         registerFactory(CompileUiTests::class.java) { name ->
             CompileUiTests(buildStepListName, name)
+        }
+        registerFactory(ImpactMetrics::class.java) { name ->
+            ImpactMetrics(buildStepListName, name)
         }
         registerFactory(UnitTestCheck::class.java) { name ->
             UnitTestCheck(buildStepListName, name)
@@ -105,6 +109,14 @@ open class BuildStepListExtension(
 
     fun compileUiTests(action: Action<CompileUiTests>) {
         configureAndAdd("compileUiTests", action)
+    }
+
+    fun impactMetrics(closure: Closure<ImpactMetrics>) {
+        configureAndAdd("impactMetrics", closure)
+    }
+
+    fun impactMetrics(action: Action<ImpactMetrics>) {
+        configureAndAdd("impactMetrics", action)
     }
 
     fun unitTests(closure: Closure<UnitTestCheck>) {
