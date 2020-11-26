@@ -5,6 +5,7 @@ import com.avito.ci.steps.BuildStep
 import com.avito.ci.steps.CompileUiTests
 import com.avito.ci.steps.ConfigurationCheck
 import com.avito.ci.steps.DeployStep
+import com.avito.ci.steps.DetektCheck
 import com.avito.ci.steps.FlakyReportStep
 import com.avito.ci.steps.ImpactAnalysisAwareBuildStep
 import com.avito.ci.steps.LintCheck
@@ -55,6 +56,9 @@ open class BuildStepListExtension(
         }
         registerFactory(FlakyReportStep::class.java) { name ->
             FlakyReportStep(buildStepListName, name)
+        }
+        registerFactory(DetektCheck::class.java) { name ->
+            DetektCheck(buildStepListName, name)
         }
         registerFactory(UploadToQapps::class.java) { name ->
             UploadToQapps(buildStepListName, artifactsConfig, name)
@@ -113,6 +117,14 @@ open class BuildStepListExtension(
 
     fun unitTests(action: Action<UnitTestCheck>) {
         configureAndAdd("unitTests", action)
+    }
+
+    fun detekt(closure: Closure<DetektCheck>) {
+        configureAndAdd("detekt", closure)
+    }
+
+    fun detekt(action: Action<DetektCheck>) {
+        configureAndAdd("detekt", action)
     }
 
     fun lint(closure: Closure<LintCheck>) {
