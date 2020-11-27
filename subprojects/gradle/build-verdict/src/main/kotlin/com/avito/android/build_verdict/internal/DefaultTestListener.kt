@@ -1,4 +1,4 @@
-package com.avito.android.build_verdict
+package com.avito.android.build_verdict.internal
 
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestListener

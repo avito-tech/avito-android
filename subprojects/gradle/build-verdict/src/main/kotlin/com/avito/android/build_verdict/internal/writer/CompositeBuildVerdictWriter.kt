@@ -1,4 +1,6 @@
-package com.avito.android.build_verdict
+package com.avito.android.build_verdict.internal.writer
+
+import com.avito.android.build_verdict.internal.BuildVerdict
 
 internal class CompositeBuildVerdictWriter(
     private val writers: List<BuildVerdictWriter>
