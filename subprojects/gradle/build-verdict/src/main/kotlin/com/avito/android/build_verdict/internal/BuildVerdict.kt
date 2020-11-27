@@ -1,4 +1,4 @@
-package com.avito.android.build_verdict
+package com.avito.android.build_verdict.internal
 
 internal data class Error(
     val message: String,
