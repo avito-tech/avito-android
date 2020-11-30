@@ -88,17 +88,6 @@ ssh [<username>@]<mirakle host>
 
 ## Known issues
 
-### Не применились кастомные параметры из gradle properties
-
-Параметры из `~/.gradle/gradle.properties` не переносятся автоматически.   
-
-Выбираем один из вариантов:
-
-- Добавить аналогичный файл на android-builder: `~/.gradle/gradle.properties`
-- Добавь аргументами `-Pname=value` в **Preferences > Build, Execution, Deployment > Compiler > Command-line Options**   
-
-NB: про такие настройки легко забыть, по возможности избегай их.
-
 ### Запустилось не то, что я запускал
 
 Проверь что синхронизация проекта проходит успешно.
