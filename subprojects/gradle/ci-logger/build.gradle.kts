@@ -9,4 +9,5 @@ dependencies {
     api(project(":common:logger"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:build-environment"))
+    implementation(project(":common:elastic"))
 }
