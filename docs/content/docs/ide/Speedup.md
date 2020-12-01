@@ -116,10 +116,13 @@ tip: press _Cmd + Shift + **.**_ to see hidden files in Finder
 
 ## Ignore unneeded files
 
-`build` directories in modules contain many files. You can hide and ignore them from the Editor. 
-We assume that any little bit can help to IDE.
+You can hide and ignore generated files from the Editor. 
+We assume that any little bit can help IDE.
  
 **Preferences > Editor > File Types > Ignore Files and Folders**
+
+- `.gradle` 
+- `build`
 
 {{< hint warning>}}
 Some intermediate build files are still needed for development.
