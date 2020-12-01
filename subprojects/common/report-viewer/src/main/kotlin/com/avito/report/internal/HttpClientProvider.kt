@@ -9,7 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor.Level
 import java.util.concurrent.TimeUnit
 
 fun getHttpClient(
-    verbose: Boolean,
+    verbose: Boolean = false,
     fallbackUrl: String? = null,
     logger: Logger,
     readTimeoutSec: Long,
