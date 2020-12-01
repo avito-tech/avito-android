@@ -82,7 +82,7 @@ interface LintSlackReporter {
                     }
                 }
                 is LintReportModel.Invalid ->
-                    //todo send this to slack also
+                    // todo send this to slack also
                     logger.critical("$tag Not sending report: can't parse", lintReport.error)
             }
         }
