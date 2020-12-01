@@ -1,6 +1,10 @@
 package com.avito.android.lint.slack
 
 import com.avito.android.lint.model.LintIssue
+import com.avito.android.lint.model.LintIssue.Severity.ERROR
+import com.avito.android.lint.model.LintIssue.Severity.INFORMATION
+import com.avito.android.lint.model.LintIssue.Severity.UNKNOWN
+import com.avito.android.lint.model.LintIssue.Severity.WARNING
 import com.avito.android.lint.model.LintReportModel
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
@@ -32,25 +36,19 @@ interface LintSlackReporter {
         ) {
             when (lintReport) {
                 is LintReportModel.Valid -> {
-                    val (errors, everythingElse) = lintReport.issues.partition {
-                        it.severity == LintIssue.Severity.ERROR
-                    }
-                    val (warnings, unknowns) = everythingElse.partition {
-                        it.severity == LintIssue.Severity.WARNING
-                    }
-                    val (fatalErrors, regularErrors) = errors.partition {
-                        it.isFatal
-                    }
+
+                    val shouldBeAlerted = lintReport.issues.filter { it.shouldBeAlerted() }
+                    val shouldBeMentionedInAlert = lintReport.issues.filter { it.shouldBeMentionedInAlert() }
 
                     var isMessageSent = false
 
-                    if (regularErrors.isNotEmpty()) {
+                    if (shouldBeAlerted.isNotEmpty()) {
                         sendReport(
                             channel = channel,
                             message = buildSlackMessage(
                                 projectPath = lintReport.projectRelativePath,
-                                errors = regularErrors,
-                                warnings = warnings,
+                                errors = shouldBeAlerted,
+                                warnings = shouldBeMentionedInAlert,
                                 buildUrl = buildUrl
                             ),
                             htmlReport = lintReport.htmlFile
@@ -59,13 +57,18 @@ interface LintSlackReporter {
                         isMessageSent = true
                     }
 
-                    if (fatalErrors.isNotEmpty() || unknowns.isNotEmpty()) {
+                    val shouldBeReportedAsUnexpectedProblem =
+                        lintReport.issues.filter { it.shouldBeReportedAsUnexpectedProblem() }
+
+                    val shouldBeReportedAsParseError = lintReport.issues.filter { it.shouldBeReportedAsParseError() }
+
+                    if (shouldBeReportedAsUnexpectedProblem.isNotEmpty() || shouldBeReportedAsParseError.isNotEmpty()) {
                         sendReport(
                             channel = channelForLintBugs,
                             message = buildSlackMessageAboutLintBugs(
                                 projectPath = lintReport.projectRelativePath,
-                                fatalErrors = fatalErrors,
-                                unknownErrors = unknowns,
+                                fatalErrors = shouldBeReportedAsUnexpectedProblem,
+                                unknownErrors = shouldBeReportedAsParseError,
                                 buildUrl = buildUrl
                             ),
                             htmlReport = lintReport.htmlFile
@@ -78,7 +81,9 @@ interface LintSlackReporter {
                         logger.debug("$tag Not sending any reports")
                     }
                 }
-                is LintReportModel.Invalid -> logger.critical("$tag Not sending report: can't parse", lintReport.error)
+                is LintReportModel.Invalid ->
+                    //todo send this to slack also
+                    logger.critical("$tag Not sending report: can't parse", lintReport.error)
             }
         }
 
@@ -132,13 +137,32 @@ interface LintSlackReporter {
                 appendln("Build: <$buildUrl|link>")
                 appendln()
 
-                if (fatalErrors.isNotEmpty()) {
-                    appendln(":skull: [${fatalErrors.size}] Lint fatal errors")
-                }
+                fatalErrors
+                    .groupBy { it.summary }
+                    .forEach { (summary, issue) ->
+                        appendln(":skull: [${issue.size}x] $summary")
+                    }
+
                 if (unknownErrors.isNotEmpty()) {
                     appendln(":alien: [${unknownErrors.size}] Unknown type issues")
                 }
             }
+        }
+
+        private fun LintIssue.shouldBeAlerted(): Boolean {
+            return !isFatal && severity in arrayOf(ERROR)
+        }
+
+        private fun LintIssue.shouldBeMentionedInAlert(): Boolean {
+            return !isFatal && severity in arrayOf(WARNING, INFORMATION)
+        }
+
+        private fun LintIssue.shouldBeReportedAsUnexpectedProblem(): Boolean {
+            return isFatal
+        }
+
+        private fun LintIssue.shouldBeReportedAsParseError(): Boolean {
+            return severity == UNKNOWN
         }
     }
 }

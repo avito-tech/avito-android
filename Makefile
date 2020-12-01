@@ -80,6 +80,9 @@ sample_app_instrumentation_dynamic: dynamic_properties
 unit_tests:
 	./gradlew -p subprojects test $(log_level)
 
+integration_tests:
+	./gradlew -p subprojects $(module):integrationTest
+
 compile_tests:
 	./gradlew -p subprojects compileTestKotlin $(log_level)
 

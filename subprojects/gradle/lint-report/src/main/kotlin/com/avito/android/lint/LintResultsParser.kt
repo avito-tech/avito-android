@@ -66,6 +66,7 @@ class LintResultsParser(private val log: CILogger) {
                         issue.severity = when (startElement.getAttributeByName(QName("severity"))?.value) {
                             "Error" -> LintIssue.Severity.ERROR
                             "Warning" -> LintIssue.Severity.WARNING
+                            "Information" -> LintIssue.Severity.INFORMATION
                             else -> LintIssue.Severity.UNKNOWN
                         }
                     }
