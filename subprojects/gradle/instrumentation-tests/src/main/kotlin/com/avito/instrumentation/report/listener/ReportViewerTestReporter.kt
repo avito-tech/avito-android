@@ -40,7 +40,7 @@ class ReportViewerTestReporter(
         .create()
 
     private val httpClient = getHttpClient(
-        verbose = true,
+        verbose = false, // do not enable for production, generates a ton of logs
         logger = commonLogger(logger),
         readTimeoutSec = httpTimeoutSec,
         writeTimeoutSec = httpTimeoutSec
