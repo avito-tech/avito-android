@@ -36,29 +36,7 @@ class ElasticLog(
         .create()
 
     private val elasticApi: RoundRobinIterable<Lazy<ElasticLogApi>> =
-        RoundRobinIterable(
-            endpoints.map { endpoint ->
-                lazy {
-                    val httpClientBuilder = OkHttpClient()
-                        .newBuilder()
-                        .connectTimeout(defaultTimeoutSec, SECONDS)
-                        .readTimeout(defaultTimeoutSec, SECONDS)
-
-                    if (verboseHttpLog != null) {
-                        httpClientBuilder.addInterceptor(
-                            HttpLoggingInterceptor(HttpSystemLogger(verboseHttpLog)).apply { level = BODY }
-                        )
-                    }
-
-                    Retrofit.Builder()
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .client(httpClientBuilder.build())
-                        .baseUrl(endpoint)
-                        .build()
-                        .create<ElasticLogApi>()
-                }
-            }
-        )
+        RoundRobinIterable(endpoints.map { endpoint -> lazy { createApiService(endpoint) } })
 
     private val timezone = ZoneId.of("Europe/Moscow")
 
@@ -94,6 +72,26 @@ class ElasticLog(
         } catch (e: Throwable) {
             onError("Can't send logs to Elastic", e)
         }
+    }
+
+    private fun createApiService(endpoint: String): ElasticLogApi {
+        val httpClientBuilder = OkHttpClient()
+            .newBuilder()
+            .connectTimeout(defaultTimeoutSec, SECONDS)
+            .readTimeout(defaultTimeoutSec, SECONDS)
+
+        if (verboseHttpLog != null) {
+            httpClientBuilder.addInterceptor(
+                HttpLoggingInterceptor(HttpSystemLogger(verboseHttpLog)).apply { level = BODY }
+            )
+        }
+
+        return Retrofit.Builder()
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .client(httpClientBuilder.build())
+            .baseUrl(endpoint)
+            .build()
+            .create()
     }
 
     private class HttpSystemLogger(
