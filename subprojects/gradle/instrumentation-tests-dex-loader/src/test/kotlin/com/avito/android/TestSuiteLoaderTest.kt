@@ -1,4 +1,4 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android
 
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat

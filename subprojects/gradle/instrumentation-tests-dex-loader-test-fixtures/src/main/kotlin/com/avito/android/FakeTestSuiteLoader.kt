@@ -1,6 +1,6 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android
 
-import com.avito.instrumentation.suite.dex.check.TestSignatureCheck
+import com.avito.android.check.TestSignatureCheck
 import org.funktionale.tries.Try
 import java.io.File
 

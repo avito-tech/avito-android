@@ -15,7 +15,6 @@ dependencies {
     }
     implementation(Dependencies.commonsText)
     implementation(Dependencies.coroutinesCore)
-    implementation(Dependencies.dexlib)
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gson)
     implementation(Dependencies.kotson)
@@ -33,6 +32,7 @@ dependencies {
     implementation(project(":gradle:files"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:instrumentation-test-impact-analysis"))
+    implementation(project(":gradle:instrumentation-tests-dex-loader"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:runner:client"))
@@ -47,6 +47,7 @@ dependencies {
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(project(":gradle:build-failer-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-test-fixtures"))
+    testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":common:report-viewer-test-fixtures"))
     testImplementation(Dependencies.Test.mockitoKotlin)
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)

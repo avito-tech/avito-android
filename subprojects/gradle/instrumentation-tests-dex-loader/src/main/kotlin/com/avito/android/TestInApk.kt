@@ -1,4 +1,4 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android
 
 import com.avito.report.model.TestName
 

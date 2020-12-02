@@ -1,11 +1,11 @@
 package com.avito.instrumentation.suite
 
+import com.avito.android.TestInApk
+import com.avito.android.createStubInstance
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.report.FakeReport
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.suite.dex.TestInApk
-import com.avito.instrumentation.suite.dex.createStubInstance
 import com.avito.instrumentation.suite.filter.FakeFilterFactory
 import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.instrumentation.suite.filter.TestsFilter

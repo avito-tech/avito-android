@@ -1,6 +1,6 @@
-package com.avito.instrumentation.suite.dex.check
+package com.avito.android.check
 
-import com.avito.instrumentation.suite.dex.AnnotationData
+import com.avito.android.AnnotationData
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import java.util.UUID

@@ -1,5 +1,6 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android
 
+import com.avito.android.internal.AnnotationExtractor
 import com.google.common.collect.ImmutableList
 import com.google.common.truth.Truth.assertThat
 import org.jf.dexlib2.AnnotationVisibility

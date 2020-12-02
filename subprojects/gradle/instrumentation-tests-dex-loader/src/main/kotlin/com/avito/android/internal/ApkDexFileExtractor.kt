@@ -1,15 +1,11 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android.internal
 
+import com.avito.android.DexFileExtractor
 import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.iface.DexFile
 import java.io.File
 
-interface DexFileExtractor {
-
-    fun getDexFiles(file: File): List<DexFile>
-}
-
-class ApkDexFileExtractor : DexFileExtractor {
+internal class ApkDexFileExtractor : DexFileExtractor {
 
     override fun getDexFiles(file: File): List<DexFile> {
         val dexEntryNames = DexFileFactory.loadDexContainer(file, null).dexEntryNames

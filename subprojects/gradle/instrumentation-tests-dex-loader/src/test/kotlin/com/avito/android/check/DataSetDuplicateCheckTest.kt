@@ -1,6 +1,6 @@
-package com.avito.instrumentation.suite.dex.check
+package com.avito.android.check
 
-import com.avito.instrumentation.suite.dex.AnnotationData
+import com.avito.android.AnnotationData
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -20,14 +20,24 @@ internal class DataSetDuplicateCheckTest {
                 "com.avito.Test",
                 "dataSet1",
                 classAnnotations = emptyList(),
-                methodAnnotations = listOf(AnnotationData(DATA_SET_ANNOTATION_TYPE, mapOf("value" to 44)))
+                methodAnnotations = listOf(
+                    AnnotationData(
+                        DATA_SET_ANNOTATION_TYPE,
+                        mapOf("value" to 44)
+                    )
+                )
             )
 
             onNewMethodFound(
                 "com.avito.Test",
                 "dataSet2",
                 classAnnotations = emptyList(),
-                methodAnnotations = listOf(AnnotationData(DATA_SET_ANNOTATION_TYPE, mapOf("value" to 44)))
+                methodAnnotations = listOf(
+                    AnnotationData(
+                        DATA_SET_ANNOTATION_TYPE,
+                        mapOf("value" to 44)
+                    )
+                )
             )
         }
 
@@ -41,14 +51,24 @@ internal class DataSetDuplicateCheckTest {
                 "com.avito.Test",
                 "dataSet1",
                 classAnnotations = emptyList(),
-                methodAnnotations = listOf(AnnotationData(DATA_SET_ANNOTATION_TYPE, mapOf("value" to 12)))
+                methodAnnotations = listOf(
+                    AnnotationData(
+                        DATA_SET_ANNOTATION_TYPE,
+                        mapOf("value" to 12)
+                    )
+                )
             )
 
             onNewMethodFound(
                 "com.avito.Test",
                 "dataSet2",
                 classAnnotations = emptyList(),
-                methodAnnotations = listOf(AnnotationData(DATA_SET_ANNOTATION_TYPE, mapOf("value" to 14)))
+                methodAnnotations = listOf(
+                    AnnotationData(
+                        DATA_SET_ANNOTATION_TYPE,
+                        mapOf("value" to 14)
+                    )
+                )
             )
         }
 
@@ -62,7 +82,9 @@ internal class DataSetDuplicateCheckTest {
                 "com.avito.Test1",
                 "dataSet1",
                 classAnnotations = emptyList(),
-                methodAnnotations = listOf(AnnotationData(DATA_SET_ANNOTATION_TYPE, mapOf("value" to 5)))
+                methodAnnotations = listOf(
+                    AnnotationData(DATA_SET_ANNOTATION_TYPE, mapOf("value" to 5))
+                )
             )
 
             onNewMethodFound(

@@ -1,6 +1,6 @@
-package com.avito.instrumentation.suite.dex.check
+package com.avito.android.check
 
-import com.avito.instrumentation.suite.dex.AnnotationData
+import com.avito.android.AnnotationData
 
 class DataSetDuplicateCheck(override val onViolation: (String) -> Unit) : TestSignatureCheck {
 

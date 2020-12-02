@@ -1,6 +1,9 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android
 
-import com.avito.instrumentation.suite.dex.check.TestSignatureCheck
+import com.avito.android.check.TestSignatureCheck
+import com.avito.android.internal.AnnotationExtractor
+import com.avito.android.internal.AnnotationType
+import com.avito.android.internal.ApkDexFileExtractor
 import com.avito.report.model.TestName
 import org.funktionale.tries.Try
 import org.jf.dexlib2.iface.Annotation
@@ -13,12 +16,13 @@ import java.io.File
  */
 class TestSuiteLoaderImpl(
     private val dexExtractor: DexFileExtractor = ApkDexFileExtractor(),
-    private val annotationExtractor: AnnotationExtractor = AnnotationExtractor,
     private val utilityAnnotations: Array<String> = arrayOf(
         TEST_ANNOTATION,
         KOTLIN_METADATA_ANNOTATION
     )
 ) : TestSuiteLoader {
+
+    private val annotationExtractor: AnnotationExtractor = AnnotationExtractor
 
     override fun loadTestSuite(
         file: File,
@@ -72,7 +76,7 @@ class TestSuiteLoaderImpl(
     private fun Set<Annotation>.filterUtilityAnnotations(): List<Annotation> =
         filter { annotation -> utilityAnnotations.none { annotation.type.contains(it) } }
 
-    private fun ClassDef.isAbstract() = this.accessFlags.and(ACC_ABSTRACT) != 0
+    private fun ClassDef.isAbstract() = this.accessFlags.and(com.avito.android.TestSuiteLoaderImpl.ACC_ABSTRACT) != 0
 
     private fun ClassDef.hasTestMethods() = methods.find { it.hasTestAnnotation() } != null
 

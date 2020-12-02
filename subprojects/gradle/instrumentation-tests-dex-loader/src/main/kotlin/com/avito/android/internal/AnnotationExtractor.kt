@@ -1,5 +1,6 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android.internal
 
+import com.avito.android.AnnotationData
 import org.jf.dexlib2.ValueType
 import org.jf.dexlib2.iface.Annotation
 import org.jf.dexlib2.iface.Method
@@ -10,39 +11,7 @@ import org.jf.dexlib2.iface.value.IntEncodedValue
 import org.jf.dexlib2.iface.value.LongEncodedValue
 import org.jf.dexlib2.iface.value.StringEncodedValue
 
-/**
- * @param name в формате pa.ck.age.Class
- */
-data class AnnotationData(
-    val name: String,
-    val values: Map<String, Any?>
-) {
-
-    fun getStringValue(key: String): String? = values[key]?.toString()
-
-    fun getIntValue(key: String): Int? = values[key] as? Int
-
-    @Suppress("UNCHECKED_CAST")
-    fun getStringArrayValue(key: String): List<String>? = values[key] as? List<String>
-
-    @Suppress("UNCHECKED_CAST")
-    fun getIntArrayValue(key: String): List<Int>? = values[key] as? List<Int>
-
-    @Suppress("UNCHECKED_CAST")
-    fun getEnumValue(key: String): String? = values[key] as? String
-}
-
-/**
- * @param type пример: "Lorg/junit/Test;"
- */
-class AnnotationType(val type: String) {
-
-    init {
-        require(type.endsWith(';')) { "Invalid type definition: $type" }
-    }
-}
-
-object AnnotationExtractor {
+internal object AnnotationExtractor {
 
     fun toAnnotationData(annotation: Annotation): AnnotationData {
         return AnnotationData(

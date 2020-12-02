@@ -1,4 +1,4 @@
-package com.avito.instrumentation.suite.dex
+package com.avito.android
 
 import com.avito.test.gradle.fileFromJarResources
 import com.google.common.truth.Truth.assertThat
@@ -10,12 +10,9 @@ class TestSuiteLoaderIntegrationTest {
 
     private lateinit var testSuiteLoader: TestSuiteLoader
 
-    private lateinit var dexFileExtractor: ApkDexFileExtractor
-
     @BeforeEach
     fun setUp() {
-        dexFileExtractor = ApkDexFileExtractor()
-        testSuiteLoader = TestSuiteLoaderImpl(dexFileExtractor)
+        testSuiteLoader = TestSuiteLoaderImpl()
     }
 
     @Test
@@ -99,14 +96,14 @@ class TestSuiteLoaderIntegrationTest {
     @Suppress("MaxLineLength")
     @Test
     fun `get tests - pass - when parsed apk contains test classes without CaseId annotation and missed case if is allowed`() {
-        testSuiteLoader = TestSuiteLoaderImpl(dexFileExtractor)
+        testSuiteLoader = TestSuiteLoaderImpl()
         val suite = testSuiteLoader.loadTestSuite(getTestApkWithoutAnnotations()).get()
         assertThat(suite.size).isEqualTo(9)
     }
 
     @Test
     fun `get tests - returns annotation with values`() {
-        testSuiteLoader = TestSuiteLoaderImpl(dexFileExtractor)
+        testSuiteLoader = TestSuiteLoaderImpl()
         val suite = testSuiteLoader.loadTestSuite(getTestApkWithAnnotationWithValues()).get()
         assertThat(suite.size).isEqualTo(1)
         val loadedTest = suite.first()

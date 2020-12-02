@@ -1,5 +1,7 @@
 package com.avito.instrumentation.suite
 
+import com.avito.android.AnnotationData
+import com.avito.android.TestInApk
 import com.avito.android.test.annotations.Behavior
 import com.avito.android.test.annotations.CaseId
 import com.avito.android.test.annotations.DataSetNumber
@@ -22,8 +24,6 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.test.annotations.UnitTest
-import com.avito.instrumentation.suite.dex.AnnotationData
-import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
