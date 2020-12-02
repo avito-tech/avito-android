@@ -1,5 +1,6 @@
 package com.avito.utils.logging
 
+import com.avito.android.elastic.Elastic
 import com.avito.android.elastic.MultipleEndpointsElastic
 import com.avito.android.sentry.sentryConfig
 import com.avito.time.DefaultTimeProvider
@@ -43,7 +44,7 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
             "avito.elastic.indexpattern has not been provided"
         }
 
-        val elasticLogger = MultipleEndpointsElastic(
+        val elasticLogger: Elastic = MultipleEndpointsElastic(
             okHttpClient = OkHttpClient(),
             timeProvider = DefaultTimeProvider(),
             endpoints = endpoints,
@@ -56,7 +57,7 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
             defaultCILogger(
                 project = project,
                 name = loggerName,
-                elasticLogger = elasticLogger
+                elastic = elasticLogger
             )
         }.logger
     } else {
@@ -69,7 +70,7 @@ private val isInvokedFromIde = System.getProperty("isInvokedFromIde")?.toBoolean
 private fun defaultCILogger(
     project: Project,
     name: String,
-    elasticLogger: MultipleEndpointsElastic?
+    elastic: Elastic
 ): CILoggerRegistry.Entity {
 
     val destinationFileName = "${project.rootDir}/outputs/ci/$name.txt"
@@ -100,16 +101,11 @@ private fun defaultCILogger(
     val logger = CILogger(
         debugHandler = CILoggingCombinedHandler(
             handlers = listOf(
-                destinationFileHandler
+                destinationFileHandler,
+                elasticHandler(elastic, tag = name, level = "DEBUG")
             ).let {
                 if (isInvokedFromIde) {
                     it.plus(onlyMessageStdoutHandler)
-                } else {
-                    it
-                }
-            }.let {
-                if (elasticLogger != null) {
-                    it.plus(elasticHandler(elasticLogger, tag = name, level = "DEBUG"))
                 } else {
                     it
                 }
@@ -118,39 +114,24 @@ private fun defaultCILogger(
         infoHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 onlyMessageStdoutHandler,
-                destinationFileHandler
-            ).let {
-                if (elasticLogger != null) {
-                    it.plus(elasticHandler(elasticLogger, tag = name, level = "INFO"))
-                } else {
-                    it
-                }
-            }
+                destinationFileHandler,
+                elasticHandler(elastic, tag = name, level = "INFO")
+            )
         ),
         warnHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 explicitStdoutHandler,
-                destinationFileHandler
-            ).let {
-                if (elasticLogger != null) {
-                    it.plus(elasticHandler(elasticLogger, tag = name, level = "WARNING"))
-                } else {
-                    it
-                }
-            }
+                destinationFileHandler,
+                elasticHandler(elastic, tag = name, level = "WARNING")
+            )
         ),
         criticalHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 explicitStdoutHandler,
                 destinationFileHandler,
+                elasticHandler(elastic, tag = name, level = "ERROR"),
                 sentryHandler
-            ).let {
-                if (elasticLogger != null) {
-                    it.plus(elasticHandler(elasticLogger, tag = name, level = "ERROR"))
-                } else {
-                    it
-                }
-            }
+            )
         )
     )
 
@@ -160,10 +141,10 @@ private fun defaultCILogger(
     )
 }
 
-private fun elasticHandler(elasticLog: MultipleEndpointsElastic, tag: String, level: String): CILoggingHandler {
+private fun elasticHandler(elastic: Elastic, tag: String, level: String): CILoggingHandler {
     return CILoggingHandlerImplementation(
         destination = ElasticDestination(
-            elastic = elasticLog,
+            elastic = elastic,
             tag = tag,
             level = level
         )
