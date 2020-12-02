@@ -11,7 +11,6 @@ import org.gradle.api.Project
 internal object ElasticFactory {
 
     fun create(project: Project): Elastic {
-        
         val isElasticEnabled = project.properties["avito.elastic.enabled"].toString() == "true"
 
         return if (isElasticEnabled) {
