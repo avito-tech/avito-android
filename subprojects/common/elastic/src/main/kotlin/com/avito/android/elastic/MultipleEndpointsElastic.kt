@@ -1,6 +1,6 @@
 package com.avito.android.elastic
 
-import com.google.gson.FieldNamingPolicy
+import com.avito.time.TimeProvider
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit.SECONDS
  * @param onError can't deliver message; reaction delegated to upstream
  */
 class MultipleEndpointsElastic(
+    private val timeProvider: TimeProvider,
     private val endpoints: List<String>,
     private val indexPattern: String,
     private val buildId: String,
@@ -34,9 +35,7 @@ class MultipleEndpointsElastic(
 
     private val defaultTimeoutSec = 10L
 
-    private val gson = GsonBuilder()
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-        .create()
+    private val gson = GsonBuilder().create()
 
     private val elasticApi: RoundRobinIterable<Lazy<ElasticLogApi>> =
         RoundRobinIterable(endpoints.map { endpoint -> lazy { createApiService(endpoint) } })
@@ -52,9 +51,11 @@ class MultipleEndpointsElastic(
         throwable: Throwable?
     ) {
         try {
+            val nowWithTimeZone = ZonedDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
+
             val eventJson = gson.toJson(
                 ElasticLogEventRequest(
-                    timestamp = ZonedDateTime.now(timezone).format(timestampFormatter),
+                    timestamp = nowWithTimeZone.format(timestampFormatter),
                     tag = tag,
                     level = level,
                     buildId = buildId,
@@ -63,9 +64,11 @@ class MultipleEndpointsElastic(
                 )
             )
 
+            val nowWithoutTimeZone = LocalDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
+
             val response = elasticApi.next().value.log(
                 indexPattern = indexPattern,
-                date = LocalDateTime.now(timezone).format(ISO_DATE),
+                date = nowWithoutTimeZone.format(ISO_DATE),
                 logEvent = eventJson
             ).execute()
 

@@ -2,6 +2,7 @@ package com.avito.utils.logging
 
 import com.avito.android.elastic.MultipleEndpointsElastic
 import com.avito.android.sentry.sentryConfig
+import com.avito.time.DefaultTimeProvider
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
@@ -38,6 +39,7 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
             )
 
             MultipleEndpointsElastic(
+                timeProvider = DefaultTimeProvider(),
                 endpoints = endpoints,
                 indexPattern = indexPattern,
                 buildId = project.envArgs.build.id.toString(),

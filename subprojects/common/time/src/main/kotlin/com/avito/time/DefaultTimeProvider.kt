@@ -4,7 +4,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-// todo java8 api
 class DefaultTimeProvider : TimeProvider {
 
     override fun isSameDay(date1: Date, date2: Date): Boolean {
