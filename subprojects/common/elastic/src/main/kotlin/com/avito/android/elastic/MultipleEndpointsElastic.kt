@@ -3,8 +3,12 @@ package com.avito.android.elastic
 import com.avito.time.TimeProvider
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -55,7 +59,7 @@ class MultipleEndpointsElastic(
 
             val nowWithoutTimeZone = LocalDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
 
-            val response = elasticApi.next().value.log(
+            elasticApi.next().value.log(
                 indexPattern = indexPattern,
                 date = nowWithoutTimeZone.format(ISO_DATE),
                 logEvent = ElasticLogEventRequest(
@@ -66,11 +70,17 @@ class MultipleEndpointsElastic(
                     message = message,
                     errorMessage = throwable?.message
                 )
-            ).execute()
+            ).enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (!response.isSuccessful) {
+                        onError("Can't send logs to Elastic, response code: ${response.code()}", null)
+                    }
+                }
 
-            if (!response.isSuccessful) {
-                onError("Can't send logs to Elastic, response code: ${response.code()}", null)
-            }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    onError("Can't send logs to Elastic", t)
+                }
+            })
         } catch (e: Throwable) {
             onError("Can't send logs to Elastic", e)
         }
