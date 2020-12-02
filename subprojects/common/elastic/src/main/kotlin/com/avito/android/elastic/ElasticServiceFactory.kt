@@ -14,10 +14,9 @@ internal class ElasticServiceFactory(
 
     fun createApiService(endpoint: String): ElasticService =
         Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .baseUrl(endpoint)
             .build()
             .create()
-
 }
