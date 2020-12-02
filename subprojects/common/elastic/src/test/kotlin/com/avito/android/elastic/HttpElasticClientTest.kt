@@ -9,7 +9,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-internal class MultipleEndpointsElasticTest {
+internal class HttpElasticClientTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
@@ -22,10 +22,10 @@ internal class MultipleEndpointsElasticTest {
 
         timeProvider.now = Date(1606922084000)
 
-        val elastic: Elastic = MultipleEndpointsElastic(
+        val elasticClient: ElasticClient = HttpElasticClient(
             okHttpClient = OkHttpClient(),
             timeProvider = timeProvider,
-            endpoints = listOf(mockWebServer.url("/").toString()),
+            endpoint = mockWebServer.url("/").toString(),
             indexPattern = "doesnt-matter",
             buildId = "12345",
             onError = { msg, error ->
@@ -36,7 +36,7 @@ internal class MultipleEndpointsElasticTest {
 
         val capturedRequest = dispatcher.captureRequest { true }
 
-        elastic.sendMessage(
+        elasticClient.sendMessage(
             tag = "SomeTag",
             level = "WARNING",
             message = "SomeMessage",

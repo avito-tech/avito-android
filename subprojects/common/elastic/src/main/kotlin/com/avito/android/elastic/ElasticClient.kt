@@ -1,6 +1,6 @@
 package com.avito.android.elastic
 
-interface Elastic {
+interface ElasticClient {
 
     fun sendMessage(
         tag: String,

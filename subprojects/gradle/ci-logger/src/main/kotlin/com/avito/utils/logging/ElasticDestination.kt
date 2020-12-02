@@ -1,15 +1,15 @@
 package com.avito.utils.logging
 
-import com.avito.android.elastic.Elastic
+import com.avito.android.elastic.ElasticClient
 
 internal class ElasticDestination(
-    private val elastic: Elastic,
+    private val elasticClient: ElasticClient,
     private val tag: String,
     private val level: String
 ) : CILoggingDestination {
 
     override fun write(message: String, throwable: Throwable?) {
-        elastic.sendMessage(
+        elasticClient.sendMessage(
             tag = tag,
             level = level,
             message = message,
@@ -19,7 +19,7 @@ internal class ElasticDestination(
 
     override fun child(tag: String): CILoggingDestination =
         ElasticDestination(
-            elastic = elastic,
+            elasticClient = elasticClient,
             tag = "${this.tag}_$tag",
             level = level
         )
