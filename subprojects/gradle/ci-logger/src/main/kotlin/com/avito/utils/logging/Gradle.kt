@@ -6,6 +6,7 @@ import com.avito.time.DefaultTimeProvider
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import com.avito.utils.gradle.envArgs
+import okhttp3.OkHttpClient
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.LogLevel
@@ -29,30 +30,27 @@ internal object CILoggerRegistry {
 
 private fun provideLogger(project: Project, loggerName: String): CILogger {
     return if (project.buildEnvironment is BuildEnvironment.CI && !project.buildEnvironment.inGradleTestKit) {
-        val endpoints: List<String>? = project.properties["avito.elastic.endpoints"]?.toString()?.split("|")
-        val indexPattern: String? = project.properties["avito.elastic.indexpattern"]?.toString()
+        val endpoints: List<String> =
+            requireNotNull(
+                project.properties["avito.elastic.endpoints"]
+                    ?.toString()
+                    ?.split("|")
+            ) {
+                "avito.elastic.endpoints has not been provided"
+            }
 
-        val elasticLogger = if (endpoints != null && indexPattern != null) {
-            project.logger.info(
-                "ElasticLog: initialized with avito.elastic.endpoints=$endpoints " +
-                    "avito.elastic.indexpattern=$indexPattern"
-            )
-
-            MultipleEndpointsElastic(
-                timeProvider = DefaultTimeProvider(),
-                endpoints = endpoints,
-                indexPattern = indexPattern,
-                buildId = project.envArgs.build.id.toString(),
-                verboseHttpLog = null, // don't enable on production, produces huge logs
-                onError = { msg, e -> project.logger.error(msg, e) }
-            )
-        } else {
-            project.logger.info(
-                "ElasticLog: set 'avito.elastic.endpoints'(| separated urls) " +
-                    "and 'avito.elastic.indexpattern' properties to initialize"
-            )
-            null
+        val indexPattern: String = requireNotNull(project.properties["avito.elastic.indexpattern"]?.toString()) {
+            "avito.elastic.indexpattern has not been provided"
         }
+
+        val elasticLogger = MultipleEndpointsElastic(
+            okHttpClient = OkHttpClient(),
+            timeProvider = DefaultTimeProvider(),
+            endpoints = endpoints,
+            indexPattern = indexPattern,
+            buildId = project.envArgs.build.id.toString(),
+            onError = { msg, e -> project.logger.error(msg, e) }
+        )
 
         CILoggerRegistry.loggersCache.getOrPut(loggerName) {
             defaultCILogger(

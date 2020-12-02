@@ -7,7 +7,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-internal interface ElasticLogApi {
+internal interface ElasticService {
 
     @Headers("Content-Type:application/json")
     @POST("{indexPattern}-{date}/_doc")

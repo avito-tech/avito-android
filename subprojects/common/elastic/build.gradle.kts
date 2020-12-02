@@ -6,11 +6,11 @@ plugins {
 }
 
 dependencies {
+    api(Dependencies.okhttp)
+
     implementation(project(":common:time"))
 
     implementation(Dependencies.gson)
-    implementation(Dependencies.okhttp)
-    implementation(Dependencies.okhttpLogging)
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)
 

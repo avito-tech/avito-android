@@ -3,6 +3,7 @@ package com.avito.android.elastic
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.avito.time.FakeTimeProvider
+import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -22,11 +23,11 @@ internal class MultipleEndpointsElasticTest {
         timeProvider.now = Date(1606922084000)
 
         val elastic: Elastic = MultipleEndpointsElastic(
+            okHttpClient = OkHttpClient(),
             timeProvider = timeProvider,
             endpoints = listOf(mockWebServer.url("/").toString()),
             indexPattern = "doesnt-matter",
             buildId = "12345",
-            verboseHttpLog = { println(it) },
             onError = { msg, error ->
                 println(msg)
                 error?.printStackTrace()
