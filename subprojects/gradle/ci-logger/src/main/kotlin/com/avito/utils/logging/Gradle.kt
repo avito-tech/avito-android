@@ -1,6 +1,6 @@
 package com.avito.utils.logging
 
-import com.avito.android.elastic.ElasticLog
+import com.avito.android.elastic.MultipleEndpointsElastic
 import com.avito.android.sentry.sentryConfig
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
@@ -37,7 +37,7 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
                     "avito.elastic.indexpattern=$indexPattern"
             )
 
-            ElasticLog(
+            MultipleEndpointsElastic(
                 endpoints = endpoints,
                 indexPattern = indexPattern,
                 buildId = project.envArgs.build.id.toString(),
@@ -69,7 +69,7 @@ private val isInvokedFromIde = System.getProperty("isInvokedFromIde")?.toBoolean
 private fun defaultCILogger(
     project: Project,
     name: String,
-    elasticLogger: ElasticLog?
+    elasticLogger: MultipleEndpointsElastic?
 ): CILoggerRegistry.Entity {
 
     val destinationFileName = "${project.rootDir}/outputs/ci/$name.txt"
@@ -160,10 +160,10 @@ private fun defaultCILogger(
     )
 }
 
-private fun elasticHandler(elasticLog: ElasticLog, tag: String, level: String): CILoggingHandler {
+private fun elasticHandler(elasticLog: MultipleEndpointsElastic, tag: String, level: String): CILoggingHandler {
     return CILoggingHandlerImplementation(
         destination = ElasticDestination(
-            elasticLog = elasticLog,
+            elastic = elasticLog,
             tag = tag,
             level = level
         )

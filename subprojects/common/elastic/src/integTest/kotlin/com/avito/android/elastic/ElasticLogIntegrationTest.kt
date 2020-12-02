@@ -8,7 +8,7 @@ internal class ElasticLogIntegrationTest {
     @Disabled
     @Test
     fun test() {
-        val elasticLog = ElasticLog(
+        val elastic: Elastic = MultipleEndpointsElastic(
             endpoints = listOf(requireNotNull(System.getProperty("avito.elastic.endpoints"))),
             indexPattern = requireNotNull(System.getProperty("avito.elastic.indexpattern")),
             buildId = "12345",
@@ -19,7 +19,7 @@ internal class ElasticLogIntegrationTest {
             }
         )
 
-        elasticLog.sendMessage(
+        elastic.sendMessage(
             tag = "Test",
             level = "WARNING",
             message = "Test",

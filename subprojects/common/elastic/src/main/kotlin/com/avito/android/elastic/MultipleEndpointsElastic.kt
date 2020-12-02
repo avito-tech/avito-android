@@ -16,18 +16,21 @@ import java.time.format.DateTimeFormatter.ISO_DATE
 import java.util.concurrent.TimeUnit.SECONDS
 
 /**
+ * Multiple endpoints used for stability, sometimes nodes may be unresponsive
+ * todo retries on other nodes (or it may be even less stable in corner cases)
+ *
  * @param endpoints list of elastic endpoints to send logs
  * @param indexPattern see https://www.elastic.co/guide/en/kibana/current/index-patterns.html
  * @param verboseHttpLog verbose http for debugging purposes
  * @param onError can't deliver message; reaction delegated to upstream
  */
-class ElasticLog(
+class MultipleEndpointsElastic(
     private val endpoints: List<String>,
     private val indexPattern: String,
     private val buildId: String,
     private val verboseHttpLog: ((String) -> Unit)?,
     private val onError: (String, Throwable?) -> Unit
-) {
+) : Elastic {
 
     private val defaultTimeoutSec = 10L
 
@@ -42,7 +45,7 @@ class ElasticLog(
 
     private val timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSZ")
 
-    fun sendMessage(
+    override fun sendMessage(
         tag: String,
         level: String,
         message: String,
