@@ -12,7 +12,7 @@ dependencies {
     implementation(Dependencies.okhttp)
     implementation(Dependencies.okhttpLogging)
     implementation(Dependencies.retrofit)
-    implementation(Dependencies.retrofitConverterScalars)
+    implementation(Dependencies.retrofitConverterGson)
 
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":common:time-test-fixtures"))

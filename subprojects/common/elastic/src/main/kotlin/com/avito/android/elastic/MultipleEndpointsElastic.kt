@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
 import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -53,8 +53,12 @@ class MultipleEndpointsElastic(
         try {
             val nowWithTimeZone = ZonedDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
 
-            val eventJson = gson.toJson(
-                ElasticLogEventRequest(
+            val nowWithoutTimeZone = LocalDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
+
+            val response = elasticApi.next().value.log(
+                indexPattern = indexPattern,
+                date = nowWithoutTimeZone.format(ISO_DATE),
+                logEvent = ElasticLogEventRequest(
                     timestamp = nowWithTimeZone.format(timestampFormatter),
                     tag = tag,
                     level = level,
@@ -62,14 +66,6 @@ class MultipleEndpointsElastic(
                     message = message,
                     errorMessage = throwable?.message
                 )
-            )
-
-            val nowWithoutTimeZone = LocalDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
-
-            val response = elasticApi.next().value.log(
-                indexPattern = indexPattern,
-                date = nowWithoutTimeZone.format(ISO_DATE),
-                logEvent = eventJson
             ).execute()
 
             if (!response.isSuccessful) {
@@ -93,7 +89,7 @@ class MultipleEndpointsElastic(
         }
 
         return Retrofit.Builder()
-            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .client(httpClientBuilder.build())
             .baseUrl(endpoint)
             .build()

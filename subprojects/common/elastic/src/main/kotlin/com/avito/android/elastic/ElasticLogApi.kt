@@ -14,6 +14,6 @@ internal interface ElasticLogApi {
     fun log(
         @Path("indexPattern") indexPattern: String,
         @Path("date") date: String,
-        @Body logEvent: String
+        @Body logEvent: ElasticLogEventRequest
     ): Call<ResponseBody>
 }
