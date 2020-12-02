@@ -283,6 +283,8 @@ subprojects {
                     "isInvokedFromIde",
                     gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
                 )
+
+                systemProperty("isTest", true)
             }
         }
 
