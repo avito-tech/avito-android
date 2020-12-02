@@ -1,13 +1,9 @@
 package com.avito.utils.logging
 
 import com.avito.android.elastic.Elastic
-import com.avito.android.elastic.MultipleEndpointsElastic
 import com.avito.android.sentry.sentryConfig
-import com.avito.time.DefaultTimeProvider
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.gradle.envArgs
-import okhttp3.OkHttpClient
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.LogLevel
@@ -31,33 +27,11 @@ internal object CILoggerRegistry {
 
 private fun provideLogger(project: Project, loggerName: String): CILogger {
     return if (project.buildEnvironment is BuildEnvironment.CI && !project.buildEnvironment.inGradleTestKit) {
-        val endpoints: List<String> =
-            requireNotNull(
-                project.properties["avito.elastic.endpoints"]
-                    ?.toString()
-                    ?.split("|")
-            ) {
-                "avito.elastic.endpoints has not been provided"
-            }
-
-        val indexPattern: String = requireNotNull(project.properties["avito.elastic.indexpattern"]?.toString()) {
-            "avito.elastic.indexpattern has not been provided"
-        }
-
-        val elasticLogger: Elastic = MultipleEndpointsElastic(
-            okHttpClient = OkHttpClient(),
-            timeProvider = DefaultTimeProvider(),
-            endpoints = endpoints,
-            indexPattern = indexPattern,
-            buildId = project.envArgs.build.id.toString(),
-            onError = { msg, e -> project.logger.error(msg, e) }
-        )
-
         CILoggerRegistry.loggersCache.getOrPut(loggerName) {
             defaultCILogger(
                 project = project,
                 name = loggerName,
-                elastic = elasticLogger
+                elastic = ElasticFactory.create(project)
             )
         }.logger
     } else {
