@@ -3,6 +3,7 @@
 package org.gradle.kotlin.dsl
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 
@@ -21,3 +22,6 @@ inline fun <reified T> ObjectFactory.property(): Property<T> =
  */
 inline fun <reified K, reified V> ObjectFactory.mapProperty(): MapProperty<K, V> =
     mapProperty(K::class.java, V::class.java)
+
+inline fun <reified T> ObjectFactory.listProperty(): ListProperty<T> =
+    listProperty(T::class.java)

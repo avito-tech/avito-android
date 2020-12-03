@@ -10,7 +10,8 @@ import com.avito.report.model.TestName
  */
 data class TestInApk(
     val testName: TestName,
-    val annotations: List<AnnotationData>
+    val annotations: List<AnnotationData>,
+    val filePath: String
 ) {
     companion object
 }
