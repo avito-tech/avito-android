@@ -5,6 +5,7 @@ import com.avito.impact.changes.ChangedFile
 import com.avito.impact.changes.FakeChangesDetector
 import com.avito.instrumentation.impact.KotlinClassesFinderImpl
 import com.avito.logger.NoOpLogger
+import com.avito.report.model.TestName
 import com.avito.test.gradle.file
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.isInstanceOf
@@ -28,11 +29,11 @@ internal class FindModifiedTestsActionTest {
     private lateinit var multipleClassesTestFile: File
 
     private val allTestsInApk = listOf(
-        TestInApk.createStubInstance(className = "com.avito.android.test.TestGroup", methodName = "testOne"),
-        TestInApk.createStubInstance(className = "com.avito.android.test.TestGroup", methodName = "testTwo"),
-        TestInApk.createStubInstance(className = "com.avito.android.test.AnotherTest", methodName = "test"),
-        TestInApk.createStubInstance(className = "com.avito.android.test.TestClassInFileOne", methodName = "test"),
-        TestInApk.createStubInstance(className = "com.avito.android.test.TestClassInFileTwo", methodName = "test")
+        TestName(className = "com.avito.android.test.TestGroup", methodName = "testOne"),
+        TestName(className = "com.avito.android.test.TestGroup", methodName = "testTwo"),
+        TestName(className = "com.avito.android.test.AnotherTest", methodName = "test"),
+        TestName(className = "com.avito.android.test.TestClassInFileOne", methodName = "test"),
+        TestName(className = "com.avito.android.test.TestClassInFileTwo", methodName = "test")
     )
 
     @BeforeEach

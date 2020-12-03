@@ -94,7 +94,7 @@ private fun determineFlakiness(annotations: List<AnnotationData>, api: Int): Fla
     return when {
         flakyAnnotation != null -> {
             val flakySdks = flakyAnnotation.getIntArrayValue(FLAKY_SDKS_KEY)
-            // by defaul vararg parameter is initialized by emptyArray
+            // by default vararg parameter is initialized by emptyArray
             val isFlaky = if (flakySdks != null && flakySdks.isNotEmpty()) {
                 flakySdks.contains(api)
             } else {

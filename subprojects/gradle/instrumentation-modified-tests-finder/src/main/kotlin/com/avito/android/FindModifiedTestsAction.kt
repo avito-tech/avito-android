@@ -3,6 +3,7 @@ package com.avito.android
 import com.avito.impact.changes.ChangeType
 import com.avito.impact.changes.ChangesDetector
 import com.avito.instrumentation.impact.KotlinClassesFinder
+import com.avito.report.model.TestName
 import org.funktionale.tries.Try
 import java.io.File
 
@@ -11,7 +12,7 @@ class FindModifiedTestsAction(
     private val kotlinClassesFinder: KotlinClassesFinder
 ) {
 
-    fun find(androidTestDir: File, allTestsInApk: List<TestInApk>): Try<List<String>> {
+    fun find(androidTestDir: File, allTestsInApk: List<TestName>): Try<List<String>> {
         return changesDetector.computeChanges(
             targetDirectory = androidTestDir,
             excludedDirectories = emptyList()
@@ -21,8 +22,8 @@ class FindModifiedTestsAction(
                 .flatMap { kotlinClassesFinder.find(it.file) }
 
             allTestsInApk
-                .filter { changedClasses.contains(it.testName.className) }
-                .map { it.testName.toString() }
+                .filter { changedClasses.contains(it.className) }
+                .map { it.toString() }
         }
     }
 }

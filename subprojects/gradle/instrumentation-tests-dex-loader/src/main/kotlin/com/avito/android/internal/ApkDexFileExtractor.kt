@@ -5,7 +5,7 @@ import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.iface.DexFile
 import java.io.File
 
-internal class ApkDexFileExtractor : DexFileExtractor {
+class ApkDexFileExtractor : DexFileExtractor {
 
     override fun getDexFiles(file: File): List<DexFile> {
         val dexEntryNames = DexFileFactory.loadDexContainer(file, null).dexEntryNames
