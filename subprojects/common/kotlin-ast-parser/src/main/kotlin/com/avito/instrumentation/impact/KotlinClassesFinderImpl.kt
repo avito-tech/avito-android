@@ -1,6 +1,6 @@
 package com.avito.instrumentation.impact
 
-import com.avito.utils.logging.CILogger
+import com.avito.logger.Logger
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -13,30 +13,31 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-private typealias FilePath = String
+typealias FilePath = String
 
-internal class ModifiedKotlinClassesFinder(
-    private val projectDir: File,
-    private val logger: CILogger
-) {
+class KotlinClassesFinderImpl(
+    private val logger: Logger
+) : KotlinClassesFinder {
 
     private val psiProject: Project = createKotlinCoreEnvironment()
 
     private val compiler: KotlinCompiler = KotlinCompiler(project = psiProject)
 
-    /**
-     * @param path relative project file path
-     */
-    fun find(path: FilePath): List<Regex> {
-        val file = File(projectDir, path)
+    override fun find(file: File): List<String> {
+        val parsedKotlinFile = compiler.compile(file)
+        val packageName = getPackage(parsedKotlinFile)
+        return getClassNames(parsedKotlinFile).map { "$packageName.$it" }.toList()
+    }
+
+    override fun find(projectDir: File, relativePath: FilePath): List<Regex> {
+        val file = File(projectDir, relativePath)
 
         return if (file.exists() && file.canRead() && file.extension == KOTLIN_FILE_EXTENSION) {
 
             logger.info("Parsing AST from: ${file.path}")
 
             val parsedKotlinFile = compiler.compile(file)
-            val packagePath = parsedKotlinFile.packageFqName.asString()
-                .replace(".", "/")
+            val packagePath = getPackage(parsedKotlinFile).replace(".", "/")
 
             if (packagePath.isNotEmpty()) {
                 val fileNameBasedRegex = getRegexBasedOnFileName(
@@ -73,19 +74,26 @@ internal class ModifiedKotlinClassesFinder(
         compiledFile: KtFile,
         packagePath: String
     ): List<Regex> =
+        getClassNames(compiledFile)
+            .map { "$packagePath/$it(\\.class|$.*\\.class)" }
+            .map { it.toRegex() }
+            .toList()
+
+    private fun getPackage(compiledFile: KtFile): String =
+        compiledFile.packageFqName.asString()
+
+    private fun getClassNames(compiledFile: KtFile): Sequence<String> =
         compiledFile.declarations
             .asSequence()
             .filterIsInstance<KtClassOrObject>()
             .map { it.name }
-            .map { "$packagePath/$it(\\.class|$.*\\.class)" }
-            .map { it.toRegex() }
-            .toList()
+            .filterNotNull()
 
     companion object {
 
         private const val KOTLIN_FILE_EXTENSION = "kt"
 
-        internal fun createKotlinCoreEnvironment(): Project {
+        fun createKotlinCoreEnvironment(): Project {
             // Based on detekt by Artur Bosch
             val configuration = CompilerConfiguration()
 

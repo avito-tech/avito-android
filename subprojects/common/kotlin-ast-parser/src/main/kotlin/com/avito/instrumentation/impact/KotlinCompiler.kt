@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.nio.file.Path
 
-internal class KotlinCompiler(
+class KotlinCompiler(
     private val project: Project,
     private val psiFileFactory: PsiFileFactory = PsiFileFactory.getInstance(project)
 ) {

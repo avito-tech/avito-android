@@ -3,7 +3,9 @@ package com.avito.android
 import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.changes.GitChangesDetector
 import com.avito.impact.changes.IgnoreSettings
+import com.avito.instrumentation.impact.KotlinClassesFinderImpl
 import com.avito.utils.logging.ciLogger
+import com.avito.utils.logging.commonLogger
 import com.avito.utils.rewriteNewLineList
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFile
@@ -25,7 +27,7 @@ class FindModifiedTestsTask @Inject constructor(
     val targetCommit = extension.targetCommit
 
     @Input
-    val tests = objects.listProperty<TestInApk>()
+    val allTestsInApk = objects.listProperty<TestInApk>()
 
     @Suppress("UnstableApiUsage")
     @OutputFile
@@ -41,14 +43,18 @@ class FindModifiedTestsTask @Inject constructor(
                 logger = ciLogger
             )
 
-        val action = FindModifiedTestsAction(changesDetector)
+        val action = FindModifiedTestsAction(
+            changesDetector = changesDetector,
+            kotlinClassesFinder = KotlinClassesFinderImpl(logger = commonLogger(ciLogger))
+        )
+
         val androidTestDir = File(project.projectDir, "src/androidTest")
 
-        val modifiedTests = action.find(
+        val modifiedTestNames = action.find(
             androidTestDir = androidTestDir,
-            tests = tests.get()
+            allTestsInApk = allTestsInApk.get()
         ).get()
 
-        modifiedTestsFile.get().asFile.rewriteNewLineList(modifiedTests)
+        modifiedTestsFile.get().asFile.rewriteNewLineList(modifiedTestNames)
     }
 }

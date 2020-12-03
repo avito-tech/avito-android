@@ -29,6 +29,7 @@ import com.avito.instrumentation.impact.metadata.ScreenToModulePath
 import com.avito.instrumentation.impact.model.AffectedTest
 import com.avito.instrumentation.impact.model.AffectionType
 import com.avito.utils.logging.CILogger
+import com.avito.utils.logging.commonLogger
 import com.google.gson.GsonBuilder
 import org.apache.bcel.classfile.JavaClass
 import org.gradle.api.Project
@@ -152,10 +153,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val targetModule = AndroidProject(project)
         val targetModulePackage = targetModule.manifest.getPackage()
 
-        val classesFinder = ModifiedKotlinClassesFinder(
-            projectDir = project.rootDir,
-            logger = ciLogger
-        )
+        val classesFinder = KotlinClassesFinderImpl(logger = commonLogger(ciLogger))
 
         val affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject> =
             @Suppress("DEPRECATION")
@@ -171,7 +169,10 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             val changedFiles = affectedAndroidTestModules[targetModulePackage]!!.changedFiles
             val patterns: Map<ChangeType, List<Regex>> = changedFiles
                 .map { changedFile ->
-                    classesFinder.find(changedFile.relativePath)
+                    classesFinder.find(
+                        projectDir = project.rootDir,
+                        relativePath = changedFile.relativePath
+                    )
                         .map { classRegex -> changedFile.changeType to classRegex }
                 }.flatten()
                 .groupByTo(

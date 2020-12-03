@@ -6,6 +6,9 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
+    implementation(project(":common:kotlin-ast-parser")) {
+        because("Need to know all classes in files")
+    }
     implementation(project(":gradle:files"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:kotlin-dsl-support"))
@@ -14,5 +17,12 @@ dependencies {
     }
     implementation(project(":gradle:impact-shared")) {
         because("ChangesDetector reuse")
+    }
+
+    testImplementation(project(":gradle:impact-shared-test-fixtures"))
+    testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
+    testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":gradle:test-project")) {
+        because("File extensions") // todo probably move to :common:files
     }
 }

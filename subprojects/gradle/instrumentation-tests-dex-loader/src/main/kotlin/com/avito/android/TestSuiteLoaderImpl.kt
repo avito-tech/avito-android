@@ -60,8 +60,7 @@ class TestSuiteLoaderImpl(
                                     className = method.definingClass.toJavaType(),
                                     methodName = method.name
                                 ),
-                                annotations = classAnnotations + methodAnnotations,
-                                filePath =
+                                annotations = classAnnotations + methodAnnotations
                             )
                         }
                 }
