@@ -283,6 +283,8 @@ subprojects {
                     "isInvokedFromIde",
                     gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
                 )
+
+                systemProperty("isTest", true)
             }
         }
 
@@ -305,7 +307,9 @@ subprojects {
         val testProperties = listOf(
             "avito.slack.test.channel",
             "avito.slack.test.token",
-            "avito.slack.test.workspace"
+            "avito.slack.test.workspace",
+            "avito.elastic.endpoint",
+            "avito.elastic.indexpattern"
         )
         testProperties.forEach { key ->
             val property = if (project.hasProperty(key)) {

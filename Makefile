@@ -59,6 +59,9 @@ sample_app_help:
 publish_to_maven_local:
 	./gradlew -p subprojects publishToMavenLocal -PprojectVersion=local $(log_level)
 
+publish_to_artifactory:
+	./gradlew -p subprojects publishToArtifactory -PprojectVersion=$(version) $(log_level)
+
 sample_app_instrumentation:
 	./gradlew samples:$(module):instrumentation$(instrumentation) $(params)
 

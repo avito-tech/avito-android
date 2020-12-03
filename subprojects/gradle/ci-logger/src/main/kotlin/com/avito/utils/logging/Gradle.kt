@@ -1,5 +1,6 @@
 package com.avito.utils.logging
 
+import com.avito.android.elastic.ElasticClient
 import com.avito.android.sentry.sentryConfig
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
@@ -29,7 +30,8 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
         CILoggerRegistry.loggersCache.getOrPut(loggerName) {
             defaultCILogger(
                 project = project,
-                name = loggerName
+                name = loggerName,
+                elasticClient = ElasticFactory.create(project)
             )
         }.logger
     } else {
@@ -41,15 +43,19 @@ private val isInvokedFromIde = System.getProperty("isInvokedFromIde")?.toBoolean
 
 private fun defaultCILogger(
     project: Project,
-    name: String
+    name: String,
+    elasticClient: ElasticClient
 ): CILoggerRegistry.Entity {
+
     val destinationFileName = "${project.rootDir}/outputs/ci/$name.txt"
+
     val destinationFile = File(destinationFileName)
 
     val destinationFileHandler = CILoggingHandlerImplementation(
         formatter = AppendDateTimeFormatter(),
         destination = FileDestination(destinationFile)
     )
+
     val onlyMessageStdoutHandler = CILoggingHandlerImplementation(
         formatter = AppendPrefixFormatter(prefix = name),
         destination = OnlyMessageStdoutDestination
@@ -61,6 +67,7 @@ private fun defaultCILogger(
     )
 
     val sentryConfig = project.sentryConfig
+
     val sentryHandler = CILoggingHandlerImplementation(
         destination = SentryDestination(sentryConfig.get())
     )
@@ -68,7 +75,8 @@ private fun defaultCILogger(
     val logger = CILogger(
         debugHandler = CILoggingCombinedHandler(
             handlers = listOf(
-                destinationFileHandler
+                destinationFileHandler,
+                elasticHandler(elasticClient, tag = name, level = "DEBUG")
             ).let {
                 if (isInvokedFromIde) {
                     it.plus(onlyMessageStdoutHandler)
@@ -80,19 +88,22 @@ private fun defaultCILogger(
         infoHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 onlyMessageStdoutHandler,
-                destinationFileHandler
+                destinationFileHandler,
+                elasticHandler(elasticClient, tag = name, level = "INFO")
             )
         ),
         warnHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 explicitStdoutHandler,
-                destinationFileHandler
+                destinationFileHandler,
+                elasticHandler(elasticClient, tag = name, level = "WARNING")
             )
         ),
         criticalHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 explicitStdoutHandler,
                 destinationFileHandler,
+                elasticHandler(elasticClient, tag = name, level = "ERROR"),
                 sentryHandler
             )
         )
@@ -101,6 +112,16 @@ private fun defaultCILogger(
     return CILoggerRegistry.Entity(
         logger = logger,
         destinationFile = destinationFile
+    )
+}
+
+private fun elasticHandler(elasticClient: ElasticClient, tag: String, level: String): CILoggingHandler {
+    return CILoggingHandlerImplementation(
+        destination = ElasticDestination(
+            elasticClient = elasticClient,
+            tag = tag,
+            level = level
+        )
     )
 }
 
