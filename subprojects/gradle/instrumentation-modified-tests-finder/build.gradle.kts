@@ -1,4 +1,5 @@
 plugins {
+    id("java-gradle-plugin")
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
@@ -24,5 +25,15 @@ dependencies {
     testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":gradle:test-project")) {
         because("File extensions") // todo probably move to :common:files
+    }
+}
+
+gradlePlugin {
+    plugins {
+        create("instrumentationModifiedTestsFinder") {
+            id = "com.avito.android.instrumentation-modified-tests-finder"
+            implementationClass = "com.avito.android.InstrumentationModifiedTestsFinderPlugin"
+            displayName = "Instrumentation modified tests finder"
+        }
     }
 }

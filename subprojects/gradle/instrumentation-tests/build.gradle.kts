@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":gradle:files"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:instrumentation-test-impact-analysis"))
+    implementation(project(":gradle:instrumentation-modified-tests-finder"))
     implementation(project(":gradle:instrumentation-tests-dex-loader"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:process"))

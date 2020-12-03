@@ -10,7 +10,7 @@ class InstrumentationModifiedTestsFinderPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.extensions.create<ModifiedTestsFinderExtension>("modifiedTestsFinder")
 
-        target.tasks.register<FindModifiedTestsTask>("findModifiedTests") {
+        target.tasks.register<FindModifiedTestsTask>(modifiedTestsFinderTaskName) {
             group = "impact-analysis"
         }
     }
