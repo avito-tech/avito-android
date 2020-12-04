@@ -43,7 +43,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val testApplication: DirectoryProperty = objects.directoryProperty()
 
     @Input
-    val impactAnalysisPolicy = objects.property<ImpactAnalysisPolicy>()
+    val impactAnalysisPolicy = objects.property<ImpactAnalysisPolicy>().convention(ImpactAnalysisPolicy.Off)
 
     @Optional
     @InputFile

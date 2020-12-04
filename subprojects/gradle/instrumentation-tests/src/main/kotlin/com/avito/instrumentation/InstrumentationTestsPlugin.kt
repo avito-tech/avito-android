@@ -171,7 +171,8 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                     task.changedTests.set(impactTask.get().changedTestsFile)
                                 }
 
-                                is ImpactAnalysisPolicy.Off -> task.impactAnalysisPolicy.set(ImpactAnalysisPolicy.Off)
+                                is ImpactAnalysisPolicy.Off -> {
+                                }
                             }
 
                             if (extensionData.testApplicationApk == null) {
