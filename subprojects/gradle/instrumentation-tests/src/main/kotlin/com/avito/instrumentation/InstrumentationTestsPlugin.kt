@@ -149,13 +149,14 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             task.impactAnalysisPolicy.set(instrumentationConfiguration.impactAnalysisPolicy)
 
                             when (instrumentationConfiguration.impactAnalysisPolicy) {
-                                is On.RunAffectedTests, is On.RunNewTests -> {
+                                is On.RunAffectedTests, is On.RunNewTests, is On.RunModifiedTests -> {
                                     val impactTask = project.tasks.analyzeTestImpactTask().get()
                                     task.affectedTests.set(impactTask.testsToRunFile)
                                     task.newTests.set(impactTask.addedTestsFile)
                                     task.modifiedTests.set(impactTask.modifiedTestsFile)
                                 }
-                                is On.RunModifiedTests -> {
+
+                                is On.RunChangedTests -> {
                                     val impactTask = project.tasks.changedTestsFinderTaskProvider().apply {
                                         configure {
                                             it.targetCommit.set(
@@ -167,8 +168,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                             )
                                         }
                                     }
-                                    task.modifiedTests.set(impactTask.get().changedTestsFile)
+                                    task.changedTests.set(impactTask.get().changedTestsFile)
                                 }
+
                                 is ImpactAnalysisPolicy.Off -> task.impactAnalysisPolicy.set(ImpactAnalysisPolicy.Off)
                             }
 

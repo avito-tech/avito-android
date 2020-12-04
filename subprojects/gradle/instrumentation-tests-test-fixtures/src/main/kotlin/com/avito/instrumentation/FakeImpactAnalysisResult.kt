@@ -4,13 +4,15 @@ import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 
 fun ImpactAnalysisResult.Companion.createStubInstance(
-    impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off,
+    policy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off,
     affectedTests: List<String> = emptyList(),
     addedTests: List<String> = emptyList(),
-    modifiedTests: List<String> = emptyList()
+    modifiedTests: List<String> = emptyList(),
+    changedTests: List<String> = emptyList()
 ) = ImpactAnalysisResult(
-    policy = impactAnalysisPolicy,
+    policy = policy,
     affectedTests = affectedTests,
     addedTests = addedTests,
-    modifiedTests = modifiedTests
+    modifiedTests = modifiedTests,
+    changedTests = changedTests
 )

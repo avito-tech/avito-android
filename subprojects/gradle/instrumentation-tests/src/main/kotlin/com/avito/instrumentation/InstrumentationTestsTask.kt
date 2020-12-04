@@ -59,6 +59,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
 
     @Optional
     @InputFile
+    val changedTests: RegularFileProperty = objects.fileProperty()
+
+    @Optional
+    @InputFile
     val applicationProguardMapping: RegularFileProperty = objects.fileProperty()
 
     @Optional
@@ -153,7 +157,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
                         policy = impactAnalysisPolicy.get(),
                         affectedTestsFile = affectedTests.asFile.orNull,
                         addedTestsFile = newTests.asFile.orNull,
-                        modifiedTestsFile = modifiedTests.asFile.orNull
+                        modifiedTestsFile = modifiedTests.asFile.orNull,
+                        changedTestsFile = changedTests.asFile.orNull
                     ),
                     logger = ciLogger,
                     outputDir = output.get().asFile,

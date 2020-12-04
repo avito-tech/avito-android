@@ -8,10 +8,13 @@ sealed class ImpactAnalysisPolicy : Serializable {
 
         object RunAffectedTests : On()
 
-        // Use RunModifiedTests, it also includes new tests
+        // Use RunChangedTests, it also includes new tests
         object RunNewTests : On()
 
+        // Use RunChangedTests, it also includes modified tests
         object RunModifiedTests : On()
+
+        object RunChangedTests : On()
     }
 
     object Off : ImpactAnalysisPolicy()
