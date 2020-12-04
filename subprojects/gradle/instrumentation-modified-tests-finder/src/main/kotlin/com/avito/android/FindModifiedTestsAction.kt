@@ -17,9 +17,10 @@ class FindModifiedTestsAction(
             targetDirectory = androidTestDir,
             excludedDirectories = emptyList()
         ).map { changedFiles ->
-            val changedClasses = changedFiles
+            val changedClasses = changedFiles.asSequence()
                 .filter { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
-                .flatMap { kotlinClassesFinder.find(it.file) }
+                .flatMap { kotlinClassesFinder.findClasses(it.file) }
+                .map { it.toString() }
 
             allTestsInApk
                 .filter { changedClasses.contains(it.className) }

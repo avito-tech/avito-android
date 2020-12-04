@@ -4,7 +4,6 @@ import com.avito.impact.changes.ChangeType
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.changes.FakeChangesDetector
 import com.avito.instrumentation.impact.KotlinClassesFinderImpl
-import com.avito.logger.NoOpLogger
 import com.avito.report.model.TestName
 import com.avito.test.gradle.file
 import com.google.common.truth.Truth.assertThat
@@ -17,9 +16,8 @@ import java.io.File
 
 internal class FindModifiedTestsActionTest {
 
-    private val logger = NoOpLogger
     private val changesDetector = FakeChangesDetector()
-    private val kotlinClassFinder = KotlinClassesFinderImpl(logger)
+    private val kotlinClassFinder = KotlinClassesFinderImpl()
     private val action = FindModifiedTestsAction(changesDetector, kotlinClassFinder)
 
     private lateinit var dir: File

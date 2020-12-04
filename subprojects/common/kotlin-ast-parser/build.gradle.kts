@@ -5,6 +5,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:logger"))
     implementation(Dependencies.kotlinCompilerEmbeddable)
+
+    testImplementation(project(":gradle:test-project")) {
+        because("File extensions") // todo probably move to :common:files
+    }
 }
