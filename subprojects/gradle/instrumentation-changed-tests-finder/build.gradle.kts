@@ -31,9 +31,9 @@ dependencies {
 gradlePlugin {
     plugins {
         create("instrumentationModifiedTestsFinder") {
-            id = "com.avito.android.instrumentation-modified-tests-finder"
-            implementationClass = "com.avito.android.InstrumentationModifiedTestsFinderPlugin"
-            displayName = "Instrumentation modified tests finder"
+            id = "com.avito.android.instrumentation-changed-tests-finder"
+            implementationClass = "com.avito.android.InstrumentationChangedTestsFinderPlugin"
+            displayName = "Instrumentation changed tests finder"
         }
     }
 }

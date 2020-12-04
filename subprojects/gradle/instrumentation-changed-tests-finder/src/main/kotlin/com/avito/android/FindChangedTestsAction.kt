@@ -7,15 +7,15 @@ import com.avito.report.model.TestName
 import org.funktionale.tries.Try
 import java.io.File
 
-class FindModifiedTestsAction(
+class FindChangedTestsAction(
     private val changesDetector: ChangesDetector,
     private val kotlinClassesFinder: KotlinClassesFinder
 ) {
 
     /**
-     * Changed types considered as modification in context of test execution strategies
+     * Change types considered as "Changed" in context of test execution strategies
      */
-    private val modifiedChangeTypes = arrayOf(
+    private val changeTypes = arrayOf(
         ChangeType.ADDED,
         ChangeType.MODIFIED,
         ChangeType.COPIED
@@ -27,7 +27,7 @@ class FindModifiedTestsAction(
             excludedDirectories = emptyList()
         ).map { changedFiles ->
             val changedClasses = changedFiles.asSequence()
-                .filter { it.changeType in modifiedChangeTypes }
+                .filter { it.changeType in changeTypes }
                 .flatMap { kotlinClassesFinder.findClasses(it.file) }
                 .map { it.toString() }
 

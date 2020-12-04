@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class FindModifiedTestsActionTest {
+internal class FindChangedTestsActionTest {
 
     private val changesDetector = FakeChangesDetector()
     private val kotlinClassFinder = KotlinClassesFinderImpl()
-    private val action = FindModifiedTestsAction(changesDetector, kotlinClassFinder)
+    private val action = FindChangedTestsAction(changesDetector, kotlinClassFinder)
 
     private lateinit var dir: File
 

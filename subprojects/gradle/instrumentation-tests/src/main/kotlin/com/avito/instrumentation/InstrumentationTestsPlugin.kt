@@ -9,7 +9,7 @@ import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
 import com.avito.android.LoadTestsFromApkTask
 import com.avito.android.apkDirectory
-import com.avito.android.modifiedTestsFinderTaskProvider
+import com.avito.android.changedTestsFinderTaskProvider
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
@@ -156,7 +156,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                     task.modifiedTests.set(impactTask.modifiedTestsFile)
                                 }
                                 is On.RunModifiedTests -> {
-                                    val impactTask = project.tasks.modifiedTestsFinderTaskProvider().apply {
+                                    val impactTask = project.tasks.changedTestsFinderTaskProvider().apply {
                                         configure {
                                             it.targetCommit.set(
                                                 gitState.map { git ->
