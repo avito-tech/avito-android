@@ -165,10 +165,9 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                                     }
                                                 }
                                             )
-                                            it.allTestsInApk.set(loadTestsTask.get().testsInApkFile)
                                         }
                                     }
-                                    task.modifiedTests.set(impactTask.get().modifiedTestsFile)
+                                    task.modifiedTests.set(impactTask.get().changedTestsFile)
                                 }
                                 is ImpactAnalysisPolicy.Off -> task.impactAnalysisPolicy.set(ImpactAnalysisPolicy.Off)
                             }

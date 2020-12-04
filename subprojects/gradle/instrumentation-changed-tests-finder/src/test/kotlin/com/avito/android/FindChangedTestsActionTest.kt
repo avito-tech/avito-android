@@ -1,44 +1,52 @@
 package com.avito.android
 
-import com.avito.impact.changes.ChangeType
-import com.avito.impact.changes.ChangedFile
-import com.avito.impact.changes.FakeChangesDetector
-import com.avito.instrumentation.impact.KotlinClassesFinderImpl
-import com.avito.report.model.TestName
+import com.avito.android.InstrumentationChangedTestsFinderApi.changedTestsFinderTaskName
+import com.avito.android.InstrumentationChangedTestsFinderApi.pluginId
+import com.avito.git.Git
+import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
+import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.module.AndroidAppModule
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.isInstanceOf
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Paths
 
 internal class FindChangedTestsActionTest {
 
-    private val changesDetector = FakeChangesDetector()
-    private val kotlinClassFinder = KotlinClassesFinderImpl()
-    private val action = FindChangedTestsAction(changesDetector, kotlinClassFinder)
-
-    private lateinit var dir: File
-
+    private lateinit var projectDir: File
+    private lateinit var androidTestDir: File
     private lateinit var testGroupFile: File
     private lateinit var anotherTestFile: File
     private lateinit var multipleClassesTestFile: File
-
-    private val allTestsInApk = listOf(
-        TestName(className = "com.avito.android.test.TestGroup", methodName = "testOne"),
-        TestName(className = "com.avito.android.test.TestGroup", methodName = "testTwo"),
-        TestName(className = "com.avito.android.test.AnotherTest", methodName = "test"),
-        TestName(className = "com.avito.android.test.TestClassInFileOne", methodName = "test"),
-        TestName(className = "com.avito.android.test.TestClassInFileTwo", methodName = "test")
-    )
+    private lateinit var git: Git
+    private lateinit var targetCommit: String
 
     @BeforeEach
-    fun setup(@TempDir dir: File) {
-        this.dir = dir
+    fun setup(@TempDir projectDir: File) {
+        this.projectDir = projectDir
+        git = Git.Impl(projectDir)
 
-        testGroupFile = dir.file(
+        TestProjectGenerator(
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app",
+                    plugins = listOf(pluginId),
+                    buildGradleExtra = """
+                        changedTests {
+                            targetCommit = project.properties.get("targetCommit")
+                        }
+                    """.trimIndent()
+                )
+            )
+        ).generateIn(projectDir)
+
+        this.androidTestDir = projectDir.dir("app/src/androidTest/kotlin")
+
+        testGroupFile = androidTestDir.file(
             "TestGroup.kt",
             """
             package com.avito.android.test
@@ -58,7 +66,7 @@ internal class FindChangedTestsActionTest {
         """.trimIndent()
         )
 
-        anotherTestFile = dir.file(
+        anotherTestFile = androidTestDir.file(
             "AnotherTest.kt",
             """
             package com.avito.android.test
@@ -74,7 +82,7 @@ internal class FindChangedTestsActionTest {
         """.trimIndent()
         )
 
-        multipleClassesTestFile = dir.file(
+        multipleClassesTestFile = androidTestDir.file(
             "YetAnotherTest.kt",
             """
             package com.avito.android.test
@@ -96,104 +104,95 @@ internal class FindChangedTestsActionTest {
             }
         """.trimIndent()
         )
+
+        git.init().get()
+        git.checkout(branchName = "develop", create = true).get()
+        git.addAll().get()
+        git.commit("initial").get()
+
+        targetCommit = git.tryParseRev("develop").get()
     }
 
     @Test
     fun `finds modified file's class`() {
-        changesDetector.result = Try.Success(
-            listOf(
-                ChangedFile(dir, anotherTestFile, ChangeType.MODIFIED)
-            )
-        )
+        git.checkout(branchName = "changes", create = true).get()
+        mutateKotlinFile(anotherTestFile)
+        git.addAll().get()
+        git.commit("some changes").get()
 
-        val result = action.find(
-            androidTestDir = dir,
-            allTestsInApk = allTestsInApk
-        )
+        gradlew(projectDir, changedTestsFinderTaskName, "-PtargetCommit=$targetCommit")
+            .assertThat()
+            .buildSuccessful()
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
-        assertThat(result.get()).containsExactly("com.avito.android.test.AnotherTest.test")
+        val output = Paths.get(projectDir.path, "app", "build", "changed-test-classes.txt").toFile()
+
+        assertThat(output.exists()).isTrue()
+        assertThat(output.readText()).isEqualTo("com.avito.android.test.AnotherTest")
+    }
+
+    private fun mutateKotlinFile(file: File) {
+        file.appendText("\n private fun newFun() { }")
     }
 
     @Test
     fun `finds added file's class`() {
-        changesDetector.result = Try.Success(
-            listOf(
-                ChangedFile(dir, anotherTestFile, ChangeType.ADDED)
-            )
+        git.checkout(branchName = "addition", create = true).get()
+        androidTestDir.file(
+            "NewTest.kt",
+            """
+            package com.avito.android.test
+            
+            import org.junit.Test
+            
+            class NewTest {
+            
+                @Test
+                fun test() {
+                }
+            }
+        """.trimIndent()
         )
+        git.addAll().get()
+        git.commit("new test added").get()
 
-        val result = action.find(
-            androidTestDir = dir,
-            allTestsInApk = allTestsInApk
-        )
+        gradlew(projectDir, changedTestsFinderTaskName, "-PtargetCommit=$targetCommit")
+            .assertThat()
+            .buildSuccessful()
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
-        assertThat(result.get()).containsExactly("com.avito.android.test.AnotherTest.test")
-    }
+        val output = Paths.get(projectDir.path, "app", "build", "changed-test-classes.txt").toFile()
 
-    @Test
-    fun `finds all tests in modified class`() {
-        changesDetector.result = Try.Success(
-            listOf(
-                ChangedFile(dir, testGroupFile, ChangeType.MODIFIED)
-            )
-        )
-
-        val result = action.find(
-            androidTestDir = dir,
-            allTestsInApk = allTestsInApk
-        )
-
-        assertThat(result).isInstanceOf<Try.Success<*>>()
-        assertThat(result.get()).containsExactly(
-            "com.avito.android.test.TestGroup.testOne",
-            "com.avito.android.test.TestGroup.testTwo"
-        )
+        assertThat(output.exists()).isTrue()
+        assertThat(output.readText()).isEqualTo("com.avito.android.test.NewTest")
     }
 
     @Test
     fun `finds all tests in modified file with multiple classes`() {
-        changesDetector.result = Try.Success(
-            listOf(
-                ChangedFile(dir, multipleClassesTestFile, ChangeType.MODIFIED)
-            )
-        )
+        git.checkout(branchName = "multiple-classes", create = true).get()
+        mutateKotlinFile(multipleClassesTestFile)
+        git.addAll().get()
+        git.commit("change in test").get()
 
-        val result = action.find(
-            androidTestDir = dir,
-            allTestsInApk = allTestsInApk
-        )
+        gradlew(projectDir, changedTestsFinderTaskName, "-PtargetCommit=$targetCommit")
+            .assertThat()
+            .buildSuccessful()
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
-        assertThat(result.get()).containsExactly(
-            "com.avito.android.test.TestClassInFileOne.test",
-            "com.avito.android.test.TestClassInFileTwo.test"
+        val output = Paths.get(projectDir.path, "app", "build", "changed-test-classes.txt").toFile()
+
+        assertThat(output.exists()).isTrue()
+        assertThat(output.readText()).isEqualTo(
+            "com.avito.android.test.TestClassInFileOne\ncom.avito.android.test.TestClassInFileTwo"
         )
     }
 
     @Test
-    fun `finds nothing is nothing changes`() {
-        changesDetector.result = Try.Success(emptyList())
+    fun `finds nothing if nothing changes`() {
+        gradlew(projectDir, changedTestsFinderTaskName, "-PtargetCommit=$targetCommit")
+            .assertThat()
+            .buildSuccessful()
 
-        val result = action.find(
-            androidTestDir = dir,
-            allTestsInApk = allTestsInApk
-        )
+        val output = Paths.get(projectDir.path, "app", "build", "changed-test-classes.txt").toFile()
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
-        assertThat(result.get()).isEmpty()
-    }
-
-    @Test
-    fun `find fails if changed detector fails`() {
-        changesDetector.result = Try.Failure(IllegalStateException("Something went wrong"))
-
-        val result = action.find(
-            androidTestDir = dir,
-            allTestsInApk = allTestsInApk
-        )
-
-        assertThat(result).isInstanceOf<Try.Failure<*>>()
+        assertThat(output.exists()).isTrue()
+        assertThat(output.readText()).isEmpty()
     }
 }
