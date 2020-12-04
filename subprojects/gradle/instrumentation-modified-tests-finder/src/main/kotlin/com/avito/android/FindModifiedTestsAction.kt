@@ -12,13 +12,22 @@ class FindModifiedTestsAction(
     private val kotlinClassesFinder: KotlinClassesFinder
 ) {
 
+    /**
+     * Changed types considered as modification in context of test execution strategies
+     */
+    private val modifiedChangeTypes = arrayOf(
+        ChangeType.ADDED,
+        ChangeType.MODIFIED,
+        ChangeType.COPIED
+    )
+
     fun find(androidTestDir: File, allTestsInApk: List<TestName>): Try<List<String>> {
         return changesDetector.computeChanges(
             targetDirectory = androidTestDir,
             excludedDirectories = emptyList()
         ).map { changedFiles ->
             val changedClasses = changedFiles.asSequence()
-                .filter { it.changeType == ChangeType.ADDED || it.changeType == ChangeType.MODIFIED }
+                .filter { it.changeType in modifiedChangeTypes }
                 .flatMap { kotlinClassesFinder.findClasses(it.file) }
                 .map { it.toString() }
 
