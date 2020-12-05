@@ -1,18 +1,15 @@
-package ru.avito.test
+package ru.avito.util
 
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.hasItems
-import org.hamcrest.Matchers.not
+import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
-import ru.avito.util.Characters
-import ru.avito.util.Is
-import ru.avito.util.randomInt
-import ru.avito.util.randomString
+import org.junit.jupiter.api.TestFactory
 
-@Suppress("IllegalIdentifier")
 class RandomUtilsTest {
 
-    private val cases: List<Case> = listOf(
+    @TestFactory
+    fun `randomString - generate string without forbidden symbols`(): List<DynamicTest> = listOf(
         Case(
             allowed = Characters.Alphabetic,
             forbidden = listOf(Characters.Digits, Characters.Punctuation, Characters.Special)
@@ -30,14 +27,20 @@ class RandomUtilsTest {
             forbidden = listOf(Characters.Alphabetic, Characters.Digits, Characters.Punctuation)
         ),
 
-        Case(allowed = Characters.Alphanumeric, forbidden = listOf(Characters.Punctuation, Characters.Special)),
-        Case(allowed = Characters.Text, forbidden = listOf(Characters.Special)),
-        Case(allowed = Characters.All, forbidden = emptyList())
-    )
-
-    @Test
-    fun `randomString - generate string without forbidden symbols`() {
-        cases.forEach { case ->
+        Case(
+            allowed = Characters.Alphanumeric,
+            forbidden = listOf(Characters.Punctuation, Characters.Special)
+        ),
+        Case(
+            allowed = Characters.Text,
+            forbidden = listOf(Characters.Special)
+        ),
+        Case(
+            allowed = Characters.All,
+            forbidden = emptyList()
+        )
+    ).mapIndexed { index, case ->
+        DynamicTest.dynamicTest("case #$index") {
             val generated = randomString(length = 20000, symbols = case.allowed)
             val generatedChars: List<Char> = generated.toList()
 
@@ -45,18 +48,17 @@ class RandomUtilsTest {
 
             val allowedChars: Array<Char> = case.allowed.chars.toTypedArray()
 
-            assertThat("contains only $allowedName", generatedChars, hasItems(*allowedChars))
+            assertWithMessage("contains only $allowedName")
+                .that(generatedChars)
+                .containsAtLeastElementsIn(allowedChars)
 
-            case.forbidden.forEach {
-
+            case.forbidden.forEach { _ ->
                 val forbiddenNames = case.forbidden.map { it.javaClass.simpleName }
                 val forbiddenChars: Array<Char> = case.forbidden.flatMap { it.chars }.toTypedArray()
 
-                assertThat(
-                    "$allowedName doesn't contain $forbiddenNames",
-                    generatedChars,
-                    not(hasItems(*forbiddenChars))
-                )
+                assertWithMessage("$allowedName doesn't contain $forbiddenNames")
+                    .that(generatedChars)
+                    .containsNoneIn(forbiddenChars)
             }
         }
     }
@@ -67,7 +69,7 @@ class RandomUtilsTest {
 
         val generated = randomString(length)
 
-        assertThat(generated.length, Is(length))
+        assertThat(generated.length).isEqualTo(length)
     }
 
     private class Case(val allowed: Characters, val forbidden: List<Characters>)
