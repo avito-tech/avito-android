@@ -22,6 +22,7 @@ dependencies {
     implementation(Dependencies.okhttp)
     implementation(Dependencies.sentryAndroid) // todo use common:sentry
 
+    testImplementation(project(":common:resources"))
     testImplementation(project(":common:junit-utils"))
     testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":common:time-test-fixtures"))

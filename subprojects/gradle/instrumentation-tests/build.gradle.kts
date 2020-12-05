@@ -50,6 +50,7 @@ dependencies {
     testImplementation(project(":gradle:instrumentation-tests-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":common:report-viewer-test-fixtures"))
+    testImplementation(project(":common:resources"))
     testImplementation(Dependencies.Test.mockitoKotlin)
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(Dependencies.Test.okhttpMockWebServer)

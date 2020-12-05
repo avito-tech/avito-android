@@ -67,6 +67,7 @@ include(":gradle:build-environment")
 include(":gradle:worker")
 include(":gradle:ci-logger")
 
+include(":common:resources")
 include(":common:files")
 include(":common:time")
 include(":common:time-test-fixtures")

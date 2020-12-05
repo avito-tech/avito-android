@@ -17,6 +17,7 @@ dependencies {
 
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":common:files"))
+    testImplementation(project(":common:resources"))
     testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":common:report-viewer-test-fixtures"))
     testImplementation(Dependencies.Test.okhttpMockWebServer)
