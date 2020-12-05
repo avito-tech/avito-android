@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":common:kotlin-ast-parser"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:files"))
+    implementation(project(":common:files"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact"))
     implementation(project(":gradle:impact-shared"))

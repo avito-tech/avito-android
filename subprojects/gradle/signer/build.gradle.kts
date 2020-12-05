@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:files"))
+    implementation(project(":common:files"))
 
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.Gradle.androidPlugin)

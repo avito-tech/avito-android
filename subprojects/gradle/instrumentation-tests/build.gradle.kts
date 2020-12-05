@@ -29,7 +29,7 @@ dependencies {
     implementation(project(":common:test-annotations"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:files"))
+    implementation(project(":common:files"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:instrumentation-test-impact-analysis"))
     implementation(project(":gradle:instrumentation-changed-tests-finder"))

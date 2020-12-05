@@ -11,7 +11,7 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":gradle:android"))
     implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:files"))
+    implementation(project(":common:files"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:sentry-config"))

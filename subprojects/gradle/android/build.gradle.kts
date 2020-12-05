@@ -8,7 +8,7 @@ dependencies {
     api(Dependencies.Gradle.androidPlugin)
 
     implementation(gradleApi())
-    implementation(project(":gradle:files"))
+    implementation(project(":common:files"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.funktionaleTry)
