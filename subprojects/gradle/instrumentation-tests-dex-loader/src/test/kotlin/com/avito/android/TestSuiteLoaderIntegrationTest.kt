@@ -1,6 +1,6 @@
 package com.avito.android
 
-import com.avito.test.gradle.fileFromJarResources
+import com.avito.utils.fileFromJarResources
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
