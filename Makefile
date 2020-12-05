@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 test_build_type?=debug
 infra?=
 ci?=false
@@ -110,3 +112,10 @@ record_screenshots:
 
 analyzeImpactOnSampleApp:
 	./gradlew samples:test-app-impact:app:analyzeTestImpact -PtargetBranch=develop $(params)
+
+# Clear local branches that not on remote
+# from: https://stackoverflow.com/a/17029936/981330
+unsafe_clear_local_branches:
+	git fetch --prune && \
+	git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | \
+	awk '{print $$1}' | xargs git branch -D
