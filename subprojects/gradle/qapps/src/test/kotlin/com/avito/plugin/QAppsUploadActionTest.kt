@@ -1,6 +1,8 @@
 package com.avito.plugin
 
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.assertThat
+import com.avito.truth.isInstanceOf
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -69,10 +71,10 @@ class QAppsUploadActionTest {
 
         val result = action.upload()
 
-        assertThat(result).isInstanceOf(Try.Failure::class.java)
-        val failure = (result as Try.Failure).throwable
-        assertThat(failure.message).contains("Can't upload apk to qapps")
-        assertThat(failure.message).contains("[error reason]")
+        assertThat<Try.Failure<*>>(result) {
+            assertThat(throwable.message).contains("Can't upload apk to qapps")
+            assertThat(throwable.message).contains("[error reason]")
+        }
 
         assertWithMessage("retry to send")
             .that(server.requestCount).isAtLeast(2)
@@ -85,7 +87,7 @@ class QAppsUploadActionTest {
 
         val result = action.upload()
 
-        assertThat(result).isInstanceOf(Try.Success::class.java)
+        assertThat(result).isInstanceOf<Try.Success<*>>()
         assertThat(server.requestCount).isEqualTo(2)
     }
 
@@ -101,6 +103,6 @@ class QAppsUploadActionTest {
         assertThat(recordedRequest.path).isEqualTo("/qapps/api/os/android/upload")
         assertThat(recordedRequest.body.readUtf8()).contains("content")
 
-        assertThat(result).isInstanceOf(Try.Success::class.java)
+        assertThat(result).isInstanceOf<Try.Success<*>>()
     }
 }

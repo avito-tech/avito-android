@@ -2,6 +2,7 @@ package com.avito.http
 
 import com.avito.logger.NoOpLogger
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -19,7 +20,7 @@ internal class RetryInterceptorTest {
 
     private lateinit var server: MockWebServer
 
-    private val errorResponseCases = mapOf<String, MockResponse>(
+    private val errorResponseCases = mapOf(
         "500" to MockResponse().setResponseCode(500),
         "DISCONNECT_AT_START" to MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
     )
@@ -89,7 +90,7 @@ internal class RetryInterceptorTest {
                         assertThat(it.isSuccessful).isFalse()
                     },
                     {
-                        assertThat(it).isInstanceOf(IOException::class.java)
+                        assertThat(it).isInstanceOf<IOException>()
                     }
                 )
                 tearDown()

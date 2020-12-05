@@ -3,6 +3,7 @@ package com.avito.slack
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
+import com.avito.truth.isInstanceOf
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
@@ -40,7 +41,7 @@ internal class SlackConditionalSenderIntegrationTest {
 
         val message = slackClient.findMessage(testChannel, condition)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get().text).contains("second message")
 
         // todo assert thread message
@@ -65,11 +66,11 @@ internal class SlackConditionalSenderIntegrationTest {
         val firstMessageTry = sender.sendMessage("first message", author = author)
         val secondMessageTry = sender.sendMessage("second message", author = author)
 
-        assertThat(firstMessageTry).isInstanceOf(Try.Success::class.java)
+        assertThat(firstMessageTry).isInstanceOf<Try.Success<*>>()
         val firstMessage = firstMessageTry.get()
         assertThat(firstMessage.text).contains("first message")
 
-        assertThat(secondMessageTry).isInstanceOf(Try.Success::class.java)
+        assertThat(secondMessageTry).isInstanceOf<Try.Success<*>>()
         assertThat(secondMessageTry.get().text).contains("second message")
 
         // так проверяем что сообщение написано в треде к первому

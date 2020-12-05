@@ -9,6 +9,7 @@ import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.test.generateDeviceTestCaseRun
 import com.avito.runner.test.generateTestCaseRun
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -59,7 +60,7 @@ class ReportCreatorTest {
 
         assertThat(
             summary.reports.first().result
-        ).isInstanceOf(TestCaseRequestMatchingReport.Result.Matched::class.java)
+        ).isInstanceOf<TestCaseRequestMatchingReport.Result.Matched>()
     }
 
     @Test
@@ -76,7 +77,7 @@ class ReportCreatorTest {
 
         assertThat(
             summary.reports.first().result
-        ).isInstanceOf(TestCaseRequestMatchingReport.Result.Mismatched::class.java)
+        ).isInstanceOf<TestCaseRequestMatchingReport.Result.Mismatched>()
     }
 
     @Test
@@ -116,7 +117,7 @@ class ReportCreatorTest {
 
         assertThat(
             summary.reports.first().result
-        ).isInstanceOf(TestCaseRequestMatchingReport.Result.Mismatched::class.java)
+        ).isInstanceOf<TestCaseRequestMatchingReport.Result.Mismatched>()
     }
 
     @Test
@@ -162,7 +163,7 @@ class ReportCreatorTest {
 
         assertThat(
             summary.reports.first().result
-        ).isInstanceOf(TestCaseRequestMatchingReport.Result.Matched::class.java)
+        ).isInstanceOf<TestCaseRequestMatchingReport.Result.Matched>()
     }
 
     @Test
@@ -183,7 +184,7 @@ class ReportCreatorTest {
 
         assertThat(
             summary.reports.first().result
-        ).isInstanceOf(TestCaseRequestMatchingReport.Result.Ignored::class.java)
+        ).isInstanceOf<TestCaseRequestMatchingReport.Result.Ignored>()
     }
 
     private fun createTestSuiteRuns(

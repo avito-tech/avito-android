@@ -6,7 +6,7 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
 import com.avito.utils.logging.CILogger
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class TestReporterTest {
@@ -33,7 +33,7 @@ internal class TestReporterTest {
 
         reporter.sendLostTests(lostTests = lostTestsToReport)
 
-        Truth.assertThat(reportsApi.addTestsRequests).containsAtLeastElementsIn(
+        assertThat(reportsApi.addTestsRequests).containsAtLeastElementsIn(
             lostTestsToReport
                 .map {
                     FakeReportsApi.AddTestsRequest(

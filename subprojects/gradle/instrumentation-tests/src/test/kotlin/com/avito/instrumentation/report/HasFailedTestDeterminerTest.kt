@@ -4,6 +4,8 @@ import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.report.model.createStubInstance
+import com.avito.truth.assertThat
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
@@ -33,7 +35,7 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.NoFailed::class.java)
+        assertThat(result).isInstanceOf<HasFailedTestDeterminer.Result.NoFailed>()
     }
 
     @Test
@@ -45,7 +47,7 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.NoFailed::class.java)
+        assertThat(result).isInstanceOf<HasFailedTestDeterminer.Result.NoFailed>()
     }
 
     @Test
@@ -70,7 +72,7 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.NoFailed::class.java)
+        assertThat(result).isInstanceOf<HasFailedTestDeterminer.Result.NoFailed>()
     }
 
     @Test
@@ -96,7 +98,7 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
+        assertThat(result).isInstanceOf<HasFailedTestDeterminer.Result.Failed>()
     }
 
     @Test
@@ -123,14 +125,12 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
-        val failed = result as HasFailedTestDeterminer.Result.Failed
-        assertThat(failed.notSuppressedCount).isEqualTo(0)
-        assertThat(failed.suppression).isInstanceOf(
-            HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky::class.java
-        )
-        assertThat(failed.suppression.tests).hasSize(1)
-        assertThat(failed.suppression.tests[0].name).isEqualTo("com.Test.test2")
+        assertThat<HasFailedTestDeterminer.Result.Failed>(result) {
+            assertThat(notSuppressedCount).isEqualTo(0)
+            assertThat(suppression).isInstanceOf<HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky>()
+            assertThat(suppression.tests).hasSize(1)
+            assertThat(suppression.tests[0].name).isEqualTo("com.Test.test2")
+        }
     }
 
     @Test
@@ -157,13 +157,11 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
-        val failed = result as HasFailedTestDeterminer.Result.Failed
-        assertThat(failed.notSuppressedCount).isEqualTo(1)
-        assertThat(failed.notSuppressed[0].name).isEqualTo("com.Test.test2")
-        assertThat(failed.suppression).isInstanceOf(
-            HasFailedTestDeterminer.Result.Failed.Suppression.NoSuppressed::class.java
-        )
+        assertThat<HasFailedTestDeterminer.Result.Failed>(result) {
+            assertThat(notSuppressedCount).isEqualTo(1)
+            assertThat(notSuppressed[0].name).isEqualTo("com.Test.test2")
+            assertThat(suppression).isInstanceOf<HasFailedTestDeterminer.Result.Failed.Suppression.NoSuppressed>()
+        }
     }
 
     @Test
@@ -191,15 +189,13 @@ internal class HasFailedTestDeterminerTest {
                 )
             )
 
-        assertThat(result).isInstanceOf(HasFailedTestDeterminer.Result.Failed::class.java)
-        val failed = result as HasFailedTestDeterminer.Result.Failed
-        assertThat(failed.notSuppressedCount).isEqualTo(1)
-        assertThat(failed.notSuppressed[0].name).isEqualTo("com.Test.test3")
-        assertThat(failed.suppression).isInstanceOf(
-            HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky::class.java
-        )
-        assertThat(failed.suppression.tests).hasSize(1)
-        assertThat(failed.suppression.tests[0].name).isEqualTo("com.Test.test2")
+        assertThat<HasFailedTestDeterminer.Result.Failed>(result) {
+            assertThat(notSuppressedCount).isEqualTo(1)
+            assertThat(notSuppressed[0].name).isEqualTo("com.Test.test3")
+            assertThat(suppression).isInstanceOf<HasFailedTestDeterminer.Result.Failed.Suppression.SuppressedFlaky>()
+            assertThat(suppression.tests).hasSize(1)
+            assertThat(suppression.tests[0].name).isEqualTo("com.Test.test2")
+        }
     }
 
     private fun createImpl(

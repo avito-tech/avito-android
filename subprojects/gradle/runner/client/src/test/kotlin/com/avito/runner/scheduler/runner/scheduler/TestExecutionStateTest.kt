@@ -9,6 +9,7 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.test.generateDeviceTestCaseRun
 import com.avito.runner.test.generateTestCaseRun
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 
@@ -56,7 +57,7 @@ class TestExecutionStateTest {
 
         assertWithMessage("Verdict must be Run")
             .that(verdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Should have 1")
             .that((verdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(1)
@@ -75,7 +76,7 @@ class TestExecutionStateTest {
         with(state.verdict()) {
             assertWithMessage("Verdict must be Run")
                 .that(this)
-                .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+                .isInstanceOf<TestExecutionState.Verdict.Run>()
             assertWithMessage("Should have $minimalPassedCount")
                 .that((this as TestExecutionState.Verdict.Run).intentions)
                 .hasSize(minimalPassedCount)
@@ -105,7 +106,7 @@ class TestExecutionStateTest {
 
             assertWithMessage("Verdict must be Run")
                 .that(verdict)
-                .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+                .isInstanceOf<TestExecutionState.Verdict.Run>()
             assertWithMessage("Should have 1")
                 .that((verdict as TestExecutionState.Verdict.Run).intentions)
                 .hasSize(1)
@@ -127,7 +128,7 @@ class TestExecutionStateTest {
 
         assertWithMessage("Initial verdict must has MultipleRun type")
             .that(initialVerdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Initial verdict must has 10 runs")
             .that((initialVerdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(10)
@@ -143,7 +144,7 @@ class TestExecutionStateTest {
 
             assertWithMessage("Verdict must be DoNothing")
                 .that(verdict)
-                .isInstanceOf(TestExecutionState.Verdict.DoNothing::class.java)
+                .isInstanceOf<TestExecutionState.Verdict.DoNothing>()
         }
     }
 
@@ -164,7 +165,7 @@ class TestExecutionStateTest {
 
         assertWithMessage("Initial verdict must has MultipleRun type")
             .that(initialVerdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Initial verdict must has 10 runs")
             .that((initialVerdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(10)
@@ -179,7 +180,7 @@ class TestExecutionStateTest {
 
             assertWithMessage("Verdict must be DoNothing")
                 .that(verdict)
-                .isInstanceOf(TestExecutionState.Verdict.DoNothing::class.java)
+                .isInstanceOf<TestExecutionState.Verdict.DoNothing>()
         }
     }
 
@@ -201,7 +202,7 @@ class TestExecutionStateTest {
 
         assertWithMessage("Initial verdict must has MultipleRun type")
             .that(initialVerdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Initial verdict must has 11 runs")
             .that((initialVerdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(11)
@@ -213,7 +214,7 @@ class TestExecutionStateTest {
 
             assertWithMessage("Verdict must be DoNothing for event: $index in failedRuns")
                 .that(verdict)
-                .isInstanceOf(TestExecutionState.Verdict.DoNothing::class.java)
+                .isInstanceOf<TestExecutionState.Verdict.DoNothing>()
         }
 
         val successRuns = (1..9).map { createPassedTestCaseRun() }
@@ -223,7 +224,7 @@ class TestExecutionStateTest {
 
             assertWithMessage("Verdict must be Run for event: $index in successRuns")
                 .that(verdict)
-                .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+                .isInstanceOf<TestExecutionState.Verdict.Run>()
 
             assertWithMessage("Verdict must has only one intention for event: $index in successRuns")
                 .that((verdict as TestExecutionState.Verdict.Run).intentions)
@@ -236,7 +237,7 @@ class TestExecutionStateTest {
 
         assertWithMessage("Last (20th) verdict must be as SendResult")
             .that(verdict)
-            .isInstanceOf(TestExecutionState.Verdict.SendResult::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.SendResult>()
 
         val results =
             (verdict as TestExecutionState.Verdict.SendResult).results
@@ -263,13 +264,13 @@ class TestExecutionStateTest {
 
         assertWithMessage("Verdict must be Run")
             .that(verdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Should have 1")
             .that((verdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(InstrumentationTestRunAction::class.java)
+            .isInstanceOf<InstrumentationTestRunAction>()
         assertWithMessage("Should be 1")
             .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(1)
@@ -294,13 +295,13 @@ class TestExecutionStateTest {
 
         assertWithMessage("Verdict must be Run")
             .that(verdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Should have 1")
             .that((verdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(InstrumentationTestRunAction::class.java)
+            .isInstanceOf<InstrumentationTestRunAction>()
         assertWithMessage("Should be 2")
             .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(2)
@@ -320,19 +321,19 @@ class TestExecutionStateTest {
 
         assertWithMessage("Verdict must be Run")
             .that(verdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Should have 1")
             .that((verdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(2)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(InstrumentationTestRunAction::class.java)
+            .isInstanceOf<InstrumentationTestRunAction>()
         assertWithMessage("Should be 1")
             .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[1].action)
-            .isInstanceOf(InstrumentationTestRunAction::class.java)
+            .isInstanceOf<InstrumentationTestRunAction>()
         assertWithMessage("Should be 2")
             .that(verdict.intentions[1].action.executionNumber)
             .isEqualTo(2)
@@ -359,13 +360,13 @@ class TestExecutionStateTest {
 
         assertWithMessage("Verdict must be Run")
             .that(verdict)
-            .isInstanceOf(TestExecutionState.Verdict.Run::class.java)
+            .isInstanceOf<TestExecutionState.Verdict.Run>()
         assertWithMessage("Should have 1")
             .that((verdict as TestExecutionState.Verdict.Run).intentions)
             .hasSize(1)
         assertWithMessage("Should be RunAction")
             .that(verdict.intentions[0].action)
-            .isInstanceOf(InstrumentationTestRunAction::class.java)
+            .isInstanceOf<InstrumentationTestRunAction>()
         assertWithMessage("Should be 5")
             .that(verdict.intentions[0].action.executionNumber)
             .isEqualTo(5)

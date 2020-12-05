@@ -10,6 +10,7 @@ dependencies {
 
     implementation(project(":gradle:process"))
     implementation(project(":gradle:android"))
+    implementation(project(":common:truth-extensions"))
 
     implementation(Dependencies.kotlinReflect)
     implementation(Dependencies.funktionaleTry)

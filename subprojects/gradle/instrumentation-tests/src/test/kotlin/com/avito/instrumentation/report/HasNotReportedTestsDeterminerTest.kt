@@ -3,8 +3,8 @@ package com.avito.instrumentation.report
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.isInstanceOf
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 
