@@ -2,7 +2,7 @@ package com.avito.android.plugin.artifactory
 
 import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -34,7 +34,7 @@ class MavenArtifactsToCdBuildResultArtifactMapperTest {
                 )
             )
         )
-        Truth.assertThat(result)
+        assertThat(result)
             .containsExactly(
                 CdBuildResult.Artifact.AndroidBinary(
                     type = "apk",
@@ -69,7 +69,7 @@ class MavenArtifactsToCdBuildResultArtifactMapperTest {
                 )
             )
         )
-        Truth.assertThat(result)
+        assertThat(result)
             .containsExactly(
                 CdBuildResult.Artifact.AndroidBinary(
                     type = "bundle",
@@ -103,7 +103,7 @@ class MavenArtifactsToCdBuildResultArtifactMapperTest {
                 )
             )
         )
-        Truth.assertThat(result)
+        assertThat(result)
             .containsExactly(
                 CdBuildResult.Artifact.FileArtifact(
                     type = classifier,

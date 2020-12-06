@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.avito.truth.isInstanceOf
 import com.avito.utils.ExistingDirectory
 import com.avito.utils.FakeProcessRunner
 import com.google.common.truth.Truth.assertThat
@@ -45,6 +46,6 @@ internal class AaptTest {
 
         val actual = aapt.getPackageName(irrelevant)
 
-        assertThat(actual).isInstanceOf(Try.Failure::class.java)
+        assertThat(actual).isInstanceOf<Try.Failure<*>>()
     }
 }

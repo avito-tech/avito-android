@@ -2,6 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.createStub
 import com.avito.report.model.DeviceName
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -51,8 +52,7 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method")
         )
-        assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
+        assertThat(result).isInstanceOf<TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature>()
     }
 
     @Test
@@ -67,7 +67,7 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method")
         )
-        assertThat(result).isInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(result).isInstanceOf<TestsFilter.Result.Included>()
     }
 
     @Test
@@ -83,8 +83,7 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method", deviceName = DeviceName("22"))
         )
-        assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature::class.java)
+        assertThat(result).isInstanceOf<TestsFilter.Result.Excluded.DoesNotMatchIncludeSignature>()
     }
 
     @Test
@@ -99,6 +98,6 @@ internal class TestSignaturesFilterTest {
         ).filter(
             TestsFilter.Test.createStub("TestClass.method", deviceName = DeviceName("22"))
         )
-        assertThat(result).isInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(result).isInstanceOf<TestsFilter.Result.Included>()
     }
 }

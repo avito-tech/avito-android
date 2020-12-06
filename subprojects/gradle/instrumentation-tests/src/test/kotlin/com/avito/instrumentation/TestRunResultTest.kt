@@ -4,7 +4,7 @@ import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 
@@ -24,13 +24,13 @@ internal class TestRunResultTest {
             notReported = HasNotReportedTestsDeterminer.Result.AllTestsReported
         ).verdict
 
-        Truth.assertThat(verdict).apply {
+        assertThat(verdict).apply {
             isInstanceOf(
                 TestRunResult.Verdict.Failure::class.java
             )
         }
 
-        Truth.assertThat(gson.toJson(verdict))
+        assertThat(gson.toJson(verdict))
             .isEqualTo(
                 """
 {
@@ -63,13 +63,13 @@ internal class TestRunResultTest {
             notReported = HasNotReportedTestsDeterminer.Result.AllTestsReported
         ).verdict
 
-        Truth.assertThat(verdict).apply {
+        assertThat(verdict).apply {
             isInstanceOf(
                 TestRunResult.Verdict.Failure::class.java
             )
         }
 
-        Truth.assertThat(gson.toJson(verdict))
+        assertThat(gson.toJson(verdict))
             .isEqualTo(
                 """
 {

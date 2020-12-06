@@ -1,12 +1,12 @@
 package com.avito.test.gradle
 
 import com.avito.test.gradle.TestResult.ExpectedFailure
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Ordered
 import com.google.common.truth.Subject
 import com.google.common.truth.Subject.Factory
 import com.google.common.truth.Truth
-import com.google.common.truth.isInstanceOf
 import org.gradle.testkit.runner.TaskOutcome
 
 class TestResultSubject private constructor(

@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.avito.truth.isInstanceOf
 import com.avito.utils.ExistingFile
 import com.avito.utils.FakeProcessRunner
 import com.google.common.truth.Truth.assertThat
@@ -56,6 +57,6 @@ internal class KeyToolTest {
 
         val actual = keyTool.getJarSha1(irrelevant)
 
-        assertThat(actual).isInstanceOf(Try.Failure::class.java)
+        assertThat(actual).isInstanceOf<Try.Failure<*>>()
     }
 }

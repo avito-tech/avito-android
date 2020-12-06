@@ -1,6 +1,8 @@
 package com.avito.plugin
 
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.assertThat
+import com.avito.truth.isInstanceOf
 import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -8,7 +10,6 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.funktionale.tries.Try
-import org.funktionale.tries.Try.Failure
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -59,8 +60,9 @@ class SignViaServiceActionTest {
 
         val result = signViaServiceAction.sign()
 
-        assertThat(result).isInstanceOf(Try.Failure::class.java)
-        assertThat((result as Failure).throwable.message).contains("Failed to sign apk via service")
+        assertThat<Try.Failure<*>>(result) {
+            assertThat(throwable.message).contains("Failed to sign apk via service")
+        }
 
         assertWithMessage("retry to send")
             .that(server.requestCount).isAtLeast(5)
@@ -73,7 +75,7 @@ class SignViaServiceActionTest {
 
         val result = signViaServiceAction.sign()
 
-        assertThat(result).isInstanceOf(Try.Success::class.java)
+        assertThat(result).isInstanceOf<Try.Success<*>>()
         assertThat(server.requestCount).isEqualTo(2)
     }
 
@@ -89,6 +91,6 @@ class SignViaServiceActionTest {
         assertThat(recordedRequest.path).isEqualTo("/sign")
         assertThat(recordedRequest.body.readUtf8()).contains("12345")
 
-        assertThat(result).isInstanceOf(Try.Success::class.java)
+        assertThat(result).isInstanceOf<Try.Success<*>>()
     }
 }

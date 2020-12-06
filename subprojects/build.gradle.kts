@@ -391,6 +391,10 @@ fun Project.configureJunit5Tests() {
         "testRuntimeOnly"(Dependencies.Test.junitJupiterEngine)
 
         "testImplementation"(Dependencies.Test.truth)
+
+        if (name != "truth-extensions") {
+            "testImplementation"(project(":common:truth-extensions"))
+        }
     }
 
     tasks.withType<Test> {
