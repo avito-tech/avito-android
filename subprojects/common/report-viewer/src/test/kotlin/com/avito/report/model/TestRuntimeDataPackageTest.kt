@@ -2,7 +2,7 @@ package com.avito.report.model
 
 import com.avito.report.ReportsApi
 import com.github.salomonbrys.kotson.fromJson
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class TestRuntimeDataPackageTest {
@@ -14,6 +14,6 @@ internal class TestRuntimeDataPackageTest {
         val gson = ReportsApi.gson
         val json = gson.toJson(testRuntimeDataPackage)
         val result = gson.fromJson<TestRuntimeDataPackage>(json)
-        Truth.assertThat(result).isEqualTo(testRuntimeDataPackage)
+        assertThat(result).isEqualTo(testRuntimeDataPackage)
     }
 }

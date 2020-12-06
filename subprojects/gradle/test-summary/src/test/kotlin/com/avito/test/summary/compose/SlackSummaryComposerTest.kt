@@ -13,6 +13,7 @@ import com.avito.report.model.FailureOnDevice
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.report.model.createStubInstance
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
@@ -33,7 +34,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains("Ручные тесты: 2")
     }
 
@@ -50,7 +51,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains("*Автотесты*: 3")
     }
 
@@ -69,7 +70,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
 
         // не 50% потому что manual не берется в расчет
         assertThat(message.get()).contains(
@@ -89,7 +90,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains(
             ":white_circle: *Пропущенные тесты (например, заигнорен) на всех девайсах*: 3 (100%)"
         )
@@ -108,7 +109,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains(
             ":black_circle: *Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: 2 (50%)"
         )
@@ -128,7 +129,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains(":red_circle: *Тесты упали на всех девайсах*: 2 (50%)")
     }
 
@@ -146,7 +147,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains(":warning: *Тесты упали только на некоторых девайсах*: 2 (50%)")
     }
 
@@ -181,7 +182,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(crossDeviceSuite)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains("*2* из-за ```failure1```")
         assertThat(message.get()).contains("*2* из-за ```failure2```")
         assertThat(message.get()).contains("*2* из-за ```failure3```")
@@ -205,7 +206,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(suiteWithFailure, mentionOnFailures = true)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).contains("<!channel>")
     }
 
@@ -220,7 +221,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(greenSuite, mentionOnFailures = true)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).doesNotContain("<!channel>")
     }
 
@@ -239,7 +240,7 @@ internal class SlackSummaryComposerTest {
 
         val message = compose(suiteWithFailure, mentionOnFailures = false)
 
-        assertThat(message).isInstanceOf(Try.Success::class.java)
+        assertThat(message).isInstanceOf<Try.Success<*>>()
         assertThat(message.get()).doesNotContain("<!channel>")
     }
 

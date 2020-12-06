@@ -1,4 +1,6 @@
-package com.google.common.truth
+package com.avito.truth
+
+import com.google.common.truth.Subject
 
 inline fun <reified T : Any> Subject.isInstanceOf() = isInstanceOf(T::class.java)
 

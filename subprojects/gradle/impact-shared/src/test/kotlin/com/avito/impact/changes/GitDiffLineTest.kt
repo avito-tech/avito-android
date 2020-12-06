@@ -1,7 +1,7 @@
 package com.avito.impact.changes
 
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.isInstanceOf
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest

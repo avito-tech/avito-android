@@ -2,6 +2,7 @@ package com.avito.android.lint
 
 import com.avito.android.lint.model.LintIssue
 import com.avito.android.lint.model.LintReportModel
+import com.avito.truth.isInstanceOf
 import com.avito.utils.logging.FakeCILogger
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -87,7 +88,7 @@ class LintResultsParserTest {
             readingError = error
         }
         assertThat(readingError).isNotNull()
-        assertThat(readingError).isInstanceOf(UnsupportedFormatVersion::class.java)
+        assertThat(readingError).isInstanceOf<UnsupportedFormatVersion>()
         assertThat(readingError?.message).contains("Lint xml report for version 6 is not supported")
     }
 
@@ -97,7 +98,7 @@ class LintResultsParserTest {
             xmlContent = "invalid xml file"
         )
 
-        assertThat(model).isInstanceOf(LintReportModel.Invalid::class.java)
+        assertThat(model).isInstanceOf<LintReportModel.Invalid>()
     }
 
     private fun parse(

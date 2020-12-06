@@ -3,9 +3,9 @@ package com.avito.instrumentation.suite.filter
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.createStub
 import com.avito.instrumentation.suite.filter.TestsFilter.Result.Included
+import com.avito.truth.isInstanceOf
+import com.avito.truth.isNotInstanceOf
 import com.google.common.truth.Truth.assertWithMessage
-import com.google.common.truth.isInstanceOf
-import com.google.common.truth.isNotInstanceOf
 import org.junit.jupiter.api.Test
 
 internal class ImpactAnalysisFilterFactoryTest {

@@ -6,7 +6,7 @@ import com.avito.report.FakeReportViewer
 import com.avito.report.ReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 class GetTestResultsActionTest {
@@ -23,7 +23,7 @@ class GetTestResultsActionTest {
             reportCoordinates = reportCoordinates
         ).getTestResults()
 
-        Truth.assertThat(results)
+        assertThat(results)
             .isEqualTo(
                 CdBuildResult.TestResultsLink(
                     reportId = reportId,

@@ -1,7 +1,7 @@
 package com.avito.instrumentation.suite.dex
 
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.isInstanceOf
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever

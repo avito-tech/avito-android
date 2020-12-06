@@ -2,6 +2,7 @@ package com.avito.android.test.report.incident
 
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.IncidentElement
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -35,7 +36,7 @@ class ResourceManagerIncidentTest {
             incidentChain = emptyList()
         )
         val result = presenter.customize(exception)
-        assertThat(result).isInstanceOf(IncidentPresenter.Result.OK::class.java)
+        assertThat(result).isInstanceOf<IncidentPresenter.Result.OK>()
     }
 
     @Test
