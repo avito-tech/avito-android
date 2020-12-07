@@ -37,7 +37,7 @@ dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:runner:client"))
-    implementation(project(":gradle:runner:shared-test"))
+    implementation(project(":gradle:runner:fake"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(project(":gradle:build-failer"))

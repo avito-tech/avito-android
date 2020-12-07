@@ -8,11 +8,10 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
+import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
-import com.avito.runner.test.randomDeviceCoordinate
-import com.google.common.truth.Truth.assertWithMessage
 import com.google.gson.Gson
 import org.funktionale.tries.Try
 import java.io.File
@@ -22,7 +21,7 @@ import java.util.Date
 import java.util.Queue
 
 open class MockDevice(
-    override val coordinate: DeviceCoordinate = randomDeviceCoordinate(),
+    override val coordinate: DeviceCoordinate = DeviceCoordinate.Local(Serial.Local("fake")),
     private val logger: Logger,
     installApplicationResults: List<MockActionResult<Any>> = emptyList(),
     gettingDeviceStatusResults: List<MockActionResult<Device.DeviceStatus>> = emptyList(),
@@ -177,21 +176,18 @@ open class MockDevice(
     }
 
     fun verify() {
-        assertWithMessage("Mock device has remains commands in queue: installApplicationResultsQueue")
-            .that(installApplicationResultsQueue)
-            .isEmpty()
-
-        assertWithMessage("Mock device has remains commands in queue: gettingDeviceStatusResultsQueue")
-            .that(gettingDeviceStatusResultsQueue)
-            .isEmpty()
-
-        assertWithMessage("Mock device has remains commands in queue: runTestsResultsQueue")
-            .that(runTestsResultsQueue)
-            .isEmpty()
-
-        assertWithMessage("Mock device has remains commands in queue: clearPackageResultsQueue")
-            .that(clearPackageResultsQueue)
-            .isEmpty()
+        check(installApplicationResultsQueue.isEmpty()) {
+            "Mock device has remains commands in queue: installApplicationResultsQueue"
+        }
+        check(gettingDeviceStatusResultsQueue.isEmpty()) {
+            "Mock device has remains commands in queue: gettingDeviceStatusResultsQueue"
+        }
+        check(runTestsResultsQueue.isEmpty()) {
+            "Mock device has remains commands in queue: runTestsResultsQueue"
+        }
+        check(clearPackageResultsQueue.isEmpty()) {
+            "Mock device has remains commands in queue: clearPackageResultsQueue"
+        }
     }
 
     private fun log(message: String) {
