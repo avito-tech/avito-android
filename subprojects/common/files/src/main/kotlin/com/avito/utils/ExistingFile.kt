@@ -2,11 +2,12 @@ package com.avito.utils
 
 import java.io.File
 
-// Способ перенести ответственность за проверки существования файла на клиента и отразить это в API
-
 fun File.toExisting(): ExistingFile =
     ExistingFile.Impl(this)
 
+/**
+ * A way to represent in type system that client has no need to check file existence
+ */
 interface ExistingFile {
 
     val file: File
@@ -65,10 +66,8 @@ interface ExistingDirectory {
         override val dir: File
             get() = TODO("not implemented")
 
-        override fun plus(path: String): ExistingDirectory =
-            Stub
+        override fun plus(path: String): ExistingDirectory = Stub
 
-        override fun file(name: String): ExistingFile =
-            ExistingFile.Stub
+        override fun file(name: String): ExistingFile = ExistingFile.Stub
     }
 }

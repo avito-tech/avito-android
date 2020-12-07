@@ -52,6 +52,9 @@ endif
 help:
 	./gradlew help $(params)
 
+clean:
+	./gradlew -p subprojects clean
+
 assembleSamples:
 	./gradlew samples:test-app:assembleAndroidTest samples:test-app-without-backward-compatibility:assembleAndroidTest
 
@@ -90,6 +93,9 @@ integration_tests:
 
 compile_tests:
 	./gradlew -p subprojects compileTestKotlin $(log_level)
+
+compile:
+	./gradlew -p subprojects compileKotlin compileTestKotlin $(log_level)
 
 check:
 	./gradlew -p subprojects $(module):check

@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":common:kotlin-ast-parser")) {
         because("Need to know all classes in files")
     }
-    implementation(project(":gradle:files"))
+    implementation(project(":common:files"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:instrumentation-tests-dex-loader")) {

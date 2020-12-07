@@ -19,7 +19,10 @@ fun File.rewriteNewLineList(listOfData: Iterable<String>) {
 }
 
 fun <K, V> File.rewriteNewLineMap(data: Map<K, V>) {
-    rewriteIterable(data) { it.map { "${it.key} -> ${it.value}" }.joinToString(separator = "\n") }
+    rewriteIterable(data) {
+        it.map { (key, value) -> "$key -> $value" }
+            .joinToString(separator = "\n")
+    }
 }
 
 fun <T> File.rewriteIterable(data: T, transform: (T) -> String) {
