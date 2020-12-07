@@ -3,8 +3,11 @@ package com.avito.android
 import com.avito.android.check.AllChecks
 import com.avito.android.check.TestSignatureCheck
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
@@ -13,16 +16,16 @@ import javax.inject.Inject
 
 @CacheableTask
 @Suppress("UnstableApiUsage")
-class LoadTestsFromApkTask @Inject constructor(
+open class LoadTestsFromApkTask @Inject constructor(
     objects: ObjectFactory,
     layout: ProjectLayout
 ) : DefaultTask() {
 
     @InputDirectory
-    val testApk = objects.directoryProperty()
+    val testApk: DirectoryProperty = objects.directoryProperty()
 
     @OutputFile
-    val testsInApkFile = objects.directoryProperty()
+    val testsInApkFile: Provider<RegularFile> = objects.directoryProperty()
         .convention(layout.buildDirectory)
         .file("tests-in-apk.json")
 
