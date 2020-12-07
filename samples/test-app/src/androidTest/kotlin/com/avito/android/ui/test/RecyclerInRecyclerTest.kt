@@ -3,7 +3,7 @@ package com.avito.android.ui.test
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.RecyclerInRecyclerActivity
 import com.google.common.truth.ThrowableSubject
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
@@ -52,7 +52,7 @@ class RecyclerInRecyclerTest {
             Screen.recyclerInRecycler.list.horizontalList.cellWithTitle("3")
                 .title.checks.displayedWithText("3")
         } catch (e: Exception) {
-            Truth.assertThat(e)
+            assertThat(e)
                 .checkCausesDeeply {
                     isInstanceOf(AssertionError::class.java)
                     hasMessageThat()
@@ -69,7 +69,7 @@ class RecyclerInRecyclerTest {
             Screen.recyclerInRecycler.list.horizontalList.cellWithTitle("2", 0)
                 .title.checks.displayedWithText("3")
         } catch (e: Exception) {
-            Truth.assertThat(e)
+            assertThat(e)
                 .checkCausesDeeply {
                     isInstanceOf(AssertionError::class.java)
                     hasMessageThat()
@@ -86,7 +86,7 @@ class RecyclerInRecyclerTest {
             Screen.recyclerInRecycler.list.horizontalList.cellAt(3)
                 .title.checks.displayedWithText("3")
         } catch (e: Exception) {
-            Truth.assertThat(e)
+            assertThat(e)
                 .checkCausesDeeply {
                     isInstanceOf(AssertionError::class.java)
                     hasMessageThat()
@@ -95,6 +95,7 @@ class RecyclerInRecyclerTest {
         }
     }
 
+    // todo use from :common:truth-extension (can't right now, because it depends on published version)
     private fun ThrowableSubject.checkCausesDeeply(check: ThrowableSubject.() -> Unit) {
         try {
             check(this)

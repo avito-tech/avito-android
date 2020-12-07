@@ -9,4 +9,5 @@ dependencies {
     implementation(Dependencies.gson)
 
     testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":common:resources"))
 }

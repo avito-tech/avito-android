@@ -2,7 +2,7 @@ package com.avito.report.model
 
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.typedToJson
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 
@@ -48,6 +48,6 @@ internal class EntryTest {
 
         val json = gson.typedToJson(entryList)
         val result = gson.fromJson<List<Entry>>(json)
-        Truth.assertThat(result).isEqualTo(entryList)
+        assertThat(result).isEqualTo(entryList)
     }
 }

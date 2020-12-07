@@ -7,8 +7,9 @@ import com.avito.runner.service.worker.device.adb.instrumentation.Instrumentatio
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.runner.test.Is
-import com.avito.test.gradle.fileFromJarResources
-import com.google.common.truth.Truth
+import com.avito.truth.isInstanceOf
+import com.avito.utils.fileFromJarResources
+import com.google.common.truth.Truth.assertThat
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import rx.Observable
@@ -1059,13 +1060,13 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
-        Truth.assertThat(entries)
+        assertThat(entries)
             .hasSize(1)
 
-        Truth.assertThat(entries[0])
-            .isInstanceOf(InstrumentationTestCaseRun.FailedOnInstrumentationParsing::class.java)
+        assertThat(entries[0])
+            .isInstanceOf<InstrumentationTestCaseRun.FailedOnInstrumentationParsing>()
 
-        Truth.assertThat(subscriber.onErrorEvents)
+        assertThat(subscriber.onErrorEvents)
             .isEmpty()
     }
 

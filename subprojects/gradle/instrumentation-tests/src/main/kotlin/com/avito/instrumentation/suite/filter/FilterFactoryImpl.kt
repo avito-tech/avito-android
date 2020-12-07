@@ -161,6 +161,9 @@ internal class FilterFactoryImpl(
 
             is ImpactAnalysisPolicy.On.RunModifiedTests ->
                 addImpactTests(impactAnalysisResult.modifiedTests)
+
+            is ImpactAnalysisPolicy.On.RunChangedTests ->
+                addImpactTests(impactAnalysisResult.modifiedTests)
         }
     }
 

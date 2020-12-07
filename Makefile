@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 test_build_type?=debug
 infra?=
 ci?=false
@@ -50,6 +52,9 @@ endif
 help:
 	./gradlew help $(params)
 
+clean:
+	./gradlew -p subprojects clean
+
 assembleSamples:
 	./gradlew samples:test-app:assembleAndroidTest samples:test-app-without-backward-compatibility:assembleAndroidTest
 
@@ -89,8 +94,11 @@ integration_tests:
 compile_tests:
 	./gradlew -p subprojects compileTestKotlin $(log_level)
 
+compile:
+	./gradlew -p subprojects compileKotlin compileTestKotlin $(log_level)
+
 check:
-	./gradlew -p subprojects check
+	./gradlew -p subprojects $(module):check
 
 detekt:
 	./gradlew -p subprojects detektAll
@@ -110,3 +118,10 @@ record_screenshots:
 
 analyzeImpactOnSampleApp:
 	./gradlew samples:test-app-impact:app:analyzeTestImpact -PtargetBranch=develop $(params)
+
+# Clear local branches that not on remote
+# from: https://stackoverflow.com/a/17029936/981330
+unsafe_clear_local_branches:
+	git fetch --prune && \
+	git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | \
+	awk '{print $$1}' | xargs git branch -D

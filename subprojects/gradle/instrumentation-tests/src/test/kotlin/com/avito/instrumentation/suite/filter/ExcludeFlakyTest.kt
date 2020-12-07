@@ -3,6 +3,7 @@ package com.avito.instrumentation.suite.filter
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.createStub
 import com.avito.report.model.Flakiness
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -28,8 +29,7 @@ class ExcludeFlakyTest {
             )
         )
 
-        assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.HasFlakyAnnotation::class.java)
+        assertThat(result).isInstanceOf<TestsFilter.Result.Excluded.HasFlakyAnnotation>()
     }
 
     @Test
@@ -46,8 +46,7 @@ class ExcludeFlakyTest {
             )
         )
 
-        assertThat(result)
-            .isInstanceOf(TestsFilter.Result.Excluded.HasFlakyAnnotation::class.java)
+        assertThat(result).isInstanceOf<TestsFilter.Result.Excluded.HasFlakyAnnotation>()
     }
 
     @Test

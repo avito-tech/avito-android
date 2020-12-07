@@ -1,11 +1,11 @@
 package com.avito.android.test.report
 
-import com.avito.android.test.report.ExtendedIterableSubject.Companion.assertIterable
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentElement
 import com.avito.time.TimeMachineProvider
+import com.avito.truth.ExtendedIterableSubject.Companion.assertIterable
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.google.gson.JsonObject

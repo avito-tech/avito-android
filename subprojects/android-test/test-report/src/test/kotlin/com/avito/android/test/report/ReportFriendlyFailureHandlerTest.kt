@@ -1,7 +1,7 @@
 package com.avito.android.test.report
 
 import androidx.test.espresso.NoMatchingViewException
-import com.avito.android.util.fileFromJarResources
+import com.avito.utils.fileFromJarResources
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

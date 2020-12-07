@@ -3,8 +3,9 @@ package com.avito.report
 import com.avito.logger.NoOpLogger
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
-import com.avito.test.gradle.fileFromJarResources
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.isInstanceOf
+import com.avito.utils.fileFromJarResources
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
@@ -49,7 +50,7 @@ internal class ReportsApiTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
         )
 
-        assertThat(result).isInstanceOf(GetReportResult.NotFound::class.java)
+        assertThat(result).isInstanceOf<GetReportResult.NotFound>()
     }
 
     @Test
@@ -60,7 +61,7 @@ internal class ReportsApiTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
         )
 
-        assertThat(result).isInstanceOf(GetReportResult.Error::class.java)
+        assertThat(result).isInstanceOf<GetReportResult.Error>()
     }
 
     @Test
@@ -72,7 +73,7 @@ internal class ReportsApiTest {
 
         val result = reportsApi.getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", ""))
 
-        assertThat(result).isInstanceOf(GetReportResult.Found::class.java)
+        assertThat(result).isInstanceOf<GetReportResult.Found>()
 
         (result as GetReportResult.Found).report.run {
             // see json
@@ -93,7 +94,7 @@ internal class ReportsApiTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "")
         )
 
-        assertThat(result).isInstanceOf(Try.Success::class.java)
+        assertThat(result).isInstanceOf<Try.Success<*>>()
 
         assertThat(
             result.get().first().name
@@ -108,6 +109,6 @@ internal class ReportsApiTest {
 
         val result = reportsApi.pushPreparedData("any", "any", jsonObject("any" to "any"))
 
-        assertThat(result).isInstanceOf(Try.Success::class.java)
+        assertThat(result).isInstanceOf<Try.Success<*>>()
     }
 }

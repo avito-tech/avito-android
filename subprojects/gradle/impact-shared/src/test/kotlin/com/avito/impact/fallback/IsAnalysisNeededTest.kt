@@ -5,9 +5,9 @@ import com.avito.git.GitLocalStateStub
 import com.avito.git.GitState
 import com.avito.git.GitStateStub
 import com.avito.impact.plugin.ImpactAnalysisExtension
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
-import com.google.common.truth.isInstanceOf
 import org.gradle.api.internal.provider.Providers
 import org.junit.jupiter.api.Test
 

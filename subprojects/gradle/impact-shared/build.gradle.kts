@@ -5,6 +5,10 @@ plugins {
 }
 
 dependencies {
+    api(Dependencies.funktionaleTry) {
+        because("Try<> is in ABI")
+    }
+
     implementation(gradleApi())
 
     implementation(project(":gradle:android"))
@@ -14,7 +18,6 @@ dependencies {
     implementation(project(":gradle:process"))
 
     implementation(Dependencies.antPattern)
-    implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.Gradle.kotlinPlugin)
 
     testImplementation(project(":gradle:git-test-fixtures"))

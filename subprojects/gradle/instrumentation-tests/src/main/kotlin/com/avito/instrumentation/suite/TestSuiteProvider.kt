@@ -1,8 +1,8 @@
 package com.avito.instrumentation.suite
 
+import com.avito.android.TestInApk
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.instrumentation.suite.filter.TestsFilter
 import com.avito.instrumentation.suite.filter.TestsFilter.Result.Excluded

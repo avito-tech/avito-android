@@ -2,6 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.createStub
 import com.avito.report.model.DeviceName
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -19,8 +20,7 @@ internal class ExcludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.MatchesExcludeSignature::class.java)
+        assertThat(actual).isInstanceOf<TestsFilter.Result.Excluded.MatchesExcludeSignature>()
     }
 
     @Test
@@ -35,8 +35,7 @@ internal class ExcludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.MatchesExcludeSignature::class.java)
+        assertThat(actual).isInstanceOf<TestsFilter.Result.Excluded.MatchesExcludeSignature>()
     }
 
     @Test
@@ -51,8 +50,7 @@ internal class ExcludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Excluded.MatchesExcludeSignature::class.java)
+        assertThat(actual).isInstanceOf<TestsFilter.Result.Excluded.MatchesExcludeSignature>()
     }
 
     @Test
@@ -67,8 +65,7 @@ internal class ExcludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(actual).isInstanceOf<TestsFilter.Result.Included>()
     }
 
     @Test
@@ -83,8 +80,7 @@ internal class ExcludeByTestSignaturesFilterTest {
 
         val actual = filter.filter(test)
 
-        assertThat(actual)
-            .isInstanceOf(TestsFilter.Result.Included::class.java)
+        assertThat(actual).isInstanceOf<TestsFilter.Result.Included>()
     }
 
     private fun createIncludeTestSignatureFilter(

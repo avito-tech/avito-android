@@ -18,6 +18,7 @@ import com.avito.runner.test.mock.MockActionResult
 import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.receiveAvailable
+import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -168,7 +169,7 @@ class DeviceWorkerTest {
                 .hasSize(1)
 
             assertThat(actualResults[0])
-                .isInstanceOf(DeviceWorkerMessage.WorkerDied::class.java)
+                .isInstanceOf<DeviceWorkerMessage.WorkerDied>()
         }
 
     @Test
@@ -235,11 +236,11 @@ class DeviceWorkerTest {
 
             assertWithMessage("Received only Worker failed message for freeze device")
                 .that(results[0])
-                .isInstanceOf(DeviceWorkerMessage.WorkerDied::class.java)
+                .isInstanceOf<DeviceWorkerMessage.WorkerDied>()
 
             assertWithMessage("Received only Worker failed message for freeze device")
                 .that(results[1])
-                .isInstanceOf(DeviceWorkerMessage.FailedIntentionProcessing::class.java)
+                .isInstanceOf<DeviceWorkerMessage.FailedIntentionProcessing>()
         }
 
     private fun provideDeviceWorker(

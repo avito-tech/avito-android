@@ -8,8 +8,8 @@ import com.avito.bytecode.invokes.bytecode.find.TestMethodsFinderImpl
 import com.avito.bytecode.invokes.bytecode.tracer.InvokesTracerImpl
 import com.avito.bytecode.metadata.IdFieldExtractor
 import com.avito.bytecode.target.TargetClassesDetector
+import com.avito.utils.fileFromJarResources
 import org.apache.bcel.classfile.JavaClass
-import java.io.File
 import java.util.jar.JarFile
 
 const val INTERFACE_DETECTION = "com.example.dimorinny.example.screen.ScreenInterface"
@@ -86,6 +86,4 @@ fun extractTargetClasses(): Set<String> = ContextLoader().load(getFixtureJarFile
     .map { it.className }
     .toSet()
 
-fun fileFromJarResources(name: String) = File("src/test/resources/$name")
-
-fun getFixtureJarFile(): JarFile = JarFile(fileFromJarResources(FIXTURE_PATH))
+fun getFixtureJarFile(): JarFile = JarFile(fileFromJarResources<InvocationGraphBuildingResult>(FIXTURE_PATH))
