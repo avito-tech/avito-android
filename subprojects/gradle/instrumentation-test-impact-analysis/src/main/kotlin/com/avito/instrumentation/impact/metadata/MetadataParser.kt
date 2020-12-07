@@ -1,7 +1,7 @@
 package com.avito.instrumentation.impact.metadata
 
+import com.avito.instrumentation.impact.KotlinClassesFinderImpl
 import com.avito.instrumentation.impact.KotlinCompiler
-import com.avito.instrumentation.impact.ModifiedKotlinClassesFinder
 import com.avito.utils.logging.CILogger
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtExpression
@@ -18,7 +18,7 @@ class MetadataParser(
 ) {
 
     private val kotlinCompiler: KotlinCompiler =
-        KotlinCompiler(ModifiedKotlinClassesFinder.createKotlinCoreEnvironment())
+        KotlinCompiler(KotlinClassesFinderImpl.createKotlinCoreEnvironment())
 
     private val screenClassSimpleName = screenClass.substringAfterLast('.')
 

@@ -1,12 +1,12 @@
 package com.avito.instrumentation.scheduling
 
+import com.avito.android.TestSuiteLoader
+import com.avito.android.TestSuiteLoaderImpl
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.listener.ReportViewerTestReporter
 import com.avito.instrumentation.suite.TestSuiteProvider
-import com.avito.instrumentation.suite.dex.TestSuiteLoader
-import com.avito.instrumentation.suite.dex.TestSuiteLoaderImpl
 import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.instrumentation.suite.filter.FilterInfoWriter
 import com.avito.retrace.ProguardRetracer

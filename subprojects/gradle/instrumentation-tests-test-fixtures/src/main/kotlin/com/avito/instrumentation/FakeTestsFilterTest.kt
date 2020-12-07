@@ -1,6 +1,6 @@
 package com.avito.instrumentation
 
-import com.avito.instrumentation.suite.dex.AnnotationData
+import com.avito.android.AnnotationData
 import com.avito.instrumentation.suite.filter.TestsFilter
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness

@@ -1,5 +1,7 @@
 package com.avito.instrumentation.suite
 
+import com.avito.android.AnnotationData
+import com.avito.android.TestInApk
 import com.avito.android.test.annotations.Behavior
 import com.avito.android.test.annotations.CaseId
 import com.avito.android.test.annotations.DataSetNumber
@@ -22,8 +24,6 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.test.annotations.UnitTest
-import com.avito.instrumentation.suite.dex.AnnotationData
-import com.avito.instrumentation.suite.dex.TestInApk
 import com.avito.report.model.DeviceName
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
@@ -94,7 +94,7 @@ private fun determineFlakiness(annotations: List<AnnotationData>, api: Int): Fla
     return when {
         flakyAnnotation != null -> {
             val flakySdks = flakyAnnotation.getIntArrayValue(FLAKY_SDKS_KEY)
-            // by defaul vararg parameter is initialized by emptyArray
+            // by default vararg parameter is initialized by emptyArray
             val isFlaky = if (flakySdks != null && flakySdks.isNotEmpty()) {
                 flakySdks.contains(api)
             } else {
