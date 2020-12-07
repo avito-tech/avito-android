@@ -1,5 +1,8 @@
 package com.avito.instrumentation
 
+import com.avito.android.FakeTestSuiteLoader
+import com.avito.android.TestInApk
+import com.avito.android.createStubInstance
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
@@ -11,9 +14,6 @@ import com.avito.instrumentation.report.Report.Impl
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.scheduling.TestsSchedulerFactory
-import com.avito.instrumentation.suite.dex.FakeTestSuiteLoader
-import com.avito.instrumentation.suite.dex.TestInApk
-import com.avito.instrumentation.suite.dex.createStubInstance
 import com.avito.report.FakeReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult

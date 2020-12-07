@@ -1,12 +1,12 @@
 package com.avito.instrumentation.scheduling
 
+import com.avito.android.TestInApk
+import com.avito.android.TestSuiteLoader
+import com.avito.android.check.AllChecks
 import com.avito.instrumentation.InstrumentationTestsAction
 import com.avito.instrumentation.executing.TestExecutor
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.TestSuiteProvider
-import com.avito.instrumentation.suite.dex.TestInApk
-import com.avito.instrumentation.suite.dex.TestSuiteLoader
-import com.avito.instrumentation.suite.dex.check.AllChecks
 import com.avito.instrumentation.suite.filter.FilterInfoWriter
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.Gson

@@ -40,6 +40,7 @@ import org.gradle.internal.snapshot.ValueSnapshot
 import org.gradle.util.Path
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
@@ -152,10 +153,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         val targetModule = AndroidProject(project)
         val targetModulePackage = targetModule.manifest.getPackage()
 
-        val classesFinder = ModifiedKotlinClassesFinder(
-            projectDir = project.rootDir,
-            logger = ciLogger
-        )
+        val classesFinder = KotlinClassesFinderImpl()
 
         val affectedAndroidTestModules: Map<AndroidPackage, ModifiedProject> =
             @Suppress("DEPRECATION")
@@ -171,9 +169,13 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             val changedFiles = affectedAndroidTestModules[targetModulePackage]!!.changedFiles
             val patterns: Map<ChangeType, List<Regex>> = changedFiles
                 .map { changedFile ->
-                    classesFinder.find(changedFile.relativePath)
+                    classesFinder.findClasses(File(project.rootDir, changedFile.relativePath))
+                        .map { "${it.packageName.replace(".", "/")}/${it.className}(\\.class|$.*\\.class)" }
+                        .map { it.toRegex() }
                         .map { classRegex -> changedFile.changeType to classRegex }
-                }.flatten()
+                        .toList()
+                }
+                .flatten()
                 .groupByTo(
                     destination = mutableMapOf(),
                     keySelector = { it.first },

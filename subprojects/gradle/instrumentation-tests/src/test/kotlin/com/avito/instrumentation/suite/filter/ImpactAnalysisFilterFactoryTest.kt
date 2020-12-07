@@ -2,6 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.createStub
+import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.suite.filter.TestsFilter.Result.Included
 import com.avito.truth.isInstanceOf
 import com.avito.truth.isNotInstanceOf
@@ -18,11 +19,8 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `noImpactAnalysis - filters nothing`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
-                policy = ImpactAnalysisPolicy.Off,
-                affectedTests = emptyList(),
-                addedTests = emptyList(),
-                modifiedTests = emptyList()
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                policy = ImpactAnalysisPolicy.Off
             )
         ).createFilter()
 
@@ -32,7 +30,7 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `noImpactAnalysis - filters nothing - even if impact provided`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.Off,
                 affectedTests = listOf(test1, test2, test3, test4),
                 addedTests = listOf(test1, test2, test3, test4),
@@ -46,7 +44,7 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runAffectedTests - filters out new and modified`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunAffectedTests,
                 affectedTests = listOf(test1, test2, test3, test4),
                 addedTests = listOf(test2),
@@ -61,11 +59,9 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runAffectedTests - filters nothing - no added or modified`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunAffectedTests,
-                affectedTests = listOf(test1, test2, test3, test4),
-                addedTests = emptyList(),
-                modifiedTests = emptyList()
+                affectedTests = listOf(test1, test2, test3, test4)
             )
         ).createFilter()
 
@@ -75,11 +71,8 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runAffectedTests - filters nothing - no affected`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
-                policy = ImpactAnalysisPolicy.On.RunAffectedTests,
-                affectedTests = emptyList(),
-                addedTests = emptyList(),
-                modifiedTests = emptyList()
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
+                policy = ImpactAnalysisPolicy.On.RunAffectedTests
             )
         ).createFilter()
 
@@ -89,9 +82,8 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runAffectedTests - filters nothing - new and modified provided`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunAffectedTests,
-                affectedTests = emptyList(),
                 addedTests = listOf(test2),
                 modifiedTests = listOf(test3)
             )
@@ -103,11 +95,9 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runNewTests - filters out all - affected provided`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunNewTests,
-                affectedTests = listOf(test1, test2, test3, test4),
-                addedTests = emptyList(),
-                modifiedTests = emptyList()
+                affectedTests = listOf(test1, test2, test3, test4)
             )
         ).createFilter()
 
@@ -117,11 +107,10 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runNewTests - filters in only added - affected provided`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunNewTests,
                 affectedTests = listOf(test1, test2, test3, test4),
-                addedTests = listOf(test2, test4),
-                modifiedTests = emptyList()
+                addedTests = listOf(test2, test4)
             )
         ).createFilter()
 
@@ -132,7 +121,7 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runNewTests - filters in only added - affected and modified provided`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunNewTests,
                 affectedTests = listOf(test1, test2, test3, test4),
                 addedTests = listOf(test2, test4),
@@ -147,10 +136,9 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runModifiedTests - filters in only modified - affected provided`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunModifiedTests,
                 affectedTests = listOf(test1, test2, test3, test4),
-                addedTests = emptyList(),
                 modifiedTests = listOf(test1, test3)
             )
         ).createFilter()
@@ -162,11 +150,10 @@ internal class ImpactAnalysisFilterFactoryTest {
     @Test
     fun `runModifiedTests - filters out all - no modified provided`() {
         val filter = FilterFactoryFactory.create(
-            impactAnalysisResult = ImpactAnalysisResult(
+            impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
                 policy = ImpactAnalysisPolicy.On.RunModifiedTests,
                 affectedTests = listOf(test1, test2, test3, test4),
-                addedTests = listOf(test1, test3),
-                modifiedTests = emptyList()
+                addedTests = listOf(test1, test3)
             )
         ).createFilter()
 

@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     api(project(":gradle:instrumentation-tests"))
+    api(project(":gradle:instrumentation-tests-dex-loader"))
     api(project(":common:report-viewer-test-fixtures"))
 
     implementation(project(":gradle:bitbucket"))

@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":common:percent"))
+    implementation(project(":common:kotlin-ast-parser"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:files"))

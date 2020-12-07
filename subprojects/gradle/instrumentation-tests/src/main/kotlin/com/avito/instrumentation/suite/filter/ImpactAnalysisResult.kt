@@ -7,7 +7,8 @@ data class ImpactAnalysisResult(
     val policy: ImpactAnalysisPolicy,
     val affectedTests: List<String>,
     val addedTests: List<String>,
-    val modifiedTests: List<String>
+    val modifiedTests: List<String>,
+    val changedTests: List<String>
 ) {
 
     companion object {
@@ -15,12 +16,14 @@ data class ImpactAnalysisResult(
             policy: ImpactAnalysisPolicy,
             affectedTestsFile: File?,
             addedTestsFile: File?,
-            modifiedTestsFile: File?
+            modifiedTestsFile: File?,
+            changedTestsFile: File?
         ) = ImpactAnalysisResult(
             policy = policy,
             affectedTests = parseFile(affectedTestsFile),
             addedTests = parseFile(addedTestsFile),
-            modifiedTests = parseFile(modifiedTestsFile)
+            modifiedTests = parseFile(modifiedTestsFile),
+            changedTests = parseFile(changedTestsFile)
         )
 
         private fun parseFile(file: File?): List<String> {
