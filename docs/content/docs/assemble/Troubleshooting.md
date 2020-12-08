@@ -50,7 +50,7 @@ type: docs
 
 ## Как искать проблемы с кешированием?
 
-[Gradle - Using build cache](https://guides.gradle.org/using-build-cache/)
+[Build cache troubleshooting]({{< ref "/docs/assemble/BuildCaching.md#troubleshooting" >}})
 
 ## Known issues
 

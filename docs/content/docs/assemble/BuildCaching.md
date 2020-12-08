@@ -68,6 +68,11 @@ Cм. `ci/alerts/`
 
 ### Remote cache miss в локальной сборке
 
+Здесь описана краткая версия гайда [build cache debugging](https://docs.gradle.org/nightly/userguide/build_cache_debugging.html).
+Продублировали чтобы показать процесс без Gradle Enterprise.
+
+Смотри также [common caching problems](https://docs.gradle.org/nightly/userguide/common_caching_problems.html).
+
 #### Симптомы
 
 Общее количество промахов: вкладка **Performance > Build cache**
@@ -103,25 +108,29 @@ rm -rf .gradle/build-cache
 
 ./gradlew help
 
-./gradlew ... -Dorg.gradle.caching.debug=true --scan > build.log
+./gradlew ... -Dorg.gradle.caching.debug=true --scan
 ```
 
 См. пример в `benchmarks/scripts/check_remote_caching.sh`.
 
-3. Выбери задачу для сравнения.\
-Проще взять ту, которая запускалась как можно раньше. У нее будет меньше входных данных.
+3. Посмотреть build scan, какие задачи не взяты из кеша.
 
-4. Найди по логам разницу в input'ах между двумя запусками:
+![tasks](https://user-images.githubusercontent.com/1104540/100125051-66821680-2e8d-11eb-8b70-27c493b493ac.png)
+
+4. Выбрать задачу для сравнения.\
+Проще сначала взять ту, которая запускалась как можно раньше. У нее будет меньше входных данных.
+
+5. Найти по логам разницу в input'ах между двумя запусками:
 
 ```text
-CI build:
+CI:
 
 > Task :module:compileKotlin
 Appending input file fingerprints for 'source' to build cache key: 7023b2220d8c42b5ee69b8b0af28b52e - RELATIVE_PATH{...}
 Appending input file fingerprints for 'classpath' to build cache key: 7023b2220d8c42b5ee69b8b0af28b52e - CLASSPATH{...} <---
 Build cache key for task ':module:compileKotlin' is ed6b6082714ccd0b4e8472884f055df0
 
-Local build:
+Локальная сборка:
 
 > Task :module:compileKotlin
 Appending input file fingerprints for 'source' to build cache key: 7023b2220d8c42b5ee69b8b0af28b52e - RELATIVE_PATH{...}
@@ -132,9 +141,9 @@ Build cache key for task ':module:compileKotlin' is 12f0ae79f405c46e9045f83b6654
 "Build cache key for task" - output задачи, виден в build scan.\
 "input file fingerprints for 'xxx' to build cache key" - input.
 
-Найти все input'ы задачи можно в ее исходниках.
+Найти input'ы задачи можно в ее исходниках.
 
-5. Для найденной разницы сравни что именно отличается.
+6. Для найденной разницы сравни что именно отличается.
 
 При сравнении помни, что в Gradle есть много оптимизаций для более умного сравнения файлов:
 
@@ -142,9 +151,30 @@ Build cache key for task ':module:compileKotlin' is 12f0ae79f405c46e9045f83b6654
 - Учитывать только ABI от классов
 - [Нормализация](https://docs.gradle.org/nightly/userguide/build_cache_concepts.html#normalization) input'ов
 
-6. Поищи известные проблемы по типу задачи в issue tracker'е.
+{{< hint info >}}
+Когда знаем конкретную задачу, проверять изменения можем без очистики кеша.
+`org.gradle.caching.debug` всегда логирует input/output. 
 
-Подробнее: [Build cache debugging](https://docs.gradle.org/nightly/userguide/build_cache_debugging.html)
+```text
+./gradlew :module:compileKotlin -Dorg.gradle.caching.debug=true
+
+> Task :module:compileKotlin UP-TO-DATE
+Appending implementation to build cache key: org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated@2f0174769b8ce32d370ff13bae07baee
+Appending additional implementation to build cache key: org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated@2f0174769b8ce32d370ff13bae07baee
+...
+Appending input file fingerprints for 'source' to build cache key: 7023b2220d8c42b5ee69b8b0af28b52e - RELATIVE_PATH{...}
+Appending input file fingerprints for 'classpath' to build cache key: 7023b2220d8c42b5ee69b8b0af28b52e - CLASSPATH{...}
+Build cache key for task ':module:compileKotlin' is ed6b6082714ccd0b4e8472884f055df0
+```
+
+{{< /hint >}}
+
+7. Что еще может помочь?
+
+- Поищи известные проблемы по типу задачи в issue tracker'е.
+- На input'ы влияет и окружение: [common caching problems](https://docs.gradle.org/nightly/userguide/common_caching_problems.html)
+- Примеры старых проблем с кешированием: MBS-9988, MA-2069
+- [Gradle community Slack](https://gradle-community.slack.com/) - канал #caching.
 
 ## Known issues
 
