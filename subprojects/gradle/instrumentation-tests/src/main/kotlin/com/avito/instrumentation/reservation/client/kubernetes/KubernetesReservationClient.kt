@@ -23,7 +23,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class KubernetesReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
     private val kubernetesClient: KubernetesClient,
@@ -40,6 +39,7 @@ class KubernetesReservationClient(
         reservations: Collection<Reservation.Data>,
         scope: CoroutineScope
     ): ReservationClient.ClaimResult {
+        logger.debug("Claiming...")
         val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
         scope.launch(Dispatchers.IO) {
             if (state !is State.Idling) {
@@ -55,6 +55,7 @@ class KubernetesReservationClient(
                     reservation = reservation
                 )
                 val deploymentName = deployment.metadata.name
+                logger.debug("Creating deployment: $deploymentName")
                 deploymentsChannel.send(deploymentName)
                 deployment.create()
                 logger.debug("Deployment created: $deploymentName")
@@ -115,6 +116,7 @@ class KubernetesReservationClient(
     }
 
     override suspend fun release() = withContext(Dispatchers.IO) {
+        logger.debug("Releasing...")
         val state = state
         if (state !is State.Reserving) {
             // TODO: check on client side beforehand
@@ -298,6 +300,7 @@ class KubernetesReservationClient(
         logger.debug("Start listening devices for $deploymentName")
         var pods = podsFromDeployment(deploymentName)
 
+        @Suppress("EXPERIMENTAL_API_USAGE")
         while (!podsChannel.isClosedForSend && pods.isNotEmpty()) {
             pods.forEach { pod ->
                 podsChannel.send(pod)

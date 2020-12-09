@@ -75,14 +75,14 @@ interface DevicesProviderFactory {
                                 buildId = buildId,
                                 buildType = buildType,
                                 registry = registry,
-                                logger = logger
+                                logger = logger.child("ReservationDeploymentFactory")
                             ),
-                            logger = logger,
+                            logger = logger.child("KubernetesReservationClient"),
                             emulatorsLogsReporter = emulatorsLogsReporter
                         ),
                         adbDevicesManager = devicesManager,
                         adb = adb,
-                        logger = logger
+                        logger = logger.child("KubernetesDeviceProvider")
                     )
             }
         }

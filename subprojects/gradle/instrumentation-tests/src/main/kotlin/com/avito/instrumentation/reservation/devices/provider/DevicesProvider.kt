@@ -7,6 +7,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 
 interface DevicesProvider : DeviceReservation {
-    fun provideFor(reservations: Collection<Reservation.Data>, scope: CoroutineScope): ReceiveChannel<Device>
+
+    fun provideFor(
+        reservations: Collection<Reservation.Data>,
+        scope: CoroutineScope
+    ): ReceiveChannel<Device>
+
     suspend fun releaseDevices()
 }

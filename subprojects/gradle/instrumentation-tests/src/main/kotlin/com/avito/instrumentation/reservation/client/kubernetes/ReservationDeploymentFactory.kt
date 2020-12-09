@@ -29,16 +29,21 @@ class ReservationDeploymentFactory(
     private val buildId: String,
     private val buildType: String,
     private val registry: String,
-    private val logger: CILogger
+    logger: CILogger
 ) {
 
+    private val logger = logger.child("ReservationDeploymentFactory")
+
     init {
-        require(buildId.isNotBlank()) { "buildId is blank, client can't distinguish reservations" }
+        val prefix = { reason: String -> "Can't create configuration, precondition failed: $reason" }
+        require(configurationName.isNotBlank()) { prefix.invoke("configurationName is blank; used to label pods") }
+        require(buildId.isNotBlank()) { prefix.invoke("buildId is blank, client can't distinguish reservations") }
     }
 
     fun createDeployment(namespace: String, reservation: Reservation.Data): Deployment {
         logger.debug("Creating deployment for configuration: $configurationName")
         val deploymentName = generateDeploymentName(namespace)
+        logger.debug("Deployment name will be: $deploymentName")
         return when (reservation.device) {
             is Device.LocalEmulator -> throw IllegalStateException(
                 "Local emulator ${reservation.device} is unsupported in kubernetes reservation"
@@ -222,9 +227,7 @@ class ReservationDeploymentFactory(
         )
     }
 
-    private fun generateDeploymentName(namespace: String): String =
-        "$namespace-${UUID.randomUUID()}"
-            .kubernetesName()
+    private fun generateDeploymentName(namespace: String): String = "$namespace-${UUID.randomUUID()}".kubernetesName()
 
     private fun String.kubernetesName(): String = replace("_", "-").toLowerCase()
 }
