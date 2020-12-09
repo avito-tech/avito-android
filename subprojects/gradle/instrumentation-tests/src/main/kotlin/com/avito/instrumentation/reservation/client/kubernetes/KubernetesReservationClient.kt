@@ -271,6 +271,11 @@ class KubernetesReservationClient(
             // https://kubernetes.io/docs/tasks/debug-application-cluster/debug-application/#my-pod-stays-waiting
             if (!waitingMessage.isNullOrBlank()) {
                 logger.warn("Can't start pod on this node: $waitingMessage")
+
+                // handle special cases
+                if (waitingMessage.contains("couldn't parse image reference")) {
+                    error("Can't create pods for deployment, check image reference: $waitingMessage")
+                }
             }
 
             val terminatedMessage = containerState

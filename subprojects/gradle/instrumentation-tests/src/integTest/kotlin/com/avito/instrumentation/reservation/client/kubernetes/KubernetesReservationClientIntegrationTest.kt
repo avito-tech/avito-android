@@ -15,6 +15,7 @@ import java.io.File
 
 internal class KubernetesReservationClientIntegrationTest {
 
+    private val logger = FakeCILogger()
     private val client = createClient()
 
     @Test
@@ -46,7 +47,13 @@ internal class KubernetesReservationClientIntegrationTest {
         }
     }
 
-    private fun createClient(): KubernetesReservationClient {
+    private fun createClient(
+        configurationName: String = "integration-test",
+        projectName: String = "",
+        buildId: String = "19723577",
+        buildType: String = "",
+        registry: String = ""
+    ): KubernetesReservationClient {
         val kubernetesCredentials = KubernetesCredentials.Service(
             token = requireNotNull(System.getProperty("avito.kubernetes.token")),
             caCertData = requireNotNull(System.getProperty("avito.kubernetes.cert")),
@@ -54,14 +61,8 @@ internal class KubernetesReservationClientIntegrationTest {
         )
         val namespace = requireNotNull(System.getProperty("avito.kubernetes.namespace"))
 
-        val logger = FakeCILogger()
         val outputFolder = File("integration")
         val logcatFolder = File("logcat")
-        val configurationName = "integration-test"
-        val projectName = ""
-        val buildId = "19723577"
-        val buildType = ""
-        val registry = ""
 
         return KubernetesReservationClient(
             androidDebugBridge = AndroidDebugBridge(
