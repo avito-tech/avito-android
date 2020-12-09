@@ -31,7 +31,6 @@ abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params
     override fun execute() {
         val logger = parameters.logger.get()
 
-        // todo separate task for this?
         val changesDetector: ChangesDetector =
             GitChangesDetector(
                 gitRootDir = parameters.rootDir.get().asFile,

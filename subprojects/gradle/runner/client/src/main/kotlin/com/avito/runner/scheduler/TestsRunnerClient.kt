@@ -22,14 +22,18 @@ class TestsRunnerClient {
             scheduler = TestExecutionScheduler(
                 logger = arguments.logger
             ),
-            client = TestExecutionClient(logger = arguments.logger),
+            client = TestExecutionClient(
+                logger = arguments.logger
+            ),
             service = IntentionExecutionServiceImplementation(
                 outputDirectory = arguments.outputDirectory,
                 devices = arguments.devices,
                 logger = arguments.logger,
                 listener = setupListener(arguments)
             ),
-            reservationWatcher = DeviceReservationWatcher.Impl(arguments.reservation),
+            reservationWatcher = DeviceReservationWatcher.Impl(
+                reservation = arguments.reservation
+            ),
             logger = arguments.logger
         )
 

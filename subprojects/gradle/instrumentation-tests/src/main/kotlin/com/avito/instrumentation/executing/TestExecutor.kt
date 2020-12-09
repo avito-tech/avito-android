@@ -1,5 +1,6 @@
 package com.avito.instrumentation.executing
 
+import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProvider
 import com.avito.instrumentation.reservation.request.Reservation
@@ -37,8 +38,7 @@ interface TestExecutor {
 
         private val runner = TestsRunnerClient()
 
-        // todo hi Juno!
-        private val outputDirectoryName = "composer"
+        private val outputDirectoryName = "test-runner"
 
         override fun execute(
             application: File?,
@@ -47,40 +47,21 @@ interface TestExecutor {
             executionParameters: ExecutionParameters,
             output: File
         ) {
-            withDevices(
-                reservations = reservations(testsToRun)
-            ) { devices ->
-                val testRequests = testsToRun
-                    .map { targetTestRun ->
-                        val reservation = targetTestRun.target.reservation
+            withDevices(reservations = reservations(testsToRun)) { devices ->
 
-                        val quota = reservation.quota
+                val testRequests = testsToRun.map { targetTestRun: TestWithTarget ->
 
-                        TestRunRequest(
-                            testCase = TestCase(
-                                className = targetTestRun.test.name.className,
-                                methodName = targetTestRun.test.name.methodName,
-                                deviceName = targetTestRun.target.deviceName
-                            ),
-                            configuration = DeviceConfiguration(
-                                api = reservation.device.api,
-                                model = reservation.device.model
-                            ),
-                            scheduling = TestRunRequest.Scheduling(
-                                retryCount = quota.retryCount,
-                                minimumFailedCount = quota.minimumFailedCount,
-                                minimumSuccessCount = quota.minimumSuccessCount
-                            ),
-                            application = application?.absolutePath,
-                            applicationPackage = executionParameters.applicationPackageName,
-                            testApplication = testApplication.absolutePath,
-                            testPackage = executionParameters.applicationTestPackageName,
-                            testRunner = executionParameters.testRunner,
-                            timeoutMinutes = TEST_TIMEOUT_MINUTES,
-                            instrumentationParameters = targetTestRun.target.instrumentationParams,
-                            enableDeviceDebug = executionParameters.enableDeviceDebug
-                        )
-                    }
+                    val reservation = targetTestRun.target.reservation
+
+                    createTestRunRequest(
+                        targetTestRun = targetTestRun,
+                        quota = reservation.quota,
+                        reservation = reservation,
+                        application = application,
+                        testApplication = testApplication,
+                        executionParameters = executionParameters
+                    )
+                }
 
                 val runnerArguments = Arguments(
                     outputDirectory = outputFolder(output),
@@ -150,6 +131,38 @@ interface TestExecutor {
                 }
             }
         }
+
+        private fun createTestRunRequest(
+            targetTestRun: TestWithTarget,
+            quota: QuotaConfiguration.Data,
+            reservation: Reservation,
+            application: File?,
+            testApplication: File,
+            executionParameters: ExecutionParameters
+        ): TestRunRequest = TestRunRequest(
+            testCase = TestCase(
+                className = targetTestRun.test.name.className,
+                methodName = targetTestRun.test.name.methodName,
+                deviceName = targetTestRun.target.deviceName
+            ),
+            configuration = DeviceConfiguration(
+                api = reservation.device.api,
+                model = reservation.device.model
+            ),
+            scheduling = TestRunRequest.Scheduling(
+                retryCount = quota.retryCount,
+                minimumFailedCount = quota.minimumFailedCount,
+                minimumSuccessCount = quota.minimumSuccessCount
+            ),
+            application = application?.absolutePath,
+            applicationPackage = executionParameters.applicationPackageName,
+            testApplication = testApplication.absolutePath,
+            testPackage = executionParameters.applicationTestPackageName,
+            testRunner = executionParameters.testRunner,
+            timeoutMinutes = TEST_TIMEOUT_MINUTES,
+            instrumentationParameters = targetTestRun.target.instrumentationParams,
+            enableDeviceDebug = executionParameters.enableDeviceDebug
+        )
 
         data class TargetGroup(val name: String, val reservation: Reservation)
     }
