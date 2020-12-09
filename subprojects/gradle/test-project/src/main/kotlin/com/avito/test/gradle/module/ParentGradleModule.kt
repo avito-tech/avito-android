@@ -1,5 +1,6 @@
 package com.avito.test.gradle.module
 
+import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.files.build_gradle
 import com.avito.test.gradle.module
 import java.io.File
@@ -13,6 +14,8 @@ class ParentGradleModule(
     override val plugins: List<String> = emptyList(),
     override val buildGradleExtra: String = ""
 ) : Module {
+
+    override val dependencies: Set<GradleDependency> = emptySet()
 
     override fun generateIn(file: File) {
         file.module(name) {

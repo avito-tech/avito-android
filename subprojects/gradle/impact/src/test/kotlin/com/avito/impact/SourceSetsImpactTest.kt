@@ -3,6 +3,7 @@ package com.avito.impact
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.commit
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
@@ -44,9 +45,7 @@ class SourceSetsImpactTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                    implementation(project(":feature"))
-                """.trimIndent()
+                    dependencies = setOf(project(":feature"))
                 ),
                 AndroidLibModule(
                     name = "feature",

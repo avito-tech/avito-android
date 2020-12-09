@@ -3,6 +3,9 @@ package com.avito.instrumentation.impact.util
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.append
 import com.avito.test.gradle.commit
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.ANDROID_TEST_IMPLEMENTATION
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.IMPLEMENTATION
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.git
 import com.avito.test.gradle.kotlinClass
@@ -24,14 +27,19 @@ private fun generateBaseStubProject(dir: File, output: File): File {
         modules = listOf(
             AndroidAppModule(
                 name = projectToChange,
-                dependencies = """
-                    androidTestImplementation project(':$androidModuleTestDependency')
-                    androidTestImplementation project(':$kotlinModuleTestDependency')
-                """.trimIndent()
+                dependencies = setOf(
+                    project(path = ":$androidModuleTestDependency", configuration = ANDROID_TEST_IMPLEMENTATION),
+                    project(path = ":$kotlinModuleTestDependency", configuration = ANDROID_TEST_IMPLEMENTATION)
+                )
             ),
             AndroidLibModule(
                 name = androidModuleTestDependency,
-                dependencies = "implementation project(':$kotlinModuleTestDependency')"
+                dependencies = setOf(
+                    project(
+                        path = ":$kotlinModuleTestDependency",
+                        configuration = IMPLEMENTATION
+                    )
+                )
             ),
             KotlinModule(
                 name = kotlinModuleTestDependency

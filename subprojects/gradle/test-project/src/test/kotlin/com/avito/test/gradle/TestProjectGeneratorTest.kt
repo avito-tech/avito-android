@@ -1,5 +1,6 @@
 package com.avito.test.gradle
 
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.FolderModule
@@ -109,11 +110,11 @@ class TestProjectGeneratorTest {
     fun `generating test project with all module types is successful`() {
         val androidApp = AndroidAppModule(
             "app",
-            dependencies = """
-            implementation project(':parent:empty:library')
-            implementation project(':parent:empty:kotlin')
-            implementation project(':parent:empty:platform')
-        """.trimIndent()
+            dependencies = setOf(
+                project(":parent:empty:library"),
+                project(":parent:empty:kotlin"),
+                project(":parent:empty:platform")
+            )
         )
         val androidLibrary = AndroidLibModule("library")
         val platform = PlatformModule("platform")

@@ -1,5 +1,6 @@
 package com.avito.test.gradle.module
 
+import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.files.build_gradle
 import com.avito.test.gradle.kotlinClass
@@ -13,7 +14,7 @@ class KotlinModule(
     override val plugins: List<String> = emptyList(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
-    private val dependencies: String = "",
+    override val dependencies: Set<GradleDependency> = emptySet(),
     private val mutator: File.() -> Unit = {}
 ) : Module {
 
@@ -31,7 +32,7 @@ plugins {
 $buildGradleExtra
 
 dependencies {
-    $dependencies
+    ${dependencies.joinToString(separator = "\n\t", transform = { it.getScriptRepresentation() })}
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }
 """.trimIndent()

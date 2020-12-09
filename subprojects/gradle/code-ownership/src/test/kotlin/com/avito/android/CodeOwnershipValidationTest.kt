@@ -5,6 +5,8 @@ import com.avito.android.CodeOwnershipValidationTest.Case.NegativeCase
 import com.avito.android.CodeOwnershipValidationTest.Case.PositiveCase
 import com.avito.test.gradle.ManualTempFolder
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.ANDROID_TEST_IMPLEMENTATION
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
@@ -93,16 +95,17 @@ class CodeOwnershipValidationTest {
                         AndroidAppModule(
                             "app",
                             plugins = listOf("com.avito.android.module-types"),
-                            dependencies = """
-                                androidTestImplementation project(':feature')
-                            """.trimIndent()
+                            dependencies = setOf(
+                                project(
+                                    path = ":feature",
+                                    configuration = ANDROID_TEST_IMPLEMENTATION
+                                )
+                            )
                         ),
                         AndroidLibModule(
                             "feature",
                             plugins = listOf("com.avito.android.module-types"),
-                            dependencies = """
-                                implementation project(":dependent_test_module")
-                            """.trimIndent(),
+                            dependencies = setOf(project(path = ":dependent_test_module")),
                             buildGradleExtra = """
                                 ownership {
                                     team '${case.featureOwnership.team}.${case.featureOwnership.team}'
