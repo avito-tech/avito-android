@@ -1,6 +1,7 @@
 package com.avito.test.gradle.module
 
 import com.avito.test.gradle.buildToolsVersion
+import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.files.androidManifest
@@ -18,7 +19,7 @@ class AndroidLibModule(
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
     override val enableKotlinAndroidPlugin: Boolean = true,
-    private val dependencies: String = "",
+    override val dependencies: Set<GradleDependency> = emptySet(),
     private val mutator: File.() -> Unit = {}
 ) : AndroidModule {
 
@@ -55,7 +56,7 @@ android {
 }
 
 dependencies {
-    $dependencies
+    ${dependencies.joinToString(separator = "\n\t", transform = { it.getScriptRepresentation() })}
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }
     """.trimIndent()

@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_param_check
 
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
@@ -21,18 +22,18 @@ class UniqueRClassesTest {
                 AndroidAppModule(
                     name = "app-x",
                     packageName = "x",
-                    dependencies = """
-                        implementation project(':lib-a')
-                        implementation project(':lib-b')
-                    """.trimIndent()
+                    dependencies = setOf(
+                        project(":lib-a"),
+                        project(":lib-b")
+                    )
                 ),
                 AndroidAppModule(
                     name = "app-y",
                     packageName = "y",
-                    dependencies = """
-                        implementation project(':lib-b')
-                        implementation project(':lib-c')
-                    """.trimIndent()
+                    dependencies = setOf(
+                        project(":lib-c"),
+                        project(":lib-b")
+                    )
                 ),
                 AndroidLibModule(name = "lib-a", packageName = "a"),
                 AndroidLibModule(name = "lib-b", packageName = "b"),
@@ -65,18 +66,18 @@ class UniqueRClassesTest {
                 AndroidAppModule(
                     name = "app-x",
                     packageName = "x",
-                    dependencies = """
-                        implementation project(':lib-a')
-                        implementation project(':lib-b')
-                    """.trimIndent()
+                    dependencies = setOf(
+                        project(":lib-a"),
+                        project(":lib-b")
+                    )
                 ),
                 AndroidAppModule(
                     name = "app-y",
                     packageName = "y",
-                    dependencies = """
-                        implementation project(':lib-b')
-                        implementation project(':duplicate')
-                    """.trimIndent()
+                    dependencies = setOf(
+                        project(":duplicate"),
+                        project(":lib-b")
+                    )
                 ),
                 AndroidLibModule(name = "lib-a", packageName = "a"),
                 AndroidLibModule(name = "lib-b", packageName = "b"),
