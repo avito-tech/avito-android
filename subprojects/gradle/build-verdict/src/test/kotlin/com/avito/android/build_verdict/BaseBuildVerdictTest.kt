@@ -1,0 +1,75 @@
+package com.avito.android.build_verdict
+
+import com.avito.android.build_verdict.internal.Error
+import com.avito.android.build_verdict.internal.Error.Multi
+import com.avito.android.build_verdict.internal.Error.Single
+import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.module.Module
+import com.google.common.truth.Truth.assertWithMessage
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
+import java.lang.reflect.Type
+import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter.Companion.buildVerdictFileName as plainTextVerdict
+import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter.Companion.buildVerdictFileName as rawVerdict
+
+abstract class BaseBuildVerdictTest {
+
+    @field:TempDir
+    lateinit var temp: File
+
+    protected val jsonBuildVerdict by lazy {
+        File(temp, "outputs/build-verdict/$rawVerdict")
+    }
+    protected val plainTextBuildVerdict by lazy {
+        File(temp, "outputs/build-verdict/$plainTextVerdict")
+    }
+
+    protected val gson = GsonBuilder()
+        .registerTypeAdapter(
+            Error::class.java,
+            object : JsonDeserializer<Error> {
+                override fun deserialize(
+                    json: JsonElement,
+                    type: Type,
+                    context: JsonDeserializationContext
+                ): Error {
+                    return when {
+                        json.asJsonObject.has("errors") -> context.deserialize<Multi>(json, Multi::class.java)
+                        else -> context.deserialize<Single>(json, Single::class.java)
+                    }
+                }
+            }
+        ).create()
+
+    protected fun generateProject(
+        module: Module = AndroidAppModule(
+            name = appName
+        )
+    ) {
+        TestProjectGenerator(
+            plugins = listOf("com.avito.android.build-verdict"),
+            modules = listOf(module)
+        ).generateIn(temp)
+    }
+
+    protected fun assertBuildVerdictFileExist(
+        exist: Boolean
+    ) {
+        assertWithMessage("$jsonBuildVerdict is ${if (exist) "" else "not"} present")
+            .that(jsonBuildVerdict.exists())
+            .isEqualTo(exist)
+
+        assertWithMessage("$plainTextBuildVerdict is ${if (exist) "" else "not"} present")
+            .that(plainTextBuildVerdict.exists())
+            .isEqualTo(exist)
+    }
+
+    protected companion object {
+        const val appName = "app"
+    }
+}

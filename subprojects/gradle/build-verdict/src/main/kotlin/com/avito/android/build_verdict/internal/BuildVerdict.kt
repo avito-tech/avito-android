@@ -1,18 +1,20 @@
 package com.avito.android.build_verdict.internal
 
-internal data class Error(
-    val message: String,
-    val stackTrace: String
-)
+internal sealed class BuildVerdict {
 
-internal data class BuildVerdict(
-    val rootError: Error,
-    val failedTasks: List<FailedTask>
-)
+    abstract val error: Error
+
+    data class Configuration(override val error: Error) : BuildVerdict()
+
+    data class Execution(
+        override val error: Error,
+        val failedTasks: List<FailedTask>
+    ) : BuildVerdict()
+}
 
 internal data class FailedTask(
     val name: String,
     val projectPath: String,
     val errorOutput: String,
-    val originalError: Error
+    val error: Error
 )
