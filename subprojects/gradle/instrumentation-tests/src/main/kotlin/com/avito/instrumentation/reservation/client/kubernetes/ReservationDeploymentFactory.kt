@@ -21,7 +21,6 @@ import com.fkorotkov.kubernetes.spec
 import io.fabric8.kubernetes.api.model.PodSpec
 import io.fabric8.kubernetes.api.model.Quantity
 import io.fabric8.kubernetes.api.model.apps.Deployment
-import java.util.UUID
 
 class ReservationDeploymentFactory(
     private val configurationName: String,
@@ -29,6 +28,7 @@ class ReservationDeploymentFactory(
     private val buildId: String,
     private val buildType: String,
     private val registry: String,
+    private val deploymentNameGenerator: DeploymentNameGenerator,
     logger: CILogger
 ) {
 
@@ -42,7 +42,7 @@ class ReservationDeploymentFactory(
 
     fun createDeployment(namespace: String, reservation: Reservation.Data): Deployment {
         logger.debug("Creating deployment for configuration: $configurationName")
-        val deploymentName = generateDeploymentName(namespace)
+        val deploymentName = deploymentNameGenerator.generateName(namespace)
         logger.debug("Deployment name will be: $deploymentName")
         return when (reservation.device) {
             is Device.LocalEmulator -> throw IllegalStateException(
@@ -226,8 +226,4 @@ class ReservationDeploymentFactory(
             "device" to device.description
         )
     }
-
-    private fun generateDeploymentName(namespace: String): String = "$namespace-${UUID.randomUUID()}".kubernetesName()
-
-    private fun String.kubernetesName(): String = replace("_", "-").toLowerCase()
 }

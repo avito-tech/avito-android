@@ -13,6 +13,11 @@ import com.avito.utils.gradle.createKubernetesClient
 import com.avito.utils.logging.FakeCILogger
 import com.google.common.truth.Truth.assertThat
 import io.fabric8.kubernetes.client.KubernetesClientException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -23,18 +28,20 @@ import java.net.UnknownHostException
 internal class KubernetesReservationClientIntegrationTest {
 
     private val logger = FakeCILogger()
-    private lateinit var client: ReservationClient
+    private val deploymentNameGenerator = FakeDeploymentNameGenerator()
+    private var clientOne: ReservationClient? = null
+    private var clientTwo: ReservationClient? = null
 
     @Test
     fun `claim - throws exception - unknown host`() {
-        client = createClient(
+        clientOne = createClient(
             kubernetesUrl = "unknown-host",
             kubernetesNamespace = "emulators"
         )
 
         val exception = assertThrows<KubernetesClientException> {
             runBlocking {
-                client.claim(
+                clientOne!!.claim(
                     reservations = listOf(
                         Reservation.Data(
                             device = CloudEmulator.createStubInstance(),
@@ -60,10 +67,62 @@ internal class KubernetesReservationClientIntegrationTest {
         }
     }
 
+    /**
+     * see MBS-8662
+     */
+    @Test
+    fun `claim - throws exception - deployment already exists`() {
+        clientOne = createClient()
+        clientTwo = createClient()
+
+        val delayEnoughToCreateFirstDeploymentMs = 3000L
+
+        val exception = assertThrows<KubernetesClientException> {
+            runParallel(
+                {
+                    clientOne!!.claim(
+                        reservations = listOf(
+                            Reservation.Data(
+                                device = CloudEmulator.createStubInstance(),
+                                count = 1
+                            )
+                        ),
+                        scope = this
+                    )
+                },
+                {
+                    delay(delayEnoughToCreateFirstDeploymentMs)
+                    clientTwo!!.claim(
+                        reservations = listOf(
+                            Reservation.Data(
+                                device = CloudEmulator.createStubInstance(),
+                                count = 1
+                            )
+                        ),
+                        scope = this
+                    )
+                }
+            )
+        }
+
+        assertThat<KubernetesClientException>(exception) {
+            assertThat(message).contains("deployments.extensions \"android-emulator-integration-test\" already exists")
+        }
+    }
+
     @AfterEach
     fun cleanup() {
+        runParallel(
+            { clientOne?.release() },
+            { clientTwo?.release() }
+        )
+    }
+
+    private fun runParallel(vararg runnable: suspend CoroutineScope.() -> Unit) {
         runBlocking {
-            client.release()
+            coroutineScope {
+                runnable.map { async { it.invoke(this@coroutineScope) } }.awaitAll()
+            }
         }
     }
 
@@ -106,6 +165,7 @@ internal class KubernetesReservationClientIntegrationTest {
                 buildId = buildId,
                 buildType = buildType,
                 registry = registry,
+                deploymentNameGenerator = deploymentNameGenerator,
                 logger = logger
             )
         )
