@@ -13,3 +13,14 @@ fun Throwable.getStackTraceString(): String {
 
     return stringWriter.buffer.toString()
 }
+
+fun Throwable.getCausesRecursively(): List<Throwable> {
+    val causes = mutableListOf<Throwable>()
+    var current = this
+    while (current.cause != null) {
+        val cause = current.cause!!
+        causes.add(cause)
+        current = cause
+    }
+    return causes
+}

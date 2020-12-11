@@ -2,35 +2,24 @@ package com.avito.android.build_verdict.internal.writer
 
 import com.avito.android.build_verdict.internal.BuildVerdict
 import com.avito.utils.logging.CILogger
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import java.io.File
 
 internal class PlainTextBuildVerdictWriter(
-    private val buildVerdictDir: File,
+    private val buildVerdictDir: Provider<Directory>,
     private val logger: CILogger
 ) : BuildVerdictWriter {
 
     override fun write(buildVerdict: BuildVerdict) {
-        val dir = buildVerdictDir.apply { mkdirs() }
+        val dir = buildVerdictDir.get().asFile.apply { mkdirs() }
         val file = File(dir, buildVerdictFileName)
         file.createNewFile()
         file.writeText(
-            """
-Your build FAILED: "${buildVerdict.rootError.message}"
--------------------------------------------------------
-
-Failed tasks:
-${
-                StringBuilder().apply {
-                    val lineSeparator = System.lineSeparator()
-                    buildVerdict.failedTasks.forEachIndexed { index, failedTask ->
-                        append("${index + 1}: Task ${failedTask.projectPath}:${failedTask.name}$lineSeparator")
-                        append("* What went wrong:$lineSeparator")
-                        append("${failedTask.errorOutput.trimIndent()}$lineSeparator")
-                        append("________________________________________")
-                        append(lineSeparator)
-                    }
-                }
-            }""".trimMargin()
+            when (buildVerdict) {
+                is BuildVerdict.Execution -> buildVerdict.plainText()
+                is BuildVerdict.Configuration -> buildVerdict.plainText()
+            }
         )
         logger.warn("Pretty build verdict at $file")
     }

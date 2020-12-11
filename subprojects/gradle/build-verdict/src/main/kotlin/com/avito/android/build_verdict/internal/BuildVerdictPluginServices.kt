@@ -8,19 +8,26 @@ import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWrit
 import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter
 import com.avito.utils.logging.CILogger
 import com.google.gson.GsonBuilder
-import org.gradle.BuildResult
-import org.gradle.api.Action
+import org.gradle.BuildListener
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.execution.TaskExecutionListener
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.util.Path
-import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 internal class BuildVerdictPluginServices {
+
     private val listeners = ConcurrentHashMap<OperationIdentifier, LogMessageListener>()
     private val logs = ConcurrentHashMap<Path, LogsTextBuilder>()
+    private val gson by lazy {
+        GsonBuilder()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .create()
+    }
 
     fun gradleLogEventListener(): OutputEventListener {
         return GradleLogEventListener(
@@ -36,28 +43,42 @@ internal class BuildVerdictPluginServices {
         )
     }
 
+    fun gradleConfigurationListener(
+        outputDir: Provider<Directory>,
+        logger: CILogger
+    ): BuildListener {
+        return BuildConfigurationFailureListener(
+            createWriter(
+                outputDir = outputDir,
+                logger = logger
+            )
+        )
+    }
+
     fun gradleBuildFinishedListener(
         graph: TaskExecutionGraph,
-        outputDir: File,
+        outputDir: Provider<Directory>,
         logger: CILogger
-    ): Action<BuildResult> {
-        return BuildFailureListener(
-            graph = graph,
-            logs = logs,
-            writer = CompositeBuildVerdictWriter(
-                writers = listOf(
-                    RawBuildVerdictWriter(
-                        buildVerdictDir = outputDir,
-                        logger = logger,
-                        gson = GsonBuilder()
-                            .disableHtmlEscaping()
-                            .setPrettyPrinting()
-                            .create()
-                    ),
-                    PlainTextBuildVerdictWriter(
-                        buildVerdictDir = outputDir,
-                        logger = logger
-                    )
+    ): BuildListener = BuildExecutionFailureListener(
+        graph = graph,
+        logs = logs,
+        writer = createWriter(outputDir, logger)
+    )
+
+    private fun createWriter(
+        outputDir: Provider<Directory>,
+        logger: CILogger
+    ): CompositeBuildVerdictWriter {
+        return CompositeBuildVerdictWriter(
+            writers = listOf(
+                RawBuildVerdictWriter(
+                    buildVerdictDir = outputDir,
+                    logger = logger,
+                    gson = gson
+                ),
+                PlainTextBuildVerdictWriter(
+                    buildVerdictDir = outputDir,
+                    logger = logger
                 )
             )
         )
