@@ -8,8 +8,8 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
-import com.avito.instrumentation.reservation.client.kubernetes.UUIDDeploymentNameGenerator
 import com.avito.instrumentation.reservation.client.kubernetes.ReservationDeploymentFactory
+import com.avito.instrumentation.reservation.client.kubernetes.UUIDDeploymentNameGenerator
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.gradle.KubernetesCredentials
