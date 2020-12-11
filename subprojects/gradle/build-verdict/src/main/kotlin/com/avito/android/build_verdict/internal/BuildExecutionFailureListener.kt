@@ -1,19 +1,17 @@
 package com.avito.android.build_verdict.internal
 
 import com.avito.android.build_verdict.internal.writer.BuildVerdictWriter
-import com.avito.utils.getStackTraceString
 import org.gradle.BuildResult
-import org.gradle.api.Action
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.util.Path
 
-internal class BuildFailureListener(
+internal class BuildExecutionFailureListener(
     private val graph: TaskExecutionGraph,
     private val logs: Map<Path, LogsTextBuilder>,
     private val writer: BuildVerdictWriter
-) : Action<BuildResult> {
+) : BaseBuildListener() {
 
-    override fun execute(result: BuildResult) {
+    override fun buildFinished(result: BuildResult) {
         result.failure?.apply {
             onFailure(this)
         }
@@ -25,22 +23,14 @@ internal class BuildFailureListener(
             .filter { it.state.failure != null }
 
         writer.write(
-            BuildVerdict(
-                rootError = Error(
-                    message = failure.localizedMessage,
-                    stackTrace = failure.getStackTraceString()
-                ),
+            BuildVerdict.Execution(
+                error = Error.from(failure),
                 failedTasks = failedTasks.map { task ->
                     FailedTask(
                         name = task.name,
                         projectPath = task.project.path,
                         errorOutput = logs[Path.path(task.path)]?.build() ?: "No error logs",
-                        originalError = task.state.failure!!.let { error ->
-                            Error(
-                                message = error.localizedMessage,
-                                stackTrace = error.getStackTraceString()
-                            )
-                        }
+                        error = task.state.failure!!.let { error -> Error.from(error) }
                     )
                 }
             )

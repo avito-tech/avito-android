@@ -7,10 +7,6 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(Dependencies.Gradle.kotlinPlugin)
-    implementation(Dependencies.Gradle.androidPlugin) {
-        because("Ad-hoc TODO add documentation MBS-9695")
-    }
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(project(":gradle:ci-logger"))
