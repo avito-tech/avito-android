@@ -15,6 +15,7 @@ import io.fabric8.kubernetes.client.KubernetesClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
@@ -39,8 +40,9 @@ class KubernetesReservationClient(
         reservations: Collection<Reservation.Data>,
         scope: CoroutineScope
     ): ReservationClient.ClaimResult {
-        logger.debug("Claiming...")
+
         val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
+
         scope.launch(Dispatchers.IO) {
             if (state !is State.Idling) {
                 throw IllegalStateException("Unable to start reservation job. Already started")
@@ -69,11 +71,13 @@ class KubernetesReservationClient(
             }
 
             launch {
-                // todo use Flow
-                @Suppress("DEPRECATION")
-                for (pod in podsChannel
+
+                @Suppress("DEPRECATION") // todo use Flow
+                val uniqueRunningPods: ReceiveChannel<Pod> = podsChannel
                     .filter { it.status.phase == POD_STATUS_RUNNING }
-                    .distinctBy { it.metadata.name }) {
+                    .distinctBy { it.metadata.name }
+
+                for (pod in uniqueRunningPods) {
                     launch {
                         val podName = pod.metadata.name
                         logger.debug("Found new pod: $podName")
@@ -104,6 +108,7 @@ class KubernetesReservationClient(
                 }
             }
         }
+
         return ReservationClient.ClaimResult(
             deviceCoordinates = serialsChannel
         )
