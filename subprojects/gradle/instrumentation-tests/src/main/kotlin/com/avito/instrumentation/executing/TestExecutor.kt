@@ -49,6 +49,8 @@ interface TestExecutor {
         ) {
             withDevices(reservations = reservations(testsToRun)) { devices ->
 
+                logger.info("Got devices channel")
+
                 val testRequests = testsToRun.map { targetTestRun: TestWithTarget ->
 
                     val reservation = targetTestRun.target.reservation

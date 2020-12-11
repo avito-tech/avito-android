@@ -15,6 +15,9 @@ dependencies {
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:test-project"))
     implementation(project(":gradle:runner:service")) {
-        because("Adb class access")
+        because("to access Adb class")
+    }
+    implementation(project(":gradle:runner:client")) {
+        because("to access TestLifecycleListener class")
     }
 }

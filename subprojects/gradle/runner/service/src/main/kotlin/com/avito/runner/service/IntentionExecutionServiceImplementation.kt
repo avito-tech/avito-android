@@ -9,6 +9,7 @@ import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
@@ -32,13 +33,14 @@ class IntentionExecutionServiceImplementation(
     private val deviceSignals: Channel<Device.Signal> =
         Channel(Channel.UNLIMITED)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun start(scope: CoroutineScope): IntentionExecutionService.Communication {
         scope.launch {
             launch {
-                for (device in devices) {
+                while (!devices.isClosedForReceive) {
                     DeviceWorker(
                         intentionsRouter = intentionsRouter,
-                        device = device,
+                        device = devices.receive(),
                         outputDirectory = outputDirectory,
                         logger = logger,
                         messagesChannel = messages,

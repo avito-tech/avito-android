@@ -65,7 +65,8 @@ class KubernetesReservationClient(
                 launch {
                     listenPodsFromDeployment(
                         deploymentName = deploymentName,
-                        podsChannel = podsChannel
+                        podsChannel = podsChannel,
+                        serialsChannel = serialsChannel
                     )
                 }
             }
@@ -302,7 +303,8 @@ class KubernetesReservationClient(
 
     private suspend fun listenPodsFromDeployment(
         deploymentName: String,
-        podsChannel: SendChannel<Pod>
+        podsChannel: SendChannel<Pod>,
+        serialsChannel: Channel<DeviceCoordinate>
     ) {
         logger.debug("Start listening devices for $deploymentName")
         var pods = podsFromDeployment(deploymentName)
@@ -318,6 +320,8 @@ class KubernetesReservationClient(
             pods = podsFromDeployment(deploymentName)
         }
         logger.debug("Finish listening devices for $deploymentName")
+        podsChannel.close()
+        serialsChannel.close()
     }
 
     private fun emulatorSerialName(name: String): Serial.Remote = Serial.Remote("$name:$ADB_DEFAULT_PORT")

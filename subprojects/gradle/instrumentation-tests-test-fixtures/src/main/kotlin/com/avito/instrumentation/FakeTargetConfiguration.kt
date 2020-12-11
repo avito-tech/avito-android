@@ -9,10 +9,7 @@ import com.avito.instrumentation.reservation.request.createStubInstance
 
 fun TargetConfiguration.Data.Companion.createStubInstance(
     deviceName: String = "functional-24",
-    instrumentationParams: InstrumentationParameters = InstrumentationParameters()
-) = TargetConfiguration.Data(
-    name = "${deviceName}Configuration",
-    reservation = Reservation.StaticReservation(
+    reservation: Reservation = Reservation.StaticReservation(
         device = Device.CloudEmulator.createStubInstance(),
         count = 24,
         quota = QuotaConfiguration.Data(
@@ -21,6 +18,10 @@ fun TargetConfiguration.Data.Companion.createStubInstance(
             minimumFailedCount = 0
         )
     ),
+    instrumentationParams: InstrumentationParameters = InstrumentationParameters()
+) = TargetConfiguration.Data(
+    name = "${deviceName}Configuration",
+    reservation = reservation,
     deviceName = deviceName,
     instrumentationParams = instrumentationParams
 )
