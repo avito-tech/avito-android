@@ -5,6 +5,7 @@ import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.instrumentation.reservation.request.createStubInstance
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.truth.assertThat
 import com.avito.utils.gradle.KubernetesCredentials
@@ -36,14 +37,7 @@ internal class KubernetesReservationClientIntegrationTest {
                 client.claim(
                     reservations = listOf(
                         Reservation.Data(
-                            device = CloudEmulator(
-                                name = "api29",
-                                api = 29,
-                                model = "Android_SDK_built_for_x86_64",
-                                image = "avitotech/android-emulator-29:915c1f20be",
-                                cpuCoresRequest = "1",
-                                cpuCoresLimit = "1.3"
-                            ),
+                            device = CloudEmulator.createStubInstance(),
                             count = 1
                         )
                     ),

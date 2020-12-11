@@ -121,7 +121,6 @@ class KubernetesReservationClient(
     }
 
     override suspend fun release() = withContext(Dispatchers.IO) {
-        logger.debug("Releasing...")
         val state = state
         if (state !is State.Reserving) {
             // TODO: check on client side beforehand
@@ -174,11 +173,9 @@ class KubernetesReservationClient(
                         }
                     }
 
-                    logger.debug("Deleting deployment: $deploymentName...")
                     removeEmulatorsDeployment(
                         deploymentName = deploymentName
                     )
-                    logger.debug("Deployment: $deploymentName deleted")
                 }
             }
             this@KubernetesReservationClient.state = State.Idling
