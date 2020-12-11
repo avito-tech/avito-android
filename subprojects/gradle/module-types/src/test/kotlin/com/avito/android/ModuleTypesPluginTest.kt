@@ -1,6 +1,7 @@
 package com.avito.android
 
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
@@ -33,7 +34,7 @@ class ModuleTypesPluginTest {
                 AndroidLibModule(
                     "feature",
                     plugins = listOf("com.avito.android.module-types"),
-                    dependencies = "implementation project(':dependent_test_module')"
+                    dependencies = setOf(project(":dependent_test_module"))
                 ),
                 AndroidLibModule(
                     "dependent_test_module",

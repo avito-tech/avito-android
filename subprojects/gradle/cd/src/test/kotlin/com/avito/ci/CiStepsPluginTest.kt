@@ -6,6 +6,7 @@ import com.avito.android.plugin.artifactory.artifactoryUserParameterName
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.steps.verifyTaskName
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.file
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
@@ -33,7 +34,7 @@ class CiStepsPluginTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "appA",
-                    dependencies = "implementation project(':shared')",
+                    dependencies = setOf(project(":shared")),
                     plugins = listOf(
                         "com.avito.android.signer",
                         "com.avito.android.instrumentation-tests",
@@ -102,12 +103,12 @@ class CiStepsPluginTest {
                 ),
                 AndroidAppModule(
                     name = "appB",
-                    dependencies = "implementation project(':shared')",
+                    dependencies = setOf(project(":shared")),
                     plugins = listOf("com.avito.android.cd")
                 ),
                 AndroidLibModule(
                     name = "shared",
-                    dependencies = "implementation project(':transitive')"
+                    dependencies = setOf(project(":transitive"))
                 ),
                 AndroidLibModule(
                     name = "transitive"

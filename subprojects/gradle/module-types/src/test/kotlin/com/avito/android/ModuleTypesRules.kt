@@ -8,6 +8,8 @@ import com.avito.android.ModuleTypesRules.Case.NegativeCase
 import com.avito.android.ModuleTypesRules.Case.PositiveCase
 import com.avito.test.gradle.ManualTempFolder
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidLibModule
@@ -54,8 +56,12 @@ class ModuleTypesRules {
                             AndroidLibModule(
                                 "feature",
                                 plugins = listOf("com.avito.android.module-types"),
-                                dependencies = "${case.dependentModuleDependencyType.configuration} " +
-                                    "project(':dependent_test_module')",
+                                dependencies = setOf(
+                                    project(
+                                        path = ":dependent_test_module",
+                                        configuration = case.dependentModuleDependencyType.configuration
+                                    )
+                                ),
                                 buildGradleExtra = if (case.featureModuleType != IMPLEMENTATION) {
                                     """
                                     module {
@@ -96,6 +102,8 @@ class ModuleTypesRules {
                             ).assertThat().buildSuccessful()
                         }
                         is NegativeCase -> {
+                            val configurationStr =
+                                case.dependentModuleDependencyType.configuration.getScriptRepresentation()
                             gradlew(
                                 projectDir,
                                 ":feature:checkProjectDependenciesType",
@@ -104,7 +112,7 @@ class ModuleTypesRules {
                                 expectFailure = true
                             ).assertThat()
                                 .buildFailed(
-                                    "'${case.dependentModuleDependencyType.configuration}' configuration " +
+                                    "'$configurationStr' configuration " +
                                         "contains the following ${case.dependentModuleDependencyType.errorSlug} " +
                                         "dependencies: :dependent_test_module"
                                 )
@@ -146,9 +154,9 @@ class ModuleTypesRules {
         )
     }
 
-    private enum class DependencyType(val configuration: String, val errorSlug: String) {
-        IMPLEMENTATION("implementation", "non-implementation"),
-        TEST_IMPLEMENTATION("testImplementation", "non-test"),
-        ANDROID_TEST_IMPLEMENTATION("androidTestImplementation", "non-android-test")
+    private enum class DependencyType(val configuration: CONFIGURATION, val errorSlug: String) {
+        IMPLEMENTATION(CONFIGURATION.IMPLEMENTATION, "non-implementation"),
+        TEST_IMPLEMENTATION(CONFIGURATION.TEST_IMPLEMENTATION, "non-test"),
+        ANDROID_TEST_IMPLEMENTATION(CONFIGURATION.ANDROID_TEST_IMPLEMENTATION, "non-android-test")
     }
 }

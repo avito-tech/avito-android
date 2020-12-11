@@ -1,6 +1,8 @@
 package com.avito.test.gradle
 
 import com.avito.android.androidHomeFromLocalPropertiesFallback
+import com.avito.test.gradle.dependencies.GradleDependency
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.files.build_gradle
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
@@ -36,14 +38,16 @@ class TestProjectGenerator(
     override val buildGradleExtra: String = "",
     // TODO: don't share complex default values in common test fixtures. Plugin must define them implicitly!
     override val modules: List<Module> = listOf(
-        AndroidAppModule(appA, dependencies = "implementation project(':$sharedModule')"),
-        AndroidAppModule(appB, dependencies = "implementation project(':$sharedModule')"),
+        AndroidAppModule(appA, dependencies = setOf(project(":$sharedModule"))),
+        AndroidAppModule(appB, dependencies = setOf(project(":$sharedModule"))),
         AndroidLibModule(sharedModule),
         AndroidLibModule(independentModule)
     ),
     val localBuildCache: File? = null,
     val androidHome: String? = null
 ) : Module {
+
+    override val dependencies: Set<GradleDependency> = emptySet()
 
     override fun generateIn(file: File) {
         with(file) {

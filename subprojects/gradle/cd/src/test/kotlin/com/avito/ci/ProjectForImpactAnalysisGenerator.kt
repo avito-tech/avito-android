@@ -1,6 +1,8 @@
 package com.avito.ci
 
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dependencies.GradleDependency
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import java.io.File
@@ -11,15 +13,15 @@ internal fun generateProjectWithImpactAnalysis(rootDir: File) {
         modules = listOf(
             appModule(
                 "appA",
-                dependencies = "implementation project(':shared')"
+                dependencies = setOf(project(":shared"))
             ),
             appModule(
                 "appB",
-                dependencies = "implementation project(':shared')"
+                dependencies = setOf(project(":shared"))
             ),
             AndroidLibModule(
                 name = "shared",
-                dependencies = "implementation project(':transitive')"
+                dependencies = setOf(project(":transitive"))
             ),
             AndroidLibModule(
                 name = "transitive"
@@ -32,7 +34,7 @@ internal fun generateProjectWithImpactAnalysis(rootDir: File) {
 }
 
 @Suppress("MaxLineLength")
-private fun appModule(name: String, dependencies: String) = AndroidAppModule(
+private fun appModule(name: String, dependencies: Set<GradleDependency>) = AndroidAppModule(
     name = name,
     dependencies = dependencies,
     plugins = listOf(

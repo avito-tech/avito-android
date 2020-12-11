@@ -1,6 +1,8 @@
 package com.avito.android
 
 import com.avito.test.gradle.TestProjectGenerator
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.COMPILE
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.platformProject
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.module.PlatformModule
@@ -20,7 +22,12 @@ class PlatformDependencyTest {
             modules = listOf(
                 KotlinModule(
                     "lib",
-                    dependencies = "compile platform(project(':platform'))"
+                    dependencies = setOf(
+                        platformProject(
+                            path = ":platform",
+                            configuration = COMPILE
+                        )
+                    )
                 ),
                 PlatformModule("platform")
             )

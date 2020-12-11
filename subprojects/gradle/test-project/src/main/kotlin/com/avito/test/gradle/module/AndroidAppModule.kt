@@ -1,6 +1,7 @@
 package com.avito.test.gradle.module
 
 import com.avito.test.gradle.buildToolsVersion
+import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.files.InstrumentationTest
@@ -19,9 +20,9 @@ class AndroidAppModule(
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
     override val enableKotlinAndroidPlugin: Boolean = true,
+    override val dependencies: Set<GradleDependency> = emptySet(),
     private val enableKapt: Boolean = false,
     private val instrumentationTests: List<InstrumentationTest> = emptyList(),
-    private val dependencies: String = "",
     private val versionName: String = "",
     private val versionCode: String = "",
     private val customScript: String = "",
@@ -74,19 +75,45 @@ class AndroidAppModule(
 
             build_gradle {
                 writeText(
-                    """${imports.joinToString(separator = "\n")}
-
-
-plugins {
-    id 'com.android.application'
-    ${if (enableKotlinAndroidPlugin || enableKapt) "id 'kotlin-android'" else ""}
-    ${if (enableKapt) "id 'kotlin-kapt'" else ""}
-${plugins.joinToString(separator = "\n") { "    id '$it'" }}
-}
+                    """
+${imports()}
+${plugins()}
 
 $buildGradleExtra
 
-android {
+${androidExtension()}
+
+${dependencies()}
+
+$customScript
+""".trimIndent()
+                )
+            }
+            this.mutator(this@AndroidAppModule)
+        }
+    }
+
+    private fun dependencies(): String {
+        return """dependencies {
+    ${dependencies.joinToString(separator = "\n\t", transform = { it.getScriptRepresentation() })}
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    androidTestImplementation("junit:junit:4.13")
+    testImplementation("junit:junit:4.13")
+    ${
+            if (enableKapt) {
+                """
+                            implementation("com.google.dagger:dagger:2.29.1")
+                            kapt("com.google.dagger:dagger-compiler:2.29.1")
+                            """.trimIndent()
+            } else {
+                ""
+            }
+        }
+}"""
+    }
+
+    private fun androidExtension(): String {
+        return """android {
     compileSdkVersion $sdkVersion
     buildToolsVersion "$buildToolsVersion"
     defaultConfig {
@@ -103,8 +130,8 @@ android {
         }
     }
     ${
-                        if (enableKotlinAndroidPlugin || enableKapt) {
-                            """
+            if (enableKotlinAndroidPlugin || enableKapt) {
+                """
         sourceSets {
         main {
             java.srcDir("src/main/kotlin")
@@ -117,38 +144,25 @@ android {
         }
     }
     """.trimIndent()
-                        } else {
-                            ""
-                        }
-                    }
-}
-
+            } else {
+                ""
+            }
+        }
 afterEvaluate{
     tasks.named("lintVitalRelease").configure { onlyIf { false } }
 }
 
-dependencies {
-    $dependencies
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    androidTestImplementation("junit:junit:4.13")
-    testImplementation("junit:junit:4.13")
-    ${
-                        if (enableKapt) {
-                            """
-                            implementation("com.google.dagger:dagger:2.29.1")
-                            kapt("com.google.dagger:dagger-compiler:2.29.1")
-                            """.trimIndent()
-                        } else {
-                            ""
-                        }
-                    }
-}
-
-$customScript
-""".trimIndent()
-                )
-            }
-            this.mutator(this@AndroidAppModule)
-        }
+}"""
     }
+
+    private fun plugins(): String {
+        return """plugins {
+    id 'com.android.application'
+    ${if (enableKotlinAndroidPlugin || enableKapt) "id 'kotlin-android'" else ""}
+    ${if (enableKapt) "id 'kotlin-kapt'" else ""}
+    ${plugins.joinToString(separator = "\n") { "    id '$it'" }}
+}"""
+    }
+
+    private fun imports() = imports.joinToString(separator = "\n")
 }

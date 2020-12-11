@@ -3,6 +3,12 @@ package com.avito.impact
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.commit
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.ANDROID_TEST_IMPLEMENTATION
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.API
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.IMPLEMENTATION
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.CONFIGURATION.TEST_IMPLEMENTATION
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.platformProject
+import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
@@ -178,10 +184,10 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        implementation project(':feature_a')
-                        implementation project(':feature_b')
-                    """
+                    dependencies = setOf(
+                        project(":feature_a"),
+                        project(":feature_b")
+                    )
                 ),
                 AndroidLibModule("feature_a"),
                 AndroidLibModule("feature_b")
@@ -209,22 +215,22 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        implementation project(':feature_a')
-                        implementation project(':feature_b')
-                    """
+                    dependencies = setOf(
+                        project(":feature_a"),
+                        project(":feature_b")
+                    )
                 ),
                 AndroidLibModule(
                     name = "feature_a",
-                    dependencies = """
-                        implementation project(':core')
-                    """
+                    dependencies = setOf(
+                        project(":core")
+                    )
                 ),
                 AndroidLibModule(
                     name = "feature_b",
-                    dependencies = """
-                        implementation project(':core')
-                    """
+                    dependencies = setOf(
+                        project(":core")
+                    )
                 ),
                 AndroidLibModule("core")
             )
@@ -251,16 +257,16 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        implementation project(':feature')
-                        testImplementation project(':test_utils')
-                    """
+                    dependencies = setOf(
+                        project(path = ":feature", configuration = IMPLEMENTATION),
+                        project(path = ":test_utils", configuration = TEST_IMPLEMENTATION)
+                    )
                 ),
                 AndroidLibModule(
                     name = "feature",
-                    dependencies = """
-                        testImplementation project(':test_utils')
-                    """
+                    dependencies = setOf(
+                        project(path = ":test_utils", configuration = TEST_IMPLEMENTATION)
+                    )
                 ),
                 AndroidLibModule("test_utils")
             )
@@ -287,15 +293,16 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        androidTestImplementation project(':android_test_utils')
-                    """
+                    dependencies = setOf(
+                        project(path = ":android_test_utils", configuration = ANDROID_TEST_IMPLEMENTATION)
+                    )
+
                 ),
                 AndroidLibModule(
                     name = "android_test_utils",
-                    dependencies = """
-                        implementation project(':core_test_utils')
-                    """
+                    dependencies = setOf(
+                        project(":core_test_utils")
+                    )
                 ),
                 AndroidLibModule("core_test_utils")
             )
@@ -325,22 +332,22 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        implementation project(':feature')
-                        androidTestImplementation project(':android_test_feature')
-                    """
+                    dependencies = setOf(
+                        project(path = ":feature", configuration = IMPLEMENTATION),
+                        project(path = ":android_test_feature", configuration = ANDROID_TEST_IMPLEMENTATION)
+                    )
                 ),
                 AndroidLibModule(
                     name = "feature",
-                    dependencies = """
-                        androidTestImplementation project(':android_test_feature')
-                    """
+                    dependencies = setOf(
+                        project(path = ":android_test_feature", configuration = ANDROID_TEST_IMPLEMENTATION)
+                    )
                 ),
                 AndroidLibModule(
                     name = "android_test_feature",
-                    dependencies = """
-                        implementation project(':feature')
-                    """
+                    dependencies = setOf(
+                        project(":feature")
+                    )
                 )
             )
         )
@@ -366,16 +373,16 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        api platform(project(':platform'))
-                        implementation project(':feature')
-                    """
+                    dependencies = setOf(
+                        platformProject(path = ":platform", configuration = API),
+                        project(path = ":feature", configuration = IMPLEMENTATION)
+                    )
                 ),
                 AndroidLibModule(
                     name = "feature",
-                    dependencies = """
-                        api platform(project(':platform'))
-                    """
+                    dependencies = setOf(
+                        platformProject(path = ":platform", configuration = API)
+                    )
                 ),
                 PlatformModule(name = "platform")
             )
@@ -405,10 +412,10 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        implementation project(':parent:feature1')
-                        implementation project(':parent:feature2')
-                    """
+                    dependencies = setOf(
+                        project(":parent:feature1"),
+                        project(":parent:feature2")
+                    )
                 ),
                 ParentGradleModule(
                     name = "parent",
@@ -446,9 +453,9 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        implementation project(':feature')
-                    """
+                    dependencies = setOf(
+                        project(":feature")
+                    )
                 ),
                 AndroidLibModule(
                     "feature"
@@ -478,9 +485,9 @@ class ImpactAnalysisTest {
                 AndroidAppModule("standalone_app"),
                 AndroidAppModule(
                     name = "app",
-                    dependencies = """
-                        androidTestImplementation platform(project(':platform'))
-                    """
+                    dependencies = setOf(
+                        platformProject(path = ":platform", configuration = ANDROID_TEST_IMPLEMENTATION)
+                    )
                 ),
                 PlatformModule(name = "platform")
             )
