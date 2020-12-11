@@ -1,8 +1,11 @@
 package com.avito.android.build_verdict.internal
 
+import com.avito.android.build_verdict.BuildVerdictPluginExtension
 import com.avito.android.build_verdict.internal.task.lifecycle.BuildVerdictTaskLifecycleListener
 import com.avito.android.build_verdict.internal.task.lifecycle.DefaultTaskLifecycleListener
+import com.avito.android.build_verdict.internal.task.lifecycle.TaskExecutionListenerBridge
 import com.avito.android.build_verdict.internal.task.lifecycle.TestTaskLifecycleListener
+import com.avito.android.build_verdict.internal.task.lifecycle.UserDefinedVerdictProducerTaskLifecycleListener
 import com.avito.android.build_verdict.internal.writer.CompositeBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter
@@ -18,10 +21,14 @@ import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.util.Path
 import java.util.concurrent.ConcurrentHashMap
 
-internal class BuildVerdictPluginServices {
+internal class BuildVerdictPluginServices(
+    private val extension: BuildVerdictPluginExtension,
+    private val logger: CILogger
+) {
 
     private val listeners = ConcurrentHashMap<OperationIdentifier, LogMessageListener>()
     private val logs = ConcurrentHashMap<Path, LogsTextBuilder>()
+    private val verdicts = ConcurrentHashMap<Path, LogsTextBuilder>()
     private val gson by lazy {
         GsonBuilder()
             .disableHtmlEscaping()
@@ -36,33 +43,39 @@ internal class BuildVerdictPluginServices {
     }
 
     fun gradleTaskExecutionListener(): TaskExecutionListener {
-        return TaskExecutionErrorsCapture(
-            testLifecycle = TestTaskLifecycleListener(logs),
-            buildVerdictLifecycle = BuildVerdictTaskLifecycleListener(logs),
-            defaultLifecycle = DefaultTaskLifecycleListener(logs, listeners)
+        return TaskExecutionListenerBridge(
+            listeners = listOf(
+                TestTaskLifecycleListener(verdicts),
+                BuildVerdictTaskLifecycleListener(verdicts),
+                DefaultTaskLifecycleListener(logs, listeners),
+                UserDefinedVerdictProducerTaskLifecycleListener(
+                    taskVerdictProducers = lazy {
+                        extension.taskVerdictProviders.getOrElse(
+                            emptyList()
+                        )
+                    },
+                    verdicts = verdicts
+                )
+            )
         )
     }
 
-    fun gradleConfigurationListener(
-        outputDir: Provider<Directory>,
-        logger: CILogger
-    ): BuildListener {
+    fun gradleConfigurationListener(): BuildListener {
         return BuildConfigurationFailureListener(
             createWriter(
-                outputDir = outputDir,
+                outputDir = extension.outputDir,
                 logger = logger
             )
         )
     }
 
     fun gradleBuildFinishedListener(
-        graph: TaskExecutionGraph,
-        outputDir: Provider<Directory>,
-        logger: CILogger
+        graph: TaskExecutionGraph
     ): BuildListener = BuildExecutionFailureListener(
         graph = graph,
         logs = logs,
-        writer = createWriter(outputDir, logger)
+        verdicts = verdicts,
+        writer = createWriter(extension.outputDir, logger)
     )
 
     private fun createWriter(

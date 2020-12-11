@@ -8,6 +8,7 @@ import org.gradle.util.Path
 internal class BuildExecutionFailureListener(
     private val graph: TaskExecutionGraph,
     private val logs: Map<Path, LogsTextBuilder>,
+    private val verdicts: Map<Path, LogsTextBuilder>,
     private val writer: BuildVerdictWriter
 ) : BaseBuildListener() {
 
@@ -29,7 +30,8 @@ internal class BuildExecutionFailureListener(
                     FailedTask(
                         name = task.name,
                         projectPath = task.project.path,
-                        errorOutput = logs[Path.path(task.path)]?.build() ?: "No error logs",
+                        errorLogs = logs[Path.path(task.path)]?.build() ?: "No error logs",
+                        verdict = verdicts[Path.path(task.path)]?.build(),
                         error = task.state.failure!!.let { error -> Error.from(error) }
                     )
                 }

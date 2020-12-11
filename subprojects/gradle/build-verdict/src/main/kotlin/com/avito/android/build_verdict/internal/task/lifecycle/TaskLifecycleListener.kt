@@ -1,25 +1,40 @@
 package com.avito.android.build_verdict.internal.task.lifecycle
 
-import com.avito.android.build_verdict.internal.LogsTextBuilder
 import org.gradle.api.Task
-import org.gradle.util.Path
+import org.gradle.api.tasks.TaskState
 
-abstract class TaskLifecycleListener<in T> {
+internal abstract class TaskLifecycleListener<in T> {
 
-    protected abstract val logs: MutableMap<Path, LogsTextBuilder>
+    abstract val acceptedTask: Class<in T>
 
-    abstract fun beforeExecute(task: T)
+    @Suppress("UNCHECKED_CAST")
+    fun beforeExecute(task: Task) {
+        if (acceptedTask.isInstance(task)) {
+            beforeExecuteTyped(task as T)
+        }
+    }
 
-    protected abstract fun afterSucceedExecute(task: T)
+    protected open fun beforeExecuteTyped(task: T) {
+        // empty
+    }
 
-    protected abstract fun afterFailedExecute(task: T)
+    protected open fun afterSucceedExecute(task: T) {
+        // empty
+    }
 
-    fun afterExecute(task: T, failure: Throwable?) {
-        if (failure == null) {
-            logs.remove(Path.path((task as Task).path))
-            afterSucceedExecute(task)
-        } else {
-            afterFailedExecute(task)
+    protected open fun afterFailedExecute(task: T, error: Throwable) {
+        // empty
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun afterExecute(task: Task, state: TaskState) {
+        if (acceptedTask.isInstance(task)) {
+            val failure = state.failure
+            if (failure != null) {
+                afterFailedExecute(task as T, failure)
+            } else {
+                afterSucceedExecute(task as T)
+            }
         }
     }
 }

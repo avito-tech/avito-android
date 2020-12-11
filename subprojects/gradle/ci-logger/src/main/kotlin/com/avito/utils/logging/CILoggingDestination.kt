@@ -9,6 +9,16 @@ interface CILoggingDestination : Serializable {
     fun child(tag: String): CILoggingDestination
 }
 
+internal object StderrDestination : CILoggingDestination {
+
+    override fun write(message: String, throwable: Throwable?) {
+        System.err.println(message)
+        throwable?.also { System.err.println(it) }
+    }
+
+    override fun child(tag: String): CILoggingDestination = this
+}
+
 internal object StdoutDestination : CILoggingDestination {
 
     override fun write(message: String, throwable: Throwable?) {
