@@ -18,10 +18,13 @@ fun unitTestsFails(dir: File) = """
 Execution failed for task ':app:testDebugUnitTest'.
 	> There were failing tests. See the report at: file://${dir.canonicalPath}/app/build/reports/tests/testDebugUnitTest/index.html
 
-* Error logs:
+* Task result:
 FAILED tests:
 	AppTest.test assert true
 	AppTest.test runtime exception
+
+* Error logs:
+No error logs
 """.trimIndent()
 
 fun kaptFails(dir: File) = """
@@ -44,8 +47,12 @@ val customTaskFails = """
 Execution failed for task ':app:customTask'.
 	> Surprise
 
-* Error logs:
+* Task result:
 Custom verdict
+User added verdict
+
+* Error logs:
+No error logs
 """.trimIndent()
 
 fun compileFails(dir: File) = """
