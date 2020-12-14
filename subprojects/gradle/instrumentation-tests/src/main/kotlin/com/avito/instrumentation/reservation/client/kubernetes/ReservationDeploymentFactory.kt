@@ -2,6 +2,7 @@ package com.avito.instrumentation.reservation.client.kubernetes
 
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.utils.gradle.toValidKubernetesName
 import com.avito.utils.logging.CILogger
 import com.fkorotkov.kubernetes.apps.metadata
 import com.fkorotkov.kubernetes.apps.newDeployment
@@ -77,7 +78,7 @@ class ReservationDeploymentFactory(
         ) {
             containers = listOf(
                 newContainer {
-                    name = phone.name.kubernetesName()
+                    name = phone.name.toValidKubernetesName()
                     image = "$registry/${phone.proxyImage}"
 
                     securityContext {
@@ -116,7 +117,7 @@ class ReservationDeploymentFactory(
         ) {
             containers = listOf(
                 newContainer {
-                    name = emulator.name.kubernetesName()
+                    name = emulator.name.toValidKubernetesName()
                     image = "$registry/${emulator.image}"
 
                     securityContext {
