@@ -272,7 +272,7 @@ class KubernetesReservationClient(
             // waiting means pod can't start on this node
             // https://kubernetes.io/docs/tasks/debug-application-cluster/debug-application/#my-pod-stays-waiting
             if (!waitingMessage.isNullOrBlank()) {
-                logger.warn("Can't start pod on this node: $waitingMessage")
+                logger.warn("Can't start pod: $waitingMessage")
 
                 // handle special cases
                 if (waitingMessage.contains("couldn't parse image reference")) {
