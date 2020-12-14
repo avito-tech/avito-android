@@ -330,6 +330,8 @@ class KubernetesReservationClient(
 
         object Idling : State()
     }
+
+    companion object
 }
 
 private const val ADB_DEFAULT_PORT = 5555
