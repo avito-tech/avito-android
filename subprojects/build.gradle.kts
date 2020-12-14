@@ -313,7 +313,8 @@ subprojects {
             "avito.slack.test.token",
             "avito.slack.test.workspace",
             "avito.elastic.endpoint",
-            "avito.elastic.indexpattern"
+            "avito.elastic.indexpattern",
+            "teamcityBuildId"
         )
         testProperties.forEach { key ->
             val property = if (project.hasProperty(key)) {

@@ -4,6 +4,7 @@ import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.reservation.request.createStubInstance
+import com.avito.test.gradle.getTestProperty
 import com.avito.truth.assertThat
 import com.avito.utils.logging.FakeCILogger
 import com.google.common.truth.Truth.assertThat
@@ -22,7 +23,8 @@ import java.net.UnknownHostException
 internal class KubernetesReservationClientIntegrationTest {
 
     private val logger = FakeCILogger()
-    private val deploymentNameGenerator = FakeDeploymentNameGenerator()
+    private val buildId = getTestProperty(name = "teamcityBuildId", defaultValue = "local")
+    private val deploymentNameGenerator = FakeDeploymentNameGenerator(postfix = buildId)
     private var clientOne: ReservationClient? = null
     private var clientTwo: ReservationClient? = null
 
@@ -108,7 +110,7 @@ internal class KubernetesReservationClientIntegrationTest {
         }
 
         assertThat<KubernetesClientException>(exception) {
-            assertThat(message).contains("deployments.extensions \"android-emulator-integration-test\" already exists")
+            assertThat(message).containsMatch(Regex("deployments.extensions .+ already exists").pattern)
         }
     }
 
