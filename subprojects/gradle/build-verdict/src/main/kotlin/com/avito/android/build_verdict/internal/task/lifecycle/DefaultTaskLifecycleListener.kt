@@ -7,12 +7,14 @@ import org.gradle.internal.operations.CurrentBuildOperationRef
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.util.Path
 
-class DefaultTaskLifecycleListener(
-    override val logs: MutableMap<Path, LogsTextBuilder>,
+internal class DefaultTaskLifecycleListener(
+    private val logs: MutableMap<Path, LogsTextBuilder>,
     private val listeners: MutableMap<OperationIdentifier, LogMessageListener>
 ) : TaskLifecycleListener<Task>() {
 
-    override fun beforeExecute(task: Task) {
+    override val acceptedTask: Class<in Task> = Task::class.java
+
+    override fun beforeExecuteTyped(task: Task) {
         val id = CurrentBuildOperationRef.instance().id
         if (id != null) {
             val path = Path.path(task.path)
@@ -27,9 +29,10 @@ class DefaultTaskLifecycleListener(
 
     override fun afterSucceedExecute(task: Task) {
         deleteListener()
+        logs.remove(Path.path(task.path))
     }
 
-    override fun afterFailedExecute(task: Task) {
+    override fun afterFailedExecute(task: Task, error: Throwable) {
         deleteListener()
     }
 

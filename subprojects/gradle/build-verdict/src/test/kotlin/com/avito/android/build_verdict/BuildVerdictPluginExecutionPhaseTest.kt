@@ -28,7 +28,7 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         assertBuildVerdict(
             failedTask = "compileDebugKotlin",
             plainTextVerdict = compileFails(temp),
-            expectedErrorLines = listOf(
+            expectedErrorLogs = listOf(
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
             )
@@ -56,7 +56,7 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         assertBuildVerdict(
             failedTask = "kaptGenerateStubsDebugKotlin",
             plainTextVerdict = kaptStubGeneratingFails(temp),
-            expectedErrorLines = listOf(
+            expectedErrorLogs = listOf(
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
             )
@@ -99,7 +99,7 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         assertBuildVerdict(
             failedTask = "kaptDebugKotlin",
             plainTextVerdict = kaptFails(temp),
-            expectedErrorLines = listOf(
+            expectedErrorLogs = listOf(
                 "$temp/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.",
                 "public abstract interface DaggerComponent {",
                 "                ^",
@@ -151,10 +151,8 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         assertBuildVerdict(
             failedTask = "testDebugUnitTest",
             plainTextVerdict = unitTestsFails(temp),
-            expectedErrorLines = listOf(
-                "FAILED tests:",
-                "\tAppTest.test assert true",
-                "\tAppTest.test runtime exception"
+            expectedErrorLogs = listOf(
+                "No error logs"
             )
         )
     }
@@ -202,7 +200,14 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
                 
                 tasks.register("customTask", CustomTask)
             """.trimIndent()
-            )
+            ),
+            buildGradleExtra = """
+import com.avito.android.build_verdict.TaskVerdictProducer
+import org.gradle.api.Task
+buildVerdict {
+    onTaskFailure("customTask", { "User added verdict" } as TaskVerdictProducer)
+}
+""".trimIndent()
         )
 
         val result = gradlew(
@@ -218,8 +223,8 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         assertBuildVerdict(
             failedTask = "customTask",
             plainTextVerdict = customTaskFails,
-            expectedErrorLines = listOf(
-                "Custom verdict"
+            expectedErrorLogs = listOf(
+                "No error logs"
             )
         )
     }
@@ -228,7 +233,7 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         failedApp: String = appName,
         failedTask: String,
         plainTextVerdict: String,
-        expectedErrorLines: List<String>
+        expectedErrorLogs: List<String>
     ) {
         assertBuildVerdictFileExist(true)
         assertThat(plainTextBuildVerdict.readText()).isEqualTo(plainTextVerdict)
@@ -246,14 +251,14 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         assertThat(task.projectPath)
             .isEqualTo(":$failedApp")
 
-        val actualErrorLines = task.errorOutput.lines()
+        val actualErrorLines = task.errorLogs.lines()
 
         assertThat(actualErrorLines)
-            .hasSize(expectedErrorLines.size)
+            .hasSize(expectedErrorLogs.size)
 
         actualErrorLines.forEachIndexed { index, actualErrorLine ->
             assertThat(actualErrorLine)
-                .contains(expectedErrorLines[index])
+                .contains(expectedErrorLogs[index])
         }
     }
 }

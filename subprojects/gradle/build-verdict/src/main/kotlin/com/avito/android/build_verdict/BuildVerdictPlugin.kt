@@ -29,19 +29,16 @@ class BuildVerdictPlugin : Plugin<ProjectInternal> {
 
         if (project.pluginIsEnabled) {
             val extension = project.extensions.create<BuildVerdictPluginExtension>("buildVerdict")
-            val outputDir = extension.outputDir
-            val services = BuildVerdictPluginServices()
+            val services = BuildVerdictPluginServices(extension, project.ciLogger)
             project.gradle.addListener(services.gradleTaskExecutionListener())
             project.gradle.addLogEventListener(services.gradleLogEventListener())
-            val configurationListener = services.gradleConfigurationListener(outputDir, project.ciLogger)
+            val configurationListener = services.gradleConfigurationListener()
             project.gradle.addBuildListener(configurationListener)
             project.gradle.taskGraph.whenReady { graph ->
                 project.gradle.removeListener(configurationListener)
                 project.gradle.addBuildListener(
                     services.gradleBuildFinishedListener(
-                        graph,
-                        outputDir,
-                        project.ciLogger
+                        graph
                     )
                 )
             }

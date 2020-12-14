@@ -49,11 +49,13 @@ abstract class BaseBuildVerdictTest {
     protected fun generateProject(
         module: Module = AndroidAppModule(
             name = appName
-        )
+        ),
+        buildGradleExtra: String = ""
     ) {
         TestProjectGenerator(
             plugins = listOf("com.avito.android.build-verdict"),
-            modules = listOf(module)
+            modules = listOf(module),
+            buildGradleExtra = buildGradleExtra
         ).generateIn(temp)
     }
 

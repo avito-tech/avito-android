@@ -15,6 +15,7 @@ internal sealed class BuildVerdict {
 internal data class FailedTask(
     val name: String,
     val projectPath: String,
-    val errorOutput: String,
-    val error: Error
+    val errorLogs: String,
+    val error: Error,
+    val verdict: String? = null
 )

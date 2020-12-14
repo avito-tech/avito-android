@@ -24,8 +24,13 @@ internal fun BuildVerdict.Execution.plainText(): String {
 private fun FailedTask.plainText() = buildString {
     appendln(error.plainText().trimIndent())
     appendln()
+    if (verdict != null) {
+        appendln("* Task result:")
+        appendln(verdict.trimIndent())
+        appendln()
+    }
     appendln("* Error logs:")
-    appendln(errorOutput.trimIndent())
+    appendln(errorLogs.trimIndent())
 }
 
 private fun Error.plainText() = buildString {

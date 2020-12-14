@@ -66,6 +66,11 @@ private fun defaultCILogger(
         destination = StdoutDestination
     )
 
+    val explicitStderrHandler = CILoggingHandlerImplementation(
+        formatter = AppendPrefixFormatter(prefix = name),
+        destination = StderrDestination
+    )
+
     val sentryConfig = project.sentryConfig
 
     val sentryHandler = CILoggingHandlerImplementation(
@@ -101,7 +106,7 @@ private fun defaultCILogger(
         ),
         criticalHandler = CILoggingCombinedHandler(
             handlers = listOf(
-                explicitStdoutHandler,
+                explicitStderrHandler,
                 destinationFileHandler,
                 elasticHandler(elasticClient, tag = name, level = "ERROR"),
                 sentryHandler
