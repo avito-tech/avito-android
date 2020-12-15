@@ -66,8 +66,17 @@ internal class KubernetesReservationClientIntegrationTest {
      */
     @Test
     fun `claim - throws exception - deployment already exists`() {
-        clientOne = KubernetesReservationClient.createStubInstance(logger = logger)
-        clientTwo = KubernetesReservationClient.createStubInstance(logger = logger)
+        // to generate single name for two different clients
+        val deploymentNameGenerator = FakeDeploymentNameGenerator()
+
+        clientOne = KubernetesReservationClient.createStubInstance(
+            logger = logger,
+            deploymentNameGenerator = deploymentNameGenerator
+        )
+        clientTwo = KubernetesReservationClient.createStubInstance(
+            logger = logger,
+            deploymentNameGenerator = deploymentNameGenerator
+        )
 
         val delayEnoughToCreateFirstDeploymentMs = 3000L
 
