@@ -11,11 +11,13 @@ import kotlinx.cli.delimiter
 import kotlinx.cli.required
 
 object ClearK8SDeploymentsMain {
+
     @OptIn(ExperimentalCli::class)
     abstract class ClearDeployments(
         name: String,
         description: String
     ) : Subcommand(name, description) {
+
         protected val teamcityUrl: String by option(type = ArgType.String)
             .required()
 
@@ -40,8 +42,11 @@ object ClearK8SDeploymentsMain {
     @ExperimentalCli
     @JvmStatic
     fun main(args: Array<String>) {
-        class ByNamespaces :
-            ClearDeployments("clearByNamespaces", "Clear given namespaces from leaked deployments") {
+
+        class ByNamespaces : ClearDeployments(
+            name = "clearByNamespaces",
+            description = "Clear given namespaces from leaked deployments"
+        ) {
 
             private val namespaces by option(
                 type = ArgType.String,
@@ -66,8 +71,10 @@ object ClearK8SDeploymentsMain {
             }
         }
 
-        class ByNames :
-            ClearDeployments("deleteByNames", "Delete deployments by names in given namespace") {
+        class ByNames : ClearDeployments(
+            name = "deleteByNames",
+            description = "Delete deployments by names in given namespace"
+        ) {
 
             private val namespace by option(
                 type = ArgType.String,

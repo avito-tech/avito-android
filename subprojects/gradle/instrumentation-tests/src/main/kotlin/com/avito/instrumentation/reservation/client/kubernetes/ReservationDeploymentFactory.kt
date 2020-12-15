@@ -220,7 +220,13 @@ class ReservationDeploymentFactory(
         device: Device
     ): Map<String, String> {
         return mapOf(
-            "type" to buildType, // teamcity or local
+
+            /**
+             * used to distinguish different strategies for clearing leaked kubernetes deployments
+             * for incorrectly finished builds
+             * see [com.avito.ci.DeploymentEnvironment]
+             */
+            "type" to buildType,
             "id" to buildId, // teamcity_build_id or local synthetic
             "project" to projectName,
             "instrumentationConfiguration" to configurationName,

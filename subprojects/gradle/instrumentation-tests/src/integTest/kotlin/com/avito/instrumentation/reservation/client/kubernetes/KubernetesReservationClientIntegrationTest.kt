@@ -4,7 +4,6 @@ import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.reservation.request.createStubInstance
-import com.avito.test.gradle.getTestProperty
 import com.avito.truth.assertThat
 import com.avito.utils.logging.FakeCILogger
 import com.google.common.truth.Truth.assertThat
@@ -23,8 +22,6 @@ import java.net.UnknownHostException
 internal class KubernetesReservationClientIntegrationTest {
 
     private val logger = FakeCILogger()
-    private val buildId = getTestProperty(name = "teamcityBuildId", defaultValue = "local")
-    private val deploymentNameGenerator = FakeDeploymentNameGenerator(postfix = buildId)
     private var clientOne: ReservationClient? = null
     private var clientTwo: ReservationClient? = null
 
@@ -32,7 +29,6 @@ internal class KubernetesReservationClientIntegrationTest {
     fun `claim - throws exception - unknown host`() {
         clientOne = KubernetesReservationClient.createStubInstance(
             logger = logger,
-            deploymentNameGenerator = deploymentNameGenerator,
             kubernetesUrl = "unknown-host",
             kubernetesNamespace = "emulators"
         )
@@ -70,14 +66,8 @@ internal class KubernetesReservationClientIntegrationTest {
      */
     @Test
     fun `claim - throws exception - deployment already exists`() {
-        clientOne = KubernetesReservationClient.createStubInstance(
-            logger = logger,
-            deploymentNameGenerator = deploymentNameGenerator
-        )
-        clientTwo = KubernetesReservationClient.createStubInstance(
-            logger = logger,
-            deploymentNameGenerator = deploymentNameGenerator
-        )
+        clientOne = KubernetesReservationClient.createStubInstance(logger = logger)
+        clientTwo = KubernetesReservationClient.createStubInstance(logger = logger)
 
         val delayEnoughToCreateFirstDeploymentMs = 3000L
 

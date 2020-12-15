@@ -11,13 +11,13 @@ import java.io.File
 
 fun KubernetesReservationClient.Companion.createStubInstance(
     logger: CILogger,
-    deploymentNameGenerator: DeploymentNameGenerator = FakeDeploymentNameGenerator(),
+    buildId: String = getTestProperty(name = "teamcityBuildId", defaultValue = "local"),
+    deploymentNameGenerator: DeploymentNameGenerator = FakeDeploymentNameGenerator(buildId),
     kubernetesUrl: String = getTestProperty("avito.kubernetes.url"),
     kubernetesNamespace: String = getTestProperty("avito.kubernetes.namespace"),
     configurationName: String = "integration-test",
     projectName: String = "",
-    buildId: String = "1",
-    buildType: String = "",
+    buildType: String = "integration-test", // see DeploymentEnvironment
     registry: String = ""
 ): KubernetesReservationClient {
     val kubernetesCredentials = KubernetesCredentials.Service(

@@ -1,5 +1,10 @@
 package com.avito.ci
 
+import com.avito.ci.DeploymentEnvironment.IntegrationTest
+import com.avito.ci.DeploymentEnvironment.Local
+import com.avito.ci.DeploymentEnvironment.Service
+import com.avito.ci.DeploymentEnvironment.Teamcity
+import com.avito.ci.DeploymentEnvironment.Unknown
 import com.avito.teamcity.TeamcityApi
 import io.fabric8.kubernetes.api.model.apps.Deployment
 import io.fabric8.kubernetes.api.model.apps.DeploymentList
@@ -34,30 +39,16 @@ class ClearK8SDeploymentsByNamespaces(
     private val Deployment.isLeaked: Boolean
         get() {
             return when (val env = environment) {
-                is DeploymentEnvironment.Teamcity ->
-                    when (teamcity.getBuild(env.buildId).state) {
-                        BuildState.FINISHED,
-                        BuildState.DELETED,
-                        BuildState.UNKNOWN -> true
-                        BuildState.QUEUED,
-                        BuildState.RUNNING -> false
-                    }
-                is DeploymentEnvironment.Local -> {
-                    val now = Date(System.currentTimeMillis())
-                    val hourInMillis = TimeUnit.HOURS.toMillis(1)
-                    val hourAgo = Date(
-                        now.toInstant()
-                            .minusMillis(hourInMillis)
-                            .toEpochMilli()
-                    )
-                    creationTime.before(hourAgo)
-                }
 
-                is DeploymentEnvironment.Service ->
-                    false
+                is Teamcity -> noActiveTeamcityBuilds(env.buildId)
 
-                is DeploymentEnvironment.Unknown ->
-                    throw IllegalStateException("Unknown environment in deployment:$description")
+                is Local -> creationTime.before(minutesAgo(60))
+
+                is Service -> false
+
+                is IntegrationTest -> creationTime.before(minutesAgo(4)) || noActiveTeamcityBuilds(env.buildId)
+
+                is Unknown -> throw IllegalStateException("Unknown environment in deployment:$description")
             }
         }
 
@@ -82,6 +73,32 @@ class ClearK8SDeploymentsByNamespaces(
                         "If reason wasn't clear read previous discussion http://links.k.avito.ru/Az",
                     e
                 )
+            }
+        }
+    }
+
+    private fun minutesAgo(minutes: Long): Date {
+        val now = Date(System.currentTimeMillis())
+        val minutesInMillis = TimeUnit.MINUTES.toMillis(minutes)
+        return Date(
+            now.toInstant()
+                .minusMillis(minutesInMillis)
+                .toEpochMilli()
+        )
+    }
+
+    private fun noActiveTeamcityBuilds(buildId: String): Boolean {
+        return if (buildId.startsWith("local")) {
+            // see EnvArgs.Build.Local and FakeKubernetesReservationClient
+            true
+        } else {
+            when (teamcity.getBuild(buildId).state) {
+                BuildState.FINISHED,
+                BuildState.DELETED,
+                BuildState.UNKNOWN -> true
+
+                BuildState.QUEUED,
+                BuildState.RUNNING -> false
             }
         }
     }
