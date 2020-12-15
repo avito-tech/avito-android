@@ -15,6 +15,7 @@ import io.fabric8.kubernetes.client.KubernetesClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
@@ -23,7 +24,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@Suppress("EXPERIMENTAL_API_USAGE")
 class KubernetesReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
     private val kubernetesClient: KubernetesClient,
@@ -40,7 +40,9 @@ class KubernetesReservationClient(
         reservations: Collection<Reservation.Data>,
         scope: CoroutineScope
     ): ReservationClient.ClaimResult {
+
         val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
+
         scope.launch(Dispatchers.IO) {
             if (state !is State.Idling) {
                 throw IllegalStateException("Unable to start reservation job. Already started")
@@ -55,6 +57,7 @@ class KubernetesReservationClient(
                     reservation = reservation
                 )
                 val deploymentName = deployment.metadata.name
+                logger.debug("Creating deployment: $deploymentName")
                 deploymentsChannel.send(deploymentName)
                 deployment.create()
                 logger.debug("Deployment created: $deploymentName")
@@ -68,11 +71,13 @@ class KubernetesReservationClient(
             }
 
             launch {
-                // todo use Flow
-                @Suppress("DEPRECATION")
-                for (pod in podsChannel
+
+                @Suppress("DEPRECATION") // todo use Flow
+                val uniqueRunningPods: ReceiveChannel<Pod> = podsChannel
                     .filter { it.status.phase == POD_STATUS_RUNNING }
-                    .distinctBy { it.metadata.name }) {
+                    .distinctBy { it.metadata.name }
+
+                for (pod in uniqueRunningPods) {
                     launch {
                         val podName = pod.metadata.name
                         logger.debug("Found new pod: $podName")
@@ -103,6 +108,7 @@ class KubernetesReservationClient(
                 }
             }
         }
+
         return ReservationClient.ClaimResult(
             deviceCoordinates = serialsChannel
         )
@@ -167,11 +173,9 @@ class KubernetesReservationClient(
                         }
                     }
 
-                    logger.debug("Deleting deployment: $deploymentName...")
                     removeEmulatorsDeployment(
                         deploymentName = deploymentName
                     )
-                    logger.debug("Deployment: $deploymentName deleted")
                 }
             }
             this@KubernetesReservationClient.state = State.Idling
@@ -268,7 +272,12 @@ class KubernetesReservationClient(
             // waiting means pod can't start on this node
             // https://kubernetes.io/docs/tasks/debug-application-cluster/debug-application/#my-pod-stays-waiting
             if (!waitingMessage.isNullOrBlank()) {
-                logger.warn("Can't start pod on this node: $waitingMessage")
+                logger.warn("Can't start pod: $waitingMessage")
+
+                // handle special cases
+                if (waitingMessage.contains("couldn't parse image reference")) {
+                    error("Can't create pods for deployment, check image reference: $waitingMessage")
+                }
             }
 
             val terminatedMessage = containerState
@@ -298,6 +307,7 @@ class KubernetesReservationClient(
         logger.debug("Start listening devices for $deploymentName")
         var pods = podsFromDeployment(deploymentName)
 
+        @Suppress("EXPERIMENTAL_API_USAGE")
         while (!podsChannel.isClosedForSend && pods.isNotEmpty()) {
             pods.forEach { pod ->
                 podsChannel.send(pod)
@@ -320,6 +330,8 @@ class KubernetesReservationClient(
 
         object Idling : State()
     }
+
+    companion object
 }
 
 private const val ADB_DEFAULT_PORT = 5555

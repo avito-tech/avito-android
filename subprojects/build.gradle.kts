@@ -305,11 +305,16 @@ subprojects {
         systemProperty("rootDir", "${project.rootDir}")
 
         val testProperties = listOf(
+            "avito.kubernetes.url",
+            "avito.kubernetes.token",
+            "avito.kubernetes.cert",
+            "avito.kubernetes.namespace",
             "avito.slack.test.channel",
             "avito.slack.test.token",
             "avito.slack.test.workspace",
             "avito.elastic.endpoint",
-            "avito.elastic.indexpattern"
+            "avito.elastic.indexpattern",
+            "teamcityBuildId"
         )
         testProperties.forEach { key ->
             val property = if (project.hasProperty(key)) {

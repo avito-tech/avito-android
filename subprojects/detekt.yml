@@ -620,7 +620,7 @@ style:
         ignoreNumbers: [ '-1', '0', '1', '2' ]
         ignoreHashCodeFunction: true
         ignorePropertyDeclaration: true
-        ignoreLocalVariableDeclaration: false
+        ignoreLocalVariableDeclaration: true
         ignoreConstantDeclaration: true
         ignoreCompanionObjectPropertyDeclaration: true
         ignoreAnnotation: false

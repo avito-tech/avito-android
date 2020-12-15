@@ -9,6 +9,7 @@ import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.client.kubernetes.ReservationDeploymentFactory
+import com.avito.instrumentation.reservation.client.kubernetes.UUIDDeploymentNameGenerator
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.gradle.KubernetesCredentials
@@ -75,14 +76,15 @@ interface DevicesProviderFactory {
                                 buildId = buildId,
                                 buildType = buildType,
                                 registry = registry,
-                                logger = logger
+                                deploymentNameGenerator = UUIDDeploymentNameGenerator(),
+                                logger = logger.child("ReservationDeploymentFactory")
                             ),
-                            logger = logger,
+                            logger = logger.child("KubernetesReservationClient"),
                             emulatorsLogsReporter = emulatorsLogsReporter
                         ),
                         adbDevicesManager = devicesManager,
                         adb = adb,
-                        logger = logger
+                        logger = logger.child("KubernetesDeviceProvider")
                     )
             }
         }

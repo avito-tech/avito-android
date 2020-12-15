@@ -5,6 +5,7 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient
 class DeleteK8SDeploymentsByNames(
     private val kubernetesClient: DefaultKubernetesClient
 ) {
+
     fun delete(
         namespace: String,
         deploymentNames: List<String>
@@ -13,6 +14,7 @@ class DeleteK8SDeploymentsByNames(
             val deployments = kubernetesClient.inNamespace(namespace)
                 .apps()
                 .deployments()
+
             deploymentNames.forEach { deployment ->
                 try {
                     deployments

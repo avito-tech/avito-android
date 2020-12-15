@@ -19,7 +19,7 @@ import javax.inject.Inject
  * todo @CacheableTask + test for it
  */
 @Suppress("UnstableApiUsage")
-open class FindChangedTestsTask @Inject constructor(
+abstract class FindChangedTestsTask @Inject constructor(
     objects: ObjectFactory,
     layout: ProjectLayout,
     private val workerExecutor: WorkerExecutor

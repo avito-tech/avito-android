@@ -14,4 +14,7 @@ dependencies {
     implementation(project(":gradle:kubernetes"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:test-project"))
+    implementation(project(":gradle:runner:service")) {
+        because("Adb class access")
+    }
 }

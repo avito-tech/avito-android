@@ -2,6 +2,7 @@ package com.avito.instrumentation.reservation.client.kubernetes
 
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.utils.gradle.toValidKubernetesName
 import com.avito.utils.logging.CILogger
 import com.fkorotkov.kubernetes.apps.metadata
 import com.fkorotkov.kubernetes.apps.newDeployment
@@ -21,7 +22,6 @@ import com.fkorotkov.kubernetes.spec
 import io.fabric8.kubernetes.api.model.PodSpec
 import io.fabric8.kubernetes.api.model.Quantity
 import io.fabric8.kubernetes.api.model.apps.Deployment
-import java.util.UUID
 
 class ReservationDeploymentFactory(
     private val configurationName: String,
@@ -29,16 +29,22 @@ class ReservationDeploymentFactory(
     private val buildId: String,
     private val buildType: String,
     private val registry: String,
-    private val logger: CILogger
+    private val deploymentNameGenerator: DeploymentNameGenerator,
+    logger: CILogger
 ) {
 
+    private val logger = logger.child("ReservationDeploymentFactory")
+
     init {
-        require(buildId.isNotBlank()) { "buildId is blank, client can't distinguish reservations" }
+        val prefix = { reason: String -> "Can't create configuration, precondition failed: $reason" }
+        require(configurationName.isNotBlank()) { prefix.invoke("configurationName is blank; used to label pods") }
+        require(buildId.isNotBlank()) { prefix.invoke("buildId is blank, client can't distinguish reservations") }
     }
 
     fun createDeployment(namespace: String, reservation: Reservation.Data): Deployment {
         logger.debug("Creating deployment for configuration: $configurationName")
-        val deploymentName = generateDeploymentName(namespace)
+        val deploymentName = deploymentNameGenerator.generateName(namespace)
+        logger.debug("Deployment name will be: $deploymentName")
         return when (reservation.device) {
             is Device.LocalEmulator -> throw IllegalStateException(
                 "Local emulator ${reservation.device} is unsupported in kubernetes reservation"
@@ -72,7 +78,7 @@ class ReservationDeploymentFactory(
         ) {
             containers = listOf(
                 newContainer {
-                    name = phone.name.kubernetesName()
+                    name = phone.name.toValidKubernetesName()
                     image = "$registry/${phone.proxyImage}"
 
                     securityContext {
@@ -111,7 +117,7 @@ class ReservationDeploymentFactory(
         ) {
             containers = listOf(
                 newContainer {
-                    name = emulator.name.kubernetesName()
+                    name = emulator.name.toValidKubernetesName()
                     image = "$registry/${emulator.image}"
 
                     securityContext {
@@ -214,17 +220,17 @@ class ReservationDeploymentFactory(
         device: Device
     ): Map<String, String> {
         return mapOf(
-            "type" to buildType, // teamcity or local
+
+            /**
+             * used to distinguish different strategies for clearing leaked kubernetes deployments
+             * for incorrectly finished builds
+             * see [com.avito.ci.DeploymentEnvironment]
+             */
+            "type" to buildType,
             "id" to buildId, // teamcity_build_id or local synthetic
             "project" to projectName,
             "instrumentationConfiguration" to configurationName,
             "device" to device.description
         )
     }
-
-    private fun generateDeploymentName(namespace: String): String =
-        "$namespace-${UUID.randomUUID()}"
-            .kubernetesName()
-
-    private fun String.kubernetesName(): String = replace("_", "-").toLowerCase()
 }
