@@ -57,4 +57,6 @@ internal class Entrypoint(
     private fun log(message: String) {
         logger.debug("Entrypoint: $message")
     }
+
+    companion object
 }
