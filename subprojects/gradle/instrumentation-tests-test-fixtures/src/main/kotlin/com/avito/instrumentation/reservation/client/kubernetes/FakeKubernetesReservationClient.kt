@@ -2,8 +2,8 @@ package com.avito.instrumentation.reservation.client.kubernetes
 
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
+import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.runner.service.worker.device.adb.Adb
-import com.avito.test.gradle.getTestProperty
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.createKubernetesClient
 import com.avito.utils.logging.CILogger
@@ -11,18 +11,18 @@ import java.io.File
 
 fun KubernetesReservationClient.Companion.createStubInstance(
     logger: CILogger,
-    buildId: String = getTestProperty(name = "teamcityBuildId", defaultValue = "local"),
+    buildId: String = getSystemProperty(name = "teamcityBuildId", defaultValue = "local"),
     deploymentNameGenerator: DeploymentNameGenerator = FakeDeploymentNameGenerator(buildId),
-    kubernetesUrl: String = getTestProperty("avito.kubernetes.url"),
-    kubernetesNamespace: String = getTestProperty("avito.kubernetes.namespace"),
+    kubernetesUrl: String = getSystemProperty("avito.kubernetes.url"),
+    kubernetesNamespace: String = getSystemProperty("avito.kubernetes.namespace"),
     configurationName: String = "integration-test",
     projectName: String = "",
     buildType: String = "integration-test", // see DeploymentEnvironment
     registry: String = ""
 ): KubernetesReservationClient {
     val kubernetesCredentials = KubernetesCredentials.Service(
-        token = getTestProperty("avito.kubernetes.token"),
-        caCertData = getTestProperty("avito.kubernetes.cert"),
+        token = getSystemProperty("avito.kubernetes.token"),
+        caCertData = getSystemProperty("avito.kubernetes.cert"),
         url = kubernetesUrl
     )
 
