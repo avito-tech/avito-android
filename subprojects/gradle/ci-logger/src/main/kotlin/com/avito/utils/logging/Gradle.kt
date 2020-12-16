@@ -18,7 +18,6 @@ val Project.ciLogger: CILogger
 internal object CILoggerRegistry {
 
     val loggersCache = mutableMapOf<String, CILogger>()
-
 }
 
 private fun provideLogger(project: Project, loggerName: String): CILogger {
