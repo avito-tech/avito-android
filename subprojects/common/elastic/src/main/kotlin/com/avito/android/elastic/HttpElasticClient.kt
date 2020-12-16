@@ -6,6 +6,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -17,10 +18,10 @@ import java.time.format.DateTimeFormatter.ISO_DATE
  * @param indexPattern see https://www.elastic.co/guide/en/kibana/current/index-patterns.html
  * @param onError can't deliver message; reaction delegated to upstream
  */
-class HttpElasticClient(
+internal class HttpElasticClient(
     okHttpClient: OkHttpClient,
     private val timeProvider: TimeProvider,
-    private val endpoint: String,
+    private val endpoint: URL,
     private val indexPattern: String,
     private val buildId: String,
     private val onError: (String, Throwable?) -> Unit

@@ -22,12 +22,13 @@ abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
     }
 
     override fun execute() {
-        require(!parameters.getBuildId().orNull.isNullOrBlank()) { "teamcity buildId property must be set" }
+        val buildId: String? = parameters.getBuildId().orNull
+        require(!buildId.isNullOrBlank()) { "teamcity buildId property must be set" }
 
         val graphite = graphiteSender()
         val teamcity = TeamcityApi.Impl(parameters.getTeamcityCredentials().get())
         val action = CollectTeamcityMetricsAction(
-            buildId = parameters.getBuildId().get(),
+            buildId = buildId,
             teamcityApi = teamcity,
             graphite = graphite
         )

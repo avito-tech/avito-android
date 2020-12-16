@@ -6,13 +6,14 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import java.net.URL
 
 internal class ElasticServiceFactory(
     private val okHttpClient: OkHttpClient,
     private val gson: Gson = GsonBuilder().create()
 ) {
 
-    fun createApiService(endpoint: String): ElasticService =
+    fun createApiService(endpoint: URL): ElasticService =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
