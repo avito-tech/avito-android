@@ -1,7 +1,21 @@
 package com.avito.android.build_verdict.internal.writer
 
 import com.avito.android.build_verdict.internal.BuildVerdict
+import com.avito.utils.logging.CILogger
+import java.io.File
 
-internal interface BuildVerdictWriter {
-    fun write(buildVerdict: BuildVerdict)
+internal abstract class BuildVerdictWriter(
+    private val outputDir: Lazy<File>,
+    private val fileName: String
+) {
+    protected abstract val logger: CILogger
+
+    fun write(buildVerdict: BuildVerdict) {
+        val destination = File(outputDir.value, fileName)
+        destination.createNewFile()
+        writeTo(buildVerdict, destination)
+        logger.warn("Build verdict at $destination")
+    }
+
+    protected abstract fun writeTo(buildVerdict: BuildVerdict, destination: File)
 }

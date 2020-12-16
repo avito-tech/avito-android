@@ -12,6 +12,14 @@ import org.junit.jupiter.api.Test
 
 class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
 
+    private val htmlVerdicts by lazy {
+        HtmlVerdictCases.Configuration(temp)
+    }
+
+    private val plainTextVerdicts by lazy {
+        PlainTextVerdictCases.Configuration(temp)
+    }
+
     @Test
     fun `configuration success`() {
         generateProject()
@@ -28,7 +36,7 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
     }
 
     @Test
-    fun `configuration fails - build verdict contains gradle fail error`() {
+    fun `configuration fails - illegal method`() {
         generateProject(
             AndroidAppModule(
                 name = appName,
@@ -43,8 +51,10 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
             expectFailure = true
         )
         result.assertThat().buildFailed()
-        assertBuildVerdictFileExist(true)
-        assertThat(plainTextBuildVerdict.readText()).isEqualTo(configurationIllegalMethodFails(temp))
+        assertBuildVerdictFiles(
+            expectedPlainTextVerdict = plainTextVerdicts.illegalMethodFails(),
+            expectedHtmlVerdict = htmlVerdicts.illegalMethodFails()
+        )
         val actualBuildVerdict = gson.fromJson(jsonBuildVerdict.readText(), BuildVerdict.Configuration::class.java)
 
         assertThat(actualBuildVerdict.error.message).isEqualTo("Build completed with 2 failures.")
@@ -77,7 +87,7 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
     }
 
     @Test
-    fun `configuration fails - build verdict contains project dependecy error`() {
+    fun `configuration fails - wrong project dependency`() {
         generateProject(
             KotlinModule(
                 name = appName,
@@ -94,8 +104,10 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
             expectFailure = true
         )
         result.assertThat().buildFailed()
-        assertBuildVerdictFileExist(true)
-        assertThat(plainTextBuildVerdict.readText()).isEqualTo(configurationProjectNotFoundFails(temp))
+        assertBuildVerdictFiles(
+            expectedPlainTextVerdict = plainTextVerdicts.wrongProjectDependencyFails(),
+            expectedHtmlVerdict = htmlVerdicts.wrongProjectDependencyFails()
+        )
 
         val actualBuildVerdict = gson.fromJson(jsonBuildVerdict.readText(), BuildVerdict.Configuration::class.java)
         val error = actualBuildVerdict.error as Single
@@ -110,6 +122,15 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
                 "Project with path ':not-existed' could not be found"
             )
         )
+    }
+
+    private fun assertBuildVerdictFiles(
+        expectedPlainTextVerdict: String,
+        expectedHtmlVerdict: String
+    ) {
+        assertBuildVerdictFileExist(true)
+        assertThat(plainTextBuildVerdict.readText()).isEqualTo(expectedPlainTextVerdict)
+        assertThat(htmlBuildVerdict.readText()).isEqualTo(expectedHtmlVerdict)
     }
 
     private fun Single.assertSingleError(

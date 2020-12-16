@@ -14,8 +14,9 @@ import com.google.gson.JsonElement
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.lang.reflect.Type
-import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter.Companion.buildVerdictFileName as plainTextVerdict
-import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter.Companion.buildVerdictFileName as rawVerdict
+import com.avito.android.build_verdict.internal.writer.HtmlBuildVerdictWriter.Companion.fileName as htmlVerdictFileName
+import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter.Companion.fileName as plainTextVerdictFileName
+import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter.Companion.fileName as rawVerdictFileName
 
 abstract class BaseBuildVerdictTest {
 
@@ -23,10 +24,13 @@ abstract class BaseBuildVerdictTest {
     lateinit var temp: File
 
     protected val jsonBuildVerdict by lazy {
-        File(temp, "outputs/build-verdict/$rawVerdict")
+        File(temp, "outputs/build-verdict/$rawVerdictFileName")
     }
     protected val plainTextBuildVerdict by lazy {
-        File(temp, "outputs/build-verdict/$plainTextVerdict")
+        File(temp, "outputs/build-verdict/$plainTextVerdictFileName")
+    }
+    protected val htmlBuildVerdict by lazy {
+        File(temp, "outputs/build-verdict/$htmlVerdictFileName")
     }
 
     protected val gson = GsonBuilder()
@@ -68,6 +72,10 @@ abstract class BaseBuildVerdictTest {
 
         assertWithMessage("$plainTextBuildVerdict is ${if (exist) "" else "not"} present")
             .that(plainTextBuildVerdict.exists())
+            .isEqualTo(exist)
+
+        assertWithMessage("$htmlBuildVerdict is ${if (exist) "" else "not"} present")
+            .that(htmlBuildVerdict.exists())
             .isEqualTo(exist)
     }
 
