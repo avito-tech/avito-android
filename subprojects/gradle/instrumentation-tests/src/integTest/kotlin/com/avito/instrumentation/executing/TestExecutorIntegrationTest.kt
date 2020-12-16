@@ -30,7 +30,7 @@ internal class TestExecutorIntegrationTest {
 
     @Timeout(10, unit = SECONDS)
     @Test
-    fun `executor - finished - no requests`(@TempDir tempDir: File) {
+    fun `executor - does not stuck - when no requests passed`(@TempDir tempDir: File) {
         val executor = createTestExecutor(logger = logger)
 
         executor.execute(
@@ -46,7 +46,7 @@ internal class TestExecutorIntegrationTest {
 
     @Timeout(10, unit = SECONDS)
     @Test
-    fun `executor - finished - problem with deployment`(@TempDir tempDir: File) {
+    fun `executor - does not stuck - when deployment failed with invalid image reference`(@TempDir tempDir: File) {
         val executor = createTestExecutor(logger = logger)
 
         executor.execute(
@@ -57,7 +57,7 @@ internal class TestExecutorIntegrationTest {
                     test = TestStaticDataPackage.createStubInstance(),
                     target = TargetConfiguration.Data.createStubInstance(
                         reservation = Reservation.StaticReservation(
-                            device = Device.CloudEmulator.createStubInstance(),
+                            device = Device.CloudEmulator.createStubInstance(image = "invalid/image/reference"),
                             count = 1,
                             quota = QuotaConfiguration.Data(
                                 retryCount = 0,
