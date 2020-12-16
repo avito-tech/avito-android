@@ -11,6 +11,7 @@ import java.io.File
 
 fun KubernetesReservationClient.Companion.createStubInstance(
     logger: CILogger,
+    adb: Adb = Adb(),
     buildId: String = getSystemProperty(name = "teamcityBuildId", defaultValue = "local"),
     deploymentNameGenerator: DeploymentNameGenerator = FakeDeploymentNameGenerator(buildId),
     kubernetesUrl: String = getSystemProperty("avito.kubernetes.url"),
@@ -31,7 +32,7 @@ fun KubernetesReservationClient.Companion.createStubInstance(
 
     return KubernetesReservationClient(
         androidDebugBridge = AndroidDebugBridge(
-            adb = Adb(),
+            adb = adb,
             logger = { logger.info(it) }
         ),
         kubernetesClient = createKubernetesClient(

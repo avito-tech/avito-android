@@ -19,13 +19,16 @@ import com.avito.utils.logging.CILogger
 import com.avito.utils.logging.FakeCILogger
 import com.avito.utils.logging.commonLogger
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.util.concurrent.TimeUnit.SECONDS
 
 internal class TestExecutorIntegrationTest {
 
     private val logger = FakeCILogger()
 
+    @Timeout(10, unit = SECONDS)
     @Test
     fun `executor - finished - no requests`(@TempDir tempDir: File) {
         val executor = createTestExecutor(logger = logger)
@@ -41,6 +44,7 @@ internal class TestExecutorIntegrationTest {
         // no assertion needed: just stuck in runBlocking forever before fix
     }
 
+    @Timeout(10, unit = SECONDS)
     @Test
     fun `executor - finished - problem with deployment`(@TempDir tempDir: File) {
         val executor = createTestExecutor(logger = logger)
