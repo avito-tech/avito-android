@@ -21,11 +21,15 @@ internal class Entrypoint(
 
         log("Test run started. requests = $requests")
 
-        val runResult: TestRunnerResult = runBlocking {
-            testRunner.runTests(
-                tests = requests,
-                scope = this
-            )
+        val runResult: TestRunnerResult = if (requests.isNotEmpty()) {
+            runBlocking {
+                testRunner.runTests(
+                    tests = requests,
+                    scope = this
+                )
+            }
+        } else {
+            TestRunnerResult(emptyMap())
         }
 
         val summary = summaryReportMaker.make(
@@ -53,4 +57,6 @@ internal class Entrypoint(
     private fun log(message: String) {
         logger.debug("Entrypoint: $message")
     }
+
+    companion object
 }

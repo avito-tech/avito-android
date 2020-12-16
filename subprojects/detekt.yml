@@ -623,7 +623,7 @@ style:
         ignoreLocalVariableDeclaration: true
         ignoreConstantDeclaration: true
         ignoreCompanionObjectPropertyDeclaration: true
-        ignoreAnnotation: false
+        ignoreAnnotation: true
         ignoreNamedArgument: true
         ignoreEnums: true
         ignoreRanges: false

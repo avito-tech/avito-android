@@ -6,6 +6,7 @@ import com.avito.runner.scheduler.runner.TestRunnerResult
 import com.avito.runner.service.model.TestCaseRun
 
 interface SummaryReportMaker {
+
     fun make(
         runResult: TestRunnerResult,
         startTimeMilliseconds: Long

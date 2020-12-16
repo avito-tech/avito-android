@@ -12,6 +12,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.concurrent.TimeUnit.MINUTES
 
 buildscript {
     dependencies {
@@ -285,6 +286,8 @@ subprojects {
                 )
 
                 systemProperty("isTest", true)
+
+                systemProperty("junit.jupiter.execution.timeout.default", MINUTES.toSeconds(5))
             }
         }
 
