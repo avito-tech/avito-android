@@ -6,17 +6,18 @@ fun Device.CloudEmulator.Companion.createStubInstance(
     model: String = "Android_SDK_built_for_x86",
     image: String = "some/image",
     gpu: Boolean = false,
-    cpuCoreLimit: String = "1.3",
-    cpuCoreRequest: String = "1",
-    memoryLimit: String = "3.5Gi"
-) =
-    Device.CloudEmulator(
-        name = name,
-        api = api,
-        model = model,
-        image = image,
-        gpu = gpu,
-        cpuCoresLimit = cpuCoreLimit,
-        cpuCoresRequest = cpuCoreRequest,
-        memoryLimit = memoryLimit
-    )
+    cpuCoreLimit: String? = "1.3",
+    cpuCoreRequest: String? = "1",
+    memoryLimit: String? = "3.5Gi",
+    memoryRequest: String? = null
+) = Device.CloudEmulator(
+    name = name,
+    api = api,
+    model = model,
+    image = image,
+    gpu = gpu,
+    cpuCoresLimit = cpuCoreLimit,
+    cpuCoresRequest = cpuCoreRequest,
+    memoryLimit = memoryLimit,
+    memoryRequest = memoryRequest
+)

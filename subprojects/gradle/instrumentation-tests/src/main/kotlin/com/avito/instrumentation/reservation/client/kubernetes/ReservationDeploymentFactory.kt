@@ -125,13 +125,23 @@ class ReservationDeploymentFactory(
                     }
 
                     resources {
-                        limits = mapOf(
-                            "cpu" to Quantity(emulator.cpuCoresLimit),
-                            "memory" to Quantity(emulator.memoryLimit)
-                        )
-                        requests = mapOf(
-                            "cpu" to Quantity(emulator.cpuCoresRequest)
-                        )
+                        limits = mutableMapOf<String, Quantity>().apply {
+                            if (!emulator.cpuCoresLimit.isNullOrBlank()) {
+                                plusAssign("cpu" to Quantity(emulator.cpuCoresLimit))
+                            }
+                            if (!emulator.memoryLimit.isNullOrBlank()) {
+                                plusAssign("memory" to Quantity(emulator.memoryLimit))
+                            }
+                        }
+
+                        requests = mutableMapOf<String, Quantity>().apply {
+                            if (!emulator.cpuCoresRequest.isNullOrBlank()) {
+                                plusAssign("cpu" to Quantity(emulator.cpuCoresRequest))
+                            }
+                            if (!emulator.memoryRequest.isNullOrBlank()) {
+                                plusAssign("memory" to Quantity(emulator.memoryRequest))
+                            }
+                        }
                     }
 
                     if (emulator.gpu) {
