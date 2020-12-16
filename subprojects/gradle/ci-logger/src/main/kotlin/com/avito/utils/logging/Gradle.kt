@@ -1,6 +1,6 @@
 package com.avito.utils.logging
 
-import com.avito.android.elastic.ElasticClient
+import com.avito.android.elastic.ElasticConfig
 import com.avito.android.sentry.sentryConfig
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
@@ -17,12 +17,8 @@ val Project.ciLogger: CILogger
 
 internal object CILoggerRegistry {
 
-    val loggersCache: MutableMap<String, Entity> = mutableMapOf()
+    val loggersCache = mutableMapOf<String, CILogger>()
 
-    data class Entity(
-        val logger: CILogger,
-        val destinationFile: File?
-    )
 }
 
 private fun provideLogger(project: Project, loggerName: String): CILogger {
@@ -30,10 +26,9 @@ private fun provideLogger(project: Project, loggerName: String): CILogger {
         CILoggerRegistry.loggersCache.getOrPut(loggerName) {
             defaultCILogger(
                 project = project,
-                name = loggerName,
-                elasticClient = ElasticFactory.create(project)
+                name = loggerName
             )
-        }.logger
+        }
     } else {
         localBuildLogger(project.gradle.startParameter.logLevel < LogLevel.LIFECYCLE, loggerName)
     }
@@ -43,9 +38,8 @@ private val isInvokedFromIde = System.getProperty("isInvokedFromIde")?.toBoolean
 
 private fun defaultCILogger(
     project: Project,
-    name: String,
-    elasticClient: ElasticClient
-): CILoggerRegistry.Entity {
+    name: String
+): CILogger {
 
     val destinationFileName = "${project.rootDir}/outputs/ci/$name.txt"
 
@@ -76,12 +70,13 @@ private fun defaultCILogger(
     val sentryHandler = CILoggingHandlerImplementation(
         destination = SentryDestination(sentryConfig.get())
     )
+    val elasticConfig = ElasticConfigFactory.config(project)
 
-    val logger = CILogger(
+    return CILogger(
         debugHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 destinationFileHandler,
-                elasticHandler(elasticClient, tag = name, level = "DEBUG")
+                elasticHandler(elasticConfig, tag = name, level = "DEBUG")
             ).let {
                 if (isInvokedFromIde) {
                     it.plus(onlyMessageStdoutHandler)
@@ -94,41 +89,38 @@ private fun defaultCILogger(
             handlers = listOf(
                 onlyMessageStdoutHandler,
                 destinationFileHandler,
-                elasticHandler(elasticClient, tag = name, level = "INFO")
+                elasticHandler(elasticConfig, tag = name, level = "INFO")
             )
         ),
         warnHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 explicitStdoutHandler,
                 destinationFileHandler,
-                elasticHandler(elasticClient, tag = name, level = "WARNING")
+                elasticHandler(elasticConfig, tag = name, level = "WARNING")
             )
         ),
         criticalHandler = CILoggingCombinedHandler(
             handlers = listOf(
                 explicitStderrHandler,
                 destinationFileHandler,
-                elasticHandler(elasticClient, tag = name, level = "ERROR"),
+                elasticHandler(elasticConfig, tag = name, level = "ERROR"),
                 sentryHandler
             )
         )
     )
-
-    return CILoggerRegistry.Entity(
-        logger = logger,
-        destinationFile = destinationFile
-    )
 }
 
-private fun elasticHandler(elasticClient: ElasticClient, tag: String, level: String): CILoggingHandler {
-    return CILoggingHandlerImplementation(
-        destination = ElasticDestination(
-            elasticClient = elasticClient,
-            tag = tag,
-            level = level
-        )
+private fun elasticHandler(
+    elasticConfig: ElasticConfig,
+    tag: String,
+    level: String
+): CILoggingHandler = CILoggingHandlerImplementation(
+    destination = ElasticDestination(
+        config = elasticConfig,
+        tag = tag,
+        level = level
     )
-}
+)
 
 private fun localBuildLogger(
     debug: Boolean,

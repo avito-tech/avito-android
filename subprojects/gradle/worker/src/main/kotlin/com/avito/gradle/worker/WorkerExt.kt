@@ -15,7 +15,7 @@ fun WorkerExecutor.inMemoryWork(work: () -> Unit) {
     }
 }
 
-internal abstract class NonSerializableWork<T> : WorkAction<NonSerializationWorkerParams> {
+internal abstract class NonSerializableWork : WorkAction<NonSerializationWorkerParams> {
 
     override fun execute() {
         parameters.state.work()
