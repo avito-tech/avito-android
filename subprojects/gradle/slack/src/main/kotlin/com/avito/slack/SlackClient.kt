@@ -135,8 +135,9 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                 }
         }
 
-        // Ищем ID канала по его имени
-        // Судя по https://stackoverflow.com/a/50114874/2893307 это единственный способ
+        /**
+         * https://stackoverflow.com/a/50114874/2893307
+         */
         private fun findChannelByName(name: String): Try<Channel> {
             val request = ChannelsListRequest.builder()
                 .token(token)
@@ -161,13 +162,13 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
 }
 
 private fun <T : SlackApiResponse> T.toTry(): Try<T> {
-    return if (this.isOk) {
+    return if (isOk) {
         Try.Success(this)
     } else {
         Try.Failure(
             RuntimeException(
-                "Slack request failed; error=${this.error} [needed=${this.needed}; " +
-                    "provided=${this.provided}]"
+                "Slack request failed; error=${error} [needed=${needed}; " +
+                    "provided=${provided}]"
             )
         )
     }
