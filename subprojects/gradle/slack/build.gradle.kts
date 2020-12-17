@@ -14,6 +14,8 @@ dependencies {
     implementation(Dependencies.okhttp)
     implementation(Dependencies.coroutinesCore)
 
+    integTestImplementation(project(":gradle:kotlin-dsl-support"))
+
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(project(":common:time-test-fixtures"))
