@@ -6,7 +6,7 @@ import com.avito.android.build_verdict.internal.task.lifecycle.DefaultTaskLifecy
 import com.avito.android.build_verdict.internal.task.lifecycle.TaskExecutionListenerBridge
 import com.avito.android.build_verdict.internal.task.lifecycle.TestTaskLifecycleListener
 import com.avito.android.build_verdict.internal.task.lifecycle.UserDefinedVerdictProducerTaskLifecycleListener
-import com.avito.android.build_verdict.internal.writer.CompositeBuildVerdictWriter
+import com.avito.android.build_verdict.internal.writer.HtmlBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter
 import com.avito.utils.logging.CILogger
@@ -14,8 +14,6 @@ import com.google.gson.GsonBuilder
 import org.gradle.BuildListener
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.execution.TaskExecutionListener
-import org.gradle.api.file.Directory
-import org.gradle.api.provider.Provider
 import org.gradle.internal.logging.events.OutputEventListener
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.util.Path
@@ -29,11 +27,34 @@ internal class BuildVerdictPluginServices(
     private val listeners = ConcurrentHashMap<OperationIdentifier, LogMessageListener>()
     private val logs = ConcurrentHashMap<Path, LogsTextBuilder>()
     private val verdicts = ConcurrentHashMap<Path, LogsTextBuilder>()
+    private val outputDir = lazy {
+        extension.outputDir.get().asFile.apply { mkdirs() }
+    }
     private val gson by lazy {
         GsonBuilder()
             .disableHtmlEscaping()
             .setPrettyPrinting()
             .create()
+    }
+
+    private val buildFailedListener by lazy {
+        BuildFailedListener(
+            writers = listOf(
+                RawBuildVerdictWriter(
+                    gson = gson,
+                    buildVerdictDir = outputDir,
+                    logger = logger
+                ),
+                PlainTextBuildVerdictWriter(
+                    buildVerdictDir = outputDir,
+                    logger = logger
+                ),
+                HtmlBuildVerdictWriter(
+                    buildVerdictDir = outputDir,
+                    logger = logger
+                )
+            )
+        )
     }
 
     fun gradleLogEventListener(): OutputEventListener {
@@ -60,14 +81,7 @@ internal class BuildVerdictPluginServices(
         )
     }
 
-    fun gradleConfigurationListener(): BuildListener {
-        return BuildConfigurationFailureListener(
-            createWriter(
-                outputDir = extension.outputDir,
-                logger = logger
-            )
-        )
-    }
+    fun gradleConfigurationListener() = BuildConfigurationFailureListener(buildFailedListener)
 
     fun gradleBuildFinishedListener(
         graph: TaskExecutionGraph
@@ -75,25 +89,6 @@ internal class BuildVerdictPluginServices(
         graph = graph,
         logs = logs,
         verdicts = verdicts,
-        writer = createWriter(extension.outputDir, logger)
+        listener = buildFailedListener
     )
-
-    private fun createWriter(
-        outputDir: Provider<Directory>,
-        logger: CILogger
-    ): CompositeBuildVerdictWriter {
-        return CompositeBuildVerdictWriter(
-            writers = listOf(
-                RawBuildVerdictWriter(
-                    buildVerdictDir = outputDir,
-                    logger = logger,
-                    gson = gson
-                ),
-                PlainTextBuildVerdictWriter(
-                    buildVerdictDir = outputDir,
-                    logger = logger
-                )
-            )
-        )
-    }
 }

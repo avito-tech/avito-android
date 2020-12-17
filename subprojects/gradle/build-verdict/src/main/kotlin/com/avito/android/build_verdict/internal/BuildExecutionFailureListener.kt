@@ -1,6 +1,5 @@
 package com.avito.android.build_verdict.internal
 
-import com.avito.android.build_verdict.internal.writer.BuildVerdictWriter
 import org.gradle.BuildResult
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.util.Path
@@ -9,7 +8,7 @@ internal class BuildExecutionFailureListener(
     private val graph: TaskExecutionGraph,
     private val logs: Map<Path, LogsTextBuilder>,
     private val verdicts: Map<Path, LogsTextBuilder>,
-    private val writer: BuildVerdictWriter
+    private val listener: BuildFailedListener
 ) : BaseBuildListener() {
 
     override fun buildFinished(result: BuildResult) {
@@ -23,7 +22,7 @@ internal class BuildExecutionFailureListener(
         val failedTasks = graph.allTasks
             .filter { it.state.failure != null }
 
-        writer.write(
+        listener.onFailed(
             BuildVerdict.Execution(
                 error = Error.from(failure),
                 failedTasks = failedTasks.map { task ->
@@ -36,6 +35,7 @@ internal class BuildExecutionFailureListener(
                     )
                 }
             )
+
         )
     }
 }
