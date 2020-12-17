@@ -34,9 +34,9 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
         private val methodsClient: MethodsClient = Slack.getInstance().methods()
 
         /**
-         * для [findMessage] фетчим [messagesLookupCount] сообщений вверх, число просто взято "с запасом"
+         * fetch [messagesLookupCount] messages back though history
          */
-        private val messagesLookupCount = 100
+        private val messagesLookupCount = 25
 
         override fun sendMessage(message: SlackSendMessageRequest): Try<SlackMessage> {
 
