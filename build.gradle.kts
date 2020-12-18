@@ -196,7 +196,8 @@ subprojects {
                     model = "Android_SDK_built_for_x86",
                     image = "${emulatorImage(registry, 22)}:740eb9a948",
                     cpuCoresRequest = "1",
-                    cpuCoresLimit = "1.3"
+                    cpuCoresLimit = "1.3",
+                    memoryLimit = "4Gi"
                 )
 
                 val emulator29 = CloudEmulator(
@@ -205,7 +206,8 @@ subprojects {
                     model = "Android_SDK_built_for_x86_64",
                     image = "${emulatorImage(registry, 29)}:915c1f20be",
                     cpuCoresRequest = "1",
-                    cpuCoresLimit = "1.3"
+                    cpuCoresLimit = "1.3",
+                    memoryLimit = "4Gi"
                 )
 
                 configurationsContainer.register("ui") {

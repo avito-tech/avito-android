@@ -57,7 +57,8 @@ plugins.withType<InstrumentationTestsPlugin> {
                 model = "Android_SDK_built_for_x86",
                 image = "${emulatorImage(registry, 27)}:b9877ffc00",
                 cpuCoresRequest = "1",
-                cpuCoresLimit = "1.3"
+                cpuCoresLimit = "1.3",
+                memoryLimit = "4Gi"
             )
 
             val emulator28 = CloudEmulator(
@@ -66,7 +67,8 @@ plugins.withType<InstrumentationTestsPlugin> {
                 model = "Android_SDK_built_for_x86_64",
                 image = "${emulatorImage(registry, 28)}:951e8f56c4",
                 cpuCoresRequest = "1",
-                cpuCoresLimit = "1.3"
+                cpuCoresLimit = "1.3",
+                memoryLimit = "4Gi"
             )
 
             val emulator29 = CloudEmulator(
@@ -75,7 +77,8 @@ plugins.withType<InstrumentationTestsPlugin> {
                 model = "Android_SDK_built_for_x86_64",
                 image = "${emulatorImage(registry, 29)}:915c1f20be",
                 cpuCoresRequest = "1",
-                cpuCoresLimit = "1.3"
+                cpuCoresLimit = "1.3",
+                memoryLimit = "4Gi"
             )
 
             filters.register("excludeFlaky") {
