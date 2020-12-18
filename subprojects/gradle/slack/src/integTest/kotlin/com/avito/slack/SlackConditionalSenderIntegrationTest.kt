@@ -1,5 +1,6 @@
 package com.avito.slack
 
+import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
@@ -12,11 +13,9 @@ import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
-    // todo хреново что для локального запуска нужно здесь ENV задавать
-    private val testChannel = SlackChannel(requireNotNull(System.getProperty("avito.slack.test.channel")))
-    private val testToken = requireNotNull(System.getProperty("avito.slack.test.token"))
-    private val slackClient: SlackClient =
-        SlackClient.Impl(testToken, requireNotNull(System.getProperty("avito.slack.test.workspace")))
+    private val testChannel = SlackChannel(getSystemProperty("avito.slack.test.channel"))
+    private val testToken = getSystemProperty("avito.slack.test.token")
+    private val slackClient: SlackClient = SlackClient.Impl(testToken, getSystemProperty("avito.slack.test.workspace"))
     private val logger: CILogger = CILogger.allToStdout
 
     @Test
@@ -73,7 +72,6 @@ internal class SlackConditionalSenderIntegrationTest {
         assertThat(secondMessageTry).isInstanceOf<Try.Success<*>>()
         assertThat(secondMessageTry.get().text).contains("second message")
 
-        // так проверяем что сообщение написано в треде к первому
         assertThat(secondMessageTry.get().threadId).isEqualTo(firstMessage.id)
     }
 
