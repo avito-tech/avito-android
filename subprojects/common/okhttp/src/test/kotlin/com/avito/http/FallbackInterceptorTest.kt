@@ -16,7 +16,7 @@ internal class FallbackInterceptorTest {
 
     private val doFallbackOnThisResponseCode = 503
 
-    private val api: FakeApi by lazy {
+    private val api: StubApi by lazy {
         createApi(
             baseUrl = server.url("/")
         ) {

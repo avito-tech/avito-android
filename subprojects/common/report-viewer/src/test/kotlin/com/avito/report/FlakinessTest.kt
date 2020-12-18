@@ -10,11 +10,11 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 class FlakinessTest {
 
     @Test
-    fun `prepared data contains flakiness - test is stable`(reports: MockReportApi) {
+    fun `prepared data contains flakiness - test is stable`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1002134",
@@ -39,7 +39,7 @@ class FlakinessTest {
     }
 
     @Test
-    fun `prepared data contains flakiness - test is flaky`(reports: MockReportApi) {
+    fun `prepared data contains flakiness - test is flaky`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1002134",

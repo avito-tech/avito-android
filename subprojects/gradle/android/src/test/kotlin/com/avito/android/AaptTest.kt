@@ -2,7 +2,7 @@ package com.avito.android
 
 import com.avito.truth.isInstanceOf
 import com.avito.utils.ExistingDirectory
-import com.avito.utils.FakeProcessRunner
+import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ internal class AaptTest {
 
         val expected = "ru.domofond.app.dev"
 
-        val processRunner = FakeProcessRunner()
+        val processRunner = StubProcessRunner()
         val aapt = Aapt.Impl(ExistingDirectory.Stub, processRunner)
 
         processRunner.result = Try.Success(aaptOutput)
@@ -39,7 +39,7 @@ internal class AaptTest {
             There is no valid output
         """.trimIndent()
 
-        val processRunner = FakeProcessRunner()
+        val processRunner = StubProcessRunner()
         val aapt = Aapt.Impl(ExistingDirectory.Stub, processRunner)
 
         processRunner.result = Try.Success(aaptOutput)

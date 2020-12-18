@@ -1,9 +1,9 @@
 package com.avito.instrumentation
 
 import com.avito.cd.CdBuildResult
-import com.avito.instrumentation.report.FakeReport
-import com.avito.report.FakeReportViewer
+import com.avito.instrumentation.report.StubReport
 import com.avito.report.ReportViewer
+import com.avito.report.StubReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
@@ -15,8 +15,8 @@ class GetTestResultsActionTest {
     fun `action - getTestResultAction success`() {
         val reportCoordinates = ReportCoordinates.createStubInstance()
         val reportId = "reportId"
-        val report = FakeReport().also { report -> report.reportId = reportId }
-        val reportViewer = FakeReportViewer()
+        val report = StubReport().also { report -> report.reportId = reportId }
+        val reportViewer = StubReportViewer()
         val results = createGetTestResultsAction(
             report = report,
             reportViewer = reportViewer,
@@ -39,8 +39,8 @@ class GetTestResultsActionTest {
 
     private fun createGetTestResultsAction(
         reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
-        report: FakeReport = FakeReport(),
-        reportViewer: ReportViewer = FakeReportViewer()
+        report: StubReport = StubReport(),
+        reportViewer: ReportViewer = StubReportViewer()
     ): GetTestResultsAction {
         return GetTestResultsAction(
             reportViewerUrl = "xxx",

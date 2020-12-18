@@ -7,7 +7,7 @@ plugins {
 extra["artifact-id"] = "runner-shared-test"
 
 dependencies {
-    api(project(":gradle:runner:fake"))
+    api(project(":gradle:runner:stub"))
     api(Dependencies.Test.coroutinesTest)
 
     compileOnly(gradleApi())

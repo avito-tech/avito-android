@@ -7,11 +7,11 @@ import com.avito.report.model.createStubInstance
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 class TestCaseIdTest {
 
     @Test
-    fun `testCaseId doesnt sent if null`(reports: MockReportApi) {
+    fun `testCaseId doesnt sent if null`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -26,7 +26,7 @@ class TestCaseIdTest {
     }
 
     @Test
-    fun `grouping_key sent for dataSet without testCaseId`(reports: MockReportApi) {
+    fun `grouping_key sent for dataSet without testCaseId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

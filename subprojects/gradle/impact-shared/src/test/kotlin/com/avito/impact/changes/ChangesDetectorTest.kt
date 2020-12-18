@@ -5,7 +5,7 @@ import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
 import com.avito.test.gradle.mutate
-import com.avito.utils.logging.FakeCILogger
+import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.BeforeEach
@@ -121,7 +121,7 @@ class ChangesDetectorTest {
             gitRootDir = rootDir,
             targetCommit = targetCommit,
             ignoreSettings = IgnoreSettings(ignorePatterns),
-            logger = FakeCILogger()
+            logger = StubCILogger()
         )
             .computeChanges(targetDir, excludedDirectories)
             .fold(

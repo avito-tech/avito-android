@@ -126,7 +126,7 @@ private fun buildRequest(
         bodySize = if (body == null) -1 else Buffer().writeString(body, Charset.forName("UTF-8")).size,
         body = if (body == null) Buffer() else Buffer().writeString(body, Charset.forName("UTF-8")),
         sequenceNumber = -1,
-        socket = FakeSocket(
+        socket = StubSocket(
             inetAddress = InetAddress.getByAddress(
                 "127.0.0.1",
                 byteArrayOf(127, 0, 0, 1)

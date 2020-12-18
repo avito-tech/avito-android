@@ -1,6 +1,6 @@
 package com.avito.instrumentation
 
-import com.avito.android.FakeTestSuiteLoader
+import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
@@ -14,7 +14,7 @@ import com.avito.instrumentation.report.Report.Impl
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.scheduling.TestsSchedulerFactory
-import com.avito.report.FakeReportsApi
+import com.avito.report.StubReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
 import com.avito.report.model.GetReportResult
@@ -22,9 +22,9 @@ import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
-import com.avito.utils.FakeBuildFailer
+import com.avito.utils.StubBuildFailer
 import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.FakeCILogger
+import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.funktionale.tries.Try
@@ -39,8 +39,8 @@ internal class InstrumentationTestsActionIntegrationTest {
     private lateinit var inputDir: File
     private lateinit var apk: File
     private lateinit var outputDir: File
-    private val reportsApi = FakeReportsApi()
-    private val testSuiteLoader = FakeTestSuiteLoader()
+    private val reportsApi = StubReportsApi()
+    private val testSuiteLoader = StubTestSuiteLoader()
     private val reportCoordinates = ReportCoordinates.createStubInstance()
     private val testRunner = StubTestExecutor()
     private val testExecutorFactory = object : TestExecutorFactory {
@@ -54,8 +54,8 @@ internal class InstrumentationTestsActionIntegrationTest {
             return testRunner
         }
     }
-    private val buildFailer = FakeBuildFailer()
-    private val logger: FakeCILogger = FakeCILogger()
+    private val buildFailer = StubBuildFailer()
+    private val logger: StubCILogger = StubCILogger()
 
     @BeforeEach
     fun setup(@TempDir tempDir: File) {
