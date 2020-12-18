@@ -165,8 +165,6 @@ private fun <T : SlackApiResponse> T.toTry(): Try<T> {
     return if (isOk) {
         Try.Success(this)
     } else {
-        Try.Failure(
-            RuntimeException("Slack request failed; error=$error [needed=$needed; provided=$provided]")
-        )
+        Try.Failure(RuntimeException("Slack request failed; error=$error [needed=$needed; provided=$provided]"))
     }
 }

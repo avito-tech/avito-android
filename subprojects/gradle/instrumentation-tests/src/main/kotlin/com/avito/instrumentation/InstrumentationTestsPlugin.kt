@@ -7,6 +7,7 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
+import com.avito.android.InstrumentationChangedTestsFinderApi
 import com.avito.android.LoadTestsFromApkTask
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
@@ -94,7 +95,23 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     group = ciTaskGroup
                 }
 
-                val instrumentationTask = project.tasks.register<InstrumentationTestsTask>(
+                if (instrumentationConfiguration.impactAnalysisPolicy is On.RunChangedTests) {
+                    if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
+                        project.tasks.changedTestsFinderTaskProvider().apply {
+                            configure {
+                                it.targetCommit.set(
+                                    gitState.map { git ->
+                                        requireNotNull(git.targetBranch?.commit) {
+                                            "Target commit is required to find modified tests"
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                val instrumentationTaskProvider = project.tasks.register<InstrumentationTestsTask>(
                     instrumentationTaskName(instrumentationConfiguration.name)
                 ) {
                     timeout.set(Duration.ofSeconds(instrumentationConfiguration.timeoutInSeconds))
@@ -115,6 +132,32 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     }
                     this.registry.set(extensionData.registry)
                     this.kubernetesCredentials.set(project.kubernetesCredentials)
+
+                    this.impactAnalysisPolicy.set(instrumentationConfiguration.impactAnalysisPolicy)
+
+                    when (instrumentationConfiguration.impactAnalysisPolicy) {
+                        is On.RunAffectedTests, is On.RunNewTests, is On.RunModifiedTests -> {
+                            val impactTaskProvider = project.tasks.analyzeTestImpactTask()
+
+                            this.dependencyOn(impactTaskProvider) {
+                                this.affectedTests.set(it.testsToRunFile)
+                                this.newTests.set(it.addedTestsFile)
+                                this.modifiedTests.set(it.modifiedTestsFile)
+                            }
+                        }
+
+                        is On.RunChangedTests ->
+                            if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
+                                val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
+
+                                this.dependencyOn(impactTaskProvider) {
+                                    this.changedTests.set(it.changedTestsFile)
+                                }
+                            }
+
+                        is ImpactAnalysisPolicy.Off -> {
+                        }
+                    }
                 }
 
                 project.withAndroidLib { libExtension ->
@@ -143,50 +186,24 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
                         preInstrumentationTask.configure { it.dependsOn(testApkProvider) }
 
-                        instrumentationTask.configure { task ->
-                            task.parameters.set(runFunctionalTestsParameters)
-
-                            task.impactAnalysisPolicy.set(instrumentationConfiguration.impactAnalysisPolicy)
-
-                            when (instrumentationConfiguration.impactAnalysisPolicy) {
-                                is On.RunAffectedTests, is On.RunNewTests, is On.RunModifiedTests -> {
-                                    val impactTask = project.tasks.analyzeTestImpactTask().get()
-                                    task.affectedTests.set(impactTask.testsToRunFile)
-                                    task.newTests.set(impactTask.addedTestsFile)
-                                    task.modifiedTests.set(impactTask.modifiedTestsFile)
-                                }
-
-                                is On.RunChangedTests -> {
-                                    val impactTask = project.tasks.changedTestsFinderTaskProvider().apply {
-                                        configure {
-                                            it.targetCommit.set(
-                                                gitState.map { git ->
-                                                    requireNotNull(git.targetBranch?.commit) {
-                                                        "Target commit is required to find modified tests"
-                                                    }
-                                                }
-                                            )
-                                        }
-                                    }
-                                    task.changedTests.set(impactTask.get().changedTestsFile)
-                                }
-
-                                is ImpactAnalysisPolicy.Off -> {
-                                }
-                            }
+                        instrumentationTaskProvider.configure { instrumentationTask ->
+                            instrumentationTask.parameters.set(runFunctionalTestsParameters)
 
                             if (extensionData.testApplicationApk == null) {
-                                task.dependencyOn(testApkProvider) { dependentTask ->
-                                    task.testApplication.set(dependentTask.apkDirectory())
+                                instrumentationTask.dependencyOn(testApkProvider) { dependentTask ->
+                                    instrumentationTask.testApplication.set(dependentTask.apkDirectory())
                                 }
                             } else {
-                                task.testApplication.set(File(extensionData.testApplicationApk))
+                                instrumentationTask.testApplication.set(File(extensionData.testApplicationApk))
                             }
 
                             if (extensionData.testProguardMapping == null) {
-                                task.setupProguardMapping(task.testProguardMapping, testVariant)
+                                instrumentationTask.setupProguardMapping(
+                                    instrumentationTask.testProguardMapping,
+                                    testVariant
+                                )
                             } else {
-                                task.testProguardMapping.set(extensionData.testProguardMapping)
+                                instrumentationTask.testProguardMapping.set(extensionData.testProguardMapping)
                             }
                         }
                     }
@@ -217,7 +234,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                 )
                             }
 
-                            instrumentationTask.configure { task ->
+                            instrumentationTaskProvider.configure { task ->
                                 task.parameters.set(runFunctionalTestsParameters)
 
                                 if (extensionData.applicationApk == null) {
