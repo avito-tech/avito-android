@@ -28,7 +28,8 @@ class InstrumentationTestsPluginCIFalseTests {
                                 false,
                                 "1",
                                 "1.3",
-                                "3.5Gi"
+                                "3.5Gi",
+                                "3Gi"
                             )
                         """.trimIndent()
         )
@@ -57,7 +58,8 @@ class InstrumentationTestsPluginCIFalseTests {
                                 false,
                                 "1",
                                 "1.3",
-                                "3.5Gi"
+                                "3.5Gi",
+                                "3Gi"
                             )
                         """.trimIndent()
         )
