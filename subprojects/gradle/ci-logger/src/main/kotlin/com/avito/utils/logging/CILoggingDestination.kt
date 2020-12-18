@@ -23,7 +23,7 @@ internal object StdoutDestination : CILoggingDestination {
 
     override fun write(message: String, throwable: Throwable?) {
         println(message)
-        throwable?.also { println(it) }
+        throwable?.also { println("  cause: $it") }
     }
 
     override fun child(tag: String): CILoggingDestination = this
