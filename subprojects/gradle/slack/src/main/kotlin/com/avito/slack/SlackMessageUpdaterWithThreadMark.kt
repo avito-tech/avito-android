@@ -21,8 +21,8 @@ class SlackMessageUpdaterWithThreadMark(
         newContent: String
     ): Try<SlackMessage> {
         logger.info(
-            "[Slack] Updating message with thread mark; channel=${previousMessage.channel}; " +
-                "oldMessage=${SlackStringFormat.ellipsize(string = previousMessage.text, limit = 50)}; "
+            "[Slack] Updating message with thread mark; channel: ${previousMessage.channel.name}; " +
+                "oldMessage: '${SlackStringFormat.ellipsize(string = previousMessage.text, limit = 50)}'; "
         )
         return slackClient.sendMessage(
             SlackSendMessageRequest(
@@ -34,8 +34,8 @@ class SlackMessageUpdaterWithThreadMark(
             )
         ).flatMap {
             logger.info(
-                "[Slack] Thread message posted; channel=${previousMessage.channel}; " +
-                    "threadId=${previousMessage.timestamp}; " +
+                "[Slack] Thread message posted; channel: ${previousMessage.channel.name}; " +
+                    "threadId: '${previousMessage.timestamp}'; " +
                     SlackStringFormat.ellipsize(string = threadMessage, limit = 50)
             )
 
@@ -48,7 +48,7 @@ class SlackMessageUpdaterWithThreadMark(
             .onSuccess {
                 logger.info(
                     "[Slack] Original message updated; " +
-                        "newMessage=${SlackStringFormat.ellipsize(string = newContent, limit = 50)}"
+                        "newMessage: '${SlackStringFormat.ellipsize(string = newContent, limit = 50)}'"
                 )
             }
     }
