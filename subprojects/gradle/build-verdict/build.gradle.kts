@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:build-verdict-tasks-api"))
     implementation(Dependencies.gson)
+    implementation(Dependencies.kotlinHtml)
     testImplementation(project(":gradle:test-project"))
 }
 

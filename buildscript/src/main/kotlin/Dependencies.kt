@@ -20,7 +20,7 @@ object Dependencies {
     const val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
     const val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib"
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect"
-    const val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.1"
+    const val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2"
     const val kotlinCompilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable"
     const val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"

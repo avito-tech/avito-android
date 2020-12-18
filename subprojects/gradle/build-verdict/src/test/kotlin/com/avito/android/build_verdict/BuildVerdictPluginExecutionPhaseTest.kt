@@ -12,6 +12,14 @@ import java.io.File
 
 class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
 
+    private val htmlVerdicts by lazy {
+        HtmlVerdictCases.Execution(temp)
+    }
+
+    private val plainTextVerdicts by lazy {
+        PlainTextVerdictCases.Execution(temp)
+    }
+
     @Test
     fun `kotlin compilation fails - build-verdict contains kotlin compile info`() {
         generateProject()
@@ -27,7 +35,8 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
 
         assertBuildVerdict(
             failedTask = "compileDebugKotlin",
-            plainTextVerdict = compileFails(temp),
+            expectedPlainTextVerdict = plainTextVerdicts.compileKotlinFails(),
+            expectedHtmlVerdict = htmlVerdicts.compileKotlinFails(),
             expectedErrorLogs = listOf(
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
@@ -55,7 +64,8 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
 
         assertBuildVerdict(
             failedTask = "kaptGenerateStubsDebugKotlin",
-            plainTextVerdict = kaptStubGeneratingFails(temp),
+            expectedPlainTextVerdict = plainTextVerdicts.kaptStubGeneratingFails(),
+            expectedHtmlVerdict = htmlVerdicts.kaptStubGeneratingFails(),
             expectedErrorLogs = listOf(
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 1): Expecting a top level declaration",
                 "$temp/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expecting a top level declaration"
@@ -98,7 +108,8 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
         @Suppress("MaxLineLength")
         assertBuildVerdict(
             failedTask = "kaptDebugKotlin",
-            plainTextVerdict = kaptFails(temp),
+            expectedPlainTextVerdict = plainTextVerdicts.kaptFails(),
+            expectedHtmlVerdict = htmlVerdicts.kaptFails(),
             expectedErrorLogs = listOf(
                 "$temp/app/build/tmp/kapt3/stubs/debug/DaggerComponent.java:6: error: [Dagger/MissingBinding] CoffeeMaker cannot be provided without an @Inject constructor or an @Provides-annotated method.",
                 "public abstract interface DaggerComponent {",
@@ -150,7 +161,8 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
 
         assertBuildVerdict(
             failedTask = "testDebugUnitTest",
-            plainTextVerdict = unitTestsFails(temp),
+            expectedPlainTextVerdict = plainTextVerdicts.unitTestsFails(),
+            expectedHtmlVerdict = htmlVerdicts.unitTestsFails(),
             expectedErrorLogs = listOf(
                 "No error logs"
             )
@@ -222,7 +234,8 @@ buildVerdict {
 
         assertBuildVerdict(
             failedTask = "customTask",
-            plainTextVerdict = customTaskFails,
+            expectedPlainTextVerdict = plainTextVerdicts.buildVerdictTaskFails(),
+            expectedHtmlVerdict = htmlVerdicts.buildVerdictTaskFails(),
             expectedErrorLogs = listOf(
                 "No error logs"
             )
@@ -232,11 +245,13 @@ buildVerdict {
     private fun assertBuildVerdict(
         failedApp: String = appName,
         failedTask: String,
-        plainTextVerdict: String,
+        expectedPlainTextVerdict: String,
+        expectedHtmlVerdict: String,
         expectedErrorLogs: List<String>
     ) {
         assertBuildVerdictFileExist(true)
-        assertThat(plainTextBuildVerdict.readText()).isEqualTo(plainTextVerdict)
+        assertThat(plainTextBuildVerdict.readText()).isEqualTo(expectedPlainTextVerdict)
+        assertThat(htmlBuildVerdict.readText().trimIndent()).isEqualTo(expectedHtmlVerdict)
 
         val actualBuildVerdict = gson.fromJson(jsonBuildVerdict.readText(), BuildVerdict.Execution::class.java)
 

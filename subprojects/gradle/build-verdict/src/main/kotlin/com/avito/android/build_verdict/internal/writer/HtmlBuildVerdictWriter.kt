@@ -4,7 +4,7 @@ import com.avito.android.build_verdict.internal.BuildVerdict
 import com.avito.utils.logging.CILogger
 import java.io.File
 
-internal class PlainTextBuildVerdictWriter(
+internal class HtmlBuildVerdictWriter(
     buildVerdictDir: Lazy<File>,
     override val logger: CILogger
 ) : BuildVerdictWriter(buildVerdictDir, fileName) {
@@ -12,13 +12,13 @@ internal class PlainTextBuildVerdictWriter(
     override fun writeTo(buildVerdict: BuildVerdict, destination: File) {
         destination.writeText(
             when (buildVerdict) {
-                is BuildVerdict.Execution -> buildVerdict.plainText()
-                is BuildVerdict.Configuration -> buildVerdict.plainText()
+                is BuildVerdict.Execution -> buildVerdict.html()
+                is BuildVerdict.Configuration -> buildVerdict.html()
             }
         )
     }
 
     companion object {
-        const val fileName = "pretty-build-verdict.txt"
+        const val fileName = "build-verdict.html"
     }
 }
