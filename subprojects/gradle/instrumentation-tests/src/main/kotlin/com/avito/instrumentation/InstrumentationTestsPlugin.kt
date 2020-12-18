@@ -146,7 +146,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                             }
                         }
 
-                        is On.RunChangedTests -> {
+                        is On.RunChangedTests ->
                             if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
                                 val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
 
@@ -154,7 +154,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                     this.changedTests.set(it.changedTestsFile)
                                 }
                             }
-                        }
 
                         is ImpactAnalysisPolicy.Off -> {
                         }

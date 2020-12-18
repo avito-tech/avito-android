@@ -36,10 +36,7 @@ class InstrumentationTestsAction(
 
     override fun run() {
         logger.debug("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
-        logger.debug(
-            "Impact analysis: ${params.impactAnalysisResult.policy.javaClass.simpleName} " +
-                "${params.impactAnalysisResult}"
-        )
+        logger.debug("Impact analysis: ${params.impactAnalysisResult}")
 
         val testsExecutionResults = scheduler.schedule()
 
