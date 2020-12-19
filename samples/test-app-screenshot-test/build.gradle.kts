@@ -87,7 +87,6 @@ plugins.withType<InstrumentationTestsPlugin> {
 
             configurationsContainer.register("screenshot") {
                 reportSkippedTests = false
-                reportFlakyTests = false
                 filter = "excludeFlaky"
 
                 setOf(emulator27, emulator28, emulator29).forEach { emulator ->
