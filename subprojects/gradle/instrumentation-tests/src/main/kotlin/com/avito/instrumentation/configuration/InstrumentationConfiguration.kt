@@ -10,12 +10,6 @@ abstract class InstrumentationConfiguration(val name: String) {
 
     var instrumentationParams: Map<String, String> = emptyMap()
 
-    @Deprecated("remove after 2020.23")
-    var reportFlakyTests = false
-
-    /**
-     * Отправлять в репорт ignored/skipped тесты, нужно для проверок тестов на ПР c потенцианльно полным сьютом тестов
-     */
     var reportSkippedTests = false
 
     var impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off

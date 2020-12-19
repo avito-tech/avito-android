@@ -337,7 +337,6 @@ class RealTest {
     private fun registerUiTestConfigurations(vararg names: String): String {
         val configurations = names.map { name ->
             """$name {
-                    reportFlakyTests = false
                     targets {
                         api22 {
                             deviceName = "api22"
