@@ -54,6 +54,7 @@ snackbar.showSnackbar()
 import com.avito.android.test.app.second.SnackbarRule
 import org.junit.Test
 import org.junit.Rule
+
 class SomeTest {
     
     @get:Rule

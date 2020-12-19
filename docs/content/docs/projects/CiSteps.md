@@ -146,7 +146,7 @@ uiTests {
 
 #### Android lint
 
-Run [Android lint]({{< ref "/docs/checks/AndroidLint.md" >}}) tasks.
+Runs Android lint tasks.
 
 {{< tabs "lint" >}}
 {{< tab "Kotlin" >}}
@@ -356,7 +356,7 @@ deploy {}
 
 #### Mark report as source of truth for TMS
 
-See [Test case in code]({{< ref "/docs/test/TestCaseInCode.md" >}})
+See [Test case in code](http://links.k.avito.ru/Wg)
 
 #### Configuration checks
 

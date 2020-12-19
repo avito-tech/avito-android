@@ -424,7 +424,7 @@ buildChecks {
 {{<avito check>}}
 
 This check detects if you override [Gradle project property](https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties) by command-line.
-It sends mismatches to [statsd]({{< ref "/docs/analytics/Statsd.md" >}}). 
+It sends mismatches to statsd. 
 This information helps to see frequently changed propeties that can lead to remote cache misses.
 
 {{< tabs "Gradle properties" >}}
