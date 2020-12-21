@@ -67,6 +67,15 @@ publish_to_maven_local:
 publish_to_artifactory:
 	./gradlew -p subprojects publishToArtifactory -PprojectVersion=$(version) $(log_level)
 
+# precondition: push $(version) branch
+# post actions: go to link in output, edit notes and publish release
+draft_release:
+	gh release create $(version) \
+		--draft \
+		--target $(version) \
+		--title $(version) \
+		--notes "$$(git log --pretty=format:%s $(prev_version)..$(version) | cat)"
+
 sample_app_instrumentation:
 	./gradlew samples:$(module):instrumentation$(instrumentation) $(params)
 
