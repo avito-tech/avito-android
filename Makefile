@@ -49,6 +49,21 @@ ifdef stacktrace
 params +=--stacktrace
 endif
 
+# from: https://stackoverflow.com/questions/10858261/abort-makefile-if-variable-not-set
+#
+# Check that given variables are set and all have non-empty values,
+# die with an error otherwise.
+#
+# Params:
+#   1. Variable name(s) to test.
+#   2. (optional) Error message to print.
+check_defined = \
+    $(strip $(foreach 1,$1, \
+        $(call __check_defined,$1,$(strip $(value 2)))))
+__check_defined = \
+    $(if $(value $1),, \
+      $(error Undefined $1$(if $2, ($2))))
+
 help:
 	./gradlew help $(params)
 
@@ -66,6 +81,23 @@ publish_to_maven_local:
 
 publish_to_artifactory:
 	./gradlew -p subprojects publishToArtifactory -PprojectVersion=$(version) $(log_level)
+
+# precondition:
+# - installed CLI: https://cli.github.com/
+# - push $(version) branch
+#
+# post actions:
+# - go to link in output
+# - edit notes
+# - publish release
+draft_release:
+	$(call check_defined, version)
+	$(call check_defined, prev_version)
+	gh release create $(version) \
+		--draft \
+		--target $(version) \
+		--title $(version) \
+		--notes "$$(git log --pretty=format:%s $(prev_version)..$(version) | cat)"
 
 sample_app_instrumentation:
 	./gradlew samples:$(module):instrumentation$(instrumentation) $(params)
