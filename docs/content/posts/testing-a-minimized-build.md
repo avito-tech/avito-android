@@ -1,11 +1,12 @@
 ---
+date: 2020-03-20
 title: Testing a minimized build
-type: docs
+tags: [testing, R8]
 ---
 
 # Testing a minimized build
 
-About minimization: [link]({{< ref "/docs/assemble/Minimization.md" >}})
+About minimization: [link](https://developer.android.com/studio/build/shrink-code)
 
 We want to run UI tests against build as close as possible to a production one.\
 It's quite a challenging task, mostly because of tooling problems: [#126429384](https://issuetracker.google.com/issues/126429384)\
@@ -14,8 +15,6 @@ Developers should maintain a list of keep rules of code referenced from a test a
 We work around these problems by using [keeper](https://slackhq.github.io/keeper/).
 
 ## Build type
-
-Our build types: [link]({{< ref "/docs/assemble/BuildTypes.md" >}})
 
 Android Gradle plugin uses `testBuildType` property to determine which build type to test.
 

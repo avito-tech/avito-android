@@ -31,7 +31,7 @@ Plugins:
 - `:module-types` - Gradle plugin to prevent modules go to wrong configurations (android-test module as an app's implementation dependency for example) 
 - `:code-ownership` - Gradle plugin to prevent dependency on other team's private modules
 - `:prosector` - Gradle plugin and client for security service
-- `:qapps` - Gradle plugin to deliver apps to internal distribution service, see [QApps]({{< ref "/docs/cd/QApps.md" >}})
+- `:qapps` - Gradle plugin to deliver apps to internal distribution service
 - `:robolectric`- Gradle plugin to configure [robolectrtic](http://robolectric.org/) for internal project
 - `:room-config` - Gradle plugin to configure [room](https://developer.android.com/topic/libraries/architecture/room) for internal project
 - `:signer` - Gradle plugin for internal app signer
@@ -70,7 +70,7 @@ Code that goes in `androidTestImplementation` configuration and runs on emulator
 - `:junit-utils` - //todo move to common
 - `:mockito-utils` - //todo move to common
 - `:resource-manager-exceptions` - //todo remove
-- `:test-annotations` - annotations to supply meta information for reports and [test management system]({{< ref "/docs/test/TestCaseInCode.md" >}})
+- `:test-annotations` - annotations to supply meta information for reports to internal test management system
 - `:test-app` - app we are using to test `:ui-testing-` libraries
 - `:test-inhouse-runner` - custom [android junit runner](https://developer.android.com/reference/android/support/test/runner/AndroidJUnitRunner.html)
 - `:test-report` - client to gather test runtime information for reporting
