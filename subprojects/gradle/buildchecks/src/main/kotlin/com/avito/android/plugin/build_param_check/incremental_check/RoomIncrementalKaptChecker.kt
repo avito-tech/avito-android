@@ -56,7 +56,7 @@ internal class RoomIncrementalKaptChecker(
 
     private fun checkCommonWay(processor: AbstractProcessor): Boolean {
         processor.init(
-            FakeProcessingEnvironment(
+            StubProcessingEnvironment(
                 options = mapOf("room.incremental" to "true"),
                 logTag = "RoomMessage"
             )

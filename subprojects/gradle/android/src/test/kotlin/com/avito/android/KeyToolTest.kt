@@ -2,7 +2,7 @@ package com.avito.android
 
 import com.avito.truth.isInstanceOf
 import com.avito.utils.ExistingFile
-import com.avito.utils.FakeProcessRunner
+import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
@@ -34,7 +34,7 @@ internal class KeyToolTest {
 
         val expected = "6aef8d82c935cb0ae597ac31418df7f4f28505d6"
 
-        val processRunner = FakeProcessRunner()
+        val processRunner = StubProcessRunner()
         val keyTool = KeyTool(processRunner)
 
         processRunner.result = Try.Success(keytoolOutput)
@@ -50,7 +50,7 @@ internal class KeyToolTest {
             There is no valid output
         """.trimIndent()
 
-        val processRunner = FakeProcessRunner()
+        val processRunner = StubProcessRunner()
         val keyTool = KeyTool(processRunner)
 
         processRunner.result = Try.Success(keytoolOutput)

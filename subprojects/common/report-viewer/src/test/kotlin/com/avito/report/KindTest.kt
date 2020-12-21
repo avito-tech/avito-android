@@ -10,11 +10,11 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class KindTest {
 
     @Test
-    fun `kind e2e sent`(reports: MockReportApi) {
+    fun `kind e2e sent`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -27,7 +27,7 @@ internal class KindTest {
     }
 
     @Test
-    fun `kind component sent`(reports: MockReportApi) {
+    fun `kind component sent`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -40,7 +40,7 @@ internal class KindTest {
     }
 
     @Test
-    fun `kind manual sent`(reports: MockReportApi) {
+    fun `kind manual sent`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

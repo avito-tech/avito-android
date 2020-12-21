@@ -5,7 +5,7 @@ import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.reservation.request.createStubInstance
 import com.avito.truth.assertThat
-import com.avito.utils.logging.FakeCILogger
+import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import io.fabric8.kubernetes.client.KubernetesClientException
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +21,7 @@ import java.net.UnknownHostException
 
 internal class KubernetesReservationClientIntegrationTest {
 
-    private val logger = FakeCILogger()
+    private val logger = StubCILogger()
     private var clientOne: ReservationClient? = null
     private var clientTwo: ReservationClient? = null
 
@@ -67,7 +67,7 @@ internal class KubernetesReservationClientIntegrationTest {
     @Test
     fun `claim - throws exception - deployment already exists`() {
         // to generate single name for two different clients
-        val deploymentNameGenerator = FakeDeploymentNameGenerator()
+        val deploymentNameGenerator = StubDeploymentNameGenerator()
 
         clientOne = KubernetesReservationClient.createStubInstance(
             logger = logger,

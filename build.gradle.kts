@@ -161,7 +161,6 @@ subprojects {
 
             configurationsContainer.register("Local") {
                 reportSkippedTests = true
-                reportFlakyTests = false
                 filter = customFilter
 
                 targetsContainer.register("api28") {
@@ -212,7 +211,6 @@ subprojects {
 
                 configurationsContainer.register("ui") {
                     reportSkippedTests = true
-                    reportFlakyTests = true
                     filter = customFilter
 
                     targetsContainer.register("api22") {
@@ -254,7 +252,6 @@ subprojects {
 
                 configurationsContainer.register("uiDebug") {
                     reportSkippedTests = false
-                    reportFlakyTests = false
                     enableDeviceDebug = true
                     filter = customFilter
 

@@ -68,7 +68,7 @@ internal class ArtifactoryAppBackupPluginTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
             )
         )
 
@@ -150,7 +150,7 @@ internal class ArtifactoryAppBackupPluginTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
             )
         )
 

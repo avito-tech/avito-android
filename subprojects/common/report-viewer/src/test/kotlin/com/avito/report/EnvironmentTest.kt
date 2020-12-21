@@ -9,11 +9,11 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class EnvironmentTest {
 
     @Test
-    fun `deviceName sent as environment field`(reports: MockReportApi) {
+    fun `deviceName sent as environment field`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

@@ -10,11 +10,11 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class PriorityTest {
 
     @Test
-    fun `priority major sent in prepared_data`(reports: MockReportApi) {
+    fun `priority major sent in prepared_data`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -27,7 +27,7 @@ internal class PriorityTest {
     }
 
     @Test
-    fun `priority minor sent in prepared_data`(reports: MockReportApi) {
+    fun `priority minor sent in prepared_data`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

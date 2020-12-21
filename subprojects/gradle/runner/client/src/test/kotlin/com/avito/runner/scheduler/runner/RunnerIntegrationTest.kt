@@ -17,10 +17,10 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.test.NoOpListener
+import com.avito.runner.test.StubActionResult
+import com.avito.runner.test.StubDevice
 import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.listWithDefault
-import com.avito.runner.test.mock.MockActionResult
-import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.randomString
 import com.google.common.truth.Truth.assertThat
@@ -75,12 +75,12 @@ class RunnerIntegrationTest {
 
             val requests = createRunRequests()
 
-            val firstFailedDevice = MockDevice(
+            val firstFailedDevice = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
+                    StubActionResult.Success(Any()), // Install application
+                    StubActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
                     deviceIsAlive(), // Device status for initializing
@@ -102,12 +102,12 @@ class RunnerIntegrationTest {
                     testPassed() // Test result for second test
                 )
             )
-            val secondDevice = MockDevice(
+            val secondDevice = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
+                    StubActionResult.Success(Any()), // Install application
+                    StubActionResult.Success(Any()) // Install test application
                 ),
                 clearPackageResults = listOf(
                     succeedClearPackage(),
@@ -192,7 +192,7 @@ class RunnerIntegrationTest {
             val requests = createRunRequests()
 
             val successfulDevice = createSuccessfulDevice(requests)
-            val failedDevice = createBrokenDevice(MockActionResult.Failed(Exception()))
+            val failedDevice = createBrokenDevice(StubActionResult.Failed(Exception()))
 
             launch {
                 devices.send(failedDevice)
@@ -224,7 +224,7 @@ class RunnerIntegrationTest {
             val requests = createRunRequests()
 
             val successfulDevice = createSuccessfulDevice(requests)
-            val failedDevice = MockDevice(
+            val failedDevice = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
                 gettingDeviceStatusResults = listOf(
@@ -232,7 +232,7 @@ class RunnerIntegrationTest {
                     deviceIsAlive()
                 ),
                 installApplicationResults = mutableListOf(
-                    MockActionResult.Failed(Exception())
+                    StubActionResult.Failed(Exception())
                 )
             )
 
@@ -273,12 +273,12 @@ class RunnerIntegrationTest {
             testRunRequest(scheduling = scheduling)
         )
 
-        val device = MockDevice(
+        val device = StubDevice(
             logger = StdOutLogger(),
             coordinate = randomDeviceCoordinate(),
             installApplicationResults = listOf(
-                MockActionResult.Success(Any()), // Install application
-                MockActionResult.Success(Any()) // Install test application
+                StubActionResult.Success(Any()), // Install application
+                StubActionResult.Success(Any()) // Install test application
             ),
             clearPackageResults = listOf(
                 succeedClearPackage(), // Clear test package for first try for second test
@@ -338,12 +338,12 @@ class RunnerIntegrationTest {
                 testRunRequest(scheduling = scheduling)
             )
 
-            val device = MockDevice(
+            val device = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
+                    StubActionResult.Success(Any()), // Install application
+                    StubActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
                     deviceIsAlive(), // Alive status for initializing
@@ -427,12 +427,12 @@ class RunnerIntegrationTest {
                 testRunRequest(scheduling = scheduling)
             )
 
-            val device = MockDevice(
+            val device = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
+                    StubActionResult.Success(Any()), // Install application
+                    StubActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
                     deviceIsAlive(), // Alive status for initializing
@@ -479,9 +479,9 @@ class RunnerIntegrationTest {
         }
 
     private fun createBrokenDevice(
-        failureReason: MockActionResult<Device.DeviceStatus>
-    ): MockDevice {
-        return MockDevice(
+        failureReason: StubActionResult<Device.DeviceStatus>
+    ): StubDevice {
+        return StubDevice(
             logger = StdOutLogger(),
             coordinate = randomDeviceCoordinate(),
             gettingDeviceStatusResults = listOf(
@@ -494,14 +494,14 @@ class RunnerIntegrationTest {
         return (1..count).map { testRunRequest() }
     }
 
-    private fun List<TestRunRequest>.toPassedRuns(device: MockDevice): Map<TestRunRequest, List<DeviceTestCaseRun>> {
+    private fun List<TestRunRequest>.toPassedRuns(device: StubDevice): Map<TestRunRequest, List<DeviceTestCaseRun>> {
         return map { request ->
             request to listOf(request.toPassedRun(device))
         }.toMap()
     }
 
     private fun TestRunRequest.toPassedRun(
-        device: MockDevice
+        device: StubDevice
     ): DeviceTestCaseRun {
         return deviceTestCaseRun(
             device = device,
@@ -511,7 +511,7 @@ class RunnerIntegrationTest {
     }
 
     private fun TestRunRequest.toFailedRun(
-        device: MockDevice
+        device: StubDevice
     ): DeviceTestCaseRun {
         return deviceTestCaseRun(
             device = device,
@@ -520,25 +520,25 @@ class RunnerIntegrationTest {
         )
     }
 
-    private fun deviceIsFreezed(): MockActionResult.Success<Device.DeviceStatus> {
-        return MockActionResult.Success(
+    private fun deviceIsFreezed(): StubActionResult.Success<Device.DeviceStatus> {
+        return StubActionResult.Success(
             Device.DeviceStatus.Freeze(reason = Exception())
         )
     }
 
-    private fun testFailed(): MockActionResult.Success<TestCaseRun.Result> {
-        return MockActionResult.Success(
+    private fun testFailed(): StubActionResult.Success<TestCaseRun.Result> {
+        return StubActionResult.Success(
             TestCaseRun.Result.Failed.InRun("Failed")
         )
     }
 
-    private fun createSuccessfulDevice(requests: List<TestRunRequest>): MockDevice {
-        return MockDevice(
+    private fun createSuccessfulDevice(requests: List<TestRunRequest>): StubDevice {
+        return StubDevice(
             logger = StdOutLogger(),
             coordinate = randomDeviceCoordinate(),
             installApplicationResults = mutableListOf(
-                MockActionResult.Success(Any()), // Install application
-                MockActionResult.Success(Any()) // Install test application
+                StubActionResult.Success(Any()), // Install application
+                StubActionResult.Success(Any()) // Install test application
             ),
             clearPackageResults = (0 until requests.size - 1).flatMap {
                 listOf(
@@ -556,16 +556,16 @@ class RunnerIntegrationTest {
         )
     }
 
-    private fun testPassed(): MockActionResult.Success<TestCaseRun.Result> {
-        return MockActionResult.Success(
+    private fun testPassed(): StubActionResult.Success<TestCaseRun.Result> {
+        return StubActionResult.Success(
             TestCaseRun.Result.Passed
         )
     }
 
-    private fun succeedClearPackage() = MockActionResult.Success<Try<Any>>(Try.Success(Unit))
+    private fun succeedClearPackage() = StubActionResult.Success<Try<Any>>(Try.Success(Unit))
 
-    private fun deviceIsAlive(): MockActionResult.Success<Device.DeviceStatus> {
-        return MockActionResult.Success(
+    private fun deviceIsAlive(): StubActionResult.Success<Device.DeviceStatus> {
+        return StubActionResult.Success(
             Device.DeviceStatus.Alive
         )
     }

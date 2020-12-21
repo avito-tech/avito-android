@@ -1,6 +1,6 @@
 package com.avito.ci.steps
 
-import com.avito.android.plugin.artifactory.setFakeMavenMetadataBody
+import com.avito.android.plugin.artifactory.setStubMavenMetadataBody
 import com.avito.cd.BuildVariant
 import com.avito.cd.CdBuildResult
 import com.avito.cd.Providers
@@ -194,7 +194,7 @@ class RealTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
             )
         )
 
@@ -257,7 +257,7 @@ class RealTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setFakeMavenMetadataBody()
+                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
             )
         )
 
@@ -337,7 +337,6 @@ class RealTest {
     private fun registerUiTestConfigurations(vararg names: String): String {
         val configurations = names.map { name ->
             """$name {
-                    reportFlakyTests = false
                     targets {
                         api22 {
                             deviceName = "api22"

@@ -2,7 +2,7 @@ package com.avito.android.elastic
 
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
-import com.avito.time.FakeTimeProvider
+import com.avito.time.StubTimeProvider
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
@@ -18,7 +18,7 @@ internal class HttpElasticClientTest {
 
     @Test
     fun testRequestParams() {
-        val timeProvider = FakeTimeProvider()
+        val timeProvider = StubTimeProvider()
 
         timeProvider.now = Date(1606922084000)
 

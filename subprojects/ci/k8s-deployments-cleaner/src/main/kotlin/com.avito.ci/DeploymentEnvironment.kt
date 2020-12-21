@@ -38,7 +38,7 @@ val Deployment.environment: DeploymentEnvironment
             )
 
             /**
-             * see FakeKubernetesReservationClient
+             * see StubKubernetesReservationClient
              */
             type.startsWith("integration-test") -> IntegrationTest(
                 buildId = requireNotNull(metadata.labels["id"])

@@ -1,7 +1,7 @@
 package com.avito.instrumentation.report
 
 import com.avito.instrumentation.TestRunResult
-import com.avito.report.FakeReportViewer
+import com.avito.report.StubReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
@@ -95,7 +95,7 @@ internal class JUnitReportWriterTest {
             jobSlug = "FunctionalTests",
             runId = "49.0.275.32855"
         )
-        JUnitReportWriter(FakeReportViewer(reportViewerUrl)).write(
+        JUnitReportWriter(StubReportViewer(reportViewerUrl)).write(
             reportCoordinates = runIdentifier,
             testRunResult = testRunResult,
             destination = file
