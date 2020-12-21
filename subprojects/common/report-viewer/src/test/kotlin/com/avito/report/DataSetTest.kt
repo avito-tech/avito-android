@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class DataSetTest {
 
     @Test
-    fun `data_set doesnt sent for empty map`(reports: MockReportApi) {
+    fun `data_set doesnt sent for empty map`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -27,7 +27,7 @@ internal class DataSetTest {
     }
 
     @Test
-    fun `data_set_number sent`(reports: MockReportApi) {
+    fun `data_set_number sent`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -40,7 +40,7 @@ internal class DataSetTest {
     }
 
     @Test
-    fun `data_set object sent`(reports: MockReportApi) {
+    fun `data_set object sent`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -54,7 +54,7 @@ internal class DataSetTest {
     }
 
     @Test
-    fun `data_set without data_set_number throws an exception`(reports: MockReportApi) {
+    fun `data_set without data_set_number throws an exception`(reports: StubReportApi) {
         val exception = assertThrows(IllegalArgumentException::class.java) {
             reports.addTest(
                 reportCoordinates = ReportCoordinates.createStubInstance(),

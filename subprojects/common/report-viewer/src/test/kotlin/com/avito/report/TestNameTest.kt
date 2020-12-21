@@ -9,11 +9,11 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class TestNameTest {
 
     @Test
-    fun `report with dataSet - name contains dataset number - with testCaseId`(reports: MockReportApi) {
+    fun `report with dataSet - name contains dataset number - with testCaseId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -30,7 +30,7 @@ internal class TestNameTest {
     }
 
     @Test
-    fun `report with dataSet - name contains dataset number - no testCaseId`(reports: MockReportApi) {
+    fun `report with dataSet - name contains dataset number - no testCaseId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -47,7 +47,7 @@ internal class TestNameTest {
     }
 
     @Test
-    fun `report without dataSet - have testName without # - with testCaseId`(reports: MockReportApi) {
+    fun `report without dataSet - have testName without # - with testCaseId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -64,7 +64,7 @@ internal class TestNameTest {
     }
 
     @Test
-    fun `report without dataSet - have testName without # - no testCaseId`(reports: MockReportApi) {
+    fun `report without dataSet - have testName without # - no testCaseId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

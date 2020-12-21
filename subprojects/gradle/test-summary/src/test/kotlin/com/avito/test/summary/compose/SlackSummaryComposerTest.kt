@@ -1,6 +1,6 @@
 package com.avito.test.summary.compose
 
-import com.avito.report.FakeReportViewer
+import com.avito.report.StubReportViewer
 import com.avito.report.model.CrossDeviceRunTest
 import com.avito.report.model.CrossDeviceStatus.FailedOnAllDevices
 import com.avito.report.model.CrossDeviceStatus.FailedOnSomeDevices
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 
 internal class SlackSummaryComposerTest {
 
-    private val reportViewer = FakeReportViewer()
+    private val reportViewer = StubReportViewer()
     private val composer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewer)
 
     @Test

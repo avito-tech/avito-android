@@ -107,6 +107,6 @@ internal class QAppsPluginIntegrationTest {
 
         val apk = File(apkDirectory, "app-debug.apk")
         apk.createNewFile()
-        apk.writeText("fake apk content")
+        apk.writeText("stub apk content")
     }
 }

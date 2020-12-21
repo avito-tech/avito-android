@@ -9,11 +9,11 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class FeatureIdTest {
 
     @Test
-    fun `feature_id sent`(reports: MockReportApi) {
+    fun `feature_id sent`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

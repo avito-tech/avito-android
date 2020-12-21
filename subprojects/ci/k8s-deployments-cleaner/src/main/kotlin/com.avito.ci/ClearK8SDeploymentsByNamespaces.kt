@@ -89,7 +89,7 @@ class ClearK8SDeploymentsByNamespaces(
 
     private fun noActiveTeamcityBuilds(buildId: String): Boolean {
         return if (buildId.startsWith("local")) {
-            // see EnvArgs.Build.Local and FakeKubernetesReservationClient
+            // see EnvArgs.Build.Local and StubKubernetesReservationClient
             true
         } else {
             when (teamcity.getBuild(buildId).state) {

@@ -1,7 +1,7 @@
 package com.avito.instrumentation.report
 
-import com.avito.report.FakeReportsApi
 import com.avito.report.ReportsApi
+import com.avito.report.StubReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
@@ -17,7 +17,7 @@ internal class TestReporterTest {
 
     @Test
     fun `every lost tests reported by separate request when batch size is 1`() {
-        val reportsApi = FakeReportsApi()
+        val reportsApi = StubReportsApi()
         val reporter = provideTestReporter(
             reportsApi = reportsApi,
             batchSize = 1,
@@ -36,7 +36,7 @@ internal class TestReporterTest {
         assertThat(reportsApi.addTestsRequests).containsAtLeastElementsIn(
             lostTestsToReport
                 .map {
-                    FakeReportsApi.AddTestsRequest(
+                    StubReportsApi.AddTestsRequest(
                         reportCoordinates = coordinates,
                         buildId = buildId,
                         tests = listOf(it)

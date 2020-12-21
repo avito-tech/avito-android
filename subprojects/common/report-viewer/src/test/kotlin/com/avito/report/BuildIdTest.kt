@@ -8,11 +8,11 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 class BuildIdTest {
 
     @Test
-    fun `buildId added to list via mongo method hack`(reports: MockReportApi) {
+    fun `buildId added to list via mongo method hack`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1002134",
@@ -28,7 +28,7 @@ class BuildIdTest {
     }
 
     @Test
-    fun `prepared data tc_build contains buildId`(reports: MockReportApi) {
+    fun `prepared data tc_build contains buildId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1002134",
@@ -44,7 +44,7 @@ class BuildIdTest {
     }
 
     @Test
-    fun `prepared data doesn't contain tc_build for local build`(reports: MockReportApi) {
+    fun `prepared data doesn't contain tc_build for local build`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = null,
@@ -55,7 +55,7 @@ class BuildIdTest {
     }
 
     @Test
-    fun `report_data doesn't contain for local build`(reports: MockReportApi) {
+    fun `report_data doesn't contain for local build`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = null,

@@ -4,10 +4,10 @@ import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.createStubInstance
-import com.avito.instrumentation.report.FakeReport
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.suite.filter.FakeFilterFactory
+import com.avito.instrumentation.report.StubReport
 import com.avito.instrumentation.suite.filter.FilterFactory
+import com.avito.instrumentation.suite.filter.StubFilterFactory
 import com.avito.instrumentation.suite.filter.TestsFilter
 import com.avito.instrumentation.suite.filter.excludedFilter
 import com.google.common.truth.Truth.assertThat
@@ -34,11 +34,11 @@ internal class TestSuiteProviderTest {
 
     @Test
     fun `test suite - skip test - if rerun enabled and test passed in previous run`() {
-        val report = FakeReport()
+        val report = StubReport()
         val testSuiteProvider = createTestSuiteProvider(
             report = report,
             reportSkippedTests = true,
-            filterFactory = FakeFilterFactory(
+            filterFactory = StubFilterFactory(
                 filter = excludedFilter(
                     TestsFilter.Result.Excluded.MatchesExcludeSignature(
                         name = "",
@@ -57,10 +57,10 @@ internal class TestSuiteProviderTest {
     }
 
     private fun createTestSuiteProvider(
-        report: Report = FakeReport(),
+        report: Report = StubReport(),
         targets: List<TargetConfiguration.Data> = listOf(TargetConfiguration.Data.createStubInstance()),
         reportSkippedTests: Boolean = false,
-        filterFactory: FilterFactory = FakeFilterFactory()
+        filterFactory: FilterFactory = StubFilterFactory()
     ): TestSuiteProvider {
         return TestSuiteProvider.Impl(
             report = report,

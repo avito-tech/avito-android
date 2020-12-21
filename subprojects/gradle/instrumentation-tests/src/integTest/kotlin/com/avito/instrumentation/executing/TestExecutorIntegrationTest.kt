@@ -3,7 +3,7 @@ package com.avito.instrumentation.executing
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.createStubInstance
-import com.avito.instrumentation.report.listener.FakeTestReporter
+import com.avito.instrumentation.report.listener.StubTestReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.client.kubernetes.createStubInstance
 import com.avito.instrumentation.reservation.devices.provider.KubernetesDevicesProvider
@@ -16,7 +16,7 @@ import com.avito.report.model.createStubInstance
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.FakeCILogger
+import com.avito.utils.logging.StubCILogger
 import com.avito.utils.logging.commonLogger
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -24,7 +24,7 @@ import java.io.File
 
 internal class TestExecutorIntegrationTest {
 
-    private val logger = FakeCILogger()
+    private val logger = StubCILogger()
 
     @Test
     fun `executor - does not stuck - when no requests passed`(@TempDir tempDir: File) {
@@ -88,7 +88,7 @@ internal class TestExecutorIntegrationTest {
             logger = logger,
             adb = adb
         ),
-        testReporter = FakeTestReporter(),
+        testReporter = StubTestReporter(),
         configurationName = configurationName,
         logger = logger
     )

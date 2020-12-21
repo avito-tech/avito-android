@@ -11,10 +11,10 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class StepsTest {
 
-    private fun testRequest(reports: MockReportApi) = reports.addTest(
+    private fun testRequest(reports: StubReportApi) = reports.addTest(
         reportCoordinates = ReportCoordinates.createStubInstance(),
         buildId = "1234",
         test = AndroidTest.Completed.createStubInstance(
@@ -34,7 +34,7 @@ internal class StepsTest {
     )
 
     @Test
-    fun `step contains title`(reports: MockReportApi) {
+    fun `step contains title`(reports: StubReportApi) {
         testRequest(reports)
             .singleRequestCaptured()
             .bodyMatches(
@@ -46,7 +46,7 @@ internal class StepsTest {
     }
 
     @Test
-    fun `step contains number`(reports: MockReportApi) {
+    fun `step contains number`(reports: StubReportApi) {
         testRequest(reports)
             .singleRequestCaptured()
             .bodyMatches(
@@ -58,7 +58,7 @@ internal class StepsTest {
     }
 
     @Test
-    fun `step contains timestamp`(reports: MockReportApi) {
+    fun `step contains timestamp`(reports: StubReportApi) {
         testRequest(reports)
             .singleRequestCaptured()
             .bodyMatches(
@@ -70,7 +70,7 @@ internal class StepsTest {
     }
 
     @Test
-    fun `step contains entry with type`(reports: MockReportApi) {
+    fun `step contains entry with type`(reports: StubReportApi) {
         testRequest(reports)
             .singleRequestCaptured()
             .bodyMatches(
@@ -82,7 +82,7 @@ internal class StepsTest {
     }
 
     @Test
-    fun `step contains entry with timestamp`(reports: MockReportApi) {
+    fun `step contains entry with timestamp`(reports: StubReportApi) {
         testRequest(reports)
             .singleRequestCaptured()
             .bodyMatches(
@@ -94,7 +94,7 @@ internal class StepsTest {
     }
 
     @Test
-    fun `step contains comment entry with title`(reports: MockReportApi) {
+    fun `step contains comment entry with title`(reports: StubReportApi) {
         testRequest(reports)
             .singleRequestCaptured()
             .bodyMatches(

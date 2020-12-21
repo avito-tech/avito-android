@@ -1,14 +1,14 @@
 package com.avito.runner.scheduler.runner.client
 
 import com.avito.logger.NoOpLogger
+import com.avito.runner.scheduler.StubTestExecutionState
 import com.avito.runner.scheduler.runner.client.model.ClientTestRunRequest
 import com.avito.runner.scheduler.util.generateTestRunRequest
-import com.avito.runner.scheduler.util.mock.MockTestExecutionState
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
-import com.avito.runner.test.mock.MockIntentionExecutionService
+import com.avito.runner.test.mock.StubIntentionExecutionService
 import com.avito.runner.test.receiveAvailable
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +26,7 @@ class TestExecutionClientTest {
         runBlockingTest {
             val requests = listOf(
                 ClientTestRunRequest(
-                    state = MockTestExecutionState(
+                    state = StubTestExecutionState(
                         request = generateTestRunRequest()
                     ),
                     intention = generateIntention(
@@ -39,7 +39,7 @@ class TestExecutionClientTest {
                     )
                 ),
                 ClientTestRunRequest(
-                    state = MockTestExecutionState(
+                    state = StubTestExecutionState(
                         request = generateTestRunRequest()
                     ),
                     intention = generateIntention(
@@ -53,7 +53,7 @@ class TestExecutionClientTest {
                 )
             )
 
-            val service = MockIntentionExecutionService(
+            val service = StubIntentionExecutionService(
                 testIntentionExecutionResults = requests.map {
                     TestCaseRun.Result.Passed
                 }
@@ -73,7 +73,7 @@ class TestExecutionClientTest {
                 .that(
                     results
                         .map {
-                            (it.state as MockTestExecutionState).request
+                            (it.state as StubTestExecutionState).request
                         }
                 )
                 .isEqualTo(

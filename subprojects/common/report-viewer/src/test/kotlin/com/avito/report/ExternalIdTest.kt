@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class ExternalIdTest {
 
     @Test
-    fun `externalId sent in prepared_data`(reports: MockReportApi) {
+    fun `externalId sent in prepared_data`(reports: StubReportApi) {
         val externalId = UUID.randomUUID().toString()
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
@@ -29,7 +29,7 @@ internal class ExternalIdTest {
     }
 
     @Test
-    fun `externalId contains dataSetNumber if present`(reports: MockReportApi) {
+    fun `externalId contains dataSetNumber if present`(reports: StubReportApi) {
         val externalId = UUID.randomUUID().toString()
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
@@ -46,7 +46,7 @@ internal class ExternalIdTest {
     }
 
     @Test
-    fun `externalId doesnt sent if not set`(reports: MockReportApi) {
+    fun `externalId doesnt sent if not set`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

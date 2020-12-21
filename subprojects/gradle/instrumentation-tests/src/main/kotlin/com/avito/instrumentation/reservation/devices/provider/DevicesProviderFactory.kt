@@ -51,7 +51,7 @@ interface DevicesProviderFactory {
             val devicesManager = AdbDevicesManager(adb = adb, logger = commonLogger(logger))
             return when (configuration.requestedDeviceType) {
                 MOCK ->
-                    MockDevicesProvider(logger)
+                    StubDevicesProvider(logger)
 
                 LOCAL ->
                     LocalDevicesProvider(
