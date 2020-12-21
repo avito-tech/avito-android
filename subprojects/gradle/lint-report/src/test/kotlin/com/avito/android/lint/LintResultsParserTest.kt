@@ -3,7 +3,7 @@ package com.avito.android.lint
 import com.avito.android.lint.model.LintIssue
 import com.avito.android.lint.model.LintReportModel
 import com.avito.truth.isInstanceOf
-import com.avito.utils.logging.FakeCILogger
+import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ class LintResultsParserTest {
 
     private lateinit var tempDir: File
 
-    private val logger = FakeCILogger()
+    private val logger = StubCILogger()
 
     @BeforeEach
     fun setup(@TempDir dir: Path) {

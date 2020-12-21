@@ -98,7 +98,7 @@ internal class RetryInterceptorTest {
         }
     }
 
-    private fun createApi(): FakeApi {
+    private fun createApi(): StubApi {
         return createApi(baseUrl = server.url("/")) {
             addInterceptor(
                 RetryInterceptor(

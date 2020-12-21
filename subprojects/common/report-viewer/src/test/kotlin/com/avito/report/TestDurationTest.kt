@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.Date
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 class TestDurationTest {
 
     @Test
-    fun `startTime set`(reports: MockReportApi) {
+    fun `startTime set`(reports: StubReportApi) {
         val now = Date().time
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
@@ -28,7 +28,7 @@ class TestDurationTest {
     }
 
     @Test
-    fun `endTime set`(reports: MockReportApi) {
+    fun `endTime set`(reports: StubReportApi) {
         val now = Date().time
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),

@@ -28,7 +28,7 @@ class MavenArtifactsToCdBuildResultArtifactMapperTest {
         )
         val result = mapper.mapToCdBuildResultArtifacts(
             setOf(
-                FakeMavenArtifact(
+                StubMavenArtifact(
                     file = artifactFile,
                     classifier = classifier
                 )
@@ -63,7 +63,7 @@ class MavenArtifactsToCdBuildResultArtifactMapperTest {
         )
         val result = mapper.mapToCdBuildResultArtifacts(
             setOf(
-                FakeMavenArtifact(
+                StubMavenArtifact(
                     file = artifactFile,
                     classifier = classifier
                 )
@@ -97,7 +97,7 @@ class MavenArtifactsToCdBuildResultArtifactMapperTest {
         )
         val result = mapper.mapToCdBuildResultArtifacts(
             setOf(
-                FakeMavenArtifact(
+                StubMavenArtifact(
                     file = artifactFile,
                     classifier = classifier
                 )

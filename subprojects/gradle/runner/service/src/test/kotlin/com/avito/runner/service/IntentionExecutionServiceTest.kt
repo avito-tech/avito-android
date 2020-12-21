@@ -7,13 +7,13 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.test.NoOpListener
+import com.avito.runner.test.StubActionResult
+import com.avito.runner.test.StubDevice
 import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
 import com.avito.runner.test.generateIntention
 import com.avito.runner.test.listWithDefault
-import com.avito.runner.test.mock.MockActionResult
-import com.avito.runner.test.mock.MockDevice
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.receiveAvailable
 import com.google.common.truth.Truth.assertWithMessage
@@ -66,32 +66,32 @@ class IntentionExecutionServiceTest {
                     action = generateInstrumentationTestAction()
                 )
             )
-            val successfulDevice = MockDevice(
+            val successfulDevice = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
-                apiResult = MockActionResult.Success(22),
+                apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
+                    StubActionResult.Success(Any()), // Install application
+                    StubActionResult.Success(Any()) // Install test application
                 ),
                 gettingDeviceStatusResults = listWithDefault(
                     1 + intentions.size,
-                    MockActionResult.Success<DeviceStatus>(
+                    StubActionResult.Success<DeviceStatus>(
                         DeviceStatus.Alive
                     )
                 ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
-                        MockActionResult.Success<Try<Any>>(
+                        StubActionResult.Success<Try<Any>>(
                             Try.Success(Unit)
                         ),
-                        MockActionResult.Success<Try<Any>>(
+                        StubActionResult.Success<Try<Any>>(
                             Try.Success(Unit)
                         )
                     )
                 },
                 runTestsResults = intentions.map {
-                    MockActionResult.Success<TestCaseRun.Result>(
+                    StubActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
                     )
                 }
@@ -145,16 +145,16 @@ class IntentionExecutionServiceTest {
                     action = generateInstrumentationTestAction()
                 )
             )
-            val freezeDevice = MockDevice(
+            val freezeDevice = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
-                apiResult = MockActionResult.Success(22),
+                apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<DeviceStatus>(
+                    StubActionResult.Success<DeviceStatus>(
                         DeviceStatus.Alive
                     ), // State while initializing worker
-                    MockActionResult.Success<DeviceStatus>(
+                    StubActionResult.Success<DeviceStatus>(
                         DeviceStatus.Freeze(
                             RuntimeException()
                         )
@@ -162,34 +162,34 @@ class IntentionExecutionServiceTest {
                 ),
                 runTestsResults = emptyList()
             )
-            val successfulDevice = MockDevice(
+            val successfulDevice = StubDevice(
                 logger = StdOutLogger(),
                 coordinate = randomDeviceCoordinate(),
-                apiResult = MockActionResult.Success(22),
+                apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
-                    MockActionResult.Success(Any()), // Install application
-                    MockActionResult.Success(Any()) // Install test application
+                    StubActionResult.Success(Any()), // Install application
+                    StubActionResult.Success(Any()) // Install test application
                 ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
-                        MockActionResult.Success<Try<Any>>(
+                        StubActionResult.Success<Try<Any>>(
                             Try.Success(Unit)
                         ),
-                        MockActionResult.Success<Try<Any>>(
+                        StubActionResult.Success<Try<Any>>(
                             Try.Success(Unit)
                         )
                     )
                 },
                 gettingDeviceStatusResults = listOf(
-                    MockActionResult.Success<DeviceStatus>(
+                    StubActionResult.Success<DeviceStatus>(
                         DeviceStatus.Alive
                     ), // State while initializing worker
-                    MockActionResult.Success<DeviceStatus>(
+                    StubActionResult.Success<DeviceStatus>(
                         DeviceStatus.Alive
                     )
                 ),
                 runTestsResults = intentions.map {
-                    MockActionResult.Success<TestCaseRun.Result>(
+                    StubActionResult.Success<TestCaseRun.Result>(
                         TestCaseRun.Result.Passed
                     )
                 }

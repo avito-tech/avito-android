@@ -2,7 +2,7 @@ package com.avito.android.test.report
 
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.android.test.report.future.MockFutureValue
+import com.avito.android.test.report.future.StubFutureValue
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.filestorage.RemoteStorage
@@ -53,7 +53,7 @@ class ReportTestExtension(
         )
         whenever(screenshotUploader.makeAndUploadScreenshot(any()))
             .thenReturn(
-                MockFutureValue(
+                StubFutureValue(
                     RemoteStorage.Result.Error(
                         RuntimeException()
                     )

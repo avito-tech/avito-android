@@ -7,11 +7,11 @@ import com.avito.report.model.createStubInstance
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class GroupingKeyTest {
 
     @Test
-    fun `grouping_key sent for dataSet without testCaseId`(reports: MockReportApi) {
+    fun `grouping_key sent for dataSet without testCaseId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -28,7 +28,7 @@ internal class GroupingKeyTest {
     }
 
     @Test
-    fun `grouping_key doesnt sent for dataSet with testCaseId`(reports: MockReportApi) {
+    fun `grouping_key doesnt sent for dataSet with testCaseId`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -45,7 +45,7 @@ internal class GroupingKeyTest {
     }
 
     @Test
-    fun `grouping_key doesnt sent for testCase without dataset`(reports: MockReportApi) {
+    fun `grouping_key doesnt sent for testCase without dataset`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",

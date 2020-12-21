@@ -10,11 +10,11 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(MockReportsExtension::class)
+@ExtendWith(StubReportsExtension::class)
 internal class BehaviorTest {
 
     @Test
-    fun `behavior positive sent in prepared_data`(reports: MockReportApi) {
+    fun `behavior positive sent in prepared_data`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
@@ -27,7 +27,7 @@ internal class BehaviorTest {
     }
 
     @Test
-    fun `behavior negative sent in prepared_data`(reports: MockReportApi) {
+    fun `behavior negative sent in prepared_data`(reports: StubReportApi) {
         reports.addTest(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
