@@ -67,8 +67,14 @@ publish_to_maven_local:
 publish_to_artifactory:
 	./gradlew -p subprojects publishToArtifactory -PprojectVersion=$(version) $(log_level)
 
-# precondition: push $(version) branch
-# post actions: go to link in output, edit notes and publish release
+# precondition:
+# - installed CLI: https://cli.github.com/
+# - push $(version) branch
+#
+# post actions:
+# - go to link in output
+# - edit notes
+# - publish release
 draft_release:
 	gh release create $(version) \
 		--draft \
