@@ -36,10 +36,18 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
             .getOrElse { true }
     }
 
-    fun allDependencies(): Set<SimpleConfiguration> {
-        return dependencies.flatMap { it.allDependencies() }
-            .plus(this)
+    fun allDependencies(includeSelf: Boolean = true): Set<SimpleConfiguration> {
+        val dependencies = this.dependencies
+            .flatMap {
+                it.allDependencies(includeSelf = true)
+            }
             .toSet()
+
+        return if (includeSelf) {
+            dependencies.plus(this)
+        } else {
+            dependencies
+        }
     }
 
     fun sourceSets(): Set<File> {
@@ -102,6 +110,6 @@ internal fun SimpleConfiguration.dependencies(filter: (Configuration) -> Boolean
                 .implementationConfiguration
         }
         .toMutableSet().apply {
-            remove(this@dependencies)
+            remove(this@dependencies) // project has dependency to itself in a default configuration
         }
 }

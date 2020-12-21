@@ -13,11 +13,16 @@ abstract class UniqueRClassesTask : DefaultTask() {
     fun check() {
         val apps = project.subprojects.filter { it.isAndroidApp() }
 
-        apps.forEach { app ->
+        apps.stream().parallel().forEach { app ->
             val packages: List<String> = app.internalModule
-                .implementationConfiguration.allDependencies()
+                .configurations.flatMap {
+                    it.allDependencies(includeSelf = false)
+                }
+                .toSet()
                 .filter { it.module.project.isAndroid() }
-                .map { AndroidManifest.from(it.module.project).getPackage() }
+                .map {
+                    AndroidManifest.from(it.module.project).getPackage()
+                }
 
             val duplicates = packages.duplicates()
             if (duplicates.isNotEmpty()) {
