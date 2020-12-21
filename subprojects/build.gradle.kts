@@ -287,7 +287,7 @@ subprojects {
 
                 systemProperty("isTest", true)
 
-                systemProperty("junit.jupiter.execution.timeout.default", MINUTES.toSeconds(5))
+                systemProperty("junit.jupiter.execution.timeout.default", MINUTES.toSeconds(10))
             }
         }
 
