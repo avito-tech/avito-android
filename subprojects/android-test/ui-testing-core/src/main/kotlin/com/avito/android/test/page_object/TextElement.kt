@@ -54,8 +54,9 @@ class ClickOnTextAction(private val textToClick: String) : ViewAction {
 
         val count = text.split(textToClick).size - 1
         if (count != 1) {
-            throw throw PerformException.Builder().withActionDescription(this.toString())
-                .withViewDescription(HumanReadables.describe(view))
+            throw throw PerformException.Builder()
+                .withActionDescription(this.toString())
+                .withViewDescription(HumanReadables.describe(view)) // TODO
                 .withCause(
                     IllegalStateException(
                         "Zero or more than 1 matches for given text in TextView. " +
@@ -85,8 +86,9 @@ class ClickOnSpannableAction : ViewAction {
         val spans = text.getSpans(0, text.length, ClickableSpan::class.java)
 
         val count = spans.size
-        if (count != 1) {
-            throw throw PerformException.Builder().withActionDescription(this.toString())
+        if (count != 1) { // TODO Bug?
+            throw throw PerformException.Builder()
+                .withActionDescription(this.toString())
                 .withViewDescription(HumanReadables.describe(view))
                 .withCause(IllegalStateException("TextView doesn't contain clickableSpans"))
                 .build()

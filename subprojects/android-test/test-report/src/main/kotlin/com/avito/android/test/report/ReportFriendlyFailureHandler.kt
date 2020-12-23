@@ -2,7 +2,6 @@ package com.avito.android.test.report
 
 import android.view.View
 import androidx.test.espresso.AppNotIdleException
-import androidx.test.espresso.EspressoException
 import androidx.test.espresso.FailureHandler
 import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.NoMatchingViewException
@@ -10,7 +9,7 @@ import androidx.test.espresso.PerformException
 import junit.framework.AssertionFailedError
 import org.hamcrest.Matcher
 
-class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) : FailureHandler {
+class ReportFriendlyFailureHandler : FailureHandler {
 
     private val normalizers = listOf(
         RegexNormalizer(
@@ -50,50 +49,49 @@ class ReportFriendlyFailureHandler(private val defaultHandler: FailureHandler) :
     )
 
     override fun handle(error: Throwable, viewMatcher: Matcher<View>?) {
-        try {
-            defaultHandler.handle(error, viewMatcher)
-        } catch (e: Throwable) {
-            when {
-                e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("ASYNC_TASKS_HAVE_IDLED") } -> {
-                    val asyncTaskThreads = Thread.getAllStackTraces()
-                        .filterKeys { it.name.contains("AsyncTask") }
-                    val threadDump = asyncTaskThreads.entries.joinToString(separator = "\n") { it.dumpState() }
-                    throw createExceptionWithPrivateStringConstructor<AppNotIdleException>(
-                        "AsyncTask is still running in background. Thread dump:\n$threadDump"
-                    )
-                }
-                e.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } ->
-                    throw createExceptionWithPrivateStringConstructor<AppNotIdleException>(
-                        "Main thread is busy. " +
-                            "The probable cause is in animations."
-                    )
-                // Handle expected errors from UITestConfig.waiterAllowedExceptions
-                // TODO: make this contract explicit
-                e is PerformException -> {
-
-                    // RecyclerView descendant checks implemented via ViewActions (gross)
-                    if (e.actionDescription.startsWith("Check descendant view")) {
-                        throw AssertionFailedError("Не прошла проверка: ${e.actionDescription}")
+        throw when {
+            error.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("ASYNC_TASKS_HAVE_IDLED") } -> {
+                val asyncTaskThreads = Thread.getAllStackTraces()
+                    .filterKeys { it.name.contains("AsyncTask") }
+                val threadDump = asyncTaskThreads.entries.joinToString(separator = "\n") { it.dumpState() }
+                val exception = createExceptionWithPrivateStringConstructor<AppNotIdleException>(
+                    "AsyncTask is still running in background. Thread dump:\n$threadDump"
+                )
+                exception.initCause(error)
+                exception
+            }
+            error.isCausedBy<AppNotIdleException> { it.message.orEmpty().contains("Looped for ") } -> {
+                val exception = createExceptionWithPrivateStringConstructor<AppNotIdleException>(
+                    "Main thread is busy. " +
+                        "The probable cause is in animations."
+                )
+                exception.initCause(error)
+                exception
+            }
+            error is PerformException -> {
+                // RecyclerView descendant checks implemented via ViewActions (gross)
+                if (error.actionDescription.startsWith("Check descendant view")) {
+                    AssertionFailedError("Не прошла проверка: ${error.actionDescription}").apply {
+                        initCause(error.cause)
                     }
-
-                    // rethrow exception with bare minimum of useful info
-                    throw PerformException.Builder()
-                        .from(e)
-                        .withViewDescription(minimizeViewDescription(e.viewDescription))
-                        .withCause(e)
+                } else {
+                    PerformException.Builder()
+                        .from(error)
+                        .withViewDescription(minimizeViewDescription(error.viewDescription))
                         .build()
                 }
-                e is AssertionFailedError -> throw AssertionFailedError(e.normalizedMessage())
-                e is NoMatchingRootException -> throw e.toNormalizedException()
-                e is NoMatchingViewException -> throw e.toNormalizedException()
-                e is EspressoException -> throw e
-                else -> throw e
             }
+            error is AssertionError -> AssertionFailedError(error.normalizedMessage()).apply { initCause(error.cause) }
+            error is NoMatchingRootException -> error.toNormalizedException()
+            error is NoMatchingViewException -> error.toNormalizedException()
+            else -> error
         }
     }
 
     private inline fun <reified T : Exception> T.toNormalizedException(): T {
-        return createExceptionWithPrivateStringConstructor(this.normalizedMessage())
+        val exception = createExceptionWithPrivateStringConstructor<T>(this.normalizedMessage())
+        exception.stackTrace = this.stackTrace
+        return exception
     }
 
     private fun Throwable.normalizedMessage(): String {

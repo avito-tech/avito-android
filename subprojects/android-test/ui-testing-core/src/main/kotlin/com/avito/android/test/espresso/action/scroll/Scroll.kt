@@ -40,7 +40,7 @@ private fun getScrollableContainer(view: View): ViewGroup {
     }
 
     if (view.parent !is ViewGroup) {
-        throw RuntimeException("Scrollable container not found for view")
+        throw IllegalStateException("Scrollable container not found for view")
     }
 
     return getScrollableContainer(view.parent as View)

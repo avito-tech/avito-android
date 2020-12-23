@@ -118,7 +118,7 @@ internal class ScrollToViewAction<VH : RecyclerView.ViewHolder>(
         } catch (t: Throwable) {
             throw PerformException.Builder()
                 .withActionDescription(this.description)
-                .withViewDescription(HumanReadables.describe(view))
+                .withViewDescription(HumanReadables.describe(view)) // TODO Add recycler description
                 .withCause(t)
                 .build()
         }
