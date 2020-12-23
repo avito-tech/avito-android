@@ -46,8 +46,11 @@ private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> 
             }
             uiController.loopMainThreadUntilIdle()
         } catch (t: Throwable) {
-            throw PerformException.Builder().withActionDescription(this.description)
-                .withViewDescription(HumanReadables.describe(root)).withCause(t).build()
+            throw PerformException.Builder()
+                .withActionDescription(this.description)
+                .withViewDescription(HumanReadables.describe(root)) // TODO replace with recycler view description
+                .withCause(t)
+                .build()
         }
     }
 }
@@ -91,8 +94,9 @@ private class ActionOnItemAtPositionViewAction<VH : RecyclerView.ViewHolder>(
 
         @Suppress("UNCHECKED_CAST")
         val viewHolderForPosition = recyclerView.findViewHolderForAdapterPosition(position) as VH?
-            ?: throw PerformException.Builder().withActionDescription(this.toString())
-                .withViewDescription(HumanReadables.describe(view))
+            ?: throw PerformException.Builder()
+                .withActionDescription(this.toString())
+                .withViewDescription(HumanReadables.describe(view)) // TODO describe RecyclerView
                 .withCause(IllegalStateException("No view holder at position: $position"))
                 .build()
 
@@ -146,8 +150,11 @@ private class ActionOnItemViewAction<VH : RecyclerView.ViewHolder>(
                 }
             }
         } catch (t: Throwable) {
-            throw PerformException.Builder().withActionDescription(this.description)
-                .withViewDescription(HumanReadables.describe(root)).withCause(t).build()
+            throw PerformException.Builder()
+                .withActionDescription(this.description)
+                .withViewDescription(HumanReadables.describe(root)) // TODO describe RecyclerView
+                .withCause(t)
+                .build()
         }
     }
 }
@@ -198,9 +205,11 @@ class ViewActionOnItemAtPosition<VH : RecyclerView.ViewHolder>(
             recyclerView.findViewHolderForLayoutPosition(position) as VH?
 
         val viewAtPosition: View = viewHolderForPosition?.itemView
-            ?: throw PerformException.Builder().withActionDescription(this.toString())
-                .withViewDescription("null")
-                .withCause(IllegalStateException("No view at position: $position")).build()
+            ?: throw PerformException.Builder()
+                .withActionDescription(this.toString())
+                .withViewDescription(HumanReadables.describe(recyclerView)) // TODO Add recyclerview description
+                .withCause(IllegalStateException("No view at position: $position"))
+                .build()
 
         viewAction.perform(uiController, viewAtPosition)
     }

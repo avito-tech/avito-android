@@ -17,6 +17,7 @@ import androidx.test.espresso.action.Swiper
 import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.actionWithAssertions
+import androidx.test.espresso.util.HumanReadables
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.element.field.actions.TypeText
 import com.avito.android.test.espresso.action.ActionOnClickableElement
@@ -99,7 +100,8 @@ object EspressoActions {
                         override fun perform(uiController: UiController?, view: View?) {
                             throw PerformException.Builder()
                                 .withActionDescription("click interpreted as long click")
-                                .withViewDescription("view")
+                                // TODO Replace with relevant description
+                                .withViewDescription(HumanReadables.describe(view))
                                 .build()
                         }
                     }

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.base.DefaultFailureHandler
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
@@ -210,7 +209,7 @@ abstract class InHouseInstrumentationTestRunner :
 
         testRunEnvironment.executeIfRealRun {
             Espresso.setFailureHandler(
-                ReportFriendlyFailureHandler(DefaultFailureHandler(targetContext))
+                ReportFriendlyFailureHandler()
             )
             initUITestConfig()
 

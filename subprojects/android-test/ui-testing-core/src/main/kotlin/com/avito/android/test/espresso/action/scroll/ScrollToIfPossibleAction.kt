@@ -63,7 +63,7 @@ class ScrollToIfPossibleAction : ViewAction {
         if (!view.isDisplayed()) {
             throw PerformException.Builder()
                 .withActionDescription(this.description)
-                .withViewDescription(HumanReadables.describe(view))
+                .withViewDescription(HumanReadables.describe(view)) // TODO add relevant view info?
                 .withCause(RuntimeException("Scrolling to view was attempted, but the view is not displayed"))
                 .build()
         }

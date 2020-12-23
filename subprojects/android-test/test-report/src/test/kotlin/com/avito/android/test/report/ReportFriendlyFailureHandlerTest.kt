@@ -11,7 +11,7 @@ internal class ReportFriendlyFailureHandlerTest {
     @Test
     fun `failureHandler - removes view hierarchy`() {
         val exception = assertThrows<NoMatchingViewException> {
-            ReportFriendlyFailureHandler(StubFailureHandler).handle(
+            ReportFriendlyFailureHandler().handle(
                 error = createExceptionWithPrivateStringConstructor<NoMatchingViewException>(
                     fileFromJarResources<ReportFriendlyFailureHandlerTest>("view-hierarchy.txt").readText()
                 ),
