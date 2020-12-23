@@ -74,7 +74,7 @@ class AnnotationsTest {
             )
         )
         assertThat(
-            (annotations[0] as TestAnnotation3).value,
+            (annotations.first() as TestAnnotation3).value,
             Matchers.`is`("method")
         )
     }

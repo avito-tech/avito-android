@@ -74,6 +74,7 @@ internal fun parseTest(
     flakiness = determineFlakiness(testInApk.annotations, deviceApi)
 )
 
+// TODO: reuse logic with TestKindExtractor
 private val annotationsToKindMap = mapOf(
     ManualTest::class.java.canonicalName to Kind.MANUAL,
     ScreenshotTest::class.java.canonicalName to Kind.UI_COMPONENT,

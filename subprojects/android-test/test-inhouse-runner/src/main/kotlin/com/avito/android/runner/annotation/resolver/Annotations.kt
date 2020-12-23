@@ -30,7 +30,7 @@ object Annotations {
         aClass: Class<*>,
         method: Method? = null,
         vararg subset: Class<out Annotation>
-    ): List<Annotation> {
+    ): Set<Annotation> {
         val methodAnnotations = method
             ?.annotations
             ?.map {
@@ -50,6 +50,7 @@ object Annotations {
         return methodAnnotations.toSet().plus(classAnnotations)
             .map { it.value }
             .filterBy(*subset)
+            .toSet()
     }
 
     private fun Collection<Annotation>.filterBy(vararg subset: Class<out Annotation>): List<Annotation> {
