@@ -1,6 +1,6 @@
 package com.avito.android
 
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
@@ -39,10 +39,12 @@ abstract class FindChangedTestsTask @Inject constructor(
 
     @TaskAction
     fun doWork() {
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+
         workerExecutor.noIsolation().submit(FindChangedTestsAction::class.java) { params ->
             params.rootDir.set(project.rootDir)
             params.targetCommit.set(targetCommit)
-            params.logger.set(project.ciLogger)
+            params.loggerFactory.set(loggerFactory)
             params.androidTestDir.set(androidTestDir)
             params.changedTestsFile.set(changedTestsFile)
         }

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:signer"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:upload-cd-build-result"))

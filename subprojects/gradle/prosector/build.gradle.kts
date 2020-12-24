@@ -6,9 +6,10 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":common:okhttp"))
 
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)

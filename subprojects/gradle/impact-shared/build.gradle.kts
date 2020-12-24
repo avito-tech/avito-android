@@ -12,17 +12,17 @@ dependencies {
     implementation(gradleApi())
 
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:git"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:process"))
 
     implementation(Dependencies.antPattern)
     implementation(Dependencies.Gradle.kotlinPlugin)
 
     testImplementation(project(":gradle:git-test-fixtures"))
-    testImplementation(project(":gradle:logging-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":common:logger-test-fixtures"))
 
     testImplementation(Dependencies.Test.mockitoKotlin)
 }

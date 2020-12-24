@@ -2,8 +2,8 @@ package com.avito.android.lint
 
 import com.avito.android.lint.model.LintIssue
 import com.avito.android.lint.model.LintReportModel
+import com.avito.logger.StubLoggerFactory
 import com.avito.truth.isInstanceOf
-import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ class LintResultsParserTest {
 
     private lateinit var tempDir: File
 
-    private val logger = StubCILogger()
+    private val loggerFactory = StubLoggerFactory
 
     @BeforeEach
     fun setup(@TempDir dir: Path) {
@@ -105,7 +105,7 @@ class LintResultsParserTest {
         xmlContent: String,
         htmlContent: String = "some html file content",
         projectPath: String = ":app"
-    ): LintReportModel = LintResultsParser(logger).parse(
+    ): LintReportModel = LintResultsParser(loggerFactory = loggerFactory).parse(
         projectPath = projectPath,
         lintXml = File(tempDir, "lint-report.xml").apply { writeText(xmlContent) },
         lintHtml = File(tempDir, "lint-report.html").apply { writeText(htmlContent) }

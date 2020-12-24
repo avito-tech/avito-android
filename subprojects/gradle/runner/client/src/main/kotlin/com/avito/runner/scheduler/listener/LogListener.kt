@@ -14,7 +14,7 @@ class LogListener : TestListener {
         test: TestCase,
         executionNumber: Int
     ) {
-        device.info("Test started: ${test.className}.${test.methodName}")
+        device.logger.info("Test started: ${test.className}.${test.methodName}")
     }
 
     override fun finished(
@@ -30,12 +30,12 @@ class LogListener : TestListener {
             is TestCaseRun.Result.Ignored -> "IGNORED"
             is TestCaseRun.Result.Failed.InRun -> "FAILED"
             is TestCaseRun.Result.Failed.InfrastructureError -> {
-                device.warn(result.errorMessage, result.cause)
+                device.logger.warn(result.errorMessage, result.cause)
                 "LOST"
             }
         }
 
-        device.info(
+        device.logger.info(
             "Test $status in ${durationMilliseconds.millisecondsToHumanReadableTime()}: " +
                 "${test.className}.${test.methodName}"
         )

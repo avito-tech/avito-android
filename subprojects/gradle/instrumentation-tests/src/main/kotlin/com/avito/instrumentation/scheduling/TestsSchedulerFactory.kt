@@ -92,7 +92,7 @@ interface TestsSchedulerFactory {
                 kubernetesCredentials = params.kubernetesCredentials,
                 testReporterFactory = { testSuite, outputDir, report ->
                     ReportViewerTestReporter(
-                        logger = params.logger,
+                        loggerFactory = params.loggerFactory,
                         testSuite = testSuite,
                         report = report,
                         fileStorageUrl = params.fileStorageUrl,
@@ -106,7 +106,7 @@ interface TestsSchedulerFactory {
                 executionParameters = params.executionParameters,
                 outputDirectory = params.outputDir,
                 instrumentationConfiguration = params.instrumentationConfiguration,
-                logger = params.logger,
+                loggerFactory = params.loggerFactory,
                 registry = params.registry
             )
         }

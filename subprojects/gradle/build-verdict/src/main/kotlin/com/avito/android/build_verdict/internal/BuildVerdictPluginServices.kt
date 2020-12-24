@@ -9,7 +9,7 @@ import com.avito.android.build_verdict.internal.task.lifecycle.UserDefinedVerdic
 import com.avito.android.build_verdict.internal.writer.HtmlBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter
-import com.avito.utils.logging.CILogger
+import com.avito.logger.Logger
 import com.google.gson.GsonBuilder
 import org.gradle.BuildListener
 import org.gradle.api.execution.TaskExecutionGraph
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 internal class BuildVerdictPluginServices(
     private val extension: BuildVerdictPluginExtension,
-    private val logger: CILogger
+    logger: Logger
 ) {
 
     private val listeners = ConcurrentHashMap<OperationIdentifier, LogMessageListener>()

@@ -1,10 +1,9 @@
 package com.avito.plugin
 
+import com.avito.logger.GradleLoggerFactory
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.DefaultTimeProvider
-import com.avito.utils.logging.ciLogger
-import com.avito.utils.logging.commonLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -21,16 +20,16 @@ abstract class MarkReportAsSourceTask : DefaultTask() {
 
     @TaskAction
     fun doWork() {
-        val logger = commonLogger(ciLogger)
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
 
         MarkReportAsSourceAction(
             reportsApi = ReportsApi.create(
                 host = reportsHost.get(),
                 fallbackUrl = reportsHost.get(),
-                logger = logger
+                loggerFactory = loggerFactory
             ),
             timeProvider = DefaultTimeProvider(),
-            logger = logger
+            loggerFactory = loggerFactory
         ).mark(reportCoordinates = reportCoordinates.get())
     }
 }

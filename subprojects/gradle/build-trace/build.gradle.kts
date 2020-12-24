@@ -6,8 +6,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:trace-event"))
     implementation(project(":gradle:gradle-profile"))
     implementation(project(":gradle:build-environment"))

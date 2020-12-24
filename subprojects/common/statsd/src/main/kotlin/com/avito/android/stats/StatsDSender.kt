@@ -1,5 +1,7 @@
 package com.avito.android.stats
 
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.timgroup.statsd.NoOpStatsDClient
 import com.timgroup.statsd.NonBlockingStatsDClient
 import com.timgroup.statsd.StatsDClient
@@ -14,11 +16,13 @@ interface StatsDSender {
 
     class Impl(
         private val config: StatsDConfig,
-        private val logger: (String, Throwable?) -> Unit
+        loggerFactory: LoggerFactory
     ) : StatsDSender {
 
+        private val logger = loggerFactory.create<StatsDSender>()
+
         private val errorHandler = StatsDClientErrorHandler {
-            logger.invoke("statsd error", it)
+            logger.warn("statsd error", it)
         }
 
         private val client: StatsDClient by lazy {
@@ -50,7 +54,7 @@ interface StatsDSender {
                 is CountMetric -> client.count(path, metric.value)
                 is GaugeMetric -> client.gauge(path, metric.value)
             } as Unit
-            logger.invoke("statsd:${metric.type}:${config.namespace}.$path:${metric.value}", null)
+            logger.debug("${metric.type}:${config.namespace}.$path:${metric.value}")
         }
     }
 }

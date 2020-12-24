@@ -3,14 +3,14 @@ package com.avito.instrumentation.reservation.client.kubernetes
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.kotlin.dsl.getSystemProperty
+import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.createKubernetesClient
-import com.avito.utils.logging.CILogger
 import java.io.File
 
 fun KubernetesReservationClient.Companion.createStubInstance(
-    logger: CILogger,
+    loggerFactory: LoggerFactory,
     adb: Adb = Adb(),
     buildId: String = getSystemProperty(name = "teamcityBuildId", defaultValue = "local"),
     deploymentNameGenerator: DeploymentNameGenerator = StubDeploymentNameGenerator(buildId),
@@ -18,7 +18,7 @@ fun KubernetesReservationClient.Companion.createStubInstance(
     kubernetesNamespace: String = getSystemProperty("avito.kubernetes.namespace"),
     configurationName: String = "integration-test",
     projectName: String = "",
-    buildType: String = "integration-test", // see DeploymentEnvironment
+    buildType: String = "integration-test",
     registry: String = ""
 ): KubernetesReservationClient {
     val kubernetesCredentials = KubernetesCredentials.Service(
@@ -33,7 +33,7 @@ fun KubernetesReservationClient.Companion.createStubInstance(
     return KubernetesReservationClient(
         androidDebugBridge = AndroidDebugBridge(
             adb = adb,
-            logger = { logger.info(it) }
+            loggerFactory = loggerFactory
         ),
         kubernetesClient = createKubernetesClient(
             kubernetesCredentials = kubernetesCredentials,
@@ -44,7 +44,7 @@ fun KubernetesReservationClient.Companion.createStubInstance(
             logcatDir = logcatFolder,
             logcatTags = emptyList()
         ),
-        logger = logger,
+        loggerFactory = loggerFactory,
         reservationDeploymentFactory = ReservationDeploymentFactory(
             configurationName = configurationName,
             projectName = projectName,
@@ -52,7 +52,7 @@ fun KubernetesReservationClient.Companion.createStubInstance(
             buildType = buildType,
             registry = registry,
             deploymentNameGenerator = deploymentNameGenerator,
-            logger = logger
+            loggerFactory = loggerFactory
         )
     )
 }

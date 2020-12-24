@@ -1,5 +1,6 @@
 package com.avito.http
 
+import com.avito.logger.StubLogger
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -28,7 +29,8 @@ internal class FallbackInterceptorTest {
                             .addHeader("X-FALLBACK", "true")
                             .build()
                     },
-                    doFallbackOnTheseCodes = listOf(doFallbackOnThisResponseCode)
+                    doFallbackOnTheseCodes = listOf(doFallbackOnThisResponseCode),
+                    logger = StubLogger
                 )
             )
         }

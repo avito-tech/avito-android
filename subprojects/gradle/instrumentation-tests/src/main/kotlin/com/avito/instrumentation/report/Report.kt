@@ -1,5 +1,8 @@
 package com.avito.instrumentation.report
 
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
@@ -10,8 +13,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 import org.funktionale.tries.Try
 import java.io.Serializable
 
@@ -83,7 +84,7 @@ interface Report : ReadReport {
         class ReportViewerFactory(
             val reportApiUrl: String,
             val reportApiFallbackUrl: String,
-            val ciLogger: CILogger,
+            val loggerFactory: GradleLoggerFactory,
             val verboseHttp: Boolean
         ) : Factory {
 
@@ -96,7 +97,7 @@ interface Report : ReadReport {
                         ensureInitializedReportsApi()
                         Impl(
                             reportsApi = reportsApi,
-                            logger = ciLogger,
+                            loggerFactory = loggerFactory,
                             reportCoordinates = config.reportCoordinates,
                             buildId = config.buildId
                         )
@@ -134,7 +135,7 @@ interface Report : ReadReport {
                     reportsApi = ReportsApi.create(
                         host = reportApiUrl,
                         fallbackUrl = reportApiFallbackUrl,
-                        logger = commonLogger(ciLogger),
+                        loggerFactory = loggerFactory,
                         verboseHttp = verboseHttp
                     )
                 }
@@ -162,12 +163,14 @@ interface Report : ReadReport {
     // todo перенести логику с батчами в reportsApi
     class Impl(
         private val reportsApi: ReportsApi,
-        private val logger: CILogger,
+        loggerFactory: LoggerFactory,
         private val reportCoordinates: ReportCoordinates,
         private val buildId: String,
         private val timeProvider: TimeProvider = DefaultTimeProvider(),
         private val batchSize: Int = 400
     ) : Report {
+
+        private val logger = loggerFactory.create<Report>()
 
         override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
             return when (val result = reportsApi.create(reportCoordinates, buildId, apiUrl, gitBranch, gitCommit)) {
@@ -188,7 +191,7 @@ interface Report : ReadReport {
             return when (val result = reportsApi.getReport(reportCoordinates)) {
                 is GetReportResult.Found -> result.report.id
                 GetReportResult.NotFound -> {
-                    logger.critical("Can't find report for runId=${reportCoordinates.runId}")
+                    logger.critical("Can't find report for runId=${reportCoordinates.runId}", NoSuchElementException())
                     null
                 }
                 is GetReportResult.Error -> {

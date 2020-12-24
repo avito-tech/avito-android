@@ -1,12 +1,17 @@
 package com.avito.git
 
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.logger.LoggerFactory
 import org.gradle.api.Project
 import java.io.File
 
 interface GitLocalState : GitState
 
-class GitLocalStateImpl(repoDir: File, targetBranch: String?) : GitLocalState {
+class GitLocalStateImpl(
+    rootDir: File,
+    targetBranch: String?,
+    loggerFactory: LoggerFactory
+) : GitLocalState {
 
     override val defaultBranch = "develop"
 
@@ -20,7 +25,10 @@ class GitLocalStateImpl(repoDir: File, targetBranch: String?) : GitLocalState {
         @Suppress("NAME_SHADOWING")
         val targetBranch = targetBranch?.asBranchWithoutOrigin()
 
-        val git = Git.Impl(repoDir, System.out::println)
+        val git = Git.Impl(
+            rootDir = rootDir,
+            loggerFactory = loggerFactory
+        )
 
         val gitBranch: String = git.tryParseRev("HEAD", abbrevRef = true).get()
         val gitCommit: String = git.tryParseRev("HEAD", abbrevRef = false).get()
@@ -50,9 +58,13 @@ class GitLocalStateImpl(repoDir: File, targetBranch: String?) : GitLocalState {
 
     companion object {
 
-        fun from(project: Project): GitState {
+        fun from(project: Project, loggerFactory: LoggerFactory): GitState {
             val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
-            return GitLocalStateImpl(project.rootProject.rootDir, targetBranch)
+            return GitLocalStateImpl(
+                rootDir = project.rootDir,
+                targetBranch = targetBranch,
+                loggerFactory = loggerFactory
+            )
         }
     }
 }

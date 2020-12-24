@@ -12,7 +12,10 @@ fun sentryClient(config: SentryConfig): SentryClient {
             SentryClient(NoopConnection(), ThreadLocalContextManager())
 
         is SentryConfig.Enabled ->
-            SentryClientFactory.sentryClient(config.dsn).apply {
+            SentryClientFactory.sentryClient(
+                config.dsn,
+                CustomizableSentryClientFactory(config.maxStringLength)
+            ).apply {
                 environment = config.environment
                 serverName = config.serverName
                 release = config.release
@@ -22,6 +25,13 @@ fun sentryClient(config: SentryConfig): SentryClient {
             }
     }
 }
+
+/**
+ * Some payloads are bigger than default 400 symbols but helpful for troubleshooting
+ *
+ * https://github.com/getsentry/sentry-java/issues/543
+ */
+private const val DEFAULT_SENTRY_MAX_STRING: Int = 50000
 
 /**
  * Default config for SentryClient
@@ -35,6 +45,7 @@ sealed class SentryConfig : Serializable {
         val environment: String,
         val serverName: String,
         val release: String,
-        val tags: Map<String, String>
+        val tags: Map<String, String>,
+        val maxStringLength: Int = DEFAULT_SENTRY_MAX_STRING
     ) : SentryConfig()
 }

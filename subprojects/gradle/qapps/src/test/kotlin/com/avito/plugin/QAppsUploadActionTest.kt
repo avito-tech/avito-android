@@ -1,9 +1,9 @@
 package com.avito.plugin
 
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf
-import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.Dispatcher
@@ -23,6 +23,8 @@ class QAppsUploadActionTest {
 
     private val server = MockWebServerFactory.create()
 
+    private val loggerFactory = StubLoggerFactory
+
     private val apk: File
         get() {
             val apk = File(testProjectDir, "test.apk")
@@ -41,7 +43,7 @@ class QAppsUploadActionTest {
             versionCode = "0",
             packageName = "com.avito.android",
             releaseChain = false,
-            logger = CILogger.allToStdout
+            loggerFactory = loggerFactory
         )
 
     private val failedResponse = MockResponse()

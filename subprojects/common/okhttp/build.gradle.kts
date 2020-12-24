@@ -8,6 +8,7 @@ dependencies {
     api(Dependencies.okhttp)
 
     implementation(project(":common:logger"))
+    implementation(Dependencies.okhttpLogging)
 
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":common:logger-test-fixtures"))

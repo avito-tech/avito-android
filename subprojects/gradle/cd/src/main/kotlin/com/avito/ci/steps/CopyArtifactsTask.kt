@@ -1,6 +1,6 @@
 package com.avito.ci.steps
 
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -25,14 +25,16 @@ abstract class CopyArtifactsTask : DefaultTask() {
 
     @TaskAction
     fun doAction() {
+        val logger = GradleLoggerFactory.getLogger(this)
+
         entries.get().forEach { entry ->
             if (entry.exists()) {
                 val relativeEntryPath = entry.relativeTo(sourceDir.get().asFile).path
                 val destination = File(destinationDir.get().asFile, relativeEntryPath)
-                project.ciLogger.info("Copying ${entry.path} to $destination")
+                logger.debug("Copying ${entry.path} to $destination")
                 entry.copyTo(destination, overwrite = true) // TODO: убрать перезапись после MBS-5491
             } else {
-                project.ciLogger.info("Can't copy ${entry.path} it does not exist")
+                logger.info("Can't copy ${entry.path} it does not exist")
             }
         }
     }

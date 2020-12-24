@@ -1,6 +1,7 @@
 package com.avito.runner.service.worker.device.adb
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.service.worker.device.DevicesManager
@@ -9,11 +10,13 @@ import rx.Single
 import java.util.Optional
 
 class AdbDevicesManager(
-    private val logger: Logger,
+    loggerFactory: LoggerFactory,
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
     private val adbParser: AdbDeviceParser = AdbDeviceParser(),
     private val adb: Adb
 ) : DevicesManager {
+
+    private val logger = loggerFactory.create<AdbDevicesManager>()
 
     override fun findDevice(coordinate: Serial): Optional<AdbDeviceParams> {
         return adbDevices().map { output ->

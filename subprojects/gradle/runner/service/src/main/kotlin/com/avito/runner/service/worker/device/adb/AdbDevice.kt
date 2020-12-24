@@ -3,7 +3,7 @@ package com.avito.runner.service.worker.device.adb
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
 import com.avito.runner.retry
@@ -31,13 +31,13 @@ data class AdbDevice(
     override val model: String,
     override val online: Boolean,
     private val adb: Adb,
-    private val logger: Logger,
+    private val loggerFactory: LoggerFactory,
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
 ) : Device {
 
     // MBS-8531: don't use ADB here to avoid possible recursion
-    private val tag: String = "[${coordinate.serial}]"
+    override val logger = loggerFactory.create("[${coordinate.serial}]")
 
     override val api: Int by lazy {
         retry(
@@ -433,21 +433,7 @@ data class AdbDevice(
             output = redirectOutputTo
         )
 
-    override fun debug(message: String) {
-        logger.debug("$tag $message")
-    }
-
-    override fun info(message: String) {
-        logger.info(message)
-    }
-
-    override fun warn(message: String, error: Throwable?) {
-        logger.warn("$tag $message", error)
-    }
-
-    override fun toString(): String {
-        return "Device $tag"
-    }
+    override fun toString(): String = "Device ${coordinate.serial}"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L

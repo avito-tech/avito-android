@@ -13,15 +13,17 @@ interface ArgsProvider {
 
     fun getMandatoryArgument(name: String): String
 
-    fun getMandatorySerializableArgument(name: String): Serializable
+    fun <T : Serializable> getMandatorySerializableArgument(name: String): T
+
+    fun <T : Serializable> getOptionalSerializableArgument(name: String): T?
 }
 
 class BundleArgsProvider(
     private val bundle: Bundle
 ) : ArgsProvider {
 
-    override fun getMandatorySerializableArgument(name: String): Serializable {
-        val result: Serializable? = bundle.getSerializable(name)
+    override fun <T : Serializable> getMandatorySerializableArgument(name: String): T {
+        val result: T? = getOptionalSerializableArgument(name)
 
         if (result == null) {
             throw ReporterException("$name is a mandatory serializable argument")
@@ -29,6 +31,10 @@ class BundleArgsProvider(
             return result
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Serializable> getOptionalSerializableArgument(name: String): T? =
+        bundle.getSerializable(name) as T?
 
     override fun getOptionalArgument(name: String): String? =
         bundle.getString(name)?.let { if (it.isBlank()) null else it }

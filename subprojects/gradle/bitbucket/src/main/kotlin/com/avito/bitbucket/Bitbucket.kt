@@ -1,6 +1,6 @@
 package com.avito.bitbucket
 
-import com.avito.utils.logging.CILogger
+import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
 import org.funktionale.tries.Try
 import java.io.File
@@ -41,14 +41,15 @@ interface Bitbucket {
     ): Try<Unit>
 
     companion object {
+
         fun create(
             bitbucketConfig: BitbucketConfig,
             pullRequestId: Int?,
-            logger: CILogger
+            loggerFactory: LoggerFactory
         ): Bitbucket = BitbucketImpl(
             config = bitbucketConfig,
             pullRequestId = pullRequestId,
-            logger = logger
+            loggerFactory = loggerFactory
         )
     }
 }

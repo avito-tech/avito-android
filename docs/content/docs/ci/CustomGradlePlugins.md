@@ -160,22 +160,7 @@ open class MyPlugin : Plugin<Project> {
 }
 ```
 
-### Logging
-
-Do not use `System.out` or `System.err` to log something from your plugin. It is not customizable and
-do not allow you to write logs to a file or disable them at all. Consider using `com.avito.utils.logging.CILogger`.
-It is serializable so it can be passed through `org.gradle.workers.WorkerConfiguration.setParams` and it is able
-to direct logs to a file.
-
-There are convenient extensions allowing you to get instance of CILogger:
-
-```kotlin
-val Task.ciLogger: CILogger
-    get() = ...
-
-val Project.ciLogger: CILogger
-    get() = ...
-```
+## [Logging]({{< ref "/docs/ci/Logging.md" >}})
 
 ## Директория ci
 

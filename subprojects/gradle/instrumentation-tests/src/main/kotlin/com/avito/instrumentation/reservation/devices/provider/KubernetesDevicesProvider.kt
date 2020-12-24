@@ -2,13 +2,13 @@ package com.avito.instrumentation.reservation.devices.provider
 
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevice
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
@@ -16,9 +16,11 @@ import kotlinx.coroutines.channels.map
 class KubernetesDevicesProvider(
     private val client: KubernetesReservationClient,
     private val adbDevicesManager: AdbDevicesManager,
-    private val logger: CILogger,
+    private val loggerFactory: LoggerFactory,
     private val adb: Adb
 ) : DevicesProvider {
+
+    private val logger = loggerFactory.create<KubernetesDevicesProvider>()
 
     override fun provideFor(reservations: Collection<Reservation.Data>, scope: CoroutineScope): ReceiveChannel<Device> {
         val claim = client.claim(reservations, scope)
@@ -34,7 +36,7 @@ class KubernetesDevicesProvider(
                 coordinate = coordinate,
                 model = adbDeviceParams.model,
                 online = adbDeviceParams.online,
-                logger = commonLogger(logger),
+                loggerFactory = loggerFactory,
                 adb = adb
             )
         }

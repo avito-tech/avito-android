@@ -6,7 +6,7 @@ import com.avito.impact.changes.GitChangesDetector
 import com.avito.impact.changes.IgnoreSettings
 import com.avito.instrumentation.impact.KotlinClassesFinder
 import com.avito.instrumentation.impact.KotlinClassesFinderImpl
-import com.avito.utils.logging.CILogger
+import com.avito.logger.LoggerFactory
 import com.avito.utils.rewriteNewLineList
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -29,15 +29,13 @@ abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params
     )
 
     override fun execute() {
-        val logger = parameters.logger.get()
 
-        val changesDetector: ChangesDetector =
-            GitChangesDetector(
-                gitRootDir = parameters.rootDir.get().asFile,
-                targetCommit = parameters.targetCommit.get(),
-                ignoreSettings = IgnoreSettings(emptySet()),
-                logger = logger
-            )
+        val changesDetector: ChangesDetector = GitChangesDetector(
+            gitRootDir = parameters.rootDir.get().asFile,
+            targetCommit = parameters.targetCommit.get(),
+            ignoreSettings = IgnoreSettings(emptySet()),
+            loggerFactory = parameters.loggerFactory.get()
+        )
 
         val androidTestDir = parameters.androidTestDir.get().asFile
 
@@ -64,7 +62,7 @@ abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params
     interface Params : WorkParameters {
         val rootDir: RegularFileProperty
         val targetCommit: Property<String>
-        val logger: Property<CILogger>
+        val loggerFactory: Property<LoggerFactory>
         val androidTestDir: DirectoryProperty
         val changedTestsFile: RegularFileProperty
     }

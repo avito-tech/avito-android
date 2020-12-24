@@ -6,9 +6,10 @@ import com.avito.android.lint.model.LintIssue.Severity.INFORMATION
 import com.avito.android.lint.model.LintIssue.Severity.UNKNOWN
 import com.avito.android.lint.model.LintIssue.Severity.WARNING
 import com.avito.android.lint.model.LintReportModel
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
-import com.avito.utils.logging.CILogger
 import okhttp3.HttpUrl
 import java.io.File
 
@@ -23,10 +24,10 @@ interface LintSlackReporter {
 
     class Impl(
         private val slackClient: SlackClient,
-        private val logger: CILogger
+        loggerFactory: LoggerFactory
     ) : LintSlackReporter {
 
-        private val tag = "LintSlackAlert"
+        private val logger = loggerFactory.create<LintSlackReporter>()
 
         override fun report(
             lintReport: LintReportModel,
@@ -78,12 +79,12 @@ interface LintSlackReporter {
                     }
 
                     if (!isMessageSent) {
-                        logger.debug("$tag Not sending any reports")
+                        logger.debug("Not sending any reports")
                     }
                 }
                 is LintReportModel.Invalid ->
                     // todo send this to slack also
-                    logger.critical("$tag Not sending report: can't parse", lintReport.error)
+                    logger.critical("Not sending report: can't parse", lintReport.error)
             }
         }
 
@@ -97,8 +98,8 @@ interface LintSlackReporter {
                 message = message,
                 file = htmlReport
             ).fold(
-                { logger.debug("$tag: Report sent successfully to $channel") },
-                { error -> logger.critical("$tag: Can't send report to $channel", error) }
+                { logger.debug("Report sent successfully to $channel") },
+                { error -> logger.critical("Can't send report to $channel", error) }
             )
         }
 

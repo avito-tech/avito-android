@@ -1,13 +1,12 @@
 package com.avito.plugin
 
+import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.DevicesManager
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevice
 import com.avito.runner.service.worker.device.adb.AdbDeviceParams
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 
 internal interface DeviceProvider {
 
@@ -17,7 +16,7 @@ internal interface DeviceProvider {
 internal class DeviceProviderLocal(
     private val adb: Adb,
     private val adbDevicesManager: DevicesManager,
-    private val logger: CILogger
+    private val loggerFactory: LoggerFactory
 ) : DeviceProvider {
 
     override fun getDevice(): AdbDevice {
@@ -34,7 +33,7 @@ internal class DeviceProviderLocal(
             coordinate = DeviceCoordinate.Local(serial),
             model = adbDeviceParams.model,
             online = adbDeviceParams.online,
-            logger = commonLogger(logger),
+            loggerFactory = loggerFactory,
             adb = adb
         )
     }

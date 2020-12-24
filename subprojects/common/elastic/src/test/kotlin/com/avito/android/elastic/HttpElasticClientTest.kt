@@ -37,7 +37,7 @@ internal class HttpElasticClientTest {
         val capturedRequest = dispatcher.captureRequest { true }
 
         elasticClient.sendMessage(
-            tag = "SomeTag",
+            metadata = mapOf("some_key" to "SomeValue"),
             level = "WARNING",
             message = "SomeMessage",
             throwable = Exception("SomeException")
@@ -47,11 +47,11 @@ internal class HttpElasticClientTest {
             pathContains("doesnt-matter-2020-12-02/_doc")
             bodyContains(
                 "{\"@timestamp\":\"2020-12-02T18:14:44.000000000+0300\"," +
-                    "\"tag\":\"SomeTag\"," +
                     "\"level\":\"WARNING\"," +
                     "\"build_id\":\"12345\"," +
                     "\"message\":\"SomeMessage\"," +
-                    "\"error_message\":\"SomeException\"}"
+                    "\"error_message\":\"SomeException\"," +
+                    "\"some_key\":\"SomeValue\"}"
             )
         }
     }

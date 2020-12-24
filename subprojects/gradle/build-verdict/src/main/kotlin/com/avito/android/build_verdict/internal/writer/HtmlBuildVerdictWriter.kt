@@ -1,12 +1,12 @@
 package com.avito.android.build_verdict.internal.writer
 
 import com.avito.android.build_verdict.internal.BuildVerdict
-import com.avito.utils.logging.CILogger
+import com.avito.logger.Logger
 import java.io.File
 
 internal class HtmlBuildVerdictWriter(
     buildVerdictDir: Lazy<File>,
-    override val logger: CILogger
+    override val logger: Logger
 ) : BuildVerdictWriter(buildVerdictDir, fileName) {
 
     override fun writeTo(buildVerdict: BuildVerdict, destination: File) {

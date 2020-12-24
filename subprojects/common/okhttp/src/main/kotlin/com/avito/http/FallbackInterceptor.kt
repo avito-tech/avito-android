@@ -1,5 +1,6 @@
 package com.avito.http
 
+import com.avito.logger.Logger
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -17,7 +18,8 @@ class FallbackInterceptor(
         HttpCodes.UNAVAILABLE,
         HttpCodes.BAD_GATEWAY,
         HttpCodes.GATEWAY_TIMEOUT
-    )
+    ),
+    private val logger: Logger
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -35,6 +37,9 @@ class FallbackInterceptor(
         return if (isFallbackNeeded(response)) {
             // возможно помогает от Transmitter.prepareToConnect IllegalStateException, не удалось воспроизвести в тесте
             response?.close()
+
+            logger.warn("Original request failed, using fallback")
+
             chain.doFallback(request)
         } else {
             response ?: throw exception!!

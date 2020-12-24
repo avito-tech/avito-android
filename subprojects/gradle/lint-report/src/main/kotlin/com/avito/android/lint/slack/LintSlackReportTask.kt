@@ -2,9 +2,10 @@ package com.avito.android.lint.slack
 
 import com.avito.android.lint.LintResultsParser
 import com.avito.android.lint.teamcity.TeamcityBuildLinkAccessor
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -32,7 +33,9 @@ abstract class LintSlackReportTask : DefaultTask() {
 
     @TaskAction
     fun doWork() {
-        val models = createLintParser().parse(
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+
+        val models = createLintParser(loggerFactory).parse(
             projectPath = project.path,
             lintXml = lintXml.get().asFile,
             lintHtml = lintHtml.get().asFile
@@ -40,7 +43,7 @@ abstract class LintSlackReportTask : DefaultTask() {
 
         val teamcityBuildLinkAccessor = createTeamcityBuildLinkAccessor()
 
-        createLintSlackAlert().report(
+        createLintSlackAlert(loggerFactory).report(
             lintReport = models,
             channel = SlackChannel(slackReportChannel.get()),
             channelForLintBugs = SlackChannel(slackChannelForLintBugs.get()),
@@ -48,14 +51,13 @@ abstract class LintSlackReportTask : DefaultTask() {
         )
     }
 
-    private fun createLintParser(): LintResultsParser = LintResultsParser(
-        log = project.ciLogger
-    )
+    private fun createLintParser(loggerFactory: LoggerFactory): LintResultsParser =
+        LintResultsParser(loggerFactory = loggerFactory)
 
     private fun createTeamcityBuildLinkAccessor(): TeamcityBuildLinkAccessor = TeamcityBuildLinkAccessor.Impl(project)
 
-    private fun createLintSlackAlert(): LintSlackReporter = LintSlackReporter.Impl(
+    private fun createLintSlackAlert(loggerFactory: LoggerFactory): LintSlackReporter = LintSlackReporter.Impl(
         slackClient = slackClient.get(),
-        logger = ciLogger
+        loggerFactory = loggerFactory
     )
 }

@@ -2,7 +2,7 @@ package com.avito.instrumentation.impact
 
 import com.avito.impact.BytecodeResolver
 import com.avito.impact.ModifiedProjectsFinder
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
@@ -26,7 +26,7 @@ abstract class TestBytecodeAnalyzeTask @Inject constructor(
     fun analyze() {
         workerExecutor.noIsolation().submit(TestBytecodeAnalyzeAction::class.java) { params ->
             params.state = TestBytecodeAnalyzeAction.Params.State(
-                ciLogger = ciLogger,
+                loggerFactory = GradleLoggerFactory.fromTask(this),
                 byteCodeAnalyzeSummary = byteCodeAnalyzeSummary,
                 bytecodeResolver = bytecodeResolver,
                 config = config,

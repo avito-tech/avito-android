@@ -2,7 +2,7 @@ package com.avito.bitbucket
 
 import com.avito.http.BasicAuthenticator
 import com.avito.impact.changes.newChangesDetector
-import com.avito.utils.logging.CILogger
+import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
@@ -14,7 +14,7 @@ import java.io.File
 class BitbucketImpl(
     private val config: BitbucketConfig,
     private val pullRequestId: Int?,
-    private val logger: CILogger
+    private val loggerFactory: LoggerFactory
 ) : Bitbucket {
 
     /**
@@ -71,7 +71,7 @@ class BitbucketImpl(
         newChangesDetector(
             rootDir = rootDir,
             targetCommit = targetCommitHash,
-            logger = logger
+            loggerFactory = loggerFactory
         )
             .computeChanges(rootDir)
             .map { changes ->

@@ -1,11 +1,11 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.git.Git
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
-import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
@@ -16,12 +16,18 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 private const val rootAppName = "root"
-private const val loggerPrefix = "[$rootAppName] statsd:"
+private const val loggerPrefix = "[StatsDSender@:] "
 
 class BuildMetricsPluginTest {
 
     private lateinit var tempDir: File
-    private val git: Git by lazy { Git.Impl(tempDir) { CILogger.allToStdout.info(it) } }
+    private val loggerFactory = StubLoggerFactory
+    private val git: Git by lazy {
+        Git.Impl(
+            rootDir = tempDir,
+            loggerFactory = loggerFactory
+        )
+    }
 
     private val syncBranch = "develop"
 
@@ -142,9 +148,9 @@ class BuildMetricsPluginTest {
     }
 
     private fun TestResult.expectMetric(type: String, metricName: String) {
-        // example: statsd:time:apps.mobile.statistic.android.local.user.id.success.init_configuration.total:5821
+        // example: time:apps.mobile.statistic.android.local.user.id.success.init_configuration.total:5821
         val metrics = output.lines()
-            .filter { it.startsWith(loggerPrefix) }
+            .filter { it.contains(loggerPrefix) }
             .map { it.substringAfter(loggerPrefix) }
             .map { it.substringBeforeLast(':') }
 
@@ -165,7 +171,7 @@ class BuildMetricsPluginTest {
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
             "-Pavito.stats.namespace=android",
-            "--info", // to read sentry logs from stdout
+            "--debug", // to read sentry logs from stdout
             dryRun = dryRun
         )
     }

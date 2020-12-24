@@ -7,10 +7,11 @@ import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.scheduling.TestsScheduler
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.utils.BuildFailer
 import com.avito.utils.createOrClear
-import com.avito.utils.logging.CILogger
 import com.google.gson.Gson
 import okhttp3.HttpUrl
 import java.io.File
@@ -30,8 +31,10 @@ interface InstrumentationTestActionFinalizer {
         private val jUnitReportWriter: JUnitReportWriter,
         private val buildFailer: BuildFailer,
         private val gson: Gson,
-        private val logger: CILogger
+        loggerFactory: LoggerFactory
     ) : InstrumentationTestActionFinalizer {
+
+        private val logger = loggerFactory.create<InstrumentationTestActionFinalizer>()
 
         override fun finalize(
             testsExecutionResults: TestsScheduler.Result

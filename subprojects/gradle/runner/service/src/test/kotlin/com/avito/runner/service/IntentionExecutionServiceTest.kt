@@ -1,7 +1,6 @@
 package com.avito.runner.service
 
-import com.avito.logger.NoOpLogger
-import com.avito.runner.logging.StdOutLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
@@ -28,13 +27,13 @@ import java.io.File
 @ExperimentalCoroutinesApi
 class IntentionExecutionServiceTest {
 
-    val logger = NoOpLogger
+    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `schedule all tests to supported devices`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter(logger = logger)
+            val intentionsRouter = IntentionsRouter(loggerFactory = loggerFactory)
             val executionService = provideIntentionExecutionService(
                 devices = devices,
                 intentionsRouter = intentionsRouter
@@ -67,7 +66,7 @@ class IntentionExecutionServiceTest {
                 )
             )
             val successfulDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
@@ -124,7 +123,7 @@ class IntentionExecutionServiceTest {
     fun `reschedule test to another device - when device is broken while processing intention`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter(logger = logger)
+            val intentionsRouter = IntentionsRouter(loggerFactory = loggerFactory)
             val executionService = provideIntentionExecutionService(
                 devices = devices,
                 intentionsRouter = intentionsRouter
@@ -146,7 +145,7 @@ class IntentionExecutionServiceTest {
                 )
             )
             val freezeDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
@@ -163,7 +162,7 @@ class IntentionExecutionServiceTest {
                 runTestsResults = emptyList()
             )
             val successfulDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
@@ -222,7 +221,7 @@ class IntentionExecutionServiceTest {
         intentionsRouter: IntentionsRouter
     ) = IntentionExecutionServiceImplementation(
         outputDirectory = File(""),
-        logger = NoOpLogger,
+        loggerFactory = loggerFactory,
         devices = devices,
         intentionsRouter = intentionsRouter,
         listener = NoOpListener,

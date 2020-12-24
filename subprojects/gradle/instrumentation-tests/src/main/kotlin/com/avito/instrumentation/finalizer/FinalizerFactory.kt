@@ -5,9 +5,9 @@ import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
 import com.avito.instrumentation.report.Report
+import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.utils.BuildFailer
-import com.avito.utils.logging.CILogger
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -24,7 +24,7 @@ interface FinalizerFactory {
 
         // todo Make generic. Need two realization for InMemory and ReportViewer
         private val reportViewer: ReportViewer
-        private val logger: CILogger
+        private val loggerFactory: LoggerFactory
 
         @VisibleForTesting
         internal constructor(
@@ -37,7 +37,7 @@ interface FinalizerFactory {
             this.sourceReport = sourceReport
             this.gson = gson
             this.reportViewer = ReportViewer.Impl(params.reportViewerUrl)
-            this.logger = params.logger
+            this.loggerFactory = params.loggerFactory
             this.buildFailer = buildFailer
         }
 
@@ -68,7 +68,7 @@ interface FinalizerFactory {
                 gson = gson,
                 jUnitReportWriter = JUnitReportWriter(reportViewer),
                 buildFailer = buildFailer,
-                logger = logger
+                loggerFactory = loggerFactory
             )
         }
     }

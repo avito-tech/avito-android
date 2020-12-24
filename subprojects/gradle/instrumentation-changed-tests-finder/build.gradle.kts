@@ -11,8 +11,9 @@ dependencies {
         because("Need to know all classes in files")
     }
     implementation(project(":common:files"))
-    implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:process"))
+    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:instrumentation-tests-dex-loader")) {
         because("TestInApkModel")
     }
@@ -20,6 +21,7 @@ dependencies {
         because("ChangesDetector reuse")
     }
 
+    testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":gradle:git"))
     testImplementation(project(":gradle:impact-shared-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))

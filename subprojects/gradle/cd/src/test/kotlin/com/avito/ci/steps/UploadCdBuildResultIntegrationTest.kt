@@ -7,6 +7,7 @@ import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.runTask
 import com.avito.git.Git
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -26,6 +27,7 @@ import java.nio.file.Path
 
 class UploadCdBuildResultIntegrationTest {
 
+    private val loggerFactory = StubLoggerFactory
     private lateinit var projectDir: File
     private val server = MockWebServerFactory.create()
     private val mockUrl = server.url("").toString().removeSuffix("/")
@@ -148,7 +150,10 @@ class RealTest {
         """
         val gitBranch = CdBuildResult.GitBranch(
             name = "branchName",
-            commitHash = Git.Impl(projectDir).tryParseRev("HEAD").get()
+            commitHash = Git.Impl(
+                rootDir = projectDir,
+                loggerFactory = loggerFactory
+            ).tryParseRev("HEAD").get()
         )
 
         val runId = "runId"
@@ -228,7 +233,10 @@ class RealTest {
         val releaseVersion = "249.0"
         val gitBranch = CdBuildResult.GitBranch(
             name = "branchName",
-            commitHash = Git.Impl(projectDir).tryParseRev("HEAD").get()
+            commitHash = Git.Impl(
+                rootDir = projectDir,
+                loggerFactory = loggerFactory
+            ).tryParseRev("HEAD").get()
         )
         val cdBuildConfig = """
         {

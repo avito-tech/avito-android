@@ -1,5 +1,6 @@
 package com.avito.android
 
+import com.avito.logger.GradleLoggerFactory
 import com.avito.utils.ExistingDirectory
 import com.avito.utils.ProcessRunner
 import org.gradle.api.Project
@@ -42,18 +43,29 @@ class AndroidSdk(
             }
             val buildToolsVersion = project.androidBaseExtension.buildToolsVersion
 
+            val loggerFactory = GradleLoggerFactory.fromProject(project)
+
             return AndroidSdk(
-                androidHome(project.rootDir, project.logger),
-                ProcessRunner.Real(),
-                buildToolsVersion
+                androidHome = androidHome(project.rootDir, project.logger),
+                processRunner = ProcessRunner.Real(
+                    workingDirectory = null,
+                    loggerFactory = loggerFactory
+                ),
+                buildToolsVersion = buildToolsVersion
             )
         }
 
         @JvmStatic
         fun fromProject(project: Project): BaseAndroidSdk {
+
+            val loggerFactory = GradleLoggerFactory.fromProject(project)
+
             return BaseAndroidSdk(
-                androidHome(project.rootDir, project.logger),
-                ProcessRunner.Real()
+                androidHome = androidHome(project.rootDir, project.logger),
+                processRunner = ProcessRunner.Real(
+                    workingDirectory = null,
+                    loggerFactory = loggerFactory
+                )
             )
         }
 

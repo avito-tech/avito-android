@@ -11,24 +11,23 @@ import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.reservation.request.createStubInstance
 import com.avito.instrumentation.suite.model.TestWithTarget
+import com.avito.logger.LoggerFactory
+import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.StubCILogger
-import com.avito.utils.logging.commonLogger
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal class TestExecutorIntegrationTest {
 
-    private val logger = StubCILogger()
+    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `executor - does not stuck - when no requests passed`(@TempDir tempDir: File) {
-        val executor = createTestExecutor(logger = logger)
+        val executor = createTestExecutor(loggerFactory = loggerFactory)
 
         executor.execute(
             application = null,
@@ -43,7 +42,7 @@ internal class TestExecutorIntegrationTest {
 
     @Test
     fun `executor - does not stuck - when deployment failed with invalid image reference`(@TempDir tempDir: File) {
-        val executor = createTestExecutor(logger = logger)
+        val executor = createTestExecutor(loggerFactory = loggerFactory)
 
         executor.execute(
             application = null,
@@ -72,24 +71,24 @@ internal class TestExecutorIntegrationTest {
     }
 
     private fun createTestExecutor(
-        logger: CILogger,
+        loggerFactory: LoggerFactory,
         configurationName: String = "",
         adb: Adb = Adb()
     ): TestExecutor = TestExecutor.Impl(
         devicesProvider = KubernetesDevicesProvider(
             client = KubernetesReservationClient.createStubInstance(
-                logger = logger,
+                loggerFactory = loggerFactory,
                 adb = adb
             ),
             adbDevicesManager = AdbDevicesManager(
-                logger = commonLogger(logger),
+                loggerFactory = loggerFactory,
                 adb = adb
             ),
-            logger = logger,
+            loggerFactory = loggerFactory,
             adb = adb
         ),
         testReporter = StubTestReporter(),
         configurationName = configurationName,
-        logger = logger
+        loggerFactory = loggerFactory
     )
 }

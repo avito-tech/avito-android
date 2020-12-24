@@ -1,19 +1,22 @@
 package com.avito.slack
 
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import com.avito.utils.logging.CILogger
 import org.funktionale.tries.Try
 
 class SlackMessageUpdaterDirectlyToThread(
     private val slackClient: SlackClient,
-    private val logger: CILogger
+    loggerFactory: LoggerFactory
 ) : SlackMessageUpdater {
+
+    private val logger = loggerFactory.create<SlackMessageUpdaterDirectlyToThread>()
 
     override fun updateMessage(previousMessage: FoundMessage, newContent: String): Try<SlackMessage> {
         logger.info(
-            "[Slack] Updating message by posting to its thread; channel=${previousMessage.channel}; " +
+            "Updating message by posting to its thread; channel=${previousMessage.channel}; " +
                 "oldMessage=${SlackStringFormat.ellipsize(string = previousMessage.text, limit = 50)}; "
         )
 
@@ -27,7 +30,7 @@ class SlackMessageUpdaterDirectlyToThread(
             )
         ).onSuccess {
             logger.info(
-                "[Slack] Update message posted to thread; " +
+                "Update message posted to thread; " +
                     "message=${SlackStringFormat.ellipsize(string = newContent, limit = 50)}"
             )
         }

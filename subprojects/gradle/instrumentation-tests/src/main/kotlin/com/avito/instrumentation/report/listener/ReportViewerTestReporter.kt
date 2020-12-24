@@ -5,6 +5,8 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorage.Request
 import com.avito.filestorage.RemoteStorage.Result
 import com.avito.instrumentation.report.Report
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.internal.getHttpClient
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
@@ -14,8 +16,6 @@ import com.avito.report.model.TestStaticData
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -24,7 +24,7 @@ import java.io.File
 import java.io.FileReader
 
 class ReportViewerTestReporter(
-    private val logger: CILogger,
+    loggerFactory: LoggerFactory,
     private val testSuite: Map<TestCase, TestStaticData>,
     private val report: Report,
     // todo extract write to file
@@ -32,6 +32,8 @@ class ReportViewerTestReporter(
     private val logcatDir: File,
     private val retracer: ProguardRetracer
 ) : TestReporter() {
+
+    private val logger = loggerFactory.create<ReportViewerTestReporter>()
 
     private val httpTimeoutSec = 30L
 
@@ -41,7 +43,7 @@ class ReportViewerTestReporter(
 
     private val httpClient = getHttpClient(
         verbose = false, // do not enable for production, generates a ton of logs
-        logger = commonLogger(logger),
+        logger = logger,
         readTimeoutSec = httpTimeoutSec,
         writeTimeoutSec = httpTimeoutSec
     )
@@ -52,7 +54,7 @@ class ReportViewerTestReporter(
     private val remoteStorage: RemoteStorage =
         RemoteStorage.create(
             endpoint = fileStorageUrl,
-            logger = commonLogger(logger),
+            loggerFactory = loggerFactory,
             httpClient = httpClient
         )
 

@@ -1,8 +1,7 @@
 package com.avito.android.plugin
 
-import com.avito.utils.logging.ciLogger
-import com.avito.utils.logging.commonLogger
-import com.avito.utils.runCommand
+import com.avito.logger.GradleLoggerFactory
+import com.avito.utils.ProcessRunner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.gradle.api.DefaultTask
@@ -36,13 +35,18 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
     @Input
     val developersToTeam = project.objects.mapProperty<DeveloperEmail, Team>()
 
-    @Suppress("unused")
     @TaskAction
-    fun action() {
+    fun doWork() {
         val jsonToggles = readJsonReport()
-        val blameCodeLines = readBlameCodeLines()
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+
+        val processRunner = ProcessRunner.Real(
+            workingDirectory = project.projectDir,
+            loggerFactory = loggerFactory
+        )
+        val blameCodeLines = readBlameCodeLines(processRunner)
         val suspiciousToggles: List<Toggle> = SuspiciousTogglesCollector(
-            logger = commonLogger(ciLogger),
+            loggerFactory = loggerFactory,
             developerToTeam = developersToTeam.get()
         ).collectSuspiciousToggles(
             jsonTogglesList = jsonToggles,
@@ -79,8 +83,8 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
     }
 
     private fun buildReportText(sortedToggles: List<TeamTogglesList>): String {
-        val text =
-            StringBuilder().append("Obsolete feature toggles :information_source: $newLineEscaped")
+        val text = StringBuilder().append("Obsolete feature toggles :information_source: $newLineEscaped")
+
         sortedToggles.forEach {
             text.append(newLineEscaped)
             text.append("Unit: *${it.team}*")
@@ -89,12 +93,12 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
                 text.append("> No obsolete toggles.")
                 text.append(newLineEscaped)
             }
-            if (!it.turnedOns.isEmpty()) {
+            if (it.turnedOns.isNotEmpty()) {
                 text.append("*Turned on toggles:*$newLineEscaped")
                 text.append(getTogglesString(it.turnedOns))
                 text.append(newLineEscaped)
             }
-            if (!it.turnedOffs.isEmpty()) {
+            if (it.turnedOffs.isNotEmpty()) {
                 text.append("*Turned off toggles:*$newLineEscaped")
                 text.append(getTogglesString(it.turnedOffs))
                 text.append(newLineEscaped)
@@ -141,12 +145,10 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
         )
     }
 
-    private fun readBlameCodeLines() = BlameParser().parseBlameCodeLines(getBlame())
+    private fun readBlameCodeLines(processRunner: ProcessRunner) =
+        BlameParser().parseBlameCodeLines(processRunner.getBlame())
 
-    private fun getBlame() = runCommand(
-        command = "git blame -w ${featureTogglesFile.path} -et",
-        workingDirectory = project.projectDir
-    ).get()
+    private fun ProcessRunner.getBlame() = run(command = "git blame -w ${featureTogglesFile.path} -et").get()
 }
 
 private const val newLineEscaped = "\\n"

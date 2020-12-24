@@ -3,6 +3,7 @@ package com.avito.android
 import com.avito.android.InstrumentationChangedTestsFinderApi.changedTestsFinderTaskName
 import com.avito.android.InstrumentationChangedTestsFinderApi.pluginId
 import com.avito.git.Git
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
@@ -17,6 +18,7 @@ import java.nio.file.Paths
 
 internal class FindChangedTestsActionTest {
 
+    private val loggerFactory = StubLoggerFactory
     private lateinit var projectDir: File
     private lateinit var androidTestDir: File
     private lateinit var testGroupFile: File
@@ -28,7 +30,7 @@ internal class FindChangedTestsActionTest {
     @BeforeEach
     fun setup(@TempDir projectDir: File) {
         this.projectDir = projectDir
-        git = Git.Impl(projectDir)
+        git = Git.Impl(projectDir, loggerFactory)
 
         TestProjectGenerator(
             modules = listOf(

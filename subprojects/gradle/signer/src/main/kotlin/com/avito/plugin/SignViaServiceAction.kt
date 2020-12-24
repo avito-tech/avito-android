@@ -1,9 +1,10 @@
 package com.avito.plugin
 
+import com.avito.http.HttpLogger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.ExistingFile
 import com.avito.utils.createOrClear
-import com.avito.utils.getStackTraceString
-import com.avito.utils.logging.CILogger
 import com.avito.utils.toExisting
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -20,8 +21,10 @@ internal class SignViaServiceAction(
     private val token: String,
     private val unsignedFile: File,
     private val signedFile: File,
-    private val ciLogger: CILogger
+    loggerFactory: LoggerFactory
 ) {
+
+    private val logger = loggerFactory.create<SignViaServiceAction>()
 
     private val apiPath = "/sign"
 
@@ -31,13 +34,11 @@ internal class SignViaServiceAction(
                 retriesCount = 6,
                 delaySeconds = 0,
                 attemptFailedHandler = { attempt, throwable ->
-                    ciLogger.critical(
-                        "Attempt $attempt: failed to sign apk via service ${throwable.getStackTraceString()}"
-                    )
+                    logger.critical("Attempt $attempt: failed to sign apk via service", throwable)
                 },
                 actionFailedHandler = { throwable ->
-                    val message = "Failed to sign apk via service: " + throwable.getStackTraceString()
-                    ciLogger.critical(message)
+                    val message = "Failed to sign apk via service"
+                    logger.critical(message, throwable)
                     throw IllegalStateException(message, throwable)
                 }
             ) {
@@ -58,15 +59,7 @@ internal class SignViaServiceAction(
         .connectTimeout(1, TimeUnit.MINUTES)
         .writeTimeout(1, TimeUnit.MINUTES)
         .readTimeout(1, TimeUnit.MINUTES)
-        .addInterceptor(
-            HttpLoggingInterceptor(
-                object : HttpLoggingInterceptor.Logger {
-                    override fun log(message: String) {
-                        ciLogger.info(message)
-                    }
-                }
-            ).setLevel(HttpLoggingInterceptor.Level.BASIC)
-        )
+        .addInterceptor(HttpLoggingInterceptor(HttpLogger(logger)).setLevel(HttpLoggingInterceptor.Level.BASIC))
         .build()
 
     private fun buildRequest(): Request {

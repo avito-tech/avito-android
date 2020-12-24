@@ -1,6 +1,6 @@
 package com.avito.http
 
-import com.avito.logger.NoOpLogger
+import com.avito.logger.StubLogger
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
@@ -104,7 +104,7 @@ internal class RetryInterceptorTest {
                 RetryInterceptor(
                     retries = maxAttempts,
                     delayMs = 1,
-                    logger = NoOpLogger,
+                    logger = StubLogger,
                     allowedMethods = listOf("GET", "POST"),
                     useIncreasingDelay = false
                 )

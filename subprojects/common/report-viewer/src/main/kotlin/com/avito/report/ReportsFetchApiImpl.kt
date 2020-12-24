@@ -2,7 +2,8 @@ package com.avito.report
 
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.internal.model.ConclusionStatus
 import com.avito.report.internal.model.ListResult
@@ -30,8 +31,10 @@ import org.funktionale.tries.Try
  */
 internal class ReportsFetchApiImpl(
     private val requestProvider: JsonRpcRequestProvider,
-    private val logger: Logger
+    loggerFactory: LoggerFactory
 ) : ReportsFetchApi {
+
+    private val logger = loggerFactory.create<ReportsFetchApiImpl>()
 
     override fun getReportsList(
         planSlug: String,

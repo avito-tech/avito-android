@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":gradle:build-failer"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:build-metrics"))
@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":gradle:build-environment"))
     implementation(project(":common:files"))
     implementation(project(":gradle:statsd-config"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(Dependencies.Gradle.kotlinPlugin)
     implementation(Dependencies.funktionaleTry)
 

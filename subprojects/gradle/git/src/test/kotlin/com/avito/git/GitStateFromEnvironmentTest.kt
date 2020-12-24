@@ -1,5 +1,6 @@
 package com.avito.git
 
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
@@ -12,6 +13,7 @@ import java.nio.file.Path
 
 class GitStateFromEnvironmentTest {
 
+    private val loggerFactory = StubLoggerFactory
     private lateinit var remoteRepo: File
     private lateinit var localRepo: File
 
@@ -114,13 +116,11 @@ class GitStateFromEnvironmentTest {
         assertThat(state.isOnDefaultBranch).isFalse()
     }
 
-    private fun gitState(gitBranch: String, targetBranch: String?): GitState {
-        return GitStateFromEnvironment(
-            repoDir = localRepo,
-            gitBranch = gitBranch,
-            targetBranch = targetBranch,
-            originalCommitHash = null,
-            logger = {}
-        )
-    }
+    private fun gitState(gitBranch: String, targetBranch: String?): GitState = GitStateFromEnvironment(
+        rootDir = localRepo,
+        gitBranch = gitBranch,
+        targetBranch = targetBranch,
+        originalCommitHash = null,
+        loggerFactory = loggerFactory
+    )
 }

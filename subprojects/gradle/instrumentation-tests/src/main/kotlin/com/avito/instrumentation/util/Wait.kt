@@ -1,10 +1,11 @@
 package com.avito.instrumentation.util
 
+import com.avito.logger.Logger
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 
 suspend fun waitForCondition(
-    logger: (String) -> Unit = {},
+    logger: Logger,
     conditionName: String,
     successMessage: String? = null,
     errorMessage: String? = null,
@@ -14,15 +15,16 @@ suspend fun waitForCondition(
 ): Boolean {
     @Suppress("NAME_SHADOWING")
     val successMessage = successMessage ?: "Condition $conditionName succeeded"
+
     @Suppress("NAME_SHADOWING")
     val errorMessage = errorMessage ?: "Condition $conditionName failed"
 
     (0..maxAttempts).forEach { attempt ->
-        logger("Attempt #$attempt for condition: $conditionName")
+        logger.debug("Attempt #$attempt for condition: $conditionName")
 
         val conditionResult = condition()
         if (conditionResult) {
-            logger(successMessage)
+            logger.debug(successMessage)
             return true
         }
 
@@ -30,7 +32,7 @@ suspend fun waitForCondition(
             TimeUnit.SECONDS.toMillis(frequencySeconds)
         )
     }
-    logger(errorMessage)
+    logger.warn(errorMessage)
     return false
 }
 

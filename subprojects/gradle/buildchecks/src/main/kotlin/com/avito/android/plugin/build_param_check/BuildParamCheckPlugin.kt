@@ -11,8 +11,9 @@ import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.isRoot
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.Logger
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.logging.ciLogger
 import org.gradle.StartParameter
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -43,7 +44,9 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
         if (!project.pluginIsEnabled) return
 
-        printBuildEnvironment(project)
+        val logger = GradleLoggerFactory.getLogger(this, project)
+
+        printBuildEnvironment(project, logger)
 
         project.afterEvaluate {
             val checks = ChecksFilter(extension).enabledChecks()
@@ -236,14 +239,14 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    private fun printBuildEnvironment(project: Project) {
+    private fun printBuildEnvironment(project: Project, logger: Logger) {
         val isBuildCachingEnabled = project.gradle.startParameter.isBuildCacheEnabled
         val minSdk = project.getOptionalStringProperty("minSdk")
         val kaptBuildCache: Boolean = project.getBooleanProperty("kaptBuildCache")
         val kaptMapDiagnosticLocations = project.getBooleanProperty("kaptMapDiagnosticLocations")
         val javaIncrementalCompilation = project.getBooleanProperty("javaIncrementalCompilation")
 
-        project.ciLogger.info(
+        logger.info(
             """Config information for project: ${project.displayName}:
 BuildEnvironment: ${project.buildEnvironment}
 ${startParametersDescription(project.gradle)}

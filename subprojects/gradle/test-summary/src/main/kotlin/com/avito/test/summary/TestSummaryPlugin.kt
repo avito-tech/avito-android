@@ -1,6 +1,7 @@
 package com.avito.test.summary
 
-import com.avito.logger.Logger
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.Team
@@ -8,8 +9,6 @@ import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.avito.utils.logging.ciLogger
-import com.avito.utils.logging.commonLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
@@ -22,15 +21,15 @@ class TestSummaryPlugin : Plugin<Project> {
 
         val extension = target.extensions.create<TestSummaryExtension>(testSummaryExtensionName)
 
-        val logger = commonLogger(target.ciLogger)
-
         @Suppress("UnstableApiUsage")
         val slackClient: Provider<SlackClient> =
             extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
                 createSlackClient(token, workspace)
             }
 
-        val reportsApi: Provider<ReportsApi> = extension.reportsHost.map { createReportsApi(it, logger) }
+        val reportsApi: Provider<ReportsApi> = extension.reportsHost.map {
+            createReportsApi(it, GradleLoggerFactory.fromPlugin(this, target))
+        }
 
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
@@ -81,11 +80,11 @@ class TestSummaryPlugin : Plugin<Project> {
         )
     }
 
-    private fun createReportsApi(reportsHost: String, logger: Logger): ReportsApi {
+    private fun createReportsApi(reportsHost: String, loggerFactory: LoggerFactory): ReportsApi {
         return ReportsApi.create(
             host = reportsHost,
             fallbackUrl = reportsHost,
-            logger = logger
+            loggerFactory = loggerFactory
         )
     }
 }

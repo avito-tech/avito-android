@@ -28,7 +28,8 @@ import com.avito.instrumentation.impact.metadata.MetadataParser
 import com.avito.instrumentation.impact.metadata.ScreenToModulePath
 import com.avito.instrumentation.impact.model.AffectedTest
 import com.avito.instrumentation.impact.model.AffectionType
-import com.avito.utils.logging.CILogger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.google.gson.GsonBuilder
 import org.apache.bcel.classfile.JavaClass
 import org.gradle.api.Project
@@ -48,8 +49,8 @@ import kotlin.system.measureTimeMillis
 @Suppress("UnstableApiUsage")
 abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.Params> {
 
-    private val ciLogger: CILogger
-        get() = parameters.state.ciLogger
+    private val loggerFactory: LoggerFactory
+        get() = parameters.state.loggerFactory
 
     private val bytecodeResolver
         get() = parameters.state.bytecodeResolver
@@ -68,15 +69,18 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
 
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
+    private val logger = loggerFactory.create<TestBytecodeAnalyzeAction>()
+
     private val metadataParser = MetadataParser(
-        ciLogger = ciLogger,
+        loggerFactory = loggerFactory,
         screenClass = config.screenMarkerClass.get(),
         fieldName = config.screenMarkerMetadataField.get()
     )
 
     abstract class Params : WorkParameters {
+
         class State(
-            val ciLogger: CILogger,
+            val loggerFactory: LoggerFactory,
             val byteCodeAnalyzeSummary: Provider<RegularFile>,
             val bytecodeResolver: BytecodeResolver,
             val config: InstrumentationTestImpactAnalysisExtension,
@@ -182,7 +186,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                     valueTransform = { it.second }
                 )
 
-            ciLogger.info("Finding changed classes using patterns: $patterns...")
+            logger.info("Finding changed classes using patterns: $patterns...")
             val changedClasses = patterns.mapValues { (_, patterns) ->
                 val changedClassesFinder = TargetClassesFinderImpl(
                     targetClassesDetector = TargetClassesDetector.RegexFileNameDetector(
@@ -192,7 +196,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 changedClassesFinder.find(context)
             }
 
-            ciLogger.info("Found ${changedClasses.size} changed classes")
+            logger.info("Found ${changedClasses.size} changed classes")
             return changedClasses
         } else {
             emptyMap()
@@ -209,9 +213,9 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             )
         )
 
-        ciLogger.info("Finding ${config.screenMarkerClass} classes...")
+        logger.info("Finding ${config.screenMarkerClass} classes...")
         val targetClasses = targetClassesFinder.find(context)
-        ciLogger.info("Found ${targetClasses.size} affected classes")
+        logger.info("Found ${targetClasses.size} affected classes")
 
         return targetClasses
     }
@@ -238,7 +242,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 affectedClasses.find { it.className == node.className } != null
             }
 
-        ciLogger.info("Invocation tracing started")
+        logger.info("Invocation tracing started")
         lateinit var invocationGraph: OneDirectedGraph<Node>
         val tracingTime = measureTimeMillis {
             val allChangedClasses = changedClasses.values.flatten().toSet()
@@ -250,7 +254,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
                 }
             )
         }
-        ciLogger.info(
+        logger.info(
             "Invocation tracing completed in " +
                 "${TimeUnit.MILLISECONDS.toSeconds(tracingTime)}s"
         )
@@ -271,12 +275,12 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
 
         val invokesFinder = TargetClassesByTestsInvokesFinder()
 
-        ciLogger.info("Detecting affections from changed classes to tests...")
+        logger.info("Detecting affections from changed classes to tests...")
         val invocations = invokesFinder.find(
             invocationGraph = invocationGraph,
             invocationsOnTargetClasses = invocationsOnChangedClasses
         )
-        ciLogger.info("Completed detecting affections from screens to tests")
+        logger.info("Completed detecting affections from screens to tests")
 
         return invocations.entries.map { (test, methods) ->
             AffectedTest(test, AffectionType.DEPENDENT_TEST_CODE_CHANGED, methods)
@@ -287,7 +291,7 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
         context: Context,
         changedClasses: Map<ChangeType, Collection<JavaClass>>
     ): Set<AffectedTest> {
-        ciLogger.info("Finding test methods inside changed classes...")
+        logger.info("Finding test methods inside changed classes...")
         val testMethodsFinder = TestMethodsFinderImpl()
         return changedClasses
             .map { (changeType, changedClasses) ->
@@ -332,9 +336,10 @@ abstract class TestBytecodeAnalyzeAction : WorkAction<TestBytecodeAnalyzeAction.
             .map { (screen, packageName) ->
                 val project = androidModules.find { it.manifest.getPackage() == packageName }
                 if (project == null) {
-                    ciLogger.critical(
+                    logger.critical(
                         "packageName=$packageName not found in project, " +
-                            "available packages=${androidModules.map { it.name to it.manifest.getPackage() }}"
+                            "available packages=${androidModules.map { it.name to it.manifest.getPackage() }}",
+                        NoSuchElementException()
                     )
                     null
                 } else {

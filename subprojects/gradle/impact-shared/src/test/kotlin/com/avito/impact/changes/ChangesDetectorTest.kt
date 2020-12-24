@@ -1,11 +1,11 @@
 package com.avito.impact.changes
 
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
 import com.avito.test.gradle.mutate
-import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.BeforeEach
@@ -16,6 +16,7 @@ import java.nio.file.Path
 
 class ChangesDetectorTest {
 
+    private val loggerFactory = StubLoggerFactory
     private lateinit var rootDir: File
     private lateinit var targetCommit: String
 
@@ -121,7 +122,7 @@ class ChangesDetectorTest {
             gitRootDir = rootDir,
             targetCommit = targetCommit,
             ignoreSettings = IgnoreSettings(ignorePatterns),
-            logger = StubCILogger()
+            loggerFactory = loggerFactory
         )
             .computeChanges(targetDir, excludedDirectories)
             .fold(

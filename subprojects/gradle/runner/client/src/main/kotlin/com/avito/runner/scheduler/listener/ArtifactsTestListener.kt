@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler.listener
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
@@ -11,8 +12,10 @@ import kotlin.io.path.createTempDirectory
 
 class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
-    private val logger: Logger
+    loggerFactory: LoggerFactory
 ) : TestListener {
+
+    private val logger = loggerFactory.create<ArtifactsTestListener>()
 
     override fun started(
         device: Device,

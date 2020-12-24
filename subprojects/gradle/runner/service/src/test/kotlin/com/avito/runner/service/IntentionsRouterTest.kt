@@ -1,6 +1,6 @@
 package com.avito.runner.service
 
-import com.avito.logger.NoOpLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
@@ -16,11 +16,11 @@ class IntentionsRouterTest {
 
     private lateinit var router: IntentionsRouter
 
-    private val logger = NoOpLogger
+    private val loggerFactory = StubLoggerFactory
 
     @BeforeEach
     fun setup() {
-        router = IntentionsRouter(logger = logger)
+        router = IntentionsRouter(loggerFactory = loggerFactory)
     }
 
     @Test

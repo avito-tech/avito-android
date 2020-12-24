@@ -7,7 +7,8 @@ import android.os.Looper
 import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
 import com.avito.android.util.toPng
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import org.funktionale.option.Option
 import org.funktionale.tries.Try
 import java.io.File
@@ -41,8 +42,10 @@ interface ScreenshotCapturer {
      */
     class Impl(
         private val outputDirectory: Lazy<File>,
-        private val logger: Logger
+        loggerFactory: LoggerFactory
     ) : ScreenshotCapturer {
+
+        private val logger = loggerFactory.create<ScreenshotCapturer>()
 
         override fun captureBitmap(): Try<Option<Bitmap>> {
             // todo use di: pass activity getter as constructor argument

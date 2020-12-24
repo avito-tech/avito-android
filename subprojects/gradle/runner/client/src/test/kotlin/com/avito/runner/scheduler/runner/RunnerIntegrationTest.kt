@@ -1,8 +1,6 @@
 package com.avito.runner.scheduler.runner
 
-import com.avito.logger.Logger
-import com.avito.logger.NoOpLogger
-import com.avito.runner.logging.StdOutLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.model.TestRunRequest
@@ -42,7 +40,7 @@ class RunnerIntegrationTest {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
-    private val logger = NoOpLogger
+    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `all tests passed - for 1 successful device`() =
@@ -76,7 +74,7 @@ class RunnerIntegrationTest {
             val requests = createRunRequests()
 
             val firstFailedDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
                     StubActionResult.Success(Any()), // Install application
@@ -103,7 +101,7 @@ class RunnerIntegrationTest {
                 )
             )
             val secondDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
                     StubActionResult.Success(Any()), // Install application
@@ -225,7 +223,7 @@ class RunnerIntegrationTest {
 
             val successfulDevice = createSuccessfulDevice(requests)
             val failedDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 gettingDeviceStatusResults = listOf(
                     deviceIsAlive(), // Device state for initializing
@@ -274,7 +272,7 @@ class RunnerIntegrationTest {
         )
 
         val device = StubDevice(
-            logger = StdOutLogger(),
+            loggerFactory = loggerFactory,
             coordinate = randomDeviceCoordinate(),
             installApplicationResults = listOf(
                 StubActionResult.Success(Any()), // Install application
@@ -339,7 +337,7 @@ class RunnerIntegrationTest {
             )
 
             val device = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
                     StubActionResult.Success(Any()), // Install application
@@ -428,7 +426,7 @@ class RunnerIntegrationTest {
             )
 
             val device = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
                     StubActionResult.Success(Any()), // Install application
@@ -482,7 +480,7 @@ class RunnerIntegrationTest {
         failureReason: StubActionResult<Device.DeviceStatus>
     ): StubDevice {
         return StubDevice(
-            logger = StdOutLogger(),
+            loggerFactory = loggerFactory,
             coordinate = randomDeviceCoordinate(),
             gettingDeviceStatusResults = listOf(
                 failureReason
@@ -534,7 +532,7 @@ class RunnerIntegrationTest {
 
     private fun createSuccessfulDevice(requests: List<TestRunRequest>): StubDevice {
         return StubDevice(
-            logger = StdOutLogger(),
+            loggerFactory = loggerFactory,
             coordinate = randomDeviceCoordinate(),
             installApplicationResults = mutableListOf(
                 StubActionResult.Success(Any()), // Install application
@@ -573,17 +571,16 @@ class RunnerIntegrationTest {
     private fun provideRunner(
         devices: ReceiveChannel<Device>,
         testListener: TestListener = NoOpListener,
-        logger: Logger = NoOpLogger,
         outputDirectory: File = File("")
     ): TestRunner {
         val scheduler = TestExecutionScheduler(
-            logger = logger,
+            loggerFactory = loggerFactory,
             dispatcher = TestCoroutineDispatcher()
         )
-        val client = TestExecutionClient(TestCoroutineDispatcher(), logger)
+        val client = TestExecutionClient(TestCoroutineDispatcher(), loggerFactory)
         val service = IntentionExecutionServiceImplementation(
             outputDirectory = outputDirectory,
-            logger = logger,
+            loggerFactory = loggerFactory,
             devices = devices,
             listener = testListener,
             deviceWorkersDispatcher = TestDispatcher
@@ -593,7 +590,7 @@ class RunnerIntegrationTest {
             scheduler = scheduler,
             client = client,
             service = service,
-            logger = logger,
+            loggerFactory = loggerFactory,
             reservationWatcher = object : DeviceReservationWatcher {
                 override fun watch(deviceSignals: ReceiveChannel<Device.Signal>, scope: CoroutineScope) {
                     // empty

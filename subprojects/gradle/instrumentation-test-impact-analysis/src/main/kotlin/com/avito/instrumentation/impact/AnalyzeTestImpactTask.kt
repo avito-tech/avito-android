@@ -9,7 +9,7 @@ import com.avito.bytecode.report.JsonFileReporter
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Test
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
 import com.avito.utils.rewriteNewLineList
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.GsonBuilder
@@ -65,12 +65,14 @@ abstract class AnalyzeTestImpactTask @Inject constructor(
     fun findAffectedTasks() {
         val gson = GsonBuilder().setPrettyPrinting().create()
 
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+
         val impactSummary = AnalyzeTestImpactAction(
             bytecodeAnalyzeSummary = gson.fromJson(bytecodeAnalyzeSummaryJson.get().asFile.reader()),
             targetModule = AndroidProject(project),
             packageFilter = packageFilter.orNull,
             finder = finder,
-            ciLogger = ciLogger
+            loggerFactory = loggerFactory
         ).computeImpact()
 
         JsonFileReporter(

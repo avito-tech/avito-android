@@ -4,9 +4,9 @@ import com.avito.android.gradle.metric.GradleCollector
 import com.avito.android.gradle.metric.MetricsConsumer
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
+import com.avito.logger.GradleLoggerFactory
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -25,7 +25,7 @@ open class BuildTracePlugin : Plugin<Project> {
     private fun buildTraceConsumer(project: Project): MetricsConsumer = BuildTraceConsumer(
         // TODO: pass it from an extension
         output = File(project.projectDir, "outputs/trace/build.trace"),
-        logger = project.ciLogger
+        loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
     )
 
     // TODO: enable by a project extension

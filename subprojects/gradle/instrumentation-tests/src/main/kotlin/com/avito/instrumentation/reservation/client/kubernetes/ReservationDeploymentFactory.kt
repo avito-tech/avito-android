@@ -2,8 +2,9 @@ package com.avito.instrumentation.reservation.client.kubernetes
 
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.gradle.toValidKubernetesName
-import com.avito.utils.logging.CILogger
 import com.fkorotkov.kubernetes.apps.metadata
 import com.fkorotkov.kubernetes.apps.newDeployment
 import com.fkorotkov.kubernetes.apps.selector
@@ -30,10 +31,10 @@ class ReservationDeploymentFactory(
     private val buildType: String,
     private val registry: String,
     private val deploymentNameGenerator: DeploymentNameGenerator,
-    logger: CILogger
+    loggerFactory: LoggerFactory
 ) {
 
-    private val logger = logger.child("ReservationDeploymentFactory")
+    private val logger = loggerFactory.create<ReservationDeploymentFactory>()
 
     init {
         val prefix = { reason: String -> "Can't create configuration, precondition failed: $reason" }

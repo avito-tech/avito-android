@@ -1,5 +1,7 @@
 package com.avito.test.summary
 
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
@@ -12,8 +14,6 @@ import com.avito.slack.TodayMessageCondition
 import com.avito.slack.model.SlackChannel
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
@@ -62,7 +62,7 @@ abstract class FlakyReportTask : DefaultTask() {
             reportViewer = reportViewer.get(),
             buildUrl = buildUrl.get(),
             currentBranch = currentBranch.get(),
-            logger = ciLogger
+            loggerFactory = GradleLoggerFactory.fromTask(this)
         ).reportSummary(flakyTestInfo.getInfo())
     }
 
@@ -73,19 +73,19 @@ abstract class FlakyReportTask : DefaultTask() {
         reportViewer: ReportViewer,
         buildUrl: String,
         currentBranch: String,
-        logger: CILogger
+        loggerFactory: LoggerFactory
     ): FlakyTestReporterImpl {
         return FlakyTestReporterImpl(
             slackClient = SlackConditionalSender(
                 slackClient = slackClient.get(),
-                updater = SlackMessageUpdaterDirectlyToThread(slackClient.get(), logger),
+                updater = SlackMessageUpdaterDirectlyToThread(slackClient.get(), loggerFactory),
                 condition = ConjunctionMessageUpdateCondition(
                     listOf(
                         SameAuthorUpdateCondition(slackUsername),
                         TodayMessageCondition(DefaultTimeProvider())
                     )
                 ),
-                logger = logger
+                loggerFactory = loggerFactory
             ),
             summaryChannel = summaryChannel,
             messageAuthor = slackUsername,

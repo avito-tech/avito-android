@@ -1,6 +1,6 @@
 package com.avito.http
 
-import com.avito.logger.NoOpLogger
+import com.avito.logger.StubLogger
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 
 class RetryWithFallbackTest {
 
+    private val logger = StubLogger
     private val mockDispatcher = MockDispatcher()
     private val server = MockWebServerFactory.create().apply { dispatcher = mockDispatcher }
 
@@ -35,7 +36,7 @@ class RetryWithFallbackTest {
                 RetryInterceptor(
                     allowedMethods = listOf("POST"),
                     allowedCodes = listOf(503),
-                    logger = NoOpLogger
+                    logger = logger
                 )
             )
             addInterceptor(
@@ -49,7 +50,8 @@ class RetryWithFallbackTest {
                                     .build()
                             ).build()
                     },
-                    doFallbackOnTheseCodes = listOf(503)
+                    doFallbackOnTheseCodes = listOf(503),
+                    logger = logger
                 )
             )
         }

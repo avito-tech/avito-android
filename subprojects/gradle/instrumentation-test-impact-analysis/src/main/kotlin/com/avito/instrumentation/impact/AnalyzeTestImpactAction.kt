@@ -11,7 +11,8 @@ import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Test
 import com.avito.instrumentation.impact.metadata.ScreenToModulePath
 import com.avito.instrumentation.impact.model.AffectionType
-import com.avito.utils.logging.CILogger
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.create
 import org.gradle.util.Path
 
 internal data class ImpactSummary(
@@ -40,8 +41,10 @@ internal class AnalyzeTestImpactAction(
     private val bytecodeAnalyzeSummary: BytecodeAnalyzeSummary,
     private val packageFilter: String?,
     private val finder: ModifiedProjectsFinder,
-    private val ciLogger: CILogger
+    loggerFactory: GradleLoggerFactory
 ) {
+
+    private val logger = loggerFactory.create<AnalyzeTestImpactAction>()
 
     private val tests: Set<Test> = bytecodeAnalyzeSummary
         .testsByScreen
@@ -150,18 +153,18 @@ internal class AnalyzeTestImpactAction(
 
                         when (val screensModule: Path? = screenToModuleMaps[screen]) {
                             null -> {
-                                ciLogger.info("Module not found for screen $screen")
+                                logger.info("Module not found for screen $screen")
                                 tests
                             }
                             else -> when {
                                 changedModules.map { it.path }.contains(screensModule.path) -> {
-                                    ciLogger.info(
+                                    logger.info(
                                         "Module $screensModule for screen $screen changed, will run its tests"
                                     )
                                     tests
                                 }
                                 else -> {
-                                    ciLogger.info(
+                                    logger.info(
                                         "Module $screensModule for screen $screen not changed, won't run it tests"
                                     )
                                     emptySet()

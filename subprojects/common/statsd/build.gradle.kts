@@ -6,4 +6,5 @@ plugins {
 
 dependencies {
     implementation(Dependencies.statsd)
+    implementation(project(":common:logger"))
 }

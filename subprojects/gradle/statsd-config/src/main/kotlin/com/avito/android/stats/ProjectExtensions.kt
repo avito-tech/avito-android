@@ -7,24 +7,16 @@ import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryIntProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Project
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
 val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    val logger = project.ciLogger
-
     Providers.of<StatsDSender>(
         StatsDSender.Impl(
             config = config(project),
-            logger = { message, error ->
-                if (error != null) {
-                    logger.info(message, error)
-                } else {
-                    logger.debug(message)
-                }
-            }
+            loggerFactory = GradleLoggerFactory.fromProject(project)
         )
     )
 }

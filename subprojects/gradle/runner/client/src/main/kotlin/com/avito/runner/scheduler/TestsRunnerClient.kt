@@ -20,21 +20,21 @@ class TestsRunnerClient {
 
         val testRunner = TestRunnerImplementation(
             scheduler = TestExecutionScheduler(
-                logger = arguments.logger
+                loggerFactory = arguments.loggerFactory
             ),
             client = TestExecutionClient(
-                logger = arguments.logger
+                loggerFactory = arguments.loggerFactory
             ),
             service = IntentionExecutionServiceImplementation(
                 outputDirectory = arguments.outputDirectory,
                 devices = arguments.devices,
-                logger = arguments.logger,
+                loggerFactory = arguments.loggerFactory,
                 listener = setupListener(arguments)
             ),
             reservationWatcher = DeviceReservationWatcher.Impl(
                 reservation = arguments.reservation
             ),
-            logger = arguments.logger
+            loggerFactory = arguments.loggerFactory
         )
 
         Entrypoint(
@@ -48,7 +48,7 @@ class TestsRunnerClient {
                     )
                 )
             ),
-            logger = arguments.logger
+            loggerFactory = arguments.loggerFactory
         ).also {
             it.run(
                 requests = arguments.requests
@@ -63,7 +63,7 @@ class TestsRunnerClient {
                 add(
                     ArtifactsTestListener(
                         lifecycleListener = arguments.listener,
-                        logger = arguments.logger
+                        loggerFactory = arguments.loggerFactory
                     )
                 )
             }

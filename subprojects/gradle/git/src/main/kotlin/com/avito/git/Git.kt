@@ -1,6 +1,8 @@
 package com.avito.git
 
-import com.avito.utils.runCommand
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
+import com.avito.utils.ProcessRunner
 import org.funktionale.tries.Try
 import java.io.File
 
@@ -31,9 +33,13 @@ interface Git {
     fun config(option: String): Try<String>
 
     class Impl(
-        private val dir: File,
-        private val logger: (String) -> Unit = {}
+        rootDir: File,
+        loggerFactory: LoggerFactory
     ) : Git {
+
+        private val processRunner = ProcessRunner.Real(rootDir, loggerFactory)
+
+        private val logger = loggerFactory.create<Git>()
 
         override fun init(): Try<Unit> = git("init").map { Unit }
 
@@ -55,8 +61,8 @@ interface Git {
         override fun config(option: String): Try<String> = git("config $option")
 
         override fun tryParseRev(branchName: String, abbrevRef: Boolean): Try<String> {
-            val abbrevRefOption = if (abbrevRef) "--abbrev-ref" else ""
-            return git("rev-parse $abbrevRefOption $branchName")
+            val abbrevRefOption = if (abbrevRef) " --abbrev-ref" else ""
+            return git("rev-parse$abbrevRefOption $branchName")
                 .rescue { error ->
                     throw IllegalStateException(
                         "Can't get revision for $branchName",
@@ -65,22 +71,12 @@ interface Git {
                 }
         }
 
-        private fun git(command: String): Try<String> {
-            val calledFrom = Thread.currentThread().stackTrace[CALLER_STACK_TRACE_DEPTH]
-            logger("GIT running: git $command (${calledFrom.fileName}:${calledFrom.lineNumber})")
-
-            return runCommand(
-                command = "git $command",
-                workingDirectory = dir
-            )
+        private fun git(command: String): Try<String> =
+            processRunner.run(command = "git $command")
                 .apply {
-                    onSuccess { result -> logger("GIT result: $result") }
-                    onFailure { error -> logger("GIT error: ${error.message}") }
+                    onFailure { error -> logger.warn("git error running: '$command'", error) }
                 }
-        }
 
         private fun escapeGitMessage(message: String) = message.replace("\\s+".toRegex()) { "_" }
     }
 }
-
-private const val CALLER_STACK_TRACE_DEPTH = 3

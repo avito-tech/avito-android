@@ -2,13 +2,12 @@ package com.avito.instrumentation.reservation.devices.provider
 
 import com.avito.instrumentation.reservation.request.Device.MockEmulator
 import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.logger.LoggerFactory
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +16,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
 
-class StubDevicesProvider(private val logger: CILogger) : DevicesProvider {
+class StubDevicesProvider(private val loggerFactory: LoggerFactory) : DevicesProvider {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
@@ -35,7 +34,7 @@ class StubDevicesProvider(private val logger: CILogger) : DevicesProvider {
                         val acquiredDevice = successfulMockDevice(
                             model = reservation.device.model,
                             api = reservation.device.api,
-                            logger = logger
+                            loggerFactory = loggerFactory
                         )
                         devices.send(acquiredDevice)
                         acquiredCoordinates.add(acquiredDevice.coordinate)
@@ -54,8 +53,8 @@ class StubDevicesProvider(private val logger: CILogger) : DevicesProvider {
         devices.close()
     }
 
-    private fun successfulMockDevice(model: String, api: Int, logger: CILogger) = StubDevice(
-        logger = commonLogger(logger),
+    private fun successfulMockDevice(model: String, api: Int, loggerFactory: LoggerFactory) = StubDevice(
+        loggerFactory = loggerFactory,
         installApplicationResults = generateList { StubActionResult.Success(Any()) },
         gettingDeviceStatusResults = generateList { deviceIsAlive() },
         runTestsResults = generateList { testPassed() },

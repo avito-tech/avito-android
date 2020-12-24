@@ -6,8 +6,8 @@ import com.avito.android.test.report.future.StubFutureValue
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.Logger
-import com.avito.logger.NoOpLogger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
 import com.avito.time.TimeProvider
@@ -26,10 +26,10 @@ class ReportTestExtension(
     private val fileStorageUrl: String = "https://filestorage.com",
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotUploader: ScreenshotUploader = mock(),
-    private val logger: Logger = NoOpLogger,
+    private val loggerFactory: LoggerFactory = StubLoggerFactory,
     private val report: Report = ReportImplementation(
         onDeviceCacheDirectory = lazy { error("nope") },
-        logger = logger,
+        loggerFactory = loggerFactory,
         transport = emptyList(),
         screenshotUploader = screenshotUploader,
         timeProvider = timeProvider,
@@ -38,7 +38,7 @@ class ReportTestExtension(
             httpClient = OkHttpClient.Builder()
                 .addInterceptor(mockInterceptor)
                 .build(),
-            logger = logger
+            loggerFactory = loggerFactory
         )
     )
 ) : BeforeEachCallback, Report by report {

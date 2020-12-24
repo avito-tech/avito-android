@@ -1,6 +1,7 @@
 package com.avito.runner.service
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
 import kotlinx.coroutines.channels.Channel
@@ -8,14 +9,16 @@ import kotlinx.coroutines.channels.ReceiveChannel
 
 class IntentionsRouter(
     private val intentionRoutings: MutableMap<String, Channel<Intention>> = mutableMapOf(),
-    private val logger: Logger
+    loggerFactory: LoggerFactory
 ) {
+
+    private val logger = loggerFactory.create<IntentionsRouter>()
 
     fun observeIntentions(state: State): ReceiveChannel<Intention> {
 
         val id = state.routingIdentifier()
 
-        log("observing intentions with id: $id for state: $state")
+        logger.debug("observing intentions with id: $id for state: $state")
 
         return intentionRoutings.getOrPut(
             key = id,
@@ -27,7 +30,7 @@ class IntentionsRouter(
 
         val intentionId = intention.state.routingIdentifier()
 
-        log("sending intention with id: $intentionId [$intention]")
+        logger.debug("sending intention with id: $intentionId [$intention]")
 
         intentionRoutings.getOrPut(
             key = intentionId,
@@ -44,10 +47,5 @@ class IntentionsRouter(
 
     private fun State.routingIdentifier(): String = State(
         layers = layers.filterIsInstance<State.Layer.Model>() + layers.filterIsInstance<State.Layer.ApiLevel>()
-    )
-        .digest
-
-    private fun log(message: String) {
-        logger.debug("IntentionsRouter: $message")
-    }
+    ).digest
 }

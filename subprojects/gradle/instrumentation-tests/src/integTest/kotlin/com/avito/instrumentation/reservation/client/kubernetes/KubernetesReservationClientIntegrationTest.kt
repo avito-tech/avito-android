@@ -4,8 +4,8 @@ import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.reservation.request.createStubInstance
+import com.avito.logger.StubLoggerFactory
 import com.avito.truth.assertThat
-import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import io.fabric8.kubernetes.client.KubernetesClientException
 import kotlinx.coroutines.CoroutineScope
@@ -21,14 +21,14 @@ import java.net.UnknownHostException
 
 internal class KubernetesReservationClientIntegrationTest {
 
-    private val logger = StubCILogger()
+    private val loggerFactory = StubLoggerFactory
     private var clientOne: ReservationClient? = null
     private var clientTwo: ReservationClient? = null
 
     @Test
     fun `claim - throws exception - unknown host`() {
         clientOne = KubernetesReservationClient.createStubInstance(
-            logger = logger,
+            loggerFactory = loggerFactory,
             kubernetesUrl = "unknown-host",
             kubernetesNamespace = "emulators"
         )
@@ -70,11 +70,11 @@ internal class KubernetesReservationClientIntegrationTest {
         val deploymentNameGenerator = StubDeploymentNameGenerator()
 
         clientOne = KubernetesReservationClient.createStubInstance(
-            logger = logger,
+            loggerFactory = loggerFactory,
             deploymentNameGenerator = deploymentNameGenerator
         )
         clientTwo = KubernetesReservationClient.createStubInstance(
-            logger = logger,
+            loggerFactory = loggerFactory,
             deploymentNameGenerator = deploymentNameGenerator
         )
 

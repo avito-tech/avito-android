@@ -1,12 +1,14 @@
 package com.avito.instrumentation.impact.metadata
 
-import com.avito.utils.logging.CILogger
+import com.avito.logger.StubLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal class MetadataParserTest {
+
+    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `rootId package`(@TempDir projectDir: File) {
@@ -24,7 +26,7 @@ internal class MetadataParserTest {
         }
 
         val result = MetadataParser(
-            ciLogger = CILogger.allToStdout,
+            loggerFactory = loggerFactory,
             screenClass = "com.test.Screen",
             fieldName = "rootId"
         ).parseMetadata(setOf(projectDir))
@@ -49,7 +51,7 @@ internal class MetadataParserTest {
         }
 
         val result = MetadataParser(
-            ciLogger = CILogger.allToStdout,
+            loggerFactory = loggerFactory,
             screenClass = "com.test.Screen",
             fieldName = "rootId"
         ).parseMetadata(setOf(projectDir))

@@ -10,12 +10,13 @@ dependencies {
     implementation(Dependencies.okhttpLogging)
     implementation(Dependencies.gson)
 
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":common:okhttp"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:git"))
+    implementation(project(":gradle:gradle-extensions"))
 
-    testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":gradle:git-test-fixtures"))
+    testImplementation(project(":gradle:test-project"))
 }

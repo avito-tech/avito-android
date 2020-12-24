@@ -4,10 +4,10 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.android.isAndroidApp
 import com.avito.android.lint.slack.LintReportToSlackTaskFactory
 import com.avito.impact.configuration.internalModule
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.create
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
-import com.avito.utils.logging.ciLogger
-import com.avito.utils.logging.commonLogger
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
@@ -28,7 +28,7 @@ class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, 
 
         project.pluginManager.withPlugin("com.avito.android.lint-report") {
 
-            val logger = commonLogger(project.ciLogger)
+            val logger = GradleLoggerFactory.fromProject(project).create<LintCheck>()
             val factory = LintReportToSlackTaskFactory(project, logger)
 
             if (slackChannelForAlerts.isBlank()) {

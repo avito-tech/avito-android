@@ -25,5 +25,6 @@ headless: true
     - [Custom Gradle Plugins]({{< ref "/docs/ci/CustomGradlePlugins.md" >}})
     - [Impact analysis]({{< ref "/docs/ci/ImpactAnalysis.md" >}})
     - [Containers]({{< ref "/docs/ci/Containers.md" >}})
+    - [Logging]({{< ref "/docs/ci/Logging.md" >}})
 - [Infrastructure]({{< ref "/docs/Infrastructure.md" >}})
 - [Infra Release]({{< ref "/docs/Release.md" >}})

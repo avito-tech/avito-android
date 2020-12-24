@@ -1,6 +1,6 @@
 package com.avito.report
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
 import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.internal.model.ConclusionStatus
 import com.avito.report.internal.model.CreateResponse
@@ -16,11 +16,11 @@ import com.google.gson.JsonElement
 import org.funktionale.tries.Try
 
 internal class ReportsApiImpl(
-    private val logger: Logger,
+    private val loggerFactory: LoggerFactory,
     private val requestProvider: JsonRpcRequestProvider
 ) : ReportsApi,
     ReportsAddApi by ReportsAddApiImpl(requestProvider),
-    ReportsFetchApi by ReportsFetchApiImpl(requestProvider, logger) {
+    ReportsFetchApi by ReportsFetchApiImpl(requestProvider, loggerFactory) {
 
     override fun create(
         reportCoordinates: ReportCoordinates,
