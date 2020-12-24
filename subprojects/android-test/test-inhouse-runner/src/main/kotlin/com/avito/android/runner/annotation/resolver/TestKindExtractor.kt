@@ -13,7 +13,7 @@ import com.avito.report.model.Kind
 
 internal object TestKindExtractor {
 
-    fun extract(test: String): Kind {
+    fun extract(test: MethodStringRepresentation.Resolution): Kind {
         val testTypes = arrayOf(
             UIComponentTest::class.java,
             E2ETest::class.java,
@@ -28,7 +28,7 @@ internal object TestKindExtractor {
         val testAnnotations = TestAnnotationExtractor.extract(test, *testTypes)
 
         require(testAnnotations.isNotEmpty()) {
-            "Test $test has no type. Expected one of $testTypes"
+            "Test $test has no type. Expected one of ${testTypes.joinToString { it.simpleName }}"
         }
         require(testAnnotations.size == 1) {
             "Test $test has multiple types but must be only one: $testAnnotations"

@@ -31,8 +31,9 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
     override val key: String = TEST_METADATA_KEY
 
     override fun resolve(test: String): TestMetadataResolver.Resolution {
+        val testOrClass = MethodStringRepresentation.parseString(test)
 
-        val kind: Kind = TestKindExtractor.extract(test)
+        val kind: Kind = TestKindExtractor.extract(testOrClass)
         var caseId: Int? = null
         var description: String? = null
         var priority: TestCasePriority? = null
@@ -44,7 +45,7 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
         var flakiness: Flakiness = Flakiness.Stable
 
         val testAnnotations = TestAnnotationExtractor.extract(
-            test,
+            testOrClass,
             FeatureId::class.java,
             Description::class.java,
             DataSetNumber::class.java,
@@ -88,18 +89,16 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
         var testMethod: Method? = null
 
         @Suppress("OptionalWhenBraces")
-        when (val methodResolution = MethodStringRepresentation.parseString(test)) {
-
+        when (testOrClass) {
             is MethodStringRepresentation.Resolution.ClassOnly -> {
-                testClass = methodResolution.aClass
+                testClass = testOrClass.aClass
             }
-
             is MethodStringRepresentation.Resolution.Method -> {
-                testClass = methodResolution.aClass
-                testMethod = methodResolution.method
+                testClass = testOrClass.aClass
+                testMethod = testOrClass.method
             }
             is MethodStringRepresentation.Resolution.ParseError ->
-                throw RuntimeException("Failed to parse test $test")
+                throw RuntimeException("Failed to parse test $testOrClass")
         }
 
         return TestMetadataResolver.Resolution.ReplaceSerializable(

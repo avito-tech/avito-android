@@ -2,17 +2,17 @@ package com.avito.android.runner.annotation.resolver
 
 internal object TestAnnotationExtractor {
 
-    fun extract(test: String, vararg subset: Class<out Annotation>): Set<Annotation> {
-        return when (val methodResolution = MethodStringRepresentation.parseString(test)) {
+    fun extract(test: MethodStringRepresentation.Resolution, vararg subset: Class<out Annotation>): Set<Annotation> {
+        return when (test) {
 
             is MethodStringRepresentation.Resolution.ClassOnly -> Annotations.getAnnotationsSubset(
-                methodResolution.aClass,
+                test.aClass,
                 null,
                 *subset
             )
             is MethodStringRepresentation.Resolution.Method -> Annotations.getAnnotationsSubset(
-                methodResolution.aClass,
-                methodResolution.method,
+                test.aClass,
+                test.method,
                 *subset
             )
             is MethodStringRepresentation.Resolution.ParseError ->

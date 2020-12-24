@@ -14,9 +14,10 @@ internal class TestMetadataValidator {
         if (test.isNullOrBlank()) {
             throw RuntimeException("Test name not found in instrumentation arguments: $instrumentationArguments")
         }
+        val parsedTest = MethodStringRepresentation.parseString(test)
 
         @Suppress("NON_EXHAUSTIVE_WHEN")
-        when (TestKindExtractor.extract(test)) {
+        when (TestKindExtractor.extract(parsedTest)) {
             Kind.UI_COMPONENT, Kind.UI_COMPONENT_STUB, Kind.E2E_STUB -> validateNoSideEffects(test)
         }
     }
