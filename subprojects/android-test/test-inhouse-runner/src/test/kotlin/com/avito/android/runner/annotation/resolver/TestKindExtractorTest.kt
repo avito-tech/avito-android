@@ -1,6 +1,5 @@
 package com.avito.android.runner.annotation.resolver
 
-import com.avito.android.runner.annotation.resolver.MethodStringRepresentation.Resolution
 import com.avito.android.test.annotations.E2ETest
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.report.model.Kind
@@ -30,7 +29,7 @@ class TestKindExtractorTest {
     }
 
     private fun extract(test: Class<*>): Kind =
-        TestKindExtractor.extract(Resolution.ClassOnly(test))
+        TestKindExtractor.extract(TestMethodOrClass(test))
 
     @UIComponentTest
     class ComponentTest {

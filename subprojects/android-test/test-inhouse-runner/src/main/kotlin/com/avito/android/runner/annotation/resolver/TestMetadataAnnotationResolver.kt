@@ -24,14 +24,13 @@ import com.avito.android.test.annotations.UnitTest
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
-import java.lang.reflect.Method
 
 class TestMetadataAnnotationResolver : TestMetadataResolver {
 
     override val key: String = TEST_METADATA_KEY
 
     override fun resolve(test: String): TestMetadataResolver.Resolution {
-        val testOrClass = MethodStringRepresentation.parseString(test)
+        val testOrClass = MethodStringRepresentation.parseString(test).getTestOrThrow()
 
         val kind: Kind = TestKindExtractor.extract(testOrClass)
         var caseId: Int? = null
@@ -44,8 +43,7 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
         var featureIds: List<Int> = emptyList()
         var flakiness: Flakiness = Flakiness.Stable
 
-        val testAnnotations = TestAnnotationExtractor.extract(
-            testOrClass,
+        val annotationTypes = arrayOf(
             FeatureId::class.java,
             Description::class.java,
             DataSetNumber::class.java,
@@ -63,6 +61,12 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             UnitTest::class.java,
             ScreenshotTest::class.java,
             SyntheticMonitoringTest::class.java
+        )
+
+        val testAnnotations = Annotations.getAnnotationsSubset(
+            testOrClass.testClass,
+            testOrClass.testMethod,
+            *annotationTypes
         )
 
         testAnnotations
@@ -85,28 +89,12 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
                 }
             }
 
-        val testClass: Class<*>
-        var testMethod: Method? = null
-
-        @Suppress("OptionalWhenBraces")
-        when (testOrClass) {
-            is MethodStringRepresentation.Resolution.ClassOnly -> {
-                testClass = testOrClass.aClass
-            }
-            is MethodStringRepresentation.Resolution.Method -> {
-                testClass = testOrClass.aClass
-                testMethod = testOrClass.method
-            }
-            is MethodStringRepresentation.Resolution.ParseError ->
-                throw RuntimeException("Failed to parse test $testOrClass")
-        }
-
         return TestMetadataResolver.Resolution.ReplaceSerializable(
             replacement = TestMetadata(
                 caseId = caseId,
                 description = description,
-                className = testClass.name,
-                methodName = testMethod?.name,
+                className = testOrClass.testClass.name,
+                methodName = testOrClass.testMethod?.name,
                 dataSetNumber = dataSetNumber,
                 kind = kind,
                 priority = priority,

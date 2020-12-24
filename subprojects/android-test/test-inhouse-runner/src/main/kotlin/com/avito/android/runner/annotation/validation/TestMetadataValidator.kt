@@ -2,35 +2,27 @@ package com.avito.android.runner.annotation.validation
 
 import android.os.Bundle
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
-import com.avito.android.runner.annotation.resolver.TestKindExtractor
-import com.avito.android.runner.annotation.resolver.getClassOrThrow
-import com.avito.report.model.Kind
+import com.avito.android.runner.annotation.resolver.getTestOrThrow
 
-internal class TestMetadataValidator {
+interface TestMetadataValidator {
 
-    fun validate(instrumentationArguments: Bundle) {
+    fun validate(instrumentationArguments: Bundle) // TODO: don't use Bundle
+}
+
+class TestMetadataValidatorImpl(
+    private val checks: List<TestMetadataCheck>
+) : TestMetadataValidator {
+
+    override fun validate(instrumentationArguments: Bundle) {
         val test = instrumentationArguments.getString("class")
 
         if (test.isNullOrBlank()) {
             throw RuntimeException("Test name not found in instrumentation arguments: $instrumentationArguments")
         }
-        val parsedTest = MethodStringRepresentation.parseString(test)
+        val testMethod = MethodStringRepresentation.parseString(test).getTestOrThrow()
 
-        @Suppress("NON_EXHAUSTIVE_WHEN")
-        when (TestKindExtractor.extract(parsedTest)) {
-            Kind.UI_COMPONENT, Kind.UI_COMPONENT_STUB, Kind.E2E_STUB -> validateNoSideEffects(test)
-        }
-    }
-
-    private fun validateNoSideEffects(test: String) {
-        val testClass = MethodStringRepresentation.parseString(test).getClassOrThrow()
-
-        val rules = NoSideEffectsRulesValidator.validate(testClass)
-        if (rules.isNotEmpty()) {
-            throw IllegalStateException(
-                "Test ${testClass.canonicalName} uses rules with side effects: $rules. " +
-                    "It makes test unstable. Replace these rules by hermetic equivalents or change type of test."
-            )
+        checks.forEach {
+            it.validate(testMethod)
         }
     }
 }

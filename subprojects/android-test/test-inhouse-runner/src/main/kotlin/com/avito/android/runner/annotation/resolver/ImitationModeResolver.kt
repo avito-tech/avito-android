@@ -11,10 +11,11 @@ class ImitationModeResolver : TestMetadataResolver {
 
     @SuppressLint("LogNotTimber")
     override fun resolve(test: String): TestMetadataResolver.Resolution {
-        val testOrClass = MethodStringRepresentation.parseString(test)
-        val skipOnSdkAnnotation: SkipOnSdk? = TestAnnotationExtractor.extract(testOrClass, SkipOnSdk::class.java)
-            .firstOrNull()
-            ?.let { it as SkipOnSdk }
+        val testOrClass = MethodStringRepresentation.parseString(test).getTestOrThrow()
+        val skipOnSdkAnnotation: SkipOnSdk? =
+            Annotations.getAnnotationsSubset(testOrClass.testClass, testOrClass.testMethod, SkipOnSdk::class.java)
+                .firstOrNull()
+                ?.let { it as SkipOnSdk }
 
         if (skipOnSdkAnnotation == null) {
             return TestMetadataResolver.Resolution.NothingToChange("SkipOnSdk annotation not found")

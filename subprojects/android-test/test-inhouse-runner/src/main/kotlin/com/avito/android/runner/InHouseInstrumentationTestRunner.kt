@@ -12,6 +12,7 @@ import com.avito.android.monitoring.TestIssuesMonitor
 import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
+import com.avito.android.runner.annotation.validation.TestMetadataValidatorImpl
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryClient
 import com.avito.android.test.UITestConfig
@@ -149,6 +150,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
+    protected open val testMetadataValidator: TestMetadataValidator = TestMetadataValidatorImpl(emptyList())
 
     abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
 
@@ -156,7 +158,7 @@ abstract class InHouseInstrumentationTestRunner :
         val isRealRun = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
         if (isRealRun) {
             metadataToBundleInjector.inject(arguments)
-            TestMetadataValidator().validate(arguments)
+            testMetadataValidator.validate(arguments)
         }
     }
 

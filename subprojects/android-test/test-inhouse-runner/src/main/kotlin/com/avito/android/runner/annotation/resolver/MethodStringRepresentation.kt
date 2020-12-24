@@ -77,10 +77,12 @@ internal object MethodStringRepresentation {
     }
 }
 
-internal fun Resolution.getClassOrThrow(): Class<*> {
+data class TestMethodOrClass(val testClass: Class<*>, val testMethod: Method? = null)
+
+internal fun Resolution.getTestOrThrow(): TestMethodOrClass {
     return when (this) {
-        is Resolution.ClassOnly -> aClass
-        is Resolution.Method -> aClass
+        is Resolution.ClassOnly -> TestMethodOrClass(aClass)
+        is Resolution.Method -> TestMethodOrClass(aClass, method)
         is Resolution.ParseError -> throw IllegalArgumentException(message)
     }
 }

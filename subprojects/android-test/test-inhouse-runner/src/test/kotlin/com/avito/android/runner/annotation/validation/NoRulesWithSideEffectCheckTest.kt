@@ -1,30 +1,40 @@
 package com.avito.android.runner.annotation.validation
 
 import com.avito.android.mock.MockWebServerApiRule
+import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.test.annotations.UIComponentTest
 import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-class NoSideEffectsRulesValidatorTest {
+class NoRulesWithSideEffectCheckTest {
 
     @Test
     fun `success - valid component test`() {
-        val rules = NoSideEffectsRulesValidator.validate(ValidTest::class.java)
-
-        assertThat(rules).isEmpty()
+        validate(ValidTest::class.java)
     }
 
     @Test
     fun `finds rule - test with non-hermetic rule`() {
-        val rules = NoSideEffectsRulesValidator.validate(TestWithNonHermeticRule::class.java)
+        val error = assertThrows<IllegalStateException> {
+            validate(TestWithNonHermeticRule::class.java)
+        }
 
-        assertThat(rules).hasSize(1)
-        assertThat(rules.first()).isEqualTo(NonHermeticRule::class.java)
+        assertThat(error).hasMessageThat().contains(
+            "Test com.avito.android.runner.annotation.validation.NoRulesWithSideEffectCheckTest.TestWithNonHermeticRule " +
+                "uses rules with side effects: NonHermeticRule. " +
+                "It makes test unstable. Replace these rules by hermetic equivalents or change type of test."
+        )
     }
+
+    private fun validate(testClass: Class<*>) =
+        NoRulesWithSideEffectCheck().validate(
+            TestMethodOrClass(testClass)
+        )
 
     @UIComponentTest
     class ValidTest {
