@@ -19,15 +19,15 @@ class NoRulesWithSideEffectCheckTest {
     }
 
     @Test
-    fun `finds rule - test with non-hermetic rule`() {
+    fun `fail - test with non-hermetic rule`() {
         val error = assertThrows<IllegalStateException> {
             validate(TestWithNonHermeticRule::class.java)
         }
 
         assertThat(error).hasMessageThat().contains(
-            "Test com.avito.android.runner.annotation.validation.NoRulesWithSideEffectCheckTest.TestWithNonHermeticRule " +
-                "uses rules with side effects: NonHermeticRule. " +
-                "It makes test unstable. Replace these rules by hermetic equivalents or change type of test."
+            "Test com.avito.android.runner.annotation.validation.NoRulesWithSideEffectCheckTest.TestWithNonHermeticRule"
+                + "uses rules with side effects: NonHermeticRule. "
+                + "It makes test unstable. Replace these rules by hermetic equivalents or change type of test."
         )
     }
 

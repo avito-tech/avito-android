@@ -18,7 +18,8 @@ class NoRulesWithSideEffectCheck : TestMetadataCheck {
         val rules = findTestRules(testClass)
         if (rules.isNotEmpty()) {
             throw IllegalStateException(
-                "Test ${testClass.canonicalName} uses rules with side effects: ${rules.joinToString { it.simpleName }}. " +
+                "Test ${testClass.canonicalName} uses rules with side effects: " +
+                    "${rules.joinToString { it.simpleName }}. " +
                     "It makes test unstable. Replace these rules by hermetic equivalents or change type of test."
             )
         }
