@@ -12,8 +12,6 @@ import com.avito.android.test.annotations.FeatureId
 import com.avito.android.test.annotations.Flaky
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
-import com.avito.android.test.annotations.PerformanceComponentTest
-import com.avito.android.test.annotations.PerformanceFunctionalTest
 import com.avito.android.test.annotations.Priority
 import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.SyntheticMonitoringTest
@@ -49,8 +47,6 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             UIComponentStub::class.java,
             E2EStub::class.java,
             UnitTest::class.java,
-            PerformanceFunctionalTest::class.java,
-            PerformanceComponentTest::class.java,
             ScreenshotTest::class.java,
             SyntheticMonitoringTest::class.java
         )
@@ -106,9 +102,7 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
                     is UIComponentStub -> kind = Kind.UI_COMPONENT_STUB
                     is E2EStub -> kind = Kind.E2E_STUB
                     is UnitTest -> kind = Kind.UNIT
-                    is PerformanceFunctionalTest -> kind = Kind.E2E
                     is SyntheticMonitoringTest -> kind = Kind.E2E
-                    is PerformanceComponentTest -> kind = Kind.UI_COMPONENT
                     is ScreenshotTest -> kind = Kind.UI_COMPONENT
                     is CaseId -> caseId = annotation.value
                     is Description -> description = annotation.value

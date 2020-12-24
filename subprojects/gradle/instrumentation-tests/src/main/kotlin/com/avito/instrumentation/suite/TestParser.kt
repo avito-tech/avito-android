@@ -14,8 +14,6 @@ import com.avito.android.test.annotations.Flaky
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.ManualTest
 import com.avito.android.test.annotations.NO_REASON
-import com.avito.android.test.annotations.PerformanceComponentTest
-import com.avito.android.test.annotations.PerformanceFunctionalTest
 import com.avito.android.test.annotations.Priority
 import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.TagId
@@ -78,8 +76,6 @@ internal fun parseTest(
 
 private val annotationsToKindMap = mapOf(
     ManualTest::class.java.canonicalName to Kind.MANUAL,
-    PerformanceFunctionalTest::class.java.canonicalName to Kind.E2E,
-    PerformanceComponentTest::class.java.canonicalName to Kind.UI_COMPONENT,
     ScreenshotTest::class.java.canonicalName to Kind.UI_COMPONENT,
     E2EStub::class.java.canonicalName to Kind.E2E_STUB,
     E2ETest::class.java.canonicalName to Kind.E2E,
