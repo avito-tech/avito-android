@@ -16,7 +16,7 @@ internal object TestAnnotationExtractor {
                 *subset
             )
             is MethodStringRepresentation.Resolution.ParseError ->
-                throw RuntimeException("Failed to parse annotations from $test")
+                throw IllegalArgumentException("Failed to parse annotations from $test")
         }
     }
 }
