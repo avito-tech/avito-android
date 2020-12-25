@@ -10,10 +10,9 @@ class ImitationModeResolver : TestMetadataResolver {
     override val key: String = BUNDLE_KEY
 
     @SuppressLint("LogNotTimber")
-    override fun resolve(test: String): TestMetadataResolver.Resolution {
-        val testOrClass = MethodStringRepresentation.parseString(test).getTestOrThrow()
+    override fun resolve(test: TestMethodOrClass): TestMetadataResolver.Resolution {
         val skipOnSdkAnnotation: SkipOnSdk? =
-            Annotations.getAnnotationsSubset(testOrClass.testClass, testOrClass.testMethod, SkipOnSdk::class.java)
+            Annotations.getAnnotationsSubset(test.testClass, test.testMethod, SkipOnSdk::class.java)
                 .firstOrNull()
                 ?.let { it as SkipOnSdk }
 

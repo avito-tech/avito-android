@@ -10,7 +10,7 @@ import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.test.annotations.E2ETest
 import com.avito.report.model.Kind
 
-class NetworkIsMockedCheck : TestMetadataCheck {
+class NetworkIsMockedValidator : TestMetadataValidator {
 
     override fun validate(test: TestMethodOrClass) {
         @Suppress("NON_EXHAUSTIVE_WHEN")

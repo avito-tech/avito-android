@@ -29,10 +29,9 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
 
     override val key: String = TEST_METADATA_KEY
 
-    override fun resolve(test: String): TestMetadataResolver.Resolution {
-        val testOrClass = MethodStringRepresentation.parseString(test).getTestOrThrow()
+    override fun resolve(test: TestMethodOrClass): TestMetadataResolver.Resolution {
 
-        val kind: Kind = TestKindExtractor.extract(testOrClass)
+        val kind: Kind = TestKindExtractor.extract(test)
         var caseId: Int? = null
         var description: String? = null
         var priority: TestCasePriority? = null
@@ -63,11 +62,7 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             SyntheticMonitoringTest::class.java
         )
 
-        val testAnnotations = Annotations.getAnnotationsSubset(
-            testOrClass.testClass,
-            testOrClass.testMethod,
-            *annotationTypes
-        )
+        val testAnnotations = Annotations.getAnnotationsSubset(test.testClass, test.testMethod, *annotationTypes)
 
         testAnnotations
             .forEach { annotation ->
@@ -93,8 +88,8 @@ class TestMetadataAnnotationResolver : TestMetadataResolver {
             replacement = TestMetadata(
                 caseId = caseId,
                 description = description,
-                className = testOrClass.testClass.name,
-                methodName = testOrClass.testMethod?.name,
+                className = test.testClass.name,
+                methodName = test.testMethod?.name,
                 dataSetNumber = dataSetNumber,
                 kind = kind,
                 priority = priority,

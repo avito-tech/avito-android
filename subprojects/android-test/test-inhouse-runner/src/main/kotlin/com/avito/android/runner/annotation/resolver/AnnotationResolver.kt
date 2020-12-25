@@ -11,26 +11,20 @@ open class AnnotationResolver<T : Annotation>(
     private val annotationResolutionGetter: (T) -> TestMetadataResolver.Resolution
 ) : TestMetadataResolver {
 
-    override fun resolve(test: String): TestMetadataResolver.Resolution =
-        when (val parseResolution = MethodStringRepresentation.parseString(test)) {
-
-            is MethodStringRepresentation.Resolution.ClassOnly ->
-                parseResolution.aClass.resolveClassAnnotation(test)
-
-            is MethodStringRepresentation.Resolution.Method ->
-                parseResolution.method.getAnnotation(annotationClass)
-                    ?.let { annotationResolutionGetter.invoke(it) }
-                    ?: parseResolution.aClass.resolveClassAnnotation(test)
-
-            is MethodStringRepresentation.Resolution.ParseError ->
-                TestMetadataResolver.Resolution.NothingToChange(parseResolution.message)
+    override fun resolve(test: TestMethodOrClass): TestMetadataResolver.Resolution =
+        if (test.testMethod == null) {
+            test.testClass.resolveClassAnnotation(test)
+        } else {
+            test.testMethod.getAnnotation(annotationClass)
+                ?.let { annotationResolutionGetter.invoke(it) }
+                ?: test.testClass.resolveClassAnnotation(test)
         }
 
-    private fun Class<*>.resolveClassAnnotation(test: String): TestMetadataResolver.Resolution =
+    private fun Class<*>.resolveClassAnnotation(test: TestMethodOrClass): TestMetadataResolver.Resolution =
         getAnnotation(annotationClass)
             ?.let { annotationResolutionGetter.invoke(it) }
             ?: TestMetadataResolver.Resolution.NothingToChange(defaultReason(test))
 
-    private fun defaultReason(test: String): String =
+    private fun defaultReason(test: TestMethodOrClass): String =
         "$annotationClass annotation not specified for: $test"
 }

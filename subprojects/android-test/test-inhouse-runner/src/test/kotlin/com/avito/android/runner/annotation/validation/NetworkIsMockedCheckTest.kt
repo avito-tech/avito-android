@@ -29,7 +29,7 @@ class NetworkIsMockedCheckTest {
     }
 
     private fun validate(testClass: Class<*>) =
-        NetworkIsMockedCheck().validate(
+        NetworkIsMockedValidator().validate(
             TestMethodOrClass(testClass)
         )
 

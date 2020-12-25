@@ -9,16 +9,5 @@ open class ClassReflectionResolver(
     internal val resolver: (Class<*>) -> TestMetadataResolver.Resolution
 ) : TestMetadataResolver {
 
-    override fun resolve(test: String): TestMetadataResolver.Resolution =
-        when (val parseResolution = MethodStringRepresentation.parseString(test)) {
-
-            is MethodStringRepresentation.Resolution.ClassOnly ->
-                resolver(parseResolution.aClass)
-
-            is MethodStringRepresentation.Resolution.Method ->
-                resolver(parseResolution.aClass)
-
-            is MethodStringRepresentation.Resolution.ParseError ->
-                TestMetadataResolver.Resolution.NothingToChange(parseResolution.message)
-        }
+    override fun resolve(test: TestMethodOrClass): TestMetadataResolver.Resolution = resolver(test.testClass)
 }
