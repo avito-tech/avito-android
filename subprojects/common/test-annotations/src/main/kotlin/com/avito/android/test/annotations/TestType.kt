@@ -51,14 +51,6 @@ annotation class UnitTest
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class PerformanceFunctionalTest
-
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class PerformanceComponentTest
-
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class ScreenshotTest
 
 @Retention(AnnotationRetention.RUNTIME)

@@ -10,6 +10,9 @@ dependencies {
     api(project(":common:junit-utils"))
     api(project(":android-test:test-report"))
     api(project(":android-test:test-report"))
+    api(Dependencies.sentry) {
+        because("InHouseInstrumentationTestRunner.sentry")
+    }
 
     implementation(project(":common:sentry"))
     implementation(project(":common:okhttp"))
