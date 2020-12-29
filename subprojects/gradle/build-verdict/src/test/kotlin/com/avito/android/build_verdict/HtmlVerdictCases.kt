@@ -41,7 +41,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
 </pre>
     <h3>Task verdict:</h3>
     <pre>Custom verdict
-User added verdict</pre>
+<a href="https://www.google.com/" target="_blank">User added verdict</a></pre>
     <h3>Error logs:</h3>
     <pre class="logs">No error logs</pre>
   </body>

@@ -1,6 +1,7 @@
 package com.avito.instrumentation.finalizer
 
 import com.avito.instrumentation.InstrumentationTestsAction
+import com.avito.instrumentation.InstrumentationTestsTask
 import com.avito.instrumentation.TestRunResult
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
@@ -74,8 +75,14 @@ interface InstrumentationTestActionFinalizer {
             )
 
             val verdictFile = params.verdictFile
-            verdictFile.appendText("Report url $reportViewerUrl\n")
-            verdictFile.appendText(gson.toJson(verdict))
+            verdictFile.writeText(
+                gson.toJson(
+                    InstrumentationTestsTask.Verdict(
+                        reportUrl = reportViewerUrl.toString(),
+                        testRunVerdict = verdict
+                    )
+                )
+            )
 
             when (verdict) {
                 is TestRunResult.Verdict.Success -> logger.debug(verdict.message)

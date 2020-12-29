@@ -1,6 +1,7 @@
 package com.avito.instrumentation.finalizer
 
 import com.avito.instrumentation.InstrumentationTestsAction
+import com.avito.instrumentation.InstrumentationTestsActionFactory
 import com.avito.instrumentation.report.HasFailedTestDeterminer
 import com.avito.instrumentation.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.report.JUnitReportWriter
@@ -10,7 +11,6 @@ import com.avito.report.ReportViewer
 import com.avito.utils.BuildFailer
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 
 interface FinalizerFactory {
 
@@ -30,7 +30,7 @@ interface FinalizerFactory {
         internal constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            gson: Gson = GsonBuilder().setPrettyPrinting().create(),
+            gson: Gson = InstrumentationTestsActionFactory.gson,
             buildFailer: BuildFailer
         ) {
             this.params = params

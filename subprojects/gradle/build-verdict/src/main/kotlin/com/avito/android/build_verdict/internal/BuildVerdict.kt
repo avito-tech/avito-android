@@ -1,5 +1,7 @@
 package com.avito.android.build_verdict.internal
 
+import com.avito.android.build_verdict.span.SpannedString
+
 internal sealed class BuildVerdict {
 
     abstract val error: Error
@@ -17,5 +19,5 @@ internal data class FailedTask(
     val projectPath: String,
     val errorLogs: String,
     val error: Error,
-    val verdict: String? = null
+    val verdict: SpannedString? = null
 )

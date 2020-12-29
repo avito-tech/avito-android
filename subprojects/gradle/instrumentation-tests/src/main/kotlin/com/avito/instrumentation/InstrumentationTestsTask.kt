@@ -1,10 +1,13 @@
 package com.avito.instrumentation
 
 import com.avito.android.build_verdict.BuildVerdictTask
+import com.avito.android.build_verdict.span.SpannedString
+import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
+import com.avito.instrumentation.InstrumentationTestsActionFactory.Companion.gson
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
@@ -17,6 +20,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
+import com.github.salomonbrys.kotson.fromJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -38,6 +42,11 @@ abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask(), BuildVerdictTask {
+
+    internal class Verdict(
+        val reportUrl: String,
+        val testRunVerdict: TestRunResult.Verdict
+    )
 
     @Optional
     @InputDirectory
@@ -125,8 +134,15 @@ abstract class InstrumentationTestsTask @Inject constructor(
     private val verdictFile = objects.fileProperty().convention(output.file("verdict.json"))
 
     @get:Internal
-    override val verdict: String
-        get() = verdictFile.asFile.get().readText()
+    override val verdict: SpannedString
+        get() {
+            val verdictRaw = verdictFile.asFile.get().reader()
+            val verdict = gson.fromJson<Verdict>(verdictRaw)
+            return link(
+                url = verdict.reportUrl,
+                text = verdict.testRunVerdict.message
+            )
+        }
 
     @TaskAction
     fun doWork() {

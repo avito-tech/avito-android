@@ -1,5 +1,6 @@
 package com.avito.android.build_verdict
 
+import com.avito.android.build_verdict.span.SpannedString
 import org.gradle.api.Task
 
 class UserDefinedTaskVerdictProducer(
@@ -20,10 +21,10 @@ interface TaskPredicate {
 }
 
 interface TaskVerdictProducer {
-    fun produce(task: Task): String
+    fun produce(task: Task): SpannedString
 
     companion object {
-        internal inline fun create(crossinline producer: (Task) -> String): TaskVerdictProducer {
+        internal inline fun create(crossinline producer: (Task) -> SpannedString): TaskVerdictProducer {
             return object : TaskVerdictProducer {
                 override fun produce(task: Task) = producer(task)
             }
