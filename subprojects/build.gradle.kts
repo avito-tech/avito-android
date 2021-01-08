@@ -333,7 +333,7 @@ subprojects {
 tasks.withType<Wrapper> {
     // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.7"
+    gradleVersion = "6.8"
 }
 
 val Project.sourceSets: SourceSetContainer
