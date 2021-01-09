@@ -159,6 +159,7 @@ subprojects {
                 isAbortOnError = false
                 isWarningsAsErrors = true
                 textReport = true
+                isQuiet = true
             }
         }
     }
