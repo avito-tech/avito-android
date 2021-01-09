@@ -66,54 +66,11 @@ val finalProjectVersion: String = System.getProperty("avito.project.version").le
     if (env.isNullOrBlank()) projectVersion else env
 }
 
-repositories {
-    exclusiveContent {
-        forRepository {
-            jcenter()
-        }
-        filter {
-            // all for detekt
-            includeGroup("io.gitlab.arturbosch.detekt")
-            includeGroup("com.pinterest.ktlint")
-            includeGroup("org.ec4j.core")
-            includeGroupByRegex("org.jetbrains.*")
-            includeModule("com.beust", "jcommander")
-            includeModule("org.yaml", "snakeyaml")
-        }
-    }
-}
-
 dependencies {
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0-RC1")
 }
 
 subprojects {
-
-    repositories {
-        jcenter()
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrl("https://kotlin.bintray.com/kotlinx")
-                }
-            }
-            filter {
-                includeGroup("org.jetbrains.kotlinx")
-            }
-        }
-        exclusiveContent {
-            forRepository {
-                google()
-            }
-            filter {
-                includeModuleByRegex("com\\.android.*", "(?!r8).*")
-                includeModuleByRegex("com\\.google\\.android.*", ".*")
-                includeGroupByRegex("androidx\\..*")
-                includeGroup("com.google.test.platform")
-            }
-        }
-    }
-
     group = "com.avito.android"
     version = finalProjectVersion
 

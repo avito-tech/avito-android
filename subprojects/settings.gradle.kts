@@ -166,6 +166,33 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        jcenter()
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrl("https://kotlin.bintray.com/kotlinx")
+                }
+            }
+            filter {
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                google()
+            }
+            filter {
+                includeModuleByRegex("com\\.android.*", "(?!r8).*")
+                includeModuleByRegex("com\\.google\\.android.*", ".*")
+                includeGroupByRegex("androidx\\..*")
+                includeGroup("com.google.test.platform")
+            }
+        }
+    }
+}
+
 plugins {
     id("com.gradle.enterprise") version "3.3.4"
 }
