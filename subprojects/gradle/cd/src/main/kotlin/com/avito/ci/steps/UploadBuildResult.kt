@@ -25,9 +25,12 @@ class UploadBuildResult(context: String, name: String) : SuppressibleBuildStep(c
             require(!uiTestConfiguration.isNullOrBlank()) {
                 "uploadBuildResult.uiTestConfiguration parameter must be set"
             }
+
+            // todo should be inputs?
+            @Suppress("CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS")
             val uploadCdBuildResult = project.tasks.register<UploadCdBuildResultTask>(
                 name = uploadCdBuildResultTaskName,
-                constructorArgs = *arrayOf(
+                constructorArgs = arrayOf(
                     uiTestConfiguration,
                     project.artifactoryUser,
                     project.artifactoryPassword,

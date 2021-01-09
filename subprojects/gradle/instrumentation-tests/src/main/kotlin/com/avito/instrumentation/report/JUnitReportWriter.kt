@@ -26,7 +26,7 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
         require(testCountOverall == testCountSuccess + testCountFailures + testCountSkipped + testCountErrors)
 
         val xml = buildString(testCountOverall * estimatedTestRecordSize) {
-            appendln("""<?xml version="1.0" encoding="UTF-8"?>""")
+            appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")
 
             append("<testsuite ")
             append("""name="${reportCoordinates.planSlug}_${reportCoordinates.jobSlug}" """)
@@ -35,9 +35,9 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
             append("""errors="$testCountErrors" """)
             append("""skipped="$testCountSkipped" """)
             append("""time="${testRunResult.testsDuration}" """)
-            appendln(">")
+            appendLine(">")
 
-            appendln("<properties/>")
+            appendLine("<properties/>")
 
             testRunResult.reportedTests.forEach { test ->
                 append("<testcase ")
@@ -45,38 +45,38 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
                 append("""name="${test.methodName}" """)
                 append("""caseId="${test.testCaseId}" """)
                 append("""time="${test.lastAttemptDurationInSeconds}"""")
-                appendln(">")
+                appendLine(">")
 
                 if (test.stability is Stability.Flaky) {
-                    appendln("<system-out>")
+                    appendLine("<system-out>")
                     appendEscapedLine(
                         "Flaky test. " +
                             "Success runs: ${(test.stability as Stability.Flaky).successCount} " +
                             "out of ${(test.stability as Stability.Flaky).attemptsCount}"
                     )
-                    appendln("</system-out>")
+                    appendLine("</system-out>")
                 }
 
                 when (test.status) {
                     is Status.Skipped -> {
-                        appendln("<skipped/>")
+                        appendLine("<skipped/>")
                         if (test.skipReason != null) {
-                            appendln("<system-out>")
+                            appendLine("<system-out>")
                             appendEscapedLine("Тест не запускался: ${test.skipReason}")
-                            appendln("</system-out>")
+                            appendLine("</system-out>")
                         }
                     }
                     is Status.Failure -> {
-                        appendln("<failure>")
+                        appendLine("<failure>")
                         appendEscapedLine((test.status as Status.Failure).verdict)
-                        appendln("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
-                        appendln("</failure>")
+                        appendLine("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
+                        appendLine("</failure>")
                     }
                     is Status.Lost -> {
-                        appendln("<error>")
-                        appendln("LOST (no info in report)")
-                        appendln("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
-                        appendln("</error>")
+                        appendLine("<error>")
+                        appendLine("LOST (no info in report)")
+                        appendLine("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
+                        appendLine("</error>")
                     }
                     Status.Success -> { /* do nothing */
                     }
@@ -84,7 +84,7 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
                     }
                 }
 
-                appendln("</testcase>")
+                appendLine("</testcase>")
             }
 
             testRunResult.notReported.lostTests.forEach { test ->
@@ -93,22 +93,22 @@ class JUnitReportWriter(private val reportViewer: ReportViewer) {
                 append("""name="${test.name.methodName}" """)
                 append("""caseId="${test.testCaseId}" """)
                 append("""time="unknown"""")
-                appendln(">")
+                appendLine(">")
 
-                appendln("<error>")
-                appendln("Not reported")
-                appendln("</error>")
+                appendLine("<error>")
+                appendLine("Not reported")
+                appendLine("</error>")
 
-                appendln("</testcase>")
+                appendLine("</testcase>")
             }
 
-            appendln("</testsuite>")
+            appendLine("</testsuite>")
         }
 
         destination.writeText(xml)
     }
 
     private fun StringBuilder.appendEscapedLine(line: String) {
-        appendln(StringEscapeUtils.escapeXml10(line))
+        appendLine(StringEscapeUtils.escapeXml10(line))
     }
 }

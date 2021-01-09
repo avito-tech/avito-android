@@ -8,11 +8,11 @@ plugins {
 dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:ci-logger"))
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.Gradle.androidPlugin)
+    implementation(Dependencies.gson)
 
-    testImplementation(Dependencies.Test.mockitoKotlin)
-    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
+    testImplementation(project(":common:logger-test-fixtures"))
 }
 
 gradlePlugin {

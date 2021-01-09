@@ -1,5 +1,7 @@
 package com.avito.android.plugin
 
+import com.avito.utils.logging.ciLogger
+import com.avito.utils.logging.commonLogger
 import com.avito.utils.runCommand
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -40,7 +42,7 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
         val jsonToggles = readJsonReport()
         val blameCodeLines = readBlameCodeLines()
         val suspiciousToggles: List<Toggle> = SuspiciousTogglesCollector(
-            logger = logger,
+            logger = commonLogger(ciLogger),
             developerToTeam = developersToTeam.get()
         ).collectSuspiciousToggles(
             jsonTogglesList = jsonToggles,

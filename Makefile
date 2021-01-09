@@ -130,7 +130,7 @@ compile:
 	./gradlew -p subprojects compileKotlin compileTestKotlin $(log_level)
 
 check:
-	./gradlew -p subprojects $(module):check
+	./gradlew -p subprojects check
 
 detekt:
 	./gradlew -p subprojects detektAll

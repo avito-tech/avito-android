@@ -169,6 +169,7 @@ pluginManagement {
 plugins {
     id("com.gradle.enterprise") version "3.3.4"
 }
+
 val isCI = booleanProperty("ci", false)
 
 gradleEnterprise {

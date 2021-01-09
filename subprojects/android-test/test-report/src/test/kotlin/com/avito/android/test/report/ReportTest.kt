@@ -128,7 +128,9 @@ class ReportTest {
         assertThat(state.testCaseStepList)
             .hasSize(1)
         assertIterable(state.testCaseStepList[0].entryList)
-            .containsExactlyOne<Entry.Check> { it.type == "check" && it.title == "assertion message" }
+            .containsExactlyOne(Entry.Check::class.java) {
+                it.type == "check" && it.title == "assertion message"
+            }
     }
 
     @Test
@@ -151,7 +153,9 @@ class ReportTest {
         assertThat(state.testCaseStepList[0].number)
             .isEqualTo(0)
         assertIterable(state.testCaseStepList[0].entryList)
-            .containsExactlyOne<Entry.Check> { it.type == "check" && it.title == "assertion message" }
+            .containsExactlyOne(Entry.Check::class.java) {
+                it.type == "check" && it.title == "assertion message"
+            }
 
         assertThat(state.preconditionStepList)
             .hasSize(2)
@@ -159,12 +163,16 @@ class ReportTest {
         assertThat(state.preconditionStepList[0].number)
             .isEqualTo(0)
         assertIterable(state.preconditionStepList[0].entryList)
-            .containsExactlyOne<Entry.Check> { it.type == "check" && it.title == "first precondition assertion" }
+            .containsExactlyOne(Entry.Check::class.java) {
+                it.type == "check" && it.title == "first precondition assertion"
+            }
 
         assertThat(state.preconditionStepList[1].number)
             .isEqualTo(1)
         assertIterable(state.preconditionStepList[1].entryList)
-            .containsExactlyOne<Entry.Check> { it.type == "check" && it.title == "second precondition assertion" }
+            .containsExactlyOne(Entry.Check::class.java) {
+                it.type == "check" && it.title == "second precondition assertion"
+            }
     }
 
     @Test

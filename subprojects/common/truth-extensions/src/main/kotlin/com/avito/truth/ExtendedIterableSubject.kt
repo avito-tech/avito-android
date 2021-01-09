@@ -12,11 +12,10 @@ class ExtendedIterableSubject<T>(
     val actual: Iterable<T>
 ) : Subject(failureMetadata, actual) {
 
-    @Suppress("PROTECTED_CALL_FROM_PUBLIC_INLINE") // for better API
-    inline fun <reified T> containsExactlyOne(condition: (T) -> Boolean) {
-        val ts = FluentIterable.from(this.actual).filter(T::class.java)
+    fun <T> containsExactlyOne(clazz: Class<T>, condition: (T) -> Boolean) {
+        val ts = FluentIterable.from(this.actual).filter(clazz)
         if (ts.size() != 1) {
-            failWithActual("contains exactly one instance of", T::class.simpleName)
+            failWithActual("contains exactly one instance of", clazz.simpleName)
         } else {
             val t = ts[0] as T
             if (!condition.invoke(t)) {

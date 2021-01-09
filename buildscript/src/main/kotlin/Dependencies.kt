@@ -104,7 +104,7 @@ object Dependencies {
         const val junit = "junit:junit:4.13"
         const val truth = "com.google.truth:truth:1.0"
         const val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.2.5"
-        const val kotlinPoet = "com.squareup:kotlinpoet:1.5.0"
+        const val kotlinPoet = "com.squareup:kotlinpoet:1.7.2"
         const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
         const val mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:${Versions.mockito}"
         const val mockitoCore = "org.mockito:mockito-core:${Versions.mockito}"

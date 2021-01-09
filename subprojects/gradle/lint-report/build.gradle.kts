@@ -10,7 +10,6 @@ dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.Gradle.androidPlugin)
     implementation(Dependencies.kotlinHtml)
     implementation(Dependencies.okhttp)
 

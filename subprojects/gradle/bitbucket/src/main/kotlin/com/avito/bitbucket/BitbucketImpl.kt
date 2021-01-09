@@ -152,14 +152,14 @@ class BitbucketImpl(
         if (!isSuccessful) {
 
             val errorMessage = StringBuilder("Error creating insight")
-            errorMessage.appendln(" ${code()}")
-            errorMessage.appendln(" ${message()}")
-            errorMessage.appendln(" ${errorBody()?.string() ?: "no error body"}")
+            errorMessage.appendLine(" ${code()}")
+            errorMessage.appendLine(" ${message()}")
+            errorMessage.appendLine(" ${errorBody()?.string() ?: "no error body"}")
             if (issueSize > 0) {
-                errorMessage.appendln("number of issues: $issueSize")
+                errorMessage.appendLine("number of issues: $issueSize")
             }
             if (link != null) {
-                errorMessage.appendln("link: $link")
+                errorMessage.appendLine("link: $link")
             }
             throw BitbucketClientException(errorMessage.toString(), null)
         }

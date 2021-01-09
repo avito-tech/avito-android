@@ -112,7 +112,7 @@ private class IOThread(
 
         var line: String? = reader.readLine()
         while (line != null) {
-            result.appendln(line)
+            result.appendLine(line)
 
             if (logPrefix != null) {
                 logger("$logPrefix $line")

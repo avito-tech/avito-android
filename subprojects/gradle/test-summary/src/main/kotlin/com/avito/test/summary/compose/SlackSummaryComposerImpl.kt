@@ -33,57 +33,57 @@ internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) 
 
         return reportViewerUrl.map { url ->
             StringBuilder().apply {
-                appendln(SlackStringFormat.link(label = "Report: $reportIdentifier", url = url))
+                appendLine(SlackStringFormat.link(label = "Report: $reportIdentifier", url = url))
                 if (team != Team.UNDEFINED) {
-                    appendln("Юнит: ${team.name}\n")
+                    appendLine("Юнит: ${team.name}\n")
                 }
-                appendln("Ручные тесты: ${testData.manualCount}\n")
+                appendLine("Ручные тесты: ${testData.manualCount}\n")
 
-                appendln("*Автотесты*: ${testData.automatedCount}")
+                appendLine("*Автотесты*: ${testData.automatedCount}")
 
                 // todo адекватная разбивка по flaky
-                appendln(
+                appendLine(
                     ":green_heart: " +
-                        "*Зеленые тесты*: " +
-                        "${testData.success} (${testData.percentSuccessOfAutomated})"
+                            "*Зеленые тесты*: " +
+                            "${testData.success} (${testData.percentSuccessOfAutomated})"
                 )
-                appendln(
+                appendLine(
                     ":warning: " +
-                        "*Тесты упали только на некоторых девайсах*: " +
-                        "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated})"
+                            "*Тесты упали только на некоторых девайсах*: " +
+                            "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated})"
                 )
-                appendln(
+                appendLine(
                     ":red_circle: " +
-                        "*Тесты упали на всех девайсах*: " +
-                        "${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated})"
+                            "*Тесты упали на всех девайсах*: " +
+                            "${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated})"
                 )
-                appendln(
+                appendLine(
                     ":white_circle: " +
-                        "*Пропущенные тесты (например, заигнорен) на всех девайсах*: " +
-                        "${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated})"
+                            "*Пропущенные тесты (например, заигнорен) на всех девайсах*: " +
+                            "${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated})"
                 )
-                appendln(
+                appendLine(
                     ":black_circle: " +
-                        "*Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: " +
-                        "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated})"
+                            "*Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: " +
+                            "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated})"
                 )
 
                 val hasFailures = testData.failedOnSomeDevicesCount + testData.failedOnAllDevicesCount > 0
 
                 if (mentionOnFailures && hasFailures) {
-                    appendln("${SlackStringFormat.mentionChannel}, т.к. есть упавшие тесты")
+                    appendLine("${SlackStringFormat.mentionChannel}, т.к. есть упавшие тесты")
                 }
 
                 if (topFailures.isNotEmpty()) {
-                    appendln("*Причины падений:*")
+                    appendLine("*Причины падений:*")
                     topFailures.forEach {
                         val reason = SlackStringFormat.ellipsize(string = it.first, limit = insightLimitLength)
-                        appendln("*${it.second.size}* из-за ```$reason```")
+                        appendLine("*${it.second.size}* из-за ```$reason```")
                     }
                 }
 
                 if (rareFailuresCount > 0) {
-                    appendln("И еще *$rareFailuresCount* более редких падений из-за различных причин.")
+                    appendLine("И еще *$rareFailuresCount* более редких падений из-за различных причин.")
                 }
             }.toString()
         }

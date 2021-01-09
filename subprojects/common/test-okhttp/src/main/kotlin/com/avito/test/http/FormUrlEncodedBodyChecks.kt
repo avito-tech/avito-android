@@ -59,9 +59,9 @@ class FormUrlEncodedBodyChecks(
                 .joinToString(separator = ", ") { it.key }
 
             if (keyErrors.isNotBlank()) {
-                errorMessage.appendln()
-                errorMessage.appendln("Request should contain these keys, but its not: $keyErrors")
-                errorMessage.appendln(
+                errorMessage.appendLine()
+                errorMessage.appendLine("Request should contain these keys, but its not: $keyErrors")
+                errorMessage.appendLine(
                     "Actual request keys are:" +
                         actualParameters.keys.joinToString(separator = ", ") { decode(it) }
                 )
@@ -72,8 +72,8 @@ class FormUrlEncodedBodyChecks(
                 .joinToString(separator = "\n") { "[${it.key}] expected: ${it.value}; actual: ${it.actualValue}" }
 
             if (valueErrors.isNotBlank()) {
-                errorMessage.appendln()
-                errorMessage.appendln("Actual request body values differs from what was expected:")
+                errorMessage.appendLine()
+                errorMessage.appendLine("Actual request body values differs from what was expected:")
                 errorMessage.append(valueErrors)
             }
 

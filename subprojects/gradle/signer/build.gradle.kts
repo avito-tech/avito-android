@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":common:files"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.Gradle.androidPlugin)
     implementation(Dependencies.okhttp)
     implementation(Dependencies.okhttpLogging)
 

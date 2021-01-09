@@ -6,6 +6,8 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
 
 class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
@@ -25,6 +27,7 @@ class ArtifactsTestListener(
         )
     }
 
+    @ExperimentalPathApi
     override fun finished(
         device: Device,
         test: TestCase,
@@ -33,7 +36,7 @@ class ArtifactsTestListener(
         durationMilliseconds: Long,
         executionNumber: Int
     ) {
-        val tempDirectory = createTempDir()
+        val tempDirectory = createTempDirectory()
         val testMetadataDirectory = testMetadataFullDirectory(
             targetPackage = targetPackage,
             test = test
@@ -42,13 +45,13 @@ class ArtifactsTestListener(
         try {
             val pullingResult = device.pull(
                 from = testMetadataDirectory.toPath(),
-                to = tempDirectory.toPath()
+                to = tempDirectory
             )
 
             val resultDirectory = pullingResult
                 .map {
                     File(
-                        tempDirectory,
+                        tempDirectory.toFile(),
                         testMetadataDirectoryPath(test)
                     )
                 }
@@ -64,9 +67,9 @@ class ArtifactsTestListener(
             ).invoke()
         } catch (t: Throwable) {
             logger.warn("Failed to process artifacts from $device", t)
+        } finally {
+            tempDirectory.toFile().delete()
         }
-
-        tempDirectory.delete()
     }
 
     private fun testMetadataFullDirectory(targetPackage: String, test: TestCase): File =

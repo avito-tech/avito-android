@@ -18,7 +18,6 @@ dependencies {
     implementation(project(":gradle:kotlin-dsl-support"))
     implementation(Dependencies.Gradle.kotlinPlugin)
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.Gradle.androidPlugin)
 
     // for test
     implementation(project(":gradle:module-types"))

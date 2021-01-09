@@ -20,7 +20,7 @@ class LintReportToSlackTaskFactory(
 ) {
 
     private val extension: LintReportExtension by lazy {
-        project.extensions.getByType<LintReportExtension>()
+        project.extensions.getByType()
     }
 
     @Suppress("UnstableApiUsage")
@@ -29,7 +29,7 @@ class LintReportToSlackTaskFactory(
             SlackClient.Impl(
                 token = token,
                 workspace = workspace
-            ) as SlackClient
+            )
         }
     }
 

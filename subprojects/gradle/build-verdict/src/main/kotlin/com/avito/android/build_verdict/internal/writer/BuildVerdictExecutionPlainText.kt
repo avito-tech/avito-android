@@ -11,39 +11,39 @@ internal fun BuildVerdict.Execution.plainText(): String {
     return when (failedTasks.size) {
         1 -> failedTasks[0].plainText()
         else -> buildString {
-            appendln("FAILURE: Build completed with ${failedTasks.size} failed tasks.")
-            appendln()
+            appendLine("FAILURE: Build completed with ${failedTasks.size} failed tasks.")
+            appendLine()
             failedTasks.forEachIndexed { index, task ->
-                appendln("${index + 1}: ")
-                appendln(task.plainText().trimIndent())
+                appendLine("${index + 1}: ")
+                appendLine(task.plainText().trimIndent())
             }
         }
     }.trimIndent()
 }
 
 private fun FailedTask.plainText() = buildString {
-    appendln(error.plainText().trimIndent())
-    appendln()
+    appendLine(error.plainText().trimIndent())
+    appendLine()
     if (verdict != null) {
-        appendln("* Task result:")
-        appendln(verdict.trimIndent())
-        appendln()
+        appendLine("* Task result:")
+        appendLine(verdict.trimIndent())
+        appendLine()
     }
-    appendln("* Error logs:")
-    appendln(errorLogs.trimIndent())
+    appendLine("* Error logs:")
+    appendLine(errorLogs.trimIndent())
 }
 
 private fun Error.plainText() = buildString {
-    appendln("* What went wrong:")
+    appendLine("* What went wrong:")
     when (this@plainText) {
-        is Error.Single -> appendln(plainText().trimIndent())
+        is Error.Single -> appendLine(plainText().trimIndent())
         is Error.Multi -> {
-            appendln(message.trimIndent())
+            appendLine(message.trimIndent())
             errors.forEachIndexed { index, error ->
                 append("${1 + index}: ")
-                appendln(error.plainText())
+                appendLine(error.plainText())
                 if (index < errors.size - 1) {
-                    appendln("==============================================================================")
+                    appendLine("==============================================================================")
                 }
             }
         }
@@ -51,10 +51,10 @@ private fun Error.plainText() = buildString {
 }
 
 private fun Error.Single.plainText() = buildString {
-    appendln(message.trimIndent())
+    appendLine(message.trimIndent())
     causes.forEachIndexed { index, cause ->
         append("\t".repeat(index + 1))
         append("> ")
-        appendln(cause.message.trimIndent())
+        appendLine(cause.message.trimIndent())
     }
 }

@@ -1,6 +1,6 @@
 package com.avito.android.plugin
 
-import org.gradle.api.logging.Logger
+import com.avito.logger.Logger
 import java.time.LocalDate
 
 typealias Team = String
@@ -35,7 +35,7 @@ internal class SuspiciousTogglesCollector(
                     .find { it.codeLine.contains("defaultValue") }
 
                 if (lastChangeCodeItem == null) {
-                    logger.error("Error: ${jsonToggle.key}")
+                    logger.critical("Error: ${jsonToggle.key}", NoSuchElementException(jsonToggle.key))
                     null
                 } else {
                     Toggle(

@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:ci-logger"))
     implementation(project(":gradle:gradle-profile"))
+    implementation(project(":gradle:android"))
     implementation(project(":gradle:graphite-config"))
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:kotlin-dsl-support"))
@@ -18,7 +19,6 @@ dependencies {
     implementation(project(":gradle:teamcity"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.Gradle.androidPlugin)
 
     testImplementation(Dependencies.Test.mockitoKotlin)
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)

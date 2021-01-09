@@ -229,16 +229,17 @@ abstract class InstrumentationTestsTask @Inject constructor(
 
     private fun createReportFactory(): Report.Factory {
         val reportViewerConfig = reportViewerConfig.orNull
-        val factories = mutableMapOf<Class<out Report.Factory.Config>, Report.Factory>()
+        val factories = mutableMapOf<String, Report.Factory>()
         if (reportViewerConfig != null) {
-            factories[Report.Factory.Config.ReportViewerCoordinates::class.java] = Report.Factory.ReportViewerFactory(
-                reportApiUrl = reportViewerConfig.reportApiUrl,
-                reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
-                ciLogger = ciLogger,
-                verboseHttp = false // do not enable for production, generates a ton of logs
-            )
+            factories[Report.Factory.Config.ReportViewerCoordinates::class.java.simpleName] =
+                Report.Factory.ReportViewerFactory(
+                    reportApiUrl = reportViewerConfig.reportApiUrl,
+                    reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
+                    ciLogger = ciLogger,
+                    verboseHttp = false // do not enable for production, generates a ton of logs
+                )
         }
-        factories[Report.Factory.Config.InMemory::class.java] = Report.Factory.InMemoryReportFactory()
+        factories[Report.Factory.Config.InMemory::class.java.simpleName] = Report.Factory.InMemoryReportFactory()
         return Report.Factory.StrategyFactory(
             factories = factories.toMap()
         )

@@ -4,21 +4,23 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempFile
 
 class TraceReportTest {
 
-    private lateinit var tempDir: File
+    private lateinit var tempDir: Path
 
     @BeforeEach
     fun setup(@TempDir tempDir: Path) {
-        this.tempDir = tempDir.toFile()
+        this.tempDir = tempDir
     }
 
+    @ExperimentalPathApi
     @Test
     fun `deserialize serialized data`() {
-        val events = listOf<TraceEvent>(
+        val events = listOf(
             DurationEvent(
                 phase = DurationEvent.PHASE_BEGIN,
                 timestampMicroseconds = 0,
@@ -59,7 +61,7 @@ class TraceReportTest {
         val report = TraceReport(
             traceEvents = events
         )
-        val file = createTempFile(directory = tempDir)
+        val file = createTempFile(directory = tempDir).toFile()
         val client = TraceReportClient()
 
         client.writeTo(file, report)

@@ -107,7 +107,7 @@ class BuildProfile {
         get() {
             val firstTask = getProjects()
                 .flatMap { it.getTasks() }
-                .minBy { it.startTime } ?: return 0
+                .minByOrNull { it.startTime } ?: return 0
 
             return firstTask.startTime - profilingStarted
         }

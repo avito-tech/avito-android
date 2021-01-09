@@ -19,7 +19,7 @@ class Arguments(
 
     override fun toString(): String {
         return buildString {
-            appendln(requests)
+            appendLine(requests)
         }
     }
 }

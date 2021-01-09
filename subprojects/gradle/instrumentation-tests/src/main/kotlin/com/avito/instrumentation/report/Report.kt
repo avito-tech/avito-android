@@ -40,7 +40,7 @@ interface Report : ReadReport {
         fun createReadReport(config: Config): ReadReport
 
         class StrategyFactory(
-            private val factories: Map<in Class<Config>, Factory>
+            private val factories: Map<String, Factory>
         ) : Factory, Serializable {
 
             override fun createReport(config: Config): Report =
@@ -50,7 +50,7 @@ interface Report : ReadReport {
                 getFactory(config).createReadReport(config)
 
             private fun getFactory(config: Config): Factory =
-                requireNotNull(factories[config::class.java]) {
+                requireNotNull(factories[config::class.java.simpleName]) {
                     "Factory for config: $config hasn't found. You must register"
                 }
         }
