@@ -12,6 +12,7 @@ dependencies {
 
     implementation(gradleApi())
     implementation(project(":common:logger"))
+    implementation(project(":common:slf4j-logger"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(Dependencies.funktionaleTry)
 
