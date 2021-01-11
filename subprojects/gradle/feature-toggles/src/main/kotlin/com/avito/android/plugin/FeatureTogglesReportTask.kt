@@ -1,6 +1,7 @@
 package com.avito.android.plugin
 
 import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.Logger
 import com.avito.utils.ProcessRunner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -16,7 +17,6 @@ import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@Suppress("UnstableApiUsage")
 abstract class FeatureTogglesReportTask : DefaultTask() {
 
     private val monthAgo = LocalDate.now().minusMonths(1L)
@@ -60,11 +60,12 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
 
         sendReport(
             slackHook = slackHook.get(),
-            reportText = reportText
+            reportText = reportText,
+            logger = GradleLoggerFactory.getLogger(this)
         )
     }
 
-    private fun sendReport(slackHook: String, reportText: String) {
+    private fun sendReport(slackHook: String, reportText: String, logger: Logger) {
         val connection = URL(slackHook).openConnection() as HttpURLConnection
         try {
             with(connection) {
@@ -75,7 +76,7 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
                     it.write("payload={\"text\": \"$reportText\"}")
                     it.flush()
                 }
-                logger.lifecycle("Response: ${inputStream.bufferedReader().readText()}")
+                logger.debug("Response: ${inputStream.bufferedReader().readText()}")
             }
         } finally {
             connection.disconnect()

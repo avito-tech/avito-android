@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-@Suppress("UnstableApiUsage")
 open class FeatureTogglesPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -16,6 +15,8 @@ open class FeatureTogglesPlugin : Plugin<Project> {
             description = "Generates Feature Toggles Report"
 
             slackHook.set(extension.slackHook)
+
+            @Suppress("UnstableApiUsage")
             developersToTeam.set(extension.developersToTeam)
 
             dependsOn("${project.path}:testReleaseUnitTest")

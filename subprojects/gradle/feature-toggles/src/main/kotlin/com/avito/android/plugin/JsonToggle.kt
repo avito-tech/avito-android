@@ -1,6 +1,6 @@
 package com.avito.android.plugin
 
-class JsonToggle(
+internal class JsonToggle(
     val key: String,
     val value: Any?
 )
