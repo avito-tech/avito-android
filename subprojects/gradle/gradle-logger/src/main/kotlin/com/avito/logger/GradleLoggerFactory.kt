@@ -3,6 +3,13 @@ package com.avito.logger
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryConfig
+import com.avito.logger.destination.ElasticDestination
+import com.avito.logger.destination.SentryDestination
+import com.avito.logger.destination.Slf4jDestination
+import com.avito.logger.formatter.AppendMetadataFormatter
+import com.avito.logger.handler.CombinedHandler
+import com.avito.logger.handler.DefaultLoggingHandler
+import com.avito.logger.handler.LoggingHandler
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
@@ -19,14 +26,82 @@ class GradleLoggerFactory(
     private val taskName: String? = null
 ) : LoggerFactory, Serializable {
 
-    override fun create(tag: String): Logger = LoggerRegistry.create(
+    override fun create(tag: String): Logger = provideLogger(
         isCiRun = isCiRun,
-        tag = tag,
-        projectPath = projectPath,
         sentryConfig = sentryConfig,
         elasticConfig = elasticConfig,
-        pluginName = pluginName,
-        taskName = taskName
+        metadata = LoggerMetadata(
+            tag = tag,
+            pluginName = pluginName,
+            projectPath = projectPath,
+            taskName = taskName
+        )
+    )
+
+    private fun provideLogger(
+        isCiRun: Boolean,
+        sentryConfig: SentryConfig,
+        elasticConfig: ElasticConfig,
+        metadata: LoggerMetadata
+    ): Logger = if (isCiRun) {
+        createCiLogger(sentryConfig, elasticConfig, metadata)
+    } else {
+        createLocalBuildLogger(metadata)
+    }
+
+    private fun createCiLogger(
+        sentryConfig: SentryConfig,
+        elasticConfig: ElasticConfig,
+        metadata: LoggerMetadata
+    ): Logger {
+
+        val elasticHandler = createElasticHandler(elasticConfig, metadata)
+
+        val sentryHandler = createSentryHandler(sentryConfig, metadata)
+
+        return DefaultLogger(
+            debugHandler = elasticHandler,
+            infoHandler = elasticHandler,
+            warningHandler = elasticHandler,
+            criticalHandler = CombinedHandler(
+                handlers = listOf(
+                    elasticHandler,
+                    sentryHandler
+                )
+            )
+        )
+    }
+
+    private fun createLocalBuildLogger(metadata: LoggerMetadata): Logger {
+
+        val gradleLoggerHandler = DefaultLoggingHandler(
+            formatter = AppendMetadataFormatter(metadata),
+            destination = Slf4jDestination(metadata.tag)
+        )
+
+        return DefaultLogger(
+            debugHandler = gradleLoggerHandler,
+            infoHandler = gradleLoggerHandler,
+            warningHandler = gradleLoggerHandler,
+            criticalHandler = gradleLoggerHandler
+        )
+    }
+
+    private fun createElasticHandler(
+        elasticConfig: ElasticConfig,
+        metadata: LoggerMetadata
+    ): LoggingHandler = DefaultLoggingHandler(
+        destination = ElasticDestination(
+            config = elasticConfig,
+            metadata = metadata
+        )
+    )
+
+    private fun createSentryHandler(
+        sentryConfig: SentryConfig,
+        metadata: LoggerMetadata
+    ): LoggingHandler = DefaultLoggingHandler(
+        destination = SentryDestination(sentryConfig, metadata)
     )
 
     companion object {
