@@ -131,8 +131,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
 
-    @SuppressLint("LogNotTimber")
-    val mockDispatcher = MockDispatcher(logger = { Log.d("MOCK_WEB_SERVER", it) })
+    val mockDispatcher by lazy { MockDispatcher(loggerFactory = loggerFactory) }
 
     protected open val testIssuesMonitor: TestIssuesMonitor by lazy {
         CompositeTestIssuesMonitor(

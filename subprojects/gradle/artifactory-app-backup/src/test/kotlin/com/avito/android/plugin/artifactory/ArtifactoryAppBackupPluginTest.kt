@@ -1,5 +1,6 @@
 package com.avito.android.plugin.artifactory
 
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
@@ -17,6 +18,8 @@ import java.nio.file.Paths
 private typealias Artifact = Pair<String, String>
 
 internal class ArtifactoryAppBackupPluginTest {
+
+    private val loggerFactory = StubLoggerFactory
 
     private val mockWebServer = MockWebServerFactory.create()
 
@@ -62,7 +65,10 @@ internal class ArtifactoryAppBackupPluginTest {
 
         Files.createFile(Paths.get(projectDir.path, moduleName, artifactName))
 
-        val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
+        val dispatcher = MockDispatcher(
+            unmockedResponse = MockResponse().setResponseCode(200),
+            loggerFactory = loggerFactory
+        )
             .also { mockWebServer.dispatcher = it }
 
         dispatcher.registerMock(
@@ -144,7 +150,10 @@ internal class ArtifactoryAppBackupPluginTest {
             Files.createFile(Paths.get(projectDir.path, moduleName, path))
         }
 
-        val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
+        val dispatcher = MockDispatcher(
+            unmockedResponse = MockResponse().setResponseCode(200),
+            loggerFactory = loggerFactory
+        )
             .also { mockWebServer.dispatcher = it }
 
         dispatcher.registerMock(

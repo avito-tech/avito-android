@@ -1,10 +1,10 @@
 package com.avito.android
 
 import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.Logger
 import com.avito.utils.ExistingDirectory
 import com.avito.utils.ProcessRunner
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
 import java.io.File
 import java.util.Properties
 
@@ -36,6 +36,8 @@ class AndroidSdk(
 
     companion object {
 
+        private const val TAG = "AndroidSdk"
+
         @JvmStatic
         fun fromAndroidProject(project: Project): AndroidSdk {
             require(project.isAndroid()) {
@@ -46,7 +48,7 @@ class AndroidSdk(
             val loggerFactory = GradleLoggerFactory.fromProject(project)
 
             return AndroidSdk(
-                androidHome = androidHome(project.rootDir, project.logger),
+                androidHome = androidHome(project.rootDir, loggerFactory.create(TAG)),
                 processRunner = ProcessRunner.Real(
                     workingDirectory = null,
                     loggerFactory = loggerFactory
@@ -61,7 +63,7 @@ class AndroidSdk(
             val loggerFactory = GradleLoggerFactory.fromProject(project)
 
             return BaseAndroidSdk(
-                androidHome = androidHome(project.rootDir, project.logger),
+                androidHome = androidHome(project.rootDir, loggerFactory.create(TAG)),
                 processRunner = ProcessRunner.Real(
                     workingDirectory = null,
                     loggerFactory = loggerFactory
@@ -74,7 +76,7 @@ class AndroidSdk(
             val path = if (fromEnv.isNullOrBlank()) {
                 androidHomeFromLocalProperties(
                     localPropertiesLocation = File(projectRootDir, "local.properties"),
-                    logger = { logger.error(it) }
+                    logger = logger
                 )
                     ?: error("Can't find ANDROID_HOME")
             } else {
@@ -94,7 +96,7 @@ class AndroidSdk(
  * Used in tests, when for any reason ANDROID_HOME environment variable was not resolved
  * Required in places where is no access to Project, mostly on Gradle Test Kit project creation
  */
-fun androidHomeFromLocalPropertiesFallback(): String {
+fun androidHomeFromLocalPropertiesFallback(logger: Logger): String {
     val env: String? = System.getenv("ANDROID_HOME")
     if (!env.isNullOrBlank()) {
         return env
@@ -102,18 +104,21 @@ fun androidHomeFromLocalPropertiesFallback(): String {
 
     val rootDir: String? = System.getProperty("rootDir")
 
-    return androidHomeFromLocalProperties(File("$rootDir/local.properties"))
+    return androidHomeFromLocalProperties(
+        localPropertiesLocation = File("$rootDir/local.properties"),
+        logger = logger
+    )
         ?: error("Can't resolve android sdk: env ANDROID_HOME and $rootDir/local.properties is not available")
 }
 
 private fun androidHomeFromLocalProperties(
     localPropertiesLocation: File,
-    logger: (String) -> Unit = {}
+    logger: Logger
 ): String? {
     return try {
         Properties().apply { load(localPropertiesLocation.inputStream()) }.getProperty("sdk.dir")
     } catch (e: Exception) {
-        logger.invoke("Can't resolve androidHome from local.properties")
+        logger.warn("Can't resolve androidHome from local.properties", e)
         null
     }
 }

@@ -14,7 +14,8 @@ class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
     private var state: State? = null
 
     override fun beforeEach(context: ExtensionContext) {
-        val mockDispatcher = MockDispatcher()
+        val loggerFactory = StubLoggerFactory
+        val mockDispatcher = MockDispatcher(loggerFactory = loggerFactory)
         val mockWebServer = MockWebServer().apply { dispatcher = mockDispatcher }
         state = State(
             mockWebServer = mockWebServer,

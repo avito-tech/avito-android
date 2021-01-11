@@ -23,7 +23,10 @@ internal class BitbucketImplTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
-    private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
+    private val dispatcher = MockDispatcher(
+        unmockedResponse = MockResponse().setResponseCode(200),
+        loggerFactory = loggerFactory
+    )
         .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
 
     @Test

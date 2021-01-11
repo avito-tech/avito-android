@@ -1,6 +1,7 @@
 package com.avito.http
 
 import com.avito.logger.StubLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -12,7 +13,8 @@ import org.junit.jupiter.api.Test
 
 internal class FallbackInterceptorTest {
 
-    private val mockDispatcher = MockDispatcher()
+    private val loggerFactory = StubLoggerFactory
+    private val mockDispatcher = MockDispatcher(loggerFactory = loggerFactory)
     private val server: MockWebServer = MockWebServerFactory.create().apply { dispatcher = mockDispatcher }
 
     private val doFallbackOnThisResponseCode = 503

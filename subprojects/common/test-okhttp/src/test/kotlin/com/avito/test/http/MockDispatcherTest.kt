@@ -1,5 +1,6 @@
 package com.avito.test.http
 
+import com.avito.logger.StubLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import okhttp3.Headers
 import okhttp3.mockwebserver.MockResponse
@@ -7,31 +8,14 @@ import okhttp3.mockwebserver.RecordedRequest
 import okio.Buffer
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import java.io.OutputStream
-import java.io.PrintStream
 import java.net.InetAddress
 import java.nio.charset.Charset
 
 internal class MockDispatcherTest {
 
-    // todo create TestLogger for it
-    private val devNull = PrintStream(
-        object : OutputStream() {
-            override fun write(b: Int) {
-            }
-        }
-    )
+    private val loggerFactory = StubLoggerFactory
 
-    private val isLocalRun: Boolean by lazy {
-        val command: String? = System.getProperty("sun.java.command")
-        command?.contains("intellij") ?: false
-    }
-
-    private val output = if (isLocalRun) System.out else devNull
-
-    private val logger: (String) -> Unit = { output.println(it) }
-
-    private val dispatcher = MockDispatcher(logger = logger)
+    private val dispatcher = MockDispatcher(loggerFactory = loggerFactory)
 
     @Test
     fun `dispatcher - dispatch last matching response - if multiple registered conditions matches`() {

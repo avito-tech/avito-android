@@ -15,4 +15,5 @@ dependencies {
 
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":common:time-test-fixtures"))
+    testImplementation(project(":common:logger-test-fixtures"))
 }

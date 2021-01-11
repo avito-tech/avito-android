@@ -61,7 +61,7 @@ internal class TestSummarySenderImpl(
     )
     private val slackBulkSender: SlackBulkSender = CoroutinesSlackBulkSender(
         sender = slackConditionalSender,
-        logger = { s, throwable -> logger.critical(s, throwable) }
+        loggerFactory = loggerFactory
     )
 
     private val slackEmojiProvider = SlackEmojiProvider()

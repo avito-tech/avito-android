@@ -38,7 +38,10 @@ class UploadCdBuildResultIntegrationTest {
     private val artifactoryUser = "deployer"
     private val artifactoryPassword = "deployer_password"
     private val reportsApiUrl = "https://reports"
-    private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
+    private val dispatcher = MockDispatcher(
+        unmockedResponse = MockResponse().setResponseCode(200),
+        loggerFactory = loggerFactory
+    )
         .also { dispatcher -> server.dispatcher = dispatcher }
 
     private val runGetParamsResponse =

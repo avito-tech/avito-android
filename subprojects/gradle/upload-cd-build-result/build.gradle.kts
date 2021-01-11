@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":common:test-okhttp"))
+    testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":gradle:git-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
 }
