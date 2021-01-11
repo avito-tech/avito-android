@@ -8,8 +8,8 @@ plugins {
 dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":gradle:pre-build"))
-    implementation(project(":gradle:ci-logger"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":gradle:test-project"))
 }

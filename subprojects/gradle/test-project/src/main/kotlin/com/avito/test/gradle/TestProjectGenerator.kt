@@ -1,6 +1,8 @@
 package com.avito.test.gradle
 
 import com.avito.android.androidHomeFromLocalPropertiesFallback
+import com.avito.logger.Logger
+import com.avito.logger.StubLogger
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.files.build_gradle
@@ -46,6 +48,8 @@ class TestProjectGenerator(
     val localBuildCache: File? = null,
     val androidHome: String? = null
 ) : Module {
+
+    private val logger: Logger = StubLogger
 
     override val dependencies: Set<GradleDependency> = emptySet()
 
@@ -120,7 +124,7 @@ buildCache {
                  * заэскейпить пути в windows
                  */
                 Properties().run {
-                    setProperty("sdk.dir", androidHome ?: androidHomeFromLocalPropertiesFallback())
+                    setProperty("sdk.dir", androidHome ?: androidHomeFromLocalPropertiesFallback(logger))
                     store(file, null)
                 }
             }

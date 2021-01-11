@@ -1,9 +1,10 @@
 package com.avito.slack
 
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import com.avito.utils.logging.CILogger
 import org.funktionale.tries.Try
 
 /**
@@ -12,16 +13,18 @@ import org.funktionale.tries.Try
  */
 class SlackMessageUpdaterWithThreadMark(
     private val slackClient: SlackClient,
-    private val logger: CILogger,
+    loggerFactory: LoggerFactory,
     private val threadMessage: String
 ) : SlackMessageUpdater {
+
+    private val logger = loggerFactory.create<SlackMessageUpdaterWithThreadMark>()
 
     override fun updateMessage(
         previousMessage: FoundMessage,
         newContent: String
     ): Try<SlackMessage> {
         logger.info(
-            "[Slack] Updating message with thread mark; channel: ${previousMessage.channel.name}; " +
+            "Updating message with thread mark; channel: ${previousMessage.channel.name}; " +
                 "oldMessage: '${SlackStringFormat.ellipsize(string = previousMessage.text, limit = 50)}'; "
         )
         return slackClient.sendMessage(
@@ -34,7 +37,7 @@ class SlackMessageUpdaterWithThreadMark(
             )
         ).flatMap {
             logger.info(
-                "[Slack] Thread message posted; channel: ${previousMessage.channel.name}; " +
+                "Thread message posted; channel: ${previousMessage.channel.name}; " +
                     "threadId: '${previousMessage.timestamp}'; " +
                     SlackStringFormat.ellipsize(string = threadMessage, limit = 50)
             )
@@ -47,7 +50,7 @@ class SlackMessageUpdaterWithThreadMark(
         }
             .onSuccess {
                 logger.info(
-                    "[Slack] Original message updated; " +
+                    "Original message updated; " +
                         "newMessage: '${SlackStringFormat.ellipsize(string = newContent, limit = 50)}'"
                 )
             }

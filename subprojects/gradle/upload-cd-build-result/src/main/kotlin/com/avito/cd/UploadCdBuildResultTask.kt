@@ -3,14 +3,14 @@ package com.avito.cd
 import com.avito.android.androidAppExtension
 import com.avito.git.GitState
 import com.avito.git.gitState
+import com.avito.http.HttpLogger
+import com.avito.logger.GradleLoggerFactory
 import com.avito.utils.gradle.envArgs
-import com.avito.utils.logging.ciLogger
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import javax.inject.Inject
@@ -34,16 +34,14 @@ abstract class UploadCdBuildResultTask @Inject constructor(
     }
 
     private val uploadAction by lazy {
+        val logger = GradleLoggerFactory.getLogger(this)
+
         UploadCdBuildResultTaskAction(
             gson = Providers.gson,
             client = Providers.client(
                 user = user,
                 password = password,
-                logger = object : HttpLoggingInterceptor.Logger {
-                    override fun log(message: String) {
-                        project.ciLogger.info(message)
-                    }
-                }
+                logger = HttpLogger(logger)
             ),
             suppressErrors = suppressErrors
         )
@@ -51,7 +49,7 @@ abstract class UploadCdBuildResultTask @Inject constructor(
 
     @TaskAction
     fun sendCdBuildResult() {
-        val gitState = project.gitState { project.ciLogger.info(it) }
+        val gitState = project.gitState()
         uploadAction.send(
             buildOutput = project.buildOutput.get(),
             cdBuildConfig = project.cdBuildConfig.get(),

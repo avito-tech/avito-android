@@ -7,11 +7,11 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)
     implementation(Dependencies.okhttp)
@@ -21,4 +21,5 @@ dependencies {
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:test-okhttp"))
+    testImplementation(project(":common:logger-test-fixtures"))
 }

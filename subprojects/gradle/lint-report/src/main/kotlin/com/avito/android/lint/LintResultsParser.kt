@@ -2,13 +2,16 @@ package com.avito.android.lint
 
 import com.avito.android.lint.model.LintIssue
 import com.avito.android.lint.model.LintReportModel
-import com.avito.utils.logging.CILogger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import java.io.File
 import java.io.InputStream
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
 
-class LintResultsParser(private val log: CILogger) {
+class LintResultsParser(loggerFactory: LoggerFactory) {
+
+    private val logger = loggerFactory.create<LintResultsParser>()
 
     fun parse(
         projectPath: String,
@@ -22,7 +25,7 @@ class LintResultsParser(private val log: CILogger) {
         } catch (error: UnsupportedFormatVersion) {
             throw error
         } catch (error: Exception) {
-            log.info("Invalid lint report: ", error)
+            logger.critical("Invalid lint report: ", error)
             LintReportModel.Invalid(projectPath, lintHtml, error)
         }
     }

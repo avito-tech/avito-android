@@ -1,7 +1,6 @@
 package com.avito.runner.service
 
-import com.avito.logger.NoOpLogger
-import com.avito.runner.logging.StdOutLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.DeviceWorker
@@ -31,7 +30,7 @@ import java.io.File
 @ExperimentalCoroutinesApi
 class DeviceWorkerTest {
 
-    val logger = NoOpLogger
+    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `returns application installed event and 4 passed intentions for 4 tests with of 2 applications`() =
@@ -63,7 +62,7 @@ class DeviceWorkerTest {
                 )
             )
             val successfulDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
@@ -100,7 +99,7 @@ class DeviceWorkerTest {
             val resultsChannel: Channel<DeviceWorkerMessage> =
                 Channel(Channel.UNLIMITED)
 
-            val router = IntentionsRouter(logger = logger).apply {
+            val router = IntentionsRouter(loggerFactory = loggerFactory).apply {
                 intentions.forEach { sendIntention(it) }
             }
 
@@ -134,7 +133,7 @@ class DeviceWorkerTest {
     fun `fail with device died event - device is freeze before processing intentions`() =
         runBlockingTest {
             val freezeDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
@@ -149,7 +148,7 @@ class DeviceWorkerTest {
             )
 
             val resultsChannel = Channel<DeviceWorkerMessage>(Channel.UNLIMITED)
-            val router = IntentionsRouter(logger = logger)
+            val router = IntentionsRouter(loggerFactory = loggerFactory)
 
             val worker = provideDeviceWorker(
                 results = resultsChannel,
@@ -194,7 +193,7 @@ class DeviceWorkerTest {
                 )
             )
             val freezeDevice = StubDevice(
-                logger = StdOutLogger(),
+                loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
@@ -213,7 +212,7 @@ class DeviceWorkerTest {
 
             val resultsChannel: Channel<DeviceWorkerMessage> =
                 Channel(Channel.UNLIMITED)
-            val router = IntentionsRouter(logger = logger).apply {
+            val router = IntentionsRouter(loggerFactory = loggerFactory).apply {
                 intentions.forEach { sendIntention(it) }
             }
 
@@ -254,6 +253,6 @@ class DeviceWorkerTest {
         outputDirectory = File(""),
         listener = NoOpListener,
         dispatchers = TestDispatcher,
-        logger = logger
+        loggerFactory = loggerFactory
     )
 }

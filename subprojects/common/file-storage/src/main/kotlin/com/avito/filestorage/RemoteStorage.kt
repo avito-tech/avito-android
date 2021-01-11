@@ -1,6 +1,6 @@
 package com.avito.filestorage
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -59,13 +59,13 @@ interface RemoteStorage {
 
         fun create(
             endpoint: String,
-            logger: Logger,
+            loggerFactory: LoggerFactory,
             timeSource: TimeProvider = DefaultTimeProvider(),
             httpClient: OkHttpClient
         ): RemoteStorage = HttpRemoteStorage(
             endpoint = requireNotNull(endpoint.toHttpUrl()),
             httpClient = httpClient,
-            logger = logger,
+            loggerFactory = loggerFactory,
             timeSource = timeSource
         )
     }

@@ -1,6 +1,6 @@
 package com.avito.android.plugin
 
-import com.avito.logger.NoOpLogger
+import com.avito.logger.StubLoggerFactory
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -10,14 +10,14 @@ class SuspiciousTogglesCollectorTest {
 
     private lateinit var collector: SuspiciousTogglesCollector
 
-    private val logger = NoOpLogger
+    private val loggerFactory = StubLoggerFactory
 
     private val monthAgo = LocalDate.parse("2018-05-20")
     private val quarterAgo = LocalDate.parse("2018-03-20")
 
     @BeforeEach
     fun setUp() {
-        collector = SuspiciousTogglesCollector(logger, developerToTeam = mapOf())
+        collector = SuspiciousTogglesCollector(loggerFactory, developerToTeam = mapOf())
     }
 
     @Test

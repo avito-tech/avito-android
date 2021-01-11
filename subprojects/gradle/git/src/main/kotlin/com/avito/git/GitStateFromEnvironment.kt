@@ -2,15 +2,16 @@ package com.avito.git
 
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.logger.LoggerFactory
 import org.gradle.api.Project
 import java.io.File
 
 class GitStateFromEnvironment(
-    repoDir: File,
+    rootDir: File,
+    loggerFactory: LoggerFactory,
     gitBranch: String,
     targetBranch: String?,
-    originalCommitHash: String?,
-    logger: (String) -> Unit
+    originalCommitHash: String?
 ) : GitState {
 
     override val defaultBranch = "develop"
@@ -24,10 +25,15 @@ class GitStateFromEnvironment(
     init {
         @Suppress("NAME_SHADOWING")
         val gitBranch: String = gitBranch.asBranchWithoutOrigin()
+
         @Suppress("NAME_SHADOWING")
         val targetBranch: String? = targetBranch?.asBranchWithoutOrigin()
 
-        val git = Git.Impl(repoDir, logger)
+        val git = Git.Impl(
+            rootDir = rootDir,
+            loggerFactory = loggerFactory
+        )
+
         val gitCommit = git.tryParseRev("HEAD").get()
 
         this.currentBranch = Branch(
@@ -61,17 +67,16 @@ class GitStateFromEnvironment(
 
     companion object {
 
-        fun from(project: Project, logger: (String) -> Unit): GitState {
-            val rootDir = project.rootProject.rootDir
+        fun from(project: Project, loggerFactory: LoggerFactory): GitState {
             val gitBranch: String = project.getMandatoryStringProperty("gitBranch")
             val targetBranch: String? = project.getOptionalStringProperty("targetBranch")
             val originalCommitHash: String? = project.getOptionalStringProperty("originalCommitHash")
             return GitStateFromEnvironment(
-                repoDir = rootDir,
+                rootDir = project.rootDir,
+                loggerFactory = loggerFactory,
                 gitBranch = gitBranch,
                 targetBranch = targetBranch,
-                originalCommitHash = originalCommitHash,
-                logger = logger
+                originalCommitHash = originalCommitHash
             )
         }
     }

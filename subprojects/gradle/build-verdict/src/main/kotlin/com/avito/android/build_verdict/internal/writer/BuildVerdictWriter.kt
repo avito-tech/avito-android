@@ -1,14 +1,14 @@
 package com.avito.android.build_verdict.internal.writer
 
 import com.avito.android.build_verdict.internal.BuildVerdict
-import com.avito.utils.logging.CILogger
+import com.avito.logger.Logger
 import java.io.File
 
 internal abstract class BuildVerdictWriter(
     private val outputDir: Lazy<File>,
     private val fileName: String
 ) {
-    protected abstract val logger: CILogger
+    protected abstract val logger: Logger
 
     fun write(buildVerdict: BuildVerdict) {
         val destination = File(outputDir.value, fileName)

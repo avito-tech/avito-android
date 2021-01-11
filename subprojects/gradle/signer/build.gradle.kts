@@ -6,9 +6,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:build-failer"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:android"))
@@ -20,6 +20,7 @@ dependencies {
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:test-okhttp"))
+    testImplementation(project(":common:logger-test-fixtures"))
 }
 
 gradlePlugin {

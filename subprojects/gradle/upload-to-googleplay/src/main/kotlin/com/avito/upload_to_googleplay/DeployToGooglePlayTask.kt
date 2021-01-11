@@ -1,6 +1,6 @@
 package com.avito.upload_to_googleplay
 
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskAction
@@ -28,10 +28,11 @@ internal abstract class DeployToGooglePlayTask @Inject constructor(
 ) : DefaultTask() {
 
     private val jsonKey = project.playConsoleJsonKey
-    private val logger = this.ciLogger
 
     @TaskAction
     fun upload() {
+        val logger = GradleLoggerFactory.getLogger(this)
+
         val googlePlayKey = jsonKey.orNull
             ?: throw IllegalStateException("google play key must present in ${project.name}").apply {
                 logger.critical("google play key was empty", this)

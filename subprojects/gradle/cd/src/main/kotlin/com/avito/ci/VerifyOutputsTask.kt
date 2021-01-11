@@ -3,8 +3,8 @@ package com.avito.ci
 import com.avito.android.androidSdk
 import com.avito.ci.steps.ArtifactsConfiguration
 import com.avito.ci.steps.Output
+import com.avito.logger.GradleLoggerFactory
 import com.avito.plugin.SignVerifier
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
@@ -43,13 +43,15 @@ abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFactory) : D
             outputsDir = outputsDir
         )
 
+        val logger = GradleLoggerFactory.getLogger(this)
+
         config.get().outputs.forEach { (_: String, output: Output) ->
             // Check file that have already been copied to outputs folder
             val originalArtifact = File(output.path)
                 .relativeTo(project.rootProject.projectDir)
 
             val artifactPath = File(outputsDir, originalArtifact.path)
-            ciLogger.info("Verify artifact ${artifactPath.path}")
+            logger.info("Verify artifact ${artifactPath.path}")
 
             when (output) {
                 is Output.ProguardMapping,
@@ -71,7 +73,7 @@ abstract class VerifyOutputsTask @Inject constructor(objects: ObjectFactory) : D
         if (outputsVerifier.errors.isNotEmpty()) {
             error(outputsVerifier.errors.joinToString(prefix = "CI contract violation!\n", separator = "\n"))
         } else {
-            ciLogger.info("All artifacts checked")
+            logger.info("All artifacts checked")
         }
     }
 }

@@ -8,20 +8,22 @@ import com.avito.impact.platformModules
 import com.avito.impact.plugin.ImpactAnalysisExtension
 import com.avito.impact.supportedByImpactAnalysisProjects
 import com.avito.kotlin.dsl.isRoot
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.findByType
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 class ImpactFallbackDetectorImplementation(
     private val configuration: ImpactAnalysisExtension,
     private val project: Project,
     private val gitState: Provider<GitState>,
-    private val logger: CILogger = project.ciLogger
+    private val loggerFactory: LoggerFactory
 ) : ImpactFallbackDetector {
+
+    private val logger = loggerFactory.create<ImpactFallbackDetectorImplementation>()
 
     override val isFallback: ImpactFallbackDetector.Result by lazy {
 
@@ -52,7 +54,7 @@ class ImpactFallbackDetectorImplementation(
             changesDetector = newChangesDetector(
                 rootDir = project.rootDir,
                 targetCommit = gitState.orNull?.targetBranch?.commit,
-                logger = logger
+                loggerFactory = loggerFactory
             )
         )
 
@@ -83,7 +85,7 @@ class ImpactFallbackDetectorImplementation(
         return changesDetector
             .computeChanges(rootDir, excludedDirectories)
             .onFailure {
-                logger.info("Can't findModifiedProjects changes in the root project; ${it.message}", it.cause)
+                logger.warn("Can't findModifiedProjects changes in the root project; ${it.message}", it.cause)
             }
             .map {
                 val hasChanges = it.isNotEmpty()
@@ -114,7 +116,7 @@ class ImpactFallbackDetectorImplementation(
                 configuration,
                 project = project,
                 gitState = project.gitState(),
-                logger = project.ciLogger
+                loggerFactory = GradleLoggerFactory.fromProject(project)
             )
         }
     }

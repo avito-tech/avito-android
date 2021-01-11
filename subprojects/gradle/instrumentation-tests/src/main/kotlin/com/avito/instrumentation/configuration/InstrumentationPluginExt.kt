@@ -6,7 +6,6 @@ import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHist
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
 import com.avito.report.model.RunId
 import com.avito.utils.gradle.envArgs
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
@@ -33,7 +32,7 @@ internal fun Project.withInstrumentationExtensionData(action: (GradleInstrumenta
         afterEvaluate {
             val extension = extensions.getByType<GradleInstrumentationPluginConfiguration>()
             val env = project.envArgs
-            val runId = project.gitState { project.ciLogger.info(it) }
+            val runId = project.gitState()
                 .map { gitState ->
                     RunId(
                         commitHash = gitState.currentBranch.commit,

@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.millisecondsToHumanReadableTime
 import com.avito.runner.scheduler.report.Reporter
 import com.avito.runner.scheduler.report.SummaryReportMaker
@@ -13,13 +14,15 @@ internal class Entrypoint(
     private val testRunner: TestRunner,
     private val summaryReportMaker: SummaryReportMaker,
     private val reporter: Reporter,
-    private val logger: Logger
+    loggerFactory: LoggerFactory
 ) {
+
+    private val logger = loggerFactory.create<Entrypoint>()
 
     fun run(requests: List<TestRunRequest>) {
         val startTime = System.currentTimeMillis()
 
-        log("Test run started. requests = $requests")
+        logger.debug("Test run started. requests = $requests")
 
         val runResult: TestRunnerResult = if (requests.isNotEmpty()) {
             runBlocking {
@@ -39,23 +42,19 @@ internal class Entrypoint(
 
         reporter.report(summary)
 
-        log(
+        logger.debug(
             "Test run finished. The results: " +
                 "passed = ${summary.successRunsCount}, " +
                 "failed = ${summary.failedRunsCount}, " +
                 "ignored = ${summary.ignoredRunsCount}, " +
                 "took ${summary.durationMilliseconds.millisecondsToHumanReadableTime()}."
         )
-        log(
+        logger.debug(
             "Matching results: " +
                 "matched = ${summary.matchedCount}, " +
                 "mismatched = ${summary.mismatched}, " +
                 "ignored = ${summary.ignoredCount}."
         )
-    }
-
-    private fun log(message: String) {
-        logger.debug("Entrypoint: $message")
     }
 
     companion object

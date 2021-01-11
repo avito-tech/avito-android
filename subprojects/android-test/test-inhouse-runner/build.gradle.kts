@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":common:test-annotations"))
     implementation(project(":common:file-storage"))
     implementation(project(":common:time"))
+    implementation(project(":android-test:android-log"))
     implementation(project(":android-test:ui-testing-core"))
     implementation(project(":android-test:ui-testing-maps"))
     implementation(Dependencies.AndroidTest.runner)

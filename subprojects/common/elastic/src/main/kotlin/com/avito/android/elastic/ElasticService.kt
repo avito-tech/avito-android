@@ -14,6 +14,6 @@ internal interface ElasticService {
     fun log(
         @Path("indexPattern") indexPattern: String,
         @Path("date") date: String,
-        @Body logEvent: ElasticLogEventRequest
+        @Body params: Map<String, String>
     ): Call<ResponseBody>
 }

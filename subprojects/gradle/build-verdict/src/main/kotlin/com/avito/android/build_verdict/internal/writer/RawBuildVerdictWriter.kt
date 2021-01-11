@@ -1,14 +1,14 @@
 package com.avito.android.build_verdict.internal.writer
 
 import com.avito.android.build_verdict.internal.BuildVerdict
-import com.avito.utils.logging.CILogger
+import com.avito.logger.Logger
 import com.google.gson.Gson
 import java.io.File
 
 internal class RawBuildVerdictWriter(
     buildVerdictDir: Lazy<File>,
     private val gson: Gson,
-    override val logger: CILogger
+    override val logger: Logger
 ) : BuildVerdictWriter(buildVerdictDir, fileName) {
 
     override fun writeTo(buildVerdict: BuildVerdict, destination: File) {

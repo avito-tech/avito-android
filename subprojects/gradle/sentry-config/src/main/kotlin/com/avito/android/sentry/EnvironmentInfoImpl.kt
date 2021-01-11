@@ -6,7 +6,10 @@ import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 
-internal class EnvironmentInfoImpl(private val project: Project, private val git: Git) : EnvironmentInfo {
+internal class EnvironmentInfoImpl(
+    private val project: Project,
+    private val git: Git
+) : EnvironmentInfo {
 
     override val node: String? by lazy {
         when (environment) {

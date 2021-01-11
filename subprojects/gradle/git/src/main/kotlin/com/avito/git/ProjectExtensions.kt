@@ -4,19 +4,31 @@ package com.avito.git
 
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.kotlin.dsl.lazyProperty
+import com.avito.logger.SimpleLoggerFactory
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.property
 
-@JvmOverloads // for using default parameters in build.gradle
-fun Project.gitState(logger: (String) -> Unit = {}): Provider<GitState> =
+/**
+ * Warning! used in build.gradle files
+ */
+fun Project.gitState(): Provider<GitState> =
     lazyProperty("GIT_STATE_PROVIDER") { project ->
         project.objects.property<GitState>().apply {
             val strategy = project.getOptionalStringProperty("avito.git.state", default = "env")
+
+            val loggerFactory = SimpleLoggerFactory()
+
             set(
                 when (strategy) {
-                    "local" -> GitLocalStateImpl.from(project)
-                    "env" -> GitStateFromEnvironment.from(project, logger)
+                    "local" -> GitLocalStateImpl.from(
+                        project = project,
+                        loggerFactory = loggerFactory
+                    )
+                    "env" -> GitStateFromEnvironment.from(
+                        project = project,
+                        loggerFactory = loggerFactory
+                    )
                     else -> throw RuntimeException("Unknown git state strategy: $strategy")
                 }
             )

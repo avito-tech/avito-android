@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(Dependencies.Gradle.kotlinPlugin)
 
     testImplementation(project(":gradle:test-project"))

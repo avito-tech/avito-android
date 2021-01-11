@@ -5,14 +5,14 @@ import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProvider
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.suite.model.TestWithTarget
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.scheduler.TestsRunnerClient
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -33,8 +33,10 @@ interface TestExecutor {
         private val devicesProvider: DevicesProvider,
         private val testReporter: TestReporter,
         private val configurationName: String,
-        private val logger: CILogger
+        private val loggerFactory: LoggerFactory
     ) : TestExecutor {
+
+        private val logger = loggerFactory.create<TestExecutor>()
 
         private val runner = TestsRunnerClient()
 
@@ -66,7 +68,7 @@ interface TestExecutor {
                 val runnerArguments = Arguments(
                     outputDirectory = outputFolder(output),
                     devices = devices,
-                    logger = commonLogger(logger),
+                    loggerFactory = loggerFactory,
                     listener = testReporter,
                     requests = testRequests,
                     reservation = devicesProvider

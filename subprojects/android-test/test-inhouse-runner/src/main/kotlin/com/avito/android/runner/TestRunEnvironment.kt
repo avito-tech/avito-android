@@ -7,6 +7,7 @@ import com.avito.android.runner.annotation.resolver.HostAnnotationResolver
 import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
 import com.avito.android.runner.annotation.resolver.NetworkingType
 import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
+import com.avito.android.sentry.SentryConfig
 import com.avito.android.test.report.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
@@ -47,9 +48,8 @@ sealed class TestRunEnvironment {
      * @link https://developer.android.com/training/testing/junit-runner#using-android-test-orchestrator
      */
     object OrchestratorFakeRunEnvironment : TestRunEnvironment() {
-        override fun toString(): String {
-            return this::class.java.simpleName
-        }
+
+        override fun toString(): String = this::class.java.simpleName
     }
 
     data class InitError(val error: String) : TestRunEnvironment()
@@ -84,7 +84,8 @@ sealed class TestRunEnvironment {
         val slackToken: String,
         val videoRecordingFeature: VideoFeatureValue,
         val outputDirectory: Lazy<File>,
-        val sentryDsn: String,
+        val sentryDsn: String?, // todo remove after 2021.1 (replaced by sentryConfig)
+        val sentryConfig: SentryConfig?,
         val fileStorageUrl: String,
         val reportConfig: ReportConfig?,
         val testRunCoordinates: ReportCoordinates,
@@ -131,8 +132,8 @@ fun provideEnvironment(
                 teamcityBuildId = argumentsProvider.getMandatoryArgument("teamcityBuildId").toInt(),
                 buildBranch = argumentsProvider.getMandatoryArgument("buildBranch"),
                 buildCommit = argumentsProvider.getMandatoryArgument("buildCommit"),
-                testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY) as TestMetadata,
-                networkType = argumentsProvider.getMandatorySerializableArgument(NETWORKING_TYPE_KEY) as NetworkingType,
+                testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
+                networkType = argumentsProvider.getMandatorySerializableArgument(NETWORKING_TYPE_KEY),
                 // todo url'ы не обязательные параметры
                 apiUrl = provideApiUrl(
                     argumentsProvider = argumentsProvider,
@@ -150,7 +151,8 @@ fun provideEnvironment(
                 },
                 // from GradleInstrumentationPluginConfiguration
                 slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
-                sentryDsn = argumentsProvider.getMandatoryArgument("sentryDsn"),
+                sentryDsn = argumentsProvider.getOptionalArgument("sentryDsn"),
+                sentryConfig = argumentsProvider.getOptionalSerializableArgument("sentryConfig"),
                 fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
                 testRunCoordinates = coordinates,
                 reportConfig = reportConfig,

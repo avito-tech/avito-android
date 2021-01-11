@@ -1,7 +1,8 @@
 package com.avito.impact.changes
 
-import com.avito.utils.logging.CILogger
-import com.avito.utils.runCommand
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
+import com.avito.utils.ProcessRunner
 import org.funktionale.tries.Try
 import java.io.File
 
@@ -26,11 +27,13 @@ class GitChangesDetector(
     private val gitRootDir: File,
     private val targetCommit: String,
     private val ignoreSettings: IgnoreSettings,
-    private val logger: CILogger
+    loggerFactory: LoggerFactory
 ) : ChangesDetector {
 
+    private val logger = loggerFactory.create<GitChangesDetector>()
     private val cache: MutableMap<Key, Try<List<ChangedFile>>> = mutableMapOf()
     private val gitDiffWithTargetBranch by lazy { gitDiffWith() }
+    private val processRunner = ProcessRunner.Real(gitRootDir, loggerFactory)
 
     init {
         require(gitRootDir.exists()) { "Directory ${gitRootDir.canonicalPath} doesn't exist" }
@@ -52,10 +55,7 @@ class GitChangesDetector(
      * Just a git diff between HEAD and [targetCommit]
      */
     private fun gitDiffWith(): Try<Sequence<ChangedFile>> {
-        return runCommand(
-            command = "git diff --name-status $targetCommit",
-            workingDirectory = gitRootDir
-        ).map { output: String ->
+        return processRunner.run("git diff --name-status $targetCommit").map { output: String ->
             output.lineSequence()
                 .filterNot { it.isBlank() }
                 .map { line ->
@@ -99,7 +99,7 @@ class GitChangesDetector(
     private data class Key(val targetDirectory: File, val excludedDirectories: Iterable<File>)
 }
 
-fun newChangesDetector(rootDir: File, targetCommit: String?, logger: CILogger): ChangesDetector {
+fun newChangesDetector(rootDir: File, targetCommit: String?, loggerFactory: LoggerFactory): ChangesDetector {
     val ignoreFile = File(rootDir, ".tia_ignore")
     val settings = readIgnoreSettings(ignoreFile)
 
@@ -110,7 +110,7 @@ fun newChangesDetector(rootDir: File, targetCommit: String?, logger: CILogger): 
             gitRootDir = rootDir,
             targetCommit = targetCommit,
             ignoreSettings = settings,
-            logger = logger
+            loggerFactory = loggerFactory
         )
     }
 }

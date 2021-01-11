@@ -3,14 +3,14 @@ package com.avito.instrumentation.reservation.devices.provider
 import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
 import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevice
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,8 +26,10 @@ class LocalDevicesProvider(
     private val devicesManager: AdbDevicesManager,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
     private val adb: Adb,
-    private val logger: CILogger
+    private val loggerFactory: LoggerFactory
 ) : DevicesProvider {
+
+    private val logger = loggerFactory.create<LocalDevicesProvider>()
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
@@ -86,7 +88,7 @@ class LocalDevicesProvider(
                         coordinate = DeviceCoordinate.Local(adbDeviceParams.id as Serial.Local),
                         model = adbDeviceParams.model,
                         online = adbDeviceParams.online,
-                        logger = commonLogger(logger),
+                        loggerFactory = loggerFactory,
                         adb = adb
                     )
                 }
@@ -100,7 +102,7 @@ class LocalDevicesProvider(
             )
             devices.toSet()
         } catch (t: Throwable) {
-            logger.debug("Failed to get local emulators", t)
+            logger.warn("Failed to get local emulators", t)
             emptySet()
         }
     }

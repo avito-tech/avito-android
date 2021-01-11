@@ -10,10 +10,10 @@ dependencies {
 
     implementation(gradleApi())
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:files"))
     implementation(project(":gradle:git"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:statsd-config"))
 
@@ -22,7 +22,6 @@ dependencies {
 
     testImplementation(project(":gradle:impact-shared-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":gradle:logging-test-fixtures"))
     testImplementation(project(":gradle:git-test-fixtures"))
     testImplementation(Dependencies.Test.mockitoKotlin)
 }

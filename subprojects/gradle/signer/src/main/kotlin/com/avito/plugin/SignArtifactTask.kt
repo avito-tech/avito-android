@@ -1,7 +1,8 @@
 package com.avito.plugin
 
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.create
 import com.avito.utils.BuildFailer
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Input
@@ -10,7 +11,6 @@ import org.gradle.kotlin.dsl.property
 import java.io.File
 import javax.inject.Inject
 
-@Suppress("UnstableApiUsage")
 abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
 
     @Input
@@ -33,6 +33,7 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
 
     @TaskAction
     fun run() {
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
         val unsignedFile = unsignedFile()
         val signedFile = signedFile()
 
@@ -43,12 +44,14 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
             token = tokenProperty.get(),
             unsignedFile = unsignedFile,
             signedFile = signedFile,
-            ciLogger = ciLogger
+            loggerFactory = loggerFactory
         ).sign() // TODO: User workers
 
         hackForArtifactsApi()
 
         val buildFailer = BuildFailer.RealFailer()
+
+        val logger = loggerFactory.create<SignArtifactTask>()
 
         signResult.fold(
             { logger.info("signed successfully: ${signedFile.path}") },

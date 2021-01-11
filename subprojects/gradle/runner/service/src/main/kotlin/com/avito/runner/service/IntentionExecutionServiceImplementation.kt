@@ -1,7 +1,8 @@
 package com.avito.runner.service
 
 import com.avito.coroutines.extensions.Dispatchers
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
@@ -17,12 +18,14 @@ import java.io.File
 
 class IntentionExecutionServiceImplementation(
     private val outputDirectory: File,
-    private val logger: Logger,
+    private val loggerFactory: LoggerFactory,
     private val devices: ReceiveChannel<Device>,
-    private val intentionsRouter: IntentionsRouter = IntentionsRouter(logger = logger),
+    private val intentionsRouter: IntentionsRouter = IntentionsRouter(loggerFactory = loggerFactory),
     private val listener: TestListener,
     private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread
 ) : IntentionExecutionService {
+
+    private val logger = loggerFactory.create<IntentionExecutionService>()
 
     private val intentions: Channel<Intention> =
         Channel(Channel.UNLIMITED)
@@ -42,7 +45,7 @@ class IntentionExecutionServiceImplementation(
                         intentionsRouter = intentionsRouter,
                         device = devices.receive(),
                         outputDirectory = outputDirectory,
-                        logger = logger,
+                        loggerFactory = loggerFactory,
                         messagesChannel = messages,
                         listener = listener,
                         dispatchers = deviceWorkersDispatcher
@@ -52,20 +55,20 @@ class IntentionExecutionServiceImplementation(
 
             launch {
                 for (intention in intentions) {
-                    log("received intention: $intention")
+                    logger.debug("received intention: $intention")
                     intentionsRouter.sendIntention(intention = intention)
                 }
             }
 
             launch {
                 for (message in messages) {
-                    log("received message: $message")
+                    logger.debug("received message: $message")
                     when (message) {
                         is DeviceWorkerMessage.ApplicationInstalled ->
-                            log("Application: ${message.installation.installation.application} installed")
+                            logger.debug("Application: ${message.installation.installation.application} installed")
 
                         is DeviceWorkerMessage.FailedIntentionProcessing -> {
-                            log(
+                            logger.debug(
                                 "Received worker failed message during executing intention:" +
                                     " ${message.intention}. Rescheduling..."
                             )
@@ -97,9 +100,5 @@ class IntentionExecutionServiceImplementation(
         messages.close()
         devices.cancel()
         deviceSignals.close()
-    }
-
-    private fun log(message: String) {
-        logger.debug("IntentionExecutionService: $message")
     }
 }

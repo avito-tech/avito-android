@@ -1,6 +1,7 @@
 package com.avito.runner.service.worker.device
 
 sealed class DeviceCoordinate {
+
     abstract val serial: Serial
 
     data class Kubernetes(

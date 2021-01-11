@@ -8,8 +8,8 @@ plugins {
 dependencies {
     implementation(gradleApi())
     implementation(project(":common:throwable-utils"))
-    implementation(project(":gradle:kotlin-dsl-support"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:build-verdict-tasks-api"))
     implementation(Dependencies.gson)
     implementation(Dependencies.kotlinHtml)

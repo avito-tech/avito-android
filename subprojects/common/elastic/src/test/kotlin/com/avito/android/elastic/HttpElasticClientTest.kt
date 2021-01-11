@@ -1,5 +1,6 @@
 package com.avito.android.elastic
 
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.avito.time.StubTimeProvider
@@ -13,7 +14,12 @@ internal class HttpElasticClientTest {
 
     private val mockWebServer = MockWebServerFactory.create()
 
-    private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
+    private val loggerFactory = StubLoggerFactory
+
+    private val dispatcher = MockDispatcher(
+        unmockedResponse = MockResponse().setResponseCode(200),
+        loggerFactory = loggerFactory
+    )
         .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
 
     @Test
@@ -37,7 +43,7 @@ internal class HttpElasticClientTest {
         val capturedRequest = dispatcher.captureRequest { true }
 
         elasticClient.sendMessage(
-            tag = "SomeTag",
+            metadata = mapOf("some_key" to "SomeValue"),
             level = "WARNING",
             message = "SomeMessage",
             throwable = Exception("SomeException")
@@ -47,11 +53,11 @@ internal class HttpElasticClientTest {
             pathContains("doesnt-matter-2020-12-02/_doc")
             bodyContains(
                 "{\"@timestamp\":\"2020-12-02T18:14:44.000000000+0300\"," +
-                    "\"tag\":\"SomeTag\"," +
                     "\"level\":\"WARNING\"," +
                     "\"build_id\":\"12345\"," +
                     "\"message\":\"SomeMessage\"," +
-                    "\"error_message\":\"SomeException\"}"
+                    "\"error_message\":\"SomeException\"," +
+                    "\"some_key\":\"SomeValue\"}"
             )
         }
     }

@@ -1,48 +1,31 @@
 package com.avito.android.test.report.video
 
-import android.annotation.SuppressLint
-import android.util.Log
 import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
 import okhttp3.OkHttpClient
 import java.io.File
 
-@SuppressLint("LogNotTimber")
 class VideoCaptureTestListener(
     videoFeatureValue: VideoFeatureValue,
     onDeviceCacheDirectory: Lazy<File>,
     httpClient: OkHttpClient,
     fileStorageUrl: String,
+    loggerFactory: LoggerFactory,
     private val shouldRecord: Boolean,
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
     private val videoCapturer: VideoCapturer = VideoCapturerImpl(onDeviceCacheDirectory)
 ) : TestLifecycleListener {
 
-    private val logger: Logger = object : Logger {
-        override fun debug(msg: String) {
-            Log.d(LOG_TAG, msg)
-        }
-
-        override fun info(msg: String) {
-            Log.i(LOG_TAG, msg)
-        }
-
-        override fun critical(msg: String, error: Throwable) {
-            Log.e(LOG_TAG, msg, error)
-        }
-
-        override fun warn(msg: String, error: Throwable?) {
-            Log.w(LOG_TAG, msg, error)
-        }
-    }
+    private val logger = loggerFactory.create<VideoCaptureTestListener>()
 
     private val remoteStorage: RemoteStorage = RemoteStorage.create(
-        logger = logger,
+        loggerFactory = loggerFactory,
         httpClient = httpClient,
         endpoint = fileStorageUrl
     )
@@ -114,5 +97,3 @@ class VideoCaptureTestListener(
         }
     }
 }
-
-private const val LOG_TAG = "VideoCaptureListener"

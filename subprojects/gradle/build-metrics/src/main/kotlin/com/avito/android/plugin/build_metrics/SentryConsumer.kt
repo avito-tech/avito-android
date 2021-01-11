@@ -6,28 +6,34 @@ import com.avito.android.gradle.metric.AbstractMetricsConsumer
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.sentry.sentry
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import io.sentry.connection.EventSendCallback
 import io.sentry.event.Event
 import org.gradle.BuildResult
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
 
 // todo вынести в фабрику знания про project
 internal class SentryConsumer(
-    project: Project
+    project: Project,
+    loggerFactory: LoggerFactory
 ) : AbstractMetricsConsumer() {
 
-    private val log = project.logger
+    private val logger = loggerFactory.create<SentryConsumer>()
+
     private val sentry = project.sentry
+
     private val sentryUrl: String? = project.getOptionalStringProperty("avito.sentry.projectUrl")
+
     private val capturedOutputs = mutableSetOf<Int>()
+
     private var hasSendCallback = false
 
     override fun onOutput(output: CharSequence) {
         // Do not print or log here. It'll cause infinite recursion.
         if (isCaptured(output)) return
-
-        if (output.contains(logTag)) return
+        if (output.contains("SentryConsumer")) return
 
         when {
             output.startsWith("Could not store entry ") -> handleCacheError(output)
@@ -59,7 +65,7 @@ internal class SentryConsumer(
 
     private fun sendException(error: Throwable) {
         if (!hasSendCallback) {
-            sentry.get().addEventSendCallback(DefaultSendCallback(log = log, sentryUrl = sentryUrl))
+            sentry.get().addEventSendCallback(DefaultSendCallback(logger = logger, sentryUrl = sentryUrl))
             hasSendCallback = true
         }
         sentry.get().sendException(error)
@@ -67,16 +73,16 @@ internal class SentryConsumer(
 }
 
 private class DefaultSendCallback(
-    private val log: Logger,
+    private val logger: Logger,
     private val sentryUrl: String?
 ) : EventSendCallback {
 
     override fun onSuccess(event: Event) {
         val hash = event.id.toString().replace("-", "")
         if (sentryUrl.isNullOrBlank()) {
-            log.lifecycle("$logTag Error sent")
+            logger.info("Error sent")
         } else {
-            log.lifecycle("$logTag Error sent: $sentryUrl?query=$hash")
+            logger.info("Error sent: $sentryUrl?query=$hash")
         }
     }
 
@@ -84,10 +90,8 @@ private class DefaultSendCallback(
         val cause = exception.javaClass.simpleName +
             " ← " + exception.cause?.javaClass?.name +
             ": " + exception.cause?.message
-        log.warn("$logTag Can't send error: $cause. \nCheck your connection.")
+        logger.warn("Can't send error: $cause. \nCheck your connection.")
     }
 }
-
-private const val logTag = "[sentry]"
 
 internal class GradleCacheError(message: String) : Exception(message)

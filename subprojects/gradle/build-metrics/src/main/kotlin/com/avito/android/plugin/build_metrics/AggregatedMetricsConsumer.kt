@@ -9,6 +9,8 @@ import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.TimeMetric
 import com.avito.android.stats.graphiteSeriesElement
 import com.avito.kotlin.dsl.isRoot
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.BuildResult
@@ -21,11 +23,14 @@ import kotlin.system.measureTimeMillis
 
 internal class AggregatedMetricsConsumer(
     project: Project,
-    private val stats: BuildMetricTracker
+    private val stats: BuildMetricTracker,
+    loggerFactory: LoggerFactory
 ) : AbstractMetricsConsumer() {
 
-    private val log = project.logger
+    private val logger = loggerFactory.create<AggregatedMetricsConsumer>()
+
     private val env = project.buildEnvironment
+
     private val androidApps: MutableList<String> = CopyOnWriteArrayList()
 
     private val BuildResult.isBuildAction
@@ -56,11 +61,11 @@ internal class AggregatedMetricsConsumer(
 
         buildResult.gradle?.startParameter?.let { startParameter ->
             if (startParameter.isDryRun) {
-                log.debug("Build metrics are disabled due to dry run")
+                logger.debug("Build metrics are disabled due to dry run")
                 return
             }
             if (isBuildNothing(startParameter.taskNames)) {
-                log.debug("Build metrics are disabled due to useless tasks: ${startParameter.taskRequests}")
+                logger.debug("Build metrics are disabled due to useless tasks: ${startParameter.taskRequests}")
                 return
             }
         }
@@ -70,7 +75,7 @@ internal class AggregatedMetricsConsumer(
             trackBuildTimeByRequestedTasks(buildResult, profile)
             trackTasksMetrics(buildResult, profile)
         }
-        log.debug("send metrics took $totalMs ms")
+        logger.debug("send metrics took $totalMs ms")
     }
 
     private fun isBuildNothing(tasks: List<String>): Boolean {
@@ -177,7 +182,7 @@ internal class AggregatedMetricsConsumer(
     @Suppress("unused")
     private fun dump(task: TaskExecution) {
         val state = task.internalState
-        log.debug(
+        logger.debug(
             "TaskExecution: ${task.path}, " +
                 "didWork:${state.didWork}, " +
                 "actionable:${state.isActionable}, " +

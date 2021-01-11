@@ -1,6 +1,7 @@
 package com.avito.runner.test
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -22,7 +23,7 @@ import java.util.Queue
 
 open class StubDevice(
     override val coordinate: DeviceCoordinate = DeviceCoordinate.Local(Serial.Local("stub")),
-    private val logger: Logger,
+    loggerFactory: LoggerFactory,
     installApplicationResults: List<StubActionResult<Any>> = emptyList(),
     gettingDeviceStatusResults: List<StubActionResult<Device.DeviceStatus>> = emptyList(),
     runTestsResults: List<StubActionResult<TestCaseRun.Result>> = emptyList(),
@@ -43,13 +44,15 @@ open class StubDevice(
     private val clearPackageResultsQueue: Queue<StubActionResult<Try<Any>>> =
         ArrayDeque(clearPackageResults)
 
+    override val logger = loggerFactory.create<StubDevice>()
+
     override val api: Int
         get() {
             return apiResult.get()
         }
 
     override fun installApplication(application: String): DeviceInstallation {
-        log("MockDevice: installApplication called")
+        logger.debug("MockDevice: installApplication called")
 
         check(installApplicationResultsQueue.isNotEmpty()) {
             "Install application results queue is empty in MockDevice"
@@ -71,7 +74,7 @@ open class StubDevice(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun {
-        log("MockDevice: runIsolatedTest called")
+        logger.debug("runIsolatedTest called")
 
         check(runTestsResultsQueue.isNotEmpty()) {
             "Running test results queue is empty in MockDevice"
@@ -79,7 +82,7 @@ open class StubDevice(
 
         val result = runTestsResultsQueue.poll().get()
 
-        log("MockDevice: runIsolatedTest resulted with: $result")
+        logger.debug("runIsolatedTest resulted with: $result")
 
         return DeviceTestCaseRun(
             testCaseRun = TestCaseRun(
@@ -93,7 +96,7 @@ open class StubDevice(
     }
 
     override fun clearPackage(name: String): Try<Any> {
-        log("MockDevice: clearPackage called")
+        logger.debug("clearPackage called")
 
         check(clearPackageResultsQueue.isNotEmpty()) {
             "Clear package results queue is empty in MockDevice"
@@ -101,14 +104,14 @@ open class StubDevice(
 
         val result = clearPackageResultsQueue.poll().get()
 
-        log("MockDevice: clearPackage resulted with: $result")
+        logger.debug("clearPackage resulted with: $result")
 
         return result
     }
 
     override fun pull(from: Path, to: Path): Try<Any> {
 
-        log("pull called [from: $from to: $to]")
+        logger.debug("pull called [from: $from to: $to]")
 
         return if (from.toString().contains("report.json")) {
             to.toFile().writeText("")
@@ -143,7 +146,7 @@ open class StubDevice(
     override fun list(remotePath: String): Try<Any> = Try {}
 
     override fun deviceStatus(): Device.DeviceStatus {
-        log("MockDevice: deviceStatus called")
+        logger.debug("deviceStatus called")
 
         check(gettingDeviceStatusResultsQueue.isNotEmpty()) {
             "Getting device status results queue is empty in MockDevice"
@@ -151,21 +154,9 @@ open class StubDevice(
 
         val result = gettingDeviceStatusResultsQueue.poll().get()
 
-        log("MockDevice: deviceStatus resulted with: $result")
+        logger.debug("deviceStatus resulted with: $result")
 
         return result
-    }
-
-    override fun debug(message: String) {
-        logger.debug(message)
-    }
-
-    override fun info(message: String) {
-        logger.info(message)
-    }
-
-    override fun warn(message: String, error: Throwable?) {
-        logger.warn(message, error)
     }
 
     fun isDone(): Boolean {
@@ -188,9 +179,5 @@ open class StubDevice(
         check(clearPackageResultsQueue.isEmpty()) {
             "Mock device has remains commands in queue: clearPackageResultsQueue"
         }
-    }
-
-    private fun log(message: String) {
-        logger.debug("MockDevice: $message")
     }
 }

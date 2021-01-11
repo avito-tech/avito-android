@@ -366,6 +366,7 @@ fun Project.configureJunit5Tests() {
     tasks.withType<Test> {
         useJUnitPlatform()
         maxParallelForks = 8
+        failFast = true
     }
 }
 
@@ -374,7 +375,6 @@ val detektAll by tasks.registering(Detekt::class) {
     parallel = true
     setSource(files(projectDir))
 
-    //
     /**
      * About config:
      * yaml is a copy of https://github.com/detekt/detekt/blob/master/detekt-core/src/main/resources/default-detekt-config.yml

@@ -1,6 +1,6 @@
 package com.avito.report
 
-import com.avito.logger.NoOpLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockDispatcher
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.jupiter.api.extension.AfterEachCallback
@@ -14,7 +14,8 @@ class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
     private var state: State? = null
 
     override fun beforeEach(context: ExtensionContext) {
-        val mockDispatcher = MockDispatcher()
+        val loggerFactory = StubLoggerFactory
+        val mockDispatcher = MockDispatcher(loggerFactory = loggerFactory)
         val mockWebServer = MockWebServer().apply { dispatcher = mockDispatcher }
         state = State(
             mockWebServer = mockWebServer,
@@ -22,7 +23,7 @@ class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
                 realApi = ReportsApi.create(
                     host = mockWebServer.url("/").toString(),
                     fallbackUrl = "",
-                    logger = NoOpLogger
+                    loggerFactory = StubLoggerFactory
                 ),
                 mockDispatcher = mockDispatcher
             )

@@ -9,12 +9,13 @@ import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.suite.model.transformTestsWithNewJobSlug
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.runner.service.model.TestCase
 import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.logging.CILogger
 import org.funktionale.tries.Try
 import java.io.File
 import java.nio.file.Files
@@ -35,7 +36,7 @@ class TestsRunnerImplementation(
     private val testExecutorFactory: TestExecutorFactory,
     private val kubernetesCredentials: KubernetesCredentials,
     private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter,
-    private val logger: CILogger,
+    private val loggerFactory: LoggerFactory,
     private val buildId: String,
     private val buildType: String,
     private val projectName: String,
@@ -44,6 +45,8 @@ class TestsRunnerImplementation(
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
     private val registry: String
 ) : TestsRunner {
+
+    private val logger = loggerFactory.create<TestsRunner>()
 
     override fun runTests(
         mainApk: File?,
@@ -71,7 +74,6 @@ class TestsRunnerImplementation(
                 logcatDir,
                 report
             )
-            val logger = logger.child(runType.id)
             // TODO: pass through constructor
             val initialRunConfiguration =
                 instrumentationConfiguration.copy(name = "${instrumentationConfiguration.name}-${runType.id}")
@@ -84,12 +86,12 @@ class TestsRunnerImplementation(
                     registry = registry,
                     output = output,
                     logcatDir = logcatDir,
-                    logger = logger
+                    loggerFactory = loggerFactory
                 ),
                 configuration = initialRunConfiguration,
                 executionParameters = executionParameters,
                 testReporter = testReporter,
-                logger = logger
+                loggerFactory = loggerFactory
             )
 
             executor.execute(
@@ -103,13 +105,13 @@ class TestsRunnerImplementation(
             // todo через Report
             val raw = report.getTests()
 
-            log("test results: $raw")
+            logger.debug("test results: $raw")
 
             val filtered = raw.map { runs ->
                 runs.filterNotRelatedRunsToThisInstrumentation(testsToRun)
             }
 
-            log("filtered results: $filtered")
+            logger.debug("filtered results: $filtered")
 
             filtered
         }
@@ -125,9 +127,5 @@ class TestsRunnerImplementation(
         return testsToRun.any { testWithTarget ->
             testWithTarget.test.name.name == name && testWithTarget.target.deviceName == deviceName
         }
-    }
-
-    private fun log(message: String) {
-        logger.debug("TestsRunner: $message")
     }
 }

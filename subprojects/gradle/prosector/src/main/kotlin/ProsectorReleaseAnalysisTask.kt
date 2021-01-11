@@ -1,4 +1,7 @@
-import com.avito.utils.logging.ciLogger
+import com.avito.http.HttpLogger
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.Logger
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -32,36 +35,12 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     @Internal
     var debug: Boolean = false
 
-    private val apiClient by lazy {
-        Retrofit.Builder()
-            .baseUrl(host)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-            .client(
-                OkHttpClient.Builder().apply {
-                    if (debug) {
-                        addInterceptor(
-                            HttpLoggingInterceptor(
-                                object : HttpLoggingInterceptor.Logger {
-                                    override fun log(message: String) {
-                                        project.ciLogger.info(message)
-                                    }
-                                }
-                            ).apply {
-                                level = HttpLoggingInterceptor.Level.BODY
-                            }
-                        )
-                    }
-                }
-                    .build()
-            )
-            .build()
-            .create(ProsectorApi::class.java)
-    }
-
     @TaskAction
     fun doWork() {
+        val logger = GradleLoggerFactory.getLogger(this)
+
         try {
-            val result = apiClient.releaseAnalysis(
+            val result = createClient(logger).releaseAnalysis(
                 meta = meta,
                 apk = MultipartBody.Part.createFormData(
                     "build_after",
@@ -74,14 +53,34 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
             //  require(result.isSuccessful) { "${result.message()} ${result.errorBody()?.string()}" }
             //  require(result.body()?.result == "ok") { "Service should return {result:ok} normally" }
 
-            ciLogger.info(
+            logger.info(
                 "isSuccessful = ${result.isSuccessful}; body = ${result.body()?.result}; errorBody = ${
                     result.errorBody()
                         ?.string()
                 }"
             )
         } catch (e: Throwable) {
-            ciLogger.critical("Prosector upload failed", e)
+            logger.critical("Prosector upload failed", e)
         }
     }
+
+    private fun createClient(
+        logger: Logger,
+        gson: Gson = GsonBuilder().setLenient().create()
+    ): ProsectorApi = Retrofit.Builder()
+        .baseUrl(host)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .client(
+            OkHttpClient.Builder().apply {
+                if (debug) {
+                    addInterceptor(
+                        HttpLoggingInterceptor(HttpLogger(logger)).apply {
+                            level = HttpLoggingInterceptor.Level.BODY
+                        }
+                    )
+                }
+            }.build()
+        )
+        .build()
+        .create(ProsectorApi::class.java)
 }

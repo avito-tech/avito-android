@@ -9,12 +9,12 @@ dependencies {
     implementation(project(":common:percent"))
     implementation(project(":common:kotlin-ast-parser"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:files"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact"))
     implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:teamcity"))
@@ -28,6 +28,7 @@ dependencies {
     implementation(Dependencies.kotson)
 
     testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":common:logger-test-fixtures"))
 }
 
 gradlePlugin {

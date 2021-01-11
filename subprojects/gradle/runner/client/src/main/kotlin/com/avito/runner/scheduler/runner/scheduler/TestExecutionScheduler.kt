@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler.runner.scheduler
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.client.model.ClientTestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunRequest
@@ -15,8 +16,10 @@ import kotlinx.coroutines.launch
 
 class TestExecutionScheduler(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
-    private val logger: Logger
+    loggerFactory: LoggerFactory
 ) {
+
+    private val logger = loggerFactory.create<TestExecutionScheduler>()
 
     private val resultChannel: Channel<TestRunResult> = Channel(Channel.UNLIMITED)
 

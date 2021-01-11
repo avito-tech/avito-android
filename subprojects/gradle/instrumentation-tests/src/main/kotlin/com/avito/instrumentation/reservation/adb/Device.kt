@@ -1,6 +1,8 @@
 package com.avito.instrumentation.reservation.adb
 
 import com.avito.instrumentation.util.waitForCondition
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.utils.runCommand
@@ -8,10 +10,12 @@ import com.avito.utils.spawnProcess
 import org.funktionale.tries.Try
 import java.io.File
 
-abstract class Device(
-    protected val logger: (String) -> Unit = {}
-) {
+abstract class Device(protected val loggerFactory: LoggerFactory) {
+
+    private val logger = loggerFactory.create<Device>()
+
     protected abstract val adb: Adb
+
     abstract val serial: Serial
 
     fun redirectLogcatToFile(
@@ -53,7 +57,7 @@ abstract class Device(
 
     private fun executeCommand(command: String): Try<String> = runCommand(
         command = "$adb -s $serial $command",
-        logger = logger
+        loggerFactory = loggerFactory
     )
 
     private fun executeNonBlockingCommand(

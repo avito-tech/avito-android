@@ -6,9 +6,10 @@ import com.avito.instrumentation.reservation.adb.RemoteDevice
 import com.avito.instrumentation.reservation.client.ReservationClient
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.util.waitForCondition
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
-import com.avito.utils.logging.CILogger
 import io.fabric8.kubernetes.api.model.Pod
 import io.fabric8.kubernetes.api.model.apps.Deployment
 import io.fabric8.kubernetes.client.KubernetesClient
@@ -28,9 +29,11 @@ class KubernetesReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
     private val kubernetesClient: KubernetesClient,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
-    private val logger: CILogger,
+    loggerFactory: LoggerFactory,
     private val reservationDeploymentFactory: ReservationDeploymentFactory
 ) : ReservationClient {
+
+    private val logger = loggerFactory.create<KubernetesReservationClient>()
 
     private var state: State = State.Idling
 
@@ -231,7 +234,7 @@ class KubernetesReservationClient(
         count: Int
     ) {
         val isDeploymentDone = waitForCondition(
-            logger = { logger.debug(it) },
+            logger = logger,
             conditionName = "Deployment $deploymentName deployed"
         ) {
             podsFromDeployment(

@@ -17,13 +17,13 @@ dependencies {
     implementation(project(":common:sentry"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:bitbucket"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:slack"))
 
-    testImplementation(project(":gradle:logging-test-fixtures"))
+    testImplementation(project(":common:logger-test-fixtures"))
 }
 
 gradlePlugin {

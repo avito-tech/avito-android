@@ -1,7 +1,8 @@
 package com.avito.runner.service.worker
 
 import com.avito.coroutines.extensions.Dispatchers
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -25,10 +26,12 @@ class DeviceWorker(
     private val messagesChannel: Channel<DeviceWorkerMessage>,
     private val device: Device,
     private val outputDirectory: File,
-    private val logger: Logger,
+    loggerFactory: LoggerFactory,
     private val listener: TestListener,
     dispatchers: Dispatchers
 ) {
+
+    private val logger = loggerFactory.create<DeviceWorker>()
 
     private val dispatcher: CoroutineDispatcher = dispatchers.dispatcher()
 
@@ -48,25 +51,25 @@ class DeviceWorker(
             return@launch
         }
 
-        log("$state")
+        logger.debug("$state")
 
         for (intention in intentionsRouter.observeIntentions(state)) {
             try {
-                log("Received intention: $intention")
-                device.debug("Received intention: $intention")
+                logger.debug("Received intention: $intention")
+                device.logger.debug("Received intention: $intention")
                 when (val status = device.deviceStatus()) {
                     is Device.DeviceStatus.Alive -> {
-                        device.debug("Preparing state: ${intention.state}")
+                        device.logger.debug("Preparing state: ${intention.state}")
                         val (preparingError, newState) = prepareDeviceState(
                             currentState = state,
                             intentionState = intention.state
                         ).toEither()
                         when {
                             newState != null -> {
-                                device.debug("State prepared")
+                                device.logger.debug("State prepared")
                                 state = newState
                                 val result = executeAction(action = intention.action)
-                                device.debug("Worker test run completed for intention")
+                                device.logger.debug("Worker test run completed for intention")
                                 messagesChannel.send(
                                     DeviceWorkerMessage.Result(
                                         intentionResult = IntentionResult(
@@ -94,7 +97,7 @@ class DeviceWorker(
                 return@launch
             }
         }
-        device.debug("Worker ended with success result")
+        device.logger.debug("Worker ended with success result")
     }
 
     private suspend fun onDeviceDieOnIntention(
@@ -114,8 +117,8 @@ class DeviceWorker(
         message: String,
         reason: Throwable
     ) {
-        log("device died: $message, $reason")
-        device.warn(message, reason)
+        logger.debug("device died: $message, $reason")
+        device.logger.warn(message, reason)
         messagesChannel.send(
             DeviceWorkerMessage.WorkerDied(
                 t = reason,
@@ -128,8 +131,8 @@ class DeviceWorker(
         currentState: State,
         intentionState: State
     ): Try<State> {
-        log("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
-        device.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
+        logger.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
+        device.logger.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
         if (intentionState.digest == currentState.digest) {
             clearStatePackages(currentState).get()
             return Try.Success(intentionState)
@@ -200,7 +203,7 @@ class DeviceWorker(
     }
 
     private fun clearStatePackages(state: State): Try<Any> = Try {
-        device.debug("Clearing packages")
+        device.logger.debug("Clearing packages")
         state.layers
             .asSequence()
             .filterIsInstance<State.Layer.InstalledApplication>()
@@ -214,8 +217,4 @@ class DeviceWorker(
                 State.Layer.Model(model = model)
             )
         )
-
-    private fun log(message: String) {
-        logger.debug("DeviceWorker: $message")
-    }
 }

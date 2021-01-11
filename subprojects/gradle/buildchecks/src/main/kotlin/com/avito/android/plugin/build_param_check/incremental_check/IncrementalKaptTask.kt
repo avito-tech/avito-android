@@ -3,6 +3,10 @@ package com.avito.android.plugin.build_param_check.incremental_check
 import com.avito.android.plugin.build_param_check.CheckResult
 import com.avito.android.plugin.build_param_check.CheckTaskWithMode
 import com.avito.kotlin.dsl.getBooleanProperty
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
+import com.avito.utils.BuildFailer
+import com.avito.utils.buildFailer
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 
@@ -18,19 +22,21 @@ internal abstract class IncrementalKaptTask : CheckTaskWithMode() {
 
     @TaskAction
     fun check() {
+        val buildFailer = project.buildFailer
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
         val incrementalKaptEnabled = project.getBooleanProperty("kapt.incremental.apt", default = false)
         if (incrementalKaptEnabled) {
-            checkAnnotationProcessors()
+            checkAnnotationProcessors(buildFailer, loggerFactory)
         }
     }
 
-    private fun checkAnnotationProcessors() {
+    private fun checkAnnotationProcessors(failer: BuildFailer, loggerFactory: LoggerFactory) {
         val subProject = project.subprojects.firstOrNull {
             it.hasKotlinKapt && it.hasRoomKapt
         }
         if (subProject != null) {
-            mode.get().check(subProject) {
-                if (RoomIncrementalKaptChecker(subProject).isSupported()) {
+            mode.get().check(buildFailer = failer, logger = loggerFactory.create("CheckAnnotationProcessors")) {
+                if (RoomIncrementalKaptChecker(subProject, loggerFactory = loggerFactory).isSupported()) {
                     CheckResult.Ok
                 } else {
                     CheckResult.Failed(collectErrorMessage())

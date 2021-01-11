@@ -11,13 +11,14 @@ import com.avito.instrumentation.configuration.InstrumentationPluginConfiguratio
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
+import com.avito.logger.GradleLoggerFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
@@ -43,7 +44,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val testApplication: DirectoryProperty = objects.directoryProperty()
 
     @Input
-    val impactAnalysisPolicy = objects.property<ImpactAnalysisPolicy>().convention(ImpactAnalysisPolicy.Off)
+    val impactAnalysisPolicy: Property<ImpactAnalysisPolicy> =
+        objects.property<ImpactAnalysisPolicy>().convention(ImpactAnalysisPolicy.Off)
 
     @Optional
     @InputFile
@@ -94,10 +96,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val sourceCommitHash = objects.property<String>()
 
     @Input
-    val suppressFailure = objects.property<Boolean>().convention(false)
+    val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Input
-    val suppressFlaky = objects.property<Boolean>().convention(false)
+    val suppressFlaky: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Input
     val instrumentationConfiguration = objects.property<InstrumentationConfiguration.Data>()
@@ -106,7 +108,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
     val parameters = objects.property<ExecutionParameters>()
 
     @Internal
-    val reportViewerConfig = objects.property(Data.ReportViewer::class.java)
+    val reportViewerConfig: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
 
     @Internal
     val registry = objects.property<String>()
@@ -128,7 +130,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val reportConfig = createReportConfig(reportCoordinates)
-        val reportFactory = createReportFactory()
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val reportFactory = createReportFactory(loggerFactory)
 
         saveTestResultsToBuildOutput(
             reportFactory,
@@ -160,7 +163,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                         modifiedTestsFile = modifiedTests.asFile.orNull,
                         changedTestsFile = changedTests.asFile.orNull
                     ),
-                    logger = ciLogger,
+                    loggerFactory = loggerFactory,
                     outputDir = output.get().asFile,
                     verdictFile = verdictFile.get().asFile,
                     slackToken = slackToken.get(),
@@ -227,7 +230,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
         }
     }
 
-    private fun createReportFactory(): Report.Factory {
+    private fun createReportFactory(loggerFactory: GradleLoggerFactory): Report.Factory {
         val reportViewerConfig = reportViewerConfig.orNull
         val factories = mutableMapOf<String, Report.Factory>()
         if (reportViewerConfig != null) {
@@ -235,7 +238,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
                 Report.Factory.ReportViewerFactory(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
                     reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
-                    ciLogger = ciLogger,
+                    loggerFactory = loggerFactory,
                     verboseHttp = false // do not enable for production, generates a ton of logs
                 )
         }

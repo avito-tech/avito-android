@@ -1,6 +1,7 @@
 package com.avito.report.internal
 
 import com.avito.http.FallbackInterceptor
+import com.avito.http.HttpLogger
 import com.avito.http.RetryInterceptor
 import com.avito.logger.Logger
 import okhttp3.OkHttpClient
@@ -14,8 +15,9 @@ fun getHttpClient(
     logger: Logger,
     readTimeoutSec: Long,
     writeTimeoutSec: Long
-): OkHttpClient =
-    OkHttpClient.Builder()
+): OkHttpClient {
+
+    return OkHttpClient.Builder()
         .readTimeout(readTimeoutSec, TimeUnit.SECONDS)
         .writeTimeout(writeTimeoutSec, TimeUnit.SECONDS)
         .addInterceptor(RetryInterceptor(logger = logger))
@@ -27,22 +29,16 @@ fun getHttpClient(
                             request.newBuilder()
                                 .url(fallbackUrl)
                                 .build()
-                        }
+                        },
+                        logger = logger
                     )
                 )
             }
         }
         .apply {
             if (verbose) {
-                addInterceptor(
-                    HttpLoggingInterceptor(
-                        object : HttpLoggingInterceptor.Logger {
-                            override fun log(message: String) {
-                                logger.debug(message)
-                            }
-                        }
-                    ).setLevel(Level.BODY)
-                )
+                addInterceptor(HttpLoggingInterceptor(HttpLogger(logger)).setLevel(Level.BODY))
             }
         }
         .build()
+}

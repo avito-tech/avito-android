@@ -1,5 +1,6 @@
 package com.avito.runner.service.worker.device
 
+import com.avito.logger.Logger
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.model.DeviceInstallation
@@ -8,14 +9,20 @@ import java.io.File
 import java.nio.file.Path
 
 interface Device {
+
     sealed class Signal {
         data class Died(val coordinate: DeviceCoordinate) : Signal()
     }
 
     val coordinate: DeviceCoordinate
+
     val online: Boolean
+
     val model: String
+
     val api: Int
+
+    val logger: Logger
 
     fun installApplication(application: String): DeviceInstallation
 
@@ -27,16 +34,12 @@ interface Device {
     fun clearPackage(name: String): Try<Any>
 
     fun pull(from: Path, to: Path): Try<Any>
+
     fun clearDirectory(remotePath: Path): Try<Any>
+
     fun list(remotePath: String): Try<Any>
 
     fun deviceStatus(): DeviceStatus
-
-    fun debug(message: String)
-
-    fun info(message: String)
-
-    fun warn(message: String, error: Throwable?)
 
     sealed class DeviceStatus {
         object Alive : DeviceStatus() {

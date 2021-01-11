@@ -1,17 +1,23 @@
 package com.avito.instrumentation.reservation.adb
 
+import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.Adb
+import com.avito.utils.ProcessRunner
 
 class AndroidDebugBridge(
     private val adb: Adb,
-    private val logger: (String) -> Unit = {} // TODO: use Logger interface
+    private val loggerFactory: LoggerFactory
 ) {
+
+    private val processRunner = ProcessRunner.Real(null, loggerFactory)
+
     fun getRemoteDevice(serial: Serial.Remote): RemoteDevice {
         return RemoteDevice(
             serial = serial,
             adb = adb,
-            logger = logger
+            processRunner = processRunner,
+            loggerFactory = loggerFactory
         )
     }
 
@@ -19,7 +25,7 @@ class AndroidDebugBridge(
         return LocalDevice(
             serial = serial,
             adb = adb,
-            logger = logger
+            loggerFactory = loggerFactory
         )
     }
 }

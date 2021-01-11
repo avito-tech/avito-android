@@ -1,11 +1,11 @@
 package com.avito.slack
 
 import com.avito.kotlin.dsl.getSystemProperty
+import com.avito.logger.StubLoggerFactory
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.truth.isInstanceOf
-import com.avito.utils.logging.CILogger
 import com.google.common.truth.Truth.assertThat
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
@@ -16,7 +16,7 @@ internal class SlackConditionalSenderIntegrationTest {
     private val testChannel = SlackChannel(getSystemProperty("avito.slack.test.channel"))
     private val testToken = getSystemProperty("avito.slack.test.token")
     private val slackClient: SlackClient = SlackClient.Impl(testToken, getSystemProperty("avito.slack.test.workspace"))
-    private val logger: CILogger = CILogger.allToStdout
+    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `second message - updates with thread message - if contains same unique string as first one`() {
@@ -28,11 +28,11 @@ internal class SlackConditionalSenderIntegrationTest {
             slackClient = slackClient,
             updater = SlackMessageUpdaterWithThreadMark(
                 slackClient = slackClient,
-                logger = logger,
+                loggerFactory = loggerFactory,
                 threadMessage = "Updated"
             ),
             condition = condition,
-            logger = logger
+            loggerFactory = loggerFactory
         )
 
         sender.sendMessage("$uniqueId first message")
@@ -56,10 +56,10 @@ internal class SlackConditionalSenderIntegrationTest {
             slackClient = slackClient,
             updater = SlackMessageUpdaterDirectlyToThread(
                 slackClient = slackClient,
-                logger = logger
+                loggerFactory = loggerFactory
             ),
             condition = condition,
-            logger = logger
+            loggerFactory = loggerFactory
         )
 
         val firstMessageTry = sender.sendMessage("first message", author = author)

@@ -1,12 +1,12 @@
 package com.avito.test.summary
 
+import com.avito.logger.GradleLoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -54,7 +54,7 @@ abstract class TestSummaryTask : DefaultTask() {
             slackClient = slackClient.get(),
             reportViewer = reportViewer.get(),
             reportsApi = reportsApi.get(),
-            logger = ciLogger,
+            loggerFactory = GradleLoggerFactory.fromTask(this),
             buildUrl = buildUrl.get(),
             reportCoordinates = reportCoordinates.get(),
             globalSummaryChannel = summaryChannel.get(),

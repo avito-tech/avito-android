@@ -7,8 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":gradle:process"))
-    implementation(project(":gradle:kotlin-dsl-support"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gson)
 

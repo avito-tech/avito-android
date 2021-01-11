@@ -6,19 +6,22 @@ import com.avito.instrumentation.finalizer.InstrumentationTestActionFinalizer
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.scheduling.TestsScheduler
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
 import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.logging.CILogger
 import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
 
 class InstrumentationTestsAction(
     private val params: Params,
-    private val logger: CILogger,
+    private val loggerFactory: LoggerFactory,
     private val scheduler: TestsScheduler,
     private val finalizer: InstrumentationTestActionFinalizer
 ) : Runnable {
+
+    private val logger = loggerFactory.create<InstrumentationTestsAction>()
 
     /**
      * for Worker API
@@ -29,7 +32,7 @@ class InstrumentationTestsAction(
 
     constructor(params: Params, factory: InstrumentationTestsActionFactory) : this(
         params = params,
-        logger = params.logger,
+        loggerFactory = params.loggerFactory,
         scheduler = factory.provideScheduler(),
         finalizer = factory.provideFinalizer()
     )
@@ -60,7 +63,7 @@ class InstrumentationTestsAction(
         val suppressFailure: Boolean,
         val suppressFlaky: Boolean,
         val impactAnalysisResult: ImpactAnalysisResult,
-        val logger: CILogger,
+        val loggerFactory: LoggerFactory,
         val outputDir: File,
         val verdictFile: File,
         val slackToken: String,

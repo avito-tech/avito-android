@@ -1,5 +1,7 @@
 package com.avito.test.summary
 
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.CrossDeviceSuite
@@ -19,21 +21,17 @@ import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.test.summary.compose.SlackSummaryComposer
 import com.avito.test.summary.compose.SlackSummaryComposerImpl
-import com.avito.utils.logging.CILogger
 
 internal interface TestSummarySender {
 
     fun send()
 }
 
-/**
- * @param reserveSlackChannel на случай ошибок, чтобы не терять репорты
- */
 internal class TestSummarySenderImpl(
     slackClient: SlackClient,
     reportViewer: ReportViewer,
     private val reportsApi: ReportsApi,
-    private val logger: CILogger,
+    loggerFactory: LoggerFactory,
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val globalSummaryChannel: SlackChannel,
@@ -42,10 +40,12 @@ internal class TestSummarySenderImpl(
     private val slackUserName: String
 ) : TestSummarySender {
 
+    private val logger = loggerFactory.create<TestSummarySender>()
+
     private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewer)
     private val slackMessageUpdater: SlackMessageUpdater = SlackMessageUpdaterWithThreadMark(
         slackClient = slackClient,
-        logger = logger,
+        loggerFactory = loggerFactory,
         threadMessage = "Updated by: $buildUrl"
     )
     private val slackConditionalSender: SlackConditionalSender = SlackConditionalSender(
@@ -57,11 +57,11 @@ internal class TestSummarySenderImpl(
                 TextContainsStringCondition(reportCoordinates.runId)
             )
         ),
-        logger = logger
+        loggerFactory = loggerFactory
     )
     private val slackBulkSender: SlackBulkSender = CoroutinesSlackBulkSender(
         sender = slackConditionalSender,
-        logger = { s, throwable -> logger.critical(s, throwable) }
+        loggerFactory = loggerFactory
     )
 
     private val slackEmojiProvider = SlackEmojiProvider()

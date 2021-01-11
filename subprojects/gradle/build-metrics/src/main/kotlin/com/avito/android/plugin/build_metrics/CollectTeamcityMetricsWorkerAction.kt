@@ -3,10 +3,9 @@ package com.avito.android.plugin.build_metrics
 import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.graphite.GraphiteSender
 import com.avito.android.plugin.build_metrics.CollectTeamcityMetricsWorkerAction.Parameters
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
 import com.avito.teamcity.TeamcityApi
 import com.avito.teamcity.TeamcityCredentials
-import com.avito.utils.logging.CILogger
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -18,7 +17,7 @@ abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
         fun getBuildId(): Property<String>
         fun getTeamcityCredentials(): Property<TeamcityCredentials>
         fun getGraphiteConfig(): Property<GraphiteConfig>
-        fun getLogger(): Property<CILogger>
+        fun getLoggerFactory(): Property<LoggerFactory>
     }
 
     override fun execute() {
@@ -36,27 +35,9 @@ abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
     }
 
     private fun graphiteSender(): GraphiteSender {
-        val config = parameters.getGraphiteConfig().get()
-
-        val ciLogger = parameters.getLogger().get()
-        val logger = object : Logger {
-
-            override fun debug(msg: String) {
-                if (config.debug) {
-                    ciLogger.debug(msg)
-                }
-            }
-
-            override fun info(msg: String) {
-                ciLogger.info(msg)
-            }
-
-            override fun warn(msg: String, error: Throwable?) {
-                ciLogger.warn(msg, error)
-            }
-
-            override fun critical(msg: String, error: Throwable) = ciLogger.critical(msg, error)
-        }
-        return GraphiteSender.Impl(config, logger)
+        return GraphiteSender.Impl(
+            config = parameters.getGraphiteConfig().get(),
+            loggerFactory = parameters.getLoggerFactory().get()
+        )
     }
 }

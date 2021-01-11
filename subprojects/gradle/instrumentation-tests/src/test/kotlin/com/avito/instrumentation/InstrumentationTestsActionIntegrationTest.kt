@@ -14,6 +14,8 @@ import com.avito.instrumentation.report.Report.Impl
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.scheduling.TestsSchedulerFactory
+import com.avito.logger.LoggerFactory
+import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
@@ -23,8 +25,6 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
 import com.avito.utils.StubBuildFailer
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.StubCILogger
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.funktionale.tries.Try
@@ -49,13 +49,13 @@ internal class InstrumentationTestsActionIntegrationTest {
             testReporter: TestReporter,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
-            logger: CILogger
+            loggerFactory: LoggerFactory
         ): TestExecutor {
             return testRunner
         }
     }
     private val buildFailer = StubBuildFailer()
-    private val logger: StubCILogger = StubCILogger()
+    private val loggerFactory = StubLoggerFactory
 
     @BeforeEach
     fun setup(@TempDir tempDir: File) {
@@ -147,21 +147,29 @@ internal class InstrumentationTestsActionIntegrationTest {
 
     private fun createAction(
         configuration: InstrumentationConfiguration.Data,
-        params: InstrumentationTestsAction.Params = params(
-            configuration
-        )
+        params: InstrumentationTestsAction.Params = params(configuration)
     ) = InstrumentationTestsAction(
         params = params,
-        logger = params.logger,
+        loggerFactory = params.loggerFactory,
         scheduler = TestsSchedulerFactory.Impl(
             params = params,
-            sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
+            sourceReport = Impl(
+                reportsApi = reportsApi,
+                loggerFactory = params.loggerFactory,
+                reportCoordinates = reportCoordinates,
+                buildId = params.buildId
+            ),
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader
         ).create(),
         finalizer = FinalizerFactory.Impl(
             params = params,
-            sourceReport = Impl(reportsApi, logger, reportCoordinates, params.buildId),
+            sourceReport = Impl(
+                reportsApi = reportsApi,
+                loggerFactory = params.loggerFactory,
+                reportCoordinates = reportCoordinates,
+                buildId = params.buildId
+            ),
             buildFailer = buildFailer
         ).create()
     )
@@ -170,7 +178,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         instrumentationConfiguration: InstrumentationConfiguration.Data
     ) = InstrumentationTestsAction.Params.createStubInstance(
         instrumentationConfiguration = instrumentationConfiguration,
-        logger = logger,
+        loggerFactory = loggerFactory,
         outputDir = outputDir,
         reportCoordinates = reportCoordinates
     )

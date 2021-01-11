@@ -6,10 +6,10 @@ import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.StubReport
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
+import com.avito.logger.LoggerFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
 import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.logging.CILogger
 import java.io.File
 
 fun InstrumentationTestsAction.Params.Companion.createStubInstance(
@@ -30,7 +30,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     suppressFailure: Boolean = false,
     suppressFlaky: Boolean = false,
     impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
-    logger: CILogger = CILogger.allToStdout,
+    loggerFactory: LoggerFactory,
     slackToken: String = "slack",
     sourceCommitHash: String = "",
     currentBranch: String = "develop",
@@ -54,7 +54,7 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         suppressFailure = suppressFailure,
         suppressFlaky = suppressFlaky,
         impactAnalysisResult = impactAnalysisResult,
-        logger = logger,
+        loggerFactory = loggerFactory,
         currentBranch = currentBranch,
         sourceCommitHash = sourceCommitHash,
         outputDir = outputDir,

@@ -1,28 +1,24 @@
 package com.avito.instrumentation.reservation.adb
 
+import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.Adb
-import com.avito.utils.runCommand
+import com.avito.utils.ProcessRunner
 import org.funktionale.tries.Try
 
 class RemoteDevice(
+    private val processRunner: ProcessRunner,
     override val serial: Serial.Remote,
     override val adb: Adb,
-    logger: (String) -> Unit = {}
-) : Device(logger) {
+    loggerFactory: LoggerFactory
+) : Device(loggerFactory) {
 
-    fun disconnect(): Try<String> = runCommand(
-        command = "$adb disconnect $serial",
-        logger = logger
-    )
+    fun disconnect(): Try<String> = processRunner.run(command = "$adb disconnect $serial")
 
     fun connect(): Try<String> {
         disconnect()
 
-        return runCommand(
-            "$adb connect $serial",
-            logger = logger
-        )
+        return processRunner.run("$adb connect $serial")
     }
 
     override suspend fun waitForBoot() = waitForCommand(

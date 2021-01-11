@@ -2,7 +2,8 @@ package com.avito.instrumentation.impact.metadata
 
 import com.avito.instrumentation.impact.KotlinClassesFinderImpl
 import com.avito.instrumentation.impact.KotlinCompiler
-import com.avito.utils.logging.CILogger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
@@ -12,10 +13,12 @@ typealias Screen = String
 typealias PackageName = String
 
 class MetadataParser(
-    private val ciLogger: CILogger,
+    loggerFactory: LoggerFactory,
     screenClass: String,
     private val fieldName: String
 ) {
+
+    private val logger = loggerFactory.create<MetadataParser>()
 
     private val kotlinCompiler: KotlinCompiler =
         KotlinCompiler(KotlinClassesFinderImpl.createKotlinCoreEnvironment())
@@ -63,7 +66,7 @@ class MetadataParser(
                 }
         }
 
-        ciLogger.debug("Analyzed screen classes in ${System.currentTimeMillis() - startTime}ms")
+        logger.debug("Analyzed screen classes in ${System.currentTimeMillis() - startTime}ms")
 
         return result
     }

@@ -6,11 +6,13 @@ import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
-import com.avito.android.monitoring.createSentry
 import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
+import com.avito.android.sentry.SentryConfig
+import com.avito.android.sentry.sentryClient
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
@@ -31,7 +33,7 @@ import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.Logger
+import com.avito.logger.create
 import com.avito.report.ReportsApi
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
@@ -52,41 +54,21 @@ abstract class InHouseInstrumentationTestRunner :
 
     protected val tag = "UITestRunner"
 
-    protected val sentry by lazy {
-        createSentry(
-            sentryDsn = testRunEnvironment.asRunEnvironmentOrThrow().sentryDsn
-        )
-    }
+    protected val sentry by lazy { sentryClient(config = sentryConfig()) }
+
+    private val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig()) }
 
     override val remoteStorage: RemoteStorage by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         RemoteStorage.create(
-            logger = testReportLogger,
+            loggerFactory = loggerFactory,
             httpClient = reportHttpClient,
             endpoint = runEnvironment.fileStorageUrl
         )
     }
 
-    private val testReportLogger: Logger = object : Logger {
-        override fun debug(msg: String) {
-            Log.d("TestReport", msg)
-        }
-
-        override fun info(msg: String) {
-            Log.i("TestReport", msg)
-        }
-
-        override fun warn(msg: String, error: Throwable?) {
-            Log.w("TestReport", msg, error)
-        }
-
-        override fun critical(msg: String, error: Throwable) {
-            Log.e("TestReport", msg, error)
-            sentry.sendException(error)
-        }
-    }
-
     override val report: Report by lazy {
+        val testReportLogger = loggerFactory.create<Report>()
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
         val transport: List<Transport> = when {
@@ -103,7 +85,7 @@ abstract class InHouseInstrumentationTestRunner :
                                 fallbackUrl = runEnvironment.reportConfig.reportApiFallbackUrl,
                                 readTimeout = 10,
                                 writeTimeout = 10,
-                                logger = testReportLogger
+                                loggerFactory = loggerFactory
                             )
                         )
                     )
@@ -122,7 +104,7 @@ abstract class InHouseInstrumentationTestRunner :
             onDeviceCacheDirectory = runEnvironment.outputDirectory,
             onIncident = { testIssuesMonitor.onFailure(it) },
             transport = transport,
-            logger = testReportLogger,
+            loggerFactory = loggerFactory,
             remoteStorage = remoteStorage
         )
     }
@@ -149,8 +131,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
 
-    @SuppressLint("LogNotTimber")
-    val mockDispatcher = MockDispatcher(logger = { Log.d("MOCK_WEB_SERVER", it) })
+    val mockDispatcher by lazy { MockDispatcher(loggerFactory = loggerFactory) }
 
     protected open val testIssuesMonitor: TestIssuesMonitor by lazy {
         CompositeTestIssuesMonitor(
@@ -162,7 +143,9 @@ abstract class InHouseInstrumentationTestRunner :
 
     private lateinit var instrumentationArguments: Bundle
 
-    private val reportHttpClient: OkHttpClient by lazy { createReportHttpClient() }
+    private val reportHttpClient: OkHttpClient by lazy {
+        createReportHttpClient(loggerFactory.create("ReportViewerHttp"))
+    }
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 
@@ -312,7 +295,8 @@ abstract class InHouseInstrumentationTestRunner :
                 onDeviceCacheDirectory = runEnvironment.outputDirectory,
                 httpClient = reportHttpClient,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
-                fileStorageUrl = runEnvironment.fileStorageUrl
+                fileStorageUrl = runEnvironment.fileStorageUrl,
+                loggerFactory = loggerFactory
             )
         )
     }
@@ -327,6 +311,27 @@ abstract class InHouseInstrumentationTestRunner :
     private fun addReportListener(arguments: Bundle) {
         arguments.putString("listener", ReportTestListener::class.java.name)
         arguments.putString("newRunListenerMode", "true")
+    }
+
+    /**
+     * todo remove after 2021.1 will be passed directly
+     */
+    private fun sentryConfig(): SentryConfig {
+        val environment = testRunEnvironment.asRunEnvironmentOrThrow()
+
+        return when {
+            environment.sentryConfig != null -> environment.sentryConfig
+
+            !environment.sentryDsn.isNullOrBlank() -> SentryConfig.Enabled(
+                dsn = environment.sentryDsn,
+                environment = "android-test",
+                serverName = "",
+                release = "",
+                tags = emptyMap()
+            )
+
+            else -> SentryConfig.Disabled
+        }
     }
 
     override fun finish(resultCode: Int, results: Bundle?) {

@@ -6,9 +6,10 @@ import com.avito.cd.AndroidArtifactType.BUNDLE
 import com.avito.cd.CdBuildConfig
 import com.avito.cd.cdBuildConfig
 import com.avito.cd.isCdBuildConfigPresent
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.create
 import com.avito.upload_to_googleplay.GooglePlayDeploy
 import com.avito.upload_to_googleplay.registerDeployToGooglePlayTask
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
@@ -31,7 +32,9 @@ class DeployStep(
                 rootTask
             )
         } else {
-            project.ciLogger.info("Configure deploy step without cd build config")
+            val loggerFactory = GradleLoggerFactory.fromProject(project)
+            val logger = loggerFactory.create<DeployStep>()
+            logger.debug("Configure deploy step without cd build config")
         }
     }
 

@@ -1,5 +1,7 @@
 package com.avito.test.http
 
+import com.avito.logger.LoggerFactory
+import com.avito.utils.resourceFrom
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import okhttp3.mockwebserver.Dispatcher
@@ -9,8 +11,10 @@ import java.util.Collections
 
 class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
-    private val logger: (String) -> Unit = {}
+    loggerFactory: LoggerFactory
 ) : Dispatcher() {
+
+    private val logger = loggerFactory.create("MOCK_WEB_SERVER")
 
     private val mocks = Collections.synchronizedList(mutableListOf<Mock>())
 
@@ -33,7 +37,7 @@ class MockDispatcher(
         synchronized(capturers) {
             capturers.find { it.requestMatcher.invoke(requestData) }?.run {
                 capture(request)
-                logger("request captured: $request")
+                logger.debug("request captured: $request")
             }
         }
 
@@ -49,7 +53,7 @@ class MockDispatcher(
 
         if (matchedMock?.removeAfterMatched == true) mocks.remove(matchedMock)
 
-        logger.invoke("got request: ${request.path}, response will be: $response")
+        logger.debug("got request: ${request.path}, response will be: $response")
 
         return response
     }
@@ -64,8 +68,7 @@ private val gson = Gson()
  *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
  */
 fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
-    val text = textFromAsset<MockDispatcher>(fileName)
-    requireNotNull(text) { "$fileName not found, check path" }
+    val text = resourceFrom<MockDispatcher>(fileName).readText()
     if (fileName.endsWith(".json")) {
         val exception = validateJson(text)
         if (exception != null) {
@@ -83,8 +86,4 @@ private fun validateJson(json: String): Throwable? {
     } catch (t: Throwable) {
         t
     }
-}
-
-private inline fun <reified C> textFromAsset(fileName: String): String? {
-    return C::class.java.classLoader?.getResource(fileName)?.readText()
 }

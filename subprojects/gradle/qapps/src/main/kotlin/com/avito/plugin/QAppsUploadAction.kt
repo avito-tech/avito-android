@@ -1,8 +1,9 @@
 package com.avito.plugin
 
+import com.avito.http.HttpLogger
 import com.avito.http.RetryInterceptor
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -24,8 +25,10 @@ internal class QAppsUploadAction(
     private val versionCode: String,
     private val packageName: String,
     private val releaseChain: Boolean,
-    private val logger: CILogger
+    loggerFactory: LoggerFactory
 ) {
+
+    private val logger = loggerFactory.create<QAppsUploadAction>()
 
     private val apiClient by lazy {
         Retrofit.Builder()
@@ -79,17 +82,11 @@ internal class QAppsUploadAction(
             RetryInterceptor(
                 retries = 3,
                 allowedMethods = listOf("POST", "GET"),
-                logger = commonLogger(logger)
+                logger = logger
             )
         )
         .addInterceptor(
-            HttpLoggingInterceptor(
-                object : HttpLoggingInterceptor.Logger {
-                    override fun log(message: String) {
-                        logger.info(message)
-                    }
-                }
-            ).apply {
+            HttpLoggingInterceptor(HttpLogger(logger)).apply {
                 level = HttpLoggingInterceptor.Level.BASIC
             }
         )

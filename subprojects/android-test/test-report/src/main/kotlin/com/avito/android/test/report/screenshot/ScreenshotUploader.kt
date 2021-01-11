@@ -2,7 +2,8 @@ package com.avito.android.test.report.screenshot
 
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 
 interface ScreenshotUploader {
 
@@ -13,8 +14,10 @@ interface ScreenshotUploader {
     class Impl(
         private val remoteStorage: RemoteStorage,
         private val screenshotCapturer: ScreenshotCapturer,
-        private val logger: Logger
+        loggerFactory: LoggerFactory
     ) : ScreenshotUploader {
+
+        private val logger = loggerFactory.create<ScreenshotUploader>()
 
         override fun makeAndUploadScreenshot(comment: String): FutureValue<RemoteStorage.Result>? {
 

@@ -1,6 +1,6 @@
 package com.avito.upload_to_googleplay
 
-import com.avito.utils.logging.CILogger
+import com.avito.logger.Logger
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.FileContent
@@ -35,7 +35,7 @@ interface GooglePlayDeployer {
 
     class Impl(
         jsonKey: File,
-        private val logger: CILogger
+        private val logger: Logger
     ) : GooglePlayDeployer {
 
         private val publisher by lazy {

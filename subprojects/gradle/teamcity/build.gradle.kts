@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api(project(":common:teamcity-common"))
     implementation(gradleApi())
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":gradle:test-project"))
 }

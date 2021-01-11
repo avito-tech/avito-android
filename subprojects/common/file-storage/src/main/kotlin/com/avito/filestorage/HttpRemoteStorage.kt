@@ -1,6 +1,7 @@
 package com.avito.filestorage
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl
@@ -14,8 +15,10 @@ class HttpRemoteStorage(
     private val endpoint: HttpUrl,
     httpClient: OkHttpClient,
     private val timeSource: TimeProvider = DefaultTimeProvider(),
-    private val logger: Logger
+    loggerFactory: LoggerFactory
 ) : RemoteStorage {
+
+    private val logger = loggerFactory.create<HttpRemoteStorage>()
 
     private val storageClient: FileStorageClient =
         FileStorageClient.create(

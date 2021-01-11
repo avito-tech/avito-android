@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.runner.client
 
-import com.avito.logger.NoOpLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.runner.scheduler.StubTestExecutionState
 import com.avito.runner.scheduler.runner.client.model.ClientTestRunRequest
 import com.avito.runner.scheduler.util.generateTestRunRequest
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 @ExperimentalCoroutinesApi
 class TestExecutionClientTest {
 
-    private val logger = NoOpLogger
+    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `test execution client return results for every request`() =
@@ -60,7 +60,7 @@ class TestExecutionClientTest {
             )
             val serviceCommunication = service.start(this)
 
-            val client = TestExecutionClient(TestCoroutineDispatcher(), logger)
+            val client = TestExecutionClient(TestCoroutineDispatcher(), loggerFactory)
             val clientCommunication = client.start(serviceCommunication, this)
 
             requests.forEach { clientCommunication.requests.send(it) }

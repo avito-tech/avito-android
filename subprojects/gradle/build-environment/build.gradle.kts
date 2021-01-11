@@ -6,5 +6,5 @@ plugins {
 
 dependencies {
     api(gradleApi())
-    api(project(":gradle:kotlin-dsl-support"))
+    api(project(":gradle:gradle-extensions"))
 }

@@ -1,5 +1,7 @@
 package com.avito.utils
 
+import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
 import org.apache.tools.ant.types.Commandline
 import org.funktionale.tries.Try
 import java.io.BufferedReader
@@ -16,9 +18,16 @@ interface ProcessRunner {
      */
     fun run(command: String): Try<String>
 
-    class Real : ProcessRunner {
+    class Real(
+        private val workingDirectory: File?,
+        private val loggerFactory: LoggerFactory
+    ) : ProcessRunner {
 
-        override fun run(command: String): Try<String> = runCommand(command)
+        override fun run(command: String): Try<String> = runCommand(
+            command = command,
+            workingDirectory = workingDirectory,
+            loggerFactory = loggerFactory
+        )
     }
 }
 
@@ -52,10 +61,11 @@ fun spawnProcess(
 fun runCommand(
     command: String,
     workingDirectory: File? = null,
-    logger: (String) -> Unit = {}
+    loggerFactory: LoggerFactory
 ): Try<String> = try {
     val binary = splitCommand(command).firstOrNull()
-    val logPrefix = binary?.let { "[$binary]" }
+
+    val logger = loggerFactory.create(binary ?: "runCommand")
 
     val process = spawnProcess(
         command = command,
@@ -67,15 +77,13 @@ fun runCommand(
     val outputThread = IOThread(
         source = process.inputStream,
         result = processOutput,
-        logger = logger,
-        logPrefix = logPrefix
+        logger = logger
     )
 
     val errorThread = IOThread(
         source = process.errorStream,
         result = processOutput,
-        logger = logger,
-        logPrefix = logPrefix
+        logger = logger
     )
 
     outputThread.start()
@@ -99,8 +107,7 @@ fun runCommand(
 private class IOThread(
     val source: InputStream,
     val result: StringBuffer,
-    val logPrefix: String? = null,
-    val logger: (String) -> Unit
+    val logger: Logger
 ) : Thread() {
 
     init {
@@ -114,11 +121,7 @@ private class IOThread(
         while (line != null) {
             result.appendLine(line)
 
-            if (logPrefix != null) {
-                logger("$logPrefix $line")
-            } else {
-                logger(line)
-            }
+            logger.debug(line)
 
             line = reader.readLine()
         }

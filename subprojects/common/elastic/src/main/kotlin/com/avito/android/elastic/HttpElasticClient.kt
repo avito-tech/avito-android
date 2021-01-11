@@ -36,26 +36,32 @@ internal class HttpElasticClient(
     private val timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSZ")
 
     override fun sendMessage(
-        tag: String,
         level: String,
         message: String,
+        metadata: Map<String, String>,
         throwable: Throwable?
     ) {
         try {
             val nowWithTimeZone = ZonedDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
             val nowWithoutTimeZone = LocalDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
 
+            val params = mutableMapOf(
+                "@timestamp" to nowWithTimeZone.format(timestampFormatter),
+                "level" to level,
+                "build_id" to buildId,
+                "message" to message
+            )
+
+            if (!throwable?.message.isNullOrBlank()) {
+                params["error_message"] = throwable?.message
+            }
+
+            params.putAll(metadata)
+
             elasticApi.log(
                 indexPattern = indexPattern,
                 date = nowWithoutTimeZone.format(ISO_DATE),
-                logEvent = ElasticLogEventRequest(
-                    timestamp = nowWithTimeZone.format(timestampFormatter),
-                    tag = tag,
-                    level = level,
-                    buildId = buildId,
-                    message = message,
-                    errorMessage = throwable?.message
-                )
+                params = params
             ).enqueue(
                 object : Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

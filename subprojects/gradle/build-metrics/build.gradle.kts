@@ -8,12 +8,12 @@ plugins {
 dependencies {
     implementation(project(":common:percent"))
     implementation(project(":gradle:build-environment"))
-    implementation(project(":gradle:ci-logger"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-profile"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:graphite-config"))
     implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:teamcity"))
@@ -26,6 +26,7 @@ dependencies {
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:graphite-test-fixtures"))
     testImplementation(project(":common:statsd-test-fixtures"))
+    testImplementation(project(":common:logger-test-fixtures"))
 }
 
 gradlePlugin {

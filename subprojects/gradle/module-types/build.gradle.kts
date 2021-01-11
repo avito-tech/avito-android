@@ -8,7 +8,7 @@ plugins {
 dependencies {
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:pre-build"))
-    implementation(project(":gradle:kotlin-dsl-support"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:impact"))
     implementation(Dependencies.Gradle.kotlinPlugin)
 

@@ -23,7 +23,8 @@ import com.avito.android.test.report.transport.Transport
 import com.avito.android.util.formatStackTrace
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.time.DefaultTimeProvider
@@ -41,19 +42,21 @@ import java.io.File
 class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
     private val onIncident: (Throwable) -> Unit = {},
-    private val logger: Logger,
+    private val loggerFactory: LoggerFactory,
     private val transport: List<Transport>,
     private val remoteStorage: RemoteStorage,
     private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
-        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, logger),
+        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, loggerFactory),
         remoteStorage = remoteStorage,
-        logger = logger
+        loggerFactory = loggerFactory
     ),
     private val timeProvider: TimeProvider = DefaultTimeProvider()
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
     PreconditionLifecycleListener by PreconditionLifecycleNotifier {
+
+    private val logger = loggerFactory.create<Report>()
 
     /**
      * Entries that occurred before first step/precondition

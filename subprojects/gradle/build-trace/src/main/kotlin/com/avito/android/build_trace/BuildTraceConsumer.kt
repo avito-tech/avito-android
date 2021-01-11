@@ -8,7 +8,8 @@ import com.avito.android.trace.InstantEvent
 import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
 import com.avito.android.trace.TraceReportClient
-import com.avito.utils.logging.CILogger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import org.gradle.BuildResult
 import org.gradle.api.Task
 import java.io.File
@@ -17,8 +18,10 @@ import java.util.concurrent.TimeUnit
 
 internal class BuildTraceConsumer(
     private val output: File,
-    private val logger: CILogger
+    loggerFactory: LoggerFactory
 ) : AbstractMetricsConsumer() {
+
+    private val logger = loggerFactory.create<BuildTraceConsumer>()
 
     private val events: MutableList<TraceEvent> = Collections.synchronizedList(mutableListOf())
 

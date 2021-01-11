@@ -1,29 +1,44 @@
 package com.avito.android.plugin.build_param_check
 
-import com.avito.utils.buildFailer
-import com.avito.utils.logging.ciLogger
-import org.gradle.api.Project
+import com.avito.logger.Logger
+import com.avito.utils.BuildFailer
 
 enum class CheckMode {
     NONE {
-        override fun check(project: Project, block: () -> CheckResult) {
+        override fun check(
+            buildFailer: BuildFailer,
+            logger: Logger,
+            block: () -> CheckResult
+        ) {
             // do nothing
         }
     },
     WARNING {
-        override fun check(project: Project, block: () -> CheckResult) {
+        override fun check(
+            buildFailer: BuildFailer,
+            logger: Logger,
+            block: () -> CheckResult
+        ) {
             when (val result = block()) {
-                is CheckResult.Failed -> project.ciLogger.info(result.message)
+                is CheckResult.Failed -> logger.warn(result.message)
             }
         }
     },
     FAIL {
-        override fun check(project: Project, block: () -> CheckResult) {
+        override fun check(
+            buildFailer: BuildFailer,
+            logger: Logger,
+            block: () -> CheckResult
+        ) {
             when (val result = block()) {
-                is CheckResult.Failed -> project.buildFailer.failBuild(result.message)
+                is CheckResult.Failed -> buildFailer.failBuild(result.message)
             }
         }
     };
 
-    internal abstract fun check(project: Project, block: () -> CheckResult)
+    internal abstract fun check(
+        buildFailer: BuildFailer,
+        logger: Logger,
+        block: () -> CheckResult
+    )
 }

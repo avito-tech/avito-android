@@ -2,6 +2,7 @@ package com.avito.cd
 
 import com.avito.git.Branch
 import com.avito.git.GitStateStub
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -16,7 +17,8 @@ import org.junit.jupiter.api.Test
 class UploadCdBuildResultTaskActionTest {
 
     private val mockWebServer = MockWebServerFactory.create()
-    private val dispatcher = MockDispatcher()
+    private val loggerFactory = StubLoggerFactory
+    private val dispatcher = MockDispatcher(loggerFactory = loggerFactory)
     private val gson = Providers.gson
     private val user = "user"
     private val password = "password"

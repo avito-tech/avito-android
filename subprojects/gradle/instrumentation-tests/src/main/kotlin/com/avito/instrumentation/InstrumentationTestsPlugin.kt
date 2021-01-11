@@ -32,7 +32,6 @@ import com.avito.kotlin.dsl.withType
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
-import com.avito.utils.logging.ciLogger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -48,8 +47,7 @@ class InstrumentationTestsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         val env = project.envArgs
-        val logger = project.ciLogger
-        val gitState = project.gitState { logger.info(it) }
+        val gitState = project.gitState()
         project.createInstrumentationPluginExtension()
         project.applyTestTasks()
 

@@ -6,13 +6,12 @@ import com.avito.impact.configuration.InternalModule
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.impactFallbackDetector
 import com.avito.kotlin.dsl.isRoot
-import com.avito.utils.logging.ciLogger
+import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 
-@Suppress("UnstableApiUsage")
 class ImpactAnalysisPlugin : Plugin<Project> {
 
     override fun apply(rootProject: Project) {
@@ -26,12 +25,14 @@ class ImpactAnalysisPlugin : Plugin<Project> {
 
         rootProject.extensions.create<ImpactAnalysisExtension>("impactAnalysis")
 
-        val gitState = rootProject.gitState { rootProject.ciLogger.info(it) }
+        val gitState = rootProject.gitState()
+
+        val loggerFactory = GradleLoggerFactory.fromPlugin(this, rootProject)
 
         val changesDetector = newChangesDetector(
             rootDir = rootProject.rootDir,
             targetCommit = gitState.orNull?.targetBranch?.commit,
-            logger = rootProject.ciLogger
+            loggerFactory = loggerFactory
         )
 
         rootProject.subprojects.forEach { subProject ->

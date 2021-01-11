@@ -1,5 +1,6 @@
 package com.avito.bitbucket
 
+import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.commit
 import com.avito.test.gradle.file
@@ -9,7 +10,6 @@ import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
-import com.avito.utils.logging.CILogger
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
@@ -19,9 +19,14 @@ import java.io.File
 
 internal class BitbucketImplTest {
 
+    private val loggerFactory = StubLoggerFactory
+
     private val mockWebServer = MockWebServerFactory.create()
 
-    private val dispatcher = MockDispatcher(unmockedResponse = MockResponse().setResponseCode(200))
+    private val dispatcher = MockDispatcher(
+        unmockedResponse = MockResponse().setResponseCode(200),
+        loggerFactory = loggerFactory
+    )
         .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
 
     @Test
@@ -98,7 +103,7 @@ internal class BitbucketImplTest {
             credentials = AtlassianCredentials("", "")
         ),
         pullRequestId = null,
-        logger = CILogger.allToStdout
+        loggerFactory = loggerFactory
     )
 
     private fun File.createSourceFiles(fileToBeModifiedPath: String, notModifiedFilePath: String) {

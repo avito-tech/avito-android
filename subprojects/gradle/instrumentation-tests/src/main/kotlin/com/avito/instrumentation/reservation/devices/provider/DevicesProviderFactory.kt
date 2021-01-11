@@ -10,15 +10,16 @@ import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.client.kubernetes.ReservationDeploymentFactory
 import com.avito.instrumentation.reservation.client.kubernetes.UUIDDeploymentNameGenerator
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.createKubernetesClient
-import com.avito.utils.logging.CILogger
-import com.avito.utils.logging.commonLogger
 import java.io.File
 
 interface DevicesProviderFactory {
+
     fun create(
         configuration: InstrumentationConfiguration.Data,
         executionParameters: ExecutionParameters
@@ -32,8 +33,11 @@ interface DevicesProviderFactory {
         private val registry: String,
         private val output: File,
         private val logcatDir: File,
-        private val logger: CILogger
+        private val loggerFactory: LoggerFactory
     ) : DevicesProviderFactory {
+
+        private val logger = loggerFactory.create<DevicesProviderFactory>()
+
         override fun create(
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters
@@ -41,17 +45,20 @@ interface DevicesProviderFactory {
             val adb = Adb()
             val androidDebugBridge = AndroidDebugBridge(
                 adb = adb,
-                logger = { logger.info(it) }
+                loggerFactory = loggerFactory
             )
             val emulatorsLogsReporter = EmulatorsLogsReporter(
                 outputFolder = output,
                 logcatTags = executionParameters.logcatTags,
                 logcatDir = logcatDir
             )
-            val devicesManager = AdbDevicesManager(adb = adb, logger = commonLogger(logger))
+            val devicesManager = AdbDevicesManager(
+                adb = adb,
+                loggerFactory = loggerFactory
+            )
             return when (configuration.requestedDeviceType) {
                 MOCK ->
-                    StubDevicesProvider(logger)
+                    StubDevicesProvider(loggerFactory)
 
                 LOCAL ->
                     LocalDevicesProvider(
@@ -59,7 +66,7 @@ interface DevicesProviderFactory {
                         devicesManager = devicesManager,
                         emulatorsLogsReporter = emulatorsLogsReporter,
                         adb = adb,
-                        logger = logger
+                        loggerFactory = loggerFactory
                     )
 
                 CLOUD ->
@@ -77,14 +84,14 @@ interface DevicesProviderFactory {
                                 buildType = buildType,
                                 registry = registry,
                                 deploymentNameGenerator = UUIDDeploymentNameGenerator(),
-                                logger = logger.child("ReservationDeploymentFactory")
+                                loggerFactory = loggerFactory
                             ),
-                            logger = logger.child("KubernetesReservationClient"),
+                            loggerFactory = loggerFactory,
                             emulatorsLogsReporter = emulatorsLogsReporter
                         ),
                         adbDevicesManager = devicesManager,
                         adb = adb,
-                        logger = logger.child("KubernetesDeviceProvider")
+                        loggerFactory = loggerFactory
                     )
             }
         }

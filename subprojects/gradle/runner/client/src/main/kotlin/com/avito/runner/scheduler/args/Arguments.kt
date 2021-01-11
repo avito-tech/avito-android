@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.args
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
 import com.avito.runner.reservation.DeviceReservation
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.runner.model.TestRunRequest
@@ -12,7 +12,7 @@ class Arguments(
     val outputDirectory: File,
     val requests: List<TestRunRequest>,
     val devices: ReceiveChannel<Device>,
-    val logger: Logger,
+    val loggerFactory: LoggerFactory,
     val listener: TestLifecycleListener,
     val reservation: DeviceReservation
 ) {

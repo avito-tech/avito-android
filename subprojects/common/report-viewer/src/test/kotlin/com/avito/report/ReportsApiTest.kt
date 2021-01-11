@@ -1,6 +1,6 @@
 package com.avito.report
 
-import com.avito.logger.NoOpLogger
+import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
@@ -18,6 +18,7 @@ internal class ReportsApiTest {
 
     private val mockWebServer = MockWebServerFactory.create()
     private lateinit var reportsApi: ReportsApi
+    private val loggerFactory = StubLoggerFactory
 
     @BeforeEach
     fun setup() {
@@ -26,7 +27,7 @@ internal class ReportsApiTest {
         reportsApi = ReportsApi.create(
             host = host,
             fallbackUrl = "",
-            logger = NoOpLogger
+            loggerFactory = loggerFactory
         )
     }
 

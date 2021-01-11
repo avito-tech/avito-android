@@ -1,8 +1,8 @@
 package com.avito.android.plugin
 
-import com.avito.utils.logging.ciLogger
-import com.avito.utils.logging.commonLogger
-import com.avito.utils.runCommand
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.Logger
+import com.avito.utils.ProcessRunner
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.gradle.api.DefaultTask
@@ -17,7 +17,6 @@ import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@Suppress("UnstableApiUsage")
 abstract class FeatureTogglesReportTask : DefaultTask() {
 
     private val monthAgo = LocalDate.now().minusMonths(1L)
@@ -36,13 +35,18 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
     @Input
     val developersToTeam = project.objects.mapProperty<DeveloperEmail, Team>()
 
-    @Suppress("unused")
     @TaskAction
-    fun action() {
+    fun doWork() {
         val jsonToggles = readJsonReport()
-        val blameCodeLines = readBlameCodeLines()
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+
+        val processRunner = ProcessRunner.Real(
+            workingDirectory = project.projectDir,
+            loggerFactory = loggerFactory
+        )
+        val blameCodeLines = readBlameCodeLines(processRunner)
         val suspiciousToggles: List<Toggle> = SuspiciousTogglesCollector(
-            logger = commonLogger(ciLogger),
+            loggerFactory = loggerFactory,
             developerToTeam = developersToTeam.get()
         ).collectSuspiciousToggles(
             jsonTogglesList = jsonToggles,
@@ -56,11 +60,12 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
 
         sendReport(
             slackHook = slackHook.get(),
-            reportText = reportText
+            reportText = reportText,
+            logger = GradleLoggerFactory.getLogger(this)
         )
     }
 
-    private fun sendReport(slackHook: String, reportText: String) {
+    private fun sendReport(slackHook: String, reportText: String, logger: Logger) {
         val connection = URL(slackHook).openConnection() as HttpURLConnection
         try {
             with(connection) {
@@ -71,7 +76,7 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
                     it.write("payload={\"text\": \"$reportText\"}")
                     it.flush()
                 }
-                logger.lifecycle("Response: ${inputStream.bufferedReader().readText()}")
+                logger.debug("Response: ${inputStream.bufferedReader().readText()}")
             }
         } finally {
             connection.disconnect()
@@ -79,8 +84,8 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
     }
 
     private fun buildReportText(sortedToggles: List<TeamTogglesList>): String {
-        val text =
-            StringBuilder().append("Obsolete feature toggles :information_source: $newLineEscaped")
+        val text = StringBuilder().append("Obsolete feature toggles :information_source: $newLineEscaped")
+
         sortedToggles.forEach {
             text.append(newLineEscaped)
             text.append("Unit: *${it.team}*")
@@ -89,12 +94,12 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
                 text.append("> No obsolete toggles.")
                 text.append(newLineEscaped)
             }
-            if (!it.turnedOns.isEmpty()) {
+            if (it.turnedOns.isNotEmpty()) {
                 text.append("*Turned on toggles:*$newLineEscaped")
                 text.append(getTogglesString(it.turnedOns))
                 text.append(newLineEscaped)
             }
-            if (!it.turnedOffs.isEmpty()) {
+            if (it.turnedOffs.isNotEmpty()) {
                 text.append("*Turned off toggles:*$newLineEscaped")
                 text.append(getTogglesString(it.turnedOffs))
                 text.append(newLineEscaped)
@@ -141,12 +146,10 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
         )
     }
 
-    private fun readBlameCodeLines() = BlameParser().parseBlameCodeLines(getBlame())
+    private fun readBlameCodeLines(processRunner: ProcessRunner) =
+        BlameParser().parseBlameCodeLines(processRunner.getBlame())
 
-    private fun getBlame() = runCommand(
-        command = "git blame -w ${featureTogglesFile.path} -et",
-        workingDirectory = project.projectDir
-    ).get()
+    private fun ProcessRunner.getBlame() = run(command = "git blame -w ${featureTogglesFile.path} -et").get()
 }
 
 private const val newLineEscaped = "\\n"

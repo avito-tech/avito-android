@@ -1,6 +1,7 @@
 package com.avito.plugin
 
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.ReportsApi
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
@@ -17,9 +18,10 @@ import com.github.salomonbrys.kotson.jsonObject
 class MarkReportAsSourceAction(
     private val reportsApi: ReportsApi,
     private val timeProvider: TimeProvider,
-    private val logger: Logger
+    loggerFactory: LoggerFactory
 ) {
-    private val tag = "TMS"
+
+    private val logger = loggerFactory.create<MarkReportAsSourceAction>()
 
     fun mark(reportCoordinates: ReportCoordinates) {
         val testSuiteVersion = timeProvider.nowInMillis()
@@ -38,27 +40,27 @@ class MarkReportAsSourceAction(
                         reportsApi.setFinished(reportCoordinates).fold(
                             {
                                 logger.info(
-                                    "[$tag] Test suite for tms version $testSuiteVersion, " +
+                                    "Test suite for tms version $testSuiteVersion, " +
                                         "with id: ${result.report.id}, " +
                                         "coordinates: $reportCoordinates marked as source of truth for tms"
                                 )
                             },
                             { error ->
-                                logger.critical("[$tag] Can't finish report for coordinates: $reportCoordinates", error)
+                                logger.critical("Can't finish report for coordinates: $reportCoordinates", error)
                             }
                         )
                     },
                     { error ->
-                        logger.critical("[$tag] Can't push prepared data: testSuite info", error)
+                        logger.critical("Can't push prepared data: testSuite info", error)
                     }
                 )
             GetReportResult.NotFound ->
                 logger.critical(
-                    "[$tag] Can't get reportId for coordinates: $reportCoordinates",
+                    "Can't get reportId for coordinates: $reportCoordinates",
                     IllegalStateException("stub")
                 )
             is GetReportResult.Error ->
-                logger.critical("[$tag] Can't find report for runId=${reportCoordinates.runId}", result.exception)
+                logger.critical("Can't find report for runId=${reportCoordinates.runId}", result.exception)
         }
     }
 }

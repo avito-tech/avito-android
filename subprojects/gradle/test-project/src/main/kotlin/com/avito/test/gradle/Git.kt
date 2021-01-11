@@ -1,33 +1,25 @@
 package com.avito.test.gradle
 
-import com.avito.utils.runCommand
+import com.avito.logger.StubLoggerFactory
+import com.avito.utils.ProcessRunner
 import java.io.File
 import java.security.MessageDigest
 import java.util.Random
 
-fun File.git(command: String): String {
-    return runCommand(
-        command = "git $command",
-        workingDirectory = this
-    ).get()
-}
+fun File.git(command: String): String = processRunner().run("git $command").get()
 
-fun File.getCommitHash(): String {
-    return runCommand(
-        command = "git rev-parse HEAD",
-        workingDirectory = this
-    ).get()
-}
+fun File.getCommitHash(): String = git("rev-parse HEAD")
 
 fun File.commit(message: String = "changes") {
-    runCommand(
-        command = "git add --all",
-        workingDirectory = this
-    ).get()
-    runCommand(
-        command = "git commit --author='test <>' --all --message='${message.escape()}'",
-        workingDirectory = this
-    ).get()
+    git("add --all")
+    git("commit --author='test <>' --all --message='${message.escape()}'")
+}
+
+private fun File.processRunner(): ProcessRunner {
+    return ProcessRunner.Real(
+        workingDirectory = this,
+        loggerFactory = StubLoggerFactory
+    )
 }
 
 fun randomCommitHash(): String =
