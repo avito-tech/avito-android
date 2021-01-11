@@ -25,7 +25,7 @@ internal object TestKindExtractor {
             ScreenshotTest::class.java,
             SyntheticMonitoringTest::class.java
         )
-        val testAnnotations = Annotations.getAnnotationsSubset(test.testClass, test.testMethod, subset = *testTypes)
+        val testAnnotations = Annotations.getAnnotationsSubset(test.testClass, test.testMethod, subset = testTypes)
 
         require(testAnnotations.size <= 1) {
             "Test $test has multiple types but must be only one: $testAnnotations"

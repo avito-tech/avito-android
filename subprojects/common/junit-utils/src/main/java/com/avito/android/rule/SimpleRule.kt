@@ -45,7 +45,7 @@ abstract class SimpleRule : TestRule {
             }
         }
 
-    // TODO: make an abstract after implementing in clients
+    // TODO: make an abstract after implementing in clients MBS-10013
     protected open fun validatePreconditions() {}
 
     protected open fun before() {}

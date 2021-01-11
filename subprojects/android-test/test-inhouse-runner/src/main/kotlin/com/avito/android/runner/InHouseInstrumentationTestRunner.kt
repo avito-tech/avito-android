@@ -12,10 +12,9 @@ import com.avito.android.monitoring.TestIssuesMonitor
 import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
-import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.runner.annotation.resolver.getTestOrThrow
+import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
-import com.avito.android.runner.annotation.validation.TestMetadataValidatorImpl
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryClient
 import com.avito.android.test.UITestConfig
@@ -153,13 +152,11 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
-    private val testMetadataValidators: MutableList<TestMetadataValidator> = mutableListOf()
+
+    protected open val testMetadataValidator: TestMetadataValidator =
+        CompositeTestMetadataValidator(validators = emptyList())
 
     abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
-
-    protected fun addTestValidator(validator: TestMetadataValidator) {
-        testMetadataValidators.add(validator)
-    }
 
     protected open fun beforeApplicationCreated(
         runEnvironment: TestRunEnvironment.RunEnvironment,
@@ -217,7 +214,7 @@ abstract class InHouseInstrumentationTestRunner :
             requireNoDuplicates(arguments, testMetadata)
             arguments.putAll(testMetadata)
 
-            validateTestMetadata(test)
+            testMetadataValidator.validate(test)
         }
     }
 
@@ -228,12 +225,6 @@ abstract class InHouseInstrumentationTestRunner :
             "Duplicates in test arguments: $duplicatedKeys.\n" +
                 "- $left\n" +
                 "- $right"
-        }
-    }
-
-    private fun validateTestMetadata(test: TestMethodOrClass) {
-        testMetadataValidators.forEach {
-            it.validate(test)
         }
     }
 
