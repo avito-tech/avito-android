@@ -38,9 +38,9 @@ class ReportViewerHttpInterceptor(
         if (RemoteStorage.isFileStorageHost(request.url)) return chain.proceed(request)
 
         val reportViewerMessage = StringBuilder()
-        reportViewerMessage.appendln(request.printUrl())
-        reportViewerMessage.appendln(request.printHeaders())
-        reportViewerMessage.appendln(request.printBody())
+        reportViewerMessage.appendLine(request.printUrl())
+        reportViewerMessage.appendLine(request.printHeaders())
+        reportViewerMessage.appendLine(request.printBody())
 
         val label = "HTTP ${request.method}: ${request.url.toString().split("?")[0]}"
 
@@ -49,16 +49,16 @@ class ReportViewerHttpInterceptor(
         try {
             response = chain.proceed(request)
         } catch (e: Exception) {
-            reportViewerMessage.appendln("<-- HTTP FAILED: $e")
+            reportViewerMessage.appendLine("<-- HTTP FAILED: $e")
             report.addHtml("$label    HTTP FAILED!!!", reportViewerMessage.toString())
             throw e
         }
 
         val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
 
-        reportViewerMessage.appendln(response.printUrl(tookMs))
-        reportViewerMessage.appendln(response.printHeaders())
-        reportViewerMessage.appendln(response.printBody())
+        reportViewerMessage.appendLine(response.printUrl(tookMs))
+        reportViewerMessage.appendLine(response.printHeaders())
+        reportViewerMessage.appendLine(response.printBody())
 
         report.addHtml(label + "    ${response.code}", reportViewerMessage.toString())
 
@@ -83,10 +83,10 @@ class ReportViewerHttpInterceptor(
         // them to be included (when available) so there values are known.
         if (requestBody != null) {
             if (requestBody.contentType() != null) {
-                result.appendln("Content-Type: ${requestBody.contentType()}")
+                result.appendLine("Content-Type: ${requestBody.contentType()}")
             }
             if (requestBody.contentLength() != -1L) {
-                result.appendln("Content-Length: ${requestBody.contentLength()}")
+                result.appendLine("Content-Length: ${requestBody.contentLength()}")
             }
         }
 
@@ -97,7 +97,7 @@ class ReportViewerHttpInterceptor(
             val name = headers.name(requestHeadersIndex)
             // Skip headers from the request body as they are explicitly logged above.
             if (!"Content-Type".equals(name, ignoreCase = true) && !"Content-Length".equals(name, ignoreCase = true)) {
-                result.appendln(name + ": " + headers.value(requestHeadersIndex))
+                result.appendLine(name + ": " + headers.value(requestHeadersIndex))
             }
             requestHeadersIndex++
         }
@@ -108,9 +108,9 @@ class ReportViewerHttpInterceptor(
         val result = StringBuilder()
         val requestBody = body
         if (requestBody == null) {
-            result.appendln("--> END $method")
+            result.appendLine("--> END $method")
         } else if (bodyEncoded(headers)) {
-            result.appendln("--> END $method (encoded body omitted)")
+            result.appendLine("--> END $method (encoded body omitted)")
         } else {
             val buffer = Buffer()
             requestBody.writeTo(buffer)
@@ -118,10 +118,10 @@ class ReportViewerHttpInterceptor(
             val charset = determineBodyCharset(requestBody.contentType())
 
             if (isPlaintext(buffer)) {
-                result.appendln(tryPrettify(buffer.readString(charset)))
-                result.appendln("--> END $method (${requestBody.contentLength()}-byte body)")
+                result.appendLine(tryPrettify(buffer.readString(charset)))
+                result.appendLine("--> END $method (${requestBody.contentLength()}-byte body)")
             } else {
-                result.appendln("--> END $method (binary ${requestBody.contentLength()}-byte body omitted)")
+                result.appendLine("--> END $method (binary ${requestBody.contentLength()}-byte body omitted)")
             }
         }
         return result.toString()
@@ -138,7 +138,7 @@ class ReportViewerHttpInterceptor(
         var i = 0
         val count = headers.size
         while (i < count) {
-            result.appendln("${headers.name(i)}: ${headers.value(i)}")
+            result.appendLine("${headers.name(i)}: ${headers.value(i)}")
             i++
         }
         return result.toString()
@@ -150,9 +150,9 @@ class ReportViewerHttpInterceptor(
         val contentLength = responseBody!!.contentLength()
 
         if (!promisesBody()) {
-            result.appendln("<-- END HTTP")
+            result.appendLine("<-- END HTTP")
         } else if (bodyEncoded(headers)) {
-            result.appendln("<-- END HTTP (encoded body omitted)")
+            result.appendLine("<-- END HTTP (encoded body omitted)")
         } else {
             val source = responseBody.source()
             source.request(java.lang.Long.MAX_VALUE) // Buffer the entire body.
@@ -161,16 +161,16 @@ class ReportViewerHttpInterceptor(
             val charset = determineBodyCharset(responseBody.contentType())
 
             if (!isPlaintext(buffer)) {
-                result.appendln("")
-                result.appendln("<-- END HTTP (binary ${buffer.size}-byte body omitted)")
+                result.appendLine("")
+                result.appendLine("<-- END HTTP (binary ${buffer.size}-byte body omitted)")
                 return result.toString()
             }
 
             if (contentLength != 0L) {
-                result.appendln(tryPrettify(buffer.clone().readString(charset)))
+                result.appendLine(tryPrettify(buffer.clone().readString(charset)))
             }
 
-            result.appendln("<-- END HTTP (${buffer.size}-byte body)")
+            result.appendLine("<-- END HTTP (${buffer.size}-byte body)")
         }
         return result.toString()
     }

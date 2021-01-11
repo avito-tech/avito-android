@@ -10,5 +10,7 @@ dependencies {
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.kotlinReflect)
     // TODO: Use https://github.com/docker-java/docker-java
-    implementation(Dependencies.dockerClient)
+    implementation(Dependencies.dockerClient) {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
+    }
 }

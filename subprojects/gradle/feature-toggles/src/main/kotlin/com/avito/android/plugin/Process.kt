@@ -31,7 +31,7 @@ fun List<String>.runCommand(
                 var readLine: String? = processOutputReader.readLine()
 
                 while (readLine != null) {
-                    processOutput.appendln(readLine)
+                    processOutput.appendLine(readLine)
                     readLine = processOutputReader.readLine()
                 }
                 process.waitFor()

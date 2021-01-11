@@ -53,11 +53,11 @@ private fun Error.html() = createHTML().html {
 
 private fun Error.Single.text(): String {
     return buildString {
-        appendln(message)
+        appendLine(message)
         causes.forEachIndexed { index, cause ->
             append("\t".repeat(index + 1))
             append("> ")
-            appendln(cause.message.trimIndent())
+            appendLine(cause.message.trimIndent())
         }
     }
 }

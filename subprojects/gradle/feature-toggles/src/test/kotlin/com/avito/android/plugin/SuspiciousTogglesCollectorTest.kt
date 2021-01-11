@@ -1,22 +1,16 @@
 package com.avito.android.plugin
 
+import com.avito.logger.NoOpLogger
 import com.google.common.truth.Truth.assertThat
-import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
-import org.gradle.api.logging.Logger
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
 import java.time.LocalDate
 
-@ExtendWith(MockitoExtension::class)
 class SuspiciousTogglesCollectorTest {
 
     private lateinit var collector: SuspiciousTogglesCollector
 
-    @Mock
-    lateinit var logger: Logger
+    private val logger = NoOpLogger
 
     private val monthAgo = LocalDate.parse("2018-05-20")
     private val quarterAgo = LocalDate.parse("2018-03-20")
@@ -65,7 +59,6 @@ class SuspiciousTogglesCollectorTest {
             turnedOffDateAgo = quarterAgo
         )
 
-        verifyNoMoreInteractions(logger)
         assertThat(toggles[0].toggleName).isEqualTo("toggle1")
         assertThat(toggles[1].toggleName).isEqualTo("toggle3")
         assertThat(toggles[2].toggleName).isEqualTo("toggle7")

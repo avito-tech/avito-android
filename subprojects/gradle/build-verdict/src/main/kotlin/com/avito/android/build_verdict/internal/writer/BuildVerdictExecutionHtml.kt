@@ -98,10 +98,10 @@ private fun BODY.error(error: Error) {
 }
 
 private fun Error.Single.text() = buildString {
-    appendln(message.trimIndent())
+    appendLine(message.trimIndent())
     causes.forEachIndexed { index, cause ->
         append("\t".repeat(index + 1))
         append("> ")
-        appendln(cause.message.trimIndent())
+        appendLine(cause.message.trimIndent())
     }
 }

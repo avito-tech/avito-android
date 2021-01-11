@@ -9,9 +9,9 @@ internal fun BuildVerdict.Configuration.plainText(): String {
 
 private fun Error.plainText() = when (this) {
     is Error.Single -> buildString {
-        appendln("FAILURE: Build failed with an exception.")
-        appendln()
-        appendln("* What went wrong:")
+        appendLine("FAILURE: Build failed with an exception.")
+        appendLine()
+        appendLine("* What went wrong:")
         append(plainText())
     }
     is Error.Multi -> plainText()
@@ -19,25 +19,25 @@ private fun Error.plainText() = when (this) {
 
 private fun Error.Single.plainText(): String {
     return buildString {
-        appendln(message)
+        appendLine(message)
         causes.forEachIndexed { index, cause ->
             append("\t".repeat(index + 1))
             append("> ")
-            appendln(cause.message.trimIndent())
+            appendLine(cause.message.trimIndent())
         }
     }
 }
 
 private fun Error.Multi.plainText(): String {
     return buildString {
-        appendln("FAILURE: $message")
-        appendln()
+        appendLine("FAILURE: $message")
+        appendLine()
         errors.forEachIndexed { index, error ->
-            appendln("${index + 1}: Task failed with an exception.")
-            appendln("-----------")
-            appendln(error.plainText().trimIndent())
+            appendLine("${index + 1}: Task failed with an exception.")
+            appendLine("-----------")
+            appendLine(error.plainText().trimIndent())
             if (index < errors.size - 1) {
-                appendln()
+                appendLine()
             }
         }
     }

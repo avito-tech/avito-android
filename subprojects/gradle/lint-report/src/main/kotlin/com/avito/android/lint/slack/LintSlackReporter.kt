@@ -109,19 +109,19 @@ interface LintSlackReporter {
             buildUrl: HttpUrl
         ): String {
             return buildString {
-                appendln("*Critical lint problems detected for project $projectPath*")
-                appendln("Build: <$buildUrl|link>")
-                appendln()
+                appendLine("*Critical lint problems detected for project $projectPath*")
+                appendLine("Build: <$buildUrl|link>")
+                appendLine()
 
                 val groupedErrors = errors.groupBy { it.summary }
                 groupedErrors.forEach { (summary, issue) ->
-                    appendln(":red_circle: [${issue.size}x] $summary")
+                    appendLine(":red_circle: [${issue.size}x] $summary")
                 }
-                appendln()
+                appendLine()
                 if (warnings.isEmpty()) {
-                    appendln(":green_flag: No warnings!")
+                    appendLine(":green_flag: No warnings!")
                 } else {
-                    appendln(":warning: also ${warnings.count()} warnings")
+                    appendLine(":warning: also ${warnings.count()} warnings")
                 }
             }
         }
@@ -133,18 +133,18 @@ interface LintSlackReporter {
             buildUrl: HttpUrl
         ): String {
             return buildString {
-                appendln("*Lint encountered a problem on project $projectPath*")
-                appendln("Build: <$buildUrl|link>")
-                appendln()
+                appendLine("*Lint encountered a problem on project $projectPath*")
+                appendLine("Build: <$buildUrl|link>")
+                appendLine()
 
                 fatalErrors
                     .groupBy { it.summary }
                     .forEach { (summary, issue) ->
-                        appendln(":skull: [${issue.size}x] $summary")
+                        appendLine(":skull: [${issue.size}x] $summary")
                     }
 
                 if (unknownErrors.isNotEmpty()) {
-                    appendln(":alien: [${unknownErrors.size}] Unknown type issues")
+                    appendLine(":alien: [${unknownErrors.size}] Unknown type issues")
                 }
             }
         }

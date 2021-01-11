@@ -10,7 +10,6 @@ dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":gradle:kotlin-dsl-support"))
 
-    implementation(Dependencies.Gradle.androidPlugin)
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)
     implementation(Dependencies.okhttpLogging)

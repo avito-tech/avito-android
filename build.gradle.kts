@@ -101,6 +101,7 @@ subprojects {
                 isAbortOnError = false
                 isWarningsAsErrors = true
                 textReport = true
+                isQuiet = true
             }
         }
     }
@@ -309,5 +310,5 @@ fun emulatorImage(registry: String?, api: Int): String {
 tasks.withType<Wrapper> {
     //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.7"
+    gradleVersion = "6.8"
 }

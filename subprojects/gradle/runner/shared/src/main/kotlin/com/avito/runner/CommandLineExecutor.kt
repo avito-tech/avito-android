@@ -56,7 +56,7 @@ interface CommandLineExecutor {
                     emitter.onNext(
                         ProcessNotification.Output(line = line)
                     )
-                    buffer.appendln(line)
+                    buffer.appendLine(line)
 
                     outputFile?.appendText("$line${System.lineSeparator()}")
 
