@@ -367,6 +367,12 @@ fun Project.configureJunit5Tests() {
         useJUnitPlatform()
         maxParallelForks = 8
         failFast = true
+
+        /**
+         * fix for retrofit `WARNING: Illegal reflective access by retrofit2.Platform`
+         * see square/retrofit/issues/3341
+         */
+        jvmArgs = listOf("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
     }
 }
 
