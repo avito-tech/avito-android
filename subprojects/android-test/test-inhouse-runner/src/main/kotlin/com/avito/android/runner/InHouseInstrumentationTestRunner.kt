@@ -2,7 +2,6 @@ package com.avito.android.runner
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
@@ -17,6 +16,8 @@ import com.avito.android.runner.annotation.validation.CompositeTestMetadataValid
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryClient
+import com.avito.android.stats.StatsDConfig
+import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
@@ -45,6 +46,7 @@ import com.avito.report.model.Kind
 import com.avito.test.http.MockDispatcher
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.sentry.SentryClient
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
@@ -56,14 +58,26 @@ abstract class InHouseInstrumentationTestRunner :
     ImitateFlagProvider,
     RemoteStorageProvider {
 
-    protected val tag = "UITestRunner"
+    private val sentryConfig: SentryConfig by lazy { runEnvironment.sentryConfig }
 
-    protected val sentry by lazy { sentryClient(config = sentryConfig()) }
+    private val statsDConfig: StatsDConfig by lazy { runEnvironment.statsDConfig }
 
-    private val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig()) }
+    private val logger by lazy { loggerFactory.create("InHouseInstrumentationTestRunner") }
+
+    val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
+
+    val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
+
+    val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
+
+    /**
+     * Public for *TestApp to skip on orchestrator runs
+     */
+    val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
+
+    val runEnvironment: TestRunEnvironment.RunEnvironment by lazy { testRunEnvironment.asRunEnvironmentOrThrow() }
 
     override val remoteStorage: RemoteStorage by lazy {
-        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         RemoteStorage.create(
             loggerFactory = loggerFactory,
             httpClient = reportHttpClient,
@@ -73,20 +87,20 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val report: Report by lazy {
         val testReportLogger = loggerFactory.create<Report>()
-        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
         val transport: List<Transport> = when {
-            isLocalRun ->
-                if (runEnvironment.reportConfig != null) {
+            isLocalRun -> {
+                val reportConfig = runEnvironment.reportConfig
+                if (reportConfig != null) {
                     listOf(
                         LocalRunTransport(
-                            reportViewerUrl = runEnvironment.reportConfig.reportViewerUrl,
+                            reportViewerUrl = reportConfig.reportViewerUrl,
                             reportCoordinates = runEnvironment.testRunCoordinates,
                             deviceName = DeviceName(runEnvironment.deviceName),
                             logger = testReportLogger,
                             reportsApi = ReportsApi.create(
-                                host = runEnvironment.reportConfig.reportApiUrl,
-                                fallbackUrl = runEnvironment.reportConfig.reportApiFallbackUrl,
+                                host = reportConfig.reportApiUrl,
+                                fallbackUrl = reportConfig.reportApiFallbackUrl,
                                 readTimeout = 10,
                                 writeTimeout = 10,
                                 loggerFactory = loggerFactory
@@ -96,6 +110,7 @@ abstract class InHouseInstrumentationTestRunner :
                 } else {
                     emptyList()
                 }
+            }
             else -> {
                 val gson: Gson = GsonBuilder()
                     .registerTypeAdapterFactory(EntryTypeAdapterFactory())
@@ -117,10 +132,6 @@ abstract class InHouseInstrumentationTestRunner :
         testRunEnvironment.asRunEnvironmentOrThrow().isImitation
     }
 
-    val testRunEnvironment: TestRunEnvironment by lazy {
-        createRunnerEnvironment(instrumentationArguments)
-    }
-
     val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
@@ -139,9 +150,9 @@ abstract class InHouseInstrumentationTestRunner :
 
     protected open val testIssuesMonitor: TestIssuesMonitor by lazy {
         CompositeTestIssuesMonitor(
-            sentry = sentry,
+            sentry = sentryClient,
             testRunEnvironment = testRunEnvironment.asRunEnvironmentOrThrow(),
-            logTag = tag
+            logger = logger
         )
     }
 
@@ -173,8 +184,8 @@ abstract class InHouseInstrumentationTestRunner :
         instrumentationArguments = arguments
         injectTestMetadata(arguments)
 
-        Log.d(tag, "Instrumentation arguments: $instrumentationArguments")
-        Log.d(tag, "TestRunEnvironment: $testRunEnvironment")
+        logger.debug("Instrumentation arguments: $instrumentationArguments")
+        logger.debug("TestRunEnvironment: $testRunEnvironment")
 
         testRunEnvironment.executeIfRealRun {
             initApplicationCrashHandling()
@@ -191,11 +202,8 @@ abstract class InHouseInstrumentationTestRunner :
         super.onCreate(arguments)
 
         testRunEnvironment.executeIfRealRun {
-            Espresso.setFailureHandler(
-                ReportFriendlyFailureHandler()
-            )
+            Espresso.setFailureHandler(ReportFriendlyFailureHandler())
             initUITestConfig()
-
             DeviceSettingsChecker(targetContext).check()
         }
     }
@@ -228,14 +236,11 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    override fun createFactory(): ContextFactory {
-        return object : ContextFactory.Default() {
-            override fun createIfRealRun(arguments: Bundle): Context {
-                return DefaultTestInstrumentationContext(
-                    errorsReporter = SentryErrorsReporter(sentry)
-                )
-            }
-        }
+    override fun createFactory(): ContextFactory = object : ContextFactory.Default() {
+
+        override fun createIfRealRun(arguments: Bundle): Context = DefaultTestInstrumentationContext(
+            errorsReporter = SentryErrorsReporter(sentryClient)
+        )
     }
 
     override fun onStart() {
@@ -246,15 +251,11 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    @SuppressLint("LogNotTimber")
     override fun onException(obj: Any?, e: Throwable): Boolean {
-        Log.e(tag, "Application crash captured by onException handler inside instrumentation", e)
+        logger.critical("Application crash captured by onException handler inside instrumentation", e)
 
         testRunEnvironment.executeIfRealRun {
-            tryToReportUnexpectedIncident(
-                incident = e,
-                tag = tag
-            )
+            tryToReportUnexpectedIncident(incident = e)
         }
 
         return super.onException(obj, e)
@@ -280,13 +281,12 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    @SuppressLint("LogNotTimber")
-    fun tryToReportUnexpectedIncident(incident: Throwable, tag: String) {
+    fun tryToReportUnexpectedIncident(incident: Throwable) {
         try {
             report.registerIncident(AppCrashException(incident))
             report.reportTestCase()
         } catch (t: Throwable) {
-            Log.w(tag, "Can't register and report unexpected incident", t)
+            logger.critical("Can't register and report unexpected incident", t)
         }
     }
 
@@ -341,38 +341,16 @@ abstract class InHouseInstrumentationTestRunner :
         arguments.putString("newRunListenerMode", "true")
     }
 
-    /**
-     * todo remove after 2021.1 will be passed directly
-     */
-    private fun sentryConfig(): SentryConfig {
-        val environment = testRunEnvironment.asRunEnvironmentOrThrow()
-
-        return when {
-            environment.sentryConfig != null -> environment.sentryConfig
-
-            !environment.sentryDsn.isNullOrBlank() -> SentryConfig.Enabled(
-                dsn = environment.sentryDsn,
-                environment = "android-test",
-                serverName = "",
-                release = "",
-                tags = emptyMap()
-            )
-
-            else -> SentryConfig.Disabled
-        }
-    }
-
     override fun finish(resultCode: Int, results: Bundle?) {
         try {
             super.finish(resultCode, results)
         } catch (e: IllegalStateException) {
-            // we made a research.
-            // It showed that IllegalStateException("UiAutomation not connected") occurs unrelated to our code.
+            // IllegalStateException("UiAutomation not connected") occurs unrelated to our code.
             // We use uiAutomation only for VideoCapture but without capturing this exception occurs with same frequency
             if (e.message?.contains("UiAutomation not connected") != true) {
                 throw e
             } else {
-                Log.d(tag, "Got UiAutomation not connected when finished")
+                logger.debug("Got UiAutomation not connected when finished")
             }
         }
     }
