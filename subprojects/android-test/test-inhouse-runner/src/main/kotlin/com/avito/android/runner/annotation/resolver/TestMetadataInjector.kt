@@ -4,36 +4,54 @@ import android.os.Bundle
 
 interface TestMetadataInjector {
 
-    fun inject(instrumentationArguments: Bundle)
+    fun inject(test: TestMethodOrClass): Bundle
 }
 
 class AnnotationResolversBasedMetadataInjector(
     private val annotationResolvers: Set<TestMetadataResolver>
 ) : TestMetadataInjector {
 
-    override fun inject(instrumentationArguments: Bundle) {
-        val fullyQualifiedTestName = instrumentationArguments.getString("class")
+    init {
+        requireUniqueKeys()
+    }
 
-        if (fullyQualifiedTestName.isNullOrBlank()) {
-            throw RuntimeException("Test name not found in instrumentation arguments")
-        }
+    override fun inject(test: TestMethodOrClass): Bundle {
+        val metadata = Bundle()
 
         for (annotationResolver in annotationResolvers) {
 
-            when (val switchResolution = annotationResolver.resolve(fullyQualifiedTestName)) {
+            when (val switchResolution = annotationResolver.resolve(test)) {
                 is TestMetadataResolver.Resolution.ReplaceString ->
-                    instrumentationArguments.putString(
-                        annotationResolver.key, // TODO: protect against accidental collision in keys
+                    metadata.putString(
+                        annotationResolver.key,
                         switchResolution.replacement
                     )
                 is TestMetadataResolver.Resolution.ReplaceSerializable ->
-                    instrumentationArguments.putSerializable(
+                    metadata.putSerializable(
                         annotationResolver.key,
                         switchResolution.replacement
                     )
                 is TestMetadataResolver.Resolution.NothingToChange -> {
                 }
             }
+        }
+        return metadata
+    }
+
+    private fun requireUniqueKeys() {
+        val uniqueKeys = mutableSetOf<String>()
+
+        annotationResolvers.forEach { resolver ->
+            val key = resolver.key
+
+            if (uniqueKeys.contains(key)) {
+                val duplicates = annotationResolvers.filter { it.key == key }
+                throw IllegalArgumentException(
+                    "Multiple TestMetadataResolvers have the same key: ${key}\n" +
+                        "Resolvers: $duplicates"
+                )
+            }
+            uniqueKeys.add(key)
         }
     }
 }

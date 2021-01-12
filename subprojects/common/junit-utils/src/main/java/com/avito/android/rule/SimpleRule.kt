@@ -9,6 +9,7 @@ abstract class SimpleRule : TestRule {
     final override fun apply(base: Statement, description: Description): Statement =
         object : Statement() {
             override fun evaluate() {
+                validatePreconditions()
                 before()
                 val executionError = execute()
                 val finalizeError = cleanup()
@@ -43,6 +44,9 @@ abstract class SimpleRule : TestRule {
                 }
             }
         }
+
+    // TODO: make an abstract after implementing in clients MBS-10013
+    protected open fun validatePreconditions() {}
 
     protected open fun before() {}
 

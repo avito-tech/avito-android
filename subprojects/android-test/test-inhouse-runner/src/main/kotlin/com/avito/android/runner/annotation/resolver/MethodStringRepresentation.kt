@@ -1,11 +1,12 @@
 package com.avito.android.runner.annotation.resolver
 
+import com.avito.android.runner.annotation.resolver.MethodStringRepresentation.Resolution
 import java.lang.reflect.Method
 
 /**
  * Parser for string representation of methods of class: class#method
  */
-object MethodStringRepresentation {
+internal object MethodStringRepresentation {
 
     sealed class Resolution {
         data class ClassOnly(val aClass: Class<*>) : Resolution()
@@ -73,5 +74,15 @@ object MethodStringRepresentation {
         } catch (e: NoSuchMethodException) {
             onError(e)
         }
+    }
+}
+
+data class TestMethodOrClass(val testClass: Class<*>, val testMethod: Method? = null)
+
+internal fun Resolution.getTestOrThrow(): TestMethodOrClass {
+    return when (this) {
+        is Resolution.ClassOnly -> TestMethodOrClass(aClass)
+        is Resolution.Method -> TestMethodOrClass(aClass, method)
+        is Resolution.ParseError -> throw IllegalArgumentException(message)
     }
 }

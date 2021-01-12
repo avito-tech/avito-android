@@ -12,5 +12,5 @@ interface TestMetadataResolver {
 
     val key: String
 
-    fun resolve(test: String): Resolution
+    fun resolve(test: TestMethodOrClass): Resolution
 }

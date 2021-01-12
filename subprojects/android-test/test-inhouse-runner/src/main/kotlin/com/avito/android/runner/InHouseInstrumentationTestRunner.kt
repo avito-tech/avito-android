@@ -10,7 +10,11 @@ import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
 import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
+import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
+import com.avito.android.runner.annotation.resolver.getTestOrThrow
+import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
+import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryClient
 import com.avito.android.test.UITestConfig
@@ -149,14 +153,10 @@ abstract class InHouseInstrumentationTestRunner :
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 
-    abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
+    protected open val testMetadataValidator: TestMetadataValidator =
+        CompositeTestMetadataValidator(validators = emptyList())
 
-    private fun injectTestMetadata(arguments: Bundle) {
-        val isRealRun = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
-        if (isRealRun) {
-            metadataToBundleInjector.inject(arguments)
-        }
-    }
+    abstract fun createRunnerEnvironment(arguments: Bundle): TestRunEnvironment
 
     protected open fun beforeApplicationCreated(
         runEnvironment: TestRunEnvironment.RunEnvironment,
@@ -197,6 +197,34 @@ abstract class InHouseInstrumentationTestRunner :
             initUITestConfig()
 
             DeviceSettingsChecker(targetContext).check()
+        }
+    }
+
+    private fun injectTestMetadata(arguments: Bundle) {
+        val isRealRun = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
+        if (isRealRun) {
+            val testName = instrumentationArguments.getString("class")
+
+            if (testName.isNullOrBlank()) {
+                throw RuntimeException("Test name not found in instrumentation arguments: $instrumentationArguments")
+            }
+            val test = MethodStringRepresentation.parseString(testName).getTestOrThrow()
+
+            val testMetadata = metadataToBundleInjector.inject(test)
+            requireNoDuplicates(arguments, testMetadata)
+            arguments.putAll(testMetadata)
+
+            testMetadataValidator.validate(test)
+        }
+    }
+
+    // TODO: wrap to a bundle to avoid accidental overriding.
+    private fun requireNoDuplicates(left: Bundle, right: Bundle) {
+        val duplicatedKeys = right.keySet().intersect(left.keySet())
+        require(duplicatedKeys.isEmpty()) {
+            "Duplicates in test arguments: $duplicatedKeys.\n" +
+                "- $left\n" +
+                "- $right"
         }
     }
 
