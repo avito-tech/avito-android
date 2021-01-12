@@ -12,8 +12,7 @@ internal class ReportUncaughtHandler(
         Log.e(TAG, "Application crash captured by global handler", e)
 
         InHouseInstrumentationTestRunner.instance.tryToReportUnexpectedIncident(
-            incident = e,
-            tag = TAG
+            incident = e
         )
 
         globalExceptionHandler?.uncaughtException(t, e)

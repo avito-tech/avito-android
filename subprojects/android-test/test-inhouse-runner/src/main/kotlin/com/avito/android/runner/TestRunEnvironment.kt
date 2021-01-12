@@ -8,6 +8,7 @@ import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
 import com.avito.android.runner.annotation.resolver.NetworkingType
 import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
 import com.avito.android.sentry.SentryConfig
+import com.avito.android.stats.StatsDConfig
 import com.avito.android.test.report.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
@@ -84,8 +85,8 @@ sealed class TestRunEnvironment {
         val slackToken: String,
         val videoRecordingFeature: VideoFeatureValue,
         val outputDirectory: Lazy<File>,
-        val sentryDsn: String?, // todo remove after 2021.1 (replaced by sentryConfig)
-        val sentryConfig: SentryConfig?,
+        val sentryConfig: SentryConfig,
+        val statsDConfig: StatsDConfig,
         val fileStorageUrl: String,
         val reportConfig: ReportConfig?,
         val testRunCoordinates: ReportCoordinates,
@@ -151,8 +152,8 @@ fun provideEnvironment(
                 },
                 // from GradleInstrumentationPluginConfiguration
                 slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
-                sentryDsn = argumentsProvider.getOptionalArgument("sentryDsn"),
-                sentryConfig = argumentsProvider.getOptionalSerializableArgument("sentryConfig"),
+                sentryConfig = argumentsProvider.getMandatorySerializableArgument("sentryConfig"),
+                statsDConfig = argumentsProvider.getMandatorySerializableArgument("statsDConfig"),
                 fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
                 testRunCoordinates = coordinates,
                 reportConfig = reportConfig,
