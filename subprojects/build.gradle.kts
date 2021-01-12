@@ -9,6 +9,8 @@ import com.jfrog.bintray.gradle.BintrayExtension
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
 import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -211,6 +213,10 @@ subprojects {
             dependencies {
                 "implementation"(Dependencies.kotlinStdlib)
             }
+        }
+
+        configure<KotlinProjectExtension> {
+            explicitApi = ExplicitApiMode.Warning
         }
     }
 
