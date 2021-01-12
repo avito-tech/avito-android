@@ -31,6 +31,8 @@ internal object TestKindExtractor {
             "Test $test has multiple types but must be only one: $testAnnotations"
         }
 
+        if (testAnnotations.isEmpty()) return Kind.UNKNOWN
+
         return when (val testType = testAnnotations.first()) {
             is UIComponentTest, is ScreenshotTest -> Kind.UI_COMPONENT
             is E2ETest, is SyntheticMonitoringTest -> Kind.E2E

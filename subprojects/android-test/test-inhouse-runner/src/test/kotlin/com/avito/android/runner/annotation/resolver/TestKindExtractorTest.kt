@@ -10,10 +10,17 @@ import org.junit.jupiter.api.assertThrows
 class TestKindExtractorTest {
 
     @Test
-    fun `parse valid test`() {
+    fun `component type - component test`() {
         val kind = extract(ComponentTest::class.java)
 
         assertThat(kind).isEqualTo(Kind.UI_COMPONENT)
+    }
+
+    @Test
+    fun `unknown test type - test without type`() {
+        val kind = extract(UnknownTest::class.java)
+
+        assertThat(kind).isEqualTo(Kind.UNKNOWN)
     }
 
     @Test
@@ -30,6 +37,13 @@ class TestKindExtractorTest {
 
     private fun extract(test: Class<*>): Kind =
         TestKindExtractor.extract(TestMethodOrClass(test))
+
+    class UnknownTest {
+
+        @org.junit.Test
+        fun test() {
+        }
+    }
 
     @UIComponentTest
     class ComponentTest {
