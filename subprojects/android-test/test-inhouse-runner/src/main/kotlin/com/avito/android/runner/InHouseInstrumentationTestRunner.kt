@@ -12,6 +12,7 @@ import com.avito.android.monitoring.TestIssuesMonitor
 import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
+import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
@@ -165,7 +166,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     /**
-     * WARNING: Can't crash in this method.
+     * WARNING: Shouldn't crash in this method.
      * Otherwise we can't pass an error to the report
      */
     @SuppressLint("LogNotTimber")
@@ -203,29 +204,20 @@ abstract class InHouseInstrumentationTestRunner :
     private fun injectTestMetadata(arguments: Bundle) {
         val isRealRun = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
         if (isRealRun) {
-            val testName = instrumentationArguments.getString("class")
+            val test = getTest(arguments)
 
-            if (testName.isNullOrBlank()) {
-                throw RuntimeException("Test name not found in instrumentation arguments: $instrumentationArguments")
-            }
-            val test = MethodStringRepresentation.parseString(testName).getTestOrThrow()
-
-            val testMetadata = metadataToBundleInjector.inject(test)
-            requireNoDuplicates(arguments, testMetadata)
-            arguments.putAll(testMetadata)
-
+            metadataToBundleInjector.inject(test, arguments)
             testMetadataValidator.validate(test)
         }
     }
 
-    // TODO: wrap to a bundle to avoid accidental overriding.
-    private fun requireNoDuplicates(left: Bundle, right: Bundle) {
-        val duplicatedKeys = right.keySet().intersect(left.keySet())
-        require(duplicatedKeys.isEmpty()) {
-            "Duplicates in test arguments: $duplicatedKeys.\n" +
-                "- $left\n" +
-                "- $right"
+    private fun getTest(instrumentationArguments: Bundle): TestMethodOrClass {
+        val testName = instrumentationArguments.getString("class")
+
+        if (testName.isNullOrBlank()) {
+            throw RuntimeException("Test name not found in instrumentation arguments: $instrumentationArguments")
         }
+        return MethodStringRepresentation.parseString(testName).getTestOrThrow()
     }
 
     override fun createFactory(): ContextFactory {

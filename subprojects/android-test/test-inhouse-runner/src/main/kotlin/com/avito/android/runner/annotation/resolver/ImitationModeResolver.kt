@@ -1,6 +1,5 @@
 package com.avito.android.runner.annotation.resolver
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import com.avito.android.test.annotations.SkipOnSdk
@@ -9,7 +8,6 @@ class ImitationModeResolver : TestMetadataResolver {
 
     override val key: String = BUNDLE_KEY
 
-    @SuppressLint("LogNotTimber")
     override fun resolve(test: TestMethodOrClass): TestMetadataResolver.Resolution {
         val skipOnSdkAnnotation: SkipOnSdk? =
             Annotations.getAnnotationsSubset(test.testClass, test.testMethod, SkipOnSdk::class.java)
