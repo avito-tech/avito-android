@@ -321,7 +321,8 @@ buildChecks {
 ### Unique R classes
 
 If two Android modules use the same package, their R classes will be merged. 
-While merging, it can unexpectedly override resources. It happens even with `android.namespacedRClass`.
+While merging, it can unexpectedly override resources ([#175316324](https://issuetracker.google.com/issues/175316324)). 
+It happens even with `android.namespacedRClass`.
 
 To forbid merged R files use this check:
 
@@ -332,7 +333,6 @@ To forbid merged R files use this check:
 ```kotlin
 plugins {
     id("com.avito.android.buildchecks")
-    id("com.avito.android.impact") // this check requires impact analysis
 }
 
 buildChecks {
@@ -347,7 +347,6 @@ buildChecks {
 ```groovy
 plugins {
     id("com.avito.android.buildchecks")
-    id("com.avito.android.impact") // this check requires impact analysis
 }
 
 buildChecks {
@@ -357,6 +356,26 @@ buildChecks {
 
 {{< /tab >}}
 {{< /tabs >}}
+
+Try also `android.uniquePackageNames` check. In AGP 4.1 it provides similar but less complete contract.
+
+#### Configuration
+
+You can suppress errors for a specific package name:
+
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    uniqueRClasses {
+        allowedNonUniquePackageNames.addAll(listOf(
+            "androidx.test", // Default from ManifestMerger #151171905
+            "androidx.test.espresso", // Won't fix: https://issuetracker.google.com/issues/176002058
+            "androidx.navigation.ktx" // Fixed in 2.2.1: https://developer.android.com/jetpack/androidx/releases/navigation#2.2.1
+        ))
+    }
+}
+```
 
 ### Gradle daemon reusage
 

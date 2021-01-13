@@ -88,7 +88,9 @@ open class BuildChecksExtension {
             override var enabled: Boolean = false
         }
 
-        open class UniqueRClasses : Check()
+        open class UniqueRClasses : Check() {
+            val allowedNonUniquePackageNames: MutableList<String> = mutableListOf()
+        }
 
         open class IncrementalKapt : Check() {
             var mode: CheckMode = CheckMode.WARNING
