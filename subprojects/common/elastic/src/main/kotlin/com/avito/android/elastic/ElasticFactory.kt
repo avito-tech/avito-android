@@ -20,7 +20,7 @@ object ElasticFactory {
                 HttpElasticClient(
                     okHttpClient = okHttpClient,
                     timeProvider = DefaultTimeProvider(),
-                    endpoint = config.endpoint,
+                    endpoints = config.endpoints,
                     indexPattern = config.indexPattern,
                     buildId = config.buildId,
                     onError = onError

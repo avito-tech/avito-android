@@ -29,7 +29,7 @@ class LoggingDestinationTest {
             ),
             ElasticDestination(
                 config = ElasticConfig.Enabled(
-                    endpoint = URL("http://stub"),
+                    endpoints = listOf(URL("http://stub")),
                     indexPattern = "pattern",
                     buildId = "id"
                 ),

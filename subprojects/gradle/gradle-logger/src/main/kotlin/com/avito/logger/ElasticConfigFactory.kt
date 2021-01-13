@@ -11,8 +11,8 @@ internal object ElasticConfigFactory {
         val isElasticEnabled = project.properties["avito.elastic.enabled"].toString() == "true"
 
         return if (isElasticEnabled) {
-            val endpoint: String? = project.properties["avito.elastic.endpoint"]?.toString()
-            require(!endpoint.isNullOrBlank()) { "avito.elastic.endpoints has not been provided" }
+            val endpointsRawValue: String? = project.properties["avito.elastic.endpoints"]?.toString()
+            require(!endpointsRawValue.isNullOrBlank()) { "avito.elastic.endpoints has not been provided" }
 
             val indexPattern: String? = project.properties["avito.elastic.indexpattern"]?.toString()
             require(!indexPattern.isNullOrBlank()) { "avito.elastic.indexpattern has not been provided" }
@@ -20,7 +20,7 @@ internal object ElasticConfigFactory {
             val buildId = project.envArgs.build.id.toString()
 
             ElasticConfig.Enabled(
-                endpoint = URL(endpoint),
+                endpoints = parseEndpoint(endpointsRawValue),
                 indexPattern = indexPattern,
                 buildId = buildId
             )
@@ -28,4 +28,7 @@ internal object ElasticConfigFactory {
             ElasticConfig.Disabled
         }
     }
+
+    private fun parseEndpoint(rawEndpointsValue: String): List<URL> =
+        rawEndpointsValue.split('|').map { URL(it) }
 }

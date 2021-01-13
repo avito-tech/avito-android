@@ -6,7 +6,7 @@ import com.avito.android.sentry.SentryConfig
 import com.avito.android.test.annotations.SkipOnSdk
 import com.avito.logger.create
 
-class ImitationModeResolver() : TestMetadataResolver {
+class ImitationModeResolver : TestMetadataResolver {
 
     private val logger = AndroidLoggerFactory(SentryConfig.Disabled).create<ImitationModeResolver>()
 
