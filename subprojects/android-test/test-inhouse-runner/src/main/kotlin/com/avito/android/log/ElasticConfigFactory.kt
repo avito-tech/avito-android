@@ -27,5 +27,5 @@ internal object ElasticConfigFactory {
     }
 
     private fun parseEndpoint(rawEndpointsValue: String): List<URL> =
-        rawEndpointsValue.split('|').map { URL(it) }
+        rawEndpointsValue.split(',').map { URL(it) }
 }
