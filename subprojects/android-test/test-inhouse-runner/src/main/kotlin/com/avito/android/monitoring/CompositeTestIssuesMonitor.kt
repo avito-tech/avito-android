@@ -1,8 +1,7 @@
 package com.avito.android.monitoring
 
-import android.annotation.SuppressLint
-import android.util.Log
 import com.avito.android.runner.TestRunEnvironment
+import com.avito.logger.Logger
 import io.sentry.SentryClient
 import io.sentry.event.Event
 import io.sentry.event.EventBuilder
@@ -12,7 +11,7 @@ import okhttp3.Response
 class CompositeTestIssuesMonitor(
     private val sentry: SentryClient,
     private val testRunEnvironment: TestRunEnvironment.RunEnvironment,
-    private val logTag: String,
+    private val logger: Logger,
     private val responseParser: (EventBuilder, RequestResponseData) -> EventBuilder = { event, _ -> event }
 ) : TestIssuesMonitor {
 
@@ -24,7 +23,6 @@ class CompositeTestIssuesMonitor(
         sentry.sendEvent(createExceptionEvent(throwable).withLevel(Event.Level.WARNING))
     }
 
-    @SuppressLint("LogNotTimber")
     override fun onWarning(response: Response) {
         val requestResponseData = ResponseDataExtractor.extract(response)
 
@@ -34,7 +32,7 @@ class CompositeTestIssuesMonitor(
             try {
                 responseParser.invoke(event, requestResponseData)
             } catch (e: Throwable) {
-                Log.e(logTag, "Can't send sentry event", e)
+                logger.critical("Can't send sentry event", e)
                 event
             }
         )
