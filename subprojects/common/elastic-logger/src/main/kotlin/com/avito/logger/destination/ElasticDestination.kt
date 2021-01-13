@@ -4,12 +4,11 @@ import com.avito.android.elastic.ElasticClient
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.elastic.ElasticFactory
 import com.avito.logger.LogLevel
-import com.avito.logger.LoggerMetadata
 import com.avito.logger.LoggingDestination
 
-internal class ElasticDestination(
+class ElasticDestination(
     private val config: ElasticConfig,
-    private val metadata: LoggerMetadata
+    private val metadata: Map<String, String>
 ) : LoggingDestination {
 
     @Transient
@@ -29,26 +28,8 @@ internal class ElasticDestination(
         client().sendMessage(
             level = level.name,
             message = message,
-            metadata = metadata.toMap(),
+            metadata = metadata,
             throwable = throwable
         )
-    }
-
-    private fun LoggerMetadata.toMap(): Map<String, String> {
-        val result = mutableMapOf("tag" to tag)
-
-        if (!pluginName.isNullOrBlank()) {
-            result["plugin_name"] = pluginName
-        }
-
-        if (!projectPath.isNullOrBlank()) {
-            result["project_path"] = projectPath
-        }
-
-        if (!taskName.isNullOrBlank()) {
-            result["task_name"] = taskName
-        }
-
-        return result
     }
 }

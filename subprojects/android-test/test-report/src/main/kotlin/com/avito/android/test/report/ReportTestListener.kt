@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.sentry.SentryConfig
 import com.avito.logger.create
@@ -10,7 +11,10 @@ import org.junit.runner.notification.RunListener
 class ReportTestListener : RunListener() {
 
     private val report: Report by lazy { TestExecutionState.reportInstance }
-    private val logger = AndroidLoggerFactory(SentryConfig.Disabled).create<ReportTestListener>()
+    private val logger = AndroidLoggerFactory(
+        elasticConfig = ElasticConfig.Disabled,
+        sentryConfig = SentryConfig.Disabled
+    ).create<ReportTestListener>()
 
     override fun testStarted(description: Description) {
         processEvent("start", description.displayName) {

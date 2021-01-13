@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
@@ -57,9 +58,11 @@ abstract class InHouseInstrumentationTestRunner :
     ImitateFlagProvider,
     RemoteStorageProvider {
 
-    private val sentryConfig: SentryConfig by lazy { runEnvironment.sentryConfig }
+    private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
 
-    private val statsDConfig: StatsDConfig by lazy { runEnvironment.statsDConfig }
+    private val sentryConfig: SentryConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().sentryConfig }
+
+    private val statsDConfig: StatsDConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig }
 
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
@@ -72,19 +75,23 @@ abstract class InHouseInstrumentationTestRunner :
      */
     val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
 
-    val runEnvironment: TestRunEnvironment.RunEnvironment by lazy { testRunEnvironment.asRunEnvironmentOrThrow() }
-
-    override val loggerFactory   by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
+    override val loggerFactory by lazy {
+        AndroidLoggerFactory(
+            elasticConfig = elasticConfig,
+            sentryConfig = sentryConfig
+        )
+    }
 
     override val remoteStorage: RemoteStorage by lazy {
         RemoteStorage.create(
             loggerFactory = loggerFactory,
             httpClient = reportHttpClient,
-            endpoint = runEnvironment.fileStorageUrl
+            endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl
         )
     }
 
     override val report: Report by lazy {
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         val testReportLogger = loggerFactory.create<Report>()
         val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
         val transport: List<Transport> = when {

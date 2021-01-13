@@ -1,6 +1,7 @@
 package com.avito.android.runner.annotation.resolver
 
 import android.os.Build
+import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.test.annotations.SkipOnSdk
@@ -8,7 +9,10 @@ import com.avito.logger.create
 
 class ImitationModeResolver : TestMetadataResolver {
 
-    private val logger = AndroidLoggerFactory(SentryConfig.Disabled).create<ImitationModeResolver>()
+    private val logger = AndroidLoggerFactory(
+        elasticConfig = ElasticConfig.Disabled,
+        sentryConfig = SentryConfig.Disabled
+    ).create<ImitationModeResolver>()
 
     override val key: String = BUNDLE_KEY
 

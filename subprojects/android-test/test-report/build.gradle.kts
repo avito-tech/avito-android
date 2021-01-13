@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":common:file-storage"))
     implementation(project(":common:report-viewer"))
     implementation(project(":common:logger"))
+    implementation(project(":common:elastic-logger"))
     implementation(project(":common:sentry"))
     implementation(project(":common:test-annotations"))
     implementation(project(":common:throwable-utils"))
