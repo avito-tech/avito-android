@@ -286,7 +286,7 @@ abstract class InHouseInstrumentationTestRunner :
             report.registerIncident(AppCrashException(incident))
             report.reportTestCase()
         } catch (t: Throwable) {
-            logger.critical("Can't register and report unexpected incident", t)
+            logger.warn("Can't register and report unexpected incident", t)
         }
     }
 
