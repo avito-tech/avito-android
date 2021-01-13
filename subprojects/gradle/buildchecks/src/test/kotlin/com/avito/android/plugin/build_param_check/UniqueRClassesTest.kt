@@ -24,13 +24,12 @@ class UniqueRClassesTest {
     fun `success - unique package names`() {
         TestProjectGenerator(
             plugins = listOf(
-                "com.avito.android.buildchecks",
-                "com.avito.android.impact"
+                "com.avito.android.buildchecks"
             ),
             modules = listOf(
                 AndroidAppModule(
                     name = "app-x",
-                    packageName = "app_x_package",
+                    packageName = "app.x.package",
                     dependencies = setOf(
                         project(":lib-a"),
                         project(":lib-b")
@@ -38,15 +37,15 @@ class UniqueRClassesTest {
                 ),
                 AndroidAppModule(
                     name = "app-y",
-                    packageName = "app_y_package",
+                    packageName = "app.y.package",
                     dependencies = setOf(
                         project(":lib-c"),
                         project(":lib-b")
                     )
                 ),
-                AndroidLibModule(name = "lib-a", packageName = "lib_a_package"),
-                AndroidLibModule(name = "lib-b", packageName = "lib_b_package"),
-                AndroidLibModule(name = "lib-c", packageName = "lib_c_package")
+                AndroidLibModule(name = "lib-a", packageName = "lib.a.package"),
+                AndroidLibModule(name = "lib-b", packageName = "lib.b.package"),
+                AndroidLibModule(name = "lib-c", packageName = "lib.c.package")
             ),
             buildGradleExtra = """
                 buildChecks {
@@ -56,7 +55,48 @@ class UniqueRClassesTest {
             """.trimIndent()
         ).generateIn(projectDir)
 
-        val build = runCheck(expectFailure = false)
+        val build = runCheck()
+
+        build.assertThat().buildSuccessful()
+    }
+
+    @Test
+    fun `success - allowed duplicate`() {
+        TestProjectGenerator(
+            plugins = listOf(
+                "com.avito.android.buildchecks"
+            ),
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app-x",
+                    packageName = "app.x.package",
+                    dependencies = setOf(
+                        project(":lib-a"),
+                    )
+                ),
+                AndroidLibModule(
+                    name = "lib-a",
+                    packageName = "lib.package",
+                    dependencies = setOf(
+                        project(":lib-b")
+                    )
+                ),
+                AndroidLibModule(
+                    name = "lib-b",
+                    packageName = "lib.package"
+                ),
+            ),
+            buildGradleExtra = """
+                buildChecks {
+                    enableByDefault = false
+                    uniqueRClasses {
+                        allowedNonUniquePackageNames.add("lib.package")
+                    }
+                }
+            """.trimIndent()
+        ).generateIn(projectDir)
+
+        val build = runCheck()
 
         build.assertThat().buildSuccessful()
     }
@@ -65,13 +105,12 @@ class UniqueRClassesTest {
     fun `fail - duplicated package in implementation`() {
         TestProjectGenerator(
             plugins = listOf(
-                "com.avito.android.buildchecks",
-                "com.avito.android.impact"
+                "com.avito.android.buildchecks"
             ),
             modules = listOf(
                 AndroidAppModule(
                     name = "app-x",
-                    packageName = "app_x_package",
+                    packageName = "app.x.package",
                     dependencies = setOf(
                         project(":lib-a"),
                         project(":lib-b")
@@ -79,15 +118,15 @@ class UniqueRClassesTest {
                 ),
                 AndroidAppModule(
                     name = "app-y",
-                    packageName = "app_y_package",
+                    packageName = "app.y.package",
                     dependencies = setOf(
                         project(":duplicate"),
                         project(":lib-b")
                     )
                 ),
-                AndroidLibModule(name = "lib-a", packageName = "lib_a_package"),
-                AndroidLibModule(name = "lib-b", packageName = "lib_b_package"),
-                AndroidLibModule(name = "duplicate", packageName = "lib_b_package")
+                AndroidLibModule(name = "lib-a", packageName = "lib.a.package"),
+                AndroidLibModule(name = "lib-b", packageName = "lib.b.package"),
+                AndroidLibModule(name = "duplicate", packageName = "lib.b.package")
             ),
             buildGradleExtra = """
                 buildChecks {
@@ -99,7 +138,7 @@ class UniqueRClassesTest {
 
         val build = runCheck(expectFailure = true)
 
-        build.assertThat().buildFailed("Application :app-y has modules with the same package: [lib_b_package]")
+        build.assertThat().buildFailed("Application :app-y has modules with the same package: [lib.b.package]")
     }
 
     /**
@@ -110,13 +149,12 @@ class UniqueRClassesTest {
     fun `fail - duplicated package in test`() {
         TestProjectGenerator(
             plugins = listOf(
-                "com.avito.android.buildchecks",
-                "com.avito.android.impact"
+                "com.avito.android.buildchecks"
             ),
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    packageName = "app_package",
+                    packageName = "app.package",
                     dependencies = setOf(
                         project(":lib"),
                         project(":lib-test", configuration = ANDROID_TEST_IMPLEMENTATION)
@@ -124,11 +162,11 @@ class UniqueRClassesTest {
                 ),
                 AndroidLibModule(
                     name = "lib",
-                    packageName = "lib_package"
+                    packageName = "lib.package"
                 ),
                 AndroidLibModule(
                     name = "lib-test",
-                    packageName = "lib_package",
+                    packageName = "lib.package",
                     dependencies = setOf(
                         project(":lib")
                     )
@@ -144,12 +182,12 @@ class UniqueRClassesTest {
 
         val build = runCheck(expectFailure = true)
 
-        build.assertThat().buildFailed("Application :app has modules with the same package: [lib_package]")
+        build.assertThat().buildFailed("Application :app has modules with the same package: [lib.package]")
     }
 
-    private fun runCheck(expectFailure: Boolean) = gradlew(
+    private fun runCheck(expectFailure: Boolean = false) = gradlew(
         projectDir,
-        "checkUniqueAndroidPackages",
+        "checkBuildEnvironment",
         "-PgitBranch=xxx", // todo need for impact plugin
         expectFailure = expectFailure
     )
