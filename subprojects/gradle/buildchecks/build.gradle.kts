@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":gradle:build-failer"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:build-metrics"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:build-environment"))
