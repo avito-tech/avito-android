@@ -7,11 +7,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.net.URL
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ISO_DATE
 
 /**
  * @param endpoints list of elastic endpoints to send logs
@@ -32,9 +27,9 @@ internal class HttpElasticClient(
 
     private val elasticApi = elasticServiceFactory.createApiService(endpoints)
 
-    private val timezone = ZoneId.of("Europe/Moscow")
+    private val timestampFormatter = timeProvider.formatter("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSZ")
 
-    private val timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSZ")
+    private val isoDate = timeProvider.formatter("yyyy-MM-dd")
 
     override fun sendMessage(
         level: String,
@@ -43,25 +38,25 @@ internal class HttpElasticClient(
         throwable: Throwable?
     ) {
         try {
-            val nowWithTimeZone = ZonedDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
-            val nowWithoutTimeZone = LocalDateTime.ofInstant(timeProvider.now().toInstant(), timezone)
+            val nowWithTimeZone = timeProvider.now()
 
             val params = mutableMapOf(
-                "@timestamp" to nowWithTimeZone.format(timestampFormatter),
+                "@timestamp" to timestampFormatter.format(nowWithTimeZone),
                 "level" to level,
                 "build_id" to buildId,
                 "message" to message
             )
 
-            if (!throwable?.message.isNullOrBlank()) {
-                params["error_message"] = throwable?.message
+            val errorMessage = throwable?.message
+            if (!errorMessage.isNullOrBlank()) {
+                params["error_message"] = errorMessage
             }
 
             params.putAll(metadata)
 
             elasticApi.log(
                 indexPattern = indexPattern,
-                date = nowWithoutTimeZone.format(ISO_DATE),
+                date = isoDate.format(nowWithTimeZone),
                 params = params
             ).enqueue(
                 object : Callback<ResponseBody> {
