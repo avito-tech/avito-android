@@ -58,8 +58,6 @@ abstract class InHouseInstrumentationTestRunner :
     ImitateFlagProvider,
     RemoteStorageProvider {
 
-    private val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
-
     private val sentryConfig: SentryConfig by lazy { runEnvironment.sentryConfig }
 
     private val statsDConfig: StatsDConfig by lazy { runEnvironment.statsDConfig }
@@ -71,6 +69,11 @@ abstract class InHouseInstrumentationTestRunner :
     protected val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
 
     protected val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
+
+    /**
+     * Public for *TestApp to skip on orchestrator runs
+     */
+    val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
 
     val runEnvironment: TestRunEnvironment.RunEnvironment by lazy { testRunEnvironment.asRunEnvironmentOrThrow() }
 

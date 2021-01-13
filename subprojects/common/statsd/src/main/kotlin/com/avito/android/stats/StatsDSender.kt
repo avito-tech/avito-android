@@ -30,7 +30,8 @@ interface StatsDSender {
                 is StatsDConfig.Disabled -> NoOpStatsDClient()
                 is StatsDConfig.Enabled -> try {
                     NonBlockingStatsDClient(config.namespace, config.host, config.port, errorHandler)
-                } catch (err: Exception) {
+                } catch (e: Exception) {
+                    logger.warn("Can't create statsDClient on main host", e)
                     if (config.host == config.fallbackHost) {
                         NoOpStatsDClient()
                     } else {
@@ -61,6 +62,8 @@ interface StatsDSender {
 
             if (config is StatsDConfig.Enabled) {
                 logger.debug("${metric.type}:${config.namespace}.$path:${metric.value}")
+            } else {
+                logger.debug("Skip sending event: $path")
             }
         }
     }
