@@ -121,16 +121,8 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             }
         }
         if (checks.hasInstance<Check.UniqueRClasses>()) {
-            check(project.pluginManager.hasPlugin("com.avito.android.impact")) {
-                "build check 'uniqueRClasses' requires 'com.avito.android.impact' plugin"
-            }
-            val task = project.tasks.register<UniqueRClassesTask>("checkUniqueAndroidPackages") {
-                group = "verification"
-                description = "Verify unique R classes"
-            }
-            checkBuildEnvironment {
-                dependsOn(task)
-            }
+            UniqueRClassesTaskFactory(project, checks.getInstance())
+                .register(checkBuildEnvironment)
         }
         if (checks.hasInstance<Check.MacOSLocalhost>() && isMac()) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
