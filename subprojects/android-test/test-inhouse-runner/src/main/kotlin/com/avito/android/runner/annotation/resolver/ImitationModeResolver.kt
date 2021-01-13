@@ -1,21 +1,24 @@
 package com.avito.android.runner.annotation.resolver
 
-import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
+import com.avito.android.log.AndroidLoggerFactory
+import com.avito.android.sentry.SentryConfig
 import com.avito.android.test.annotations.SkipOnSdk
+import com.avito.logger.create
 
-class ImitationModeResolver : TestMetadataResolver {
+class ImitationModeResolver() : TestMetadataResolver {
+
+    private val logger = AndroidLoggerFactory(SentryConfig.Disabled).create<ImitationModeResolver>()
 
     override val key: String = BUNDLE_KEY
 
-    @SuppressLint("LogNotTimber")
     override fun resolve(test: TestMethodOrClass): TestMetadataResolver.Resolution {
         val skipOnSdkAnnotation: SkipOnSdk? =
             Annotations.getAnnotationsSubset(test.testClass, test.testMethod, SkipOnSdk::class.java)
                 .firstOrNull()
                 ?.let { it as SkipOnSdk }
 
+        @Suppress("FoldInitializerAndIfToElvis")
         if (skipOnSdkAnnotation == null) {
             return TestMetadataResolver.Resolution.NothingToChange("SkipOnSdk annotation not found")
         }
@@ -23,8 +26,7 @@ class ImitationModeResolver : TestMetadataResolver {
         val currentSdk = Build.VERSION.SDK_INT
 
         if (skipOnSdkAnnotation.sdk.contains(currentSdk)) {
-            Log.w(
-                "ImitationModeResolver",
+            logger.debug(
                 "Test is configured to be skipped on sdk " +
                     "${skipOnSdkAnnotation.sdk.joinToString(", ")} " +
                     "Current sdk is $currentSdk. Real execution will be skipped"

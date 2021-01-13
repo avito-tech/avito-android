@@ -1,15 +1,16 @@
 package com.avito.android.test.report
 
-import android.annotation.SuppressLint
-import android.util.Log
+import com.avito.android.log.AndroidLoggerFactory
+import com.avito.android.sentry.SentryConfig
+import com.avito.logger.create
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
-@SuppressLint("LogNotTimber")
 class ReportTestListener : RunListener() {
 
     private val report: Report by lazy { TestExecutionState.reportInstance }
+    private val logger = AndroidLoggerFactory(SentryConfig.Disabled).create<ReportTestListener>()
 
     override fun testStarted(description: Description) {
         processEvent("start", description.displayName) {
@@ -37,15 +38,11 @@ class ReportTestListener : RunListener() {
 
     private inline fun processEvent(event: String, testName: String, action: () -> Unit) {
         try {
-            Log.d(TAG, "Receive event: $event for test: $testName")
+            logger.debug("Receive event: $event for test: $testName")
             action()
-            Log.d(TAG, "Processed event: $event for test: $testName SUCCESSFULLY")
+            logger.debug("Processed event: $event for test: $testName SUCCESSFULLY")
         } catch (t: Throwable) {
-            Log.w(TAG, "Processed event: $event for test: $testName UNSUCCESSFULLY", t)
+            logger.warn("Processed event: $event for test: $testName UNSUCCESSFULLY", t)
         }
-    }
-
-    companion object {
-        private const val TAG = "ReportTestListener"
     }
 }

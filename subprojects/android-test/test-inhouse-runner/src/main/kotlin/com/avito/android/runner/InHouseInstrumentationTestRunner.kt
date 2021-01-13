@@ -1,6 +1,5 @@
 package com.avito.android.runner
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
@@ -62,13 +61,11 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val statsDConfig: StatsDConfig by lazy { runEnvironment.statsDConfig }
 
-    private val logger by lazy { loggerFactory.create("InHouseInstrumentationTestRunner") }
+    private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
     val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
 
     val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
-
-    val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
 
     /**
      * Public for *TestApp to skip on orchestrator runs
@@ -76,6 +73,8 @@ abstract class InHouseInstrumentationTestRunner :
     val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
 
     val runEnvironment: TestRunEnvironment.RunEnvironment by lazy { testRunEnvironment.asRunEnvironmentOrThrow() }
+
+    override val loggerFactory   by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
 
     override val remoteStorage: RemoteStorage by lazy {
         RemoteStorage.create(
@@ -115,7 +114,7 @@ abstract class InHouseInstrumentationTestRunner :
                 val gson: Gson = GsonBuilder()
                     .registerTypeAdapterFactory(EntryTypeAdapterFactory())
                     .create()
-                listOf(ExternalStorageTransport(gson))
+                listOf(ExternalStorageTransport(gson, loggerFactory))
             }
         }
 
@@ -179,15 +178,14 @@ abstract class InHouseInstrumentationTestRunner :
      * WARNING: Can't crash in this method.
      * Otherwise we can't pass an error to the report
      */
-    @SuppressLint("LogNotTimber")
     override fun onCreate(arguments: Bundle) {
         instrumentationArguments = arguments
         injectTestMetadata(arguments)
 
-        logger.debug("Instrumentation arguments: $instrumentationArguments")
-        logger.debug("TestRunEnvironment: $testRunEnvironment")
-
         testRunEnvironment.executeIfRealRun {
+            logger.debug("Instrumentation arguments: $instrumentationArguments")
+            logger.debug("TestRunEnvironment: $testRunEnvironment")
+
             initApplicationCrashHandling()
 
             addReportListener(arguments)
@@ -204,7 +202,10 @@ abstract class InHouseInstrumentationTestRunner :
         testRunEnvironment.executeIfRealRun {
             Espresso.setFailureHandler(ReportFriendlyFailureHandler())
             initUITestConfig()
-            DeviceSettingsChecker(targetContext).check()
+            DeviceSettingsChecker(
+                context = targetContext,
+                loggerFactory = loggerFactory
+            ).check()
         }
     }
 
@@ -304,7 +305,7 @@ abstract class InHouseInstrumentationTestRunner :
      */
     private fun initApplicationCrashHandling() {
         Thread.setDefaultUncaughtExceptionHandler(
-            ReportUncaughtHandler()
+            ReportUncaughtHandler(loggerFactory)
         )
     }
 

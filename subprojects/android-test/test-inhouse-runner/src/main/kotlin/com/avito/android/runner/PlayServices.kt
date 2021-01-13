@@ -1,16 +1,13 @@
 package com.avito.android.runner
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
+import com.avito.logger.Logger
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 
-@SuppressLint("LogNotTimber")
-internal fun Context.checkPlayServices() {
-    Log.d(
-        "LaunchRule",
+internal fun Context.checkPlayServices(logger: Logger) {
+    logger.debug(
         "Required play services version: $playServicesMetaDataVersion, on device: $playServicesOnDeviceVersion"
     )
     when (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)) {

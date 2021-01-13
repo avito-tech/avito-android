@@ -1,6 +1,5 @@
 package com.avito.android.test.report
 
-import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
@@ -37,8 +36,6 @@ import java.io.File
  *
  * @param onDeviceCacheDirectory для всяких скриншотов, видео, логов
  */
-@Suppress("FoldInitializerAndIfToElvis")
-@SuppressLint("LogNotTimber")
 class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
     private val onIncident: (Throwable) -> Unit = {},

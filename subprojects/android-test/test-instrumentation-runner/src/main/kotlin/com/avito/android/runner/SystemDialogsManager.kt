@@ -2,29 +2,35 @@ package com.avito.android.runner
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
+import android.provider.Settings
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 
 /**
  * Based on https://github.com/nenick/espresso-macchiato
  */
-class SystemDialogsManager(private val errorsReporter: ErrorsReporter) {
+class SystemDialogsManager(
+    private val errorsReporter: ErrorsReporter,
+    loggerFactory: LoggerFactory
+) {
 
-    @SuppressLint("LogNotTimber")
+    private val logger = loggerFactory.create<Settings.System>()
+
     fun closeSystemDialogs() {
         try {
             dismissCrashDialogIfShown()
         } catch (t: Throwable) {
-            Log.v(TAG, "Failed to close crash dialog: ${t.message}")
+            logger.warn("Failed to close crash dialog: ${t.message}")
             errorsReporter.reportError(t)
         }
 
         try {
             dismissAnrDialogIfShown()
         } catch (t: Throwable) {
-            Log.v(TAG, "Failed to close application not respond dialog: ${t.message}")
+            logger.warn("Failed to close application not respond dialog: ${t.message}")
             errorsReporter.reportError(t)
         }
 
@@ -32,7 +38,7 @@ class SystemDialogsManager(private val errorsReporter: ErrorsReporter) {
             try {
                 dismissHiddenApiDialog()
             } catch (t: Throwable) {
-                Log.v(TAG, "Failed to close hidden api dialog: ${t.message}")
+                logger.warn("Failed to close hidden api dialog: ${t.message}")
                 errorsReporter.reportError(t)
             }
         }
@@ -86,7 +92,7 @@ class SystemDialogsManager(private val errorsReporter: ErrorsReporter) {
         }
     }
 
-    @SuppressLint("PrivateApi", "DiscouragedPrivateApi", "LogNotTimber")
+    @SuppressLint("PrivateApi", "DiscouragedPrivateApi")
     private fun dismissHiddenApiDialog() {
         val aClass = Class.forName("android.content.pm.PackageParser\$Package")
         val declaredConstructor = aClass.getDeclaredConstructor(String::class.java)
@@ -129,5 +135,3 @@ class SystemDialogsManager(private val errorsReporter: ErrorsReporter) {
             "($it)"
         }
 }
-
-private const val TAG = "SystemDialogsManager"
