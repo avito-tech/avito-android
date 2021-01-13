@@ -64,11 +64,11 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val logger by lazy { loggerFactory.create("InHouseInstrumentationTestRunner") }
 
-    protected val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
+    val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
 
-    protected val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
+    val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
 
-    protected val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
+    val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
 
     /**
      * Public for *TestApp to skip on orchestrator runs
