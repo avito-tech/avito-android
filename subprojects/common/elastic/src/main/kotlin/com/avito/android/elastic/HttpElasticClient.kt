@@ -14,14 +14,15 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_DATE
 
 /**
- * @param endpoint elastic endpoints to send logs
+ * @param endpoints list of elastic endpoints to send logs
+ *                  multiple endpoints used for stability, sometimes nodes may be unresponsive
  * @param indexPattern see https://www.elastic.co/guide/en/kibana/current/index-patterns.html
  * @param onError can't deliver message; reaction delegated to upstream
  */
 internal class HttpElasticClient(
     okHttpClient: OkHttpClient,
     private val timeProvider: TimeProvider,
-    private val endpoint: URL,
+    private val endpoints: List<URL>,
     private val indexPattern: String,
     private val buildId: String,
     private val onError: (String, Throwable?) -> Unit
@@ -29,7 +30,7 @@ internal class HttpElasticClient(
 
     private val elasticServiceFactory = ElasticServiceFactory(okHttpClient)
 
-    private val elasticApi = elasticServiceFactory.createApiService(endpoint)
+    private val elasticApi = elasticServiceFactory.createApiService(endpoints)
 
     private val timezone = ZoneId.of("Europe/Moscow")
 

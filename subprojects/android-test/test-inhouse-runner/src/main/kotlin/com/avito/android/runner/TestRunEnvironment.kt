@@ -2,6 +2,8 @@ package com.avito.android.runner
 
 import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.elastic.ElasticConfig
+import com.avito.android.log.ElasticConfigFactory
 import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.HostAnnotationResolver
 import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
@@ -85,6 +87,7 @@ sealed class TestRunEnvironment {
         val slackToken: String,
         val videoRecordingFeature: VideoFeatureValue,
         val outputDirectory: Lazy<File>,
+        val elasticConfig: ElasticConfig,
         val sentryConfig: SentryConfig,
         val statsDConfig: StatsDConfig,
         val fileStorageUrl: String,
@@ -152,6 +155,7 @@ fun provideEnvironment(
                 },
                 // from GradleInstrumentationPluginConfiguration
                 slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
+                elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
                 sentryConfig = parseSentryConfig(argumentsProvider),
                 statsDConfig = parseStatsDConfig(argumentsProvider),
                 fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),

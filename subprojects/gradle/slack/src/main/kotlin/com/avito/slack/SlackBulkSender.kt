@@ -1,6 +1,7 @@
 package com.avito.slack
 
 import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.slack.model.SlackSendMessageRequest
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -26,7 +27,7 @@ class CoroutinesSlackBulkSender(
     private val loggerFactory: LoggerFactory
 ) : SlackBulkSender {
 
-    private val logger = loggerFactory.create("SlackBulkSender")
+    private val logger = loggerFactory.create<SlackBulkSender>()
 
     private val requestQueue = Channel<SlackSendMessageRequest>(Channel.UNLIMITED)
 
