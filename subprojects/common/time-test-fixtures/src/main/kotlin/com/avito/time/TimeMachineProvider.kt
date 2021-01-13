@@ -1,6 +1,8 @@
 package com.avito.time
 
+import java.text.DateFormat
 import java.util.Date
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 /**
@@ -11,6 +13,8 @@ class TimeMachineProvider : TimeProvider {
     private var timeShift: Long = 0
 
     private val defaultTimeProvider = DefaultTimeProvider()
+
+    override val timeZone: TimeZone = defaultTimeProvider.timeZone
 
     fun moveForwardOn(time: Long, unit: TimeUnit = TimeUnit.MILLISECONDS) {
         timeShift += unit.toMillis(time)
@@ -29,4 +33,6 @@ class TimeMachineProvider : TimeProvider {
     override fun now() = defaultTimeProvider.toDate(nowInSeconds())
 
     override fun toDate(seconds: Long) = defaultTimeProvider.toDate(seconds)
+
+    override fun formatter(pattern: String): DateFormat = defaultTimeProvider.formatter(pattern)
 }

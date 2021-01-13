@@ -1,9 +1,9 @@
 package com.avito.android.test.report.transport
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.report.ReportState
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.TestRuntimeDataPackage
 import com.google.gson.Gson
 import java.io.File
@@ -11,9 +11,13 @@ import java.io.File
 /**
  * Сохраняем репорт в json, чтобы потом достать из раннера
  */
-class ExternalStorageTransport(private val gson: Gson) : Transport, PreTransportMappers {
+class ExternalStorageTransport(
+    private val gson: Gson,
+    loggerFactory: LoggerFactory
+) : Transport, PreTransportMappers {
 
-    @SuppressLint("LogNotTimber")
+    private val logger = loggerFactory.create<ExternalStorageTransport>()
+
     override fun send(state: ReportState.Initialized.Started) {
         val testFolderName = "${state.testMetadata.className}#${state.testMetadata.methodName}"
 
@@ -31,7 +35,7 @@ class ExternalStorageTransport(private val gson: Gson) : Transport, PreTransport
             endTime = state.endTime
         )
 
-        Log.v(TAG, "Write report for test $testFolderName to file: ${reportMetadataJson.absolutePath}")
+        logger.debug("Write report for test $testFolderName to file: ${reportMetadataJson.absolutePath}")
 
         reportMetadataJson.writeText(gson.toJson(testRuntimeDataPackage))
     }
@@ -54,6 +58,5 @@ class ExternalStorageTransport(private val gson: Gson) : Transport, PreTransport
         // todo наверное можно прокинуть в instrumentation params
         private const val RUNNER_OUTPUT_FOLDER = "runner"
         private const val REPORT_FILE_NAME = "report.json"
-        private const val TAG = "StorageJsonTransport"
     }
 }

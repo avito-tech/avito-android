@@ -31,7 +31,7 @@ internal class HttpElasticClientTest {
         val elasticClient: ElasticClient = HttpElasticClient(
             okHttpClient = OkHttpClient(),
             timeProvider = timeProvider,
-            endpoint = mockWebServer.url("/").toUrl(),
+            endpoints = listOf(mockWebServer.url("/").toUrl()),
             indexPattern = "doesnt-matter",
             buildId = "12345",
             onError = { msg, error ->

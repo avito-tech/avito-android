@@ -1,10 +1,10 @@
 package com.avito.android.runner
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.monitoring.CompositeTestIssuesMonitor
 import com.avito.android.monitoring.TestIssuesMonitor
@@ -58,34 +58,40 @@ abstract class InHouseInstrumentationTestRunner :
     ImitateFlagProvider,
     RemoteStorageProvider {
 
-    private val sentryConfig: SentryConfig by lazy { runEnvironment.sentryConfig }
+    private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
 
-    private val statsDConfig: StatsDConfig by lazy { runEnvironment.statsDConfig }
+    private val sentryConfig: SentryConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().sentryConfig }
 
-    private val logger by lazy { loggerFactory.create("InHouseInstrumentationTestRunner") }
+    private val statsDConfig: StatsDConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig }
+
+    private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
     val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
 
     val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
-
-    val loggerFactory by lazy { AndroidLoggerFactory(sentryConfig = sentryConfig) }
 
     /**
      * Public for *TestApp to skip on orchestrator runs
      */
     val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
 
-    val runEnvironment: TestRunEnvironment.RunEnvironment by lazy { testRunEnvironment.asRunEnvironmentOrThrow() }
+    override val loggerFactory by lazy {
+        AndroidLoggerFactory(
+            elasticConfig = elasticConfig,
+            sentryConfig = sentryConfig
+        )
+    }
 
     override val remoteStorage: RemoteStorage by lazy {
         RemoteStorage.create(
             loggerFactory = loggerFactory,
             httpClient = reportHttpClient,
-            endpoint = runEnvironment.fileStorageUrl
+            endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl
         )
     }
 
     override val report: Report by lazy {
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         val testReportLogger = loggerFactory.create<Report>()
         val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
         val transport: List<Transport> = when {
@@ -115,7 +121,7 @@ abstract class InHouseInstrumentationTestRunner :
                 val gson: Gson = GsonBuilder()
                     .registerTypeAdapterFactory(EntryTypeAdapterFactory())
                     .create()
-                listOf(ExternalStorageTransport(gson))
+                listOf(ExternalStorageTransport(gson, loggerFactory))
             }
         }
 
@@ -179,15 +185,14 @@ abstract class InHouseInstrumentationTestRunner :
      * WARNING: Can't crash in this method.
      * Otherwise we can't pass an error to the report
      */
-    @SuppressLint("LogNotTimber")
     override fun onCreate(arguments: Bundle) {
         instrumentationArguments = arguments
         injectTestMetadata(arguments)
 
-        logger.debug("Instrumentation arguments: $instrumentationArguments")
-        logger.debug("TestRunEnvironment: $testRunEnvironment")
-
         testRunEnvironment.executeIfRealRun {
+            logger.debug("Instrumentation arguments: $instrumentationArguments")
+            logger.debug("TestRunEnvironment: $testRunEnvironment")
+
             initApplicationCrashHandling()
 
             addReportListener(arguments)
@@ -204,7 +209,10 @@ abstract class InHouseInstrumentationTestRunner :
         testRunEnvironment.executeIfRealRun {
             Espresso.setFailureHandler(ReportFriendlyFailureHandler())
             initUITestConfig()
-            DeviceSettingsChecker(targetContext).check()
+            DeviceSettingsChecker(
+                context = targetContext,
+                loggerFactory = loggerFactory
+            ).check()
         }
     }
 
@@ -304,7 +312,7 @@ abstract class InHouseInstrumentationTestRunner :
      */
     private fun initApplicationCrashHandling() {
         Thread.setDefaultUncaughtExceptionHandler(
-            ReportUncaughtHandler()
+            ReportUncaughtHandler(loggerFactory)
         )
     }
 

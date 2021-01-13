@@ -2,6 +2,7 @@ package com.avito.android
 
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
+import com.avito.logger.create
 import com.avito.utils.ExistingDirectory
 import com.avito.utils.ProcessRunner
 import org.gradle.api.Project
@@ -36,8 +37,6 @@ class AndroidSdk(
 
     companion object {
 
-        private const val TAG = "AndroidSdk"
-
         @JvmStatic
         fun fromAndroidProject(project: Project): AndroidSdk {
             require(project.isAndroid()) {
@@ -48,7 +47,7 @@ class AndroidSdk(
             val loggerFactory = GradleLoggerFactory.fromProject(project)
 
             return AndroidSdk(
-                androidHome = androidHome(project.rootDir, loggerFactory.create(TAG)),
+                androidHome = androidHome(project.rootDir, loggerFactory.create<AndroidSdk>()),
                 processRunner = ProcessRunner.Real(
                     workingDirectory = null,
                     loggerFactory = loggerFactory
@@ -63,7 +62,7 @@ class AndroidSdk(
             val loggerFactory = GradleLoggerFactory.fromProject(project)
 
             return BaseAndroidSdk(
-                androidHome = androidHome(project.rootDir, loggerFactory.create(TAG)),
+                androidHome = androidHome(project.rootDir, loggerFactory.create<AndroidSdk>()),
                 processRunner = ProcessRunner.Real(
                     workingDirectory = null,
                     loggerFactory = loggerFactory

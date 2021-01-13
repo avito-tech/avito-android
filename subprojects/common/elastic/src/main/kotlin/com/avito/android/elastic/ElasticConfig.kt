@@ -8,7 +8,7 @@ sealed class ElasticConfig : Serializable {
     object Disabled : ElasticConfig()
 
     data class Enabled(
-        val endpoint: URL,
+        val endpoints: List<URL>,
         val indexPattern: String,
         val buildId: String
     ) : ElasticConfig()
