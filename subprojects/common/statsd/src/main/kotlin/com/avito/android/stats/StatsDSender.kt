@@ -26,17 +26,21 @@ interface StatsDSender {
         }
 
         private val client: StatsDClient by lazy {
-            if (!config.isEnabled) {
-                NoOpStatsDClient()
-            } else {
-                try {
+            when (config) {
+                is StatsDConfig.Disabled -> NoOpStatsDClient()
+                is StatsDConfig.Enabled -> try {
                     NonBlockingStatsDClient(config.namespace, config.host, config.port, errorHandler)
-                } catch (err: Exception) {
-                    try {
-                        NonBlockingStatsDClient(config.namespace, config.fallbackHost, config.port, errorHandler)
-                    } catch (err: Exception) {
-                        errorHandler.handle(err)
+                } catch (e: Exception) {
+                    logger.warn("Can't create statsDClient on main host", e)
+                    if (config.host == config.fallbackHost) {
                         NoOpStatsDClient()
+                    } else {
+                        try {
+                            NonBlockingStatsDClient(config.namespace, config.fallbackHost, config.port, errorHandler)
+                        } catch (err: Exception) {
+                            errorHandler.handle(err)
+                            NoOpStatsDClient()
+                        }
                     }
                 }
             }
@@ -48,13 +52,19 @@ interface StatsDSender {
             } else {
                 metric.path
             }
+
             @Suppress("USELESS_CAST")
             when (metric) {
                 is TimeMetric -> client.time(path, metric.value)
                 is CountMetric -> client.count(path, metric.value)
                 is GaugeMetric -> client.gauge(path, metric.value)
             } as Unit
-            logger.debug("${metric.type}:${config.namespace}.$path:${metric.value}")
+
+            if (config is StatsDConfig.Enabled) {
+                logger.debug("${metric.type}:${config.namespace}.$path:${metric.value}")
+            } else {
+                logger.debug("Skip sending event: $path")
+            }
         }
     }
 }

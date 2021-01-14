@@ -1,25 +1,22 @@
 package com.avito.android.runner
 
-import android.annotation.SuppressLint
-import android.util.Log
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 
-@SuppressLint("LogNotTimber")
 internal class ReportUncaughtHandler(
+    loggerFactory: LoggerFactory,
     private val globalExceptionHandler: Thread.UncaughtExceptionHandler? = Thread.getDefaultUncaughtExceptionHandler()
 ) : Thread.UncaughtExceptionHandler {
 
+    private val logger = loggerFactory.create<ReportUncaughtHandler>()
+
     override fun uncaughtException(t: Thread, e: Throwable) {
-        Log.e(TAG, "Application crash captured by global handler", e)
+        logger.critical("Application crash captured by global handler", e)
 
         InHouseInstrumentationTestRunner.instance.tryToReportUnexpectedIncident(
-            incident = e,
-            tag = TAG
+            incident = e
         )
 
         globalExceptionHandler?.uncaughtException(t, e)
-    }
-
-    companion object {
-        private const val TAG = "ReportUncaughtHandler"
     }
 }

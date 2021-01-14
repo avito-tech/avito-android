@@ -19,7 +19,7 @@ class VideoCaptureTestListener(
     loggerFactory: LoggerFactory,
     private val shouldRecord: Boolean,
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
-    private val videoCapturer: VideoCapturer = VideoCapturerImpl(onDeviceCacheDirectory)
+    private val videoCapturer: VideoCapturer = VideoCapturerImpl(onDeviceCacheDirectory, loggerFactory)
 ) : TestLifecycleListener {
 
     private val logger = loggerFactory.create<VideoCaptureTestListener>()

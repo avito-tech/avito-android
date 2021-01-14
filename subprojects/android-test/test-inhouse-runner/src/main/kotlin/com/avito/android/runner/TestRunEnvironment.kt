@@ -2,12 +2,15 @@ package com.avito.android.runner
 
 import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.elastic.ElasticConfig
+import com.avito.android.log.ElasticConfigFactory
 import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.HostAnnotationResolver
 import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
 import com.avito.android.runner.annotation.resolver.NetworkingType
 import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
 import com.avito.android.sentry.SentryConfig
+import com.avito.android.stats.StatsDConfig
 import com.avito.android.test.report.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.video.VideoFeatureValue
@@ -84,8 +87,9 @@ sealed class TestRunEnvironment {
         val slackToken: String,
         val videoRecordingFeature: VideoFeatureValue,
         val outputDirectory: Lazy<File>,
-        val sentryDsn: String?, // todo remove after 2021.1 (replaced by sentryConfig)
-        val sentryConfig: SentryConfig?,
+        val elasticConfig: ElasticConfig,
+        val sentryConfig: SentryConfig,
+        val statsDConfig: StatsDConfig,
         val fileStorageUrl: String,
         val reportConfig: ReportConfig?,
         val testRunCoordinates: ReportCoordinates,
@@ -151,8 +155,9 @@ fun provideEnvironment(
                 },
                 // from GradleInstrumentationPluginConfiguration
                 slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
-                sentryDsn = argumentsProvider.getOptionalArgument("sentryDsn"),
-                sentryConfig = argumentsProvider.getOptionalSerializableArgument("sentryConfig"),
+                elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
+                sentryConfig = parseSentryConfig(argumentsProvider),
+                statsDConfig = parseStatsDConfig(argumentsProvider),
                 fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
                 testRunCoordinates = coordinates,
                 reportConfig = reportConfig,
@@ -162,6 +167,37 @@ fun provideEnvironment(
         } catch (e: Throwable) {
             TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
         }
+    }
+}
+
+private fun parseSentryConfig(argumentsProvider: ArgsProvider): SentryConfig {
+    val sentryDsn = argumentsProvider.getOptionalArgument("sentryDsn")
+    return if (sentryDsn.isNullOrBlank()) {
+        SentryConfig.Disabled
+    } else {
+        SentryConfig.Enabled(
+            dsn = sentryDsn,
+            environment = "android-test",
+            serverName = "",
+            release = "",
+            tags = emptyMap()
+        )
+    }
+}
+
+private fun parseStatsDConfig(argumentsProvider: ArgsProvider): StatsDConfig {
+    val host = argumentsProvider.getOptionalArgument("statsDHost")
+    val port = argumentsProvider.getOptionalIntArgument("statsDPort")
+    val namespace = argumentsProvider.getOptionalArgument("statsDNamespace")
+    return if (!host.isNullOrBlank() && port != null && !namespace.isNullOrBlank()) {
+        StatsDConfig.Enabled(
+            host = host,
+            fallbackHost = host,
+            port = port,
+            namespace = namespace
+        )
+    } else {
+        StatsDConfig.Disabled
     }
 }
 

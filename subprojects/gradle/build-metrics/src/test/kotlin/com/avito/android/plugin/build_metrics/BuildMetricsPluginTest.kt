@@ -166,7 +166,7 @@ class BuildMetricsPluginTest {
         return gradlew(
             tempDir, *tasks,
             "-Pavito.build.metrics.enabled=true",
-            "-Pavito.stats.enabled=false",
+            "-Pavito.stats.enabled=true",
             "-Pavito.stats.host=http://stats",
             "-Pavito.stats.fallbackHost=http://stats",
             "-Pavito.stats.port=80",
