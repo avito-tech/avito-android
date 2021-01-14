@@ -121,9 +121,6 @@ include(":ci:k8s-deployments-cleaner")
 
 pluginManagement {
 
-    val kotlinVersion: String by System.getProperties()
-    val androidGradlePluginVersion: String by System.getProperties()
-
     repositories {
         exclusiveContent {
             forRepository {
@@ -134,7 +131,6 @@ pluginManagement {
                 includeGroup("com.gradle.enterprise")
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("com.jfrog.bintray")
-                includeGroup("nebula.integtest")
                 includeGroup("io.gitlab.arturbosch.detekt")
                 includeGroup("com.autonomousapps.dependency-analysis")
             }
@@ -150,21 +146,25 @@ pluginManagement {
     }
 
     plugins {
-        id("nebula.integtest") version "7.0.7"
     }
 
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
+            val moduleGroup = requested.module?.group
+            val moduleName= requested.module?.name
             when {
                 pluginId.startsWith("com.android.") ->
-                    useModule("com.android.tools.build:gradle:$androidGradlePluginVersion")
+                    useModule("com.android.tools.build:gradle:4.2.0-beta03")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion(kotlinVersion)
+                    useVersion("1.4.21")
 
                 pluginId == "com.autonomousapps.dependency-analysis" ->
                     useVersion("0.55.0")
+
+                moduleGroup == "com.netflix.nebula" && moduleName == "gradle-info-plugin" ->
+                    useVersion("3.8.0")
             }
         }
     }
@@ -192,13 +192,14 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
                 includeGroup("com.google.test.platform")
+                includeGroup("com.google.testing.platform")
             }
         }
     }
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.3.4"
+    id("com.gradle.enterprise") version "3.5.1"
 }
 
 val isCI = booleanProperty("ci", false)

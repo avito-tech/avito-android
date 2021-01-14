@@ -14,7 +14,7 @@ object Dependencies {
         const val mockito = "3.3.3"
         const val detekt = "1.10.0"
         const val coroutines = "1.3.7"
-        val androidGradlePlugin: String = System.getProperty("androidGradlePluginVersion")
+        const val androidGradlePlugin: String = "4.2.0-beta03"
     }
 
     const val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
