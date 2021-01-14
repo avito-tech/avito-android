@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.android.stats
 
 import com.avito.kotlin.dsl.ProjectProperty
@@ -13,7 +11,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.provider.Provider
 
 val Project.statsd: Provider<StatsDSender> by ProjectProperty.lazy(scope = ROOT_PROJECT) { project ->
-    Providers.of<StatsDSender>(
+    Providers.of(
         StatsDSender.Impl(
             config = config(project),
             loggerFactory = GradleLoggerFactory.fromProject(project)
@@ -29,14 +27,13 @@ val Project.statsdConfig: Provider<StatsDConfig> by ProjectProperty.lazy(scope =
 private fun config(project: Project): StatsDConfig {
     val isEnabled = project.getBooleanProperty("avito.stats.enabled", false)
     return if (isEnabled) {
-        StatsDConfig(
-            isEnabled = isEnabled,
+        StatsDConfig.Enabled(
             host = project.getMandatoryStringProperty("avito.stats.host"),
             fallbackHost = project.getMandatoryStringProperty("avito.stats.fallbackHost"),
             port = project.getMandatoryIntProperty("avito.stats.port"),
             namespace = project.getMandatoryStringProperty("avito.stats.namespace")
         )
     } else {
-        StatsDConfig(isEnabled, "", "", 0, "")
+        StatsDConfig.Disabled
     }
 }

@@ -12,7 +12,8 @@ dependencies {
 
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:build-environment"))
-    implementation(project(":common:elastic"))
+    implementation(project(":common:elastic-logger"))
+    implementation(project(":common:sentry-logger"))
     implementation(project(":common:slf4j-logger"))
 
     testImplementation(Dependencies.Test.junitJupiterApi)

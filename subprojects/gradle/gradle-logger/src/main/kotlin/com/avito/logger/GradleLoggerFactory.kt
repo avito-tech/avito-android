@@ -3,13 +3,10 @@ package com.avito.logger
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryConfig
-import com.avito.logger.destination.ElasticDestination
-import com.avito.logger.destination.SentryDestination
 import com.avito.logger.destination.Slf4jDestination
 import com.avito.logger.formatter.AppendMetadataFormatter
 import com.avito.logger.handler.CombinedHandler
 import com.avito.logger.handler.DefaultLoggingHandler
-import com.avito.logger.handler.LoggingHandler
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
@@ -55,17 +52,21 @@ class GradleLoggerFactory(
         metadata: LoggerMetadata
     ): Logger {
 
-        val elasticHandler = createElasticHandler(elasticConfig, metadata)
+        val defaultHandler = DefaultLoggingHandler(
+            destination = ElasticDestinationFactory.create(elasticConfig, metadata)
+        )
 
-        val sentryHandler = createSentryHandler(sentryConfig, metadata)
+        val sentryHandler = DefaultLoggingHandler(
+            destination = SentryDestinationFactory.create(sentryConfig, metadata)
+        )
 
         return DefaultLogger(
-            debugHandler = elasticHandler,
-            infoHandler = elasticHandler,
-            warningHandler = elasticHandler,
+            debugHandler = defaultHandler,
+            infoHandler = defaultHandler,
+            warningHandler = defaultHandler,
             criticalHandler = CombinedHandler(
                 handlers = listOf(
-                    elasticHandler,
+                    defaultHandler,
                     sentryHandler
                 )
             )
@@ -86,23 +87,6 @@ class GradleLoggerFactory(
             criticalHandler = gradleLoggerHandler
         )
     }
-
-    private fun createElasticHandler(
-        elasticConfig: ElasticConfig,
-        metadata: LoggerMetadata
-    ): LoggingHandler = DefaultLoggingHandler(
-        destination = ElasticDestination(
-            config = elasticConfig,
-            metadata = metadata
-        )
-    )
-
-    private fun createSentryHandler(
-        sentryConfig: SentryConfig,
-        metadata: LoggerMetadata
-    ): LoggingHandler = DefaultLoggingHandler(
-        destination = SentryDestination(sentryConfig, metadata)
-    )
 
     companion object {
 
