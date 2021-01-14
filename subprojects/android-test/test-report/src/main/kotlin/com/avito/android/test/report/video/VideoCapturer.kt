@@ -1,14 +1,14 @@
 package com.avito.android.test.report.video
 
-import android.annotation.SuppressLint
 import android.media.MediaMetadataRetriever
 import android.os.ParcelFileDescriptor
 import android.os.ParcelFileDescriptor.MODE_READ_WRITE
-import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.waitFor
 import com.avito.android.util.executeMethod
 import com.avito.android.util.getFieldValue
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import java.io.File
 import java.io.IOException
 import java.util.UUID
@@ -34,8 +34,11 @@ interface VideoCapturer {
 }
 
 class VideoCapturerImpl(
-    private val outputDirectory: Lazy<File>
+    private val outputDirectory: Lazy<File>,
+    loggerFactory: LoggerFactory
 ) : VideoCapturer {
+
+    private val logger = loggerFactory.create<VideoCapturer>()
 
     private var state: State = State.Idling
 
@@ -61,13 +64,11 @@ class VideoCapturerImpl(
         }
     }
 
-    @SuppressLint("LogNotTimber")
     @Synchronized
-    override fun stop(): VideoCapturer.RecordResult {
-        val state = state
-        val result = when {
-            state is State.Recording -> {
-                val (videoFile, outputFile) = state
+    override fun stop(): VideoCapturer.RecordResult =
+        when (val castHelperLocalState = state) {
+            is State.Recording -> {
+                val (videoFile, outputFile) = castHelperLocalState
                 val result = try {
                     executeRecorderCommand("stop", outputFile)
                     waitForVideoSaving(videoFile)
@@ -90,20 +91,17 @@ class VideoCapturerImpl(
             }
             else -> VideoCapturer.RecordResult.Error("Can't stop video capturing. Capturer isn't recording")
         }
-        return result
-    }
 
     @Synchronized
     override fun abort() {
-        val state = state
-        when {
-            state is State.Recording -> {
-                val (videoFile, outputFile) = state
+        when (val castHelperLocalState = state) {
+            is State.Recording -> {
+                val (videoFile, outputFile) = castHelperLocalState
 
                 try {
                     executeRecorderCommand("abort", outputFile)
                 } catch (t: Throwable) {
-                    Log.w(TAG, "Can't abort capture", t)
+                    logger.warn("Can't abort capture", t)
                 } finally {
                     if (videoFile.exists()) {
                         videoFile.delete()

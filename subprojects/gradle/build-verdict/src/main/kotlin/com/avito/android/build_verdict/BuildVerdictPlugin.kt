@@ -29,7 +29,7 @@ class BuildVerdictPlugin : Plugin<ProjectInternal> {
 
         if (project.pluginIsEnabled) {
             val extension = project.extensions.create<BuildVerdictPluginExtension>("buildVerdict")
-            val logger = GradleLoggerFactory.fromPlugin(this, project).create("BuildVerdict")
+            val logger = GradleLoggerFactory.getLogger(this, project)
             val services = BuildVerdictPluginServices(extension, logger)
             project.gradle.addListener(services.gradleTaskExecutionListener())
             project.gradle.addLogEventListener(services.gradleLogEventListener())

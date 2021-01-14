@@ -1,6 +1,7 @@
 package com.avito.android.plugin
 
 import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import java.time.LocalDate
 
 typealias Team = String
@@ -11,7 +12,7 @@ internal class SuspiciousTogglesCollector(
     private val developerToTeam: Map<DeveloperEmail, Team>
 ) {
 
-    private val logger = loggerFactory.create("SuspiciousTogglesCollector")
+    private val logger = loggerFactory.create<SuspiciousTogglesCollector>()
 
     private val excludedToggles = listOf(
         "stetho",

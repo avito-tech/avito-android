@@ -1,15 +1,19 @@
 package com.avito.android.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import android.view.ViewConfiguration
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 
-class DeviceSettingsChecker(private val context: Context) {
+class DeviceSettingsChecker(
+    private val context: Context,
+    loggerFactory: LoggerFactory
+) {
 
-    @SuppressLint("LogNotTimber")
+    private val logger = loggerFactory.create<DeviceSettingsChecker>()
+
     fun check() {
         checkSupportedApi()
 
@@ -21,8 +25,7 @@ class DeviceSettingsChecker(private val context: Context) {
         )
         if (warnings.isNotEmpty()) {
             // TODO: Try to fix them of fail MBS-7355
-            Log.e(
-                "UITestRunner",
+            logger.warn(
                 "=== ERROR=== \n" +
                     "Emulator has incorrect settings which cause flakiness:\n" +
                     warnings.joinToString(separator = "") { "- $it\n" } +
