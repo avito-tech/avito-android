@@ -2,7 +2,7 @@
 
 set -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 source "$DIR"/ci/_environment.sh
 
@@ -94,14 +94,13 @@ function runInBuilder() {
     COMMANDS=$@
 
     docker run --rm \
-    --volume "$(pwd)":/app \
-    --volume /var/run/docker.sock:/var/run/docker.sock \
-    --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
-    --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
-    --workdir /app \
-    --env GRADLE_USER_HOME=/gradle \
-    --env LOCAL_USER_ID="$USER_ID" \
-    --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
-    ${IMAGE_ANDROID_BUILDER} \
-    bash -c "${GIT_COMMANDS} ${COMMANDS}"
+        --volume "$(pwd)":/app \
+        --volume /var/run/docker.sock:/var/run/docker.sock \
+        --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
+        --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
+        --workdir /app \
+        --env LOCAL_USER_ID="$USER_ID" \
+        --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
+        ${IMAGE_ANDROID_BUILDER} \
+        bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }
