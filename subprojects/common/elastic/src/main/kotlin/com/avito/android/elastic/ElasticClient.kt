@@ -1,8 +1,8 @@
 package com.avito.android.elastic
 
-interface ElasticClient {
+public interface ElasticClient {
 
-    fun sendMessage(
+    public fun sendMessage(
         level: String,
         message: String,
         metadata: Map<String, String>,

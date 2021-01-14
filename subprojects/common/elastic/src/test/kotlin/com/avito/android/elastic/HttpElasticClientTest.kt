@@ -4,7 +4,6 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
 import com.avito.time.StubTimeProvider
-import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -29,7 +28,6 @@ internal class HttpElasticClientTest {
         timeProvider.now = Date(1609858594000)
 
         val elasticClient: ElasticClient = HttpElasticClient(
-            okHttpClient = OkHttpClient(),
             timeProvider = timeProvider,
             endpoints = listOf(mockWebServer.url("/").toUrl()),
             indexPattern = "doesnt-matter",

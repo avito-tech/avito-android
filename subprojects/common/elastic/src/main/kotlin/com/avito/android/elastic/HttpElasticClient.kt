@@ -3,7 +3,8 @@ package com.avito.android.elastic
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.TimeProvider
-import okhttp3.OkHttpClient
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,7 +17,6 @@ import java.net.URL
  * @param indexPattern see https://www.elastic.co/guide/en/kibana/current/index-patterns.html
  */
 internal class HttpElasticClient(
-    okHttpClient: OkHttpClient,
     private val timeProvider: TimeProvider,
     private val endpoints: List<URL>,
     private val indexPattern: String,
@@ -26,9 +26,12 @@ internal class HttpElasticClient(
 
     private val logger = loggerFactory.create<HttpElasticClient>()
 
-    private val elasticServiceFactory = ElasticServiceFactory(okHttpClient)
+    private val elasticServiceFactory = ElasticServiceFactory
 
-    private val elasticApi = elasticServiceFactory.createApiService(endpoints)
+    private val elasticApi = elasticServiceFactory.create(
+        endpoints = endpoints.toHttpUrls(),
+        loggerFactory = loggerFactory
+    ).provide()
 
     private val timestampFormatter = timeProvider.formatter("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSZ")
 
@@ -74,5 +77,13 @@ internal class HttpElasticClient(
         } catch (t: Throwable) {
             logger.warn("Can't send logs to Elastic", t)
         }
+    }
+
+    private fun List<URL>.toHttpUrls(): List<HttpUrl> = mapNotNull { url ->
+        val result = url.toHttpUrlOrNull()
+        if (result == null) {
+            logger.warn("Can't convert URL to okhttp.HttpUrl: $url")
+        }
+        result
     }
 }
