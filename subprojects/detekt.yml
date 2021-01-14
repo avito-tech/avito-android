@@ -676,7 +676,8 @@ style:
         active: false
     # https://detekt.github.io/detekt/style.html#redundantvisibilitymodifierrule
     # todo don't know about kotlin strict mode
-    # possibly fixed in 1.15 https://github.com/detekt/detekt/issues/3125
+    # fix in 1.15 https://github.com/detekt/detekt/issues/3125 only works per module, not in our detektAll task
+    # because of how strict api detection works
     RedundantVisibilityModifierRule:
         active: false
     # https://detekt.github.io/detekt/style.html#returncount

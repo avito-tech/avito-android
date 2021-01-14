@@ -7,9 +7,9 @@ import com.avito.time.TimeProvider
 
 public object ElasticClientFactory {
 
-    private val loggerFactory: LoggerFactory by lazy { SimpleLoggerFactory() }
+    private val loggerFactory: LoggerFactory = SimpleLoggerFactory()
 
-    private val timeProvider: TimeProvider by lazy { DefaultTimeProvider(loggerFactory) }
+    private val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
 
     private val cache = mutableMapOf<ElasticConfig, HttpElasticClient>()
 
