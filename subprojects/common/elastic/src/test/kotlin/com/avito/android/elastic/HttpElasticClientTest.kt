@@ -26,7 +26,7 @@ internal class HttpElasticClientTest {
     fun testRequestParams() {
         val timeProvider = StubTimeProvider()
 
-        timeProvider.now = Date(1606922084000)
+        timeProvider.now = Date(1609858594000)
 
         val elasticClient: ElasticClient = HttpElasticClient(
             okHttpClient = OkHttpClient(),
@@ -47,9 +47,9 @@ internal class HttpElasticClientTest {
         )
 
         capturedRequest.checks.singleRequestCaptured().apply {
-            pathContains("doesnt-matter-2020-12-02/_doc")
+            pathContains("doesnt-matter-2021-01-05/_doc")
             bodyContains(
-                "{\"@timestamp\":\"2020-12-02T18:14:44.000000000+0300\"," +
+                "{\"@timestamp\":\"2021-01-05T17:56:34.000000000+0300\"," +
                     "\"level\":\"WARNING\"," +
                     "\"build_id\":\"12345\"," +
                     "\"message\":\"SomeMessage\"," +
