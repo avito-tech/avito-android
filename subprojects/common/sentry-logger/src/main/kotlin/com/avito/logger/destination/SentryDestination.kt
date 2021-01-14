@@ -3,20 +3,15 @@ package com.avito.logger.destination
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryClient
 import com.avito.logger.LogLevel
-import com.avito.logger.LoggerMetadata
 import com.avito.logger.LoggingDestination
 import io.sentry.SentryClient
 import io.sentry.event.Event
 import io.sentry.event.EventBuilder
 import io.sentry.event.interfaces.ExceptionInterface
 
-/**
- * @param config can't pass SentryClient directly here, even if it's already created,
- *               because logger instance should be serializable
- */
-internal class SentryDestination(
+class SentryDestination(
     private val config: SentryConfig,
-    private val metadata: LoggerMetadata
+    private val metadata: Map<String, String>
 ) : LoggingDestination {
 
     @Transient
@@ -50,18 +45,10 @@ internal class SentryDestination(
     }
 
     private fun EventBuilder.appendMetadata(): EventBuilder = apply {
-        withTag("tag", metadata.tag)
-
-        if (!metadata.pluginName.isNullOrBlank()) {
-            withTag("plugin_name", metadata.pluginName)
-        }
-
-        if (!metadata.projectPath.isNullOrBlank()) {
-            withTag("project_path", metadata.projectPath)
-        }
-
-        if (!metadata.taskName.isNullOrBlank()) {
-            withTag("task_name", metadata.taskName)
-        }
+        metadata
+            .filterValues { it.isNotBlank() }
+            .forEach { (key, value) ->
+                withTag(key, value)
+            }
     }
 }

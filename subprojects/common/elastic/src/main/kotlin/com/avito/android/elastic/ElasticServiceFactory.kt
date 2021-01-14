@@ -12,12 +12,19 @@ internal class ElasticServiceFactory(
     private val okHttpClient: OkHttpClient,
     private val gson: Gson = GsonBuilder().create()
 ) {
-
-    fun createApiService(endpoint: URL): ElasticService =
+    private val createApiService = { endpoint: URL ->
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .baseUrl(endpoint)
             .build()
-            .create()
+            .create<ElasticService>()
+    }
+
+    fun createApiService(endpoints: List<URL>): ElasticService =
+        when (endpoints.size) {
+            0 -> error("Elastic service endpoints has not been provided")
+            1 -> createApiService(endpoints[0])
+            else -> RoundRobinService(createApiService, endpoints)
+        }
 }
