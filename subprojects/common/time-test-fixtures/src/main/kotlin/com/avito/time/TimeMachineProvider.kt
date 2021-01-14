@@ -1,5 +1,6 @@
 package com.avito.time
 
+import com.avito.logger.StubLoggerFactory
 import java.text.DateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -10,9 +11,11 @@ import java.util.concurrent.TimeUnit
  */
 class TimeMachineProvider : TimeProvider {
 
+    private val loggerFactory = StubLoggerFactory
+
     private var timeShift: Long = 0
 
-    private val defaultTimeProvider = DefaultTimeProvider()
+    private val defaultTimeProvider = DefaultTimeProvider(loggerFactory)
 
     override val timeZone: TimeZone = defaultTimeProvider.timeZone
 

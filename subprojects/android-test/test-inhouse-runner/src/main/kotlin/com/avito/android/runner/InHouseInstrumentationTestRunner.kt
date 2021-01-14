@@ -45,6 +45,8 @@ import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Kind
 import com.avito.test.http.MockDispatcher
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.sentry.SentryClient
@@ -67,6 +69,8 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
+    private val timeProvider: TimeProvider by lazy { DefaultTimeProvider(loggerFactory) }
+
     val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
 
     val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
@@ -87,7 +91,8 @@ abstract class InHouseInstrumentationTestRunner :
         RemoteStorage.create(
             loggerFactory = loggerFactory,
             httpClient = reportHttpClient,
-            endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl
+            endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
+            timeProvider = timeProvider
         )
     }
 
@@ -131,7 +136,8 @@ abstract class InHouseInstrumentationTestRunner :
             onIncident = { testIssuesMonitor.onFailure(it) },
             transport = transport,
             loggerFactory = loggerFactory,
-            remoteStorage = remoteStorage
+            remoteStorage = remoteStorage,
+            timeProvider = timeProvider
         )
     }
 
@@ -324,7 +330,8 @@ abstract class InHouseInstrumentationTestRunner :
                 httpClient = reportHttpClient,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
                 fileStorageUrl = runEnvironment.fileStorageUrl,
-                loggerFactory = loggerFactory
+                loggerFactory = loggerFactory,
+                timeProvider = timeProvider
             )
         )
     }

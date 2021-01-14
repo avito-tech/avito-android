@@ -16,10 +16,7 @@ class ElasticDestination(
 
     private fun client(): ElasticClient {
         if (!::_client.isInitialized) {
-            _client = ElasticClientFactory.provide(config) { msg, error ->
-                System.err.println(msg)
-                error?.also { System.err.println(it) }
-            }
+            _client = ElasticClientFactory.provide(config)
         }
         return _client
     }

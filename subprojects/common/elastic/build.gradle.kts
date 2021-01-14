@@ -8,6 +8,7 @@ dependencies {
     api(Dependencies.okhttp)
 
     implementation(project(":common:time"))
+    implementation(project(":common:slf4j-logger"))
 
     implementation(Dependencies.gson)
     implementation(Dependencies.retrofit)

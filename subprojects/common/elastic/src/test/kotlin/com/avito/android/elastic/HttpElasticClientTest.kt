@@ -34,10 +34,7 @@ internal class HttpElasticClientTest {
             endpoints = listOf(mockWebServer.url("/").toUrl()),
             indexPattern = "doesnt-matter",
             buildId = "12345",
-            onError = { msg, error ->
-                println(msg)
-                error?.printStackTrace()
-            }
+            loggerFactory = loggerFactory
         )
 
         val capturedRequest = dispatcher.captureRequest { true }

@@ -4,13 +4,15 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
-import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import org.funktionale.tries.Try
 
-class InMemoryReport(private val id: String) : Report {
+class InMemoryReport(
+    private val id: String,
+    private val timeProvider: TimeProvider
+) : Report {
 
     private var gitInfo: String? = null
-    private val time = DefaultTimeProvider()
     private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
 
@@ -34,7 +36,7 @@ class InMemoryReport(private val id: String) : Report {
                 AndroidTest.Skipped.fromTestMetadata(
                     testStaticData = test,
                     skipReason = reason,
-                    reportTime = time.nowInMillis()
+                    reportTime = timeProvider.nowInMillis()
                 )
             }
         )

@@ -1,5 +1,7 @@
 package com.avito.android.elastic
 
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.time.TimeProvider
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -12,7 +14,6 @@ import java.net.URL
  * @param endpoints list of elastic endpoints to send logs
  *                  multiple endpoints used for stability, sometimes nodes may be unresponsive
  * @param indexPattern see https://www.elastic.co/guide/en/kibana/current/index-patterns.html
- * @param onError can't deliver message; reaction delegated to upstream
  */
 internal class HttpElasticClient(
     okHttpClient: OkHttpClient,
@@ -20,8 +21,10 @@ internal class HttpElasticClient(
     private val endpoints: List<URL>,
     private val indexPattern: String,
     private val buildId: String,
-    private val onError: (String, Throwable?) -> Unit
+    loggerFactory: LoggerFactory
 ) : ElasticClient {
+
+    private val logger = loggerFactory.create<HttpElasticClient>()
 
     private val elasticServiceFactory = ElasticServiceFactory(okHttpClient)
 
@@ -64,12 +67,12 @@ internal class HttpElasticClient(
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        onError("Can't send logs to Elastic", t)
+                        logger.warn("Can't send logs to Elastic", t)
                     }
                 }
             )
         } catch (t: Throwable) {
-            onError("Can't send logs to Elastic", t)
+            logger.warn("Can't send logs to Elastic", t)
         }
     }
 }

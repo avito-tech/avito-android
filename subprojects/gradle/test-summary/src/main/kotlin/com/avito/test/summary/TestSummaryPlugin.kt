@@ -31,7 +31,9 @@ class TestSummaryPlugin : Plugin<Project> {
             createReportsApi(it, GradleLoggerFactory.fromPlugin(this, target))
         }
 
-        val timeProvider: TimeProvider = DefaultTimeProvider()
+        val loggerFactory: LoggerFactory = GradleLoggerFactory.fromPlugin(this, target)
+
+        val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
 
         val reportViewer: Provider<ReportViewer> = extension.reportViewerUrl.map { createReportViewer(it) }
 
