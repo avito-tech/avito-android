@@ -4,7 +4,7 @@ import android.os.Bundle
 
 interface TestMetadataInjector {
 
-    fun inject(test: TestMethodOrClass): Bundle
+    fun inject(test: TestMethodOrClass, instrumentationArguments: Bundle)
 }
 
 class AnnotationResolversBasedMetadataInjector(
@@ -15,7 +15,13 @@ class AnnotationResolversBasedMetadataInjector(
         requireUniqueKeys()
     }
 
-    override fun inject(test: TestMethodOrClass): Bundle {
+    override fun inject(test: TestMethodOrClass, instrumentationArguments: Bundle) {
+        val testMetadata = resolveMetadata(test)
+        requireNoDuplicates(instrumentationArguments, testMetadata)
+        instrumentationArguments.putAll(testMetadata)
+    }
+
+    private fun resolveMetadata(test: TestMethodOrClass): Bundle {
         val metadata = Bundle()
 
         for (annotationResolver in annotationResolvers) {
@@ -36,6 +42,16 @@ class AnnotationResolversBasedMetadataInjector(
             }
         }
         return metadata
+    }
+
+    // TODO: wrap to a bundle to avoid accidental overriding.
+    private fun requireNoDuplicates(left: Bundle, right: Bundle) {
+        val duplicatedKeys = right.keySet().intersect(left.keySet())
+        require(duplicatedKeys.isEmpty()) {
+            "Duplicates in test arguments: $duplicatedKeys.\n" +
+                "- $left\n" +
+                "- $right"
+        }
     }
 
     private fun requireUniqueKeys() {
