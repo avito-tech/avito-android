@@ -99,6 +99,7 @@ function runInBuilder() {
         --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
         --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
         --workdir /app \
+        --env TZ="Europe/Moscow" \
         --env LOCAL_USER_ID="$USER_ID" \
         --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
         ${IMAGE_ANDROID_BUILDER} \

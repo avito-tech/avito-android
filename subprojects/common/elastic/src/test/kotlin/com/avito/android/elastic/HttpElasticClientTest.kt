@@ -15,6 +15,8 @@ internal class HttpElasticClientTest {
 
     private val loggerFactory = StubLoggerFactory
 
+    private val timeProvider = StubTimeProvider()
+
     private val dispatcher = MockDispatcher(
         unmockedResponse = MockResponse().setResponseCode(200),
         loggerFactory = loggerFactory
@@ -23,7 +25,6 @@ internal class HttpElasticClientTest {
 
     @Test
     fun testRequestParams() {
-        val timeProvider = StubTimeProvider()
 
         timeProvider.now = Date(1609858594000)
 
