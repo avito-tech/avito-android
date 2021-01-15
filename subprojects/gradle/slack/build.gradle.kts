@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
+    id("nebula.integtest")
 }
 
 dependencies {
@@ -13,7 +14,7 @@ dependencies {
     implementation(Dependencies.okhttp)
     implementation(Dependencies.coroutinesCore)
 
-//    integTestImplementation(project(":gradle:gradle-extensions"))
+    integTestImplementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:slack-test-fixtures"))

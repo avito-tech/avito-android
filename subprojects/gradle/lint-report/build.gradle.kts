@@ -3,6 +3,7 @@ plugins {
     id("java-gradle-plugin")
     `maven-publish`
     id("com.jfrog.bintray")
+    id("nebula.integtest")
 }
 
 dependencies {

@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    buildscript {
-        dependencies {
-            classpath("com.avito.android:buildscript")
-        }
+    dependencies {
+        classpath("com.avito.android:buildscript")
     }
 }
 

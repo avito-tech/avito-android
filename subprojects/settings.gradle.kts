@@ -130,6 +130,7 @@ pluginManagement {
                 includeGroup("com.gradle")
                 includeGroup("com.gradle.enterprise")
                 includeGroup("org.jetbrains.kotlin.jvm")
+                includeGroupByRegex("nebula\\..*")
                 includeGroup("com.jfrog.bintray")
                 includeGroup("io.gitlab.arturbosch.detekt")
                 includeGroup("com.autonomousapps.dependency-analysis")
@@ -145,14 +146,9 @@ pluginManagement {
         }
     }
 
-    plugins {
-    }
-
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
-            val moduleGroup = requested.module?.group
-            val moduleName= requested.module?.name
             when {
                 pluginId.startsWith("com.android.") ->
                     useModule("com.android.tools.build:gradle:4.1.1")
@@ -163,8 +159,8 @@ pluginManagement {
                 pluginId == "com.autonomousapps.dependency-analysis" ->
                     useVersion("0.55.0")
 
-                moduleGroup == "com.netflix.nebula" && moduleName == "gradle-info-plugin" ->
-                    useVersion("3.8.0")
+                pluginId == "nebula.integtest" ->
+                    useVersion("7.0.9")
             }
         }
     }

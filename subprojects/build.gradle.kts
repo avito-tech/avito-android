@@ -74,6 +74,17 @@ subprojects {
     group = "com.avito.android"
     version = finalProjectVersion
 
+    buildscript {
+        configurations.classpath {
+            resolutionStrategy {
+                failOnChangingVersions()
+                failOnDynamicVersions()
+
+                force("com.netflix.nebula:gradle-info-plugin:4.0.2")
+            }
+        }
+    }
+
     /**
      * https://www.jetbrains.com/help/teamcity/build-script-interaction-with-teamcity.html#BuildScriptInteractionwithTeamCity-ReportingBuildNumber
      */
