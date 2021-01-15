@@ -57,6 +57,13 @@ class DeviceWorker(
             try {
                 logger.debug("Received intention: $intention")
                 device.logger.debug("Received intention: $intention")
+
+                listener.intended(
+                    test = intention.action.test,
+                    targetPackage = intention.action.targetPackage,
+                    executionNumber = intention.action.executionNumber
+                )
+
                 when (val status = device.deviceStatus()) {
                     is Device.DeviceStatus.Alive -> {
                         device.logger.debug("Preparing state: ${intention.state}")
@@ -163,12 +170,14 @@ class DeviceWorker(
 
     private fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun {
         val deviceTestCaseRun = try {
+
             listener.started(
                 device = device,
                 targetPackage = action.targetPackage,
                 test = action.test,
                 executionNumber = action.executionNumber
             )
+
             device.runIsolatedTest(
                 action = action,
                 outputDir = outputDirectory

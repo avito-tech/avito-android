@@ -8,6 +8,13 @@ import com.avito.runner.service.worker.device.Device
 
 class LogListener : TestListener {
 
+    override fun intended(
+        test: TestCase,
+        targetPackage: String,
+        executionNumber: Int
+    ) {
+    }
+
     override fun started(
         device: Device,
         targetPackage: String,

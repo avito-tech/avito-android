@@ -6,6 +6,12 @@ import com.avito.runner.service.worker.device.Device
 
 interface TestListener {
 
+    fun intended(
+        test: TestCase,
+        targetPackage: String,
+        executionNumber: Int
+    )
+
     fun started(
         device: Device,
         targetPackage: String,

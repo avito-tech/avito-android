@@ -8,6 +8,16 @@ class CompositeListener(
     val listeners: List<TestListener>
 ) : TestListener {
 
+    override fun intended(test: TestCase, targetPackage: String, executionNumber: Int) {
+        listeners.forEach {
+            it.intended(
+                test = test,
+                targetPackage = targetPackage,
+                executionNumber = executionNumber
+            )
+        }
+    }
+
     override fun started(
         device: Device,
         targetPackage: String,
