@@ -2,7 +2,6 @@ package com.avito.filestorage
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -14,7 +13,7 @@ import retrofit2.Response
 class HttpRemoteStorage(
     private val endpoint: HttpUrl,
     httpClient: OkHttpClient,
-    private val timeSource: TimeProvider = DefaultTimeProvider(),
+    private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
 ) : RemoteStorage {
 
@@ -42,7 +41,7 @@ class HttpRemoteStorage(
 
         val futureValue = SettableFutureValue<RemoteStorage.Result>()
 
-        val timestamp = timeSource.nowInSeconds()
+        val timestamp = timeProvider.nowInSeconds()
 
         logUploading(uploadRequest)
 

@@ -31,7 +31,7 @@ plugins {
     id("com.android.application") apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
     id("com.autonomousapps.dependency-analysis") apply false
-    id("io.gitlab.arturbosch.detekt") version "1.15.0-RC1"
+    id("io.gitlab.arturbosch.detekt") version "1.15.0"
 }
 
 if (gradle.startParameter.taskNames.contains("buildHealth")) {

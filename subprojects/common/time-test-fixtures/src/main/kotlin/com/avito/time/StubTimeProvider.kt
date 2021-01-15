@@ -1,12 +1,15 @@
 package com.avito.time
 
+import com.avito.logger.StubLoggerFactory
 import java.text.DateFormat
 import java.util.Date
 import java.util.TimeZone
 
 class StubTimeProvider : TimeProvider {
 
-    private val timeProvider = DefaultTimeProvider()
+    private val loggerFactory = StubLoggerFactory
+
+    private val timeProvider = DefaultTimeProvider(loggerFactory)
 
     override val timeZone: TimeZone = timeProvider.timeZone
 

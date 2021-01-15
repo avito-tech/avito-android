@@ -16,6 +16,7 @@ import com.avito.report.model.TestStaticData
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
+import com.avito.time.TimeProvider
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -25,6 +26,7 @@ import java.io.FileReader
 
 class ReportViewerTestReporter(
     loggerFactory: LoggerFactory,
+    timeProvider: TimeProvider,
     private val testSuite: Map<TestCase, TestStaticData>,
     private val report: Report,
     // todo extract write to file
@@ -55,7 +57,8 @@ class ReportViewerTestReporter(
         RemoteStorage.create(
             endpoint = fileStorageUrl,
             loggerFactory = loggerFactory,
-            httpClient = httpClient
+            httpClient = httpClient,
+            timeProvider = timeProvider
         )
 
     // todo переместить ближе к DeviceWorker

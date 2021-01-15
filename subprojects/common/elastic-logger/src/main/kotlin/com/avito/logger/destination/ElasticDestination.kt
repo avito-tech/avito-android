@@ -1,8 +1,8 @@
 package com.avito.logger.destination
 
 import com.avito.android.elastic.ElasticClient
+import com.avito.android.elastic.ElasticClientFactory
 import com.avito.android.elastic.ElasticConfig
-import com.avito.android.elastic.ElasticFactory
 import com.avito.logger.LogLevel
 import com.avito.logger.LoggingDestination
 
@@ -16,10 +16,7 @@ class ElasticDestination(
 
     private fun client(): ElasticClient {
         if (!::_client.isInitialized) {
-            _client = ElasticFactory.create(config) { msg, error ->
-                System.err.println(msg)
-                error?.also { System.err.println(it) }
-            }
+            _client = ElasticClientFactory.provide(config)
         }
         return _client
     }

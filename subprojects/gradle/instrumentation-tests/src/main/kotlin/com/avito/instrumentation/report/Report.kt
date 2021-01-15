@@ -1,6 +1,5 @@
 package com.avito.instrumentation.report
 
-import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
@@ -11,7 +10,6 @@ import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
-import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import org.funktionale.tries.Try
 import java.io.Serializable
@@ -56,7 +54,7 @@ interface Report : ReadReport {
                 }
         }
 
-        class InMemoryReportFactory : Factory {
+        class InMemoryReportFactory(private val timeProvider: TimeProvider) : Factory {
 
             @Transient
             private var reports: MutableMap<Config.InMemory, InMemoryReport> = mutableMapOf()
@@ -65,7 +63,12 @@ interface Report : ReadReport {
             @Synchronized
             override fun createReport(config: Config): Report {
                 return when (config) {
-                    is Config.InMemory -> reports.getOrPut(config, { InMemoryReport(config.id) })
+                    is Config.InMemory -> reports.getOrPut(config, {
+                        InMemoryReport(
+                            id = config.id,
+                            timeProvider = timeProvider
+                        )
+                    })
                     is Config.ReportViewerCoordinates -> TODO("Unsupported type")
                     is Config.ReportViewerId -> TODO("Unsupported type")
                 }
@@ -74,7 +77,12 @@ interface Report : ReadReport {
             @Synchronized
             override fun createReadReport(config: Config): ReadReport {
                 return when (config) {
-                    is Config.InMemory -> reports.getOrPut(config, { InMemoryReport(config.id) })
+                    is Config.InMemory -> reports.getOrPut(config, {
+                        InMemoryReport(
+                            id = config.id,
+                            timeProvider = timeProvider
+                        )
+                    })
                     is Config.ReportViewerCoordinates -> TODO("Unsupported type")
                     is Config.ReportViewerId -> TODO("Unsupported type")
                 }
@@ -84,7 +92,8 @@ interface Report : ReadReport {
         class ReportViewerFactory(
             val reportApiUrl: String,
             val reportApiFallbackUrl: String,
-            val loggerFactory: GradleLoggerFactory,
+            val loggerFactory: LoggerFactory,
+            val timeProvider: TimeProvider,
             val verboseHttp: Boolean
         ) : Factory {
 
@@ -99,7 +108,8 @@ interface Report : ReadReport {
                             reportsApi = reportsApi,
                             loggerFactory = loggerFactory,
                             reportCoordinates = config.reportCoordinates,
-                            buildId = config.buildId
+                            buildId = config.buildId,
+                            timeProvider = timeProvider
                         )
                     }
                     else -> throwUnsupportedConfigException(config)
@@ -166,7 +176,7 @@ interface Report : ReadReport {
         loggerFactory: LoggerFactory,
         private val reportCoordinates: ReportCoordinates,
         private val buildId: String,
-        private val timeProvider: TimeProvider = DefaultTimeProvider(),
+        private val timeProvider: TimeProvider,
         private val batchSize: Int = 400
     ) : Report {
 
@@ -297,4 +307,6 @@ interface Report : ReadReport {
                 .forEach { (index, batch) -> batchAction(index, batch) }
         }
     }
+
+    companion object
 }
