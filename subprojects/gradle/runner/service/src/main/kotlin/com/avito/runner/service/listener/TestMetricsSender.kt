@@ -8,6 +8,7 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.time.TimeProvider
+import java.util.concurrent.ConcurrentHashMap
 
 internal class TestMetricsSender(
     private val statsDSender: StatsDSender,
@@ -19,9 +20,9 @@ internal class TestMetricsSender(
 
     private val logger = loggerFactory.create<TestMetricsSender>()
 
-    private val intendedMarks = mutableMapOf<Key, Long>()
+    private val intendedMarks = ConcurrentHashMap<Key, Long>()
 
-    private val startedMarks = mutableMapOf<Key, Long>()
+    private val startedMarks = ConcurrentHashMap<Key, Long>()
 
     override fun intended(test: TestCase, targetPackage: String, executionNumber: Int) {
         intendedMarks[Key(test, executionNumber)] = timeProvider.nowInMillis()
@@ -31,7 +32,7 @@ internal class TestMetricsSender(
         val key = Key(test, executionNumber)
         startedMarks[key] = timeProvider.nowInMillis()
 
-        val intendedMark = intendedMarks[key]
+        val intendedMark: Long? = intendedMarks.remove(key)
 
         if (intendedMark != null) {
             statsDSender.send(
@@ -56,7 +57,7 @@ internal class TestMetricsSender(
     ) {
         val key = Key(test, executionNumber)
 
-        val startedMark = startedMarks[key]
+        val startedMark = startedMarks.remove(key)
 
         if (startedMark != null) {
             statsDSender.send(
