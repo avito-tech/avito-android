@@ -55,6 +55,9 @@ abstract class FlakyReportTask : DefaultTask() {
 
         flakyTestInfo.addReport(reportsApi.get().getTestsForRunId(reportCoordinates.get()))
 
+        val loggerFactory: LoggerFactory = GradleLoggerFactory.fromTask(this)
+        val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
+
         createFlakyTestReporter(
             summaryChannel = summaryChannel.get(),
             slackUsername = slackUsername.get(),
@@ -62,7 +65,8 @@ abstract class FlakyReportTask : DefaultTask() {
             reportViewer = reportViewer.get(),
             buildUrl = buildUrl.get(),
             currentBranch = currentBranch.get(),
-            loggerFactory = GradleLoggerFactory.fromTask(this)
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
         ).reportSummary(flakyTestInfo.getInfo())
     }
 
@@ -73,7 +77,8 @@ abstract class FlakyReportTask : DefaultTask() {
         reportViewer: ReportViewer,
         buildUrl: String,
         currentBranch: String,
-        loggerFactory: LoggerFactory
+        loggerFactory: LoggerFactory,
+        timeProvider: TimeProvider
     ): FlakyTestReporterImpl {
         return FlakyTestReporterImpl(
             slackClient = SlackConditionalSender(
@@ -82,7 +87,7 @@ abstract class FlakyReportTask : DefaultTask() {
                 condition = ConjunctionMessageUpdateCondition(
                     listOf(
                         SameAuthorUpdateCondition(slackUsername),
-                        TodayMessageCondition(DefaultTimeProvider())
+                        TodayMessageCondition(timeProvider)
                     )
                 ),
                 loggerFactory = loggerFactory

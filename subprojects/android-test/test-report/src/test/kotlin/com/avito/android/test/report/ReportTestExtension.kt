@@ -38,7 +38,8 @@ class ReportTestExtension(
             httpClient = OkHttpClient.Builder()
                 .addInterceptor(mockInterceptor)
                 .build(),
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
         )
     )
 ) : BeforeEachCallback, Report by report {

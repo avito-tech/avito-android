@@ -10,6 +10,7 @@ import com.avito.instrumentation.suite.TestSuiteProvider
 import com.avito.instrumentation.suite.filter.FilterFactory
 import com.avito.instrumentation.suite.filter.FilterInfoWriter
 import com.avito.retrace.ProguardRetracer
+import com.avito.time.DefaultTimeProvider
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -93,6 +94,8 @@ interface TestsSchedulerFactory {
                 testReporterFactory = { testSuite, outputDir, report ->
                     ReportViewerTestReporter(
                         loggerFactory = params.loggerFactory,
+                        // todo pass though constructor but needs to be serializable
+                        timeProvider = DefaultTimeProvider(params.loggerFactory),
                         testSuite = testSuite,
                         report = report,
                         fileStorageUrl = params.fileStorageUrl,

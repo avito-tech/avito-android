@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     api(project(":common:time"))
+
+    implementation(project(":common:logger-test-fixtures"))
 }
