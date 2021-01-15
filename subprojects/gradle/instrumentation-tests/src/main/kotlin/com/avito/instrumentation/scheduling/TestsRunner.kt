@@ -1,5 +1,6 @@
 package com.avito.instrumentation.scheduling
 
+import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.TestExecutor
@@ -43,7 +44,8 @@ class TestsRunnerImplementation(
     private val executionParameters: ExecutionParameters,
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
-    private val registry: String
+    private val registry: String,
+    private val statsDConfig: StatsDConfig
 ) : TestsRunner {
 
     private val logger = loggerFactory.create<TestsRunner>()
@@ -74,9 +76,11 @@ class TestsRunnerImplementation(
                 logcatDir,
                 report
             )
+
             // TODO: pass through constructor
             val initialRunConfiguration =
                 instrumentationConfiguration.copy(name = "${instrumentationConfiguration.name}-${runType.id}")
+
             val executor = testExecutorFactory.createExecutor(
                 devicesProviderFactory = DevicesProviderFactory.Impl(
                     kubernetesCredentials = kubernetesCredentials,
@@ -91,7 +95,8 @@ class TestsRunnerImplementation(
                 configuration = initialRunConfiguration,
                 executionParameters = executionParameters,
                 testReporter = testReporter,
-                loggerFactory = loggerFactory
+                loggerFactory = loggerFactory,
+                statsDConfig = statsDConfig
             )
 
             executor.execute(

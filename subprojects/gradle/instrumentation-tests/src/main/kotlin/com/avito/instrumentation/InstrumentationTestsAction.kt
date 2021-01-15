@@ -1,5 +1,6 @@
 package com.avito.instrumentation
 
+import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.finalizer.InstrumentationTestActionFinalizer
@@ -70,6 +71,7 @@ class InstrumentationTestsAction(
         val reportViewerUrl: String,
         val fileStorageUrl: String,
         val registry: String,
+        val statsDConfig: StatsDConfig,
         val reportFactory: Report.Factory,
         val reportConfig: Report.Factory.Config,
         val reportCoordinates: ReportCoordinates,

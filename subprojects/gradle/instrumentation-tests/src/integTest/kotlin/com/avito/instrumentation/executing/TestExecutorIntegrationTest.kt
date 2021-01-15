@@ -1,5 +1,6 @@
 package com.avito.instrumentation.executing
 
+import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.createStubInstance
@@ -73,6 +74,7 @@ internal class TestExecutorIntegrationTest {
     private fun createTestExecutor(
         loggerFactory: LoggerFactory,
         configurationName: String = "",
+        statsDConfig: StatsDConfig = StatsDConfig.Disabled,
         adb: Adb = Adb()
     ): TestExecutor = TestExecutor.Impl(
         devicesProvider = KubernetesDevicesProvider(
@@ -89,6 +91,7 @@ internal class TestExecutorIntegrationTest {
         ),
         testReporter = StubTestReporter(),
         configurationName = configurationName,
-        loggerFactory = loggerFactory
+        loggerFactory = loggerFactory,
+        statsDConfig = statsDConfig
     )
 }

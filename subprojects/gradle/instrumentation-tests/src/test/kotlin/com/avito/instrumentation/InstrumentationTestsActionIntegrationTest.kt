@@ -3,6 +3,7 @@ package com.avito.instrumentation
 import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
+import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
@@ -49,7 +50,8 @@ internal class InstrumentationTestsActionIntegrationTest {
             testReporter: TestReporter,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
-            loggerFactory: LoggerFactory
+            loggerFactory: LoggerFactory,
+            statsDConfig: StatsDConfig
         ): TestExecutor {
             return testRunner
         }

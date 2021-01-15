@@ -1,5 +1,6 @@
 package com.avito.runner.scheduler.args
 
+import com.avito.android.stats.StatsDConfig
 import com.avito.logger.LoggerFactory
 import com.avito.runner.reservation.DeviceReservation
 import com.avito.runner.scheduler.listener.TestLifecycleListener
@@ -14,7 +15,8 @@ class Arguments(
     val devices: ReceiveChannel<Device>,
     val loggerFactory: LoggerFactory,
     val listener: TestLifecycleListener,
-    val reservation: DeviceReservation
+    val reservation: DeviceReservation,
+    val statsDConfig: StatsDConfig
 ) {
 
     override fun toString(): String {
