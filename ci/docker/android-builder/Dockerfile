@@ -23,30 +23,24 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 
 # ----------------- Android SDK -----------------
 ENV ANDROID_HOME /opt/android-sdk
-ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin
+ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/cmdline-tools/bin
 # https://developer.android.com/studio/index.html#command-tools
-ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
+ARG ANDROID_SDK_URL=https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
 ARG ANDROID_SDK_FILE_NAME=android-sdk.zip
 
 RUN curl $ANDROID_SDK_URL --progress-bar --location --output $ANDROID_SDK_FILE_NAME && \
   unzip $ANDROID_SDK_FILE_NAME -d $ANDROID_HOME && \
   rm -f $ANDROID_SDK_FILE_NAME
 
+COPY packages.txt $ANDROID_HOME/packages.txt
+
 # Update sdk and install components
-# --package_file is broken https://issuetracker.google.com/issues/66465833
 RUN mkdir $HOME/.android && \
-  # empty file to mitigate warning
-  touch $HOME/.android/repositories.cfg && \
   echo "y" | sdkmanager --verbose \
-    --sdk_root=${ANDROID_HOME} \
-    "build-tools;29.0.3" \
-    "patcher;v4" \
-    "platform-tools" \
-    "platforms;android-29" \
-    "tools" \
-    "extras;google;google_play_services" \
-    "extras;google;m2repository" && \
-  chmod -R o+rwX ${ANDROID_HOME}
+    --sdk_root=$ANDROID_HOME \
+    --package_file=$ANDROID_HOME/packages.txt && \
+  chmod -R o+rwX $ANDROID_HOME && \
+  rm $ANDROID_HOME/packages.txt
 
 # --------------- Gradle Profiler -----------------
 # https://github.com/gradle/gradle-profiler/releases
@@ -55,7 +49,8 @@ ARG PROFILER_VERSION=0.15.0
 # Install gradle-profiler
 RUN \
   cd /opt/ && \
-  curl https://repo.gradle.org/gradle/ext-releases-local/org/gradle/profiler/gradle-profiler/${PROFILER_VERSION}/gradle-profiler-${PROFILER_VERSION}.zip --progress-bar --location --output gradle-profiler.zip && \
+  curl https://repo.gradle.org/gradle/ext-releases-local/org/gradle/profiler/gradle-profiler/${PROFILER_VERSION}/gradle-profiler-${PROFILER_VERSION}.zip \
+    --progress-bar --location --output gradle-profiler.zip && \
   unzip gradle-profiler.zip && \
   mv gradle-profiler-${PROFILER_VERSION} gradle-profiler && \
   cp -a gradle-profiler/. /usr/local/ && \

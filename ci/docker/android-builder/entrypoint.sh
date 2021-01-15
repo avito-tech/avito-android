@@ -6,6 +6,7 @@ set -e
 
 USER_ID=${LOCAL_USER_ID:-9001}
 BUILD_USER=build_user
+GRADLE_USER_HOME=/gradle
 
 echo "Starting with UID : $USER_ID"
 groupadd --gid "${USER_ID}" ${BUILD_USER}
