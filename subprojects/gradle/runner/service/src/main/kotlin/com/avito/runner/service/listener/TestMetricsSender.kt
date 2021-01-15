@@ -9,7 +9,7 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.time.TimeProvider
 
-class TestMetricsSender(
+internal class TestMetricsSender(
     private val statsDSender: StatsDSender,
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
@@ -34,7 +34,13 @@ class TestMetricsSender(
         val intendedMark = intendedMarks[key]
 
         if (intendedMark != null) {
-            statsDSender.send(prefix, GaugeMetric("queue", timeProvider.nowInMillis() - intendedMark))
+            statsDSender.send(
+                prefix = prefix,
+                metric = GaugeMetric(
+                    path = keyMetric("queue", key),
+                    value = timeProvider.nowInMillis() - intendedMark
+                )
+            )
         } else {
             logger.warn("Can't send test metric: intended mark not found")
         }
@@ -53,11 +59,20 @@ class TestMetricsSender(
         val startedMark = startedMarks[key]
 
         if (startedMark != null) {
-            statsDSender.send(prefix, GaugeMetric("execution", timeProvider.nowInMillis() - startedMark))
+            statsDSender.send(
+                prefix = prefix,
+                metric = GaugeMetric(
+                    path = keyMetric("execution", key),
+                    value = timeProvider.nowInMillis() - startedMark
+                )
+            )
         } else {
             logger.warn("Can't send test metric: started mark not found")
         }
     }
+
+    private fun keyMetric(name: String, key: Key): String =
+        "${key.test.deviceName}.${key.executionNumber}.${key.test.testName}.$name"
 
     private data class Key(
         val test: TestCase,
