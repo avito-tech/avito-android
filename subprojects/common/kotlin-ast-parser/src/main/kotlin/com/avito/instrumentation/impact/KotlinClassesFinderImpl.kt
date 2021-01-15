@@ -59,7 +59,7 @@ class KotlinClassesFinderImpl : KotlinClassesFinder {
 
     companion object {
 
-        private const val KOTLIN_FILE_EXTENSION = "kt"
+        const val KOTLIN_FILE_EXTENSION = "kt"
 
         /**
          *  Based on detekt by Artur Bosch
