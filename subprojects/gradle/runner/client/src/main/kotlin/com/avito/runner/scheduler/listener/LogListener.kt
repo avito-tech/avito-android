@@ -6,7 +6,7 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 
-class LogListener : TestListener {
+internal class LogListener : TestListener {
 
     override fun intended(
         test: TestCase,

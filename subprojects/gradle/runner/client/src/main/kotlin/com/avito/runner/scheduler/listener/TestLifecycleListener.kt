@@ -6,6 +6,7 @@ import org.funktionale.tries.Try
 import java.io.File
 
 interface TestLifecycleListener {
+    
     fun started(
         test: TestCase,
         device: Device,

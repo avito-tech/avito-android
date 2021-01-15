@@ -10,14 +10,17 @@ import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
 
-class ArtifactsTestListener(
+internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
     loggerFactory: LoggerFactory
 ) : TestListener {
 
     private val logger = loggerFactory.create<ArtifactsTestListener>()
 
-    override fun intended(test: TestCase, targetPackage: String, executionNumber: Int) {
+    override fun intended(
+        test: TestCase, targetPackage: String,
+        executionNumber: Int
+    ) {
     }
 
     override fun started(
@@ -78,6 +81,7 @@ class ArtifactsTestListener(
         }
     }
 
+    @Suppress("SdCardPath") // android API's are unavailable here
     private fun testMetadataFullDirectory(targetPackage: String, test: TestCase): File =
         File("/sdcard/Android/data/$targetPackage/files/runner/${testMetadataDirectoryPath(test)}")
 
