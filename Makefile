@@ -135,6 +135,10 @@ check:
 detekt:
 	./gradlew -p subprojects detektAll
 
+.PHONY: docs
+docs:
+	./ci/documentation/preview.sh
+
 clear_k8s_deployments_by_namespaces:
 	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
 

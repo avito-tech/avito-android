@@ -1,12 +1,12 @@
 #!/usr/bin/env sh
 
-set -e
+set -euf
 
 USER_ID=${LOCAL_USER_ID:-1000}
 DOCKER_USER=user
 
 echo "Creating user: $USER_ID"
-adduser --shell /bin/sh --disabled-password --uid "${USER_ID}" ${DOCKER_USER}
+adduser --shell /bin/sh --disabled-password --gecos GECOS --uid "${USER_ID}" ${DOCKER_USER}
 
 # where were errors when created by git itself
 SSH_DIR=/home/${DOCKER_USER}/.ssh

@@ -6,8 +6,6 @@ set -e
 
 source $(dirname $0)/_main.sh
 
-docs/check.sh
-
 runInBuilder "set -e;
     ./gradlew help;
     ./gradlew help -PuseCompositeBuild=false;
