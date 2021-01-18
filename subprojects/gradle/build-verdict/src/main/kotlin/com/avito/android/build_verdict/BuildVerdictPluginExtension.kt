@@ -1,5 +1,6 @@
 package com.avito.android.build_verdict
 
+import com.avito.android.build_verdict.span.SpannedString
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.file.ProjectLayout
@@ -35,11 +36,11 @@ abstract class BuildVerdictPluginExtension(
         )
     }
 
-    fun onTaskFailure(name: String, producer: (Task) -> String) {
+    fun onTaskFailure(name: String, producer: (Task) -> SpannedString) {
         onTaskFailure(name, TaskVerdictProducer.create(producer))
     }
 
-    fun onTaskFailure(acceptedClass: Class<in Task>, producer: (Task) -> String) {
+    fun onTaskFailure(acceptedClass: Class<in Task>, producer: (Task) -> SpannedString) {
         onTaskFailure(acceptedClass, TaskVerdictProducer.create(producer))
     }
 }

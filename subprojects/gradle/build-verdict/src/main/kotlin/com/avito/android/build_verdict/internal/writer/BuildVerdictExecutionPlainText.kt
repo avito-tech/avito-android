@@ -26,7 +26,7 @@ private fun FailedTask.plainText() = buildString {
     appendLine()
     if (verdict != null) {
         appendLine("* Task result:")
-        appendLine(verdict.trimIndent())
+        appendLine(verdict.plain.trimIndent())
         appendLine()
     }
     appendLine("* Error logs:")

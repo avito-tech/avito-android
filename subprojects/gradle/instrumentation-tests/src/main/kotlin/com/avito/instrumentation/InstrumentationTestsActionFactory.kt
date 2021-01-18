@@ -23,7 +23,7 @@ interface InstrumentationTestsActionFactory {
         constructor(params: InstrumentationTestsAction.Params) : this(
             params = params,
             sourceReport = params.reportFactory.createReport(params.reportConfig),
-            gson = GsonBuilder().setPrettyPrinting().create()
+            gson = InstrumentationTestsActionFactory.gson
         )
 
         @VisibleForTesting
@@ -49,5 +49,9 @@ interface InstrumentationTestsActionFactory {
         override fun provideScheduler() = schedulerFactory.create()
 
         override fun provideFinalizer() = finalizerFactory.create()
+    }
+
+    companion object {
+        val gson by lazy { GsonBuilder().setPrettyPrinting().create() }
     }
 }

@@ -193,14 +193,15 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
                 name = appName,
                 buildGradleExtra = """
                 import com.avito.android.build_verdict.BuildVerdictTask
+                import com.avito.android.build_verdict.span.SpannedString
                 
                 class CustomTask extends DefaultTask implements BuildVerdictTask {
                 
-                    private verdict = null
+                    private String verdict = null
                     
                     @Override
-                    String getVerdict() {
-                        return verdict
+                    SpannedString getVerdict() {
+                        return SpannedString.toSpanned(verdict)
                     }
                     
                     @TaskAction 
@@ -215,9 +216,13 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
             ),
             buildGradleExtra = """
 import com.avito.android.build_verdict.TaskVerdictProducer
+import com.avito.android.build_verdict.span.SpannedString
 import org.gradle.api.Task
+
 buildVerdict {
-    onTaskFailure("customTask", { "User added verdict" } as TaskVerdictProducer)
+    onTaskFailure("customTask", { 
+        SpannedString.link("https://www.google.com/", "User added verdict")
+    } as TaskVerdictProducer)
 }
 """.trimIndent()
         )

@@ -64,7 +64,9 @@ private fun BODY.task(titlePostfix: String = "", task: FailedTask) {
             text("Task verdict:")
         }
         pre {
-            text(task.verdict.trimIndent())
+            unsafe {
+                raw(task.verdict.html.trimIndent())
+            }
         }
     }
     h3 {

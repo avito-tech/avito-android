@@ -3,6 +3,7 @@ package com.avito.instrumentation.scheduling
 import com.avito.android.TestSuiteLoader
 import com.avito.android.TestSuiteLoaderImpl
 import com.avito.instrumentation.InstrumentationTestsAction
+import com.avito.instrumentation.InstrumentationTestsActionFactory
 import com.avito.instrumentation.executing.TestExecutorFactory
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.report.listener.ReportViewerTestReporter
@@ -13,7 +14,6 @@ import com.avito.retrace.ProguardRetracer
 import com.avito.time.DefaultTimeProvider
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 
 interface TestsSchedulerFactory {
 
@@ -31,7 +31,7 @@ interface TestsSchedulerFactory {
         internal constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            gson: Gson = GsonBuilder().setPrettyPrinting().create(),
+            gson: Gson = InstrumentationTestsActionFactory.gson,
             testExecutorFactory: TestExecutorFactory,
             testSuiteLoader: TestSuiteLoader
         ) {
