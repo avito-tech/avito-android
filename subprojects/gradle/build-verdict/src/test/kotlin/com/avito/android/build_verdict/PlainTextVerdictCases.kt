@@ -22,7 +22,7 @@ Execution failed for task ':app:customTask'.
 
 * Task result:
 Custom verdict
-User added verdict
+User added verdict: https://www.google.com/
 
 * Error logs:
 No error logs

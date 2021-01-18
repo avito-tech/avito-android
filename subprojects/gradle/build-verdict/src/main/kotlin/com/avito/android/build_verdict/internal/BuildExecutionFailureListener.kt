@@ -1,5 +1,6 @@
 package com.avito.android.build_verdict.internal
 
+import com.avito.android.build_verdict.internal.span.SpannedStringBuilder
 import org.gradle.BuildResult
 import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.util.Path
@@ -7,7 +8,7 @@ import org.gradle.util.Path
 internal class BuildExecutionFailureListener(
     private val graph: TaskExecutionGraph,
     private val logs: Map<Path, LogsTextBuilder>,
-    private val verdicts: Map<Path, LogsTextBuilder>,
+    private val verdicts: Map<Path, SpannedStringBuilder>,
     private val listener: BuildFailedListener
 ) : BaseBuildListener() {
 
@@ -35,7 +36,6 @@ internal class BuildExecutionFailureListener(
                     )
                 }
             )
-
         )
     }
 }

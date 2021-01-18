@@ -1,6 +1,7 @@
 package com.avito.android.build_verdict.internal
 
 import com.avito.android.build_verdict.BuildVerdictPluginExtension
+import com.avito.android.build_verdict.internal.span.SpannedStringBuilder
 import com.avito.android.build_verdict.internal.task.lifecycle.BuildVerdictTaskLifecycleListener
 import com.avito.android.build_verdict.internal.task.lifecycle.DefaultTaskLifecycleListener
 import com.avito.android.build_verdict.internal.task.lifecycle.TaskExecutionListenerBridge
@@ -26,7 +27,7 @@ internal class BuildVerdictPluginServices(
 
     private val listeners = ConcurrentHashMap<OperationIdentifier, LogMessageListener>()
     private val logs = ConcurrentHashMap<Path, LogsTextBuilder>()
-    private val verdicts = ConcurrentHashMap<Path, LogsTextBuilder>()
+    private val verdicts = ConcurrentHashMap<Path, SpannedStringBuilder>()
     private val outputDir = lazy {
         extension.outputDir.get().asFile.apply { mkdirs() }
     }

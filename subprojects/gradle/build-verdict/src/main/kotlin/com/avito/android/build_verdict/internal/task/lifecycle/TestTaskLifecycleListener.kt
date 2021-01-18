@@ -1,14 +1,15 @@
 package com.avito.android.build_verdict.internal.task.lifecycle
 
 import com.avito.android.build_verdict.internal.DefaultTestListener
-import com.avito.android.build_verdict.internal.LogsTextBuilder
+import com.avito.android.build_verdict.internal.span.SpannedStringBuilder
+import com.avito.android.build_verdict.span.SpannedString.Companion.toSpanned
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.util.Path
 
 internal class TestTaskLifecycleListener(
-    private val verdicts: MutableMap<Path, LogsTextBuilder>
+    private val verdicts: MutableMap<Path, SpannedStringBuilder>
 ) : TaskLifecycleListener<Test>() {
 
     override val acceptedTask: Class<in Test> = Test::class.java
@@ -18,8 +19,8 @@ internal class TestTaskLifecycleListener(
             object : DefaultTestListener() {
                 override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
                     if (result.resultType == TestResult.ResultType.FAILURE) {
-                        verdicts.getOrPut(Path.path(task.path), { LogsTextBuilder("FAILED tests:") })
-                            .addLine("\t${testDescriptor.className}.${testDescriptor.displayName}")
+                        verdicts.getOrPut(Path.path(task.path), { SpannedStringBuilder("FAILED tests:".toSpanned()) })
+                            .addLine("\t${testDescriptor.className}.${testDescriptor.displayName}".toSpanned())
                     }
                 }
             }
