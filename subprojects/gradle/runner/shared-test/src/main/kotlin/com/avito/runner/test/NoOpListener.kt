@@ -7,7 +7,7 @@ import com.avito.runner.service.worker.device.Device
 
 object NoOpListener : TestListener {
 
-    override fun intended(test: TestCase, targetPackage: String, executionNumber: Int) {
+    override fun deviceClaimed(test: TestCase, targetPackage: String, executionNumber: Int) {
     }
 
     override fun started(device: Device, targetPackage: String, test: TestCase, executionNumber: Int) {

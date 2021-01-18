@@ -58,14 +58,16 @@ class DeviceWorker(
                 logger.debug("Received intention: $intention")
                 device.logger.debug("Received intention: $intention")
 
-                listener.intended(
-                    test = intention.action.test,
-                    targetPackage = intention.action.targetPackage,
-                    executionNumber = intention.action.executionNumber
-                )
-
                 when (val status = device.deviceStatus()) {
                     is Device.DeviceStatus.Alive -> {
+
+                        listener.onDevice(
+                            device = device,
+                            test = intention.action.test,
+                            targetPackage = intention.action.targetPackage,
+                            executionNumber = intention.action.executionNumber
+                        )
+
                         device.logger.debug("Preparing state: ${intention.state}")
                         val (preparingError, newState) = prepareDeviceState(
                             currentState = state,

@@ -31,6 +31,14 @@ class TestsRunnerClient {
             loggerFactory = loggerFactory
         )
 
+        val testMetricsSender = TestMetricsSender(
+            statsDSender = statsDSender,
+            timeProvider = timeProvider,
+            loggerFactory = arguments.loggerFactory
+        )
+
+        testMetricsSender.onTestSuiteStarted()
+
         val testRunner = TestRunnerImplementation(
             scheduler = TestExecutionScheduler(
                 loggerFactory = loggerFactory
@@ -44,8 +52,7 @@ class TestsRunnerClient {
                 loggerFactory = loggerFactory,
                 listener = setupListener(
                     arguments = arguments,
-                    timeProvider = timeProvider,
-                    statsDSender = statsDSender
+                    testMetricsSender = testMetricsSender
                 )
             ),
             reservationWatcher = DeviceReservationWatcher.Impl(
@@ -71,12 +78,13 @@ class TestsRunnerClient {
                 requests = arguments.requests
             )
         }
+
+        testMetricsSender.onTestSuiteFinished()
     }
 
     private fun setupListener(
         arguments: Arguments,
-        timeProvider: TimeProvider,
-        statsDSender: StatsDSender
+        testMetricsSender: TestMetricsSender
     ): TestListener = CompositeListener(
         listeners = mutableListOf<TestListener>().apply {
             add(LogListener())
@@ -86,13 +94,7 @@ class TestsRunnerClient {
                     loggerFactory = arguments.loggerFactory
                 )
             )
-            add(
-                TestMetricsSender(
-                    statsDSender = statsDSender,
-                    timeProvider = timeProvider,
-                    loggerFactory = arguments.loggerFactory
-                )
-            )
+            add(testMetricsSender)
         }
     )
 }

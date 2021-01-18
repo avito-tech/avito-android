@@ -8,9 +8,9 @@ class CompositeListener(
     val listeners: List<TestListener>
 ) : TestListener {
 
-    override fun intended(test: TestCase, targetPackage: String, executionNumber: Int) {
+    override fun deviceClaimed(test: TestCase, targetPackage: String, executionNumber: Int) {
         listeners.forEach {
-            it.intended(
+            it.onDevice(
                 test = test,
                 targetPackage = targetPackage,
                 executionNumber = executionNumber
