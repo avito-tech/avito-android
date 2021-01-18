@@ -14,6 +14,7 @@ interface TestExecutorFactory {
     fun createExecutor(
         devicesProviderFactory: DevicesProviderFactory,
         testReporter: TestReporter,
+        buildId: String,
         configuration: InstrumentationConfiguration.Data,
         executionParameters: ExecutionParameters,
         loggerFactory: LoggerFactory,
@@ -25,6 +26,7 @@ interface TestExecutorFactory {
         override fun createExecutor(
             devicesProviderFactory: DevicesProviderFactory,
             testReporter: TestReporter,
+            buildId: String,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,
@@ -33,6 +35,7 @@ interface TestExecutorFactory {
             return TestExecutor.Impl(
                 devicesProvider = devicesProviderFactory.create(configuration, executionParameters),
                 testReporter = testReporter,
+                buildId = buildId,
                 configurationName = configuration.name,
                 loggerFactory = loggerFactory,
                 statsDConfig = statsDConfig

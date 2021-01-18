@@ -11,6 +11,8 @@ import java.io.File
 
 class Arguments(
     val outputDirectory: File,
+    val buildId: String,
+    val instrumentationConfigName: String,
     val requests: List<TestRunRequest>,
     val devices: ReceiveChannel<Device>,
     val loggerFactory: LoggerFactory,

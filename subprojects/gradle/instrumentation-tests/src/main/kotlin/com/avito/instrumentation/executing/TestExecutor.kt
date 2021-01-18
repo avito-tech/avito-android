@@ -33,6 +33,7 @@ interface TestExecutor {
     class Impl(
         private val devicesProvider: DevicesProvider,
         private val testReporter: TestReporter,
+        private val buildId: String,
         private val configurationName: String,
         private val loggerFactory: LoggerFactory,
         private val statsDConfig: StatsDConfig
@@ -69,6 +70,8 @@ interface TestExecutor {
 
                 val runnerArguments = Arguments(
                     outputDirectory = outputFolder(output),
+                    buildId = buildId,
+                    instrumentationConfigName = configurationName,
                     devices = devices,
                     loggerFactory = loggerFactory,
                     listener = testReporter,

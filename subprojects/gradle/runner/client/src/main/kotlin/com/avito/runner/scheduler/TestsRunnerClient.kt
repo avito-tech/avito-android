@@ -5,6 +5,9 @@ import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.listener.ArtifactsTestListener
 import com.avito.runner.scheduler.listener.LogListener
+import com.avito.runner.scheduler.metrics.TestMetricsListener
+import com.avito.runner.scheduler.metrics.TestMetricsListenerImpl
+import com.avito.runner.scheduler.metrics.TestMetricsSender
 import com.avito.runner.scheduler.report.CompositeReporter
 import com.avito.runner.scheduler.report.SummaryReportMakerImplementation
 import com.avito.runner.scheduler.report.trace.TraceReporter
@@ -14,7 +17,6 @@ import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.IntentionExecutionServiceImplementation
 import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
-import com.avito.runner.service.listener.TestMetricsSender
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 
@@ -31,8 +33,12 @@ class TestsRunnerClient {
             loggerFactory = loggerFactory
         )
 
-        val testMetricsSender = TestMetricsSender(
-            statsDSender = statsDSender,
+        val testMetricsSender: TestMetricsListener = TestMetricsListenerImpl(
+            testMetricsSender = TestMetricsSender(
+                statsDSender = statsDSender,
+                buildId = arguments.buildId,
+                instrumentationConfigName = arguments.instrumentationConfigName
+            ),
             timeProvider = timeProvider,
             loggerFactory = arguments.loggerFactory
         )
@@ -52,7 +58,7 @@ class TestsRunnerClient {
                 loggerFactory = loggerFactory,
                 listener = setupListener(
                     arguments = arguments,
-                    testMetricsSender = testMetricsSender
+                    testMetricsListener = testMetricsSender
                 )
             ),
             reservationWatcher = DeviceReservationWatcher.Impl(
@@ -84,7 +90,7 @@ class TestsRunnerClient {
 
     private fun setupListener(
         arguments: Arguments,
-        testMetricsSender: TestMetricsSender
+        testMetricsListener: TestMetricsListener
     ): TestListener = CompositeListener(
         listeners = mutableListOf<TestListener>().apply {
             add(LogListener())
@@ -94,7 +100,7 @@ class TestsRunnerClient {
                     loggerFactory = arguments.loggerFactory
                 )
             )
-            add(testMetricsSender)
+            add(testMetricsListener)
         }
     )
 }

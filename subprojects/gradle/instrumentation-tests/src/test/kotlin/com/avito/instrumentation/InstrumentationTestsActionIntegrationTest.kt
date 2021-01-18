@@ -48,6 +48,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         override fun createExecutor(
             devicesProviderFactory: DevicesProviderFactory,
             testReporter: TestReporter,
+            buildId: String,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,

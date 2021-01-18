@@ -74,6 +74,7 @@ internal class TestExecutorIntegrationTest {
     private fun createTestExecutor(
         loggerFactory: LoggerFactory,
         configurationName: String = "",
+        buildId: String = "",
         statsDConfig: StatsDConfig = StatsDConfig.Disabled,
         adb: Adb = Adb()
     ): TestExecutor = TestExecutor.Impl(
@@ -90,6 +91,7 @@ internal class TestExecutorIntegrationTest {
             adb = adb
         ),
         testReporter = StubTestReporter(),
+        buildId = buildId,
         configurationName = configurationName,
         loggerFactory = loggerFactory,
         statsDConfig = statsDConfig

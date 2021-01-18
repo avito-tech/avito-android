@@ -95,6 +95,7 @@ class TestsRunnerImplementation(
                 configuration = initialRunConfiguration,
                 executionParameters = executionParameters,
                 testReporter = testReporter,
+                buildId = buildId,
                 loggerFactory = loggerFactory,
                 statsDConfig = statsDConfig
             )
