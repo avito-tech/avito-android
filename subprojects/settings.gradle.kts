@@ -160,7 +160,7 @@ pluginManagement {
                     useVersion("0.55.0")
 
                 pluginId == "nebula.integtest" ->
-                    useVersion("7.0.9")
+                    useVersion("8.0.0")
             }
         }
     }
