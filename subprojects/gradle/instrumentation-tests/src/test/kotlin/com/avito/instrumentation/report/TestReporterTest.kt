@@ -1,7 +1,5 @@
 package com.avito.instrumentation.report
 
-import com.avito.logger.StubLoggerFactory
-import com.avito.report.ReportsApi
 import com.avito.report.StubReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
@@ -14,12 +12,11 @@ internal class TestReporterTest {
     private val coordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
     private val device: String = "device"
     private val buildId: String = "123552"
-    private val loggerFactory = StubLoggerFactory
 
     @Test
     fun `every lost tests reported by separate request when batch size is 1`() {
         val reportsApi = StubReportsApi()
-        val reporter = provideTestReporter(
+        val reporter = Report.createStubInstance(
             reportsApi = reportsApi,
             batchSize = 1,
             buildId = buildId
@@ -45,16 +42,4 @@ internal class TestReporterTest {
                 }
         )
     }
-
-    private fun provideTestReporter(
-        reportsApi: ReportsApi,
-        batchSize: Int,
-        buildId: String
-    ): Report = Report.Impl(
-        reportsApi = reportsApi,
-        loggerFactory = loggerFactory,
-        reportCoordinates = coordinates,
-        batchSize = batchSize,
-        buildId = buildId
-    )
 }

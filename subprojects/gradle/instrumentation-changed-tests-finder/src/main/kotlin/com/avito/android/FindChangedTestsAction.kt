@@ -45,6 +45,7 @@ abstract class FindChangedTestsAction : WorkAction<FindChangedTestsAction.Params
         ).map { changedFiles ->
             changedFiles.asSequence()
                 .filter { it.changeType in changeTypes }
+                .filter { it.file.extension == KotlinClassesFinderImpl.KOTLIN_FILE_EXTENSION }
                 .flatMap { kotlinClassesFinder.findClasses(it.file) }
                 .map { it.toString() }
                 .toList()

@@ -26,7 +26,6 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
-import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import java.io.File
 
@@ -47,7 +46,7 @@ class ReportImplementation(
         remoteStorage = remoteStorage,
         loggerFactory = loggerFactory
     ),
-    private val timeProvider: TimeProvider = DefaultTimeProvider()
+    private val timeProvider: TimeProvider
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,

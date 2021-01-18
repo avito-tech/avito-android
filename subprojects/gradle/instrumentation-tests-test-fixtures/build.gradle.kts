@@ -7,6 +7,7 @@ dependencies {
     api(project(":gradle:instrumentation-tests-dex-loader"))
     api(project(":common:report-viewer-test-fixtures"))
     api(project(":common:logger-test-fixtures"))
+    api(project(":common:time-test-fixtures"))
 
     implementation(project(":gradle:bitbucket"))
     implementation(project(":common:report-viewer"))

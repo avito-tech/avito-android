@@ -2,6 +2,7 @@ package com.avito.http
 
 import com.avito.logger.Logger
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -24,7 +25,8 @@ class RetryInterceptor constructor(
     private val useIncreasingDelay: Boolean = true,
     private val logger: Logger,
     private val onSuccess: (Response) -> Unit = {},
-    private val onFailure: (Response) -> Unit = {}
+    private val onFailure: (Response) -> Unit = {},
+    private val modifyRetryRequest: (Request) -> Request = { it }
 ) : Interceptor {
 
     init {
@@ -32,7 +34,7 @@ class RetryInterceptor constructor(
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
+        val originalRequest = chain.request()
         var response: Response? = null
         var error: Throwable = IOException("Failed to execute request for unknown reason")
 
@@ -42,11 +44,17 @@ class RetryInterceptor constructor(
 
             try {
                 prepareForRetry(response)
+                val request = if (tryCount > 1) {
+                    val modifiedRequest = modifyRetryRequest(originalRequest)
+                    logger.debug("Retrying request ($tryCount / $retries) to ${modifiedRequest.url.redact()}")
+                    modifiedRequest
+                } else {
+                    originalRequest
+                }
                 response = chain.proceed(request)
-                logger.debug("Try: $tryCount. Response: $response")
             } catch (exception: IOException) {
                 error = exception
-                logger.warn("Try: $tryCount. Failed to execute request. Error: ${error.message}", exception)
+                logger.warn("Failed to execute request. Error: ${error.message}", exception)
             }
 
             if (response != null) {

@@ -1,30 +1,46 @@
 package com.avito.android.elastic
 
+import com.avito.logger.LoggerFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
-import java.net.URL
+import java.util.concurrent.TimeUnit
 
-internal class ElasticServiceFactory(
-    private val okHttpClient: OkHttpClient,
-    private val gson: Gson = GsonBuilder().create()
-) {
-    private val createApiService = { endpoint: URL ->
-        Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .baseUrl(endpoint)
-            .build()
-            .create<ElasticService>()
-    }
+internal interface ElasticServiceFactory {
 
-    fun createApiService(endpoints: List<URL>): ElasticService =
-        when (endpoints.size) {
-            0 -> error("Elastic service endpoints has not been provided")
-            1 -> createApiService(endpoints[0])
-            else -> RoundRobinService(createApiService, endpoints)
+    fun provide(): ElasticService
+
+    companion object {
+
+        private const val defaultTimeoutSec = 10L
+
+        private val gson: Gson by lazy { GsonBuilder().create() }
+
+        private val okHttpClientBuilder by lazy {
+            OkHttpClient.Builder()
+                .connectTimeout(defaultTimeoutSec, TimeUnit.SECONDS)
+                .readTimeout(defaultTimeoutSec, TimeUnit.SECONDS)
         }
+
+        fun create(
+            endpoints: List<HttpUrl>,
+            loggerFactory: LoggerFactory
+        ): ElasticServiceFactory {
+            return when (endpoints.size) {
+                0 -> error("Elastic service endpoints has not been provided")
+                1 -> ElasticHttpServiceFactory(
+                    endpoint = endpoints[0],
+                    okHttpClientBuilder = okHttpClientBuilder,
+                    gson = gson
+                )
+                else -> ElasticRoundRobinHttpServiceFactory(
+                    endpoints = endpoints,
+                    okHttpClientBuilder = okHttpClientBuilder,
+                    gson = gson,
+                    loggerFactory = loggerFactory
+                )
+            }
+        }
+    }
 }

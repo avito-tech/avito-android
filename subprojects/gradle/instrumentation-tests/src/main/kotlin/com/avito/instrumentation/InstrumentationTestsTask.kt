@@ -12,7 +12,10 @@ import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 import com.avito.report.model.ReportCoordinates
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -131,7 +134,12 @@ abstract class InstrumentationTestsTask @Inject constructor(
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val reportConfig = createReportConfig(reportCoordinates)
         val loggerFactory = GradleLoggerFactory.fromTask(this)
-        val reportFactory = createReportFactory(loggerFactory)
+        val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
+
+        val reportFactory = createReportFactory(
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
+        )
 
         saveTestResultsToBuildOutput(
             reportFactory,
@@ -230,7 +238,10 @@ abstract class InstrumentationTestsTask @Inject constructor(
         }
     }
 
-    private fun createReportFactory(loggerFactory: GradleLoggerFactory): Report.Factory {
+    private fun createReportFactory(
+        loggerFactory: LoggerFactory,
+        timeProvider: TimeProvider
+    ): Report.Factory {
         val reportViewerConfig = reportViewerConfig.orNull
         val factories = mutableMapOf<String, Report.Factory>()
         if (reportViewerConfig != null) {
@@ -239,10 +250,14 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
                     reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
                     loggerFactory = loggerFactory,
+                    timeProvider = timeProvider,
                     verboseHttp = false // do not enable for production, generates a ton of logs
                 )
         }
-        factories[Report.Factory.Config.InMemory::class.java.simpleName] = Report.Factory.InMemoryReportFactory()
+
+        factories[Report.Factory.Config.InMemory::class.java.simpleName] =
+            Report.Factory.InMemoryReportFactory(timeProvider = timeProvider)
+
         return Report.Factory.StrategyFactory(
             factories = factories.toMap()
         )
