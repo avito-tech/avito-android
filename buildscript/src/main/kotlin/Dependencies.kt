@@ -14,7 +14,7 @@ object Dependencies {
         const val mockito = "3.3.3"
         const val detekt = "1.10.0"
         const val coroutines = "1.3.7"
-        val androidGradlePlugin: String = System.getProperty("androidGradlePluginVersion")
+        const val androidGradlePlugin: String = "4.1.1"
     }
 
     const val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
@@ -58,8 +58,6 @@ object Dependencies {
     const val commonsLang = "org.apache.commons:commons-lang3:3.8.1"
     const val antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
     const val dockerClient = "de.gesellix:docker-client:2019-11-26T12-39-35"
-    const val detektParser = "io.gitlab.arturbosch.detekt:detekt-parser:${Versions.detekt}"
-    const val detektCli = "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 
     // https://r8.googlesource.com/r8/
     // 1.6.x <-> AGP 3.6.x
@@ -75,7 +73,7 @@ object Dependencies {
     const val freeReflection = "me.weishu:free_reflection:2.2.0"
 
     object Gradle {
-        val androidPlugin = "com.android.tools.build:gradle:${Versions.androidGradlePlugin}"
+        const val androidPlugin = "com.android.tools.build:gradle:${Versions.androidGradlePlugin}"
         const val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin"
 
         object Avito {

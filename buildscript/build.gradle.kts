@@ -7,4 +7,3 @@ group = "com.avito.android"
 repositories {
     jcenter()
 }
-

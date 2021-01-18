@@ -121,9 +121,6 @@ include(":ci:k8s-deployments-cleaner")
 
 pluginManagement {
 
-    val kotlinVersion: String by System.getProperties()
-    val androidGradlePluginVersion: String by System.getProperties()
-
     repositories {
         exclusiveContent {
             forRepository {
@@ -133,8 +130,8 @@ pluginManagement {
                 includeGroup("com.gradle")
                 includeGroup("com.gradle.enterprise")
                 includeGroup("org.jetbrains.kotlin.jvm")
+                includeGroupByRegex("nebula\\..*")
                 includeGroup("com.jfrog.bintray")
-                includeGroup("nebula.integtest")
                 includeGroup("io.gitlab.arturbosch.detekt")
                 includeGroup("com.autonomousapps.dependency-analysis")
             }
@@ -149,22 +146,21 @@ pluginManagement {
         }
     }
 
-    plugins {
-        id("nebula.integtest") version "7.0.7"
-    }
-
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
             when {
                 pluginId.startsWith("com.android.") ->
-                    useModule("com.android.tools.build:gradle:$androidGradlePluginVersion")
+                    useModule("com.android.tools.build:gradle:4.1.1")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion(kotlinVersion)
+                    useVersion("1.4.21")
 
                 pluginId == "com.autonomousapps.dependency-analysis" ->
                     useVersion("0.55.0")
+
+                pluginId == "nebula.integtest" ->
+                    useVersion("8.0.0")
             }
         }
     }
@@ -192,6 +188,7 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
                 includeGroup("com.google.test.platform")
+                includeGroup("com.google.testing.platform")
             }
         }
     }

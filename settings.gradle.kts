@@ -44,8 +44,6 @@ pluginManagement {
 
     val artifactoryUrl: String? by settings
     val infraVersion: String by settings
-    val kotlinVersion: String by System.getProperties()
-    val androidGradlePluginVersion: String by System.getProperties()
 
     repositories {
         exclusiveContent {
@@ -120,10 +118,10 @@ pluginManagement {
             val pluginId = requested.id.id
             when {
                 pluginId.startsWith("com.android.") ->
-                    useModule("com.android.tools.build:gradle:$androidGradlePluginVersion")
+                    useModule("com.android.tools.build:gradle:4.1.1")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion(kotlinVersion)
+                    useVersion("1.4.21")
 
                 pluginId.startsWith("com.avito.android") ->
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
