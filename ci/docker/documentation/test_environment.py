@@ -8,12 +8,8 @@ from hamcrest import assert_that, contains_string
 class TestEnvironment(object):
 
     def test_hugo_is_extended_version(self, host):
-        hugo_version = host.run('hugo version').stdout
+        hugo_version = host.run('mkdocs --version').stdout
         assert_that(
             hugo_version,
-            contains_string('Hugo')
-        )
-        assert_that(
-            hugo_version,
-            contains_string('extended')
+            contains_string('mkdocs, version')
         )
