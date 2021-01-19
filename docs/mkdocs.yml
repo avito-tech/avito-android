@@ -1,6 +1,6 @@
 site_name: Avito Android
 site_description: Avito Android infrastructure
-repo_url: https://avito-tech.github.io/avito-android
+repo_url: https://github.com/avito-tech/avito-android
 repo_name: avito-android
 edit_uri: tree/develop/docs/content
 docs_dir: 'content'
