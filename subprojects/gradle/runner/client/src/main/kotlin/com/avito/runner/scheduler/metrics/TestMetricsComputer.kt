@@ -35,21 +35,21 @@ internal class TestMetricsComputer(
     /**
      * null is possible if no tests
      */
-    fun computeInitialDelay(): Long? = firstTestStarted?.let { it - testSuiteStartedTime }
+    fun initialDelay(): Long? = firstTestStarted?.let { it - testSuiteStartedTime }
 
-    fun computeEndDelay(): Long? = lastTestEnded?.let { testSuiteEndedTime - it }
+    fun endDelay(): Long? = lastTestEnded?.let { testSuiteEndedTime - it }
 
-    fun computeAverageTestQueueTime(): Long? = queueTimes.aggregateOrNull { it.average() }
+    fun averageTestQueueTime(): Long? = queueTimes.aggregateOrNull { it.average() }
 
-    fun computeAverageTestStartTime(): Long? = startTimes.aggregateOrNull { it.average() }
+    fun averageTestStartTime(): Long? = startTimes.aggregateOrNull { it.average() }
 
-    fun computeSuiteTime(): Long? = if (lastTestEnded != null && firstTestStarted != null) {
+    fun suiteTime(): Long? = if (lastTestEnded != null && firstTestStarted != null) {
         lastTestEnded - firstTestStarted
     } else {
         null
     }
 
-    fun computeTotalTime() = testSuiteEndedTime - testSuiteStartedTime
+    fun totalTime() = testSuiteEndedTime - testSuiteStartedTime
 
     /**
      * return null if no data

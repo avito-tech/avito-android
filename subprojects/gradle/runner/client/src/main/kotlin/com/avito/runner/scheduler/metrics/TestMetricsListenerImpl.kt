@@ -71,27 +71,27 @@ internal class TestMetricsListenerImpl(
         )
 
         with(testMetricsSender) {
-            metricsComputer.computeInitialDelay()
+            metricsComputer.initialDelay()
                 ?.let { sendInitialDelay(it) }
                 ?: logger.warn("Not sending initial delay, no data")
 
-            metricsComputer.computeAverageTestQueueTime()
+            metricsComputer.averageTestQueueTime()
                 ?.let { sendAverageTestQueueTime(it) }
                 ?: logger.warn("Not sending average test queue time, no data")
 
-            metricsComputer.computeAverageTestStartTime()
+            metricsComputer.averageTestStartTime()
                 ?.let { sendAverageTestStartTime(it) }
                 ?: logger.warn("Not sending average test start time, no data")
 
-            metricsComputer.computeEndDelay()
+            metricsComputer.endDelay()
                 ?.let { sendEndDelay(it) }
                 ?: logger.warn("Not sending end delay, no data")
 
-            metricsComputer.computeSuiteTime()
+            metricsComputer.suiteTime()
                 ?.let { sendSuiteTime(it) }
                 ?: logger.warn("Not sending suite time, no data")
 
-            sendTotalTime(metricsComputer.computeTotalTime())
+            sendTotalTime(metricsComputer.totalTime())
         }
     }
 }
