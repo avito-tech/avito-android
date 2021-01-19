@@ -7,9 +7,9 @@
 ## Default `Screen.checks`
 
 ???+ warning
-`checkOnEachScreenInteraction` works only if:
-- your `Screen` extends from `PageObject`
-- your `ViewElements` is created by `element(Matcher)` function
+    `checkOnEachScreenInteraction` works only if:
+    - your `Screen` extends from `PageObject`
+    - your `ViewElements` is created by `element(Matcher)` function
 
 ```kotlin
 interface Screen {
@@ -30,7 +30,8 @@ interface Screen {
 
 ### With writing a custom check
 
-???+ info If your `Screen`  doesn't support `StrictScreenChecks.isScreenOpened` behavior
+???+ info 
+    If your `Screen`  doesn't support `StrictScreenChecks.isScreenOpened` behavior
 
 ```kotlin
 import com.avito.android.screen.Screen
@@ -72,7 +73,8 @@ class MyScreen : Screen {
 
 ## How to make `isScreenOpened` executes on each interaction with `ViewElement`s
 
-???+ warning We recommend to set `checkOnEachScreenInteraction` true. In the future, we will make this behavior default.
+???+ warning 
+    We recommend to set `checkOnEachScreenInteraction` true. In the future, we will make this behavior default.
 
 ### If your `ScreenChecks` extends from `StrictScreenChecks`
 
@@ -108,8 +110,10 @@ class MyScreen : Screen {
 
 ## How to use `ScreenChecks.isScreenOpened` in your code if `checkOnEachScreenInteraction = false`?
 
-???+ warning This code could lead you to making mistakes:
-- You could forget to add the check manually - You could add the check in to place belonging to another `Screen`
+???+ warning 
+    This code could lead you to making mistakes:
+    - You could forget to add the check manually 
+    - You could add the check in to place belonging to another `Screen`
 
     This code increases a cognitive pressure
 
@@ -122,7 +126,8 @@ screen.checks.isScreenOpened()
 
 ## How to use the same `Screen` with different behavior
 
-???+ info It may be useful when one `Screen` contains different UI states.
+???+ info 
+    It may be useful when one `Screen` contains different UI states.
 
 ```kotlin
 fun Screen.myScreen(title: String? = null) = PublishParamsScreen(title)

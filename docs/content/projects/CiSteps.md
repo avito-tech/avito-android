@@ -1,7 +1,8 @@
 # CI steps plugin
 
-???+ warning Plugin wasn't tested outside Avito yet, so expect difficulties, or even blockers. However, if you
-interested, please contact us.
+???+ warning 
+    Plugin wasn't tested outside Avito yet, so expect difficulties, or even blockers. 
+    However, if you interested, please contact us.
 
 Plugin creates chains of tasks for CI, encapsulating it under single gradle task.
 

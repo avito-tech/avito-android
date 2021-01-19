@@ -15,8 +15,8 @@ and even if your task use workers, it should acquire the lock to start or report
 So it will parallelize as nice as you might expect only if all tasks running on module use workers, or non-worker task
 is fast enough to even bother.
 
-???+ warning Tasks report finish time later than
-actual: [gradle #8630](https://github.com/gradle/gradle/issues/8630#issuecomment-488161594)
+???+ warning 
+    Tasks report finish time later than actual: [gradle #8630](https://github.com/gradle/gradle/issues/8630#issuecomment-488161594)
 
 ```mermaid
 gantt

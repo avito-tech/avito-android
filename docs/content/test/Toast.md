@@ -2,8 +2,9 @@
 
 [android.widget.Toast](https://developer.android.com/reference/android/widget/Toast)
 
-???+ warning Testing toasts is a hard because other toasts can show up and yours will be queued. We hack app with proxy
-object to mitigate this.
+???+ warning 
+    Testing toasts is a hard because other toasts can show up and yours will be queued. 
+    We hack app with proxy object to mitigate this.
 
     It is also recommended to use [snackbar](https://developer.android.com/reference/com/google/android/material/snackbar/Snackbar), 
     or your custom way to display brief unintrusive messages instead. So you should consider not testing it at all.
