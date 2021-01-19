@@ -68,13 +68,15 @@ buildscript {
 }
 ```
 
-???+ info For versions check tags here: [https://r8.googlesource.com/r8/](https://r8.googlesource.com/r8/)
+???+ info 
+    For versions check tags here: [https://r8.googlesource.com/r8/](https://r8.googlesource.com/r8/)
 
     Seems like 1.5 versions bundled with AGP 3.5.x\
     1.6 -> 3.6.x\
     and 2.0 -> 4.0.x
 
-???+ warning Don't forget to tell `keeper`, you are using different r8 version:
+???+ warning 
+    Don't forget to tell `keeper`, you are using different r8 version:
 
     ```kotlin
     dependencies {

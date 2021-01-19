@@ -142,8 +142,9 @@ Analogy: an article in Wikipedia
 - `[licencse](../about/license.md)` - относительный путь к файлу
 - `[licencse](https://choosealicense.com/licenses){target=_blank}` - открыть в новой вкладке
 
-???+ warning Абсолютные ссылки официально не поддерживаются. Они могут работать локально, но сломаться после деплоя
-документации.
+???+ warning 
+    Абсолютные ссылки официально не поддерживаются. 
+    Они могут работать локально, но сломаться после деплоя документации.
 
 Ссылка на параграф:
 
@@ -232,10 +233,10 @@ Use any public file storage for them. For example, a Github CDN:
 ```
 
 ??? "Collapsed by default"
-Here's some content. Nesting is working.
+    Here's some content. Nesting is working.
 
 ???+ "Expanded"
-Here's some content. Nesting is working.
+    Here's some content. Nesting is working.
 
     ??? success
         Content.
