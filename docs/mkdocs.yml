@@ -1,0 +1,106 @@
+site_name: Avito Android
+site_description: Avito Android infrastructure
+repo_url: https://github.com/avito-tech/avito-android
+repo_name: avito-android
+edit_uri: tree/develop/docs/content
+docs_dir: 'content'
+remote_branch: gh-pages
+
+theme:
+    name: material
+    language: en
+    features:
+        - navigation.tabs
+    palette:
+        scheme: preference
+
+plugins:
+    -   search:
+            lang:
+                - en
+                - ru
+
+markdown_extensions:
+    -   toc:
+            permalink: true
+            toc_depth: 5
+            slugify: !!python/name:pymdownx.slugs.uslugify
+            # https://facelessuser.github.io/pymdown-extensions/
+    - pymdownx.details
+    - pymdownx.tilde
+    - pymdownx.tabbed
+    - pymdownx.smartsymbols
+    -   pymdownx.tasklist:
+            custom_checkbox: true
+    - pymdownx.escapeall
+    - pymdownx.mark
+    - pymdownx.keys
+    -   pymdownx.magiclink:
+            repo_url_shortener: true
+            social_url_shortener: true
+    -   pymdownx.snippets:
+            base_path: docs/snippets
+            check_paths: true
+    -   pymdownx.superfences:
+            preserve_tabs: true
+            custom_fences:
+                -   name: mermaid
+                    class: mermaid
+                    format: !!python/name:pymdownx.superfences.fence_div_format
+    - pymdownx.inlinehilite
+    -   pymdownx.emoji:
+            emoji_generator: !!python/name:pymdownx.emoji.to_svg
+
+extra_javascript:
+    - https://unpkg.com/mermaid@8.8.4/dist/mermaid.min.js
+
+extra:
+    social:
+        -   icon: fontawesome/brands/twitter
+            link: https://twitter.com/avitotech
+        -   icon: fontawesome/brands/telegram
+            link: https://t.me/avito_android_opensource
+
+google_analytics:
+    - UA-157613383-1
+    - auto
+
+nav:
+    -   Infrastructure:
+            - index.md
+            -   Infrastructure: infrastructure/Infrastructure.md
+            -   Contributing:
+                    -   Custom Gradle Plugins: ci/CustomGradlePlugins.md
+                    -   Documentation: contributing/documentation.md
+    -   Projects:
+            -   Build checks: projects/BuildChecks.md
+            -   Build properties: projects/BuildProperties.md
+            -   Build trace: projects/BuildTrace.md
+            -   CI Steps: projects/CiSteps.md
+    -   CI:
+            -   CI Gradle Plugin: projects/CiSteps.md
+            -   Custom Gradle Plugins: ci/CustomGradlePlugins.md
+            -   Impact analysis: ci/ImpactAnalysis.md
+            -   Containers: ci/Containers.md
+            -   Logging: ci/Logging.md
+    -   Testing:
+            -   Test Runner: test/Runner.md
+            -   Flaky annotation: test/FlakyAnnotation.md
+            -   Toast: test/Toast.md
+    -   Test framework:
+            - test_framework/TestFramework.md
+            -   Snackbar: test_framework/Snackbar.md
+            -   Screen checks: test_framework/ScreenChecks.md
+            -   Internals: test_framework/Internals.md
+    -   Blog:
+            -   2020:
+                    -   03:
+                            -   Testing a minimized build: blog/2020/03/testing-a-minimized-build.md
+                    -   02:
+                            -   Lint Worker API workaround: blog/2020/02/lint-worker-api-workaround.md
+            -   2019:
+                    -   12:
+                            -   Open Source introduction: blog/2019/12/open-source-introduction.md
+                            -   Open source для CI/CD и тестовой инфраструктуры Авито для Android: blog/2019/12/open-source-introduction.ru.md
+    -   Internals:
+            -   Infra Release: internals/Release.md

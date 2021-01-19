@@ -1,1 +1,1 @@
-Image with Hugo and markdown linter.
+Image with mkdocs documentation
