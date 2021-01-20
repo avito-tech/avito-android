@@ -210,6 +210,7 @@ subprojects {
 
             dependencies {
                 "implementation"(Dependencies.kotlinStdlib)
+                "api"(platform("com.squareup.okhttp3:okhttp-bom:4.9.0"))
             }
         }
     }
