@@ -13,7 +13,6 @@ object Dependencies {
         const val mockito = "3.3.3"
         const val detekt = "1.10.0"
         const val coroutines = "1.3.7"
-        const val androidGradlePlugin: String = "4.1.1"
     }
 
     const val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
@@ -72,7 +71,6 @@ object Dependencies {
     const val freeReflection = "me.weishu:free_reflection:2.2.0"
 
     object Gradle {
-        const val androidPlugin = "com.android.tools.build:gradle:${Versions.androidGradlePlugin}"
         const val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin"
 
         object Avito {
