@@ -26,17 +26,17 @@ internal class TestMetricsSender(
     }
 
     /**
-     * average from task start to device claimed by test
+     * median from task start to device claimed by test
      */
-    fun sendAverageTestQueueTime(averageTime: Long) {
-        statsDSender.send(prefix, GaugeMetric("queue-average", averageTime))
+    fun sendMedianQueueTime(value: Long) {
+        statsDSender.send(prefix, GaugeMetric("queue-median", value))
     }
 
     /**
-     * average from on device to test execution started
+     * median from on device to test execution started
      */
-    fun sendAverageTestStartTime(averageTime: Long) {
-        statsDSender.send(prefix, GaugeMetric("start-average", averageTime))
+    fun sendMedianInstallationTime(value: Long) {
+        statsDSender.send(prefix, GaugeMetric("install-median", value))
     }
 
     /**

@@ -2,6 +2,8 @@ package com.avito.runner.scheduler.metrics
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.runner.scheduler.metrics.model.TestKey
+import com.avito.runner.scheduler.metrics.model.TestTimestamps
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
@@ -11,16 +13,12 @@ import java.util.concurrent.ConcurrentHashMap
 internal class TestMetricsListenerImpl(
     private val testMetricsSender: TestMetricsSender,
     private val timeProvider: TimeProvider,
-    private val loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory
 ) : TestMetricsListener {
 
     private val logger = loggerFactory.create<TestMetricsListener>()
 
-    private val onDeviceMarks = ConcurrentHashMap<TestKey, Long>()
-
-    private val startedMarks = ConcurrentHashMap<TestKey, Long>()
-
-    private val finishedMarks = ConcurrentHashMap<TestKey, Long>()
+    private val testTimestamps = ConcurrentHashMap<TestKey, TestTimestamps>()
 
     private var testSuiteStartedTime: Long = 0
 
@@ -35,7 +33,9 @@ internal class TestMetricsListenerImpl(
         executionNumber: Int
     ) {
         val key = TestKey(test, executionNumber)
-        onDeviceMarks[key] = timeProvider.nowInMillis()
+        testTimestamps.compute(key) { _, oldValue ->
+            oldValue.createOrUpdate { it.copy(onDevice = timeProvider.nowInMillis()) }
+        }
     }
 
     override fun started(
@@ -45,7 +45,9 @@ internal class TestMetricsListenerImpl(
         executionNumber: Int
     ) {
         val key = TestKey(test, executionNumber)
-        startedMarks[key] = timeProvider.nowInMillis()
+        testTimestamps.compute(key) { _, oldValue ->
+            oldValue.createOrUpdate { it.copy(started = timeProvider.nowInMillis()) }
+        }
     }
 
     override fun finished(
@@ -57,41 +59,48 @@ internal class TestMetricsListenerImpl(
         executionNumber: Int
     ) {
         val key = TestKey(test, executionNumber)
-        finishedMarks[key] = timeProvider.nowInMillis()
+        testTimestamps.compute(key) { _, oldValue ->
+            oldValue.createOrUpdate { it.copy(finished = timeProvider.nowInMillis()) }
+        }
     }
 
     override fun onTestSuiteFinished() {
-        val metricsComputer = TestMetricsComputer(
-            loggerFactory = loggerFactory,
-            testSuiteStartedTime = testSuiteStartedTime,
-            testSuiteEndedTime = timeProvider.nowInMillis(),
-            onDeviceMarks = onDeviceMarks,
-            startedMarks = startedMarks,
-            finishedMarks = finishedMarks
-        )
+        val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
 
         with(testMetricsSender) {
-            metricsComputer.initialDelay()
+            aggregator.initialDelay()
                 ?.let { sendInitialDelay(it) }
                 ?: logger.warn("Not sending initial delay, no data")
 
-            metricsComputer.averageTestQueueTime()
-                ?.let { sendAverageTestQueueTime(it) }
+            aggregator.medianQueueTime()
+                ?.let { sendMedianQueueTime(it) }
                 ?: logger.warn("Not sending average test queue time, no data")
 
-            metricsComputer.averageTestStartTime()
-                ?.let { sendAverageTestStartTime(it) }
+            aggregator.medianInstallationTime()
+                ?.let { sendMedianInstallationTime(it) }
                 ?: logger.warn("Not sending average test start time, no data")
 
-            metricsComputer.endDelay()
+            aggregator.endDelay()
                 ?.let { sendEndDelay(it) }
                 ?: logger.warn("Not sending end delay, no data")
 
-            metricsComputer.suiteTime()
+            aggregator.suiteTime()
                 ?.let { sendSuiteTime(it) }
                 ?: logger.warn("Not sending suite time, no data")
 
-            sendTotalTime(metricsComputer.totalTime())
+            sendTotalTime(aggregator.totalTime())
         }
+    }
+
+    private fun createTestMetricsAggregator(): TestMetricsAggregator {
+        return TestMetricsAggregatorImpl(
+            testSuiteStartedTime = testSuiteStartedTime,
+            testSuiteEndedTime = timeProvider.nowInMillis(),
+            testTimestamps = testTimestamps
+        )
+    }
+
+    private fun TestTimestamps?.createOrUpdate(updateFun: (TestTimestamps) -> TestTimestamps): TestTimestamps {
+        return updateFun(this ?: TestTimestamps(0, 0, 0))
     }
 }

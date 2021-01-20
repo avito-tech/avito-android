@@ -8,4 +8,6 @@ data class TestCase(
     val deviceName: String
 ) : Serializable {
     val testName: String = "$className.$methodName"
+
+    companion object
 }

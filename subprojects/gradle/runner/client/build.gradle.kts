@@ -15,6 +15,7 @@ dependencies {
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.coroutinesCore)
     implementation(Dependencies.gson)
+    implementation(Dependencies.statistics)
 
     testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
