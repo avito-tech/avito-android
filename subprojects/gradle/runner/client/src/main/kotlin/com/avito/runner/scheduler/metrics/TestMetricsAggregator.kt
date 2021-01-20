@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.metrics
 
-interface TestMetricsAggregator {
+internal interface TestMetricsAggregator {
 
     fun initialDelay(): Long?
 
