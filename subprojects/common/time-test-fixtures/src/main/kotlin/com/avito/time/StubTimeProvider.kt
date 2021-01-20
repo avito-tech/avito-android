@@ -1,17 +1,11 @@
 package com.avito.time
 
-import com.avito.logger.StubLoggerFactory
 import java.text.DateFormat
 import java.util.Date
-import java.util.TimeZone
 
 class StubTimeProvider : TimeProvider {
 
-    private val loggerFactory = StubLoggerFactory
-
-    private val timeProvider = DefaultTimeProvider(loggerFactory)
-
-    override val timeZone: TimeZone = timeProvider.timeZone
+    private val timeProvider = DefaultTimeProvider()
 
     lateinit var now: Date
 
@@ -25,5 +19,5 @@ class StubTimeProvider : TimeProvider {
 
     override fun toDate(seconds: Long): Date = timeProvider.toDate(seconds)
 
-    override fun formatter(pattern: String): DateFormat = timeProvider.formatter(pattern)
+    override fun utcFormatter(pattern: String): DateFormat = timeProvider.utcFormatter(pattern)
 }

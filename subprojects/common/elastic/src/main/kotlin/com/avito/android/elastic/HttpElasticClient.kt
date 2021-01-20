@@ -21,6 +21,7 @@ internal class HttpElasticClient(
     private val endpoints: List<URL>,
     private val indexPattern: String,
     private val buildId: String,
+    private val dateFormatChecker: DateFormatChecker,
     loggerFactory: LoggerFactory
 ) : ElasticClient {
 
@@ -33,9 +34,9 @@ internal class HttpElasticClient(
         loggerFactory = loggerFactory
     ).provide()
 
-    private val timestampFormatter = timeProvider.formatter("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSSZ")
+    private val timestampFormatter = timeProvider.utcFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-    private val isoDate = timeProvider.formatter("yyyy-MM-dd")
+    private val isoDate = timeProvider.utcFormatter("yyyy-MM-dd")
 
     override fun sendMessage(
         level: String,
@@ -44,10 +45,10 @@ internal class HttpElasticClient(
         throwable: Throwable?
     ) {
         try {
-            val nowWithTimeZone = timeProvider.now()
+            val now = timeProvider.now()
 
             val params = mutableMapOf(
-                "@timestamp" to timestampFormatter.format(nowWithTimeZone),
+                "@timestamp" to timestampFormatter.format(now),
                 "level" to level,
                 "build_id" to buildId,
                 "message" to message
@@ -60,9 +61,13 @@ internal class HttpElasticClient(
 
             params.putAll(metadata)
 
+            val formattedDate = isoDate.format(now)
+
+            dateFormatChecker.check(formattedDate)
+
             elasticApi.log(
                 indexPattern = indexPattern,
-                date = isoDate.format(nowWithTimeZone),
+                date = formattedDate,
                 params = params
             ).enqueue(
                 object : Callback<ResponseBody> {

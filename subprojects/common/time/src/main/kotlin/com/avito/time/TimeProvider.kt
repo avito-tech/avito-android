@@ -2,11 +2,8 @@ package com.avito.time
 
 import java.text.DateFormat
 import java.util.Date
-import java.util.TimeZone
 
 interface TimeProvider {
-
-    val timeZone: TimeZone
 
     fun isSameDay(date1: Date, date2: Date): Boolean
 
@@ -18,5 +15,5 @@ interface TimeProvider {
 
     fun toDate(seconds: Long): Date
 
-    fun formatter(pattern: String): DateFormat
+    fun utcFormatter(pattern: String): DateFormat
 }

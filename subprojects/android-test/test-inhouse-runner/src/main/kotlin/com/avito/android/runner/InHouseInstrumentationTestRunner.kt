@@ -69,7 +69,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
-    private val timeProvider: TimeProvider by lazy { DefaultTimeProvider(loggerFactory) }
+    private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
 
     val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
 

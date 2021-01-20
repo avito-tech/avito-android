@@ -150,7 +150,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val reportConfig = createReportConfig(reportCoordinates)
         val loggerFactory = GradleLoggerFactory.fromTask(this)
-        val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
+        val timeProvider: TimeProvider = DefaultTimeProvider()
 
         val reportFactory = createReportFactory(
             loggerFactory = loggerFactory,

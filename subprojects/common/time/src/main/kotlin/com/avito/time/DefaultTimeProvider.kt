@@ -1,7 +1,5 @@
 package com.avito.time
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -12,19 +10,11 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Used in android runtime < 26, so no java.time API yet
- * consider using ThreeTenABP
+ * consider using https://developer.android.com/studio/write/java8-support#library-desugaring
  */
-class DefaultTimeProvider(loggerFactory: LoggerFactory) : TimeProvider {
-
-    private val logger = loggerFactory.create<DefaultTimeProvider>()
+class DefaultTimeProvider : TimeProvider {
 
     private val locale: Locale = Locale.getDefault()
-
-    override val timeZone: TimeZone = TimeZone.getDefault()
-
-    init {
-        logger.debug("Creating new time provider: Locale = $locale; TimeZone = $timeZone")
-    }
 
     override fun isSameDay(date1: Date, date2: Date): Boolean {
         return isSameDay(
@@ -50,9 +40,7 @@ class DefaultTimeProvider(loggerFactory: LoggerFactory) : TimeProvider {
             cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
-    override fun formatter(pattern: String): DateFormat {
-        return SimpleDateFormat(pattern, locale).apply {
-            timeZone = this@DefaultTimeProvider.timeZone
-        }
+    override fun utcFormatter(pattern: String): DateFormat = SimpleDateFormat(pattern, locale).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
     }
 }

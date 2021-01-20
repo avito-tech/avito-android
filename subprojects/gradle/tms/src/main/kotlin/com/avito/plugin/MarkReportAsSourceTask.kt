@@ -22,7 +22,7 @@ abstract class MarkReportAsSourceTask : DefaultTask() {
     @TaskAction
     fun doWork() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
-        val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
+        val timeProvider: TimeProvider = DefaultTimeProvider()
 
         MarkReportAsSourceAction(
             reportsApi = ReportsApi.create(
