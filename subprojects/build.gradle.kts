@@ -213,8 +213,7 @@ subprojects {
             }
 
             dependencies {
-                "api"(platform("org.jetbrains.kotlin:kotlin-bom:${kotlinVersion.get()}"))
-                "api"(platform("com.squareup.okhttp3:okhttp-bom:4.9.0"))
+                "implementation"(Dependencies.kotlinStdlib)
             }
         }
     }
