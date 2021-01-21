@@ -1,5 +1,6 @@
 package com.avito.instrumentation.executing
 
+import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
@@ -13,9 +14,11 @@ interface TestExecutorFactory {
     fun createExecutor(
         devicesProviderFactory: DevicesProviderFactory,
         testReporter: TestReporter,
+        buildId: String,
         configuration: InstrumentationConfiguration.Data,
         executionParameters: ExecutionParameters,
-        loggerFactory: LoggerFactory
+        loggerFactory: LoggerFactory,
+        statsDConfig: StatsDConfig
     ): TestExecutor
 
     class Implementation : TestExecutorFactory {
@@ -23,15 +26,19 @@ interface TestExecutorFactory {
         override fun createExecutor(
             devicesProviderFactory: DevicesProviderFactory,
             testReporter: TestReporter,
+            buildId: String,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
-            loggerFactory: LoggerFactory
+            loggerFactory: LoggerFactory,
+            statsDConfig: StatsDConfig
         ): TestExecutor {
             return TestExecutor.Impl(
                 devicesProvider = devicesProviderFactory.create(configuration, executionParameters),
                 testReporter = testReporter,
+                buildId = buildId,
                 configurationName = configuration.name,
-                loggerFactory = loggerFactory
+                loggerFactory = loggerFactory,
+                statsDConfig = statsDConfig
             )
         }
     }

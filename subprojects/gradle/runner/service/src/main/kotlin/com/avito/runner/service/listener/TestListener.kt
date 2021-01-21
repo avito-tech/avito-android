@@ -6,6 +6,20 @@ import com.avito.runner.service.worker.device.Device
 
 interface TestListener {
 
+    /**
+     * Device is claimed and ready for this test run
+     */
+    fun onDevice(
+        device: Device,
+        test: TestCase,
+        targetPackage: String,
+        executionNumber: Int
+    )
+
+    /**
+     * Actual test execution on device is about to start,
+     * am instrument will be called right after
+     */
     fun started(
         device: Device,
         targetPackage: String,

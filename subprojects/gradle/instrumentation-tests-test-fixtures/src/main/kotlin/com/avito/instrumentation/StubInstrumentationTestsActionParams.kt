@@ -1,5 +1,6 @@
 package com.avito.instrumentation
 
+import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.report.ReadReport
@@ -39,7 +40,8 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     reportViewerUrl: String = "https://reports",
     kubernetesRegistry: String = "",
     fileStorageUrl: String = "https://files",
-    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance()
+    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
+    statsDConfig: StatsDConfig = StatsDConfig.Disabled
 ) =
     InstrumentationTestsAction.Params(
         mainApk = mainApk,
@@ -77,5 +79,6 @@ fun InstrumentationTestsAction.Params.Companion.createStubInstance(
             }
         },
         reportCoordinates = reportCoordinates,
-        proguardMappings = emptyList()
+        proguardMappings = emptyList(),
+        statsDConfig = statsDConfig
     )

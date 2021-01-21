@@ -1,0 +1,37 @@
+package com.avito.runner.scheduler.metrics
+
+import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.StatsDSender
+
+internal class TestMetricsSender(
+    private val statsDSender: StatsDSender,
+    buildId: String,
+    instrumentationConfigName: String
+) {
+
+    private val prefix = "testrunner.$buildId.$instrumentationConfigName"
+
+    fun sendInitialDelay(delayMs: Long) {
+        statsDSender.send(prefix, GaugeMetric("initial-delay", delayMs))
+    }
+
+    fun sendEndDelay(delayMs: Long) {
+        statsDSender.send(prefix, GaugeMetric("end-delay", delayMs))
+    }
+
+    fun sendMedianQueueTime(value: Long) {
+        statsDSender.send(prefix, GaugeMetric("queue-median", value))
+    }
+
+    fun sendMedianInstallationTime(value: Long) {
+        statsDSender.send(prefix, GaugeMetric("install-median", value))
+    }
+
+    fun sendSuiteTime(suiteTimeMs: Long) {
+        statsDSender.send(prefix, GaugeMetric("suite", suiteTimeMs))
+    }
+
+    fun sendTotalTime(timeMs: Long) {
+        statsDSender.send(prefix, GaugeMetric("total", timeMs))
+    }
+}

@@ -127,7 +127,7 @@ Let’s discuss some of the most important libraries.
 This is a Gradle plugin to run instrumentation tests. The closest analog
 is [Marathon](https://github.com/Malinskiy/marathon), but our plugin runs only under Android.
 
-[Test runner:](../../../test/Runner.md)
+[Test runner:](../../../test_runner/TestRunner.md)
 
 - Specifies which tests to run. Filtering by annotations, by packages, by the results of the last run is supported.
 - Specifies which emulators to run tests on. Backs these up to Kubernetes or connects to local emulators.
