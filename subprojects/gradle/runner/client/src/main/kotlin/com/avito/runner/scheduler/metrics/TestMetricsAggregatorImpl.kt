@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.metrics
 
+import com.avito.math.median
 import com.avito.runner.scheduler.metrics.model.TestKey
 import com.avito.runner.scheduler.metrics.model.TestTimestamps
-import org.nield.kotlinstatistics.median
 
 internal class TestMetricsAggregatorImpl(
     private val testSuiteStartedTime: Long,

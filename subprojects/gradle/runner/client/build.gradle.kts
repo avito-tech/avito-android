@@ -12,10 +12,10 @@ dependencies {
     api(project(":gradle:runner:service"))
 
     implementation(project(":gradle:trace-event"))
+    implementation(project(":common:math"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.coroutinesCore)
     implementation(Dependencies.gson)
-    implementation(Dependencies.statistics)
 
     testImplementation(project(":common:logger-test-fixtures"))
     testImplementation(project(":gradle:test-project"))

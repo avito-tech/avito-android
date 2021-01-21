@@ -34,7 +34,6 @@ object Dependencies {
     const val sentry = "io.sentry:sentry:${Versions.sentry}"
     const val sentryAndroid = "io.sentry:sentry-android:${Versions.sentry}"
     const val slf4jApi = "org.slf4j:slf4j-api:1.7.28"
-    const val statistics = "org.nield:kotlin-statistics:1.2.1"
 
     //https://github.com/JetBrains/teamcity-rest-client
     const val teamcityClient = "org.jetbrains.teamcity:teamcity-rest-client:1.6.2"
