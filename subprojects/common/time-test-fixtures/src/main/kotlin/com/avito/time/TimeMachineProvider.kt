@@ -1,6 +1,5 @@
 package com.avito.time
 
-import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
@@ -19,8 +18,6 @@ class TimeMachineProvider : TimeProvider {
     fun moveBackOn(time: Long, unit: TimeUnit = TimeUnit.MILLISECONDS) {
         timeShift -= unit.toMillis(time)
     }
-
-    override fun isSameDay(date1: Date, date2: Date) = defaultTimeProvider.isSameDay(date1, date2)
 
     override fun nowInMillis() = defaultTimeProvider.nowInMillis() + timeShift
 

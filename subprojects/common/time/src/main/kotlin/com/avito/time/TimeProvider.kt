@@ -4,8 +4,6 @@ import java.util.Date
 
 interface TimeProvider {
 
-    fun isSameDay(date1: Date, date2: Date): Boolean
-
     fun nowInMillis(): Long
 
     fun nowInSeconds(): Long
