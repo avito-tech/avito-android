@@ -56,7 +56,7 @@ abstract class FlakyReportTask : DefaultTask() {
         flakyTestInfo.addReport(reportsApi.get().getTestsForRunId(reportCoordinates.get()))
 
         val loggerFactory: LoggerFactory = GradleLoggerFactory.fromTask(this)
-        val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
+        val timeProvider: TimeProvider = DefaultTimeProvider()
 
         createFlakyTestReporter(
             summaryChannel = summaryChannel.get(),

@@ -95,7 +95,7 @@ interface TestsSchedulerFactory {
                     ReportViewerTestReporter(
                         loggerFactory = params.loggerFactory,
                         // todo pass though constructor but needs to be serializable
-                        timeProvider = DefaultTimeProvider(params.loggerFactory),
+                        timeProvider = DefaultTimeProvider(),
                         testSuite = testSuite,
                         report = report,
                         fileStorageUrl = params.fileStorageUrl,

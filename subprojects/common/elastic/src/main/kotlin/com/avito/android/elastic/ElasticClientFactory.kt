@@ -9,7 +9,7 @@ public object ElasticClientFactory {
 
     private val loggerFactory: LoggerFactory = SimpleLoggerFactory()
 
-    private val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
+    private val timeProvider: TimeProvider = DefaultTimeProvider()
 
     private val cache = mutableMapOf<ElasticConfig, HttpElasticClient>()
 
@@ -25,7 +25,12 @@ public object ElasticClientFactory {
                     endpoints = config.endpoints,
                     indexPattern = config.indexPattern,
                     buildId = config.buildId,
-                    loggerFactory = loggerFactory
+                    loggerFactory = loggerFactory,
+                    dateFormatChecker = if (config.checkDateFormatter) {
+                        ElasticDateFormatChecker()
+                    } else {
+                        StubDateFormatChecker
+                    }
                 )
             }
         )

@@ -33,7 +33,8 @@ internal class HttpElasticClientTest {
             endpoints = listOf(mockWebServer.url("/").toUrl()),
             indexPattern = "doesnt-matter",
             buildId = "12345",
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            dateFormatChecker = StubDateFormatChecker
         )
 
         val capturedRequest = dispatcher.captureRequest { true }
@@ -48,7 +49,7 @@ internal class HttpElasticClientTest {
         capturedRequest.checks.singleRequestCaptured().apply {
             pathContains("doesnt-matter-2021-01-05/_doc")
             bodyContains(
-                "{\"@timestamp\":\"2021-01-05T17:56:34.000000000+0300\"," +
+                "{\"@timestamp\":\"2021-01-05T14:56:34.000Z\"," +
                     "\"level\":\"WARNING\"," +
                     "\"build_id\":\"12345\"," +
                     "\"message\":\"SomeMessage\"," +
