@@ -19,10 +19,14 @@ internal object ElasticConfigFactory {
 
             val buildId = project.envArgs.build.id.toString()
 
+            val checkBuildFormatter = project.properties["avito.elastic.checkDateFormatter"]
+                ?.toString()?.toBoolean() ?: false
+
             ElasticConfig.Enabled(
                 endpoints = parseEndpoint(endpointsRawValue),
                 indexPattern = indexPattern,
-                buildId = buildId
+                buildId = buildId,
+                checkDateFormatter = checkBuildFormatter
             )
         } else {
             ElasticConfig.Disabled

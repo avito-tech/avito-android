@@ -14,7 +14,8 @@ internal class ElasticDestinationTest {
             config = ElasticConfig.Enabled(
                 endpoints = listOf(URL("http://stub")),
                 indexPattern = "pattern",
-                buildId = "id"
+                buildId = "id",
+                checkDateFormatter = false
             ),
             metadata = mapOf("tag" to "LoggingDestinationTest")
         )
