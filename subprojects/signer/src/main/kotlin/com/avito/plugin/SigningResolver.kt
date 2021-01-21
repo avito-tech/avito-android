@@ -11,7 +11,7 @@ import org.gradle.api.provider.Provider
 internal class SigningResolver(
     private val project: Project,
     private val extension: SignExtension,
-    private val variant: Variant<*>,
+    private val variant: Variant,
     private val signTokensMap: Map<String, String?>,
 ) {
 

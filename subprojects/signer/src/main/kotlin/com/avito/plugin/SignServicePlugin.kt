@@ -1,10 +1,10 @@
 package com.avito.plugin
 
 import com.android.build.api.artifact.ArtifactType
+import com.android.build.api.extension.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.Variant
 import com.android.build.gradle.api.ApplicationVariant
 import com.avito.android.Problem
-import com.avito.android.androidCommonExtension
 import com.avito.android.asRuntimeException
 import com.avito.android.bundleTaskProvider
 import com.avito.android.withAndroidApp
@@ -12,6 +12,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 
 @Suppress("UnstableApiUsage")
@@ -21,22 +22,21 @@ public class SignServicePlugin : Plugin<Project> {
 
         val extension = target.extensions.create<SignExtension>("signService")
 
-        target.withAndroidApp { appExtension ->
+        target.extensions.getByType<ApplicationAndroidComponentsExtension>().run {
 
-            target.androidCommonExtension.onVariants {
-                val variant = this
+            onVariants { variant ->
 
                 val urlResolver = UrlResolver(extension)
 
                 registerTask<SignApkTask>(
                     tasks = target.tasks,
-                    variant = this,
+                    variant = variant,
                     taskName = signApkTaskName(variant),
                     extension = extension,
                     signingResolver = SigningResolver(
                         project = target,
                         extension = extension,
-                        variant = this,
+                        variant = variant,
                         signTokensMap = extension.apkSignTokens
                     ),
                     urlResolver = urlResolver
@@ -44,29 +44,26 @@ public class SignServicePlugin : Plugin<Project> {
 
                 registerTask<SignBundleTask>(
                     tasks = target.tasks,
-                    variant = this,
+                    variant = variant,
                     taskName = signBundleTaskName(variant),
                     extension = extension,
                     signingResolver = SigningResolver(
                         project = target,
                         extension = extension,
-                        variant = this,
+                        variant = variant,
                         signTokensMap = extension.bundleSignTokens
                     ),
                     urlResolver = urlResolver
                 )
-            }
 
-            target.androidCommonExtension.onVariantProperties {
-
-                artifacts.use(target.tasks.signedApkTaskProvider(this))
+                variant.artifacts.use(target.tasks.signedApkTaskProvider(variant))
                     .wiredWithDirectories(
                         taskInput = SignApkTask::unsignedDirProperty,
                         taskOutput = SignApkTask::signedDirProperty
                     )
                     .toTransform(ArtifactType.APK)
 
-                artifacts.use(target.tasks.signedBundleTaskProvider(this))
+                variant.artifacts.use(target.tasks.signedBundleTaskProvider(variant))
                     .wiredWithFiles(
                         taskInput = SignBundleTask::unsignedFileProperty,
                         taskOutput = SignBundleTask::signedFileProperty
@@ -74,20 +71,22 @@ public class SignServicePlugin : Plugin<Project> {
                     .toTransform(ArtifactType.BUNDLE)
             }
 
-            appExtension.applicationVariants.all { variant: ApplicationVariant ->
+            target.withAndroidApp { appExtension ->
+                appExtension.applicationVariants.all { variant: ApplicationVariant ->
 
-                val buildTypeName = variant.buildType.name
-                val apkToken: String? = extension.apkSignTokens[buildTypeName]
-                val bundleToken: String? = extension.bundleSignTokens[buildTypeName]
+                    val buildTypeName = variant.buildType.name
+                    val apkToken: String? = extension.apkSignTokens[buildTypeName]
+                    val bundleToken: String? = extension.bundleSignTokens[buildTypeName]
 
-                variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
+                    variant.outputsAreSigned = apkToken.hasContent() || bundleToken.hasContent()
 
-                target.tasks.signedApkTaskProvider(variant.name).configure { signApkTask ->
-                    signApkTask.dependsOn(variant.packageApplicationProvider)
-                }
+                    target.tasks.signedApkTaskProvider(variant.name).configure { signApkTask ->
+                        signApkTask.dependsOn(variant.packageApplicationProvider)
+                    }
 
-                target.tasks.signedBundleTaskProvider(variant.name).configure { signBundleTask ->
-                    signBundleTask.dependsOn(target.tasks.bundleTaskProvider(variant))
+                    target.tasks.signedBundleTaskProvider(variant.name).configure { signBundleTask ->
+                        signBundleTask.dependsOn(target.tasks.bundleTaskProvider(variant))
+                    }
                 }
             }
         }
@@ -96,7 +95,7 @@ public class SignServicePlugin : Plugin<Project> {
     @Suppress("UnstableApiUsage")
     private inline fun <reified T : SignArtifactTask> registerTask(
         tasks: TaskContainer,
-        variant: Variant<*>,
+        variant: Variant,
         taskName: String,
         extension: SignExtension,
         signingResolver: SigningResolver,

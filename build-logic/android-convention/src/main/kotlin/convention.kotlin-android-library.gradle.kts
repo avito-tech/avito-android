@@ -10,6 +10,12 @@ plugins {
 
 val generatedJavaResDir = project.layout.buildDirectory.file("generated/avito/java_res")
 
+androidComponents {
+    beforeAndroidTests {
+        it.enabled = false
+    }
+}
+
 android {
 
     /**
@@ -19,13 +25,6 @@ android {
     variantFilter {
         if (name != "release") {
             ignore = true
-        }
-    }
-
-    @Suppress("UnstableApiUsage")
-    onVariants {
-        androidTest {
-            enabled = false
         }
     }
 

@@ -65,7 +65,7 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
-                includeGroup("com.google.test.platform")
+                includeGroup("com.google.testing.platform")
             }
         }
 
