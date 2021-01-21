@@ -40,7 +40,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
         backup: Backup
     ): PublishToMavenRepository {
         return tasks.withType(PublishToMavenRepository::class.java).matching {
-            it.repository.name == artifactoryRepositoryName
+            it.repository.name == artifactoryRepositoryName &&
             it.publication.name == backup.name
         }.first()
     }
