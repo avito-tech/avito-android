@@ -26,7 +26,7 @@ class TestsRunnerClient {
 
         val loggerFactory = arguments.loggerFactory
 
-        val timeProvider: TimeProvider = DefaultTimeProvider(loggerFactory)
+        val timeProvider: TimeProvider = DefaultTimeProvider()
 
         val statsDSender: StatsDSender = StatsDSender.Impl(
             config = arguments.statsDConfig,

@@ -74,7 +74,7 @@ internal class TestExecutorIntegrationTest {
     private fun createTestExecutor(
         loggerFactory: LoggerFactory,
         configurationName: String = "",
-        buildId: String = "",
+        buildId: String = "integration-test-build-id",
         statsDConfig: StatsDConfig = StatsDConfig.Disabled,
         adb: Adb = Adb()
     ): TestExecutor = TestExecutor.Impl(
