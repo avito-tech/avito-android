@@ -31,7 +31,7 @@ plugins {
     id("com.android.application") apply false
     id("com.jfrog.bintray") version "1.8.4" apply false
     id("com.autonomousapps.dependency-analysis") apply false
-    id("io.gitlab.arturbosch.detekt") version "1.15.0"
+    id("io.gitlab.arturbosch.detekt")
 }
 
 if (gradle.startParameter.taskNames.contains("buildHealth")) {
@@ -66,8 +66,12 @@ val finalProjectVersion: String = System.getProperty("avito.project.version").le
     if (env.isNullOrBlank()) projectVersion else env
 }
 
+val kotlinVersion = providers.systemProperty("kotlinVersion").forUseAtConfigurationTime()
+val detektVersion = providers.systemProperty("detektVersion").forUseAtConfigurationTime()
+val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
+
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.15.0-RC1")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:${detektVersion.get()}")
 }
 
 subprojects {
@@ -209,7 +213,7 @@ subprojects {
             }
 
             dependencies {
-                "implementation"(Dependencies.kotlinStdlib)
+                "api"(platform("org.jetbrains.kotlin:kotlin-bom:${kotlinVersion.get()}"))
                 "api"(platform("com.squareup.okhttp3:okhttp-bom:4.9.0"))
             }
         }
@@ -233,7 +237,7 @@ subprojects {
                 systemProperty("kotlinVersion", plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion)
                 systemProperty("compileSdkVersion", compileSdk)
                 systemProperty("buildToolsVersion", buildTools)
-                systemProperty("androidGradlePluginVersion", Dependencies.Versions.androidGradlePlugin)
+                systemProperty("androidGradlePluginVersion", androidGradlePluginVersion.get())
 
                 /**
                  * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
