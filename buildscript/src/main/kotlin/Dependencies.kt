@@ -3,7 +3,6 @@
 object Dependencies {
 
     object Versions {
-        const val okhttp = "4.7.2"
         const val sentry = "1.7.23"
         const val retrofit = "2.9.0"
         const val androidXTest = "1.2.0"
@@ -26,8 +25,8 @@ object Dependencies {
     const val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     const val retrofitConverterGson = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
     const val retrofitConverterScalars = "com.squareup.retrofit2:converter-scalars:${Versions.retrofit}"
-    const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
-    const val okhttpLogging = "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
+    const val okhttp = "com.squareup.okhttp3:okhttp"
+    const val okhttpLogging = "com.squareup.okhttp3:logging-interceptor"
     const val okio = "com.squareup.okio:okio:2.7.0"
     const val funktionaleTry = "org.funktionale:funktionale-try:1.2"
     const val gson = "com.google.code.gson:gson:2.8.5"
@@ -98,7 +97,7 @@ object Dependencies {
     }
 
     object Test {
-        const val okhttpMockWebServer = "com.squareup.okhttp3:mockwebserver:${Versions.okhttp}"
+        const val okhttpMockWebServer = "com.squareup.okhttp3:mockwebserver"
         const val okhttpMock = "com.github.gmazzo:okhttp-mock:1.2.1"
         const val junit = "junit:junit:4.13"
         const val truth = "com.google.truth:truth:1.0"
