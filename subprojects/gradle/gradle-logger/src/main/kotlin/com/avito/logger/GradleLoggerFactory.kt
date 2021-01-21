@@ -53,16 +53,14 @@ class GradleLoggerFactory(
     ): Logger {
 
         val defaultHandler = when (elasticConfig) {
-            is ElasticConfig.Disabled -> {
+            is ElasticConfig.Disabled ->
                 DefaultLoggingHandler(
                     destination = Slf4jDestination(metadata.tag)
                 )
-            }
-            is ElasticConfig.Enabled -> {
+            is ElasticConfig.Enabled ->
                 DefaultLoggingHandler(
                     destination = ElasticDestinationFactory.create(elasticConfig, metadata)
                 )
-            }
         }
 
         val sentryHandler = DefaultLoggingHandler(
