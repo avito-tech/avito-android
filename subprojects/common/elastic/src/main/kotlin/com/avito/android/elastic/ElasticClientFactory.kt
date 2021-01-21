@@ -26,7 +26,7 @@ public object ElasticClientFactory {
                     indexPattern = config.indexPattern,
                     buildId = config.buildId,
                     loggerFactory = loggerFactory,
-                    dateFormatChecker = DateFormatCheckerImpl()
+                    dateFormatChecker = ElasticDateFormatChecker()
                 )
             }
         )

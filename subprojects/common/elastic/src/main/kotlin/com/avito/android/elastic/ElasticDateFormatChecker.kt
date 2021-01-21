@@ -2,7 +2,7 @@ package com.avito.android.elastic
 
 import java.util.Locale
 
-internal class DateFormatCheckerImpl : DateFormatChecker {
+internal class ElasticDateFormatChecker : DateFormatChecker {
 
     private val datePattern = Regex("[0-9]{4}-[0-9]{2}-[0-9]{2}")
 
