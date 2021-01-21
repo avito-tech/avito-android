@@ -10,15 +10,17 @@ class ScreenshotsPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.withAndroidApp { appExtension ->
             appExtension.applicationVariants.all { applicationVariant ->
-                project.tasks.register<PullScreenshotsTask>("recordScreenshots") {
-                    group = "design"
-                    variant.set(applicationVariant)
-                    description = "Create and pull screenshots from device"
-                }
-                project.tasks.register<ClearScreenshotsTask>("clearScreenshots") {
-                    group = "design"
-                    variant.set(applicationVariant)
-                    description = "Clear screenshots on device"
+                if (applicationVariant.name != "release") {
+                    project.tasks.register<PullScreenshotsTask>("recordScreenshots") {
+                        group = "design"
+                        variant.set(applicationVariant)
+                        description = "Create and pull screenshots from device"
+                    }
+                    project.tasks.register<ClearScreenshotsTask>("clearScreenshots") {
+                        group = "design"
+                        variant.set(applicationVariant)
+                        description = "Clear screenshots on device"
+                    }
                 }
             }
         }

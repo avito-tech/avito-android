@@ -18,6 +18,7 @@ fun gradlew(
     projectDir: File,
     vararg args: String,
     dryRun: Boolean = false,
+    configurationCache: Boolean = false,
     expectFailure: Boolean = false,
     environment: Map<String, String>? = null,
     useModuleClasspath: Boolean = true
@@ -31,6 +32,10 @@ fun gradlew(
 
     if (dryRun) {
         defaultArguments += "--dry-run"
+    }
+
+    if (configurationCache) {
+        defaultArguments += "--configuration-cache"
     }
 
     val finalArgs = args.asList() + defaultArguments
