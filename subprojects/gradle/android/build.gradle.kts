@@ -4,8 +4,11 @@ plugins {
     id("com.jfrog.bintray")
 }
 
+@Suppress("UnstableApiUsage")
+val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
+
 dependencies {
-    api(Dependencies.Gradle.androidPlugin) {
+    api("com.android.tools.build:gradle:${androidGradlePluginVersion.get()}") {
         excludeTransitiveAgpDependencies()
     }
 

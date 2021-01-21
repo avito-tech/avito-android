@@ -147,21 +147,28 @@ pluginManagement {
         }
     }
 
+    val kotlinVersion = providers.systemProperty("kotlinVersion").forUseAtConfigurationTime()
+    val detektVersion = providers.systemProperty("detektVersion").forUseAtConfigurationTime()
+    val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
+
     resolutionStrategy {
         eachPlugin {
             val pluginId = requested.id.id
             when {
                 pluginId.startsWith("com.android.") ->
-                    useModule("com.android.tools.build:gradle:4.1.1")
+                    useModule("com.android.tools.build:gradle:${androidGradlePluginVersion.get()}")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion("1.4.21")
+                    useVersion(kotlinVersion.get())
 
                 pluginId == "com.autonomousapps.dependency-analysis" ->
                     useVersion("0.55.0")
 
                 pluginId == "nebula.integtest" ->
                     useVersion("8.0.0")
+
+                pluginId == "io.gitlab.arturbosch.detekt" ->
+                    useVersion(detektVersion.get())
             }
         }
     }
