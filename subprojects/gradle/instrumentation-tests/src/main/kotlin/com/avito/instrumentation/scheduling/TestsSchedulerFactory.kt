@@ -110,7 +110,8 @@ interface TestsSchedulerFactory {
                 outputDirectory = params.outputDir,
                 instrumentationConfiguration = params.instrumentationConfiguration,
                 loggerFactory = params.loggerFactory,
-                registry = params.registry
+                registry = params.registry,
+                statsDConfig = params.statsDConfig
             )
         }
     }

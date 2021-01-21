@@ -5,6 +5,7 @@ import com.avito.android.build_verdict.span.SpannedString
 import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
+import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.InstrumentationTestsActionFactory.Companion.gson
@@ -201,7 +202,8 @@ abstract class InstrumentationTestsTask @Inject constructor(
                     proguardMappings = listOf(
                         applicationProguardMapping,
                         testProguardMapping
-                    ).mapNotNull { it.orNull?.asFile }
+                    ).mapNotNull { it.orNull?.asFile },
+                    statsDConfig = project.statsdConfig.get()
                 )
             ).run()
         }

@@ -1,5 +1,6 @@
 package com.avito.instrumentation.executing
 
+import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.instrumentation.reservation.devices.provider.DevicesProvider
@@ -32,8 +33,10 @@ interface TestExecutor {
     class Impl(
         private val devicesProvider: DevicesProvider,
         private val testReporter: TestReporter,
+        private val buildId: String,
         private val configurationName: String,
-        private val loggerFactory: LoggerFactory
+        private val loggerFactory: LoggerFactory,
+        private val statsDConfig: StatsDConfig
     ) : TestExecutor {
 
         private val logger = loggerFactory.create<TestExecutor>()
@@ -67,11 +70,14 @@ interface TestExecutor {
 
                 val runnerArguments = Arguments(
                     outputDirectory = outputFolder(output),
+                    buildId = buildId,
+                    instrumentationConfigName = configurationName,
                     devices = devices,
                     loggerFactory = loggerFactory,
                     listener = testReporter,
                     requests = testRequests,
-                    reservation = devicesProvider
+                    reservation = devicesProvider,
+                    statsDConfig = statsDConfig
                 )
 
                 logger.debug("Arguments: $runnerArguments")

@@ -7,8 +7,9 @@ plugins {
 extra["artifact-id"] = "runner-service"
 
 dependencies {
-    compileOnly(gradleApi())
     api(project(":common:coroutines-extension"))
+    api(project(":common:statsd"))
+    api(project(":common:time"))
     implementation(project(":gradle:runner:shared"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.AndroidTest.ddmlib)

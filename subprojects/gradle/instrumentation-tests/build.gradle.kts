@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":common:test-annotations"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:gradle-logger"))
+    implementation(project(":gradle:statsd-config"))
     implementation(project(":common:files"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:instrumentation-test-impact-analysis"))

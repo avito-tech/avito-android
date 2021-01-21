@@ -84,7 +84,6 @@ nav:
             -   Containers: ci/Containers.md
             -   Logging: ci/Logging.md
     -   Testing:
-            -   Test Runner: test/Runner.md
             -   Flaky annotation: test/FlakyAnnotation.md
             -   Toast: test/Toast.md
     -   Test framework:
@@ -92,6 +91,9 @@ nav:
             -   Snackbar: test_framework/Snackbar.md
             -   Screen checks: test_framework/ScreenChecks.md
             -   Internals: test_framework/Internals.md
+    -   Test runner:
+            - test_runner/TestRunner.md
+            -   Metrics: test_runner/Metrics.md
     -   Blog:
             -   2020:
                     -   03:
