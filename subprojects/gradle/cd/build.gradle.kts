@@ -36,13 +36,6 @@ dependencies {
     testImplementation(project(":gradle:test-project"))
 }
 
-configurations.all {
-    resolutionStrategy {
-        // docker client тянет 4.x версию
-        force(Dependencies.okhttp)
-    }
-}
-
 gradlePlugin {
     plugins {
         create("cicd") {
