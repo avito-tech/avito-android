@@ -1,6 +1,5 @@
 package com.avito.time
 
-import java.text.DateFormat
 import java.util.Date
 
 class StubTimeProvider : TimeProvider {
@@ -18,6 +17,4 @@ class StubTimeProvider : TimeProvider {
     override fun now(): Date = now
 
     override fun toDate(seconds: Long): Date = timeProvider.toDate(seconds)
-
-    override fun utcFormatter(pattern: String): DateFormat = timeProvider.utcFormatter(pattern)
 }

@@ -1,6 +1,5 @@
 package com.avito.time
 
-import java.text.DateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -30,6 +29,4 @@ class TimeMachineProvider : TimeProvider {
     override fun now() = defaultTimeProvider.toDate(nowInSeconds())
 
     override fun toDate(seconds: Long) = defaultTimeProvider.toDate(seconds)
-
-    override fun utcFormatter(pattern: String): DateFormat = defaultTimeProvider.utcFormatter(pattern)
 }

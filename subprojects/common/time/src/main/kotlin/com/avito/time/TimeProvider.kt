@@ -1,6 +1,5 @@
 package com.avito.time
 
-import java.text.DateFormat
 import java.util.Date
 
 interface TimeProvider {
@@ -14,6 +13,4 @@ interface TimeProvider {
     fun now(): Date
 
     fun toDate(seconds: Long): Date
-
-    fun utcFormatter(pattern: String): DateFormat
 }

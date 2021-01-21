@@ -10,6 +10,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.net.URL
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 /**
  * @param endpoints list of elastic endpoints to send logs
@@ -34,9 +38,9 @@ internal class HttpElasticClient(
         loggerFactory = loggerFactory
     ).provide()
 
-    private val timestampFormatter = timeProvider.utcFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private val timestampFormatter = utcFormatter("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-    private val isoDate = timeProvider.utcFormatter("yyyy-MM-dd")
+    private val isoDate = utcFormatter("yyyy-MM-dd")
 
     override fun sendMessage(
         level: String,
@@ -90,5 +94,9 @@ internal class HttpElasticClient(
             logger.warn("Can't convert URL to okhttp.HttpUrl: $url")
         }
         result
+    }
+
+    private fun utcFormatter(pattern: String): DateFormat = SimpleDateFormat(pattern, Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
     }
 }
