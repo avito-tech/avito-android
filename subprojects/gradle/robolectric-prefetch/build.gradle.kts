@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:android"))
     implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":gradle:test-project"))
@@ -14,10 +13,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("robolectricConfig") {
-            id = "com.avito.android.robolectric"
-            implementationClass = "com.avito.android.plugin.RobolectricPlugin"
-            displayName = "Robolectric config"
+        create("robolectric-prefetch") {
+            id = "com.avito.android.robolectric-prefetch"
+            implementationClass = "com.avito.android.RobolectricPrefetchPlugin"
+            displayName = "Robolectric prefetch plugin"
         }
     }
 }

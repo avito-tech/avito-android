@@ -114,5 +114,6 @@ object Dependencies {
         const val junitPlatformLauncher = "org.junit.platform:junit-platform-launcher:${Versions.junit5Platform}"
         const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junit5}"
         const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+        const val robolectric = "org.robolectric:robolectric:4.4"
     }
 }
