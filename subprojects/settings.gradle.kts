@@ -114,7 +114,7 @@ include(":android-test:snackbar-rule")
 include(":android-test:test-screenshot")
 include(":android-test:test-instrumentation-runner")
 include(":android-test:android-log")
-include(":android-test:rx-idler")
+include(":android-test:rx3-idler")
 
 include(":android-lib:proxy-toast")
 include(":android-lib:snackbar-proxy")

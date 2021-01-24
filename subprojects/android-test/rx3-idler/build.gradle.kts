@@ -6,5 +6,5 @@ plugins {
 }
 
 dependencies {
-    implementation(Dependencies.AndroidTest.rxIlder)
+    implementation(Dependencies.AndroidTest.rx3Ilder)
 }
