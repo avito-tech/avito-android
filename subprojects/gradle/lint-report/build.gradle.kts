@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":gradle:slack"))
 
     testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

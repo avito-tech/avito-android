@@ -57,7 +57,29 @@ class InstrumentationTestsPluginTest {
         TestProjectGenerator(modules = listOf(module)).generateIn(projectDir)
     }
 
-    private fun instrumentationConfiguration(): String = """
+    private fun runGradle(projectDir: File, vararg args: String) =
+        ciRun(
+            projectDir, *args,
+            "-PdeviceName=LOCAL",
+            "-PteamcityBuildId=0",
+            "-Papp.versionName=1",
+            "-Papp.versionCode=1",
+            "-Pavito.bitbucket.url=http://bitbucket",
+            "-Pavito.bitbucket.projectKey=AA",
+            "-Pavito.bitbucket.repositorySlug=android",
+            "-Pavito.stats.enabled=false",
+            "-Pavito.stats.host=http://stats",
+            "-Pavito.stats.fallbackHost=http://stats",
+            "-Pavito.stats.port=80",
+            "-Pavito.stats.namespace=android",
+            "-PkubernetesToken=stub",
+            "-PkubernetesUrl=stub",
+            "-PkubernetesCaCertData=stub",
+            dryRun = true
+        )
+}
+
+internal fun instrumentationConfiguration(): String = """
                         import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
 
                         instrumentation {
@@ -131,25 +153,3 @@ class InstrumentationTestsPluginTest {
                             }
                         }
                 """.trimIndent()
-
-    private fun runGradle(projectDir: File, vararg args: String) =
-        ciRun(
-            projectDir, *args,
-            "-PdeviceName=LOCAL",
-            "-PteamcityBuildId=0",
-            "-Papp.versionName=1",
-            "-Papp.versionCode=1",
-            "-Pavito.bitbucket.url=http://bitbucket",
-            "-Pavito.bitbucket.projectKey=AA",
-            "-Pavito.bitbucket.repositorySlug=android",
-            "-Pavito.stats.enabled=false",
-            "-Pavito.stats.host=http://stats",
-            "-Pavito.stats.fallbackHost=http://stats",
-            "-Pavito.stats.port=80",
-            "-Pavito.stats.namespace=android",
-            "-PkubernetesToken=stub",
-            "-PkubernetesUrl=stub",
-            "-PkubernetesCaCertData=stub",
-            dryRun = true
-        )
-}

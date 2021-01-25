@@ -13,6 +13,7 @@ dependencies {
     implementation(Dependencies.gson)
 
     testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

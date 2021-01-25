@@ -29,6 +29,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
 
     private val validationErrors = mutableListOf<String>()
 
+    @Suppress("UnstableApiUsage")
     private val Project.pluginIsEnabled: Boolean
         get() = providers
             .gradleProperty(enabledProp)
@@ -148,7 +149,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
     }
 
     private fun StartParameter.addTaskNames(vararg names: String) {
-        // getter returns defencive copy
+        // getter returns defensive copy
         setTaskNames(taskNames + names.toList())
     }
 
@@ -238,6 +239,12 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         val kaptMapDiagnosticLocations = project.getBooleanProperty("kaptMapDiagnosticLocations")
         val javaIncrementalCompilation = project.getBooleanProperty("javaIncrementalCompilation")
 
+        @Suppress("UnstableApiUsage")
+        val kotlinVersion = project.providers
+            .systemProperty("kotlinVersion")
+            .forUseAtConfigurationTime()
+            .get()
+
         logger.info(
             """Config information for project: ${project.displayName}:
 BuildEnvironment: ${project.buildEnvironment}
@@ -249,7 +256,7 @@ org.gradle.caching=$isBuildCachingEnabled
 android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
 android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}
 android.builder.sdkDownload=${project.getOptionalStringProperty("android.builder.sdkDownload")}
-kotlin.version=${System.getProperty("kotlinVersion")}
+kotlin.version=$kotlinVersion
 kotlin.incremental=${project.getOptionalStringProperty("kotlin.incremental")}
 minSdk=$minSdk
 preDexLibrariesEnabled=${project.getOptionalStringProperty("preDexLibrariesEnabled")}

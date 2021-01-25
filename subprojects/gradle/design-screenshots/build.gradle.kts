@@ -12,6 +12,8 @@ dependencies {
     implementation(project(":gradle:runner:service"))
     implementation(project(":gradle:runner:shared"))
     implementation(Dependencies.funktionaleTry)
+
+    testImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

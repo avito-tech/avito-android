@@ -24,6 +24,11 @@ class TestResultSubject private constructor(
         return this
     }
 
+    fun configurationCachedReused(): TestResultSubject {
+        check("configuration cache reused").that(subject.output).contains("Reusing configuration cache.")
+        return this
+    }
+
     fun outputDoesNotContain(substring: String): TestResultSubject {
         check("output does not contain").that(subject.output).doesNotContain(substring)
         return this
