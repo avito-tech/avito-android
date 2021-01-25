@@ -4,7 +4,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 
 @Suppress("UnstableApiUsage")
-internal class SystemValuesAccessor(private val providers: ProviderFactory) {
+internal class BuildEnvironmentInfo(private val providers: ProviderFactory) {
 
     private val osName: String?
         get() = getSystemProperty("os.name")
@@ -23,7 +23,7 @@ internal class SystemValuesAccessor(private val providers: ProviderFactory) {
         get() = getSystemProperty("kotlinVersion")
 
     val javaInfo: String
-        get() = "$javaVersion (${javaVendor})"
+        get() = "$javaVersion ($javaVendor)"
 
     val isMac: Boolean
         get() = osName?.contains("mac", ignoreCase = true) ?: false

@@ -1,8 +1,8 @@
 package com.avito.android.plugin.build_param_check.incremental_check
 
+import com.avito.android.plugin.build_param_check.BuildEnvironmentInfo
 import com.avito.android.plugin.build_param_check.CheckResult
 import com.avito.android.plugin.build_param_check.CheckTaskWithMode
-import com.avito.android.plugin.build_param_check.SystemValuesAccessor
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
@@ -26,7 +26,7 @@ internal abstract class IncrementalKaptTask @Inject constructor(objects: ObjectF
         } ?: false
 
     @get:Internal
-    val accessor = objects.property<SystemValuesAccessor>()
+    val accessor = objects.property<BuildEnvironmentInfo>()
 
     @TaskAction
     fun check() {
@@ -37,7 +37,7 @@ internal abstract class IncrementalKaptTask @Inject constructor(objects: ObjectF
             checkAnnotationProcessors(
                 failer = buildFailer,
                 loggerFactory = loggerFactory,
-                accessor = accessor.get()
+                envInfo = accessor.get()
             )
         }
     }
@@ -45,7 +45,7 @@ internal abstract class IncrementalKaptTask @Inject constructor(objects: ObjectF
     private fun checkAnnotationProcessors(
         failer: BuildFailer,
         loggerFactory: LoggerFactory,
-        accessor: SystemValuesAccessor
+        envInfo: BuildEnvironmentInfo
     ) {
         val subProject = project.subprojects.firstOrNull {
             it.hasKotlinKapt && it.hasRoomKapt
@@ -55,16 +55,16 @@ internal abstract class IncrementalKaptTask @Inject constructor(objects: ObjectF
                 if (RoomIncrementalKaptChecker(subProject, loggerFactory = loggerFactory).isSupported()) {
                     CheckResult.Ok
                 } else {
-                    CheckResult.Failed(collectErrorMessage(accessor))
+                    CheckResult.Failed(collectErrorMessage(envInfo))
                 }
             }
         }
     }
 
-    private fun collectErrorMessage(accessor: SystemValuesAccessor) = """
+    private fun collectErrorMessage(envInfo: BuildEnvironmentInfo) = """
         Incremental KAPT is turned on (kapt.incremental.apt=true) but Room does not support it in current conditions. 
         You have to use JDK 11 and higher or embedded one in Android Studio 3.5.0-beta02 and higher.
-        Current JDK is ${accessor.javaInfo}.
+        Current JDK is ${envInfo.javaInfo}.
         https://avito-tech.github.io/avito-android/docs/projects/buildchecks/#room
     """.trimIndent()
 }

@@ -9,7 +9,7 @@ import java.util.Properties
 
 internal class GradlePropertiesCheck(
     private val project: Project,
-    private val accessor: SystemValuesAccessor
+    private val envInfo: BuildEnvironmentInfo
 ) : ParameterCheck {
 
     // TODO: use a white-list and pass it through extension
@@ -28,7 +28,7 @@ internal class GradlePropertiesCheck(
                 val expected = entry.value
 
                 val mismatch = if (param.isSystemProperty()) {
-                    systemPropertyMismatch(accessor, param, expected)
+                    systemPropertyMismatch(envInfo, param, expected)
                 } else {
                     projectPropertyMismatch(param, expected)
                 }
@@ -41,11 +41,11 @@ internal class GradlePropertiesCheck(
     }
 
     private fun systemPropertyMismatch(
-        accessor: SystemValuesAccessor,
+        envInfo: BuildEnvironmentInfo,
         name: String,
         expected: String
     ): ParameterMismatch? {
-        val actual = accessor.getSystemProperty(normalizedSystemProperty(name)) ?: return null
+        val actual = envInfo.getSystemProperty(normalizedSystemProperty(name)) ?: return null
         return if (actual != expected) {
             ParameterMismatch(name, expected, actual)
         } else {
