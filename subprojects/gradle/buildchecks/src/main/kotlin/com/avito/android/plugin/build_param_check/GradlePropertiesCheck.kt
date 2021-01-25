@@ -7,7 +7,10 @@ import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
-internal class GradlePropertiesCheck(private val project: Project) : ParameterCheck {
+internal class GradlePropertiesCheck(
+    private val project: Project,
+    private val accessor: SystemValuesAccessor
+) : ParameterCheck {
 
     // TODO: use a white-list and pass it through extension
     private val ignoredParams = setOf(
@@ -25,7 +28,7 @@ internal class GradlePropertiesCheck(private val project: Project) : ParameterCh
                 val expected = entry.value
 
                 val mismatch = if (param.isSystemProperty()) {
-                    systemPropertyMismatch(param, expected)
+                    systemPropertyMismatch(accessor, param, expected)
                 } else {
                     projectPropertyMismatch(param, expected)
                 }
@@ -37,8 +40,12 @@ internal class GradlePropertiesCheck(private val project: Project) : ParameterCh
         }
     }
 
-    private fun systemPropertyMismatch(name: String, expected: String): ParameterMismatch? {
-        val actual = System.getProperty(normalizedSystemProperty(name)) ?: return null
+    private fun systemPropertyMismatch(
+        accessor: SystemValuesAccessor,
+        name: String,
+        expected: String
+    ): ParameterMismatch? {
+        val actual = accessor.getSystemProperty(normalizedSystemProperty(name)) ?: return null
         return if (actual != expected) {
             ParameterMismatch(name, expected, actual)
         } else {

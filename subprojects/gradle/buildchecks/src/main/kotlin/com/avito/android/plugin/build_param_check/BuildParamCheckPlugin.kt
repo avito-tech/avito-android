@@ -47,7 +47,9 @@ open class BuildParamCheckPlugin : Plugin<Project> {
 
         val logger = GradleLoggerFactory.getLogger(this, project)
 
-        printBuildEnvironment(project, logger)
+        val accessor = SystemValuesAccessor(project.providers)
+
+        printBuildEnvironment(project, accessor, logger)
 
         project.afterEvaluate {
             val checks = ChecksFilter(extension).enabledChecks()
@@ -57,13 +59,13 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                     it.validate()
                 }
 
-            registerRequiredTasks(project, checks)
+            registerRequiredTasks(project, accessor, checks)
 
             if (checks.hasInstance<Check.JavaVersion>()) {
-                checkJavaVersion(checks.getInstance())
+                checkJavaVersion(checks.getInstance(), accessor)
             }
             if (checks.hasInstance<Check.GradleProperties>()) {
-                checkGradleProperties(project)
+                checkGradleProperties(project, accessor)
             }
             if (checks.hasInstance<Check.ModuleTypes>()) {
                 checkModuleHasRequiredPlugins(project)
@@ -73,14 +75,14 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    private fun checkJavaVersion(check: Check.JavaVersion) {
+    private fun checkJavaVersion(check: Check.JavaVersion, accessor: SystemValuesAccessor) {
         check(JavaVersion.current() == check.version) {
-            "Only ${check.version} is supported for this project but was ${javaInfo()}. " +
+            "Only ${check.version} is supported for this project but was ${accessor.javaInfo}. " +
                 "Please check java home property or install appropriate JDK."
         }
     }
 
-    private fun registerRequiredTasks(project: Project, checks: List<Check>) {
+    private fun registerRequiredTasks(project: Project, accessor: SystemValuesAccessor, checks: List<Check>) {
         val checkBuildEnvironment = project.tasks.register("checkBuildEnvironment") {
             it.group = "verification"
             it.description = "Check typical build problems"
@@ -125,7 +127,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
             UniqueRClassesTaskFactory(project, checks.getInstance())
                 .register(checkBuildEnvironment)
         }
-        if (checks.hasInstance<Check.MacOSLocalhost>() && isMac()) {
+        if (checks.hasInstance<Check.MacOSLocalhost>() && accessor.isMac) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
                 group = "verification"
                 description =
@@ -141,6 +143,7 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                 group = "verification"
                 description = "Check that all annotation processors support incremental kapt if it is turned on"
                 mode.set(check.mode)
+                this.accessor.set(accessor)
             }
             checkBuildEnvironment {
                 dependsOn(task)
@@ -151,11 +154,6 @@ open class BuildParamCheckPlugin : Plugin<Project> {
     private fun StartParameter.addTaskNames(vararg names: String) {
         // getter returns defensive copy
         setTaskNames(taskNames + names.toList())
-    }
-
-    private fun isMac(): Boolean {
-        return System.getProperty("os.name", "").orEmpty()
-            .contains("mac", ignoreCase = true)
     }
 
     private fun checkModuleHasRequiredPlugins(project: Project) {
@@ -202,12 +200,12 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    private fun checkGradleProperties(project: Project) {
+    private fun checkGradleProperties(project: Project, accessor: SystemValuesAccessor) {
         project.afterEvaluate {
             val tracker = buildTracker(project)
             val sentry = project.sentry
             val propertiesChecks = listOf(
-                GradlePropertiesCheck(project) // TODO: extract to a task
+                GradlePropertiesCheck(project, accessor) // TODO: extract to a task
             )
             propertiesChecks.forEach { checker ->
                 checker.getMismatches()
@@ -232,31 +230,25 @@ open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    private fun printBuildEnvironment(project: Project, logger: Logger) {
+    private fun printBuildEnvironment(project: Project, accessor: SystemValuesAccessor, logger: Logger) {
         val isBuildCachingEnabled = project.gradle.startParameter.isBuildCacheEnabled
         val minSdk = project.getOptionalStringProperty("minSdk")
         val kaptBuildCache: Boolean = project.getBooleanProperty("kaptBuildCache")
         val kaptMapDiagnosticLocations = project.getBooleanProperty("kaptMapDiagnosticLocations")
         val javaIncrementalCompilation = project.getBooleanProperty("javaIncrementalCompilation")
 
-        @Suppress("UnstableApiUsage")
-        val kotlinVersion = project.providers
-            .systemProperty("kotlinVersion")
-            .forUseAtConfigurationTime()
-            .get()
-
         logger.info(
             """Config information for project: ${project.displayName}:
 BuildEnvironment: ${project.buildEnvironment}
 ${startParametersDescription(project.gradle)}
-java=${javaInfo()}
-JAVA_HOME=${System.getenv("JAVA_HOME")}
+java=${accessor.javaInfo}
+JAVA_HOME=${accessor.javaHome}
 ANDROID_HOME=${AndroidSdk.fromProject(project).androidHome}
 org.gradle.caching=$isBuildCachingEnabled
 android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
 android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}
 android.builder.sdkDownload=${project.getOptionalStringProperty("android.builder.sdkDownload")}
-kotlin.version=$kotlinVersion
+kotlin.version=${accessor.kotlinVersion}
 kotlin.incremental=${project.getOptionalStringProperty("kotlin.incremental")}
 minSdk=$minSdk
 preDexLibrariesEnabled=${project.getOptionalStringProperty("preDexLibrariesEnabled")}
@@ -273,9 +265,6 @@ javaIncrementalCompilation=$javaIncrementalCompilation
     private fun buildTracker(project: Project): BuildMetricTracker {
         return BuildMetricTracker(project.environmentInfo(), project.statsd)
     }
-
-    private fun javaInfo() =
-        "${System.getProperty("java.version")} (${System.getProperty("java.vendor")})"
 
     private fun startParametersDescription(gradle: Gradle): String =
         gradle.startParameter.toString().replace(',', '\n')
