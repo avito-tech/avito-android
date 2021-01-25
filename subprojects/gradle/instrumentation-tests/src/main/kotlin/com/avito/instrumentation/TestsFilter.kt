@@ -9,19 +9,19 @@ import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 
 private val manualAnnotations = setOf(
-    ManualTest::javaClass.name,
-    UIComponentStub::javaClass.name,
-    E2EStub::javaClass.name
+    ManualTest::class.java.name,
+    UIComponentStub::class.java.name,
+    E2EStub::class.java.name
 )
 
 private val uiNoE2EAnnotations = setOf(
-    ScreenshotTest::javaClass.name,
-    UIComponentTest::javaClass.name,
-    IntegrationTest::javaClass.name
+    ScreenshotTest::class.java.name,
+    UIComponentTest::class.java.name,
+    IntegrationTest::class.java.name
 )
 
 private val uiE2EOnlyAnnotations = setOf(
-    E2ETest::javaClass.name
+    E2ETest::class.java.name
 )
 
 private val uiAnnotations = uiNoE2EAnnotations + uiE2EOnlyAnnotations
