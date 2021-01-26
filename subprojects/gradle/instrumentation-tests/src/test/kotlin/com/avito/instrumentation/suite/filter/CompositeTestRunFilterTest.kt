@@ -1,7 +1,9 @@
 package com.avito.instrumentation.suite.filter
 
 import com.avito.instrumentation.createStub
-import com.avito.instrumentation.suite.filter.TestsFilter.Result.Excluded
+import com.avito.instrumentation.internal.suite.filter.CompositionFilter
+import com.avito.instrumentation.internal.suite.filter.TestsFilter
+import com.avito.instrumentation.internal.suite.filter.TestsFilter.Result.Excluded
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

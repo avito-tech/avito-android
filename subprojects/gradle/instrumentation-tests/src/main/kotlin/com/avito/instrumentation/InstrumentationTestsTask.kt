@@ -8,11 +8,14 @@ import com.avito.android.getApkOrThrow
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.instrumentation.InstrumentationTestsActionFactory.Companion.gson
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.executing.ExecutionParameters
+import com.avito.instrumentation.internal.GetTestResultsAction
+import com.avito.instrumentation.internal.InstrumentationTestsAction
+import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Companion.gson
+import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.report.Report
 import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.logger.GradleLoggerFactory

@@ -1,6 +1,9 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.TestRunResult
+import com.avito.instrumentation.internal.TestRunResult
+import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.report.JUnitReportWriter
 import com.avito.report.StubReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest

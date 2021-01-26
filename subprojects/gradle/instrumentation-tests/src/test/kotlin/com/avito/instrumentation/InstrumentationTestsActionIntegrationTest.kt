@@ -9,12 +9,13 @@ import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.executing.StubTestExecutor
 import com.avito.instrumentation.executing.TestExecutor
-import com.avito.instrumentation.executing.TestExecutorFactory
-import com.avito.instrumentation.finalizer.FinalizerFactory
+import com.avito.instrumentation.internal.InstrumentationTestsAction
+import com.avito.instrumentation.internal.executing.TestExecutorFactory
+import com.avito.instrumentation.internal.finalizer.FinalizerFactory
+import com.avito.instrumentation.internal.reservation.devices.provider.DevicesProviderFactory
+import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
 import com.avito.instrumentation.report.createStubInstance
 import com.avito.instrumentation.report.listener.TestReporter
-import com.avito.instrumentation.reservation.devices.provider.DevicesProviderFactory
-import com.avito.instrumentation.scheduling.TestsSchedulerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi

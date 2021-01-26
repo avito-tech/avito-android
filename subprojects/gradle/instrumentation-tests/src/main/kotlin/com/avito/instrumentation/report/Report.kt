@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.instrumentation.internal.report.InMemoryReport
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi

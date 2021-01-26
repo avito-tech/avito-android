@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance

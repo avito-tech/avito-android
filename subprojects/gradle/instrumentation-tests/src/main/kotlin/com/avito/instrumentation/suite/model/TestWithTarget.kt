@@ -10,7 +10,7 @@ data class TestWithTarget(
 
 // todo чето как-то уродливо, кажется проблема в том что targetTestRun слишком много знает,
 //  и нужно стркутуру саму поменять
-fun List<TestWithTarget>.transformTestsWithNewJobSlug(newJobSlug: String): List<TestWithTarget> {
+internal fun List<TestWithTarget>.transformTestsWithNewJobSlug(newJobSlug: String): List<TestWithTarget> {
     return map {
         TestWithTarget(
             test = it.test,
