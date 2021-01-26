@@ -81,9 +81,11 @@ abstract class InHouseInstrumentationTestRunner :
     val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
 
     override val loggerFactory by lazy {
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         AndroidLoggerFactory(
             elasticConfig = elasticConfig,
-            sentryConfig = sentryConfig
+            sentryConfig = sentryConfig,
+            testName = runEnvironment.testMetadata.testName
         )
     }
 
@@ -310,7 +312,7 @@ abstract class InHouseInstrumentationTestRunner :
      */
     private fun initApplicationCrashHandling() {
         val currentHandler = Thread.getDefaultUncaughtExceptionHandler()
-        
+
         Thread.setDefaultUncaughtExceptionHandler(
             ReportUncaughtHandler(
                 loggerFactory = loggerFactory,

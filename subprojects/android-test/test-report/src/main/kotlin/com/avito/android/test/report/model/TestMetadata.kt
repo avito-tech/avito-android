@@ -19,4 +19,7 @@ data class TestMetadata(
     val featureIds: List<Int>,
     val tagIds: List<Int>,
     val flakiness: Flakiness
-) : Serializable
+) : Serializable {
+
+    val testName = "$className.$methodName"
+}

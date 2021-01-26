@@ -35,7 +35,7 @@ abstract class AbstractLaunchRule : TestRule {
                 beforeTest()
                 base.evaluate()
             } catch (t: Throwable) {
-                logger.warn("Error during test completion", t)
+                logger.warn("Test execution failed", t)
                 throw t
             }
         }

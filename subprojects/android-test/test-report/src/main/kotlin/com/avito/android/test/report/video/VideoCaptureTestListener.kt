@@ -76,7 +76,7 @@ class VideoCaptureTestListener(
                     logger.warn(
                         "Video uploading enabled. " +
                             "Failed to upload video for " +
-                            "${state.testMetadata.className}.${state.testMetadata.methodName}. " +
+                            "${state.testMetadata.testName}. " +
                             "Reason: ${result.message}",
                         result.error
                     )
