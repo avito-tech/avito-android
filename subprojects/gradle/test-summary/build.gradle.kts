@@ -8,6 +8,7 @@ plugins {
 dependencies {
     implementation(project(":common:report-viewer"))
     implementation(project(":common:time"))
+    implementation(project(":common:math"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:slack"))

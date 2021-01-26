@@ -17,14 +17,6 @@ internal class ArtifactsTestListener(
 
     private val logger = loggerFactory.create<ArtifactsTestListener>()
 
-    override fun onDevice(
-        device: Device,
-        test: TestCase,
-        targetPackage: String,
-        executionNumber: Int
-    ) {
-    }
-
     override fun started(
         device: Device,
         targetPackage: String,

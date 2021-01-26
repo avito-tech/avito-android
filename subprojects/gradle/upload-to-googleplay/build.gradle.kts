@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:percent"))
+    implementation(project(":common:math"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:gradle-logger"))
     implementation(gradleApi())

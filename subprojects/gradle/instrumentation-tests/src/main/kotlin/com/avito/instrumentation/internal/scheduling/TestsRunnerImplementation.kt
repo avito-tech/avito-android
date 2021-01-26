@@ -16,6 +16,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.runner.service.model.TestCase
+import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import org.funktionale.tries.Try
 import java.io.File
@@ -33,7 +34,8 @@ internal class TestsRunnerImplementation(
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
     private val registry: String,
-    private val statsDConfig: StatsDConfig
+    private val statsDConfig: StatsDConfig,
+    private val timeProvider: TimeProvider
 ) : TestsRunner {
 
     private val logger = loggerFactory.create<TestsRunner>()
@@ -78,7 +80,8 @@ internal class TestsRunnerImplementation(
                     registry = registry,
                     output = output,
                     logcatDir = logcatDir,
-                    loggerFactory = loggerFactory
+                    loggerFactory = loggerFactory,
+                    timeProvider = timeProvider
                 ),
                 configuration = initialRunConfiguration,
                 executionParameters = executionParameters,

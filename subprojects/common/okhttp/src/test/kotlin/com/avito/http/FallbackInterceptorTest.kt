@@ -1,7 +1,7 @@
 package com.avito.http
 
-import com.avito.logger.StubLogger
 import com.avito.logger.StubLoggerFactory
+import com.avito.logger.create
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -32,7 +32,7 @@ internal class FallbackInterceptorTest {
                             .build()
                     },
                     doFallbackOnTheseCodes = listOf(doFallbackOnThisResponseCode),
-                    logger = StubLogger
+                    logger = loggerFactory.create<StubApi>()
                 )
             )
         }

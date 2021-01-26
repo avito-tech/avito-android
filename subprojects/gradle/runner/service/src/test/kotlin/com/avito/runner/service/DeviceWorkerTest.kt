@@ -7,9 +7,11 @@ import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
-import com.avito.runner.test.NoOpListener
+import com.avito.runner.service.worker.listener.MessagesDeviceListener
+import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
+import com.avito.runner.test.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
@@ -17,6 +19,7 @@ import com.avito.runner.test.generateIntention
 import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.receiveAvailable
+import com.avito.time.StubTimeProvider
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -66,17 +69,17 @@ class DeviceWorkerTest {
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
-                    StubActionResult.Success(Any()), // Install application
-                    StubActionResult.Success(Any()) // Install test application
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
                 ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
-                        StubActionResult.Success<Try<Any>>(
+                        StubActionResult.Success(
                             Try.Success(
                                 Unit
                             )
                         ),
-                        StubActionResult.Success<Try<Any>>(
+                        StubActionResult.Success(
                             Try.Success(
                                 Unit
                             )
@@ -85,12 +88,10 @@ class DeviceWorkerTest {
                 },
                 gettingDeviceStatusResults = listWithDefault(
                     1 + intentions.size,
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Alive
-                    )
+                    DeviceStatus.Alive
                 ),
                 runTestsResults = intentions.map {
-                    StubActionResult.Success<TestCaseRun.Result>(
+                    StubActionResult.Success(
                         TestCaseRun.Result.Passed
                     )
                 }
@@ -138,11 +139,7 @@ class DeviceWorkerTest {
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Freeze(
-                            RuntimeException()
-                        )
-                    )
+                    DeviceStatus.Freeze(RuntimeException())
                 ),
                 runTestsResults = emptyList()
             )
@@ -198,14 +195,8 @@ class DeviceWorkerTest {
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Alive
-                    ),
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Freeze(
-                            RuntimeException()
-                        )
-                    )
+                    DeviceStatus.Alive,
+                    DeviceStatus.Freeze(RuntimeException())
                 ),
                 runTestsResults = emptyList()
             )
@@ -248,11 +239,11 @@ class DeviceWorkerTest {
         router: IntentionsRouter
     ) = DeviceWorker(
         intentionsRouter = router,
-        messagesChannel = results,
+        deviceListener = MessagesDeviceListener(results),
         device = device,
         outputDirectory = File(""),
-        listener = NoOpListener,
+        testListener = NoOpTestListener,
         dispatchers = TestDispatcher,
-        loggerFactory = loggerFactory
+        timeProvider = StubTimeProvider()
     )
 }

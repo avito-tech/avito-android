@@ -1,4 +1,4 @@
-package com.avito.android
+package com.avito.math
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

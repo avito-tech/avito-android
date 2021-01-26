@@ -1,179 +1,139 @@
 package com.avito.runner.service.worker
 
 import com.avito.coroutines.extensions.Dispatchers
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
-import com.avito.runner.service.model.intention.InstrumentationTestRunActionResult
 import com.avito.runner.service.model.intention.Intention
-import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.Device.DeviceStatus.Alive
+import com.avito.runner.service.worker.device.Device.DeviceStatus.Freeze
 import com.avito.runner.service.worker.device.model.getData
+import com.avito.runner.service.worker.listener.DeviceListener
+import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
 import java.io.File
 
-class DeviceWorker(
+internal class DeviceWorker(
     private val intentionsRouter: IntentionsRouter,
-    private val messagesChannel: Channel<DeviceWorkerMessage>,
     private val device: Device,
     private val outputDirectory: File,
-    loggerFactory: LoggerFactory,
-    private val listener: TestListener,
+    private val testListener: TestListener,
+    private val deviceListener: DeviceListener,
+    private val timeProvider: TimeProvider,
     dispatchers: Dispatchers
 ) {
 
-    private val logger = loggerFactory.create<DeviceWorker>()
-
     private val dispatcher: CoroutineDispatcher = dispatchers.dispatcher()
+
+    private val stateWorker: DeviceStateWorker = DeviceStateWorker(device)
 
     fun run(scope: CoroutineScope) = scope.launch(dispatcher) {
 
-        var state: State = try {
-            when (val status = device.deviceStatus()) {
-                is Device.DeviceStatus.Alive -> device.state()
-                is Device.DeviceStatus.Freeze -> {
-                    // TODO MBS-8522 Will ReservationClient get a new one?
-                    onDeviceDie("DeviceWorker died. Device status is `Freeze`", reason = status.reason)
-                    return@launch
-                }
-            }
-        } catch (t: Throwable) {
-            onDeviceDie("DeviceWorked died. Can't get status on start", reason = t)
-            return@launch
-        }
+        var state: State = when (val status = device.deviceStatus()) {
 
-        logger.debug("$state")
-
-        for (intention in intentionsRouter.observeIntentions(state)) {
-            try {
-                logger.debug("Received intention: $intention")
-                device.logger.debug("Received intention: $intention")
-
-                when (val status = device.deviceStatus()) {
-                    is Device.DeviceStatus.Alive -> {
-
-                        listener.onDevice(
-                            device = device,
-                            test = intention.action.test,
-                            targetPackage = intention.action.targetPackage,
-                            executionNumber = intention.action.executionNumber
-                        )
-
-                        device.logger.debug("Preparing state: ${intention.state}")
-                        val (preparingError, newState) = prepareDeviceState(
-                            currentState = state,
-                            intentionState = intention.state
-                        ).toEither()
-                        when {
-                            newState != null -> {
-                                device.logger.debug("State prepared")
-                                state = newState
-                                val result = executeAction(action = intention.action)
-                                device.logger.debug("Worker test run completed for intention")
-                                messagesChannel.send(
-                                    DeviceWorkerMessage.Result(
-                                        intentionResult = IntentionResult(
-                                            intention = intention,
-                                            actionResult = InstrumentationTestRunActionResult(
-                                                testCaseRun = result
-                                            )
-                                        )
-                                    )
-                                )
-                            }
-                            preparingError != null -> {
-                                onDeviceDieOnIntention(intention, preparingError)
-                                return@launch
-                            }
-                        }
-                    }
-                    is Device.DeviceStatus.Freeze -> {
-                        onDeviceDieOnIntention(intention, status.reason)
-                        return@launch
-                    }
-                }
-            } catch (t: Throwable) {
-                onDeviceDieOnIntention(intention, t)
+            is Freeze -> {
+                deviceListener.onDeviceDied(
+                    device = device,
+                    message = "DeviceWorker died. Device status is `Freeze`",
+                    reason = status.reason
+                )
                 return@launch
             }
+
+            is Alive -> device.state()
         }
-        device.logger.debug("Worker ended with success result")
-    }
 
-    private suspend fun onDeviceDieOnIntention(
-        intention: Intention,
-        reason: Throwable
-    ) {
-        onDeviceDie("DeviceWorker died. Can't process intention: $intention", reason)
-        messagesChannel.send(
-            DeviceWorkerMessage.FailedIntentionProcessing(
-                t = reason,
-                intention = intention
-            )
-        )
-    }
+        deviceListener.onDeviceCreated(device, state)
 
-    private suspend fun onDeviceDie(
-        message: String,
-        reason: Throwable
-    ) {
-        logger.debug("device died: $message, $reason")
-        device.logger.warn(message, reason)
-        messagesChannel.send(
-            DeviceWorkerMessage.WorkerDied(
-                t = reason,
-                coordinate = device.coordinate
-            )
-        )
+        for (intention in intentionsRouter.observeIntentions(state)) {
+
+            deviceListener.onIntentionReceived(device, intention)
+
+            when (val status = device.deviceStatus()) {
+
+                is Freeze -> {
+                    onDeviceDieOnIntention(intention, status.reason)
+                    return@launch
+                }
+
+                is Alive -> {
+
+                    val (preparingError, newState) = prepareDeviceState(
+                        currentState = state,
+                        intendedState = intention.state
+                    ).toEither()
+
+                    when {
+
+                        preparingError != null -> {
+                            onDeviceDieOnIntention(intention, preparingError)
+                            return@launch
+                        }
+
+                        newState != null -> {
+                            state = newState
+
+                            deviceListener.onStatePrepared(device, newState)
+
+                            deviceListener.onTestStarted(device, intention)
+
+                            val result = executeAction(action = intention.action)
+
+                            deviceListener.onTestCompleted(
+                                device = device,
+                                intention = intention,
+                                result = result
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        deviceListener.onFinished(device)
     }
 
     private suspend fun prepareDeviceState(
         currentState: State,
-        intentionState: State
-    ): Try<State> {
-        logger.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
-        device.logger.debug("Checking device state. Current: ${currentState.digest}, desired: ${intentionState.digest}")
-        if (intentionState.digest == currentState.digest) {
-            clearStatePackages(currentState).get()
-            return Try.Success(intentionState)
-        }
+        intendedState: State
+    ): Try<State> = if (intendedState.digest != currentState.digest) {
 
-        try {
-            intentionState.layers
-                .forEach {
-                    when (it) {
-                        is State.Layer.InstalledApplication -> {
-                            val installation = device.installApplication(
-                                application = it.applicationPath
-                            )
-                            messagesChannel.send(
-                                DeviceWorkerMessage.ApplicationInstalled(
-                                    installation
-                                )
-                            )
-                        }
-                    }
+        device.logger.debug(
+            "Current state=${currentState.digest}, " +
+                "intended=${intendedState.digest}. Preparing new state..."
+        )
+
+        stateWorker.installApplications(
+            state = intendedState,
+            onAllSucceeded = { installations ->
+                installations.forEach { installation ->
+                    deviceListener.onApplicationInstalled(
+                        device = device,
+                        installation = installation
+                    )
                 }
-        } catch (t: Throwable) {
-            return Try.Failure(t)
-        }
+            }
+        )
+    } else {
+        device.logger.debug(
+            "Current state=${currentState.digest}, " +
+                "intended=${intendedState.digest}. Clearing packages..."
+        )
 
-        return Try.Success(intentionState)
-    }
+        stateWorker.clearPackages(currentState)
+    }.map { intendedState }
 
     private fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun {
         val deviceTestCaseRun = try {
 
-            listener.started(
+            testListener.started(
                 device = device,
                 targetPackage = action.targetPackage,
                 test = action.test,
@@ -185,7 +145,7 @@ class DeviceWorker(
                 outputDir = outputDirectory
             )
         } catch (t: Throwable) {
-            val now = System.currentTimeMillis()
+            val now = timeProvider.nowInMillis()
 
             DeviceTestCaseRun(
                 testCaseRun = TestCaseRun(
@@ -201,7 +161,7 @@ class DeviceWorker(
             )
         }
 
-        listener.finished(
+        testListener.finished(
             device = device,
             test = action.test,
             targetPackage = action.targetPackage,
@@ -213,14 +173,25 @@ class DeviceWorker(
         return deviceTestCaseRun
     }
 
-    private fun clearStatePackages(state: State): Try<Any> = Try {
-        device.logger.debug("Clearing packages")
-        state.layers
-            .asSequence()
-            .filterIsInstance<State.Layer.InstalledApplication>()
-            .forEach { device.clearPackage(it.applicationPackage) }
+    private suspend fun onDeviceDieOnIntention(
+        intention: Intention,
+        reason: Throwable
+    ) {
+        deviceListener.onDeviceDied(
+            device = device,
+            message = "DeviceWorker died. Can't process intention: $intention",
+            reason = reason
+        )
+        deviceListener.onIntentionFail(
+            device = device,
+            intention = intention,
+            reason = reason
+        )
     }
 
+    /**
+     * layers order matter
+     */
     private fun Device.state(): State =
         State(
             layers = listOf(

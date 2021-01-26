@@ -1,28 +1,30 @@
 package com.avito.runner.scheduler.metrics
 
 import com.avito.math.median
-import com.avito.runner.scheduler.metrics.model.TestKey
-import com.avito.runner.scheduler.metrics.model.TestTimestamps
+import com.avito.runner.scheduler.metrics.model.DeviceKey
+import com.avito.runner.scheduler.metrics.model.DeviceTimestamps
 
 internal class TestMetricsAggregatorImpl(
     private val testSuiteStartedTime: Long,
     private val testSuiteEndedTime: Long,
-    testTimestamps: Map<TestKey, TestTimestamps>
+    private val deviceTimestamps: Map<DeviceKey, DeviceTimestamps>
 ) : TestMetricsAggregator {
 
-    private val firstTestStarted = testTimestamps.values
+    private val testTimestamps = deviceTimestamps.flatMap { it.value.testTimestamps.values }
+
+    private val firstTestStarted = testTimestamps
         .mapNotNull { it.started }
         .minOrNull()
 
-    private val lastTestEnded = testTimestamps.values
+    private val lastTestEnded = testTimestamps
         .mapNotNull { it.finished }
         .maxOrNull()
 
-    private val queueTimes: List<Long> = testTimestamps.values
+    private val queueTimes: List<Long> = testTimestamps
         .mapNotNull { it.onDevice }
         .map { it - testSuiteStartedTime }
 
-    private val installationTimes: List<Long> = testTimestamps.values
+    private val installationTimes: List<Long> = testTimestamps
         .mapNotNull { it.installationTime }
 
     override fun initialDelay(): Long? = firstTestStarted?.let { it - testSuiteStartedTime }
@@ -41,10 +43,15 @@ internal class TestMetricsAggregatorImpl(
 
     override fun totalTime() = testSuiteEndedTime - testSuiteStartedTime
 
+    override fun medianDeviceUtilization(): Long? =
+        deviceTimestamps.values
+            .mapNotNull { it.utilizationPercent }
+            .aggregateOrNull { it.median() }
+
     /**
      * return null if no data
      */
-    private fun List<Long>.aggregateOrNull(aggregateFunc: (List<Long>) -> Number): Long? {
+    private fun List<Number>.aggregateOrNull(aggregateFunc: (List<Number>) -> Number): Long? {
         return if (isNotEmpty()) {
             val result = aggregateFunc.invoke(this).toLong()
             if (result > 0) {

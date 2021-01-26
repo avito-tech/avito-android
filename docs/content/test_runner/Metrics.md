@@ -6,6 +6,11 @@ Metrics available at:
 
 `$namespace.testrunner.$buildId.$instrumentationConfigName.`
 
+### `device-utilization.median`
+
+Effective device work time relative to total device claimed time, in percent `0-100` \
+Median for all devices in configuration
+
 ### `initial-delay`
 
 Time from test runner job start to first test execution started
@@ -50,3 +55,4 @@ If test file was pulled, but there was a parsing error
 ## Example in grafana:
 
 ![grafana](https://user-images.githubusercontent.com/1105133/106182950-a2e53200-61b0-11eb-9615-f892fa879c84.png)
+

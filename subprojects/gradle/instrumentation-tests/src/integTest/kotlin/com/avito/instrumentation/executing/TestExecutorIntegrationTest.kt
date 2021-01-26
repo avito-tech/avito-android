@@ -21,6 +21,7 @@ import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
+import com.avito.time.StubTimeProvider
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -91,7 +92,8 @@ internal class TestExecutorIntegrationTest {
                 adb = adb
             ),
             loggerFactory = loggerFactory,
-            adb = adb
+            adb = adb,
+            timeProvider = StubTimeProvider()
         ),
         testReporter = StubTestReporter(),
         buildId = buildId,

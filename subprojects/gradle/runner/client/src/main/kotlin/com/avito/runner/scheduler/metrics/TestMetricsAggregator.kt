@@ -13,4 +13,6 @@ internal interface TestMetricsAggregator {
     fun suiteTime(): Long?
 
     fun totalTime(): Long
+
+    fun medianDeviceUtilization(): Long?
 }

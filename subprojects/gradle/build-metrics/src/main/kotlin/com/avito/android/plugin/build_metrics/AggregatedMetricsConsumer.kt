@@ -4,13 +4,13 @@ import com.avito.android.gradle.metric.AbstractMetricsConsumer
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.Operation
 import com.avito.android.gradle.profile.TaskExecution
-import com.avito.android.percentOf
 import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.TimeMetric
 import com.avito.android.stats.graphiteSeriesElement
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.math.percentOf
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.BuildResult

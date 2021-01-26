@@ -8,14 +8,6 @@ import com.avito.runner.service.worker.device.Device
 
 internal class LogListener : TestListener {
 
-    override fun onDevice(
-        device: Device,
-        test: TestCase,
-        targetPackage: String,
-        executionNumber: Int
-    ) {
-    }
-
     override fun started(
         device: Device,
         targetPackage: String,

@@ -2,7 +2,8 @@ package com.avito.test.gradle
 
 import com.avito.android.androidHomeFromLocalPropertiesFallback
 import com.avito.logger.Logger
-import com.avito.logger.StubLogger
+import com.avito.logger.StubLoggerFactory
+import com.avito.logger.create
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.files.build_gradle
@@ -49,7 +50,7 @@ class TestProjectGenerator(
     val androidHome: String? = null
 ) : Module {
 
-    private val logger: Logger = StubLogger
+    private val logger: Logger = StubLoggerFactory.create<TestProjectGenerator>()
 
     override val dependencies: Set<GradleDependency> = emptySet()
 
