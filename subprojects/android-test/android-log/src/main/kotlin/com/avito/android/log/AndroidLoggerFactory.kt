@@ -12,12 +12,16 @@ import com.avito.logger.handler.LoggingHandler
 
 class AndroidLoggerFactory(
     private val elasticConfig: ElasticConfig,
-    private val sentryConfig: SentryConfig
+    private val sentryConfig: SentryConfig,
+    private val testName: String?
 ) : LoggerFactory {
 
     override fun create(tag: String): Logger {
 
-        val metadata = AndroidMetadata(tag)
+        val metadata = AndroidTestMetadata(
+            tag = tag,
+            testName = testName
+        )
 
         val defaultHandler = defaultHandler(metadata)
 
@@ -29,7 +33,7 @@ class AndroidLoggerFactory(
         )
     }
 
-    private fun defaultHandler(metadata: AndroidMetadata): LoggingHandler {
+    private fun defaultHandler(metadata: AndroidTestMetadata): LoggingHandler {
         return if (elasticConfig is ElasticConfig.Enabled) {
             CombinedHandler(
                 listOf(
@@ -42,15 +46,15 @@ class AndroidLoggerFactory(
         }
     }
 
-    private fun androidLogHandler(metadata: AndroidMetadata): LoggingHandler {
+    private fun androidLogHandler(metadata: AndroidTestMetadata): LoggingHandler {
         return DefaultLoggingHandler(destination = AndroidLogDestination(metadata))
     }
 
-    private fun elasticHandler(metadata: AndroidMetadata): LoggingHandler {
+    private fun elasticHandler(metadata: AndroidTestMetadata): LoggingHandler {
         return DefaultLoggingHandler(destination = ElasticDestinationFactory.create(elasticConfig, metadata))
     }
 
-    private fun criticalHandler(defaultHandler: LoggingHandler, metadata: AndroidMetadata): LoggingHandler {
+    private fun criticalHandler(defaultHandler: LoggingHandler, metadata: AndroidTestMetadata): LoggingHandler {
         return if (sentryConfig is SentryConfig.Enabled) {
             val sentryHandler =
                 DefaultLoggingHandler(

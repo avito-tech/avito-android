@@ -6,7 +6,7 @@ import com.avito.logger.destination.ElasticDestination
 
 internal object ElasticDestinationFactory {
 
-    fun create(config: ElasticConfig, metadata: AndroidMetadata): LoggingDestination {
+    fun create(config: ElasticConfig, metadata: AndroidTestMetadata): LoggingDestination {
         return ElasticDestination(
             config = config,
             metadata = metadata.toMap()

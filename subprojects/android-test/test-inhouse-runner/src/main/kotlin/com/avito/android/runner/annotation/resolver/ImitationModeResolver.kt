@@ -11,7 +11,8 @@ class ImitationModeResolver : TestMetadataResolver {
 
     private val logger = AndroidLoggerFactory(
         elasticConfig = ElasticConfig.Disabled,
-        sentryConfig = SentryConfig.Disabled
+        sentryConfig = SentryConfig.Disabled,
+        testName = null
     ).create<ImitationModeResolver>()
 
     override val key: String = BUNDLE_KEY

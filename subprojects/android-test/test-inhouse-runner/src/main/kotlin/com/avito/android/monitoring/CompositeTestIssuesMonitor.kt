@@ -66,7 +66,7 @@ class CompositeTestIssuesMonitor(
         return EventBuilder()
             .withTag(
                 "test_name",
-                "${testRunEnvironment.testMetadata.className}.${testRunEnvironment.testMetadata.methodName}"
+                testRunEnvironment.testMetadata.testName
             )
             .withTag("build_id", testRunEnvironment.teamcityBuildId.toString())
             .withTag("build_branch", testRunEnvironment.buildBranch)

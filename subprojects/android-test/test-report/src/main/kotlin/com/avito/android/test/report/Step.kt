@@ -54,7 +54,7 @@ inline fun <T : DataSet> dataSet(
         dataSet = value
         // todo почему -1 это вообще валидное значение? попробовать использовать unsigned тип данных
         require(testMetadata.dataSetNumber != null && testMetadata.dataSetNumber != -1) {
-            "Please specify @DataSetNumber(Int) for test ${testMetadata.className}.${testMetadata.methodName}"
+            "Please specify @DataSetNumber(Int) for test ${testMetadata.testName}"
         }
     }
     action(value)

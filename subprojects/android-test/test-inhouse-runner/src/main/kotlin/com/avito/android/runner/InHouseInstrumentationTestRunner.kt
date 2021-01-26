@@ -81,9 +81,11 @@ abstract class InHouseInstrumentationTestRunner :
     val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
 
     override val loggerFactory by lazy {
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         AndroidLoggerFactory(
             elasticConfig = elasticConfig,
-            sentryConfig = sentryConfig
+            sentryConfig = sentryConfig,
+            testName = runEnvironment.testMetadata.testName
         )
     }
 
@@ -292,7 +294,7 @@ abstract class InHouseInstrumentationTestRunner :
             report.registerIncident(AppCrashException(incident))
             report.reportTestCase()
         } catch (t: Throwable) {
-            logger.warn("Can't register and report unexpected incident", t)
+            logger.critical("Can't register and report unexpected incident", t)
         }
     }
 
@@ -309,8 +311,14 @@ abstract class InHouseInstrumentationTestRunner :
      * глобальном обработчике.
      */
     private fun initApplicationCrashHandling() {
+        val currentHandler = Thread.getDefaultUncaughtExceptionHandler()
+
         Thread.setDefaultUncaughtExceptionHandler(
-            ReportUncaughtHandler(loggerFactory)
+            ReportUncaughtHandler(
+                loggerFactory = loggerFactory,
+                globalExceptionHandler = currentHandler,
+                nonCriticalErrorMessages = setOf("Error while disconnecting UiAutomation")
+            )
         )
     }
 

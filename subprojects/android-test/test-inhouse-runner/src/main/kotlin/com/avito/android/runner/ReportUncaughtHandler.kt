@@ -5,18 +5,19 @@ import com.avito.logger.create
 
 internal class ReportUncaughtHandler(
     loggerFactory: LoggerFactory,
-    private val globalExceptionHandler: Thread.UncaughtExceptionHandler? = Thread.getDefaultUncaughtExceptionHandler()
+    private val globalExceptionHandler: Thread.UncaughtExceptionHandler?,
+    private val nonCriticalErrorMessages: Set<String>
 ) : Thread.UncaughtExceptionHandler {
 
     private val logger = loggerFactory.create<ReportUncaughtHandler>()
 
     override fun uncaughtException(t: Thread, e: Throwable) {
-        logger.critical("Application crash captured by global handler", e)
-
-        InHouseInstrumentationTestRunner.instance.tryToReportUnexpectedIncident(
-            incident = e
-        )
-
-        globalExceptionHandler?.uncaughtException(t, e)
+        if (e.message in nonCriticalErrorMessages) {
+            logger.warn("Non critical error caught by ReportUncaughtHandler", e)
+        } else {
+            logger.critical("Application crashed", e)
+            InHouseInstrumentationTestRunner.instance.tryToReportUnexpectedIncident(incident = e)
+            globalExceptionHandler?.uncaughtException(t, e)
+        }
     }
 }

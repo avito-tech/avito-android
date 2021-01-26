@@ -6,7 +6,7 @@ import com.avito.logger.destination.SentryDestination
 
 internal object SentryDestinationFactory {
 
-    fun create(config: SentryConfig, metadata: AndroidMetadata): LoggingDestination {
+    fun create(config: SentryConfig, metadata: AndroidTestMetadata): LoggingDestination {
         return SentryDestination(config, metadata.toMap())
     }
 }

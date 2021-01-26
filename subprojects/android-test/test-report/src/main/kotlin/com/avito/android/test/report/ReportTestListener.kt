@@ -11,9 +11,11 @@ import org.junit.runner.notification.RunListener
 class ReportTestListener : RunListener() {
 
     private val report: Report by lazy { TestExecutionState.reportInstance }
+
     private val logger = AndroidLoggerFactory(
         elasticConfig = ElasticConfig.Disabled,
-        sentryConfig = SentryConfig.Disabled
+        sentryConfig = SentryConfig.Disabled,
+        testName = null
     ).create<ReportTestListener>()
 
     override fun testStarted(description: Description) {
