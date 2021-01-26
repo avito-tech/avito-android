@@ -21,7 +21,7 @@ internal data class TestRunResult(
         data class Failure(
             override val message: String,
             val prettifiedDetails: Details,
-            val cause: Throwable? = null
+            @Transient val cause: Throwable? = null
         ) : Verdict() {
 
             data class Details(

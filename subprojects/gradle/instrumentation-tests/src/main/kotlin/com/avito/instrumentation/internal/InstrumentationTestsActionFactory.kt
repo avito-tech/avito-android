@@ -52,8 +52,9 @@ internal interface InstrumentationTestsActionFactory {
     }
 
     companion object {
-        val gson by lazy {
+        val gson: Gson by lazy {
             GsonBuilder()
+                .registerTypeHierarchyAdapter(TestRunResult.Verdict::class.java, TestRunResultVerdictJsonSerializer)
                 .setPrettyPrinting()
                 .create()
         }
