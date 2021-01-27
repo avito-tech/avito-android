@@ -20,7 +20,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
-internal class TestExecutorImpl(
+class TestExecutorImpl(
     private val devicesProvider: DevicesProvider,
     private val testReporter: TestReporter,
     private val buildId: String,

@@ -4,6 +4,7 @@ import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.createStubInstance
+import com.avito.instrumentation.internal.executing.TestExecutorImpl
 import com.avito.instrumentation.internal.reservation.devices.provider.KubernetesDevicesProvider
 import com.avito.instrumentation.report.listener.StubTestReporter
 import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient

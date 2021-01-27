@@ -13,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
 
-internal class KubernetesDevicesProvider(
+class KubernetesDevicesProvider(
     private val client: KubernetesReservationClient,
     private val adbDevicesManager: AdbDevicesManager,
     private val loggerFactory: LoggerFactory,
