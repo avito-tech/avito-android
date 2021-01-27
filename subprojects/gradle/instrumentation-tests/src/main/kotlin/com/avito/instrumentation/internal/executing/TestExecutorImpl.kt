@@ -21,12 +21,12 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 
 internal class TestExecutorImpl(
-  private val devicesProvider: DevicesProvider,
-  private val testReporter: TestReporter,
-  private val buildId: String,
-  private val configurationName: String,
-  private val loggerFactory: LoggerFactory,
-  private val statsDConfig: StatsDConfig
+    private val devicesProvider: DevicesProvider,
+    private val testReporter: TestReporter,
+    private val buildId: String,
+    private val configurationName: String,
+    private val loggerFactory: LoggerFactory,
+    private val statsDConfig: StatsDConfig
 ) : TestExecutor {
 
     private val logger = loggerFactory.create<TestExecutor>()
@@ -59,15 +59,15 @@ internal class TestExecutorImpl(
             }
 
             val runnerArguments = Arguments(
-              outputDirectory = outputFolder(output),
-              buildId = buildId,
-              instrumentationConfigName = configurationName,
-              devices = devices,
-              loggerFactory = loggerFactory,
-              listener = testReporter,
-              requests = testRequests,
-              reservation = devicesProvider,
-              statsDConfig = statsDConfig
+                outputDirectory = outputFolder(output),
+                buildId = buildId,
+                instrumentationConfigName = configurationName,
+                devices = devices,
+                loggerFactory = loggerFactory,
+                listener = testReporter,
+                requests = testRequests,
+                reservation = devicesProvider,
+                statsDConfig = statsDConfig
             )
 
             logger.debug("Arguments: $runnerArguments")
@@ -79,8 +79,8 @@ internal class TestExecutorImpl(
     }
 
     private fun outputFolder(output: File): File = File(
-      output,
-      outputDirectoryName
+        output,
+        outputDirectoryName
     ).apply { mkdirs() }
 
     private fun reservations(
@@ -112,54 +112,54 @@ internal class TestExecutorImpl(
     // TODO: extract and delegate this channels orchestration.
     // It's overcomplicated for local client
     private fun withDevices(
-      reservations: Collection<Reservation.Data>,
-      action: (devices: ReceiveChannel<Device>) -> Unit
+        reservations: Collection<Reservation.Data>,
+        action: (devices: ReceiveChannel<Device>) -> Unit
     ) {
-      runBlocking {
-        try {
-          logger.info("Devices: Starting action job for configuration: $configurationName...")
-          action(devicesProvider.provideFor(reservations, this))
-          logger.info("Devices: Action completed for configuration: $configurationName")
-        } catch (e: Throwable) {
-          logger.critical("Error during action in $configurationName job", e)
-        } finally {
-          logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
-          devicesProvider.releaseDevices()
-          logger.info("Devices: Devices released for configuration: $configurationName")
+        runBlocking {
+            try {
+                logger.info("Devices: Starting action job for configuration: $configurationName...")
+                action(devicesProvider.provideFor(reservations, this))
+                logger.info("Devices: Action completed for configuration: $configurationName")
+            } catch (e: Throwable) {
+                logger.critical("Error during action in $configurationName job", e)
+            } finally {
+                logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
+                devicesProvider.releaseDevices()
+                logger.info("Devices: Devices released for configuration: $configurationName")
+            }
         }
-      }
     }
 
     private fun createTestRunRequest(
-      targetTestRun: TestWithTarget,
-      quota: QuotaConfiguration.Data,
-      reservation: Reservation,
-      application: File?,
-      testApplication: File,
-      executionParameters: ExecutionParameters
+        targetTestRun: TestWithTarget,
+        quota: QuotaConfiguration.Data,
+        reservation: Reservation,
+        application: File?,
+        testApplication: File,
+        executionParameters: ExecutionParameters
     ): TestRunRequest = TestRunRequest(
-      testCase = TestCase(
-        className = targetTestRun.test.name.className,
-        methodName = targetTestRun.test.name.methodName,
-        deviceName = targetTestRun.target.deviceName
-      ),
-      configuration = DeviceConfiguration(
-        api = reservation.device.api,
-        model = reservation.device.model
-      ),
-      scheduling = TestRunRequest.Scheduling(
-        retryCount = quota.retryCount,
-        minimumFailedCount = quota.minimumFailedCount,
-        minimumSuccessCount = quota.minimumSuccessCount
-      ),
-      application = application?.absolutePath,
-      applicationPackage = executionParameters.applicationPackageName,
-      testApplication = testApplication.absolutePath,
-      testPackage = executionParameters.applicationTestPackageName,
-      testRunner = executionParameters.testRunner,
-      timeoutMinutes = TEST_TIMEOUT_MINUTES,
-      instrumentationParameters = targetTestRun.target.instrumentationParams,
-      enableDeviceDebug = executionParameters.enableDeviceDebug
+        testCase = TestCase(
+            className = targetTestRun.test.name.className,
+            methodName = targetTestRun.test.name.methodName,
+            deviceName = targetTestRun.target.deviceName
+        ),
+        configuration = DeviceConfiguration(
+            api = reservation.device.api,
+            model = reservation.device.model
+        ),
+        scheduling = TestRunRequest.Scheduling(
+            retryCount = quota.retryCount,
+            minimumFailedCount = quota.minimumFailedCount,
+            minimumSuccessCount = quota.minimumSuccessCount
+        ),
+        application = application?.absolutePath,
+        applicationPackage = executionParameters.applicationPackageName,
+        testApplication = testApplication.absolutePath,
+        testPackage = executionParameters.applicationTestPackageName,
+        testRunner = executionParameters.testRunner,
+        timeoutMinutes = TEST_TIMEOUT_MINUTES,
+        instrumentationParameters = targetTestRun.target.instrumentationParams,
+        enableDeviceDebug = executionParameters.enableDeviceDebug
     )
 
     data class TargetGroup(val name: String, val reservation: Reservation)

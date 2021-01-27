@@ -56,11 +56,11 @@ internal interface TestsFilter {
     }
 
     data class Test(
-      val name: String,
-      val annotations: List<AnnotationData>,
-      val deviceName: DeviceName,
-      val api: Int,
-      val flakiness: Flakiness
+        val name: String,
+        val annotations: List<AnnotationData>,
+        val deviceName: DeviceName,
+        val api: Int,
+        val flakiness: Flakiness
     ) {
         companion object
     }

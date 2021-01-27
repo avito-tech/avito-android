@@ -14,33 +14,33 @@ import com.avito.logger.LoggerFactory
 internal interface TestExecutorFactory {
 
     fun createExecutor(
-      devicesProviderFactory: DevicesProviderFactory,
-      testReporter: TestReporter,
-      buildId: String,
-      configuration: InstrumentationConfiguration.Data,
-      executionParameters: ExecutionParameters,
-      loggerFactory: LoggerFactory,
-      statsDConfig: StatsDConfig
+        devicesProviderFactory: DevicesProviderFactory,
+        testReporter: TestReporter,
+        buildId: String,
+        configuration: InstrumentationConfiguration.Data,
+        executionParameters: ExecutionParameters,
+        loggerFactory: LoggerFactory,
+        statsDConfig: StatsDConfig
     ): TestExecutor
 
     class Implementation : TestExecutorFactory {
 
         override fun createExecutor(
-          devicesProviderFactory: DevicesProviderFactory,
-          testReporter: TestReporter,
-          buildId: String,
-          configuration: InstrumentationConfiguration.Data,
-          executionParameters: ExecutionParameters,
-          loggerFactory: LoggerFactory,
-          statsDConfig: StatsDConfig
+            devicesProviderFactory: DevicesProviderFactory,
+            testReporter: TestReporter,
+            buildId: String,
+            configuration: InstrumentationConfiguration.Data,
+            executionParameters: ExecutionParameters,
+            loggerFactory: LoggerFactory,
+            statsDConfig: StatsDConfig
         ): TestExecutor {
             return TestExecutorImpl(
-              devicesProvider = devicesProviderFactory.create(configuration, executionParameters),
-              testReporter = testReporter,
-              buildId = buildId,
-              configurationName = configuration.name,
-              loggerFactory = loggerFactory,
-              statsDConfig = statsDConfig
+                devicesProvider = devicesProviderFactory.create(configuration, executionParameters),
+                testReporter = testReporter,
+                buildId = buildId,
+                configurationName = configuration.name,
+                loggerFactory = loggerFactory,
+                statsDConfig = statsDConfig
             )
         }
     }

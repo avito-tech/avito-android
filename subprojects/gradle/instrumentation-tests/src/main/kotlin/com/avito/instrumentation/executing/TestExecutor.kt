@@ -14,5 +14,4 @@ interface TestExecutor {
     )
 
     data class RunType(val id: String)
-
 }

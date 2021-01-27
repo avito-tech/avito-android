@@ -19,19 +19,15 @@ internal object TestRunResultVerdictJsonSerializer : JsonSerializer<Verdict>, Js
         context: JsonSerializationContext
     ): JsonElement {
         return when (src) {
-            is Verdict.Success -> {
-                JsonObject().also { json ->
-                    json["type"] = "success"
-                    json["message"] = src.message
-                }
+            is Verdict.Success -> JsonObject().also { json ->
+                json["type"] = "success"
+                json["message"] = src.message
             }
-            is Verdict.Failure -> {
-                JsonObject().also { json ->
-                    json["type"] = "failure"
-                    json["message"] = src.message
-                    json["prettifiedDetails"] = context.serialize(src.prettifiedDetails)
-                    json["cause"] = src.cause
-                }
+            is Verdict.Failure -> JsonObject().also { json ->
+                json["type"] = "failure"
+                json["message"] = src.message
+                json["prettifiedDetails"] = context.serialize(src.prettifiedDetails)
+                json["cause"] = src.cause
             }
         }
     }

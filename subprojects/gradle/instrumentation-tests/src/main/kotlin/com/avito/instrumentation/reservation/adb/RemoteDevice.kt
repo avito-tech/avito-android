@@ -7,10 +7,10 @@ import com.avito.utils.ProcessRunner
 import org.funktionale.tries.Try
 
 class RemoteDevice(
-  private val processRunner: ProcessRunner,
-  override val serial: Serial.Remote,
-  override val adb: Adb,
-  loggerFactory: LoggerFactory
+    private val processRunner: ProcessRunner,
+    override val serial: Serial.Remote,
+    override val adb: Adb,
+    loggerFactory: LoggerFactory
 ) : Device(loggerFactory) {
 
     fun disconnect(): Try<String> = processRunner.run(command = "$adb disconnect $serial")

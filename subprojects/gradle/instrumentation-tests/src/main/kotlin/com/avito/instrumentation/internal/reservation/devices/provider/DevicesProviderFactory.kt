@@ -17,76 +17,76 @@ import java.io.File
 internal interface DevicesProviderFactory {
 
     fun create(
-      configuration: InstrumentationConfiguration.Data,
-      executionParameters: ExecutionParameters
+        configuration: InstrumentationConfiguration.Data,
+        executionParameters: ExecutionParameters
     ): DevicesProvider
 
     class Impl(
-      private val kubernetesCredentials: KubernetesCredentials,
-      private val buildId: String,
-      private val buildType: String,
-      private val projectName: String,
-      private val registry: String,
-      private val output: File,
-      private val logcatDir: File,
-      private val loggerFactory: LoggerFactory
+        private val kubernetesCredentials: KubernetesCredentials,
+        private val buildId: String,
+        private val buildType: String,
+        private val projectName: String,
+        private val registry: String,
+        private val output: File,
+        private val logcatDir: File,
+        private val loggerFactory: LoggerFactory
     ) : DevicesProviderFactory {
 
         override fun create(
-          configuration: InstrumentationConfiguration.Data,
-          executionParameters: ExecutionParameters
+            configuration: InstrumentationConfiguration.Data,
+            executionParameters: ExecutionParameters
         ): DevicesProvider {
             val adb = Adb()
             val androidDebugBridge = AndroidDebugBridge(
-              adb = adb,
-              loggerFactory = loggerFactory
+                adb = adb,
+                loggerFactory = loggerFactory
             )
             val emulatorsLogsReporter = EmulatorsLogsReporter(
-              outputFolder = output,
-              logcatTags = executionParameters.logcatTags,
-              logcatDir = logcatDir
+                outputFolder = output,
+                logcatTags = executionParameters.logcatTags,
+                logcatDir = logcatDir
             )
             val devicesManager = AdbDevicesManager(
-              adb = adb,
-              loggerFactory = loggerFactory
+                adb = adb,
+                loggerFactory = loggerFactory
             )
             return when (configuration.requestedDeviceType) {
                 InstrumentationConfiguration.Data.DevicesType.MOCK ->
-                  StubDevicesProvider(loggerFactory)
+                    StubDevicesProvider(loggerFactory)
 
                 InstrumentationConfiguration.Data.DevicesType.LOCAL ->
-                  LocalDevicesProvider(
-                    androidDebugBridge = androidDebugBridge,
-                    devicesManager = devicesManager,
-                    emulatorsLogsReporter = emulatorsLogsReporter,
-                    adb = adb,
-                    loggerFactory = loggerFactory
-                  )
+                    LocalDevicesProvider(
+                        androidDebugBridge = androidDebugBridge,
+                        devicesManager = devicesManager,
+                        emulatorsLogsReporter = emulatorsLogsReporter,
+                        adb = adb,
+                        loggerFactory = loggerFactory
+                    )
 
                 InstrumentationConfiguration.Data.DevicesType.CLOUD ->
-                  KubernetesDevicesProvider(
-                    client = KubernetesReservationClient(
-                      androidDebugBridge = androidDebugBridge,
-                      kubernetesClient = createKubernetesClient(
-                        kubernetesCredentials = kubernetesCredentials,
-                        namespace = executionParameters.namespace
-                      ),
-                      reservationDeploymentFactory = ReservationDeploymentFactory(
-                        configurationName = configuration.name,
-                        projectName = projectName,
-                        buildId = buildId,
-                        buildType = buildType,
-                        registry = registry,
-                        deploymentNameGenerator = UUIDDeploymentNameGenerator(),
+                    KubernetesDevicesProvider(
+                        client = KubernetesReservationClient(
+                            androidDebugBridge = androidDebugBridge,
+                            kubernetesClient = createKubernetesClient(
+                                kubernetesCredentials = kubernetesCredentials,
+                                namespace = executionParameters.namespace
+                            ),
+                            reservationDeploymentFactory = ReservationDeploymentFactory(
+                                configurationName = configuration.name,
+                                projectName = projectName,
+                                buildId = buildId,
+                                buildType = buildType,
+                                registry = registry,
+                                deploymentNameGenerator = UUIDDeploymentNameGenerator(),
+                                loggerFactory = loggerFactory
+                            ),
+                            loggerFactory = loggerFactory,
+                            emulatorsLogsReporter = emulatorsLogsReporter
+                        ),
+                        adbDevicesManager = devicesManager,
+                        adb = adb,
                         loggerFactory = loggerFactory
-                      ),
-                      loggerFactory = loggerFactory,
-                      emulatorsLogsReporter = emulatorsLogsReporter
-                    ),
-                    adbDevicesManager = devicesManager,
-                    adb = adb,
-                    loggerFactory = loggerFactory
-                  )
+                    )
             }
         }
     }

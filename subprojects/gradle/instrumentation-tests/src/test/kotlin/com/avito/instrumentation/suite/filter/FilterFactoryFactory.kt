@@ -12,10 +12,10 @@ import com.avito.report.model.createStubInstance
 internal object FilterFactoryFactory {
 
     fun create(
-      filter: InstrumentationFilter.Data = InstrumentationFilter.Data.createStub(),
-      impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
-      reportsByConfig: Map<Report.Factory.Config, Report> = emptyMap(),
-      reportConfig: Report.Factory.Config = Report.Factory.Config.ReportViewerCoordinates(
+        filter: InstrumentationFilter.Data = InstrumentationFilter.Data.createStub(),
+        impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
+        reportsByConfig: Map<Report.Factory.Config, Report> = emptyMap(),
+        reportConfig: Report.Factory.Config = Report.Factory.Config.ReportViewerCoordinates(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "stub"
         )

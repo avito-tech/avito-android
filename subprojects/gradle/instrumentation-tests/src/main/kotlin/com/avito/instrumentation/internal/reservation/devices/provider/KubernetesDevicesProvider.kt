@@ -14,10 +14,10 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.map
 
 internal class KubernetesDevicesProvider(
-  private val client: KubernetesReservationClient,
-  private val adbDevicesManager: AdbDevicesManager,
-  private val loggerFactory: LoggerFactory,
-  private val adb: Adb
+    private val client: KubernetesReservationClient,
+    private val adbDevicesManager: AdbDevicesManager,
+    private val loggerFactory: LoggerFactory,
+    private val adb: Adb
 ) : DevicesProvider {
 
     private val logger = loggerFactory.create<KubernetesDevicesProvider>()
@@ -32,13 +32,13 @@ internal class KubernetesDevicesProvider(
                     throw IllegalStateException("Can't find device connected adb device ${coordinate.serial}")
                 }
             logger.debug("Reserve Device ${coordinate.serial}")
-          AdbDevice(
-            coordinate = coordinate,
-            model = adbDeviceParams.model,
-            online = adbDeviceParams.online,
-            loggerFactory = loggerFactory,
-            adb = adb
-          )
+            AdbDevice(
+                coordinate = coordinate,
+                model = adbDeviceParams.model,
+                online = adbDeviceParams.online,
+                loggerFactory = loggerFactory,
+                adb = adb
+            )
         }
     }
 

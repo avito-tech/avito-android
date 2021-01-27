@@ -24,14 +24,14 @@ import java.io.File
 import java.io.FileReader
 
 internal class ReportViewerTestReporter(
-  loggerFactory: LoggerFactory,
-  timeProvider: TimeProvider,
-  private val testSuite: Map<TestCase, TestStaticData>,
-  private val report: Report,
+    loggerFactory: LoggerFactory,
+    timeProvider: TimeProvider,
+    private val testSuite: Map<TestCase, TestStaticData>,
+    private val report: Report,
     // todo extract write to file
-  fileStorageUrl: String,
-  private val logcatDir: File,
-  private val retracer: ProguardRetracer
+    fileStorageUrl: String,
+    private val logcatDir: File,
+    private val retracer: ProguardRetracer
 ) : TestReporter() {
 
     private val logger = loggerFactory.create<ReportViewerTestReporter>()
@@ -43,31 +43,31 @@ internal class ReportViewerTestReporter(
         .create()
 
     private val httpClient = getHttpClient(
-      verbose = false, // do not enable for production, generates a ton of logs
-      logger = logger,
-      readTimeoutSec = httpTimeoutSec,
-      writeTimeoutSec = httpTimeoutSec
+        verbose = false, // do not enable for production, generates a ton of logs
+        logger = logger,
+        readTimeoutSec = httpTimeoutSec,
+        writeTimeoutSec = httpTimeoutSec
     )
 
     /**
      * todo need implementation for in memory report
      */
     private val remoteStorage: RemoteStorage =
-      RemoteStorage.create(
-        endpoint = fileStorageUrl,
-        loggerFactory = loggerFactory,
-        httpClient = httpClient,
-        timeProvider = timeProvider
-      )
+        RemoteStorage.create(
+            endpoint = fileStorageUrl,
+            loggerFactory = loggerFactory,
+            httpClient = httpClient,
+            timeProvider = timeProvider
+        )
 
     // todo переместить ближе к DeviceWorker
     // сюда можно передавать логи как параметр и убрать отсюда все кроме транспорта
     private val logcatBuffers = mutableMapOf<Pair<TestCase, Int>, LogcatBuffer>()
 
     override fun started(
-      test: TestCase,
-      device: Device,
-      executionNumber: Int
+        test: TestCase,
+        device: Device,
+        executionNumber: Int
     ) {
         super.started(test, device, executionNumber)
 
@@ -80,9 +80,9 @@ internal class ReportViewerTestReporter(
     }
 
     override fun finished(
-      artifacts: Try<File>,
-      test: TestCase,
-      executionNumber: Int
+        artifacts: Try<File>,
+        test: TestCase,
+        executionNumber: Int
     ) {
         super.finished(artifacts, test, executionNumber)
         val key = test to executionNumber
@@ -90,9 +90,9 @@ internal class ReportViewerTestReporter(
     }
 
     override fun report(
-      artifacts: Try<File>,
-      test: TestCase,
-      executionNumber: Int
+        artifacts: Try<File>,
+        test: TestCase,
+        executionNumber: Int
     ) {
 
         val testFromSuite = requireNotNull(testSuite[test]) { "Can't find test in suite: ${test.testName}" }
@@ -104,7 +104,7 @@ internal class ReportViewerTestReporter(
 
                 try {
                     val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(
-                      FileReader(reportJson)
+                        FileReader(reportJson)
                     )
 
                     // отправляем только для упавших тестов
@@ -115,12 +115,12 @@ internal class ReportViewerTestReporter(
                     }
 
                     report.sendCompletedTest(
-                      AndroidTest.Completed.create(
-                        testStaticData = testFromSuite,
-                        testRuntimeData = testRuntimeData,
-                        stdout = stdout,
-                        stderr = stderr
-                      )
+                        AndroidTest.Completed.create(
+                            testStaticData = testFromSuite,
+                            testRuntimeData = testRuntimeData,
+                            stdout = stdout,
+                            stderr = stderr
+                        )
                     )
                 } catch (e: Throwable) {
                     logger.critical("Can't parse testRuntimeData: ${test.testName}; ${reportJson.readText()}", e)
@@ -132,13 +132,13 @@ internal class ReportViewerTestReporter(
                 logger.critical("Can't get report from file: $test", it)
                 report.sendLostTests(
                     listOf(
-                      AndroidTest.Lost.fromTestMetadata(
-                        testFromSuite,
-                        startTime = 0, // todo попробовать достать
-                        lastSignalTime = 0, // todo попробовать достать
-                        stdout = stdout,
-                        stderr = stderr
-                      )
+                        AndroidTest.Lost.fromTestMetadata(
+                            testFromSuite,
+                            startTime = 0, // todo попробовать достать
+                            lastSignalTime = 0, // todo попробовать достать
+                            stdout = stdout,
+                            stderr = stderr
+                        )
                     )
                 )
             }
@@ -164,10 +164,10 @@ internal class ReportViewerTestReporter(
             ""
         } else {
             when (val result = remoteStorage.upload(
-              RemoteStorage.Request.ContentRequest(
-                content = retracer.retrace(logcat.joinToString(separator = "\n")),
-                extension = "log"
-              ),
+                RemoteStorage.Request.ContentRequest(
+                    content = retracer.retrace(logcat.joinToString(separator = "\n")),
+                    extension = "log"
+                ),
                 comment = "logcat"
             ).get()) {
                 is RemoteStorage.Result.Success -> remoteStorage.fullUrl(result)

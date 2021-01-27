@@ -16,8 +16,8 @@ internal interface LogcatBuffer {
     fun stop()
 
     class Impl(
-      logcatFile: File,
-      readFileFromEnd: Boolean = true
+        logcatFile: File,
+        readFileFromEnd: Boolean = true
     ) : LogcatBuffer {
 
         private val stdoutBuffer = mutableListOf<String>()
@@ -39,10 +39,10 @@ internal interface LogcatBuffer {
         private val frequencyMs = 100L
 
         private val tailer = Tailer.create(
-          logcatFile,
-          tailerListener,
-          frequencyMs,
-          readFileFromEnd
+            logcatFile,
+            tailerListener,
+            frequencyMs,
+            readFileFromEnd
         )
 
         override fun stop() {

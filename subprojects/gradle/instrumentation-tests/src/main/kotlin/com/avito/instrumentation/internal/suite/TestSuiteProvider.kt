@@ -14,9 +14,9 @@ import com.avito.report.model.DeviceName
 internal interface TestSuiteProvider {
 
     data class TestSuite(
-      val appliedFilter: TestsFilter,
-      val testsToRun: List<TestWithTarget>,
-      val skippedTests: List<Pair<TestWithTarget, Excluded>>
+        val appliedFilter: TestsFilter,
+        val testsToRun: List<TestWithTarget>,
+        val skippedTests: List<Pair<TestWithTarget, Excluded>>
     )
 
     fun getTestSuite(tests: List<TestInApk>): TestSuite

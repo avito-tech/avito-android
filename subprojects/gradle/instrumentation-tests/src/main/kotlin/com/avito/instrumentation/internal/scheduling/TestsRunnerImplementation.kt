@@ -23,32 +23,32 @@ import java.io.File
 import java.nio.file.Files
 
 internal class TestsRunnerImplementation(
-  private val testExecutorFactory: TestExecutorFactory,
-  private val kubernetesCredentials: KubernetesCredentials,
-  private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter,
-  private val loggerFactory: LoggerFactory,
-  private val buildId: String,
-  private val buildType: String,
-  private val projectName: String,
-  private val executionParameters: ExecutionParameters,
-  private val outputDirectory: File,
-  private val instrumentationConfiguration: InstrumentationConfiguration.Data,
-  private val registry: String,
-  private val statsDConfig: StatsDConfig
+    private val testExecutorFactory: TestExecutorFactory,
+    private val kubernetesCredentials: KubernetesCredentials,
+    private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter,
+    private val loggerFactory: LoggerFactory,
+    private val buildId: String,
+    private val buildType: String,
+    private val projectName: String,
+    private val executionParameters: ExecutionParameters,
+    private val outputDirectory: File,
+    private val instrumentationConfiguration: InstrumentationConfiguration.Data,
+    private val registry: String,
+    private val statsDConfig: StatsDConfig
 ) : TestsRunner {
 
     private val logger = loggerFactory.create<TestsRunner>()
 
     override fun runTests(
-      mainApk: File?,
-      testApk: File,
-      runType: TestExecutor.RunType, // todo delete runtype
-      reportCoordinates: ReportCoordinates,
-      report: Report,
-      testsToRun: List<TestWithTarget>
+        mainApk: File?,
+        testApk: File,
+        runType: TestExecutor.RunType, // todo delete runtype
+        reportCoordinates: ReportCoordinates,
+        report: Report,
+        testsToRun: List<TestWithTarget>
     ): Try<List<SimpleRunTest>> {
         return if (testsToRun.isEmpty()) {
-          Try.Success(emptyList())
+            Try.Success(emptyList())
         } else {
 
             val output = File(outputDirectory, runType.id).apply { mkdirs() }
@@ -57,9 +57,9 @@ internal class TestsRunnerImplementation(
             val testReporter = testReporterFactory.invoke(
                 testsToRun.associate {
                     TestCase(
-                      className = it.test.name.className,
-                      methodName = it.test.name.methodName,
-                      deviceName = it.target.deviceName
+                        className = it.test.name.className,
+                        methodName = it.test.name.methodName,
+                        deviceName = it.target.deviceName
                     ) to it.test
                 },
                 logcatDir,
@@ -72,14 +72,14 @@ internal class TestsRunnerImplementation(
 
             val executor = testExecutorFactory.createExecutor(
                 devicesProviderFactory = DevicesProviderFactory.Impl(
-                  kubernetesCredentials = kubernetesCredentials,
-                  buildId = buildId,
-                  buildType = buildType,
-                  projectName = projectName,
-                  registry = registry,
-                  output = output,
-                  logcatDir = logcatDir,
-                  loggerFactory = loggerFactory
+                    kubernetesCredentials = kubernetesCredentials,
+                    buildId = buildId,
+                    buildType = buildType,
+                    projectName = projectName,
+                    registry = registry,
+                    output = output,
+                    logcatDir = logcatDir,
+                    loggerFactory = loggerFactory
                 ),
                 configuration = initialRunConfiguration,
                 executionParameters = executionParameters,

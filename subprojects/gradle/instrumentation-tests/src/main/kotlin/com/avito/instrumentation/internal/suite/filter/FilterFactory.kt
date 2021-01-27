@@ -19,10 +19,10 @@ internal interface FilterFactory {
             factory: Report.Factory
         ): FilterFactory {
             return FilterFactoryImpl(
-              filterData = filterData,
-              impactAnalysisResult = impactAnalysisResult,
-              reportConfig = reportConfig,
-              factory = factory
+                filterData = filterData,
+                impactAnalysisResult = impactAnalysisResult,
+                reportConfig = reportConfig,
+                factory = factory
             )
         }
     }

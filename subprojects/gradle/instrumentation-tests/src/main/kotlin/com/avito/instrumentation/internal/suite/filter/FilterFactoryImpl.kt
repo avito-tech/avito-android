@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal.suite.filter
 
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationFilter
+import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.instrumentation.report.Report
@@ -36,15 +37,15 @@ internal class FilterFactoryImpl(
     private fun MutableList<TestsFilter>.addAnnotationFilters() {
         if (filterData.fromSource.annotations.included.isNotEmpty()) {
             add(
-              IncludeAnnotationsFilter(
-                filterData.fromSource.annotations.included
-              )
+                IncludeAnnotationsFilter(
+                    filterData.fromSource.annotations.included
+                )
             )
         }
         add(
-          ExcludeAnnotationsFilter(
-            filterData.fromSource.annotations.excluded + JUNIT_IGNORE_ANNOTATION
-          )
+            ExcludeAnnotationsFilter(
+                filterData.fromSource.annotations.excluded + JUNIT_IGNORE_ANNOTATION
+            )
         )
     }
 
@@ -52,28 +53,28 @@ internal class FilterFactoryImpl(
         val prefixes = filterData.fromSource.prefixes
         if (prefixes.included.isNotEmpty()) {
             add(
-              IncludeByTestSignaturesFilter(
-                source = TestsFilter.Signatures.Source.Code,
-                signatures = prefixes.included
-                  .map {
-                      TestSignature(
-                          name = it
-                      )
-                  }.toSet()
-              )
+                IncludeByTestSignaturesFilter(
+                    source = TestsFilter.Signatures.Source.Code,
+                    signatures = prefixes.included
+                        .map {
+                            TestSignature(
+                                name = it
+                            )
+                        }.toSet()
+                )
             )
         }
         if (prefixes.excluded.isNotEmpty()) {
             add(
-              ExcludeByTestSignaturesFilter(
-                source = TestsFilter.Signatures.Source.Code,
-                signatures = prefixes.excluded
-                  .map {
-                      TestSignature(
-                          name = it
-                      )
-                  }.toSet()
-              )
+                ExcludeByTestSignaturesFilter(
+                    source = TestsFilter.Signatures.Source.Code,
+                    signatures = prefixes.excluded
+                        .map {
+                            TestSignature(
+                                name = it
+                            )
+                        }.toSet()
+                )
             )
         }
     }
@@ -87,18 +88,18 @@ internal class FilterFactoryImpl(
                 .get()
             if (previousStatuses.included.isNotEmpty()) {
                 add(
-                  IncludeByTestSignaturesFilter(
-                    source = TestsFilter.Signatures.Source.PreviousRun,
-                    signatures = previousRunTests.filterBy(previousStatuses.included)
-                  )
+                    IncludeByTestSignaturesFilter(
+                        source = TestsFilter.Signatures.Source.PreviousRun,
+                        signatures = previousRunTests.filterBy(previousStatuses.included)
+                    )
                 )
             }
             if (previousStatuses.excluded.isNotEmpty()) {
                 add(
-                  ExcludeByTestSignaturesFilter(
-                    source = TestsFilter.Signatures.Source.PreviousRun,
-                    signatures = previousRunTests.filterBy(previousStatuses.excluded)
-                  )
+                    ExcludeByTestSignaturesFilter(
+                        source = TestsFilter.Signatures.Source.PreviousRun,
+                        signatures = previousRunTests.filterBy(previousStatuses.excluded)
+                    )
                 )
             }
         }
@@ -116,26 +117,26 @@ internal class FilterFactoryImpl(
                 .get()
             if (statuses.included.isNotEmpty()) {
                 add(
-                  IncludeByTestSignaturesFilter(
-                    source = TestsFilter.Signatures.Source.Report,
-                    signatures = previousRunTests.filterBy(statuses.included)
-                  )
+                    IncludeByTestSignaturesFilter(
+                        source = TestsFilter.Signatures.Source.Report,
+                        signatures = previousRunTests.filterBy(statuses.included)
+                    )
 
                 )
             }
             if (statuses.excluded.isNotEmpty()) {
                 add(
-                  ExcludeByTestSignaturesFilter(
-                    source = TestsFilter.Signatures.Source.Report,
-                    signatures = previousRunTests.filterBy(statuses.excluded)
-                  )
+                    ExcludeByTestSignaturesFilter(
+                        source = TestsFilter.Signatures.Source.Report,
+                        signatures = previousRunTests.filterBy(statuses.excluded)
+                    )
 
                 )
             }
         }
     }
 
-    private fun List<SimpleRunTest>.filterBy(statuses: Set<InstrumentationFilter.FromRunHistory.RunStatus>): Set<TestSignature> {
+    private fun List<SimpleRunTest>.filterBy(statuses: Set<FromRunHistory.RunStatus>): Set<TestSignature> {
         return asSequence()
             .filter { testRun -> statuses.any { it.statusClass.isInstance(testRun.status) } }
             .map { testRun ->
@@ -169,28 +170,28 @@ internal class FilterFactoryImpl(
 
     private fun MutableList<TestsFilter>.addImpactTests(tests: List<String>) {
         add(
-          IncludeByTestSignaturesFilter(
-            source = TestsFilter.Signatures.Source.ImpactAnalysis,
-            signatures = tests.map { name ->
-              TestSignature(
-                name = name
-              )
-            }.toSet()
-          )
+            IncludeByTestSignaturesFilter(
+                source = TestsFilter.Signatures.Source.ImpactAnalysis,
+                signatures = tests.map { name ->
+                    TestSignature(
+                        name = name
+                    )
+                }.toSet()
+            )
         )
     }
 
     private fun MutableList<TestsFilter>.removeImpactTests(tests: List<String>) {
         if (tests.isNotEmpty()) {
             add(
-              ExcludeByTestSignaturesFilter(
-                source = TestsFilter.Signatures.Source.ImpactAnalysis,
-                signatures = tests.map { name ->
-                  TestSignature(
-                    name = name
-                  )
-                }.toSet()
-              )
+                ExcludeByTestSignaturesFilter(
+                    source = TestsFilter.Signatures.Source.ImpactAnalysis,
+                    signatures = tests.map { name ->
+                        TestSignature(
+                            name = name
+                        )
+                    }.toSet()
+                )
             )
         }
     }

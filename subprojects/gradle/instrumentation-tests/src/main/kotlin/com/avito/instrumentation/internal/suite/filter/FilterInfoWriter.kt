@@ -12,8 +12,8 @@ internal interface FilterInfoWriter {
     fun writeFilterExcludes(excludes: List<Pair<TestWithTarget, Excluded>>)
 
     class Impl(
-      outputDir: File,
-      private val gson: Gson
+        outputDir: File,
+        private val gson: Gson
     ) : FilterInfoWriter {
 
         private val filterDir: File = File(outputDir, "filter").apply { mkdir() }

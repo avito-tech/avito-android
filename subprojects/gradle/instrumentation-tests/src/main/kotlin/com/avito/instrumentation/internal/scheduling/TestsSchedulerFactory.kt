@@ -60,59 +60,59 @@ internal interface TestsSchedulerFactory {
             val testSuiteProvider: TestSuiteProvider = createTestSuiteProvider()
 
             return InstrumentationTestsScheduler(
-              testsRunner = testRunner,
-              params = params,
-              reportCoordinates = params.reportCoordinates,
-              sourceReport = sourceReport,
-              testSuiteProvider = testSuiteProvider,
-              testSuiteLoader = testSuiteLoader,
-              gson = gson,
-              filterInfoWriter = FilterInfoWriter.Impl(
-                outputDir = params.outputDir,
-                gson = gson
-              )
+                testsRunner = testRunner,
+                params = params,
+                reportCoordinates = params.reportCoordinates,
+                sourceReport = sourceReport,
+                testSuiteProvider = testSuiteProvider,
+                testSuiteLoader = testSuiteLoader,
+                gson = gson,
+                filterInfoWriter = FilterInfoWriter.Impl(
+                    outputDir = params.outputDir,
+                    gson = gson
+                )
             )
         }
 
         private fun createTestSuiteProvider(): TestSuiteProvider.Impl {
             return TestSuiteProvider.Impl(
-              report = sourceReport,
-              targets = params.instrumentationConfiguration.targets,
-              filterFactory = FilterFactory.create(
-                filterData = params.instrumentationConfiguration.filter,
-                impactAnalysisResult = params.impactAnalysisResult,
-                factory = params.reportFactory,
-                reportConfig = params.reportConfig
-              ),
-              reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
+                report = sourceReport,
+                targets = params.instrumentationConfiguration.targets,
+                filterFactory = FilterFactory.create(
+                    filterData = params.instrumentationConfiguration.filter,
+                    impactAnalysisResult = params.impactAnalysisResult,
+                    factory = params.reportFactory,
+                    reportConfig = params.reportConfig
+                ),
+                reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
             )
         }
 
         private fun createTestRunner(): TestsRunnerImplementation {
             return TestsRunnerImplementation(
-              testExecutorFactory = testExecutorFactory,
-              kubernetesCredentials = params.kubernetesCredentials,
-              testReporterFactory = { testSuite, outputDir, report ->
-                ReportViewerTestReporter(
-                  loggerFactory = params.loggerFactory,
-                  // todo pass though constructor but needs to be serializable
-                  timeProvider = DefaultTimeProvider(),
-                  testSuite = testSuite,
-                  report = report,
-                  fileStorageUrl = params.fileStorageUrl,
-                  logcatDir = outputDir,
-                  retracer = ProguardRetracer.Impl(params.proguardMappings)
-                )
-              },
-              buildId = params.buildId,
-              buildType = params.buildType,
-              projectName = params.projectName,
-              executionParameters = params.executionParameters,
-              outputDirectory = params.outputDir,
-              instrumentationConfiguration = params.instrumentationConfiguration,
-              loggerFactory = params.loggerFactory,
-              registry = params.registry,
-              statsDConfig = params.statsDConfig
+                testExecutorFactory = testExecutorFactory,
+                kubernetesCredentials = params.kubernetesCredentials,
+                testReporterFactory = { testSuite, outputDir, report ->
+                    ReportViewerTestReporter(
+                        loggerFactory = params.loggerFactory,
+                        // todo pass though constructor but needs to be serializable
+                        timeProvider = DefaultTimeProvider(),
+                        testSuite = testSuite,
+                        report = report,
+                        fileStorageUrl = params.fileStorageUrl,
+                        logcatDir = outputDir,
+                        retracer = ProguardRetracer.Impl(params.proguardMappings)
+                    )
+                },
+                buildId = params.buildId,
+                buildType = params.buildType,
+                projectName = params.projectName,
+                executionParameters = params.executionParameters,
+                outputDirectory = params.outputDir,
+                instrumentationConfiguration = params.instrumentationConfiguration,
+                loggerFactory = params.loggerFactory,
+                registry = params.registry,
+                statsDConfig = params.statsDConfig
             )
         }
     }

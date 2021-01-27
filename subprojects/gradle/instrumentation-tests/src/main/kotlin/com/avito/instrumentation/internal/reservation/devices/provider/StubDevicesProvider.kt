@@ -53,15 +53,15 @@ internal class StubDevicesProvider(private val loggerFactory: LoggerFactory) : D
     }
 
     private fun successfulMockDevice(model: String, api: Int, loggerFactory: LoggerFactory) =
-      StubDevice(
-        loggerFactory = loggerFactory,
-        installApplicationResults = generateList { StubActionResult.Success(Any()) },
-        gettingDeviceStatusResults = generateList { deviceIsAlive() },
-        runTestsResults = generateList { testPassed() },
-        clearPackageResults = generateList { succeedClearPackage() },
-        model = model,
-        apiResult = StubActionResult.Success(api)
-      )
+        StubDevice(
+            loggerFactory = loggerFactory,
+            installApplicationResults = generateList { StubActionResult.Success(Any()) },
+            gettingDeviceStatusResults = generateList { deviceIsAlive() },
+            runTestsResults = generateList { testPassed() },
+            clearPackageResults = generateList { succeedClearPackage() },
+            model = model,
+            apiResult = StubActionResult.Success(api)
+        )
 
     private fun <T> generateList(size: Int = 10, factory: () -> T): List<T> {
         val result = mutableListOf<T>()
@@ -73,19 +73,19 @@ internal class StubDevicesProvider(private val loggerFactory: LoggerFactory) : D
 
     private fun deviceIsAlive(): StubActionResult.Success<Device.DeviceStatus> {
         return StubActionResult.Success(
-          Device.DeviceStatus.Alive
+            Device.DeviceStatus.Alive
         )
     }
 
     private fun testPassed(): StubActionResult.Success<TestCaseRun.Result> {
         return StubActionResult.Success(
-          TestCaseRun.Result.Passed
+            TestCaseRun.Result.Passed
         )
     }
 
     private fun succeedClearPackage(): StubActionResult.Success<Try<Any>> {
         return StubActionResult.Success<Try<Any>>(
-          Try.Success(Unit)
+            Try.Success(Unit)
         )
     }
 }

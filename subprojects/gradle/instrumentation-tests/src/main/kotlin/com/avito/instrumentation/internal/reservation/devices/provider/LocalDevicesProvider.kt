@@ -60,7 +60,7 @@ internal class LocalDevicesProvider(
                             devices.send(device)
                             acquiredCoordinates.add(coordinate)
                         }
-                      delay(adbQueryIntervalMs)
+                        delay(adbQueryIntervalMs)
                     } while (!devices.isClosedForSend && acquiredCoordinates.size != devicesRequired)
                 }
             }
@@ -75,8 +75,8 @@ internal class LocalDevicesProvider(
     }
 
     private fun findDevices(
-      reservation: Reservation.Data,
-      acquiredDevices: Set<DeviceCoordinate>
+        reservation: Reservation.Data,
+        acquiredDevices: Set<DeviceCoordinate>
     ): Set<Device> {
         return try {
             logger.debug("Getting local emulators")
@@ -84,13 +84,13 @@ internal class LocalDevicesProvider(
                 .asSequence()
                 .filter { it.id is Serial.Local }
                 .map { adbDeviceParams ->
-                  AdbDevice(
-                    coordinate = DeviceCoordinate.Local(adbDeviceParams.id as Serial.Local),
-                    model = adbDeviceParams.model,
-                    online = adbDeviceParams.online,
-                    loggerFactory = loggerFactory,
-                    adb = adb
-                  )
+                    AdbDevice(
+                        coordinate = DeviceCoordinate.Local(adbDeviceParams.id as Serial.Local),
+                        model = adbDeviceParams.model,
+                        online = adbDeviceParams.online,
+                        loggerFactory = loggerFactory,
+                        adb = adb
+                    )
                 }
                 .filter { !acquiredDevices.contains(it.coordinate) }
                 .filter { fitsReservation(it, reservation) }

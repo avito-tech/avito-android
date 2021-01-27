@@ -9,7 +9,7 @@ internal interface TestsScheduler {
     fun schedule(): Result
 
     data class Result(
-      val testSuite: TestSuiteProvider.TestSuite,
-      val testsResult: Try<List<SimpleRunTest>>
+        val testSuite: TestSuiteProvider.TestSuite,
+        val testsResult: Try<List<SimpleRunTest>>
     )
 }
