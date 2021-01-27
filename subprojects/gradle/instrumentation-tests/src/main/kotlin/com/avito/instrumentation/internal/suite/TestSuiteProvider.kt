@@ -6,8 +6,8 @@ import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.TestsFilter
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Result.Excluded
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures
+import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.instrumentation.suite.parseTest
 import com.avito.report.model.DeviceName
 

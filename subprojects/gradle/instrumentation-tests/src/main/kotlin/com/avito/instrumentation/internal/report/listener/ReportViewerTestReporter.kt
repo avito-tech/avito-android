@@ -3,7 +3,6 @@ package com.avito.instrumentation.internal.report.listener
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.internal.getHttpClient

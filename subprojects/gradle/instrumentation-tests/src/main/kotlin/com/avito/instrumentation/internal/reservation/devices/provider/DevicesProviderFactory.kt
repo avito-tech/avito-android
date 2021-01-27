@@ -1,12 +1,12 @@
 package com.avito.instrumentation.internal.reservation.devices.provider
 
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
-import com.avito.instrumentation.executing.ExecutionParameters
+import com.avito.instrumentation.internal.executing.ExecutionParameters
+import com.avito.instrumentation.internal.reservation.adb.AndroidDebugBridge
+import com.avito.instrumentation.internal.reservation.adb.EmulatorsLogsReporter
+import com.avito.instrumentation.internal.reservation.client.kubernetes.KubernetesReservationClient
+import com.avito.instrumentation.internal.reservation.client.kubernetes.ReservationDeploymentFactory
 import com.avito.instrumentation.internal.reservation.client.kubernetes.UUIDDeploymentNameGenerator
-import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
-import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
-import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
-import com.avito.instrumentation.reservation.client.kubernetes.ReservationDeploymentFactory
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager

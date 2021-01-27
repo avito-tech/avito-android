@@ -2,7 +2,7 @@ package com.avito.instrumentation.internal.suite.filter
 
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Result.Excluded
-import com.avito.instrumentation.suite.model.TestWithTarget
+import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.google.gson.Gson
 import java.io.File
 

@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal.reservation.devices.provider
 
-import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
+import com.avito.instrumentation.internal.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create

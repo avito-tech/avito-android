@@ -2,10 +2,8 @@ package com.avito.instrumentation.internal.executing
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
-import com.avito.instrumentation.executing.ExecutionParameters
-import com.avito.instrumentation.executing.TestExecutor
+import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.reservation.devices.provider.DevicesProviderFactory
-import com.avito.instrumentation.report.listener.TestReporter
 import com.avito.logger.LoggerFactory
 
 /**

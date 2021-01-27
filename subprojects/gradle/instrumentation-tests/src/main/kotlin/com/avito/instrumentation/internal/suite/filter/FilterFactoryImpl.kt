@@ -6,7 +6,6 @@ import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHist
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.report.model.SimpleRunTest
 
 internal class FilterFactoryImpl(

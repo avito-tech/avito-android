@@ -2,12 +2,10 @@ package com.avito.instrumentation.internal.executing
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
-import com.avito.instrumentation.executing.ExecutionParameters
-import com.avito.instrumentation.executing.TestExecutor
+import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.reservation.devices.provider.DevicesProvider
-import com.avito.instrumentation.report.listener.TestReporter
+import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.reservation.request.Reservation
-import com.avito.instrumentation.suite.model.TestWithTarget
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.scheduler.TestsRunnerClient

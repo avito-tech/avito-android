@@ -2,11 +2,11 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
-import com.avito.instrumentation.executing.ExecutionParameters
+import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
+import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates

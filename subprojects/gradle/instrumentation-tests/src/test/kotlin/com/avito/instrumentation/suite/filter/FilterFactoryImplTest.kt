@@ -14,7 +14,7 @@ import com.avito.instrumentation.internal.suite.filter.IncludeByTestSignaturesFi
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.Source
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.report.StubReport
+import com.avito.instrumentation.stub.report.StubReport
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status

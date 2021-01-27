@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal.reservation.devices.provider
 
-import com.avito.instrumentation.reservation.adb.AndroidDebugBridge
-import com.avito.instrumentation.reservation.adb.EmulatorsLogsReporter
+import com.avito.instrumentation.internal.reservation.adb.AndroidDebugBridge
+import com.avito.instrumentation.internal.reservation.adb.EmulatorsLogsReporter
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create

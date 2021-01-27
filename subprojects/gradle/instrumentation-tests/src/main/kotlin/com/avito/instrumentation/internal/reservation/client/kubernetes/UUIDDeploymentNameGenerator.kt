@@ -1,6 +1,5 @@
 package com.avito.instrumentation.internal.reservation.client.kubernetes
 
-import com.avito.instrumentation.reservation.client.kubernetes.DeploymentNameGenerator
 import com.avito.utils.gradle.toValidKubernetesName
 import java.util.UUID
 

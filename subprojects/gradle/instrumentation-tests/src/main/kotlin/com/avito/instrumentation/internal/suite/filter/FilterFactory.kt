@@ -2,7 +2,6 @@ package com.avito.instrumentation.internal.suite.filter
 
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.suite.filter.ImpactAnalysisResult
 
 internal interface FilterFactory {
 

@@ -10,7 +10,6 @@ import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.scheduling.TestsRunner
 import com.avito.retrace.ProguardRetracer
 import com.avito.time.DefaultTimeProvider
 import com.google.common.annotations.VisibleForTesting

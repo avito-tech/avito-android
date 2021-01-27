@@ -3,6 +3,7 @@ package com.avito.instrumentation.suite.filter
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.createStub
 import com.avito.instrumentation.createStubInstance
+import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.instrumentation.internal.suite.filter.TestsFilter
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Result.Included
 import com.avito.truth.isInstanceOf
