@@ -190,7 +190,7 @@ internal class DeviceWorker(
     }
 
     /**
-     * layers order matter
+     * layers order matters
      */
     private fun Device.state(): State =
         State(
