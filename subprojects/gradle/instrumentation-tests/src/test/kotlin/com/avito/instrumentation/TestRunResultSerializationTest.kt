@@ -4,17 +4,18 @@ import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Comp
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.TestRunResult.Verdict.Failure.Details
 import com.github.salomonbrys.kotson.fromJson
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class TestRunResultJsonTest {
+class TestRunResultSerializationTest {
+
     @Test
     fun `verdict is success`() {
         val expected: TestRunResult.Verdict = TestRunResult.Verdict.Success("Success")
         val json = gson.toJson(expected)
         val actual = gson.fromJson<TestRunResult.Verdict>(json)
 
-        Truth.assertThat(actual)
+        assertThat(actual)
             .isEqualTo(expected)
     }
 
@@ -41,7 +42,7 @@ class TestRunResultJsonTest {
         val json = gson.toJson(expected)
         val actual = gson.fromJson<TestRunResult.Verdict>(json)
 
-        Truth.assertThat(actual)
+        assertThat(actual)
             .isEqualTo(expected)
     }
 }

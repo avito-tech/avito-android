@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.reservation.devices.provider
 
+import com.avito.instrumentation.reservation.request.Device.MockEmulator
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.model.TestCaseRun
@@ -24,7 +25,7 @@ internal class StubDevicesProvider(private val loggerFactory: LoggerFactory) : D
         val devicesRequired = reservations.fold(0, { acc, reservation -> acc + reservation.count })
         scope.launch(Dispatchers.IO) {
             reservations.forEach { reservation ->
-                check(reservation.device is com.avito.instrumentation.reservation.request.Device.MockEmulator) {
+                check(reservation.device is MockEmulator) {
                     "Non-mock emulator ${reservation.device} is unsupported in mock reservation"
                 }
                 launch {
