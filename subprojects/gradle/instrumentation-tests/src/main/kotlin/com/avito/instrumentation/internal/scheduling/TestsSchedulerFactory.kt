@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal.scheduling
 
 import com.avito.android.TestSuiteLoader
 import com.avito.android.TestSuiteLoaderImpl
+import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
@@ -9,6 +10,7 @@ import com.avito.instrumentation.internal.report.listener.ReportViewerTestReport
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
+import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.instrumentation.report.Report
 import com.avito.retrace.ProguardRetracer
 import com.avito.time.DefaultTimeProvider
@@ -100,7 +102,15 @@ internal interface TestsSchedulerFactory {
                         report = report,
                         fileStorageUrl = params.fileStorageUrl,
                         logcatDir = outputDir,
-                        retracer = ProguardRetracer.Impl(params.proguardMappings)
+                        retracer = ProguardRetracer.Impl(params.proguardMappings),
+                        metricsSender = InstrumentationMetricsSender(
+                            statsDSender = StatsDSender.Impl(
+                                config = params.statsDConfig,
+                                loggerFactory = params.loggerFactory
+                            ),
+                            buildId = params.buildId,
+                            instrumentationConfigName = params.instrumentationConfiguration.name
+                        )
                     )
                 },
                 buildId = params.buildId,

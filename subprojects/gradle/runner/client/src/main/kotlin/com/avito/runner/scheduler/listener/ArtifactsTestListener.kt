@@ -77,6 +77,7 @@ internal class ArtifactsTestListener(
                 remotePath = testMetadataDirectory.toPath()
             ).invoke()
         } catch (t: Throwable) {
+            // TODO LOST
             logger.warn("Failed to process artifacts from $device", t)
         } finally {
             tempDirectory.toFile().delete()
