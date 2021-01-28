@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.instrumentation.stub.report.createStubInstance
 import com.avito.report.StubReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates

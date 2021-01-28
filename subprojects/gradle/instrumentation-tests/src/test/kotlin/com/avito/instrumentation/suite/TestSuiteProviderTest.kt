@@ -4,12 +4,13 @@ import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.createStubInstance
+import com.avito.instrumentation.internal.suite.TestSuiteProvider
+import com.avito.instrumentation.internal.suite.filter.FilterFactory
+import com.avito.instrumentation.internal.suite.filter.TestsFilter
 import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.report.StubReport
-import com.avito.instrumentation.suite.filter.FilterFactory
-import com.avito.instrumentation.suite.filter.StubFilterFactory
-import com.avito.instrumentation.suite.filter.TestsFilter
-import com.avito.instrumentation.suite.filter.excludedFilter
+import com.avito.instrumentation.stub.report.StubReport
+import com.avito.instrumentation.stub.suite.filter.StubFilterFactory
+import com.avito.instrumentation.stub.suite.filter.excludedFilter
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 

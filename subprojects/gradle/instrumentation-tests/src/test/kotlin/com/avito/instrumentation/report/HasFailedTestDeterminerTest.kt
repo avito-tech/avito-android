@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status

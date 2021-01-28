@@ -4,14 +4,17 @@ import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.createStubInstance
-import com.avito.instrumentation.report.listener.StubTestReporter
-import com.avito.instrumentation.reservation.client.kubernetes.KubernetesReservationClient
-import com.avito.instrumentation.reservation.client.kubernetes.createStubInstance
-import com.avito.instrumentation.reservation.devices.provider.KubernetesDevicesProvider
+import com.avito.instrumentation.internal.executing.ExecutionParameters
+import com.avito.instrumentation.internal.executing.TestExecutor
+import com.avito.instrumentation.internal.executing.TestExecutorImpl
+import com.avito.instrumentation.internal.reservation.client.kubernetes.KubernetesReservationClient
+import com.avito.instrumentation.internal.reservation.devices.provider.KubernetesDevicesProvider
+import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.Reservation
-import com.avito.instrumentation.reservation.request.createStubInstance
-import com.avito.instrumentation.suite.model.TestWithTarget
+import com.avito.instrumentation.stub.report.listener.StubTestReporter
+import com.avito.instrumentation.stub.reservation.client.kubernetes.createStubInstance
+import com.avito.instrumentation.stub.reservation.request.createStubInstance
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.TestStaticDataPackage
@@ -77,7 +80,7 @@ internal class TestExecutorIntegrationTest {
         buildId: String = "integration-test-build-id",
         statsDConfig: StatsDConfig = StatsDConfig.Disabled,
         adb: Adb = Adb()
-    ): TestExecutor = TestExecutor.Impl(
+    ): TestExecutor = TestExecutorImpl(
         devicesProvider = KubernetesDevicesProvider(
             client = KubernetesReservationClient.createStubInstance(
                 loggerFactory = loggerFactory,

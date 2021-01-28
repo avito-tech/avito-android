@@ -3,12 +3,14 @@ package com.avito.instrumentation.suite.filter
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.createStub
 import com.avito.instrumentation.createStubInstance
+import com.avito.instrumentation.internal.suite.filter.FilterFactory
+import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
 
-object FilterFactoryFactory {
+internal object FilterFactoryFactory {
 
     fun create(
         filter: InstrumentationFilter.Data = InstrumentationFilter.Data.createStub(),

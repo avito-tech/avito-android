@@ -1,9 +1,12 @@
 package com.avito.instrumentation.reservation.client.kubernetes
 
-import com.avito.instrumentation.reservation.client.ReservationClient
+import com.avito.instrumentation.internal.reservation.client.ReservationClient
+import com.avito.instrumentation.internal.reservation.client.kubernetes.KubernetesReservationClient
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
 import com.avito.instrumentation.reservation.request.Reservation
-import com.avito.instrumentation.reservation.request.createStubInstance
+import com.avito.instrumentation.stub.reservation.client.kubernetes.StubDeploymentNameGenerator
+import com.avito.instrumentation.stub.reservation.client.kubernetes.createStubInstance
+import com.avito.instrumentation.stub.reservation.request.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat

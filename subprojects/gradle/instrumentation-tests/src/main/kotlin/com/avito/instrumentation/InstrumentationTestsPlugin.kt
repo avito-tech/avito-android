@@ -22,9 +22,9 @@ import com.avito.instrumentation.configuration.ImpactAnalysisPolicy.On
 import com.avito.instrumentation.configuration.InstrumentationConfiguration.Data.DevicesType.CLOUD
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
-import com.avito.instrumentation.executing.ExecutionParameters
 import com.avito.instrumentation.impact.analyzeTestImpactTask
-import com.avito.instrumentation.test.DumpConfigurationTask
+import com.avito.instrumentation.internal.executing.ExecutionParameters
+import com.avito.instrumentation.internal.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
