@@ -1,10 +1,12 @@
 package com.avito.instrumentation.internal.finalizer
 
+import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.report.JUnitReportWriter
+import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
@@ -68,7 +70,12 @@ internal interface FinalizerFactory {
                 gson = gson,
                 jUnitReportWriter = JUnitReportWriter(reportViewer),
                 buildFailer = buildFailer,
-                loggerFactory = loggerFactory
+                loggerFactory = loggerFactory,
+                metricsSender = InstrumentationMetricsSender(
+                    statsDSender = StatsDSender.Impl(params.statsDConfig, loggerFactory),
+                    buildId = params.buildId,
+                    instrumentationConfigName = params.instrumentationConfiguration.name
+                )
             )
         }
     }

@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal.report.listener
 
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
+import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -30,7 +31,8 @@ internal class ReportViewerTestReporter(
     // todo extract write to file
     fileStorageUrl: String,
     private val logcatDir: File,
-    private val retracer: ProguardRetracer
+    private val retracer: ProguardRetracer,
+    private val metricsSender: InstrumentationMetricsSender
 ) : TestReporter() {
 
     private val logger = loggerFactory.create<ReportViewerTestReporter>()
@@ -122,25 +124,33 @@ internal class ReportViewerTestReporter(
                         )
                     )
                 } catch (e: Throwable) {
-                    logger.critical("Can't parse testRuntimeData: ${test.testName}; ${reportJson.readText()}", e)
+                    val errorMessage = "Can't parse testRuntimeData: ${test.testName}; ${reportJson.readText()}"
+                    logger.warn(errorMessage, e)
+                    sendLostTest(testFromSuite, "", errorMessage)
+                    metricsSender.sendReportFileParseErrors()
                 }
             },
-            {
+            { throwable ->
                 val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
 
-                logger.critical("Can't get report from file: $test", it)
-                report.sendLostTests(
-                    listOf(
-                        AndroidTest.Lost.fromTestMetadata(
-                            testFromSuite,
-                            startTime = 0, // todo попробовать достать
-                            lastSignalTime = 0, // todo попробовать достать
-                            stdout = stdout,
-                            stderr = stderr
-                        )
-                    )
-                )
+                logger.warn("Can't get report from file: $test", throwable)
+                sendLostTest(testFromSuite, stdout, stderr)
+                metricsSender.sendReportFileNotAvailable()
             }
+        )
+    }
+
+    private fun sendLostTest(testFromSuite: TestStaticData, stdout: String, stderr: String) {
+        report.sendLostTests(
+            listOf(
+                AndroidTest.Lost.fromTestMetadata(
+                    testFromSuite,
+                    startTime = 0,
+                    lastSignalTime = 0,
+                    stdout = stdout,
+                    stderr = stderr
+                )
+            )
         )
     }
 

@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import java.io.File
 
 /**
- * Сохраняем репорт в json, чтобы потом достать из раннера
+ * Save report to json that will be parsed from runner
  */
 class ExternalStorageTransport(
     private val gson: Gson,
@@ -19,25 +19,30 @@ class ExternalStorageTransport(
     private val logger = loggerFactory.create<ExternalStorageTransport>()
 
     override fun send(state: ReportState.Initialized.Started) {
-        val testFolderName = "${state.testMetadata.className}#${state.testMetadata.methodName}"
+        try {
+            val testFolderName = "${state.testMetadata.className}#${state.testMetadata.methodName}"
 
-        val testMetadataDirectory = testMetadataDirectory(testFolderName = testFolderName)
+            val testMetadataDirectory = testMetadataDirectory(testFolderName = testFolderName)
 
-        val reportMetadataJson = File(testMetadataDirectory, REPORT_FILE_NAME)
+            val reportMetadataJson = File(testMetadataDirectory, REPORT_FILE_NAME)
 
-        val testRuntimeDataPackage = TestRuntimeDataPackage(
-            incident = state.incident,
-            dataSetData = state.dataSet?.serialize() ?: emptyMap(),
-            video = state.video,
-            preconditions = transformStepList(state.preconditionStepList),
-            steps = transformStepList(state.testCaseStepList),
-            startTime = state.startTime,
-            endTime = state.endTime
-        )
+            val testRuntimeDataPackage = TestRuntimeDataPackage(
+                incident = state.incident,
+                dataSetData = state.dataSet?.serialize() ?: emptyMap(),
+                video = state.video,
+                preconditions = transformStepList(state.preconditionStepList),
+                steps = transformStepList(state.testCaseStepList),
+                startTime = state.startTime,
+                endTime = state.endTime
+            )
 
-        logger.debug("Write report for test $testFolderName to file: ${reportMetadataJson.absolutePath}")
+            logger.debug("Write report for test $testFolderName to file: ${reportMetadataJson.absolutePath}")
 
-        reportMetadataJson.writeText(gson.toJson(testRuntimeDataPackage))
+            reportMetadataJson.writeText(gson.toJson(testRuntimeDataPackage))
+        } catch (e: Throwable) {
+            // TODO LOST
+            logger.warn("Can't write report to file", e)
+        }
     }
 
     private fun testMetadataDirectory(testFolderName: String): File {

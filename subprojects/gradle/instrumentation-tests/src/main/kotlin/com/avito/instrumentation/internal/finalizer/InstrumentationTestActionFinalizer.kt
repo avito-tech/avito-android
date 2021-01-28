@@ -7,6 +7,7 @@ import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.report.JUnitReportWriter
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
+import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -31,6 +32,7 @@ internal interface InstrumentationTestActionFinalizer {
         private val reportViewer: ReportViewer,
         private val jUnitReportWriter: JUnitReportWriter,
         private val buildFailer: BuildFailer,
+        private val metricsSender: InstrumentationMetricsSender,
         private val gson: Gson,
         loggerFactory: LoggerFactory
     ) : InstrumentationTestActionFinalizer {
@@ -52,7 +54,9 @@ internal interface InstrumentationTestActionFinalizer {
             )
 
             if (testRunResult.notReported is HasNotReportedTestsDeterminer.Result.HasNotReportedTests) {
-                sourceReport.sendLostTests(lostTests = testRunResult.notReported.lostTests)
+                val lostTests = testRunResult.notReported.lostTests
+                sourceReport.sendLostTests(lostTests)
+                metricsSender.sendNotReportedCount(lostTests.size)
             }
 
             sourceReport.finish()
