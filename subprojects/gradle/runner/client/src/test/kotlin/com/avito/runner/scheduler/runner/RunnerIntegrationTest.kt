@@ -12,15 +12,21 @@ import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.Device.DeviceStatus
+import com.avito.runner.service.worker.device.Device.Signal
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.getData
-import com.avito.runner.test.NoOpListener
+import com.avito.runner.service.worker.listener.StubDeviceListener
+import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
+import com.avito.runner.test.StubDevice.Companion.installApplicationFailure
+import com.avito.runner.test.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.randomString
+import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -77,13 +83,13 @@ class RunnerIntegrationTest {
                 loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
-                    StubActionResult.Success(Any()), // Install application
-                    StubActionResult.Success(Any()) // Install test application
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
-                    deviceIsAlive(), // Device status for initializing
-                    deviceIsAlive(), // Device status for first test
-                    deviceIsAlive(), // Device status for second test
+                    DeviceStatus.Alive, // Device status for initializing
+                    DeviceStatus.Alive, // Device status for first test
+                    DeviceStatus.Alive, // Device status for second test
                     deviceIsFreezed() // Device status for third test
                 ),
                 // First request doesn't need clearing package
@@ -104,17 +110,17 @@ class RunnerIntegrationTest {
                 loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = mutableListOf(
-                    StubActionResult.Success(Any()), // Install application
-                    StubActionResult.Success(Any()) // Install test application
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
                 ),
                 clearPackageResults = listOf(
                     succeedClearPackage(),
                     succeedClearPackage()
                 ),
                 gettingDeviceStatusResults = listOf(
-                    deviceIsAlive(), // Device status for initializing
-                    deviceIsAlive(), // Device status for third test
-                    deviceIsAlive() // Device status for fourth test
+                    DeviceStatus.Alive, // Device status for initializing
+                    DeviceStatus.Alive, // Device status for third test
+                    DeviceStatus.Alive // Device status for fourth test
                 ),
                 runTestsResults = listOf(
                     testPassed(), // Test result for third test
@@ -157,7 +163,7 @@ class RunnerIntegrationTest {
             val requests = createRunRequests()
 
             val successfulDevice = createSuccessfulDevice(requests)
-            val failedDevice = createBrokenDevice(deviceIsFreezed())
+            val failedDevice = createBrokenDevice(Exception())
 
             launch {
                 devices.send(failedDevice)
@@ -190,7 +196,7 @@ class RunnerIntegrationTest {
             val requests = createRunRequests()
 
             val successfulDevice = createSuccessfulDevice(requests)
-            val failedDevice = createBrokenDevice(StubActionResult.Failed(Exception()))
+            val failedDevice = createBrokenDevice(Exception())
 
             launch {
                 devices.send(failedDevice)
@@ -204,9 +210,7 @@ class RunnerIntegrationTest {
             successfulDevice.verify()
             failedDevice.verify()
 
-            assertThat(
-                result.runs
-            ).isEqualTo(
+            assertThat(result.runs).isEqualTo(
                 requests.toPassedRuns(successfulDevice)
             )
         }
@@ -223,14 +227,16 @@ class RunnerIntegrationTest {
 
             val successfulDevice = createSuccessfulDevice(requests)
             val failedDevice = StubDevice(
+                tag = "StubDevice:installProblems",
                 loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 gettingDeviceStatusResults = listOf(
-                    deviceIsAlive(), // Device state for initializing
-                    deviceIsAlive()
+                    DeviceStatus.Alive,
+                    DeviceStatus.Alive
                 ),
                 installApplicationResults = mutableListOf(
-                    StubActionResult.Failed(Exception())
+                    installApplicationFailure(), // Install test application
+                    installApplicationFailure() // Install application
                 )
             )
 
@@ -246,9 +252,7 @@ class RunnerIntegrationTest {
             successfulDevice.verify()
             failedDevice.verify()
 
-            assertThat(
-                result.runs
-            ).isEqualTo(
+            assertThat(result.runs).isEqualTo(
                 requests.toPassedRuns(successfulDevice)
             )
         }
@@ -275,8 +279,8 @@ class RunnerIntegrationTest {
             loggerFactory = loggerFactory,
             coordinate = randomDeviceCoordinate(),
             installApplicationResults = listOf(
-                StubActionResult.Success(Any()), // Install application
-                StubActionResult.Success(Any()) // Install test application
+                installApplicationSuccess(), // Install application
+                installApplicationSuccess() // Install test application
             ),
             clearPackageResults = listOf(
                 succeedClearPackage(), // Clear test package for first try for second test
@@ -286,10 +290,10 @@ class RunnerIntegrationTest {
                 succeedClearPackage() // Clear application package for second try for second test
             ),
             gettingDeviceStatusResults = listOf(
-                deviceIsAlive(), // Alive status for initializing
-                deviceIsAlive(), // Alive status for first test
-                deviceIsAlive(), // Alive status for first try for second test
-                deviceIsAlive() // Alive status for second test try for second test
+                DeviceStatus.Alive, // Alive status for initializing
+                DeviceStatus.Alive, // Alive status for first test
+                DeviceStatus.Alive, // Alive status for first try for second test
+                DeviceStatus.Alive // Alive status for second test try for second test
             ),
             runTestsResults = listOf(
                 testPassed(), // First test passed
@@ -303,9 +307,7 @@ class RunnerIntegrationTest {
         val result = runner.runTests(requests, this)
         device.verify()
 
-        assertThat(
-            result.runs
-        ).isEqualTo(
+        assertThat(result.runs).isEqualTo(
             mapOf(
                 requests[0].let { request ->
                     request to listOf(request.toPassedRun(device)) // Passed by first try
@@ -340,18 +342,18 @@ class RunnerIntegrationTest {
                 loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
-                    StubActionResult.Success(Any()), // Install application
-                    StubActionResult.Success(Any()) // Install test application
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
-                    deviceIsAlive(), // Alive status for initializing
-                    deviceIsAlive(), // Alive status for first try for first test
-                    deviceIsAlive(), // Alive status for second try for first test
-                    deviceIsAlive(), // Alive status for first try for second test
-                    deviceIsAlive(), // Alive status for second try for second test
-                    deviceIsAlive(), // Alive status for third try for first test
-                    deviceIsAlive(), // Alive status for third try for second test
-                    deviceIsAlive() // Alive status for fourth try for second test
+                    DeviceStatus.Alive, // Alive status for initializing
+                    DeviceStatus.Alive, // Alive status for first try for first test
+                    DeviceStatus.Alive, // Alive status for second try for first test
+                    DeviceStatus.Alive, // Alive status for first try for second test
+                    DeviceStatus.Alive, // Alive status for second try for second test
+                    DeviceStatus.Alive, // Alive status for third try for first test
+                    DeviceStatus.Alive, // Alive status for third try for second test
+                    DeviceStatus.Alive // Alive status for fourth try for second test
                 ),
                 clearPackageResults = listOf(
                     succeedClearPackage(), // Clear test package for second try for first test
@@ -383,9 +385,7 @@ class RunnerIntegrationTest {
             val actualResult = runner.runTests(requests, this)
             device.verify()
 
-            assertThat(
-                actualResult.runs
-            ).isEqualTo(
+            assertThat(actualResult.runs).isEqualTo(
                 mapOf(
                     requests[0].let { request ->
                         request to listOf(
@@ -429,15 +429,15 @@ class RunnerIntegrationTest {
                 loggerFactory = loggerFactory,
                 coordinate = randomDeviceCoordinate(),
                 installApplicationResults = listOf(
-                    StubActionResult.Success(Any()), // Install application
-                    StubActionResult.Success(Any()) // Install test application
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
                 ),
                 gettingDeviceStatusResults = listOf(
-                    deviceIsAlive(), // Alive status for initializing
-                    deviceIsAlive(), // Alive status for first try for first test
-                    deviceIsAlive(), // Alive status for second try for first test
-                    deviceIsAlive(), // Alive status for first try for second test
-                    deviceIsAlive() // Alive status for second try for second test
+                    DeviceStatus.Alive, // Alive status for initializing
+                    DeviceStatus.Alive, // Alive status for first try for first test
+                    DeviceStatus.Alive, // Alive status for second try for first test
+                    DeviceStatus.Alive, // Alive status for first try for second test
+                    DeviceStatus.Alive // Alive status for second try for second test
                 ),
                 clearPackageResults = listOf(
                     succeedClearPackage(), // Clear test package for second try for first test
@@ -462,9 +462,7 @@ class RunnerIntegrationTest {
             val result = runner.runTests(requests, this)
             device.verify()
 
-            assertThat(
-                result.runs
-            ).isEqualTo(
+            assertThat(result.runs).isEqualTo(
                 mapOf(
                     requests[0].let { request ->
                         request to listOf(request.toPassedRun(device), request.toFailedRun(device))
@@ -476,14 +474,13 @@ class RunnerIntegrationTest {
             )
         }
 
-    private fun createBrokenDevice(
-        failureReason: StubActionResult<Device.DeviceStatus>
-    ): StubDevice {
+    private fun createBrokenDevice(failureReason: Exception): StubDevice {
         return StubDevice(
+            tag = "StubDevice:broken",
             loggerFactory = loggerFactory,
             coordinate = randomDeviceCoordinate(),
             gettingDeviceStatusResults = listOf(
-                failureReason
+                DeviceStatus.Freeze(failureReason)
             )
         )
     }
@@ -518,10 +515,8 @@ class RunnerIntegrationTest {
         )
     }
 
-    private fun deviceIsFreezed(): StubActionResult.Success<Device.DeviceStatus> {
-        return StubActionResult.Success(
-            Device.DeviceStatus.Freeze(reason = Exception())
-        )
+    private fun deviceIsFreezed(): DeviceStatus {
+        return DeviceStatus.Freeze(reason = Exception())
     }
 
     private fun testFailed(): StubActionResult.Success<TestCaseRun.Result> {
@@ -532,11 +527,12 @@ class RunnerIntegrationTest {
 
     private fun createSuccessfulDevice(requests: List<TestRunRequest>): StubDevice {
         return StubDevice(
+            tag = "StubDevice:normal",
             loggerFactory = loggerFactory,
             coordinate = randomDeviceCoordinate(),
             installApplicationResults = mutableListOf(
-                StubActionResult.Success(Any()), // Install application
-                StubActionResult.Success(Any()) // Install test application
+                installApplicationSuccess(), // Install application
+                installApplicationSuccess() // Install test application
             ),
             clearPackageResults = (0 until requests.size - 1).flatMap {
                 listOf(
@@ -546,7 +542,7 @@ class RunnerIntegrationTest {
             },
             gettingDeviceStatusResults = listWithDefault(
                 1 + requests.size,
-                deviceIsAlive()
+                DeviceStatus.Alive
             ),
             runTestsResults = requests.map {
                 testPassed()
@@ -562,15 +558,9 @@ class RunnerIntegrationTest {
 
     private fun succeedClearPackage() = StubActionResult.Success<Try<Any>>(Try.Success(Unit))
 
-    private fun deviceIsAlive(): StubActionResult.Success<Device.DeviceStatus> {
-        return StubActionResult.Success(
-            Device.DeviceStatus.Alive
-        )
-    }
-
     private fun provideRunner(
         devices: ReceiveChannel<Device>,
-        testListener: TestListener = NoOpListener,
+        testListener: TestListener = NoOpTestListener,
         outputDirectory: File = File("")
     ): TestRunner {
         val scheduler = TestExecutionScheduler(
@@ -582,8 +572,10 @@ class RunnerIntegrationTest {
             outputDirectory = outputDirectory,
             loggerFactory = loggerFactory,
             devices = devices,
-            listener = testListener,
-            deviceWorkersDispatcher = TestDispatcher
+            testListener = testListener,
+            deviceMetricsListener = StubDeviceListener,
+            deviceWorkersDispatcher = TestDispatcher,
+            timeProvider = StubTimeProvider()
         )
 
         return TestRunnerImplementation(
@@ -592,7 +584,7 @@ class RunnerIntegrationTest {
             service = service,
             loggerFactory = loggerFactory,
             reservationWatcher = object : DeviceReservationWatcher {
-                override fun watch(deviceSignals: ReceiveChannel<Device.Signal>, scope: CoroutineScope) {
+                override fun watch(deviceSignals: ReceiveChannel<Signal>, scope: CoroutineScope) {
                     // empty
                 }
             }
@@ -618,10 +610,10 @@ class RunnerIntegrationTest {
         scheduling = scheduling,
         testCase = test,
         timeoutMinutes = 5,
-        application = "application path",
-        applicationPackage = "application package",
-        testApplication = "test application path",
-        testPackage = "test package",
+        application = "/application/path",
+        applicationPackage = "com.avito.app",
+        testApplication = "/test-application/path",
+        testPackage = "com.avito.app.test",
         deviceConfiguration = DeviceConfiguration(
             api = apiLevel,
             model = "model"

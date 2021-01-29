@@ -9,8 +9,8 @@ dependencies {
     api(Dependencies.gson)
 
     api(project(":common:okhttp"))
-    api(project(":common:percent"))
 
+    implementation(project(":common:math"))
     implementation(project(":common:logger"))
     implementation(Dependencies.okhttpLogging)
     implementation(Dependencies.kotson)

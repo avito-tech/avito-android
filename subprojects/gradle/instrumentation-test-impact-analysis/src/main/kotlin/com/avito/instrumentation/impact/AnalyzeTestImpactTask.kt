@@ -1,6 +1,5 @@
 package com.avito.instrumentation.impact
 
-import com.avito.android.percentOf
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.graphiteSeries
@@ -10,6 +9,7 @@ import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.util.AndroidProject
 import com.avito.impact.util.Test
 import com.avito.logger.GradleLoggerFactory
+import com.avito.math.percentOf
 import com.avito.utils.rewriteNewLineList
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.GsonBuilder

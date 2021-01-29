@@ -11,6 +11,7 @@ import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevice
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
+import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,7 +27,8 @@ internal class LocalDevicesProvider(
     private val devicesManager: AdbDevicesManager,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
     private val adb: Adb,
-    private val loggerFactory: LoggerFactory
+    private val loggerFactory: LoggerFactory,
+    private val timeProvider: TimeProvider
 ) : DevicesProvider {
 
     private val logger = loggerFactory.create<LocalDevicesProvider>()
@@ -89,7 +91,8 @@ internal class LocalDevicesProvider(
                         model = adbDeviceParams.model,
                         online = adbDeviceParams.online,
                         loggerFactory = loggerFactory,
-                        adb = adb
+                        adb = adb,
+                        timeProvider = timeProvider
                     )
                 }
                 .filter { !acquiredDevices.contains(it.coordinate) }

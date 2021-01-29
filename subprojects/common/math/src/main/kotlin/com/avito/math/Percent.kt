@@ -1,9 +1,12 @@
-package com.avito.android
+package com.avito.math
 
 import java.text.DecimalFormat
 
 @Suppress("MagicNumber")
 fun Int.percentOf(sum: Int): Percent = NumberPercent(toFloat() / sum * 100)
+
+@Suppress("MagicNumber")
+fun Long.percentOf(sum: Long): Percent = NumberPercent(toFloat() / sum * 100)
 
 /**
  * convert 0.0 - 1.0 representation to [Percent]

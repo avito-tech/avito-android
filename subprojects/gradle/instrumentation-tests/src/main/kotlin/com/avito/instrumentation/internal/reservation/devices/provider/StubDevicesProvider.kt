@@ -31,7 +31,7 @@ internal class StubDevicesProvider(private val loggerFactory: LoggerFactory) : D
                 launch {
                     do {
                         val acquiredCoordinates = mutableSetOf<DeviceCoordinate>()
-                        val acquiredDevice = successfulMockDevice(
+                        val acquiredDevice = successfulStubDevice(
                             model = reservation.device.model,
                             api = reservation.device.api,
                             loggerFactory = loggerFactory
@@ -53,10 +53,10 @@ internal class StubDevicesProvider(private val loggerFactory: LoggerFactory) : D
         devices.close()
     }
 
-    private fun successfulMockDevice(model: String, api: Int, loggerFactory: LoggerFactory) =
+    private fun successfulStubDevice(model: String, api: Int, loggerFactory: LoggerFactory) =
         StubDevice(
             loggerFactory = loggerFactory,
-            installApplicationResults = generateList { StubActionResult.Success(Any()) },
+            installApplicationResults = generateList { StubDevice.installApplicationSuccess() },
             gettingDeviceStatusResults = generateList { deviceIsAlive() },
             runTestsResults = generateList { testPassed() },
             clearPackageResults = generateList { succeedClearPackage() },
@@ -72,10 +72,8 @@ internal class StubDevicesProvider(private val loggerFactory: LoggerFactory) : D
         return result
     }
 
-    private fun deviceIsAlive(): StubActionResult.Success<Device.DeviceStatus> {
-        return StubActionResult.Success(
-            Device.DeviceStatus.Alive
-        )
+    private fun deviceIsAlive(): Device.DeviceStatus {
+        return Device.DeviceStatus.Alive
     }
 
     private fun testPassed(): StubActionResult.Success<TestCaseRun.Result> {
@@ -85,7 +83,7 @@ internal class StubDevicesProvider(private val loggerFactory: LoggerFactory) : D
     }
 
     private fun succeedClearPackage(): StubActionResult.Success<Try<Any>> {
-        return StubActionResult.Success<Try<Any>>(
+        return StubActionResult.Success(
             Try.Success(Unit)
         )
     }

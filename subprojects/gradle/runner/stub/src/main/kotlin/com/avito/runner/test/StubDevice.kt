@@ -1,7 +1,6 @@
 package com.avito.runner.test
 
 import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -10,6 +9,8 @@ import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.model.DeviceConfiguration
+import com.avito.runner.service.worker.device.model.DeviceData
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
@@ -22,10 +23,11 @@ import java.util.Date
 import java.util.Queue
 
 open class StubDevice(
+    tag: String = "StubDevice",
     override val coordinate: DeviceCoordinate = DeviceCoordinate.Local(Serial.Local("stub")),
     loggerFactory: LoggerFactory,
-    installApplicationResults: List<StubActionResult<Any>> = emptyList(),
-    gettingDeviceStatusResults: List<StubActionResult<Device.DeviceStatus>> = emptyList(),
+    installApplicationResults: List<Try<DeviceInstallation>> = emptyList(),
+    gettingDeviceStatusResults: List<Device.DeviceStatus> = emptyList(),
     runTestsResults: List<StubActionResult<TestCaseRun.Result>> = emptyList(),
     clearPackageResults: List<StubActionResult<Try<Any>>> = emptyList(),
     private val apiResult: StubActionResult<Int> = StubActionResult.Success(22),
@@ -35,54 +37,47 @@ open class StubDevice(
 
     private val gson = Gson()
 
-    private val installApplicationResultsQueue: Queue<StubActionResult<Any>> =
+    private val installApplicationResultsQueue: Queue<Try<DeviceInstallation>> =
         ArrayDeque(installApplicationResults)
-    private val gettingDeviceStatusResultsQueue: Queue<StubActionResult<Device.DeviceStatus>> =
+    private val gettingDeviceStatusResultsQueue: Queue<Device.DeviceStatus> =
         ArrayDeque(gettingDeviceStatusResults)
     private val runTestsResultsQueue: Queue<StubActionResult<TestCaseRun.Result>> =
         ArrayDeque(runTestsResults)
     private val clearPackageResultsQueue: Queue<StubActionResult<Try<Any>>> =
         ArrayDeque(clearPackageResults)
 
-    override val logger = loggerFactory.create<StubDevice>()
+    override val logger = loggerFactory.create(tag)
 
     override val api: Int
-        get() {
-            return apiResult.get()
-        }
+        get() = apiResult.get()
 
-    override fun installApplication(application: String): DeviceInstallation {
-        logger.debug("MockDevice: installApplication called")
-
-        check(installApplicationResultsQueue.isNotEmpty()) {
-            "Install application results queue is empty in MockDevice"
-        }
-
-        installApplicationResultsQueue.poll().get()
-
-        return DeviceInstallation(
-            installation = Installation(
-                application = application,
-                timestampStartedMilliseconds = 0,
-                timestampCompletedMilliseconds = 0
-            ),
-            device = this.getData()
+    override fun installApplication(applicationPackage: String): Try<DeviceInstallation> {
+        resultQueuePrecondition(
+            queue = installApplicationResultsQueue,
+            functionName = "installApplication",
+            values = applicationPackage
         )
+
+        val result = installApplicationResultsQueue.poll()
+
+        logger.debug("installApplication(\"$applicationPackage\") resulted with $result")
+
+        return result
     }
 
     override fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun {
-        logger.debug("runIsolatedTest called")
-
-        check(runTestsResultsQueue.isNotEmpty()) {
-            "Running test results queue is empty in MockDevice"
-        }
+        resultQueuePrecondition(
+            queue = runTestsResultsQueue,
+            functionName = "runIsolatedTest",
+            values = action.toString()
+        )
 
         val result = runTestsResultsQueue.poll().get()
 
-        logger.debug("runIsolatedTest resulted with: $result")
+        logger.debug("runIsolatedTest() resulted with: $result")
 
         return DeviceTestCaseRun(
             testCaseRun = TestCaseRun(
@@ -96,15 +91,15 @@ open class StubDevice(
     }
 
     override fun clearPackage(name: String): Try<Any> {
-        logger.debug("clearPackage called")
-
-        check(clearPackageResultsQueue.isNotEmpty()) {
-            "Clear package results queue is empty in MockDevice"
-        }
+        resultQueuePrecondition(
+            queue = clearPackageResultsQueue,
+            functionName = "clearPackage",
+            values = name
+        )
 
         val result = clearPackageResultsQueue.poll().get()
 
-        logger.debug("clearPackage resulted with: $result")
+        logger.debug("clearPackage(\"$name\") resulted with: $result")
 
         return result
     }
@@ -146,15 +141,15 @@ open class StubDevice(
     override fun list(remotePath: String): Try<Any> = Try {}
 
     override fun deviceStatus(): Device.DeviceStatus {
-        logger.debug("deviceStatus called")
+        resultQueuePrecondition(
+            queue = gettingDeviceStatusResultsQueue,
+            functionName = "deviceStatus",
+            values = ""
+        )
 
-        check(gettingDeviceStatusResultsQueue.isNotEmpty()) {
-            "Getting device status results queue is empty in MockDevice"
-        }
+        val result = gettingDeviceStatusResultsQueue.poll()
 
-        val result = gettingDeviceStatusResultsQueue.poll().get()
-
-        logger.debug("deviceStatus resulted with: $result")
+        logger.debug("deviceStatus() resulted with: $result")
 
         return result
     }
@@ -167,17 +162,50 @@ open class StubDevice(
     }
 
     fun verify() {
-        check(installApplicationResultsQueue.isEmpty()) {
-            "Mock device has remains commands in queue: installApplicationResultsQueue"
+        verifyQueueHasNoExcessiveElements(installApplicationResultsQueue, "installApplication")
+        verifyQueueHasNoExcessiveElements(gettingDeviceStatusResultsQueue, "deviceStatus")
+        verifyQueueHasNoExcessiveElements(runTestsResultsQueue, "runIsolatedTest")
+        verifyQueueHasNoExcessiveElements(clearPackageResultsQueue, "clearPackage")
+    }
+
+    private fun resultQueuePrecondition(queue: Queue<*>, functionName: String, values: String) {
+        if (queue.isEmpty()) {
+            val errorMessage = "[TEST-ERROR] $functionName(\"$values\") is called, but it's results queue is empty"
+            val exception = IllegalStateException(errorMessage)
+            logger.critical(errorMessage, exception)
+            throw exception
         }
-        check(gettingDeviceStatusResultsQueue.isEmpty()) {
-            "Mock device has remains commands in queue: gettingDeviceStatusResultsQueue"
+    }
+
+    private fun verifyQueueHasNoExcessiveElements(queue: Queue<*>, functionName: String) {
+        if (queue.isNotEmpty()) {
+            val errorMessage = "[TEST-ERROR] $functionName has excessive commands in queue"
+            val exception = IllegalStateException(errorMessage)
+            logger.critical(errorMessage, exception)
+            throw exception
         }
-        check(runTestsResultsQueue.isEmpty()) {
-            "Mock device has remains commands in queue: runTestsResultsQueue"
+    }
+
+    companion object {
+
+        fun installApplicationSuccess(applicationPackage: String = "doesntmatter"): Try<DeviceInstallation> {
+            return Try.Success(
+                DeviceInstallation(
+                    installation = Installation(
+                        application = applicationPackage,
+                        timestampStartedMilliseconds = 0,
+                        timestampCompletedMilliseconds = 0
+                    ),
+                    device = DeviceData(
+                        serial = Serial.from(""),
+                        configuration = DeviceConfiguration(api = 28, model = "model")
+                    )
+                )
+            )
         }
-        check(clearPackageResultsQueue.isEmpty()) {
-            "Mock device has remains commands in queue: clearPackageResultsQueue"
+
+        fun installApplicationFailure(): Try<DeviceInstallation> {
+            return Try.Failure(Exception())
         }
     }
 }

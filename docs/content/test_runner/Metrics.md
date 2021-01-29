@@ -1,34 +1,83 @@
 # Test runner metrics
 
-![Metrics](https://user-images.githubusercontent.com/1105133/105228737-fb467f00-5b73-11eb-801a-da494182f431.png)
+![grafana](https://user-images.githubusercontent.com/1105133/106182950-a2e53200-61b0-11eb-9615-f892fa879c84.png)
 
 Metrics available at:
 
 `$namespace.testrunner.$buildId.$instrumentationConfigName.`
 
+### `device-utilization.median`
+
+Median of all effective device time relative to total device claimed time (in percent `0-100`)
+
+```mermaid
+graph LR
+    id1[Device started] --> id2[Test claimed a device] 
+    subgraph ef1[effective part 1]
+    id2 --> id3[Test started] --> id4[Test finished]
+    end
+    id4 --> id5[Waiting for another intention]
+    id5 --> id6[Another test run]
+    subgraph ef2[effective part 2]
+    id6
+    end
+    id6 --> id7[Device finished]
+    
+```
+
 ### `initial-delay`
 
-Time from test runner job start to first test execution started
+Single stat per test suite (instrumentation configuration)
+
+```mermaid
+graph LR
+    id1[Test runner start] -->|ms|id2[First test execution start]
+```
 
 ### `end-delay`
 
-Time from last test execution finished to test runner job finished
+Single stat per test suite
+
+```mermaid
+graph LR
+    id1[Last test execution ended] -->|ms|id2[Test Runner finished]
+```
 
 ### `queue-median`
 
-Median tests queue time (from test suite started to moment test claimed a device)
+Median of tests queue time
+
+```mermaid
+graph LR
+    id1[Test runner start] -->|ms|id2[Test claimed a device]
+```
 
 ### `install-median`
 
-Median installation time (from moment test claimed a device to actual test start)
+Median of installation times
+
+```mermaid
+graph LR
+    id1[Test claimed a device] -->|ms|id2[Test execution start]
+```
 
 ### `suite`
 
-Time from first test execution start to last test execution finished
+Single stat per test suite
+
+```mermaid
+graph LR
+    id1[First test execution start] -->|ms|id2[Last test execution ended]
+```
 
 ### `total`
 
-Total job time (suite time with both delays)
+Single stat per test suite
+
+```mermaid
+graph LR
+    id1[Test runner start] -->|ms|id2[Test runner finished]
+```
 
 ## `tests.status.lost.`
 
@@ -46,7 +95,3 @@ These are cases when file was not found on device for some reason
 ### `parse-errors`
 
 If test file was pulled, but there was a parsing error
-
-## Example in grafana:
-
-![grafana](https://user-images.githubusercontent.com/1105133/106182950-a2e53200-61b0-11eb-9615-f892fa879c84.png)

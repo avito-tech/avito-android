@@ -55,11 +55,12 @@ class TestsRunnerClient {
             service = IntentionExecutionServiceImplementation(
                 outputDirectory = arguments.outputDirectory,
                 devices = arguments.devices,
+                timeProvider = timeProvider,
                 loggerFactory = loggerFactory,
-                listener = setupListener(
-                    arguments = arguments,
-                    testMetricsListener = testMetricsSender
-                )
+                testListener = setupListener(
+                    arguments = arguments
+                ),
+                deviceMetricsListener = testMetricsSender
             ),
             reservationWatcher = DeviceReservationWatcher.Impl(
                 reservation = arguments.reservation
@@ -88,19 +89,16 @@ class TestsRunnerClient {
         testMetricsSender.onTestSuiteFinished()
     }
 
-    private fun setupListener(
-        arguments: Arguments,
-        testMetricsListener: TestMetricsListener
-    ): TestListener = CompositeListener(
-        listeners = mutableListOf<TestListener>().apply {
-            add(LogListener())
-            add(
-                ArtifactsTestListener(
-                    lifecycleListener = arguments.listener,
-                    loggerFactory = arguments.loggerFactory
+    private fun setupListener(arguments: Arguments): TestListener =
+        CompositeListener(
+            listeners = mutableListOf<TestListener>().apply {
+                add(LogListener())
+                add(
+                    ArtifactsTestListener(
+                        lifecycleListener = arguments.listener,
+                        loggerFactory = arguments.loggerFactory
+                    )
                 )
-            )
-            add(testMetricsListener)
-        }
-    )
+            }
+        )
 }

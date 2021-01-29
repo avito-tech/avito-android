@@ -5,6 +5,11 @@ internal data class TestTimestamps(
     val started: Long? = null,
     val finished: Long? = null
 ) {
+    val effectiveWorkTime: Long? = if (finished != null && onDevice != null) {
+        finished - onDevice
+    } else {
+        null
+    }
 
     val installationTime: Long? = if (started != null && onDevice != null) {
         started - onDevice

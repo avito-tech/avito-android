@@ -1,7 +1,7 @@
 package com.avito.report.model
 
-import com.avito.android.Percent
-import com.avito.android.percentOf
+import com.avito.math.Percent
+import com.avito.math.percentOf
 
 data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>) {
 

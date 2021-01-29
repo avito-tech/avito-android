@@ -10,6 +10,7 @@ import com.avito.instrumentation.internal.reservation.client.kubernetes.UUIDDepl
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
+import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.createKubernetesClient
 import java.io.File
@@ -29,7 +30,8 @@ internal interface DevicesProviderFactory {
         private val registry: String,
         private val output: File,
         private val logcatDir: File,
-        private val loggerFactory: LoggerFactory
+        private val loggerFactory: LoggerFactory,
+        private val timeProvider: TimeProvider
     ) : DevicesProviderFactory {
 
         override fun create(
@@ -60,7 +62,8 @@ internal interface DevicesProviderFactory {
                         devicesManager = devicesManager,
                         emulatorsLogsReporter = emulatorsLogsReporter,
                         adb = adb,
-                        loggerFactory = loggerFactory
+                        loggerFactory = loggerFactory,
+                        timeProvider = timeProvider
                     )
 
                 InstrumentationConfiguration.Data.DevicesType.CLOUD ->
@@ -85,7 +88,8 @@ internal interface DevicesProviderFactory {
                         ),
                         adbDevicesManager = devicesManager,
                         adb = adb,
-                        loggerFactory = loggerFactory
+                        loggerFactory = loggerFactory,
+                        timeProvider = timeProvider
                     )
             }
         }

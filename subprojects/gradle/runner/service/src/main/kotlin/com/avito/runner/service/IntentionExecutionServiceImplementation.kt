@@ -9,6 +9,11 @@ import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.listener.CompositeDeviceListener
+import com.avito.runner.service.worker.listener.DeviceListener
+import com.avito.runner.service.worker.listener.DeviceLogListener
+import com.avito.runner.service.worker.listener.MessagesDeviceListener
+import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +26,9 @@ class IntentionExecutionServiceImplementation(
     private val loggerFactory: LoggerFactory,
     private val devices: ReceiveChannel<Device>,
     private val intentionsRouter: IntentionsRouter = IntentionsRouter(loggerFactory = loggerFactory),
-    private val listener: TestListener,
+    private val testListener: TestListener,
+    private val deviceMetricsListener: DeviceListener,
+    private val timeProvider: TimeProvider,
     private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread
 ) : IntentionExecutionService {
 
@@ -41,14 +48,21 @@ class IntentionExecutionServiceImplementation(
         scope.launch {
             launch {
                 while (!devices.isClosedForReceive) {
+                    val device = devices.receive()
                     DeviceWorker(
                         intentionsRouter = intentionsRouter,
-                        device = devices.receive(),
+                        device = device,
                         outputDirectory = outputDirectory,
-                        loggerFactory = loggerFactory,
-                        messagesChannel = messages,
-                        listener = listener,
-                        dispatchers = deviceWorkersDispatcher
+                        deviceListener = CompositeDeviceListener(
+                            listOf(
+                                MessagesDeviceListener(messages),
+                                DeviceLogListener(device.logger),
+                                deviceMetricsListener
+                            )
+                        ),
+                        testListener = testListener,
+                        dispatchers = deviceWorkersDispatcher,
+                        timeProvider = timeProvider
                     ).run(scope)
                 }
             }

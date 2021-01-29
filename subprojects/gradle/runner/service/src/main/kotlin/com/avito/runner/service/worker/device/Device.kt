@@ -24,7 +24,7 @@ interface Device {
 
     val logger: Logger
 
-    fun installApplication(application: String): DeviceInstallation
+    fun installApplication(applicationPackage: String): Try<DeviceInstallation>
 
     fun runIsolatedTest(
         action: InstrumentationTestRunAction,

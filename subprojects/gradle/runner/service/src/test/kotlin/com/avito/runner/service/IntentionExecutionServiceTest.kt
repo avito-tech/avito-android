@@ -5,9 +5,11 @@ import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
-import com.avito.runner.test.NoOpListener
+import com.avito.runner.service.worker.listener.StubDeviceListener
+import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
+import com.avito.runner.test.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.test.TestDispatcher
 import com.avito.runner.test.generateInstalledApplicationLayer
 import com.avito.runner.test.generateInstrumentationTestAction
@@ -15,6 +17,7 @@ import com.avito.runner.test.generateIntention
 import com.avito.runner.test.listWithDefault
 import com.avito.runner.test.randomDeviceCoordinate
 import com.avito.runner.test.receiveAvailable
+import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -70,27 +73,21 @@ class IntentionExecutionServiceTest {
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
-                    StubActionResult.Success(Any()), // Install application
-                    StubActionResult.Success(Any()) // Install test application
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
                 ),
                 gettingDeviceStatusResults = listWithDefault(
                     1 + intentions.size,
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Alive
-                    )
+                    DeviceStatus.Alive
                 ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
-                        StubActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        ),
-                        StubActionResult.Success<Try<Any>>(
-                            Try.Success(Unit)
-                        )
+                        StubActionResult.Success(Try.Success(Unit)),
+                        StubActionResult.Success(Try.Success(Unit))
                     )
                 },
                 runTestsResults = intentions.map {
-                    StubActionResult.Success<TestCaseRun.Result>(
+                    StubActionResult.Success(
                         TestCaseRun.Result.Passed
                     )
                 }
@@ -150,14 +147,8 @@ class IntentionExecutionServiceTest {
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Alive
-                    ), // State while initializing worker
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Freeze(
-                            RuntimeException()
-                        )
-                    )
+                    DeviceStatus.Alive, // State while initializing worker
+                    DeviceStatus.Freeze(RuntimeException())
                 ),
                 runTestsResults = emptyList()
             )
@@ -166,29 +157,25 @@ class IntentionExecutionServiceTest {
                 coordinate = randomDeviceCoordinate(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
-                    StubActionResult.Success(Any()), // Install application
-                    StubActionResult.Success(Any()) // Install test application
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
                 ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
-                        StubActionResult.Success<Try<Any>>(
+                        StubActionResult.Success(
                             Try.Success(Unit)
                         ),
-                        StubActionResult.Success<Try<Any>>(
+                        StubActionResult.Success(
                             Try.Success(Unit)
                         )
                     )
                 },
                 gettingDeviceStatusResults = listOf(
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Alive
-                    ), // State while initializing worker
-                    StubActionResult.Success<DeviceStatus>(
-                        DeviceStatus.Alive
-                    )
+                    DeviceStatus.Alive,
+                    DeviceStatus.Alive
                 ),
                 runTestsResults = intentions.map {
-                    StubActionResult.Success<TestCaseRun.Result>(
+                    StubActionResult.Success(
                         TestCaseRun.Result.Passed
                     )
                 }
@@ -224,7 +211,9 @@ class IntentionExecutionServiceTest {
         loggerFactory = loggerFactory,
         devices = devices,
         intentionsRouter = intentionsRouter,
-        listener = NoOpListener,
-        deviceWorkersDispatcher = TestDispatcher
+        testListener = NoOpTestListener,
+        deviceMetricsListener = StubDeviceListener,
+        deviceWorkersDispatcher = TestDispatcher,
+        timeProvider = StubTimeProvider()
     )
 }

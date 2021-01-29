@@ -90,14 +90,16 @@ internal interface TestsSchedulerFactory {
         }
 
         private fun createTestRunner(): TestsRunnerImplementation {
+            // todo pass though constructor but needs to be serializable
+            val timeProvider = DefaultTimeProvider()
+
             return TestsRunnerImplementation(
                 testExecutorFactory = testExecutorFactory,
                 kubernetesCredentials = params.kubernetesCredentials,
                 testReporterFactory = { testSuite, outputDir, report ->
                     ReportViewerTestReporter(
                         loggerFactory = params.loggerFactory,
-                        // todo pass though constructor but needs to be serializable
-                        timeProvider = DefaultTimeProvider(),
+                        timeProvider = timeProvider,
                         testSuite = testSuite,
                         report = report,
                         fileStorageUrl = params.fileStorageUrl,
@@ -121,7 +123,8 @@ internal interface TestsSchedulerFactory {
                 instrumentationConfiguration = params.instrumentationConfiguration,
                 loggerFactory = params.loggerFactory,
                 registry = params.registry,
-                statsDConfig = params.statsDConfig
+                statsDConfig = params.statsDConfig,
+                timeProvider = timeProvider
             )
         }
     }

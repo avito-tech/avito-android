@@ -1,6 +1,6 @@
 package com.avito.upload_to_googleplay
 
-import com.avito.android.percent
+import com.avito.math.percent
 import com.google.api.client.googleapis.media.MediaHttpUploader
 import com.google.api.services.androidpublisher.AndroidPublisherRequest
 

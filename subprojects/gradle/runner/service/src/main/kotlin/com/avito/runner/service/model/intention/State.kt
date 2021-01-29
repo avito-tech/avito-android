@@ -6,6 +6,7 @@ data class State(
 ) {
 
     sealed class Layer {
+
         data class ApiLevel(val api: Int) : Layer() {
             override fun toString(): String = "Api level = $api"
         }
@@ -24,8 +25,8 @@ data class State(
     }
 
     override fun toString(): String = buildString {
-        append("State ($digest) with layers: {")
+        append("State=$digest with layers: {")
         append(layers.joinToString(prefix = "[Layer: ", postfix = "]"))
-        append(" }")
+        append("}")
     }
 }
