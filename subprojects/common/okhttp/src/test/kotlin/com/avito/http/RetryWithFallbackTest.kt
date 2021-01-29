@@ -1,7 +1,7 @@
 package com.avito.http
 
-import com.avito.logger.StubLogger
 import com.avito.logger.StubLoggerFactory
+import com.avito.logger.create
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test
 
 class RetryWithFallbackTest {
 
-    private val logger = StubLogger
     private val loggerFactory = StubLoggerFactory
+    private val logger = loggerFactory.create<StubApi>()
     private val mockDispatcher = MockDispatcher(loggerFactory = loggerFactory)
     private val server = MockWebServerFactory.create().apply { dispatcher = mockDispatcher }
 

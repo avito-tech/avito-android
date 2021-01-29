@@ -18,6 +18,7 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
+import com.avito.time.TimeProvider
 import org.funktionale.tries.Try
 import rx.Observable
 import rx.Single
@@ -31,6 +32,7 @@ data class AdbDevice(
     override val model: String,
     override val online: Boolean,
     private val adb: Adb,
+    private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
@@ -59,37 +61,34 @@ data class AdbDevice(
         )
     }
 
-    override fun installApplication(
-        application: String
-    ): DeviceInstallation {
-        val adbDevice = getAdbDevice()
+    override fun installApplication(applicationPackage: String): Try<DeviceInstallation> {
+        var installStartedTimestamp = 0L
+        return getAdbDevice().flatMap { adbDevice ->
 
-        val started = System.currentTimeMillis()
+            installStartedTimestamp = timeProvider.nowInMillis()
 
-        retry(
-            retriesCount = 10,
-            delaySeconds = 5,
-            block = { attempt ->
-                logger.debug("Attempt $attempt: installing application $application")
-                adbDevice.installPackage(application, true)
-                logger.debug("Attempt $attempt: application $application installed")
-            },
-            attemptFailedHandler = { attempt, _ ->
-                logger.debug("Attempt $attempt: failed to install application $application")
-            },
-            actionFailedHandler = { throwable ->
-                logger.warn("Failed installing application $application", throwable)
-            }
-        )
-
-        return DeviceInstallation(
-            installation = Installation(
-                application = application,
-                timestampStartedMilliseconds = started,
-                timestampCompletedMilliseconds = System.currentTimeMillis()
-            ),
-            device = this.getData()
-        )
+            runWithRetries(
+                retriesCount = 10,
+                delaySeconds = 5,
+                block = { attempt ->
+                    logger.debug("Attempt $attempt: installing application $applicationPackage")
+                    adbDevice.installPackage(applicationPackage, true)
+                    logger.debug("Attempt $attempt: application $applicationPackage installed")
+                },
+                attemptFailedHandler = { attempt, _ ->
+                    logger.debug("Attempt $attempt: failed to install application $applicationPackage")
+                }
+            )
+        }.map {
+            DeviceInstallation(
+                installation = Installation(
+                    application = applicationPackage,
+                    timestampStartedMilliseconds = installStartedTimestamp,
+                    timestampCompletedMilliseconds = timeProvider.nowInMillis()
+                ),
+                device = this.getData()
+            )
+        }
     }
 
     override fun runIsolatedTest(
@@ -131,8 +130,8 @@ data class AdbDevice(
                             result = TestCaseRun.Result.Failed.InfrastructureError(
                                 errorMessage = "Failed on start test case: ${it.message}"
                             ),
-                            timestampStartedMilliseconds = System.currentTimeMillis(),
-                            timestampCompletedMilliseconds = System.currentTimeMillis()
+                            timestampStartedMilliseconds = timeProvider.nowInMillis(),
+                            timestampCompletedMilliseconds = timeProvider.nowInMillis()
                         ),
                         device = this.getData()
                     )
@@ -143,8 +142,8 @@ data class AdbDevice(
                                 errorMessage = "Failed on instrumentation parsing: ${it.message}",
                                 cause = it.throwable
                             ),
-                            timestampStartedMilliseconds = System.currentTimeMillis(),
-                            timestampCompletedMilliseconds = System.currentTimeMillis()
+                            timestampStartedMilliseconds = timeProvider.nowInMillis(),
+                            timestampCompletedMilliseconds = timeProvider.nowInMillis()
                         ),
                         device = this.getData()
                     )
@@ -181,13 +180,11 @@ data class AdbDevice(
             }
         )
     } catch (t: Throwable) {
-        Device.DeviceStatus.Freeze(
-            reason = t
-        )
+        Device.DeviceStatus.Freeze(reason = t)
     }
 
     override fun clearPackage(name: String): Try<Any> = Try {
-        retry(
+        runWithRetries(
             retriesCount = 10,
             delaySeconds = 2,
             block = { attempt ->
@@ -198,9 +195,6 @@ data class AdbDevice(
             },
             attemptFailedHandler = { attempt, _ ->
                 logger.debug("Attempt $attempt: failed to clear package $name")
-            },
-            actionFailedHandler = { throwable ->
-                logger.warn("Failed clearing package $name", throwable)
             }
         )
     }
@@ -294,7 +288,7 @@ data class AdbDevice(
     ): Single<InstrumentationTestCaseRun> {
         val logsDir = File(File(outputDir, "logs"), coordinate.serial.value)
             .apply { mkdirs() }
-        val started = System.currentTimeMillis()
+        val started = timeProvider.nowInMillis()
 
         val output = executeShellCommand(
             command = listOf(
@@ -330,18 +324,15 @@ data class AdbDevice(
             .toSingle()
     }
 
-    private fun getAdbDevice(): IDevice {
+    private fun getAdbDevice(): Try<IDevice> = Try {
         AndroidDebugBridge.initIfNeeded(false)
-        DdmPreferences.setTimeOut(
-            Duration.ofSeconds(DDMLIB_SOCKET_TIME_OUT_SECONDS).toMillis().toInt()
-        )
+        DdmPreferences.setTimeOut(Duration.ofSeconds(DDMLIB_SOCKET_TIME_OUT_SECONDS).toMillis().toInt())
 
         val bridge = AndroidDebugBridge.createBridge(adb.adbPath, false)
         waitForAdb(bridge)
 
-        return bridge.devices.find {
-            it.serialNumber == coordinate.serial.value
-        } ?: throw RuntimeException("Device $coordinate not found")
+        bridge.devices.find { it.serialNumber == coordinate.serial.value }
+            ?: throw RuntimeException("Device $coordinate not found")
     }
 
     private fun waitForAdb(
@@ -432,6 +423,27 @@ data class AdbDevice(
             args = listOf("-s", coordinate.serial.value) + command,
             output = redirectOutputTo
         )
+
+    private fun <T> runWithRetries(
+        retriesCount: Int,
+        delaySeconds: Long = 1,
+        attemptFailedHandler: (attempt: Int, throwable: Throwable) -> Unit = { _, _ -> },
+        block: (attempt: Int) -> T
+    ): Try<T> {
+        for (attempt in 0..retriesCount) {
+            if (attempt > 0) TimeUnit.SECONDS.sleep(delaySeconds)
+            try {
+                return Try.Success(block(attempt))
+            } catch (e: Throwable) {
+                if (attempt == retriesCount - 1) {
+                    return Try.Failure(e)
+                } else {
+                    attemptFailedHandler(attempt, e)
+                }
+            }
+        }
+        throw IllegalStateException("retry must return value or throw exception")
+    }
 
     override fun toString(): String = "Device ${coordinate.serial}"
 }

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:percent"))
+    implementation(project(":common:math"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-profile"))

@@ -34,4 +34,8 @@ internal class TestMetricsSender(
     fun sendTotalTime(timeMs: Long) {
         statsDSender.send(prefix, GaugeMetric("total", timeMs))
     }
+
+    fun sendMedianDeviceUtilization(percent: Int) {
+        statsDSender.send(prefix, GaugeMetric("device-utilization.median", percent))
+    }
 }
