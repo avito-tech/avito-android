@@ -25,7 +25,6 @@ internal class HttpElasticClient(
     private val endpoints: List<URL>,
     private val indexPattern: String,
     private val buildId: String,
-    private val dateFormatChecker: DateFormatChecker,
     loggerFactory: LoggerFactory
 ) : ElasticClient {
 
@@ -52,7 +51,7 @@ internal class HttpElasticClient(
             val now = timeProvider.now()
 
             val params = mutableMapOf(
-                "@timestamp" to timestampFormatter.format(now),
+                "@timestamp" to timestampFormatter.get().format(now),
                 "level" to level,
                 "build_id" to buildId,
                 "message" to message
@@ -65,9 +64,7 @@ internal class HttpElasticClient(
 
             params.putAll(metadata)
 
-            val formattedDate = isoDate.format(now)
-
-            dateFormatChecker.check(formattedDate)
+            val formattedDate = isoDate.get().format(now)
 
             elasticApi.log(
                 indexPattern = indexPattern,
@@ -96,7 +93,16 @@ internal class HttpElasticClient(
         result
     }
 
-    private fun utcFormatter(pattern: String): DateFormat = SimpleDateFormat(pattern, Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
+    /**
+     * from javadoc:
+     *
+     * It is recommended to create separate format instances for each thread.
+     * If multiple threads access a format concurrently, it must be synchronized
+     * externally.
+     */
+    private fun utcFormatter(pattern: String) = object : ThreadLocal<DateFormat>() {
+        override fun initialValue(): DateFormat = SimpleDateFormat(pattern, Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
     }
 }

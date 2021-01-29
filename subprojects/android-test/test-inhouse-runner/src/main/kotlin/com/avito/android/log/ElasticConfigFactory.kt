@@ -15,13 +15,11 @@ internal object ElasticConfigFactory {
             val endpointsRawValue: String = argsProvider.getMandatoryArgument("elasticEndpoints")
             val indexPattern: String = argsProvider.getMandatoryArgument("elasticIndexPattern")
             val buildId = argsProvider.getMandatoryArgument("buildId")
-            val checkDateFormatter = argsProvider.getOptionalArgument("checkDateFormatter")?.toBoolean() ?: false
 
             ElasticConfig.Enabled(
                 endpoints = parseEndpoint(endpointsRawValue),
                 indexPattern = indexPattern,
-                buildId = buildId,
-                checkDateFormatter = checkDateFormatter
+                buildId = buildId
             )
         } else {
             ElasticConfig.Disabled
