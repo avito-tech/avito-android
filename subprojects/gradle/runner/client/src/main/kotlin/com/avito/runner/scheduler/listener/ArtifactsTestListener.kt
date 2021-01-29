@@ -6,6 +6,7 @@ import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
+import org.funktionale.tries.Try
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
@@ -45,7 +46,7 @@ internal class ArtifactsTestListener(
             test = test
         )
 
-        try {
+        val artifacts = try {
             val pullingResult = device.pull(
                 from = testMetadataDirectory.toPath(),
                 to = tempDirectory
@@ -59,26 +60,33 @@ internal class ArtifactsTestListener(
                     )
                 }
 
-            lifecycleListener.finished(
-                artifacts = resultDirectory,
-                test = test,
-                executionNumber = executionNumber
-            )
-
             device.clearDirectory(
                 remotePath = testMetadataDirectory.toPath()
             ).invoke()
+
+            resultDirectory
         } catch (t: Throwable) {
-            // TODO LOST
             logger.warn("Failed to process artifacts from $device", t)
+            Try.Failure(t)
         } finally {
             tempDirectory.toFile().delete()
         }
+
+        lifecycleListener.finished(
+            artifacts = artifacts,
+            test = test,
+            executionNumber = executionNumber
+        )
     }
 
     @Suppress("SdCardPath") // android API's are unavailable here
     private fun testMetadataFullDirectory(targetPackage: String, test: TestCase): File =
-        File("/sdcard/Android/data/$targetPackage/files/runner/${testMetadataDirectoryPath(test)}")
+        File("/sdcard/Android/data/$targetPackage/files/$RUNNER_OUTPUT_FOLDER/${testMetadataDirectoryPath(test)}")
 
     private fun testMetadataDirectoryPath(test: TestCase): String = "${test.className}#${test.methodName}"
+
+    companion object {
+        // todo should be passed with instrumentation params, see [ExternalStorageTransport]
+        private const val RUNNER_OUTPUT_FOLDER = "runner"
+    }
 }

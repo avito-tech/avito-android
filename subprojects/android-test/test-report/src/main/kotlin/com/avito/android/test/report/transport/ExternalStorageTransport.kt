@@ -1,67 +1,46 @@
 package com.avito.android.test.report.transport
 
-import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.transport.OutputFileProvider.Result.Error
+import com.avito.android.test.report.transport.OutputFileProvider.Result.Success
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.TestRuntimeDataPackage
+import com.avito.time.TimeProvider
 import com.google.gson.Gson
-import java.io.File
 
 /**
  * Save report to json that will be parsed from runner
  */
 class ExternalStorageTransport(
     private val gson: Gson,
+    timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
 ) : Transport, PreTransportMappers {
 
     private val logger = loggerFactory.create<ExternalStorageTransport>()
 
+    private val outputFileProvider = OutputFileProvider()
+    private val testRuntimeDataBuilder = TestRuntimeDataBuilder(timeProvider)
+
     override fun send(state: ReportState.Initialized.Started) {
-        try {
-            val testFolderName = "${state.testMetadata.className}#${state.testMetadata.methodName}"
-
-            val testMetadataDirectory = testMetadataDirectory(testFolderName = testFolderName)
-
-            val reportMetadataJson = File(testMetadataDirectory, REPORT_FILE_NAME)
-
-            val testRuntimeDataPackage = TestRuntimeDataPackage(
-                incident = state.incident,
-                dataSetData = state.dataSet?.serialize() ?: emptyMap(),
-                video = state.video,
-                preconditions = transformStepList(state.preconditionStepList),
-                steps = transformStepList(state.testCaseStepList),
-                startTime = state.startTime,
-                endTime = state.endTime
-            )
-
-            logger.debug("Write report for test $testFolderName to file: ${reportMetadataJson.absolutePath}")
-
-            reportMetadataJson.writeText(gson.toJson(testRuntimeDataPackage))
-        } catch (e: Throwable) {
-            // TODO LOST
-            logger.warn("Can't write report to file", e)
-        }
-    }
-
-    private fun testMetadataDirectory(testFolderName: String): File {
-        val externalStorage = InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(null)
-            ?: throw RuntimeException("External storage is not available")
-
-        val runnerDirectory = File(
-            externalStorage,
-            RUNNER_OUTPUT_FOLDER
+        val outputFileResult = outputFileProvider.provideReportFile(
+            className = state.testMetadata.className,
+            methodName = state.testMetadata.methodName!!
         )
 
-        return File(runnerDirectory, testFolderName).apply {
-            mkdirs()
-        }
-    }
+        when (outputFileResult) {
+            is Success ->
+                try {
+                    val json = gson.toJson(testRuntimeDataBuilder.fromState(state))
+                    val file = outputFileResult.file
+                    file.writeText(json)
+                    logger.info("Wrote report for test to file: ${file.absolutePath}")
+                } catch (e: Throwable) {
+                    logger.warn("Can't write report runtime data; leads to LOST test", e)
+                }
 
-    companion object {
-        // todo наверное можно прокинуть в instrumentation params
-        private const val RUNNER_OUTPUT_FOLDER = "runner"
-        private const val REPORT_FILE_NAME = "report.json"
+            is Error ->
+                logger.warn("Can't create output file for test runtime data; leads to LOST test", outputFileResult.e)
+        }
     }
 }
