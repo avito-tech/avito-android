@@ -71,6 +71,9 @@ class ReportImplementation(
     override val isFirstStepOrPrecondition: Boolean
         get() = state.isFirstStepOrPrecondition
 
+    override val isWritten: Boolean
+        get() = currentState is ReportState.Written
+
     @Synchronized
     override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
         checkStateIs<ReportState.Nothing>()

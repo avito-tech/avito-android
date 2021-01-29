@@ -267,9 +267,8 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun onException(obj: Any?, e: Throwable): Boolean {
-        logger.critical("Application crash captured by onException handler inside instrumentation", e)
-
         testRunEnvironment.executeIfRealRun {
+            logger.warn("Application crash captured by onException handler inside instrumentation", e)
             tryToReportUnexpectedIncident(incident = e)
         }
 
@@ -298,8 +297,10 @@ abstract class InHouseInstrumentationTestRunner :
 
     fun tryToReportUnexpectedIncident(incident: Throwable) {
         try {
-            report.registerIncident(AppCrashException(incident))
-            report.reportTestCase()
+            if (!report.isWritten) {
+                report.registerIncident(AppCrashException(incident))
+                report.reportTestCase()
+            }
         } catch (t: Throwable) {
             logger.critical("Can't register and report unexpected incident", t)
         }

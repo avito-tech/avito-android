@@ -11,6 +11,8 @@ interface Report {
 
     val isFirstStepOrPrecondition: Boolean
 
+    val isWritten: Boolean
+
     fun initTestCase(testMetadata: TestMetadata)
 
     fun startTestCase()
