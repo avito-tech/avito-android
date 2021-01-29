@@ -25,12 +25,7 @@ public object ElasticClientFactory {
                     endpoints = config.endpoints,
                     indexPattern = config.indexPattern,
                     buildId = config.buildId,
-                    loggerFactory = loggerFactory,
-                    dateFormatChecker = if (config.checkDateFormatter) {
-                        ElasticDateFormatChecker()
-                    } else {
-                        StubDateFormatChecker
-                    }
+                    loggerFactory = loggerFactory
                 )
             }
         )
