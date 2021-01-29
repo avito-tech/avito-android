@@ -10,7 +10,6 @@ public sealed class ElasticConfig : Serializable {
     public data class Enabled(
         val endpoints: List<URL>,
         val indexPattern: String,
-        val buildId: String,
-        val checkDateFormatter: Boolean
+        val buildId: String
     ) : ElasticConfig()
 }
