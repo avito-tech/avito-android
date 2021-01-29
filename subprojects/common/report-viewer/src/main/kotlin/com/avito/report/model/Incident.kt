@@ -11,9 +11,15 @@ data class Incident(
 ) {
     enum class Type {
 
+        /**
+         * abnormal test execution
+         */
         @SerializedName("error")
         INFRASTRUCTURE_ERROR,
 
+        /**
+         * assertions not being fulfilled
+         */
         @SerializedName("failure")
         ASSERTION_FAILED
     }

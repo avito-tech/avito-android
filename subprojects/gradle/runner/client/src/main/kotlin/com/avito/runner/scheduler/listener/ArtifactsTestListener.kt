@@ -86,7 +86,12 @@ internal class ArtifactsTestListener(
 
     @Suppress("SdCardPath") // android API's are unavailable here
     private fun testMetadataFullDirectory(targetPackage: String, test: TestCase): File =
-        File("/sdcard/Android/data/$targetPackage/files/runner/${testMetadataDirectoryPath(test)}")
+        File("/sdcard/Android/data/$targetPackage/files/$RUNNER_OUTPUT_FOLDER/${testMetadataDirectoryPath(test)}")
 
     private fun testMetadataDirectoryPath(test: TestCase): String = "${test.className}#${test.methodName}"
+
+    companion object {
+        // todo should be passed with instrumentation params, see [ExternalStorageTransport]
+        private const val RUNNER_OUTPUT_FOLDER = "runner"
+    }
 }

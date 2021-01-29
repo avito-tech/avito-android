@@ -246,7 +246,7 @@ class ReportImplementation(
                         futureUploads.add(screenshotFuture)
                     }
                 } catch (t: Throwable) {
-                    logger.critical("Failed to update step with captured screenshot", t)
+                    logger.warn("Failed to update step with captured screenshot", t)
                     return@methodExecutionTracing null
                 }
             }

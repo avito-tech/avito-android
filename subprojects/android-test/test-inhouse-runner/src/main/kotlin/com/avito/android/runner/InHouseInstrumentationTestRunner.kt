@@ -129,7 +129,14 @@ abstract class InHouseInstrumentationTestRunner :
                 val gson: Gson = GsonBuilder()
                     .registerTypeAdapterFactory(EntryTypeAdapterFactory())
                     .create()
-                listOf(ExternalStorageTransport(gson, loggerFactory))
+
+                listOf(
+                    ExternalStorageTransport(
+                        gson = gson,
+                        timeProvider = timeProvider,
+                        loggerFactory = loggerFactory
+                    )
+                )
             }
         }
 
