@@ -15,7 +15,7 @@ internal class ReportUncaughtHandler(
         if (e.message in nonCriticalErrorMessages) {
             logger.warn("Non critical error caught by ReportUncaughtHandler", e)
         } else {
-            logger.critical("Application crashed", e)
+            logger.warn("Application crashed", e)
             InHouseInstrumentationTestRunner.instance.tryToReportUnexpectedIncident(incident = e)
             globalExceptionHandler?.uncaughtException(t, e)
         }

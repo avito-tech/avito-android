@@ -61,8 +61,6 @@ internal class ReportViewerTestReporter(
             timeProvider = timeProvider
         )
 
-    // todo переместить ближе к DeviceWorker
-    // сюда можно передавать логи как параметр и убрать отсюда все кроме транспорта
     private val logcatBuffers = mutableMapOf<Pair<TestCase, Int>, LogcatBuffer>()
 
     override fun started(
@@ -179,18 +177,19 @@ internal class ReportViewerTestReporter(
                 ),
                 comment = "logcat"
             ).get()) {
-                is RemoteStorage.Result.Success -> remoteStorage.fullUrl(result)
+                is RemoteStorage.Result.Success -> remoteStorageFullUrl(result)
                 is RemoteStorage.Result.Error -> "Failed to upload logcat: ${result.t.message}"
             }
         }
     }
 
-    private fun RemoteStorage.fullUrl(result: RemoteStorage.Result.Success): String {
+    private fun remoteStorageFullUrl(result: RemoteStorage.Result.Success): String {
         check(remoteStorage is HttpRemoteStorage) // TODO: extract to interface
         return remoteStorage.fullUrl(result)
     }
 
     companion object {
+        // todo should be passed with instrumentation params, see [ExternalStorageTransport]
         private const val REPORT_JSON_ARTIFACT = "report.json"
     }
 }

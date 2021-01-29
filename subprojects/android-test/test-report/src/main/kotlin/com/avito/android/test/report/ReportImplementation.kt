@@ -71,6 +71,9 @@ class ReportImplementation(
     override val isFirstStepOrPrecondition: Boolean
         get() = state.isFirstStepOrPrecondition
 
+    override val isWritten: Boolean
+        get() = currentState is ReportState.Written
+
     @Synchronized
     override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
         checkStateIs<ReportState.Nothing>()
@@ -246,7 +249,7 @@ class ReportImplementation(
                         futureUploads.add(screenshotFuture)
                     }
                 } catch (t: Throwable) {
-                    logger.critical("Failed to update step with captured screenshot", t)
+                    logger.warn("Failed to update step with captured screenshot", t)
                     return@methodExecutionTracing null
                 }
             }
