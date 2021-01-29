@@ -37,35 +37,6 @@ val javaVersion = JavaVersion.VERSION_1_8
 val compileSdk = 29
 
 subprojects {
-
-    repositories {
-        jcenter()
-        exclusiveContent {
-            forRepository {
-                google()
-            }
-            forRepository {
-                mavenCentral()
-            }
-            filter {
-                includeModuleByRegex("com\\.android.*", "(?!r8).*")
-                includeModuleByRegex("com\\.google\\.android.*", ".*")
-                includeGroupByRegex("androidx\\..*")
-            }
-        }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = "R8 releases"
-                    setUrl("http://storage.googleapis.com/r8-releases/raw")
-                }
-            }
-            filter {
-                includeModule("com.android.tools", "r8")
-            }
-        }
-    }
-
     plugins.withType<AppPlugin> {
         configure<BaseExtension> {
             packagingOptions {

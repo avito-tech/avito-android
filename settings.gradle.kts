@@ -43,13 +43,27 @@ if (useCompositeBuild.toBoolean()) {
 pluginManagement {
 
     val artifactoryUrl: String? by settings
-    val infraVersion: String by settings
+
+    fun MavenArtifactRepository.artifactoryUrl(repositoryName: String) {
+        setUrl("$artifactoryUrl/$repositoryName")
+        isAllowInsecureProtocol = true
+    }
+
+    fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: String) {
+        if (artifactoryUrl.isNullOrBlank()) {
+            name = repositoryName
+            setUrl(originalRepo)
+        } else {
+            name = "Proxy for $repositoryName: $originalRepo"
+            artifactoryUrl(repositoryName)
+        }
+    }
 
     repositories {
         exclusiveContent {
             forRepository {
                 maven {
-                    setUrl("https://kotlin.bintray.com/kotlinx")
+                    setUrlOrProxy("KotlinX", "https://kotlin.bintray.com/kotlinx")
                 }
             }
             filter {
@@ -60,21 +74,23 @@ pluginManagement {
             forRepository {
                 mavenLocal()
             }
-            forRepository {
-                jcenter()
-            }
-            forRepository {
-                maven {
-                    name = "Avito bintray"
-                    setUrl("https://dl.bintray.com/avito/maven")
-                }
-            }
             if (!artifactoryUrl.isNullOrBlank()) {
                 forRepository {
                     maven {
                         name = "Local Artifactory"
                         setUrl("$artifactoryUrl/libs-release-local")
                     }
+                }
+            }
+            forRepository {
+                jcenter()
+                maven {
+                    setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
+                }
+            }
+            forRepository {
+                maven {
+                    setUrlOrProxy("bintray-avito-maven", "https://dl.bintray.com/avito/maven")
                 }
             }
             filter {
@@ -94,7 +110,9 @@ pluginManagement {
         }
         exclusiveContent {
             forRepository {
-                google()
+                maven {
+                    setUrlOrProxy("google-android", "https://dl.google.com/dl/android/maven2/")
+                }
             }
             filter {
                 includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
@@ -103,8 +121,7 @@ pluginManagement {
         exclusiveContent {
             forRepository {
                 maven {
-                    name = "R8 releases"
-                    setUrl("http://storage.googleapis.com/r8-releases/raw")
+                    setUrlOrProxy("r8-releases", "http://storage.googleapis.com/r8-releases/raw")
                 }
             }
             filter {
@@ -112,6 +129,8 @@ pluginManagement {
             }
         }
     }
+
+    val infraVersion: String by settings
 
     resolutionStrategy {
         eachPlugin {
@@ -128,6 +147,53 @@ pluginManagement {
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.7.0")
+            }
+        }
+    }
+}
+
+val artifactoryUrl: String? by settings
+
+fun MavenArtifactRepository.artifactoryUrl(repositoryName: String) {
+    setUrl("$artifactoryUrl/$repositoryName")
+    isAllowInsecureProtocol = true
+}
+
+fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: String) {
+    if (artifactoryUrl.isNullOrBlank()) {
+        name = repositoryName
+        setUrl(originalRepo)
+    } else {
+        name = "Proxy for $repositoryName: $originalRepo"
+        artifactoryUrl(repositoryName)
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy("google-android", "https://dl.google.com/dl/android/maven2/")
+                }
+            }
+            filter {
+                includeModuleByRegex("com\\.android.*", "(?!r8).*")
+                includeModuleByRegex("com\\.google\\.android.*", ".*")
+                includeGroupByRegex("androidx\\..*")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy("r8-releases", "http://storage.googleapis.com/r8-releases/raw")
+                }
+            }
+            filter {
+                includeModule("com.android.tools", "r8")
             }
         }
     }

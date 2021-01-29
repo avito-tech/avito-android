@@ -122,10 +122,29 @@ include(":ci:k8s-deployments-cleaner")
 
 pluginManagement {
 
+    val artifactoryUrl: String? by settings
+
+    fun MavenArtifactRepository.artifactoryUrl(repositoryName: String) {
+        setUrl("$artifactoryUrl/$repositoryName")
+        isAllowInsecureProtocol = true
+    }
+
+    fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: String) {
+        if (artifactoryUrl.isNullOrBlank()) {
+            name = repositoryName
+            setUrl(originalRepo)
+        } else {
+            name = "Proxy for $repositoryName: $originalRepo"
+            artifactoryUrl(repositoryName)
+        }
+    }
+
     repositories {
         exclusiveContent {
             forRepository {
-                gradlePluginPortal()
+                maven {
+                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
+                }
             }
             filter {
                 includeGroup("com.gradle")
@@ -139,7 +158,9 @@ pluginManagement {
         }
         exclusiveContent {
             forRepository {
-                google()
+                maven {
+                    setUrlOrProxy("google-android", "https://dl.google.com/dl/android/maven2/")
+                }
             }
             filter {
                 includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
@@ -174,13 +195,32 @@ pluginManagement {
     }
 }
 
+val artifactoryUrl: String? by settings
+
+fun MavenArtifactRepository.artifactoryUrl(repositoryName: String) {
+    setUrl("$artifactoryUrl/$repositoryName")
+    isAllowInsecureProtocol = true
+}
+
+fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: String) {
+    if (artifactoryUrl.isNullOrBlank()) {
+        name = repositoryName
+        setUrl(originalRepo)
+    } else {
+        name = "Proxy for $repositoryName: $originalRepo"
+        artifactoryUrl(repositoryName)
+    }
+}
+
 dependencyResolutionManagement {
     repositories {
-        jcenter()
+        maven {
+            setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
+        }
         exclusiveContent {
             forRepository {
                 maven {
-                    setUrl("https://kotlin.bintray.com/kotlinx")
+                    setUrlOrProxy("KotlinX", "https://kotlin.bintray.com/kotlinx")
                 }
             }
             filter {
@@ -189,7 +229,9 @@ dependencyResolutionManagement {
         }
         exclusiveContent {
             forRepository {
-                google()
+                maven {
+                    setUrlOrProxy("google-android", "https://dl.google.com/dl/android/maven2/")
+                }
             }
             filter {
                 includeModuleByRegex("com\\.android.*", "(?!r8).*")

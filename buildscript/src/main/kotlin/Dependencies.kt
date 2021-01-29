@@ -92,7 +92,7 @@ object Dependencies {
         const val espressoWeb = "androidx.test.espresso:espresso-web:${Versions.espresso}"
         const val espressoIntents = "androidx.test.espresso:espresso-intents:${Versions.espresso}"
         const val espressoDescendantActions = "com.forkingcode.espresso.contrib:espresso-descendant-actions:1.4.0"
-        const val kaspresso = "com.kaspersky.android-components:kaspresso:1.1.0"
+        const val kaspresso = "com.kaspersky.android-components:kaspresso:1.2.0"
         const val rx3Ilder = "com.squareup.rx.idler:rx3-idler:0.11.0"
     }
 
