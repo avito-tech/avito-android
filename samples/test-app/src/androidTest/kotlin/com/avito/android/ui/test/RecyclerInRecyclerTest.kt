@@ -73,7 +73,10 @@ class RecyclerInRecyclerTest {
                 .checkCausesDeeply {
                     isInstanceOf(AssertionError::class.java)
                     hasMessageThat()
-                        .contains("No matched item in recycler at position 0. Search near items from 0 to 3 has matches at positions: [2]")
+                        .apply {
+                            contains("No matched item in recycler at position 0 but was")
+                            contains("Search near items from 0 to 3 has matches at positions: [2]")
+                        }
                 }
         }
     }
