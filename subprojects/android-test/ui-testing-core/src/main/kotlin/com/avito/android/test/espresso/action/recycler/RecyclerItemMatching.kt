@@ -94,8 +94,10 @@ internal class RecyclerItemsMatcher(
             val searchFrom: Int,
             val searchTo: Int
         ) : Result() {
+
+            @Suppress("MaxLineLength")
             override val description: String
-                get() = "No matched item in recycler at position $atPosition. ${createNearItemsDescription()}"
+                get() = "No matched item in recycler at position $atPosition but was $itemAtPosition. ${createNearItemsDescription()}"
 
             private fun createNearItemsDescription() =
                 "Search near items from $searchFrom to $searchTo ${
