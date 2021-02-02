@@ -40,7 +40,7 @@ class SentryDestination(
             LogLevel.DEBUG -> Event.Level.DEBUG
             LogLevel.INFO -> Event.Level.INFO
             LogLevel.WARNING -> Event.Level.WARNING
-            LogLevel.CRITICAL -> Event.Level.ERROR
+            LogLevel.CRITICAL -> Event.Level.FATAL
         }
     }
 
