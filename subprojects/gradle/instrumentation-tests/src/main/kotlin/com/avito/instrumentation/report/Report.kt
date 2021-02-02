@@ -142,7 +142,6 @@ interface Report : ReadReport {
                 if (!::reportsApi.isInitialized) {
                     reportsApi = ReportsApi.create(
                         host = reportApiUrl,
-                        fallbackUrl = reportApiFallbackUrl,
                         loggerFactory = loggerFactory,
                         verboseHttp = verboseHttp
                     )

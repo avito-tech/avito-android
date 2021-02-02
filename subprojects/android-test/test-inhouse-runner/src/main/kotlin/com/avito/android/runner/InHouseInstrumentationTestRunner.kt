@@ -114,10 +114,9 @@ abstract class InHouseInstrumentationTestRunner :
                             logger = testReportLogger,
                             reportsApi = ReportsApi.create(
                                 host = reportConfig.reportApiUrl,
-                                fallbackUrl = reportConfig.reportApiFallbackUrl,
+                                loggerFactory = loggerFactory,
                                 readTimeout = 10,
-                                writeTimeout = 10,
-                                loggerFactory = loggerFactory
+                                writeTimeout = 10
                             )
                         )
                     )

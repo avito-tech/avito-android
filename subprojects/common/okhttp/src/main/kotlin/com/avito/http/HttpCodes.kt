@@ -1,12 +1,12 @@
 package com.avito.http
 
-object HttpCodes {
-    const val OK = 200
-    const val BAD_REQUEST = 400
-    const val NOT_FOUND = 404
-    const val CLIENT_TIMEOUT = 408
-    const val INTERNAL_ERROR = 500
-    const val BAD_GATEWAY = 502
-    const val UNAVAILABLE = 503
-    const val GATEWAY_TIMEOUT = 504
+public object HttpCodes {
+    public const val OK: Int = 200
+    public const val BAD_REQUEST: Int = 400
+    public const val NOT_FOUND: Int = 404
+    public const val CLIENT_TIMEOUT: Int = 408
+    public const val INTERNAL_ERROR: Int = 500
+    public const val BAD_GATEWAY: Int = 502
+    public const val UNAVAILABLE: Int = 503
+    public const val GATEWAY_TIMEOUT: Int = 504
 }
