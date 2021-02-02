@@ -18,7 +18,7 @@ private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> 
 ) : ViewAction {
 
     override fun getConstraints(): Matcher<View> =
-        allOf<View>(isAssignableFrom(RecyclerView::class.java), isDisplayed())
+        allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
 
     override fun getDescription(): String = when (match) {
         is RecyclerItemsMatcher.Match.All
@@ -30,6 +30,8 @@ private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> 
     override fun perform(uiController: UiController, root: View) {
         val recyclerView = root as RecyclerView
         try {
+            uiController.loopMainThreadUntilIdle()
+
             val matchResult = RecyclerItemsMatcher(recyclerView)
                 .match(
                     match
@@ -44,6 +46,7 @@ private class ViewDoesNotExistInRecyclerCheckHack<VH : RecyclerView.ViewHolder> 
                     matchResult.description
                 )
             }
+
             uiController.loopMainThreadUntilIdle()
         } catch (t: Throwable) {
             throw PerformException.Builder()
@@ -91,6 +94,7 @@ private class ActionOnItemAtPositionViewAction<VH : RecyclerView.ViewHolder>(
 
     override fun perform(uiController: UiController, view: View) {
         val recyclerView = view as RecyclerView
+        uiController.loopMainThreadUntilIdle()
 
         @Suppress("UNCHECKED_CAST")
         val viewHolderForPosition = recyclerView.findViewHolderForAdapterPosition(position) as VH?
@@ -101,8 +105,9 @@ private class ActionOnItemAtPositionViewAction<VH : RecyclerView.ViewHolder>(
                 .build()
 
         val viewAtPosition = viewHolderForPosition.itemView
-
         viewAction.perform(uiController, viewAtPosition)
+
+        uiController.loopMainThreadUntilIdle()
     }
 }
 
@@ -113,7 +118,7 @@ private class ActionOnItemViewAction<VH : RecyclerView.ViewHolder>(
 ) : ViewAction {
 
     override fun getConstraints(): Matcher<View> =
-        allOf<View>(isAssignableFrom(RecyclerView::class.java), isDisplayed())
+        allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
 
     override fun getDescription(): String = when (match) {
         is RecyclerItemsMatcher.Match.All
@@ -125,6 +130,8 @@ private class ActionOnItemViewAction<VH : RecyclerView.ViewHolder>(
     override fun perform(uiController: UiController, root: View) {
         val recyclerView = root as RecyclerView
         try {
+            uiController.loopMainThreadUntilIdle()
+
             val matchResult = RecyclerItemsMatcher(recyclerView)
                 .match(
                     match
@@ -146,7 +153,6 @@ private class ActionOnItemViewAction<VH : RecyclerView.ViewHolder>(
                         position = matchedItem.position,
                         viewAction = viewAction
                     ).perform(uiController, root)
-                    uiController.loopMainThreadUntilIdle()
                 }
             }
         } catch (t: Throwable) {
