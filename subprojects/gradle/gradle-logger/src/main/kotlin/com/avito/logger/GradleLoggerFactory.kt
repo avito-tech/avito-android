@@ -67,16 +67,18 @@ class GradleLoggerFactory(
             destination = SentryDestinationFactory.create(sentryConfig, metadata)
         )
 
+        val errorHandler = CombinedHandler(
+            handlers = listOf(
+                defaultHandler,
+                sentryHandler
+            )
+        )
+
         return DefaultLogger(
             debugHandler = defaultHandler,
             infoHandler = defaultHandler,
-            warningHandler = defaultHandler,
-            criticalHandler = CombinedHandler(
-                handlers = listOf(
-                    defaultHandler,
-                    sentryHandler
-                )
-            )
+            warningHandler = errorHandler,
+            criticalHandler = errorHandler
         )
     }
 
