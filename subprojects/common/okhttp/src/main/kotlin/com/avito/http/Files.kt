@@ -7,7 +7,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-fun File.convertToImageMultipart(name: String = "image", filename: String = "image"): MultipartBody.Part {
+public fun File.convertToImageMultipart(
+    name: String = "image",
+    filename: String = "image"
+): MultipartBody.Part {
     return MultipartBody.Part.createFormData(
         name,
         filename,

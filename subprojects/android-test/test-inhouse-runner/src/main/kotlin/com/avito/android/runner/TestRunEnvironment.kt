@@ -24,7 +24,6 @@ sealed class TestRunEnvironment {
 
     data class ReportConfig(
         val reportApiUrl: String,
-        val reportApiFallbackUrl: String,
         val reportViewerUrl: String
     )
 
@@ -80,7 +79,7 @@ sealed class TestRunEnvironment {
          *
          * 1. Аннотация имеет главный приоритет см. [com.avito.android.runner.annotation.resolver.AnnotationResolver]
          *    и [HostAnnotationResolver] в частности
-         * 2. далее instrumentation аргумент [apiUrlParameterKey]
+         * 2. далее instrumentation аргумент apiUrlParameterKey
          */
         val apiUrl: HttpUrl,
         val mockWebServerUrl: String,
@@ -122,7 +121,6 @@ fun provideEnvironment(
             val reportConfig = if (isReportEnabled) {
                 TestRunEnvironment.ReportConfig(
                     reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
-                    reportApiFallbackUrl = argumentsProvider.getMandatoryArgument("reportApiFallbackUrl"),
                     reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl")
                 )
             } else {

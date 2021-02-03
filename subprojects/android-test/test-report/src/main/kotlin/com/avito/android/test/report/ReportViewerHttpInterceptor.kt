@@ -1,7 +1,7 @@
 package com.avito.android.test.report
 
 import com.avito.filestorage.RemoteStorage
-import com.avito.http.isPlaintext
+import com.avito.http.internal.isPlaintext
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.GsonBuilder
 import okhttp3.Headers
@@ -117,7 +117,7 @@ class ReportViewerHttpInterceptor(
 
             val charset = determineBodyCharset(requestBody.contentType())
 
-            if (isPlaintext(buffer)) {
+            if (buffer.isPlaintext()) {
                 result.appendLine(tryPrettify(buffer.readString(charset)))
                 result.appendLine("--> END $method (${requestBody.contentLength()}-byte body)")
             } else {
@@ -160,7 +160,7 @@ class ReportViewerHttpInterceptor(
 
             val charset = determineBodyCharset(responseBody.contentType())
 
-            if (!isPlaintext(buffer)) {
+            if (!buffer.isPlaintext()) {
                 result.appendLine("")
                 result.appendLine("<-- END HTTP (binary ${buffer.size}-byte body omitted)")
                 return result.toString()

@@ -60,7 +60,6 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
 
         fun create(
             host: String,
-            fallbackUrl: String,
             loggerFactory: LoggerFactory,
             readTimeout: Long = 60,
             writeTimeout: Long = 10,
@@ -73,7 +72,6 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
                     host = host,
                     httpClient = getHttpClient(
                         verbose = verboseHttp,
-                        fallbackUrl = fallbackUrl,
                         logger = loggerFactory.create<ReportsApi>(),
                         readTimeoutSec = readTimeout,
                         writeTimeoutSec = writeTimeout

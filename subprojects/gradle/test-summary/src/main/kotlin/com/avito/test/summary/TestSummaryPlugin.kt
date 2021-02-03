@@ -83,7 +83,6 @@ class TestSummaryPlugin : Plugin<Project> {
     private fun createReportsApi(reportsHost: String, loggerFactory: LoggerFactory): ReportsApi {
         return ReportsApi.create(
             host = reportsHost,
-            fallbackUrl = reportsHost,
             loggerFactory = loggerFactory
         )
     }

@@ -26,7 +26,6 @@ internal class ReportsApiTest {
         val host = mockWebServer.url("/").toString()
         reportsApi = ReportsApi.create(
             host = host,
-            fallbackUrl = "",
             loggerFactory = loggerFactory
         )
     }

@@ -22,7 +22,6 @@ class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
             stubReportApi = StubReportApi(
                 realApi = ReportsApi.create(
                     host = mockWebServer.url("/").toString(),
-                    fallbackUrl = "",
                     loggerFactory = StubLoggerFactory
                 ),
                 mockDispatcher = mockDispatcher
@@ -34,6 +33,7 @@ class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
         state?.release()
     }
 
+    @Suppress("NewApi") // test fixtures (not running in android runtime)
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
         return parameterContext.parameter.type == StubReportApi::class.java
     }
