@@ -1,9 +1,9 @@
 package com.avito.instrumentation.internal.executing
 
+import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.report.listener.TestReporter
-import com.avito.instrumentation.internal.reservation.devices.provider.DevicesProviderFactory
 import com.avito.logger.LoggerFactory
 
 /**
@@ -33,7 +33,12 @@ internal interface TestExecutorFactory {
             statsDConfig: StatsDConfig
         ): TestExecutor {
             return TestExecutorImpl(
-                devicesProvider = devicesProviderFactory.create(configuration, executionParameters),
+                devicesProvider = devicesProviderFactory.create(
+                    deviceType = configuration.requestedDeviceType,
+                    configurationName = configuration.name,
+                    logcatTags = executionParameters.logcatTags,
+                    kubernetesNamespace = executionParameters.namespace
+                ),
                 testReporter = testReporter,
                 buildId = buildId,
                 configurationName = configuration.name,

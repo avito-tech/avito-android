@@ -11,6 +11,7 @@ import com.avito.android.InstrumentationChangedTestsFinderApi
 import com.avito.android.LoadTestsFromApkTask
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
+import com.avito.android.runner.devices.model.DeviceType.CLOUD
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
@@ -19,7 +20,6 @@ import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy.On
-import com.avito.instrumentation.configuration.InstrumentationConfiguration.Data.DevicesType.CLOUD
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.internal.executing.ExecutionParameters

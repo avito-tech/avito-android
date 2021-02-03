@@ -1,12 +1,12 @@
 package com.avito.instrumentation.internal.scheduling
 
+import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.TestReporter
-import com.avito.instrumentation.internal.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.internal.suite.model.transformTestsWithNewJobSlug
 import com.avito.instrumentation.report.Report
@@ -72,7 +72,7 @@ internal class TestsRunnerImplementation(
                 instrumentationConfiguration.copy(name = "${instrumentationConfiguration.name}-${runType.id}")
 
             val executor = testExecutorFactory.createExecutor(
-                devicesProviderFactory = DevicesProviderFactory.Impl(
+                devicesProviderFactory = DeviceProviderFactoryImpl(
                     kubernetesCredentials = kubernetesCredentials,
                     buildId = buildId,
                     buildType = buildType,

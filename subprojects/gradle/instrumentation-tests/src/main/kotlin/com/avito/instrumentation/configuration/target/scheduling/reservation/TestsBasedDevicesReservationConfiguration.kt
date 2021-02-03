@@ -16,6 +16,7 @@ open class TestsBasedDevicesReservationConfiguration : DeviceReservationConfigur
     }
 
     companion object {
+
         fun create(
             device: Device,
             min: Int,

@@ -1,27 +1,25 @@
 package com.avito.instrumentation.executing
 
+import com.avito.android.runner.devices.createKubernetesDeviceProvider
+import com.avito.android.runner.devices.model.createStubInstance
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.target.TargetConfiguration
-import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorImpl
-import com.avito.instrumentation.internal.reservation.client.kubernetes.KubernetesReservationClient
-import com.avito.instrumentation.internal.reservation.devices.provider.KubernetesDevicesProvider
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.reservation.request.Device
+import com.avito.instrumentation.reservation.request.QuotaConfigurationData
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.instrumentation.stub.report.listener.StubTestReporter
-import com.avito.instrumentation.stub.reservation.client.kubernetes.createStubInstance
-import com.avito.instrumentation.stub.reservation.request.createStubInstance
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.runner.service.worker.device.adb.Adb
-import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.time.StubTimeProvider
+import com.avito.time.TimeProvider
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -59,7 +57,7 @@ internal class TestExecutorIntegrationTest {
                         reservation = Reservation.StaticReservation(
                             device = Device.CloudEmulator.createStubInstance(image = "invalid/image/reference"),
                             count = 1,
-                            quota = QuotaConfiguration.Data(
+                            quota = QuotaConfigurationData(
                                 retryCount = 0,
                                 minimumSuccessCount = 1,
                                 minimumFailedCount = 0
@@ -80,20 +78,13 @@ internal class TestExecutorIntegrationTest {
         configurationName: String = "",
         buildId: String = "integration-test-build-id",
         statsDConfig: StatsDConfig = StatsDConfig.Disabled,
-        adb: Adb = Adb()
+        adb: Adb = Adb(),
+        timeProvider: TimeProvider = StubTimeProvider()
     ): TestExecutor = TestExecutorImpl(
-        devicesProvider = KubernetesDevicesProvider(
-            client = KubernetesReservationClient.createStubInstance(
-                loggerFactory = loggerFactory,
-                adb = adb
-            ),
-            adbDevicesManager = AdbDevicesManager(
-                loggerFactory = loggerFactory,
-                adb = adb
-            ),
-            loggerFactory = loggerFactory,
+        devicesProvider = createKubernetesDeviceProvider(
             adb = adb,
-            timeProvider = StubTimeProvider()
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
         ),
         testReporter = StubTestReporter(),
         buildId = buildId,
