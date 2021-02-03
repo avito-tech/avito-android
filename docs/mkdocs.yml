@@ -95,6 +95,9 @@ nav:
             - test_runner/TestRunner.md
             -   Metrics: test_runner/Metrics.md
     -   Blog:
+            -   2021:
+                    -   01:
+                            -   Removal of ui tests impact analysis functionality: blog/2021/01/ui-impact-analysis-end.md
             -   2020:
                     -   03:
                             -   Testing a minimized build: blog/2020/03/testing-a-minimized-build.md

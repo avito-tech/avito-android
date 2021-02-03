@@ -24,8 +24,6 @@ Plugins:
 - `:feature-toggles` - Gradle plugin to extract feature toggles values from code and report it as build artifact
 - `:impact`, `:impact-shared` - Gradle plugin to search parts of the project we can avoid testing based on diff.
 - `:instrumentation-tests` - Gradle plugin to set up and run instrumentation tests on Android
-- `:instrumentation-test-impact-analysis`, `:ui-test-bytecode-analyser` - Gradle plugin to search ui tests we can avoid
-  based on `impact-plugin` analysis
 - `:lint-report` - Gradle plugin merging lint reports from different modules
 - `:module-types` - Gradle plugin to prevent modules go to wrong configurations (android-test module as an app's
   implementation dependency for example)

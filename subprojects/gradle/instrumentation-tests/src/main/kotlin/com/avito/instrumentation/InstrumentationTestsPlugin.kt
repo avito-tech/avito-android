@@ -22,7 +22,6 @@ import com.avito.instrumentation.configuration.ImpactAnalysisPolicy.On
 import com.avito.instrumentation.configuration.InstrumentationConfiguration.Data.DevicesType.CLOUD
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
-import com.avito.instrumentation.impact.analyzeTestImpactTask
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.test.DumpConfigurationTask
 import com.avito.instrumentation.util.DelayTask
@@ -134,16 +133,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                     this.impactAnalysisPolicy.set(instrumentationConfiguration.impactAnalysisPolicy)
 
                     when (instrumentationConfiguration.impactAnalysisPolicy) {
-                        is On.RunAffectedTests, is On.RunNewTests, is On.RunModifiedTests -> {
-                            val impactTaskProvider = project.tasks.analyzeTestImpactTask()
-
-                            this.dependencyOn(impactTaskProvider) {
-                                this.affectedTests.set(it.testsToRunFile)
-                                this.newTests.set(it.addedTestsFile)
-                                this.modifiedTests.set(it.modifiedTestsFile)
-                            }
-                        }
-
                         is On.RunChangedTests ->
                             if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
                                 val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
@@ -152,7 +141,6 @@ class InstrumentationTestsPlugin : Plugin<Project> {
                                     this.changedTests.set(it.changedTestsFile)
                                 }
                             }
-
                         is ImpactAnalysisPolicy.Off -> {
                         }
                     }

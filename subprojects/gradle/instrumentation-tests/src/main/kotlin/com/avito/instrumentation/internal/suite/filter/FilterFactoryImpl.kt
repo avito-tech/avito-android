@@ -151,17 +151,6 @@ internal class FilterFactoryImpl(
             is ImpactAnalysisPolicy.Off -> {
                 // do nothing
             }
-            is ImpactAnalysisPolicy.On.RunAffectedTests -> {
-                addImpactTests(impactAnalysisResult.affectedTests)
-                removeImpactTests(impactAnalysisResult.addedTests)
-                removeImpactTests(impactAnalysisResult.modifiedTests)
-            }
-            is ImpactAnalysisPolicy.On.RunNewTests ->
-                addImpactTests(impactAnalysisResult.addedTests)
-
-            is ImpactAnalysisPolicy.On.RunModifiedTests ->
-                addImpactTests(impactAnalysisResult.modifiedTests)
-
             is ImpactAnalysisPolicy.On.RunChangedTests ->
                 addImpactTests(impactAnalysisResult.changedTests)
         }
@@ -178,20 +167,5 @@ internal class FilterFactoryImpl(
                 }.toSet()
             )
         )
-    }
-
-    private fun MutableList<TestsFilter>.removeImpactTests(tests: List<String>) {
-        if (tests.isNotEmpty()) {
-            add(
-                ExcludeByTestSignaturesFilter(
-                    source = TestsFilter.Signatures.Source.ImpactAnalysis,
-                    signatures = tests.map { name ->
-                        TestSignature(
-                            name = name
-                        )
-                    }.toSet()
-                )
-            )
-        }
     }
 }
