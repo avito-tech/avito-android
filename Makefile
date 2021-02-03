@@ -127,7 +127,7 @@ compile_tests:
 	./gradlew -p subprojects compileTestKotlin $(log_level)
 
 compile:
-	./gradlew -p subprojects compileKotlin compileTestKotlin $(log_level)
+	./gradlew -p subprojects compileKotlin compileTestKotlin compileIntegTestKotlin $(log_level)
 
 check:
 	./gradlew -p subprojects check

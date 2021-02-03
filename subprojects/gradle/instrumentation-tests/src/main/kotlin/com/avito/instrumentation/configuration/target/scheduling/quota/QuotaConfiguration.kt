@@ -1,6 +1,6 @@
 package com.avito.instrumentation.configuration.target.scheduling.quota
 
-import java.io.Serializable
+import com.avito.instrumentation.reservation.request.QuotaConfigurationData
 
 open class QuotaConfiguration {
 
@@ -25,15 +25,9 @@ open class QuotaConfiguration {
         }
     }
 
-    fun data() = Data(
+    fun data() = QuotaConfigurationData(
         retryCount = retryCount,
         minimumSuccessCount = minimumSuccessCount,
         minimumFailedCount = minimumFailedCount
     )
-
-    data class Data(
-        val retryCount: Int,
-        val minimumSuccessCount: Int,
-        val minimumFailedCount: Int
-    ) : Serializable
 }
