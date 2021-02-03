@@ -8,6 +8,8 @@ import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.instrumentation.report.Report
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.Gson
 import org.funktionale.tries.Try
@@ -21,19 +23,39 @@ internal class InstrumentationTestsScheduler(
     private val testSuiteProvider: TestSuiteProvider,
     private val testSuiteLoader: TestSuiteLoader,
     private val gson: Gson,
-    private val filterInfoWriter: FilterInfoWriter
+    private val filterInfoWriter: FilterInfoWriter,
+    private val loggerFactory: LoggerFactory
 ) : TestsScheduler {
 
+    private val logger = loggerFactory.create<InstrumentationTestsScheduler>()
+
     override fun schedule(): TestsScheduler.Result {
+        logger.debug("Filter config: ${params.instrumentationConfiguration.filter}")
         filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
 
         val tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
+
+        tests.fold(
+            { result ->
+                logger.info("Tests parsed from apk: ${result.size}")
+                logger.debug("Tests parsed from apk: ${result.map { it.testName }}")
+            },
+            { error -> logger.critical("Can't parse tests from apk", error) }
+        )
 
         writeParsedTests(tests)
 
         val testSuite = testSuiteProvider.getTestSuite(
             tests = tests.get()
         )
+
+        val skippedTests = testSuite.skippedTests.map {
+            "${it.first.test.name} on ${it.first.target.deviceName} because ${it.second.reason}"
+        }
+        logger.debug("Skipped tests: $skippedTests")
+
+        val testsToRun = testSuite.testsToRun.map { "${it.test.name} on ${it.target.deviceName}" }
+        logger.debug("Tests to run: $testsToRun")
 
         filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
         filterInfoWriter.writeFilterExcludes(testSuite.skippedTests)

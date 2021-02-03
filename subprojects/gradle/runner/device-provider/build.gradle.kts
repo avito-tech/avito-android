@@ -10,16 +10,16 @@ extra["artifact-id"] = "runner-device-provider"
 
 dependencies {
     // todo api impl?
-    api(project(":gradle:runner:service"))
-    api(project(":gradle:runner:shared"))
-    api(project(":gradle:runner:stub"))
-    api(project(":gradle:kubernetes"))
+    api(project(":subprojects:gradle:runner:service"))
+    api(project(":subprojects:gradle:runner:shared"))
+    api(project(":subprojects:gradle:runner:stub"))
+    api(project(":subprojects:gradle:kubernetes"))
 
     implementation(Dependencies.funktionaleTry)
-    implementation(project(":gradle:process"))
-    implementation(project(":common:logger"))
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:common:logger"))
 
-    testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
 }
 
 kotlin {

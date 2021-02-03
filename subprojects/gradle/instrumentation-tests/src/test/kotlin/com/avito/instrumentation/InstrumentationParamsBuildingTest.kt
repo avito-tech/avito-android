@@ -15,7 +15,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.nio.file.Path
 
-class InstrumentationParamsBuildingTest {
+internal class InstrumentationParamsBuildingTest {
 
     private lateinit var projectDir: File
 
@@ -37,7 +37,6 @@ class InstrumentationParamsBuildingTest {
                 buildTypeId = "teamcity-$buildType"
             ).toString(),
             "reportApiUrl" to "stub",
-            "reportApiFallbackUrl" to "stub",
             "reportViewerUrl" to "stub",
             "fileStorageUrl" to "stub",
             "sentryDsn" to "stub",
@@ -73,7 +72,6 @@ class InstrumentationParamsBuildingTest {
                          instrumentation {
                              output = project.file("outputs").path
                              reportApiUrl = "stub"
-                             reportApiFallbackUrl = "stub"
                              reportViewerUrl = "stub"
                              sentryDsn = "stub"
                              slackToken = "stub"
@@ -194,9 +192,8 @@ class InstrumentationParamsBuildingTest {
         assertThat(data.reportViewer)
             .isEqualTo(
                 Data.ReportViewer(
-                    reportViewerUrl = "stub",
                     reportApiUrl = "stub",
-                    reportApiFallbackUrl = "stub",
+                    reportViewerUrl = "stub",
                     fileStorageUrl = "stub"
                 )
             )

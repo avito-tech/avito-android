@@ -13,13 +13,13 @@ dependencies {
     }
 
     implementation(gradleApi())
-    implementation(project(":common:files"))
-    implementation(project(":gradle:process"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(Dependencies.funktionaleTry)
 
-    testImplementation(project(":gradle:process-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:process-test-fixtures"))
 }
 
 /**

@@ -6,21 +6,21 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:build-failer"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":common:okhttp"))
-    implementation(project(":common:throwable-utils"))
-    implementation(project(":gradle:android"))
-    implementation(project(":common:files"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:build-failer"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:throwable-utils"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:common:files"))
 
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.okhttp)
     implementation(Dependencies.okhttpLogging)
 
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
 }
 
 gradlePlugin {

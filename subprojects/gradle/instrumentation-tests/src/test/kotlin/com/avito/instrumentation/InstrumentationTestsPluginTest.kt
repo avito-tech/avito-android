@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class InstrumentationTestsPluginTest {
+internal class InstrumentationTestsPluginTest {
 
     @Test
     fun `run instrumentation by name - ok - in application project`(@TempDir projectDir: File) {
@@ -85,7 +85,6 @@ internal fun instrumentationConfiguration(): String = """
                         instrumentation {
                             output = project.file("outputs").path
                             reportApiUrl = "stub"
-                            reportApiFallbackUrl = "stub"
                             reportViewerUrl = "stub"
                             sentryDsn = "stub"
                             slackToken = "stub"

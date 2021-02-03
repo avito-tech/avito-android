@@ -19,7 +19,6 @@ public object InstrumentationPluginConfiguration {
         public var testApplicationApk: String? = null
 
         public var reportApiUrl: String = ""
-        public var reportApiFallbackUrl: String = ""
         public var reportViewerUrl: String = ""
         public var fileStorageUrl: String = ""
 
@@ -69,15 +68,15 @@ public object InstrumentationPluginConfiguration {
             configurations.forEach {
                 it.validate()
             }
-            require(sentryDsn.isNotEmpty()) {
-                "sentryDsn must be initialized"
-            }
-            require(slackToken.isNotEmpty()) {
-                "slackToken must be initialized"
-            }
-            require(registry.isNotEmpty()) {
-                "registry must be initialized"
-            }
+//            require(sentryDsn.isNotEmpty()) {
+//                "sentryDsn must be initialized"
+//            }
+//            require(slackToken.isNotEmpty()) {
+//                "slackToken must be initialized"
+//            }
+//            require(registry.isNotEmpty()) {
+//                "registry must be initialized"
+//            }
         }
 
         private fun createReportViewer(): Data.ReportViewer? {
@@ -85,19 +84,16 @@ public object InstrumentationPluginConfiguration {
             return if (reportViewer != null) {
                 Data.ReportViewer(
                     reportApiUrl = reportViewer.reportApiUrl,
-                    reportApiFallbackUrl = reportViewer.reportApiFallbackUrl,
                     reportViewerUrl = reportViewer.reportViewerUrl,
                     fileStorageUrl = reportViewer.fileStorageUrl
                 )
             } else {
-                if (reportApiFallbackUrl.isNotEmpty()
-                    && reportViewerUrl.isNotEmpty()
+                if (reportViewerUrl.isNotEmpty()
                     && reportApiUrl.isNotEmpty()
                     && fileStorageUrl.isNotEmpty()
                 ) {
                     Data.ReportViewer(
                         reportApiUrl = reportApiUrl,
-                        reportApiFallbackUrl = reportApiFallbackUrl,
                         reportViewerUrl = reportViewerUrl,
                         fileStorageUrl = fileStorageUrl
                     )
@@ -116,7 +112,6 @@ public object InstrumentationPluginConfiguration {
                         "sentryDsn" to sentryDsn,
                         "slackToken" to slackToken,
                         "reportApiUrl" to (reportViewer?.reportApiUrl ?: "http://stub"),
-                        "reportApiFallbackUrl" to (reportViewer?.reportApiFallbackUrl ?: "http://stub"),
                         "fileStorageUrl" to (reportViewer?.fileStorageUrl ?: "http://stub"),
                         "reportViewerUrl" to (reportViewer?.reportViewerUrl ?: "http://stub")
                     )
@@ -164,7 +159,6 @@ public object InstrumentationPluginConfiguration {
 
             public data class ReportViewer(
                 val reportApiUrl: String,
-                val reportApiFallbackUrl: String,
                 val reportViewerUrl: String,
                 val fileStorageUrl: String
             ) : Serializable

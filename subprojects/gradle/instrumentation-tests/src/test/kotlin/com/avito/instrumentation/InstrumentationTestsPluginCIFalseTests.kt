@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class InstrumentationTestsPluginCIFalseTests {
+internal class InstrumentationTestsPluginCIFalseTests {
 
     @field:TempDir
     lateinit var projectDir: File

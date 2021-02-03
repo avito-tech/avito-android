@@ -7,7 +7,7 @@ plugins {
 extra["artifact-id"] = "runner-shared-test"
 
 dependencies {
-    api(project(":gradle:runner:stub"))
+    api(project(":subprojects:gradle:runner:stub"))
     api(Dependencies.Test.coroutinesTest)
 
     compileOnly(gradleApi())
@@ -17,8 +17,8 @@ dependencies {
     implementation(Dependencies.kotson)
     implementation(Dependencies.Test.junitJupiterApi)
     implementation(Dependencies.Test.truth)
-    implementation(project(":common:report-viewer"))
-    implementation(project(":gradle:runner:service"))
-    implementation(project(":gradle:runner:shared"))
-    implementation(project(":gradle:test-project"))
+    implementation(project(":subprojects:common:report-viewer"))
+    implementation(project(":subprojects:gradle:runner:service"))
+    implementation(project(":subprojects:gradle:runner:shared"))
+    implementation(project(":subprojects:gradle:test-project"))
 }

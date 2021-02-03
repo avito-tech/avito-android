@@ -8,19 +8,19 @@ extra["artifact-id"] = "runner-client"
 
 dependencies {
     compileOnly(gradleApi())
-    api(project(":gradle:runner:shared"))
-    api(project(":gradle:runner:service"))
+    api(project(":subprojects:gradle:runner:shared"))
+    api(project(":subprojects:gradle:runner:service"))
 
-    implementation(project(":gradle:trace-event"))
-    implementation(project(":common:math"))
+    implementation(project(":subprojects:gradle:trace-event"))
+    implementation(project(":subprojects:common:math"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.coroutinesCore)
     implementation(Dependencies.gson)
 
-    testImplementation(project(":common:logger-test-fixtures"))
-    testImplementation(project(":common:time-test-fixtures"))
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":gradle:runner:shared-test"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:common:time-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:gradle:runner:shared-test"))
     testImplementation(Dependencies.kotlinReflect)
     testImplementation(Dependencies.Test.mockitoKotlin)
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)

@@ -8,18 +8,18 @@ dependencies {
     api(Dependencies.funktionaleTry)
     api(Dependencies.gson)
 
-    api(project(":common:okhttp"))
+    api(project(":subprojects:common:okhttp"))
 
-    implementation(project(":common:math"))
-    implementation(project(":common:logger"))
+    implementation(project(":subprojects:common:math"))
+    implementation(project(":subprojects:common:logger"))
     implementation(Dependencies.okhttpLogging)
     implementation(Dependencies.kotson)
 
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(project(":common:files"))
-    testImplementation(project(":common:resources"))
-    testImplementation(project(":common:logger-test-fixtures"))
-    testImplementation(project(":common:report-viewer-test-fixtures"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":subprojects:common:files"))
+    testImplementation(project(":subprojects:common:resources"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
     testImplementation(Dependencies.Test.okhttpMockWebServer)
     testImplementation(Dependencies.Test.jsonPathAssert)
 }
