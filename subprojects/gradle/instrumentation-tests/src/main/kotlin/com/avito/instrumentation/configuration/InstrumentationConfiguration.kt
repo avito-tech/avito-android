@@ -1,5 +1,6 @@
 package com.avito.instrumentation.configuration
 
+import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.reservation.request.Device
 import org.gradle.api.Action
@@ -75,17 +76,17 @@ abstract class InstrumentationConfiguration(val name: String) {
         val filter: InstrumentationFilter.Data
     ) : Serializable {
 
-        val requestedDeviceType: DevicesType = determineRequestedDeviceType(targets.map { it.reservation.device })
+        val requestedDeviceType: DeviceType = determineRequestedDeviceType(targets.map { it.reservation.device })
 
         override fun toString(): String = "$name, targets: $targets, filter: $filter "
 
-        private fun determineRequestedDeviceType(requestedDevices: List<Device>): DevicesType {
+        private fun determineRequestedDeviceType(requestedDevices: List<Device>): DeviceType {
             return when {
-                requestedDevices.all { it is Device.LocalEmulator } -> DevicesType.LOCAL
-                requestedDevices.all { it is Device.CloudEmulator } -> DevicesType.CLOUD
-                requestedDevices.all { it is Device.MockEmulator } -> DevicesType.MOCK
+                requestedDevices.all { it is Device.LocalEmulator } -> DeviceType.LOCAL
+                requestedDevices.all { it is Device.CloudEmulator } -> DeviceType.CLOUD
+                requestedDevices.all { it is Device.MockEmulator } -> DeviceType.MOCK
                 else -> {
-                    val deviceTypesNames = DevicesType.values().map { it.name }
+                    val deviceTypesNames = DeviceType.values().map { it.name }
                     throw IllegalStateException(
                         "Targeting different type of emulators($deviceTypesNames) " +
                             "in the same configuration is not supported; " +
@@ -94,8 +95,6 @@ abstract class InstrumentationConfiguration(val name: String) {
                 }
             }
         }
-
-        enum class DevicesType { CLOUD, LOCAL, MOCK }
 
         companion object
     }
