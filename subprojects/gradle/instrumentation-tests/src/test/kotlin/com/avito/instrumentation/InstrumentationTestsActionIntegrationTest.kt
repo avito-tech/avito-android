@@ -3,6 +3,7 @@ package com.avito.instrumentation
 import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
+import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
@@ -12,7 +13,6 @@ import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.finalizer.FinalizerFactory
 import com.avito.instrumentation.internal.report.listener.TestReporter
-import com.avito.instrumentation.internal.reservation.devices.provider.DevicesProviderFactory
 import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
 import com.avito.instrumentation.stub.executing.StubTestExecutor
 import com.avito.instrumentation.stub.report.createStubInstance

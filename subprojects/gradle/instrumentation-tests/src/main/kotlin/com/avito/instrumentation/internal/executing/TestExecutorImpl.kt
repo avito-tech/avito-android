@@ -1,10 +1,11 @@
 package com.avito.instrumentation.internal.executing
 
+import com.avito.android.runner.devices.DevicesProvider
+import com.avito.android.runner.devices.model.ReservationData
 import com.avito.android.stats.StatsDConfig
-import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConfiguration
 import com.avito.instrumentation.internal.report.listener.TestReporter
-import com.avito.instrumentation.internal.reservation.devices.provider.DevicesProvider
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
+import com.avito.instrumentation.reservation.request.QuotaConfigurationData
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -83,7 +84,7 @@ class TestExecutorImpl(
 
     private fun reservations(
         tests: List<TestWithTarget>
-    ): Collection<Reservation.Data> {
+    ): Collection<ReservationData> {
 
         val testsGroupedByTargets: Map<TargetGroup, List<TestWithTarget>> = tests.groupBy {
             TargetGroup(
@@ -110,7 +111,7 @@ class TestExecutorImpl(
     // TODO: extract and delegate this channels orchestration.
     // It's overcomplicated for local client
     private fun withDevices(
-        reservations: Collection<Reservation.Data>,
+        reservations: Collection<ReservationData>,
         action: (devices: ReceiveChannel<Device>) -> Unit
     ) {
         runBlocking {
@@ -130,7 +131,7 @@ class TestExecutorImpl(
 
     private fun createTestRunRequest(
         targetTestRun: TestWithTarget,
-        quota: QuotaConfiguration.Data,
+        quota: QuotaConfigurationData,
         reservation: Reservation,
         application: File?,
         testApplication: File,
