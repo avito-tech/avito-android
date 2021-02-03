@@ -75,6 +75,9 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
              -PkubernetesUrl=$KUBERNETES_URL \\
              -Pavito.build=teamcity \\
+             -Pavito.elastic.enabled=true \\
+             -Pavito.elastic.endpoints=$ELASTIC_ENDPOINTS \\
+             -Pavito.elastic.indexpattern=speed-android \\
              -Davito.project.version=$PROJECT_VERSION \\
              -Pavito.artifactory.user=$ARTIFACTORY_USER \\
              -Pavito.artifactory.password=$ARTIFACTORY_PASSWORD \\
