@@ -27,7 +27,6 @@ abstract class MarkReportAsSourceTask : DefaultTask() {
         MarkReportAsSourceAction(
             reportsApi = ReportsApi.create(
                 host = reportsHost.get(),
-                fallbackUrl = reportsHost.get(),
                 loggerFactory = loggerFactory
             ),
             timeProvider = timeProvider,

@@ -27,7 +27,12 @@ class BitbucketImpl(
         .baseUrl(config.baseUrl.toHttpUrl())
         .client(
             OkHttpClient.Builder()
-                .authenticator(BasicAuthenticator(config.credentials.user, config.credentials.password))
+                .authenticator(
+                    BasicAuthenticator(
+                        user = config.credentials.user,
+                        password = config.credentials.password
+                    )
+                )
                 .build()
         )
         .addConverterFactory(GsonConverterFactory.create())

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
  * See also:
  * - [okhttp3.internal.http.RetryAndFollowUpInterceptor]
  */
-class RetryInterceptor constructor(
+public class RetryInterceptor constructor(
     private val retries: Int = 5,
     private val allowedMethods: List<String> = listOf("GET"),
     private val allowedCodes: List<Int> = listOf(
