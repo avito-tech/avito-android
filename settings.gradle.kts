@@ -11,10 +11,6 @@ if (useCompositeBuild.toBoolean()) {
 }
 include(":samples:test-app-core")
 include(":samples:test-app-screenshot-test")
-include(":samples:test-app-impact:app")
-include(":samples:test-app-impact:androidTest-core")
-include(":samples:test-app-impact:feature-one")
-include(":samples:test-app-impact:feature-two")
 
 includeBuild("buildscript")
 

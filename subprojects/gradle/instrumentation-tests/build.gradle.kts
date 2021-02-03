@@ -33,7 +33,6 @@ dependencies {
     implementation(project(":gradle:statsd-config"))
     implementation(project(":common:files"))
     implementation(project(":gradle:git"))
-    implementation(project(":gradle:instrumentation-test-impact-analysis"))
     implementation(project(":gradle:instrumentation-changed-tests-finder"))
     implementation(project(":gradle:instrumentation-tests-dex-loader"))
     implementation(project(":gradle:gradle-extensions"))
