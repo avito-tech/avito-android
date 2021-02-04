@@ -136,7 +136,7 @@ pluginManagement {
                     useModule("com.android.tools.build:gradle:4.1.1")
 
                 pluginId.startsWith("org.jetbrains.kotlin.") ->
-                    useVersion("1.4.21")
+                    useVersion("1.4.30")
 
                 pluginId.startsWith("com.avito.android") ->
                     useModule("com.avito.android:${pluginId.removePrefix("com.avito.android.")}:$infraVersion")
