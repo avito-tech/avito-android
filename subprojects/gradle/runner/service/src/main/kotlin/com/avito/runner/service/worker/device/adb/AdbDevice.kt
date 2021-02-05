@@ -62,14 +62,14 @@ data class AdbDevice(
                     key = "ro.build.version.sdk",
                     cast = { it.toInt() }
                 )
-                eventsListener.getSdkPropertySuccess(attempt, result)
+                eventsListener.onGetSdkPropertySuccess(attempt, result)
                 result
             },
             attemptFailedHandler = { attempt, _ ->
-                eventsListener.getSdkPropertyAttemptFail(attempt)
+                eventsListener.onGetSdkPropertyAttemptFail(attempt)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.getSdkPropertyFailure(throwable)
+                eventsListener.onGetSdkPropertyFailure(throwable)
             }
         )
     }
@@ -85,13 +85,13 @@ data class AdbDevice(
                 delaySeconds = 5,
                 block = { attempt ->
                     adbDevice.installPackage(applicationPackage, true)
-                    eventsListener.installApplicationSuccess(attempt, applicationPackage)
+                    eventsListener.onInstallApplicationSuccess(attempt, applicationPackage)
                 },
                 attemptFailedHandler = { attempt, _ ->
-                    eventsListener.installApplicationAttemptFail(attempt, applicationPackage)
+                    eventsListener.onInstallApplicationAttemptFail(attempt, applicationPackage)
                 },
                 onError = { throwable ->
-                    eventsListener.installApplicationFailure(applicationPackage, throwable)
+                    eventsListener.onInstallApplicationFailure(applicationPackage, throwable)
                 }
             )
         }.map {
@@ -129,15 +129,15 @@ data class AdbDevice(
                     is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
                         val testName = "${it.className}.${it.name}"
                         when (it.result) {
-                            TestCaseRun.Result.Passed -> eventsListener.runTestPassed(testName)
-                            TestCaseRun.Result.Ignored -> eventsListener.runTestIgnored(testName)
+                            TestCaseRun.Result.Passed -> eventsListener.onRunTestPassed(testName)
+                            TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(testName)
                             is TestCaseRun.Result.Failed.InRun ->
-                                eventsListener.runTestRunError(
+                                eventsListener.onRunTestRunError(
                                     testName = testName,
                                     errorMessage = it.result.errorMessage
                                 )
                             is TestCaseRun.Result.Failed.InfrastructureError ->
-                                eventsListener.runTestInfrastructureError(
+                                eventsListener.onRunTestInfrastructureError(
                                     testName = testName,
                                     errorMessage = it.result.errorMessage,
                                     throwable = it.result.cause
@@ -158,7 +158,7 @@ data class AdbDevice(
                         )
                     }
                     is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
-                        eventsListener.runTestFailedOnStart(it.message)
+                        eventsListener.onRunTestFailedOnStart(it.message)
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
@@ -172,7 +172,7 @@ data class AdbDevice(
                         )
                     }
                     is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
-                        eventsListener.runTestFailedOnInstrumentationParse(it.message, it.throwable)
+                        eventsListener.onRunTestFailedOnInstrumentationParse(it.message, it.throwable)
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
@@ -206,15 +206,15 @@ data class AdbDevice(
                     throw IllegalStateException("sys.boot_completed isn't '1'")
                 }
 
-                eventsListener.getAliveDeviceSuccess(attempt)
+                eventsListener.onGetAliveDeviceSuccess(attempt)
 
                 Device.DeviceStatus.Alive
             },
             attemptFailedHandler = { attempt, _ ->
-                eventsListener.getAliveDeviceAttemptFail(attempt)
+                eventsListener.onGetAliveDeviceAttemptFail(attempt)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.getAliveDeviceFailed(throwable)
+                eventsListener.onGetAliveDeviceFailed(throwable)
             }
         )
     } catch (t: Throwable) {
@@ -234,13 +234,13 @@ data class AdbDevice(
                     throw IllegalStateException("Fail to clear package $name; output=${result.output}")
                 }
 
-                eventsListener.clearPackageSuccess(attempt, name)
+                eventsListener.onClearPackageSuccess(attempt, name)
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.clearPackageAttemptFail(attempt, name, throwable)
+                eventsListener.onClearPackageAttemptFail(attempt, name, throwable)
             },
             onError = { throwable ->
-                eventsListener.clearPackageFailure(name, throwable)
+                eventsListener.onClearPackageFailure(name, throwable)
             }
         )
     }
@@ -270,13 +270,13 @@ data class AdbDevice(
                     )
                 }
 
-                eventsListener.pullSuccess(from, to)
+                eventsListener.onPullSuccess(from, to)
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.pullAttemptFail(attempt, from, throwable)
+                eventsListener.onPullAttemptFail(attempt, from, throwable)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.pullFailure(from, throwable)
+                eventsListener.onPullFailure(from, throwable)
             }
         )
     }
@@ -295,16 +295,16 @@ data class AdbDevice(
                 )
 
                 if (result.output.contains("removed ")) {
-                    eventsListener.clearDirectorySuccess(remotePath, result.output)
+                    eventsListener.onClearDirectorySuccess(remotePath, result.output)
                 } else {
-                    eventsListener.clearDirectoryNothingDone(remotePath)
+                    eventsListener.onClearDirectoryNothingDone(remotePath)
                 }
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.clearDirectoryAttemptFail(attempt, remotePath, throwable)
+                eventsListener.onClearDirectoryAttemptFail(attempt, remotePath, throwable)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.clearDirectoryFailure(remotePath, throwable)
+                eventsListener.onClearDirectoryFailure(remotePath, throwable)
             }
         )
     }
@@ -321,15 +321,15 @@ data class AdbDevice(
                     )
                 ).output.lines()
 
-                eventsListener.listSuccess(remotePath)
+                eventsListener.onListSuccess(remotePath)
 
                 result
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.listAttemptFail(attempt, remotePath, throwable)
+                eventsListener.onListAttemptFail(attempt, remotePath, throwable)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.listFailure(remotePath, throwable)
+                eventsListener.onListFailure(remotePath, throwable)
             }
         )
     }
