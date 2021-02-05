@@ -81,7 +81,8 @@ internal class TestsRunnerImplementation(
                     output = output,
                     logcatDir = logcatDir,
                     loggerFactory = loggerFactory,
-                    timeProvider = timeProvider
+                    timeProvider = timeProvider,
+                    statsDConfig = statsDConfig
                 ),
                 configuration = initialRunConfiguration,
                 executionParameters = executionParameters,

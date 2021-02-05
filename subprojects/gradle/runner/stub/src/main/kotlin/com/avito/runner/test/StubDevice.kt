@@ -138,7 +138,7 @@ open class StubDevice(
 
     override fun clearDirectory(remotePath: Path): Try<Any> = Try {}
 
-    override fun list(remotePath: String): Try<Any> = Try {}
+    override fun list(remotePath: String): Try<List<String>> = Try { emptyList() }
 
     override fun deviceStatus(): Device.DeviceStatus {
         resultQueuePrecondition(

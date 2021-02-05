@@ -24,6 +24,7 @@ public fun createKubernetesDeviceProvider(
         ),
         loggerFactory = loggerFactory,
         adb = adb,
-        timeProvider = timeProvider
+        timeProvider = timeProvider,
+        metricsConfigData = null
     )
 }
