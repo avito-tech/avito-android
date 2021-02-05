@@ -5,11 +5,8 @@ import com.avito.android.stats.StatsDSender
 
 internal class TestMetricsSender(
     private val statsDSender: StatsDSender,
-    buildId: String,
-    instrumentationConfigName: String
+    private val prefix: String
 ) {
-
-    private val prefix = "testrunner.$buildId.$instrumentationConfigName"
 
     fun sendInitialDelay(delayMs: Long) {
         statsDSender.send(prefix, GaugeMetric("initial-delay", delayMs))

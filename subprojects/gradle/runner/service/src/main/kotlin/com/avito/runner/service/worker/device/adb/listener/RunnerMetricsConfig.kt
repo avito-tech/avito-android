@@ -1,9 +1,9 @@
 package com.avito.runner.service.worker.device.adb.listener
 
 import com.avito.android.stats.StatsDConfig
+import java.io.Serializable
 
-data class MetricsConfigData(
+data class RunnerMetricsConfig(
     val statsDConfig: StatsDConfig,
-    val buildId: String,
-    val instrumentationConfigName: String
-)
+    val runnerPrefix: String
+) : Serializable

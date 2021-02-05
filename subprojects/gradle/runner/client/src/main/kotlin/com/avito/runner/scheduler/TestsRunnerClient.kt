@@ -29,15 +29,14 @@ class TestsRunnerClient {
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         val statsDSender: StatsDSender = StatsDSender.Impl(
-            config = arguments.statsDConfig,
+            config = arguments.metricsConfig.statsDConfig,
             loggerFactory = loggerFactory
         )
 
         val testMetricsSender: TestMetricsListener = TestMetricsListenerImpl(
             testMetricsSender = TestMetricsSender(
                 statsDSender = statsDSender,
-                buildId = arguments.buildId,
-                instrumentationConfigName = arguments.instrumentationConfigName
+                prefix = arguments.metricsConfig.runnerPrefix
             ),
             timeProvider = timeProvider,
             loggerFactory = arguments.loggerFactory

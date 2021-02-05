@@ -1,5 +1,6 @@
 package com.avito.runner.service.worker.device.adb.listener
 
+import com.avito.runner.service.worker.device.Device
 import java.nio.file.Path
 
 internal class CompositeAdbDeviceEventListener(
@@ -18,103 +19,108 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onGetSdkPropertyFailure(throwable) }
     }
 
-    override fun onInstallApplicationSuccess(attempt: Int, applicationPackage: String) {
-        listeners.forEach { it.onInstallApplicationSuccess(attempt, applicationPackage) }
+    override fun onInstallApplicationSuccess(device: Device, attempt: Int, applicationPackage: String) {
+        listeners.forEach { it.onInstallApplicationSuccess(device, attempt, applicationPackage) }
     }
 
-    override fun onInstallApplicationAttemptFail(attempt: Int, applicationPackage: String) {
-        listeners.forEach { it.onInstallApplicationAttemptFail(attempt, applicationPackage) }
+    override fun onInstallApplicationAttemptFail(device: Device, attempt: Int, applicationPackage: String) {
+        listeners.forEach { it.onInstallApplicationAttemptFail(device, attempt, applicationPackage) }
     }
 
-    override fun onInstallApplicationFailure(applicationPackage: String, throwable: Throwable) {
-        listeners.forEach { it.onInstallApplicationFailure(applicationPackage, throwable) }
+    override fun onInstallApplicationFailure(device: Device, applicationPackage: String, throwable: Throwable) {
+        listeners.forEach { it.onInstallApplicationFailure(device, applicationPackage, throwable) }
     }
 
-    override fun onGetAliveDeviceSuccess(attempt: Int) {
-        listeners.forEach { it.onGetAliveDeviceSuccess(attempt) }
+    override fun onGetAliveDeviceSuccess(device: Device, attempt: Int) {
+        listeners.forEach { it.onGetAliveDeviceSuccess(device, attempt) }
     }
 
-    override fun onGetAliveDeviceAttemptFail(attempt: Int) {
-        listeners.forEach { it.onGetAliveDeviceAttemptFail(attempt) }
+    override fun onGetAliveDeviceAttemptFail(device: Device, attempt: Int) {
+        listeners.forEach { it.onGetAliveDeviceAttemptFail(device, attempt) }
     }
 
-    override fun onGetAliveDeviceFailed(throwable: Throwable) {
-        listeners.forEach { it.onGetAliveDeviceFailed(throwable) }
+    override fun onGetAliveDeviceFailed(device: Device, throwable: Throwable) {
+        listeners.forEach { it.onGetAliveDeviceFailed(device, throwable) }
     }
 
-    override fun onClearPackageSuccess(attempt: Int, name: String) {
-        listeners.forEach { it.onClearPackageSuccess(attempt, name) }
+    override fun onClearPackageSuccess(device: Device, attempt: Int, name: String) {
+        listeners.forEach { it.onClearPackageSuccess(device, attempt, name) }
     }
 
-    override fun onClearPackageAttemptFail(attempt: Int, name: String, throwable: Throwable) {
-        listeners.forEach { it.onClearPackageAttemptFail(attempt, name, throwable) }
+    override fun onClearPackageAttemptFail(device: Device, attempt: Int, name: String, throwable: Throwable) {
+        listeners.forEach { it.onClearPackageAttemptFail(device, attempt, name, throwable) }
     }
 
-    override fun onClearPackageFailure(name: String, throwable: Throwable) {
-        listeners.forEach { it.onClearPackageFailure(name, throwable) }
+    override fun onClearPackageFailure(device: Device, name: String, throwable: Throwable) {
+        listeners.forEach { it.onClearPackageFailure(device, name, throwable) }
     }
 
-    override fun onPullSuccess(from: Path, to: Path) {
-        listeners.forEach { it.onPullSuccess(from, to) }
+    override fun onPullSuccess(device: Device, from: Path, to: Path) {
+        listeners.forEach { it.onPullSuccess(device, from, to) }
     }
 
-    override fun onPullAttemptFail(attempt: Int, from: Path, throwable: Throwable) {
-        listeners.forEach { it.onPullAttemptFail(attempt, from, throwable) }
+    override fun onPullAttemptFail(device: Device, attempt: Int, from: Path, throwable: Throwable) {
+        listeners.forEach { it.onPullAttemptFail(device, attempt, from, throwable) }
     }
 
-    override fun onPullFailure(from: Path, throwable: Throwable) {
-        listeners.forEach { it.onPullFailure(from, throwable) }
+    override fun onPullFailure(device: Device, from: Path, throwable: Throwable) {
+        listeners.forEach { it.onPullFailure(device, from, throwable) }
     }
 
-    override fun onClearDirectorySuccess(remotePath: Path, output: String) {
-        listeners.forEach { it.onClearDirectorySuccess(remotePath, output) }
+    override fun onClearDirectorySuccess(device: Device, remotePath: Path, output: String) {
+        listeners.forEach { it.onClearDirectorySuccess(device, remotePath, output) }
     }
 
-    override fun onClearDirectoryNothingDone(remotePath: Path) {
-        listeners.forEach { it.onClearDirectoryNothingDone(remotePath) }
+    override fun onClearDirectoryNothingDone(device: Device, remotePath: Path) {
+        listeners.forEach { it.onClearDirectoryNothingDone(device, remotePath) }
     }
 
-    override fun onClearDirectoryAttemptFail(attempt: Int, remotePath: Path, throwable: Throwable) {
-        listeners.forEach { it.onClearDirectoryAttemptFail(attempt, remotePath, throwable) }
+    override fun onClearDirectoryAttemptFail(device: Device, attempt: Int, remotePath: Path, throwable: Throwable) {
+        listeners.forEach { it.onClearDirectoryAttemptFail(device, attempt, remotePath, throwable) }
     }
 
-    override fun onClearDirectoryFailure(remotePath: Path, throwable: Throwable) {
-        listeners.forEach { it.onClearDirectoryFailure(remotePath, throwable) }
+    override fun onClearDirectoryFailure(device: Device, remotePath: Path, throwable: Throwable) {
+        listeners.forEach { it.onClearDirectoryFailure(device, remotePath, throwable) }
     }
 
-    override fun onListSuccess(remotePath: String) {
-        listeners.forEach { it.onListSuccess(remotePath) }
+    override fun onListSuccess(device: Device, remotePath: String) {
+        listeners.forEach { it.onListSuccess(device, remotePath) }
     }
 
-    override fun onListAttemptFail(attempt: Int, remotePath: String, throwable: Throwable) {
-        listeners.forEach { it.onListAttemptFail(attempt, remotePath, throwable) }
+    override fun onListAttemptFail(device: Device, attempt: Int, remotePath: String, throwable: Throwable) {
+        listeners.forEach { it.onListAttemptFail(device, attempt, remotePath, throwable) }
     }
 
-    override fun onListFailure(remotePath: String, throwable: Throwable) {
-        listeners.forEach { it.onListFailure(remotePath, throwable) }
+    override fun onListFailure(device: Device, remotePath: String, throwable: Throwable) {
+        listeners.forEach { it.onListFailure(device, remotePath, throwable) }
     }
 
-    override fun onRunTestPassed(testName: String) {
-        listeners.forEach { it.onRunTestPassed(testName) }
+    override fun onRunTestPassed(device: Device, testName: String) {
+        listeners.forEach { it.onRunTestPassed(device, testName) }
     }
 
-    override fun onRunTestIgnored(testName: String) {
-        listeners.forEach { it.onRunTestIgnored(testName) }
+    override fun onRunTestIgnored(device: Device, testName: String) {
+        listeners.forEach { it.onRunTestIgnored(device, testName) }
     }
 
-    override fun onRunTestRunError(testName: String, errorMessage: String) {
-        listeners.forEach { it.onRunTestRunError(testName, errorMessage) }
+    override fun onRunTestRunError(device: Device, testName: String, errorMessage: String) {
+        listeners.forEach { it.onRunTestRunError(device, testName, errorMessage) }
     }
 
-    override fun onRunTestInfrastructureError(testName: String, errorMessage: String, throwable: Throwable?) {
-        listeners.forEach { it.onRunTestInfrastructureError(testName, errorMessage, throwable) }
+    override fun onRunTestInfrastructureError(
+        device: Device,
+        testName: String,
+        errorMessage: String,
+        throwable: Throwable?
+    ) {
+        listeners.forEach { it.onRunTestInfrastructureError(device, testName, errorMessage, throwable) }
     }
 
-    override fun onRunTestFailedOnStart(message: String) {
-        listeners.forEach { it.onRunTestFailedOnStart(message) }
+    override fun onRunTestFailedOnStart(device: Device, message: String) {
+        listeners.forEach { it.onRunTestFailedOnStart(device, message) }
     }
 
-    override fun onRunTestFailedOnInstrumentationParse(message: String, throwable: Throwable) {
-        listeners.forEach { it.onRunTestFailedOnInstrumentationParse(message, throwable) }
+    override fun onRunTestFailedOnInstrumentationParse(device: Device, message: String, throwable: Throwable) {
+        listeners.forEach { it.onRunTestFailedOnInstrumentationParse(device, message, throwable) }
     }
 }

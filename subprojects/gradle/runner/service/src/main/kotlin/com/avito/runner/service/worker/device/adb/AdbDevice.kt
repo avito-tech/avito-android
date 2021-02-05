@@ -20,7 +20,7 @@ import com.avito.runner.service.worker.device.adb.listener.AdbDeviceEventsListen
 import com.avito.runner.service.worker.device.adb.listener.AdbDeviceEventsLogger
 import com.avito.runner.service.worker.device.adb.listener.AdbDeviceMetrics
 import com.avito.runner.service.worker.device.adb.listener.CompositeAdbDeviceEventListener
-import com.avito.runner.service.worker.device.adb.listener.MetricsConfigData
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
@@ -41,13 +41,13 @@ data class AdbDevice(
     private val adb: Adb,
     private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
-    private val metricsConfigData: MetricsConfigData? = null,
+    private val metricsConfig: RunnerMetricsConfig? = null,
     // MBS-8531: don't use "ADB" here to avoid possible recursion
     override val logger: Logger = loggerFactory.create("[${coordinate.serial}]"),
     private val eventsListener: AdbDeviceEventsListener = createEventListener(
         loggerFactory = loggerFactory,
         logger = logger,
-        metricsConfigData = metricsConfigData
+        runnerMetricsConfig = metricsConfig
     ),
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
     private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
@@ -85,13 +85,13 @@ data class AdbDevice(
                 delaySeconds = 5,
                 block = { attempt ->
                     adbDevice.installPackage(applicationPackage, true)
-                    eventsListener.onInstallApplicationSuccess(attempt, applicationPackage)
+                    eventsListener.onInstallApplicationSuccess(this, attempt, applicationPackage)
                 },
                 attemptFailedHandler = { attempt, _ ->
-                    eventsListener.onInstallApplicationAttemptFail(attempt, applicationPackage)
+                    eventsListener.onInstallApplicationAttemptFail(this, attempt, applicationPackage)
                 },
                 onError = { throwable ->
-                    eventsListener.onInstallApplicationFailure(applicationPackage, throwable)
+                    eventsListener.onInstallApplicationFailure(this, applicationPackage, throwable)
                 }
             )
         }.map {
@@ -129,15 +129,17 @@ data class AdbDevice(
                     is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
                         val testName = "${it.className}.${it.name}"
                         when (it.result) {
-                            TestCaseRun.Result.Passed -> eventsListener.onRunTestPassed(testName)
-                            TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(testName)
+                            TestCaseRun.Result.Passed -> eventsListener.onRunTestPassed(this, testName)
+                            TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(this, testName)
                             is TestCaseRun.Result.Failed.InRun ->
                                 eventsListener.onRunTestRunError(
+                                    device = this,
                                     testName = testName,
                                     errorMessage = it.result.errorMessage
                                 )
                             is TestCaseRun.Result.Failed.InfrastructureError ->
                                 eventsListener.onRunTestInfrastructureError(
+                                    device = this,
                                     testName = testName,
                                     errorMessage = it.result.errorMessage,
                                     throwable = it.result.cause
@@ -158,7 +160,7 @@ data class AdbDevice(
                         )
                     }
                     is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
-                        eventsListener.onRunTestFailedOnStart(it.message)
+                        eventsListener.onRunTestFailedOnStart(this, it.message)
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
@@ -172,7 +174,7 @@ data class AdbDevice(
                         )
                     }
                     is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
-                        eventsListener.onRunTestFailedOnInstrumentationParse(it.message, it.throwable)
+                        eventsListener.onRunTestFailedOnInstrumentationParse(this, it.message, it.throwable)
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
@@ -206,15 +208,15 @@ data class AdbDevice(
                     throw IllegalStateException("sys.boot_completed isn't '1'")
                 }
 
-                eventsListener.onGetAliveDeviceSuccess(attempt)
+                eventsListener.onGetAliveDeviceSuccess(this, attempt)
 
                 Device.DeviceStatus.Alive
             },
             attemptFailedHandler = { attempt, _ ->
-                eventsListener.onGetAliveDeviceAttemptFail(attempt)
+                eventsListener.onGetAliveDeviceAttemptFail(this, attempt)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.onGetAliveDeviceFailed(throwable)
+                eventsListener.onGetAliveDeviceFailed(this, throwable)
             }
         )
     } catch (t: Throwable) {
@@ -234,13 +236,13 @@ data class AdbDevice(
                     throw IllegalStateException("Fail to clear package $name; output=${result.output}")
                 }
 
-                eventsListener.onClearPackageSuccess(attempt, name)
+                eventsListener.onClearPackageSuccess(this, attempt, name)
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onClearPackageAttemptFail(attempt, name, throwable)
+                eventsListener.onClearPackageAttemptFail(this, attempt, name, throwable)
             },
             onError = { throwable ->
-                eventsListener.onClearPackageFailure(name, throwable)
+                eventsListener.onClearPackageFailure(this, name, throwable)
             }
         )
     }
@@ -270,13 +272,13 @@ data class AdbDevice(
                     )
                 }
 
-                eventsListener.onPullSuccess(from, to)
+                eventsListener.onPullSuccess(this, from, to)
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onPullAttemptFail(attempt, from, throwable)
+                eventsListener.onPullAttemptFail(this, attempt, from, throwable)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.onPullFailure(from, throwable)
+                eventsListener.onPullFailure(this, from, throwable)
             }
         )
     }
@@ -295,16 +297,16 @@ data class AdbDevice(
                 )
 
                 if (result.output.contains("removed ")) {
-                    eventsListener.onClearDirectorySuccess(remotePath, result.output)
+                    eventsListener.onClearDirectorySuccess(this, remotePath, result.output)
                 } else {
-                    eventsListener.onClearDirectoryNothingDone(remotePath)
+                    eventsListener.onClearDirectoryNothingDone(this, remotePath)
                 }
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onClearDirectoryAttemptFail(attempt, remotePath, throwable)
+                eventsListener.onClearDirectoryAttemptFail(this, attempt, remotePath, throwable)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.onClearDirectoryFailure(remotePath, throwable)
+                eventsListener.onClearDirectoryFailure(this, remotePath, throwable)
             }
         )
     }
@@ -321,15 +323,15 @@ data class AdbDevice(
                     )
                 ).output.lines()
 
-                eventsListener.onListSuccess(remotePath)
+                eventsListener.onListSuccess(this, remotePath)
 
                 result
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onListAttemptFail(attempt, remotePath, throwable)
+                eventsListener.onListAttemptFail(this, attempt, remotePath, throwable)
             },
             actionFailedHandler = { throwable ->
-                eventsListener.onListFailure(remotePath, throwable)
+                eventsListener.onListFailure(this, remotePath, throwable)
             }
         )
     }
@@ -514,9 +516,9 @@ private const val WAIT_FOR_ADB_TIME_OUT_MINUTES = 1L
 private fun createEventListener(
     loggerFactory: LoggerFactory,
     logger: Logger,
-    metricsConfigData: MetricsConfigData?
+    runnerMetricsConfig: RunnerMetricsConfig?
 ): AdbDeviceEventsListener {
-    return if (metricsConfigData == null) {
+    return if (runnerMetricsConfig == null) {
         AdbDeviceEventsLogger(logger)
     } else {
         CompositeAdbDeviceEventListener(
@@ -524,11 +526,10 @@ private fun createEventListener(
                 AdbDeviceEventsLogger(logger),
                 AdbDeviceMetrics(
                     statsDSender = StatsDSender.Impl(
-                        config = metricsConfigData.statsDConfig,
+                        config = runnerMetricsConfig.statsDConfig,
                         loggerFactory = loggerFactory
                     ),
-                    buildId = metricsConfigData.buildId,
-                    instrumentationConfigName = metricsConfigData.instrumentationConfigName
+                    runnerPrefix = runnerMetricsConfig.runnerPrefix
                 )
             )
         )

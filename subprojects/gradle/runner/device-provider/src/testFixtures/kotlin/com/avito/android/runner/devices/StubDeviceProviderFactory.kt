@@ -25,6 +25,6 @@ public fun createKubernetesDeviceProvider(
         loggerFactory = loggerFactory,
         adb = adb,
         timeProvider = timeProvider,
-        metricsConfigData = null
+        metricsConfig = null
     )
 }

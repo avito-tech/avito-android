@@ -4,7 +4,6 @@ import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.internal.InstrumentationTestsAction
@@ -26,6 +25,7 @@ import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.utils.StubBuildFailer
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -53,7 +53,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,
-            statsDConfig: StatsDConfig
+            metricsConfig: RunnerMetricsConfig
         ): TestExecutor {
             return testRunner
         }

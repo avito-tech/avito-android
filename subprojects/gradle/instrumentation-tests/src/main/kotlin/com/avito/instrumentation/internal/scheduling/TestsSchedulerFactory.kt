@@ -3,6 +3,7 @@ package com.avito.instrumentation.internal.scheduling
 import com.avito.android.TestSuiteLoader
 import com.avito.android.TestSuiteLoaderImpl
 import com.avito.android.stats.StatsDSender
+import com.avito.android.stats.graphiteSeries
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
@@ -13,6 +14,7 @@ import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.instrumentation.report.Report
 import com.avito.retrace.ProguardRetracer
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
@@ -123,7 +125,14 @@ internal interface TestsSchedulerFactory {
                 instrumentationConfiguration = params.instrumentationConfiguration,
                 loggerFactory = params.loggerFactory,
                 registry = params.registry,
-                statsDConfig = params.statsDConfig,
+                metricsConfig = RunnerMetricsConfig(
+                    statsDConfig = params.statsDConfig,
+                    runnerPrefix = graphiteSeries(
+                        "testrunner",
+                        params.buildId,
+                        params.instrumentationConfiguration.name
+                    )
+                ),
                 timeProvider = timeProvider
             )
         }
