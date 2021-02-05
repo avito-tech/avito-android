@@ -4,7 +4,6 @@ import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.ElasticConfigFactory
-import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.HostAnnotationResolver
 import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
 import com.avito.android.runner.annotation.resolver.NetworkingType
@@ -96,75 +95,68 @@ sealed class TestRunEnvironment {
     ) : TestRunEnvironment()
 
     companion object {
-        internal val LOCAL_STUDIO_RUN_ID = -1
+        internal const val LOCAL_STUDIO_RUN_ID = -1
     }
 }
 
 fun provideEnvironment(
     apiUrlParameterKey: String = "unnecessaryUrl",
     mockWebServerUrl: String = "localhost",
-    argumentsProvider: ArgsProvider
+    argumentsProvider: ArgsProvider,
 ): TestRunEnvironment {
-
-    val isFakeOrchestratorRun =
-        argumentsProvider.getOptionalArgument(FAKE_ORCHESTRATOR_RUN_ARGUMENT) != null
-
-    return when (isFakeOrchestratorRun) {
-        true -> TestRunEnvironment.OrchestratorFakeRunEnvironment
-        false -> try {
-            val coordinates = ReportCoordinates(
-                planSlug = argumentsProvider.getMandatoryArgument("planSlug"),
-                jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
-                runId = argumentsProvider.getMandatoryArgument("runId")
+    return try {
+        val coordinates = ReportCoordinates(
+            planSlug = argumentsProvider.getMandatoryArgument("planSlug"),
+            jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
+            runId = argumentsProvider.getMandatoryArgument("runId")
+        )
+        val isReportEnabled = argumentsProvider.getOptionalArgument("avito.report.enabled")?.toBoolean() ?: false
+        val reportConfig = if (isReportEnabled) {
+            TestRunEnvironment.ReportConfig(
+                reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
+                reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl")
             )
-            val isReportEnabled = argumentsProvider.getOptionalArgument("avito.report.enabled")?.toBoolean() ?: false
-            val reportConfig = if (isReportEnabled) {
-                TestRunEnvironment.ReportConfig(
-                    reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
-                    reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl")
-                )
-            } else {
-                null
-            }
-            TestRunEnvironment.RunEnvironment(
-                isImitation = argumentsProvider.getOptionalArgument("imitation") == "true",
-                deviceId = argumentsProvider.getOptionalArgument("deviceId")
-                    ?: UUID.randomUUID().toString(),
-                deviceName = argumentsProvider.getMandatoryArgument("deviceName"),
-                teamcityBuildId = argumentsProvider.getMandatoryArgument("teamcityBuildId").toInt(),
-                buildBranch = argumentsProvider.getMandatoryArgument("buildBranch"),
-                buildCommit = argumentsProvider.getMandatoryArgument("buildCommit"),
-                testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
-                networkType = argumentsProvider.getMandatorySerializableArgument(NETWORKING_TYPE_KEY),
-                // todo url'ы не обязательные параметры
-                apiUrl = provideApiUrl(
-                    argumentsProvider = argumentsProvider,
-                    apiUrlParameterKey = apiUrlParameterKey
-                ),
-                mockWebServerUrl = mockWebServerUrl,
-                videoRecordingFeature = provideVideoRecordingFeature(
-                    argumentsProvider = argumentsProvider
-                ),
-                outputDirectory = lazy {
-                    ContextCompat.getExternalFilesDirs(
-                        InstrumentationRegistry.getInstrumentation().targetContext,
-                        null
-                    )[0]
-                },
-                // from GradleInstrumentationPluginConfiguration
-                slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
-                elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
-                sentryConfig = parseSentryConfig(argumentsProvider),
-                statsDConfig = parseStatsDConfig(argumentsProvider),
-                fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
-                testRunCoordinates = coordinates,
-                reportConfig = reportConfig,
-                isSyntheticStepsEnabled =
-                argumentsProvider.getOptionalArgument("isSyntheticStepsEnabled")?.toBoolean() ?: false
-            )
-        } catch (e: Throwable) {
-            TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
+        } else {
+            null
         }
+        TestRunEnvironment.RunEnvironment(
+            isImitation = argumentsProvider.getOptionalArgument("imitation") == "true",
+            deviceId = argumentsProvider.getOptionalArgument("deviceId")
+                ?: UUID.randomUUID().toString(),
+            deviceName = argumentsProvider.getMandatoryArgument("deviceName"),
+            teamcityBuildId = argumentsProvider.getMandatoryArgument("teamcityBuildId").toInt(),
+            buildBranch = argumentsProvider.getMandatoryArgument("buildBranch"),
+            buildCommit = argumentsProvider.getMandatoryArgument("buildCommit"),
+            testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
+            networkType = argumentsProvider.getMandatorySerializableArgument(NETWORKING_TYPE_KEY),
+            // todo url'ы не обязательные параметры
+            apiUrl = provideApiUrl(
+                argumentsProvider = argumentsProvider,
+                apiUrlParameterKey = apiUrlParameterKey
+            ),
+            mockWebServerUrl = mockWebServerUrl,
+            videoRecordingFeature = provideVideoRecordingFeature(
+                argumentsProvider = argumentsProvider
+            ),
+            outputDirectory = lazy {
+                ContextCompat.getExternalFilesDirs(
+                    InstrumentationRegistry.getInstrumentation().targetContext,
+                    null
+                )[0]
+            },
+            // from GradleInstrumentationPluginConfiguration
+            slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
+            elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
+            sentryConfig = parseSentryConfig(argumentsProvider),
+            statsDConfig = parseStatsDConfig(argumentsProvider),
+            fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
+            testRunCoordinates = coordinates,
+            reportConfig = reportConfig,
+            isSyntheticStepsEnabled =
+            argumentsProvider.getOptionalArgument("isSyntheticStepsEnabled")?.toBoolean() ?: false
+        )
+    } catch (e: Throwable) {
+        TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
     }
 }
 

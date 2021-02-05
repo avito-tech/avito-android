@@ -6,9 +6,6 @@ import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.AndroidLoggerFactory
-import com.avito.android.monitoring.CompositeTestIssuesMonitor
-import com.avito.android.monitoring.TestIssuesMonitor
-import com.avito.android.runner.ContextFactory.Companion.FAKE_ORCHESTRATOR_RUN_ARGUMENT
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.runner.annotation.resolver.TestMethodOrClass
@@ -78,7 +75,13 @@ abstract class InHouseInstrumentationTestRunner :
     /**
      * Public for *TestApp to skip on orchestrator runs
      */
-    val testRunEnvironment: TestRunEnvironment by lazy { createRunnerEnvironment(instrumentationArguments) }
+    val testRunEnvironment: TestRunEnvironment by lazy {
+        if (isRealRun(instrumentationArguments)) {
+            createRunnerEnvironment(instrumentationArguments)
+        } else {
+            TestRunEnvironment.OrchestratorFakeRunEnvironment
+        }
+    }
 
     override val loggerFactory by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
@@ -141,7 +144,6 @@ abstract class InHouseInstrumentationTestRunner :
 
         ReportImplementation(
             onDeviceCacheDirectory = runEnvironment.outputDirectory,
-            onIncident = { testIssuesMonitor.onFailure(it) },
             transport = transport,
             loggerFactory = loggerFactory,
             remoteStorage = remoteStorage,
@@ -168,14 +170,6 @@ abstract class InHouseInstrumentationTestRunner :
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
 
     val mockDispatcher by lazy { MockDispatcher(loggerFactory = loggerFactory) }
-
-    protected open val testIssuesMonitor: TestIssuesMonitor by lazy {
-        CompositeTestIssuesMonitor(
-            sentry = sentryClient,
-            testRunEnvironment = testRunEnvironment.asRunEnvironmentOrThrow(),
-            logger = logger
-        )
-    }
 
     private lateinit var instrumentationArguments: Bundle
 
@@ -232,8 +226,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     private fun injectTestMetadata(arguments: Bundle) {
-        val isRealRun = !arguments.containsKey(FAKE_ORCHESTRATOR_RUN_ARGUMENT)
-        if (isRealRun) {
+        if (isRealRun(arguments)) {
             val test = getTest(arguments)
 
             metadataToBundleInjector.inject(test, arguments)
@@ -248,13 +241,6 @@ abstract class InHouseInstrumentationTestRunner :
             throw RuntimeException("Test name not found in instrumentation arguments: $instrumentationArguments")
         }
         return MethodStringRepresentation.parseString(testName).getTestOrThrow()
-    }
-
-    override fun createFactory(): ContextFactory = object : ContextFactory.Default() {
-
-        override fun createIfRealRun(arguments: Bundle): Context = DefaultTestInstrumentationContext(
-            errorsReporter = SentryErrorsReporter(sentryClient)
-        )
     }
 
     override fun onStart() {
