@@ -2,13 +2,9 @@ package com.avito.android.runner
 
 import com.avito.logger.LoggerFactory
 
-class InstrumentationDelegate(
-    errorsReporter: ErrorsReporter,
-    loggerFactory: LoggerFactory
-) {
+class InstrumentationDelegate(loggerFactory: LoggerFactory) {
 
     private val systemDialogsManager = SystemDialogsManager(
-        errorsReporter = errorsReporter,
         loggerFactory = loggerFactory
     )
 
