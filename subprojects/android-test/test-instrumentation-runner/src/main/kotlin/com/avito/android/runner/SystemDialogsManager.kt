@@ -12,10 +12,7 @@ import com.avito.logger.create
 /**
  * Based on https://github.com/nenick/espresso-macchiato
  */
-class SystemDialogsManager(
-    private val errorsReporter: ErrorsReporter,
-    loggerFactory: LoggerFactory
-) {
+class SystemDialogsManager(loggerFactory: LoggerFactory) {
 
     private val logger = loggerFactory.create<Settings.System>()
 
@@ -23,23 +20,20 @@ class SystemDialogsManager(
         try {
             dismissCrashDialogIfShown()
         } catch (t: Throwable) {
-            logger.warn("Failed to close crash dialog: ${t.message}")
-            errorsReporter.reportError(t)
+            logger.warn("Failed to close crash dialog", t)
         }
 
         try {
             dismissAnrDialogIfShown()
         } catch (t: Throwable) {
-            logger.warn("Failed to close application not respond dialog: ${t.message}")
-            errorsReporter.reportError(t)
+            logger.warn("Failed to close application not respond dialog", t)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             try {
                 dismissHiddenApiDialog()
             } catch (t: Throwable) {
-                logger.warn("Failed to close hidden api dialog: ${t.message}")
-                errorsReporter.reportError(t)
+                logger.warn("Failed to close hidden api dialog", t)
             }
         }
     }
