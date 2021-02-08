@@ -66,7 +66,7 @@ data class AdbDevice(
                 result
             },
             attemptFailedHandler = { attempt, _ ->
-                eventsListener.onGetSdkPropertyAttemptFail(attempt)
+                eventsListener.onGetSdkPropertyError(attempt)
             },
             actionFailedHandler = { throwable ->
                 eventsListener.onGetSdkPropertyFailure(throwable)
@@ -88,7 +88,7 @@ data class AdbDevice(
                     eventsListener.onInstallApplicationSuccess(this, attempt, applicationPackage)
                 },
                 attemptFailedHandler = { attempt, _ ->
-                    eventsListener.onInstallApplicationAttemptFail(this, attempt, applicationPackage)
+                    eventsListener.onInstallApplicationError(this, attempt, applicationPackage)
                 },
                 onError = { throwable ->
                     eventsListener.onInstallApplicationFailure(this, applicationPackage, throwable)
@@ -213,7 +213,7 @@ data class AdbDevice(
                 Device.DeviceStatus.Alive
             },
             attemptFailedHandler = { attempt, _ ->
-                eventsListener.onGetAliveDeviceAttemptFail(this, attempt)
+                eventsListener.onGetAliveDeviceError(this, attempt)
             },
             actionFailedHandler = { throwable ->
                 eventsListener.onGetAliveDeviceFailed(this, throwable)
@@ -232,14 +232,14 @@ data class AdbDevice(
                     command = listOf("pm", "clear", name)
                 )
 
-                if (result.output != "Success") {
+                if (!result.output.contains("success", ignoreCase = true)) {
                     throw IllegalStateException("Fail to clear package $name; output=${result.output}")
                 }
 
                 eventsListener.onClearPackageSuccess(this, attempt, name)
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onClearPackageAttemptFail(this, attempt, name, throwable)
+                eventsListener.onClearPackageError(this, attempt, name, throwable)
             },
             onError = { throwable ->
                 eventsListener.onClearPackageFailure(this, name, throwable)
@@ -275,7 +275,7 @@ data class AdbDevice(
                 eventsListener.onPullSuccess(this, from, to)
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onPullAttemptFail(this, attempt, from, throwable)
+                eventsListener.onPullError(this, attempt, from, throwable)
             },
             actionFailedHandler = { throwable ->
                 eventsListener.onPullFailure(this, from, throwable)
@@ -291,19 +291,15 @@ data class AdbDevice(
                 val result = executeBlockingShellCommand(
                     command = listOf(
                         "rm",
-                        "-rfv",
+                        "-rf",
                         remotePath.toString()
                     )
                 )
 
-                if (result.output.contains("removed ")) {
-                    eventsListener.onClearDirectorySuccess(this, remotePath, result.output)
-                } else {
-                    eventsListener.onClearDirectoryNothingDone(this, remotePath)
-                }
+                eventsListener.onClearDirectorySuccess(this, remotePath, result.output)
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onClearDirectoryAttemptFail(this, attempt, remotePath, throwable)
+                eventsListener.onClearDirectoryError(this, attempt, remotePath, throwable)
             },
             actionFailedHandler = { throwable ->
                 eventsListener.onClearDirectoryFailure(this, remotePath, throwable)
@@ -328,7 +324,7 @@ data class AdbDevice(
                 result
             },
             attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onListAttemptFail(this, attempt, remotePath, throwable)
+                eventsListener.onListError(this, attempt, remotePath, throwable)
             },
             actionFailedHandler = { throwable ->
                 eventsListener.onListFailure(this, remotePath, throwable)

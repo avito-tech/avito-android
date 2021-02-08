@@ -11,8 +11,8 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onGetSdkPropertySuccess(attempt, api) }
     }
 
-    override fun onGetSdkPropertyAttemptFail(attempt: Int) {
-        listeners.forEach { it.onGetSdkPropertyAttemptFail(attempt) }
+    override fun onGetSdkPropertyError(attempt: Int) {
+        listeners.forEach { it.onGetSdkPropertyError(attempt) }
     }
 
     override fun onGetSdkPropertyFailure(throwable: Throwable) {
@@ -23,8 +23,8 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onInstallApplicationSuccess(device, attempt, applicationPackage) }
     }
 
-    override fun onInstallApplicationAttemptFail(device: Device, attempt: Int, applicationPackage: String) {
-        listeners.forEach { it.onInstallApplicationAttemptFail(device, attempt, applicationPackage) }
+    override fun onInstallApplicationError(device: Device, attempt: Int, applicationPackage: String) {
+        listeners.forEach { it.onInstallApplicationError(device, attempt, applicationPackage) }
     }
 
     override fun onInstallApplicationFailure(device: Device, applicationPackage: String, throwable: Throwable) {
@@ -35,8 +35,8 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onGetAliveDeviceSuccess(device, attempt) }
     }
 
-    override fun onGetAliveDeviceAttemptFail(device: Device, attempt: Int) {
-        listeners.forEach { it.onGetAliveDeviceAttemptFail(device, attempt) }
+    override fun onGetAliveDeviceError(device: Device, attempt: Int) {
+        listeners.forEach { it.onGetAliveDeviceError(device, attempt) }
     }
 
     override fun onGetAliveDeviceFailed(device: Device, throwable: Throwable) {
@@ -47,8 +47,8 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onClearPackageSuccess(device, attempt, name) }
     }
 
-    override fun onClearPackageAttemptFail(device: Device, attempt: Int, name: String, throwable: Throwable) {
-        listeners.forEach { it.onClearPackageAttemptFail(device, attempt, name, throwable) }
+    override fun onClearPackageError(device: Device, attempt: Int, name: String, throwable: Throwable) {
+        listeners.forEach { it.onClearPackageError(device, attempt, name, throwable) }
     }
 
     override fun onClearPackageFailure(device: Device, name: String, throwable: Throwable) {
@@ -59,8 +59,8 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onPullSuccess(device, from, to) }
     }
 
-    override fun onPullAttemptFail(device: Device, attempt: Int, from: Path, throwable: Throwable) {
-        listeners.forEach { it.onPullAttemptFail(device, attempt, from, throwable) }
+    override fun onPullError(device: Device, attempt: Int, from: Path, throwable: Throwable) {
+        listeners.forEach { it.onPullError(device, attempt, from, throwable) }
     }
 
     override fun onPullFailure(device: Device, from: Path, throwable: Throwable) {
@@ -71,12 +71,8 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onClearDirectorySuccess(device, remotePath, output) }
     }
 
-    override fun onClearDirectoryNothingDone(device: Device, remotePath: Path) {
-        listeners.forEach { it.onClearDirectoryNothingDone(device, remotePath) }
-    }
-
-    override fun onClearDirectoryAttemptFail(device: Device, attempt: Int, remotePath: Path, throwable: Throwable) {
-        listeners.forEach { it.onClearDirectoryAttemptFail(device, attempt, remotePath, throwable) }
+    override fun onClearDirectoryError(device: Device, attempt: Int, remotePath: Path, throwable: Throwable) {
+        listeners.forEach { it.onClearDirectoryError(device, attempt, remotePath, throwable) }
     }
 
     override fun onClearDirectoryFailure(device: Device, remotePath: Path, throwable: Throwable) {
@@ -87,8 +83,8 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onListSuccess(device, remotePath) }
     }
 
-    override fun onListAttemptFail(device: Device, attempt: Int, remotePath: String, throwable: Throwable) {
-        listeners.forEach { it.onListAttemptFail(device, attempt, remotePath, throwable) }
+    override fun onListError(device: Device, attempt: Int, remotePath: String, throwable: Throwable) {
+        listeners.forEach { it.onListError(device, attempt, remotePath, throwable) }
     }
 
     override fun onListFailure(device: Device, remotePath: String, throwable: Throwable) {
