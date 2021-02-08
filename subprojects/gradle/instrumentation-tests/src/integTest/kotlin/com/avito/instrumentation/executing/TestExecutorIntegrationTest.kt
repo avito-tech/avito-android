@@ -2,6 +2,7 @@ package com.avito.instrumentation.executing
 
 import com.avito.android.runner.devices.createKubernetesDeviceProvider
 import com.avito.android.runner.devices.model.createStubInstance
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.createStubInstance
@@ -81,7 +82,7 @@ internal class TestExecutorIntegrationTest {
         timeProvider: TimeProvider = StubTimeProvider(),
         metricsConfig: RunnerMetricsConfig = RunnerMetricsConfig(
             statsDConfig = StatsDConfig.Disabled,
-            runnerPrefix = "test"
+            runnerPrefix = SeriesName.create("test")
         )
     ): TestExecutor = TestExecutorImpl(
         devicesProvider = createKubernetesDeviceProvider(

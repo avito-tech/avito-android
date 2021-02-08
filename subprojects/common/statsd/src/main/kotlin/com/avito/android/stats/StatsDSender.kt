@@ -7,12 +7,11 @@ import com.timgroup.statsd.NonBlockingStatsDClient
 import com.timgroup.statsd.StatsDClient
 import com.timgroup.statsd.StatsDClientErrorHandler
 
-/**
- * Use [Project.statsd] to gain instance
- */
 interface StatsDSender {
 
-    fun send(prefix: String = "", metric: StatsMetric)
+    fun send(metric: StatsMetric)
+
+    fun send(prefix: SeriesName, metric: StatsMetric)
 
     class Impl(
         private val config: StatsDConfig,
@@ -29,14 +28,24 @@ interface StatsDSender {
             when (config) {
                 is StatsDConfig.Disabled -> NoOpStatsDClient()
                 is StatsDConfig.Enabled -> try {
-                    NonBlockingStatsDClient(config.namespace, config.host, config.port, errorHandler)
+                    NonBlockingStatsDClient(
+                        config.namespace.toString(),
+                        config.host,
+                        config.port,
+                        errorHandler
+                    )
                 } catch (e: Exception) {
                     logger.warn("Can't create statsDClient on main host", e)
                     if (config.host == config.fallbackHost) {
                         NoOpStatsDClient()
                     } else {
                         try {
-                            NonBlockingStatsDClient(config.namespace, config.fallbackHost, config.port, errorHandler)
+                            NonBlockingStatsDClient(
+                                config.namespace.toString(),
+                                config.fallbackHost,
+                                config.port,
+                                errorHandler
+                            )
                         } catch (err: Exception) {
                             errorHandler.handle(err)
                             NoOpStatsDClient()
@@ -46,24 +55,32 @@ interface StatsDSender {
             }
         }
 
-        override fun send(prefix: String, metric: StatsMetric) {
-            val path = if (prefix.isNotBlank()) {
-                prefix + "." + metric.path
+        override fun send(metric: StatsMetric) {
+            sendInternal(prefix = null, metric)
+        }
+
+        override fun send(prefix: SeriesName, metric: StatsMetric) {
+            sendInternal(prefix, metric)
+        }
+
+        private fun sendInternal(prefix: SeriesName?, metric: StatsMetric) {
+
+            val aspect: String = if (prefix != null) {
+                metric.name.prefix(prefix)
             } else {
-                metric.path
+                metric.name
+            }.toString()
+
+            when (metric) {
+                is TimeMetric -> client.time(aspect, metric.value)
+                is CountMetric -> client.count(aspect, metric.value)
+                is GaugeMetric -> client.gauge(aspect, metric.value)
             }
 
-            @Suppress("USELESS_CAST")
-            when (metric) {
-                is TimeMetric -> client.time(path, metric.value)
-                is CountMetric -> client.count(path, metric.value)
-                is GaugeMetric -> client.gauge(path, metric.value)
-            } as Unit
-
             if (config is StatsDConfig.Enabled) {
-                logger.debug("${metric.type}:${config.namespace}.$path:${metric.value}")
+                logger.debug("${metric.type}:${config.namespace}.$aspect:${metric.value}")
             } else {
-                logger.debug("Skip sending event: $path")
+                logger.debug("Skip sending event: $aspect")
             }
         }
     }

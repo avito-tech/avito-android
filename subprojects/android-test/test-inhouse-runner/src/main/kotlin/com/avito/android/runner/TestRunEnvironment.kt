@@ -9,6 +9,7 @@ import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
 import com.avito.android.runner.annotation.resolver.NetworkingType
 import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
 import com.avito.android.sentry.SentryConfig
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import com.avito.android.test.report.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
@@ -184,7 +185,7 @@ private fun parseStatsDConfig(argumentsProvider: ArgsProvider): StatsDConfig {
             host = host,
             fallbackHost = host,
             port = port,
-            namespace = namespace
+            namespace = SeriesName.create(namespace, multipart = true)
         )
     } else {
         StatsDConfig.Disabled

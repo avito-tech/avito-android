@@ -3,8 +3,8 @@ package com.avito.impact.plugin
 import com.avito.android.sentry.Environment
 import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
-import com.avito.android.stats.graphiteSeries
 import com.avito.impact.ConfigurationType
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.configuration.internalModule
@@ -26,7 +26,7 @@ class ImpactMetricsSender(
         val buildId = requireNotNull(environmentInfo.teamcityBuildId()) {
             "ImpactMetricsSender should run only if teamcityBuildInfo available"
         }
-        graphiteSeries(envName, node, buildId)
+        SeriesName.create(envName, node, buildId)
     }
 
     fun sendModifiedProjectCounters(modifiedProjectsFinder: ModifiedProjectsFinder) {
@@ -41,8 +41,7 @@ class ImpactMetricsSender(
     @Suppress("DefaultLocale")
     private fun sendMetric(type: ConfigurationType, name: String, value: Number) {
         statsDSender.send(
-            prefix,
-            GaugeMetric(graphiteSeries("impact", type.name.toLowerCase(), name), value)
+            GaugeMetric(prefix.append("impact", type.name.toLowerCase(), name), value)
         )
     }
 }

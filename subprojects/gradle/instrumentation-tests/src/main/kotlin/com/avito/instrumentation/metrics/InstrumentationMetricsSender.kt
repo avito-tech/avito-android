@@ -2,25 +2,25 @@ package com.avito.instrumentation.metrics
 
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 
 public class InstrumentationMetricsSender(
     private val statsDSender: StatsDSender,
-    buildId: String,
-    instrumentationConfigName: String
+    runnerPrefix: SeriesName
 ) {
 
-    private val prefix = "testrunner.$buildId.$instrumentationConfigName.tests.status"
+    private val prefix = runnerPrefix.append("tests", "status")
 
     public fun sendNotReportedCount(count: Int) {
-        statsDSender.send(prefix, GaugeMetric("lost.not-reported", count))
+        statsDSender.send(GaugeMetric(prefix.append("lost.not-reported"), count))
     }
 
     public fun sendReportFileParseErrors() {
-        statsDSender.send(prefix, CountMetric("lost.parse-errors"))
+        statsDSender.send(CountMetric(prefix.append("lost.parse-errors")))
     }
 
     public fun sendReportFileNotAvailable() {
-        statsDSender.send(prefix, CountMetric("lost.no-file"))
+        statsDSender.send(CountMetric(prefix.append("lost.no-file")))
     }
 }

@@ -7,6 +7,7 @@ import com.avito.android.plugin.build_param_check.incremental_check.IncrementalK
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.sentry.sentry
 import com.avito.android.stats.CountMetric
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -217,13 +218,17 @@ open class BuildParamCheckPlugin : Plugin<Project> {
                                     "Actual: ${mismatch.actual}"
                             )
                             val safeParamName = mismatch.name.replace(".", "-")
-                            tracker.track(CountMetric("configuration.mismatch.$safeParamName"))
+                            tracker.track(
+                                CountMetric(SeriesName.create("configuration", "mismatch", safeParamName))
+                            )
                         }
                     }
                     .onFailure {
                         project.logger.error("[$pluginName] can't check project", it)
                         val checkerName = checker.javaClass.simpleName
-                        tracker.track(CountMetric("configuration.mismatch.failed.$checkerName"))
+                        tracker.track(
+                            CountMetric(SeriesName.create("configuration", "mismatch", "failed", checkerName))
+                        )
                         sentry.get().sendException(ParamMismatchFailure(it))
                     }
             }

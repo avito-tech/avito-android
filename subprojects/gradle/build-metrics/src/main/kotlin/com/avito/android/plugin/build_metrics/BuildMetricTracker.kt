@@ -1,9 +1,9 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.android.sentry.EnvironmentInfo
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
-import com.avito.android.stats.graphiteSeries
 import org.gradle.BuildResult
 import org.gradle.api.provider.Provider
 
@@ -17,7 +17,7 @@ class BuildMetricTracker(
     }
 
     fun track(buildResult: BuildResult, metric: StatsMetric) {
-        val prefix = graphiteSeries(
+        val prefix = SeriesName.create(
             env.get().environment.publicName,
             node,
             "id",
@@ -27,7 +27,7 @@ class BuildMetricTracker(
     }
 
     fun track(metric: StatsMetric) {
-        val prefix = graphiteSeries(
+        val prefix = SeriesName.create(
             env.get().environment.publicName,
             node,
             "id"

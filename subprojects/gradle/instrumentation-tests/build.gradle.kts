@@ -55,6 +55,8 @@ dependencies {
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(Dependencies.Test.okhttpMockWebServer)
 
+    integTestImplementation(project(":common:statsd"))
+
     testFixturesApi(project(":common:logger-test-fixtures"))
     testFixturesApi(project(":common:time-test-fixtures"))
     testFixturesApi(project(":common:report-viewer-test-fixtures"))
