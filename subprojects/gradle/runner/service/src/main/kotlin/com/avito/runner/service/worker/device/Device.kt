@@ -37,7 +37,7 @@ interface Device {
 
     fun clearDirectory(remotePath: Path): Try<Any>
 
-    fun list(remotePath: String): Try<Any>
+    fun list(remotePath: String): Try<List<String>>
 
     fun deviceStatus(): DeviceStatus
 

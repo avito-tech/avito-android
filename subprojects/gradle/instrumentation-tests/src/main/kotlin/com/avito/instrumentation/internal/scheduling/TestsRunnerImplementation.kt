@@ -1,7 +1,6 @@
 package com.avito.instrumentation.internal.scheduling
 
 import com.avito.android.runner.devices.DeviceProviderFactoryImpl
-import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
@@ -16,6 +15,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.runner.service.model.TestCase
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import org.funktionale.tries.Try
@@ -34,7 +34,7 @@ internal class TestsRunnerImplementation(
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
     private val registry: String,
-    private val statsDConfig: StatsDConfig,
+    private val metricsConfig: RunnerMetricsConfig,
     private val timeProvider: TimeProvider
 ) : TestsRunner {
 
@@ -81,14 +81,15 @@ internal class TestsRunnerImplementation(
                     output = output,
                     logcatDir = logcatDir,
                     loggerFactory = loggerFactory,
-                    timeProvider = timeProvider
+                    timeProvider = timeProvider,
+                    metricsConfig = metricsConfig
                 ),
                 configuration = initialRunConfiguration,
                 executionParameters = executionParameters,
                 testReporter = testReporter,
                 buildId = buildId,
                 loggerFactory = loggerFactory,
-                statsDConfig = statsDConfig
+                metricsConfig = metricsConfig
             )
 
             executor.execute(

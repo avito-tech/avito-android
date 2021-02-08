@@ -2,7 +2,6 @@ package com.avito.instrumentation.internal.executing
 
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
-import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.reservation.request.QuotaConfigurationData
@@ -14,6 +13,7 @@ import com.avito.runner.scheduler.args.Arguments
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.runBlocking
@@ -22,10 +22,9 @@ import java.io.File
 class TestExecutorImpl(
     private val devicesProvider: DevicesProvider,
     private val testReporter: TestReporter,
-    private val buildId: String,
     private val configurationName: String,
     private val loggerFactory: LoggerFactory,
-    private val statsDConfig: StatsDConfig
+    private val metricsConfig: RunnerMetricsConfig
 ) : TestExecutor {
 
     private val logger = loggerFactory.create<TestExecutor>()
@@ -59,14 +58,12 @@ class TestExecutorImpl(
 
             val runnerArguments = Arguments(
                 outputDirectory = outputFolder(output),
-                buildId = buildId,
-                instrumentationConfigName = configurationName,
+                requests = testRequests,
                 devices = devices,
                 loggerFactory = loggerFactory,
                 listener = testReporter,
-                requests = testRequests,
                 reservation = devicesProvider,
-                statsDConfig = statsDConfig
+                metricsConfig = metricsConfig
             )
 
             logger.debug("Arguments: $runnerArguments")

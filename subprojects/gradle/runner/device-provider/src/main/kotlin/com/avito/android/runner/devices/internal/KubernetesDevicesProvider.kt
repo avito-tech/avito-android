@@ -10,6 +10,7 @@ import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevice
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -20,7 +21,8 @@ internal class KubernetesDevicesProvider(
     private val adbDevicesManager: AdbDevicesManager,
     private val loggerFactory: LoggerFactory,
     private val adb: Adb,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val metricsConfig: RunnerMetricsConfig?
 ) : DevicesProvider {
 
     private val logger = loggerFactory.create<KubernetesDevicesProvider>()
@@ -44,7 +46,8 @@ internal class KubernetesDevicesProvider(
                 online = adbDeviceParams.online,
                 loggerFactory = loggerFactory,
                 adb = adb,
-                timeProvider = timeProvider
+                timeProvider = timeProvider,
+                metricsConfig = metricsConfig
             )
         }
     }

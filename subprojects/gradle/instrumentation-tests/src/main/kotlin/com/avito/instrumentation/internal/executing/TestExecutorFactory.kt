@@ -1,10 +1,10 @@
 package com.avito.instrumentation.internal.executing
 
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.logger.LoggerFactory
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 
 /**
  * Abstraction for testing purposes only
@@ -18,7 +18,7 @@ internal interface TestExecutorFactory {
         configuration: InstrumentationConfiguration.Data,
         executionParameters: ExecutionParameters,
         loggerFactory: LoggerFactory,
-        statsDConfig: StatsDConfig
+        metricsConfig: RunnerMetricsConfig
     ): TestExecutor
 
     class Implementation : TestExecutorFactory {
@@ -30,7 +30,7 @@ internal interface TestExecutorFactory {
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,
-            statsDConfig: StatsDConfig
+            metricsConfig: RunnerMetricsConfig
         ): TestExecutor {
             return TestExecutorImpl(
                 devicesProvider = devicesProviderFactory.create(
@@ -40,10 +40,9 @@ internal interface TestExecutorFactory {
                     kubernetesNamespace = executionParameters.namespace
                 ),
                 testReporter = testReporter,
-                buildId = buildId,
                 configurationName = configuration.name,
                 loggerFactory = loggerFactory,
-                statsDConfig = statsDConfig
+                metricsConfig = metricsConfig
             )
         }
     }

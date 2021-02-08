@@ -4,7 +4,6 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
 import com.avito.logger.create
-import com.avito.runner.ProcessNotification
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
 import com.avito.time.DefaultTimeProvider
@@ -38,19 +37,17 @@ abstract class PullScreenshotsTask : DefaultTask() {
         val referencePath = Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
         currentDevice.list(remotePath.toString()).onSuccess { result ->
-            if (result is ProcessNotification.Exit) {
-                result.output.lines().firstOrNull { it.trim().isNotEmpty() }
-                    ?.let { directory ->
-                        if (directory.trim().isNotEmpty()) {
-                            referencePath.toFile().mkdirs()
-                            val remoteEmulatorPath = remotePath.resolve(directory)
-                            currentDevice.pull(
-                                from = remoteEmulatorPath,
-                                to = referencePath
-                            )
-                        }
+            result.firstOrNull { it.trim().isNotEmpty() }
+                ?.let { directory ->
+                    if (directory.trim().isNotEmpty()) {
+                        referencePath.toFile().mkdirs()
+                        val remoteEmulatorPath = remotePath.resolve(directory)
+                        currentDevice.pull(
+                            from = remoteEmulatorPath,
+                            to = referencePath
+                        )
                     }
-            }
+                }
             logger.debug("Screenshots are pulled to $referencePath")
             clearOutputFiles(logger)
         }.onFailure {

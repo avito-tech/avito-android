@@ -18,6 +18,7 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.avito.runner.service.worker.device.adb.Adb
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.StubTimeProvider
 import com.avito.time.TimeProvider
 import org.junit.jupiter.api.Test
@@ -76,10 +77,12 @@ internal class TestExecutorIntegrationTest {
     private fun createTestExecutor(
         loggerFactory: LoggerFactory,
         configurationName: String = "",
-        buildId: String = "integration-test-build-id",
-        statsDConfig: StatsDConfig = StatsDConfig.Disabled,
         adb: Adb = Adb(),
-        timeProvider: TimeProvider = StubTimeProvider()
+        timeProvider: TimeProvider = StubTimeProvider(),
+        metricsConfig: RunnerMetricsConfig = RunnerMetricsConfig(
+            statsDConfig = StatsDConfig.Disabled,
+            runnerPrefix = "test"
+        )
     ): TestExecutor = TestExecutorImpl(
         devicesProvider = createKubernetesDeviceProvider(
             adb = adb,
@@ -87,9 +90,8 @@ internal class TestExecutorIntegrationTest {
             timeProvider = timeProvider
         ),
         testReporter = StubTestReporter(),
-        buildId = buildId,
         configurationName = configurationName,
         loggerFactory = loggerFactory,
-        statsDConfig = statsDConfig
+        metricsConfig = metricsConfig
     )
 }

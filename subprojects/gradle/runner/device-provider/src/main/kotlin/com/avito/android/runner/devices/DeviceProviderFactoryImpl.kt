@@ -12,6 +12,7 @@ import com.avito.android.runner.devices.model.DeviceType
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.createKubernetesClient
@@ -26,7 +27,8 @@ public class DeviceProviderFactoryImpl(
     private val output: File,
     private val logcatDir: File,
     private val loggerFactory: LoggerFactory,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val metricsConfig: RunnerMetricsConfig
 ) : DevicesProviderFactory {
 
     override fun create(
@@ -86,7 +88,8 @@ public class DeviceProviderFactoryImpl(
                     adbDevicesManager = devicesManager,
                     adb = adb,
                     loggerFactory = loggerFactory,
-                    timeProvider = timeProvider
+                    timeProvider = timeProvider,
+                    metricsConfig = metricsConfig
                 )
         }
     }
