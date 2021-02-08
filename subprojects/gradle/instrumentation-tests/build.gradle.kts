@@ -1,6 +1,7 @@
 plugins {
     id("java-gradle-plugin")
     id("kotlin")
+    `java-test-fixtures`
     `maven-publish`
     id("com.jfrog.bintray")
     id("nebula.integtest")
@@ -48,15 +49,42 @@ dependencies {
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(project(":gradle:build-failer-test-fixtures"))
-    testImplementation(project(":common:logger-test-fixtures"))
-    testImplementation(project(":common:time-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
-    testImplementation(project(":common:report-viewer-test-fixtures"))
     testImplementation(project(":common:resources"))
-    testImplementation(testFixtures(project(":gradle:runner:device-provider")))
     testImplementation(Dependencies.Test.mockitoKotlin)
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(Dependencies.Test.okhttpMockWebServer)
+
+    testFixturesApi(project(":common:logger-test-fixtures"))
+    testFixturesApi(project(":common:time-test-fixtures"))
+    testFixturesApi(project(":common:report-viewer-test-fixtures"))
+    testFixturesApi(testFixtures(project(":gradle:runner:device-provider")))
+}
+
+kotlin {
+    explicitApi()
+
+    /**
+     * Workaround to access internal classes from testFixtures
+     * till https://youtrack.jetbrains.com/issue/KT-34901 resolved
+     */
+    target.compilations
+        .matching { it.name in listOf("testFixtures", "integTest") }
+        .configureEach {
+            associateWith(target.compilations.getByName("main"))
+        }
+
+    target.compilations
+        .matching { it.name in listOf("integTest") }
+        .configureEach {
+            associateWith(target.compilations.getByName("testFixtures"))
+        }
+
+    target.compilations
+        .matching { it.name in listOf("test") }
+        .configureEach {
+            associateWith(target.compilations.getByName("testFixtures"))
+        }
 }
 
 gradlePlugin {

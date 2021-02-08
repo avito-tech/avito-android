@@ -7,39 +7,39 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import java.io.Serializable
 
-abstract class InstrumentationConfiguration(val name: String) {
+public abstract class InstrumentationConfiguration(public val name: String) {
 
-    var instrumentationParams: Map<String, String> = emptyMap()
+    public var instrumentationParams: Map<String, String> = emptyMap()
 
-    var reportSkippedTests = false
+    public var reportSkippedTests: Boolean = false
 
-    var impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off
+    public var impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off
 
-    var kubernetesNamespace = "android-emulator"
+    public var kubernetesNamespace: String = "android-emulator"
 
-    var timeoutInSeconds: Long = 6000L // 100min
+    public var timeoutInSeconds: Long = 6000L // 100min
 
-    var enableDeviceDebug: Boolean = false
+    public var enableDeviceDebug: Boolean = false
 
-    var filter = "default"
+    public var filter: String = "default"
 
-    abstract val targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
+    public abstract val targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
 
-    val targets: List<TargetConfiguration>
+    public val targets: List<TargetConfiguration>
         get() = targetsContainer.toList()
             .filter { it.enabled }
 
-    fun targets(action: Action<NamedDomainObjectContainer<TargetConfiguration>>) {
+    public fun targets(action: Action<NamedDomainObjectContainer<TargetConfiguration>>) {
         action.execute(targetsContainer)
     }
 
-    fun validate() {
+    public fun validate() {
         require(kubernetesNamespace.isNotBlank()) { "kubernetesNamespace must be set" }
         require(targets.isNotEmpty()) { "configuration $name must have at least one target" }
         targets.forEach { it.validate() }
     }
 
-    fun data(
+    public fun data(
         parentInstrumentationParameters: InstrumentationParameters,
         filters: List<InstrumentationFilter.Data>
     ): Data {
@@ -64,7 +64,7 @@ abstract class InstrumentationConfiguration(val name: String) {
         )
     }
 
-    data class Data(
+    public data class Data(
         val name: String,
         val instrumentationParams: InstrumentationParameters,
         val reportSkippedTests: Boolean,
@@ -96,6 +96,6 @@ abstract class InstrumentationConfiguration(val name: String) {
             }
         }
 
-        companion object
+        public companion object
     }
 }

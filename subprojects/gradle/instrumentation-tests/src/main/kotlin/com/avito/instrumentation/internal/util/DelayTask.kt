@@ -12,10 +12,10 @@ import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-abstract class DelayAction : WorkAction<Parameters> {
+public abstract class DelayAction : WorkAction<Parameters> {
 
-    interface Parameters : WorkParameters {
-        fun getMillis(): Property<Long>
+    public interface Parameters : WorkParameters {
+        public fun getMillis(): Property<Long>
     }
 
     override fun execute() {
@@ -23,16 +23,16 @@ abstract class DelayAction : WorkAction<Parameters> {
     }
 }
 
-abstract class DelayTask @Inject constructor(
+public abstract class DelayTask @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask() {
 
     @Internal
-    val delayMillis = project.objects.property<Long>()
+    public val delayMillis: Property<Long> = project.objects.property()
 
     @Suppress("UnstableApiUsage")
     @TaskAction
-    fun action() {
+    public fun action() {
         workerExecutor.noIsolation().submit(DelayAction::class.java) { parameters ->
             parameters.getMillis().set(delayMillis)
         }

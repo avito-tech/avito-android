@@ -3,7 +3,7 @@ package com.avito.instrumentation.configuration
 import com.avito.report.model.ReportCoordinates
 import java.io.Serializable
 
-data class InstrumentationParameters(
+public data class InstrumentationParameters(
     val initialParameters: Map<String, String> = emptyMap()
 ) : Map<String, String> by initialParameters, Serializable {
 
@@ -11,7 +11,7 @@ data class InstrumentationParameters(
         validateParameters(initialParameters)
     }
 
-    fun applyParameters(newParameters: Map<String, String>): InstrumentationParameters {
+    public fun applyParameters(newParameters: Map<String, String>): InstrumentationParameters {
         validateParameters(newParameters)
         return InstrumentationParameters(
             HashMap(this).apply {
@@ -28,7 +28,7 @@ data class InstrumentationParameters(
         }
     }
 
-    fun reportCoordinates(): ReportCoordinates = ReportCoordinates(
+    public fun reportCoordinates(): ReportCoordinates = ReportCoordinates(
         planSlug = getValue("planSlug"),
         jobSlug = getValue("jobSlug"),
         runId = getValue("runId")

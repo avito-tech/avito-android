@@ -1,7 +1,8 @@
-package com.avito.instrumentation
+package com.avito.instrumentation.stub
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
+import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult

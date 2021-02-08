@@ -4,14 +4,14 @@ import com.avito.android.runner.devices.model.ReservationData
 import com.avito.report.model.TestName
 import java.io.Serializable
 
-sealed class Reservation(
-    val device: Device,
-    val quota: QuotaConfigurationData
+public sealed class Reservation(
+    public val device: Device,
+    public val quota: QuotaConfigurationData
 ) : Serializable {
 
-    abstract fun data(tests: List<TestName>): ReservationData
+    public abstract fun data(tests: List<TestName>): ReservationData
 
-    class StaticReservation(
+    public class StaticReservation(
         device: Device,
         quota: QuotaConfigurationData,
         private val count: Int
@@ -24,7 +24,7 @@ sealed class Reservation(
             )
     }
 
-    class TestsCountBasedReservation(
+    public class TestsCountBasedReservation(
         device: Device,
         quota: QuotaConfigurationData,
         private val testsPerEmulator: Int,

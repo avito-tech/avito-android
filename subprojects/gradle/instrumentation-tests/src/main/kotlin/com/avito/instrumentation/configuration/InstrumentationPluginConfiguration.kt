@@ -10,58 +10,58 @@ import org.gradle.api.Project
 import java.io.File
 import java.io.Serializable
 
-object InstrumentationPluginConfiguration {
-    abstract class GradleInstrumentationPluginConfiguration(
+public object InstrumentationPluginConfiguration {
+    public abstract class GradleInstrumentationPluginConfiguration(
         project: Project
     ) {
 
-        var applicationApk: String? = null
-        var testApplicationApk: String? = null
+        public var applicationApk: String? = null
+        public var testApplicationApk: String? = null
 
-        var reportApiUrl: String = ""
-        var reportApiFallbackUrl: String = ""
-        var reportViewerUrl: String = ""
-        var fileStorageUrl = ""
+        public var reportApiUrl: String = ""
+        public var reportApiFallbackUrl: String = ""
+        public var reportViewerUrl: String = ""
+        public var fileStorageUrl: String = ""
 
-        var registry: String = ""
+        public var registry: String = ""
 
         // todo make optional
-        var sentryDsn: String = ""
+        public var sentryDsn: String = ""
 
         // todo extract
-        var slackToken: String = ""
+        public var slackToken: String = ""
 
-        var unitToChannelMap: Map<String, String> = emptyMap()
+        public var unitToChannelMap: Map<String, String> = emptyMap()
 
-        var applicationProguardMapping: File? = null
-        var testProguardMapping: File? = null
+        public var applicationProguardMapping: File? = null
+        public var testProguardMapping: File? = null
 
-        abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
-        abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
+        public abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
+        public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
         @get:Incubating
-        val testReport = InstrumentationTestReportExtension()
+        public val testReport: InstrumentationTestReportExtension = InstrumentationTestReportExtension()
 
-        val configurations: List<InstrumentationConfiguration>
+        public val configurations: List<InstrumentationConfiguration>
             get() = configurationsContainer.toList()
 
-        var instrumentationParams: Map<String, String> = emptyMap()
+        public var instrumentationParams: Map<String, String> = emptyMap()
 
         // https://developer.android.com/studio/command-line/logcat#filteringOutput
-        var logcatTags: Collection<String> = emptyList()
+        public var logcatTags: Collection<String> = emptyList()
 
-        var output: String =
+        public var output: String =
             project.rootProject.file("outputs/${project.name}/instrumentation").path
 
-        fun configurations(closure: Closure<NamedDomainObjectSet<InstrumentationConfiguration>>) {
+        public fun configurations(closure: Closure<NamedDomainObjectSet<InstrumentationConfiguration>>) {
             configurationsContainer.configure(closure)
         }
 
-        fun filters(action: Action<NamedDomainObjectContainer<InstrumentationFilter>>) {
+        public fun filters(action: Action<NamedDomainObjectContainer<InstrumentationFilter>>) {
             action.execute(filters)
         }
 
-        fun testReport(action: Action<InstrumentationTestReportExtension>) {
+        public fun testReport(action: Action<InstrumentationTestReportExtension>) {
             action.execute(testReport)
         }
 
@@ -148,7 +148,7 @@ object InstrumentationPluginConfiguration {
             )
         }
 
-        data class Data(
+        public data class Data(
             val configurations: Collection<InstrumentationConfiguration.Data>,
             private val pluginInstrumentationParameters: InstrumentationParameters,
             val logcatTags: Collection<String>,
@@ -162,7 +162,7 @@ object InstrumentationPluginConfiguration {
             val testProguardMapping: File?
         ) : Serializable {
 
-            data class ReportViewer(
+            public data class ReportViewer(
                 val reportApiUrl: String,
                 val reportApiFallbackUrl: String,
                 val reportViewerUrl: String,

@@ -13,6 +13,7 @@ import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.finalizer.FinalizerFactory
 import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
+import com.avito.instrumentation.stub.createStubInstance
 import com.avito.instrumentation.stub.executing.StubTestExecutor
 import com.avito.instrumentation.stub.report.createStubInstance
 import com.avito.logger.LoggerFactory

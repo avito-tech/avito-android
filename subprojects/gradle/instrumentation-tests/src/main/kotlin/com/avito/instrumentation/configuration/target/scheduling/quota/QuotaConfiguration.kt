@@ -2,13 +2,13 @@ package com.avito.instrumentation.configuration.target.scheduling.quota
 
 import com.avito.instrumentation.reservation.request.QuotaConfigurationData
 
-open class QuotaConfiguration {
+public open class QuotaConfiguration {
 
-    var retryCount: Int = 0
-    var minimumSuccessCount: Int = 0
-    var minimumFailedCount: Int = 0
+    public var retryCount: Int = 0
+    public var minimumSuccessCount: Int = 0
+    public var minimumFailedCount: Int = 0
 
-    fun validate() {
+    public fun validate() {
         val runsCount = retryCount + 1
         val minimumRequiredRunsCount = minimumSuccessCount + minimumFailedCount
 
@@ -25,7 +25,7 @@ open class QuotaConfiguration {
         }
     }
 
-    fun data() = QuotaConfigurationData(
+    public fun data(): QuotaConfigurationData = QuotaConfigurationData(
         retryCount = retryCount,
         minimumSuccessCount = minimumSuccessCount,
         minimumFailedCount = minimumFailedCount
