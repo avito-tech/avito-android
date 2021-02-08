@@ -277,7 +277,7 @@ fun emulatorImage(registry: String?, api: Int): String {
 }
 
 tasks.withType<Wrapper> {
-    //sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
+    // Sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.8.1"
+    gradleVersion = "6.8.2"
 }
