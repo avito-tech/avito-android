@@ -10,7 +10,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.debug("Got ro.build.version.sdk = $api")
     }
 
-    override fun onGetSdkPropertyAttemptFail(attempt: Int) {
+    override fun onGetSdkPropertyError(attempt: Int) {
         logger.debug("Attempt $attempt: reading ro.build.version.sdk failed")
     }
 
@@ -26,7 +26,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.debug("Attempt $attempt: application $applicationPackage installed")
     }
 
-    override fun onInstallApplicationAttemptFail(
+    override fun onInstallApplicationError(
         device: Device,
         attempt: Int,
         applicationPackage: String
@@ -49,7 +49,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.debug("Device status: alive")
     }
 
-    override fun onGetAliveDeviceAttemptFail(
+    override fun onGetAliveDeviceError(
         device: Device,
         attempt: Int
     ) {
@@ -71,7 +71,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.debug("Attempt: $attempt: clear package $name completed")
     }
 
-    override fun onClearPackageAttemptFail(
+    override fun onClearPackageError(
         device: Device,
         attempt: Int,
         name: String,
@@ -96,7 +96,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.debug("Pull success from: $from to $to")
     }
 
-    override fun onPullAttemptFail(
+    override fun onPullError(
         device: Device,
         attempt: Int,
         from: Path,
@@ -121,14 +121,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.debug("Successfully cleared $remotePath. ($output)")
     }
 
-    override fun onClearDirectoryNothingDone(
-        device: Device,
-        remotePath: Path
-    ) {
-        logger.debug("Nothing cleared in $remotePath")
-    }
-
-    override fun onClearDirectoryAttemptFail(
+    override fun onClearDirectoryError(
         device: Device,
         attempt: Int,
         remotePath: Path,
@@ -152,7 +145,7 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.debug("Listing $remotePath success")
     }
 
-    override fun onListAttemptFail(
+    override fun onListError(
         device: Device,
         attempt: Int,
         remotePath: String,

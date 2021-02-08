@@ -101,18 +101,18 @@ If test file was pulled, but there was a parsing error
 Lower level metrics from AdbDevice, to observe device connection issues. \
 It is count metrics, aggregated by time windows
 
-### `get-sdk-property`.[ `success` / `attempt-fail` / `failure` ]
+### `get-sdk-property`.[ `success` / `error` / `failure` ]
 
-### `install-application`.[ `success` / `attempt-fail` / `failure` ]
+### `install-application`.[ `success` / `error` / `failure` ]
 
-### `get-alive-device`.[ `success` / `attempt-fail` / `failure` ]
+### `get-alive-device`.[ `success` / `error` / `failure` ]
 
-### `clear-package`.[ `success` / `attempt-fail` / `failure` ]
+### `clear-package`.[ `success` / `error` / `failure` ]
 
-### `pull`.[ `success` / `attempt-fail` / `failure` ]
+### `pull`.[ `success` / `error` / `failure` ]
 
-### `clear-directory`.[ `success` / `nothing` / `attempt-fail` / `failure` ]
+### `clear-directory`.[ `success` /  `error` / `failure` ]
 
-### `list`.[ `success` / `nothing` / `attempt-fail` / `failure` ]
+### `list`.[ `success` / `error` / `failure` ]
 
 ### `run-test`.[ `passed` / `ignored` / `error` / `infrastructure-err` / `failed-on-start` / `failed-instrum-parse` ]

@@ -17,8 +17,8 @@ class AdbDeviceMetrics(
         statsDSender.send(prefix, CountMetric("get-sdk-property.success"))
     }
 
-    override fun onGetSdkPropertyAttemptFail(attempt: Int) {
-        statsDSender.send(prefix, CountMetric("get-sdk-property.attempt-fail"))
+    override fun onGetSdkPropertyError(attempt: Int) {
+        statsDSender.send(prefix, CountMetric("get-sdk-property.error"))
     }
 
     override fun onGetSdkPropertyFailure(throwable: Throwable) {
@@ -29,8 +29,8 @@ class AdbDeviceMetrics(
         statsDSender.send(prefixWithDevice(device), CountMetric("install-application.success"))
     }
 
-    override fun onInstallApplicationAttemptFail(device: Device, attempt: Int, applicationPackage: String) {
-        statsDSender.send(prefixWithDevice(device), CountMetric("install-application.attempt-fail"))
+    override fun onInstallApplicationError(device: Device, attempt: Int, applicationPackage: String) {
+        statsDSender.send(prefixWithDevice(device), CountMetric("install-application.error"))
     }
 
     override fun onInstallApplicationFailure(device: Device, applicationPackage: String, throwable: Throwable) {
@@ -41,8 +41,8 @@ class AdbDeviceMetrics(
         statsDSender.send(prefixWithDevice(device), CountMetric("get-alive-device.success"))
     }
 
-    override fun onGetAliveDeviceAttemptFail(device: Device, attempt: Int) {
-        statsDSender.send(prefixWithDevice(device), CountMetric("get-alive-device.attempt-fail"))
+    override fun onGetAliveDeviceError(device: Device, attempt: Int) {
+        statsDSender.send(prefixWithDevice(device), CountMetric("get-alive-device.error"))
     }
 
     override fun onGetAliveDeviceFailed(device: Device, throwable: Throwable) {
@@ -53,8 +53,8 @@ class AdbDeviceMetrics(
         statsDSender.send(prefixWithDevice(device), CountMetric("clear-package.success"))
     }
 
-    override fun onClearPackageAttemptFail(device: Device, attempt: Int, name: String, throwable: Throwable) {
-        statsDSender.send(prefixWithDevice(device), CountMetric("clear-package.attempt-fail"))
+    override fun onClearPackageError(device: Device, attempt: Int, name: String, throwable: Throwable) {
+        statsDSender.send(prefixWithDevice(device), CountMetric("clear-package.error"))
     }
 
     override fun onClearPackageFailure(device: Device, name: String, throwable: Throwable) {
@@ -65,8 +65,8 @@ class AdbDeviceMetrics(
         statsDSender.send(prefixWithDevice(device), CountMetric("pull.success"))
     }
 
-    override fun onPullAttemptFail(device: Device, attempt: Int, from: Path, throwable: Throwable) {
-        statsDSender.send(prefixWithDevice(device), CountMetric("pull.attempt-fail"))
+    override fun onPullError(device: Device, attempt: Int, from: Path, throwable: Throwable) {
+        statsDSender.send(prefixWithDevice(device), CountMetric("pull.error"))
     }
 
     override fun onPullFailure(device: Device, from: Path, throwable: Throwable) {
@@ -77,12 +77,8 @@ class AdbDeviceMetrics(
         statsDSender.send(prefixWithDevice(device), CountMetric("clear-directory.success"))
     }
 
-    override fun onClearDirectoryNothingDone(device: Device, remotePath: Path) {
-        statsDSender.send(prefixWithDevice(device), CountMetric("clear-directory.nothing"))
-    }
-
-    override fun onClearDirectoryAttemptFail(device: Device, attempt: Int, remotePath: Path, throwable: Throwable) {
-        statsDSender.send(prefixWithDevice(device), CountMetric("clear-directory.attempt-fail"))
+    override fun onClearDirectoryError(device: Device, attempt: Int, remotePath: Path, throwable: Throwable) {
+        statsDSender.send(prefixWithDevice(device), CountMetric("clear-directory.error"))
     }
 
     override fun onClearDirectoryFailure(device: Device, remotePath: Path, throwable: Throwable) {
@@ -93,8 +89,8 @@ class AdbDeviceMetrics(
         statsDSender.send(prefixWithDevice(device), CountMetric("list.success"))
     }
 
-    override fun onListAttemptFail(device: Device, attempt: Int, remotePath: String, throwable: Throwable) {
-        statsDSender.send(prefixWithDevice(device), CountMetric("list.attempt-fail"))
+    override fun onListError(device: Device, attempt: Int, remotePath: String, throwable: Throwable) {
+        statsDSender.send(prefixWithDevice(device), CountMetric("list.error"))
     }
 
     override fun onListFailure(device: Device, remotePath: String, throwable: Throwable) {
