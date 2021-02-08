@@ -12,31 +12,31 @@ import com.avito.time.TimeProvider
 import org.funktionale.tries.Try
 import java.io.Serializable
 
-interface Report : ReadReport {
+public interface Report : ReadReport {
 
-    interface Factory : Serializable {
+    public interface Factory : Serializable {
 
-        sealed class Config : Serializable {
+        public sealed class Config : Serializable {
 
-            data class ReportViewerCoordinates(
+            public data class ReportViewerCoordinates(
                 val reportCoordinates: ReportCoordinates,
                 val buildId: String
             ) : Config()
 
-            data class ReportViewerId(
+            public data class ReportViewerId(
                 val reportId: String
             ) : Config()
 
-            data class InMemory(
+            public data class InMemory(
                 val id: String
             ) : Config()
         }
 
-        fun createReport(config: Config): Report
+        public fun createReport(config: Config): Report
 
-        fun createReadReport(config: Config): ReadReport
+        public fun createReadReport(config: Config): ReadReport
 
-        class StrategyFactory(
+        public class StrategyFactory(
             private val factories: Map<String, Factory>
         ) : Factory, Serializable {
 
@@ -52,7 +52,7 @@ interface Report : ReadReport {
                 }
         }
 
-        class InMemoryReportFactory(private val timeProvider: TimeProvider) : Factory {
+        public class InMemoryReportFactory(private val timeProvider: TimeProvider) : Factory {
 
             @Transient
             private var reports: MutableMap<Config.InMemory, InMemoryReport> = mutableMapOf()
@@ -87,12 +87,12 @@ interface Report : ReadReport {
             }
         }
 
-        class ReportViewerFactory(
-            val reportApiUrl: String,
-            val reportApiFallbackUrl: String,
-            val loggerFactory: LoggerFactory,
-            val timeProvider: TimeProvider,
-            val verboseHttp: Boolean
+        public class ReportViewerFactory(
+            public val reportApiUrl: String,
+            public val reportApiFallbackUrl: String,
+            public val loggerFactory: LoggerFactory,
+            public val timeProvider: TimeProvider,
+            public val verboseHttp: Boolean
         ) : Factory {
 
             @Transient
@@ -150,21 +150,21 @@ interface Report : ReadReport {
         }
     }
 
-    fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String)
+    public fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String)
 
-    fun tryGetId(): String?
+    public fun tryGetId(): String?
 
-    fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)
+    public fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)
 
-    fun sendLostTests(lostTests: List<AndroidTest.Lost>)
+    public fun sendLostTests(lostTests: List<AndroidTest.Lost>)
 
-    fun sendCompletedTest(completedTest: AndroidTest.Completed)
+    public fun sendCompletedTest(completedTest: AndroidTest.Completed)
 
-    fun finish()
+    public fun finish()
 
-    fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit>
+    public fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit>
 
-    fun getCrossDeviceTestData(): Try<CrossDeviceSuite>
+    public fun getCrossDeviceTestData(): Try<CrossDeviceSuite>
 
-    companion object
+    public companion object
 }

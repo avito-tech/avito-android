@@ -4,6 +4,7 @@ import com.avito.instrumentation.configuration.InstrumentationPluginConfiguratio
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -12,18 +13,18 @@ import java.io.ObjectOutputStream
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-abstract class DumpConfigurationTask @Inject constructor(
+public abstract class DumpConfigurationTask @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {
 
     @Input
-    val configuration = objects.property<Data>()
+    public val configuration: Property<Data> = objects.property()
 
     @OutputFile
-    val output: RegularFileProperty = objects.fileProperty()
+    public val output: RegularFileProperty = objects.fileProperty()
 
     @TaskAction
-    fun action() {
+    public fun action() {
         ObjectOutputStream(
             output.asFile.get().outputStream()
         ).use {

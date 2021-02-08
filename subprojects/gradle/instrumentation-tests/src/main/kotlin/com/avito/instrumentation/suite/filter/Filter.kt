@@ -2,9 +2,9 @@ package com.avito.instrumentation.suite.filter
 
 import java.io.Serializable
 
-class Filter<T : Serializable> {
+public class Filter<T : Serializable> {
 
-    data class Value<T : Serializable>(
+    public data class Value<T : Serializable>(
         val included: Set<T>,
         val excluded: Set<T>
     ) : Serializable
@@ -21,11 +21,11 @@ class Filter<T : Serializable> {
             )
         }
 
-    fun include(values: Set<T>) {
+    public fun include(values: Set<T>) {
         included = values
     }
 
-    fun exclude(values: Set<T>) {
+    public fun exclude(values: Set<T>) {
         excluded = values
     }
 }

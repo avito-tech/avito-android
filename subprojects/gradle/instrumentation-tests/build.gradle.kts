@@ -62,6 +62,7 @@ dependencies {
 }
 
 kotlin {
+    explicitApi()
 
     /**
      * Workaround to access internal classes from testFixtures

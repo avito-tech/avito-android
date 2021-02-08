@@ -2,12 +2,12 @@ package com.avito.instrumentation.configuration
 
 import java.io.Serializable
 
-sealed class ImpactAnalysisPolicy : Serializable {
+public sealed class ImpactAnalysisPolicy : Serializable {
 
-    sealed class On : ImpactAnalysisPolicy() {
+    public sealed class On : ImpactAnalysisPolicy() {
 
-        object RunChangedTests : On()
+        public object RunChangedTests : On()
     }
 
-    object Off : ImpactAnalysisPolicy()
+    public object Off : ImpactAnalysisPolicy()
 }
