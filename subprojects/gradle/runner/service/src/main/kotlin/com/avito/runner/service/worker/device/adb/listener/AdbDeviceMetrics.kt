@@ -2,7 +2,7 @@ package com.avito.runner.service.worker.device.adb.listener
 
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.StatsDSender
-import com.avito.android.stats.graphiteSeries
+import com.avito.android.stats.graphiteSeriesElement
 import com.avito.runner.service.worker.device.Device
 import java.nio.file.Path
 
@@ -11,7 +11,7 @@ class AdbDeviceMetrics(
     runnerPrefix: String
 ) : AdbDeviceEventsListener {
 
-    private val prefix = graphiteSeries(runnerPrefix, "adb")
+    private val prefix = "$runnerPrefix.adb"
 
     override fun onGetSdkPropertySuccess(attempt: Int, api: Int) {
         statsDSender.send(prefix, CountMetric("get-sdk-property.success"))
@@ -127,6 +127,6 @@ class AdbDeviceMetrics(
     }
 
     private fun prefixWithDevice(device: Device): String {
-        return graphiteSeries(prefix, device.api.toString())
+        return "$prefix.${graphiteSeriesElement(device.api.toString())}"
     }
 }
