@@ -229,7 +229,9 @@ data class AdbDevice(
             delaySeconds = 2,
             block = { attempt ->
                 val result = executeBlockingShellCommand(
-                    command = listOf("pm", "clear", name)
+                    command = listOf("pm", "clear", name),
+                    // was seeing ~20% error rate at 5s
+                    timeoutSeconds = 10
                 )
 
                 if (!result.output.contains("success", ignoreCase = true)) {
