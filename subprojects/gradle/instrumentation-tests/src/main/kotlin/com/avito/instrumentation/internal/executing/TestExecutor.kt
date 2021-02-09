@@ -3,7 +3,7 @@ package com.avito.instrumentation.internal.executing
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import java.io.File
 
-interface TestExecutor {
+internal interface TestExecutor {
 
     fun execute(
         application: File?,

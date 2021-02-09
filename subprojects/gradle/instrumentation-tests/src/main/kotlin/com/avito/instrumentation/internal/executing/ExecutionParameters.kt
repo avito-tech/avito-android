@@ -2,7 +2,7 @@ package com.avito.instrumentation.internal.executing
 
 import java.io.Serializable
 
-data class ExecutionParameters(
+public data class ExecutionParameters(
     val applicationPackageName: String,
     val applicationTestPackageName: String,
     val testRunner: String,
@@ -10,5 +10,5 @@ data class ExecutionParameters(
     val logcatTags: Collection<String>,
     val enableDeviceDebug: Boolean
 ) : Serializable {
-    companion object
+    public companion object
 }

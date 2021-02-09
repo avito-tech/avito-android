@@ -9,12 +9,12 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import java.io.Serializable
 
-open class SchedulingConfiguration {
+public open class SchedulingConfiguration {
 
-    lateinit var reservation: DeviceReservationConfiguration
-    lateinit var quota: QuotaConfiguration
+    public lateinit var reservation: DeviceReservationConfiguration
+    public lateinit var quota: QuotaConfiguration
 
-    fun staticDevicesReservation(closure: Closure<StaticDeviceReservationConfiguration>) {
+    public fun staticDevicesReservation(closure: Closure<StaticDeviceReservationConfiguration>) {
         staticDevicesReservation(
             Action {
                 closure.delegate = it
@@ -23,7 +23,7 @@ open class SchedulingConfiguration {
         )
     }
 
-    fun testsCountBasedReservation(closure: Closure<TestsBasedDevicesReservationConfiguration>) {
+    public fun testsCountBasedReservation(closure: Closure<TestsBasedDevicesReservationConfiguration>) {
         testsCountBasedReservation(
             Action {
                 closure.delegate = it
@@ -32,21 +32,21 @@ open class SchedulingConfiguration {
         )
     }
 
-    fun staticDevicesReservation(action: Action<StaticDeviceReservationConfiguration>) {
+    public fun staticDevicesReservation(action: Action<StaticDeviceReservationConfiguration>) {
         reservation = StaticDeviceReservationConfiguration().also {
             action.execute(it)
             it.validate()
         }
     }
 
-    fun testsCountBasedReservation(action: Action<TestsBasedDevicesReservationConfiguration>) {
+    public fun testsCountBasedReservation(action: Action<TestsBasedDevicesReservationConfiguration>) {
         reservation = TestsBasedDevicesReservationConfiguration().also {
             action.execute(it)
             it.validate()
         }
     }
 
-    fun quota(closure: Closure<QuotaConfiguration>) {
+    public fun quota(closure: Closure<QuotaConfiguration>) {
         quota(
             Action {
                 closure.delegate = it
@@ -55,7 +55,7 @@ open class SchedulingConfiguration {
         )
     }
 
-    fun quota(action: Action<QuotaConfiguration>) {
+    public fun quota(action: Action<QuotaConfiguration>) {
         quota = QuotaConfiguration()
             .also {
                 action.execute(it)
@@ -63,7 +63,7 @@ open class SchedulingConfiguration {
             }
     }
 
-    fun validate() {
+    public fun validate() {
         reservation
         reservation.validate()
 
@@ -71,7 +71,7 @@ open class SchedulingConfiguration {
         quota.validate()
     }
 
-    fun data(): Data {
+    public fun data(): Data {
         val currentReservation = reservation
 
         return Data(
@@ -93,7 +93,7 @@ open class SchedulingConfiguration {
         )
     }
 
-    data class Data(
+    public data class Data(
         val reservation: Reservation
     ) : Serializable
 }

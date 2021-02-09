@@ -3,7 +3,7 @@ package com.avito.instrumentation.internal.suite.filter
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import java.io.File
 
-data class ImpactAnalysisResult(
+public data class ImpactAnalysisResult(
     val policy: ImpactAnalysisPolicy,
     val affectedTests: List<String>,
     val addedTests: List<String>,
@@ -11,14 +11,14 @@ data class ImpactAnalysisResult(
     val changedTests: List<String>
 ) {
 
-    companion object {
-        fun create(
+    public companion object {
+        public fun create(
             policy: ImpactAnalysisPolicy,
             affectedTestsFile: File?,
             addedTestsFile: File?,
             modifiedTestsFile: File?,
             changedTestsFile: File?
-        ) = ImpactAnalysisResult(
+        ): ImpactAnalysisResult = ImpactAnalysisResult(
             policy = policy,
             affectedTests = parseFile(affectedTestsFile),
             addedTests = parseFile(addedTestsFile),

@@ -5,7 +5,7 @@ import com.avito.runner.service.model.TestCase
 import org.funktionale.tries.Try
 import java.io.File
 
-class StubTestReporter : TestReporter() {
+internal class StubTestReporter : TestReporter() {
 
     override fun report(artifacts: Try<File>, test: TestCase, executionNumber: Int) {
     }

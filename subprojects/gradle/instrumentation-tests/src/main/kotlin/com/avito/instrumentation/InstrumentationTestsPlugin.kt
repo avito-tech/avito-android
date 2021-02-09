@@ -40,7 +40,7 @@ import java.io.File
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
-class InstrumentationTestsPlugin : Plugin<Project> {
+public class InstrumentationTestsPlugin : Plugin<Project> {
 
     private val ciTaskGroup = "ci"
 

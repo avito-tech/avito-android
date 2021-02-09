@@ -30,7 +30,7 @@ private val regressionNoE2EAnnotations = uiNoE2EAnnotations + manualAnnotations
 
 private val regressionAnnotations = uiAnnotations + manualAnnotations
 
-enum class TestsFilter(val annotatedWith: Set<String>) {
+public enum class TestsFilter(public val annotatedWith: Set<String>) {
     uiE2EOnly(uiE2EOnlyAnnotations),
     uiNoE2E(uiNoE2EAnnotations),
     ui(uiAnnotations),

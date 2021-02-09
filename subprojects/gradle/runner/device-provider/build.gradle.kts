@@ -26,7 +26,7 @@ kotlin {
     explicitApi()
 
     /**
-     * Workaround to access internal classes from textFixtures
+     * Workaround to access internal classes from testFixtures
      * till https://youtrack.jetbrains.com/issue/KT-34901 resolved
      */
     target.compilations

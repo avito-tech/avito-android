@@ -7,22 +7,22 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import java.io.Serializable
 
-open class TargetConfiguration(val name: String) : Serializable {
+public open class TargetConfiguration(public val name: String) : Serializable {
 
-    lateinit var scheduling: SchedulingConfiguration
+    public lateinit var scheduling: SchedulingConfiguration
 
-    lateinit var deviceName: String
+    public lateinit var deviceName: String
 
     /**
      * Таргет может считаться отключенным. Такая возможность добавлена для
      * динамической конфигурации. Таргеты могут быть отключены в DSL с помощью
      * проброшенных извне Gradle параметров
      */
-    var enabled: Boolean = true
+    public var enabled: Boolean = true
 
-    var instrumentationParams: Map<String, String> = emptyMap()
+    public var instrumentationParams: Map<String, String> = emptyMap()
 
-    fun scheduling(closure: Closure<SchedulingConfiguration>) {
+    public fun scheduling(closure: Closure<SchedulingConfiguration>) {
         scheduling(
             Action {
                 closure.delegate = it
@@ -31,7 +31,7 @@ open class TargetConfiguration(val name: String) : Serializable {
         )
     }
 
-    fun scheduling(action: Action<SchedulingConfiguration>) {
+    public fun scheduling(action: Action<SchedulingConfiguration>) {
         scheduling = SchedulingConfiguration()
             .also {
                 action.execute(it)
@@ -39,7 +39,7 @@ open class TargetConfiguration(val name: String) : Serializable {
             }
     }
 
-    fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
+    public fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
 
         return Data(
             name = name,
@@ -53,12 +53,12 @@ open class TargetConfiguration(val name: String) : Serializable {
         )
     }
 
-    fun validate() {
+    public fun validate() {
         scheduling.validate()
         require(deviceName.isNotBlank()) { "deviceName must be set" }
     }
 
-    data class Data(
+    public data class Data(
         val name: String,
         val reservation: Reservation,
         val deviceName: String,
@@ -67,6 +67,6 @@ open class TargetConfiguration(val name: String) : Serializable {
 
         override fun toString(): String = "$name with device name: $deviceName"
 
-        companion object
+        public companion object
     }
 }
