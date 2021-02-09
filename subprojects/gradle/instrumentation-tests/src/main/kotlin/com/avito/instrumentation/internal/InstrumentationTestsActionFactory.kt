@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.stats.SeriesName
 import com.avito.instrumentation.internal.finalizer.FinalizerFactory
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
@@ -23,26 +24,34 @@ internal interface InstrumentationTestsActionFactory {
         constructor(params: InstrumentationTestsAction.Params) : this(
             params = params,
             sourceReport = params.reportFactory.createReport(params.reportConfig),
-            gson = Companion.gson
+            gson = Companion.gson,
+            runnerPrefix = SeriesName.create(
+                "testrunner",
+                params.buildId,
+                params.instrumentationConfiguration.name
+            )
         )
 
         @VisibleForTesting
         internal constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            gson: Gson
+            gson: Gson,
+            runnerPrefix: SeriesName
         ) {
             this.gson = gson
             this.sourceReport = sourceReport
             this.schedulerFactory = TestsSchedulerFactory.Impl(
                 params = params,
                 sourceReport = sourceReport,
-                gson = gson
+                gson = gson,
+                runnerPrefix = runnerPrefix
             )
             this.finalizerFactory = FinalizerFactory.Impl(
                 params = params,
                 sourceReport = sourceReport,
-                gson = gson
+                gson = gson,
+                runnerPrefix = runnerPrefix
             )
         }
 

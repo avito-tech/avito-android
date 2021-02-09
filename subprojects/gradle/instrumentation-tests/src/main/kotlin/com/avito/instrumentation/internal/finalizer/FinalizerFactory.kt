@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.finalizer
 
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
@@ -27,13 +28,15 @@ internal interface FinalizerFactory {
         // todo Make generic. Need two realization for InMemory and ReportViewer
         private val reportViewer: ReportViewer
         private val loggerFactory: LoggerFactory
+        private val runnerPrefix: SeriesName
 
         @VisibleForTesting
         internal constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
             gson: Gson = InstrumentationTestsActionFactory.gson,
-            buildFailer: BuildFailer
+            buildFailer: BuildFailer,
+            runnerPrefix: SeriesName
         ) {
             this.params = params
             this.sourceReport = sourceReport
@@ -41,17 +44,20 @@ internal interface FinalizerFactory {
             this.reportViewer = ReportViewer.Impl(params.reportViewerUrl)
             this.loggerFactory = params.loggerFactory
             this.buildFailer = buildFailer
+            this.runnerPrefix = runnerPrefix
         }
 
         constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            gson: Gson
+            gson: Gson,
+            runnerPrefix: SeriesName
         ) : this(
             params = params,
             sourceReport = sourceReport,
             gson = gson,
-            buildFailer = BuildFailer.RealFailer()
+            buildFailer = BuildFailer.RealFailer(),
+            runnerPrefix = runnerPrefix
         )
 
         override fun create(): InstrumentationTestActionFinalizer {
@@ -73,8 +79,7 @@ internal interface FinalizerFactory {
                 loggerFactory = loggerFactory,
                 metricsSender = InstrumentationMetricsSender(
                     statsDSender = StatsDSender.Impl(params.statsDConfig, loggerFactory),
-                    buildId = params.buildId,
-                    instrumentationConfigName = params.instrumentationConfiguration.name
+                    runnerPrefix = runnerPrefix
                 )
             )
         }

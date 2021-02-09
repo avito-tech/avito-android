@@ -2,8 +2,7 @@ package com.avito.android.plugin.build_metrics
 
 import com.avito.android.graphite.GraphiteMetric
 import com.avito.android.graphite.GraphiteSender
-import com.avito.android.stats.graphiteSeries
-import com.avito.android.stats.graphiteSeriesElement
+import com.avito.android.stats.SeriesName
 import com.avito.teamcity.TeamcityApi
 import org.jetbrains.teamcity.rest.Build
 import java.time.Duration
@@ -21,19 +20,36 @@ class CollectTeamcityMetricsAction(
     }
 
     private fun sendMetric(build: Build) {
-        val buildId = graphiteSeriesElement(build.id.stringId)
-        val buildTypeId = graphiteSeries(build.buildConfigurationId.stringId)
-        val buildStatus = graphiteSeriesElement(build.status?.name ?: "unknown")
         val duration = Duration.between(build.startDateTime, build.finishDateTime)
 
         // We use a redundant structure only for compatibility reasons
-        val path = "ci.builds.teamcity.duration" +
-            ".build_type_id.$buildTypeId" +
-            ".id.$buildId" +
-            ".agent._" +
-            ".state._" +
-            ".status.$buildStatus" +
-            "._._._._"
-        graphite.send(GraphiteMetric(path, duration.seconds.toString(), build.startDateTime!!.toEpochSecond()))
+        val path = SeriesName.create(
+            "ci",
+            "builds",
+            "teamcity",
+            "duration",
+            "build_type_id",
+            build.buildConfigurationId.stringId,
+            "id",
+            build.id.stringId,
+            "agent",
+            "_",
+            "state",
+            "_",
+            "status",
+            build.status?.name ?: "unknown",
+            "_",
+            "_",
+            "_",
+            "_"
+        )
+
+        graphite.send(
+            GraphiteMetric(
+                path.toString(),
+                duration.seconds.toString(),
+                build.startDateTime!!.toEpochSecond()
+            )
+        )
     }
 }

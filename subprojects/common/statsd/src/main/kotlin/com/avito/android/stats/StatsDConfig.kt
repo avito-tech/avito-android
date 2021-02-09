@@ -10,6 +10,6 @@ sealed class StatsDConfig : Serializable {
         val host: String,
         val fallbackHost: String,
         val port: Int,
-        val namespace: String
+        val namespace: SeriesName
     ) : StatsDConfig()
 }

@@ -25,7 +25,6 @@ dependencies {
     testImplementation(project(":gradle:git"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:graphite-test-fixtures"))
-    testImplementation(project(":common:statsd-test-fixtures"))
     testImplementation(project(":common:logger-test-fixtures"))
 }
 

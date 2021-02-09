@@ -2,8 +2,8 @@ package com.avito.instrumentation.internal.scheduling
 
 import com.avito.android.TestSuiteLoader
 import com.avito.android.TestSuiteLoaderImpl
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
-import com.avito.android.stats.graphiteSeries
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
@@ -30,6 +30,7 @@ internal interface TestsSchedulerFactory {
         private val gson: Gson
         private val testExecutorFactory: TestExecutorFactory
         private val testSuiteLoader: TestSuiteLoader
+        private val runnerPrefix: SeriesName
 
         @VisibleForTesting
         internal constructor(
@@ -37,25 +38,29 @@ internal interface TestsSchedulerFactory {
             sourceReport: Report,
             gson: Gson = InstrumentationTestsActionFactory.gson,
             testExecutorFactory: TestExecutorFactory,
-            testSuiteLoader: TestSuiteLoader
+            testSuiteLoader: TestSuiteLoader,
+            runnerPrefix: SeriesName
         ) {
             this.params = params
             this.sourceReport = sourceReport
             this.gson = gson
             this.testExecutorFactory = testExecutorFactory
             this.testSuiteLoader = testSuiteLoader
+            this.runnerPrefix = runnerPrefix
         }
 
         constructor(
             params: InstrumentationTestsAction.Params,
             sourceReport: Report,
-            gson: Gson
+            gson: Gson,
+            runnerPrefix: SeriesName
         ) : this(
             params = params,
             sourceReport = sourceReport,
             gson = gson,
             testExecutorFactory = TestExecutorFactory.Implementation(),
-            testSuiteLoader = TestSuiteLoaderImpl()
+            testSuiteLoader = TestSuiteLoaderImpl(),
+            runnerPrefix = runnerPrefix
         )
 
         override fun create(): TestsScheduler {
@@ -112,8 +117,7 @@ internal interface TestsSchedulerFactory {
                                 config = params.statsDConfig,
                                 loggerFactory = params.loggerFactory
                             ),
-                            buildId = params.buildId,
-                            instrumentationConfigName = params.instrumentationConfiguration.name
+                            runnerPrefix = runnerPrefix
                         )
                     )
                 },
@@ -127,11 +131,7 @@ internal interface TestsSchedulerFactory {
                 registry = params.registry,
                 metricsConfig = RunnerMetricsConfig(
                     statsDConfig = params.statsDConfig,
-                    runnerPrefix = graphiteSeries(
-                        "testrunner",
-                        params.buildId,
-                        params.instrumentationConfiguration.name
-                    )
+                    runnerPrefix = runnerPrefix
                 ),
                 timeProvider = timeProvider
             )

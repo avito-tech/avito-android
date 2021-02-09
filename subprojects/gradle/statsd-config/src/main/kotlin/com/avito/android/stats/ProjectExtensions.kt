@@ -31,7 +31,10 @@ private fun config(project: Project): StatsDConfig {
             host = project.getMandatoryStringProperty("avito.stats.host"),
             fallbackHost = project.getMandatoryStringProperty("avito.stats.fallbackHost"),
             port = project.getMandatoryIntProperty("avito.stats.port"),
-            namespace = project.getMandatoryStringProperty("avito.stats.namespace")
+            namespace = SeriesName.create(
+                project.getMandatoryStringProperty("avito.stats.namespace"),
+                multipart = true
+            )
         )
     } else {
         StatsDConfig.Disabled

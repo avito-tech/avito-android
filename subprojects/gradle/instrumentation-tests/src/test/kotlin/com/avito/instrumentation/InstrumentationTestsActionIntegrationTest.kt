@@ -4,6 +4,7 @@ import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.android.runner.devices.DevicesProviderFactory
+import com.avito.android.stats.SeriesName
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.internal.InstrumentationTestsAction
@@ -152,7 +153,8 @@ internal class InstrumentationTestsActionIntegrationTest {
 
     private fun createAction(
         configuration: InstrumentationConfiguration.Data,
-        params: InstrumentationTestsAction.Params = params(configuration)
+        params: InstrumentationTestsAction.Params = params(configuration),
+        seriesName: SeriesName = SeriesName.create("test")
     ) = InstrumentationTestsAction(
         params = params,
         loggerFactory = params.loggerFactory,
@@ -163,6 +165,7 @@ internal class InstrumentationTestsActionIntegrationTest {
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId,
             ),
+            runnerPrefix = seriesName,
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader
         ).create(),
@@ -173,6 +176,7 @@ internal class InstrumentationTestsActionIntegrationTest {
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId
             ),
+            runnerPrefix = seriesName,
             buildFailer = buildFailer
         ).create()
     )

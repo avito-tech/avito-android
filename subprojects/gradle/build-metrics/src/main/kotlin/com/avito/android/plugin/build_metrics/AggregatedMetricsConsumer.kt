@@ -5,8 +5,8 @@ import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.Operation
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
-import com.avito.android.stats.graphiteSeriesElement
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -97,14 +97,14 @@ internal class AggregatedMetricsConsumer(
     private fun trackConfigurationTime(buildResult: BuildResult, profile: BuildProfile) {
         stats.track(
             buildResult,
-            TimeMetric("init_configuration.total", profile.initWithConfigurationTimeMs)
+            TimeMetric(SeriesName.create("init_configuration", "total"), profile.initWithConfigurationTimeMs)
         )
     }
 
     private fun trackBuildTime(buildResult: BuildResult, profile: BuildProfile) {
         stats.track(
             buildResult,
-            TimeMetric("build-time.total", profile.elapsedTotal)
+            TimeMetric(SeriesName.create("build-time", "total"), profile.elapsedTotal)
         )
     }
 
@@ -119,11 +119,11 @@ internal class AggregatedMetricsConsumer(
         val tasksShorthand = if (canBeTooLongForGraphite) {
             "_"
         } else {
-            graphiteSeriesElement(tasks.joinToString(separator = "_"))
+            tasks.joinToString(separator = "_")
         }
         stats.track(
             buildResult,
-            TimeMetric("build-tasks.$tasksShorthand", profile.elapsedTotal)
+            TimeMetric(SeriesName.create("build-tasks", tasksShorthand), profile.elapsedTotal)
         )
     }
 
@@ -144,7 +144,7 @@ internal class AggregatedMetricsConsumer(
             it.internalState.outcome == FROM_CACHE
         }
         val missedPercentages = executed.percentOf(executed + hits).toLong()
-        stats.track(buildResult, GaugeMetric("tasks.from_cache.miss", missedPercentages))
+        stats.track(buildResult, GaugeMetric(SeriesName.create("tasks", "from_cache", "miss"), missedPercentages))
 
         // Other states are not needed yet
         // If you want to find same results as in build scan report use these filters:
@@ -171,12 +171,15 @@ internal class AggregatedMetricsConsumer(
 
     private fun trackExecutedTask(buildResult: BuildResult, task: TaskExecution) {
         val name = name(task.path)
-        val module = graphiteSeriesElement(task.path.substringBeforeLast(':'))
+        val module = task.path.substringBeforeLast(':')
             .removePrefix("_")
             .let {
                 if (it.isEmpty()) "_" else it
             }
-        stats.track(buildResult, TimeMetric("tasks.executed.$module.$name.total", task.elapsedTime))
+        stats.track(
+            buildResult,
+            TimeMetric(SeriesName.create("tasks", "executed", module, name, "total"), task.elapsedTime)
+        )
     }
 
     @Suppress("unused")
