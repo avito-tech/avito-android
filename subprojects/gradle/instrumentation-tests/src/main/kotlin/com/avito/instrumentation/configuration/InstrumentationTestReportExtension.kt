@@ -2,13 +2,13 @@ package com.avito.instrumentation.configuration
 
 import org.gradle.api.Action
 
-class InstrumentationTestReportExtension {
+public class InstrumentationTestReportExtension {
 
-    class ReportViewer {
-        var reportApiUrl: String = ""
-        var reportApiFallbackUrl: String = ""
-        var reportViewerUrl: String = ""
-        var fileStorageUrl = ""
+    public class ReportViewer {
+        public var reportApiUrl: String = ""
+        public var reportApiFallbackUrl: String = ""
+        public var reportViewerUrl: String = ""
+        public var fileStorageUrl: String = ""
 
         internal fun validate() {
             require(reportApiUrl.isNotEmpty())
@@ -20,7 +20,7 @@ class InstrumentationTestReportExtension {
 
     internal var reportViewer: ReportViewer? = null
 
-    fun reportViewer(action: Action<ReportViewer>) {
+    public fun reportViewer(action: Action<ReportViewer>) {
         val reportViewer = ReportViewer()
         action.execute(reportViewer)
         reportViewer.validate()

@@ -6,40 +6,40 @@ import com.avito.report.model.Status
 import org.gradle.api.Action
 import java.io.Serializable
 
-abstract class InstrumentationFilter(val name: String) {
+public abstract class InstrumentationFilter(public val name: String) {
 
-    val fromSource = FromSource()
+    public val fromSource: FromSource = FromSource()
 
-    val fromRunHistory = FromRunHistory()
+    public val fromRunHistory: FromRunHistory = FromRunHistory()
 
-    fun fromSource(action: Action<FromSource>) {
+    public fun fromSource(action: Action<FromSource>) {
         action.execute(fromSource)
     }
 
-    fun fromRunHistory(action: Action<FromRunHistory>) {
+    public fun fromRunHistory(action: Action<FromRunHistory>) {
         action.execute(fromRunHistory)
     }
 
-    class FromSource {
+    public class FromSource {
 
         private val annotations = Filter<String>()
         private val prefixes = Filter<String>()
 
-        var excludeFlaky = false
+        public var excludeFlaky: Boolean = false
 
-        fun includeByAnnotations(annotations: Set<String>) {
+        public fun includeByAnnotations(annotations: Set<String>) {
             this.annotations.include(annotations)
         }
 
-        fun excludeByAnnotations(annotations: Set<String>) {
+        public fun excludeByAnnotations(annotations: Set<String>) {
             this.annotations.exclude(annotations)
         }
 
-        fun includeByPrefixes(prefixes: Set<String>) {
+        public fun includeByPrefixes(prefixes: Set<String>) {
             this.prefixes.include(prefixes)
         }
 
-        fun excludeByPrefixes(prefixes: Set<String>) {
+        public fun excludeByPrefixes(prefixes: Set<String>) {
             this.prefixes.exclude(prefixes)
         }
 
@@ -52,7 +52,7 @@ abstract class InstrumentationFilter(val name: String) {
         }
     }
 
-    class FromRunHistory {
+    public class FromRunHistory {
 
         private class ReportFilter(
             val id: String,
@@ -63,15 +63,15 @@ abstract class InstrumentationFilter(val name: String) {
 
         private var reportFilter: ReportFilter? = null
 
-        fun includePreviousStatuses(statuses: Set<RunStatus>) {
+        public fun includePreviousStatuses(statuses: Set<RunStatus>) {
             previous.include(statuses)
         }
 
-        fun excludePreviousStatuses(statuses: Set<RunStatus>) {
+        public fun excludePreviousStatuses(statuses: Set<RunStatus>) {
             previous.exclude(statuses)
         }
 
-        fun report(id: String, filter: Action<Filter<RunStatus>>) {
+        public fun report(id: String, filter: Action<Filter<RunStatus>>) {
             reportFilter = ReportFilter(
                 id = id
             ).also { reportFilter -> filter.execute(reportFilter.statuses) }
@@ -89,7 +89,7 @@ abstract class InstrumentationFilter(val name: String) {
             )
         }
 
-        enum class RunStatus(val statusClass: Class<out Status>) {
+        public enum class RunStatus(public val statusClass: Class<out Status>) {
             Failed(Status.Failure::class.java),
             Success(Status.Success::class.java),
             Lost(Status.Lost::class.java),
@@ -106,29 +106,29 @@ abstract class InstrumentationFilter(val name: String) {
         )
     }
 
-    data class Data(
+    public data class Data(
         val name: String,
         val fromSource: FromSource,
         val fromRunHistory: FromRunHistory
     ) : Serializable {
 
-        data class FromSource(
+        public data class FromSource(
             val prefixes: Filter.Value<String>,
             val annotations: Filter.Value<String>,
             val excludeFlaky: Boolean
         ) : Serializable
 
-        data class FromRunHistory(
+        public data class FromRunHistory(
             val previousStatuses: Filter.Value<InstrumentationFilter.FromRunHistory.RunStatus>,
             val reportFilter: ReportFilter?
         ) : Serializable {
 
-            data class ReportFilter(
+            public data class ReportFilter(
                 val reportConfig: Report.Factory.Config.ReportViewerId,
                 val statuses: Filter.Value<InstrumentationFilter.FromRunHistory.RunStatus>
             ) : Serializable
         }
 
-        companion object
+        public companion object
     }
 }

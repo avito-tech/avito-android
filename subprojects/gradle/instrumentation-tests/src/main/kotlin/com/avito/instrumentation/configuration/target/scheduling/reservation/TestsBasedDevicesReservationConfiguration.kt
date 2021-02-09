@@ -2,11 +2,11 @@ package com.avito.instrumentation.configuration.target.scheduling.reservation
 
 import com.avito.instrumentation.reservation.request.Device
 
-open class TestsBasedDevicesReservationConfiguration : DeviceReservationConfiguration() {
+public open class TestsBasedDevicesReservationConfiguration : DeviceReservationConfiguration() {
 
-    var maximum: Int? = null
-    var minimum: Int = 1
-    var testsPerEmulator: Int? = null
+    public var maximum: Int? = null
+    public var minimum: Int = 1
+    public var testsPerEmulator: Int? = null
 
     override fun validate() {
         super.validate()
@@ -15,9 +15,9 @@ open class TestsBasedDevicesReservationConfiguration : DeviceReservationConfigur
         requireNotNull(testsPerEmulator)
     }
 
-    companion object {
+    public companion object {
 
-        fun create(
+        public fun create(
             device: Device,
             min: Int,
             max: Int,

@@ -42,7 +42,7 @@ import org.gradle.workers.WorkerExecutor
 import javax.inject.Inject
 
 @Suppress("UnstableApiUsage")
-abstract class InstrumentationTestsTask @Inject constructor(
+public abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask(), BuildVerdictTask {
@@ -54,86 +54,86 @@ abstract class InstrumentationTestsTask @Inject constructor(
 
     @Optional
     @InputDirectory
-    val application: DirectoryProperty = objects.directoryProperty()
+    public val application: DirectoryProperty = objects.directoryProperty()
 
     @InputDirectory
-    val testApplication: DirectoryProperty = objects.directoryProperty()
+    public val testApplication: DirectoryProperty = objects.directoryProperty()
 
     @Input
-    val impactAnalysisPolicy: Property<ImpactAnalysisPolicy> =
+    public val impactAnalysisPolicy: Property<ImpactAnalysisPolicy> =
         objects.property<ImpactAnalysisPolicy>().convention(ImpactAnalysisPolicy.Off)
 
     @Optional
     @InputFile
-    val newTests: RegularFileProperty = objects.fileProperty()
+    public val newTests: RegularFileProperty = objects.fileProperty()
 
     @Optional
     @InputFile
-    val modifiedTests: RegularFileProperty = objects.fileProperty()
+    public val modifiedTests: RegularFileProperty = objects.fileProperty()
 
     @Optional
     @InputFile
-    val affectedTests: RegularFileProperty = objects.fileProperty()
+    public val affectedTests: RegularFileProperty = objects.fileProperty()
 
     @Optional
     @InputFile
-    val changedTests: RegularFileProperty = objects.fileProperty()
+    public val changedTests: RegularFileProperty = objects.fileProperty()
 
     @Optional
     @InputFile
-    val applicationProguardMapping: RegularFileProperty = objects.fileProperty()
+    public val applicationProguardMapping: RegularFileProperty = objects.fileProperty()
 
     @Optional
     @InputFile
-    val testProguardMapping: RegularFileProperty = objects.fileProperty()
+    public val testProguardMapping: RegularFileProperty = objects.fileProperty()
 
     @Input
-    val slackToken = objects.property<String>()
+    public val slackToken: Property<String> = objects.property()
 
     @Input
-    val buildId = objects.property<String>()
+    public val buildId: Property<String> = objects.property()
 
     @Input
-    val buildType = objects.property<String>()
+    public val buildType: Property<String> = objects.property()
 
     @Input
-    val buildUrl = objects.property<String>()
+    public val buildUrl: Property<String> = objects.property()
 
     @Input
-    val defaultBranch = objects.property<String>()
+    public val defaultBranch: Property<String> = objects.property()
 
     @Input
-    val gitCommit = objects.property<String>()
+    public val gitCommit: Property<String> = objects.property()
 
     @Input
-    val gitBranch = objects.property<String>()
+    public val gitBranch: Property<String> = objects.property()
 
     @Input
-    val sourceCommitHash = objects.property<String>()
+    public val sourceCommitHash: Property<String> = objects.property()
 
     @Input
-    val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
+    public val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Input
-    val suppressFlaky: Property<Boolean> = objects.property<Boolean>().convention(false)
+    public val suppressFlaky: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Input
-    val instrumentationConfiguration = objects.property<InstrumentationConfiguration.Data>()
+    public val instrumentationConfiguration: Property<InstrumentationConfiguration.Data> = objects.property()
 
     @Input
-    val parameters = objects.property<ExecutionParameters>()
+    public val parameters: Property<ExecutionParameters> = objects.property()
 
     @Internal
-    val reportViewerConfig: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
+    public val reportViewerConfig: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
 
     @Internal
-    val registry = objects.property<String>()
+    public val registry: Property<String> = objects.property()
 
     @Internal
-    val kubernetesCredentials = objects.property<KubernetesCredentials>()
+    public val kubernetesCredentials: Property<KubernetesCredentials> = objects.property()
 
     @OutputDirectory
-    val output: DirectoryProperty = objects.directoryProperty()
+    public val output: DirectoryProperty = objects.directoryProperty()
 
     private val verdictFile = objects.fileProperty().convention(output.file("verdict.json"))
 
@@ -149,7 +149,7 @@ abstract class InstrumentationTestsTask @Inject constructor(
         }
 
     @TaskAction
-    fun doWork() {
+    public fun doWork() {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val reportConfig = createReportConfig(reportCoordinates)

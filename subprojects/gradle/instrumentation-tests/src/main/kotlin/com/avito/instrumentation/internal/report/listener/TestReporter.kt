@@ -6,7 +6,7 @@ import com.avito.runner.service.worker.device.Device
 import org.funktionale.tries.Try
 import java.io.File
 
-abstract class TestReporter : TestLifecycleListener {
+internal abstract class TestReporter : TestLifecycleListener {
 
     override fun started(
         test: TestCase,

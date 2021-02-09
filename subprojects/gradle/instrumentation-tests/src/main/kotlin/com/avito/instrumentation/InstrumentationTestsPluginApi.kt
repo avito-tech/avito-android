@@ -1,15 +1,13 @@
 package com.avito.instrumentation
 
-import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
-import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.kotlin.dsl.typedNamed
 import com.avito.kotlin.dsl.typedNamedOrNull
+import com.avito.report.model.ReportCoordinates
 import com.google.common.annotations.VisibleForTesting
-import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.withType
 
 internal fun instrumentationTaskName(configuration: String): String =
     "instrumentation${configuration.capitalize()}"
@@ -20,22 +18,23 @@ internal fun preInstrumentationTaskName(configuration: String): String =
 internal const val preInstrumentationTaskName: String = "preInstrumentation"
 
 // todo доступен только afterEvaluate и то ненадежно MBS-6926
-fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
+public fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
     typedNamed(instrumentationTaskName(configuration))
 
 @Suppress("UnstableApiUsage")
-fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates() = flatMap { task ->
-    task.instrumentationConfiguration.map { config ->
-        config.instrumentationParams.reportCoordinates()
+public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Provider<ReportCoordinates> =
+    flatMap { task ->
+        task.instrumentationConfiguration.map { config ->
+            config.instrumentationParams.reportCoordinates()
+        }
     }
-}
 
-fun TaskContainer.preInstrumentationTask(configuration: String): TaskProvider<Task> =
+public fun TaskContainer.preInstrumentationTask(configuration: String): TaskProvider<Task> =
     typedNamed(preInstrumentationTaskName(configuration))
 
-fun TaskContainer.preInstrumentationTask(): TaskProvider<Task> = named(preInstrumentationTaskName)
+public fun TaskContainer.preInstrumentationTask(): TaskProvider<Task> = named(preInstrumentationTaskName)
 
-fun TaskContainer.instrumentationTask(
+public fun TaskContainer.instrumentationTask(
     configuration: String,
     callback: (TaskProvider<InstrumentationTestsTask>) -> Unit
 ) {
@@ -49,12 +48,6 @@ fun TaskContainer.instrumentationTask(
                 callback.invoke(typedNamed(name))
             }
         }
-    }
-}
-
-fun Project.withInstrumentationTests(block: (config: GradleInstrumentationPluginConfiguration.Data) -> Unit) {
-    plugins.withType<InstrumentationTestsPlugin> {
-        withInstrumentationExtensionData(block)
     }
 }
 

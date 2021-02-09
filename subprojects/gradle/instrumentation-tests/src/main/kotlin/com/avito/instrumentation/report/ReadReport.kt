@@ -4,11 +4,11 @@ import com.avito.report.ReportsFetchApi
 import com.avito.report.model.SimpleRunTest
 import org.funktionale.tries.Try
 
-interface ReadReport {
+public interface ReadReport {
 
-    fun getTests(): Try<List<SimpleRunTest>>
+    public fun getTests(): Try<List<SimpleRunTest>>
 
-    class Id(
+    public class Id(
         private val reportsFetchApi: ReportsFetchApi,
         private val id: String
     ) : ReadReport {
@@ -18,7 +18,7 @@ interface ReadReport {
         }
     }
 
-    class ReportCoordinates(
+    public class ReportCoordinates(
         private val reportsFetchApi: ReportsFetchApi,
         private val coordinates: com.avito.report.model.ReportCoordinates
     ) : ReadReport {
