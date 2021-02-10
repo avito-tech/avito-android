@@ -3,6 +3,7 @@ package com.avito.android.plugin.build_param_check
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -18,7 +19,9 @@ internal class ConfigurationCacheCompatibilityTest {
     fun `configuration with applied plugin - ok`(@TempDir projectDir: File) {
         TestProjectGenerator(
             name = "rootapp",
-            plugins = listOf("com.avito.android.buildchecks"),
+            plugins = plugins {
+                id("com.avito.android.buildchecks")
+            },
             buildGradleExtra = """
                  buildChecks {
                      enableByDefault = false

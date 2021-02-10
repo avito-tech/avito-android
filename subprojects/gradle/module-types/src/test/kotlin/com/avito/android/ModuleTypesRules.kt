@@ -13,6 +13,7 @@ import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.projec
 import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
 
@@ -51,11 +52,15 @@ class ModuleTypesRules {
                 ManualTempFolder.runIn { projectDir ->
 
                     TestProjectGenerator(
-                        plugins = listOf("com.avito.android.impact"),
+                        plugins = plugins {
+                            id("com.avito.android.impact")
+                        },
                         modules = listOf(
                             AndroidLibModule(
                                 "feature",
-                                plugins = listOf("com.avito.android.module-types"),
+                                plugins = plugins {
+                                    id("com.avito.android.module-types")
+                                },
                                 dependencies = setOf(
                                     project(
                                         path = ":dependent_test_module",
@@ -74,7 +79,9 @@ class ModuleTypesRules {
                             ),
                             AndroidLibModule(
                                 "dependent_test_module",
-                                plugins = listOf("com.avito.android.module-types"),
+                                plugins = plugins {
+                                    id("com.avito.android.module-types")
+                                },
                                 buildGradleExtra = if (case.dependentModuleType != IMPLEMENTATION) {
                                     """
                                     module {

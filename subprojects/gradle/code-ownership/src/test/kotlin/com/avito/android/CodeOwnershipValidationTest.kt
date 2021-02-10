@@ -10,6 +10,7 @@ import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.projec
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -87,14 +88,16 @@ class CodeOwnershipValidationTest {
                 )
 
                 TestProjectGenerator(
-                    plugins = listOf(
-                        "com.avito.android.impact",
-                        "com.avito.android.code-ownership"
-                    ),
+                    plugins = plugins {
+                        id("com.avito.android.impact")
+                        id("com.avito.android.code-ownership")
+                    },
                     modules = listOf(
                         AndroidAppModule(
                             "app",
-                            plugins = listOf("com.avito.android.module-types"),
+                            plugins = plugins {
+                                id("com.avito.android.module-types")
+                            },
                             dependencies = setOf(
                                 project(
                                     path = ":feature",
@@ -104,7 +107,9 @@ class CodeOwnershipValidationTest {
                         ),
                         AndroidLibModule(
                             "feature",
-                            plugins = listOf("com.avito.android.module-types"),
+                            plugins = plugins {
+                                id("com.avito.android.module-types")
+                            },
                             dependencies = setOf(project(path = ":dependent_test_module")),
                             buildGradleExtra = """
                                 ownership {
@@ -126,7 +131,9 @@ class CodeOwnershipValidationTest {
                         ),
                         AndroidLibModule(
                             "dependent_test_module",
-                            plugins = listOf("com.avito.android.module-types"),
+                            plugins = plugins {
+                                id("com.avito.android.module-types")
+                            },
                             buildGradleExtra = """
                                 ownership {
                                     team '${case.dependentOwnership.team}.${case.dependentOwnership.team}'

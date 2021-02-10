@@ -5,11 +5,14 @@ import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.project
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
 internal fun generateProjectWithImpactAnalysis(rootDir: File) {
     TestProjectGenerator(
-        plugins = listOf("com.avito.android.impact"),
+        plugins = plugins {
+            id("com.avito.android.impact")
+        },
         modules = listOf(
             appModule(
                 "appA",
@@ -37,10 +40,10 @@ internal fun generateProjectWithImpactAnalysis(rootDir: File) {
 private fun appModule(name: String, dependencies: Set<GradleDependency>) = AndroidAppModule(
     name = name,
     dependencies = dependencies,
-    plugins = listOf(
-        "com.avito.android.signer",
-        "com.avito.android.cd"
-    ),
+    plugins = plugins {
+        id("com.avito.android.signer")
+        id("com.avito.android.cd")
+    },
     customScript = """
         import com.avito.cd.BuildVariant
         android {

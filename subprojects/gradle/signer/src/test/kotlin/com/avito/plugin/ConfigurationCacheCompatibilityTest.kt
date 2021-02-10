@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -45,7 +46,9 @@ internal class ConfigurationCacheCompatibilityTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
-                    plugins = listOf("com.avito.android.signer"),
+                    plugins = plugins {
+                        id("com.avito.android.signer")
+                    },
                     buildGradleExtra = """
                         signService {
                             host = "http://stub"

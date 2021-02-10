@@ -7,6 +7,7 @@ import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.file
 import com.avito.test.gradle.git
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,7 +57,9 @@ class InstrumentationParamsBuildingTest {
                 modules = listOf(
                     AndroidAppModule(
                         "app",
-                        plugins = listOf("com.avito.android.instrumentation-tests"),
+                        plugins = plugins {
+                            id("com.avito.android.instrumentation-tests")
+                        },
                         buildGradleExtra = """
                          import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
 

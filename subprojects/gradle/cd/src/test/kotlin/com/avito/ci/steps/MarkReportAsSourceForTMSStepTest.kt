@@ -4,6 +4,7 @@ import com.avito.plugin.tmsPluginId
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -13,15 +14,17 @@ internal class MarkReportAsSourceForTMSStepTest {
     @Test
     fun test(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    plugins = listOf(
-                        tmsPluginId,
-                        "com.avito.android.instrumentation-tests",
-                        "com.avito.android.cd"
-                    ),
+                    plugins = plugins {
+                        id(tmsPluginId)
+                        id("com.avito.android.instrumentation-tests")
+                        id("com.avito.android.cd")
+                    },
                     buildGradleExtra = """
                         import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
                         

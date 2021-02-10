@@ -18,6 +18,7 @@ import com.avito.test.gradle.module.Module
 import com.avito.test.gradle.module.ParentGradleModule
 import com.avito.test.gradle.module.PlatformModule
 import com.avito.test.gradle.mutate
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -509,7 +510,9 @@ class ImpactAnalysisTest {
 
     private fun generateProject(modules: List<Module>) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
             modules = modules
         ).generateIn(projectDir)
 

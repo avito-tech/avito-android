@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -21,7 +22,9 @@ internal class ConfigurationCacheCompatibilityTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    plugins = listOf("com.avito.android.instrumentation-tests"),
+                    plugins = plugins {
+                        id("com.avito.android.instrumentation-tests")
+                    },
                     buildGradleExtra = instrumentationConfiguration()
                 )
             )

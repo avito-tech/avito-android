@@ -6,6 +6,7 @@ import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.projec
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -23,9 +24,9 @@ class UniqueRClassesTest {
     @Test
     fun `success - unique package names`() {
         TestProjectGenerator(
-            plugins = listOf(
-                "com.avito.android.buildchecks"
-            ),
+            plugins = plugins {
+                id("com.avito.android.buildchecks")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app-x",
@@ -63,9 +64,9 @@ class UniqueRClassesTest {
     @Test
     fun `success - allowed duplicate`() {
         TestProjectGenerator(
-            plugins = listOf(
-                "com.avito.android.buildchecks"
-            ),
+            plugins = plugins {
+                id("com.avito.android.buildchecks")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app-x",
@@ -104,9 +105,9 @@ class UniqueRClassesTest {
     @Test
     fun `fail - duplicated package in implementation`() {
         TestProjectGenerator(
-            plugins = listOf(
-                "com.avito.android.buildchecks"
-            ),
+            plugins = plugins {
+                id("com.avito.android.buildchecks")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app-x",
@@ -148,9 +149,9 @@ class UniqueRClassesTest {
     @Test
     fun `fail - duplicated package in test`() {
         TestProjectGenerator(
-            plugins = listOf(
-                "com.avito.android.buildchecks"
-            ),
+            plugins = plugins {
+                id("com.avito.android.buildchecks")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

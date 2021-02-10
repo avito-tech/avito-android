@@ -7,6 +7,7 @@ import com.avito.test.gradle.dir
 import com.avito.test.gradle.git
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -34,14 +35,16 @@ class SignerIntegrationTest {
         projectDir = tempPath.toFile()
 
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    plugins = listOf(
-                        "com.avito.android.signer",
-                        "com.avito.android.cd"
-                    ),
+                    plugins = plugins {
+                        id("com.avito.android.signer")
+                        id("com.avito.android.cd")
+                    },
                     buildGradleExtra = """
                         import com.avito.cd.BuildVariant
                 signService {

@@ -6,6 +6,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
@@ -36,7 +37,9 @@ class BuildMetricsPluginTest {
         this.tempDir = tempDir
         TestProjectGenerator(
             name = rootAppName,
-            plugins = listOf("com.avito.android.build-metrics"),
+            plugins = plugins {
+                id("com.avito.android.build-metrics")
+            },
             modules = listOf(
                 AndroidAppModule(name = "app")
             )

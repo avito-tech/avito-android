@@ -5,6 +5,7 @@ import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
 class BuildChecksTestProjectRunner(
@@ -35,7 +36,9 @@ class BuildChecksTestProjectRunner(
             is AndroidHomeLocation.Custom -> mapOf("ANDROID_HOME" to androidHome.dir.path.toString())
         }
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.buildchecks"),
+            plugins = plugins {
+                id("com.avito.android.buildchecks")
+            },
             modules = listOf(
                 AndroidAppModule("app")
             ),

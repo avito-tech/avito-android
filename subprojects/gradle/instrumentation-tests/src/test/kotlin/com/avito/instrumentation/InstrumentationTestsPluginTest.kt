@@ -5,6 +5,7 @@ import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -19,7 +20,9 @@ class InstrumentationTestsPluginTest {
             projectDir = projectDir,
             module = AndroidAppModule(
                 moduleName,
-                plugins = listOf("com.avito.android.instrumentation-tests"),
+                plugins = plugins {
+                    id("com.avito.android.instrumentation-tests")
+                },
                 buildGradleExtra = instrumentationConfiguration()
             )
         )
@@ -40,7 +43,9 @@ class InstrumentationTestsPluginTest {
             projectDir = projectDir,
             module = AndroidLibModule(
                 moduleName,
-                plugins = listOf("com.avito.android.instrumentation-tests"),
+                plugins = plugins {
+                    id("com.avito.android.instrumentation-tests")
+                },
                 buildGradleExtra = instrumentationConfiguration()
             )
         )

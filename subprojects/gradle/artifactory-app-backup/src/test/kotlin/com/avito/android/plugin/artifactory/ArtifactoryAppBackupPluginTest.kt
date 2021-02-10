@@ -4,6 +4,7 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -38,9 +39,9 @@ internal class ArtifactoryAppBackupPluginTest {
                     versionCode = "90",
                     versionName = "10",
                     name = moduleName,
-                    plugins = listOf("com.avito.android.artifactory-app-backup"),
-                    buildGradleExtra = """
-                    """.trimIndent(),
+                    plugins = plugins {
+                        id("com.avito.android.artifactory-app-backup")
+                    },
                     customScript = """
                         import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt.getArtifactoryAndroidArtifactsBuildVariants
                         import com.avito.cd.BuildVariant
@@ -120,7 +121,9 @@ internal class ArtifactoryAppBackupPluginTest {
                     versionCode = "90",
                     versionName = "10",
                     name = moduleName,
-                    plugins = listOf("com.avito.android.artifactory-app-backup"),
+                    plugins = plugins {
+                        id("com.avito.android.artifactory-app-backup")
+                    },
                     buildGradleExtra = """
                     """.trimIndent(),
                     customScript = """

@@ -12,6 +12,7 @@ import com.avito.test.gradle.module
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.mutate
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -41,7 +42,9 @@ class SourceSetsImpactTest {
         projectDir = tempDir.toFile()
 
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",

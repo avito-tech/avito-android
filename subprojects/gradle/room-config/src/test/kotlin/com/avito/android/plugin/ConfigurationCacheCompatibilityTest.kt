@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -18,8 +19,17 @@ internal class ConfigurationCacheCompatibilityTest {
     @Test
     fun `configuration with applied plugin - ok`(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.room-config"),
-            modules = listOf(AndroidLibModule("lib", plugins = listOf("kotlin-kapt")))
+            plugins = plugins {
+                id("com.avito.android.room-config")
+            },
+            modules = listOf(
+                AndroidLibModule(
+                    name = "lib",
+                    plugins = plugins {
+                        id("kotlin-kapt")
+                    }
+                )
+            )
         ).generateIn(projectDir)
 
         runTask(projectDir).assertThat().buildSuccessful()

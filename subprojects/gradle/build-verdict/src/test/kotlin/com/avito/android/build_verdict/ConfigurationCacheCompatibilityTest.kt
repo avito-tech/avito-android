@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -31,7 +32,9 @@ internal class ConfigurationCacheCompatibilityTest {
     @Test
     fun `configuration with applied plugin`(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.build-verdict"),
+            plugins = plugins {
+                id("com.avito.android.build-verdict")
+            },
             modules = listOf(
                 AndroidAppModule(name = "app")
             )

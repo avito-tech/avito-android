@@ -3,6 +3,7 @@ package com.avito.ci.steps
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.avito.test.summary.testSummaryExtensionName
 import com.avito.test.summary.testSummaryPluginId
 import org.junit.jupiter.api.Test
@@ -65,15 +66,17 @@ internal class TestSummaryStepTest {
 
     private fun generateProject(projectDir: File, step: String) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    plugins = listOf(
-                        testSummaryPluginId,
-                        "com.avito.android.instrumentation-tests",
-                        "com.avito.android.cd"
-                    ),
+                    plugins = plugins {
+                        id(testSummaryPluginId)
+                        id("com.avito.android.instrumentation-tests")
+                        id("com.avito.android.cd")
+                    },
                     buildGradleExtra = """
                         import static com.avito.instrumentation.reservation.request.Device.LocalEmulator
                         

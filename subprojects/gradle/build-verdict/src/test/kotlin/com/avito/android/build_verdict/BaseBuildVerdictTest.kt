@@ -6,6 +6,7 @@ import com.avito.android.build_verdict.internal.Error.Single
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.Module
+import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertWithMessage
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -57,7 +58,9 @@ abstract class BaseBuildVerdictTest {
         buildGradleExtra: String = ""
     ) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.build-verdict"),
+            plugins = plugins {
+                id("com.avito.android.build-verdict")
+            },
             modules = listOf(module),
             buildGradleExtra = buildGradleExtra
         ).generateIn(temp)

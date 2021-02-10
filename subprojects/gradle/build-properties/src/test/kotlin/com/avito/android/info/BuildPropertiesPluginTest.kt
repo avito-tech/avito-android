@@ -3,6 +3,7 @@ package com.avito.android.info
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,7 +28,9 @@ class BuildPropertiesPluginTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
-                    plugins = listOf("com.avito.android.build-properties"),
+                    plugins = plugins {
+                        id("com.avito.android.build-properties")
+                    },
                     buildGradleExtra = """
                         buildProperties {
                             buildProperty("GIT_COMMIT", "commit")
@@ -53,7 +56,9 @@ class BuildPropertiesPluginTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
-                    plugins = listOf("com.avito.android.build-properties"),
+                    plugins = plugins {
+                        id("com.avito.android.build-properties")
+                    },
                     buildGradleExtra = """
                         buildInfo {
                             gitCommit = "commit"
