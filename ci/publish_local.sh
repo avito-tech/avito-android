@@ -2,8 +2,6 @@
 
 # This is an entrypoint for CI build step, don't change it's relative path(name)
 
-set -e
-
 source $(dirname $0)/_main.sh
 
-runInBuilder "set -e; ./gradlew build -PcustomFilter=ci ${GRADLE_ARGS}"
+runInBuilder "./gradlew publishToArtifactory ${GRADLE_ARGS} -Dorg.gradle.internal.publish.checksums.insecure=true"

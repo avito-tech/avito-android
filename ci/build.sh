@@ -2,6 +2,8 @@
 
 # This is an entrypoint for CI build step, don't change it's relative path(name)
 
+set -e
+
 source $(dirname $0)/_main.sh
 
-runInBuilder "./gradlew -p subprojects publishRelease ${GRADLE_ARGS} --no-parallel --stacktrace"
+runInBuilder "set -e; ./gradlew build ${GRADLE_ARGS}"
