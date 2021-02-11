@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -20,10 +21,10 @@ internal class ArtifactsTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "appA",
-                    plugins = listOf(
-                        "com.avito.android.signer",
-                        "com.avito.android.cd"
-                    ),
+                    plugins = plugins {
+                        id("com.avito.android.signer")
+                        id("com.avito.android.cd")
+                    },
                     customScript = """
                             signService {
                                 bundle(android.buildTypes.release, "no_matter")

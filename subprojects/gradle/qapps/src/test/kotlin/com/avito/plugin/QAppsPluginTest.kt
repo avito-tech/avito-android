@@ -3,6 +3,7 @@ package com.avito.plugin
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -61,7 +62,9 @@ internal class QAppsPluginTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
-                    plugins = listOf("com.avito.android.qapps"),
+                    plugins = plugins {
+                        id("com.avito.android.qapps")
+                    },
                     buildGradleExtra = """
                         qapps {
                             serviceUrl.set(${serviceUrl?.let { "\"$it\"" } ?: "null"})

@@ -6,12 +6,14 @@ import com.avito.test.gradle.files.build_gradle
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.module
+import com.avito.test.gradle.plugin.PluginsSpec
+import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
 class KotlinModule(
     override val name: String,
     val packageName: String = "com.$name",
-    override val plugins: List<String> = emptyList(),
+    override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
     override val dependencies: Set<GradleDependency> = emptySet(),
@@ -24,10 +26,7 @@ class KotlinModule(
             build_gradle {
                 writeText(
                     """
-plugins {
-    id 'kotlin'
-    ${plugins.joinToString(separator = "\n") { "id '$it'" }}
-}
+${plugins()}
 
 $buildGradleExtra
 
@@ -46,4 +45,9 @@ dependencies {
             this.mutator()
         }
     }
+
+    private fun plugins(): PluginsSpec =
+        plugins {
+            id("kotlin")
+        }.plus(plugins)
 }

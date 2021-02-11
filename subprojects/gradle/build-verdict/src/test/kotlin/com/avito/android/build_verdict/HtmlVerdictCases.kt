@@ -123,7 +123,7 @@ e: ${tempDir.canonicalPath}/app/src/main/kotlin/Uncompiled.kt: (1, 11): Expectin
   <body>
     <h2>FAILURE: Build completed with 2 failures.</h2>
     <h3>1: Task failed with an exception</h3>
-    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 9
+    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 7
 A problem occurred evaluating project ':app'.
 	&gt; A problem occurred evaluating project ':app'.
 		&gt; Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.</pre>
@@ -142,7 +142,7 @@ A problem occurred evaluating project ':app'.
   <body>
     <h2>FAILURE: Build failed with an exception</h2>
     <h3>What went wrong:</h3>
-    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 9
+    <pre>Build file '${dir.canonicalPath}/app/build.gradle' line: 8
 A problem occurred evaluating project ':app'.
 	&gt; A problem occurred evaluating project ':app'.
 		&gt; Project with path ':not-existed' could not be found in project ':app'.

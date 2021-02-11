@@ -6,6 +6,7 @@ import com.avito.test.gradle.git
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -25,20 +26,28 @@ class ModuleTypesPluginTest {
     @Test
     fun `android application - having library dependencies in implementation configuration in library module - has checkProjectDependenciesTypeTask scheduled`() {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
             modules = listOf(
                 AndroidAppModule(
                     "app",
-                    plugins = listOf("com.avito.android.module-types")
+                    plugins = plugins {
+                        id("com.avito.android.module-types")
+                    }
                 ),
                 AndroidLibModule(
                     "feature",
-                    plugins = listOf("com.avito.android.module-types"),
+                    plugins = plugins {
+                        id("com.avito.android.module-types")
+                    },
                     dependencies = setOf(project(":dependent_test_module"))
                 ),
                 AndroidLibModule(
                     "dependent_test_module",
-                    plugins = listOf("com.avito.android.module-types")
+                    plugins = plugins {
+                        id("com.avito.android.module-types")
+                    }
                 )
             )
         ).generateIn(projectDir)

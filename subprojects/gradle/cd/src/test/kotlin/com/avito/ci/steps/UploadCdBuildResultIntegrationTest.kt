@@ -13,6 +13,7 @@ import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
@@ -69,12 +70,12 @@ class UploadCdBuildResultIntegrationTest {
             versionCode = versionCode,
             versionName = versionName,
             name = "app",
-            plugins = listOf(
-                "com.avito.android.signer",
-                "com.avito.android.instrumentation-tests",
-                "com.avito.android.artifactory-app-backup",
-                "com.avito.android.cd"
-            ),
+            plugins = plugins {
+                id("com.avito.android.signer")
+                id("com.avito.android.instrumentation-tests")
+                id("com.avito.android.artifactory-app-backup")
+                id("com.avito.android.cd")
+            },
             customScript = """
                         import com.avito.cd.BuildVariant
                         ${registerUiTestConfigurations("regress")}
@@ -103,7 +104,9 @@ class UploadCdBuildResultIntegrationTest {
         )
 
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact"),
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
             modules = listOf(androidAppModule)
         ).generateIn(projectDir)
 

@@ -10,6 +10,8 @@ import com.avito.test.gradle.files.build_gradle
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.module.AndroidLibModule
 import com.avito.test.gradle.module.Module
+import com.avito.test.gradle.plugin.PluginsSpec
+import com.avito.test.gradle.plugin.plugins
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Properties
@@ -37,7 +39,7 @@ interface Generator {
  */
 class TestProjectGenerator(
     override val name: String = "test-project",
-    override val plugins: List<String> = emptyList(),
+    override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     // TODO: don't share complex default values in common test fixtures. Plugin must define them implicitly!
     override val modules: List<Module> = listOf(
@@ -61,20 +63,16 @@ class TestProjectGenerator(
             build_gradle {
                 writeText(
                     """
-        plugins {
-            id 'com.android.application' apply false
-            id "org.jetbrains.kotlin.jvm" version "$kotlinVersion" apply false
-            ${plugins.joinToString(separator = "\n") { "id '$it'" }}
-        }
-
-        subprojects {
-           repositories {
-               google()
-               jcenter()
-           }
-        }
-        $buildGradleExtra
-""".trimIndent()
+                    |${plugins()}
+                    |
+                    |subprojects {
+                    |    repositories {
+                    |         google()
+                    |         jcenter()
+                    |     }
+                    |}
+                    |$buildGradleExtra
+                    """.trimMargin()
                 )
             }
 
@@ -136,6 +134,12 @@ buildCache {
             commit("initial_state")
         }
     }
+
+    private fun plugins(): PluginsSpec =
+        plugins {
+            id("com.android.application").apply(false)
+            id("org.jetbrains.kotlin.jvm").version(kotlinVersion).apply(false)
+        }.plus(plugins)
 
     companion object {
         const val appA = "appA"

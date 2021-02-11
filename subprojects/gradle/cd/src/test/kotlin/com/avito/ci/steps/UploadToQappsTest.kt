@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.MockWebServerFactory
 import okhttp3.mockwebserver.MockResponse
 import org.gradle.testkit.runner.TaskOutcome
@@ -80,11 +81,11 @@ class UploadToQappsTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    plugins = listOf(
-                        "com.avito.android.qapps",
-                        "com.avito.android.signer",
-                        "com.avito.android.cd"
-                    ),
+                    plugins = plugins {
+                        id("com.avito.android.qapps")
+                        id("com.avito.android.signer")
+                        id("com.avito.android.cd")
+                    },
                     customScript = """
                             qapps {
                                 serviceUrl = "${mockWebServer.url("/")}"

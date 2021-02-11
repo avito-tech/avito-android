@@ -66,7 +66,7 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
         @Suppress("MaxLineLength")
         errors[0].assertSingleError(
             expectedMessageLines = listOf(
-                "$temp/app/build.gradle' line: 9",
+                "$temp/app/build.gradle' line: 7",
                 "A problem occurred evaluating project ':app'."
             ),
             expectedCauseMessages = listOf(
@@ -114,7 +114,7 @@ class BuildVerdictPluginConfigurationPhaseTest : BaseBuildVerdictTest() {
 
         error.assertSingleError(
             expectedMessageLines = listOf(
-                "$temp/app/build.gradle' line: 9",
+                "$temp/app/build.gradle' line: 8",
                 "A problem occurred evaluating project ':app'."
             ),
             expectedCauseMessages = listOf(

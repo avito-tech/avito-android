@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.KotlinModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -78,7 +79,9 @@ internal class CiStepsDynamicTest {
     @Test
     fun `cd plugin - custom task with the same name is created in multiple projects`(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.cd"),
+            plugins = plugins {
+                id("com.avito.android.cd")
+            },
             buildGradleExtra = """
             builds {
                 myCustomTask {
@@ -89,7 +92,9 @@ internal class CiStepsDynamicTest {
             modules = listOf(
                 KotlinModule(
                     name = "someModule",
-                    plugins = listOf("com.avito.android.cd"),
+                    plugins = plugins {
+                        id("com.avito.android.cd")
+                    },
                     buildGradleExtra = """
                     builds {
                         myCustomTask {

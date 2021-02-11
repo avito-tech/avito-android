@@ -74,7 +74,7 @@ No error logs
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Build file '${dir.canonicalPath}/app/build.gradle' line: 9
+Build file '${dir.canonicalPath}/app/build.gradle' line: 8
 A problem occurred evaluating project ':app'.
 	> A problem occurred evaluating project ':app'.
 		> Project with path ':not-existed' could not be found in project ':app'.
@@ -85,7 +85,7 @@ FAILURE: Build completed with 2 failures.
 
 1: Task failed with an exception.
 -----------
-Build file '${dir.canonicalPath}/app/build.gradle' line: 9
+Build file '${dir.canonicalPath}/app/build.gradle' line: 7
 A problem occurred evaluating project ':app'.
 	> A problem occurred evaluating project ':app'.
 		> Could not find method illegal() for arguments [build 'test-project'] on project ':app' of type org.gradle.api.Project.

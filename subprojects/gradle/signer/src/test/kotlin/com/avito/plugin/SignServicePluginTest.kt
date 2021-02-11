@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.avito.test.http.MockWebServerFactory
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -165,7 +166,9 @@ class SignServicePluginTest {
                     enableKotlinAndroidPlugin = false,
                     versionCode = "100",
                     versionName = "22.1",
-                    plugins = listOf("com.avito.android.signer"),
+                    plugins = plugins {
+                        id("com.avito.android.signer")
+                    },
                     buildGradleExtra = signServiceExtension
                 )
             )

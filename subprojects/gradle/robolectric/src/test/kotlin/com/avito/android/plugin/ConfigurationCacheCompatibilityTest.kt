@@ -4,6 +4,7 @@ import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -18,7 +19,9 @@ internal class ConfigurationCacheCompatibilityTest {
     @Test
     fun `configuration with applied plugin - ok`(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.robolectric"),
+            plugins = plugins {
+                id("com.avito.android.robolectric")
+            },
             modules = listOf(AndroidAppModule("app", enableKotlinAndroidPlugin = false))
         ).generateIn(projectDir)
 

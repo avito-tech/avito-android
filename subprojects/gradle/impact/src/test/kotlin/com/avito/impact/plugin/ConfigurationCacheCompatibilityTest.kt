@@ -3,6 +3,7 @@ package com.avito.impact.plugin
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -17,7 +18,9 @@ internal class ConfigurationCacheCompatibilityTest {
     @Test
     fun `configuration with applied plugin`(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.impact")
+            plugins = plugins {
+                id("com.avito.android.impact")
+            }
         ).generateIn(projectDir)
 
         runTask(projectDir).assertThat().buildSuccessful()

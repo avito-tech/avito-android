@@ -3,6 +3,7 @@ package com.avito.android.plugin.build_param_check.incremental_check
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -109,7 +110,9 @@ internal class IncrementalKaptTaskTest {
         applyRoomPlugin: Boolean = true
     ) {
         TestProjectGenerator(
-            plugins = listOf("com.avito.android.buildchecks"),
+            plugins = plugins {
+                id("com.avito.android.buildchecks")
+            },
             buildGradleExtra = """
                 buildChecks {
                     enableByDefault = false
@@ -121,10 +124,10 @@ internal class IncrementalKaptTaskTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "room-test",
-                    plugins = listOfNotNull(
-                        "kotlin-kapt",
-                        if (applyRoomPlugin) "com.avito.android.room-config" else null
-                    )
+                    plugins = plugins {
+                        id("kotlin-kapt")
+                        if (applyRoomPlugin) id("com.avito.android.room-config")
+                    }
                 )
             )
         ).generateIn(projectDir)

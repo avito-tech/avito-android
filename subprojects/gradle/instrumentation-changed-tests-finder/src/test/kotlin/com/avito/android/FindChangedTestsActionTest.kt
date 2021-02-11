@@ -9,6 +9,7 @@ import com.avito.test.gradle.dir
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
+import com.avito.test.gradle.plugin.plugins
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,7 +37,9 @@ internal class FindChangedTestsActionTest {
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
-                    plugins = listOf(pluginId),
+                    plugins = plugins {
+                        id(pluginId)
+                    },
                     buildGradleExtra = """
                         changedTests {
                             targetCommit = project.properties.get("targetCommit")

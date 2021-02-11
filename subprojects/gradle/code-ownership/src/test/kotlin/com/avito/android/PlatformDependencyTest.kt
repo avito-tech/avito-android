@@ -6,6 +6,7 @@ import com.avito.test.gradle.dependencies.GradleDependency.Safe.Companion.platfo
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.module.PlatformModule
+import com.avito.test.gradle.plugin.plugins
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -15,10 +16,10 @@ class PlatformDependencyTest {
     @Test
     fun `code ownership - skip platform module check`(@TempDir projectDir: File) {
         TestProjectGenerator(
-            plugins = listOf(
-                "com.avito.android.impact",
-                "com.avito.android.code-ownership"
-            ),
+            plugins = plugins {
+                id("com.avito.android.impact")
+                id("com.avito.android.code-ownership")
+            },
             modules = listOf(
                 KotlinModule(
                     "lib",

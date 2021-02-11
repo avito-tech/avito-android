@@ -10,13 +10,15 @@ import com.avito.test.gradle.files.build_gradle
 import com.avito.test.gradle.kotlinClass
 import com.avito.test.gradle.kotlinVersion
 import com.avito.test.gradle.module
+import com.avito.test.gradle.plugin.PluginsSpec
+import com.avito.test.gradle.plugin.plugins
 import com.avito.test.gradle.sdkVersion
 import java.io.File
 
 class AndroidAppModule(
     override val name: String,
     override val packageName: String = "com.$name",
-    override val plugins: List<String> = emptyList(),
+    override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = "",
     override val modules: List<Module> = emptyList(),
     override val enableKotlinAndroidPlugin: Boolean = true,
@@ -155,14 +157,13 @@ afterEvaluate{
 }"""
     }
 
-    private fun plugins(): String {
-        return """plugins {
-    id 'com.android.application'
-    ${if (enableKotlinAndroidPlugin || enableKapt) "id 'kotlin-android'" else ""}
-    ${if (enableKapt) "id 'kotlin-kapt'" else ""}
-    ${plugins.joinToString(separator = "\n") { "    id '$it'" }}
-}"""
-    }
+    private fun plugins(): PluginsSpec =
+        plugins {
+            id("com.android.application")
+            if (enableKotlinAndroidPlugin || enableKapt) id("kotlin-android")
+            if (enableKapt) id("kotlin-kapt")
+        }
+            .plus(plugins)
 
     private fun imports() = imports.joinToString(separator = "\n")
 }

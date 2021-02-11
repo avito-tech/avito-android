@@ -3,6 +3,7 @@ package com.avito.test.gradle.module
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.files.build_gradle
 import com.avito.test.gradle.module
+import com.avito.test.gradle.plugin.PluginsSpec
 import java.io.File
 
 /**
@@ -11,7 +12,7 @@ import java.io.File
 class ParentGradleModule(
     override val name: String,
     override val modules: List<Module>,
-    override val plugins: List<String> = emptyList(),
+    override val plugins: PluginsSpec = PluginsSpec(),
     override val buildGradleExtra: String = ""
 ) : Module {
 

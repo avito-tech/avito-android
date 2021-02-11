@@ -2,6 +2,7 @@ package com.avito.test.gradle.module
 
 import com.avito.test.gradle.dependencies.GradleDependency
 import com.avito.test.gradle.module
+import com.avito.test.gradle.plugin.PluginsSpec
 import java.io.File
 
 /**
@@ -13,7 +14,7 @@ class FolderModule(
     override val modules: List<Module>
 ) : Module {
     override val dependencies: Set<GradleDependency> = emptySet()
-    override val plugins: List<String> = emptyList()
+    override val plugins: PluginsSpec = PluginsSpec()
     override val buildGradleExtra = ""
 
     override fun generateIn(file: File) {
