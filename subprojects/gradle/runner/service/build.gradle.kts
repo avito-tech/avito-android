@@ -15,7 +15,7 @@ dependencies {
     implementation(Dependencies.AndroidTest.ddmlib)
     implementation(Dependencies.rxJava)
 
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(project(":subprojects:common:files"))
     testImplementation(project(":subprojects:common:truth-extensions"))

@@ -12,7 +12,7 @@ dependencies {
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gson)
 
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(project(":subprojects:gradle:test-project"))
 }
 

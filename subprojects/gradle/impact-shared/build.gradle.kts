@@ -22,7 +22,7 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:git-test-fixtures"))
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
 
     testImplementation(Dependencies.Test.mockitoKotlin)
 }

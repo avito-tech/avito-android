@@ -11,7 +11,7 @@ dependencies {
     implementation(Dependencies.okhttpLogging)
 
     testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(Dependencies.funktionaleTry)
     testImplementation(Dependencies.retrofit)
     testImplementation(Dependencies.retrofitConverterGson)

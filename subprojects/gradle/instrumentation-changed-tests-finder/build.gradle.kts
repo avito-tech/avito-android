@@ -21,7 +21,7 @@ dependencies {
         because("ChangesDetector reuse")
     }
 
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(project(":subprojects:gradle:git"))
     testImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
     testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
