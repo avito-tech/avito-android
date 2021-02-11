@@ -4,7 +4,7 @@ set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-source "$DIR"/ci/_environment.sh
+source "$DIR"/_environment.sh
 
 # shellcheck disable=SC2086
 USER_ID=$(id -u ${USER})
