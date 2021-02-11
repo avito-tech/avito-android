@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     `maven-publish`
     id("com.jfrog.bintray")
+    `java-test-fixtures`
 }
 
 dependencies {
@@ -19,7 +20,10 @@ dependencies {
     testImplementation(project(":subprojects:common:files"))
     testImplementation(project(":subprojects:common:resources"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
-    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
     testImplementation(Dependencies.Test.okhttpMockWebServer)
     testImplementation(Dependencies.Test.jsonPathAssert)
+
+    testFixturesImplementation(testFixtures(project(":subprojects:common:logger")))
+    testFixturesImplementation(project(":subprojects:common:test-okhttp"))
 }

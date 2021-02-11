@@ -16,7 +16,7 @@ dependencies {
     implementation(Dependencies.okhttp)
 
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
 }
 
 gradlePlugin {
