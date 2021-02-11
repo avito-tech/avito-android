@@ -6,5 +6,5 @@ plugins {
 
 dependencies {
     api(gradleApi())
-    api(project(":gradle:gradle-extensions"))
+    api(project(":subprojects:gradle:gradle-extensions"))
 }

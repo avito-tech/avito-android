@@ -5,5 +5,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:logger"))
+    api(project(":subprojects:common:logger"))
 }

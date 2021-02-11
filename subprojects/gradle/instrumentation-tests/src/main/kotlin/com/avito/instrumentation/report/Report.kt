@@ -89,7 +89,6 @@ public interface Report : ReadReport {
 
         public class ReportViewerFactory(
             public val reportApiUrl: String,
-            public val reportApiFallbackUrl: String,
             public val loggerFactory: LoggerFactory,
             public val timeProvider: TimeProvider,
             public val verboseHttp: Boolean

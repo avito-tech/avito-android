@@ -6,17 +6,17 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:report-viewer"))
-    implementation(project(":common:time"))
-    implementation(project(":common:math"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:slack"))
+    implementation(project(":subprojects:common:report-viewer"))
+    implementation(project(":subprojects:common:time"))
+    implementation(project(":subprojects:common:math"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:slack"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.okhttp)
 
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":common:report-viewer-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
 }
 
 gradlePlugin {

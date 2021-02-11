@@ -3,6 +3,9 @@ package com.avito.instrumentation.configuration
 import com.avito.report.model.ReportCoordinates
 import java.io.Serializable
 
+/**
+ * TODO move from configuration time, because it breaks gradle kotlin-dsl resolution (MBS-10591)
+ */
 public data class InstrumentationParameters(
     val initialParameters: Map<String, String> = emptyMap()
 ) : Map<String, String> by initialParameters, Serializable {

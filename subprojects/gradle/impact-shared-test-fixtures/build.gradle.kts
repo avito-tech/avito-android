@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:test-project"))
+    implementation(project(":subprojects:gradle:impact-shared"))
+    implementation(project(":subprojects:gradle:test-project"))
     implementation(Dependencies.Test.truth)
 }

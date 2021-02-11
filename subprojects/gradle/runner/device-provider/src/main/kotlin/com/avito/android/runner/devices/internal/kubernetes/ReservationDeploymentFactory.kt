@@ -56,11 +56,14 @@ internal class ReservationDeploymentFactory(
                 phone = device,
                 deploymentName = deploymentName
             )
-            is Device.CloudEmulator -> getCloudEmulatorDeployment(
-                emulator = device,
-                deploymentName = deploymentName,
-                count = reservation.count
-            )
+            is Device.CloudEmulator -> {
+                logger.debug("Creating ${reservation.count} replicas of cloud emulator deployment: $device")
+                getCloudEmulatorDeployment(
+                    emulator = device,
+                    deploymentName = deploymentName,
+                    count = reservation.count
+                )
+            }
             is Device.MockEmulator -> throw IllegalStateException(
                 "Mock emulator ${reservation.device} is unsupported in kubernetes reservation"
             )

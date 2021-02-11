@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.kotlinReflect)
     // TODO: Use https://github.com/docker-java/docker-java

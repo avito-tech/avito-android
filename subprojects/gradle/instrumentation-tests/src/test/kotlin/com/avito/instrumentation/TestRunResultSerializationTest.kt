@@ -7,7 +7,7 @@ import com.github.salomonbrys.kotson.fromJson
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class TestRunResultSerializationTest {
+internal class TestRunResultSerializationTest {
 
     @Test
     fun `verdict is success`() {

@@ -6,23 +6,23 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:impact-shared"))
+    api(project(":subprojects:gradle:impact-shared"))
 
     implementation(gradleApi())
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":common:files"))
-    implementation(project(":gradle:git"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:sentry-config"))
-    implementation(project(":gradle:statsd-config"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:sentry-config"))
+    implementation(project(":subprojects:gradle:statsd-config"))
 
     implementation(Dependencies.antPattern)
     implementation(Dependencies.Gradle.kotlinPlugin)
 
-    testImplementation(project(":gradle:impact-shared-test-fixtures"))
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":gradle:git-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:gradle:git-test-fixtures"))
     testImplementation(Dependencies.Test.mockitoKotlin)
 }
 

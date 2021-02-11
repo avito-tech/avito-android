@@ -7,11 +7,11 @@ plugins {
 dependencies {
     api(Dependencies.okhttp)
 
-    implementation(project(":common:logger"))
+    implementation(project(":subprojects:common:logger"))
     implementation(Dependencies.okhttpLogging)
 
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
     testImplementation(Dependencies.funktionaleTry)
     testImplementation(Dependencies.retrofit)
     testImplementation(Dependencies.retrofitConverterGson)

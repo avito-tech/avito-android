@@ -8,16 +8,16 @@ plugins {
 dependencies {
     api(Dependencies.funktionaleTry)
 
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":common:time"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:common:time"))
     implementation(Dependencies.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(Dependencies.okhttp)
     implementation(Dependencies.coroutinesCore)
 
-    integTestImplementation(project(":gradle:gradle-extensions"))
+    integTestImplementation(project(":subprojects:gradle:gradle-extensions"))
 
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":gradle:slack-test-fixtures"))
-    testImplementation(project(":common:time-test-fixtures"))
-    testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:gradle:slack-test-fixtures"))
+    testImplementation(project(":subprojects:common:time-test-fixtures"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
 }

@@ -28,7 +28,7 @@ dependencies(
 
         implementation(Dependencies.appcompat)
 
-        androidTestImplementation(project(":android-test:ui-testing-core"))
+        androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
         androidTestUtil(Dependencies.AndroidTest.orchestrator)
     }
 )

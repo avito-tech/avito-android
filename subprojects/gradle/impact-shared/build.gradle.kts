@@ -11,18 +11,18 @@ dependencies {
 
     implementation(gradleApi())
 
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:git"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:process"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:process"))
 
     implementation(Dependencies.antPattern)
     implementation(Dependencies.Gradle.kotlinPlugin)
 
-    testImplementation(project(":gradle:git-test-fixtures"))
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:git-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
 
     testImplementation(Dependencies.Test.mockitoKotlin)
 }

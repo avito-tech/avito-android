@@ -225,7 +225,10 @@ internal class KubernetesReservationClient(
     }
 
     private suspend fun Deployment.create() {
+        logger.debug("Deployment.create(): start $this")
         kubernetesClient.apps().deployments().create(this)
+        logger.debug("Deployment.create(): client returned")
+
         waitForDeploymentCreationDone(metadata.name, spec.replicas)
     }
 
@@ -233,6 +236,7 @@ internal class KubernetesReservationClient(
         deploymentName: String,
         count: Int
     ) {
+        logger.debug("waitForDeploymentCreationDone name=$deploymentName count=$count")
         val isDeploymentDone = waitForCondition(
             logger = logger,
             conditionName = "Deployment $deploymentName deployed"

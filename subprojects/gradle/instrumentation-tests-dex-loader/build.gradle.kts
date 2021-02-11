@@ -5,18 +5,18 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:report-viewer")) {
+    api(project(":subprojects:common:report-viewer")) {
         because("TestName model") // todo test models should be separated from reports
     }
     implementation(gradleApi())
     implementation(Dependencies.dexlib)
     implementation(Dependencies.kotson)
-    implementation(project(":common:files"))
-    implementation(project(":gradle:android")) {
+    implementation(project(":subprojects:common:files"))
+    implementation(project(":subprojects:gradle:android")) {
         because("For getApkOrThrow function only")
     }
-    testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
-    testImplementation(project(":common:resources"))
+    testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
+    testImplementation(project(":subprojects:common:resources"))
     testImplementation(Dependencies.Test.mockitoKotlin)
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)
 }
