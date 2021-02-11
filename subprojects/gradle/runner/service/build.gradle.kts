@@ -16,7 +16,7 @@ dependencies {
     implementation(Dependencies.rxJava)
 
     testImplementation(project(":subprojects:common:logger-test-fixtures"))
-    testImplementation(project(":subprojects:common:time-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(project(":subprojects:common:files"))
     testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:common:resources"))

@@ -18,6 +18,6 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:slack-test-fixtures"))
-    testImplementation(project(":subprojects:common:time-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(project(":subprojects:common:logger-test-fixtures"))
 }
