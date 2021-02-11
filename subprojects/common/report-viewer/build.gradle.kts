@@ -1,29 +1,30 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
     `java-test-fixtures`
 }
 
 dependencies {
-    api(Dependencies.funktionaleTry)
-    api(Dependencies.gson)
+    api(libs.funktionaleTry)
+    api(libs.gson)
 
     api(project(":subprojects:common:okhttp"))
 
     implementation(project(":subprojects:common:math"))
     implementation(project(":subprojects:common:logger"))
-    implementation(Dependencies.okhttpLogging)
-    implementation(Dependencies.kotson)
+    implementation(libs.okhttpLogging)
+    implementation(libs.kotson)
 
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(project(":subprojects:common:files"))
     testImplementation(project(":subprojects:common:resources"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
-    testImplementation(Dependencies.Test.okhttpMockWebServer)
-    testImplementation(Dependencies.Test.jsonPathAssert)
+    testImplementation(libs.okhttpMockWebServer)
+    testImplementation(libs.jsonPathAssert)
 
     testFixturesImplementation(testFixtures(project(":subprojects:common:logger")))
     testFixturesImplementation(project(":subprojects:common:test-okhttp"))
+    testFixturesImplementation(libs.junitJupiterApi)
 }

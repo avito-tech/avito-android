@@ -1,11 +1,11 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.Test.okhttpMockWebServer)
+    api(libs.okhttpMockWebServer)
     api(gradleTestKit())
 
     implementation(project(":subprojects:gradle:process"))
@@ -13,10 +13,10 @@ dependencies {
     implementation(project(":subprojects:common:truth-extensions"))
     implementation(testFixtures(project(":subprojects:common:logger")))
 
-    implementation(Dependencies.kotlinReflect)
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.Test.truth)
+    implementation(libs.kotlinReflect)
+    implementation(libs.funktionaleTry)
+    implementation(libs.truth)
 
-    testImplementation(Dependencies.Test.kotlinTest)
-    testImplementation(Dependencies.Test.kotlinTestJUnit)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlinTestJUnit)
 }

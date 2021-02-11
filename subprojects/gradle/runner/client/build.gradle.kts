@@ -1,7 +1,7 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 extra["artifact-id"] = "runner-client"
@@ -13,16 +13,16 @@ dependencies {
 
     implementation(project(":subprojects:gradle:trace-event"))
     implementation(project(":subprojects:common:math"))
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.coroutinesCore)
-    implementation(Dependencies.gson)
+    implementation(libs.funktionaleTry)
+    implementation(libs.coroutinesCore)
+    implementation(libs.gson)
 
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:runner:shared-test"))
-    testImplementation(Dependencies.kotlinReflect)
-    testImplementation(Dependencies.Test.mockitoKotlin)
-    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
-    testImplementation(Dependencies.Test.coroutinesTest)
+    testImplementation(libs.kotlinReflect)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockitoJUnitJupiter)
+    testImplementation(libs.coroutinesTest)
 }

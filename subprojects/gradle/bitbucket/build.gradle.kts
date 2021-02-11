@@ -1,7 +1,7 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -12,12 +12,12 @@ dependencies {
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(Dependencies.retrofit)
-    implementation(Dependencies.retrofitConverterGson)
-    implementation(Dependencies.okhttp)
-    implementation(Dependencies.okhttpLogging)
-    implementation(Dependencies.sentry)
-    implementation(Dependencies.funktionaleTry)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitConverterGson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
+    implementation(libs.sentry)
+    implementation(libs.funktionaleTry)
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:common:test-okhttp"))

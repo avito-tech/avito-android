@@ -1,8 +1,7 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -11,7 +10,7 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(project(":subprojects:gradle:runner:service"))
     implementation(project(":subprojects:gradle:runner:shared"))
-    implementation(Dependencies.funktionaleTry)
+    implementation(libs.funktionaleTry)
 
     testImplementation(project(":subprojects:gradle:test-project"))
 }

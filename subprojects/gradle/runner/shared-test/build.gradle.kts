@@ -1,22 +1,20 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 extra["artifact-id"] = "runner-shared-test"
 
 dependencies {
     api(project(":subprojects:gradle:runner:stub"))
-    api(Dependencies.Test.coroutinesTest)
+    api(libs.coroutinesTest)
 
     compileOnly(gradleApi())
 
-    implementation(Dependencies.coroutinesCore)
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.kotson)
-    implementation(Dependencies.Test.junitJupiterApi)
-    implementation(Dependencies.Test.truth)
+    implementation(libs.coroutinesCore)
+    implementation(libs.funktionaleTry)
+    implementation(libs.kotson)
     implementation(project(":subprojects:common:report-viewer"))
     implementation(project(":subprojects:gradle:runner:service"))
     implementation(project(":subprojects:gradle:runner:shared"))

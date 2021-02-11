@@ -1,7 +1,7 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -9,14 +9,14 @@ dependencies {
         because("TestName model") // todo test models should be separated from reports
     }
     implementation(gradleApi())
-    implementation(Dependencies.dexlib)
-    implementation(Dependencies.kotson)
+    implementation(libs.dexlib)
+    implementation(libs.kotson)
     implementation(project(":subprojects:common:files"))
     implementation(project(":subprojects:gradle:android")) {
         because("For getApkOrThrow function only")
     }
     testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":subprojects:common:resources"))
-    testImplementation(Dependencies.Test.mockitoKotlin)
-    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockitoJUnitJupiter)
 }

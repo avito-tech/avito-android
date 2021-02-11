@@ -1,14 +1,14 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
     implementation(gradleApi())
-    implementation(Dependencies.okhttp)
-    implementation(Dependencies.okhttpLogging)
-    implementation(Dependencies.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
+    implementation(libs.gson)
 
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:gradle:android"))

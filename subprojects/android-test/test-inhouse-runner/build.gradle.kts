@@ -1,15 +1,14 @@
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-android-library")
+    id("com.avito.android.publish-android-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
     api(project(":subprojects:android-test:test-instrumentation-runner"))
     api(project(":subprojects:common:junit-utils"))
     api(project(":subprojects:android-test:test-report"))
-    api(Dependencies.sentry) {
+    api(libs.sentry) {
         because("InHouseInstrumentationTestRunner.sentry")
     }
 
@@ -27,13 +26,13 @@ dependencies {
     implementation(project(":subprojects:android-test:android-log"))
     implementation(project(":subprojects:android-test:ui-testing-core"))
     implementation(project(":subprojects:android-test:ui-testing-maps"))
-    implementation(Dependencies.AndroidTest.runner)
-    implementation(Dependencies.Test.truth)
-    implementation(Dependencies.Test.mockitoKotlin)
-    implementation(Dependencies.okhttpLogging)
-    implementation(Dependencies.Test.okhttpMockWebServer)
-    implementation(Dependencies.gson)
+    implementation(libs.androidXTestRunner)
+    implementation(libs.truth)
+    implementation(libs.mockitoKotlin)
+    implementation(libs.okhttpLogging)
+    implementation(libs.okhttpMockWebServer)
+    implementation(libs.gson)
 
-    testImplementation(Dependencies.Test.kotlinPoet)
-    testImplementation(Dependencies.Test.kotlinCompileTesting)
+    testImplementation(libs.kotlinPoet)
+    testImplementation(libs.kotlinCompileTesting)
 }

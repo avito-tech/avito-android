@@ -1,14 +1,13 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(Dependencies.Gradle.kotlinPlugin)
+    implementation(libs.kotlinPlugin)
 
     testImplementation(project(":subprojects:gradle:test-project"))
 }

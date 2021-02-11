@@ -6,9 +6,9 @@ import com.avito.utils.gradle.KubernetesCredentials.Service
 import com.avito.utils.gradle.kubernetesCredentials
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
+    id("com.avito.android.kotlin-android-app")
     id("com.avito.android.instrumentation-tests")
+    id("com.avito.android.libraries")
 }
 
 android {
@@ -49,11 +49,10 @@ android {
 }
 
 dependencies {
-
-    implementation(Dependencies.appcompat)
-    implementation(Dependencies.material)
-    implementation(Dependencies.playServicesMaps)
-    implementation(Dependencies.recyclerView)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.playServicesMaps)
+    implementation(libs.recyclerView)
 
     implementation(project(":subprojects:android-lib:proxy-toast"))
 
@@ -65,7 +64,7 @@ dependencies {
     androidTestImplementation(project(":subprojects:common:test-annotations"))
     androidTestImplementation(project(":subprojects:common:report-viewer"))
 
-    androidTestUtil(Dependencies.AndroidTest.orchestrator)
+    androidTestUtil(libs.testOrchestrator)
 }
 
 instrumentation {

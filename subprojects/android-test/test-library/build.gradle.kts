@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
+    id("com.avito.android.kotlin-android-library")
+    id("com.avito.android.libraries")
 }
 
 android {
@@ -23,12 +23,10 @@ android {
     }
 }
 
-dependencies(
-    delegateClosureOf<DependencyHandler> {
+dependencies {
+    implementation(libs.appcompat)
 
-        implementation(Dependencies.appcompat)
+    androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
 
-        androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
-        androidTestUtil(Dependencies.AndroidTest.orchestrator)
-    }
-)
+    androidTestUtil(libs.testOrchestrator)
+}

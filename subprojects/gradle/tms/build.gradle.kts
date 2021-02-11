@@ -1,8 +1,7 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -12,8 +11,8 @@ dependencies {
     implementation(project(":subprojects:common:report-viewer"))
     implementation(project(":subprojects:common:time"))
 
-    implementation(Dependencies.gson)
-    implementation(Dependencies.kotson)
+    implementation(libs.gson)
+    implementation(libs.kotson)
 
     testImplementation(project(":subprojects:gradle:test-project"))
 }

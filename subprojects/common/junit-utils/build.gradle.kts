@@ -1,13 +1,13 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    implementation(Dependencies.Test.junit)
-    implementation(Dependencies.Test.truth)
-    implementation(Dependencies.Test.hamcrestLib)
+    implementation(libs.junit)
+    implementation(libs.truth)
+    implementation(libs.hamcrestLib)
 
-    testImplementation(Dependencies.kotlinReflect)
+    testImplementation(libs.kotlinReflect)
 }

@@ -1,27 +1,24 @@
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-android-library")
+    id("com.avito.android.publish-android-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.AndroidTest.core)
-    api(Dependencies.AndroidTest.espressoCore)
-    api(Dependencies.AndroidTest.espressoWeb)
-    api(Dependencies.AndroidTest.espressoIntents)
-    api(Dependencies.AndroidTest.uiAutomator)
-
-    api(Dependencies.AndroidTest.espressoDescendantActions)
-
-    api(Dependencies.appcompat)
-    api(Dependencies.recyclerView)
-    api(Dependencies.material)
+    api(libs.androidXTestCore)
+    api(libs.espressoCore)
+    api(libs.espressoWeb)
+    api(libs.espressoIntents)
+    api(libs.uiAutomator)
+    api(libs.espressoDescendantActions)
+    api(libs.appcompat)
+    api(libs.recyclerView)
+    api(libs.material)
 
     // todo implementation, waitForAssertion used in app
     api(project(":subprojects:common:waiter"))
 
-    implementation(Dependencies.Test.hamcrestLib)
-    implementation(Dependencies.Test.junit)
-    implementation(Dependencies.freeReflection)
+    implementation(libs.hamcrestLib)
+    implementation(libs.junit)
+    implementation(libs.freeReflection)
 }

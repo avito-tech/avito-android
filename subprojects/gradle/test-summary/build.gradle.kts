@@ -1,8 +1,7 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -12,8 +11,8 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:slack"))
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.okhttp)
+    implementation(libs.funktionaleTry)
+    implementation(libs.okhttp)
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:common:report-viewer")))

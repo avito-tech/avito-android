@@ -1,7 +1,7 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 extra["artifact-id"] = "runner-service"
@@ -11,9 +11,9 @@ dependencies {
     api(project(":subprojects:common:statsd"))
     api(project(":subprojects:common:time"))
     implementation(project(":subprojects:gradle:runner:shared"))
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.AndroidTest.ddmlib)
-    implementation(Dependencies.rxJava)
+    implementation(libs.funktionaleTry)
+    implementation(libs.ddmlib)
+    implementation(libs.rxJava)
 
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(testFixtures(project(":subprojects:common:time")))
@@ -22,9 +22,8 @@ dependencies {
     testImplementation(project(":subprojects:common:resources"))
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:runner:shared-test"))
-    testImplementation(Dependencies.kotlinReflect)
-    testImplementation(Dependencies.Test.truth)
-    testImplementation(Dependencies.Test.mockitoKotlin)
-    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
-    testImplementation(Dependencies.Test.coroutinesTest)
+    testImplementation(libs.kotlinReflect)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockitoJUnitJupiter)
+    testImplementation(libs.coroutinesTest)
 }
