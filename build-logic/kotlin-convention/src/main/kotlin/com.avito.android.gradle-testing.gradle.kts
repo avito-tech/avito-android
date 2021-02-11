@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
-import java.util.concurrent.TimeUnit
 
 plugins {
     id("com.avito.android.libraries")
@@ -11,11 +10,10 @@ dependencies {
     add("testImplementation", gradleTestKit())
 }
 
+val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
+
 tasks.withType<Test>().configureEach {
-    systemProperty(
-        "kotlinVersion",
-        plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
-    )
+    systemProperty("kotlinVersion", kotlinVersion)
     systemProperty("compileSdkVersion", libs.compileSdkVersion)
     systemProperty("buildToolsVersion", libs.buildToolsVersion)
     systemProperty("androidGradlePluginVersion", libs.androidGradlePluginVersion)
