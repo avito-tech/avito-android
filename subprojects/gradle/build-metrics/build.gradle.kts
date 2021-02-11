@@ -24,7 +24,7 @@ dependencies {
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)
     testImplementation(project(":subprojects:gradle:git"))
     testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:graphite-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:graphite")))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
