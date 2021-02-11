@@ -16,7 +16,7 @@ dependencies {
     implementation(Dependencies.retrofitConverterGson)
 
     testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(project(":subprojects:common:time-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(project(":subprojects:common:logger-test-fixtures"))
 }
 
