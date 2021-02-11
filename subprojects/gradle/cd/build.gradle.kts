@@ -30,7 +30,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
     testImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
     testImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
     testImplementation(project(":subprojects:gradle:test-project"))

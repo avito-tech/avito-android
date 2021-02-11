@@ -59,7 +59,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":subprojects:common:logger")))
     testFixturesApi(testFixtures(project(":subprojects:common:time")))
-    testFixturesApi(project(":subprojects:common:report-viewer-test-fixtures"))
+    testFixturesApi(testFixtures(project(":subprojects:common:report-viewer")))
     testFixturesApi(testFixtures(project(":subprojects:gradle:runner:device-provider")))
 }
 

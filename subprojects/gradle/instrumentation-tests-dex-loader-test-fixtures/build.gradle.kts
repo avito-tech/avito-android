@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     api(project(":subprojects:gradle:instrumentation-tests-dex-loader"))
-    api(project(":subprojects:common:report-viewer-test-fixtures"))
+    api(testFixtures(project(":subprojects:common:report-viewer")))
 }
