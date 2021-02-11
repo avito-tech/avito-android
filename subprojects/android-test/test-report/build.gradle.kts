@@ -27,7 +27,7 @@ dependencies {
 
     testImplementation(project(":subprojects:common:resources"))
     testImplementation(project(":subprojects:common:junit-utils"))
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(Dependencies.Test.okhttpMock)
     testImplementation(Dependencies.Test.mockitoKotlin)

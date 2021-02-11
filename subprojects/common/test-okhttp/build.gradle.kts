@@ -16,5 +16,5 @@ dependencies {
     implementation(project(":subprojects:common:resources"))
     implementation(project(":subprojects:common:waiter"))
 
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
 }

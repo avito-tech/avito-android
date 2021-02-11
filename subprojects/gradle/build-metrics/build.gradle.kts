@@ -25,7 +25,7 @@ dependencies {
     testImplementation(project(":subprojects:gradle:git"))
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:common:graphite-test-fixtures"))
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 gradlePlugin {

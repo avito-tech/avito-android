@@ -17,7 +17,7 @@ dependencies {
 
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(testFixtures(project(":subprojects:common:time")))
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 kotlin {

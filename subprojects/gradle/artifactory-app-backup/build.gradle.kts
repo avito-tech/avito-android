@@ -14,7 +14,7 @@ dependencies {
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
     testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 gradlePlugin {

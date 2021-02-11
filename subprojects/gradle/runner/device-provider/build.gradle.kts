@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:common:logger"))
 
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 kotlin {

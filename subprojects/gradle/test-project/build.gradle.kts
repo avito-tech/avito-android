@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:common:truth-extensions"))
-    implementation(project(":subprojects:common:logger-test-fixtures"))
+    implementation(testFixtures(project(":subprojects:common:logger")))
 
     implementation(Dependencies.kotlinReflect)
     implementation(Dependencies.funktionaleTry)

@@ -28,7 +28,7 @@ dependencies {
     implementation(project(":subprojects:gradle:upload-cd-build-result"))
     implementation(project(":subprojects:gradle:upload-to-googleplay"))
 
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
     testImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))

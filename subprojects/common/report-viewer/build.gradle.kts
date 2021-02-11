@@ -18,7 +18,7 @@ dependencies {
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(project(":subprojects:common:files"))
     testImplementation(project(":subprojects:common:resources"))
-    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(project(":subprojects:common:report-viewer-test-fixtures"))
     testImplementation(Dependencies.Test.okhttpMockWebServer)
     testImplementation(Dependencies.Test.jsonPathAssert)

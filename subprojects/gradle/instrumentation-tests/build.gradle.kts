@@ -57,7 +57,7 @@ dependencies {
 
     integTestImplementation(project(":subprojects:common:statsd"))
 
-    testFixturesApi(project(":subprojects:common:logger-test-fixtures"))
+    testFixturesApi(testFixtures(project(":subprojects:common:logger")))
     testFixturesApi(testFixtures(project(":subprojects:common:time")))
     testFixturesApi(project(":subprojects:common:report-viewer-test-fixtures"))
     testFixturesApi(testFixtures(project(":subprojects:gradle:runner:device-provider")))
