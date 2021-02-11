@@ -5,5 +5,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:report-viewer"))
+    implementation(project(":subprojects:common:report-viewer"))
 }

@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:math"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":subprojects:common:math"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(gradleApi())
     implementation(Dependencies.googlePublish)
 }

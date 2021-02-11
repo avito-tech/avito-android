@@ -7,7 +7,7 @@ plugins {
 extra["artifact-id"] = "runner-stub"
 
 dependencies {
-    implementation(project(":common:report-viewer"))
-    implementation(project(":gradle:runner:service"))
-    implementation(project(":gradle:runner:shared"))
+    implementation(project(":subprojects:common:report-viewer"))
+    implementation(project(":subprojects:gradle:runner:service"))
+    implementation(project(":subprojects:gradle:runner:shared"))
 }

@@ -6,14 +6,14 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:process"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.gson)
 
-    testImplementation(project(":common:logger-test-fixtures"))
-    testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

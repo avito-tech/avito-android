@@ -10,7 +10,7 @@ import com.avito.report.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class GetTestResultsActionTest {
+internal class GetTestResultsActionTest {
 
     @Test
     fun `action - getTestResultAction success`() {

@@ -19,7 +19,7 @@ dependencies {
     api(Dependencies.material)
 
     // todo implementation, waitForAssertion used in app
-    api(project(":common:waiter"))
+    api(project(":subprojects:common:waiter"))
 
     implementation(Dependencies.Test.hamcrestLib)
     implementation(Dependencies.Test.junit)

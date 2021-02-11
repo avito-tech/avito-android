@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:time"))
+    api(project(":subprojects:common:time"))
 
-    implementation(project(":common:logger-test-fixtures"))
+    implementation(project(":subprojects:common:logger-test-fixtures"))
 }

@@ -6,26 +6,26 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:math"))
-    implementation(project(":gradle:build-environment"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-profile"))
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:graphite-config"))
-    implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:sentry-config"))
-    implementation(project(":gradle:statsd-config"))
-    implementation(project(":gradle:teamcity"))
+    implementation(project(":subprojects:common:math"))
+    implementation(project(":subprojects:gradle:build-environment"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:gradle:gradle-profile"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:graphite-config"))
+    implementation(project(":subprojects:gradle:impact-shared"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:sentry-config"))
+    implementation(project(":subprojects:gradle:statsd-config"))
+    implementation(project(":subprojects:gradle:teamcity"))
 
     implementation(Dependencies.funktionaleTry)
 
     testImplementation(Dependencies.Test.mockitoKotlin)
     testImplementation(Dependencies.Test.mockitoJUnitJupiter)
-    testImplementation(project(":gradle:git"))
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":common:graphite-test-fixtures"))
-    testImplementation(project(":common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:git"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:graphite-test-fixtures"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
 }
 
 gradlePlugin {

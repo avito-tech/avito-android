@@ -379,7 +379,6 @@ class RealTest {
             }
             instrumentation {
                  reportViewerUrl="$reportsApiUrl"
-                 reportApiFallbackUrl = "stub"
                  sentryDsn = "stub"
                  slackToken = "stub"
                  fileStorageUrl = "$mockUrl"

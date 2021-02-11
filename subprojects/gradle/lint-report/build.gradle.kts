@@ -7,24 +7,24 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:build-verdict-tasks-api"))
+    api(project(":subprojects:gradle:build-verdict-tasks-api"))
 
     implementation(Dependencies.funktionaleTry)
     implementation(Dependencies.kotlinHtml)
     implementation(Dependencies.okhttp)
 
-    implementation(project(":common:okhttp"))
-    implementation(project(":common:sentry"))
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:bitbucket"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:git"))
-    implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:slack"))
+    implementation(project(":subprojects:common:okhttp"))
+    implementation(project(":subprojects:common:sentry"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:bitbucket"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:gradle:git"))
+    implementation(project(":subprojects:gradle:impact-shared"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:gradle:slack"))
 
-    testImplementation(project(":common:logger-test-fixtures"))
-    testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":subprojects:common:logger-test-fixtures"))
+    testImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

@@ -55,7 +55,7 @@ public sealed class Device : Serializable {
         }
     }
 
-    public class CloudEmulator(
+    public data class CloudEmulator(
         override val name: String,
         override val api: Int,
         override val model: String,

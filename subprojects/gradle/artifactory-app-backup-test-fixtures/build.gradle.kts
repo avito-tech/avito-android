@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:artifactory-app-backup"))
+    api(project(":subprojects:gradle:artifactory-app-backup"))
 
-    implementation(project(":common:test-okhttp"))
+    implementation(project(":subprojects:common:test-okhttp"))
 }

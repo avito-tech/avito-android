@@ -6,17 +6,17 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":common:okhttp"))
+    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":subprojects:gradle:android"))
+    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":subprojects:common:okhttp"))
 
     implementation(Dependencies.retrofit)
     implementation(Dependencies.retrofitConverterGson)
     implementation(Dependencies.okhttpLogging)
 
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":common:test-okhttp"))
+    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:test-okhttp"))
 }
 
 gradlePlugin {

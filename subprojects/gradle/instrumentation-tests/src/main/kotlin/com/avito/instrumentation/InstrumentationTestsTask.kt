@@ -269,7 +269,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             factories[Report.Factory.Config.ReportViewerCoordinates::class.java.simpleName] =
                 Report.Factory.ReportViewerFactory(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
-                    reportApiFallbackUrl = reportViewerConfig.reportApiFallbackUrl,
                     loggerFactory = loggerFactory,
                     timeProvider = timeProvider,
                     verboseHttp = false // do not enable for production, generates a ton of logs

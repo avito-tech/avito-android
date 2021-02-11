@@ -31,7 +31,6 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
         }
         instrumentation {
             reportApiUrl = "stub"
-            reportApiFallbackUrl = "stub"
             reportViewerUrl = "stub"
             registry = "stub"
             sentryDsn = "stub"

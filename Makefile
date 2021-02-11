@@ -68,19 +68,13 @@ help:
 	./gradlew help $(params)
 
 clean:
-	./gradlew -p subprojects clean
-
-assembleSamples:
-	./gradlew samples:test-app:assembleAndroidTest samples:test-app-without-backward-compatibility:assembleAndroidTest
-
-sample_app_help:
-	./gradlew samples:$(module):help $(params)
+	./gradlew clean
 
 publish_to_maven_local:
-	./gradlew -p subprojects publishToMavenLocal -PprojectVersion=local $(log_level)
+	./gradlew publishToMavenLocal -PprojectVersion=local $(log_level)
 
 publish_to_artifactory:
-	./gradlew -p subprojects publishToArtifactory -PprojectVersion=$(version) $(log_level)
+	./gradlew publishToArtifactory -PprojectVersion=$(version) $(log_level)
 
 # precondition:
 # - installed CLI: https://cli.github.com/
@@ -99,41 +93,29 @@ draft_release:
 		--title $(version) \
 		--notes "$$(git log --pretty=format:%s $(prev_version)..$(version) | cat)"
 
-sample_app_instrumentation:
-	./gradlew samples:$(module):instrumentation$(instrumentation) $(params)
-
-sample_app_instrumentation_local:
-	./gradlew samples:$(module):instrumentationLocal $(params)
-
-sample_app_instrumentation_android_debug:
-	./gradlew samples:$(module):instrumentationUiDebug $(params)
-
 dynamic_properties:
 	$(eval keepFailedTestsFromReport?=)
 	$(eval skipSucceedTestsFromPreviousRun=true)
 	$(eval testFilter?=empty)
 	$(eval dynamicPrefixFilter?=)
 
-sample_app_instrumentation_dynamic: dynamic_properties
-	./gradlew samples:$(module):instrumentationDynamic -PinfraVersion=local -PtestBuildType=$(test_build_type) -PdynamicTarget22=true -Pinstrumentation.dynamic.testFilter=$(testFilter) -Pinstrumentation.dynamic.keepFailedTestsFromReport=$(keepFailedTestsFromReport) -Pinstrumentation.dynamic.skipSucceedTestsFromPreviousRun=$(skipSucceedTestsFromPreviousRun) -PdynamicPrefixFilter=$(skipTestsWithPrefix) $(log_level)
-
 unit_tests:
-	./gradlew -p subprojects test $(log_level)
+	./gradlew test $(log_level)
 
 integration_tests:
-	./gradlew -p subprojects $(module):integrationTest
+	./gradlew $(module):integrationTest
 
 compile_tests:
-	./gradlew -p subprojects compileTestKotlin $(log_level)
+	./gradlew compileTestKotlin $(log_level)
 
 compile:
-	./gradlew -p subprojects compileKotlin compileTestKotlin compileIntegTestKotlin $(log_level)
+	./gradlew compileKotlin compileTestKotlin compileIntegTestKotlin $(log_level)
 
 check:
-	./gradlew -p subprojects check
+	./gradlew check
 
 detekt:
-	./gradlew -p subprojects detektAll
+	./gradlew detektAll
 
 .PHONY: docs
 docs:

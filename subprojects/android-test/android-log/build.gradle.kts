@@ -6,8 +6,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:logger"))
+    api(project(":subprojects:common:logger"))
 
-    implementation(project(":common:elastic-logger"))
-    implementation(project(":common:sentry-logger"))
+    implementation(project(":subprojects:common:elastic-logger"))
+    implementation(project(":subprojects:common:sentry-logger"))
 }

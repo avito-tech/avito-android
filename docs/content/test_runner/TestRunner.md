@@ -44,7 +44,6 @@ It can do the following:
     extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         // they are required for Avito app. We will make them optional in future.
         reportApiUrl = "http://stub"
-        reportApiFallbackUrl = "http://stub"
         reportViewerUrl = "http://stub"
         registry = "registry"
         sentryDsn = "http://stub-project@stub-host/0"
@@ -82,7 +81,6 @@ It can do the following:
     instrumentation {
         // they are required for Avito app. We will make them optional in future.
         reportApiUrl = "http://stub"
-        reportApiFallbackUrl = "http://stub"
         reportViewerUrl = "http://stub"
         registry = "registry"
         sentryDsn = "http://stub-project@stub-host/0"
