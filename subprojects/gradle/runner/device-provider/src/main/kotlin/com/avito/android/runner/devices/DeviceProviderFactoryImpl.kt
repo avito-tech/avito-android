@@ -5,6 +5,7 @@ import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
 import com.avito.android.runner.devices.internal.KubernetesDevicesProvider
 import com.avito.android.runner.devices.internal.LocalDevicesProvider
 import com.avito.android.runner.devices.internal.StubDevicesProvider
+import com.avito.android.runner.devices.internal.kubernetes.KubernetesApi
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClient
 import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactory
 import com.avito.android.runner.devices.internal.kubernetes.UUIDDeploymentNameGenerator
@@ -69,9 +70,12 @@ public class DeviceProviderFactoryImpl(
                 KubernetesDevicesProvider(
                     client = KubernetesReservationClient(
                         androidDebugBridge = androidDebugBridge,
-                        kubernetesClient = createKubernetesClient(
-                            kubernetesCredentials = kubernetesCredentials,
-                            namespace = kubernetesNamespace
+                        kubernetesApi = KubernetesApi.Impl(
+                            kubernetesClient = createKubernetesClient(
+                                kubernetesCredentials = kubernetesCredentials,
+                                namespace = kubernetesNamespace
+                            ),
+                            loggerFactory = loggerFactory
                         ),
                         reservationDeploymentFactory = ReservationDeploymentFactory(
                             configurationName = configurationName,
