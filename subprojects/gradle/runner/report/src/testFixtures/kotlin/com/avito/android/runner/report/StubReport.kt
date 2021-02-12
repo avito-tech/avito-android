@@ -1,7 +1,5 @@
-package com.avito.instrumentation.stub.report
+package com.avito.android.runner.report
 
-import com.avito.instrumentation.internal.report.ReportImpl
-import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.ReportsApi
@@ -15,14 +13,14 @@ import com.avito.time.StubTimeProvider
 import com.avito.time.TimeProvider
 import org.funktionale.tries.Try
 
-internal fun Report.Companion.createStubInstance(
+public fun Report.Companion.createStubInstance(
     reportsApi: ReportsApi,
     loggerFactory: LoggerFactory = StubLoggerFactory,
     batchSize: Int = 1,
     buildId: String = "1",
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     timeProvider: TimeProvider = StubTimeProvider()
-) = ReportImpl(
+): Report = AvitoReport(
     reportsApi = reportsApi,
     loggerFactory = loggerFactory,
     batchSize = batchSize,
@@ -31,15 +29,15 @@ internal fun Report.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-class StubReport : Report {
+public class StubReport : Report {
 
-    var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
+    public var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
 
-    var reportedMissingTests: Collection<AndroidTest.Lost>? = null
+    public var reportedMissingTests: Collection<AndroidTest.Lost>? = null
 
-    var reportId: String? = null
+    public var reportId: String? = null
 
-    var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())
+    public var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())
 
     override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
     }

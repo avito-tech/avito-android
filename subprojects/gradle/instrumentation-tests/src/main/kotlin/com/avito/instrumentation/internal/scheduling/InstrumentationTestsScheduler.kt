@@ -3,11 +3,11 @@ package com.avito.instrumentation.internal.scheduling
 import com.avito.android.TestInApk
 import com.avito.android.TestSuiteLoader
 import com.avito.android.check.AllChecks
+import com.avito.android.runner.report.Report
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
-import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates

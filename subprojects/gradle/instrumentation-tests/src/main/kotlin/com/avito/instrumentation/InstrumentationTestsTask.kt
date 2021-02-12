@@ -5,6 +5,10 @@ import com.avito.android.build_verdict.span.SpannedString
 import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
+import com.avito.android.runner.report.StrategyFactory
+import com.avito.android.runner.report.factory.InMemoryReportFactory
+import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.ReportViewerFactory
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
@@ -17,10 +21,6 @@ import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Comp
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
-import com.avito.instrumentation.report.InMemoryReportFactory
-import com.avito.instrumentation.report.ReportFactory
-import com.avito.instrumentation.report.ReportViewerFactory
-import com.avito.instrumentation.report.StrategyFactory
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.ReportCoordinates

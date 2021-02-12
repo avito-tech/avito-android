@@ -1,6 +1,8 @@
-package com.avito.instrumentation.report
+package com.avito.android.runner.report.factory
 
-import com.avito.instrumentation.internal.report.ReportImpl
+import com.avito.android.runner.report.AvitoReport
+import com.avito.android.runner.report.ReadReport
+import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportsApi
 import com.avito.time.TimeProvider
@@ -19,7 +21,7 @@ public class ReportViewerFactory(
         return when (config) {
             is ReportFactory.Config.ReportViewerCoordinates -> {
                 ensureInitializedReportsApi()
-                ReportImpl(
+                AvitoReport(
                     reportsApi = reportsApi,
                     loggerFactory = loggerFactory,
                     reportCoordinates = config.reportCoordinates,

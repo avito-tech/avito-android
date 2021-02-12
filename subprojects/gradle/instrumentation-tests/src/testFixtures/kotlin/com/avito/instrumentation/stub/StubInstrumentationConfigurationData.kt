@@ -8,7 +8,7 @@ import com.avito.instrumentation.configuration.InstrumentationParameters
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.suite.filter.Filter
 
-fun InstrumentationConfiguration.Data.Companion.createStubInstance(
+public fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name: String = "name",
     instrumentationParams: InstrumentationParameters = InstrumentationParameters(),
     reportSkippedTests: Boolean = true,

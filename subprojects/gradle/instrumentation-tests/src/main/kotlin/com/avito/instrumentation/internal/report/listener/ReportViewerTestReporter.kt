@@ -1,9 +1,9 @@
 package com.avito.instrumentation.internal.report.listener
 
+import com.avito.android.runner.report.Report
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
-import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.internal.getHttpClient

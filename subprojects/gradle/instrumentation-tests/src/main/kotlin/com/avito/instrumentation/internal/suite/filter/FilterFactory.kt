@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal.suite.filter
 
+import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
-import com.avito.instrumentation.report.ReportFactory
 
 internal interface FilterFactory {
 

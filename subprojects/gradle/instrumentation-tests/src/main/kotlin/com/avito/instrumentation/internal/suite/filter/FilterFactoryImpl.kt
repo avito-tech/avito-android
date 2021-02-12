@@ -1,11 +1,11 @@
 package com.avito.instrumentation.internal.suite.filter
 
+import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
-import com.avito.instrumentation.report.ReportFactory
 import com.avito.report.model.SimpleRunTest
 
 internal class FilterFactoryImpl(

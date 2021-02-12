@@ -1,6 +1,6 @@
 package com.avito.instrumentation.configuration
 
-import com.avito.instrumentation.report.ReportFactory
+import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.instrumentation.suite.filter.Filter
 import com.avito.report.model.Status
 import org.gradle.api.Action

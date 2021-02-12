@@ -1,9 +1,13 @@
-package com.avito.instrumentation.report
+package com.avito.android.runner.report.factory
 
-import com.avito.instrumentation.internal.report.InMemoryReport
+import com.avito.android.runner.report.InMemoryReport
+import com.avito.android.runner.report.ReadReport
+import com.avito.android.runner.report.Report
 import com.avito.time.TimeProvider
 
-public class InMemoryReportFactory(private val timeProvider: TimeProvider) : ReportFactory {
+public class InMemoryReportFactory(
+    private val timeProvider: TimeProvider
+) : ReportFactory {
 
     @Transient
     private var reports: MutableMap<ReportFactory.Config.InMemory, InMemoryReport> = mutableMapOf()

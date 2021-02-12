@@ -1,5 +1,7 @@
 package com.avito.instrumentation.suite.filter
 
+import com.avito.android.runner.report.StubReport
+import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.Data.FromRunHistory.ReportFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
@@ -13,8 +15,6 @@ import com.avito.instrumentation.internal.suite.filter.IncludeAnnotationsFilter
 import com.avito.instrumentation.internal.suite.filter.IncludeByTestSignaturesFilter
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.Source
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
-import com.avito.instrumentation.report.ReportFactory
-import com.avito.instrumentation.stub.report.StubReport
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status

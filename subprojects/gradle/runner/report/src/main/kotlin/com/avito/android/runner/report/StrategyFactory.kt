@@ -1,5 +1,6 @@
-package com.avito.instrumentation.report
+package com.avito.android.runner.report
 
+import com.avito.android.runner.report.factory.ReportFactory
 import java.io.Serializable
 
 public class StrategyFactory(

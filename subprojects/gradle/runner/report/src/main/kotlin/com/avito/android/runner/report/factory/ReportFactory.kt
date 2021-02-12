@@ -1,5 +1,7 @@
-package com.avito.instrumentation.report
+package com.avito.android.runner.report.factory
 
+import com.avito.android.runner.report.ReadReport
+import com.avito.android.runner.report.Report
 import com.avito.report.model.ReportCoordinates
 import java.io.Serializable
 
@@ -24,5 +26,4 @@ public interface ReportFactory : Serializable {
     public fun createReport(config: Config): Report
 
     public fun createReadReport(config: Config): ReadReport
-
 }
