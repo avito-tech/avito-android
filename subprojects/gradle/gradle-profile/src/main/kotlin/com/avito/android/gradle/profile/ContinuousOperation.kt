@@ -5,7 +5,8 @@ open class ContinuousOperation(override val description: String) : Operation() {
     var startTime: Long = 0
         private set
 
-    private var finish: Long = 0
+    var finish: Long = 0
+        private set
 
     override val elapsedTime: Long
         get() = this.finish - this.startTime

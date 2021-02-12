@@ -76,6 +76,13 @@ internal class SeriesNameTest {
     }
 
     @Test
+    fun `append series name - success`() {
+        val result = SeriesName.create("one").append(SeriesName.create("two"))
+
+        assertThat(result.toString()).isEqualTo("one.two")
+    }
+
+    @Test
     fun `prefix series name - success - multipart`() {
         val result = SeriesName.create("one").prefix(SeriesName.create("minus-one", "zero"))
 

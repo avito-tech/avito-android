@@ -11,7 +11,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 
 @Suppress("UnstableApiUsage")
-abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
+internal abstract class CollectTeamcityMetricsWorkerAction : WorkAction<Parameters> {
 
     interface Parameters : WorkParameters {
         fun getBuildId(): Property<String>
