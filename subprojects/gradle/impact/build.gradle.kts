@@ -1,8 +1,7 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -17,13 +16,13 @@ dependencies {
     implementation(project(":subprojects:gradle:sentry-config"))
     implementation(project(":subprojects:gradle:statsd-config"))
 
-    implementation(Dependencies.antPattern)
-    implementation(Dependencies.Gradle.kotlinPlugin)
+    implementation(libs.antPattern)
+    implementation(libs.kotlinPlugin)
 
     testImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:git-test-fixtures"))
-    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(libs.mockitoKotlin)
 }
 
 gradlePlugin {

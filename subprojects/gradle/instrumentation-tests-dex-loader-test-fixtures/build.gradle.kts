@@ -1,5 +1,5 @@
 plugins {
-    id("kotlin")
+    id("com.avito.android.kotlin-jvm")
 }
 
 dependencies {

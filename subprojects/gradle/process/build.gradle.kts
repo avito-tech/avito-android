@@ -1,11 +1,11 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.funktionaleTry)
+    api(libs.funktionaleTry)
 
     // todo used only for Commandline.translateCommandline(source)
     implementation(gradleApi())

@@ -1,10 +1,9 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
+    id("com.avito.android.kotlin-jvm")
     `java-test-fixtures`
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.publish-gradle-plugin")
     id("nebula.integtest")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -12,16 +11,16 @@ dependencies {
     api(project(":subprojects:common:time"))
     api(project(":subprojects:gradle:build-verdict-tasks-api"))
 
-    implementation(Dependencies.commonsIo) {
+    implementation(libs.commonsIo) {
         because("LogcatBuffer.Impl.tailer needs to consider Charset (https://issues.apache.org/jira/browse/IO-354)")
     }
-    implementation(Dependencies.commonsText)
-    implementation(Dependencies.coroutinesCore)
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.gson)
-    implementation(Dependencies.kotson)
-    implementation(Dependencies.retrofit)
-    implementation(Dependencies.teamcityClient)
+    implementation(libs.commonsText)
+    implementation(libs.coroutinesCore)
+    implementation(libs.funktionaleTry)
+    implementation(libs.gson)
+    implementation(libs.kotson)
+    implementation(libs.retrofit)
+    implementation(libs.teamcityClient)
     implementation(project(":subprojects:common:composite-exception"))
     implementation(project(":subprojects:common:file-storage"))
     implementation(project(":subprojects:common:logger"))
@@ -51,9 +50,9 @@ dependencies {
     testImplementation(project(":subprojects:gradle:build-failer-test-fixtures"))
     testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":subprojects:common:resources"))
-    testImplementation(Dependencies.Test.mockitoKotlin)
-    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
-    testImplementation(Dependencies.Test.okhttpMockWebServer)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockitoJUnitJupiter)
+    testImplementation(libs.okhttpMockWebServer)
 
     integTestImplementation(project(":subprojects:common:statsd"))
 

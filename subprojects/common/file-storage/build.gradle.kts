@@ -1,13 +1,13 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
     implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:common:logger"))
 
-    implementation(Dependencies.retrofit)
-    implementation(Dependencies.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
 }

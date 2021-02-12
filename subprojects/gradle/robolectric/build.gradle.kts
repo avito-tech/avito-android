@@ -1,8 +1,7 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {

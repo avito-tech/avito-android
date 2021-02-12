@@ -1,11 +1,12 @@
 plugins {
-    id("kotlin")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.kubernetesClient)
+    api(libs.kubernetesClient)
     api(project(":subprojects:common:teamcity-common"))
-    api(Dependencies.kotlinXCli)
+    api(libs.kotlinXCli)
 }
 
 // todo add if ci

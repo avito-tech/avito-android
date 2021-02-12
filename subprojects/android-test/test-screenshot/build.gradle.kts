@@ -1,12 +1,12 @@
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
+    id("com.avito.android.kotlin-android-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.appcompat)
-    api(Dependencies.androidAnnotations)
-    implementation(Dependencies.Test.mockitoCore)
+    api(libs.appcompat)
+    api(libs.androidAnnotations)
+    implementation(libs.mockitoKotlin)
     implementation(project(":subprojects:android-test:test-inhouse-runner"))
     implementation(project(":subprojects:android-test:ui-testing-core"))
     implementation(project(":subprojects:common:logger"))

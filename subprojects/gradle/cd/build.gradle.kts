@@ -1,13 +1,12 @@
 plugins {
-    id("java-gradle-plugin")
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
     implementation(gradleApi())
-    implementation(Dependencies.funktionaleTry)
+    implementation(libs.funktionaleTry)
     implementation(project(":subprojects:common:report-viewer"))
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:artifactory-app-backup"))

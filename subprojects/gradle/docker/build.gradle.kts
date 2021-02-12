@@ -1,16 +1,16 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
     implementation(gradleApi())
     implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.kotlinReflect)
+    implementation(libs.funktionaleTry)
+    implementation(libs.kotlinReflect)
     // TODO: Use https://github.com/docker-java/docker-java
-    implementation(Dependencies.dockerClient) {
+    implementation(libs.dockerClient) {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib-jdk8")
     }
 }

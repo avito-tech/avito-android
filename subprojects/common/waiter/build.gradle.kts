@@ -1,5 +1,4 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
 }

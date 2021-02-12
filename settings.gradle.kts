@@ -1,5 +1,14 @@
 rootProject.name = "avito-android-infra"
 
+// Convenience to provide constants for library GA coordinates
+includeBuild("libraries")
+
+// Platform for dependency versions shared by 'main build' and 'build-logic'
+includeBuild("platform")
+
+// Not traditional 'buildSrc', but 'build-logic' as a normal included build
+includeBuild("build-logic")
+
 include(":subprojects:gradle:artifactory-app-backup")
 include(":subprojects:gradle:artifactory-app-backup-test-fixtures")
 include(":subprojects:gradle:buildchecks")
@@ -210,10 +219,16 @@ pluginManagement {
         }
     }
 
-    val kotlinVersion = providers.systemProperty("kotlinVersion").forUseAtConfigurationTime()
-    val detektVersion = providers.systemProperty("detektVersion").forUseAtConfigurationTime()
-    val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
-    val infraVersion = providers.gradleProperty("infraVersion").forUseAtConfigurationTime()
+    @Suppress("UnstableApiUsage")
+    fun systemProperty(name: String): Provider<String> {
+        return providers.systemProperty(name).forUseAtConfigurationTime()
+    }
+
+    val kotlinVersion = systemProperty("kotlinVersion")
+    val detektVersion = systemProperty("detektVersion")
+    val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion")
+    val infraVersion = systemProperty("infraVersion")
+    val bintrayVersion = systemProperty("bintrayVersion")
 
     resolutionStrategy {
         eachPlugin {
@@ -231,11 +246,11 @@ pluginManagement {
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.7.0")
 
-                pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.55.0")
-
                 pluginId == "nebula.integtest" ->
                     useVersion("8.0.0")
+
+                pluginId == "com.jfrog.bintray" ->
+                    useVersion(bintrayVersion.get())
 
                 pluginId == "io.gitlab.arturbosch.detekt" ->
                     useVersion(detektVersion.get())

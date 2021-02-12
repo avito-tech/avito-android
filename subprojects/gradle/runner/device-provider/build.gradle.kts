@@ -1,9 +1,9 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
     `java-test-fixtures`
     id("nebula.integtest")
+    id("com.avito.android.libraries")
 }
 
 extra["artifact-id"] = "runner-device-provider"
@@ -15,7 +15,7 @@ dependencies {
     api(project(":subprojects:gradle:runner:stub"))
     api(project(":subprojects:gradle:kubernetes"))
 
-    implementation(Dependencies.funktionaleTry)
+    implementation(libs.funktionaleTry)
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:common:logger"))
 

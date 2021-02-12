@@ -1,18 +1,18 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
     id("nebula.integtest")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.funktionaleTry)
+    api(libs.funktionaleTry)
 
     implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(project(":subprojects:common:time"))
-    implementation(Dependencies.slackClient) { exclude(group = "com.squareup.okhttp3") }
-    implementation(Dependencies.okhttp)
-    implementation(Dependencies.coroutinesCore)
+    implementation(libs.slackClient) { exclude(group = "com.squareup.okhttp3") }
+    implementation(libs.okhttp)
+    implementation(libs.coroutinesCore)
 
     integTestImplementation(project(":subprojects:gradle:gradle-extensions"))
 

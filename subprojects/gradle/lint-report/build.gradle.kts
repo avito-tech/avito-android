@@ -1,17 +1,16 @@
 plugins {
-    id("kotlin")
-    id("java-gradle-plugin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
     id("nebula.integtest")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
     api(project(":subprojects:gradle:build-verdict-tasks-api"))
 
-    implementation(Dependencies.funktionaleTry)
-    implementation(Dependencies.kotlinHtml)
-    implementation(Dependencies.okhttp)
+    implementation(libs.funktionaleTry)
+    implementation(libs.kotlinHtml)
+    implementation(libs.okhttp)
 
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:common:sentry"))

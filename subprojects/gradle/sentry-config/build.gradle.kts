@@ -1,7 +1,7 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -12,5 +12,5 @@ dependencies {
     implementation(project(":subprojects:common:logger"))
     implementation(project(":subprojects:gradle:git"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(Dependencies.funktionaleTry)
+    implementation(libs.funktionaleTry)
 }

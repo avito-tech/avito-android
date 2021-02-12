@@ -1,19 +1,19 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.okhttp)
+    api(libs.okhttp)
 
     implementation(project(":subprojects:common:time"))
     implementation(project(":subprojects:common:okhttp"))
     implementation(project(":subprojects:common:slf4j-logger"))
 
-    implementation(Dependencies.gson)
-    implementation(Dependencies.retrofit)
-    implementation(Dependencies.retrofitConverterGson)
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitConverterGson)
 
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(testFixtures(project(":subprojects:common:time")))

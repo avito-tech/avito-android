@@ -1,20 +1,20 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.okhttp)
+    api(libs.okhttp)
 
     implementation(project(":subprojects:common:logger"))
-    implementation(Dependencies.okhttpLogging)
+    implementation(libs.okhttpLogging)
 
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
-    testImplementation(Dependencies.funktionaleTry)
-    testImplementation(Dependencies.retrofit)
-    testImplementation(Dependencies.retrofitConverterGson)
+    testImplementation(libs.funktionaleTry)
+    testImplementation(libs.retrofit)
+    testImplementation(libs.retrofitConverterGson)
 }
 
 kotlin {

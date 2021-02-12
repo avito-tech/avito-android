@@ -1,8 +1,7 @@
 plugins {
-    id("kotlin")
-    id("java-gradle-plugin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-gradle-plugin")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
@@ -13,8 +12,8 @@ dependencies {
     implementation(project(":subprojects:gradle:build-environment"))
     implementation(gradleApi())
 
-    testImplementation(Dependencies.Test.mockitoKotlin)
-    testImplementation(Dependencies.Test.mockitoJUnitJupiter)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(project(":subprojects:gradle:test-project"))
 }
 

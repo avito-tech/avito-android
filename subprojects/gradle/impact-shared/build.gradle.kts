@@ -1,13 +1,11 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.funktionaleTry) {
-        because("Try<> is in ABI")
-    }
+    api(libs.funktionaleTry)
 
     implementation(gradleApi())
 
@@ -17,12 +15,12 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:process"))
 
-    implementation(Dependencies.antPattern)
-    implementation(Dependencies.Gradle.kotlinPlugin)
+    implementation(libs.antPattern)
+    implementation(libs.kotlinPlugin)
 
     testImplementation(project(":subprojects:gradle:git-test-fixtures"))
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
 
-    testImplementation(Dependencies.Test.mockitoKotlin)
+    testImplementation(libs.mockitoKotlin)
 }

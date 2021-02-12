@@ -1,16 +1,16 @@
 plugins {
-    id("kotlin")
-    `maven-publish`
-    id("com.jfrog.bintray")
+    id("com.avito.android.kotlin-jvm")
+    id("com.avito.android.publish-kotlin-library")
+    id("com.avito.android.libraries")
 }
 
 dependencies {
-    api(Dependencies.Test.okhttpMockWebServer)
+    api(libs.okhttpMockWebServer)
     api(project(":subprojects:common:logger"))
 
-    implementation(Dependencies.Test.truth)
-    implementation(Dependencies.gson)
-    implementation(Dependencies.commonsLang)
+    implementation(libs.truth)
+    implementation(libs.gson)
+    implementation(libs.commonsLang)
 
     implementation(project(":subprojects:common:junit-utils"))
     implementation(project(":subprojects:common:resources"))
