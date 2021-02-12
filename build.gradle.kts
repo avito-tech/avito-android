@@ -14,6 +14,7 @@ plugins {
     // https://youtrack.jetbrains.com/issue/KT-31643#focus=Comments-27-3510019.0-0
     id("org.jetbrains.kotlin.jvm") apply false
     id("com.android.application") apply false
+    id("com.jfrog.bintray") apply false
 }
 
 buildscript {

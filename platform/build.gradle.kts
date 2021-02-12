@@ -10,6 +10,6 @@ group = "com.avito.android.infra"
 
 dependencies {
     constraints {
-        api(libs.kotlinStdlib) { version { prefer("1.4.30") } }
+        api(libs.kotlinStdlib) { version { prefer(libs.kotlinVersion) } }
     }
 }

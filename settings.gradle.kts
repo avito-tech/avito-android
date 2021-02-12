@@ -219,10 +219,16 @@ pluginManagement {
         }
     }
 
-    val kotlinVersion = providers.gradleProperty("kotlinVersion").forUseAtConfigurationTime()
-    val detektVersion = providers.gradleProperty("detektVersion").forUseAtConfigurationTime()
-    val androidGradlePluginVersion = providers.gradleProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
-    val infraVersion = providers.gradleProperty("infraVersion").forUseAtConfigurationTime()
+    @Suppress("UnstableApiUsage")
+    fun systemProperty(name: String): Provider<String> {
+        return providers.systemProperty(name).forUseAtConfigurationTime()
+    }
+
+    val kotlinVersion = systemProperty("kotlinVersion")
+    val detektVersion = systemProperty("detektVersion")
+    val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion")
+    val infraVersion = systemProperty("infraVersion")
+    val bintrayVersion = systemProperty("bintrayVersion")
 
     resolutionStrategy {
         eachPlugin {
@@ -242,6 +248,9 @@ pluginManagement {
 
                 pluginId == "nebula.integtest" ->
                     useVersion("8.0.0")
+
+                pluginId == "com.jfrog.bintray" ->
+                    useVersion(bintrayVersion.get())
 
                 pluginId == "io.gitlab.arturbosch.detekt" ->
                     useVersion(detektVersion.get())

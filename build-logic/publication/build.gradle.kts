@@ -6,7 +6,7 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
-    implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5")
+    implementation(libs.bintrayPlugin)
     implementation(libs.androidGradlePlugin)
 }
 

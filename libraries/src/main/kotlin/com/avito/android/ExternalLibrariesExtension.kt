@@ -1,8 +1,11 @@
 package com.avito.android
 
 import org.gradle.api.JavaVersion
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
+import javax.inject.Inject
 
-abstract class ExternalLibrariesExtension {
+abstract class ExternalLibrariesExtension @Inject constructor(private val providers: ProviderFactory) {
 
     private object Versions {
         const val okhttp = "4.9.0"
@@ -14,15 +17,16 @@ abstract class ExternalLibrariesExtension {
         const val androidX = "1.0.0"
         const val espresso = "3.2.0"
         const val mockito = "3.3.3"
-        const val detekt = "1.15.0"
         const val coroutines = "1.3.7"
-        const val kotlin = "1.4.30"
     }
 
     val javaVersion = JavaVersion.VERSION_1_8
     val compileSdkVersion = 29
     val targetSdkVersion = 28
     val minSdkVersion = 21
+    val kotlinVersion = systemProperty("kotlinVersion").get()
+    val detektVersion = systemProperty("detektVersion").get()
+    val bintrayVersion = systemProperty("bintrayVersion").get()
 
     /**
      * We use exact version to provide consistent environment and avoid build cache issues
@@ -30,7 +34,7 @@ abstract class ExternalLibrariesExtension {
      */
     val buildToolsVersion = "29.0.3"
 
-    val androidGradlePluginVersion = "4.1.2"
+    val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion").get()
 
     val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
     val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib"
@@ -51,7 +55,7 @@ abstract class ExternalLibrariesExtension {
     val sentryAndroid = "io.sentry:sentry-android:${Versions.sentry}"
     val slf4jApi = "org.slf4j:slf4j-api:1.7.28"
 
-    val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:${Versions.detekt}"
+    val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
 
     // https://github.com/JetBrains/teamcity-rest-client
     val teamcityClient = "org.jetbrains.teamcity:teamcity-rest-client:1.6.2"
@@ -85,8 +89,9 @@ abstract class ExternalLibrariesExtension {
     val androidAnnotations = "androidx.annotation:annotation:1.1.0"
     val freeReflection = "me.weishu:free_reflection:2.2.0"
 
-    val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+    val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     val androidGradlePlugin = "com.android.tools.build:gradle:$androidGradlePluginVersion"
+    val bintrayPlugin = "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
 
     val androidXTestRunner = "androidx.test:runner:${Versions.androidXTest}"
     val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"
@@ -118,4 +123,9 @@ abstract class ExternalLibrariesExtension {
     val junitPlatformLauncher = "org.junit.platform:junit-platform-launcher:${Versions.junit5Platform}"
     val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.junit5}"
     val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
+
+    @Suppress("UnstableApiUsage")
+    private fun systemProperty(name: String): Provider<String> {
+        return providers.systemProperty(name).forUseAtConfigurationTime()
+    }
 }
