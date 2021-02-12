@@ -48,6 +48,6 @@ dependencies {
 
     private fun plugins(): PluginsSpec =
         plugins {
-            id("com.avito.android.kotlin-jvm")
+            id("kotlin")
         }.plus(plugins)
 }

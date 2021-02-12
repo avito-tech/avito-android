@@ -160,7 +160,7 @@ afterEvaluate{
     private fun plugins(): PluginsSpec =
         plugins {
             id("com.android.application")
-            if (enableKotlinAndroidPlugin || enableKapt) id("com.avito.android.kotlin-android")
+            if (enableKotlinAndroidPlugin || enableKapt) id("kotlin-android")
             if (enableKapt) id("kotlin-kapt")
         }
             .plus(plugins)

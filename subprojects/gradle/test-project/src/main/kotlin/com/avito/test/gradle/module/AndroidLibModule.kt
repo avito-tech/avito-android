@@ -91,6 +91,6 @@ dependencies {
     private fun plugins(): PluginsSpec =
         plugins {
             id("com.android.library")
-            if (enableKotlinAndroidPlugin) id("com.avito.android.kotlin-android")
+            if (enableKotlinAndroidPlugin) id("kotlin-android")
         }.plus(plugins)
 }
