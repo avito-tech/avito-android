@@ -7,6 +7,7 @@ import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
+import com.avito.instrumentation.report.ReportFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
 
@@ -15,8 +16,8 @@ internal object FilterFactoryFactory {
     fun create(
         filter: InstrumentationFilter.Data = InstrumentationFilter.Data.createStub(),
         impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
-        reportsByConfig: Map<Report.Factory.Config, Report> = emptyMap(),
-        reportConfig: Report.Factory.Config = Report.Factory.Config.ReportViewerCoordinates(
+        reportsByConfig: Map<ReportFactory.Config, Report> = emptyMap(),
+        reportConfig: ReportFactory.Config = ReportFactory.Config.ReportViewerCoordinates(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "stub"
         )
@@ -25,12 +26,12 @@ internal object FilterFactoryFactory {
             filterData = filter,
             impactAnalysisResult = impactAnalysisResult,
             reportConfig = reportConfig,
-            factory = object : Report.Factory {
-                override fun createReport(config: Report.Factory.Config): Report {
+            factory = object : ReportFactory {
+                override fun createReport(config: ReportFactory.Config): Report {
                     TODO("Not yet implemented")
                 }
 
-                override fun createReadReport(config: Report.Factory.Config): ReadReport {
+                override fun createReadReport(config: ReportFactory.Config): ReadReport {
                     return reportsByConfig[config] ?: throw IllegalArgumentException("No report by config: $config")
                 }
             }

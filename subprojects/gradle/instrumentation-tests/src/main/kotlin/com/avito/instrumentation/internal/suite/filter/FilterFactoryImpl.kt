@@ -5,14 +5,14 @@ import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
-import com.avito.instrumentation.report.Report
+import com.avito.instrumentation.report.ReportFactory
 import com.avito.report.model.SimpleRunTest
 
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilter.Data,
     private val impactAnalysisResult: ImpactAnalysisResult,
-    private val factory: Report.Factory,
-    private val reportConfig: Report.Factory.Config
+    private val factory: ReportFactory,
+    private val reportConfig: ReportFactory.Config
 ) : FilterFactory {
 
     override fun createFilter(): TestsFilter {

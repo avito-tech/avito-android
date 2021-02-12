@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal.suite.filter
 
 import com.avito.instrumentation.configuration.InstrumentationFilter
-import com.avito.instrumentation.report.Report
+import com.avito.instrumentation.report.ReportFactory
 
 internal interface FilterFactory {
 
@@ -14,8 +14,8 @@ internal interface FilterFactory {
         fun create(
             filterData: InstrumentationFilter.Data,
             impactAnalysisResult: ImpactAnalysisResult,
-            reportConfig: Report.Factory.Config,
-            factory: Report.Factory
+            reportConfig: ReportFactory.Config,
+            factory: ReportFactory
         ): FilterFactory {
             return FilterFactoryImpl(
                 filterData = filterData,

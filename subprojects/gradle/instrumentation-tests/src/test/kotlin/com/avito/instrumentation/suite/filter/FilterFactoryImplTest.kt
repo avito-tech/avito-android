@@ -13,7 +13,7 @@ import com.avito.instrumentation.internal.suite.filter.IncludeAnnotationsFilter
 import com.avito.instrumentation.internal.suite.filter.IncludeByTestSignaturesFilter
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.Source
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
-import com.avito.instrumentation.report.Report
+import com.avito.instrumentation.report.ReportFactory
 import com.avito.instrumentation.stub.report.StubReport
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -97,7 +97,7 @@ internal class FilterFactoryImplTest {
     @Suppress("MaxLineLength")
     @Test
     fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
-        val reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
+        val reportConfig = ReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -143,7 +143,7 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
+        val reportConfig = ReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -193,7 +193,7 @@ internal class FilterFactoryImplTest {
                 )
             )
         )
-        val reportConfig = Report.Factory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
+        val reportConfig = ReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -265,7 +265,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData report is present and has includes then filters contain Report include filter`() {
         val reportId = "reportId"
-        val reportConfig = Report.Factory.Config.ReportViewerId(reportId)
+        val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
         report.getTestsResult = Try.Success(
             listOf(
@@ -318,7 +318,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData report is present and has excludes then filters contain Report exclude filter`() {
         val reportId = "reportId"
-        val reportConfig = Report.Factory.Config.ReportViewerId(reportId)
+        val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
         report.getTestsResult = Try.Success(
             listOf(
@@ -338,7 +338,7 @@ internal class FilterFactoryImplTest {
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
-                    reportConfig = Report.Factory.Config.ReportViewerId(reportId),
+                    reportConfig = ReportFactory.Config.ReportViewerId(reportId),
                     statuses = Filter.Value(
                         included = emptySet(),
                         excluded = setOf(RunStatus.Success)
@@ -371,7 +371,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData report is present and statuses empty then filters don't contain Report filter`() {
         val reportId = "reportId"
-        val reportConfig = Report.Factory.Config.ReportViewerId(reportId)
+        val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
         report.getTestsResult = Try.Success(
             listOf(
@@ -391,7 +391,7 @@ internal class FilterFactoryImplTest {
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
-                    reportConfig = Report.Factory.Config.ReportViewerId(reportId),
+                    reportConfig = ReportFactory.Config.ReportViewerId(reportId),
                     statuses = Filter.Value(
                         included = emptySet(),
                         excluded = emptySet()

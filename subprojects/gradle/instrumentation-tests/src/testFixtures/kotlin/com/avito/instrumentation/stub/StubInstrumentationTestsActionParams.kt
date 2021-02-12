@@ -8,6 +8,7 @@ import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.instrumentation.report.ReadReport
 import com.avito.instrumentation.report.Report
+import com.avito.instrumentation.report.ReportFactory
 import com.avito.instrumentation.stub.report.StubReport
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.ReportCoordinates
@@ -66,16 +67,16 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         fileStorageUrl = fileStorageUrl,
         reportViewerUrl = reportViewerUrl,
         registry = kubernetesRegistry,
-        reportConfig = Report.Factory.Config.ReportViewerCoordinates(
+        reportConfig = ReportFactory.Config.ReportViewerCoordinates(
             ReportCoordinates.createStubInstance(),
             buildId
         ),
-        reportFactory = object : Report.Factory {
-            override fun createReport(config: Report.Factory.Config): Report {
+        reportFactory = object : ReportFactory {
+            override fun createReport(config: ReportFactory.Config): Report {
                 return StubReport()
             }
 
-            override fun createReadReport(config: Report.Factory.Config): ReadReport {
+            override fun createReadReport(config: ReportFactory.Config): ReadReport {
                 return StubReport()
             }
         },
