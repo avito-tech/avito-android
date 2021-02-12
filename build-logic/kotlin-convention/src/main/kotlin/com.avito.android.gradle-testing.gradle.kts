@@ -12,6 +12,8 @@ dependencies {
 
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
 
+val testTimeoutSeconds = 600
+
 tasks.withType<Test>().configureEach {
     systemProperty("kotlinVersion", kotlinVersion)
     systemProperty("compileSdkVersion", libs.compileSdkVersion)
@@ -29,8 +31,5 @@ tasks.withType<Test>().configureEach {
 
     systemProperty("isTest", true)
 
-    systemProperty(
-        "junit.jupiter.execution.timeout.default",
-        TimeUnit.MINUTES.toSeconds(10)
-    )
+    systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
 }

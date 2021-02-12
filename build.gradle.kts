@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
@@ -9,8 +7,13 @@ plugins {
      */
     base
     id("io.gitlab.arturbosch.detekt")
-    id("com.autonomousapps.dependency-analysis") apply false
+    id("com.autonomousapps.dependency-analysis") version "0.55.0" apply false
     id("com.avito.android.libraries")
+
+    // workaround to load plugin classes once:
+    // https://youtrack.jetbrains.com/issue/KT-31643#focus=Comments-27-3510019.0-0
+    id("org.jetbrains.kotlin.jvm") apply false
+    id("com.android.application") apply false
 }
 
 buildscript {
@@ -22,8 +25,6 @@ buildscript {
         }
     }
 }
-
-val detektVersion: Provider<String> = providers.systemProperty("detektVersion").forUseAtConfigurationTime()
 
 if (gradle.startParameter.taskNames.contains("buildHealth")) {
     // Reasons to disabling by default:

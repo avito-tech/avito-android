@@ -5,22 +5,24 @@ import org.gradle.api.JavaVersion
 abstract class ExternalLibrariesExtension {
 
     private object Versions {
-        val okhttp = "4.9.0"
-        val sentry = "1.7.23"
-        val retrofit = "2.9.0"
-        val androidXTest = "1.2.0"
-        val junit5 = "5.6.0"
-        val junit5Platform = "1.6.0"
-        val androidX = "1.0.0"
-        val espresso = "3.2.0"
-        val mockito = "3.3.3"
-        val detekt = "1.15.0"
-        val coroutines = "1.3.7"
+        const val okhttp = "4.9.0"
+        const val sentry = "1.7.23"
+        const val retrofit = "2.9.0"
+        const val androidXTest = "1.2.0"
+        const val junit5 = "5.6.0"
+        const val junit5Platform = "1.6.0"
+        const val androidX = "1.0.0"
+        const val espresso = "3.2.0"
+        const val mockito = "3.3.3"
+        const val detekt = "1.15.0"
+        const val coroutines = "1.3.7"
+        const val kotlin = "1.4.30"
     }
 
-    // todo extract
     val javaVersion = JavaVersion.VERSION_1_8
-    val compileSdkVersion =  29
+    val compileSdkVersion = 29
+    val targetSdkVersion = 28
+    val minSdkVersion = 21
 
     /**
      * We use exact version to provide consistent environment and avoid build cache issues
@@ -83,8 +85,8 @@ abstract class ExternalLibrariesExtension {
     val androidAnnotations = "androidx.annotation:annotation:1.1.0"
     val freeReflection = "me.weishu:free_reflection:2.2.0"
 
-    val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.30"
-    val androidGradlePlugin = "com.android.tools.build:gradle:4.1.2"
+    val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+    val androidGradlePlugin = "com.android.tools.build:gradle:$androidGradlePluginVersion"
 
     val androidXTestRunner = "androidx.test:runner:${Versions.androidXTest}"
     val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"

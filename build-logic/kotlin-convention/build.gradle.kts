@@ -17,3 +17,7 @@ repositories {
     google() // agp
     jcenter() // org jetbrains trove4j (agp depends on it)
 }
+
+kotlinDslPluginOptions {
+    experimentalWarning.set(false)
+}

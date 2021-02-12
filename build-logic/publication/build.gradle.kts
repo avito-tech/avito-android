@@ -14,3 +14,7 @@ repositories {
     jcenter()
     google()
 }
+
+kotlinDslPluginOptions {
+    experimentalWarning.set(false)
+}

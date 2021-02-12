@@ -219,9 +219,9 @@ pluginManagement {
         }
     }
 
-    val kotlinVersion = providers.systemProperty("kotlinVersion").forUseAtConfigurationTime()
-    val detektVersion = providers.systemProperty("detektVersion").forUseAtConfigurationTime()
-    val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
+    val kotlinVersion = providers.gradleProperty("kotlinVersion").forUseAtConfigurationTime()
+    val detektVersion = providers.gradleProperty("detektVersion").forUseAtConfigurationTime()
+    val androidGradlePluginVersion = providers.gradleProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
     val infraVersion = providers.gradleProperty("infraVersion").forUseAtConfigurationTime()
 
     resolutionStrategy {
@@ -239,9 +239,6 @@ pluginManagement {
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.7.0")
-
-                pluginId == "com.autonomousapps.dependency-analysis" ->
-                    useVersion("0.55.0")
 
                 pluginId == "nebula.integtest" ->
                     useVersion("8.0.0")

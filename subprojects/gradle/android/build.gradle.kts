@@ -8,7 +8,7 @@ plugins {
 val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
 
 dependencies {
-    api("com.android.tools.build:gradle:${androidGradlePluginVersion.get()}") {
+    api(libs.androidGradlePlugin) {
         excludeTransitiveAgpDependencies()
     }
 

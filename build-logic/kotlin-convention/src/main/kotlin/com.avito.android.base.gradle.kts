@@ -20,8 +20,8 @@ configure<BaseExtension> {
     }
 
     defaultConfig {
-        minSdkVersion(21)
-        targetSdkVersion(28)
+        minSdkVersion(libs.minSdkVersion)
+        targetSdkVersion(libs.targetSdkVersion)
     }
 
     lintOptions {
