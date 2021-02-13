@@ -1,4 +1,4 @@
-package com.avito.instrumentation.internal.report
+package com.avito.android.runner.report
 
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Kind
@@ -12,9 +12,9 @@ import com.avito.report.model.Status
  *
  * TODO Make it source of truth
  */
-internal interface TestStatusFinalizer {
+public interface TestStatusFinalizer {
 
-    data class TestStatus(
+    public data class TestStatus(
         val status: Status,
         val stability: Stability,
         val startTime: Long,
@@ -24,12 +24,11 @@ internal interface TestStatusFinalizer {
         val lastAttemptDurationInSeconds: Int
     )
 
-    fun getTestFinalStatus(testAttempts: List<AndroidTest>): TestStatus
+    public fun getTestFinalStatus(testAttempts: List<AndroidTest>): TestStatus
 
-    companion object {
-        fun create(): TestStatusFinalizer {
-            return Impl()
-        }
+    public companion object {
+
+        public fun create(): TestStatusFinalizer = Impl()
     }
 
     private class Impl : TestStatusFinalizer {

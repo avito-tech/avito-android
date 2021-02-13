@@ -1,6 +1,5 @@
-package com.avito.instrumentation.internal.report
+package com.avito.android.runner.report
 
-import com.avito.instrumentation.report.Report
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest

@@ -1,14 +1,15 @@
 package com.avito.instrumentation.stub
 
+import com.avito.android.runner.report.ReadReport
+import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.StubReport
+import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
-import com.avito.instrumentation.report.ReadReport
-import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.stub.report.StubReport
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
@@ -45,41 +46,38 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     statsDConfig: StatsDConfig = StatsDConfig.Disabled
 ) = InstrumentationTestsAction.Params(
-        mainApk = mainApk,
-        testApk = testApk,
-        instrumentationConfiguration = instrumentationConfiguration,
-        executionParameters = executionParameters,
-        buildId = buildId,
-        buildType = buildType,
-        buildUrl = buildUrl,
-        kubernetesCredentials = kubernetesCredentials,
-        projectName = projectName,
-        suppressFailure = suppressFailure,
-        suppressFlaky = suppressFlaky,
-        impactAnalysisResult = impactAnalysisResult,
-        loggerFactory = loggerFactory,
-        currentBranch = currentBranch,
-        sourceCommitHash = sourceCommitHash,
-        outputDir = outputDir,
-        verdictFile = verdictFile,
-        slackToken = slackToken,
-        fileStorageUrl = fileStorageUrl,
-        reportViewerUrl = reportViewerUrl,
-        registry = kubernetesRegistry,
-        reportConfig = Report.Factory.Config.ReportViewerCoordinates(
-            ReportCoordinates.createStubInstance(),
-            buildId
-        ),
-        reportFactory = object : Report.Factory {
-            override fun createReport(config: Report.Factory.Config): Report {
-                return StubReport()
-            }
+    mainApk = mainApk,
+    testApk = testApk,
+    instrumentationConfiguration = instrumentationConfiguration,
+    executionParameters = executionParameters,
+    buildId = buildId,
+    buildType = buildType,
+    buildUrl = buildUrl,
+    kubernetesCredentials = kubernetesCredentials,
+    projectName = projectName,
+    suppressFailure = suppressFailure,
+    suppressFlaky = suppressFlaky,
+    impactAnalysisResult = impactAnalysisResult,
+    loggerFactory = loggerFactory,
+    currentBranch = currentBranch,
+    sourceCommitHash = sourceCommitHash,
+    outputDir = outputDir,
+    verdictFile = verdictFile,
+    slackToken = slackToken,
+    fileStorageUrl = fileStorageUrl,
+    reportViewerUrl = reportViewerUrl,
+    registry = kubernetesRegistry,
+    reportConfig = ReportFactory.Config.ReportViewerCoordinates(
+        ReportCoordinates.createStubInstance(),
+        buildId
+    ),
+    reportFactory = object : ReportFactory {
 
-            override fun createReadReport(config: Report.Factory.Config): ReadReport {
-                return StubReport()
-            }
-        },
-        reportCoordinates = reportCoordinates,
-        proguardMappings = emptyList(),
-        statsDConfig = statsDConfig
-    )
+        override fun createReport(config: ReportFactory.Config): Report = StubReport()
+
+        override fun createReadReport(config: ReportFactory.Config): ReadReport = StubReport()
+    },
+    reportCoordinates = reportCoordinates,
+    proguardMappings = emptyList(),
+    statsDConfig = statsDConfig
+)

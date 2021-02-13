@@ -1,11 +1,11 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.runner.report.Report
 import com.avito.android.stats.SeriesName
 import com.avito.instrumentation.internal.finalizer.FinalizerFactory
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
 import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
-import com.avito.instrumentation.report.Report
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

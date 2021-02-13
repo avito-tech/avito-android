@@ -1,4 +1,4 @@
-package com.avito.instrumentation.report
+package com.avito.android.runner.report
 
 import com.avito.report.ReportsFetchApi
 import com.avito.report.model.SimpleRunTest

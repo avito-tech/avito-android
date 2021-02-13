@@ -5,6 +5,10 @@ import com.avito.android.build_verdict.span.SpannedString
 import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
+import com.avito.android.runner.report.StrategyFactory
+import com.avito.android.runner.report.factory.InMemoryReportFactory
+import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.ReportViewerFactory
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
@@ -17,7 +21,6 @@ import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Comp
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
-import com.avito.instrumentation.report.Report
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.ReportCoordinates
@@ -221,14 +224,14 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     private fun createReportConfig(
         reportCoordinates: ReportCoordinates
-    ): Report.Factory.Config {
+    ): ReportFactory.Config {
         return if (reportViewerConfig.isPresent) {
-            Report.Factory.Config.ReportViewerCoordinates(
+            ReportFactory.Config.ReportViewerCoordinates(
                 reportCoordinates = reportCoordinates,
                 buildId = buildId.get()
             )
         } else {
-            Report.Factory.Config.InMemory(buildId.get())
+            ReportFactory.Config.InMemory(buildId.get())
         }
     }
 
@@ -236,13 +239,13 @@ public abstract class InstrumentationTestsTask @Inject constructor(
      * todo Move into Report.Impl
      */
     private fun saveTestResultsToBuildOutput(
-        reportFactory: Report.Factory,
-        reportConfig: Report.Factory.Config
+        reportFactory: ReportFactory,
+        reportConfig: ReportFactory.Config
     ) {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val reportViewerConfig = reportViewerConfig.orNull
-        if (reportViewerConfig != null && reportConfig is Report.Factory.Config.ReportViewerCoordinates) {
+        if (reportViewerConfig != null && reportConfig is ReportFactory.Config.ReportViewerCoordinates) {
             val getTestResultsAction = GetTestResultsAction(
                 reportViewerUrl = reportViewerConfig.reportViewerUrl,
                 reportCoordinates = reportCoordinates,
@@ -262,12 +265,12 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     private fun createReportFactory(
         loggerFactory: LoggerFactory,
         timeProvider: TimeProvider
-    ): Report.Factory {
+    ): ReportFactory {
         val reportViewerConfig = reportViewerConfig.orNull
-        val factories = mutableMapOf<String, Report.Factory>()
+        val factories = mutableMapOf<String, ReportFactory>()
         if (reportViewerConfig != null) {
-            factories[Report.Factory.Config.ReportViewerCoordinates::class.java.simpleName] =
-                Report.Factory.ReportViewerFactory(
+            factories[ReportFactory.Config.ReportViewerCoordinates::class.java.simpleName] =
+                ReportViewerFactory(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
                     loggerFactory = loggerFactory,
                     timeProvider = timeProvider,
@@ -275,10 +278,10 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 )
         }
 
-        factories[Report.Factory.Config.InMemory::class.java.simpleName] =
-            Report.Factory.InMemoryReportFactory(timeProvider = timeProvider)
+        factories[ReportFactory.Config.InMemory::class.java.simpleName] =
+            InMemoryReportFactory(timeProvider = timeProvider)
 
-        return Report.Factory.StrategyFactory(
+        return StrategyFactory(
             factories = factories.toMap()
         )
     }

@@ -1,6 +1,5 @@
-package com.avito.instrumentation.stub.report.listener
+package com.avito.instrumentation.internal.report.listener
 
-import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.runner.service.model.TestCase
 import org.funktionale.tries.Try
 import java.io.File

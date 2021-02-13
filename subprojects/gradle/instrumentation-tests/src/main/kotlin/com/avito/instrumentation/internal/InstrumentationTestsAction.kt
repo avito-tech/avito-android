@@ -1,12 +1,12 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
-import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
@@ -72,8 +72,8 @@ internal class InstrumentationTestsAction(
         val fileStorageUrl: String,
         val registry: String,
         val statsDConfig: StatsDConfig,
-        val reportFactory: Report.Factory,
-        val reportConfig: Report.Factory.Config,
+        val reportFactory: ReportFactory,
+        val reportConfig: ReportFactory.Config,
         val reportCoordinates: ReportCoordinates,
         val proguardMappings: List<File>
     ) : Serializable {

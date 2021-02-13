@@ -2,13 +2,13 @@ package com.avito.instrumentation.suite
 
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
+import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.StubReport
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.TestsFilter
-import com.avito.instrumentation.report.Report
-import com.avito.instrumentation.stub.report.StubReport
 import com.avito.instrumentation.stub.suite.filter.StubFilterFactory
 import com.avito.instrumentation.stub.suite.filter.excludedFilter
 import com.google.common.truth.Truth.assertThat
