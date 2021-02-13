@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.avito.android.libraries")
+    id("convention.libraries")
     id("convention.unit-testing")
 }
 

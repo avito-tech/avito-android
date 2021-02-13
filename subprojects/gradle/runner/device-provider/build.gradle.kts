@@ -3,7 +3,7 @@ plugins {
     id("convention.publish-kotlin-library")
     `java-test-fixtures`
     id("nebula.integtest")
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 extra["artifact-id"] = "runner-device-provider"

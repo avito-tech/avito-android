@@ -1,6 +1,6 @@
 plugins {
     `java-platform`
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 // Allow dependencies for dependencies to other platforms (BOMs)

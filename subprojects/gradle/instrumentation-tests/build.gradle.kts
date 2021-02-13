@@ -3,7 +3,7 @@ plugins {
     `java-test-fixtures`
     id("convention.publish-gradle-plugin")
     id("nebula.integtest")
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 dependencies {

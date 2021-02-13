@@ -1,5 +1,5 @@
 plugins {
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 tasks.withType<Test>().configureEach {

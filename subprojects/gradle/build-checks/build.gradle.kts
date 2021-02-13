@@ -1,7 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 dependencies {

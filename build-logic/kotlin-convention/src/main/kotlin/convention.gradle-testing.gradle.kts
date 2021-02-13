@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
 plugins {
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 // todo more precise configuration for gradle plugins, no need for gradle testing in common kotlin modules

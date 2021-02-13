@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     id("nebula.integtest")
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 dependencies {

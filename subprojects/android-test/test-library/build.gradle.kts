@@ -1,6 +1,6 @@
 plugins {
     id("convention.kotlin-android-library")
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 android {
