@@ -127,7 +127,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     if (extensionData.reportViewer != null) {
                         this.reportViewerConfig.set(extensionData.reportViewer)
                     }
-                    this.registry.set(extensionData.registry)
                     this.kubernetesCredentials.set(project.kubernetesCredentials)
 
                     this.impactAnalysisPolicy.set(instrumentationConfiguration.impactAnalysisPolicy)

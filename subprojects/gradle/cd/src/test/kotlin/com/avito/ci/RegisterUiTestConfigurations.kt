@@ -32,7 +32,6 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
         instrumentation {
             reportApiUrl = "stub"
             reportViewerUrl = "stub"
-            registry = "stub"
             sentryDsn = "stub"
             slackToken = "stub"
             fileStorageUrl = "stub"

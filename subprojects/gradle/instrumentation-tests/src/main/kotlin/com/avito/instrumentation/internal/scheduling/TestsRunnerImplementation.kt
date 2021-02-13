@@ -33,7 +33,6 @@ internal class TestsRunnerImplementation(
     private val executionParameters: ExecutionParameters,
     private val outputDirectory: File,
     private val instrumentationConfiguration: InstrumentationConfiguration.Data,
-    private val registry: String,
     private val metricsConfig: RunnerMetricsConfig,
     private val timeProvider: TimeProvider
 ) : TestsRunner {
@@ -77,7 +76,6 @@ internal class TestsRunnerImplementation(
                     buildId = buildId,
                     buildType = buildType,
                     projectName = projectName,
-                    registry = registry,
                     output = output,
                     logcatDir = logcatDir,
                     loggerFactory = loggerFactory,

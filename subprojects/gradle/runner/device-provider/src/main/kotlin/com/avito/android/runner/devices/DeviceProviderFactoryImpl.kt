@@ -24,7 +24,6 @@ public class DeviceProviderFactoryImpl(
     private val buildId: String,
     private val buildType: String,
     private val projectName: String,
-    private val registry: String,
     private val output: File,
     private val logcatDir: File,
     private val loggerFactory: LoggerFactory,
@@ -82,7 +81,6 @@ public class DeviceProviderFactoryImpl(
                             projectName = projectName,
                             buildId = buildId,
                             buildType = buildType,
-                            registry = registry,
                             deploymentNameGenerator = UUIDDeploymentNameGenerator(),
                             loggerFactory = loggerFactory
                         ),

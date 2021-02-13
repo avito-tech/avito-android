@@ -130,9 +130,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val reportViewerConfig: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
 
     @Internal
-    public val registry: Property<String> = objects.property()
-
-    @Internal
     public val kubernetesCredentials: Property<KubernetesCredentials> = objects.property()
 
     @OutputDirectory
@@ -201,7 +198,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                     fileStorageUrl = getFileStorageUrl(),
                     reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
                         ?: "http://stub", // stub for inmemory report
-                    registry = registry.get(),
                     reportConfig = reportConfig,
                     reportFactory = reportFactory,
                     reportCoordinates = reportCoordinates,

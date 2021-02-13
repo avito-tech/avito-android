@@ -60,7 +60,6 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.report.url=$AVITO_REPORT_URL \\
              -Pavito.report.fallbackUrl=$AVITO_REPORT_FALLBACK_URL \\
              -Pavito.report.viewerUrl=$AVITO_REPORT_VIEWER_URL \\
-             -Pavito.registry=$AVITO_REGISTRY \\
              -Pavito.fileStorage.url=$AVITO_FILESTORAGE_URL \\
              -Pavito.bitbucket.url=$AVITO_BITBUCKET_URL \\
              -Pavito.bitbucket.projectKey=AG \\

@@ -70,7 +70,6 @@ internal class InstrumentationTestsAction(
         val slackToken: String,
         val reportViewerUrl: String,
         val fileStorageUrl: String,
-        val registry: String,
         val statsDConfig: StatsDConfig,
         val reportFactory: ReportFactory,
         val reportConfig: ReportFactory.Config,

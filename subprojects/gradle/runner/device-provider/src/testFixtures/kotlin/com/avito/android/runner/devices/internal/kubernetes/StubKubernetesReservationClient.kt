@@ -18,8 +18,7 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
     kubernetesNamespace: String = getSystemProperty("avito.kubernetes.namespace"),
     configurationName: String = "integration-test",
     projectName: String = "",
-    buildType: String = "integration-test",
-    registry: String = ""
+    buildType: String = "integration-test"
 ): KubernetesReservationClient {
     val kubernetesCredentials = KubernetesCredentials.Service(
         token = getSystemProperty("avito.kubernetes.token"),
@@ -53,7 +52,6 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
             projectName = projectName,
             buildId = buildId,
             buildType = buildType,
-            registry = registry,
             deploymentNameGenerator = deploymentNameGenerator,
             loggerFactory = loggerFactory
         )

@@ -41,7 +41,6 @@ internal class MarkReportAsSourceForTMSStepTest {
                         instrumentation {
                             sentryDsn = "stub"
                             slackToken = "stub"
-                            registry = "stub"
                             
                             configurations {
                                 ui {

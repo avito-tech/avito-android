@@ -79,7 +79,6 @@ internal class InstrumentationParamsBuildingTest {
                              sentryDsn = "stub"
                              slackToken = "stub"
                              fileStorageUrl = "stub"
-                             registry = "stub"
 
                              instrumentationParams = [
                                  "jobSlug": "FunctionalTests",

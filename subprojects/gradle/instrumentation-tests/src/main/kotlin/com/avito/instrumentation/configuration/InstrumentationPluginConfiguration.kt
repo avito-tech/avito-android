@@ -22,15 +22,11 @@ public object InstrumentationPluginConfiguration {
         public var reportViewerUrl: String = ""
         public var fileStorageUrl: String = ""
 
-        public var registry: String = ""
-
         // todo make optional
         public var sentryDsn: String = ""
 
         // todo extract
         public var slackToken: String = ""
-
-        public var unitToChannelMap: Map<String, String> = emptyMap()
 
         public var applicationProguardMapping: File? = null
         public var testProguardMapping: File? = null
@@ -68,15 +64,6 @@ public object InstrumentationPluginConfiguration {
             configurations.forEach {
                 it.validate()
             }
-//            require(sentryDsn.isNotEmpty()) {
-//                "sentryDsn must be initialized"
-//            }
-//            require(slackToken.isNotEmpty()) {
-//                "slackToken must be initialized"
-//            }
-//            require(registry.isNotEmpty()) {
-//                "registry must be initialized"
-//            }
         }
 
         private fun createReportViewer(): Data.ReportViewer? {
@@ -136,7 +123,6 @@ public object InstrumentationPluginConfiguration {
                 applicationApk = applicationApk,
                 testApplicationApk = testApplicationApk,
                 reportViewer = reportViewer,
-                registry = registry,
                 slackToken = slackToken,
                 applicationProguardMapping = applicationProguardMapping,
                 testProguardMapping = testProguardMapping
@@ -151,7 +137,6 @@ public object InstrumentationPluginConfiguration {
             val applicationApk: String?, // TODO file
             val testApplicationApk: String?, // TODO file
             val reportViewer: ReportViewer?,
-            val registry: String,
             val slackToken: String,
             val applicationProguardMapping: File?,
             val testProguardMapping: File?

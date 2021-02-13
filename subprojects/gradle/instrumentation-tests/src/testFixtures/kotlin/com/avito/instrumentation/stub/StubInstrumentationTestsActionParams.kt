@@ -41,7 +41,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     outputDir: File = File("."),
     verdictFile: File = File(outputDir, "verdict.json"),
     reportViewerUrl: String = "https://reports",
-    kubernetesRegistry: String = "",
     fileStorageUrl: String = "https://files",
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     statsDConfig: StatsDConfig = StatsDConfig.Disabled
@@ -66,7 +65,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     slackToken = slackToken,
     fileStorageUrl = fileStorageUrl,
     reportViewerUrl = reportViewerUrl,
-    registry = kubernetesRegistry,
     reportConfig = ReportFactory.Config.ReportViewerCoordinates(
         ReportCoordinates.createStubInstance(),
         buildId
