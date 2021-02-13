@@ -6,12 +6,8 @@ plugins {
 }
 
 configure<KotlinJvmProjectExtension> {
-
-    /**
-     * Workaround to access internal classes from testFixtures
-     * till https://youtrack.jetbrains.com/issue/KT-34901 resolved
-     */
-    target.compilations.getByName("integTest").associateWith(target.compilations.getByName("main"))
+    target.compilations.getByName("integTest")
+        .associateWith(target.compilations.getByName("main"))
 }
 
 plugins.withType<JavaTestFixturesPlugin>() {

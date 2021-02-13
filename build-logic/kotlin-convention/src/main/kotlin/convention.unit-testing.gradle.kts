@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+
 plugins {
     id("convention.libraries")
 }
@@ -63,4 +65,12 @@ dependencies {
  */
 fun onlyInSubprojects(): Boolean {
     return project.path.contains("subprojects")
+}
+
+plugins.withType<JavaTestFixturesPlugin>() {
+
+    configure<KotlinJvmProjectExtension> {
+        target.compilations.getByName("test")
+            .associateWith(target.compilations.getByName("testFixtures"))
+    }
 }
