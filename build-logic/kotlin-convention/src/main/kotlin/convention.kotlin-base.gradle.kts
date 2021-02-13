@@ -11,7 +11,7 @@ dependencies {
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
-        jvmTarget = libs.javaVersion.toString()
+        jvmTarget = "1.8"
         allWarningsAsErrors = true
         freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
     }

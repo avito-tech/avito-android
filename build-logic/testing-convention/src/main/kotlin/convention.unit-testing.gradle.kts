@@ -1,4 +1,9 @@
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
 plugins {
     id("convention.libraries")
@@ -42,16 +47,18 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-dependencies {
-    add("testImplementation", libs.junitJupiterApi)
-    add("testImplementation", libs.truth)
+plugins.withType<KotlinBasePluginWrapper>() {
+    dependencies {
+        add("testImplementation", libs.junitJupiterApi)
+        add("testImplementation", libs.truth)
 
-    add("testRuntimeOnly", libs.junitJupiterEngine)
-    add("testRuntimeOnly", libs.junitPlatformRunner)
-    add("testRuntimeOnly", libs.junitPlatformLauncher)
+        add("testRuntimeOnly", libs.junitJupiterEngine)
+        add("testRuntimeOnly", libs.junitPlatformRunner)
+        add("testRuntimeOnly", libs.junitPlatformLauncher)
 
-    if (onlyInSubprojects() && project.name != "truth-extensions") {
-        add("testImplementation", project(":subprojects:common:truth-extensions"))
+        if (onlyInSubprojects() && project.name != "truth-extensions") {
+            add("testImplementation", project(":subprojects:common:truth-extensions"))
+        }
     }
 }
 
