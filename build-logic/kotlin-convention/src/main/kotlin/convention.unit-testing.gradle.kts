@@ -48,7 +48,19 @@ dependencies {
     add("testRuntimeOnly", libs.junitPlatformRunner)
     add("testRuntimeOnly", libs.junitPlatformLauncher)
 
-    if (project.name != "truth-extensions") {
+    if (onlyInSubprojects() && project.name != "truth-extensions") {
         add("testImplementation", project(":subprojects:common:truth-extensions"))
     }
+}
+
+/**
+ * Workaround for:
+ * Failed to generate type-safe Gradle model accessors for the following precompiled script plugins:
+ * src/main/kotlin/convention.kotlin-android-app.gradle.kts
+ *
+ * Without this check generation will fail with UnknownProjectException,
+ * because it's invoked on conventions module where `truth-extensions` not exists and check was not strong enough
+ */
+fun onlyInSubprojects(): Boolean {
+    return project.path.contains("subprojects")
 }
