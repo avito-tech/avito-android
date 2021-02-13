@@ -1,5 +1,5 @@
 plugins {
-    id("com.avito.android.bintray")
+    id("convention.bintray")
 }
 
 plugins.withId("kotlin") {

@@ -1,7 +1,7 @@
 plugins {
-    id("com.avito.android.kotlin-jvm")
+    id("convention.kotlin-jvm")
     `java-test-fixtures`
-    id("com.avito.android.publish-gradle-plugin")
+    id("convention.publish-gradle-plugin")
     id("nebula.integtest")
     id("com.avito.android.libraries")
 }

@@ -3,7 +3,7 @@ import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
 
 plugins {
     id("com.jfrog.bintray")
-    id("com.avito.android.publish")
+    id("convention.publish")
 }
 
 @Suppress("UnstableApiUsage")
