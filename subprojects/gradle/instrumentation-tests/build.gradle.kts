@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     `java-test-fixtures`
     id("convention.publish-gradle-plugin")
-    id("nebula.integtest")
+    id("convention.integration-testing")
     id("convention.libraries")
 }
 
@@ -73,7 +73,7 @@ kotlin {
      * till https://youtrack.jetbrains.com/issue/KT-34901 resolved
      */
     target.compilations
-        .matching { it.name in listOf("testFixtures", "integTest") }
+        .matching { it.name in listOf("testFixtures") }
         .configureEach {
             associateWith(target.compilations.getByName("main"))
         }

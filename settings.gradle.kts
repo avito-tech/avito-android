@@ -230,6 +230,7 @@ pluginManagement {
     val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion")
     val infraVersion = systemProperty("infraVersion")
     val bintrayVersion = systemProperty("bintrayVersion")
+    val nebulaIntegTestVersion = systemProperty("nebulaIntegTestVersion")
 
     resolutionStrategy {
         eachPlugin {
@@ -248,7 +249,7 @@ pluginManagement {
                     useModule("com.slack.keeper:keeper:0.7.0")
 
                 pluginId == "nebula.integtest" ->
-                    useVersion("8.0.0")
+                    useVersion(nebulaIntegTestVersion.get())
 
                 pluginId == "com.jfrog.bintray" ->
                     useVersion(bintrayVersion.get())

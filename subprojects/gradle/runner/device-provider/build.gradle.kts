@@ -2,14 +2,13 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     `java-test-fixtures`
-    id("nebula.integtest")
+    id("convention.integration-testing")
     id("convention.libraries")
 }
 
 extra["artifact-id"] = "runner-device-provider"
 
 dependencies {
-    // todo api impl?
     api(project(":subprojects:gradle:runner:service"))
     api(project(":subprojects:gradle:runner:shared"))
     api(project(":subprojects:gradle:runner:stub"))
@@ -30,14 +29,8 @@ kotlin {
      * till https://youtrack.jetbrains.com/issue/KT-34901 resolved
      */
     target.compilations
-        .matching { it.name in listOf("testFixtures", "integTest") }
+        .matching { it.name in listOf("testFixtures") }
         .configureEach {
             associateWith(target.compilations.getByName("main"))
-        }
-
-    target.compilations
-        .matching { it.name in listOf("integTest") }
-        .configureEach {
-            associateWith(target.compilations.getByName("testFixtures"))
         }
 }

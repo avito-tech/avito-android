@@ -1,7 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("nebula.integtest")
+    id("convention.integration-testing")
     id("convention.libraries")
 }
 
