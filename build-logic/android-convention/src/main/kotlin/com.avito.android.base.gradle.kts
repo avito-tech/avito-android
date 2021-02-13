@@ -1,4 +1,5 @@
 import com.android.build.gradle.BaseExtension
+import org.gradle.kotlin.dsl.configure
 
 plugins {
     id("com.avito.android.libraries")
