@@ -68,7 +68,7 @@ help:
 	./gradlew help $(params)
 
 clean:
-	./gradlew clean
+	rm -rf `find -type d -name build`
 
 publish_to_maven_local:
 	./gradlew publishToMavenLocal -PprojectVersion=local $(log_level)

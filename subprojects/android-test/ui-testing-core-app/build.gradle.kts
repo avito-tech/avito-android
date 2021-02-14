@@ -174,7 +174,7 @@ instrumentation {
 val avitoRegistry = getOptionalStringProperty("avito.registry")
 
 fun emulatorImage(api: Int, label: String): String {
-    return if(avitoRegistry!=null) {
+    return if (avitoRegistry != null) {
         "$avitoRegistry/android/emulator-$api:$label"
     } else {
         "avitotech/android-emulator-$api:$label"
