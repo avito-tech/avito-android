@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal.scheduling
 
 import com.avito.android.runner.devices.DeviceProviderFactoryImpl
+import com.avito.android.runner.report.Report
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
@@ -8,7 +9,6 @@ import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.internal.suite.model.transformTestsWithNewJobSlug
-import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates

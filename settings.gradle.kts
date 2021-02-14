@@ -4,7 +4,7 @@ rootProject.name = "avito-android-infra"
 includeBuild("libraries")
 
 // Platform for dependency versions shared by 'main build' and 'build-logic'
-includeBuild("platform")
+includeBuild("platforms")
 
 // Not traditional 'buildSrc', but 'build-logic' as a normal included build
 includeBuild("build-logic")
@@ -42,6 +42,7 @@ include(":subprojects:gradle:instrumentation-tests-test-fixtures")
 include(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures")
 include(":subprojects:gradle:runner:client")
 include(":subprojects:gradle:runner:device-provider")
+include(":subprojects:gradle:runner:report")
 include(":subprojects:gradle:runner:stub")
 include(":subprojects:gradle:runner:service")
 include(":subprojects:gradle:runner:shared")

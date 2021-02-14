@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    add("implementation", platform("com.avito.android.infra:platform"))
+    add("implementation", platform("com.avito.android.infra:platforms"))
 }
 
 tasks.withType<KotlinCompile>().configureEach {

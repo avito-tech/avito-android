@@ -1,8 +1,8 @@
 package com.avito.instrumentation.internal.scheduling
 
+import com.avito.android.runner.report.Report
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
-import com.avito.instrumentation.report.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import org.funktionale.tries.Try

@@ -4,6 +4,7 @@ import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.android.runner.devices.DevicesProviderFactory
+import com.avito.android.runner.report.createStubInstance
 import com.avito.android.stats.SeriesName
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
@@ -16,7 +17,6 @@ import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
 import com.avito.instrumentation.stub.createStubInstance
 import com.avito.instrumentation.stub.executing.StubTestExecutor
-import com.avito.instrumentation.stub.report.createStubInstance
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi
@@ -160,7 +160,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         loggerFactory = params.loggerFactory,
         scheduler = TestsSchedulerFactory.Impl(
             params = params,
-            sourceReport = com.avito.instrumentation.report.Report.createStubInstance(
+            sourceReport = com.avito.android.runner.report.Report.createStubInstance(
                 reportsApi = reportsApi,
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId,
@@ -171,7 +171,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         ).create(),
         finalizer = FinalizerFactory.Impl(
             params = params,
-            sourceReport = com.avito.instrumentation.report.Report.createStubInstance(
+            sourceReport = com.avito.android.runner.report.Report.createStubInstance(
                 reportsApi = reportsApi,
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId

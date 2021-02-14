@@ -1,6 +1,5 @@
-package com.avito.instrumentation.internal.report
+package com.avito.android.runner.report
 
-import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
@@ -14,9 +13,13 @@ import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
 import org.funktionale.tries.Try
 
-// todo новый инстанс на каждый reportCoordinates, сейчас уже неверно шарится между rerun report и основным
-// todo перенести логику с батчами в reportsApi
-internal class ReportImpl(
+/**
+ * Implementation for inhouse Avito report backend
+ *
+ * todo new instance for every new reportCoordinates
+ * todo extract batching logic
+ */
+internal class AvitoReport(
     private val reportsApi: ReportsApi,
     loggerFactory: LoggerFactory,
     private val reportCoordinates: ReportCoordinates,

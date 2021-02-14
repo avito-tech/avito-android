@@ -35,9 +35,12 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
             adb = adb,
             loggerFactory = loggerFactory
         ),
-        kubernetesClient = createKubernetesClient(
-            kubernetesCredentials = kubernetesCredentials,
-            namespace = kubernetesNamespace
+        kubernetesApi = KubernetesApi.Impl(
+            kubernetesClient = createKubernetesClient(
+                kubernetesCredentials = kubernetesCredentials,
+                namespace = kubernetesNamespace
+            ),
+            loggerFactory = loggerFactory
         ),
         emulatorsLogsReporter = EmulatorsLogsReporter(
             outputFolder = outputFolder,

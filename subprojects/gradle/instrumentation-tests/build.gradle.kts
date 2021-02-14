@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":subprojects:gradle:instrumentation-tests-dex-loader"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:process"))
+    implementation(project(":subprojects:gradle:runner:report"))
     implementation(project(":subprojects:gradle:runner:client"))
     implementation(project(":subprojects:gradle:runner:device-provider"))
     implementation(project(":subprojects:gradle:runner:stub"))
@@ -53,6 +54,7 @@ dependencies {
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(libs.okhttpMockWebServer)
+    testImplementation(testFixtures(project(":subprojects:gradle:runner:report")))
 
     integTestImplementation(project(":subprojects:common:statsd"))
 
@@ -60,6 +62,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":subprojects:common:time")))
     testFixturesApi(testFixtures(project(":subprojects:common:report-viewer")))
     testFixturesApi(testFixtures(project(":subprojects:gradle:runner:device-provider")))
+    testFixturesApi(testFixtures(project(":subprojects:gradle:runner:report")))
 }
 
 kotlin {

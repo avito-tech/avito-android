@@ -9,11 +9,11 @@ import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorImpl
+import com.avito.instrumentation.internal.report.listener.StubTestReporter
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.QuotaConfigurationData
 import com.avito.instrumentation.reservation.request.Reservation
-import com.avito.instrumentation.stub.report.listener.StubTestReporter
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.TestStaticDataPackage

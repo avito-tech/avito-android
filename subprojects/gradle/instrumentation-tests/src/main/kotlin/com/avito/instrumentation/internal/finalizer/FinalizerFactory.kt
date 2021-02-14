@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.finalizer
 
+import com.avito.android.runner.report.Report
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
@@ -8,7 +9,6 @@ import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.report.JUnitReportWriter
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
-import com.avito.instrumentation.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.utils.BuildFailer
