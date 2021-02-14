@@ -112,7 +112,7 @@ instrumentation {
             name = "api22",
             api = 22,
             model = "Android_SDK_built_for_x86",
-            image = "avitotech/android-emulator-22:740eb9a948",
+            image = emulatorImage(22, "740eb9a948"),
             cpuCoresRequest = "1",
             cpuCoresLimit = "1.3",
             memoryLimit = "4Gi"
@@ -122,7 +122,7 @@ instrumentation {
             name = "api29",
             api = 29,
             model = "Android_SDK_built_for_x86_64",
-            image = "avitotech/android-emulator-29:915c1f20be",
+            image = emulatorImage(29, "915c1f20be"),
             cpuCoresRequest = "1",
             cpuCoresLimit = "1.3",
             memoryLimit = "4Gi"
@@ -168,5 +168,15 @@ instrumentation {
                 }
             }
         }
+    }
+}
+
+val avitoRegistry = getOptionalStringProperty("avito.registry")
+
+fun emulatorImage(api: Int, label: String): String {
+    return if(avitoRegistry!=null) {
+        "$avitoRegistry/android/emulator-$api:$label"
+    } else {
+        "avitotech/android-emulator-$api:$label"
     }
 }
