@@ -119,7 +119,9 @@ internal interface KubernetesApi {
                     logger.warn("Can't start pod: $waitingMessage")
 
                     // handle special cases
-                    if (waitingMessage.contains("couldn't parse image reference")) {
+                    if (waitingMessage.contains("couldn't parse image reference")
+                        || waitingMessage.contains("pull access denied for")
+                    ) {
                         error("Can't create pods for deployment, check image reference: $waitingMessage")
                     }
                 }

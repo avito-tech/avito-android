@@ -13,16 +13,16 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
     loggerFactory: LoggerFactory,
     adb: Adb = Adb(),
     buildId: String = getSystemProperty(name = "teamcityBuildId", defaultValue = "local"),
-    deploymentNameGenerator: DeploymentNameGenerator = StubDeploymentNameGenerator(buildId),
-    kubernetesUrl: String = getSystemProperty("avito.kubernetes.url"),
-    kubernetesNamespace: String = getSystemProperty("avito.kubernetes.namespace"),
+    deploymentNameGenerator: DeploymentNameGenerator = StubDeploymentNameGenerator(),
+    kubernetesUrl: String = getSystemProperty("kubernetesUrl"),
+    kubernetesNamespace: String = getSystemProperty("kubernetesNamespace"),
     configurationName: String = "integration-test",
     projectName: String = "",
     buildType: String = "integration-test"
 ): KubernetesReservationClient {
     val kubernetesCredentials = KubernetesCredentials.Service(
-        token = getSystemProperty("avito.kubernetes.token"),
-        caCertData = getSystemProperty("avito.kubernetes.cert"),
+        token = getSystemProperty("kubernetesToken"),
+        caCertData = getSystemProperty("kubernetesCaCertData"),
         url = kubernetesUrl
     )
 
