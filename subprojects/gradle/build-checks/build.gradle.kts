@@ -29,8 +29,12 @@ gradlePlugin {
     plugins {
         create("buildChecks") {
             id = "com.avito.android.buildchecks"
-            implementationClass = "com.avito.android.plugin.build_param_check.BuildParamCheckPlugin"
+            implementationClass = "com.avito.android.build_checks.BuildParamCheckPlugin"
             displayName = "Build checks"
         }
     }
+}
+
+kotlin {
+//    explicitApi()
 }
