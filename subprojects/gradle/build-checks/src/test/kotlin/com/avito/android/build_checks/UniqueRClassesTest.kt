@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class UniqueRClassesTest {
+internal class UniqueRClassesTest {
 
     private lateinit var projectDir: File
 

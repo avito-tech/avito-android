@@ -79,7 +79,7 @@ internal abstract class UniqueRClassesTask @Inject constructor(
             )
         }
 
-        output.get().asFile.writeText("1")
+        output.get().asFile.writeText("no duplicates")
     }
 
     private fun <T> List<T>.duplicates(): Set<T> {

@@ -13,7 +13,7 @@ import com.avito.android.build_checks.internal.hasInstance
 import com.avito.android.build_checks.internal.incremental_kapt.IncrementalKaptTask
 import com.avito.android.build_checks.internal.params.GradlePropertiesCheck
 import com.avito.android.build_checks.internal.params.ParamMismatchFailure
-import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskFactory
+import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskProvider
 import com.avito.android.plugin.build_metrics.BuildMetricTracker
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.sentry.sentry
@@ -95,7 +95,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     }
 
     private fun registerRequiredTasks(project: Project, envInfo: BuildEnvironmentInfo, checks: List<Check>) {
-        val checkBuildEnvironment = project.tasks.register("checkBuildEnvironment") {
+        val rootTask = project.tasks.register("checkBuildEnvironment") {
             it.group = "verification"
             it.description = "Check typical build problems"
         }
@@ -113,7 +113,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 // task will be executed next time if either local jar or docker jar(e.g. inputs) changed
                 outputs.upToDateWhen { outputs.files.singleFile.exists() }
             }
-            checkBuildEnvironment {
+            rootTask {
                 dependsOn(task)
             }
         }
@@ -122,7 +122,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 group = "verification"
                 description = "Check gradle daemon problems"
             }
-            checkBuildEnvironment {
+            rootTask {
                 dependsOn(task)
             }
         }
@@ -131,13 +131,13 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 group = "verification"
                 description = "Detects dynamic dependencies"
             }
-            checkBuildEnvironment {
+            rootTask {
                 dependsOn(task)
             }
         }
         if (checks.hasInstance<Check.UniqueRClasses>()) {
-            UniqueRClassesTaskFactory(project, checks.getInstance())
-                .register(checkBuildEnvironment)
+            UniqueRClassesTaskProvider(project, checks.getInstance())
+                .dependsOn(rootTask)
         }
         if (checks.hasInstance<Check.MacOSLocalhost>() && envInfo.isMac) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
@@ -145,7 +145,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 description =
                     "Check macOS localhost resolving issue from Java (https://thoeni.io/post/macos-sierra-java/)"
             }
-            checkBuildEnvironment {
+            rootTask {
                 dependsOn(task)
             }
         }
@@ -157,7 +157,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 mode.set(check.mode)
                 this.accessor.set(envInfo)
             }
-            checkBuildEnvironment {
+            rootTask {
                 dependsOn(task)
             }
         }

@@ -13,7 +13,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-internal class UniqueRClassesTaskFactory(
+internal class UniqueRClassesTaskProvider(
     private val rootProject: Project,
     private val config: Check.UniqueRClasses
 ) {
@@ -24,7 +24,7 @@ internal class UniqueRClassesTaskFactory(
         }
     }
 
-    fun register(rootTask: TaskProvider<Task>) {
+    fun dependsOn(rootTask: TaskProvider<Task>) {
         rootProject.subprojects.forEach { module ->
             module.pluginManager.withPlugin("com.android.application") {
 
@@ -55,9 +55,6 @@ internal class UniqueRClassesTaskFactory(
             appManifest.set(processAppManifest.mergedManifest)
             librariesManifests.set(processAppManifest.getManifests())
             testManifests.set(processTestManifest.getManifests())
-
-            dependsOn(processAppManifest)
-            dependsOn(processTestManifest)
         }
     }
 }
