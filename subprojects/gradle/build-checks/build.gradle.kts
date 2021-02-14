@@ -36,5 +36,5 @@ gradlePlugin {
 }
 
 kotlin {
-//    explicitApi()
+    explicitApi()
 }
