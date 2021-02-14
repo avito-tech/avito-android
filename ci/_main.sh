@@ -105,6 +105,7 @@ function runInBuilder() {
         --env TZ="Europe/Moscow" \
         --env LOCAL_USER_ID="$USER_ID" \
         --env BINTRAY_GPG_PASSPHRASE="$BINTRAY_GPG_PASSPHRASE" \
+        --env GRADLE_USER_HOME=/gradle \
         ${IMAGE_ANDROID_BUILDER} \
         bash -c "${GIT_COMMANDS} ${COMMANDS}"
 }
