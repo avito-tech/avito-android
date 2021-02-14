@@ -5,7 +5,7 @@ import org.funktionale.tries.Try
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileInputStream
-import java.util.Properties
+import java.util.*
 
 internal class GradlePropertiesCheck(
     private val project: Project,

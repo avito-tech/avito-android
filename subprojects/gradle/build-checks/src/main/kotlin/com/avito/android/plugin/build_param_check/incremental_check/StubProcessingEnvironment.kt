@@ -1,6 +1,6 @@
 package com.avito.android.plugin.build_param_check.incremental_check
 
-import java.util.Locale
+import java.util.*
 import javax.annotation.processing.Filer
 import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment

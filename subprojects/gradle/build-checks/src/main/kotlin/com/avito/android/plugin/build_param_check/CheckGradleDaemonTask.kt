@@ -5,7 +5,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.util.Properties
+import java.util.*
 
 abstract class CheckGradleDaemonTask : DefaultTask() {
 
