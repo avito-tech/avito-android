@@ -11,7 +11,7 @@ includeBuild("build-logic")
 
 include(":subprojects:gradle:artifactory-app-backup")
 include(":subprojects:gradle:artifactory-app-backup-test-fixtures")
-include(":subprojects:gradle:buildchecks")
+include(":subprojects:gradle:build-checks")
 include(":subprojects:gradle:build-metrics")
 include(":subprojects:gradle:gradle-profile")
 include(":subprojects:gradle:build-properties")
