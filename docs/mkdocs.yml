@@ -77,6 +77,9 @@ nav:
             -   Build properties: projects/BuildProperties.md
             -   Build trace: projects/BuildTrace.md
             -   CI Steps: projects/CiSteps.md
+            -   Internal:
+                    - projects/internal/Internal.md
+                    - projects/internal/BuildMetrics.md
     -   CI:
             -   CI Gradle Plugin: projects/CiSteps.md
             -   Custom Gradle Plugins: ci/CustomGradlePlugins.md

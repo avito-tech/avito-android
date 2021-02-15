@@ -1,6 +1,7 @@
 package com.avito.android.gradle.profile
 
 import org.gradle.util.CollectionUtils
+import org.gradle.util.Path
 import java.util.HashMap
 
 class ProjectProfile(
@@ -26,7 +27,7 @@ class ProjectProfile(
     fun getTaskProfile(taskPath: String): TaskExecution {
         var result: TaskExecution? = tasks[taskPath]
         if (result == null) {
-            result = TaskExecution(taskPath)
+            result = TaskExecution(Path.path(taskPath))
             tasks[taskPath] = result
         }
         return result

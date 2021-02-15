@@ -4,10 +4,9 @@ import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
-import org.gradle.BuildResult
 import org.gradle.api.provider.Provider
 
-class BuildMetricTracker(
+public class BuildMetricTracker(
     private val env: Provider<EnvironmentInfo>,
     private val sender: Provider<StatsDSender>
 ) {
@@ -16,17 +15,17 @@ class BuildMetricTracker(
         env.get().node?.take(32) ?: "unknown"
     }
 
-    fun track(buildResult: BuildResult, metric: StatsMetric) {
+    public fun track(buildStatus: BuildStatus, metric: StatsMetric) {
         val prefix = SeriesName.create(
             env.get().environment.publicName,
             node,
             "id",
-            buildStatus(buildResult)
+            buildStatus.name
         )
         sender.get().send(prefix, metric)
     }
 
-    fun track(metric: StatsMetric) {
+    public fun track(metric: StatsMetric) {
         val prefix = SeriesName.create(
             env.get().environment.publicName,
             node,
@@ -35,7 +34,8 @@ class BuildMetricTracker(
         sender.get().send(prefix, metric)
     }
 
-    private fun buildStatus(buildResult: BuildResult): String {
-        return if (buildResult.failure == null) "success" else "fail"
+    public sealed class BuildStatus(public val name: String) {
+        public object Success : BuildStatus("success")
+        public object Fail : BuildStatus("fail")
     }
 }
