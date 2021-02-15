@@ -1,6 +1,6 @@
 plugins {
-    id("com.avito.android.kotlin-android-library")
-    id("com.avito.android.publish-android-library")
+    id("convention.kotlin-android-library")
+    id("convention.publish-android-library")
 }
 
 dependencies {

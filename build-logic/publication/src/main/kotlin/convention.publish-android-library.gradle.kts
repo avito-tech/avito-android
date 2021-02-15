@@ -1,7 +1,7 @@
 import com.android.build.gradle.LibraryExtension
 
 plugins {
-    id("com.avito.android.bintray")
+    id("convention.bintray")
 }
 
 configure<LibraryExtension> {

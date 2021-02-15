@@ -1,9 +1,9 @@
 plugins {
-    id("com.avito.android.kotlin-jvm")
-    `java-test-fixtures`
-    id("com.avito.android.publish-gradle-plugin")
-    id("nebula.integtest")
-    id("com.avito.android.libraries")
+    id("convention.kotlin-jvm")
+    id("convention.test-fixtures")
+    id("convention.publish-gradle-plugin")
+    id("convention.integration-testing")
+    id("convention.libraries")
 }
 
 dependencies {
@@ -67,28 +67,6 @@ dependencies {
 
 kotlin {
     explicitApi()
-
-    /**
-     * Workaround to access internal classes from testFixtures
-     * till https://youtrack.jetbrains.com/issue/KT-34901 resolved
-     */
-    target.compilations
-        .matching { it.name in listOf("testFixtures", "integTest") }
-        .configureEach {
-            associateWith(target.compilations.getByName("main"))
-        }
-
-    target.compilations
-        .matching { it.name in listOf("integTest") }
-        .configureEach {
-            associateWith(target.compilations.getByName("testFixtures"))
-        }
-
-    target.compilations
-        .matching { it.name in listOf("test") }
-        .configureEach {
-            associateWith(target.compilations.getByName("testFixtures"))
-        }
 }
 
 gradlePlugin {
