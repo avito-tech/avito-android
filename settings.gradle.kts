@@ -11,7 +11,7 @@ includeBuild("build-logic")
 
 include(":subprojects:gradle:artifactory-app-backup")
 include(":subprojects:gradle:artifactory-app-backup-test-fixtures")
-include(":subprojects:gradle:buildchecks")
+include(":subprojects:gradle:build-checks")
 include(":subprojects:gradle:build-metrics")
 include(":subprojects:gradle:gradle-profile")
 include(":subprojects:gradle:build-properties")
@@ -230,6 +230,7 @@ pluginManagement {
     val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion")
     val infraVersion = systemProperty("infraVersion")
     val bintrayVersion = systemProperty("bintrayVersion")
+    val nebulaIntegTestVersion = systemProperty("nebulaIntegTestVersion")
 
     resolutionStrategy {
         eachPlugin {
@@ -248,7 +249,7 @@ pluginManagement {
                     useModule("com.slack.keeper:keeper:0.7.0")
 
                 pluginId == "nebula.integtest" ->
-                    useVersion("8.0.0")
+                    useVersion(nebulaIntegTestVersion.get())
 
                 pluginId == "com.jfrog.bintray" ->
                     useVersion(bintrayVersion.get())

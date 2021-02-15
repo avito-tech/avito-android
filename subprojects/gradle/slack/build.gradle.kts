@@ -1,8 +1,8 @@
 plugins {
-    id("com.avito.android.kotlin-jvm")
-    id("com.avito.android.publish-kotlin-library")
-    id("nebula.integtest")
-    id("com.avito.android.libraries")
+    id("convention.kotlin-jvm")
+    id("convention.publish-kotlin-library")
+    id("convention.integration-testing")
+    id("convention.libraries")
 }
 
 dependencies {

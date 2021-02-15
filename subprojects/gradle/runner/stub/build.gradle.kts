@@ -1,6 +1,6 @@
 plugins {
-    id("com.avito.android.kotlin-jvm")
-    id("com.avito.android.publish-kotlin-library")
+    id("convention.kotlin-jvm")
+    id("convention.publish-kotlin-library")
 }
 
 extra["artifact-id"] = "runner-stub"

@@ -1,7 +1,7 @@
 plugins {
-    id("com.avito.android.kotlin-jvm")
-    id("com.avito.android.publish-kotlin-library")
-    id("com.avito.android.libraries")
+    id("convention.kotlin-jvm")
+    id("convention.publish-kotlin-library")
+    id("convention.libraries")
 }
 
 extra["artifact-id"] = "runner-shared-test"

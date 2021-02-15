@@ -1,15 +1,14 @@
 plugins {
-    id("com.avito.android.kotlin-jvm")
-    id("com.avito.android.publish-kotlin-library")
-    `java-test-fixtures`
-    id("nebula.integtest")
-    id("com.avito.android.libraries")
+    id("convention.kotlin-jvm")
+    id("convention.publish-kotlin-library")
+    id("convention.test-fixtures")
+    id("convention.integration-testing")
+    id("convention.libraries")
 }
 
 extra["artifact-id"] = "runner-device-provider"
 
 dependencies {
-    // todo api impl?
     api(project(":subprojects:gradle:runner:service"))
     api(project(":subprojects:gradle:runner:shared"))
     api(project(":subprojects:gradle:runner:stub"))
@@ -24,20 +23,4 @@ dependencies {
 
 kotlin {
     explicitApi()
-
-    /**
-     * Workaround to access internal classes from testFixtures
-     * till https://youtrack.jetbrains.com/issue/KT-34901 resolved
-     */
-    target.compilations
-        .matching { it.name in listOf("testFixtures", "integTest") }
-        .configureEach {
-            associateWith(target.compilations.getByName("main"))
-        }
-
-    target.compilations
-        .matching { it.name in listOf("integTest") }
-        .configureEach {
-            associateWith(target.compilations.getByName("testFixtures"))
-        }
 }
