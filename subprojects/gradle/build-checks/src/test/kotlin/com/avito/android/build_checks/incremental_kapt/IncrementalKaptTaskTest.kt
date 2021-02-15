@@ -111,7 +111,7 @@ internal class IncrementalKaptTaskTest {
     ) {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.buildchecks")
+                id("com.avito.android.build-checks")
             },
             buildGradleExtra = """
                 buildChecks {

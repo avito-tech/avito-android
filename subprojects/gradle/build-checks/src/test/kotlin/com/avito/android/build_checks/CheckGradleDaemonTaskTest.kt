@@ -13,7 +13,7 @@ internal class CheckGradleDaemonTaskTest {
     fun `checkGradleDaemon - passes - when no buildSrc in project`(@TempDir projectDir: File) {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.buildchecks")
+                id("com.avito.android.build-checks")
             },
             buildGradleExtra = """
                 buildChecks {
