@@ -7,6 +7,16 @@ plugins {
 }
 
 dependencies {
+    constraints {
+        api(libs.okio) {
+            version { strictly("2.+") }
+            because(
+                "There was an issue dependency-analysis plugin which depends on 1.x version of okio, " +
+                    "caused runtime failures"
+            )
+        }
+    }
+
     api(project(":subprojects:gradle:kubernetes"))
     api(project(":subprojects:common:time"))
     api(project(":subprojects:gradle:build-verdict-tasks-api"))
