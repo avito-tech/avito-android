@@ -40,8 +40,8 @@ class IntentionsRouter(
         )
     }
 
-    fun close() {
-        intentionRoutings.forEach { (_, channel) -> channel.close() }
+    fun cancel() {
+        intentionRoutings.forEach { (_, channel) -> channel.cancel() }
         intentionRoutings.clear()
     }
 

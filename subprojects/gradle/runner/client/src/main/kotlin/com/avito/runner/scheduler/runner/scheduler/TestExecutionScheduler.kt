@@ -8,6 +8,7 @@ import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.scheduler.retry.SchedulingBasedRetryManager
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -28,7 +29,7 @@ class TestExecutionScheduler(
         executionClient: TestExecutionClient.Communication,
         scope: CoroutineScope
     ): Communication {
-        scope.launch(dispatcher) {
+        scope.launch(dispatcher + CoroutineName("test-state-verdict")) {
             for (testRunResult in executionClient.results) {
                 when (val verdict = testRunResult.state.verdict(testRunResult.incomingTestCaseRun)) {
                     is TestExecutionState.Verdict.SendResult ->
@@ -52,7 +53,7 @@ class TestExecutionScheduler(
                 }
             }
         }
-        scope.launch(dispatcher) {
+        scope.launch(dispatcher + CoroutineName("test-state-verdict")) {
             for (request in requests) {
                 val testState =
                     TestExecutionStateImplementation(
@@ -85,7 +86,7 @@ class TestExecutionScheduler(
     }
 
     fun stop() {
-        resultChannel.close()
+        resultChannel.cancel()
     }
 
     class Communication(

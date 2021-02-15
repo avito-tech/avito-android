@@ -19,10 +19,11 @@ import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
+import kotlinx.coroutines.CoroutineScope
 
 class TestsRunnerClient {
 
-    fun run(arguments: Arguments) {
+    fun run(arguments: Arguments, scope: CoroutineScope) {
 
         val loggerFactory = arguments.loggerFactory
 
@@ -78,6 +79,7 @@ class TestsRunnerClient {
                     )
                 )
             ),
+            scope = scope,
             loggerFactory = loggerFactory
         ).also {
             it.run(

@@ -15,7 +15,11 @@ import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -32,6 +36,8 @@ internal class TestExecutorImpl(
     private val runner = TestsRunnerClient()
 
     private val outputDirectoryName = "test-runner"
+
+    private val scope = CoroutineScope(CoroutineName("test-executor") + Dispatchers.IO)
 
     override fun execute(
         application: File?,
@@ -68,7 +74,7 @@ internal class TestExecutorImpl(
 
             logger.debug("Arguments: $runnerArguments")
 
-            runner.run(arguments = runnerArguments)
+            runner.run(arguments = runnerArguments, scope)
         }
 
         logger.debug("Worker completed")
@@ -112,17 +118,19 @@ internal class TestExecutorImpl(
         action: (devices: ReceiveChannel<Device>) -> Unit
     ) {
         runBlocking {
-            try {
-                logger.info("Devices: Starting action job for configuration: $configurationName...")
-                action(devicesProvider.provideFor(reservations, this))
-                logger.info("Devices: Action completed for configuration: $configurationName")
-            } catch (e: Throwable) {
-                logger.critical("Error during action in $configurationName job", e)
-            } finally {
-                logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
-                devicesProvider.releaseDevices()
-                logger.info("Devices: Devices released for configuration: $configurationName")
-            }
+            scope.launch {
+                try {
+                    logger.info("Devices: Starting action job for configuration: $configurationName...")
+                    action(devicesProvider.provideFor(reservations, this))
+                    logger.info("Devices: Action completed for configuration: $configurationName")
+                } catch (e: Throwable) {
+                    logger.critical("Error during action in $configurationName job", e)
+                } finally {
+                    logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
+                    devicesProvider.releaseDevices()
+                    logger.info("Devices: Devices released for configuration: $configurationName")
+                }
+            }.join()
         }
     }
 

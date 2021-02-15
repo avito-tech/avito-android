@@ -8,6 +8,7 @@ import com.avito.runner.scheduler.runner.scheduler.TestExecutionState
 import com.avito.runner.service.IntentionExecutionService
 import com.avito.runner.service.model.intention.Intention
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -31,18 +32,19 @@ class TestExecutionClient(
         executionServiceCommunication: IntentionExecutionService.Communication,
         scope: CoroutineScope
     ): Communication {
-        scope.launch(dispatcher) {
-            scope.launch {
+        scope.launch(dispatcher + CoroutineName("test-execution-client")) {
+            scope.launch(CoroutineName("send-request")) {
                 for (request in requests) {
                     statesMapping[request.intention] = request.state
                     logger.debug("sending intention: ${request.intention}")
                     executionServiceCommunication.intentions.send(request.intention)
                 }
             }
-            scope.launch {
+            scope.launch(CoroutineName("send-client-test-run-result")) {
                 for (serviceResult in executionServiceCommunication.results) {
-                    val sourceState: TestExecutionState = statesMapping[serviceResult.intention]
-                        ?: throw RuntimeException("State for intention ${serviceResult.intention} not found in mapping")
+                    val sourceState: TestExecutionState = requireNotNull(statesMapping[serviceResult.intention]) {
+                        "State for intention ${serviceResult.intention} not found in mapping"
+                    }
 
                     results.send(
                         ClientTestRunResult(
@@ -62,8 +64,8 @@ class TestExecutionClient(
     }
 
     fun stop() {
-        requests.close()
-        results.close()
+        requests.cancel()
+        results.cancel()
     }
 
     class Communication(

@@ -15,6 +15,7 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.funktionale.tries.Try
@@ -34,7 +35,7 @@ internal class DeviceWorker(
 
     private val stateWorker: DeviceStateWorker = DeviceStateWorker(device)
 
-    fun run(scope: CoroutineScope) = scope.launch(dispatcher) {
+    fun run(scope: CoroutineScope) = scope.launch(dispatcher + CoroutineName("device-worker")) {
 
         var state: State = when (val status = device.deviceStatus()) {
 
