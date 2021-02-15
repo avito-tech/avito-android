@@ -26,10 +26,10 @@ tasks.withType<Test>().configureEach {
     systemProperty("rootDir", "${project.rootDir}")
 
     val testProperties = listOf(
-        "avito.kubernetes.url",
-        "avito.kubernetes.token",
-        "avito.kubernetes.cert",
-        "avito.kubernetes.namespace",
+        "kubernetesUrl",
+        "kubernetesToken",
+        "kubernetesCaCertData",
+        "kubernetesNamespace",
         "avito.slack.test.channel",
         "avito.slack.test.token",
         "avito.slack.test.workspace",

@@ -94,7 +94,6 @@ internal fun instrumentationConfiguration(): String = """
                             sentryDsn = "stub"
                             slackToken = "stub"
                             fileStorageUrl = "stub"
-                            registry = "stub"
 
                             instrumentationParams = [
                                 "jobSlug": "FunctionalTests"

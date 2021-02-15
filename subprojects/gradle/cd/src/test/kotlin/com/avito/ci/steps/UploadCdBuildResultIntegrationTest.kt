@@ -382,7 +382,6 @@ class RealTest {
                  sentryDsn = "stub"
                  slackToken = "stub"
                  fileStorageUrl = "$mockUrl"
-                 registry = "stub"
                  reportApiUrl = "$mockUrl"
                  instrumentationParams = [
                     "deviceName"    : "regress",

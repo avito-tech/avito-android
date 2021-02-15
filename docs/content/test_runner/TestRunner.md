@@ -45,7 +45,6 @@ It can do the following:
         // they are required for Avito app. We will make them optional in future.
         reportApiUrl = "http://stub"
         reportViewerUrl = "http://stub"
-        registry = "registry"
         sentryDsn = "http://stub-project@stub-host/0"
         slackToken = "stub"
         fileStorageUrl = "http://stub"
@@ -82,7 +81,6 @@ It can do the following:
         // they are required for Avito app. We will make them optional in future.
         reportApiUrl = "http://stub"
         reportViewerUrl = "http://stub"
-        registry = "registry"
         sentryDsn = "http://stub-project@stub-host/0"
         slackToken = "stub"
         fileStorageUrl = "http://stub"

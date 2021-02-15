@@ -122,14 +122,13 @@ internal interface TestsSchedulerFactory {
                         )
                     )
                 },
+                loggerFactory = params.loggerFactory,
                 buildId = params.buildId,
                 buildType = params.buildType,
                 projectName = params.projectName,
                 executionParameters = params.executionParameters,
                 outputDirectory = params.outputDir,
                 instrumentationConfiguration = params.instrumentationConfiguration,
-                loggerFactory = params.loggerFactory,
-                registry = params.registry,
                 metricsConfig = RunnerMetricsConfig(
                     statsDConfig = params.statsDConfig,
                     runnerPrefix = runnerPrefix

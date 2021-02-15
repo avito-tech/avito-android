@@ -131,7 +131,6 @@ internal class InstrumentationTestsPluginCIFalseTests {
                     
                         sentryDsn = "stub"
                         slackToken = "stub"
-                        registry = "stub"
 
                         configurations {
 

@@ -93,7 +93,6 @@ internal class TestSummaryStepTest {
                         instrumentation {
                             sentryDsn = "stub"
                             slackToken = "stub"
-                            registry = "stub"
                             
                             configurations {
                                 ui {

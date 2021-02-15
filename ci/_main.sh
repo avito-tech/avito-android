@@ -71,9 +71,6 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.stats.fallbackHost=$AVITO_STATS_FALLBACK_HOST \\
              -Pavito.stats.port=$AVITO_STATS_PORT \\
              -Pavito.stats.namespace=$AVITO_STATS_NAMESPACE \\
-             -PkubernetesToken=$KUBERNETES_TOKEN \\
-             -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
-             -PkubernetesUrl=$KUBERNETES_URL \\
              -Pavito.build=teamcity \\
              -Pavito.elastic.enabled=true \\
              -Pavito.elastic.endpoints=$ELASTIC_ENDPOINTS \\
@@ -86,10 +83,10 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.slack.test.channel=$SLACK_TEST_CHANNEL \\
              -Pavito.slack.test.token=$SLACK_TEST_TOKEN \\
              -Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE \\
-             -Pavito.kubernetes.url=$KUBERNETES_URL \\
-             -Pavito.kubernetes.namespace=android-emulator \\
-             -Pavito.kubernetes.token=$KUBERNETES_TOKEN \\
-             -Pavito.kubernetes.cert=$KUBERNETES_CA_CERT_DATA \\
+             -PkubernetesUrl=$KUBERNETES_URL \\
+             -PkubernetesNamespace=android-emulator \\
+             -PkubernetesToken=$KUBERNETES_TOKEN \\
+             -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
              -Pavito.build-verdict.enabled=true \\
              -Pavito.bitbucket.enabled=true"
 

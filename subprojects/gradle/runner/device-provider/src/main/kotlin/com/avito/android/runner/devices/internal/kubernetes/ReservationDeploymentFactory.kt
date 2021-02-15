@@ -29,7 +29,6 @@ internal class ReservationDeploymentFactory(
     private val projectName: String,
     private val buildId: String,
     private val buildType: String,
-    private val registry: String,
     private val deploymentNameGenerator: DeploymentNameGenerator,
     loggerFactory: LoggerFactory
 ) {
@@ -84,7 +83,7 @@ internal class ReservationDeploymentFactory(
             containers = listOf(
                 newContainer {
                     name = phone.name.toValidKubernetesName()
-                    image = "$registry/${phone.proxyImage}"
+                    image = phone.proxyImage
 
                     securityContext {
                         privileged = true
@@ -123,7 +122,7 @@ internal class ReservationDeploymentFactory(
             containers = listOf(
                 newContainer {
                     name = emulator.name.toValidKubernetesName()
-                    image = "$registry/${emulator.image}"
+                    image = emulator.image
 
                     securityContext {
                         privileged = true
