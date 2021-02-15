@@ -19,13 +19,13 @@ import java.io.File
 private const val rootAppName = "root"
 private const val loggerPrefix = "[StatsDSender@:] "
 
-class BuildMetricsPluginTest {
+internal class BuildMetricsPluginTest {
 
-    private lateinit var tempDir: File
+    private lateinit var projectDir: File
     private val loggerFactory = StubLoggerFactory
     private val git: Git by lazy {
         Git.Impl(
-            rootDir = tempDir,
+            rootDir = projectDir,
             loggerFactory = loggerFactory
         )
     }
@@ -34,7 +34,7 @@ class BuildMetricsPluginTest {
 
     @BeforeEach
     fun setup(@TempDir tempDir: File) {
-        this.tempDir = tempDir
+        this.projectDir = tempDir
         TestProjectGenerator(
             name = rootAppName,
             plugins = plugins {
@@ -62,29 +62,6 @@ class BuildMetricsPluginTest {
         result.expectNoMetrics()
     }
 
-    @TestFactory
-    fun `send nothing - the most common tasks without real work`(): List<DynamicTest> {
-        return listOf(
-            "help",
-            "tasks",
-            ":app:tasks",
-            "cleanBuildCache",
-            ":app:cleanBuildCache",
-            "clean",
-            ":app:clean",
-            ":app:dependencies"
-        ).map {
-            val task = it
-            dynamicTest("send nothing - no real work by $task") {
-                val result = build(task)
-
-                result.assertThat().buildSuccessful()
-
-                result.expectNoMetrics()
-            }
-        }
-    }
-
     @Test
     fun `send configuration time - build`() {
         val result = build(":app:preBuild")
@@ -96,7 +73,7 @@ class BuildMetricsPluginTest {
     }
 
     @Test
-    fun `send total build time`() {
+    fun `send total build time - build`() {
         val result = build(":app:preBuild")
 
         result.assertThat()
@@ -106,7 +83,7 @@ class BuildMetricsPluginTest {
     }
 
     @TestFactory
-    fun `send build tasks`(): List<DynamicTest> {
+    fun `send app build time - build app`(): List<DynamicTest> {
 
         class Case(
             val description: String,
@@ -116,26 +93,16 @@ class BuildMetricsPluginTest {
         return listOf(
             Case(
                 description = "build app",
-                tasks = arrayOf(":app:assemble"),
-                metricName = "build-tasks.app_assemble"
+                tasks = arrayOf(":app:assembleDebug"),
+                metricName = "app-build.app.packageDebug.finish"
             ),
             Case(
                 description = "run instrumentation tests",
                 tasks = arrayOf(":app:assembleDebug", ":app:assembleDebugAndroidTest"),
-                metricName = "build-tasks.app_assembleDebug_app_assembleDebugAndroidTest"
+                metricName = "app-build.app.packageDebugAndroidTest.finish"
             ),
-            Case(
-                description = "stable tasks order",
-                tasks = arrayOf(":app:assembleDebugAndroidTest", ":app:assembleDebug"),
-                metricName = "build-tasks.app_assembleDebug_app_assembleDebugAndroidTest"
-            ),
-            Case(
-                description = "up to three tasks",
-                tasks = arrayOf(":app:preBuild", ":app:assembleDebug", ":app:assembleDebugAndroidTest"),
-                metricName = "build-tasks._"
-            )
         ).map {
-            dynamicTest("send build tasks - " + it.description) {
+            dynamicTest("send total task time for app scenario - " + it.description) {
                 val result = build(*it.tasks)
 
                 result.assertThat()
@@ -151,7 +118,7 @@ class BuildMetricsPluginTest {
     }
 
     private fun TestResult.expectMetric(type: String, metricName: String) {
-        // example: time:apps.mobile.statistic.android.local.user.id.success.init_configuration.total:5821
+        // Example: time:apps.mobile.statistic.android.local.user.id.success.init_configuration.total:5821
         val metrics = output.lines()
             .filter { it.contains(loggerPrefix) }
             .map { it.substringAfter(loggerPrefix) }
@@ -167,7 +134,7 @@ class BuildMetricsPluginTest {
 
     private fun build(vararg tasks: String, dryRun: Boolean = false): TestResult {
         return gradlew(
-            tempDir, *tasks,
+            projectDir, *tasks,
             "-Pavito.build.metrics.enabled=true",
             "-Pavito.stats.enabled=true",
             "-Pavito.stats.host=http://stats",

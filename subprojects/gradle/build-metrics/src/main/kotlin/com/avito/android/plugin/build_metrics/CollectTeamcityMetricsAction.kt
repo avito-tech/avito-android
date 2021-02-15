@@ -8,7 +8,7 @@ import org.jetbrains.teamcity.rest.Build
 import java.time.Duration
 
 @Suppress("UnstableApiUsage")
-class CollectTeamcityMetricsAction(
+internal class CollectTeamcityMetricsAction(
     val buildId: String,
     private val teamcityApi: TeamcityApi,
     private val graphite: GraphiteSender

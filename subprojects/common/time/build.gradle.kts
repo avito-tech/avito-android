@@ -1,7 +1,7 @@
 plugins {
-    id("com.avito.android.kotlin-jvm")
-    id("com.avito.android.publish-kotlin-library")
-    `java-test-fixtures`
+    id("convention.kotlin-jvm")
+    id("convention.publish-kotlin-library")
+    id("convention.test-fixtures")
 }
 
 dependencies {

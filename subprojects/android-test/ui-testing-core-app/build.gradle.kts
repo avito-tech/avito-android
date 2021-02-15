@@ -6,9 +6,9 @@ import com.avito.utils.gradle.KubernetesCredentials.Service
 import com.avito.utils.gradle.kubernetesCredentials
 
 plugins {
-    id("com.avito.android.kotlin-android-app")
+    id("convention.kotlin-android-app")
     id("com.avito.android.instrumentation-tests")
-    id("com.avito.android.libraries")
+    id("convention.libraries")
 }
 
 android {
