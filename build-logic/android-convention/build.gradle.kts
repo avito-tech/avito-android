@@ -8,7 +8,6 @@ group = "com.avito.android.buildlogic"
 dependencies {
     implementation("com.avito.android.buildlogic:libraries")
     implementation("com.avito.android.buildlogic:kotlin-convention")
-    implementation(platform("com.avito.android.infra:platforms"))
     implementation(libs.kotlinPlugin)
     implementation(libs.androidGradlePlugin)
 }

@@ -38,10 +38,10 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion").get()
 
     val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
-    val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib"
-    val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect"
+    val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     val kotlinHtml = "org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2"
-    val kotlinCompilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable"
+    val kotlinCompilerEmbeddable = "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
     val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
     val retrofit = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
     val retrofitConverterGson = "com.squareup.retrofit2:converter-gson:${Versions.retrofit}"
@@ -118,7 +118,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val mockitoCore = "org.mockito:mockito-core:${Versions.mockito}"
     val jsonPathAssert = "com.jayway.jsonpath:json-path-assert:2.4.0"
     val kotlinTest = "io.kotlintest:kotlintest:2.0.7"
-    val kotlinTestJUnit = "org.jetbrains.kotlin:kotlin-test-junit"
+    val kotlinTestJUnit = "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
     val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${Versions.junit5}"
     val hamcrestLib = "org.hamcrest:hamcrest-library:1.3"
     val junitPlatformRunner = "org.junit.platform:junit-platform-runner:${Versions.junit5Platform}"
