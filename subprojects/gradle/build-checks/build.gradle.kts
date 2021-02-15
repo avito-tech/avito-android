@@ -28,7 +28,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("buildChecks") {
-            id = "com.avito.android.buildchecks"
+            id = "com.avito.android.build-checks"
             implementationClass = "com.avito.android.build_checks.BuildParamCheckPlugin"
             displayName = "Build checks"
         }
