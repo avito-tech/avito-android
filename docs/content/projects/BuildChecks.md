@@ -8,7 +8,7 @@ Apply the plugin in the root build script:
 
 ```groovy
 plugins {
-    id("com.avito.android.buildchecks")
+    id("com.avito.android.build-checks")
 }
 ```
 
@@ -288,7 +288,7 @@ To forbid merged R files use this check:
 
     ```kotlin
     plugins {
-        id("com.avito.android.buildchecks")
+        id("com.avito.android.build-checks")
     }
     
     buildChecks {
@@ -301,7 +301,7 @@ To forbid merged R files use this check:
 
     ```groovy
     plugins {
-        id("com.avito.android.buildchecks")
+        id("com.avito.android.build-checks")
     }
     
     buildChecks {

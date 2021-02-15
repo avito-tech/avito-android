@@ -20,7 +20,7 @@ internal class ConfigurationCacheCompatibilityTest {
         TestProjectGenerator(
             name = "rootapp",
             plugins = plugins {
-                id("com.avito.android.buildchecks")
+                id("com.avito.android.build-checks")
             },
             buildGradleExtra = """
                  buildChecks {

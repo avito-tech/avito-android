@@ -25,7 +25,7 @@ internal class UniqueRClassesTest {
     fun `success - unique package names`() {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.buildchecks")
+                id("com.avito.android.build-checks")
             },
             modules = listOf(
                 AndroidAppModule(
@@ -65,7 +65,7 @@ internal class UniqueRClassesTest {
     fun `success - allowed duplicate`() {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.buildchecks")
+                id("com.avito.android.build-checks")
             },
             modules = listOf(
                 AndroidAppModule(
@@ -106,7 +106,7 @@ internal class UniqueRClassesTest {
     fun `fail - duplicated package in implementation`() {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.buildchecks")
+                id("com.avito.android.build-checks")
             },
             modules = listOf(
                 AndroidAppModule(
@@ -150,7 +150,7 @@ internal class UniqueRClassesTest {
     fun `fail - duplicated package in test`() {
         TestProjectGenerator(
             plugins = plugins {
-                id("com.avito.android.buildchecks")
+                id("com.avito.android.build-checks")
             },
             modules = listOf(
                 AndroidAppModule(
