@@ -62,7 +62,7 @@ class RunnerIntegrationTest {
 
             devices.send(device)
 
-            val result = runner.runTests(tests = requests, scope = this)
+            val result = runner.runTests(tests = requests)
             device.verify()
 
             assertThat(result.runs).isEqualTo(
@@ -138,7 +138,7 @@ class RunnerIntegrationTest {
                 devices.send(secondDevice)
             }
 
-            val result = runner.runTests(requests, this)
+            val result = runner.runTests(requests)
             val resultsByFirstDevice = requests.slice(0..1).toPassedRuns(firstFailedDevice)
 
             val resultsBySecondDevice = requests.slice(2..3).toPassedRuns(secondDevice)
@@ -175,7 +175,7 @@ class RunnerIntegrationTest {
                 devices.send(successfulDevice)
             }
 
-            val result = runner.runTests(requests, this)
+            val result = runner.runTests(requests)
             successfulDevice.verify()
             failedDevice.verify()
 
@@ -207,7 +207,7 @@ class RunnerIntegrationTest {
                 devices.send(successfulDevice)
             }
 
-            val result = runner.runTests(requests, this)
+            val result = runner.runTests(requests)
             successfulDevice.verify()
             failedDevice.verify()
 
@@ -249,7 +249,7 @@ class RunnerIntegrationTest {
                 devices.send(successfulDevice)
             }
 
-            val result = runner.runTests(requests, this)
+            val result = runner.runTests(requests)
             successfulDevice.verify()
             failedDevice.verify()
 
@@ -305,7 +305,7 @@ class RunnerIntegrationTest {
 
         devices.send(device)
 
-        val result = runner.runTests(requests, this)
+        val result = runner.runTests(requests)
         device.verify()
 
         assertThat(result.runs).isEqualTo(
@@ -383,7 +383,7 @@ class RunnerIntegrationTest {
 
             devices.send(device)
 
-            val actualResult = runner.runTests(requests, this)
+            val actualResult = runner.runTests(requests)
             device.verify()
 
             assertThat(actualResult.runs).isEqualTo(
@@ -460,7 +460,7 @@ class RunnerIntegrationTest {
 
             devices.send(device)
 
-            val result = runner.runTests(requests, this)
+            val result = runner.runTests(requests)
             device.verify()
 
             assertThat(result.runs).isEqualTo(
@@ -496,7 +496,7 @@ class RunnerIntegrationTest {
                     testRunRequest(scheduling = scheduling)
                 )
 
-                runner.runTests(requests, this)
+                runner.runTests(requests)
             }
         }
 

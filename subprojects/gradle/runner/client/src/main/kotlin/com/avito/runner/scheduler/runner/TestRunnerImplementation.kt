@@ -8,8 +8,7 @@ import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.IntentionExecutionService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.coroutineScope
 
 class TestRunnerImplementation(
     private val scheduler: TestExecutionScheduler,
@@ -21,8 +20,8 @@ class TestRunnerImplementation(
 
     private val logger = loggerFactory.create<TestRunner>()
 
-    override suspend fun runTests(tests: List<TestRunRequest>, scope: CoroutineScope): TestRunnerResult {
-        return withContext(scope.coroutineContext) {
+    override suspend fun runTests(tests: List<TestRunRequest>): TestRunnerResult {
+        return coroutineScope {
             val serviceCommunication = service.start(this)
             reservationWatcher.watch(serviceCommunication.deviceSignals, this)
             val clientCommunication = client.start(
