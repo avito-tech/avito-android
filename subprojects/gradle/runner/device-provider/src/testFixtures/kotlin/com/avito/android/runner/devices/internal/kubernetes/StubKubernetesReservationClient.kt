@@ -1,7 +1,7 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
-import com.avito.android.runner.devices.internal.AndroidDebugBridge
-import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
+import com.avito.android.runner.devices.internal.FakeAndroidDebugBridge
+import com.avito.android.runner.devices.internal.StubEmulatorsLogsReporter
 import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
@@ -11,7 +11,6 @@ import java.io.File
 
 internal fun KubernetesReservationClient.Companion.createStubInstance(
     loggerFactory: LoggerFactory,
-    adb: Adb = Adb(),
     buildId: String = getSystemProperty(name = "teamcityBuildId", defaultValue = "local"),
     deploymentNameGenerator: DeploymentNameGenerator = StubDeploymentNameGenerator(),
     kubernetesUrl: String = getSystemProperty("kubernetesUrl"),
@@ -26,14 +25,8 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
         url = kubernetesUrl
     )
 
-    val outputFolder = File("integration")
-    val logcatFolder = File("logcat")
-
     return KubernetesReservationClient(
-        androidDebugBridge = AndroidDebugBridge(
-            adb = adb,
-            loggerFactory = loggerFactory
-        ),
+        androidDebugBridge = FakeAndroidDebugBridge(),
         kubernetesApi = KubernetesApi.Impl(
             kubernetesClient = createKubernetesClient(
                 kubernetesCredentials = kubernetesCredentials,
@@ -41,13 +34,9 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
             ),
             loggerFactory = loggerFactory
         ),
-        emulatorsLogsReporter = EmulatorsLogsReporter(
-            outputFolder = outputFolder,
-            logcatDir = logcatFolder,
-            logcatTags = emptyList()
-        ),
+        emulatorsLogsReporter = StubEmulatorsLogsReporter,
         loggerFactory = loggerFactory,
-        reservationDeploymentFactory = ReservationDeploymentFactory(
+        reservationDeploymentFactory = ReservationDeploymentFactoryImpl(
             configurationName = configurationName,
             projectName = projectName,
             buildId = buildId,

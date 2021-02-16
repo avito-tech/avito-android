@@ -8,7 +8,7 @@ internal class LocalDevice(
     override val serial: Serial.Local,
     override val adb: Adb,
     loggerFactory: LoggerFactory
-) : Device(loggerFactory) {
+) : AbstractDevice(loggerFactory) {
 
     override suspend fun waitForBoot() = waitForCommand(
         runner = { isBootCompleted() },

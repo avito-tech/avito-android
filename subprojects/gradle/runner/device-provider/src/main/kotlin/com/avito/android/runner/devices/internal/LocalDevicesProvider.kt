@@ -22,12 +22,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 internal class LocalDevicesProvider(
-    private val androidDebugBridge: AndroidDebugBridge,
-    private val devicesManager: AdbDevicesManager,
-    private val emulatorsLogsReporter: EmulatorsLogsReporter,
-    private val adb: Adb,
-    private val loggerFactory: LoggerFactory,
-    private val timeProvider: TimeProvider
+  private val androidDebugBridge: AndroidDebugBridge,
+  private val devicesManager: AdbDevicesManager,
+  private val emulatorsLogsReporter: EmulatorsLogsReporter,
+  private val adb: Adb,
+  private val loggerFactory: LoggerFactory,
+  private val timeProvider: TimeProvider
 ) : DevicesProvider {
 
     private val logger = loggerFactory.create<LocalDevicesProvider>()
@@ -37,7 +37,7 @@ internal class LocalDevicesProvider(
     private val adbQueryIntervalMs = 5000L
 
     @ExperimentalCoroutinesApi
-    override fun provideFor(
+    override suspend fun provideFor(
         reservations: Collection<ReservationData>,
         scope: CoroutineScope
     ): ReceiveChannel<Device> {

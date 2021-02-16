@@ -15,8 +15,7 @@ public fun createKubernetesDeviceProvider(
 ): DevicesProvider {
     return KubernetesDevicesProvider(
         client = KubernetesReservationClient.createStubInstance(
-            loggerFactory = loggerFactory,
-            adb = adb
+            loggerFactory = loggerFactory
         ),
         adbDevicesManager = AdbDevicesManager(
             loggerFactory = loggerFactory,
