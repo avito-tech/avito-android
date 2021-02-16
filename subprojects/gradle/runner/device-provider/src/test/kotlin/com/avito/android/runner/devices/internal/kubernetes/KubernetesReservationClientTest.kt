@@ -9,6 +9,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -118,6 +119,7 @@ internal class KubernetesReservationClientTest {
         }
         runBlocking {
             client.claim(listOf(ReservationData.stub()), this)
+            delay(100) // wait inner parts of `claim` fun
             client.release()
         }
     }
