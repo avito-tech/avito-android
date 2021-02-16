@@ -38,6 +38,7 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -473,6 +474,35 @@ class RunnerIntegrationTest {
                 )
             )
         }
+
+    @Test
+    fun `devices channel closed - run failed`() {
+        val exception = assertThrows<IllegalStateException>() {
+            runBlockingTest {
+                val devices = Channel<Device>(Channel.UNLIMITED)
+                devices.close()
+                val runner = provideRunner(
+                    devices = devices
+                )
+
+                val scheduling = TestRunRequest.Scheduling(
+                    retryCount = 4,
+                    minimumSuccessCount = 1,
+                    minimumFailedCount = 1
+                )
+
+                val requests = listOf(
+                    testRunRequest(scheduling = scheduling),
+                    testRunRequest(scheduling = scheduling)
+                )
+
+                runner.runTests(requests, this)
+            }
+        }
+
+        assertThat(exception.message)
+            .isEqualTo("devices channel was closed")
+    }
 
     private fun createBrokenDevice(failureReason: Exception): StubDevice {
         return StubDevice(

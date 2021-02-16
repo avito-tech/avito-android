@@ -14,6 +14,7 @@ import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.runner.service.worker.listener.DeviceLogListener
 import com.avito.runner.service.worker.listener.MessagesDeviceListener
 import com.avito.time.TimeProvider
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -45,10 +46,9 @@ class IntentionExecutionServiceImplementation(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun start(scope: CoroutineScope): IntentionExecutionService.Communication {
-        scope.launch {
-            launch {
-                while (!devices.isClosedForReceive) {
-                    val device = devices.receive()
+        scope.launch(CoroutineName("intention-execution-service")) {
+            launch(CoroutineName("device-workers")) {
+                for (device in devices) {
                     DeviceWorker(
                         intentionsRouter = intentionsRouter,
                         device = device,
@@ -65,16 +65,17 @@ class IntentionExecutionServiceImplementation(
                         timeProvider = timeProvider
                     ).run(scope)
                 }
+                throw IllegalStateException("devices channel was closed")
             }
 
-            launch {
+            launch(CoroutineName("send-intentions")) {
                 for (intention in intentions) {
                     logger.debug("received intention: $intention")
                     intentionsRouter.sendIntention(intention = intention)
                 }
             }
 
-            launch {
+            launch(CoroutineName("worker-messages")) {
                 for (message in messages) {
                     logger.debug("received message: $message")
                     when (message) {
@@ -108,11 +109,11 @@ class IntentionExecutionServiceImplementation(
     }
 
     override fun stop() {
-        intentionsRouter.close()
-        intentions.close()
-        results.close()
-        messages.close()
+        intentionsRouter.cancel()
+        intentions.cancel()
+        results.cancel()
+        messages.cancel()
         devices.cancel()
-        deviceSignals.close()
+        deviceSignals.cancel()
     }
 }

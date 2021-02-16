@@ -78,7 +78,7 @@ class IntentionsRouterTest {
         assertThat(api20Intentions.isEmpty).isTrue()
         assertThat(api21Intentions.isEmpty).isTrue()
 
-        router.close()
+        router.cancel()
 
         assertThat(results20).isEqualTo(expected20Intentions)
         assertThat(results21).isEqualTo(expected21Intentions)
@@ -139,7 +139,7 @@ class IntentionsRouterTest {
         assertThat(api20StateWithInstalledApplicationsIntentions.isEmpty).isTrue()
         assertThat(api20StateWithoutInstalledApplicationsIntentions.isEmpty).isTrue()
 
-        router.close()
+        router.cancel()
 
         assertThat(api20StateWithInstalledApplicationsIntentionsResults)
             .isEqualTo(expectedIntentions)

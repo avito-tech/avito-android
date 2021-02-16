@@ -110,7 +110,7 @@ class DeviceWorkerTest {
                 router = router
             ).run(this)
 
-            router.close()
+            router.cancel()
             worker.join()
 
             val results = resultsChannel.receiveAvailable()
@@ -153,7 +153,7 @@ class DeviceWorkerTest {
                 router = router
             ).run(this)
 
-            router.close()
+            router.cancel()
             worker.join()
 
             freezeDevice.verify()
@@ -213,7 +213,7 @@ class DeviceWorkerTest {
                 router = router
             ).run(this)
 
-            router.close()
+            router.cancel()
             worker.join()
 
             val results = resultsChannel.receiveAvailable()

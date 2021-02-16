@@ -9,17 +9,20 @@ import com.avito.runner.scheduler.report.SummaryReportMakerImplementation
 import com.avito.runner.scheduler.runner.StubTestRunner
 import com.avito.runner.scheduler.runner.TestRunner
 import com.avito.runner.scheduler.runner.TestRunnerResult
+import kotlinx.coroutines.CoroutineScope
 
 internal fun Entrypoint.Companion.createStubInstance(
     testRunner: TestRunner = StubTestRunner(result = TestRunnerResult(emptyMap())),
     summaryMaker: SummaryReportMaker = SummaryReportMakerImplementation(),
     reporter: Reporter = StubReporter(),
-    loggerFactory: LoggerFactory = StubLoggerFactory
+    loggerFactory: LoggerFactory = StubLoggerFactory,
+    coroutineScope: CoroutineScope
 ): Entrypoint {
     return Entrypoint(
         testRunner = testRunner,
         summaryReportMaker = summaryMaker,
         reporter = reporter,
-        loggerFactory = loggerFactory
+        loggerFactory = loggerFactory,
+        scope = coroutineScope
     )
 }

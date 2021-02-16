@@ -8,12 +8,14 @@ import com.avito.runner.scheduler.report.SummaryReportMaker
 import com.avito.runner.scheduler.runner.TestRunner
 import com.avito.runner.scheduler.runner.TestRunnerResult
 import com.avito.runner.scheduler.runner.model.TestRunRequest
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
 
 internal class Entrypoint(
     private val testRunner: TestRunner,
     private val summaryReportMaker: SummaryReportMaker,
     private val reporter: Reporter,
+    private val scope: CoroutineScope,
     loggerFactory: LoggerFactory
 ) {
 
@@ -28,7 +30,7 @@ internal class Entrypoint(
             runBlocking {
                 testRunner.runTests(
                     tests = requests,
-                    scope = this
+                    scope = scope
                 )
             }
         } else {
