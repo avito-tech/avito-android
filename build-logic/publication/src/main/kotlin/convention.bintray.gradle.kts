@@ -15,7 +15,6 @@ val finalProjectVersion: String = System.getProperty("avito.project.version").le
     if (env.isNullOrBlank()) projectVersion.get() else env
 }
 
-group = "com.avito.android"
 version = finalProjectVersion
 
 /**

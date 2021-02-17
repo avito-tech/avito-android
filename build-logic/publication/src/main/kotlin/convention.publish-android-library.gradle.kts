@@ -30,6 +30,10 @@ configure<LibraryExtension> {
                         artifact(sourcesTask.get())
 
                         registeredVariants++
+
+                        afterEvaluate {
+                            artifactId = publishExtension.artifactId.getOrElse(project.name)
+                        }
                     }
                 }
             }

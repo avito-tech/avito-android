@@ -14,4 +14,11 @@ abstract class AndroidLibraryPublishExtension @Inject constructor(objects: Objec
      */
     @Suppress("UnstableApiUsage")
     val variant: Property<String> = objects.property<String>().convention("release")
+
+    /**
+     * non blank value will modify artifact id of maven coordinates
+     *
+     * default: project.name
+     */
+    val artifactId: Property<String> = objects.property()
 }

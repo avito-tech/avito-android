@@ -2,6 +2,8 @@ plugins {
     `maven-publish`
 }
 
+group = "com.avito.android"
+
 @Suppress("UnstableApiUsage")
 val artifactoryUrl: Provider<String> = providers.gradleProperty("artifactoryUrl").forUseAtConfigurationTime()
 

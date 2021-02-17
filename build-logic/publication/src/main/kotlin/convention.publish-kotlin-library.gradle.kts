@@ -16,7 +16,7 @@ plugins.withId("kotlin") {
 
 publishing {
     publications {
-        register<MavenPublication>("maven") {
+        register<MavenPublication>("kotlin-library-maven") {
             from(components["java"])
 
             afterEvaluate {
