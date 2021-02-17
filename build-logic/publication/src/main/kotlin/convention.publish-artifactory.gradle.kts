@@ -1,5 +1,5 @@
 plugins {
-    id("convention.publish")
+    id("convention.publish-base")
 }
 
 @Suppress("UnstableApiUsage")

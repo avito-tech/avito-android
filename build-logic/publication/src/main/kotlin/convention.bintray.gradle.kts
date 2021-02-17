@@ -3,7 +3,7 @@ import com.jfrog.bintray.gradle.BintrayExtension.VersionConfig
 
 plugins {
     id("com.jfrog.bintray")
-    id("convention.publish")
+    id("convention.publish-base")
 }
 
 afterEvaluate {

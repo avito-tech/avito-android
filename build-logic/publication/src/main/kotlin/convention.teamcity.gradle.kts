@@ -2,7 +2,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 
 plugins {
-    id("convention.publish")
+    id("convention.publish-base")
 }
 
 /**

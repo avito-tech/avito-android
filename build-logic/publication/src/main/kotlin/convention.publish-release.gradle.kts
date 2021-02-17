@@ -1,7 +1,7 @@
 plugins {
-    id("convention.publish")
+    id("convention.publish-base")
     id("convention.teamcity")
-    id("convention.bintray")
+    id("convention.sonatype")
 }
 
 /**
@@ -10,7 +10,7 @@ plugins {
 tasks.register("publishRelease") {
     group = "publication"
 
-    dependsOn(tasks.named("bintrayUpload"))
+    dependsOn(tasks.named("publishToSonatype"))
 
     finalizedBy(tasks.named("teamcityPrintReleasedVersion"))
 }
