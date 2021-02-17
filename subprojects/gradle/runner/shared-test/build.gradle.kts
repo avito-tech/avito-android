@@ -4,7 +4,9 @@ plugins {
     id("convention.libraries")
 }
 
-extra["artifact-id"] = "runner-shared-test"
+publish {
+    artifactId = "runner-shared-test"
+}
 
 dependencies {
     api(project(":subprojects:gradle:runner:stub"))

@@ -4,7 +4,9 @@ plugins {
     id("convention.libraries")
 }
 
-extra["artifact-id"] = "runner-service"
+publish {
+    artifactId = "runner-service"
+}
 
 dependencies {
     api(project(":subprojects:common:coroutines-extension"))
