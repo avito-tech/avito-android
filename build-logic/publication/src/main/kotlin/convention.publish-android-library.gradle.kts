@@ -26,7 +26,7 @@ configure<LibraryExtension> {
         .whenObjectAdded {
             publishing {
                 publications {
-                    register<MavenPublication>("android-library-${publishExtension.variant.get()}") {
+                    register<MavenPublication>("${publishExtension.variant.get()}AndroidLibrary") {
                         from(components.getAt(publishExtension.variant.get()))
                         artifact(sourcesTask.get())
 

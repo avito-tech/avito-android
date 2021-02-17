@@ -10,7 +10,7 @@ val publishExtension = extensions.create<KotlinLibraryPublishExtension>("publish
 
 publishing {
     publications {
-        register<MavenPublication>("kotlin-library-maven") {
+        register<MavenPublication>("kotlinLibraryMaven") {
             from(components["java"])
 
             afterEvaluate {

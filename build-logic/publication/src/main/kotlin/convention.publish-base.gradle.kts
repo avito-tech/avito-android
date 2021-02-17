@@ -12,7 +12,13 @@ version = providers.systemProperty("avito.project.version").forUseAtConfiguratio
 
 publishing.publications.withType<MavenPublication> {
     pom {
+        name.set("Avito Android Infrastructure")
+        description.set("Collection of infrastructure libraries and gradle plugins of Avito Android project")
         url.set("https://github.com/avito-tech/avito-android")
+
+        scm {
+            url.set("https://github.com/avito-tech/avito-android")
+        }
         licenses {
             license {
                 name.set("MIT License")

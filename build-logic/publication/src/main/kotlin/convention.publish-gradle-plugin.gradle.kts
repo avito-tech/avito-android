@@ -1,5 +1,3 @@
-import gradle.kotlin.dsl.accessors._9672f80bef8b8ac66e9d4721ac07ac79.publishing
-
 plugins {
     id("convention.publish-kotlin-base")
     id("convention.publish-release")
@@ -22,7 +20,7 @@ publishing {
 
                 val pluginDeclaration = this
 
-                register<MavenPublication>("${pluginDeclaration.name}-plugin-maven") {
+                register<MavenPublication>("${pluginDeclaration.name}PluginMaven") {
                     from(components["java"])
 
                     require(pluginDeclaration.id.startsWith(pluginPrefix)) {

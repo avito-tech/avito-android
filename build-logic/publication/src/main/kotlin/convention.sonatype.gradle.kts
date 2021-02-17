@@ -1,11 +1,11 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("convention.publish-base")
+    signing
 }
 
-/**
- * used in ci/publish_local.sh
- */
-    tasks.register<Task>("publishToSonatype") {
+val publishTask = tasks.register<Task>("publishToSonatype") {
     group = "publication"
 
     if (isSnapshot()) {
@@ -31,7 +31,28 @@ publishing {
     }
 }
 
-@Suppress("UnstableApiUsage")
+signing {
+    sign(publishing.publications)
+
+    val signingKeyId = providers.gradleProperty("avito.pgp.keyid")
+        .forUseAtConfigurationTime()
+        .orNull
+    val signingKey = providers.gradleProperty("avito.pgp.key")
+        .forUseAtConfigurationTime()
+        .orNull
+    val signingPassword = providers.gradleProperty("avito.pgp.password")
+        .forUseAtConfigurationTime()
+        .orNull
+
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+}
+
+tasks.withType<Sign>().configureEach {
+    onlyIf {
+        gradle.taskGraph.hasTask(publishTask.get())
+    }
+}
+
 fun MavenArtifactRepository.setupCredentials() {
     credentials {
         username = providers.gradleProperty("avito.ossrh.user")
