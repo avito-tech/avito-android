@@ -26,6 +26,7 @@ import com.avito.android.test.report.ReportProvider
 import com.avito.android.test.report.ReportTestListener
 import com.avito.android.test.report.ReportViewerHttpInterceptor
 import com.avito.android.test.report.ReportViewerWebsocketReporter
+import com.avito.android.test.report.dump.ThreadDumper
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
@@ -283,6 +284,7 @@ abstract class InHouseInstrumentationTestRunner :
     fun tryToReportUnexpectedIncident(incident: Throwable) {
         try {
             if (!report.isWritten) {
+                report.addHtml("Threads dump", ThreadDumper.getThreadDump(), false)
                 report.registerIncident(AppCrashException(incident))
                 report.reportTestCase()
             }
