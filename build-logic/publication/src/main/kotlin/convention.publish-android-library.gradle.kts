@@ -2,7 +2,8 @@ import com.android.build.gradle.LibraryExtension
 import com.avito.android.publish.AndroidLibraryPublishExtension
 
 plugins {
-    id("convention.bintray")
+    id("convention.publish-release")
+    id("convention.publish-artifactory")
 }
 
 val publishExtension = extensions.create<AndroidLibraryPublishExtension>("publish")

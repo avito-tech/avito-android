@@ -1,7 +1,8 @@
 import gradle.kotlin.dsl.accessors._9672f80bef8b8ac66e9d4721ac07ac79.publishing
 
 plugins {
-    id("convention.bintray")
+    id("convention.publish-release")
+    id("convention.publish-artifactory")
     id("java-gradle-plugin")
 }
 

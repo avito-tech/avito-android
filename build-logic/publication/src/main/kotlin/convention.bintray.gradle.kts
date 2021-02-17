@@ -6,43 +6,10 @@ plugins {
     id("convention.publish")
 }
 
-@Suppress("UnstableApiUsage")
-val projectVersion: Provider<String> = providers.gradleProperty("projectVersion").forUseAtConfigurationTime()
-
-val publishReleaseTaskName = "publishRelease"
-
-val finalProjectVersion: String = System.getProperty("avito.project.version").let { env ->
-    if (env.isNullOrBlank()) projectVersion.get() else env
-}
-
-version = finalProjectVersion
-
-/**
- * https://www.jetbrains.com/help/teamcity/build-script-interaction-with-teamcity.html#BuildScriptInteractionwithTeamCity-ReportingBuildNumber
- */
-val teamcityPrintVersionTask: TaskProvider<Task> = tasks.register("teamcityPrintReleasedVersion") {
-    group = "publication"
-    description = "Prints teamcity service message to display released version as build number"
-
-    doLast {
-        logger.lifecycle("##teamcity[buildNumber '$finalProjectVersion']")
-    }
-}
-
-tasks.register(publishReleaseTaskName) {
-    group = "publication"
-    finalizedBy(teamcityPrintVersionTask)
-}
-
 afterEvaluate {
     val registeredPublications = publishing.publications.names
 
-    tasks.named(publishReleaseTaskName).configure {
-        dependsOn(tasks.named("bintrayUpload"))
-    }
-
     bintray {
-        // todo fail fast with meaningful error message
         user = getOptionalExtra("avito.bintray.user")
         key = getOptionalExtra("avito.bintray.key")
 
@@ -68,7 +35,7 @@ afterEvaluate {
 
                 version(
                     closureOf<VersionConfig> {
-                        name = finalProjectVersion
+                        name = version.toString()
                     }
                 )
             }
