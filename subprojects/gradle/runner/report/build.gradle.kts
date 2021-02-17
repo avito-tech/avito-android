@@ -6,7 +6,7 @@ plugins {
 }
 
 publish {
-    artifactId = "runner-report"
+    artifactId.set("runner-report")
 }
 
 dependencies {

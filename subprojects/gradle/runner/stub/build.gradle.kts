@@ -4,7 +4,7 @@ plugins {
 }
 
 publish {
-    artifactId = "runner-stub"
+    artifactId.set("runner-stub")
 }
 
 dependencies {

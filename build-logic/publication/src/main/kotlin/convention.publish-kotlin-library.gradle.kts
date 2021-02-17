@@ -20,11 +20,7 @@ publishing {
             from(components["java"])
 
             afterEvaluate {
-                artifactId = if (publishExtension.artifactId.isNotBlank()) {
-                    publishExtension.artifactId
-                } else {
-                    project.name
-                }
+                artifactId = publishExtension.artifactId.getOrElse(project.name)
             }
         }
     }

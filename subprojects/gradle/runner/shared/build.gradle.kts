@@ -5,7 +5,7 @@ plugins {
 }
 
 publish {
-    artifactId = "runner-shared"
+    artifactId.set("runner-shared")
 }
 
 dependencies {

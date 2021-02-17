@@ -5,7 +5,7 @@ plugins {
 }
 
 publish {
-    artifactId = "runner-client"
+    artifactId.set("runner-client")
 }
 
 dependencies {

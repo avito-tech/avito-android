@@ -7,7 +7,7 @@ plugins {
 }
 
 publish {
-    artifactId = "runner-device-provider"
+    artifactId.set("runner-device-provider")
 }
 
 dependencies {
