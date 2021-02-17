@@ -10,6 +10,7 @@ import com.avito.runner.scheduler.runner.TestRunnerResult
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 internal class Entrypoint(
     private val testRunner: TestRunner,
@@ -28,10 +29,11 @@ internal class Entrypoint(
 
         val runResult: TestRunnerResult = if (requests.isNotEmpty()) {
             runBlocking {
-                testRunner.runTests(
-                    tests = requests,
-                    scope = scope
-                )
+                withContext(scope.coroutineContext) {
+                    testRunner.runTests(
+                        tests = requests
+                    )
+                }
             }
         } else {
             TestRunnerResult(emptyMap())

@@ -11,14 +11,13 @@ internal interface ReservationClient {
         val deviceCoordinates: ReceiveChannel<DeviceCoordinate>
     )
 
-    fun claim(
+    suspend fun claim(
         reservations: Collection<ReservationData>,
         scope: CoroutineScope
     ): ClaimResult
 
     suspend fun remove(
-        podName: String,
-        scope: CoroutineScope
+        podName: String
     )
 
     suspend fun release()

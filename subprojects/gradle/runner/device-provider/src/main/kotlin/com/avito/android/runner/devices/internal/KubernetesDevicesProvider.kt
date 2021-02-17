@@ -27,7 +27,7 @@ internal class KubernetesDevicesProvider(
 
     private val logger = loggerFactory.create<KubernetesDevicesProvider>()
 
-    override fun provideFor(
+    override suspend fun provideFor(
         reservations: Collection<ReservationData>,
         scope: CoroutineScope
     ): ReceiveChannel<Device> {
@@ -57,7 +57,7 @@ internal class KubernetesDevicesProvider(
         scope: CoroutineScope
     ) {
         check(coordinate is DeviceCoordinate.Kubernetes)
-        client.remove(coordinate.podName, scope)
+        client.remove(coordinate.podName)
     }
 
     override suspend fun releaseDevices() {

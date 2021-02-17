@@ -6,4 +6,6 @@ import java.io.Serializable
 public data class ReservationData(
     val device: Device,
     val count: Int
-) : Serializable
+) : Serializable {
+    public companion object
+}

@@ -1,13 +1,13 @@
 package com.avito.android.runner.devices
 
-import com.avito.android.runner.devices.internal.AndroidDebugBridge
-import com.avito.android.runner.devices.internal.EmulatorsLogsReporter
+import com.avito.android.runner.devices.internal.AndroidDebugBridgeImpl
+import com.avito.android.runner.devices.internal.EmulatorsLogsReporterImpl
 import com.avito.android.runner.devices.internal.KubernetesDevicesProvider
 import com.avito.android.runner.devices.internal.LocalDevicesProvider
 import com.avito.android.runner.devices.internal.StubDevicesProvider
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesApi
 import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservationClient
-import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactory
+import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactoryImpl
 import com.avito.android.runner.devices.internal.kubernetes.UUIDDeploymentNameGenerator
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.logger.LoggerFactory
@@ -38,11 +38,11 @@ public class DeviceProviderFactoryImpl(
         kubernetesNamespace: String
     ): DevicesProvider {
         val adb = Adb()
-        val androidDebugBridge = AndroidDebugBridge(
+        val androidDebugBridge = AndroidDebugBridgeImpl(
             adb = adb,
             loggerFactory = loggerFactory
         )
-        val emulatorsLogsReporter = EmulatorsLogsReporter(
+        val emulatorsLogsReporter = EmulatorsLogsReporterImpl(
             outputFolder = output,
             logcatTags = logcatTags,
             logcatDir = logcatDir
@@ -76,7 +76,7 @@ public class DeviceProviderFactoryImpl(
                             ),
                             loggerFactory = loggerFactory
                         ),
-                        reservationDeploymentFactory = ReservationDeploymentFactory(
+                        reservationDeploymentFactory = ReservationDeploymentFactoryImpl(
                             configurationName = configurationName,
                             projectName = projectName,
                             buildId = buildId,

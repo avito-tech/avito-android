@@ -23,7 +23,7 @@ internal class StubDevicesProvider(
     private val devices = Channel<Device>(Channel.UNLIMITED)
 
     @ExperimentalCoroutinesApi
-    override fun provideFor(
+    override suspend fun provideFor(
         reservations: Collection<ReservationData>,
         scope: CoroutineScope
     ): ReceiveChannel<Device> {

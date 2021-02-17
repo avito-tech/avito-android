@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":subprojects:common:logger"))
 
     testImplementation(testFixtures(project(":subprojects:common:logger")))
+    testImplementation(libs.coroutinesTest)
 }
 
 kotlin {

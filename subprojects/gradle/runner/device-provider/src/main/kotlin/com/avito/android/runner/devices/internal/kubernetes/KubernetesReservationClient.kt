@@ -11,11 +11,14 @@ import com.avito.logger.create
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
 import io.fabric8.kubernetes.api.model.Pod
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
 import kotlinx.coroutines.channels.toList
@@ -23,44 +26,47 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class KubernetesReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
     private val kubernetesApi: KubernetesApi,
     private val emulatorsLogsReporter: EmulatorsLogsReporter,
     loggerFactory: LoggerFactory,
-    private val reservationDeploymentFactory: ReservationDeploymentFactory
+    private val reservationDeploymentFactory: ReservationDeploymentFactory,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val podsQueryIntervalMs: Long = 5000L
 ) : ReservationClient {
 
     private val logger = loggerFactory.create<KubernetesReservationClient>()
 
     private var state: State = State.Idling
 
-    private val podsQueryIntervalMs = 5000L
-
-    override fun claim(
+    override suspend fun claim(
         reservations: Collection<ReservationData>,
         scope: CoroutineScope
     ): ReservationClient.ClaimResult {
-
+        require(reservations.isNotEmpty()) {
+            "Must have at least one reservation but empty"
+        }
         val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
-
-        scope.launch(Dispatchers.IO) {
+        scope.launch(CoroutineName("main-reservation") + dispatcher) {
             if (state !is State.Idling) {
                 throw IllegalStateException("Unable to start reservation job. Already started")
             }
-            val podsChannel = Channel<Pod>()
+            val podsChannel = Channel<Pod>(Channel.UNLIMITED)
             val deploymentsChannel = Channel<String>(reservations.size)
             state = State.Reserving(pods = podsChannel, deployments = deploymentsChannel)
 
             reservations.forEach { reservation ->
-                createDeployment(
-                    reservation,
-                    deploymentsChannel,
-                    podsChannel,
-                    serialsChannel
-                )
+                launch(CoroutineName("create-deployment")) {
+                    createDeployment(
+                        reservation,
+                        deploymentsChannel,
+                        podsChannel,
+                        serialsChannel
+                    )
+                }
             }
-
             initializeDevices(podsChannel, serialsChannel)
         }
 
@@ -69,44 +75,46 @@ internal class KubernetesReservationClient(
         )
     }
 
-    private fun CoroutineScope.createDeployment(
+    private suspend fun createDeployment(
         reservation: ReservationData,
         deploymentsChannel: Channel<String>,
         podsChannel: Channel<Pod>,
         serialsChannel: Channel<DeviceCoordinate>
     ) {
-        launch {
-            val deployment = reservationDeploymentFactory.createDeployment(
-                namespace = kubernetesApi.namespace,
-                reservation = reservation
-            )
-            val deploymentName = deployment.metadata.name
-            deploymentsChannel.send(deploymentName)
-            kubernetesApi.createDeployment(deployment)
+        val deployment = reservationDeploymentFactory.createDeployment(
+            namespace = kubernetesApi.namespace,
+            reservation = reservation
+        )
+        val deploymentName = deployment.metadata.name
+        deploymentsChannel.send(deploymentName)
+        kubernetesApi.createDeployment(deployment)
 
-            listenPodsFromDeployment(
-                deploymentName = deploymentName,
-                podsChannel = podsChannel,
-                serialsChannel = serialsChannel
-            )
-        }
+        listenPodsFromDeployment(
+            deploymentName = deploymentName,
+            podsChannel = podsChannel,
+            serialsChannel = serialsChannel
+        )
     }
 
     private fun CoroutineScope.initializeDevices(
         podsChannel: ReceiveChannel<Pod>,
         serialsChannel: Channel<DeviceCoordinate>
     ) {
-        launch {
-            @Suppress("DEPRECATION") // todo use Flow
-            val uniqueRunningPods: ReceiveChannel<Pod> = podsChannel
+        launch(CoroutineName("waiting-pods")) {
+            @Suppress("DEPRECATION")
+            podsChannel
                 .filter { it.status.phase == POD_STATUS_RUNNING }
                 .distinctBy { it.metadata.name }
-
-            for (pod in uniqueRunningPods) {
-                launch {
-                    pod.bootDevice(serialsChannel)
+                .consumeEach { pod ->
+                    if (!serialsChannel.isClosedForSend) {
+                        launch(CoroutineName("boot-pod-${pod.metadata.name}")) {
+                            pod.bootDevice(serialsChannel)
+                        }
+                    } else {
+                        logger.debug("cancel wating-pods")
+                        podsChannel.cancel()
+                    }
                 }
-            }
         }
     }
 
@@ -117,6 +125,9 @@ internal class KubernetesReservationClient(
         val serial = device.serial
         val isReady = device.waitForBoot()
         if (isReady) {
+            if (serialsChannel.isClosedForSend) {
+                return
+            }
             emulatorsLogsReporter.redirectLogcat(
                 emulatorName = serial,
                 device = device
@@ -138,23 +149,23 @@ internal class KubernetesReservationClient(
         }
     }
 
-    override suspend fun remove(podName: String, scope: CoroutineScope) {
-        scope.launch(Dispatchers.IO) {
+    override suspend fun remove(podName: String) {
+        withContext(CoroutineName("delete-pod-$podName") + dispatcher) {
             kubernetesApi.deletePod(podName)
         }
     }
 
-    override suspend fun release() = withContext(Dispatchers.IO) {
+    override suspend fun release() = withContext(dispatcher) {
         val state = state
         if (state !is State.Reserving) {
             // TODO: check on client side beforehand
             // TODO this leads to deployment leak
-            throw RuntimeException("Unable to stop reservation job. Hasn't started yet")
+            throw IllegalStateException("Unable to stop reservation job. Hasn't started yet")
         } else {
             state.pods.close()
             state.deployments.close()
             for (deploymentName in state.deployments.toList()) {
-                launch {
+                launch(CoroutineName("delete-deployment-$deploymentName")) {
                     val runningPods = kubernetesApi.getPods(
                         deploymentName = deploymentName
                     ).filter { it.status.phase == POD_STATUS_RUNNING }
@@ -162,7 +173,7 @@ internal class KubernetesReservationClient(
                     if (runningPods.isNotEmpty()) {
                         logger.debug("Save emulators logs for deployment: $deploymentName")
                         for (pod in runningPods) {
-                            launch {
+                            launch(CoroutineName("get-pod-logs-${pod.metadata.name}")) {
                                 val podName = pod.metadata.name
                                 val device = getDevice(pod)
                                 val serial = device.serial
@@ -213,7 +224,7 @@ internal class KubernetesReservationClient(
 
     private suspend fun listenPodsFromDeployment(
         deploymentName: String,
-        podsChannel: SendChannel<Pod>,
+        podsChannel: Channel<Pod>,
         serialsChannel: Channel<DeviceCoordinate>
     ) {
         logger.debug("Start listening devices for $deploymentName")
@@ -230,7 +241,7 @@ internal class KubernetesReservationClient(
             pods = kubernetesApi.getPods(deploymentName)
         }
         logger.debug("Finish listening devices for $deploymentName")
-        podsChannel.close()
+        podsChannel.cancel()
         serialsChannel.close()
     }
 

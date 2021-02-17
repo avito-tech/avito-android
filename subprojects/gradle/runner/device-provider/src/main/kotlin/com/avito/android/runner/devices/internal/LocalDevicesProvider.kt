@@ -37,7 +37,7 @@ internal class LocalDevicesProvider(
     private val adbQueryIntervalMs = 5000L
 
     @ExperimentalCoroutinesApi
-    override fun provideFor(
+    override suspend fun provideFor(
         reservations: Collection<ReservationData>,
         scope: CoroutineScope
     ): ReceiveChannel<Device> {
