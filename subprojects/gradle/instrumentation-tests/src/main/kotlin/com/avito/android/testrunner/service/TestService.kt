@@ -26,11 +26,7 @@ public abstract class TestService : BuildService<Params>, AutoCloseable {
         data class Error(val report: String) : TestServiceRunResult()
     }
 
-    init {
-    }
-
     internal fun runTests(): TestServiceRunResult {
-        Thread.sleep(5000)
         return TestServiceRunResult.Success(report = "All is good!")
     }
 
