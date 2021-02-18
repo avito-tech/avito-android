@@ -31,6 +31,9 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 
     useJUnitPlatform()
 
+    @Suppress("MagicNumber")
+    maxParallelForks = 8
+
     failFast = true
 
     systemProperty("rootDir", "${project.rootDir}")
