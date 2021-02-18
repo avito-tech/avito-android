@@ -5,7 +5,9 @@ plugins {
     id("convention.test-fixtures")
 }
 
-extra["artifact-id"] = "runner-report"
+publish {
+    artifactId.set("runner-report")
+}
 
 dependencies {
     api(project(":subprojects:common:report-viewer"))

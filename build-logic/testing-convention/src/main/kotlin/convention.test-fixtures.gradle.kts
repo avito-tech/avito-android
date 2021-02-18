@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.`java-test-fixtures`
-import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
@@ -15,4 +13,14 @@ configure<KotlinJvmProjectExtension> {
      */
     target.compilations.getByName("testFixtures")
         .associateWith(target.compilations.getByName("main"))
+}
+
+(components["java"] as AdhocComponentWithVariants).skipTestFixturesPublication()
+
+/**
+ * from: https://docs.gradle.org/current/userguide/java_testing.html#publishing_test_fixtures
+ */
+fun AdhocComponentWithVariants.skipTestFixturesPublication() {
+    withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
+    withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
 }

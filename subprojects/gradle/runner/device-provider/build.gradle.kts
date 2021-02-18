@@ -6,7 +6,9 @@ plugins {
     id("convention.libraries")
 }
 
-extra["artifact-id"] = "runner-device-provider"
+publish {
+    artifactId.set("runner-device-provider")
+}
 
 dependencies {
     api(project(":subprojects:gradle:runner:service"))

@@ -3,7 +3,9 @@ plugins {
     id("convention.publish-kotlin-library")
 }
 
-extra["artifact-id"] = "runner-stub"
+publish {
+    artifactId.set("runner-stub")
+}
 
 dependencies {
     implementation(project(":subprojects:common:report-viewer"))

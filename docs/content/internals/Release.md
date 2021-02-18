@@ -4,7 +4,7 @@
 avito-disclaimer.md
 --8<--
 
-We publish releases to [Bintray](https://bintray.com/avito-tech/maven/avito-android).
+We publish releases to [Maven Central](https://search.maven.org/search?q=com.avito.android).
 
 ## Publishing a new release
 
@@ -18,42 +18,41 @@ If it is `Failed` you could release from previous `Succeed` commits or fix probl
 This branch must be persistent. It is used for automation.
 1. Manually run [Integration build](http://links.k.avito.ru/ZA) on the `release branch`.
 1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`.
+1. Verify and close staging repo on [nexus](https://oss.sonatype.org/#stagingRepositories). See [Maven central publishing reference article](https://getstream.io/blog/publishing-libraries-to-mavencentral-2021/)
+1. Wait till new packages appear on [maven central](https://search.maven.org/search?q=com.avito.android). Should take ~15 mins.
 1. Make a PR to an internal avito repository with the new version of infrastructure.
 1. Checkout a new branch and make a PR to github repository:
     - Change `infraVersion` property in the `./gradle.properties` to the new version 
-    - Bump up a `projectVersion` property in the `./subprojects/gradle.properties` to the next version
+    - Bump up a `projectVersion` property in the `./gradle.properties` to the next version
 1. Run `make draft_release version=<current release version> prev_version=<last release version>`. Ensure you installed the ([`Github cli`](https://github.com/cli/cli))
 ([Managing releases in a repository](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository))\
 
+### Sonatype access
+
+1. [Create account](https://issues.sonatype.org/secure/Signup!default.jspa)
+1. Create an issue referencing [original one](https://issues.sonatype.org/browse/OSSRH-64609), asking for `com.avito.android` access
+1. Wait for confirmation
+1. Login to [nexus](https://oss.sonatype.org/) to validate staging profile access
+
+Some additional info:
+
+- [Maven central publishing reference article](https://getstream.io/blog/publishing-libraries-to-mavencentral-2021/)
+
 ### Known issues
-
-#### Failed publishing to Bintray
-
-Uploading to Bintray is flaky. You can face different issues:
-
-- NoHttpResponseException: api.bintray.com:443 failed to respond [#325](https://github.com/bintray/gradle-bintray-plugin/issues/325)
-- Could not upload to https://api.bintray.com/...: HTTP/1.1 405 Not Allowed nginx
-
-In this case artifacts can be uploaded partially, only pom for instance.\
-Try to upload it with overriding:
-
-0. Enable `BintrayExtension.override` in a buildscript.
-0. Upload problematic artifact:\
-`./gradlew -p subprojects :<module>:bintrayUpload --no-parallel --stacktrace`
 
 #### Can't find an artifact in an internal Artifactory
 
 How it looks:
 
-- Bintray has [expected artifacts](https://dl.bintray.com/avito/maven/com/avito/android/runner-shared/2020.16/): pom, jar/aar, sources.jar
-- Gradle can't find it in Artifactory
+- Maven central has [expected artifacts](https://search.maven.org/search?q=com.avito.android): pom, jar/aar, sources.jar
+- Gradle can't find it in Artifactory Proxy
 
 ```text
 > Could not resolve all artifacts for configuration ':classpath'.
    > Could not find com.avito.android:runner-shared:2020.16.
      Searched in the following locations:
-       - file:/home/user/.m2/repository/com/avito/android/runner-shared/2020.16/runner-shared-2020.16.pom
-       - http://<artifactory>/artifactory/bintray-avito-maven/com/avito/android/runner-shared/2020.16/runner-shared-2020.16.pom
+       - file:/home/user/.m2/repository/
+       - http://<artifactory>/
 ```
 
 Probable reasons:
@@ -73,7 +72,7 @@ If the file downloaded successfully, refresh a local cache via `--refresh-depend
 
 ### Using `mavenLocal`
 
-1. Run `./gradlew publishToMavenLocal -PprojectVersion=local -p subprojects` in github repository.
+1. Run `make publish_to_maven_local` in github repository.
 1. Run integration tests of your choice in avito with specified test version
 
 ### Using `compositeBuild`
@@ -102,7 +101,7 @@ If you want to run a real CI build against not published release,
 you could publish it manually as a temporary version to the internal Artifactory:
 
 ```text
-./gradlew -p subprojects publishToArtifactory -PprojectVersion=<projectVersion>-integration-01  -Dorg.gradle.internal.publish.checksums.insecure=true
+make publish_to_artifactory version=<custom version>
 ```
 
 Or using [Publish to Artifactory](http://links.k.avito.ru/publishToArtifactoryConfiguration) CI configuration.

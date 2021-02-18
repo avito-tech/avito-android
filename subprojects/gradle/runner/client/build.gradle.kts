@@ -4,7 +4,9 @@ plugins {
     id("convention.libraries")
 }
 
-extra["artifact-id"] = "runner-client"
+publish {
+    artifactId.set("runner-client")
+}
 
 dependencies {
     compileOnly(gradleApi())

@@ -88,6 +88,11 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -PkubernetesToken=$KUBERNETES_TOKEN \\
              -PkubernetesCaCertData=$KUBERNETES_CA_CERT_DATA \\
              -Pavito.build-verdict.enabled=true \\
+             -Pavito.ossrh.user=$OSSRH_USER \\
+             -Pavito.ossrh.password=$OSSRH_PASSWORD \\
+             -Pavito.pgp.keyid=$PGP_KEY_ID \\
+             -Pavito.pgp.key=$PGP_KEY \\
+             -Pavito.pgp.password=$PGP_PASSWORD \\
              -Pavito.bitbucket.enabled=true"
 
 function runInBuilder() {

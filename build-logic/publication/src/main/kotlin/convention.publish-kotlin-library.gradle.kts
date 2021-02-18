@@ -1,30 +1,21 @@
+import com.avito.android.publish.KotlinLibraryPublishExtension
+
 plugins {
-    id("convention.bintray")
+    id("convention.publish-kotlin-base")
+    id("convention.publish-release")
+    id("convention.publish-artifactory")
 }
 
-plugins.withId("kotlin") {
-    extensions.getByType<JavaPluginExtension>().run {
-
-        @Suppress("UnstableApiUsage")
-        withSourcesJar()
-    }
-}
+val publishExtension = extensions.create<KotlinLibraryPublishExtension>("publish")
 
 publishing {
     publications {
-        register<MavenPublication>("maven") {
+        register<MavenPublication>("kotlinLibraryMaven") {
             from(components["java"])
+
             afterEvaluate {
-                artifactId = project.getOptionalExtra("artifact-id") ?: project.name
+                artifactId = publishExtension.artifactId.getOrElse(project.name)
             }
         }
-    }
-}
-
-fun Project.getOptionalExtra(key: String): String? {
-    return if (extra.has(key)) {
-        (extra[key] as? String)?.let { if (it.isBlank()) null else it }
-    } else {
-        null
     }
 }

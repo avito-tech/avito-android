@@ -4,7 +4,9 @@ plugins {
     id("convention.libraries")
 }
 
-extra["artifact-id"] = "runner-shared"
+publish {
+    artifactId.set("runner-shared")
+}
 
 dependencies {
     compileOnly(gradleApi())

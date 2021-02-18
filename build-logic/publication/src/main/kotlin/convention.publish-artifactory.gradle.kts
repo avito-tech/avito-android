@@ -1,11 +1,14 @@
 plugins {
-    `maven-publish`
+    id("convention.publish-base")
 }
 
 @Suppress("UnstableApiUsage")
 val artifactoryUrl: Provider<String> = providers.gradleProperty("artifactoryUrl").forUseAtConfigurationTime()
 
-val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
+/**
+ * used in ci/publish_local.sh
+ */
+tasks.register<Task>("publishToArtifactory") {
     group = "publication"
     doFirst {
         requireNotNull(artifactoryUrl.orNull) {
@@ -18,25 +21,25 @@ val publishToArtifactoryTask = tasks.register<Task>("publishToArtifactory") {
     }
 }
 
-publishing {
-    repositories {
-        if (!artifactoryUrl.orNull.isNullOrBlank()) {
+if (!artifactoryUrl.orNull.isNullOrBlank()) {
+    publishing {
+        repositories {
             maven {
-                name = "artifactory"
+                name = "Artifactory"
                 setUrl("${artifactoryUrl.orNull}/libs-release-local")
+
+                @Suppress("UnstableApiUsage")
                 credentials {
-                    username = project.getOptionalExtra("avito.artifactory.user")
-                    password = project.getOptionalExtra("avito.artifactory.password")
+
+                    username = providers.gradleProperty("avito.artifactory.user")
+                        .forUseAtConfigurationTime()
+                        .orNull
+
+                    password = providers.gradleProperty("avito.artifactory.password")
+                        .forUseAtConfigurationTime()
+                        .orNull
                 }
             }
         }
-    }
-}
-
-fun Project.getOptionalExtra(key: String): String? {
-    return if (extra.has(key)) {
-        (extra[key] as? String)?.let { if (it.isBlank()) null else it }
-    } else {
-        null
     }
 }
