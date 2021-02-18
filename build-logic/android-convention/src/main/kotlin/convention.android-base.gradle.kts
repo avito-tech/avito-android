@@ -1,5 +1,4 @@
 import com.android.build.gradle.BaseExtension
-import org.gradle.kotlin.dsl.configure
 
 plugins {
     id("convention.libraries")
@@ -30,5 +29,17 @@ configure<BaseExtension> {
         isWarningsAsErrors = true
         textReport = true
         isQuiet = true
+    }
+
+    @Suppress("UnstableApiUsage")
+    with(buildFeatures) {
+        aidl = false
+        compose = false
+        buildConfig = false
+        prefab = false
+        renderScript = false
+        resValues = false
+        shaders = false
+        viewBinding = false
     }
 }
