@@ -8,6 +8,7 @@ plugins {
 gradlePlugin {
     // we publish plugins as simple libraries for now,
     // someone should dive into plugin publication specifics
+    // todo MBS-10660
     isAutomatedPublishing = false
 }
 
