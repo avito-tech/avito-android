@@ -109,7 +109,7 @@ compile_tests:
 	./gradlew compileTestKotlin $(log_level)
 
 compile:
-	./gradlew compileKotlin compileTestKotlin compileIntegTestKotlin compileReleaseKotlin compileDebugKotlin compileDebugUnitTestKotlin $(log_level)
+	./gradlew compileAll $(log_level)
 
 check:
 	./gradlew check
