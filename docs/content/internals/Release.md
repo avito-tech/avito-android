@@ -18,7 +18,7 @@ If it is `Failed` you could release from previous `Succeed` commits or fix probl
 This branch must be persistent. It is used for automation.
 1. Manually run [Integration build](http://links.k.avito.ru/ZA) on the `release branch`.
 1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`.
-1. Verify and close staging repo on [nexus](https://oss.sonatype.org/#stagingRepositories). See `Maven central publishing reference article` below
+1. Verify and close staging repo on [nexus](https://oss.sonatype.org/#stagingRepositories). See [Maven central publishing reference article](https://getstream.io/blog/publishing-libraries-to-mavencentral-2021/)
 1. Wait till new packages appear on [maven central](https://search.maven.org/search?q=com.avito.android). Should take ~15 mins.
 1. Make a PR to an internal avito repository with the new version of infrastructure.
 1. Checkout a new branch and make a PR to github repository:
