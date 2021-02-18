@@ -3,7 +3,7 @@ plugins {
 }
 
 /**
- * https://www.jetbrains.com/help/teamcity/build-script-interaction-with-teamcity.html#BuildScriptInteractionwithTeamCity-ReportingBuildNumber
+ * https://www.jetbrains.com/help/teamcity/service-messages.html#Reporting+Build+Number
  */
 tasks.register("teamcityPrintReleasedVersion") {
     group = "publication"
