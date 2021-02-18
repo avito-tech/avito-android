@@ -1,30 +1,47 @@
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.withType
+@file:Suppress("UnstableApiUsage")
+
+import gradle.kotlin.dsl.accessors._19cd057ada475b7a517b0a6f6ed44c2b.libs
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
 plugins {
+    id("kotlin")
     id("convention.libraries")
+    id("java-gradle-plugin")
+    idea
 }
 
-// todo more precise configuration for gradle plugins, no need for gradle testing in common kotlin modules
+val gradleTest: SourceSet by sourceSets.creating
 
-dependencies {
-    add("testImplementation", gradleTestKit())
+val gradleTestJarTask = tasks.register<Jar>(gradleTest.jarTaskName) {
+    archiveClassifier.set("gradle-tests")
+    from(gradleTest.output)
 }
 
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
 
 val testTimeoutSeconds = 600
 
-tasks.withType<Test>().configureEach {
+val gradleTestTask = tasks.register<Test>("gradleTest") {
+    description = "Runs gradle test kit tests"
+    group = "verification"
+
+    testClassesDirs = gradleTest.output.classesDirs
+    classpath = configurations[gradleTest.runtimeClasspathConfigurationName] + files(gradleTestJarTask)
+
+    useJUnitPlatform()
+
+    failFast = true
+
+    systemProperty("rootDir", "${project.rootDir}")
     systemProperty("kotlinVersion", kotlinVersion)
     systemProperty("compileSdkVersion", libs.compileSdkVersion)
     systemProperty("buildToolsVersion", libs.buildToolsVersion)
     systemProperty("androidGradlePluginVersion", libs.androidGradlePluginVersion)
 
     /**
-     * IDEA добавляет специальный init script, по нему понимаем что запустили в IDE
-     * используется в `:test-project`
+     * IDEA adds an init script, using it to define if it is an IDE run
+     * used in `:test-project`
      */
     systemProperty(
         "isInvokedFromIde",
@@ -34,4 +51,48 @@ tasks.withType<Test>().configureEach {
     systemProperty("isTest", true)
 
     systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
+}
+
+dependencies {
+    "gradleTestImplementation"(gradleTestKit())
+    "gradleTestImplementation"(project(":subprojects:gradle:test-project"))
+    "gradleTestImplementation"(project(":subprojects:common:truth-extensions"))
+    "gradleTestImplementation"(libs.junitJupiterApi)
+    "gradleTestImplementation"(libs.truth)
+    "gradleTestRuntimeOnly"(libs.junitJupiterEngine)
+    "gradleTestRuntimeOnly"(libs.junitPlatformRunner)
+    "gradleTestRuntimeOnly"(libs.junitPlatformLauncher)
+}
+
+gradlePlugin {
+    testSourceSets(gradleTest)
+}
+
+// make idea to treat gradleTest as test sources
+idea {
+    gradleTest.allSource.srcDirs.forEach { srcDir ->
+        module.testSourceDirs = module.testSourceDirs + srcDir
+    }
+
+    module.scopes["TEST"]?.get("plus")?.plusAssign(
+        listOf(
+            configurations.getByName(gradleTest.compileClasspathConfigurationName),
+            configurations.getByName(gradleTest.runtimeClasspathConfigurationName)
+        )
+    )
+}
+
+tasks.check.configure {
+    dependsOn(gradleTestTask)
+}
+
+configure<KotlinJvmProjectExtension> {
+
+    target.compilations.getByName("gradleTest")
+        .associateWith(target.compilations.getByName("main"))
+
+    plugins.withType<JavaTestFixturesPlugin>() {
+        target.compilations.getByName("gradleTest")
+            .associateWith(target.compilations.getByName("testFixtures"))
+    }
 }

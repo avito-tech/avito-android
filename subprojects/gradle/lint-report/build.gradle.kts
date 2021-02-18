@@ -3,6 +3,7 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.integration-testing")
     id("convention.libraries")
+    id("convention.gradle-testing-legacy")
 }
 
 dependencies {

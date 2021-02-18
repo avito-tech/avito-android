@@ -11,7 +11,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class CheckAndroidSdkVersionTest {
+internal class CheckAndroidSdkVersionTest {
 
     private var androidHome: File? = null
     private lateinit var projectDir: File
