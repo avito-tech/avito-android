@@ -1,6 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
-    id("convention.publish-gradle-plugin")
+    id("convention.publish-gradle-plugin-legacy")
     id("convention.libraries")
 }
 

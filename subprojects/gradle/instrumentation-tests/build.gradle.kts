@@ -1,7 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.test-fixtures")
-    id("convention.publish-gradle-plugin")
+    id("convention.publish-gradle-plugin-legacy")
     id("convention.integration-testing")
     id("convention.libraries")
 }
