@@ -22,6 +22,8 @@ dependencies {
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
+
+    testImplementation(testFixtures(project(":subprojects:common:graphite")))
 }
 
 gradlePlugin {

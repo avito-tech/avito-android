@@ -1,5 +1,6 @@
 package com.avito.android.plugin.artifactory
 
+import com.avito.http.HttpCodes
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
@@ -67,7 +68,7 @@ internal class ArtifactoryAppBackupPluginTest {
         Files.createFile(Paths.get(projectDir.path, moduleName, artifactName))
 
         val dispatcher = MockDispatcher(
-            unmockedResponse = MockResponse().setResponseCode(200),
+            unmockedResponse = MockResponse().setResponseCode(HttpCodes.OK),
             loggerFactory = loggerFactory
         )
             .also { mockWebServer.dispatcher = it }
@@ -75,7 +76,7 @@ internal class ArtifactoryAppBackupPluginTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
+                response = MockResponse().setResponseCode(HttpCodes.OK).setStubMavenMetadataBody()
             )
         )
 
@@ -154,7 +155,7 @@ internal class ArtifactoryAppBackupPluginTest {
         }
 
         val dispatcher = MockDispatcher(
-            unmockedResponse = MockResponse().setResponseCode(200),
+            unmockedResponse = MockResponse().setResponseCode(HttpCodes.OK),
             loggerFactory = loggerFactory
         )
             .also { mockWebServer.dispatcher = it }
@@ -162,7 +163,7 @@ internal class ArtifactoryAppBackupPluginTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
+                response = MockResponse().setResponseCode(HttpCodes.OK).setStubMavenMetadataBody()
             )
         )
 
