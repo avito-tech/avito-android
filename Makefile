@@ -102,6 +102,9 @@ dynamic_properties:
 unit_tests:
 	./gradlew test $(log_level)
 
+gradle_test:
+	./gradlew gradleTest $(log_level)
+
 integration_tests:
 	./gradlew $(module):integrationTest
 
