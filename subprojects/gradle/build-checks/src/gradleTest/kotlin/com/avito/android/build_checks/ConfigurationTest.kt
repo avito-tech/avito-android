@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class ConfigurationTest {
+internal class ConfigurationTest {
 
     @Test
     fun `disable by property - no side effects`(@TempDir projectDir: File) {
