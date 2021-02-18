@@ -55,8 +55,10 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 
 dependencies {
     "gradleTestImplementation"(gradleTestKit())
-    "gradleTestImplementation"(project(":subprojects:gradle:test-project"))
+    "gradleTestImplementation"(testFixtures(project(":subprojects:common:logger")))
     "gradleTestImplementation"(project(":subprojects:common:truth-extensions"))
+    "gradleTestImplementation"(project(":subprojects:gradle:git"))
+    "gradleTestImplementation"(project(":subprojects:gradle:test-project"))
     "gradleTestImplementation"(libs.junitJupiterApi)
     "gradleTestImplementation"(libs.truth)
     "gradleTestRuntimeOnly"(libs.junitJupiterEngine)
