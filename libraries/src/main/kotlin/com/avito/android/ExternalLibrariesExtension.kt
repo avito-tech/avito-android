@@ -78,7 +78,6 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val commonsIo = "commons-io:commons-io:2.7"
     val commonsLang = "org.apache.commons:commons-lang3:3.8.1"
     val antPattern = "io.github.azagniotov:ant-style-path-matcher:1.0.0"
-    val dockerClient = "de.gesellix:docker-client:2019-11-26T12-39-35"
 
     // https://r8.googlesource.com/r8/ (2.1.x <-> AGP 4.1.x)
     val r8 = "com.android.tools:r8:2.1.80"
@@ -99,7 +98,6 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val testOrchestrator = "androidx.test:orchestrator:${Versions.androidXTest}"
     val uiAutomator = "androidx.test.uiautomator:uiautomator:2.2.0"
     val androidXTestCore = "androidx.test:core:${Versions.androidXTest}"
-    val androidXTestRules = "androidx.test:rules:${Versions.androidXTest}"
     val espressoCore = "androidx.test.espresso:espresso-core:${Versions.espresso}"
     val espressoWeb = "androidx.test.espresso:espresso-web:${Versions.espresso}"
     val espressoIntents = "androidx.test.espresso:espresso-intents:${Versions.espresso}"
@@ -108,14 +106,13 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val rx3Ilder = "com.squareup.rx.idler:rx3-idler:0.11.0"
 
     val okhttpMockWebServer = "com.squareup.okhttp3:mockwebserver:${Versions.okhttp}"
-    val okhttpMock = "com.github.gmazzo:okhttp-mock:1.2.1"
+    val okhttpMock = "com.github.gmazzo:okhttp-mock:1.4.0"
     val junit = "junit:junit:4.13"
     val truth = "com.google.truth:truth:1.0"
     val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.2.5"
     val kotlinPoet = "com.squareup:kotlinpoet:1.7.2"
     val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     val mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:${Versions.mockito}"
-    val mockitoCore = "org.mockito:mockito-core:${Versions.mockito}"
     val jsonPathAssert = "com.jayway.jsonpath:json-path-assert:2.4.0"
     val kotlinTest = "io.kotlintest:kotlintest:2.0.7"
     val kotlinTestJUnit = "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
