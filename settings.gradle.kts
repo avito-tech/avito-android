@@ -44,7 +44,6 @@ include(":subprojects:gradle:runner:stub")
 include(":subprojects:gradle:runner:service")
 include(":subprojects:gradle:runner:shared")
 include(":subprojects:gradle:runner:shared-test")
-include(":subprojects:gradle:docker")
 include(":subprojects:gradle:sentry-config")
 include(":subprojects:gradle:graphite-config")
 include(":subprojects:gradle:statsd-config")
@@ -143,16 +142,6 @@ pluginManagement {
     repositories {
         exclusiveContent {
             forRepository {
-                maven {
-                    setUrlOrProxy("KotlinX", "https://kotlin.bintray.com/kotlinx")
-                }
-            }
-            filter {
-                includeGroup("org.jetbrains.kotlinx")
-            }
-        }
-        exclusiveContent {
-            forRepository {
                 mavenLocal()
             }
             if (!artifactoryUrl.isNullOrBlank()) {
@@ -163,11 +152,8 @@ pluginManagement {
                     }
                 }
             }
-            forRepository {
-                maven {
-                    setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
-                }
-            }
+
+            // will be replaced after mavenCentral publishing
             forRepository {
                 maven {
                     setUrlOrProxy("bintray-avito-maven", "https://dl.bintray.com/avito/maven")
@@ -185,16 +171,6 @@ pluginManagement {
             }
             filter {
                 includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
-            }
-        }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("r8-releases", "http://storage.googleapis.com/r8-releases/raw")
-                }
-            }
-            filter {
-                includeModule("com.android.tools", "r8")
             }
         }
         exclusiveContent {
@@ -279,8 +255,27 @@ fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: 
 dependencyResolutionManagement {
     repositories {
         maven {
-            setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
+            setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")
         }
+
+        // not available in mavenCentral
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
+                }
+            }
+            filter {
+                includeGroup("org.funktionale")
+                includeGroup("org.jetbrains.trove4j")
+                includeGroup("com.forkingcode.espresso.contrib")
+                includeModule("org.jetbrains.teamcity", "teamcity-rest-client")
+                includeModule("com.fkorotkov", "kubernetes-dsl")
+                includeModule("me.weishu", "free_reflection")
+            }
+        }
+
+        // will be replaced after mavenCentral publishing
         exclusiveContent {
             forRepository {
                 maven {
@@ -291,6 +286,8 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.avito\\.android", ".*")
             }
         }
+
+        // for kotlinx-cli https://github.com/Kotlin/kotlinx-cli/issues/23
         exclusiveContent {
             forRepository {
                 maven {
