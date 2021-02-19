@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
-    id("convention.gradle-testing-legacy")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -20,10 +20,7 @@ dependencies {
     implementation(libs.antPattern)
     implementation(libs.kotlinPlugin)
 
-    testImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:gradle:git-test-fixtures"))
-    testImplementation(libs.mockitoKotlin)
+    gradleTestImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
 }
 
 gradlePlugin {
