@@ -54,10 +54,12 @@ plugins.withType<KotlinBasePluginWrapper>() {
         add("testRuntimeOnly", libs.junitPlatformRunner)
         add("testRuntimeOnly", libs.junitPlatformLauncher)
 
-        if (onlyInSubprojects() && project.name != "truth-extensions") {
-            add("testImplementation", project(":subprojects:common:truth-extensions"))
+        if (onlyInSubprojects()) {
+            if (project.name != "truth-extensions") {
+                add("testImplementation", project(":subprojects:common:truth-extensions"))
+            }
+            add("testImplementation", testFixtures(project(":subprojects:common:logger")))
         }
-        add("testImplementation", testFixtures(project(":subprojects:common:logger")))
     }
 }
 
