@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import gradle.kotlin.dsl.accessors._19cd057ada475b7a517b0a6f6ed44c2b.libs
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
