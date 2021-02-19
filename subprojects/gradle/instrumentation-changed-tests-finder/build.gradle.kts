@@ -1,7 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.gradle-testing-legacy")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -18,14 +18,6 @@ dependencies {
     }
     implementation(project(":subprojects:gradle:impact-shared")) {
         because("ChangesDetector reuse")
-    }
-
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
-    testImplementation(project(":subprojects:gradle:git"))
-    testImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
-    testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
-    testImplementation(project(":subprojects:gradle:test-project")) {
-        because("File extensions") // todo probably move to :common:files
     }
 }
 
