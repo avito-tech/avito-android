@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
-    id("convention.gradle-testing-legacy")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -11,9 +11,6 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(libs.funktionaleTry)
     implementation(libs.gson)
-
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
-    testImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

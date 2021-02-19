@@ -1,7 +1,3 @@
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
@@ -59,6 +55,7 @@ plugins.withType<KotlinBasePluginWrapper>() {
         if (onlyInSubprojects() && project.name != "truth-extensions") {
             add("testImplementation", project(":subprojects:common:truth-extensions"))
         }
+        add("testImplementation", testFixtures(project(":subprojects:common:logger")))
     }
 }
 
