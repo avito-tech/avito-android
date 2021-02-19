@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
-    id("convention.gradle-testing-legacy")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -11,8 +11,6 @@ dependencies {
     implementation(project(":subprojects:gradle:module-types"))
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
-
-    testImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {
