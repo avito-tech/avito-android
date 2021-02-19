@@ -2,7 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
-    id("convention.gradle-testing-legacy")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -18,9 +18,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
 }
 
 gradlePlugin {
