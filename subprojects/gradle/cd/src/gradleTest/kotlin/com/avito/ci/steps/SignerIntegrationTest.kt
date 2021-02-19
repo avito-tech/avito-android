@@ -1,5 +1,6 @@
 package com.avito.ci.steps
 
+import com.avito.http.HttpCodes
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.ciRun
@@ -26,7 +27,7 @@ class SignerIntegrationTest {
 
     private val webServer = MockWebServerFactory.create()
 
-    private val SYNC_BRANCH = "develop"
+    private val syncBranch = "develop"
 
     @Suppress("MaxLineLength")
     @BeforeEach
@@ -65,7 +66,7 @@ class SignerIntegrationTest {
         ).generateIn(projectDir)
 
         with(projectDir) {
-            git("checkout -b $SYNC_BRANCH")
+            git("checkout -b $syncBranch")
         }
     }
 
@@ -87,7 +88,7 @@ class SignerIntegrationTest {
 
         webServer.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
-                return MockResponse().setResponseCode(500)
+                return MockResponse().setResponseCode(HttpCodes.INTERNAL_ERROR)
             }
         }
 

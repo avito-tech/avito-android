@@ -117,9 +117,8 @@ compile:
 check:
 	./gradlew check
 
-# todo add unit_test here after gradle-testing convention transition finished #792
 fast_check:
-	./gradlew compileAll detektAll ${log_level}
+	./gradlew compileAll detektAll test ${log_level}
 
 detekt:
 	./gradlew detektAll

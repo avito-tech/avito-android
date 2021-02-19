@@ -1,5 +1,6 @@
 package com.avito.ci.steps
 
+import com.avito.http.HttpCodes
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.file
 import com.avito.test.gradle.gradlew
@@ -23,7 +24,7 @@ class UploadToQappsTest {
     @BeforeEach
     fun setup(@TempDir tempPath: Path) {
         projectDir = tempPath.toFile()
-        mockWebServer.enqueue(MockResponse().setResponseCode(200))
+        mockWebServer.enqueue(MockResponse().setResponseCode(HttpCodes.OK))
     }
 
     @Test

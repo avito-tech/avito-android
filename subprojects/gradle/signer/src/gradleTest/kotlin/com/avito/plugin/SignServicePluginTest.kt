@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.http.HttpCodes
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.ciRun
 import com.avito.test.gradle.gradlew
@@ -88,7 +89,7 @@ class SignServicePluginTest {
     @Test
     fun `bundle path check`() {
         generateTestProject()
-        mockWebServer.enqueue(MockResponse().setResponseCode(200))
+        mockWebServer.enqueue(MockResponse().setResponseCode(HttpCodes.OK))
 
         val result = gradlew(
             testProjectDir,
@@ -124,7 +125,7 @@ class SignServicePluginTest {
     @Test
     fun `apk signing task - adds signed version to outputs`() {
         generateTestProject()
-        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("SIGNED_CONTENT"))
+        mockWebServer.enqueue(MockResponse().setResponseCode(HttpCodes.OK).setBody("SIGNED_CONTENT"))
 
         gradlew(
             testProjectDir,
@@ -144,7 +145,7 @@ class SignServicePluginTest {
     @Test
     fun `bundle signing task - replaces original output by signed version (HACK)`() {
         generateTestProject()
-        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody("SIGNED_CONTENT"))
+        mockWebServer.enqueue(MockResponse().setResponseCode(HttpCodes.OK).setBody("SIGNED_CONTENT"))
 
         gradlew(
             testProjectDir,

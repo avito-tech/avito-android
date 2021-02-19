@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
 
+    testImplementation(project(":subprojects:common:test-okhttp"))
     gradleTestImplementation(project(":subprojects:common:test-okhttp"))
 }
 

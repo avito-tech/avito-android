@@ -7,6 +7,7 @@ import com.avito.cd.Providers
 import com.avito.cd.uploadCdBuildResultTaskName
 import com.avito.ci.runTask
 import com.avito.git.Git
+import com.avito.http.HttpCodes
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.dir
@@ -205,7 +206,7 @@ class RealTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
+                response = MockResponse().setResponseCode(HttpCodes.OK).setStubMavenMetadataBody()
             )
         )
 
@@ -271,7 +272,7 @@ class RealTest {
         dispatcher.registerMock(
             Mock(
                 requestMatcher = { path.contains("maven-metadata.xml") },
-                response = MockResponse().setResponseCode(200).setStubMavenMetadataBody()
+                response = MockResponse().setResponseCode(HttpCodes.OK).setStubMavenMetadataBody()
             )
         )
 

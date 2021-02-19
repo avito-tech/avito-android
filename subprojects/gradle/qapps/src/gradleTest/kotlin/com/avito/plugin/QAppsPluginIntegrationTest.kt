@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.http.HttpCodes
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -65,7 +66,7 @@ internal class QAppsPluginIntegrationTest {
             .toPattern()
 
     private fun runUpload(projectDir: File): TestResult {
-        mockWebServer.enqueue(MockResponse().setResponseCode(200))
+        mockWebServer.enqueue(MockResponse().setResponseCode(HttpCodes.OK))
 
         return gradlew(
             projectDir,
