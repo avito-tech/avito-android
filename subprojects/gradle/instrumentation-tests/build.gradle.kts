@@ -4,7 +4,7 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.integration-testing")
     id("convention.libraries")
-    id("convention.gradle-testing-legacy")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -57,15 +57,8 @@ dependencies {
     implementation(project(":subprojects:gradle:build-failer"))
     implementation(project(":subprojects:gradle:worker"))
 
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:gradle:slack-test-fixtures"))
     testImplementation(project(":subprojects:gradle:build-failer-test-fixtures"))
     testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
-    testImplementation(project(":subprojects:common:resources"))
-    testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.mockitoJUnitJupiter)
-    testImplementation(libs.okhttpMockWebServer)
-    testImplementation(testFixtures(project(":subprojects:gradle:runner:report")))
 
     integTestImplementation(project(":subprojects:common:statsd"))
 
