@@ -3,7 +3,7 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.integration-testing")
     id("convention.libraries")
-    id("convention.gradle-testing-legacy")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -22,9 +22,6 @@ dependencies {
     implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:slack"))
-
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
-    testImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {
