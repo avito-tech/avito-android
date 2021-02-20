@@ -71,30 +71,4 @@ public sealed class Device : Serializable {
 
         public companion object
     }
-
-    public sealed class Phone(
-        override val name: String,
-        override val model: String,
-        override val api: Int,
-        public val proxyImage: String
-    ) : Device() {
-
-        override val description: String
-            get() = "$name-$model-api-$api"
-
-        // TODO: api aware real devices reservations
-        public object Pixel3Phone : Phone(
-            name = "real_phone",
-            model = "Pixel_3",
-            api = 29,
-            proxyImage = "android/device:54bb1105d2"
-        )
-
-        public object SamsungS8Phone : Phone(
-            name = "real_phone",
-            model = "SM_G950F",
-            api = 26,
-            proxyImage = "android/device:54bb1105d2"
-        )
-    }
 }
