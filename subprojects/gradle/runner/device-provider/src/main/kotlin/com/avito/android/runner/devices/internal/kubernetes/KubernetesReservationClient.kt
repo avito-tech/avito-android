@@ -21,9 +21,12 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.distinctBy
 import kotlinx.coroutines.channels.filter
+import kotlinx.coroutines.channels.map
 import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -41,6 +44,8 @@ internal class KubernetesReservationClient(
 
     private var state: State = State.Idling
 
+    private val lock = Mutex()
+
     override suspend fun claim(
         reservations: Collection<ReservationData>,
         scope: CoroutineScope
@@ -48,31 +53,33 @@ internal class KubernetesReservationClient(
         require(reservations.isNotEmpty()) {
             "Must have at least one reservation but empty"
         }
-        val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
-        scope.launch(CoroutineName("main-reservation") + dispatcher) {
-            if (state !is State.Idling) {
-                throw IllegalStateException("Unable to start reservation job. Already started")
-            }
-            val podsChannel = Channel<Pod>(Channel.UNLIMITED)
-            val deploymentsChannel = Channel<String>(reservations.size)
-            state = State.Reserving(pods = podsChannel, deployments = deploymentsChannel)
-
-            reservations.forEach { reservation ->
-                launch(CoroutineName("create-deployment")) {
-                    createDeployment(
-                        reservation,
-                        deploymentsChannel,
-                        podsChannel,
-                        serialsChannel
-                    )
+        return lock.withLock {
+            val serialsChannel = Channel<DeviceCoordinate>(Channel.UNLIMITED)
+            scope.launch(CoroutineName("main-reservation") + dispatcher) {
+                if (state !is State.Idling) {
+                    throw IllegalStateException("Unable to start reservation job. Already started")
                 }
-            }
-            initializeDevices(podsChannel, serialsChannel)
-        }
+                val podsChannel = Channel<Pod>(Channel.UNLIMITED)
+                val deploymentsChannel = Channel<String>(reservations.size)
+                state = State.Reserving(pods = podsChannel, deployments = deploymentsChannel)
 
-        return ReservationClient.ClaimResult(
-            deviceCoordinates = serialsChannel
-        )
+                reservations.forEach { reservation ->
+                    launch(CoroutineName("create-deployment")) {
+                        createDeployment(
+                            reservation,
+                            deploymentsChannel,
+                            podsChannel,
+                            serialsChannel
+                        )
+                    }
+                }
+                initializeDevices(podsChannel, serialsChannel)
+            }
+
+            ReservationClient.ClaimResult(
+                deviceCoordinates = serialsChannel
+            )
+        }
     }
 
     private suspend fun createDeployment(
@@ -85,9 +92,12 @@ internal class KubernetesReservationClient(
             namespace = kubernetesApi.namespace,
             reservation = reservation
         )
-        val deploymentName = deployment.metadata.name
-        deploymentsChannel.send(deploymentName)
-        kubernetesApi.createDeployment(deployment)
+        val deploymentName = lock.withLock {
+            val deploymentName = deployment.metadata.name
+            deploymentsChannel.send(deploymentName)
+            kubernetesApi.createDeployment(deployment)
+            deploymentName
+        }
 
         listenPodsFromDeployment(
             deploymentName = deploymentName,
@@ -103,16 +113,18 @@ internal class KubernetesReservationClient(
         launch(CoroutineName("waiting-pods")) {
             @Suppress("DEPRECATION")
             podsChannel
+                .map {
+                    if (serialsChannel.isClosedForSend) {
+                        logger.debug("cancel waiting-pods")
+                        podsChannel.cancel()
+                    }
+                    it
+                }
                 .filter { it.status.phase == POD_STATUS_RUNNING }
                 .distinctBy { it.metadata.name }
                 .consumeEach { pod ->
-                    if (!serialsChannel.isClosedForSend) {
-                        launch(CoroutineName("boot-pod-${pod.metadata.name}")) {
-                            pod.bootDevice(serialsChannel)
-                        }
-                    } else {
-                        logger.debug("cancel wating-pods")
-                        podsChannel.cancel()
+                    launch(CoroutineName("boot-pod-${pod.metadata.name}")) {
+                        pod.bootDevice(serialsChannel)
                     }
                 }
         }
@@ -156,57 +168,59 @@ internal class KubernetesReservationClient(
     }
 
     override suspend fun release() = withContext(dispatcher) {
-        val state = state
-        if (state !is State.Reserving) {
-            // TODO: check on client side beforehand
-            // TODO this leads to deployment leak
-            throw IllegalStateException("Unable to stop reservation job. Hasn't started yet")
-        } else {
-            state.pods.close()
-            state.deployments.close()
-            for (deploymentName in state.deployments.toList()) {
-                launch(CoroutineName("delete-deployment-$deploymentName")) {
-                    val runningPods = kubernetesApi.getPods(
-                        deploymentName = deploymentName
-                    ).filter { it.status.phase == POD_STATUS_RUNNING }
+        lock.withLock {
+            val state = state
+            if (state !is State.Reserving) {
+                // TODO: check on client side beforehand
+                // TODO this leads to deployment leak
+                throw IllegalStateException("Unable to stop reservation job. Hasn't started yet")
+            } else {
+                state.pods.close()
+                state.deployments.close()
+                for (deploymentName in state.deployments.toList()) {
+                    launch(CoroutineName("delete-deployment-$deploymentName")) {
+                        val runningPods = kubernetesApi.getPods(
+                            deploymentName = deploymentName
+                        ).filter { it.status.phase == POD_STATUS_RUNNING }
 
-                    if (runningPods.isNotEmpty()) {
-                        logger.debug("Save emulators logs for deployment: $deploymentName")
-                        for (pod in runningPods) {
-                            launch(CoroutineName("get-pod-logs-${pod.metadata.name}")) {
-                                val podName = pod.metadata.name
-                                val device = getDevice(pod)
-                                val serial = device.serial
-                                try {
-                                    logger.debug("Saving emulator logs for pod: $podName with serial: $serial")
-                                    emulatorsLogsReporter.reportEmulatorLogs(
-                                        emulatorName = serial,
-                                        log = kubernetesApi.getPodLogs(podName)
-                                    )
-                                    logger.debug("Emulator logs saved for pod: $podName with serial: $serial")
-                                } catch (throwable: Throwable) {
-                                    // TODO must be fixed after adding affinity to POD
-                                    val podDescription = kubernetesApi.getPodDescription(podName)
-                                    logger.warn(
-                                        "Get logs from emulator failed; pod=$podName; " +
-                                            "podDescription=$podDescription; " +
-                                            "container serial=$serial",
-                                        throwable
+                        if (runningPods.isNotEmpty()) {
+                            logger.debug("Save emulators logs for deployment: $deploymentName")
+                            for (pod in runningPods) {
+                                launch(CoroutineName("get-pod-logs-${pod.metadata.name}")) {
+                                    val podName = pod.metadata.name
+                                    val device = getDevice(pod)
+                                    val serial = device.serial
+                                    try {
+                                        logger.debug("Saving emulator logs for pod: $podName with serial: $serial")
+                                        emulatorsLogsReporter.reportEmulatorLogs(
+                                            emulatorName = serial,
+                                            log = kubernetesApi.getPodLogs(podName)
+                                        )
+                                        logger.debug("Emulator logs saved for pod: $podName with serial: $serial")
+                                    } catch (throwable: Throwable) {
+                                        // TODO must be fixed after adding affinity to POD
+                                        val podDescription = kubernetesApi.getPodDescription(podName)
+                                        logger.warn(
+                                            "Get logs from emulator failed; pod=$podName; " +
+                                                "podDescription=$podDescription; " +
+                                                "container serial=$serial",
+                                            throwable
+                                        )
+                                    }
+
+                                    logger.debug("Disconnecting device: $serial")
+                                    device.disconnect().fold(
+                                        { logger.debug("Disconnecting device: $serial successfully completed") },
+                                        { error -> logger.warn("Failed to disconnect device: $serial", error) }
                                     )
                                 }
-
-                                logger.debug("Disconnecting device: $serial")
-                                device.disconnect().fold(
-                                    { logger.debug("Disconnecting device: $serial successfully completed") },
-                                    { error -> logger.warn("Failed to disconnect device: $serial", error) }
-                                )
                             }
                         }
+                        kubernetesApi.deleteDeployment(deploymentName)
                     }
-                    kubernetesApi.deleteDeployment(deploymentName)
                 }
+                this@KubernetesReservationClient.state = State.Idling
             }
-            this@KubernetesReservationClient.state = State.Idling
         }
     }
 
@@ -231,14 +245,20 @@ internal class KubernetesReservationClient(
         var pods = kubernetesApi.getPods(deploymentName)
 
         @Suppress("EXPERIMENTAL_API_USAGE")
-        while (!podsChannel.isClosedForSend && pods.isNotEmpty()) {
-            pods.forEach { pod ->
-                podsChannel.send(pod)
+        while (pods.isNotEmpty()) {
+            lock.withLock {
+                if (!podsChannel.isClosedForSend) {
+                    pods.forEach { pod ->
+                        podsChannel.send(pod)
+                    }
+
+                    delay(podsQueryIntervalMs)
+
+                    pods = kubernetesApi.getPods(deploymentName)
+                } else {
+                    pods = emptyList()
+                }
             }
-
-            delay(podsQueryIntervalMs)
-
-            pods = kubernetesApi.getPods(deploymentName)
         }
         logger.debug("Finish listening devices for $deploymentName")
         podsChannel.cancel()
