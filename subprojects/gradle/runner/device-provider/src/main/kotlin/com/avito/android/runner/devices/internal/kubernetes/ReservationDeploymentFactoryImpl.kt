@@ -50,11 +50,6 @@ internal class ReservationDeploymentFactoryImpl(
             is Device.LocalEmulator -> throw IllegalStateException(
                 "Local emulator $device is unsupported in kubernetes reservation"
             )
-            is Device.Phone -> getDeviceDeployment(
-                count = reservation.count,
-                phone = device,
-                deploymentName = deploymentName
-            )
             is Device.CloudEmulator -> {
                 logger.debug("Creating ${reservation.count} replicas of cloud emulator deployment: $device")
                 getCloudEmulatorDeployment(
@@ -65,46 +60,6 @@ internal class ReservationDeploymentFactoryImpl(
             }
             is Device.MockEmulator -> throw IllegalStateException(
                 "Mock emulator ${reservation.device} is unsupported in kubernetes reservation"
-            )
-        }
-    }
-
-    private fun getDeviceDeployment(
-        count: Int,
-        phone: Device.Phone,
-        deploymentName: String,
-        kubernetesNodeName: String = "avi-training06" // temporary node, remove later
-    ): Deployment {
-        return deviceDeployment(
-            deploymentMatchLabels = deviceMatchLabels(phone),
-            deploymentName = deploymentName,
-            count = count
-        ) {
-            containers = listOf(
-                newContainer {
-                    name = phone.name.toValidKubernetesName()
-                    image = phone.proxyImage
-
-                    securityContext {
-                        privileged = true
-                    }
-                    resources {
-                        limits = mapOf(
-                            "android/device" to Quantity("1")
-                        )
-                        requests = mapOf(
-                            "android/device" to Quantity("1")
-                        )
-                    }
-                }
-            )
-            dnsPolicy = "ClusterFirst"
-            nodeName = kubernetesNodeName
-            tolerations = listOf(
-                newToleration {
-                    operator = "Exists"
-                    effect = "NoSchedule"
-                }
             )
         }
     }
