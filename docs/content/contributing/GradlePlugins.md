@@ -1,46 +1,35 @@
-# Custom Gradle plugins
-
-Вся логика CI расположена в in-house Gradle плагинах. Для тестирования корневого проекта смотри
-модуль `build-script-test`.
+# Gradle plugins
 
 ## How to start
 
-Начни с официальных туториалов, они сэкономят время:
+Start with official documentation:
 
-- [Gradle plugin development tutorials](https://gradle.org/guides/?q=Plugin%20Development)   
-  Для нас не актуальна только публикация плагинов.
+- [Gradle plugin development tutorials](https://gradle.org/guides/?q=Plugin%20Development)
 - [Custom tasks](https://docs.gradle.org/current/userguide/custom_tasks.html)
 
-Если что-то не понятно, здесь тебе помогут:
+Gradle team's slack:
 
-- [#gradle (internal)](http://links.k.avito.ru/slackgradle)
 - [gradle-community.slack.com](https://gradle-community.slack.com)
 
-## Работа с плагинами в IDE
+## Working in IDE
 
-1. Предпочтительно использовать IntelliJ IDEA
-1. Import project
-1. Согласись использовать Gradle wrapper
-1. **Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**
-    1. Delegate IDE build/run actions to Gradle (check)
-    1. Run tests using : Gradle Test Runner
+### Known issues
 
-Теперь можно запускать тесты по иконкам run
+- (DynamicTest.displayName) displays incorrectly in IDE: [#5975](https://github.com/gradle/gradle/issues/5975)
 
-Known issues:
+### IntelliJ IDEA
 
-- Имя теста (DynamicTest.displayName) некорректно отображается в
-  IDE: [#5975](https://github.com/gradle/gradle/issues/5975)
+Preferred, but could not work if current Android Gradle Plugin not merget yet
 
-## Debugging
+**Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**
 
-Для тестов работает из IDE.   
-Для отладки плагина:
+- Delegate IDE build/run actions to Gradle (check)
+- Run tests using : Gradle Test Runner
 
-- Добавь в IDE конфигурацию Remote для запуска, как для обычного java проекта.
-- Запускай Gradle из корня репозитория с параметрами `-Dorg.gradle.debug=true --no-daemon`
+### Android Studio
 
-Debugger работает не только в нашем коде, остановиться можно и в AGP или Gradle.
+2020.3.+ required to work with gradle integration tests in IDE, because intellij settings removed and gradle delegate
+used under hood started with this release
 
 ## Testing Gradle plugins
 
@@ -114,7 +103,7 @@ plugins {
 }
 ```
 
-Places tests in `src/gradleTest/kotlin`
+Place tests in `src/gradleTest/kotlin`
 
 For simple cases you can create dummy instance of Project
 by [ProjectBuilder](https://docs.gradle.org/current/javadoc/org/gradle/testfixtures/ProjectBuilder.html)
@@ -130,6 +119,16 @@ task.get().doStuff()
 When you need to run a real build, use [Gradle Test Kit](https://docs.gradle.org/current/userguide/test_kit.html).\
 See ready utilities in `:test-project` module.
 
+#### Debugging
+
+## Debugging
+
+In `GradleTestKit.kt` `fun gradlew()` set `withDebug(true)` to be able to debug gradle plugins. 
+
+Disabled by default, because breaks tests even without debugging when android gradle plugin applied.
+
+See [Gradle issue tracker](https://github.com/gradle/gradle/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+withDebug) about reasons.
+
 ### Run tests via CLI
 
 `./gradlew test` - runs unit tests
@@ -141,11 +140,6 @@ To run single test, package or class add `--tests package.class.method`, but kee
 single project
 
 ## Best practices
-
-### Fail-fast contract
-
-Each plugin should check preconditions _as early as possible_. If some parameter is missing or has invalid value, the
-plugin should fail and explain the reason.
 
 ### Feature toggles
 
@@ -165,20 +159,4 @@ open class MyPlugin : Plugin<Project> {
 }
 ```
 
-## [Logging](Logging.md)
-
-## Директория ci
-
-Там храним всю интеграцию с CI.   
-Часто нужно править плагин совместно с ./ci/
-
-Чтобы работать одновременно со всем этим кодом, к уже открытому проекту добавь модуль ci: **File > New > Module from
-existing sources > путь до папки ci > ok > ok**
-
-## Интеграция плагина в CI
-
-[CI Steps Plugin](../projects/CiSteps.md)
-
-## Дополнительные материалы
-
-- [Интеграция с AGP 4+](https://youtu.be/OTANozHzgPc)
+## [Logging](../ci/Logging.md)

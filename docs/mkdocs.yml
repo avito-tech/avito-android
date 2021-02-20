@@ -70,7 +70,7 @@ nav:
             - index.md
             -   Infrastructure: infrastructure/Infrastructure.md
             -   Contributing:
-                    -   Custom Gradle Plugins: ci/CustomGradlePlugins.md
+                    -   Gradle Plugins: contributing/GradlePlugins.md
                     -   Documentation: contributing/documentation.md
     -   Projects:
             -   Build checks: projects/BuildChecks.md
@@ -82,7 +82,6 @@ nav:
                     - projects/internal/BuildMetrics.md
     -   CI:
             -   CI Gradle Plugin: projects/CiSteps.md
-            -   Custom Gradle Plugins: ci/CustomGradlePlugins.md
             -   Impact analysis: ci/ImpactAnalysis.md
             -   Containers: ci/Containers.md
             -   Logging: ci/Logging.md
