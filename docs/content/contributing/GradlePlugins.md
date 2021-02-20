@@ -19,7 +19,7 @@ Gradle team's slack:
 
 ### IntelliJ IDEA
 
-Preferred, but could not work if current Android Gradle Plugin not merget yet
+Preferred, but could not work if current Android Gradle Plugin is not supported yet
 
 **Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**
 
