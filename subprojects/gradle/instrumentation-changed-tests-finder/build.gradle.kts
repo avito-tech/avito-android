@@ -21,6 +21,7 @@ dependencies {
     }
 
     gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:gradle:git"))
     gradleTestImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
