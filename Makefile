@@ -106,7 +106,7 @@ gradle_test:
 	./gradlew gradleTest $(log_level)
 
 integration_tests:
-	./gradlew $(module):integrationTest
+	./gradlew integrationTest
 
 compile_tests:
 	./gradlew compileTestKotlin $(log_level)

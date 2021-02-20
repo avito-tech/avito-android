@@ -22,3 +22,13 @@ dependencies {
     testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
 }
+
+tasks.named<Test>("integrationTest").configure {
+    applyOptionalSystemProperty("avito.slack.test.channel")
+    applyOptionalSystemProperty("avito.slack.test.token")
+    applyOptionalSystemProperty("avito.slack.test.workspace")
+}
+
+fun Test.applyOptionalSystemProperty(name: String) {
+    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
+}

@@ -29,3 +29,14 @@ dependencies {
 kotlin {
     explicitApi()
 }
+
+tasks.named<Test>("integrationTest").configure {
+    applyOptionalSystemProperty("kubernetesUrl")
+    applyOptionalSystemProperty("kubernetesToken")
+    applyOptionalSystemProperty("kubernetesCaCertData")
+    applyOptionalSystemProperty("kubernetesNamespace")
+}
+
+fun Test.applyOptionalSystemProperty(name: String) {
+    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
+}

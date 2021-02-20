@@ -20,29 +20,6 @@ tasks.withType<Test>().configureEach {
      * see square/retrofit/issues/3341
      */
     jvmArgs = listOf("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
-
-    systemProperty("rootDir", "${project.rootDir}")
-
-    val testProperties = listOf(
-        "kubernetesUrl",
-        "kubernetesToken",
-        "kubernetesCaCertData",
-        "kubernetesNamespace",
-        "avito.slack.test.channel",
-        "avito.slack.test.token",
-        "avito.slack.test.workspace",
-        "avito.elastic.endpoint",
-        "avito.elastic.indexpattern",
-        "teamcityBuildId"
-    )
-    testProperties.forEach { key ->
-        val property = if (project.hasProperty(key)) {
-            project.property(key)!!.toString()
-        } else {
-            ""
-        }
-        systemProperty(key, property)
-    }
 }
 
 plugins.withType<KotlinBasePluginWrapper>() {
