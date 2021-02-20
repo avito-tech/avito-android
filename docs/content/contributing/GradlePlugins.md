@@ -147,11 +147,16 @@ The plugin may break and blocks the work of other developers. Making the plugin 
 
 ```kotlin
 open class MyPlugin : Plugin<Project> {
+    
+    private val Project.pluginIsEnabled: Boolean
+        get() = providers
+            .gradleProperty("avito.my_plugin.enabled")
+            .forUseAtConfigurationTime()
+            .map { it.toBoolean() }
+            .getOrElse(true)
 
     override fun apply(project: Project) {
-        // In each property use prefix `avito.<plugin>`
-        // It makes it easy to find it in the future
-        if (!project.getBooleanProperty("avito.my_plugin.enabled", default = false)) {
+        if (!project.pluginIsEnabled) {
             project.logger.lifecycle("My plugin is disabled")
             return
         }
