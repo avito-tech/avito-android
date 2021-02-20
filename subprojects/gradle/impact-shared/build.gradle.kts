@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.antPattern)
     implementation(libs.kotlinPlugin)
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:gradle:git-test-fixtures"))
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))

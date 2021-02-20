@@ -11,6 +11,10 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(libs.funktionaleTry)
     implementation(libs.gson)
+
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

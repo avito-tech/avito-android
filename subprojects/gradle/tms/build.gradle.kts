@@ -14,6 +14,8 @@ dependencies {
 
     implementation(libs.gson)
     implementation(libs.kotson)
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

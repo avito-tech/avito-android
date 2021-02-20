@@ -12,6 +12,8 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-profile"))
     implementation(project(":subprojects:gradle:build-environment"))
     implementation(gradleApi())
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

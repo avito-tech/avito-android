@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.antPattern)
     implementation(libs.kotlinPlugin)
 
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(project(":subprojects:gradle:impact-shared-test-fixtures"))
 }
 

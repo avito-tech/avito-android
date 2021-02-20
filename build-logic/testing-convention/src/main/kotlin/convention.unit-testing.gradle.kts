@@ -13,7 +13,7 @@ tasks.withType<Test>().configureEach {
     @Suppress("MagicNumber")
     maxParallelForks = 8
 
-    failFast = true
+    failFast = false
 
     /**
      * fix for retrofit `WARNING: Illegal reflective access by retrofit2.Platform`
@@ -53,26 +53,7 @@ plugins.withType<KotlinBasePluginWrapper>() {
         add("testRuntimeOnly", libs.junitJupiterEngine)
         add("testRuntimeOnly", libs.junitPlatformRunner)
         add("testRuntimeOnly", libs.junitPlatformLauncher)
-
-        if (onlyInSubprojects()) {
-            if (project.name != "truth-extensions") {
-                add("testImplementation", project(":subprojects:common:truth-extensions"))
-            }
-            add("testImplementation", testFixtures(project(":subprojects:common:logger")))
-        }
     }
-}
-
-/**
- * Workaround for:
- * Failed to generate type-safe Gradle model accessors for the following precompiled script plugins:
- * src/main/kotlin/convention.kotlin-android-app.gradle.kts
- *
- * Without this check generation will fail with UnknownProjectException,
- * because it's invoked on conventions module where `truth-extensions` not exists and check was not strong enough
- */
-fun onlyInSubprojects(): Boolean {
-    return project.path.contains("subprojects")
 }
 
 plugins.withType<JavaTestFixturesPlugin>() {

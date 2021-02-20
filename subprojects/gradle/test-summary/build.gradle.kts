@@ -15,7 +15,10 @@ dependencies {
     implementation(libs.funktionaleTry)
     implementation(libs.okhttp)
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

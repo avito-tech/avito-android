@@ -17,13 +17,14 @@ dependencies {
     implementation(project(":subprojects:gradle:sentry-config"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:teamcity"))
-
     implementation(libs.funktionaleTry)
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
-
     testImplementation(testFixtures(project(":subprojects:common:graphite")))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 gradlePlugin {

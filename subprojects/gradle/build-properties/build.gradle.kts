@@ -10,6 +10,8 @@ dependencies {
     implementation(project(":subprojects:gradle:pre-build"))
     implementation(project(":subprojects:gradle:gradle-logger"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

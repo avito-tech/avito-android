@@ -20,6 +20,8 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:common:logger"))
 
+    integTestImplementation(project(":subprojects:common:truth-extensions"))
+
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(libs.coroutinesTest)
 }

@@ -19,10 +19,11 @@ dependencies {
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(project(":subprojects:gradle:runner:shared-test"))
+    testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(testFixtures(project(":subprojects:common:time")))
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:gradle:runner:shared-test"))
     testImplementation(libs.kotlinReflect)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)

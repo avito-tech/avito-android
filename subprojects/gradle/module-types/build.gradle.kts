@@ -11,6 +11,8 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:impact"))
     implementation(libs.kotlinPlugin)
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

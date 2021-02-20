@@ -57,8 +57,11 @@ dependencies {
     implementation(project(":subprojects:gradle:build-failer"))
     implementation(project(":subprojects:gradle:worker"))
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:gradle:build-failer-test-fixtures"))
     testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 
     integTestImplementation(project(":subprojects:common:statsd"))
 

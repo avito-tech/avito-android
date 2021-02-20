@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.okhttpLogging)
     implementation(libs.kotson)
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(project(":subprojects:common:files"))
     testImplementation(project(":subprojects:common:resources"))

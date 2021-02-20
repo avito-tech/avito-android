@@ -19,6 +19,9 @@ dependencies {
     implementation(project(":subprojects:gradle:impact-shared")) {
         because("ChangesDetector reuse")
     }
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 gradlePlugin {

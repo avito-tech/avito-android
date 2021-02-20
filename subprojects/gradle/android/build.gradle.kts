@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(libs.funktionaleTry)
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:gradle:process-test-fixtures"))
 }
 

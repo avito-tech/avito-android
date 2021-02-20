@@ -13,6 +13,7 @@ dependencies {
 
     testImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
 
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(project(":subprojects:common:test-okhttp"))
     gradleTestImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
     gradleTestImplementation(testFixtures(project(":subprojects:common:logger")))

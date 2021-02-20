@@ -15,6 +15,8 @@ dependencies {
     implementation(project(":subprojects:gradle:android")) {
         because("For getApkOrThrow function only")
     }
+
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:gradle:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":subprojects:common:resources"))
     testImplementation(libs.mockitoKotlin)

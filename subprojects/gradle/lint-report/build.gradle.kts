@@ -22,6 +22,10 @@ dependencies {
     implementation(project(":subprojects:gradle:impact-shared"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:slack"))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:truth-extensions"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 gradlePlugin {

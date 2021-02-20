@@ -22,6 +22,8 @@ dependencies {
     // for test
     implementation(project(":subprojects:gradle:module-types"))
     implementation(project(":subprojects:gradle:room-config"))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

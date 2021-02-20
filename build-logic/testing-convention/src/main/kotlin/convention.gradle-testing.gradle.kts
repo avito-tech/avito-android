@@ -57,14 +57,6 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 
 dependencies {
     "gradleTestImplementation"(gradleTestKit())
-
-    if (onlyInSubprojects()) {
-        "gradleTestImplementation"(testFixtures(project(":subprojects:common:logger")))
-        "gradleTestImplementation"(project(":subprojects:common:truth-extensions"))
-        "gradleTestImplementation"(project(":subprojects:gradle:git"))
-        "gradleTestImplementation"(project(":subprojects:gradle:test-project"))
-    }
-
     "gradleTestImplementation"(libs.junitJupiterApi)
     "gradleTestImplementation"(libs.truth)
     "gradleTestRuntimeOnly"(libs.junitJupiterEngine)
@@ -103,8 +95,4 @@ configure<KotlinJvmProjectExtension> {
         target.compilations.getByName("gradleTest")
             .associateWith(target.compilations.getByName("testFixtures"))
     }
-}
-
-fun onlyInSubprojects(): Boolean {
-    return project.path.contains("subprojects")
 }

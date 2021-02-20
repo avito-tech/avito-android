@@ -18,7 +18,11 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:common:test-okhttp"))
+    testImplementation(testFixtures(project(":subprojects:common:logger")))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
     gradleTestImplementation(project(":subprojects:common:test-okhttp"))
 }
 

@@ -11,6 +11,8 @@ dependencies {
     implementation(libs.kotlinPlugin)
 
     testImplementation(project(":subprojects:gradle:test-project"))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

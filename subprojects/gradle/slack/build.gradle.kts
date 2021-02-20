@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.coroutinesCore)
 
+    integTestImplementation(project(":subprojects:common:truth-extensions"))
     integTestImplementation(project(":subprojects:gradle:gradle-extensions"))
 
     testImplementation(project(":subprojects:gradle:test-project"))
