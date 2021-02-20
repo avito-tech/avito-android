@@ -102,7 +102,6 @@ internal class KubernetesReservationClientTest {
         }
     }
 
-    @Disabled("Flaky")
     @Test
     @Timeout(1, unit = TimeUnit.SECONDS)
     fun `devices channel cancel - success`() {
