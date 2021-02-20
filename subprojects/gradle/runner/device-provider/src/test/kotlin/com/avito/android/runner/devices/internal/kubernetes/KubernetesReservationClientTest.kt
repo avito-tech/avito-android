@@ -15,8 +15,10 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.assertThrows
 import java.util.LinkedList
+import java.util.concurrent.TimeUnit
 
 @ExperimentalCoroutinesApi
 internal class KubernetesReservationClientTest {
@@ -100,6 +102,7 @@ internal class KubernetesReservationClientTest {
     }
 
     @Test
+    @Timeout(1, unit = TimeUnit.SECONDS)
     fun `devices channel cancel - success`() {
         val client = client(dispatcher = Dispatchers.Default)
         kubernetesApi.getPods = {
@@ -112,6 +115,7 @@ internal class KubernetesReservationClientTest {
     }
 
     @Test
+    @Timeout(1, unit = TimeUnit.SECONDS)
     fun `claim then release - success`() {
         val client = client(dispatcher = Dispatchers.Default)
         kubernetesApi.getPods = {
