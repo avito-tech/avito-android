@@ -4,7 +4,7 @@ import com.avito.android.build_checks.internal.isDynamicVersion
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 
-class DynamicVersionTest {
+internal class DynamicVersionTest {
 
     @Test
     fun `non dynamic dependency versions`() {

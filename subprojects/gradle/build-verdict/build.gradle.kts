@@ -2,10 +2,12 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
+    id("convention.gradle-testing")
 }
 
 dependencies {
     api(project(":subprojects:gradle:build-verdict-tasks-api"))
+
     implementation(gradleApi())
     implementation(project(":subprojects:common:throwable-utils"))
     implementation(project(":subprojects:gradle:gradle-extensions"))
@@ -13,7 +15,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.kotlinHtml)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

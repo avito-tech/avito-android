@@ -102,8 +102,11 @@ dynamic_properties:
 unit_tests:
 	./gradlew test $(log_level)
 
+gradle_test:
+	./gradlew gradleTest $(log_level)
+
 integration_tests:
-	./gradlew $(module):integrationTest
+	./gradlew integrationTest
 
 compile_tests:
 	./gradlew compileTestKotlin $(log_level)
@@ -113,6 +116,13 @@ compile:
 
 check:
 	./gradlew check
+
+fast_check:
+	./gradlew compileAll detektAll test ${log_level}
+
+clean_fast_check:
+	rm -rf `find -type d -name build`
+	./gradlew compileAll detektAll test --rerun-tasks --no-build-cache
 
 detekt:
 	./gradlew detektAll

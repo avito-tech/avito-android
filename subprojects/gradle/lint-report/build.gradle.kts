@@ -3,6 +3,7 @@ plugins {
     id("convention.publish-gradle-plugin")
     id("convention.integration-testing")
     id("convention.libraries")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -22,8 +23,9 @@ dependencies {
     implementation(project(":subprojects:gradle:gradle-extensions"))
     implementation(project(":subprojects:gradle:slack"))
 
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
-    testImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {
@@ -34,4 +36,14 @@ gradlePlugin {
             displayName = "Lint reports merge"
         }
     }
+}
+
+tasks.named<Test>("integrationTest").configure {
+    applyOptionalSystemProperty("avito.slack.test.channel")
+    applyOptionalSystemProperty("avito.slack.test.token")
+    applyOptionalSystemProperty("avito.slack.test.workspace")
+}
+
+fun Test.applyOptionalSystemProperty(name: String) {
+    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
 }

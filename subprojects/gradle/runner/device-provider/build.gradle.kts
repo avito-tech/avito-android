@@ -20,10 +20,23 @@ dependencies {
     implementation(project(":subprojects:gradle:process"))
     implementation(project(":subprojects:common:logger"))
 
+    integTestImplementation(project(":subprojects:common:truth-extensions"))
+
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(libs.coroutinesTest)
 }
 
 kotlin {
     explicitApi()
+}
+
+tasks.named<Test>("integrationTest").configure {
+    applyOptionalSystemProperty("kubernetesUrl")
+    applyOptionalSystemProperty("kubernetesToken")
+    applyOptionalSystemProperty("kubernetesCaCertData")
+    applyOptionalSystemProperty("kubernetesNamespace")
+}
+
+fun Test.applyOptionalSystemProperty(name: String) {
+    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
 }

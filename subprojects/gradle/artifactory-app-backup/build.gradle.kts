@@ -2,6 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -10,10 +11,12 @@ dependencies {
     implementation(project(":subprojects:gradle:android"))
     implementation(project(":subprojects:gradle:upload-cd-build-result"))
 
-    testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
-    testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
+    gradleTestImplementation(project(":subprojects:gradle:artifactory-app-backup-test-fixtures"))
+    gradleTestImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 gradlePlugin {

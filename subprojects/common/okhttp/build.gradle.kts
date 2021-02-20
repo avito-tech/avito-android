@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":subprojects:common:logger"))
     implementation(libs.okhttpLogging)
 
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(project(":subprojects:common:test-okhttp"))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
     testImplementation(libs.funktionaleTry)

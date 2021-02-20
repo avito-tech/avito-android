@@ -1,7 +1,5 @@
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.withType
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
@@ -15,36 +13,13 @@ tasks.withType<Test>().configureEach {
     @Suppress("MagicNumber")
     maxParallelForks = 8
 
-    failFast = true
+    failFast = false
 
     /**
      * fix for retrofit `WARNING: Illegal reflective access by retrofit2.Platform`
      * see square/retrofit/issues/3341
      */
     jvmArgs = listOf("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
-
-    systemProperty("rootDir", "${project.rootDir}")
-
-    val testProperties = listOf(
-        "kubernetesUrl",
-        "kubernetesToken",
-        "kubernetesCaCertData",
-        "kubernetesNamespace",
-        "avito.slack.test.channel",
-        "avito.slack.test.token",
-        "avito.slack.test.workspace",
-        "avito.elastic.endpoint",
-        "avito.elastic.indexpattern",
-        "teamcityBuildId"
-    )
-    testProperties.forEach { key ->
-        val property = if (project.hasProperty(key)) {
-            project.property(key)!!.toString()
-        } else {
-            ""
-        }
-        systemProperty(key, property)
-    }
 }
 
 plugins.withType<KotlinBasePluginWrapper>() {
@@ -55,23 +30,7 @@ plugins.withType<KotlinBasePluginWrapper>() {
         add("testRuntimeOnly", libs.junitJupiterEngine)
         add("testRuntimeOnly", libs.junitPlatformRunner)
         add("testRuntimeOnly", libs.junitPlatformLauncher)
-
-        if (onlyInSubprojects() && project.name != "truth-extensions") {
-            add("testImplementation", project(":subprojects:common:truth-extensions"))
-        }
     }
-}
-
-/**
- * Workaround for:
- * Failed to generate type-safe Gradle model accessors for the following precompiled script plugins:
- * src/main/kotlin/convention.kotlin-android-app.gradle.kts
- *
- * Without this check generation will fail with UnknownProjectException,
- * because it's invoked on conventions module where `truth-extensions` not exists and check was not strong enough
- */
-fun onlyInSubprojects(): Boolean {
-    return project.path.contains("subprojects")
 }
 
 plugins.withType<JavaTestFixturesPlugin>() {

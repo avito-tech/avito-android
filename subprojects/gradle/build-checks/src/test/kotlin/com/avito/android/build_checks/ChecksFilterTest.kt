@@ -6,7 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 
-class ChecksFilterTest {
+internal class ChecksFilterTest {
 
     @Test
     fun `no checks - enableByDefault is false`() {

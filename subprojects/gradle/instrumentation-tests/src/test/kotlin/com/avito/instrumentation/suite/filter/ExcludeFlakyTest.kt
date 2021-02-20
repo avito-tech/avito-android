@@ -9,7 +9,7 @@ import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class ExcludeFlakyTest {
+internal class ExcludeFlakyTest {
 
     @Test
     fun include_stable() {

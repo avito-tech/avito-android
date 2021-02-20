@@ -2,6 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -16,15 +17,15 @@ dependencies {
     implementation(project(":subprojects:gradle:sentry-config"))
     implementation(project(":subprojects:gradle:statsd-config"))
     implementation(project(":subprojects:gradle:teamcity"))
-
     implementation(libs.funktionaleTry)
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
-    testImplementation(project(":subprojects:gradle:git"))
-    testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(testFixtures(project(":subprojects:common:graphite")))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":subprojects:gradle:git"))
+    gradleTestImplementation(testFixtures(project(":subprojects:common:logger")))
 }
 
 gradlePlugin {

@@ -2,6 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.libraries")
+    id("convention.gradle-testing")
 }
 
 dependencies {
@@ -14,8 +15,10 @@ dependencies {
     implementation(libs.funktionaleTry)
     implementation(libs.okhttp)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
+    testImplementation(project(":subprojects:common:truth-extensions"))
     testImplementation(testFixtures(project(":subprojects:common:report-viewer")))
+
+    gradleTestImplementation(project(":subprojects:gradle:test-project"))
 }
 
 gradlePlugin {

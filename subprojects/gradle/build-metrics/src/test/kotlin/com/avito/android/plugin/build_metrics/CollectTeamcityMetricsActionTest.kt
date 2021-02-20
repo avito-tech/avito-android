@@ -18,7 +18,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @Suppress("UnstableApiUsage")
-class CollectTeamcityMetricsActionTest {
+internal class CollectTeamcityMetricsActionTest {
 
     private val buildId = "BUILD_ID"
 

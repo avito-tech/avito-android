@@ -14,10 +14,21 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.coroutinesCore)
 
+    integTestImplementation(project(":subprojects:common:truth-extensions"))
     integTestImplementation(project(":subprojects:gradle:gradle-extensions"))
 
     testImplementation(project(":subprojects:gradle:test-project"))
     testImplementation(project(":subprojects:gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":subprojects:common:time")))
     testImplementation(testFixtures(project(":subprojects:common:logger")))
+}
+
+tasks.named<Test>("integrationTest").configure {
+    applyOptionalSystemProperty("avito.slack.test.channel")
+    applyOptionalSystemProperty("avito.slack.test.token")
+    applyOptionalSystemProperty("avito.slack.test.workspace")
+}
+
+fun Test.applyOptionalSystemProperty(name: String) {
+    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
 }

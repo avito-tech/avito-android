@@ -7,6 +7,7 @@ plugins {
 dependencies {
     api(libs.okhttpMockWebServer)
     api(project(":subprojects:common:logger"))
+    api(project(":subprojects:common:okhttp"))
 
     implementation(libs.truth)
     implementation(libs.gson)
