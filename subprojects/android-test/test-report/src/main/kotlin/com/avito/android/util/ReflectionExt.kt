@@ -14,3 +14,5 @@ internal fun Any.executeMethod(method: String, vararg arguments: Any?) {
             )
         }
 }
+
+internal fun Class<*>.isLambda(): Boolean = Function::class.java.isAssignableFrom(this)

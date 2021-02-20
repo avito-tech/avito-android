@@ -19,7 +19,7 @@ class TestRuntimeDataBuilder(private val timeProvider: TimeProvider) : PreTransp
                 startTime = state.startTime,
                 endTime = state.endTime
             )
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             createSafeRuntimeMetadataWithError("Can't build test runtime data", e)
         }
     }

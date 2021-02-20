@@ -1,5 +1,3 @@
-@file:Suppress("IllegalIdentifier")
-
 package com.avito.android.test.report.transport
 
 import com.avito.android.test.report.model.DataSet
@@ -11,7 +9,7 @@ class DataSetSerializerKtTest : PreTransportMappers {
     @Test
     fun `serialize() - produces null - for empty dataSet`() {
         val dataSet: DataSet = object : DataSet {}
-        assertThat(dataSet.serialize()).isEqualTo(emptyMap<Any, Any>())
+        assertThat(dataSet.serialize()).isEqualTo(emptyMap<String, Any>())
     }
 
     @Test
@@ -20,5 +18,12 @@ class DataSetSerializerKtTest : PreTransportMappers {
 
         assertThat(SinglePropertyDataSet("myValue").serialize())
             .isEqualTo(mapOf("myProperty" to "myValue"))
+    }
+
+    @Test
+    fun `serialize() - not serializing lambda`() {
+        class LambdaPropertyDataSet(@Suppress("unused") val myLambda: () -> String) : DataSet
+
+        assertThat(LambdaPropertyDataSet { "Hello" }.serialize()).isEqualTo(emptyMap<String, Any>())
     }
 }
