@@ -15,15 +15,13 @@ All source code lives in `subprojects/`:
 - `gradle` - Gradle plugins and buildscript dependencies
 - `common` - shared code between `android-test` and `gradle`
 
-More details - [project structure](infrastructure/Infrastructure.md)
-
 Besides these modules you will find:
 
 - `ci/` and `/*.sh` - we follow [IaC](https://en.wikipedia.org/wiki/Infrastructure_as_code) principle whenever possible.
   You can see docker images we use to abstract configuration of apps building and testing, as well as testing github
   project itself.
 - `docs/` - documentation you see right now and code to deploy it automatically.  
-  [How we document](contributing/documentation.md)
+  [How we document](contributing/Documentation.md)
 
 ???+ info ""
     You could see links to "internal" resources that are not available for non-employees (links.k.avito.ru).\

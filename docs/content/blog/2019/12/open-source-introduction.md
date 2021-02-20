@@ -155,7 +155,7 @@ determines which ones to run.
 ![](https://habrastorage.org/webt/ox/s3/8i/oxs38itwej7tehznhbslvjpmsi0.png)
 
 For more details of the main modules and approaches,
-see [the project documentation](../../../infrastructure/Infrastructure.md). It is still incomplete, and not everything
+see the project documentation(deleted). It is still incomplete, and not everything
 is translated. We want to make the documentation easier to understand, and need your help. Tell us what to improve and
 correct in the documentation in [our Telegram chat](https://t-do.ru/avito_android_opensource_en).
 

@@ -68,10 +68,10 @@ google_analytics:
 nav:
     -   Infrastructure:
             - index.md
-            -   Infrastructure: infrastructure/Infrastructure.md
             -   Contributing:
                     -   Gradle Plugins: contributing/GradlePlugins.md
-                    -   Documentation: contributing/documentation.md
+                    -   Documentation: contributing/Documentation.md
+                    -   Infra Release: contributing/Release.md
     -   Projects:
             -   Build checks: projects/BuildChecks.md
             -   Build properties: projects/BuildProperties.md
@@ -109,5 +109,3 @@ nav:
                     -   12:
                             -   Open Source introduction: blog/2019/12/open-source-introduction.md
                             -   Open source для CI/CD и тестовой инфраструктуры Авито для Android: blog/2019/12/open-source-introduction.ru.md
-    -   Internals:
-            -   Infra Release: internals/Release.md
