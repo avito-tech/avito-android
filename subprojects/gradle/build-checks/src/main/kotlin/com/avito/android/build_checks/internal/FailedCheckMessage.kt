@@ -1,5 +1,6 @@
 package com.avito.android.build_checks.internal
 
+import com.avito.android.build_checks.BuildChecksExtension
 import com.avito.android.build_checks.extensionName
 import kotlin.reflect.KFunction
 
@@ -16,8 +17,10 @@ internal class FailedCheckMessage(
     override fun toString() =
         """
 ERROR: '$checkExtensionName' build check is failed.
+
 ${message.trimIndent()}
-This check can be disabled by extension:
+
+This check can be disabled in an extension:
 $extensionName {
     $checkExtensionName {
         enabled = false

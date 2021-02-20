@@ -480,3 +480,84 @@ buildChecks {
     }
 }
 ```
+
+#### Unique application resources
+
+From [Android library - considerations](https://developer.android.com/studio/projects/android-library#Considerations):
+
+    The build tools merge resources from a library module with those of a dependent app module. 
+    If a given resource ID is defined in both modules, the resource from the app is used.
+
+    If conflicts occur between multiple AAR libraries, then the resource from the library listed first in the dependencies list is used.
+
+`uniqueAppResources` ensures that resources in application are unique and won't be overridden implicitly.
+
+=== "Kotlin"
+    `build.gradle.kts`
+
+    Root module:
+
+    ```kotlin
+    plugins {
+        id("com.avito.android.impact")
+    }
+    ```
+
+    Application module:
+
+    ```kotlin
+    plugins {
+        id("com.avito.android.build-checks")
+    }
+    
+    buildChecks {
+        uniqueAppResources {} // disabled by default
+    }
+    ```
+
+=== "Groovy"
+    `build.gradle`
+
+    Root module:
+
+    ```groovy
+    plugins {
+        id("com.avito.android.impact")
+    }
+    ```
+
+    Application module:
+
+    ```groovy
+    plugins {
+        id("com.avito.android.build-checks")
+    }
+    
+    buildChecks {
+        uniqueAppResources {} // disabled by default
+    }
+    ```
+
+To avoid resource conflicts, consider using a prefix (`android.resourcePrefix`) or other consistent naming scheme.
+
+##### Ignoring duplicates
+
+```kotlin
+buildChecks {
+    uniqueAppResources {
+        // Resource types: string, dimen, bool, layout, drawable, ...
+        ignoredResourceTypes.add("string")
+        // Specific resources
+        ignoredResources.put("string", "title")
+    }
+}
+```
+
+##### Known issues
+
+- Requires impact analysis that slows project configuration
+- Disabled by default due to possible false positive cases. Usually, it requires to configure ignored resources.
+- Don't compare values, only resource identifiers. Reported duplicates can have the same content.
+- Detects only project modules without binary dependencies. 
+  Don't know how to deal with massive false positive duplicates for widely used libraries (androidx and similar ones). 
+- Some resource types are not supported because the issue is not confirmed for them. These are `id`, `attr`, `styleable`.

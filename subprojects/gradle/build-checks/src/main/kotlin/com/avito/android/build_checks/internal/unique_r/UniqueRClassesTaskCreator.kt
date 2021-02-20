@@ -19,7 +19,7 @@ internal class UniqueRClassesTaskCreator(
 
     init {
         check(appProject.isAndroidApp()) {
-            "Project ${appProject.path} must be Android app"
+            "Project ${appProject.path} must be an Android app"
         }
     }
 
@@ -42,7 +42,7 @@ internal class UniqueRClassesTaskCreator(
     }
 
     private fun registerTask(project: Project, appVariant: ApplicationVariant): TaskProvider<UniqueRClassesTask> {
-        return project.tasks.register<UniqueRClassesTask>("${taskName}${appVariant.name.capitalize()}") {
+        return project.tasks.register<UniqueRClassesTask>(taskName + appVariant.name.capitalize()) {
             group = "verification"
             description = "Verify unique R classes"
 
