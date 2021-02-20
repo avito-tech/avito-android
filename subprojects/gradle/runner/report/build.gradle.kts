@@ -13,7 +13,6 @@ dependencies {
     api(project(":subprojects:common:report-viewer"))
 
     implementation(project(":subprojects:common:time"))
-    implementation(testFixtures(project(":subprojects:common:report-viewer")))
 
     testFixturesImplementation(testFixtures(project(":subprojects:common:logger")))
     testFixturesImplementation(testFixtures(project(":subprojects:common:time")))
