@@ -120,6 +120,10 @@ check:
 fast_check:
 	./gradlew compileAll detektAll test ${log_level}
 
+clean_fast_check:
+	rm -rf `find -type d -name build`
+	./gradlew compileAll detektAll test --rerun-tasks --no-build-cache
+
 detekt:
 	./gradlew detektAll
 
