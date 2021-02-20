@@ -2,7 +2,9 @@ package com.avito.android.test.report.transport
 
 import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepResult
+import com.avito.android.util.isLambda
 import com.avito.report.model.Step
+import java.lang.reflect.Field
 
 internal interface PreTransportMappers {
 
@@ -20,12 +22,15 @@ internal interface PreTransportMappers {
     fun DataSet.serialize(): Map<String, String> {
         return javaClass.declaredFields
             .filter { it.name != "number" }
-            .map { field ->
-                field.name to javaClass.methods
-                    .find { it.name == "get${field.name.capitalize()}" }
-                    ?.invoke(this)
-                    .toString()
-            }
+            .filter { !it.type.isLambda() }
+            .map { field -> field.name to getFieldStringValue(field) }
             .toMap()
+    }
+
+    private fun Any.getFieldStringValue(field: Field): String {
+        return javaClass.methods
+            .find { it.name == "get${field.name.capitalize()}" }
+            ?.invoke(this)
+            .toString()
     }
 }

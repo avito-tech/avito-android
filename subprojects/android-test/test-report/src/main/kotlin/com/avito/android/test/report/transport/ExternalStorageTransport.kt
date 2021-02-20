@@ -36,11 +36,14 @@ class ExternalStorageTransport(
                     file.writeText(json)
                     logger.info("Wrote report for test to file: ${file.absolutePath}")
                 } catch (e: Throwable) {
-                    logger.warn("Can't write report runtime data; leads to LOST test", e)
+                    logger.critical("Can't write report runtime data; leads to LOST test", e)
                 }
 
             is Error ->
-                logger.warn("Can't create output file for test runtime data; leads to LOST test", outputFileResult.e)
+                logger.critical(
+                    "Can't create output file for test runtime data; leads to LOST test",
+                    outputFileResult.e
+                )
         }
     }
 }
