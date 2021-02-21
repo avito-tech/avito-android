@@ -22,6 +22,7 @@ function openBrowser() {
 
 openBrowser
 
+# NB: Can't use strict mode with serving. Use lint.sh for checking.
 docker run --rm -it \
     -p 8000:8000 \
     --volume "$SCRIPT_DIR/../..":/app \

@@ -129,6 +129,7 @@ detekt:
 
 .PHONY: docs
 docs:
+	./ci/documentation/lint.sh
 	./ci/documentation/preview.sh
 
 clear_k8s_deployments_by_namespaces:
