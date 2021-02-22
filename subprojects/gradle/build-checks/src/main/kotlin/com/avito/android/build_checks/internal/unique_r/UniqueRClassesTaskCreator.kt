@@ -12,7 +12,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-internal class UniqueRClassesTaskProvider(
+internal class UniqueRClassesTaskCreator(
     private val appProject: Project,
     private val config: AndroidAppCheck.UniqueRClasses
 ) {

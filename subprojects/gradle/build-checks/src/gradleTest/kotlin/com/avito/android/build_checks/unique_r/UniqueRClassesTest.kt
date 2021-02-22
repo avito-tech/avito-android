@@ -24,9 +24,6 @@ internal class UniqueRClassesTest {
     @Test
     fun `success - unique package names`() {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.build-checks")
-            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -49,11 +46,6 @@ internal class UniqueRClassesTest {
                 AndroidLibModule(name = "lib-b", packageName = "lib.b"),
                 AndroidLibModule(name = "lib-c", packageName = "lib.c")
             ),
-            buildGradleExtra = """
-                buildChecks {
-                    enableByDefault = false
-                }
-            """.trimIndent()
         ).generateIn(projectDir)
 
         val build = runCheck()
@@ -65,9 +57,6 @@ internal class UniqueRClassesTest {
     @Test
     fun `success - allowed duplicate`() {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.build-checks")
-            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -98,11 +87,6 @@ internal class UniqueRClassesTest {
                     packageName = "lib.package"
                 ),
             ),
-            buildGradleExtra = """
-                buildChecks {
-                    enableByDefault = false
-                }
-            """.trimIndent()
         ).generateIn(projectDir)
 
         val build = runCheck()
@@ -114,9 +98,6 @@ internal class UniqueRClassesTest {
     @Test
     fun `fail - duplicated package in implementation`() {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.build-checks")
-            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -137,11 +118,6 @@ internal class UniqueRClassesTest {
                 AndroidLibModule(name = "lib-a", packageName = "lib.a"),
                 AndroidLibModule(name = "duplicate", packageName = "lib.a")
             ),
-            buildGradleExtra = """
-                buildChecks {
-                    enableByDefault = false
-                }
-            """.trimIndent()
         ).generateIn(projectDir)
 
         val build = runCheck(expectFailure = true)
@@ -156,9 +132,6 @@ internal class UniqueRClassesTest {
     @Test
     fun `fail - duplicated package in test`() {
         TestProjectGenerator(
-            plugins = plugins {
-                id("com.avito.android.build-checks")
-            },
             modules = listOf(
                 AndroidAppModule(
                     name = "app",
@@ -188,11 +161,6 @@ internal class UniqueRClassesTest {
                     )
                 )
             ),
-            buildGradleExtra = """
-                buildChecks {
-                    enableByDefault = false
-                }
-            """.trimIndent()
         ).generateIn(projectDir)
 
         val build = runCheck(expectFailure = true)

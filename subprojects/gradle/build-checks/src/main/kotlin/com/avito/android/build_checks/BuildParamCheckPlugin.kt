@@ -11,14 +11,14 @@ import com.avito.android.build_checks.internal.CheckGradleDaemonTask
 import com.avito.android.build_checks.internal.DynamicDependenciesTask
 import com.avito.android.build_checks.internal.MacOSLocalhostResolvingTask
 import com.avito.android.build_checks.internal.RequiredPluginsChecker
+import com.avito.android.build_checks.internal.RootTaskCreator
 import com.avito.android.build_checks.internal.incremental_kapt.IncrementalKaptTask
 import com.avito.android.build_checks.internal.params.GradlePropertiesChecker
-import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskProvider
+import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreator
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
-import org.gradle.StartParameter
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -86,9 +86,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     }
 
     private fun applyForAndroidApp(project: Project) {
-        require(project.rootProject.plugins.hasPlugin(pluginId)) {
-            "$pluginId plugin must be applied also to the root project"
-        }
         val extension = project.extensions.create<AndroidAppChecksExtension>(extensionName)
 
         if (!project.pluginIsEnabled) return
@@ -101,10 +98,10 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                     it.validate()
                 }
 
-            val rootTask = project.rootProject.tasks.named(rootTaskName)
+            val rootTask = RootTaskCreator(project).getOrCreate()
 
             if (checks.hasInstance<AndroidAppCheck.UniqueRClasses>()) {
-                UniqueRClassesTaskProvider(project, checks.getInstance())
+                UniqueRClassesTaskCreator(project, checks.getInstance())
                     .addTask(rootTask)
             }
         }
@@ -123,11 +120,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         logger: Logger,
         envInfo: BuildEnvironmentInfo,
     ) {
-        val rootTask = project.tasks.register(rootTaskName) {
-            it.group = "verification"
-            it.description = "Check typical build problems"
-        }
-        project.gradle.startParameter.addTaskNames(":checkBuildEnvironment")
+        val rootTask = RootTaskCreator(project).getOrCreate()
 
         if (checks.hasInstance<RootProjectCheck.AndroidSdk>()) {
             val check = checks.getInstance<RootProjectCheck.AndroidSdk>()
@@ -189,13 +182,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             }
         }
     }
-
-    private fun StartParameter.addTaskNames(vararg names: String) {
-        // getter returns defensive copy
-        setTaskNames(taskNames + names.toList())
-    }
 }
 
 internal const val pluginId = "com.avito.android.build-checks"
 private const val enabledProp = "avito.build-checks.enabled"
-private const val rootTaskName = "checkBuildEnvironment"
