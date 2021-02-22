@@ -9,9 +9,10 @@ import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.android.build_checks.internal.CheckAndroidSdkVersionTask
 import com.avito.android.build_checks.internal.CheckGradleDaemonTask
 import com.avito.android.build_checks.internal.DynamicDependenciesTask
-import com.avito.android.build_checks.internal.params.GradlePropertiesChecker
 import com.avito.android.build_checks.internal.MacOSLocalhostResolvingTask
+import com.avito.android.build_checks.internal.RequiredPluginsChecker
 import com.avito.android.build_checks.internal.incremental_kapt.IncrementalKaptTask
+import com.avito.android.build_checks.internal.params.GradlePropertiesChecker
 import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskProvider
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
@@ -24,12 +25,9 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
-import org.gradle.tooling.BuildException
 
 @Suppress("unused")
 public open class BuildParamCheckPlugin : Plugin<Project> {
-
-    private val validationErrors = mutableListOf<String>()
 
     @Suppress("UnstableApiUsage")
     private val Project.pluginIsEnabled: Boolean
@@ -82,10 +80,8 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 GradlePropertiesChecker(project, envInfo).check()
             }
             if (checks.hasInstance<RootProjectCheck.ModuleTypes>()) {
-                checkModuleHasRequiredPlugins(project)
+                RequiredPluginsChecker(project).check()
             }
-
-            showErrorsIfAny(project)
         }
     }
 
@@ -197,50 +193,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     private fun StartParameter.addTaskNames(vararg names: String) {
         // getter returns defensive copy
         setTaskNames(taskNames + names.toList())
-    }
-
-    private fun checkModuleHasRequiredPlugins(project: Project) {
-        project.subprojects { subproject ->
-            subproject.afterEvaluate {
-                subproject.plugins.withId("com.android.application") {
-                    subproject.checkAppliesRequiredPlugin("kotlin-android")
-                }
-                subproject.plugins.withId("com.android.library") {
-                    subproject.checkAppliesRequiredPlugin("kotlin-android")
-                    subproject.checkAppliesRequiredPlugin("com.avito.android.module-types")
-                }
-                subproject.plugins.withId("kotlin") {
-                    subproject.checkAppliesRequiredPlugin("com.avito.android.module-types")
-                }
-                subproject.plugins.withId("org.jetbrains.kotlin.jvm") {
-                    subproject.checkAppliesRequiredPlugin("com.avito.android.module-types")
-                }
-            }
-        }
-    }
-
-    private fun showErrorsIfAny(project: Project) {
-        project.gradle.projectsEvaluated {
-            if (validationErrors.isNotEmpty()) {
-                throw BuildException(
-                    "There were errors:\n" +
-                        validationErrors.joinToString(separator = "\n", transform = { " - $it" }),
-                    null
-                )
-            }
-        }
-    }
-
-    private fun lazyCheck(precondition: Boolean, message: () -> String) {
-        if (!precondition) {
-            validationErrors += message.invoke()
-        }
-    }
-
-    private fun Project.checkAppliesRequiredPlugin(pluginId: String) {
-        lazyCheck(plugins.hasPlugin(pluginId)) {
-            "You forgot to apply '$pluginId' plugin to kotlin library module $path. it is required"
-        }
     }
 }
 
