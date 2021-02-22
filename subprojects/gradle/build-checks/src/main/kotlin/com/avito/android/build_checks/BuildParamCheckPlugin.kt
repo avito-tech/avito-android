@@ -157,7 +157,9 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             }
         }
         if (checks.hasInstance<RootProjectCheck.UniqueRClasses>()) {
-            logger.warn("Build check '${RootProjectChecksExtension::uniqueRClasses.name}' is moved to Android app module")
+            logger.warn(
+                "Build check '${RootProjectChecksExtension::uniqueRClasses.name}' is moved to Android app module"
+            )
         }
         if (checks.hasInstance<RootProjectCheck.MacOSLocalhost>() && envInfo.isMac) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {

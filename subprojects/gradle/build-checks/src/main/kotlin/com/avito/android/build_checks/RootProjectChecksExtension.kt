@@ -14,6 +14,12 @@ import kotlin.reflect.full.createInstance
 
 public open class RootProjectChecksExtension : BuildChecksExtension() {
 
+    override val allChecks: List<Check>
+        get() {
+            return RootProjectCheck::class.sealedSubclasses
+                .map { it.createInstance() }
+        }
+
     public fun javaVersion(action: Action<JavaVersion>): Unit =
         register(JavaVersion(), action)
 
@@ -40,12 +46,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
 
     public fun incrementalKapt(action: Action<IncrementalKapt>): Unit =
         register(IncrementalKapt(), action)
-
-    override val allChecks: List<Check>
-        get() {
-            return RootProjectCheck::class.sealedSubclasses
-                .map { it.createInstance() }
-        }
 
     public sealed class RootProjectCheck : Check {
 

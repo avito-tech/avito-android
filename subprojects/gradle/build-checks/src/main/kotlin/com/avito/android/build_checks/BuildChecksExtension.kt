@@ -9,7 +9,7 @@ public abstract class BuildChecksExtension {
         public var enabled: Boolean
     }
 
-    internal interface RequireValidation: Check {
+    internal interface RequireValidation : Check {
         fun validate()
     }
 

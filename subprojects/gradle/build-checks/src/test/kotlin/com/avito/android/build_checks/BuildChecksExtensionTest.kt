@@ -41,10 +41,7 @@ internal class BuildChecksExtensionTest {
         assertNoInstance<ConcreteCustomCheck>(checks)
     }
 
-    private class CustomBuildChecksExtension: BuildChecksExtension() {
-
-        fun customCheck(action: Action<ConcreteCustomCheck>): Unit =
-            register(ConcreteCustomCheck(), action)
+    private class CustomBuildChecksExtension : BuildChecksExtension() {
 
         override val allChecks: List<Check>
             get() {
@@ -52,12 +49,14 @@ internal class BuildChecksExtensionTest {
                     .map { it.createInstance() }
             }
 
+        fun customCheck(action: Action<ConcreteCustomCheck>): Unit =
+            register(ConcreteCustomCheck(), action)
+
         sealed class CustomCheck : Check {
 
             override var enabled: Boolean = true
 
             open class ConcreteCustomCheck : CustomCheck()
-
         }
     }
 }

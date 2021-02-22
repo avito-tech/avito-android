@@ -145,10 +145,10 @@ avito.build-checks.enabled=false
 
 ## Checks
 
-These checks are available in a root project's buildscript.  
-See also [Android application checks](#android-application-checks). 
-
 ### Common build checks
+
+These checks are available in a root project's buildscript.  
+See also [Android application checks](#android-application-checks).
 
 #### Java version
 

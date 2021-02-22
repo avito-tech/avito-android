@@ -6,14 +6,14 @@ import kotlin.reflect.full.createInstance
 
 public open class AndroidAppChecksExtension : BuildChecksExtension() {
 
-    public fun uniqueRClasses(action: Action<UniqueRClasses>): Unit =
-        register(UniqueRClasses(), action)
-
     override val allChecks: List<Check>
         get() {
             return AndroidAppCheck::class.sealedSubclasses
                 .map { it.createInstance() }
         }
+
+    public fun uniqueRClasses(action: Action<UniqueRClasses>): Unit =
+        register(UniqueRClasses(), action)
 
     public sealed class AndroidAppCheck : Check {
 
