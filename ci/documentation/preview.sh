@@ -12,9 +12,9 @@ function openBrowser() {
     local HOST=http://localhost:8000
 
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
-        bash -c "sleep 1; xdg-open ${HOST}" &
+        bash -c "sleep 2; xdg-open ${HOST}" &
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        bash -c "sleep 1; open ${HOST}" &
+        bash -c "sleep 2; open ${HOST}" &
     else
         echo "Please, fix this script for your OS: ${OSTYPE}"
     fi

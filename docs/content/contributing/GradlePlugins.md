@@ -13,23 +13,15 @@ Gradle team's slack:
 
 ## Working in IDE
 
+IntelliJ IDEA is preferred but could not work if current Android Gradle Plugin is not supported yet.
+
 ### Known issues
 
 - (DynamicTest.displayName) displays incorrectly in IDE: [#5975](https://github.com/gradle/gradle/issues/5975)
-
-### IntelliJ IDEA
-
-Preferred, but could not work if current Android Gradle Plugin is not supported yet
-
-**Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**
-
-- Delegate IDE build/run actions to Gradle (check)
-- Run tests using : Gradle Test Runner
-
-### Android Studio
-
-2020.3.+ required to work with gradle integration tests in IDE, because intellij settings removed and gradle delegate
-used under hood started with this release
+- IDE can't run Gradle test and creates Junit Run/Debug configuration instead.  
+  Different IDE versions use different ways to run tests.  
+  Check if you can use Gradle Test Runner for tests in **Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**.  
+  If not, create manually Gradle Run/Debug configuration.
 
 ## Testing Gradle plugins
 
@@ -105,7 +97,7 @@ plugins {
 
 Place tests in `src/gradleTest/kotlin`
 
-For simple cases you can create dummy instance of Project
+For simple cases, you can create a dummy instance of Project
 by [ProjectBuilder](https://docs.gradle.org/current/javadoc/org/gradle/testfixtures/ProjectBuilder.html)
 
 ```kotlin
@@ -123,20 +115,20 @@ See ready utilities in `:test-project` module.
 
 ## Debugging
 
-In `GradleTestKit.kt` `fun gradlew()` set `withDebug(true)` to be able to debug gradle plugins. 
+In `GradleTestKit.kt` `fun gradlew()` set `withDebug(true)` to be able to debug Gradle plugins. 
 
-Disabled by default, because breaks tests even without debugging when android gradle plugin applied.
+Disabled by default, because it breaks tests even without debugging when Android Gradle plugin is applied.
 
 See [Gradle issue tracker](https://github.com/gradle/gradle/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+withDebug) about reasons.
 
 ### Run tests via CLI
 
 `./gradlew test` - runs unit tests
-`./gradlew gradleTest` - runs gradle integration tests
+`./gradlew gradleTest` - runs Gradle integration tests
 
 Add `--continue` if you don't need default fail fast on first failure
 
-To run single test, package or class add `--tests package.class.method`, but keep in mind that it works only for a
+To run a single test, package or class add `--tests package.class.method`, but keep in mind that it works only for a
 single project
 
 ## Best practices
@@ -164,4 +156,4 @@ open class MyPlugin : Plugin<Project> {
 }
 ```
 
-## [Logging](../ci/Logging.md)
+### [Logging](../ci/Logging.md)
