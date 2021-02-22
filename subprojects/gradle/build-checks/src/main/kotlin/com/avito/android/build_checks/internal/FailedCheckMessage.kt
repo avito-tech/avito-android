@@ -23,6 +23,6 @@ $extensionName {
         enabled = false
     }
 }
-See https://avito-tech.github.io/avito-android/docs/projects/buildchecks/ (search '$checkExtensionName')
+See https://avito-tech.github.io/avito-android/projects/BuildChecks (search '$checkExtensionName')
 """.trimIndent()
 }
