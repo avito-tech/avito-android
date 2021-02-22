@@ -45,5 +45,7 @@ tasks.named<Test>("integrationTest").configure {
 }
 
 fun Test.applyOptionalSystemProperty(name: String) {
-    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
+    if(project.hasProperty(name)) {
+        project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
+    }
 }
