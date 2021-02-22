@@ -5,43 +5,44 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.android.build.gradle.tasks.ProcessTestManifest
 import com.avito.android.androidAppExtension
-import com.avito.android.build_checks.BuildChecksExtension.Check
+import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck
 import com.avito.android.isAndroidApp
-import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
 internal class UniqueRClassesTaskProvider(
-    private val rootProject: Project,
-    private val config: Check.UniqueRClasses
+    private val appProject: Project,
+    private val config: AndroidAppCheck.UniqueRClasses
 ) {
 
     init {
-        check(rootProject.isRoot()) {
-            "Project ${rootProject.path} must be root"
+        check(appProject.isAndroidApp()) {
+            "Project ${appProject.path} must be Android app"
         }
     }
 
-    fun dependsOn(rootTask: TaskProvider<Task>) {
-        rootProject.subprojects.forEach { module ->
-            module.pluginManager.withPlugin("com.android.application") {
+    fun addTask(rootTask: TaskProvider<Task>) {
+        val appTask = registerTask(appProject)
+        rootTask.dependsOn(appTask)
 
-                module.androidAppExtension.applicationVariants.all { appVariant ->
-                    rootTask.dependsOn(
-                        register(module, appVariant)
-                    )
-                }
-            }
+        appProject.androidAppExtension.applicationVariants.all { appVariant ->
+            appTask.dependsOn(
+                registerTask(appProject, appVariant)
+            )
         }
     }
 
-    private fun register(project: Project, appVariant: ApplicationVariant): TaskProvider<UniqueRClassesTask> {
-        check(project.isAndroidApp()) {
-            "Project ${project.path} must be an Android application module"
+    private fun registerTask(project: Project): TaskProvider<Task> {
+        return project.tasks.register<Task>(taskName) {
+            group = "verification"
+            description = "Verify unique R classes"
         }
-        return project.tasks.register<UniqueRClassesTask>("checkUniqueAndroidPackages${appVariant.name.capitalize()}") {
+    }
+
+    private fun registerTask(project: Project, appVariant: ApplicationVariant): TaskProvider<UniqueRClassesTask> {
+        return project.tasks.register<UniqueRClassesTask>("${taskName}${appVariant.name.capitalize()}") {
             group = "verification"
             description = "Verify unique R classes"
 
@@ -58,3 +59,5 @@ internal class UniqueRClassesTaskProvider(
         }
     }
 }
+
+private const val taskName = "checkUniqueAndroidPackages"

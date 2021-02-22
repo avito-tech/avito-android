@@ -1,7 +1,7 @@
 package com.avito.android.build_checks.internal
 
 import com.avito.android.AndroidSdk
-import com.avito.android.build_checks.BuildChecksExtension
+import com.avito.android.build_checks.RootProjectChecksExtension
 import com.avito.utils.loadProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -46,7 +46,7 @@ internal abstract class CheckAndroidSdkVersionTask : DefaultTask() {
         if (localRevision < expectedRevision) {
             throw GradleException(
                 FailedCheckMessage(
-                    BuildChecksExtension::androidSdk,
+                    RootProjectChecksExtension::androidSdk,
                     """
                     You have an old Android SDK Platform version.
                     API level: ${compileSdkVersion.get()}, 
@@ -61,7 +61,7 @@ internal abstract class CheckAndroidSdkVersionTask : DefaultTask() {
         if (localRevision > expectedRevision) {
             logger.error(
                 FailedCheckMessage(
-                    BuildChecksExtension::androidSdk,
+                    RootProjectChecksExtension::androidSdk,
                     """
                     You have a newer Android SDK Platform version.
                     API level: ${compileSdkVersion.get()}, 

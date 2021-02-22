@@ -1,36 +1,26 @@
 package com.avito.android.build_checks
 
-import com.avito.android.AndroidSdk
+import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck
 import com.avito.android.build_checks.BuildChecksExtension.Check
+import com.avito.android.build_checks.BuildChecksExtension.RequireValidation
+import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck
+import com.avito.android.build_checks.internal.BuildEnvLogger
 import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.android.build_checks.internal.CheckAndroidSdkVersionTask
 import com.avito.android.build_checks.internal.CheckGradleDaemonTask
-import com.avito.android.build_checks.internal.ChecksFilter
 import com.avito.android.build_checks.internal.DynamicDependenciesTask
+import com.avito.android.build_checks.internal.params.GradlePropertiesChecker
 import com.avito.android.build_checks.internal.MacOSLocalhostResolvingTask
-import com.avito.android.build_checks.internal.getInstance
-import com.avito.android.build_checks.internal.hasInstance
 import com.avito.android.build_checks.internal.incremental_kapt.IncrementalKaptTask
-import com.avito.android.build_checks.internal.params.GradlePropertiesCheck
-import com.avito.android.build_checks.internal.params.ParamMismatchFailure
 import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskProvider
-import com.avito.android.plugin.build_metrics.BuildMetricTracker
-import com.avito.android.sentry.environmentInfo
-import com.avito.android.sentry.sentry
-import com.avito.android.stats.CountMetric
-import com.avito.android.stats.SeriesName
-import com.avito.android.stats.statsd
-import com.avito.kotlin.dsl.getBooleanProperty
-import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.Logger
-import com.avito.utils.gradle.buildEnvironment
 import org.gradle.StartParameter
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.register
@@ -50,36 +40,48 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             .getOrElse(true)
 
     override fun apply(project: Project) {
-        val extension = project.extensions.create<BuildChecksExtension>(extensionName)
-
-        check(project.isRoot()) {
-            "Plugin must be applied to the root project but was applied to ${project.path}"
+        if (project.isRoot()) {
+            applyForRootProject(project)
+        } else {
+            project.withAndroidApp {
+                applyForAndroidApp(project)
+            }
+            project.afterEvaluate {
+                require(it.pluginManager.hasPlugin("com.android.application")) {
+                    "$pluginId plugin can be applied only for root or Android app project. " +
+                        "It is applied in project ${project.path}"
+                }
+            }
         }
+    }
+
+    private fun applyForRootProject(project: Project) {
+        val extension = project.extensions.create<RootProjectChecksExtension>(extensionName)
+
         if (!project.pluginIsEnabled) return
 
         val logger = GradleLoggerFactory.getLogger(this, project)
-
         val envInfo = BuildEnvironmentInfo(project.providers)
 
-        printBuildEnvironment(project, envInfo, logger)
+        BuildEnvLogger(project, logger, envInfo).log()
 
         project.afterEvaluate {
-            val checks = ChecksFilter(extension).enabledChecks()
-            checks
-                .filterIsInstance<BuildChecksExtension.RequireParameters>()
+            val checks = extension.enabledChecks()
+
+            checks.filterIsInstance<RequireValidation>()
                 .forEach {
                     it.validate()
                 }
 
-            registerRequiredTasks(project, envInfo, checks)
+            registerRootTasks(project, checks, logger, envInfo)
 
-            if (checks.hasInstance<Check.JavaVersion>()) {
+            if (checks.hasInstance<RootProjectCheck.JavaVersion>()) {
                 checkJavaVersion(checks.getInstance(), envInfo)
             }
-            if (checks.hasInstance<Check.GradleProperties>()) {
-                checkGradleProperties(project, envInfo)
+            if (checks.hasInstance<RootProjectCheck.GradleProperties>()) {
+                GradlePropertiesChecker(project, envInfo).check()
             }
-            if (checks.hasInstance<Check.ModuleTypes>()) {
+            if (checks.hasInstance<RootProjectCheck.ModuleTypes>()) {
                 checkModuleHasRequiredPlugins(project)
             }
 
@@ -87,22 +89,52 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
         }
     }
 
-    private fun checkJavaVersion(check: Check.JavaVersion, envInfo: BuildEnvironmentInfo) {
+    private fun applyForAndroidApp(project: Project) {
+        require(project.rootProject.plugins.hasPlugin(pluginId)) {
+            "$pluginId plugin must be applied also to the root project"
+        }
+        val extension = project.extensions.create<AndroidAppChecksExtension>(extensionName)
+
+        if (!project.pluginIsEnabled) return
+
+        project.afterEvaluate {
+            val checks = extension.enabledChecks()
+
+            checks.filterIsInstance<RequireValidation>()
+                .forEach {
+                    it.validate()
+                }
+
+            val rootTask = project.rootProject.tasks.named(rootTaskName)
+
+            if (checks.hasInstance<AndroidAppCheck.UniqueRClasses>()) {
+                UniqueRClassesTaskProvider(project, checks.getInstance())
+                    .addTask(rootTask)
+            }
+        }
+    }
+
+    private fun checkJavaVersion(check: RootProjectCheck.JavaVersion, envInfo: BuildEnvironmentInfo) {
         check(JavaVersion.current() == check.version) {
             "Only ${check.version} is supported for this project but was ${envInfo.javaInfo}. " +
                 "Please check java home property or install appropriate JDK."
         }
     }
 
-    private fun registerRequiredTasks(project: Project, envInfo: BuildEnvironmentInfo, checks: List<Check>) {
-        val rootTask = project.tasks.register("checkBuildEnvironment") {
+    private fun registerRootTasks(
+        project: Project,
+        checks: List<Check>,
+        logger: Logger,
+        envInfo: BuildEnvironmentInfo,
+    ) {
+        val rootTask = project.tasks.register(rootTaskName) {
             it.group = "verification"
             it.description = "Check typical build problems"
         }
         project.gradle.startParameter.addTaskNames(":checkBuildEnvironment")
 
-        if (checks.hasInstance<Check.AndroidSdk>()) {
-            val check = checks.getInstance<Check.AndroidSdk>()
+        if (checks.hasInstance<RootProjectCheck.AndroidSdk>()) {
+            val check = checks.getInstance<RootProjectCheck.AndroidSdk>()
             val task = project.tasks.register<CheckAndroidSdkVersionTask>("checkAndroidSdkVersion") {
                 group = "verification"
                 description = "Checks sdk version in docker against local one to prevent build cache misses"
@@ -117,7 +149,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
-        if (checks.hasInstance<Check.GradleDaemon>()) {
+        if (checks.hasInstance<RootProjectCheck.GradleDaemon>()) {
             val task = project.tasks.register<CheckGradleDaemonTask>("checkGradleDaemon") {
                 group = "verification"
                 description = "Check gradle daemon problems"
@@ -126,7 +158,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
-        if (checks.hasInstance<Check.DynamicDependencies>()) {
+        if (checks.hasInstance<RootProjectCheck.DynamicDependencies>()) {
             val task = project.tasks.register<DynamicDependenciesTask>("checkDynamicDependencies") {
                 group = "verification"
                 description = "Detects dynamic dependencies"
@@ -135,11 +167,10 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
-        if (checks.hasInstance<Check.UniqueRClasses>()) {
-            UniqueRClassesTaskProvider(project, checks.getInstance())
-                .dependsOn(rootTask)
+        if (checks.hasInstance<RootProjectCheck.UniqueRClasses>()) {
+            logger.warn("Build check '${RootProjectChecksExtension::uniqueRClasses.name}' is moved to Android app module")
         }
-        if (checks.hasInstance<Check.MacOSLocalhost>() && envInfo.isMac) {
+        if (checks.hasInstance<RootProjectCheck.MacOSLocalhost>() && envInfo.isMac) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
                 group = "verification"
                 description =
@@ -149,8 +180,8 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
-        if (checks.hasInstance<Check.IncrementalKapt>()) {
-            val check = checks.getInstance<Check.IncrementalKapt>()
+        if (checks.hasInstance<RootProjectCheck.IncrementalKapt>()) {
+            val check = checks.getInstance<RootProjectCheck.IncrementalKapt>()
             val task = project.tasks.register<IncrementalKaptTask>("checkIncrementalKapt") {
                 group = "verification"
                 description = "Check that all annotation processors support incremental kapt if it is turned on"
@@ -211,80 +242,8 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             "You forgot to apply '$pluginId' plugin to kotlin library module $path. it is required"
         }
     }
-
-    private fun checkGradleProperties(project: Project, envInfo: BuildEnvironmentInfo) {
-        project.afterEvaluate {
-            val tracker = buildTracker(project)
-            val sentry = project.sentry
-            val propertiesChecks = listOf(
-                GradlePropertiesCheck(project, envInfo) // TODO: extract to a task
-            )
-            propertiesChecks.forEach { checker ->
-                checker.getMismatches()
-                    .onSuccess {
-                        it.forEach { mismatch ->
-                            project.logger.warn(
-                                "${mismatch.name} differs from recommended value! " +
-                                    "Recommended: ${mismatch.expected} " +
-                                    "Actual: ${mismatch.actual}"
-                            )
-                            val safeParamName = mismatch.name.replace(".", "-")
-                            tracker.track(
-                                CountMetric(SeriesName.create("configuration", "mismatch", safeParamName))
-                            )
-                        }
-                    }
-                    .onFailure {
-                        project.logger.error("[$pluginName] can't check project", it)
-                        val checkerName = checker.javaClass.simpleName
-                        tracker.track(
-                            CountMetric(SeriesName.create("configuration", "mismatch", "failed", checkerName))
-                        )
-                        sentry.get().sendException(ParamMismatchFailure(it))
-                    }
-            }
-        }
-    }
-
-    private fun printBuildEnvironment(project: Project, envInfo: BuildEnvironmentInfo, logger: Logger) {
-        val isBuildCachingEnabled = project.gradle.startParameter.isBuildCacheEnabled
-        val minSdk = project.getOptionalStringProperty("minSdk")
-        val kaptBuildCache: Boolean = project.getBooleanProperty("kaptBuildCache")
-        val kaptMapDiagnosticLocations = project.getBooleanProperty("kaptMapDiagnosticLocations")
-        val javaIncrementalCompilation = project.getBooleanProperty("javaIncrementalCompilation")
-
-        logger.info(
-            """Config information for project: ${project.displayName}:
-BuildEnvironment: ${project.buildEnvironment}
-${startParametersDescription(project.gradle)}
-java=${envInfo.javaInfo}
-JAVA_HOME=${envInfo.javaHome}
-ANDROID_HOME=${AndroidSdk.fromProject(project).androidHome}
-org.gradle.caching=$isBuildCachingEnabled
-android.enableD8=${project.getOptionalStringProperty("android.enableD8")}
-android.enableR8.fullMode=${project.getOptionalStringProperty("android.enableR8.fullMode")}
-android.builder.sdkDownload=${project.getOptionalStringProperty("android.builder.sdkDownload")}
-kotlin.version=${envInfo.kotlinVersion}
-kotlin.incremental=${project.getOptionalStringProperty("kotlin.incremental")}
-minSdk=$minSdk
-preDexLibrariesEnabled=${project.getOptionalStringProperty("preDexLibrariesEnabled")}
-kaptBuildCache=$kaptBuildCache
-kapt.use.worker.api=${project.getOptionalStringProperty("kapt.use.worker.api")}
-kapt.incremental.apt=${project.getOptionalStringProperty("kapt.incremental.apt")}
-kapt.include.compile.classpath=${project.getOptionalStringProperty("kapt.include.compile.classpath")}
-kaptMapDiagnosticLocations=$kaptMapDiagnosticLocations
-javaIncrementalCompilation=$javaIncrementalCompilation
-------------------------"""
-        )
-    }
-
-    private fun buildTracker(project: Project): BuildMetricTracker {
-        return BuildMetricTracker(project.environmentInfo(), project.statsd)
-    }
-
-    private fun startParametersDescription(gradle: Gradle): String =
-        gradle.startParameter.toString().replace(',', '\n')
 }
 
-private const val pluginName = "BuildParamCheckPlugin"
+internal const val pluginId = "com.avito.android.build-checks"
 private const val enabledProp = "avito.build-checks.enabled"
+private const val rootTaskName = "checkBuildEnvironment"
