@@ -1,4 +1,4 @@
-package com.avito.android.plugin.build_param_check
+package com.avito.android.build_checks.internal.params
 
 import org.funktionale.tries.Try
 

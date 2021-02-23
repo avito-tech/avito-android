@@ -1,8 +1,6 @@
 package com.avito.android.build_checks.internal.params
 
 import com.avito.android.build_checks.internal.BuildEnvironmentInfo
-import com.avito.android.plugin.build_param_check.ParameterCheck
-import com.avito.android.plugin.build_param_check.ParameterMismatch
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import org.funktionale.tries.Try
 import org.gradle.api.Project
@@ -10,12 +8,13 @@ import java.io.File
 import java.io.FileInputStream
 import java.util.Properties
 
+// TODO: merge into checker
 internal class GradlePropertiesCheck(
     private val project: Project,
     private val envInfo: BuildEnvironmentInfo
 ) : ParameterCheck {
 
-    // TODO: use a white-list and pass it through extension
+    // TODO: use a allow-list and pass it through extension
     private val ignoredParams = setOf(
         "artifactory_deployer",
         "artifactory_deployer_password",
