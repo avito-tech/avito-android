@@ -1,6 +1,6 @@
 package com.avito.android.build_checks.internal
 
-import com.avito.android.build_checks.BuildChecksExtension
+import com.avito.android.build_checks.RootProjectChecksExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -64,7 +64,7 @@ internal abstract class CheckGradleDaemonTask : DefaultTask() {
 
         if (left.getProperty(property) != right.getProperty(property)) {
             throw GradleException(
-                FailedCheckMessage(BuildChecksExtension::gradleDaemon, error()).toString()
+                FailedCheckMessage(RootProjectChecksExtension::gradleDaemon, error()).toString()
             )
         }
     }

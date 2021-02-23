@@ -1,6 +1,6 @@
 package com.avito.android.build_checks.internal
 
-import com.avito.android.build_checks.BuildChecksExtension
+import com.avito.android.build_checks.RootProjectChecksExtension
 import com.avito.android.build_checks.internal.MacOSLocalhostResolvingTask.Action.Parameters
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -55,7 +55,7 @@ internal abstract class MacOSLocalhostResolvingTask @Inject constructor(
             if (resolveTimeMs > RESOLUTION_THRESHOLD_MS) {
                 throw GradleException(
                     FailedCheckMessage(
-                        BuildChecksExtension::macOSLocalhost,
+                        RootProjectChecksExtension::macOSLocalhost,
                         """
                             Localhost resolution took $resolveTimeMs ms.
                             This is a bug in JVM on macOS. Please fix it: https://thoeni.io/post/macos-sierra-java/

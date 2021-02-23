@@ -1,6 +1,6 @@
 package com.avito.android.build_checks.internal
 
-import com.avito.android.build_checks.BuildChecksExtension
+import com.avito.android.build_checks.RootProjectChecksExtension
 import com.google.common.annotations.VisibleForTesting
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -31,7 +31,7 @@ internal abstract class DynamicDependenciesTask : DefaultTask() {
 
         check(!isDynamicVersion(version)) {
             FailedCheckMessage(
-                BuildChecksExtension::dynamicDependencies,
+                RootProjectChecksExtension::dynamicDependencies,
                 """
             Module ${module.path} has dynamic dependency ${dependency.name}:$version.
             It leads to non-reproducible builds and slower configuration time.
