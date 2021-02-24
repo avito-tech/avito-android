@@ -1,3 +1,5 @@
+import com.avito.android.test.applyOptionalSystemProperty
+
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
@@ -35,8 +37,4 @@ tasks.named<Test>("integrationTest").configure {
     applyOptionalSystemProperty("kubernetesToken")
     applyOptionalSystemProperty("kubernetesCaCertData")
     applyOptionalSystemProperty("kubernetesNamespace")
-}
-
-fun Test.applyOptionalSystemProperty(name: String) {
-    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
 }

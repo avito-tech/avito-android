@@ -1,3 +1,5 @@
+import com.avito.android.test.applyOptionalSystemProperty
+
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
@@ -27,8 +29,4 @@ tasks.named<Test>("integrationTest").configure {
     applyOptionalSystemProperty("avito.slack.test.channel")
     applyOptionalSystemProperty("avito.slack.test.token")
     applyOptionalSystemProperty("avito.slack.test.workspace")
-}
-
-fun Test.applyOptionalSystemProperty(name: String) {
-    project.property(name)?.toString()?.let { value -> systemProperty(name, value) }
 }
