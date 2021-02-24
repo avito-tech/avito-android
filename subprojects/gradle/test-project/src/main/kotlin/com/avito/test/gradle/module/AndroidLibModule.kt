@@ -25,6 +25,11 @@ class AndroidLibModule(
     private val mutator: File.() -> Unit = {}
 ) : AndroidModule {
 
+    /**
+     * Don't use `android.resourcePrefix` because clients won't be able to add resource without it.
+     */
+    private val resourcesPrefix: String = this.name.replace("[^a-z0-9_]+".toRegex(), "_")
+
     override fun generateIn(file: File) {
         file.module(name) {
 
@@ -70,16 +75,16 @@ dependencies {
                 dir("res") {
                     dir("layout") {
                         file(
-                            name = "lib.xml",
-                            content = """<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:duplicateParentState="true"
-        tools:text="Title" />
-                            """.trimIndent()
+                            name = "${resourcesPrefix}_lib.xml",
+                            content = """|<?xml version="1.0" encoding="utf-8"?>
+                                         |<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                                         |   xmlns:tools="http://schemas.android.com/tools"
+                                         |      android:id="@+id/title"
+                                         |      android:layout_width="match_parent"
+                                         |      android:layout_height="wrap_content"
+                                         |      android:duplicateParentState="true"
+                                         |      tools:text="Title" />
+                                      """.trimMargin()
                         )
                     }
                 }

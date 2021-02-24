@@ -14,6 +14,7 @@ import com.avito.android.build_checks.internal.RequiredPluginsChecker
 import com.avito.android.build_checks.internal.RootTaskCreator
 import com.avito.android.build_checks.internal.incremental_kapt.IncrementalKaptTask
 import com.avito.android.build_checks.internal.params.GradlePropertiesChecker
+import com.avito.android.build_checks.internal.unique_app_res.UniqueAppResourcesTaskProvider
 import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreator
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
@@ -102,6 +103,10 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
 
             if (checks.hasInstance<AndroidAppCheck.UniqueRClasses>()) {
                 UniqueRClassesTaskCreator(project, checks.getInstance())
+                    .addTask(rootTask)
+            }
+            if (checks.hasInstance<AndroidAppCheck.UniqueAppResources>()) {
+                UniqueAppResourcesTaskProvider(project, checks.getInstance())
                     .addTask(rootTask)
             }
         }
