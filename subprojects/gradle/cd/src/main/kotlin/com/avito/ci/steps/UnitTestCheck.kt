@@ -17,7 +17,6 @@ open class UnitTestCheck(context: String, name: String) : BuildStep(context, nam
 
             val configurations = project.internalModule.let {
                 listOf(
-                    it.androidTestConfiguration,
                     it.testConfiguration,
                     it.implementationConfiguration
                 )
