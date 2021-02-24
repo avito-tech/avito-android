@@ -4,7 +4,7 @@ This plugin verifies [common build problems](#checks) with environment and proje
 
 ## Getting started
 
-Apply the plugin in the root build script:
+Apply the plugin in a root build script or in an Android application module:
 
 ```groovy
 plugins {
@@ -28,9 +28,6 @@ plugins-setup.md
         }
         javaVersion {
             version = JavaVersion.VERSION_1_8
-        }
-        uniqueRClasses {
-            enabled = false
         }
     }
     ```
@@ -148,7 +145,12 @@ avito.build-checks.enabled=false
 
 ## Checks
 
-### Java version
+### Common build checks
+
+These checks are available in a root project's buildscript.  
+See also [Android application checks](#android-application-checks).
+
+#### Java version
 
 The Java version can influence the output of the Java compiler. It leads to
 Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss)
@@ -178,7 +180,7 @@ This check forces the same major version for all builds.
     }
     ```
 
-### Android SDK version
+#### Android SDK version
 
 Android build tools uses android.jar (`$ANDROID_HOME/platforms/android-<compileSdkVersion>/android.jar`).\
 The version can be specified only without a revision ([#117789774](https://issuetracker.google.com/issues/117789774)).
@@ -208,7 +210,7 @@ Different revisions lead to Gradle remote cache misses. This check forces the sa
     }
     ```
 
-### macOS localhost lookup
+#### macOS localhost lookup
 
 On macOs `java.net.InetAddress#getLocalHost()` invocation can last up to 5 seconds instead of milliseconds
 ([thoeni.io/post/macos-sierra-java](https://thoeni.io/post/macos-sierra-java/)). Gradle has
@@ -249,7 +251,7 @@ This check automatically detects the issue:
     }
     ```
 
-### Dynamic dependency version
+#### Dynamic dependency version
 
 Dynamic versions, such as "2.+", and snapshot versions force Gradle to check them on a remote server. It slows down
 a [configuration time](https://guides.gradle.org/performance/#minimize_dynamic_and_snapshot_versions)
@@ -275,61 +277,7 @@ This check forbids dynamic dependency versions.
     }
     ```
 
-### Unique R classes
-
-If two Android modules use the same package, their R classes will be merged. While merging, it can unexpectedly override
-resources ([#175316324](https://issuetracker.google.com/issues/175316324)). It happens even
-with `android.namespacedRClass`.
-
-To forbid merged R files use this check:
-
-=== "Kotlin"
-    `build.gradle.kts`
-
-    ```kotlin
-    plugins {
-        id("com.avito.android.build-checks")
-    }
-    
-    buildChecks {
-        uniqueRClasses { } // enabled by default
-    }
-    ```
-
-=== "Groovy"
-    `build.gradle`
-
-    ```groovy
-    plugins {
-        id("com.avito.android.build-checks")
-    }
-    
-    buildChecks {
-        uniqueRClasses { } // enabled by default
-    }
-    ```
-
-Try also `android.uniquePackageNames` check. In AGP 4.1 it provides similar but less complete contract.
-
-#### Configuration
-
-You can suppress errors for a specific package name:
-
-`build.gradle.kts`
-
-```kotlin
-buildChecks {
-    uniqueRClasses {
-        allowedNonUniquePackageNames.addAll(listOf(
-            "androidx.test", // Default from ManifestMerger #151171905
-            "androidx.test.espresso", // Won't fix: https://issuetracker.google.com/issues/176002058
-            "androidx.navigation.ktx" // Fixed in 2.2.1: https://developer.android.com/jetpack/androidx/releases/navigation#2.2.1
-        ))
-    }
-}
-```
-
-### Gradle daemon reusage
+#### Gradle daemon reusage
 
 Gradle can run multiple daemons
 for [many reasons](https://docs.gradle.org/5.0/userguide/gradle_daemon.html#sec:why_is_there_more_than_one_daemon_process_on_my_machine)
@@ -355,7 +303,7 @@ If you use `buildSrc` in the project with standalone Gradle wrapper, this check 
     }
     ```
 
-### Module types
+#### Module types
 
 This check force to
 apply [`module-types`](https://github.com/avito-tech/avito-android/blob/develop/subprojects/gradle/module-types) Gradle
@@ -384,7 +332,7 @@ dependency for example).
     }
     ```
 
-### Gradle properties
+#### Gradle properties
 
 --8<--
 avito-disclaimer.md
@@ -417,7 +365,7 @@ to remote cache misses.
     }
     ```
 
-### Incremental KAPT
+#### Incremental KAPT
 
 This check verifies that all KAPT annotation processors support incremental annotation processing if it
 is [enabled](https://kotlinlang.org/docs/reference/kapt.html#incremental-annotation-processing-since-1330) (`kapt.incremental.apt=true`)
@@ -455,7 +403,7 @@ Incremental KAPT check has three modes:
     }
     ```
 
-#### Room
+##### Room
 
 Room supports incremental annotation processing if all of the following conditions are met:
 
@@ -474,3 +422,61 @@ org.gradle.java.home=/Applications/Android Studio.app/Contents/jre/jdk/Contents/
 
 This path can be retrieved from **Project Structure > SDK Location > JDK location** in 
 Android Studio.
+
+
+### Android application checks
+
+These checks are available in an Android application's buildscript.  
+Each application can have specific settings.
+
+#### Unique R classes
+
+If two Android libraries use the same package, their R classes will be merged. While merging, it can unexpectedly override
+resources ([#175316324](https://issuetracker.google.com/issues/175316324)). It happens even
+with `android.namespacedRClass`.
+
+To forbid merged R files use this check:
+
+=== "Kotlin"
+    `build.gradle.kts`
+
+    ```kotlin
+    plugins {
+        id("com.avito.android.build-checks")
+    }
+    
+    buildChecks {
+        uniqueRClasses { } // enabled by default
+    }
+    ```
+
+=== "Groovy"
+    `build.gradle`
+
+    ```groovy
+    plugins {
+        id("com.avito.android.build-checks")
+    }
+    
+    buildChecks {
+        uniqueRClasses { } // enabled by default
+    }
+    ```
+
+See also `android.uniquePackageNames` check. In AGP 4.1 it provides similar but less complete contract.
+
+You can suppress errors for a specific package:
+
+`build.gradle.kts`
+
+```kotlin
+buildChecks {
+    uniqueRClasses {
+        allowedNonUniquePackageNames.addAll(listOf(
+            "androidx.test", // Default from ManifestMerger #151171905
+            "androidx.test.espresso", // Won't fix: https://issuetracker.google.com/issues/176002058
+            "androidx.navigation.ktx" // Fixed in 2.2.1: https://developer.android.com/jetpack/androidx/releases/navigation#2.2.1
+        ))
+    }
+}
+```
