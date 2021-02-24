@@ -152,11 +152,9 @@ pluginManagement {
                     }
                 }
             }
-
-            // will be replaced after mavenCentral publishing
             forRepository {
                 maven {
-                    setUrlOrProxy("bintray-avito-maven", "https://dl.bintray.com/avito/maven")
+                    setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")
                 }
             }
             filter {

@@ -54,15 +54,12 @@ dependencies {
     androidTestUtil(libs.testOrchestrator)
 }
 
-val avitoRegistry = getOptionalStringProperty("avito.registry") ?: "stub"
+val avitoRegistry = getOptionalStringProperty("avito.registry")
 
 instrumentation {
     reportApiUrl = getOptionalStringProperty("avito.report.url") ?: "http://stub"
-    reportApiFallbackUrl = "http://stub" // todo remove
     reportViewerUrl = getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
 
-    // todo pass whole image with registry instead of this MBS-10592
-    registry = avitoRegistry
     sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
     slackToken = getOptionalStringProperty("avito.slack.test.token") ?: "stub"
     fileStorageUrl = getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
@@ -162,8 +159,7 @@ instrumentation {
 
 fun emulatorImage(api: Int, label: String): String {
     return if (avitoRegistry != null) {
-        // todo after release "$avitoRegistry/android/emulator-$api:$label"
-        "android/emulator-$api:$label"
+        "$avitoRegistry/android/emulator-$api:$label"
     } else {
         "avitotech/android-emulator-$api:$label"
     }
