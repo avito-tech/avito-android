@@ -40,7 +40,7 @@ dependencies {
 tasks.withType<Wrapper> {
     // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.8.2"
+    gradleVersion = "6.8.3"
 }
 
 val detektAll = tasks.register<Detekt>("detektAll") {
