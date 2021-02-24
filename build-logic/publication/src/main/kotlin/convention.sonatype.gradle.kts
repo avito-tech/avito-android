@@ -20,6 +20,8 @@ val sonatypeRepoName = "SonatypeReleases"
 
 val repositoryUrlOutputFilePath: Provider<RegularFile> = rootProject.layout.buildDirectory.file("sonatype-repo.id")
 
+val buildId: Provider<String> = providers.gradleProperty("teamcityBuildId").forUseAtConfigurationTime()
+
 val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = with(rootProject.tasks) {
     val createStagingTaskName = "createSonatypeStagingRepository"
 
@@ -33,7 +35,7 @@ val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = wit
             stagingProfileId.set(ossrhStagingProfileId)
             user.set(ossrhUsername)
             password.set(ossrhPassword)
-            repositoryDescription.set("Created by avito sonatype publication convention")
+            repositoryDescription.set("Release v.$version; build ${buildId.get()}")
             repositoryIdFile.set(repositoryUrlOutputFilePath)
         }
     }
@@ -45,7 +47,7 @@ tasks.withType<PublishToMavenRepository>().configureEach {
     if (name.contains(sonatypeRepoName)) {
         doFirst {
 
-            // no direct task access, because "cannot be cast to class com.avito.android.publish.CreateStagingRepositoryTask" for some reason
+            // no direct task access, because "cannot be cast to class CreateStagingRepositoryTask" for some reason
             val repositoryUrl = repositoryUrlOutputFilePath.get().asFile.readText()
             repository = repository.apply { setUrl(repositoryUrl) }
         }
