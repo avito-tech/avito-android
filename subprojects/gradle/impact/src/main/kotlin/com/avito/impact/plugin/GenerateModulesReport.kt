@@ -1,7 +1,10 @@
 package com.avito.impact.plugin
 
-import com.avito.impact.ConfigurationType
 import com.avito.impact.ModifiedProjectsFinder
+import com.avito.module.configurations.ConfigurationType
+import com.avito.module.configurations.ConfigurationType.ANDROID_TESTS
+import com.avito.module.configurations.ConfigurationType.IMPLEMENTATION
+import com.avito.module.configurations.ConfigurationType.UNIT_TESTS
 import com.avito.utils.createOrClear
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
@@ -36,12 +39,12 @@ abstract class GenerateModulesReport : DefaultTask() {
 
         printReport(
             implementationModulesReportFile,
-            modifiedProjectsFinder.determineImpact(ConfigurationType.IMPLEMENTATION)
+            modifiedProjectsFinder.determineImpact(IMPLEMENTATION)
         )
-        printReport(unitTestsModulesReportFile, modifiedProjectsFinder.determineImpact(ConfigurationType.UNIT_TESTS))
+        printReport(unitTestsModulesReportFile, modifiedProjectsFinder.determineImpact(UNIT_TESTS))
         printReport(
             androidTestsModulesReportFile,
-            modifiedProjectsFinder.determineImpact(ConfigurationType.ANDROID_TESTS)
+            modifiedProjectsFinder.determineImpact(ANDROID_TESTS)
         )
     }
 

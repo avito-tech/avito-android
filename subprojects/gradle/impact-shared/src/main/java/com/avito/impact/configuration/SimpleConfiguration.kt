@@ -8,9 +8,9 @@ import com.avito.android.androidBaseExtension
 import com.avito.android.isAndroid
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.util.Equality
+import com.avito.module.configurations.ConfigurationType
+import com.avito.module.dependencies.dependenciesOnProjects
 import org.funktionale.tries.Try
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
@@ -18,15 +18,16 @@ import java.io.File
 /**
  * Wrapper above [org.gradle.api.artifacts.Configuration] to reduce an amount of configurations
  */
-abstract class SimpleConfiguration(val module: InternalModule) : Equality {
+abstract class SimpleConfiguration(
+    val module: InternalModule,
+    val type: ConfigurationType
+) : Equality {
 
-    abstract val dependencies: Set<ImplementationConfiguration>
     abstract val fullBytecodeSets: Set<File>
     abstract val isModified: Boolean
     protected val project = module.project
     protected val changesDetector = module.changesDetector
     val path: String = project.path
-
     open val hasChangedFiles: Boolean by lazy {
         changedFiles()
             .map { it.isNotEmpty() }
@@ -91,25 +92,17 @@ abstract class SimpleConfiguration(val module: InternalModule) : Equality {
             .toSet()
     }
 
+    open val dependencies: Set<ImplementationConfiguration> by lazy {
+        module.project.dependenciesOnProjects(type)
+            .filter { it.dependencyProject != module.project } // project has dependency to itself in a default configuration
+            .map {
+                it.dependencyProject
+                    .internalModule
+                    .implementationConfiguration
+            }
+            .toSet()
+    }
+
     protected abstract fun containsBytecode(bytecodeDirectory: File): Boolean
     protected abstract fun containsSources(sourceSet: AndroidSourceSet): Boolean
-}
-
-internal fun SimpleConfiguration.dependencies(filter: (Configuration) -> Boolean): Set<ImplementationConfiguration> {
-    return module.project.configurations
-        .filter(filter)
-        .flatMap { configuration ->
-            configuration
-                .dependencies
-                .withType(DefaultProjectDependency::class.java)
-        }
-        .toSet()
-        .map {
-            it.dependencyProject
-                .internalModule
-                .implementationConfiguration
-        }
-        .toMutableSet().apply {
-            remove(this@dependencies) // project has dependency to itself in a default configuration
-        }
 }
