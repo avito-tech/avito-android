@@ -20,6 +20,8 @@ val sonatypeRepoName = "SonatypeReleases"
 
 val repositoryUrlOutputFilePath: Provider<RegularFile> = rootProject.layout.buildDirectory.file("sonatype-repo.id")
 
+val buildId: Provider<String> = providers.gradleProperty("teamcityBuildId").forUseAtConfigurationTime()
+
 val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = with(rootProject.tasks) {
     val createStagingTaskName = "createSonatypeStagingRepository"
 
@@ -33,7 +35,7 @@ val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = wit
             stagingProfileId.set(ossrhStagingProfileId)
             user.set(ossrhUsername)
             password.set(ossrhPassword)
-            repositoryDescription.set("Release v.$version; Created by avito sonatype publication convention")
+            repositoryDescription.set("Release v.$version; build $${buildId.get()}")
             repositoryIdFile.set(repositoryUrlOutputFilePath)
         }
     }
