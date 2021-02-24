@@ -1,7 +1,8 @@
 plugins.withId("kotlin") {
-    extensions.getByType<JavaPluginExtension>().run {
 
-        @Suppress("UnstableApiUsage")
+    @Suppress("UnstableApiUsage")
+    extensions.getByType<JavaPluginExtension>().run {
         withSourcesJar()
+        withJavadocJar()
     }
 }
