@@ -35,7 +35,7 @@ val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = wit
             stagingProfileId.set(ossrhStagingProfileId)
             user.set(ossrhUsername)
             password.set(ossrhPassword)
-            repositoryDescription.set("Release v.$version; build $${buildId.get()}")
+            repositoryDescription.set("Release v.$version; build ${buildId.get()}")
             repositoryIdFile.set(repositoryUrlOutputFilePath)
         }
     }
