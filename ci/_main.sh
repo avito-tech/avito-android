@@ -91,7 +91,7 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.ossrh.password=$OSSRH_PASSWORD \\
              -Pavito.ossrh.stagingProfileId=$OSSRH_STAGING_ID \\
              -Pavito.pgp.keyid=$PGP_KEY_ID \\
-             -Pavito.pgp.key=\"$PGP_KEY\" \\
+             -Pavito.pgp.key='$PGP_KEY' \\
              -Pavito.pgp.password=$PGP_PASSWORD \\
              -Pavito.bitbucket.enabled=true"
 
