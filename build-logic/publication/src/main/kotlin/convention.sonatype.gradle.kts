@@ -33,7 +33,7 @@ val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = wit
             stagingProfileId.set(ossrhStagingProfileId)
             user.set(ossrhUsername)
             password.set(ossrhPassword)
-            repositoryDescription.set("Created by avito sonatype publication convention")
+            repositoryDescription.set("Release v.$version; Created by avito sonatype publication convention")
             repositoryIdFile.set(repositoryUrlOutputFilePath)
         }
     }
