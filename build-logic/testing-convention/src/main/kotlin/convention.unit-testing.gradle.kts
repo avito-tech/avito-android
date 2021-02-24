@@ -16,10 +16,9 @@ tasks.withType<Test>().configureEach {
     failFast = false
 
     /**
-     * fix for retrofit `WARNING: Illegal reflective access by retrofit2.Platform`
-     * see square/retrofit/issues/3341
+     * fix for multiple `WARNING: Illegal reflective access`
      */
-    jvmArgs = listOf("--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED")
+    jvmArgs = listOf("--add-opens", "java.base/java.lang=ALL-UNNAMED")
 }
 
 plugins.withType<KotlinBasePluginWrapper>() {
