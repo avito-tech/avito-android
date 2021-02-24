@@ -45,7 +45,7 @@ tasks.withType<PublishToMavenRepository>().configureEach {
     if (name.contains(sonatypeRepoName)) {
         doFirst {
 
-            // no direct task access, because "cannot be cast to class com.avito.android.publish.CreateStagingRepositoryTask" for some reason
+            // no direct task access, because "cannot be cast to class CreateStagingRepositoryTask" for some reason
             val repositoryUrl = repositoryUrlOutputFilePath.get().asFile.readText()
             repository = repository.apply { setUrl(repositoryUrl) }
         }

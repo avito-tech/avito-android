@@ -47,9 +47,9 @@ abstract class CreateStagingRepositoryTask : DefaultTask() {
 
         val okHttpClient = OkHttpClient.Builder()
             .authenticator(authenticator)
-            .readTimeout(120, TimeUnit.SECONDS)
-            .writeTimeout(120, TimeUnit.SECONDS)
-            .connectTimeout(120, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
             .build()
 
         val url = "$SONATYPE_BASE_URL/staging/profiles/${stagingProfileId.get()}/start"
@@ -63,7 +63,6 @@ abstract class CreateStagingRepositoryTask : DefaultTask() {
                     .toRequestBody(contentType = "application/json".toMediaType())
             )
             .build()
-
 
         val response = try {
             okHttpClient.newCall(request).execute()
@@ -100,6 +99,7 @@ abstract class CreateStagingRepositoryTask : DefaultTask() {
 
     private companion object {
         const val RESPONSE_BODY_STRING_LIMIT = 128
+        const val TIMEOUT_SEC = 300L
         const val SONATYPE_BASE_URL = "https://oss.sonatype.org/service/local"
     }
 }
