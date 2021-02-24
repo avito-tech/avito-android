@@ -5,9 +5,10 @@ package com.avito.impact.configuration
 
 import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.impact.configuration.sets.isAndroidTest
+import com.avito.module.configurations.ConfigurationType.ANDROID_TESTS
 import java.io.File
 
-class AndroidTestConfiguration(module: InternalModule) : SimpleConfiguration(module) {
+class AndroidTestConfiguration(module: InternalModule) : SimpleConfiguration(module, ANDROID_TESTS) {
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }
@@ -19,10 +20,6 @@ class AndroidTestConfiguration(module: InternalModule) : SimpleConfiguration(mod
         bytecodeSets() +
             dependencies.flatMap { it.fullBytecodeSets } +
             module.implementationConfiguration.fullBytecodeSets
-    }
-
-    override val dependencies: Set<ImplementationConfiguration> by lazy {
-        dependencies { it.isAndroidTest() }
     }
 
     override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isAndroidTest()
