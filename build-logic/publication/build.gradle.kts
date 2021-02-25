@@ -6,7 +6,6 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
-    implementation(libs.bintrayPlugin)
     implementation(libs.androidGradlePlugin)
     implementation(libs.okhttp)
     implementation(libs.kotson)

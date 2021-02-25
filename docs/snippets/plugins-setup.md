@@ -4,10 +4,7 @@
     ```groovy
     pluginManagement {
         repositories {
-            maven {
-                name = "Avito bintray"
-                url = "https://dl.bintray.com/avito/maven"
-            }
+            mavenCentral()
         }
         resolutionStrategy {
             eachPlugin {

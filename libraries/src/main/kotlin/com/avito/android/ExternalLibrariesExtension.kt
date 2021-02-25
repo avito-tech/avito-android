@@ -26,7 +26,6 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val minSdkVersion = 21
     val kotlinVersion = systemProperty("kotlinVersion").get()
     val detektVersion = systemProperty("detektVersion").get()
-    val bintrayVersion = systemProperty("bintrayVersion").get()
     val nebulaIntegTestVersion = systemProperty("nebulaIntegTestVersion").get()
 
     /**
@@ -92,7 +91,6 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
 
     val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     val androidGradlePlugin = "com.android.tools.build:gradle:$androidGradlePluginVersion"
-    val bintrayPlugin = "com.jfrog.bintray.gradle:gradle-bintray-plugin:$bintrayVersion"
     val nebulaIntegTest = "com.netflix.nebula:nebula-project-plugin:$nebulaIntegTestVersion"
 
     val androidXTestRunner = "androidx.test:runner:${Versions.androidXTest}"
