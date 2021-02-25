@@ -26,6 +26,8 @@ $extensionName {
         enabled = false
     }
 }
-See https://avito-tech.github.io/avito-android/projects/BuildChecks (search '$checkExtensionName')
+See $docsLink (search '$checkExtensionName')
 """.trimIndent()
 }
+
+internal const val docsLink = "https://avito-tech.github.io/avito-android/projects/BuildChecks"

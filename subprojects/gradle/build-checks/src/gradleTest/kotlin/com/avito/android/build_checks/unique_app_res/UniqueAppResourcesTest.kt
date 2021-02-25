@@ -213,6 +213,44 @@ internal class UniqueAppResourcesTest {
     }
 
     @Test
+    fun `warn - unknown ignored resource`() {
+        TestProjectGenerator(
+            plugins = plugins {
+                id("com.avito.android.impact")
+            },
+            modules = listOf(
+                AndroidAppModule(
+                    name = "app",
+                    packageName = "com.app",
+                    plugins = plugins {
+                        id("com.avito.android.build-checks")
+                    },
+                    dependencies = setOf(
+                        project(":lib-a")
+                    ),
+                    buildGradleExtra = """
+                        buildChecks {
+                            enableByDefault = false
+                            uniqueAppResources {
+                                enabled = true
+                                ignoredResource("string", "unknown_res_id")
+                            }
+                        }
+                        """.trimIndent()
+                ),
+                AndroidLibModule(name = "lib-a", packageName = "lib_a"),
+            ),
+        ).generateIn(projectDir)
+
+        val build = runCheck()
+
+        build.assertThat()
+            .buildSuccessful()
+            .outputContains("Application :app defines unknown resources in 'uniqueAppResources':")
+            .outputContains("- string 'unknown_res_id'")
+    }
+
+    @Test
     fun `fail - invalid resource type in a config`() {
         TestProjectGenerator(
             plugins = plugins {

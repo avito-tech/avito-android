@@ -5,6 +5,7 @@ import com.android.ide.common.symbols.SymbolTable
 import com.android.resources.ResourceType
 import com.avito.android.build_checks.AndroidAppChecksExtension
 import com.avito.android.build_checks.internal.FailedCheckMessage
+import com.avito.android.build_checks.internal.docsLink
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
@@ -37,6 +38,13 @@ public abstract class UniqueAppResourcesTask @Inject constructor(
     @get:Input
     internal val ignoredResources: SetProperty<Resource> = objects.setProperty(Resource::class.java)
 
+    private val symbolTables by lazy {
+        packageAwareRFiles.get().files
+            .map {
+                parsePackageAwareR(it.toPath())
+            }
+    }
+
     @OutputFile
     public val output: Property<RegularFile> = objects.fileProperty().apply {
         set(project.layout.buildDirectory.file("${UniqueAppResourcesTask::class.java.simpleName}.output"))
@@ -44,7 +52,14 @@ public abstract class UniqueAppResourcesTask @Inject constructor(
 
     @TaskAction
     public fun check() {
-        val duplicates = createFinder().findDuplicates()
+        warnUndeclaredIgnoredResources()
+        requireNoDuplicates()
+
+        output.get().asFile.writeText("no duplicates")
+    }
+
+    private fun requireNoDuplicates() {
+        val duplicates = duplicatesFinder().findDuplicates()
 
         if (duplicates.isNotEmpty()) {
             val duplicatesMessage = duplicates.joinToString(separator = "\n") { duplicate ->
@@ -68,25 +83,43 @@ public abstract class UniqueAppResourcesTask @Inject constructor(
                 ).toString()
             )
         }
-        output.get().asFile.writeText("no duplicates")
     }
 
-    private fun createFinder(): DuplicateResourcesFinder {
-        val symbols: List<SymbolTable> = packageAwareRFiles.get().files
-            .map {
-                parsePackageAwareR(it.toPath())
-            }
+    private fun warnUndeclaredIgnoredResources() {
+        val resources = undeclaredResourcesFinder().findResources()
 
+        if (resources.isNotEmpty()) {
+            val resourcesMessage = resources.joinToString(separator = "\n") { res ->
+                "- ${res.type.getName()} \'${res.name}\' "
+            }
+            @Suppress("MaxLineLength")
+            logger.warn(
+                """Application ${project.path} defines unknown resources in '${AndroidAppChecksExtension::uniqueAppResources.name}':
+                    $resourcesMessage
+                    Remove them.
+                    See $docsLink for details.
+                    """
+            )
+        }
+    }
+
+    private fun duplicatesFinder(): DuplicateResourcesFinder {
         val ignoredTypes: Set<ResourceType> = ignoredResourceTypes.get()
             .map { ResourceType.fromClassName(it) }
             .toSet()
 
         return DuplicateResourcesFinderImpl(
-            symbols,
+            symbolTables,
             ignoredResourceTypes = unsupportedTypes + ignoredTypes,
             ignoredResources.get()
         )
     }
+
+    private fun undeclaredResourcesFinder(): UndeclaredResourcesFinder =
+        UndeclaredResourcesFinderImpl(
+            symbolTables,
+            ignoredResources.get()
+        )
 }
 
 internal fun parsePackageAwareR(path: Path): SymbolTable =
