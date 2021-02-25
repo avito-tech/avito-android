@@ -1,10 +1,10 @@
 package com.avito.impact.configuration
 
-import com.avito.impact.ConfigurationType
 import com.avito.impact.changes.ChangesDetector
 import com.avito.impact.fallback.ImpactFallbackDetector
 import com.avito.impact.util.Equality
 import com.avito.kotlin.dsl.ProjectProperty
+import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
 
 /**

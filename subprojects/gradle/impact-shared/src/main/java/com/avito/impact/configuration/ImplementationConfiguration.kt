@@ -7,6 +7,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.configuration.sets.isImplementation
 import com.avito.impact.fallback.ImpactFallbackDetector
+import com.avito.module.configurations.ConfigurationType.IMPLEMENTATION
 import org.funktionale.tries.Try
 import java.io.File
 
@@ -14,7 +15,7 @@ import java.io.File
  * todo надо переименовать, кажется что речь про configuration: implementation,
  *  а по факту это гораздо большее число конфигураций
  */
-class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(module) {
+class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(module, IMPLEMENTATION) {
 
     override val isModified: Boolean by lazy {
         module.fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
@@ -43,7 +44,7 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
                 "- Using impact analysis during gradle configuration phase \n" +
                 "- Working with regular directory as with module \n"
         }
-        dependencies { it.isImplementation() }
+        super.dependencies
     }
 
     override fun changedFiles(): Try<List<ChangedFile>> {

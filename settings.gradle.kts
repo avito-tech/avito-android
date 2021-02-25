@@ -68,6 +68,7 @@ include(":subprojects:gradle:build-failer-test-fixtures")
 include(":subprojects:gradle:build-environment")
 include(":subprojects:gradle:worker")
 include(":subprojects:gradle:gradle-logger")
+include(":subprojects:gradle:module-dependencies-tree")
 
 include(":subprojects:common:resources")
 include(":subprojects:common:files")
