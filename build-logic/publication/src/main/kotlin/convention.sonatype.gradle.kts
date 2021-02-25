@@ -1,32 +1,74 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.avito.android.publish.CreateStagingRepositoryTask
+
 plugins {
     id("convention.publish-base")
     signing
 }
 
+val ossrhUsername: Provider<String> = providers.gradleProperty("avito.ossrh.user")
+    .forUseAtConfigurationTime()
+
+val ossrhPassword: Provider<String> = providers.gradleProperty("avito.ossrh.password")
+    .forUseAtConfigurationTime()
+
+val ossrhStagingProfileId: Provider<String> = providers.gradleProperty("avito.ossrh.stagingProfileId")
+    .forUseAtConfigurationTime()
+
+val sonatypeRepoName = "SonatypeReleases"
+
+val repositoryUrlOutputFilePath: Provider<RegularFile> = rootProject.layout.buildDirectory.file("sonatype-repo.id")
+
+val buildId: Provider<String> = providers.gradleProperty("teamcityBuildId").forUseAtConfigurationTime()
+
+val createStagingRepositoryTask: TaskProvider<CreateStagingRepositoryTask> = with(rootProject.tasks) {
+    val createStagingTaskName = "createSonatypeStagingRepository"
+
+    try {
+        @Suppress("UNCHECKED_CAST")
+        named(createStagingTaskName) as TaskProvider<CreateStagingRepositoryTask>
+    } catch (e: UnknownTaskException) {
+        register<CreateStagingRepositoryTask>(createStagingTaskName) {
+            group = "publication"
+
+            stagingProfileId.set(ossrhStagingProfileId)
+            user.set(ossrhUsername)
+            password.set(ossrhPassword)
+            repositoryDescription.set("Release v.$version; build ${buildId.get()}")
+            repositoryIdFile.set(repositoryUrlOutputFilePath)
+        }
+    }
+}
+
+tasks.withType<PublishToMavenRepository>().configureEach {
+
+    // https://docs.gradle.org/current/userguide/publishing_customization.html#sec:configuring_publishing_tasks
+    if (name.contains(sonatypeRepoName)) {
+        doFirst {
+
+            // no direct task access, because "cannot be cast to class CreateStagingRepositoryTask" for some reason
+            val repositoryUrl = repositoryUrlOutputFilePath.get().asFile.readText()
+            repository = repository.apply { setUrl(repositoryUrl) }
+        }
+        dependsOn(createStagingRepositoryTask)
+    }
+}
+
 val publishTask = tasks.register<Task>("publishToSonatype") {
     group = "publication"
 
-    if (isSnapshot()) {
-        dependsOn(tasks.named("publishAllPublicationsToSonatypeSnapshotsRepository"))
-    } else {
-        dependsOn(tasks.named("publishAllPublicationsToSonatypeReleasesRepository"))
-    }
+    dependsOn(tasks.named("publishAllPublicationsTo${sonatypeRepoName}Repository"))
 }
 
 publishing {
     repositories {
         maven {
-            name = "SonatypeSnapshots"
-            setUrl("https://oss.sonatype.org/content/repositories/snapshots/")
-            setupCredentials()
-        }
-
-        maven {
-            name = "SonatypeReleases"
-            setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            setupCredentials()
+            name = sonatypeRepoName
+            credentials {
+                username = ossrhUsername.orNull
+                password = ossrhPassword.orNull
+            }
         }
     }
 }
@@ -52,17 +94,3 @@ tasks.withType<Sign>().configureEach {
         gradle.taskGraph.hasTask(publishTask.get())
     }
 }
-
-fun MavenArtifactRepository.setupCredentials() {
-    credentials {
-        username = providers.gradleProperty("avito.ossrh.user")
-            .forUseAtConfigurationTime()
-            .orNull
-
-        password = providers.gradleProperty("avito.ossrh.password")
-            .forUseAtConfigurationTime()
-            .orNull
-    }
-}
-
-fun isSnapshot(): Boolean = version.toString().contains("SNAPSHOT", ignoreCase = true)

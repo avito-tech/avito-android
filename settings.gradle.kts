@@ -153,11 +153,9 @@ pluginManagement {
                     }
                 }
             }
-
-            // will be replaced after mavenCentral publishing
             forRepository {
                 maven {
-                    setUrlOrProxy("bintray-avito-maven", "https://dl.bintray.com/avito/maven")
+                    setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")
                 }
             }
             filter {
@@ -187,7 +185,6 @@ pluginManagement {
                 includeGroup("org.jetbrains.kotlin.jvm")
                 includeGroup("org.gradle.kotlin.kotlin-dsl")
                 includeGroupByRegex("nebula\\..*")
-                includeGroup("com.jfrog.bintray")
                 includeGroup("io.gitlab.arturbosch.detekt")
                 includeGroup("com.autonomousapps.dependency-analysis")
             }
@@ -203,7 +200,6 @@ pluginManagement {
     val detektVersion = systemProperty("detektVersion")
     val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion")
     val infraVersion = systemProperty("infraVersion")
-    val bintrayVersion = systemProperty("bintrayVersion")
     val nebulaIntegTestVersion = systemProperty("nebulaIntegTestVersion")
 
     resolutionStrategy {
@@ -224,9 +220,6 @@ pluginManagement {
 
                 pluginId == "nebula.integtest" ->
                     useVersion(nebulaIntegTestVersion.get())
-
-                pluginId == "com.jfrog.bintray" ->
-                    useVersion(bintrayVersion.get())
 
                 pluginId == "io.gitlab.arturbosch.detekt" ->
                     useVersion(detektVersion.get())
@@ -273,18 +266,6 @@ dependencyResolutionManagement {
                 includeModule("org.jetbrains.teamcity", "teamcity-rest-client")
                 includeModule("com.fkorotkov", "kubernetes-dsl")
                 includeModule("me.weishu", "free_reflection")
-            }
-        }
-
-        // will be replaced after mavenCentral publishing
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("bintray-avito-maven", "https://dl.bintray.com/avito/maven")
-                }
-            }
-            filter {
-                includeModuleByRegex("com\\.avito\\.android", ".*")
             }
         }
 
