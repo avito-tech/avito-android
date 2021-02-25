@@ -5,9 +5,9 @@ import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
-import com.avito.impact.ConfigurationType
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.configuration.internalModule
+import com.avito.module.configurations.ConfigurationType
 
 class ImpactMetricsSender(
     private val statsDSender: StatsDSender,

@@ -2,6 +2,7 @@ package com.avito.impact
 
 import com.avito.impact.configuration.internalModule
 import com.avito.impact.fallback.ImpactFallbackDetector
+import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
 
 class ModifiedProjectsFinder(
