@@ -160,7 +160,7 @@ internal class UniqueAppResourcesTest {
     }
 
     @Test
-    fun `success - ignore specific resource`() {
+    fun `success - ignore specific resources`() {
         val resFileCreator: File.() -> Unit = {
             val projectName = this.name
             dir("src/main/res/values") {
@@ -169,6 +169,7 @@ internal class UniqueAppResourcesTest {
                     content = """
                     <resources>
                         <string name="title">$projectName</string>
+                        <string name="hint">$projectName</string>
                     </resources>
                     """.trimIndent()
                 )
@@ -194,7 +195,8 @@ internal class UniqueAppResourcesTest {
                             enableByDefault = false
                             uniqueAppResources {
                                 enabled = true
-                                ignoredResources.put("string", "title")
+                                ignoredResource("string", "title")
+                                ignoredResource("string", "hint")
                             }
                         }
                         """.trimIndent()

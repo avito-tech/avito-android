@@ -3,6 +3,7 @@ package com.avito.android.build_checks
 import com.android.resources.ResourceType
 import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck.UniqueAppResources
 import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck.UniqueRClasses
+import com.avito.android.build_checks.internal.unique_app_res.Resource
 import org.gradle.api.Action
 import kotlin.reflect.full.createInstance
 
@@ -38,28 +39,30 @@ public open class AndroidAppChecksExtension : BuildChecksExtension() {
              */
             public val ignoredResourceTypes: MutableList<String> = mutableListOf()
 
+            internal val ignoredResources: MutableSet<Resource> = mutableSetOf()
+
             /**
              * Key is a resource type: layout, string, integer, ... as it used in XML.
              * See all names in [com.android.resources.ResourceType]
              *
              * Value: resource name
              */
-            public val ignoredResources: MutableMap<String, String> = mutableMapOf()
+            public fun ignoredResource(type: String, name: String) {
+                require(name.isNotBlank()) {
+                    "Resource can't have empty name (type: $type)"
+                }
+                val resourceType = parseResourceType(type)
+                ignoredResources.add(Resource(resourceType, name))
+            }
 
             override fun validate() {
                 ignoredResourceTypes.forEach {
-                    validateResourceType(it)
-                }
-                ignoredResources.forEach { (type, name) ->
-                    validateResourceType(type)
-                    require(name.isNotBlank()) {
-                        "Resource can't have empty name (type: $type)"
-                    }
+                    parseResourceType(it)
                 }
             }
 
-            private fun validateResourceType(type: String) {
-                try {
+            private fun parseResourceType(type: String): ResourceType {
+                return try {
                     requireNotNull(ResourceType.fromClassName(type))
                 } catch (e: Exception) {
                     throw IllegalArgumentException(

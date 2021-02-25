@@ -5,4 +5,4 @@ import com.android.resources.ResourceType
 internal data class Resource(
     val type: ResourceType,
     val name: String
-)
+) : java.io.Serializable
