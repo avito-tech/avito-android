@@ -7,11 +7,11 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    implementation(project(":subprojects:gradle:gradle-logger"))
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:gradle:git"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":common:okhttp"))
+    implementation(project(":gradle:git"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttp)
@@ -19,7 +19,7 @@ dependencies {
     implementation(libs.sentry)
     implementation(libs.funktionaleTry)
 
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    testImplementation(project(":gradle:test-project"))
+    testImplementation(project(":common:test-okhttp"))
+    testImplementation(testFixtures(project(":common:logger")))
 }

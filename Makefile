@@ -1,5 +1,13 @@
 SHELL := /bin/bash
 
+DOCKER_REGISTRY=registry.k.avito.ru
+ANDROID_BUILDER_TAG=28e6bacd68
+IMAGE_ANDROID_BUILDER=$(DOCKER_REGISTRY)/android/builder:$(ANDROID_BUILDER_TAG)
+GRADLE_CACHE_DIR=$(HOME)/.gradle/caches
+GRADLE_WRAPPER_DIR=$(HOME)/.gradle/wrapper
+USER_ID=$(shell id -u $(USER))
+
+docker=false
 test_build_type?=debug
 infra?=
 ci?=false
@@ -12,6 +20,23 @@ useCompositeBuild=true
 dry_run=false
 instrumentation=Ui
 stacktrace?=
+project=-p subprojects
+
+docker_command?=
+
+ifeq ($(docker),true)
+define docker_command
+docker run --rm \
+	--volume "$(shell pwd)":/app \
+	--volume "$(GRADLE_CACHE_DIR)":/gradle/caches \
+	--volume "$(GRADLE_WRAPPER_DIR)":/gradle/wrapper \
+	--workdir /app \
+	--env TZ="Europe/Moscow" \
+	--env LOCAL_USER_ID="$(USER_ID)" \
+	--env GRADLE_USER_HOME=/gradle \
+	android-builder
+endef
+endif
 
 params?=
 
@@ -64,17 +89,67 @@ __check_defined = \
     $(if $(value $1),, \
       $(error Undefined $1$(if $2, ($2))))
 
-help:
-	./gradlew help $(params)
-
 clean:
 	rm -rf `find -type d -name build`
 
+help:
+	./gradlew $(project) $(log_level) help $(params)
+
 publish_to_maven_local:
-	./gradlew publishToMavenLocal -PprojectVersion=local $(log_level)
+	./gradlew $(project) $(log_level) publishToMavenLocal -PprojectVersion=local
 
 publish_to_artifactory:
-	./gradlew publishToArtifactory -PprojectVersion=$(version) $(log_level)
+	./gradlew $(project) $(log_level) publishToArtifactory -PprojectVersion=$(version) -Dorg.gradle.internal.publish.checksums.insecure=true
+
+unit_tests:
+	./gradlew $(project) $(log_level) test
+
+gradle_test:
+	./gradlew $(project) $(log_level) gradleTest
+
+integration_tests:
+	./gradlew $(project) $(log_level) integrationTest
+
+compile_tests:
+	./gradlew $(project) $(log_level) compileTestKotlin
+
+compile:
+	./gradlew $(project) $(log_level) compileAll
+
+check:
+	./gradlew $(project) $(log_level) check
+
+fast_check:
+	./gradlew $(project) $(log_level) compileAll detektAll test
+
+clean_fast_check:
+	make clean
+	./gradlew $(project) $(log_level) compileAll detektAll test --rerun-tasks --no-build-cache
+
+detekt:
+	$(docker_command) ./gradlew $(project) $(log_level) detektAll
+
+build_android_image:
+	cd ./ci/docker/android-builder && \
+	docker build -t android-builder .
+
+.PHONY: docs
+docs:
+	./ci/documentation/lint.sh
+	./ci/documentation/preview.sh
+
+clear_k8s_deployments_by_namespaces:
+	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
+
+clear_k8s_deployments_by_names:
+	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
+
+# Clear local branches that not on remote
+# from: https://stackoverflow.com/a/17029936/981330
+unsafe_clear_local_branches:
+	git fetch --prune && \
+	git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | \
+	awk '{print $$1}' | xargs git branch -D
 
 # precondition:
 # - installed CLI: https://cli.github.com/
@@ -98,59 +173,3 @@ dynamic_properties:
 	$(eval skipSucceedTestsFromPreviousRun=true)
 	$(eval testFilter?=empty)
 	$(eval dynamicPrefixFilter?=)
-
-unit_tests:
-	./gradlew test $(log_level)
-
-gradle_test:
-	./gradlew gradleTest $(log_level)
-
-integration_tests:
-	./gradlew integrationTest
-
-compile_tests:
-	./gradlew compileTestKotlin $(log_level)
-
-compile:
-	./gradlew compileAll $(log_level)
-
-check:
-	./gradlew check
-
-fast_check:
-	./gradlew compileAll detektAll test ${log_level}
-
-clean_fast_check:
-	rm -rf `find -type d -name build`
-	./gradlew compileAll detektAll test --rerun-tasks --no-build-cache
-
-detekt:
-	./gradlew detektAll
-
-.PHONY: docs
-docs:
-	./ci/documentation/lint.sh
-	./ci/documentation/preview.sh
-
-clear_k8s_deployments_by_namespaces:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
-
-clear_k8s_deployments_by_names:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
-
-record_screenshots:
-	./gradlew samples:test-app-screenshot-test:clearScreenshots
-	./gradlew samples:test-app-screenshot-test:connectedAndroidTest \
-        -Pandroid.testInstrumentationRunnerArguments.annotation=com.avito.android.test.annotations.ScreenshotTest \
-        -Pandroid.testInstrumentationRunnerArguments.recordScreenshots=true
-	./gradlew samples:test-app-screenshot-test:recordScreenshots
-
-analyzeImpactOnSampleApp:
-	./gradlew samples:test-app-impact:app:analyzeTestImpact -PtargetBranch=develop $(params)
-
-# Clear local branches that not on remote
-# from: https://stackoverflow.com/a/17029936/981330
-unsafe_clear_local_branches:
-	git fetch --prune && \
-	git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | \
-	awk '{print $$1}' | xargs git branch -D

@@ -12,6 +12,7 @@ RUN \
     gcc \
     openssh-client \
     ca-certificates \
+    build-essential \
     acl \
     sudo \
     openjdk-11-jdk && \

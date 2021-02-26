@@ -13,18 +13,18 @@ publish {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:runner:service"))
-    api(project(":subprojects:gradle:runner:shared"))
-    api(project(":subprojects:gradle:runner:stub"))
-    api(project(":subprojects:gradle:kubernetes"))
+    api(project(":gradle:runner:service"))
+    api(project(":gradle:runner:shared"))
+    api(project(":gradle:runner:stub"))
+    api(project(":gradle:kubernetes"))
 
     implementation(libs.funktionaleTry)
-    implementation(project(":subprojects:gradle:process"))
-    implementation(project(":subprojects:common:logger"))
+    implementation(project(":gradle:process"))
+    implementation(project(":common:logger"))
 
-    integTestImplementation(project(":subprojects:common:truth-extensions"))
+    integTestImplementation(project(":common:truth-extensions"))
 
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    testImplementation(testFixtures(project(":common:logger")))
     testImplementation(libs.coroutinesTest)
 }
 

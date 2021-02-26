@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:git"))
+    api(project(":gradle:git"))
 }
