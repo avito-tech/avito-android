@@ -1,11 +1,9 @@
 package com.avito.android.test.report
 
-import androidx.test.espresso.EspressoException
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.report.model.Incident
 
 interface Report {
 
@@ -46,24 +44,8 @@ interface Report {
      */
     fun addHtml(label: String, content: String, wrapHtml: Boolean = true)
 
-    fun registerIncident(exception: Throwable)
-
     fun registerIncident(
         exception: Throwable,
-        screenshot: FutureValue<RemoteStorage.Result>?,
-        type: Incident.Type = exception.determineIncidentType()
+        screenshot: FutureValue<RemoteStorage.Result>? = null
     )
-}
-
-internal fun Throwable?.determineIncidentType(): Incident.Type {
-    return when {
-        this == null -> Incident.Type.INFRASTRUCTURE_ERROR
-        else -> when (this) {
-            is AssertionError, is EspressoException -> Incident.Type.ASSERTION_FAILED
-            else -> when {
-                this.cause != null -> this.cause.determineIncidentType()
-                else -> Incident.Type.INFRASTRUCTURE_ERROR
-            }
-        }
-    }
 }
