@@ -1,6 +1,8 @@
 package com.avito.android.test.report
 
 import androidx.annotation.VisibleForTesting
+import androidx.test.espresso.EspressoException
+import com.avito.android.test.report.dump.ThreadDumper
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
 import com.avito.android.test.report.incident.IncidentChain
@@ -106,22 +108,12 @@ class ReportImplementation(
         }
 
     @Synchronized
-    override fun registerIncident(exception: Throwable) {
-        registerIncident(
-            exception = exception,
-            screenshot = null,
-            type = exception.determineIncidentType()
-        )
-    }
-
-    @Synchronized
     override fun registerIncident(
         exception: Throwable,
         screenshot: FutureValue<RemoteStorage.Result>?,
-        type: Incident.Type
     ) = methodExecutionTracing("registerIncident") {
         val currentState = getCastedState<ReportState.Initialized>()
-
+        val type = exception.determineIncidentType()
         if (currentState.incident == null) {
             val incidentChain = IncidentChain.Impl(
                 customViewPresenters = setOf(
@@ -145,6 +137,7 @@ class ReportImplementation(
             if (screenshot != null) {
                 incidentFutureUploads.add(screenshot)
             }
+            addHtml("Threads dump", ThreadDumper.getThreadDump(), false)
 
             onIncident.invoke(exception)
 
@@ -300,6 +293,15 @@ class ReportImplementation(
             )
         }?.entryList ?: earlyEntries
         entriesList.add(entry)
+    }
+
+    private fun Throwable.determineIncidentType(): Incident.Type {
+        return when {
+            else -> when (this) {
+                is AssertionError, is EspressoException -> Incident.Type.ASSERTION_FAILED
+                else -> cause?.determineIncidentType() ?: Incident.Type.INFRASTRUCTURE_ERROR
+            }
+        }
     }
 
     private inline fun <reified T : ReportState> checkStateIs() = getCastedState<T>()
