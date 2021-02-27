@@ -3,8 +3,9 @@ SHELL := /bin/bash
 DOCKER_REGISTRY=registry.k.avito.ru
 ANDROID_BUILDER_TAG=28e6bacd68
 IMAGE_ANDROID_BUILDER=$(DOCKER_REGISTRY)/android/builder:$(ANDROID_BUILDER_TAG)
-GRADLE_CACHE_DIR=$(HOME)/.gradle/caches
-GRADLE_WRAPPER_DIR=$(HOME)/.gradle/wrapper
+GRADLE_HOME_DIR=$(HOME)/.gradle
+GRADLE_CACHE_DIR=$(GRADLE_HOME_DIR)/caches
+GRADLE_WRAPPER_DIR=$(GRADLE_HOME_DIR)/wrapper
 USER_ID=$(shell id -u $(USER))
 
 docker=false
@@ -26,6 +27,8 @@ docker_command?=
 
 ifeq ($(docker),true)
 define docker_command
+make clear_gradle_lock_files
+make clear_docker_containers
 docker run --rm \
 	--volume "$(shell pwd)":/app \
 	--volume "$(GRADLE_CACHE_DIR)":/gradle/caches \
@@ -61,6 +64,7 @@ params +=-Pci=$(ci)
 params +=$(log_level)
 params +=-PkubernetesContext=$(kubernetesContext)
 params +=-PuseCompositeBuild=$(useCompositeBuild)
+params +=-PartifactoryUrl=$(ARTIFACTORY_URL)
 
 ifeq ($(gradle_debug),true)
 params +=-Dorg.gradle.debug=true --no-daemon
@@ -92,42 +96,68 @@ __check_defined = \
 clean:
 	rm -rf `find -type d -name build`
 
+# Warning. Hack!
+# Мы можем удалять эти локи, т.к. гарантированно никакие другие процессы не используют этот шаренный кеш на начало новой сборки
+# см. clearDockerContainers
+# То что лок файлы остаются от предыдущих сборок, означает что мы где-то неправильно останавливаем процесс
+# '|| true' необходим для свеже-поднятых агентов, где еще не создана папка с кешами
+clear_gradle_lock_files:
+	find "$(GRADLE_HOME_DIR)" \( -name "*.lock" -o -name "*.lck" \) -delete || true
+
+# По-разным причинам работа контейнера при прошлой сборке может не завершиться
+# Здесь мы перестраховываемся и останавливаем все работающие контейнеры
+# Перед сборкой не должно быть других контейнеров в любом случае
+clear_docker_containers:
+	containers=$(docker container ls -aq)
+	if [[ ! -z "$(containers)" ]]; then \
+	docker container rm --force $(containers); \
+	fi
+
+init_git:
+	git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
+	git config --global user.name 'builder';
+	git config --global user.email 'builder@avito.ru'
+
 help:
-	./gradlew $(project) $(log_level) help $(params)
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) help
 
 publish_to_maven_local:
-	./gradlew $(project) $(log_level) publishToMavenLocal -PprojectVersion=local
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) publishToMavenLocal -PprojectVersion=local
 
 publish_to_artifactory:
-	./gradlew $(project) $(log_level) publishToArtifactory -PprojectVersion=$(version) -Dorg.gradle.internal.publish.checksums.insecure=true
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) publishToArtifactory -PprojectVersion=$(version) -Dorg.gradle.internal.publish.checksums.insecure=true
 
 unit_tests:
-	./gradlew $(project) $(log_level) test
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) test
 
 gradle_test:
-	./gradlew $(project) $(log_level) gradleTest
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) gradleTest
 
 integration_tests:
-	./gradlew $(project) $(log_level) integrationTest
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) integrationTest
 
 compile_tests:
-	./gradlew $(project) $(log_level) compileTestKotlin
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileTestKotlin
 
 compile:
-	./gradlew $(project) $(log_level) compileAll
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll
 
 check:
-	./gradlew $(project) $(log_level) check
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) check
+
+.PHONY: build
+build:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) build
 
 fast_check:
-	./gradlew $(project) $(log_level) compileAll detektAll test
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll detektAll test
 
 clean_fast_check:
 	make clean
-	./gradlew $(project) $(log_level) compileAll detektAll test --rerun-tasks --no-build-cache
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll detektAll test --rerun-tasks --no-build-cache
 
 detekt:
-	$(docker_command) ./gradlew $(project) $(log_level) detektAll
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) detektAll
 
 build_android_image:
 	cd ./ci/docker/android-builder && \
@@ -139,10 +169,10 @@ docs:
 	./ci/documentation/preview.sh
 
 clear_k8s_deployments_by_namespaces:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
+	$(docker_command) ./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
 
 clear_k8s_deployments_by_names:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
+	$(docker_command) ./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
 
 # Clear local branches that not on remote
 # from: https://stackoverflow.com/a/17029936/981330
