@@ -37,7 +37,7 @@ import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.create
-import com.avito.report.ReportsApi
+import com.avito.report.ReportsApiFactory
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Kind
@@ -115,7 +115,7 @@ abstract class InHouseInstrumentationTestRunner :
                             reportCoordinates = runEnvironment.testRunCoordinates,
                             deviceName = DeviceName(runEnvironment.deviceName),
                             logger = testReportLogger,
-                            reportsApi = ReportsApi.create(
+                            reportsApi = ReportsApiFactory.create(
                                 host = reportConfig.reportApiUrl,
                                 loggerFactory = loggerFactory,
                                 readTimeout = 10,

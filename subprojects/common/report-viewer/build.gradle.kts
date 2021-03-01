@@ -25,7 +25,8 @@ dependencies {
     testImplementation(libs.okhttpMockWebServer)
     testImplementation(libs.jsonPathAssert)
 
-    testFixturesImplementation(testFixtures(project(":subprojects:common:logger")))
     testFixturesImplementation(project(":subprojects:common:test-okhttp"))
+    testFixturesImplementation(libs.okhttpMockWebServer)
+    testFixturesImplementation(testFixtures(project(":subprojects:common:logger")))
     testFixturesImplementation(libs.junitJupiterApi)
 }

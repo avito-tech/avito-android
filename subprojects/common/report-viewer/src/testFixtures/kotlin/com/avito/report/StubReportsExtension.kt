@@ -20,7 +20,7 @@ class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
         state = State(
             mockWebServer = mockWebServer,
             stubReportApi = StubReportApi(
-                realApi = ReportsApi.create(
+                realApi = ReportsApiFactory.create(
                     host = mockWebServer.url("/").toString(),
                     loggerFactory = StubLoggerFactory
                 ),
