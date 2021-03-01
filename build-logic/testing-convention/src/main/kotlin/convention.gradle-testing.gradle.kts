@@ -40,16 +40,6 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     systemProperty("compileSdkVersion", libs.compileSdkVersion)
     systemProperty("buildToolsVersion", libs.buildToolsVersion)
     systemProperty("androidGradlePluginVersion", libs.androidGradlePluginVersion)
-
-    /**
-     * IDEA adds an init script, using it to define if it is an IDE run
-     * used in `:test-project`
-     */
-    systemProperty(
-        "isInvokedFromIde",
-        gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
-    )
-
     systemProperty("isTest", true)
 
     systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
