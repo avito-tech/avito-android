@@ -21,6 +21,8 @@ import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Comp
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
+import com.avito.instrumentation.service.TestRunnerService
+import com.avito.instrumentation.service.TestRunnerWorkAction
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.ReportCoordinates
@@ -132,6 +134,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @Internal
     public val kubernetesCredentials: Property<KubernetesCredentials> = objects.property()
 
+    @Internal
+    public val testRunnerService: Property<TestRunnerService> = objects.property()
+
     @OutputDirectory
     public val output: DirectoryProperty = objects.directoryProperty()
 
@@ -166,48 +171,58 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportConfig
         )
 
-        workerExecutor.inMemoryWork {
-            InstrumentationTestsAction(
-                InstrumentationTestsAction.Params(
-                    mainApk = application.orNull?.getApk(),
-                    testApk = testApplication.get().getApkOrThrow(),
-                    instrumentationConfiguration = configuration,
-                    executionParameters = parameters.get(),
-                    buildId = buildId.get(),
-                    buildType = buildType.get(),
-                    buildUrl = buildUrl.get(),
-                    kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
-                        "you need to provide kubernetesCredentials"
-                    },
-                    projectName = project.name,
-                    currentBranch = gitBranch.get(),
-                    sourceCommitHash = sourceCommitHash.get(),
-                    suppressFailure = suppressFailure.getOrElse(false),
-                    suppressFlaky = suppressFlaky.getOrElse(false),
-                    impactAnalysisResult = ImpactAnalysisResult.create(
-                        policy = impactAnalysisPolicy.get(),
-                        affectedTestsFile = affectedTests.asFile.orNull,
-                        addedTestsFile = newTests.asFile.orNull,
-                        modifiedTestsFile = modifiedTests.asFile.orNull,
-                        changedTestsFile = changedTests.asFile.orNull
-                    ),
-                    loggerFactory = loggerFactory,
-                    outputDir = output.get().asFile,
-                    verdictFile = verdictFile.get().asFile,
-                    slackToken = slackToken.get(),
-                    fileStorageUrl = getFileStorageUrl(),
-                    reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
-                        ?: "http://stub", // stub for inmemory report
-                    reportConfig = reportConfig,
-                    reportFactory = reportFactory,
-                    reportCoordinates = reportCoordinates,
-                    proguardMappings = listOf(
-                        applicationProguardMapping,
-                        testProguardMapping
-                    ).mapNotNull { it.orNull?.asFile },
-                    statsDConfig = project.statsdConfig.get()
-                )
-            ).run()
+        val testRunParams = InstrumentationTestsAction.Params(
+            mainApk = application.orNull?.getApk(),
+            testApk = testApplication.get().getApkOrThrow(),
+            instrumentationConfiguration = configuration,
+            executionParameters = parameters.get(),
+            buildId = buildId.get(),
+            buildType = buildType.get(),
+            buildUrl = buildUrl.get(),
+            kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
+                "you need to provide kubernetesCredentials"
+            },
+            projectName = project.name,
+            currentBranch = gitBranch.get(),
+            sourceCommitHash = sourceCommitHash.get(),
+            suppressFailure = suppressFailure.getOrElse(false),
+            suppressFlaky = suppressFlaky.getOrElse(false),
+            impactAnalysisResult = ImpactAnalysisResult.create(
+                policy = impactAnalysisPolicy.get(),
+                affectedTestsFile = affectedTests.asFile.orNull,
+                addedTestsFile = newTests.asFile.orNull,
+                modifiedTestsFile = modifiedTests.asFile.orNull,
+                changedTestsFile = changedTests.asFile.orNull
+            ),
+            loggerFactory = loggerFactory,
+            outputDir = output.get().asFile,
+            verdictFile = verdictFile.get().asFile,
+            slackToken = slackToken.get(),
+            fileStorageUrl = getFileStorageUrl(),
+            reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
+                ?: "http://stub", // stub for inmemory report
+            reportConfig = reportConfig,
+            reportFactory = reportFactory,
+            reportCoordinates = reportCoordinates,
+            proguardMappings = listOf(
+                applicationProguardMapping,
+                testProguardMapping
+            ).mapNotNull { it.orNull?.asFile },
+            statsDConfig = project.statsdConfig.get()
+        )
+
+        if (testRunnerService.isPresent) {
+            val service = testRunnerService.get()
+            val queue = workerExecutor.noIsolation()
+
+            queue.submit(TestRunnerWorkAction::class.java) { params ->
+                params.service.set(service)
+                params.testRunParams.set(testRunParams)
+            }
+        } else {
+            workerExecutor.inMemoryWork {
+                InstrumentationTestsAction(testRunParams).run()
+            }
         }
     }
 

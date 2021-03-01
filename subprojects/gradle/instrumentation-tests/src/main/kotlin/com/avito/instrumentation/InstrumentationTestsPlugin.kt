@@ -24,6 +24,7 @@ import com.avito.instrumentation.configuration.createInstrumentationPluginExtens
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.test.DumpConfigurationTask
+import com.avito.instrumentation.service.TestRunnerService
 import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
@@ -35,6 +36,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.provider.Providers
 import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.time.Duration
@@ -67,6 +69,17 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         }
 
         project.withInstrumentationExtensionData { extensionData ->
+
+            val testRunnerServiceProvider = if (extensionData.useService) {
+                project.gradle.sharedServices.registerIfAbsent(
+                    "testRunnerService",
+                    TestRunnerService::class.java
+                ) { spec ->
+                    spec.parameters
+                }
+            } else {
+                Providers.notDefined()
+            }
 
             val loadTestsTask = project.tasks.register<LoadTestsFromApkTask>("loadTestsFromApk") {
                 group = ciTaskGroup
@@ -123,6 +136,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.defaultBranch.set(gitState.map { it.defaultBranch })
                     this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
                     this.slackToken.set(extensionData.slackToken)
+                    this.testRunnerService.set(testRunnerServiceProvider)
                     this.output.set(configurationOutputFolder)
                     if (extensionData.reportViewer != null) {
                         this.reportViewerConfig.set(extensionData.reportViewer)
