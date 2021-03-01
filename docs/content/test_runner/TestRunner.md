@@ -43,11 +43,18 @@ It can do the following:
     
     extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         // they are required for Avito app. We will make them optional in future.
-        reportApiUrl = "http://stub"
-        reportViewerUrl = "http://stub"
         sentryDsn = "http://stub-project@stub-host/0"
         slackToken = "stub"
-        fileStorageUrl = "http://stub"
+
+        testReport {
+
+            // optional avito reporting
+            reportViewer {
+                reportApiUrl = "http://stub"
+                reportViewerUrl = "http://stub"
+                fileStorageUrl = "http://stub"
+            }
+        }
     
         configurationsContainer.register("local") {
     
@@ -79,11 +86,18 @@ It can do the following:
     
     instrumentation {
         // they are required for Avito app. We will make them optional in future.
-        reportApiUrl = "http://stub"
-        reportViewerUrl = "http://stub"
         sentryDsn = "http://stub-project@stub-host/0"
         slackToken = "stub"
-        fileStorageUrl = "http://stub"
+
+        testReport {
+
+            // optional avito reporting
+            reportViewer {
+                reportApiUrl = "http://stub"
+                reportViewerUrl = "http://stub"
+                fileStorageUrl = "http://stub"
+            }
+        }
         
         configurations {
             local {

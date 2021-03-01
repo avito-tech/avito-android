@@ -2,7 +2,7 @@ package com.avito.filestorage
 
 import com.avito.logger.LoggerFactory
 import com.avito.time.TimeProvider
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -62,7 +62,7 @@ interface RemoteStorage {
             timeProvider: TimeProvider,
             httpClient: OkHttpClient
         ): RemoteStorage = HttpRemoteStorage(
-            endpoint = requireNotNull(endpoint.toHttpUrl()),
+            endpoint = requireNotNull(endpoint.toHttpUrlOrNull()) { "Can't parse endpoint: $endpoint" },
             httpClient = httpClient,
             loggerFactory = loggerFactory,
             timeProvider = timeProvider
