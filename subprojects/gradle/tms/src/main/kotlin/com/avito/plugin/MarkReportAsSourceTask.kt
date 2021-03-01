@@ -1,7 +1,7 @@
 package com.avito.plugin
 
 import com.avito.logger.GradleLoggerFactory
-import com.avito.report.ReportsApi
+import com.avito.report.ReportsApiFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -25,7 +25,7 @@ abstract class MarkReportAsSourceTask : DefaultTask() {
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
         MarkReportAsSourceAction(
-            reportsApi = ReportsApi.create(
+            reportsApi = ReportsApiFactory.create(
                 host = reportsHost.get(),
                 loggerFactory = loggerFactory
             ),

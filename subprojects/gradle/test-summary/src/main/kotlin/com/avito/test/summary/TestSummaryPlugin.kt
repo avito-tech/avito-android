@@ -4,6 +4,7 @@ import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
+import com.avito.report.ReportsApiFactory
 import com.avito.report.model.Team
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
@@ -81,7 +82,7 @@ class TestSummaryPlugin : Plugin<Project> {
     }
 
     private fun createReportsApi(reportsHost: String, loggerFactory: LoggerFactory): ReportsApi {
-        return ReportsApi.create(
+        return ReportsApiFactory.create(
             host = reportsHost,
             loggerFactory = loggerFactory
         )
