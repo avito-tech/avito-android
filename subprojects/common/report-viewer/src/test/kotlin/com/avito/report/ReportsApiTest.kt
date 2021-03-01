@@ -17,8 +17,12 @@ import org.junit.jupiter.api.Test
 internal class ReportsApiTest {
 
     private val mockWebServer = MockWebServerFactory.create()
-    private lateinit var reportsApi: ReportsApi
+
     private val loggerFactory = StubLoggerFactory
+
+    private val retryCount = 5
+
+    private lateinit var reportsApi: ReportsApi
 
     @BeforeEach
     fun setup() {
@@ -37,14 +41,17 @@ internal class ReportsApiTest {
 
     @Test
     fun `getReport - returns NotFound - when throws exception with no data`() {
-        mockWebServer.enqueue(
-            MockResponse()
-                .setResponseCode(500)
-                .setBody(
-                    "{\"jsonrpc\":\"2.0\"," +
-                        "\"error\":{\"code\":-32603,\"message\":\"Internal error\",\"data\":\"not found\"},\"id\":1}"
-                )
-        )
+        repeat(retryCount) {
+            mockWebServer.enqueue(
+                MockResponse()
+                    .setResponseCode(500)
+                    .setBody(
+                        "{\"jsonrpc\":\"2.0\"," +
+                            "\"error\":{\"code\":-32603,\"message\":\"Internal error\",\"data\":\"not found\"}," +
+                            "\"id\":1}"
+                    )
+            )
+        }
 
         val result = reportsApi.getReport(
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
@@ -55,7 +62,9 @@ internal class ReportsApiTest {
 
     @Test
     fun `getReport - returns Error - when throws exception with no data`() {
-        mockWebServer.enqueue(MockResponse().setResponseCode(500))
+        repeat(retryCount) {
+            mockWebServer.enqueue(MockResponse().setResponseCode(500))
+        }
 
         val result = reportsApi.getReport(
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
