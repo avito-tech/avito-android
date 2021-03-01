@@ -15,7 +15,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.register
 
-internal class UniqueAppResourcesTaskProvider(
+internal class UniqueAppResourcesTaskCreator(
     private val appProject: Project,
     private val config: AndroidAppCheck.UniqueAppResources
 ) {

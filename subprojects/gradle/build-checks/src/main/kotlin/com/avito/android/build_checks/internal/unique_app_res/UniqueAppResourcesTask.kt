@@ -10,8 +10,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -34,10 +34,8 @@ public abstract class UniqueAppResourcesTask @Inject constructor(
     @Input
     public val ignoredResourceTypes: ListProperty<String> = objects.listProperty(String::class.java)
 
-    @Suppress("UnstableApiUsage")
-    @Input
-    public val ignoredResources: MapProperty<String, String> =
-        objects.mapProperty(String::class.java, String::class.java)
+    @get:Input
+    internal val ignoredResources: SetProperty<Resource> = objects.setProperty(Resource::class.java)
 
     @OutputFile
     public val output: Property<RegularFile> = objects.fileProperty().apply {
@@ -83,19 +81,10 @@ public abstract class UniqueAppResourcesTask @Inject constructor(
             .map { ResourceType.fromClassName(it) }
             .toSet()
 
-        val ignoredResources = ignoredResources.get()
-            .map { (type, name) ->
-                Resource(
-                    ResourceType.fromClassName(type),
-                    name
-                )
-            }
-            .toSet()
-
         return DuplicateResourcesFinderImpl(
             symbols,
             ignoredResourceTypes = unsupportedTypes + ignoredTypes,
-            ignoredResources
+            ignoredResources.get()
         )
     }
 }

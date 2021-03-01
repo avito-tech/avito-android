@@ -548,7 +548,8 @@ buildChecks {
         // Resource types: string, dimen, bool, layout, drawable, ...
         ignoredResourceTypes.add("string")
         // Specific resources
-        ignoredResources.put("string", "title")
+        ignoredResource("string", "title")
+        ignoredResource("dimen", "max_height")
     }
 }
 ```
