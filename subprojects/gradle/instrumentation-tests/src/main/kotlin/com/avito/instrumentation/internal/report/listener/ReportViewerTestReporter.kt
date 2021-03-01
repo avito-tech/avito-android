@@ -3,6 +3,7 @@ package com.avito.instrumentation.internal.report.listener
 import com.avito.android.runner.report.Report
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
+import com.avito.http.RetryInterceptor
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -47,7 +48,11 @@ internal class ReportViewerTestReporter(
         verbose = false, // do not enable for production, generates a ton of logs
         logger = logger,
         readTimeoutSec = httpTimeoutSec,
-        writeTimeoutSec = httpTimeoutSec
+        writeTimeoutSec = httpTimeoutSec,
+        retryInterceptor = RetryInterceptor(
+            logger = logger,
+            allowedMethods = listOf("POST")
+        )
     )
 
     /**

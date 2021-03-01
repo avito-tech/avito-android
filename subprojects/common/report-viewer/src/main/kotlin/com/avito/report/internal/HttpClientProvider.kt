@@ -12,16 +12,19 @@ fun getHttpClient(
     verbose: Boolean = false,
     logger: Logger,
     readTimeoutSec: Long,
-    writeTimeoutSec: Long
+    writeTimeoutSec: Long,
+    retryInterceptor: RetryInterceptor?
 ): OkHttpClient {
 
     return OkHttpClient.Builder()
         .readTimeout(readTimeoutSec, TimeUnit.SECONDS)
         .writeTimeout(writeTimeoutSec, TimeUnit.SECONDS)
-        .addInterceptor(RetryInterceptor(logger = logger))
         .apply {
             if (verbose) {
                 addInterceptor(HttpLoggingInterceptor(HttpLogger(logger)).setLevel(Level.BODY))
+            }
+            if (retryInterceptor != null) {
+                addInterceptor(retryInterceptor)
             }
         }
         .build()

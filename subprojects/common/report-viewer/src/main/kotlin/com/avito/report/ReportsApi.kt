@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.internal.JsonRpcRequestProvider
@@ -66,15 +67,21 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
             verboseHttp: Boolean = false
         ): ReportsApi {
 
+            val logger = loggerFactory.create<ReportsApi>()
+
             return ReportsApiImpl(
                 loggerFactory = loggerFactory,
                 requestProvider = JsonRpcRequestProvider(
                     host = host,
                     httpClient = getHttpClient(
                         verbose = verboseHttp,
-                        logger = loggerFactory.create<ReportsApi>(),
+                        logger = logger,
                         readTimeoutSec = readTimeout,
-                        writeTimeoutSec = writeTimeout
+                        writeTimeoutSec = writeTimeout,
+                        retryInterceptor = RetryInterceptor(
+                            logger = logger,
+                            allowedMethods = listOf("POST")
+                        )
                     ),
                     gson = gson
                 )
