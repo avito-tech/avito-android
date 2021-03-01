@@ -1,5 +1,6 @@
 package com.avito.instrumentation.configuration
 
+import groovy.lang.Closure
 import org.gradle.api.Action
 
 public class InstrumentationTestReportExtension {
@@ -22,6 +23,14 @@ public class InstrumentationTestReportExtension {
         val reportViewer = ReportViewer()
         action.execute(reportViewer)
         reportViewer.validate()
+        this.reportViewer = reportViewer
+    }
+
+    public fun reportViewer(closure: Closure<ReportViewer>) {
+        val reportViewer = ReportViewer()
+        closure.delegate = reportViewer
+        closure.resolveStrategy = Closure.DELEGATE_ONLY
+        closure.call()
         this.reportViewer = reportViewer
     }
 }
