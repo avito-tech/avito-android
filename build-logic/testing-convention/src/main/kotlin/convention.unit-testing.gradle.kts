@@ -19,6 +19,15 @@ tasks.withType<Test>().configureEach {
      * fix for multiple `WARNING: Illegal reflective access`
      */
     jvmArgs = listOf("--add-opens", "java.base/java.lang=ALL-UNNAMED")
+
+    /**
+     * IDEA adds an init script, using it to define if it is an IDE run
+     * used in `:test-project`
+     */
+    systemProperty(
+        "isInvokedFromIde",
+        gradle.startParameter.allInitScripts.find { it.name.contains("ijtestinit") } != null
+    )
 }
 
 plugins.withType<KotlinBasePluginWrapper>() {
