@@ -14,7 +14,6 @@ internal class RootProjectChecksExtensionTest {
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.GradleDaemon>(checks)
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.JavaVersion>(checks)
         assertHasInstance<RootProjectChecksExtension.RootProjectCheck.AndroidSdk>(checks)
-        assertHasInstance<RootProjectChecksExtension.RootProjectCheck.UniqueRClasses>(checks)
 
         assertNoInstance<RootProjectChecksExtension.RootProjectCheck.GradleProperties>(checks)
         assertNoInstance<RootProjectChecksExtension.RootProjectCheck.ModuleTypes>(checks)
