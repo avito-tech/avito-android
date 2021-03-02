@@ -122,7 +122,9 @@ internal class UniqueRClassesTest {
 
         val build = runCheck(expectFailure = true)
 
-        build.assertThat().buildFailed("Application :app has modules with the same package: [lib.a]")
+        build.assertThat()
+            .buildFailed()
+            .outputContains("Application :app has modules with the same package: [lib.a]")
     }
 
     /**
@@ -165,7 +167,9 @@ internal class UniqueRClassesTest {
 
         val build = runCheck(expectFailure = true)
 
-        build.assertThat().buildFailed("Application :app has modules with the same package: [lib.package]")
+        build.assertThat()
+            .buildFailed()
+            .outputContains("Application :app has modules with the same package: [lib.package]")
     }
 
     private fun runCheck(expectFailure: Boolean = false) = gradlew(

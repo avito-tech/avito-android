@@ -51,8 +51,9 @@ internal class IncrementalKaptTaskTest {
 
         checkIncrementalKapt(javaVersion = UNSUPPORTED_JAVA_VERSION, expectFailure = true)
             .assertThat()
-            .buildFailed(
-                expectedErrorSubstring = ERROR_MESSAGE_FIRST_LINE
+            .buildFailed()
+            .outputContains(
+                ERROR_MESSAGE_FIRST_LINE
             )
     }
 

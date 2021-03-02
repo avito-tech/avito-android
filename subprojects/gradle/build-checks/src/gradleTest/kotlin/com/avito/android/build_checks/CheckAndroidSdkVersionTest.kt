@@ -37,7 +37,8 @@ internal class CheckAndroidSdkVersionTest {
             expectFailure = true
         )
         result.assertThat()
-            .buildFailed("Can't find ANDROID_HOME")
+            .buildFailed()
+            .outputContains("Can't find ANDROID_HOME")
     }
 
     @Test
@@ -52,7 +53,8 @@ internal class CheckAndroidSdkVersionTest {
             expectFailure = true
         )
         result.assertThat()
-            .buildFailed("ANDROID_HOME is not found")
+            .buildFailed()
+            .outputContains("ANDROID_HOME is not found")
     }
 
     @Test
@@ -64,7 +66,8 @@ internal class CheckAndroidSdkVersionTest {
             expectFailure = true
         )
         result.assertThat()
-            .buildFailed("buildChecks.androidSdk.compileSdkVersion must be set")
+            .buildFailed()
+            .outputContains("buildChecks.androidSdk.compileSdkVersion must be set")
     }
 
     @Test
@@ -79,9 +82,8 @@ internal class CheckAndroidSdkVersionTest {
             expectFailure = true
         )
         result.assertThat()
-            .buildFailed(
-                "Android SDK platform 29 is not found"
-            )
+            .buildFailed()
+            .outputContains("Android SDK platform 29 is not found")
     }
 
     @Test
@@ -96,7 +98,8 @@ internal class CheckAndroidSdkVersionTest {
             expectFailure = true
         )
         result.assertThat()
-            .buildFailed(
+            .buildFailed()
+            .outputContains(
                 "You have an old Android SDK Platform version.\n" +
                     "API level: 29, \n(actual revision 4, expected revision: 5)"
             )

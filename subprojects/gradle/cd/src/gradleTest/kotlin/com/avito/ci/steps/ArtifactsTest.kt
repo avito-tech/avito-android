@@ -43,6 +43,7 @@ internal class ArtifactsTest {
         ).generateIn(tempDir)
 
         gradlew(tempDir, "appA:help", expectFailure = true).assertThat()
-            .buildFailed("already registered")
+            .buildFailed()
+            .outputContains("already registered")
     }
 }
