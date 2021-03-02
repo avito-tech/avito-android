@@ -2,7 +2,7 @@ package com.avito.filestorage
 
 import com.avito.logger.LoggerFactory
 import com.avito.time.TimeProvider
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -34,7 +34,20 @@ interface RemoteStorage {
             ) : FileRequest()
         }
 
-        data class ContentRequest(val content: String, val extension: String) : Request()
+        sealed class ContentRequest : Request() {
+            abstract val content: String
+            abstract val extension: String
+
+            data class Html(override val content: String) : ContentRequest() {
+                override val extension: String = "html"
+            }
+
+            data class PlainText(override val content: String) : ContentRequest() {
+                override val extension: String = "txt"
+            }
+
+            data class AnyContent(override val content: String, override val extension: String) : ContentRequest()
+        }
     }
 
     sealed class Result {
@@ -62,7 +75,7 @@ interface RemoteStorage {
             timeProvider: TimeProvider,
             httpClient: OkHttpClient
         ): RemoteStorage = HttpRemoteStorage(
-            endpoint = requireNotNull(endpoint.toHttpUrl()),
+            endpoint = requireNotNull(endpoint.toHttpUrlOrNull()) { "Can't parse endpoint: $endpoint" },
             httpClient = httpClient,
             loggerFactory = loggerFactory,
             timeProvider = timeProvider

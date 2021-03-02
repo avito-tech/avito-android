@@ -3,7 +3,6 @@ package com.avito.instrumentation.configuration
 import com.google.common.annotations.VisibleForTesting
 import groovy.lang.Closure
 import org.gradle.api.Action
-import org.gradle.api.Incubating
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
@@ -17,10 +16,6 @@ public object InstrumentationPluginConfiguration {
 
         public var applicationApk: String? = null
         public var testApplicationApk: String? = null
-
-        public var reportApiUrl: String = ""
-        public var reportViewerUrl: String = ""
-        public var fileStorageUrl: String = ""
 
         // todo make optional
         public var sentryDsn: String = ""
@@ -40,7 +35,6 @@ public object InstrumentationPluginConfiguration {
         public abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
         public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
-        @get:Incubating
         public val testReport: InstrumentationTestReportExtension = InstrumentationTestReportExtension()
 
         public val configurations: List<InstrumentationConfiguration>
@@ -81,18 +75,7 @@ public object InstrumentationPluginConfiguration {
                     fileStorageUrl = reportViewer.fileStorageUrl
                 )
             } else {
-                if (reportViewerUrl.isNotEmpty()
-                    && reportApiUrl.isNotEmpty()
-                    && fileStorageUrl.isNotEmpty()
-                ) {
-                    Data.ReportViewer(
-                        reportApiUrl = reportApiUrl,
-                        reportViewerUrl = reportViewerUrl,
-                        fileStorageUrl = fileStorageUrl
-                    )
-                } else {
-                    null
-                }
+                null
             }
         }
 

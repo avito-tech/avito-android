@@ -37,9 +37,9 @@ internal class InstrumentationParamsBuildingTest {
                 commitHash = commit,
                 buildTypeId = "teamcity-$buildType"
             ).toString(),
-            "reportApiUrl" to "stub",
-            "reportViewerUrl" to "stub",
-            "fileStorageUrl" to "stub",
+            "reportApiUrl" to "http://stub", // from InstrumentationPluginConfiguration
+            "reportViewerUrl" to "http://stub",
+            "fileStorageUrl" to "http://stub",
             "sentryDsn" to "stub",
             "slackToken" to "stub",
             "inHouse" to "true",
@@ -74,16 +74,21 @@ internal class InstrumentationParamsBuildingTest {
 
                          instrumentation {
                              output = project.file("outputs").path
-                             reportApiUrl = "stub"
-                             reportViewerUrl = "stub"
                              sentryDsn = "stub"
                              slackToken = "stub"
-                             fileStorageUrl = "stub"
 
                              instrumentationParams = [
                                  "jobSlug": "FunctionalTests",
                                  "override": "overrideInPlugin"
                              ]
+                             
+                             testReport {
+                                reportViewer {
+                                    reportApiUrl = "http://stub"
+                                    reportViewerUrl = "http://stub"
+                                    fileStorageUrl = "http://stub"
+                                }
+                             }
 
                              configurations {
 
@@ -194,9 +199,9 @@ internal class InstrumentationParamsBuildingTest {
         assertThat(data.reportViewer)
             .isEqualTo(
                 Data.ReportViewer(
-                    reportApiUrl = "stub",
-                    reportViewerUrl = "stub",
-                    fileStorageUrl = "stub"
+                    reportApiUrl = "http://stub",
+                    reportViewerUrl = "http://stub",
+                    fileStorageUrl = "http://stub"
                 )
             )
     }

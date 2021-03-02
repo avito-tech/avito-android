@@ -379,16 +379,22 @@ class RealTest {
                 testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
             }
             instrumentation {
-                 reportViewerUrl="$reportsApiUrl"
                  sentryDsn = "stub"
                  slackToken = "stub"
-                 fileStorageUrl = "$mockUrl"
-                 reportApiUrl = "$mockUrl"
+                 
                  instrumentationParams = [
                     "deviceName"    : "regress",
                     "jobSlug"       : "regress",
                     "runId"         : "runId"
                 ]
+                
+                testReport {
+                    reportViewer {
+                        reportApiUrl = "$mockUrl"
+                        reportViewerUrl = "$reportsApiUrl"
+                        fileStorageUrl = "$mockUrl"
+                    }
+                }
 
                 output = "./output"
 

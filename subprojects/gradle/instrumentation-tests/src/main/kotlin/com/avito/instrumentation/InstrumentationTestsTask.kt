@@ -230,7 +230,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
      * todo FileStorage needed only for ReportViewer
      */
     private fun getFileStorageUrl(): String {
-        return reportViewerConfig.orNull?.fileStorageUrl ?: ""
+        return reportViewerConfig.orNull?.fileStorageUrl ?: "http://stub"
     }
 
     private fun createReportConfig(

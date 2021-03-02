@@ -30,11 +30,8 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
             testInstrumentationRunnerArguments(["planSlug" : "AvitoAndroid"])
         }
         instrumentation {
-            reportApiUrl = "stub"
-            reportViewerUrl = "stub"
             sentryDsn = "stub"
             slackToken = "stub"
-            fileStorageUrl = "stub"
             instrumentationParams = [
                 "deviceName"    : "regress",
                 "jobSlug"       : "regress"
