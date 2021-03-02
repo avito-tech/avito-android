@@ -29,10 +29,24 @@ interface Report {
 
     fun makeScreenshot(comment: String): FutureValue<RemoteStorage.Result>?
 
+    /**
+     * Add comment entry with content [comment] to the current report step
+     *
+     * Use it with small text. Behind the scenes it inlines.
+     */
     fun addComment(comment: String)
 
     /**
-     * Добавляет в отчет к шагу специальное поле с текстом проверяемого условия
+     * Add text entry with content [text] to the current report step
+     *
+     * @param label one-liner you see in test step comments
+     *
+     * Use it with big text. Behind the scenes it load text as file.
+     */
+    fun addText(label: String, text: String)
+
+    /**
+     * Add entry with [assertionMessage] to the current report step
      */
     fun addAssertion(assertionMessage: String)
 

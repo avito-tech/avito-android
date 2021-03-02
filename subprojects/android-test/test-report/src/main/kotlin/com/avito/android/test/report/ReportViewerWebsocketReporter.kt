@@ -29,7 +29,7 @@ class ReportViewerWebsocketReporter(private val reportProvider: ReportProvider) 
                 } else {
                     "WS: Call wasn't enqueued: id = ${info.id}, method = ${info.method}"
                 }
-                report.addHtml(label, info.prettyJson)
+                report.addText(label, info.prettyJson)
             }
             is OutgoingMessage.Unknown -> {
                 val label = if (enqueued) {
@@ -37,7 +37,7 @@ class ReportViewerWebsocketReporter(private val reportProvider: ReportProvider) 
                 } else {
                     "WS: Call wasn't enqueued"
                 }
-                report.addHtml(label, info.prettyJson)
+                report.addText(label, info.prettyJson)
             }
         }.exhaustive
     }
@@ -52,15 +52,15 @@ class ReportViewerWebsocketReporter(private val reportProvider: ReportProvider) 
                 } else {
                     "WS: Response ERROR id = ${info.id}"
                 }
-                report.addHtml(label, info.prettyJson)
+                report.addText(label, info.prettyJson)
             }
             is IncomingMessage.Event -> {
                 val label = "WS: Event id = ${info.id}, type = ${info.type}"
-                report.addHtml(label, info.prettyJson)
+                report.addText(label, info.prettyJson)
             }
             is IncomingMessage.Unknown -> {
                 val label = "WS: Message"
-                report.addHtml(label, info.prettyJson)
+                report.addText(label, info.prettyJson)
             }
         }.exhaustive
     }
