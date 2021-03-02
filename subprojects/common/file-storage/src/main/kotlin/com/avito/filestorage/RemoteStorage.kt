@@ -34,7 +34,20 @@ interface RemoteStorage {
             ) : FileRequest()
         }
 
-        data class ContentRequest(val content: String, val extension: String) : Request()
+        sealed class ContentRequest : Request() {
+            abstract val content: String
+            abstract val extension: String
+
+            data class Html(override val content: String) : ContentRequest() {
+                override val extension: String = "html"
+            }
+
+            data class PlainText(override val content: String) : ContentRequest() {
+                override val extension: String = "txt"
+            }
+
+            data class AnyContent(override val content: String, override val extension: String) : ContentRequest()
+        }
     }
 
     sealed class Result {
