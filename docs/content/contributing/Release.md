@@ -1,12 +1,16 @@
-# Infrastructure release
+# Releasing infrastructure
 
 --8<--
 avito-disclaimer.md
 --8<--
 
-We publish releases to [Maven Central](https://search.maven.org/search?q=com.avito.android).
+We publish releases to Maven Central: [com.avito.android](https://search.maven.org/search?q=com.avito.android).
 
 ## Publishing a new release
+
+??? info "If you release for the first time"
+
+    - [Get an access to Sonatype](#getting-access-to-sonatype) 
 
 1. Check if [diff against the last release](https://github.com/avito-tech/avito-android/compare/2020.%3CSELECT_HERE_THE_LAST_RELEASE%3E...develop) contains any changes for users.
 If not, then probably there are no reasons to make a release.
@@ -17,9 +21,9 @@ If it is `Failed` you could release from previous `Succeed` commits or fix probl
 1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2020.9`.\
 This branch must be persistent. It is used for automation.
 1. Manually run [Integration build](http://links.k.avito.ru/ZA) on the `release branch`.
-1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`.
-1. Verify and close staging repo on [nexus](https://oss.sonatype.org/#stagingRepositories). See [Maven central publishing reference article](https://getstream.io/blog/publishing-libraries-to-mavencentral-2021/)
-1. Wait till new packages appear on [maven central](https://search.maven.org/search?q=com.avito.android). Should take ~15 mins.
+1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`. 
+It will upload artifacts to a staging repository in [Sonatype](https://oss.sonatype.org/#stagingRepositories)
+1. [Release staging repository](#making-a-release-in-sonatype)
 1. Make a PR to an internal avito repository with the new version of infrastructure.
 1. Checkout a new branch and make a PR to github repository:
     - Change `infraVersion` property in the `./gradle.properties` to the new version 
@@ -27,12 +31,33 @@ This branch must be persistent. It is used for automation.
 1. Run `make draft_release version=<current release version> prev_version=<last release version>`. Ensure you installed the ([`Github cli`](https://github.com/cli/cli))
 ([Managing releases in a repository](https://help.github.com/en/github/administering-a-repository/managing-releases-in-a-repository))\
 
-### Sonatype access
+### Getting access to Sonatype
 
-1. [Create account](https://issues.sonatype.org/secure/Signup!default.jspa)
+1. [Create an account](https://issues.sonatype.org/secure/Signup!default.jspa)
 1. Create an issue referencing [original one](https://issues.sonatype.org/browse/OSSRH-64609), asking for `com.avito.android` access
 1. Wait for confirmation
 1. Login to [nexus](https://oss.sonatype.org/) to validate staging profile access
+
+Some additional info:
+
+- [Maven central publishing reference article](https://getstream.io/blog/publishing-libraries-to-mavencentral-2021/)
+
+### Making a release in Sonatype
+
+We publish a release through a temporary staging repository. 
+If something goes wrong you can drop the repository to cancel the publication process.
+
+1. Open [Staging repositories](https://oss.sonatype.org/#stagingRepositories)
+![oss-avito](https://user-images.githubusercontent.com/1104540/109542777-92d5b080-7ad6-11eb-9393-30adfa11f749.png)
+In a Content tab you can see uploaded artifacts.
+1. Close the repository:  
+You don’t need to provide a description here.
+![oss-close](https://user-images.githubusercontent.com/1104540/109543602-8ef65e00-7ad7-11eb-850d-70542451ee94.png)
+In an Activity tab you can track progress.
+![oss-release](https://user-images.githubusercontent.com/1104540/109543639-9ae22000-7ad7-11eb-82d4-d3d2c1975521.png)
+1. Release the repository. It will publish the contents to Maven Central
+![oss-release-confirm](https://user-images.githubusercontent.com/1104540/109543687-ac2b2c80-7ad7-11eb-8294-7d603c523156.png)
+1. Wait till new packages appear on [Maven Central](https://search.maven.org/search?q=com.avito.android). Should take ~15 min.
 
 Some additional info:
 
