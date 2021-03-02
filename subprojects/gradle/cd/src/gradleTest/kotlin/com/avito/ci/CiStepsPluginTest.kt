@@ -449,7 +449,7 @@ class CiStepsPluginTest {
         val result = runTask(":appA:releaseVerifyArtifacts", dryRun = false, expectedFailure = true)
 
         result.assertThat().run {
-            buildFailed("Artifact: appA/build/reports/not-existed-file.json not found")
+            buildFailed().outputContains("Artifact: appA/build/reports/not-existed-file.json not found")
         }
     }
 
@@ -525,7 +525,8 @@ class CiStepsPluginTest {
 
         result
             .assertThat()
-            .buildFailed("Must be one deploy per variant")
+            .buildFailed()
+            .outputContains("Must be one deploy per variant")
     }
 
     @Test

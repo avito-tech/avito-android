@@ -118,7 +118,8 @@ class ModuleTypesRules {
                                 "-PgitBranch=xxx", // todo need for impact plugin
                                 expectFailure = true
                             ).assertThat()
-                                .buildFailed(
+                                .buildFailed()
+                                .outputContains(
                                     "'$configurationStr' configuration " +
                                         "contains the following ${case.dependentModuleDependencyType.errorSlug} " +
                                         "dependencies: :dependent_test_module"
