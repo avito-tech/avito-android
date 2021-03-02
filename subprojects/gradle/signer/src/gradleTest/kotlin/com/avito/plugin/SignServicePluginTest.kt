@@ -54,7 +54,9 @@ class SignServicePluginTest {
             expectFailure = true
         )
 
-        result.assertThat().buildFailed("host")
+        result.assertThat()
+            .buildFailed()
+            .outputContains("host")
     }
 
     @Test
@@ -67,7 +69,9 @@ class SignServicePluginTest {
             expectFailure = true
         )
 
-        result.assertThat().buildFailed("can't sign")
+        result.assertThat()
+            .buildFailed()
+            .outputContains("can't sign")
     }
 
     @Test

@@ -39,12 +39,9 @@ class TestResultSubject private constructor(
             .isEquivalentAccordingToCompareTo(outcome)
     }
 
-    fun buildFailed(expectedErrorSubstring: String? = null) {
+    fun buildFailed(): TestResultSubject {
         check("buildFailed").that(subject).isInstanceOf<ExpectedFailure>()
-        if (!expectedErrorSubstring.isNullOrBlank()) {
-            check("failureMessage").that((subject as ExpectedFailure).result.output)
-                .contains(expectedErrorSubstring)
-        }
+        return this
     }
 
     fun tasksShouldBeTriggered(vararg taskPath: String): Ordered =

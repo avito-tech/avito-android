@@ -161,7 +161,9 @@ class CodeOwnershipValidationTest {
                             "-Pavito.moduleOwnershipValidationEnabled=true",
                             "-PgitBranch=xxx", // todo need for impact plugin
                             expectFailure = true
-                        ).assertThat().buildFailed(case.errorText)
+                        ).assertThat()
+                            .buildFailed()
+                            .outputContains(case.errorText)
                     }
                 }
             }

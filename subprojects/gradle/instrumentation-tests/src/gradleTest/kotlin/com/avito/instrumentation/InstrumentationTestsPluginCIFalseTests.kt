@@ -68,7 +68,8 @@ internal class InstrumentationTestsPluginCIFalseTests {
             task = instrumentationTask,
             expectFailure = true
         ).assertThat()
-            .buildFailed("Configuration api22 error: has kubernetes device target without kubernetes credentials")
+            .buildFailed()
+            .outputContains("Configuration api22 error: has kubernetes device target without kubernetes credentials")
     }
 
     @Test

@@ -105,7 +105,9 @@ internal class UniqueAppResourcesTest {
 
         val build = runCheck(expectFailure = true)
 
-        build.assertThat().buildFailed("string 'title' in packages: [lib_a, lib_b]")
+        build.assertThat()
+            .buildFailed()
+            .outputContains("string 'title' in packages: [lib_a, lib_b]")
     }
 
     @Test
@@ -245,10 +247,12 @@ internal class UniqueAppResourcesTest {
             expectFailure = true
         )
 
-        build.assertThat().buildFailed(
-            "Unknown resource type 'INVALID_RES_TYPE'. " +
-                "See available values in com.android.resources.ResourceType's name."
-        )
+        build.assertThat()
+            .buildFailed()
+            .outputContains(
+                "Unknown resource type 'INVALID_RES_TYPE'. " +
+                    "See available values in com.android.resources.ResourceType's name."
+            )
     }
 
     private fun runCheck(expectFailure: Boolean = false) = gradlew(
