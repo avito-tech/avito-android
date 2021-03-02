@@ -19,7 +19,6 @@ import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreato
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.Logger
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -72,7 +71,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                     it.validate()
                 }
 
-            registerRootTasks(project, checks, logger, envInfo)
+            registerRootTasks(project, checks, envInfo)
 
             if (checks.hasInstance<RootProjectCheck.JavaVersion>()) {
                 checkJavaVersion(checks.getInstance(), envInfo)
@@ -122,7 +121,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     private fun registerRootTasks(
         project: Project,
         checks: List<Check>,
-        logger: Logger,
         envInfo: BuildEnvironmentInfo,
     ) {
         val rootTask = RootTaskCreator(project).getOrCreate()
@@ -160,11 +158,6 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
             rootTask {
                 dependsOn(task)
             }
-        }
-        if (checks.hasInstance<RootProjectCheck.UniqueRClasses>()) {
-            logger.warn(
-                "Build check '${RootProjectChecksExtension::uniqueRClasses.name}' is moved to Android app module"
-            )
         }
         if (checks.hasInstance<RootProjectCheck.MacOSLocalhost>() && envInfo.isMac) {
             val task = project.tasks.register<MacOSLocalhostResolvingTask>("checkMacOSLocalhostResolving") {
