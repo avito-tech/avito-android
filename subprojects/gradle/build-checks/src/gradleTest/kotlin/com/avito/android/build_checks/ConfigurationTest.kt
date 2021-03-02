@@ -48,7 +48,6 @@ internal class ConfigurationTest {
                 androidSdk { enabled = false }
                 macOSLocalhost { enabled = false }
                 dynamicDependencies { enabled = false }
-                uniqueRClasses { enabled = false }
                 gradleDaemon { enabled = false }
                 moduleTypes { enabled = false }
                 gradleProperties { enabled = false }

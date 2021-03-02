@@ -1,6 +1,6 @@
 package com.avito.android.build_checks.internal.unique_r
 
-import com.avito.android.build_checks.RootProjectChecksExtension
+import com.avito.android.build_checks.AndroidAppChecksExtension
 import com.avito.android.build_checks.internal.FailedCheckMessage
 import com.avito.android.isAndroidApp
 import com.avito.impact.util.AndroidManifestPackageParser
@@ -41,9 +41,7 @@ internal abstract class UniqueRClassesTask @Inject constructor(
     val allowedNonUniquePackageNames: ListProperty<String> = objects.listProperty(String::class.java)
 
     @OutputFile
-    val output: Property<RegularFile> = objects.fileProperty().apply {
-        set(project.layout.buildDirectory.file("${UniqueRClassesTask::class.java.simpleName}.output"))
-    }
+    val output: Property<RegularFile> = objects.fileProperty()
 
     @TaskAction
     fun check() {
@@ -69,7 +67,7 @@ internal abstract class UniqueRClassesTask @Inject constructor(
         if (duplicates.isNotEmpty()) {
             throw IllegalStateException(
                 FailedCheckMessage(
-                    RootProjectChecksExtension::uniqueRClasses,
+                    AndroidAppChecksExtension::uniqueRClasses,
                     """
                     Application ${project.path} has modules with the same package: $duplicates.
                     It leads to unexpected resource overriding.

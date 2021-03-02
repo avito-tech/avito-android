@@ -8,7 +8,6 @@ import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectChec
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.JavaVersion
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.MacOSLocalhost
 import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.ModuleTypes
-import com.avito.android.build_checks.RootProjectChecksExtension.RootProjectCheck.UniqueRClasses
 import org.gradle.api.Action
 import kotlin.reflect.full.createInstance
 
@@ -40,9 +39,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
 
     public fun moduleTypes(action: Action<ModuleTypes>): Unit =
         register(ModuleTypes(), action)
-
-    public fun uniqueRClasses(action: Action<UniqueRClasses>): Unit =
-        register(UniqueRClasses(), action)
 
     public fun incrementalKapt(action: Action<IncrementalKapt>): Unit =
         register(IncrementalKapt(), action)
@@ -82,11 +78,6 @@ public open class RootProjectChecksExtension : BuildChecksExtension() {
 
         public open class ModuleTypes : RootProjectCheck() {
             override var enabled: Boolean = false
-        }
-
-        public open class UniqueRClasses : RootProjectCheck() {
-
-            public val allowedNonUniquePackageNames: MutableList<String> = mutableListOf()
         }
 
         public open class IncrementalKapt : RootProjectCheck() {

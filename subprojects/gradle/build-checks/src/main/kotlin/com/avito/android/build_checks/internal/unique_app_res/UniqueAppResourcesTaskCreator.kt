@@ -6,6 +6,7 @@ import com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.avito.android.androidAppExtension
 import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck
+import com.avito.android.build_checks.outputDirName
 import com.avito.android.isAndroidApp
 import com.avito.impact.configuration.internalModule
 import org.gradle.api.Project
@@ -60,6 +61,9 @@ internal class UniqueAppResourcesTaskCreator(
             ignoredResourceTypes.set(config.ignoredResourceTypes)
             @Suppress("UnstableApiUsage")
             ignoredResources.set(config.ignoredResources)
+            output.set(
+                project.layout.buildDirectory.file("$outputDirName/$taskName/${appVariant.name}/output")
+            )
         }
     }
 
