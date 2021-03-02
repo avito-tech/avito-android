@@ -44,7 +44,7 @@ Some additional info:
 
 ### Making a release in Sonatype
 
-We publish a release throw a temporary staging repository. 
+We publish a release through a temporary staging repository. 
 If something goes wrong you can drop the repository to cancel the publication process.
 
 1. Open [Staging repositories](https://oss.sonatype.org/#stagingRepositories)
