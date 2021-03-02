@@ -41,9 +41,7 @@ internal abstract class UniqueRClassesTask @Inject constructor(
     val allowedNonUniquePackageNames: ListProperty<String> = objects.listProperty(String::class.java)
 
     @OutputFile
-    val output: Property<RegularFile> = objects.fileProperty().apply {
-        set(project.layout.buildDirectory.file("${UniqueRClassesTask::class.java.simpleName}.output"))
-    }
+    val output: Property<RegularFile> = objects.fileProperty()
 
     @TaskAction
     fun check() {

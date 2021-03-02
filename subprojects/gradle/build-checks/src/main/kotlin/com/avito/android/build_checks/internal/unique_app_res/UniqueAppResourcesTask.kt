@@ -38,9 +38,7 @@ public abstract class UniqueAppResourcesTask @Inject constructor(
     internal val ignoredResources: SetProperty<Resource> = objects.setProperty(Resource::class.java)
 
     @OutputFile
-    public val output: Property<RegularFile> = objects.fileProperty().apply {
-        set(project.layout.buildDirectory.file("${UniqueAppResourcesTask::class.java.simpleName}.output"))
-    }
+    public val output: Property<RegularFile> = objects.fileProperty()
 
     @TaskAction
     public fun check() {

@@ -186,3 +186,4 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
 
 internal const val pluginId = "com.avito.android.build-checks"
 private const val enabledProp = "avito.build-checks.enabled"
+internal const val outputDirName = "avito-build-checks"

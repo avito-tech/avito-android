@@ -6,6 +6,7 @@ import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.android.build.gradle.tasks.ProcessTestManifest
 import com.avito.android.androidAppExtension
 import com.avito.android.build_checks.AndroidAppChecksExtension.AndroidAppCheck
+import com.avito.android.build_checks.outputDirName
 import com.avito.android.isAndroidApp
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -56,6 +57,9 @@ internal class UniqueRClassesTaskCreator(
             appManifest.set(processAppManifest.mergedManifest)
             librariesManifests.set(processAppManifest.getManifests())
             testManifests.set(processTestManifest.getManifests())
+            output.set(
+                project.layout.buildDirectory.file("$outputDirName/$taskName/${appVariant.name}/output")
+            )
         }
     }
 }
