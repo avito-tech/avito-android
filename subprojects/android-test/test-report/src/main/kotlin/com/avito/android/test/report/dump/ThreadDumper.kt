@@ -10,6 +10,7 @@ object ThreadDumper {
                     append("\t")
                     appendLine(stackElement.toString())
                 }
+                appendLine()
             }
         }
     }
