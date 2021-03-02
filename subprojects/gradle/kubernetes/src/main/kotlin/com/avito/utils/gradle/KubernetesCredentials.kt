@@ -4,19 +4,28 @@ import java.io.Serializable
 
 sealed class KubernetesCredentials : Serializable {
 
-    object Empty : KubernetesCredentials(), Serializable
+    object Empty : KubernetesCredentials() {
 
-    data class Service(
+        override fun toString(): String = "KubernetesCredentials.Empty"
+    }
+
+    class Service(
         val token: String,
         val caCertData: String,
         val url: String
-    ) : KubernetesCredentials(), Serializable
+    ) : KubernetesCredentials() {
 
-    data class Config(
+        override fun toString(): String = "KubernetesCredentials.Service"
+    }
+
+    class Config(
         val context: String,
         val caCertFile: String? = kubeDefaultCaCertFile,
         val configFile: String = kubeConfigDefaultPath
-    ) : KubernetesCredentials(), Serializable
+    ) : KubernetesCredentials() {
+
+        override fun toString(): String = "KubernetesCredentials.Config"
+    }
 }
 
 // TODO: get rid of this default. autoConfig is enabled by default

@@ -13,7 +13,10 @@ public abstract class InstrumentationConfiguration(public val name: String) {
 
     public var reportSkippedTests: Boolean = false
 
+    @Deprecated("use runOnlyChangedTests instead")
     public var impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off
+
+    public var runOnlyChangedTests: Boolean = false
 
     public var kubernetesNamespace: String = "android-emulator"
 
@@ -52,7 +55,7 @@ public abstract class InstrumentationConfiguration(public val name: String) {
             name = name,
             instrumentationParams = mergedInstrumentationParameters,
             reportSkippedTests = reportSkippedTests,
-            impactAnalysisPolicy = impactAnalysisPolicy,
+            runOnlyChangedTests = runOnlyChangedTests,
             kubernetesNamespace = kubernetesNamespace,
             targets = targets.map {
                 it.data(parentInstrumentationParameters = mergedInstrumentationParameters)
@@ -68,7 +71,7 @@ public abstract class InstrumentationConfiguration(public val name: String) {
         val name: String,
         val instrumentationParams: InstrumentationParameters,
         val reportSkippedTests: Boolean,
-        val impactAnalysisPolicy: ImpactAnalysisPolicy,
+        val runOnlyChangedTests: Boolean,
         val kubernetesNamespace: String,
         val targets: List<TargetConfiguration.Data>,
         val enableDeviceDebug: Boolean,

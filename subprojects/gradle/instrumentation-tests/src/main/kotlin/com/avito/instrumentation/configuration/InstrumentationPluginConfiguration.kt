@@ -26,6 +26,12 @@ public object InstrumentationPluginConfiguration {
         public var applicationProguardMapping: File? = null
         public var testProguardMapping: File? = null
 
+        /**
+         * Enable experimental test run via Shared Build Service
+         * https://docs.gradle.org/current/userguide/build_services.html
+         */
+        public var useService: Boolean = false
+
         public abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
         public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
@@ -107,6 +113,7 @@ public object InstrumentationPluginConfiguration {
                 testApplicationApk = testApplicationApk,
                 reportViewer = reportViewer,
                 slackToken = slackToken,
+                useService = useService,
                 applicationProguardMapping = applicationProguardMapping,
                 testProguardMapping = testProguardMapping
             )
@@ -121,6 +128,7 @@ public object InstrumentationPluginConfiguration {
             val testApplicationApk: String?, // TODO file
             val reportViewer: ReportViewer?,
             val slackToken: String,
+            val useService: Boolean,
             val applicationProguardMapping: File?,
             val testProguardMapping: File?
         ) : Serializable {
