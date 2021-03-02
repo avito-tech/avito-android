@@ -22,8 +22,14 @@ internal interface PreTransportMappers {
     fun DataSet.serialize(): Map<String, String> {
         return javaClass.declaredFields
             .filter { it.name != "number" }
-            .filter { !it.type.isLambda() }
-            .map { field -> field.name to getFieldStringValue(field) }
+            .map { field ->
+                field.name to if (field.type.isLambda()) {
+                    // don't try to serialize lambdas KT-40666
+                    "Unsupported type: lambda value"
+                } else {
+                    getFieldStringValue(field)
+                }
+            }
             .toMap()
     }
 
