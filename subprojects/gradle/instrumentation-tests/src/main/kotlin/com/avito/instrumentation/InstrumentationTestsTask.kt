@@ -12,7 +12,6 @@ import com.avito.android.runner.report.factory.ReportViewerFactory
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.internal.GetTestResultsAction
@@ -65,8 +64,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val testApplication: DirectoryProperty = objects.directoryProperty()
 
     @Input
-    public val impactAnalysisPolicy: Property<ImpactAnalysisPolicy> =
-        objects.property<ImpactAnalysisPolicy>().convention(ImpactAnalysisPolicy.Off)
+    public val runOnlyChangedTests: Property<Boolean> = objects.property()
 
     @Optional
     @InputFile
@@ -188,7 +186,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             suppressFailure = suppressFailure.getOrElse(false),
             suppressFlaky = suppressFlaky.getOrElse(false),
             impactAnalysisResult = ImpactAnalysisResult.create(
-                policy = impactAnalysisPolicy.get(),
+                runOnlyChangedTests = runOnlyChangedTests.get(),
                 affectedTestsFile = affectedTests.asFile.orNull,
                 addedTestsFile = newTests.asFile.orNull,
                 modifiedTestsFile = modifiedTests.asFile.orNull,

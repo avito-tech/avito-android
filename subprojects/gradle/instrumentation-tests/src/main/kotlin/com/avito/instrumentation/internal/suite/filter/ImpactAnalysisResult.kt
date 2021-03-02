@@ -1,25 +1,25 @@
 package com.avito.instrumentation.internal.suite.filter
 
-import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import java.io.File
+import java.io.Serializable
 
 public data class ImpactAnalysisResult(
-    val policy: ImpactAnalysisPolicy,
+    val runOnlyChangedTests: Boolean,
     val affectedTests: List<String>,
     val addedTests: List<String>,
     val modifiedTests: List<String>,
     val changedTests: List<String>
-) {
+) : Serializable {
 
     public companion object {
         public fun create(
-            policy: ImpactAnalysisPolicy,
+            runOnlyChangedTests: Boolean,
             affectedTestsFile: File?,
             addedTestsFile: File?,
             modifiedTestsFile: File?,
             changedTestsFile: File?
         ): ImpactAnalysisResult = ImpactAnalysisResult(
-            policy = policy,
+            runOnlyChangedTests = runOnlyChangedTests,
             affectedTests = parseFile(affectedTestsFile),
             addedTests = parseFile(addedTestsFile),
             modifiedTests = parseFile(modifiedTestsFile),

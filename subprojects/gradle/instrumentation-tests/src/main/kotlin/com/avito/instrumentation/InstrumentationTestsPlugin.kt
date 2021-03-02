@@ -18,8 +18,6 @@ import com.avito.android.withAndroidModule
 import com.avito.android.withArtifacts
 import com.avito.git.GitState
 import com.avito.git.gitState
-import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
-import com.avito.instrumentation.configuration.ImpactAnalysisPolicy.On
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.internal.executing.ExecutionParameters
@@ -105,7 +103,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     group = ciTaskGroup
                 }
 
-                if (instrumentationConfiguration.impactAnalysisPolicy is On.RunChangedTests) {
+                if (instrumentationConfiguration.runOnlyChangedTests) {
                     if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
                         project.tasks.changedTestsFinderTaskProvider().apply {
                             configure {
@@ -143,18 +141,15 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     }
                     this.kubernetesCredentials.set(project.kubernetesCredentials)
 
-                    this.impactAnalysisPolicy.set(instrumentationConfiguration.impactAnalysisPolicy)
+                    this.runOnlyChangedTests.set(instrumentationConfiguration.runOnlyChangedTests)
 
-                    when (instrumentationConfiguration.impactAnalysisPolicy) {
-                        is On.RunChangedTests ->
-                            if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
-                                val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
+                    if (instrumentationConfiguration.runOnlyChangedTests) {
+                        if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
+                            val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
 
-                                this.dependencyOn(impactTaskProvider) {
-                                    this.changedTests.set(it.changedTestsFile)
-                                }
+                            this.dependencyOn(impactTaskProvider) {
+                                this.changedTests.set(it.changedTestsFile)
                             }
-                        is ImpactAnalysisPolicy.Off -> {
                         }
                     }
                 }
