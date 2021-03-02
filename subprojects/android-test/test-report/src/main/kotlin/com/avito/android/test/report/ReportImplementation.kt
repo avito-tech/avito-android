@@ -137,7 +137,7 @@ class ReportImplementation(
             if (screenshot != null) {
                 incidentFutureUploads.add(screenshot)
             }
-            addHtml("Threads dump", ThreadDumper.getThreadDump(), false)
+            addText("Threads dump", ThreadDumper.getThreadDump())
 
             onIncident.invoke(exception)
 
@@ -254,9 +254,8 @@ class ReportImplementation(
     override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
         val wrappedContentIfNeeded = if (wrapHtml) wrapInHtml(content) else content
         val html = remoteStorage.upload(
-            uploadRequest = RemoteStorage.Request.ContentRequest(
+            uploadRequest = RemoteStorage.Request.ContentRequest.Html(
                 content = wrappedContentIfNeeded,
-                extension = Entry.File.Type.html.name
             ),
             comment = label
         )
@@ -270,6 +269,25 @@ class ReportImplementation(
             )
         }?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(html)
+    }
+
+    override fun addText(label: String, text: String) {
+        val txt = remoteStorage.upload(
+            uploadRequest = RemoteStorage.Request.ContentRequest.PlainText(
+                content = text,
+            ),
+            comment = label
+        )
+        val started = getCastedStateOrNull<ReportState.Initialized.Started>()
+        val futureUploads = started?.getCurrentStepOrCreate {
+            StepResult(
+                isSynthetic = true,
+                timestamp = timeProvider.nowInSeconds(),
+                number = started.stepNumber++,
+                title = "Synthetic step"
+            )
+        }?.futureUploads ?: earlyFuturesUploads
+        futureUploads.add(txt)
     }
 
     @Synchronized
@@ -340,7 +358,9 @@ class ReportImplementation(
                     fileType = when (it.uploadRequest) {
                         is RemoteStorage.Request.FileRequest.Image -> Entry.File.Type.img_png
                         is RemoteStorage.Request.FileRequest.Video -> Entry.File.Type.video
-                        is RemoteStorage.Request.ContentRequest -> Entry.File.Type.html
+                        is RemoteStorage.Request.ContentRequest.Html -> Entry.File.Type.html
+                        is RemoteStorage.Request.ContentRequest.PlainText -> Entry.File.Type.plain_text
+                        is RemoteStorage.Request.ContentRequest.AnyContent -> Entry.File.Type.plain_text
                     }
                 )
             }

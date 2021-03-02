@@ -50,7 +50,7 @@ class ReportViewerHttpInterceptor(
             response = chain.proceed(request)
         } catch (e: Exception) {
             reportViewerMessage.appendLine("<-- HTTP FAILED: $e")
-            report.addHtml("$label    HTTP FAILED!!!", reportViewerMessage.toString())
+            report.addText("$label    HTTP FAILED!!!", reportViewerMessage.toString())
             throw e
         }
 
@@ -60,7 +60,7 @@ class ReportViewerHttpInterceptor(
         reportViewerMessage.appendLine(response.printHeaders())
         reportViewerMessage.appendLine(response.printBody())
 
-        report.addHtml(label + "    ${response.code}", reportViewerMessage.toString())
+        report.addText(label + "    ${response.code}", reportViewerMessage.toString())
 
         return response
     }

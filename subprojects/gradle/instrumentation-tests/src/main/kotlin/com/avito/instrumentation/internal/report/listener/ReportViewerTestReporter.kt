@@ -176,7 +176,7 @@ internal class ReportViewerTestReporter(
             ""
         } else {
             when (val result = remoteStorage.upload(
-                RemoteStorage.Request.ContentRequest(
+                RemoteStorage.Request.ContentRequest.AnyContent(
                     content = retracer.retrace(logcat.joinToString(separator = "\n")),
                     extension = "log"
                 ),
