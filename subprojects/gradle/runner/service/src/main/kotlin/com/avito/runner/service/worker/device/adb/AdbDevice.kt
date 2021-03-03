@@ -55,8 +55,8 @@ data class AdbDevice(
 
     override val api: Int by lazy {
         retryAction.retry(
-            retriesCount = 5,
-            delaySeconds = 3,
+            retriesCount = DEFAULT_RETRY_COUNT,
+            delaySeconds = DEFAULT_DELAY_SEC,
             action = {
                 loadProperty(
                     key = "ro.build.version.sdk",
@@ -308,8 +308,8 @@ data class AdbDevice(
     ).toTry()
 
     override fun pull(from: Path, to: Path): Try<Unit> = retryAction.retry(
-        retriesCount = 5,
-        delaySeconds = 3,
+        retriesCount = DEFAULT_RETRY_COUNT,
+        delaySeconds = DEFAULT_DELAY_SEC,
         action = {
             executeBlockingCommand(
                 command = listOf(
@@ -359,8 +359,8 @@ data class AdbDevice(
     ).toTry()
 
     override fun clearDirectory(remotePath: Path): Try<Unit> = retryAction.retry(
-        retriesCount = 5,
-        delaySeconds = 3,
+        retriesCount = DEFAULT_RETRY_COUNT,
+        delaySeconds = DEFAULT_DELAY_SEC,
         action = {
             executeBlockingShellCommand(
                 command = listOf(
@@ -398,8 +398,8 @@ data class AdbDevice(
     ).map { }.toTry()
 
     override fun list(remotePath: String): Try<List<String>> = retryAction.retry(
-        retriesCount = 5,
-        delaySeconds = 3,
+        retriesCount = DEFAULT_RETRY_COUNT,
+        delaySeconds = DEFAULT_DELAY_SEC,
         action = {
             executeBlockingShellCommand(
                 command = listOf(
@@ -587,6 +587,8 @@ data class AdbDevice(
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L
 private const val DDMLIB_SOCKET_TIME_OUT_SECONDS = 20L
 private const val WAIT_FOR_ADB_TIME_OUT_MINUTES = 1L
+private const val DEFAULT_RETRY_COUNT = 5
+private const val DEFAULT_DELAY_SEC = 3L
 
 private fun createEventListener(
     loggerFactory: LoggerFactory,
