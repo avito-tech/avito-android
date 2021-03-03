@@ -37,26 +37,28 @@ ENV NVIDIA_DRIVER_CAPABILITIES \
 # -----------------------------------------------
 
 # ----------------- Android SDK -----------------
+ARG ANDROID_SDK_VERSION=6858069
+
 # TODO: reuse android-sdk image MBS-7071
 ENV ANDROID_HOME /opt/android-sdk
-ENV PATH ${PATH}:${ANDROID_HOME}/tools/:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/platform-tools/bin:${ANDROID_HOME}/tools/bin
+
+ENV PATH ${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/cmdline-tools/tools/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:${ANDROID_HOME}/emulator/lib64/qt/lib:${ANDROID_HOME}/emulator/lib64/libstdc++:${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/gles_swiftshader
 
-RUN wget https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip -O android-sdk.zip && \
-    unzip android-sdk.zip -d $ANDROID_HOME && \
-    rm -f android-sdk.zip
+RUN mkdir -p ${ANDROID_HOME}/cmdline-tools && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_VERSION}_latest.zip && \
+    unzip *tools*linux*.zip -d ${ANDROID_HOME}/cmdline-tools && \
+    mv ${ANDROID_HOME}/cmdline-tools/cmdline-tools ${ANDROID_HOME}/cmdline-tools/tools && \
+    rm *tools*linux*.zip
 
 # platform-tools For adb and libc
 # tools          For mksdcard and avdmanager
 # emulator       For emulator command and libraries
-RUN mkdir $HOME/.android && \
-    touch $HOME/.android/repositories.cfg && \
+RUN mkdir $HOME/.android && touch $HOME/.android/repositories.cfg && \
     yes | sdkmanager --verbose --channel=3 \
-        "platform-tools" \
-        "platforms;android-29" \
-        "emulator" \
-        "tools" \
-        "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" && \
+    "platforms;android-${SDK_VERSION}" \
+    "tools" \
+    "system-images;android-${SDK_VERSION};google_apis;${EMULATOR_ARCH}" && \
     chmod -R o+rwX ${ANDROID_HOME}
 
 RUN mkdir --parents $ANDROID_HOME/tools/keymaps && \
