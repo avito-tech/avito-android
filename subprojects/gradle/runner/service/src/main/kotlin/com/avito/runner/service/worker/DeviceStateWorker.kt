@@ -25,7 +25,7 @@ internal class DeviceStateWorker(private val device: Device) {
             resultAggregator = {}
         )
 
-    fun clearPackages(state: State): Try<Any> = state.layers
+    fun clearPackages(state: State): Try<Unit> = state.layers
         .asSequence()
         .filterIsInstance<InstalledApplication>()
         .map {

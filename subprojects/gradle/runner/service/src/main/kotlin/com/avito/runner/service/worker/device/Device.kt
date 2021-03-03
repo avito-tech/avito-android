@@ -31,11 +31,11 @@ interface Device {
         outputDir: File
     ): DeviceTestCaseRun
 
-    fun clearPackage(name: String): Try<Any>
+    fun clearPackage(name: String): Try<Unit>
 
-    fun pull(from: Path, to: Path): Try<Any>
+    fun pull(from: Path, to: Path): Try<Unit>
 
-    fun clearDirectory(remotePath: Path): Try<Any>
+    fun clearDirectory(remotePath: Path): Try<Unit>
 
     fun list(remotePath: String): Try<List<String>>
 

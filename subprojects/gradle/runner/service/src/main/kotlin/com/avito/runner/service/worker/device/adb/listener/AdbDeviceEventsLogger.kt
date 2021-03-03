@@ -6,22 +6,23 @@ import java.nio.file.Path
 
 internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEventsListener {
 
-    override fun onGetSdkPropertySuccess(attempt: Int, api: Int) {
+    override fun onGetSdkPropertySuccess(attempt: Int, api: Int, durationMs: Long) {
         logger.debug("Got ro.build.version.sdk = $api")
     }
 
-    override fun onGetSdkPropertyError(attempt: Int) {
+    override fun onGetSdkPropertyError(attempt: Int, durationMs: Long) {
         logger.debug("Attempt $attempt: reading ro.build.version.sdk failed")
     }
 
-    override fun onGetSdkPropertyFailure(throwable: Throwable) {
+    override fun onGetSdkPropertyFailure(throwable: Throwable, durationMs: Long) {
         logger.warn("Failed reading ro.build.version.sdk", throwable)
     }
 
     override fun onInstallApplicationSuccess(
         device: Device,
         attempt: Int,
-        applicationPackage: String
+        applicationPackage: String,
+        durationMs: Long
     ) {
         logger.debug("Attempt $attempt: application $applicationPackage installed")
     }
@@ -29,7 +30,9 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onInstallApplicationError(
         device: Device,
         attempt: Int,
-        applicationPackage: String
+        applicationPackage: String,
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.debug("Attempt $attempt: failed to install application $applicationPackage")
     }
@@ -37,28 +40,32 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onInstallApplicationFailure(
         device: Device,
         applicationPackage: String,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.warn("Failed to install application package: $applicationPackage", throwable)
     }
 
     override fun onGetAliveDeviceSuccess(
         device: Device,
-        attempt: Int
+        attempt: Int,
+        durationMs: Long
     ) {
         logger.debug("Device status: alive")
     }
 
     override fun onGetAliveDeviceError(
         device: Device,
-        attempt: Int
+        attempt: Int,
+        durationMs: Long
     ) {
         logger.debug("Attempt $attempt: failed to determine the device status")
     }
 
     override fun onGetAliveDeviceFailed(
         device: Device,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.warn("Failed reading device status", throwable)
     }
@@ -66,7 +73,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onClearPackageSuccess(
         device: Device,
         attempt: Int,
-        name: String
+        name: String,
+        durationMs: Long
     ) {
         logger.debug("Attempt: $attempt: clear package $name completed")
     }
@@ -75,7 +83,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         device: Device,
         attempt: Int,
         name: String,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.debug("Attempt $attempt: failed to clear package $name")
     }
@@ -83,7 +92,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onClearPackageFailure(
         device: Device,
         name: String,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.warn("Failed to clear package $name", throwable)
     }
@@ -91,7 +101,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onPullSuccess(
         device: Device,
         from: Path,
-        to: Path
+        to: Path,
+        durationMs: Long
     ) {
         logger.debug("Pull success from: $from to $to")
     }
@@ -100,7 +111,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         device: Device,
         attempt: Int,
         from: Path,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.debug("Attempt $attempt: failed to pull $from")
     }
@@ -108,7 +120,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onPullFailure(
         device: Device,
         from: Path,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.warn("Failed pulling data $from", throwable)
     }
@@ -116,7 +129,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onClearDirectorySuccess(
         device: Device,
         remotePath: Path,
-        output: String
+        output: String,
+        durationMs: Long
     ) {
         logger.debug("Successfully cleared $remotePath. ($output)")
     }
@@ -125,7 +139,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         device: Device,
         attempt: Int,
         remotePath: Path,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.debug("Attempt $attempt: failed to clear $remotePath")
     }
@@ -133,14 +148,16 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onClearDirectoryFailure(
         device: Device,
         remotePath: Path,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.warn("Failed clearing directory $remotePath", throwable)
     }
 
     override fun onListSuccess(
         device: Device,
-        remotePath: String
+        remotePath: String,
+        durationMs: Long
     ) {
         logger.debug("Listing $remotePath success")
     }
@@ -149,7 +166,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         device: Device,
         attempt: Int,
         remotePath: String,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.debug("Attempt $attempt: failed to list directory $remotePath")
     }
@@ -157,14 +175,16 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onListFailure(
         device: Device,
         remotePath: String,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.warn("Failed listing path $remotePath", throwable)
     }
 
     override fun onRunTestFailedOnStart(
         device: Device,
-        message: String
+        message: String,
+        durationMs: Long
     ) {
         logger.warn("Run test failed on start: $message")
     }
@@ -172,21 +192,24 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onRunTestFailedOnInstrumentationParse(
         device: Device,
         message: String,
-        throwable: Throwable
+        throwable: Throwable,
+        durationMs: Long
     ) {
         logger.warn("Run test failed on instrumentation parse: $message", throwable)
     }
 
     override fun onRunTestPassed(
         device: Device,
-        testName: String
+        testName: String,
+        durationMs: Long
     ) {
         logger.debug("Run test passed: $testName")
     }
 
     override fun onRunTestIgnored(
         device: Device,
-        testName: String
+        testName: String,
+        durationMs: Long
     ) {
         logger.debug("Run test ignored: $testName")
     }
@@ -194,7 +217,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
     override fun onRunTestRunError(
         device: Device,
         testName: String,
-        errorMessage: String
+        errorMessage: String,
+        durationMs: Long
     ) {
         logger.warn("Run test error: $testName ($errorMessage)")
     }
@@ -203,7 +227,8 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         device: Device,
         testName: String,
         errorMessage: String,
-        throwable: Throwable?
+        throwable: Throwable?,
+        durationMs: Long
     ) {
         logger.warn("Run test infrastructure error: $testName ($errorMessage)", throwable)
     }
