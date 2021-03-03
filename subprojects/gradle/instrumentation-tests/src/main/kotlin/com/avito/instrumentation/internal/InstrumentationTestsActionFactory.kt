@@ -28,6 +28,7 @@ internal interface InstrumentationTestsActionFactory {
             runnerPrefix = SeriesName.create(
                 "testrunner",
                 params.buildId,
+                params.projectName,
                 params.instrumentationConfiguration.name
             )
         )
