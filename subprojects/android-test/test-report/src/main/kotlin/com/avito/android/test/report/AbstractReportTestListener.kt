@@ -1,22 +1,19 @@
 package com.avito.android.test.report
 
-import com.avito.android.elastic.ElasticConfig
-import com.avito.android.log.AndroidLoggerFactory
-import com.avito.android.sentry.SentryConfig
+import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
-class ReportTestListener : RunListener() {
+abstract class AbstractReportTestListener : RunListener() {
 
     private val report: Report by lazy { TestExecutionState.reportInstance }
 
-    private val logger = AndroidLoggerFactory(
-        elasticConfig = ElasticConfig.Disabled,
-        sentryConfig = SentryConfig.Disabled,
-        testName = null
-    ).create<ReportTestListener>()
+    private val logger: Logger by lazy { loggerFactory.create<AbstractReportTestListener>() }
+
+    protected abstract val loggerFactory: LoggerFactory
 
     override fun testStarted(description: Description) {
         processEvent("start", description.displayName) {
