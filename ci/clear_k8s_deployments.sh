@@ -6,4 +6,4 @@ set -xe
 
 source $(dirname $0)/_main.sh
 
-runInBuilder "./gradlew -p subprojects :subprojects:ci:k8s-deployments-cleaner:clearByNamespaces --no-daemon ${GRADLE_ARGS}"
+runInBuilder "./gradlew -p subprojects :ci:k8s-deployments-cleaner:clearByNamespaces --no-daemon ${GRADLE_ARGS}"
