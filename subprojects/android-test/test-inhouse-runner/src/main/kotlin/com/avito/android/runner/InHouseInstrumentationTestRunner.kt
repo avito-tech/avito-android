@@ -68,8 +68,10 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
 
+    @Suppress("unused") // used in avito
     val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
 
+    @Suppress("unused") // used in avito
     val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
 
     /**
@@ -155,6 +157,7 @@ abstract class InHouseInstrumentationTestRunner :
         testRunEnvironment.asRunEnvironmentOrThrow().isImitation
     }
 
+    @Suppress("unused") // used in avito
     val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
@@ -163,6 +166,7 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
+    @Suppress("unused") // used in avito
     val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
         ReportViewerWebsocketReporter(this)
     }

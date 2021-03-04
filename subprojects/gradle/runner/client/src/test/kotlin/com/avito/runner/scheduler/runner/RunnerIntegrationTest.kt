@@ -586,7 +586,7 @@ class RunnerIntegrationTest {
         )
     }
 
-    private fun succeedClearPackage() = StubActionResult.Success<Try<Any>>(Try.Success(Unit))
+    private fun succeedClearPackage() = StubActionResult.Success<Try<Unit>>(Try.Success(Unit))
 
     private fun provideRunner(
         devices: ReceiveChannel<Device>,

@@ -27,7 +27,7 @@ internal interface InstrumentationTestsActionFactory {
             gson = Companion.gson,
             runnerPrefix = SeriesName.create(
                 "testrunner",
-                params.buildId,
+                params.projectName,
                 params.instrumentationConfiguration.name
             )
         )

@@ -8,7 +8,6 @@ import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import com.avito.runner.CommandLineExecutor
 import com.avito.runner.ProcessNotification
-import com.avito.runner.retry
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
@@ -50,59 +49,81 @@ data class AdbDevice(
         runnerMetricsConfig = metricsConfig
     ),
     private val commandLine: CommandLineExecutor = CommandLineExecutor.Impl(),
-    private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl()
+    private val instrumentationParser: InstrumentationTestCaseRunParser = InstrumentationTestCaseRunParser.Impl(),
+    private val retryAction: RetryAction = RetryAction(timeProvider)
 ) : Device {
 
     override val api: Int by lazy {
-        retry(
-            retriesCount = 5,
-            delaySeconds = 3,
-            block = { attempt ->
-                val result = loadProperty(
+        retryAction.retry(
+            retriesCount = DEFAULT_RETRY_COUNT,
+            delaySeconds = DEFAULT_DELAY_SEC,
+            action = {
+                loadProperty(
                     key = "ro.build.version.sdk",
                     cast = { it.toInt() }
                 )
-                eventsListener.onGetSdkPropertySuccess(attempt, result)
-                result
             },
-            attemptFailedHandler = { attempt, _ ->
-                eventsListener.onGetSdkPropertyError(attempt)
+            onError = { attempt, _, durationMs ->
+                eventsListener.onGetSdkPropertyError(attempt, durationMs)
             },
-            actionFailedHandler = { throwable ->
-                eventsListener.onGetSdkPropertyFailure(throwable)
+            onFailure = { throwable, durationMs ->
+                eventsListener.onGetSdkPropertyFailure(throwable, durationMs)
+            },
+            onSuccess = { attempt, result, durationMs ->
+                eventsListener.onGetSdkPropertySuccess(attempt, result, durationMs)
             }
-        )
+        ).getOrThrow()
     }
 
     override fun installApplication(applicationPackage: String): Try<DeviceInstallation> {
-        var installStartedTimestamp = 0L
+        var installStartedTimestamp: Long
         return getAdbDevice().flatMap { adbDevice ->
 
             installStartedTimestamp = timeProvider.nowInMillis()
 
-            runWithRetries(
+            retryAction.retry(
                 retriesCount = 10,
                 delaySeconds = 5,
-                block = { attempt ->
+                action = {
                     adbDevice.installPackage(applicationPackage, true)
-                    eventsListener.onInstallApplicationSuccess(this, attempt, applicationPackage)
                 },
-                attemptFailedHandler = { attempt, _ ->
-                    eventsListener.onInstallApplicationError(this, attempt, applicationPackage)
+                onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
+                    eventsListener.onInstallApplicationError(
+                        device = this,
+                        attempt = attempt,
+                        applicationPackage = applicationPackage,
+                        throwable = throwable,
+                        durationMs = durationMs
+                    )
                 },
-                onError = { throwable ->
-                    eventsListener.onInstallApplicationFailure(this, applicationPackage, throwable)
+                onFailure = { throwable: Throwable, durationMs: Long ->
+                    eventsListener.onInstallApplicationFailure(
+                        device = this,
+                        applicationPackage = applicationPackage,
+                        throwable = throwable,
+                        durationMs = durationMs
+                    )
+                },
+                onSuccess = { attempt: Int, _: Unit, durationMs: Long ->
+                    eventsListener.onInstallApplicationSuccess(
+                        device = this,
+                        attempt = attempt,
+                        applicationPackage = applicationPackage,
+                        durationMs = durationMs
+                    )
                 }
             )
-        }.map {
-            DeviceInstallation(
-                installation = Installation(
-                    application = applicationPackage,
-                    timestampStartedMilliseconds = installStartedTimestamp,
-                    timestampCompletedMilliseconds = timeProvider.nowInMillis()
-                ),
-                device = this.getData()
-            )
+                .map {
+                    DeviceInstallation(
+                        installation = Installation(
+                            application = applicationPackage,
+                            timestampStartedMilliseconds = installStartedTimestamp,
+                            timestampCompletedMilliseconds = timeProvider.nowInMillis()
+                        ),
+                        device = this.getData()
+                    )
+                }
+                .toTry()
         }
     }
 
@@ -114,6 +135,8 @@ data class AdbDevice(
         val finalInstrumentationArguments = action.instrumentationParams.plus(
             "class" to "${action.test.className}#${action.test.methodName}"
         )
+
+        val startTime = timeProvider.nowInMillis()
 
         return runTest(
             test = action.test,
@@ -129,20 +152,30 @@ data class AdbDevice(
                     is InstrumentationTestCaseRun.CompletedTestCaseRun -> {
                         val testName = "${it.className}.${it.name}"
                         when (it.result) {
-                            TestCaseRun.Result.Passed -> eventsListener.onRunTestPassed(this, testName)
-                            TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(this, testName)
+                            TestCaseRun.Result.Passed -> eventsListener.onRunTestPassed(
+                                device = this,
+                                testName = testName,
+                                durationMs = timeProvider.nowInMillis() - startTime
+                            )
+                            TestCaseRun.Result.Ignored -> eventsListener.onRunTestIgnored(
+                                device = this,
+                                testName = testName,
+                                durationMs = timeProvider.nowInMillis() - startTime
+                            )
                             is TestCaseRun.Result.Failed.InRun ->
                                 eventsListener.onRunTestRunError(
                                     device = this,
                                     testName = testName,
-                                    errorMessage = it.result.errorMessage
+                                    errorMessage = it.result.errorMessage,
+                                    durationMs = timeProvider.nowInMillis() - startTime
                                 )
                             is TestCaseRun.Result.Failed.InfrastructureError ->
                                 eventsListener.onRunTestInfrastructureError(
                                     device = this,
                                     testName = testName,
                                     errorMessage = it.result.errorMessage,
-                                    throwable = it.result.cause
+                                    throwable = it.result.cause,
+                                    durationMs = timeProvider.nowInMillis() - startTime
                                 )
                         }
                         DeviceTestCaseRun(
@@ -160,7 +193,11 @@ data class AdbDevice(
                         )
                     }
                     is InstrumentationTestCaseRun.FailedOnStartTestCaseRun -> {
-                        eventsListener.onRunTestFailedOnStart(this, it.message)
+                        eventsListener.onRunTestFailedOnStart(
+                            device = this,
+                            message = it.message,
+                            durationMs = timeProvider.nowInMillis() - startTime
+                        )
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
@@ -174,7 +211,12 @@ data class AdbDevice(
                         )
                     }
                     is InstrumentationTestCaseRun.FailedOnInstrumentationParsing -> {
-                        eventsListener.onRunTestFailedOnInstrumentationParse(this, it.message, it.throwable)
+                        eventsListener.onRunTestFailedOnInstrumentationParse(
+                            device = this,
+                            message = it.message,
+                            throwable = it.throwable,
+                            durationMs = timeProvider.nowInMillis()
+                        )
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
@@ -194,145 +236,203 @@ data class AdbDevice(
             .value()
     }
 
-    override fun deviceStatus(): Device.DeviceStatus = try {
-        retry(
-            retriesCount = 15,
-            delaySeconds = 5,
-            block = { attempt ->
-                val bootCompleted: Boolean = loadProperty(
-                    key = "sys.boot_completed",
-                    cast = { output -> output == "1" }
-                )
+    override fun deviceStatus(): Device.DeviceStatus = retryAction.retry(
+        retriesCount = 15,
+        delaySeconds = 5,
+        action = {
+            val bootCompleted: Boolean = loadProperty(
+                key = "sys.boot_completed",
+                cast = { output -> output == "1" }
+            )
 
-                if (!bootCompleted) {
-                    throw IllegalStateException("sys.boot_completed isn't '1'")
-                }
-
-                eventsListener.onGetAliveDeviceSuccess(this, attempt)
-
-                Device.DeviceStatus.Alive
-            },
-            attemptFailedHandler = { attempt, _ ->
-                eventsListener.onGetAliveDeviceError(this, attempt)
-            },
-            actionFailedHandler = { throwable ->
-                eventsListener.onGetAliveDeviceFailed(this, throwable)
+            if (!bootCompleted) {
+                throw IllegalStateException("sys.boot_completed isn't '1'")
             }
+
+            bootCompleted
+        },
+        onError = { attempt: Int, _: Throwable, durationMs: Long ->
+            eventsListener.onGetAliveDeviceError(this, attempt, durationMs)
+        },
+        onFailure = { throwable, durationMs ->
+            eventsListener.onGetAliveDeviceFailed(this, throwable, durationMs)
+        },
+        onSuccess = { attempt: Int, _: Boolean, durationMs: Long ->
+            eventsListener.onGetAliveDeviceSuccess(this, attempt, durationMs)
+        }
+    )
+        .fold(
+            { Device.DeviceStatus.Alive },
+            { throwable: Throwable -> Device.DeviceStatus.Freeze(reason = throwable) }
         )
-    } catch (t: Throwable) {
-        Device.DeviceStatus.Freeze(reason = t)
-    }
 
-    override fun clearPackage(name: String): Try<Any> = Try {
-        runWithRetries(
-            retriesCount = 10,
-            delaySeconds = 2,
-            block = { attempt ->
-                val result = executeBlockingShellCommand(
-                    command = listOf("pm", "clear", name),
-                    // was seeing ~20% error rate at 5s
-                    timeoutSeconds = 10
-                )
+    override fun clearPackage(name: String): Try<Unit> = retryAction.retry(
+        retriesCount = 10,
+        delaySeconds = 2,
+        action = {
+            val result = executeBlockingShellCommand(
+                command = listOf("pm", "clear", name),
+                // was seeing ~20% error rate at 5s
+                timeoutSeconds = 10
+            )
 
-                if (!result.output.contains("success", ignoreCase = true)) {
-                    throw IllegalStateException("Fail to clear package $name; output=${result.output}")
-                }
-
-                eventsListener.onClearPackageSuccess(this, attempt, name)
-            },
-            attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onClearPackageError(this, attempt, name, throwable)
-            },
-            onError = { throwable ->
-                eventsListener.onClearPackageFailure(this, name, throwable)
+            if (!result.output.contains("success", ignoreCase = true)) {
+                throw IllegalStateException("Fail to clear package $name; output=${result.output}")
             }
-        )
-    }
+        },
+        onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
+            eventsListener.onClearPackageError(
+                device = this,
+                attempt = attempt,
+                name = name,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onFailure = { throwable: Throwable, durationMs: Long ->
+            eventsListener.onClearPackageFailure(
+                device = this,
+                name = name,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onSuccess = { attempt: Int, _: Any, durationMs: Long ->
+            eventsListener.onClearPackageSuccess(
+                device = this,
+                attempt = attempt,
+                name = name,
+                durationMs = durationMs
+            )
+        }
+    ).toTry()
 
-    override fun pull(from: Path, to: Path): Try<Any> = Try {
-        retry(
-            retriesCount = 5,
-            delaySeconds = 3,
-            block = {
-                executeBlockingCommand(
-                    command = listOf(
-                        "pull",
-                        from.toString(),
-                        to.toString()
-                    )
+    override fun pull(from: Path, to: Path): Try<Unit> = retryAction.retry(
+        retriesCount = DEFAULT_RETRY_COUNT,
+        delaySeconds = DEFAULT_DELAY_SEC,
+        action = {
+            executeBlockingCommand(
+                command = listOf(
+                    "pull",
+                    from.toString(),
+                    to.toString()
                 )
+            )
 
-                val resultFile = File(
-                    to.toFile(),
-                    from.fileName.toString()
+            val resultFile = File(
+                to.toFile(),
+                from.fileName.toString()
+            )
+
+            if (!resultFile.exists()) {
+                throw RuntimeException(
+                    "Failed to pull file from ${from.toAbsolutePath()} to ${to.toAbsolutePath()}. " +
+                        "Result file: ${resultFile.absolutePath} not found."
                 )
-
-                if (!resultFile.exists()) {
-                    throw RuntimeException(
-                        "Failed to pull file from ${from.toAbsolutePath()} to ${to.toAbsolutePath()}. " +
-                            "Result file: ${resultFile.absolutePath} not found."
-                    )
-                }
-
-                eventsListener.onPullSuccess(this, from, to)
-            },
-            attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onPullError(this, attempt, from, throwable)
-            },
-            actionFailedHandler = { throwable ->
-                eventsListener.onPullFailure(this, from, throwable)
             }
-        )
-    }
+        },
+        onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
+            eventsListener.onPullError(
+                device = this,
+                attempt = attempt,
+                from = from,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onFailure = { throwable: Throwable, durationMs: Long ->
+            eventsListener.onPullFailure(
+                device = this,
+                from = from,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onSuccess = { _: Int, _: Any, durationMs: Long ->
+            eventsListener.onPullSuccess(
+                device = this,
+                from = from,
+                to = to,
+                durationMs = durationMs
+            )
+        }
+    ).toTry()
 
-    override fun clearDirectory(remotePath: Path): Try<Any> = Try {
-        retry(
-            retriesCount = 5,
-            delaySeconds = 3,
-            block = {
-                val result = executeBlockingShellCommand(
-                    command = listOf(
-                        "rm",
-                        "-rf",
-                        remotePath.toString()
-                    )
+    override fun clearDirectory(remotePath: Path): Try<Unit> = retryAction.retry(
+        retriesCount = DEFAULT_RETRY_COUNT,
+        delaySeconds = DEFAULT_DELAY_SEC,
+        action = {
+            executeBlockingShellCommand(
+                command = listOf(
+                    "rm",
+                    "-rf",
+                    remotePath.toString()
                 )
+            )
+        },
+        onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
+            eventsListener.onClearDirectoryError(
+                device = this,
+                attempt = attempt,
+                remotePath = remotePath,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onFailure = { throwable: Throwable, durationMs: Long ->
+            eventsListener.onClearDirectoryFailure(
+                device = this,
+                remotePath = remotePath,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onSuccess = { _: Int, result: ProcessNotification.Exit, durationMs: Long ->
+            eventsListener.onClearDirectorySuccess(
+                device = this,
+                remotePath = remotePath,
+                output = result.output,
+                durationMs = durationMs
+            )
+        }
+    ).map { }.toTry()
 
-                eventsListener.onClearDirectorySuccess(this, remotePath, result.output)
-            },
-            attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onClearDirectoryError(this, attempt, remotePath, throwable)
-            },
-            actionFailedHandler = { throwable ->
-                eventsListener.onClearDirectoryFailure(this, remotePath, throwable)
-            }
-        )
-    }
-
-    override fun list(remotePath: String): Try<List<String>> = Try {
-        retry(
-            retriesCount = 5,
-            delaySeconds = 3,
-            block = {
-                val result = executeBlockingShellCommand(
-                    command = listOf(
-                        "ls",
-                        remotePath
-                    )
-                ).output.lines()
-
-                eventsListener.onListSuccess(this, remotePath)
-
-                result
-            },
-            attemptFailedHandler = { attempt, throwable ->
-                eventsListener.onListError(this, attempt, remotePath, throwable)
-            },
-            actionFailedHandler = { throwable ->
-                eventsListener.onListFailure(this, remotePath, throwable)
-            }
-        )
-    }
+    override fun list(remotePath: String): Try<List<String>> = retryAction.retry(
+        retriesCount = DEFAULT_RETRY_COUNT,
+        delaySeconds = DEFAULT_DELAY_SEC,
+        action = {
+            executeBlockingShellCommand(
+                command = listOf(
+                    "ls",
+                    remotePath
+                )
+            ).output.lines()
+        },
+        onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
+            eventsListener.onListError(
+                device = this,
+                attempt = attempt,
+                remotePath = remotePath,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onFailure = { throwable: Throwable, durationMs: Long ->
+            eventsListener.onListFailure(
+                device = this,
+                remotePath = remotePath,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onSuccess = { _: Int, _: List<String>, durationMs: Long ->
+            eventsListener.onListSuccess(
+                device = this,
+                remotePath = remotePath,
+                durationMs = durationMs
+            )
+        }
+    ).toTry()
 
     private fun runTest(
         test: TestCase,
@@ -481,35 +581,14 @@ data class AdbDevice(
             output = redirectOutputTo
         )
 
-    private fun <T> runWithRetries(
-        retriesCount: Int,
-        delaySeconds: Long = 1,
-        attemptFailedHandler: (attempt: Int, throwable: Throwable) -> Unit = { _, _ -> },
-        onError: (throwable: Throwable) -> Unit = {},
-        block: (attempt: Int) -> T
-    ): Try<T> {
-        for (attempt in 0..retriesCount) {
-            if (attempt > 0) TimeUnit.SECONDS.sleep(delaySeconds)
-            try {
-                return Try.Success(block(attempt))
-            } catch (e: Throwable) {
-                if (attempt == retriesCount - 1) {
-                    onError(e)
-                    return Try.Failure(e)
-                } else {
-                    attemptFailedHandler(attempt, e)
-                }
-            }
-        }
-        throw IllegalStateException("retry must return value or throw exception")
-    }
-
     override fun toString(): String = "Device ${coordinate.serial}"
 }
 
 private const val DEFAULT_COMMAND_TIMEOUT_SECONDS = 5L
 private const val DDMLIB_SOCKET_TIME_OUT_SECONDS = 20L
 private const val WAIT_FOR_ADB_TIME_OUT_MINUTES = 1L
+private const val DEFAULT_RETRY_COUNT = 5
+private const val DEFAULT_DELAY_SEC = 3L
 
 private fun createEventListener(
     loggerFactory: LoggerFactory,

@@ -1,6 +1,5 @@
 package com.avito.instrumentation
 
-import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
@@ -12,7 +11,7 @@ public fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name: String = "name",
     instrumentationParams: InstrumentationParameters = InstrumentationParameters(),
     reportSkippedTests: Boolean = true,
-    impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off,
+    runOnlyChangedTests: Boolean = false,
     kubernetesNamespace: String = "kubernetesNamespace",
     targets: List<TargetConfiguration.Data> = emptyList(),
     enableDeviceDebug: Boolean = false,
@@ -22,7 +21,7 @@ public fun InstrumentationConfiguration.Data.Companion.createStubInstance(
     name = name,
     instrumentationParams = instrumentationParams,
     reportSkippedTests = reportSkippedTests,
-    impactAnalysisPolicy = impactAnalysisPolicy,
+    runOnlyChangedTests = runOnlyChangedTests,
     kubernetesNamespace = kubernetesNamespace,
     targets = targets,
     enableDeviceDebug = enableDeviceDebug,

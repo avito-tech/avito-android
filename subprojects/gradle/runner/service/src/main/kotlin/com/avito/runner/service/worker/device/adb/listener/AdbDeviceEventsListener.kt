@@ -5,38 +5,186 @@ import java.nio.file.Path
 
 interface AdbDeviceEventsListener {
 
-    fun onGetSdkPropertySuccess(attempt: Int, api: Int)
-    fun onGetSdkPropertyError(attempt: Int)
-    fun onGetSdkPropertyFailure(throwable: Throwable)
+    fun onGetSdkPropertySuccess(
+        attempt: Int,
+        api: Int,
+        durationMs: Long
+    )
 
-    fun onInstallApplicationSuccess(device: Device, attempt: Int, applicationPackage: String)
-    fun onInstallApplicationError(device: Device, attempt: Int, applicationPackage: String)
-    fun onInstallApplicationFailure(device: Device, applicationPackage: String, throwable: Throwable)
+    fun onGetSdkPropertyError(
+        attempt: Int,
+        durationMs: Long
+    )
 
-    fun onGetAliveDeviceSuccess(device: Device, attempt: Int)
-    fun onGetAliveDeviceError(device: Device, attempt: Int)
-    fun onGetAliveDeviceFailed(device: Device, throwable: Throwable)
+    fun onGetSdkPropertyFailure(
+        throwable: Throwable,
+        durationMs: Long
+    )
 
-    fun onClearPackageSuccess(device: Device, attempt: Int, name: String)
-    fun onClearPackageError(device: Device, attempt: Int, name: String, throwable: Throwable)
-    fun onClearPackageFailure(device: Device, name: String, throwable: Throwable)
+    fun onInstallApplicationSuccess(
+        device: Device,
+        attempt: Int,
+        applicationPackage: String,
+        durationMs: Long
+    )
 
-    fun onPullSuccess(device: Device, from: Path, to: Path)
-    fun onPullError(device: Device, attempt: Int, from: Path, throwable: Throwable)
-    fun onPullFailure(device: Device, from: Path, throwable: Throwable)
+    fun onInstallApplicationError(
+        device: Device,
+        attempt: Int,
+        applicationPackage: String,
+        throwable: Throwable,
+        durationMs: Long
+    )
 
-    fun onClearDirectorySuccess(device: Device, remotePath: Path, output: String)
-    fun onClearDirectoryError(device: Device, attempt: Int, remotePath: Path, throwable: Throwable)
-    fun onClearDirectoryFailure(device: Device, remotePath: Path, throwable: Throwable)
+    fun onInstallApplicationFailure(
+        device: Device,
+        applicationPackage: String,
+        throwable: Throwable,
+        durationMs: Long
+    )
 
-    fun onListSuccess(device: Device, remotePath: String)
-    fun onListError(device: Device, attempt: Int, remotePath: String, throwable: Throwable)
-    fun onListFailure(device: Device, remotePath: String, throwable: Throwable)
+    fun onGetAliveDeviceSuccess(
+        device: Device,
+        attempt: Int,
+        durationMs: Long
+    )
 
-    fun onRunTestPassed(device: Device, testName: String)
-    fun onRunTestIgnored(device: Device, testName: String)
-    fun onRunTestRunError(device: Device, testName: String, errorMessage: String)
-    fun onRunTestInfrastructureError(device: Device, testName: String, errorMessage: String, throwable: Throwable?)
-    fun onRunTestFailedOnStart(device: Device, message: String)
-    fun onRunTestFailedOnInstrumentationParse(device: Device, message: String, throwable: Throwable)
+    fun onGetAliveDeviceError(
+        device: Device,
+        attempt: Int,
+        durationMs: Long
+    )
+
+    fun onGetAliveDeviceFailed(
+        device: Device,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onClearPackageSuccess(
+        device: Device,
+        attempt: Int,
+        name: String,
+        durationMs: Long
+    )
+
+    fun onClearPackageError(
+        device: Device,
+        attempt: Int,
+        name: String,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onClearPackageFailure(
+        device: Device,
+        name: String,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onPullSuccess(
+        device: Device,
+        from: Path,
+        to: Path,
+        durationMs: Long
+    )
+
+    fun onPullError(
+        device: Device,
+        attempt: Int,
+        from: Path,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onPullFailure(
+        device: Device,
+        from: Path,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onClearDirectorySuccess(
+        device: Device,
+        remotePath: Path,
+        output: String,
+        durationMs: Long
+    )
+
+    fun onClearDirectoryError(
+        device: Device,
+        attempt: Int,
+        remotePath: Path,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onClearDirectoryFailure(
+        device: Device,
+        remotePath: Path,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onListSuccess(
+        device: Device,
+        remotePath: String,
+        durationMs: Long
+    )
+
+    fun onListError(
+        device: Device,
+        attempt: Int,
+        remotePath: String,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onListFailure(
+        device: Device,
+        remotePath: String,
+        throwable: Throwable,
+        durationMs: Long
+    )
+
+    fun onRunTestPassed(
+        device: Device,
+        testName: String,
+        durationMs: Long
+    )
+
+    fun onRunTestIgnored(
+        device: Device,
+        testName: String,
+        durationMs: Long
+    )
+
+    fun onRunTestRunError(
+        device: Device,
+        testName: String,
+        errorMessage: String,
+        durationMs: Long
+    )
+
+    fun onRunTestInfrastructureError(
+        device: Device,
+        testName: String,
+        errorMessage: String,
+        throwable: Throwable?,
+        durationMs: Long
+    )
+
+    fun onRunTestFailedOnStart(
+        device: Device,
+        message: String,
+        durationMs: Long
+    )
+
+    fun onRunTestFailedOnInstrumentationParse(
+        device: Device,
+        message: String,
+        throwable: Throwable,
+        durationMs: Long
+    )
 }

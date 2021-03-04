@@ -24,6 +24,8 @@ class DataSetSerializerKtTest : PreTransportMappers {
     fun `serialize() - not serializing lambda`() {
         class LambdaPropertyDataSet(@Suppress("unused") val myLambda: () -> String) : DataSet
 
-        assertThat(LambdaPropertyDataSet { "Hello" }.serialize()).isEqualTo(emptyMap<String, Any>())
+        assertThat(LambdaPropertyDataSet { "Hello" }.serialize()).isEqualTo(
+            mapOf("myLambda" to "Unsupported type: lambda value")
+        )
     }
 }

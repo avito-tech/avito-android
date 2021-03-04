@@ -271,6 +271,7 @@ class ReportImplementation(
         futureUploads.add(html)
     }
 
+    @Synchronized
     override fun addText(label: String, text: String) {
         val txt = remoteStorage.upload(
             uploadRequest = RemoteStorage.Request.ContentRequest.PlainText(

@@ -1,7 +1,6 @@
 package com.avito.instrumentation.internal.suite.filter
 
 import com.avito.android.runner.report.factory.ReportFactory
-import com.avito.instrumentation.configuration.ImpactAnalysisPolicy
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
@@ -147,12 +146,10 @@ internal class FilterFactoryImpl(
     }
 
     private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
-        return when (impactAnalysisResult.policy) {
-            is ImpactAnalysisPolicy.Off -> {
-                // do nothing
-            }
-            is ImpactAnalysisPolicy.On.RunChangedTests ->
-                addImpactTests(impactAnalysisResult.changedTests)
+        return if (impactAnalysisResult.runOnlyChangedTests) {
+            addImpactTests(impactAnalysisResult.changedTests)
+        } else {
+            // do nothing
         }
     }
 

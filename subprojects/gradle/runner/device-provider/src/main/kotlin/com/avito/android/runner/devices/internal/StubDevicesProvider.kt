@@ -90,7 +90,7 @@ internal class StubDevicesProvider(
         )
     }
 
-    private fun succeedClearPackage(): StubActionResult.Success<Try<Any>> {
+    private fun succeedClearPackage(): StubActionResult.Success<Try<Unit>> {
         return StubActionResult.Success(
             Try.Success(Unit)
         )
