@@ -19,12 +19,12 @@ class InternalModule(
 
     val path: String = project.path
 
-    val implementationConfiguration = ImplementationConfiguration(this)
+    val mainConfiguration = MainConfiguration(this)
     val testConfiguration = TestConfiguration(this)
     val androidTestConfiguration = AndroidTestConfiguration(this)
     val lintConfiguration = LintConfiguration(this)
     val configurations = listOf(
-        implementationConfiguration,
+        mainConfiguration,
         testConfiguration,
         androidTestConfiguration,
         lintConfiguration
@@ -37,11 +37,11 @@ class InternalModule(
 
     fun isModified(): Boolean = configurations.any { it.isModified }
 
-    fun getConfiguration(configurationType: ConfigurationType): SimpleConfiguration = when (configurationType) {
-        ConfigurationType.IMPLEMENTATION -> implementationConfiguration
-        ConfigurationType.UNIT_TESTS -> testConfiguration
-        ConfigurationType.ANDROID_TESTS -> androidTestConfiguration
-        ConfigurationType.LINT -> lintConfiguration
+    fun getConfiguration(configurationType: ConfigurationType): BaseConfiguration = when (configurationType) {
+        ConfigurationType.Main -> mainConfiguration
+        ConfigurationType.UnitTests -> testConfiguration
+        ConfigurationType.AndroidTests -> androidTestConfiguration
+        ConfigurationType.Lint -> lintConfiguration
     }
 
     override fun toString(): String = "InternalModule[${project.path}]"

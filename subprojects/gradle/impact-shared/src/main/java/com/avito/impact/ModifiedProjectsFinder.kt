@@ -31,7 +31,7 @@ class ModifiedProjectsFinder(
         val reportTypes = if (configurationType == null) {
             ConfigurationType.values()
         } else {
-            arrayOf(configurationType)
+            setOf(configurationType)
         }
         return reportTypes
             .flatMap { type ->

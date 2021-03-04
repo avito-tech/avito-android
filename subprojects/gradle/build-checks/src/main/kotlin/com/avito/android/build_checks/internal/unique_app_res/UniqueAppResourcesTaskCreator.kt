@@ -75,7 +75,7 @@ internal class UniqueAppResourcesTaskCreator(
         @Suppress("UnstableApiUsage")
         val files: ConfigurableFileCollection = appProject.objects.fileCollection()
 
-        appProject.internalModule.implementationConfiguration
+        appProject.internalModule.mainConfiguration
             .allDependencies(includeSelf = true)
             .toSet()
             .forEach {

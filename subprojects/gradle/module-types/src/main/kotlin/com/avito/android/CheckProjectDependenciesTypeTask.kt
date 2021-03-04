@@ -1,6 +1,6 @@
 package com.avito.android
 
-import com.avito.impact.configuration.ImplementationConfiguration
+import com.avito.impact.configuration.MainConfiguration
 import com.avito.impact.configuration.internalModule
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
@@ -65,9 +65,9 @@ abstract class CheckProjectDependenciesTypeTask : DefaultTask() {
     }
 
     private fun buildWrongDependenciesTypeString(
-        wrongDependenciesInImplementation: List<ImplementationConfiguration>,
-        wrongDependenciesInTest: List<ImplementationConfiguration>,
-        wrongDependenciesInAndroidTest: List<ImplementationConfiguration>
+        wrongDependenciesInImplementation: List<MainConfiguration>,
+        wrongDependenciesInTest: List<MainConfiguration>,
+        wrongDependenciesInAndroidTest: List<MainConfiguration>
     ): String {
         val message = StringBuilder()
         message.appendLine("${project.path} has wrong dependencies:")
@@ -93,7 +93,7 @@ abstract class CheckProjectDependenciesTypeTask : DefaultTask() {
     }
 
     private fun implementationsByType(type: ModuleType) =
-        project.internalModule.implementationConfiguration.dependencies.filter {
+        project.internalModule.mainConfiguration.dependencies.filter {
             it.module.project.extensions.moduleType?.type?.equals(type) ?: false
         }
 

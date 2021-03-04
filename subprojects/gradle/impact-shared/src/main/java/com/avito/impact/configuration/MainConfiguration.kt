@@ -7,15 +7,16 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.configuration.sets.isImplementation
 import com.avito.impact.fallback.ImpactFallbackDetector
-import com.avito.module.configurations.ConfigurationType.IMPLEMENTATION
+import com.avito.module.configurations.ConfigurationType.Main
 import org.funktionale.tries.Try
 import java.io.File
 
-/**
- * todo надо переименовать, кажется что речь про configuration: implementation,
- *  а по факту это гораздо большее число конфигураций
- */
-class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(module, IMPLEMENTATION) {
+class MainConfiguration(module: InternalModule) : BaseConfiguration(
+    module,
+    setOf(
+        Main::class.java
+    )
+) {
 
     override val isModified: Boolean by lazy {
         module.fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
@@ -37,7 +38,7 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
             .getOrElse { true }
     }
 
-    override val dependencies: Set<ImplementationConfiguration> by lazy {
+    override val dependencies: Set<MainConfiguration> by lazy {
         require(project.configurations.isNotEmpty()) {
             "Configurations of ${project.path} required to continue impact analysis, but nothing found. \n" +
                 "Most likely reasons: \n" +
@@ -69,7 +70,7 @@ class ImplementationConfiguration(module: InternalModule) : SimpleConfiguration(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        other as ImplementationConfiguration
+        other as MainConfiguration
         if (project != other.project) return false
         return true
     }
