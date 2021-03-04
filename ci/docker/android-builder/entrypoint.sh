@@ -23,6 +23,10 @@ else
     find "${GRADLE_USER_HOME}" -maxdepth 3 -type d -not -user ${BUILD_USER} -print -execdir chown ${BUILD_USER} {} \+
 fi
 
+sudo --set-home --preserve-env "PATH=$PATH" -u ${BUILD_USER} bash -c "git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
+git config --global user.name 'builder';
+git config --global user.email 'builder@avito.ru';"
+
 # shellcheck disable=SC2145
 echo "Running command: $@"
 

@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:pre-build"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(project(":subprojects:gradle:impact"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:pre-build"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:impact"))
     implementation(libs.kotlinPlugin)
 
-    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

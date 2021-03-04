@@ -6,16 +6,16 @@ plugins {
 
 dependencies {
     api(libs.okhttpMockWebServer)
-    api(project(":subprojects:common:logger"))
-    api(project(":subprojects:common:okhttp"))
+    api(project(":common:logger"))
+    api(project(":common:okhttp"))
 
     implementation(libs.truth)
     implementation(libs.gson)
     implementation(libs.commonsLang)
 
-    implementation(project(":subprojects:common:junit-utils"))
-    implementation(project(":subprojects:common:resources"))
-    implementation(project(":subprojects:common:waiter"))
+    implementation(project(":common:junit-utils"))
+    implementation(project(":common:resources"))
+    implementation(project(":common:waiter"))
 
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    testImplementation(testFixtures(project(":common:logger")))
 }

@@ -9,5 +9,5 @@ dependencies {
 
     // todo used only for Commandline.translateCommandline(source)
     implementation(gradleApi())
-    implementation(project(":subprojects:common:logger"))
+    implementation(project(":common:logger"))
 }

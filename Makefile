@@ -1,5 +1,17 @@
 SHELL := /bin/bash
 
+ANDROID_BUILDER_TAG=28e6bacd68
+ifeq ($(origin DOCKER_REGISTRY),undefined)
+    IMAGE_ANDROID_BUILDER=avitotech/android-builder:$(ANDROID_BUILDER_TAG)
+else
+    IMAGE_ANDROID_BUILDER=$(DOCKER_REGISTRY)/android/builder:$(ANDROID_BUILDER_TAG)
+endif
+GRADLE_HOME_DIR=$(HOME)/.gradle
+GRADLE_CACHE_DIR=$(GRADLE_HOME_DIR)/caches
+GRADLE_WRAPPER_DIR=$(GRADLE_HOME_DIR)/wrapper
+USER_ID=$(shell id -u $(USER))
+
+docker=false
 test_build_type?=debug
 infra?=
 ci?=false
@@ -12,6 +24,25 @@ useCompositeBuild=true
 dry_run=false
 instrumentation=Ui
 stacktrace?=
+project=-p subprojects
+
+docker_command?=
+
+ifeq ($(docker),true)
+define docker_command
+make clear_gradle_lock_files
+make clear_docker_containers
+docker run --rm \
+	--volume "$(shell pwd)":/app \
+	--volume "$(GRADLE_CACHE_DIR)":/gradle/caches \
+	--volume "$(GRADLE_WRAPPER_DIR)":/gradle/wrapper \
+	--workdir /app \
+	--env TZ="Europe/Moscow" \
+	--env LOCAL_USER_ID="$(USER_ID)" \
+	--env GRADLE_USER_HOME=/gradle \
+	android-builder
+endef
+endif
 
 params?=
 
@@ -36,6 +67,7 @@ params +=-Pci=$(ci)
 params +=$(log_level)
 params +=-PkubernetesContext=$(kubernetesContext)
 params +=-PuseCompositeBuild=$(useCompositeBuild)
+params +=-PartifactoryUrl=$(ARTIFACTORY_URL)
 
 ifeq ($(gradle_debug),true)
 params +=-Dorg.gradle.debug=true --no-daemon
@@ -64,17 +96,88 @@ __check_defined = \
     $(if $(value $1),, \
       $(error Undefined $1$(if $2, ($2))))
 
-help:
-	./gradlew help $(params)
-
 clean:
 	rm -rf `find -type d -name build`
 
+# Warning. Hack!
+# Мы можем удалять эти локи, т.к. гарантированно никакие другие процессы не используют этот шаренный кеш на начало новой сборки
+# см. clearDockerContainers
+# То что лок файлы остаются от предыдущих сборок, означает что мы где-то неправильно останавливаем процесс
+# '|| true' необходим для свеже-поднятых агентов, где еще не создана папка с кешами
+clear_gradle_lock_files:
+	find "$(GRADLE_HOME_DIR)" \( -name "*.lock" -o -name "*.lck" \) -delete || true
+
+# По-разным причинам работа контейнера при прошлой сборке может не завершиться
+# Здесь мы перестраховываемся и останавливаем все работающие контейнеры
+# Перед сборкой не должно быть других контейнеров в любом случае
+clear_docker_containers:
+	containers=$(docker container ls -aq)
+	if [[ ! -z "$(containers)" ]]; then \
+	docker container rm --force $(containers); \
+	fi
+
+help:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) help
+
 publish_to_maven_local:
-	./gradlew publishToMavenLocal -PprojectVersion=local $(log_level)
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) publishToMavenLocal -PprojectVersion=local
 
 publish_to_artifactory:
-	./gradlew publishToArtifactory -PprojectVersion=$(version) $(log_level)
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) publishToArtifactory -PprojectVersion=$(version) -Dorg.gradle.internal.publish.checksums.insecure=true
+
+unit_tests:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) test
+
+gradle_test:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) gradleTest
+
+integration_tests:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) integrationTest
+
+compile_tests:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileTestKotlin
+
+compile:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll
+
+check:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) check
+
+.PHONY: build
+build:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) build
+
+fast_check:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll detektAll test
+
+clean_fast_check:
+	make clean
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll detektAll test --rerun-tasks --no-build-cache
+
+detekt:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) detektAll
+
+build_android_image:
+	cd ./ci/docker/android-builder && \
+	docker build -t android-builder .
+
+.PHONY: docs
+docs:
+	./ci/documentation/lint.sh
+	./ci/documentation/preview.sh
+
+clear_k8s_deployments_by_namespaces:
+	$(docker_command) ./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
+
+clear_k8s_deployments_by_names:
+	$(docker_command) ./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
+
+# Clear local branches that not on remote
+# from: https://stackoverflow.com/a/17029936/981330
+unsafe_clear_local_branches:
+	git fetch --prune && \
+	git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | \
+	awk '{print $$1}' | xargs git branch -D
 
 # precondition:
 # - installed CLI: https://cli.github.com/
@@ -98,59 +201,3 @@ dynamic_properties:
 	$(eval skipSucceedTestsFromPreviousRun=true)
 	$(eval testFilter?=empty)
 	$(eval dynamicPrefixFilter?=)
-
-unit_tests:
-	./gradlew test $(log_level)
-
-gradle_test:
-	./gradlew gradleTest $(log_level)
-
-integration_tests:
-	./gradlew integrationTest
-
-compile_tests:
-	./gradlew compileTestKotlin $(log_level)
-
-compile:
-	./gradlew compileAll $(log_level)
-
-check:
-	./gradlew check
-
-fast_check:
-	./gradlew compileAll detektAll test ${log_level}
-
-clean_fast_check:
-	rm -rf `find -type d -name build`
-	./gradlew compileAll detektAll test --rerun-tasks --no-build-cache
-
-detekt:
-	./gradlew detektAll
-
-.PHONY: docs
-docs:
-	./ci/documentation/lint.sh
-	./ci/documentation/preview.sh
-
-clear_k8s_deployments_by_namespaces:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
-
-clear_k8s_deployments_by_names:
-	./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
-
-record_screenshots:
-	./gradlew samples:test-app-screenshot-test:clearScreenshots
-	./gradlew samples:test-app-screenshot-test:connectedAndroidTest \
-        -Pandroid.testInstrumentationRunnerArguments.annotation=com.avito.android.test.annotations.ScreenshotTest \
-        -Pandroid.testInstrumentationRunnerArguments.recordScreenshots=true
-	./gradlew samples:test-app-screenshot-test:recordScreenshots
-
-analyzeImpactOnSampleApp:
-	./gradlew samples:test-app-impact:app:analyzeTestImpact -PtargetBranch=develop $(params)
-
-# Clear local branches that not on remote
-# from: https://stackoverflow.com/a/17029936/981330
-unsafe_clear_local_branches:
-	git fetch --prune && \
-	git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | \
-	awk '{print $$1}' | xargs git branch -D

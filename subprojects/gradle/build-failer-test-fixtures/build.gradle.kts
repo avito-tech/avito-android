@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:build-failer"))
+    api(project(":gradle:build-failer"))
 }

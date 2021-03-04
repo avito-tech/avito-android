@@ -8,7 +8,7 @@ dependencies {
     implementation(libs.androidAnnotations)
     implementation(libs.junit)
 
-    implementation(project(":subprojects:android-lib:proxy-toast"))
-    implementation(project(":subprojects:android-test:ui-testing-core"))
-    implementation(project(":subprojects:common:junit-utils"))
+    implementation(project(":android-lib:proxy-toast"))
+    implementation(project(":android-test:ui-testing-core"))
+    implementation(project(":common:junit-utils"))
 }

@@ -5,8 +5,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:common:time"))
-    implementation(project(":subprojects:common:logger"))
+    implementation(project(":common:time"))
+    implementation(project(":common:logger"))
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
