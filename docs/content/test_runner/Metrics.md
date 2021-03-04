@@ -4,7 +4,7 @@
 
 Metrics available at:
 
-`$namespace.testrunner.$buildId.$instrumentationConfigName.`
+`$namespace.testrunner.$projectName.$instrumentationConfigName.`
 
 ### `device-utilization.median`
 

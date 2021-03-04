@@ -29,7 +29,7 @@ open class StubDevice(
     installApplicationResults: List<Try<DeviceInstallation>> = emptyList(),
     gettingDeviceStatusResults: List<Device.DeviceStatus> = emptyList(),
     runTestsResults: List<StubActionResult<TestCaseRun.Result>> = emptyList(),
-    clearPackageResults: List<StubActionResult<Try<Any>>> = emptyList(),
+    clearPackageResults: List<StubActionResult<Try<Unit>>> = emptyList(),
     private val apiResult: StubActionResult<Int> = StubActionResult.Success(22),
     override val online: Boolean = true,
     override val model: String = "model"
@@ -43,7 +43,7 @@ open class StubDevice(
         ArrayDeque(gettingDeviceStatusResults)
     private val runTestsResultsQueue: Queue<StubActionResult<TestCaseRun.Result>> =
         ArrayDeque(runTestsResults)
-    private val clearPackageResultsQueue: Queue<StubActionResult<Try<Any>>> =
+    private val clearPackageResultsQueue: Queue<StubActionResult<Try<Unit>>> =
         ArrayDeque(clearPackageResults)
 
     override val logger = loggerFactory.create(tag)
@@ -90,7 +90,7 @@ open class StubDevice(
         )
     }
 
-    override fun clearPackage(name: String): Try<Any> {
+    override fun clearPackage(name: String): Try<Unit> {
         resultQueuePrecondition(
             queue = clearPackageResultsQueue,
             functionName = "clearPackage",
@@ -104,7 +104,7 @@ open class StubDevice(
         return result
     }
 
-    override fun pull(from: Path, to: Path): Try<Any> {
+    override fun pull(from: Path, to: Path): Try<Unit> {
 
         logger.debug("pull called [from: $from to: $to]")
 
@@ -130,13 +130,13 @@ open class StubDevice(
 
             resultFile.writeText(gson.toJson(testRuntimeData))
 
-            Try.Success(Any())
+            Try.Success(Unit)
         } else {
-            Try.Success(Any())
+            Try.Success(Unit)
         }
     }
 
-    override fun clearDirectory(remotePath: Path): Try<Any> = Try {}
+    override fun clearDirectory(remotePath: Path): Try<Unit> = Try {}
 
     override fun list(remotePath: String): Try<List<String>> = Try { emptyList() }
 
