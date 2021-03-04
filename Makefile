@@ -1,8 +1,11 @@
 SHELL := /bin/bash
 
-DOCKER_REGISTRY=registry.k.avito.ru
 ANDROID_BUILDER_TAG=28e6bacd68
-IMAGE_ANDROID_BUILDER=$(DOCKER_REGISTRY)/android/builder:$(ANDROID_BUILDER_TAG)
+ifeq ($(origin DOCKER_REGISTRY),undefined)
+    IMAGE_ANDROID_BUILDER=avitotech/android-builder:$(ANDROID_BUILDER_TAG)
+else
+    IMAGE_ANDROID_BUILDER=$(DOCKER_REGISTRY)/android/builder:$(ANDROID_BUILDER_TAG)
+endif
 GRADLE_HOME_DIR=$(HOME)/.gradle
 GRADLE_CACHE_DIR=$(GRADLE_HOME_DIR)/caches
 GRADLE_WRAPPER_DIR=$(GRADLE_HOME_DIR)/wrapper
@@ -112,11 +115,6 @@ clear_docker_containers:
 	if [[ ! -z "$(containers)" ]]; then \
 	docker container rm --force $(containers); \
 	fi
-
-init_git:
-	git config --global core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no';
-	git config --global user.name 'builder';
-	git config --global user.email 'builder@avito.ru'
 
 help:
 	$(docker_command) ./gradlew $(project) $(log_level) $(params) help
