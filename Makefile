@@ -21,7 +21,6 @@ kubernetesContext?=beta
 testFilter?=
 includePrefix?=
 includeAnnotation?=
-useCompositeBuild=true
 dry_run=false
 instrumentation=Ui
 stacktrace?=
@@ -67,7 +66,6 @@ params +=-PtestBuildType=$(test_build_type)
 params +=-Pci=$(ci)
 params +=$(log_level)
 params +=-PkubernetesContext=$(kubernetesContext)
-params +=-PuseCompositeBuild=$(useCompositeBuild)
 params +=-PartifactoryUrl=$(ARTIFACTORY_URL)
 
 ifeq ($(gradle_debug),true)
@@ -150,6 +148,9 @@ build:
 
 fast_check:
 	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll detektAll test
+
+full_check:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) compileAll detektAll test gradleTest
 
 clean_fast_check:
 	make clean

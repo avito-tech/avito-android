@@ -29,6 +29,16 @@ class ImpactMetricsSender(
         SeriesName.create(envName, node, buildId)
     }
 
+    private val ConfigurationType.name: String
+        get() {
+            return when (this) {
+                ConfigurationType.AndroidTests -> "androidtests"
+                ConfigurationType.Main -> "implementation"
+                ConfigurationType.Lint -> "lint"
+                ConfigurationType.UnitTests -> "unittests"
+            }
+        }
+
     fun sendModifiedProjectCounters(modifiedProjectsFinder: ModifiedProjectsFinder) {
         modifiedProjectsFinder.getProjects().forEach { (type, projects) ->
             val modified = projects.filter { it.project.internalModule.isModified(type) }

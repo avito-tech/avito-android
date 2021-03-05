@@ -63,7 +63,7 @@ include(":gradle:build-failer-test-fixtures")
 include(":gradle:build-environment")
 include(":gradle:worker")
 include(":gradle:gradle-logger")
-include(":gradle:module-dependencies-tree")
+include(":gradle:module-dependencies-graph")
 
 include(":common:resources")
 include(":common:files")

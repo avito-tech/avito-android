@@ -29,7 +29,7 @@ abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
 
     private fun checkPrivateDependenciesRule() {
         project.internalModule
-            .implementationConfiguration
+            .mainConfiguration
             .dependencies.forEach {
                 val codeOwnershipExtensionTo = it.module.project.extensions.ownership
                 if (codeOwnershipExtensionTo.visibility == Visibility.PRIVATE) {
@@ -45,7 +45,7 @@ abstract class CheckProjectDependenciesOwnershipTask : DefaultTask() {
     private fun checkUnitDependencyRuleDependency() {
         val codeOwnershipExtensionFrom = project.extensions.ownership
         project.internalModule
-            .implementationConfiguration
+            .mainConfiguration
             .dependencies.forEach {
                 val codeOwnershipExtensionTo = it.module.project.extensions.ownership
                 if (codeOwnershipExtensionTo.visibility == Visibility.TEAM
