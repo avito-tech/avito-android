@@ -1,11 +1,12 @@
 SHELL := /bin/bash
 
-ANDROID_BUILDER_TAG=28e6bacd68
+ANDROID_BUILDER_TAG=eddf45adfa
 ifeq ($(origin DOCKER_REGISTRY),undefined)
     IMAGE_ANDROID_BUILDER=avitotech/android-builder:$(ANDROID_BUILDER_TAG)
 else
     IMAGE_ANDROID_BUILDER=$(DOCKER_REGISTRY)/android/builder:$(ANDROID_BUILDER_TAG)
 endif
+IMAGE_DOCKER_IN_DOCKER=${DOCKER_REGISTRY}/android/docker-in-docker-image:c2ecce3a3e
 GRADLE_HOME_DIR=$(HOME)/.gradle
 GRADLE_CACHE_DIR=$(GRADLE_HOME_DIR)/caches
 GRADLE_WRAPPER_DIR=$(GRADLE_HOME_DIR)/wrapper
@@ -161,6 +162,22 @@ detekt:
 build_android_image:
 	cd ./ci/docker/android-builder && \
 	docker build -t android-builder .
+
+# new ANDROID_BUILDER_TAG will be printed after successful publishing
+internal_publish_android_builder:
+	docker run --rm \
+        --volume /var/run/docker.sock:/var/run/docker.sock \
+        --volume "$(shell pwd)/ci/docker/android-builder":/build \
+        --env DOCKER_REGISTRY=${DOCKER_REGISTRY} \
+        --env DOCKER_LOGIN=${DOCKER_LOGIN} \
+        --env DOCKER_PASSWORD=${DOCKER_PASSWORD} \
+        ${IMAGE_DOCKER_IN_DOCKER} publish_docker_image publish /build
+
+# run after new ANDROID_BUILDER_TAG set
+# assume `docker login` to dockerhub was successful
+publish_android_builder:
+	docker tag $(ANDROID_BUILDER_TAG) avitotech/android-builder:$(ANDROID_BUILDER_TAG)
+	docker push avitotech/android-builder:$(ANDROID_BUILDER_TAG)
 
 .PHONY: docs
 docs:
