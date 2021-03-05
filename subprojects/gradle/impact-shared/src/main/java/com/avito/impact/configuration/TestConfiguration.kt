@@ -6,7 +6,6 @@ package com.avito.impact.configuration
 import com.android.build.gradle.api.AndroidSourceSet
 import com.avito.impact.configuration.sets.isTest
 import com.avito.module.configurations.ConfigurationType.UnitTests
-import java.io.File
 
 class TestConfiguration(module: InternalModule) : BaseConfiguration(module, setOf(UnitTests::class.java)) {
 
@@ -16,14 +15,7 @@ class TestConfiguration(module: InternalModule) : BaseConfiguration(module, setO
             || hasChangedFiles
     }
 
-    override val fullBytecodeSets: Set<File> by lazy {
-        bytecodeSets() +
-            dependencies.flatMap { it.fullBytecodeSets } +
-            module.mainConfiguration.fullBytecodeSets
-    }
-
     override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isTest()
-    override fun containsBytecode(bytecodeDirectory: File): Boolean = bytecodeDirectory.isTest()
 
     override fun toString(): String {
         return "TestConfiguration(${project.path})"
