@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(libs.funktionaleTry)
-    api(project(":gradle:module-dependencies-tree"))
+    api(project(":gradle:module-dependencies-graph"))
 
     implementation(gradleApi())
 

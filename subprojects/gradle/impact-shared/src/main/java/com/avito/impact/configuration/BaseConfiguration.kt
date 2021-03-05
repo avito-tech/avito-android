@@ -18,9 +18,9 @@ import java.io.File
 /**
  * Wrapper above [org.gradle.api.artifacts.Configuration] to reduce an amount of configurations
  */
-abstract class SimpleConfiguration(
+abstract class BaseConfiguration(
     val module: InternalModule,
-    val type: ConfigurationType
+    val types: Set<Class<out ConfigurationType>>
 ) : Equality {
 
     abstract val fullBytecodeSets: Set<File>
@@ -38,19 +38,17 @@ abstract class SimpleConfiguration(
             .getOrElse { true }
     }
 
-    open val dependencies: Set<ImplementationConfiguration> by lazy {
-        module.project.dependenciesOnProjects(type)
-            // project has dependency to itself in a default configuration
-            .filter { it.dependencyProject != module.project }
+    open val dependencies: Set<MainConfiguration> by lazy {
+        module.project.dependenciesOnProjects(types)
             .map {
                 it.dependencyProject
                     .internalModule
-                    .implementationConfiguration
+                    .mainConfiguration
             }
             .toSet()
     }
 
-    fun allDependencies(includeSelf: Boolean = true): Set<SimpleConfiguration> {
+    fun allDependencies(includeSelf: Boolean = true): Set<BaseConfiguration> {
         val dependencies = this.dependencies
             .flatMap {
                 it.allDependencies(includeSelf = true)
