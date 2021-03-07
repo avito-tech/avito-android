@@ -9,7 +9,6 @@ import com.avito.impact.configuration.sets.isImplementation
 import com.avito.impact.fallback.ImpactFallbackDetector
 import com.avito.module.configurations.ConfigurationType.Main
 import org.funktionale.tries.Try
-import java.io.File
 
 class MainConfiguration(module: InternalModule) : BaseConfiguration(
     module,
@@ -22,11 +21,6 @@ class MainConfiguration(module: InternalModule) : BaseConfiguration(
         module.fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
             || dependencies.any { it.isModified }
             || hasChangedFiles
-    }
-
-    override val fullBytecodeSets: Set<File> by lazy {
-        bytecodeSets() +
-            dependencies.flatMap { it.fullBytecodeSets }
     }
 
     override val hasChangedFiles: Boolean by lazy {
@@ -60,8 +54,6 @@ class MainConfiguration(module: InternalModule) : BaseConfiguration(
     }
 
     override fun containsSources(sourceSet: AndroidSourceSet) = sourceSet.isImplementation()
-
-    override fun containsBytecode(bytecodeDirectory: File): Boolean = bytecodeDirectory.isImplementation()
 
     override fun toString(): String {
         return "ImplementationConfiguration(${project.path})"

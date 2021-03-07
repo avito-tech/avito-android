@@ -11,8 +11,6 @@ import com.avito.impact.util.Equality
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.dependencies.dependenciesOnProjects
 import org.funktionale.tries.Try
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
 /**
@@ -23,7 +21,6 @@ abstract class BaseConfiguration(
     val types: Set<Class<out ConfigurationType>>
 ) : Equality {
 
-    abstract val fullBytecodeSets: Set<File>
     abstract val isModified: Boolean
     protected val project = module.project
     protected val changesDetector = module.changesDetector
@@ -75,26 +72,6 @@ abstract class BaseConfiguration(
         }
     }
 
-    /**
-     * Directories with compiled classes
-     */
-    fun bytecodeSets(): Set<File> {
-        val kotlinCompileTasks = project.tasks.withType(KotlinCompile::class.java)
-            .filter { it !is KaptGenerateStubsTask }
-
-        return kotlinCompileTasks
-            .map {
-                it.destinationDir
-            }
-            .filter {
-                it.isDirectory &&
-                    it.exists() &&
-                    it.list().isNotEmpty()
-            }
-            .filter { containsBytecode(it) }
-            .toSet()
-    }
-
     open fun changedFiles(): Try<List<ChangedFile>> {
         return sourceSets()
             .map { sourceDir -> changesDetector.computeChanges(sourceDir) }
@@ -103,6 +80,5 @@ abstract class BaseConfiguration(
             }
     }
 
-    protected abstract fun containsBytecode(bytecodeDirectory: File): Boolean
     protected abstract fun containsSources(sourceSet: AndroidSourceSet): Boolean
 }
