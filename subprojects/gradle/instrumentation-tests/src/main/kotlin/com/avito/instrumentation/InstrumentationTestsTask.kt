@@ -100,9 +100,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val buildType: Property<String> = objects.property()
 
     @Input
-    public val defaultBranch: Property<String> = objects.property()
-
-    @Input
     public val gitCommit: Property<String> = objects.property()
 
     @Input

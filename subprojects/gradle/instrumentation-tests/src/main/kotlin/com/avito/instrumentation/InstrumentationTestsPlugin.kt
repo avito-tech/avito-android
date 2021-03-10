@@ -130,7 +130,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.buildType.set(env.build.type)
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
-                    this.defaultBranch.set(gitState.map { it.defaultBranch })
                     this.slackToken.set(extensionData.slackToken)
                     this.testRunnerService.set(testRunnerServiceProvider)
                     this.output.set(configurationOutputFolder)
