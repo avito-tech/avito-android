@@ -56,7 +56,6 @@ internal class InstrumentationTestsAction(
         val executionParameters: ExecutionParameters,
         val buildId: String,
         val buildType: String,
-        val currentBranch: String,
         val kubernetesCredentials: KubernetesCredentials,
         val projectName: String,
         val suppressFailure: Boolean,

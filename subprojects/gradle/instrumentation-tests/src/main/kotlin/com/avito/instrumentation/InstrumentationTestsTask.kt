@@ -164,7 +164,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             executionParameters = parameters.get(),
             buildId = buildId.get(),
             buildType = buildType.get(),
-            currentBranch = gitBranch.get(),
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
             },
@@ -186,8 +185,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             fileStorageUrl = getFileStorageUrl(),
             statsDConfig = project.statsdConfig.get(),
             reportFactory = reportFactory,
-            reportConfig = reportConfig, // stub for inmemory report
-            reportCoordinates = reportCoordinates,
+            reportConfig = reportConfig,
+            reportCoordinates = reportCoordinates, // stub for inmemory report
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
