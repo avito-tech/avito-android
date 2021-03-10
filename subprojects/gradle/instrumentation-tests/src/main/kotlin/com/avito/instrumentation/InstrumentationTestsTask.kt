@@ -68,18 +68,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     @Optional
     @InputFile
-    public val newTests: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
-    public val modifiedTests: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
-    public val affectedTests: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
     public val changedTests: RegularFileProperty = objects.fileProperty()
 
     @Optional
@@ -172,9 +160,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             suppressFlaky = suppressFlaky.getOrElse(false),
             impactAnalysisResult = ImpactAnalysisResult.create(
                 runOnlyChangedTests = runOnlyChangedTests.get(),
-                affectedTestsFile = affectedTests.asFile.orNull,
-                addedTestsFile = newTests.asFile.orNull,
-                modifiedTestsFile = modifiedTests.asFile.orNull,
                 changedTestsFile = changedTests.asFile.orNull
             ),
             loggerFactory = loggerFactory,

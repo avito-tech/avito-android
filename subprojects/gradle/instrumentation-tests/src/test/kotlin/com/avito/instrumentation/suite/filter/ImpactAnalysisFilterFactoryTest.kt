@@ -31,10 +31,7 @@ internal class ImpactAnalysisFilterFactoryTest {
     fun `noImpactAnalysis - filters nothing - even if impact provided`() {
         val filter = FilterFactoryFactory.create(
             impactAnalysisResult = ImpactAnalysisResult.createStubInstance(
-                runOnlyChangedTests = false,
-                affectedTests = listOf(test1, test2, test3, test4),
-                addedTests = listOf(test1, test2, test3, test4),
-                modifiedTests = listOf(test1, test2, test3, test4)
+                runOnlyChangedTests = false
             )
         ).createFilter()
 
