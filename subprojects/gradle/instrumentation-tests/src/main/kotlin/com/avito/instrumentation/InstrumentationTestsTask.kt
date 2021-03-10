@@ -20,6 +20,7 @@ import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Comp
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
+import com.avito.instrumentation.service.TestRunParams
 import com.avito.instrumentation.service.TestRunnerService
 import com.avito.instrumentation.service.TestRunnerWorkAction
 import com.avito.logger.GradleLoggerFactory
@@ -145,6 +146,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportConfig
         )
 
+        val statsDConfig = project.statsdConfig.get()
+
         val testRunParams = InstrumentationTestsAction.Params(
             mainApk = application.orNull?.getApk(),
             testApk = testApplication.get().getApkOrThrow(),
@@ -168,7 +171,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
                 ?: "http://stub",
             fileStorageUrl = getFileStorageUrl(),
-            statsDConfig = project.statsdConfig.get(),
+            statsDConfig = statsDConfig,
             reportFactory = reportFactory,
             reportConfig = reportConfig,
             reportCoordinates = reportCoordinates, // stub for inmemory report
@@ -184,7 +187,14 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
             queue.submit(TestRunnerWorkAction::class.java) { params ->
                 params.service.set(service)
-                params.testRunParams.set(testRunParams)
+                params.statsDConfig.set(statsDConfig)
+                params.testRunParams.set(
+                    TestRunParams(
+                        projectName = project.name,
+                        instrumentationConfigName = configuration.name
+                    )
+                )
+                params.legacyTestRunParams.set(testRunParams)
             }
         } else {
             workerExecutor.inMemoryWork {

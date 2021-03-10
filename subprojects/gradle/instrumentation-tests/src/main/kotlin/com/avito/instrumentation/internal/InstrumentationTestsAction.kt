@@ -1,6 +1,9 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.runner.devices.DeviceProviderFactoryImpl
+import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
@@ -10,6 +13,9 @@ import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
 import java.io.Serializable
@@ -29,12 +35,23 @@ internal class InstrumentationTestsAction(
      */
     @Suppress("unused")
     @Inject
-    constructor(params: Params) : this(params, InstrumentationTestsActionFactory.Impl(params))
+    constructor(params: Params) : this(
+        params = params,
+        factory = InstrumentationTestsActionFactory.Impl(
+            params,
+            RunnerMetricsConfig(params.statsDConfig, runnerPrefix(params))
+        )
+    )
 
     constructor(params: Params, factory: InstrumentationTestsActionFactory) : this(
         params = params,
         loggerFactory = params.loggerFactory,
-        scheduler = factory.provideScheduler(),
+        scheduler = factory.provideScheduler(
+            devicesProviderFactory = createDevicesProviderFactory(
+                params = params,
+                timeProvider = DefaultTimeProvider()
+            )
+        ),
         finalizer = factory.provideFinalizer()
     )
 
@@ -75,3 +92,21 @@ internal class InstrumentationTestsAction(
         companion object
     }
 }
+
+private fun runnerPrefix(params: InstrumentationTestsAction.Params) = SeriesName.create(
+    "testrunner",
+    params.projectName,
+    params.instrumentationConfiguration.name
+)
+
+private fun createDevicesProviderFactory(
+    params: InstrumentationTestsAction.Params,
+    timeProvider: TimeProvider
+): DevicesProviderFactory = DeviceProviderFactoryImpl(
+    kubernetesCredentials = params.kubernetesCredentials,
+    buildId = params.buildId,
+    buildType = params.buildType,
+    loggerFactory = params.loggerFactory,
+    timeProvider = timeProvider,
+    statsDConfig = params.statsDConfig
+)
