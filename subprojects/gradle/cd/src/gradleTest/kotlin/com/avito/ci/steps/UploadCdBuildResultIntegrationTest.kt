@@ -380,7 +380,6 @@ class RealTest {
             }
             instrumentation {
                  sentryDsn = "stub"
-                 slackToken = "stub"
                  
                  instrumentationParams = [
                     "deviceName"    : "regress",

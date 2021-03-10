@@ -65,7 +65,6 @@ internal class InstrumentationTestsAction(
         val loggerFactory: LoggerFactory,
         val outputDir: File,
         val verdictFile: File,
-        val slackToken: String,
         val reportViewerUrl: String,
         val fileStorageUrl: String,
         val statsDConfig: StatsDConfig,

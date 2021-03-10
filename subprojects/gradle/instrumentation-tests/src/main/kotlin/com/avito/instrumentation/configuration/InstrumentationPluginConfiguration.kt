@@ -20,7 +20,7 @@ public object InstrumentationPluginConfiguration {
         // todo make optional
         public var sentryDsn: String = ""
 
-        // todo extract
+        // todo remove
         public var slackToken: String = ""
 
         public var applicationProguardMapping: File? = null
@@ -86,7 +86,6 @@ public object InstrumentationPluginConfiguration {
                 .applyParameters(
                     mapOf(
                         "sentryDsn" to sentryDsn,
-                        "slackToken" to slackToken,
                         "reportApiUrl" to (reportViewer?.reportApiUrl ?: "http://stub"),
                         "fileStorageUrl" to (reportViewer?.fileStorageUrl ?: "http://stub"),
                         "reportViewerUrl" to (reportViewer?.reportViewerUrl ?: "http://stub")
@@ -112,7 +111,6 @@ public object InstrumentationPluginConfiguration {
                 applicationApk = applicationApk,
                 testApplicationApk = testApplicationApk,
                 reportViewer = reportViewer,
-                slackToken = slackToken,
                 useService = useService,
                 applicationProguardMapping = applicationProguardMapping,
                 testProguardMapping = testProguardMapping
@@ -127,7 +125,6 @@ public object InstrumentationPluginConfiguration {
             val applicationApk: String?, // TODO file
             val testApplicationApk: String?, // TODO file
             val reportViewer: ReportViewer?,
-            val slackToken: String,
             val useService: Boolean,
             val applicationProguardMapping: File?,
             val testProguardMapping: File?

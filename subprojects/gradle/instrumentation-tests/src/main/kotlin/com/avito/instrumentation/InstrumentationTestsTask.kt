@@ -91,9 +91,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val testProguardMapping: RegularFileProperty = objects.fileProperty()
 
     @Input
-    public val slackToken: Property<String> = objects.property()
-
-    @Input
     public val buildId: Property<String> = objects.property()
 
     @Input
@@ -184,13 +181,12 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             loggerFactory = loggerFactory,
             outputDir = output.get().asFile,
             verdictFile = verdictFile.get().asFile,
-            slackToken = slackToken.get(),
             reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
                 ?: "http://stub",
             fileStorageUrl = getFileStorageUrl(),
             statsDConfig = project.statsdConfig.get(),
-            reportFactory = reportFactory, // stub for inmemory report
-            reportConfig = reportConfig,
+            reportFactory = reportFactory,
+            reportConfig = reportConfig, // stub for inmemory report
             reportCoordinates = reportCoordinates,
             proguardMappings = listOf(
                 applicationProguardMapping,
