@@ -24,7 +24,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     executionParameters: ExecutionParameters = ExecutionParameters.createStubInstance(),
     buildId: String = "33456",
     buildType: String = "teamcity",
-    buildUrl: String = "https://build",
     kubernetesCredentials: KubernetesCredentials = KubernetesCredentials.Service(
         token = "empty",
         caCertData = "empty",
@@ -50,7 +49,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     executionParameters = executionParameters,
     buildId = buildId,
     buildType = buildType,
-    buildUrl = buildUrl,
     currentBranch = currentBranch,
     kubernetesCredentials = kubernetesCredentials,
     projectName = projectName,

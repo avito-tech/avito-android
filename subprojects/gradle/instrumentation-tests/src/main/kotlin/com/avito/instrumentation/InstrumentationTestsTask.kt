@@ -100,9 +100,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val buildType: Property<String> = objects.property()
 
     @Input
-    public val buildUrl: Property<String> = objects.property()
-
-    @Input
     public val defaultBranch: Property<String> = objects.property()
 
     @Input
@@ -173,7 +170,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             executionParameters = parameters.get(),
             buildId = buildId.get(),
             buildType = buildType.get(),
-            buildUrl = buildUrl.get(),
             currentBranch = gitBranch.get(),
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
@@ -195,8 +191,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
                 ?: "http://stub",
             fileStorageUrl = getFileStorageUrl(),
-            statsDConfig = project.statsdConfig.get(), // stub for inmemory report
-            reportFactory = reportFactory,
+            statsDConfig = project.statsdConfig.get(),
+            reportFactory = reportFactory, // stub for inmemory report
             reportConfig = reportConfig,
             reportCoordinates = reportCoordinates,
             proguardMappings = listOf(

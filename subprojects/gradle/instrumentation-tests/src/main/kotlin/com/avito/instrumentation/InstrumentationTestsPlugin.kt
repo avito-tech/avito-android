@@ -128,7 +128,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
                     this.buildId.set(env.build.id.toString())
                     this.buildType.set(env.build.type)
-                    this.buildUrl.set(env.build.url)
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
                     this.defaultBranch.set(gitState.map { it.defaultBranch })
