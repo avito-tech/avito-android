@@ -45,8 +45,7 @@ internal class ReportsApiImpl(
                             "appBranch" to gitBranch,
 
                             /**
-                             * Секретный массив, в который добавляются параметры в таком формате,
-                             * чтобы потом по ним фильтровать в бекенде истории
+                             * to filter report history
                              */
                             "tags" to listOf(
                                 "buildBranch:$gitBranch",
