@@ -12,6 +12,4 @@ internal interface TestExecutor {
         executionParameters: ExecutionParameters,
         output: File
     )
-
-    data class RunType(val id: String)
 }

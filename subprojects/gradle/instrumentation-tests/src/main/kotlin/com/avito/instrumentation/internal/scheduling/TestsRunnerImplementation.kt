@@ -4,7 +4,6 @@ import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.report.Report
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
-import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
@@ -42,7 +41,6 @@ internal class TestsRunnerImplementation(
     override fun runTests(
         mainApk: File?,
         testApk: File,
-        runType: TestExecutor.RunType, // todo delete runtype
         reportCoordinates: ReportCoordinates,
         report: Report,
         testsToRun: List<TestWithTarget>
@@ -51,7 +49,6 @@ internal class TestsRunnerImplementation(
             Try.Success(emptyList())
         } else {
 
-            val output = File(outputDirectory, runType.id).apply { mkdirs() }
             val logcatDir = Files.createTempDirectory(null).toFile()
 
             val testReporter = testReporterFactory.invoke(
@@ -66,23 +63,19 @@ internal class TestsRunnerImplementation(
                 report
             )
 
-            // TODO: pass through constructor
-            val initialRunConfiguration =
-                instrumentationConfiguration.copy(name = "${instrumentationConfiguration.name}-${runType.id}")
-
             val executor = testExecutorFactory.createExecutor(
                 devicesProviderFactory = DeviceProviderFactoryImpl(
                     kubernetesCredentials = kubernetesCredentials,
                     buildId = buildId,
                     buildType = buildType,
                     projectName = projectName,
-                    output = output,
+                    output = outputDirectory,
                     logcatDir = logcatDir,
                     loggerFactory = loggerFactory,
                     timeProvider = timeProvider,
                     metricsConfig = metricsConfig
                 ),
-                configuration = initialRunConfiguration,
+                configuration = instrumentationConfiguration,
                 executionParameters = executionParameters,
                 testReporter = testReporter,
                 buildId = buildId,
@@ -95,10 +88,10 @@ internal class TestsRunnerImplementation(
                 testApplication = testApk,
                 testsToRun = testsToRun.transformTestsWithNewJobSlug(reportCoordinates.jobSlug),
                 executionParameters = executionParameters,
-                output = output
+                output = outputDirectory
             )
 
-            // todo через Report
+            // todo through Report
             val raw = report.getTests()
 
             logger.debug("test results: $raw")
