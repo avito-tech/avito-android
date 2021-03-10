@@ -112,9 +112,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val gitBranch: Property<String> = objects.property()
 
     @Input
-    public val sourceCommitHash: Property<String> = objects.property()
-
-    @Input
     public val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Input
@@ -177,12 +174,11 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             buildId = buildId.get(),
             buildType = buildType.get(),
             buildUrl = buildUrl.get(),
+            currentBranch = gitBranch.get(),
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
             },
             projectName = project.name,
-            currentBranch = gitBranch.get(),
-            sourceCommitHash = sourceCommitHash.get(),
             suppressFailure = suppressFailure.getOrElse(false),
             suppressFlaky = suppressFlaky.getOrElse(false),
             impactAnalysisResult = ImpactAnalysisResult.create(
@@ -196,17 +192,17 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             outputDir = output.get().asFile,
             verdictFile = verdictFile.get().asFile,
             slackToken = slackToken.get(),
-            fileStorageUrl = getFileStorageUrl(),
             reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
-                ?: "http://stub", // stub for inmemory report
-            reportConfig = reportConfig,
+                ?: "http://stub",
+            fileStorageUrl = getFileStorageUrl(),
+            statsDConfig = project.statsdConfig.get(), // stub for inmemory report
             reportFactory = reportFactory,
+            reportConfig = reportConfig,
             reportCoordinates = reportCoordinates,
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
-            ).mapNotNull { it.orNull?.asFile },
-            statsDConfig = project.statsdConfig.get()
+            ).mapNotNull { it.orNull?.asFile }
         )
 
         if (testRunnerService.isPresent) {

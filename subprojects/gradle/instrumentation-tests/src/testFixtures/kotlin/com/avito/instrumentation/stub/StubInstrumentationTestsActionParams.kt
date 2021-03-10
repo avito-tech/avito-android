@@ -36,7 +36,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
     loggerFactory: LoggerFactory,
     slackToken: String = "slack",
-    sourceCommitHash: String = "",
     currentBranch: String = "develop",
     outputDir: File = File("."),
     verdictFile: File = File(outputDir, "verdict.json"),
@@ -52,30 +51,29 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     buildId = buildId,
     buildType = buildType,
     buildUrl = buildUrl,
+    currentBranch = currentBranch,
     kubernetesCredentials = kubernetesCredentials,
     projectName = projectName,
     suppressFailure = suppressFailure,
     suppressFlaky = suppressFlaky,
     impactAnalysisResult = impactAnalysisResult,
     loggerFactory = loggerFactory,
-    currentBranch = currentBranch,
-    sourceCommitHash = sourceCommitHash,
     outputDir = outputDir,
     verdictFile = verdictFile,
     slackToken = slackToken,
-    fileStorageUrl = fileStorageUrl,
     reportViewerUrl = reportViewerUrl,
-    reportConfig = ReportFactory.Config.ReportViewerCoordinates(
-        ReportCoordinates.createStubInstance(),
-        buildId
-    ),
+    fileStorageUrl = fileStorageUrl,
+    statsDConfig = statsDConfig,
     reportFactory = object : ReportFactory {
 
         override fun createReport(config: ReportFactory.Config): Report = StubReport()
 
         override fun createReadReport(config: ReportFactory.Config): ReadReport = StubReport()
     },
+    reportConfig = ReportFactory.Config.ReportViewerCoordinates(
+        ReportCoordinates.createStubInstance(),
+        buildId
+    ),
     reportCoordinates = reportCoordinates,
-    proguardMappings = emptyList(),
-    statsDConfig = statsDConfig
+    proguardMappings = emptyList()
 )
