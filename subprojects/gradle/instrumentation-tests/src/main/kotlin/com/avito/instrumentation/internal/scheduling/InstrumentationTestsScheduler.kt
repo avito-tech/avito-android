@@ -5,7 +5,6 @@ import com.avito.android.TestSuiteLoader
 import com.avito.android.check.AllChecks
 import com.avito.android.runner.report.Report
 import com.avito.instrumentation.internal.InstrumentationTestsAction
-import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.logger.LoggerFactory
@@ -24,7 +23,7 @@ internal class InstrumentationTestsScheduler(
     private val testSuiteLoader: TestSuiteLoader,
     private val gson: Gson,
     private val filterInfoWriter: FilterInfoWriter,
-    private val loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory
 ) : TestsScheduler {
 
     private val logger = loggerFactory.create<InstrumentationTestsScheduler>()
@@ -65,7 +64,6 @@ internal class InstrumentationTestsScheduler(
         val testsResult = testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
-            runType = TestExecutor.RunType(id = "initialRun"),
             reportCoordinates = reportCoordinates,
             report = sourceReport,
             testsToRun = testSuite.testsToRun

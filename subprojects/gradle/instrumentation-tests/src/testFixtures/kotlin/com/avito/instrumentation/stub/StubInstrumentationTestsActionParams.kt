@@ -24,7 +24,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     executionParameters: ExecutionParameters = ExecutionParameters.createStubInstance(),
     buildId: String = "33456",
     buildType: String = "teamcity",
-    buildUrl: String = "https://build",
     kubernetesCredentials: KubernetesCredentials = KubernetesCredentials.Service(
         token = "empty",
         caCertData = "empty",
@@ -35,9 +34,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     suppressFlaky: Boolean = false,
     impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
     loggerFactory: LoggerFactory,
-    slackToken: String = "slack",
-    sourceCommitHash: String = "",
-    currentBranch: String = "develop",
     outputDir: File = File("."),
     verdictFile: File = File(outputDir, "verdict.json"),
     reportViewerUrl: String = "https://reports",
@@ -51,31 +47,27 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     executionParameters = executionParameters,
     buildId = buildId,
     buildType = buildType,
-    buildUrl = buildUrl,
     kubernetesCredentials = kubernetesCredentials,
     projectName = projectName,
     suppressFailure = suppressFailure,
     suppressFlaky = suppressFlaky,
     impactAnalysisResult = impactAnalysisResult,
     loggerFactory = loggerFactory,
-    currentBranch = currentBranch,
-    sourceCommitHash = sourceCommitHash,
     outputDir = outputDir,
     verdictFile = verdictFile,
-    slackToken = slackToken,
-    fileStorageUrl = fileStorageUrl,
     reportViewerUrl = reportViewerUrl,
-    reportConfig = ReportFactory.Config.ReportViewerCoordinates(
-        ReportCoordinates.createStubInstance(),
-        buildId
-    ),
+    fileStorageUrl = fileStorageUrl,
+    statsDConfig = statsDConfig,
     reportFactory = object : ReportFactory {
 
         override fun createReport(config: ReportFactory.Config): Report = StubReport()
 
         override fun createReadReport(config: ReportFactory.Config): ReadReport = StubReport()
     },
+    reportConfig = ReportFactory.Config.ReportViewerCoordinates(
+        ReportCoordinates.createStubInstance(),
+        buildId
+    ),
     reportCoordinates = reportCoordinates,
-    proguardMappings = emptyList(),
-    statsDConfig = statsDConfig
+    proguardMappings = emptyList()
 )

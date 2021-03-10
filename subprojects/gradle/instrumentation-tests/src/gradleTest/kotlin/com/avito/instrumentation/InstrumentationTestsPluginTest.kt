@@ -90,7 +90,6 @@ internal fun instrumentationConfiguration(): String = """
                         instrumentation {
                             output = project.file("outputs").path
                             sentryDsn = "stub"
-                            slackToken = "stub"
                             
                             instrumentationParams = [
                                 "jobSlug": "FunctionalTests"

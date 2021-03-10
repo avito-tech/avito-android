@@ -75,7 +75,6 @@ internal class InstrumentationParamsBuildingTest {
                          instrumentation {
                              output = project.file("outputs").path
                              sentryDsn = "stub"
-                             slackToken = "stub"
 
                              instrumentationParams = [
                                  "jobSlug": "FunctionalTests",

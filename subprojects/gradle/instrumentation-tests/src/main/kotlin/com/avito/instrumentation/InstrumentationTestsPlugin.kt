@@ -128,12 +128,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
                     this.buildId.set(env.build.id.toString())
                     this.buildType.set(env.build.type)
-                    this.buildUrl.set(env.build.url)
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
-                    this.defaultBranch.set(gitState.map { it.defaultBranch })
-                    this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
-                    this.slackToken.set(extensionData.slackToken)
                     this.testRunnerService.set(testRunnerServiceProvider)
                     this.output.set(configurationOutputFolder)
                     if (extensionData.reportViewer != null) {

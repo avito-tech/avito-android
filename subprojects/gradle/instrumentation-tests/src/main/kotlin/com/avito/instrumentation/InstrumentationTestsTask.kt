@@ -68,18 +68,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     @Optional
     @InputFile
-    public val newTests: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
-    public val modifiedTests: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
-    public val affectedTests: RegularFileProperty = objects.fileProperty()
-
-    @Optional
-    @InputFile
     public val changedTests: RegularFileProperty = objects.fileProperty()
 
     @Optional
@@ -91,28 +79,16 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val testProguardMapping: RegularFileProperty = objects.fileProperty()
 
     @Input
-    public val slackToken: Property<String> = objects.property()
-
-    @Input
     public val buildId: Property<String> = objects.property()
 
     @Input
     public val buildType: Property<String> = objects.property()
 
     @Input
-    public val buildUrl: Property<String> = objects.property()
-
-    @Input
-    public val defaultBranch: Property<String> = objects.property()
-
-    @Input
     public val gitCommit: Property<String> = objects.property()
 
     @Input
     public val gitBranch: Property<String> = objects.property()
-
-    @Input
-    public val sourceCommitHash: Property<String> = objects.property()
 
     @Input
     public val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
@@ -176,37 +152,30 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             executionParameters = parameters.get(),
             buildId = buildId.get(),
             buildType = buildType.get(),
-            buildUrl = buildUrl.get(),
             kubernetesCredentials = requireNotNull(kubernetesCredentials.orNull) {
                 "you need to provide kubernetesCredentials"
             },
             projectName = project.name,
-            currentBranch = gitBranch.get(),
-            sourceCommitHash = sourceCommitHash.get(),
             suppressFailure = suppressFailure.getOrElse(false),
             suppressFlaky = suppressFlaky.getOrElse(false),
             impactAnalysisResult = ImpactAnalysisResult.create(
                 runOnlyChangedTests = runOnlyChangedTests.get(),
-                affectedTestsFile = affectedTests.asFile.orNull,
-                addedTestsFile = newTests.asFile.orNull,
-                modifiedTestsFile = modifiedTests.asFile.orNull,
                 changedTestsFile = changedTests.asFile.orNull
             ),
             loggerFactory = loggerFactory,
             outputDir = output.get().asFile,
             verdictFile = verdictFile.get().asFile,
-            slackToken = slackToken.get(),
-            fileStorageUrl = getFileStorageUrl(),
             reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
-                ?: "http://stub", // stub for inmemory report
-            reportConfig = reportConfig,
+                ?: "http://stub",
+            fileStorageUrl = getFileStorageUrl(),
+            statsDConfig = project.statsdConfig.get(),
             reportFactory = reportFactory,
-            reportCoordinates = reportCoordinates,
+            reportConfig = reportConfig,
+            reportCoordinates = reportCoordinates, // stub for inmemory report
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
-            ).mapNotNull { it.orNull?.asFile },
-            statsDConfig = project.statsdConfig.get()
+            ).mapNotNull { it.orNull?.asFile }
         )
 
         if (testRunnerService.isPresent) {

@@ -44,7 +44,6 @@ It can do the following:
     extensions.getByType<GradleInstrumentationPluginConfiguration>().apply {
         // they are required for Avito app. We will make them optional in future.
         sentryDsn = "http://stub-project@stub-host/0"
-        slackToken = "stub"
 
         testReport {
 
@@ -87,7 +86,6 @@ It can do the following:
     instrumentation {
         // they are required for Avito app. We will make them optional in future.
         sentryDsn = "http://stub-project@stub-host/0"
-        slackToken = "stub"
 
         testReport {
 

@@ -146,10 +146,8 @@ internal class FilterFactoryImpl(
     }
 
     private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
-        return if (impactAnalysisResult.runOnlyChangedTests) {
+        if (impactAnalysisResult.runOnlyChangedTests) {
             addImpactTests(impactAnalysisResult.changedTests)
-        } else {
-            // do nothing
         }
     }
 
