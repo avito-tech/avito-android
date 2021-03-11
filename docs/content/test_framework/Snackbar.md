@@ -6,7 +6,14 @@ So it's hard to realize our test failed because: there are no snackbars, snackba
 appeared yet.
 
 **How our library works?** \
-We remember all snackbar showings through the test and give you an ability to check that snackbar showing history.
+We remember all snackbar showings intentions through the test and give you an ability to check that snackbar showing history.
+
+???+ warning ""
+    All snackbar assertions only checks an *intention* to show a snackbar, e.g. a function call, not a real view render.<br/>
+    Keep that in mind, because snackbar could be broken on layout phase even if test is green.<br/>
+
+    We use this approach in Avito, because value test stability over assertions depth,
+    and couldn't achieve stable tests with real snackbar layout checks.
 
 ## How to test snackbars with our library?
 
