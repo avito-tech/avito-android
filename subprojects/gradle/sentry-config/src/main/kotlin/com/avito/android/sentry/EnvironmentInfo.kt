@@ -10,7 +10,6 @@ interface EnvironmentInfo {
     val environment: Environment
     val commit: String?
     fun teamcityBuildId(): String?
-    fun isInvokedFromIde(): Boolean
 }
 
 /**

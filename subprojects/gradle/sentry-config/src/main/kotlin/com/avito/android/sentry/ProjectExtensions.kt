@@ -15,6 +15,7 @@ import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import com.avito.logger.LoggingDestination
 import com.avito.logger.handler.DefaultLoggingHandler
+import com.avito.utils.gradle.buildEnvironment
 import io.sentry.SentryClient
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.gradle.api.Project
@@ -44,9 +45,9 @@ val Project.sentryConfig: Provider<SentryConfig> by ProjectProperty.lazy(scope =
 
 private fun from(project: Project): SentryConfig {
     return if (project.getBooleanProperty("avito.sentry.enabled")) {
+        val buildEnv = project.buildEnvironment
         val info = project.environmentInfo().get()
         val tags = mutableMapOf<String, String>()
-        tags["ide"] = info.isInvokedFromIde().toString()
 
         val buildId = info.teamcityBuildId()
 
@@ -58,7 +59,7 @@ private fun from(project: Project): SentryConfig {
 
         val config = SentryConfig.Enabled(
             dsn = project.getMandatoryStringProperty("avito.sentry.dsn"),
-            environment = info.environment.publicName,
+            environment = buildEnv::class.java.simpleName,
             serverName = info.node ?: "unknown",
             release = info.commit ?: "unknown",
             tags = tags

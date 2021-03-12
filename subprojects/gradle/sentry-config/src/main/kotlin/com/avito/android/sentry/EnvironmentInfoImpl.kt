@@ -61,6 +61,4 @@ internal class EnvironmentInfoImpl(
     override fun teamcityBuildId(): String? {
         return project.rootProject.getOptionalStringProperty("teamcityBuildId")
     }
-
-    override fun isInvokedFromIde() = project.hasProperty("android.injected.invoked.from.ide")
 }
