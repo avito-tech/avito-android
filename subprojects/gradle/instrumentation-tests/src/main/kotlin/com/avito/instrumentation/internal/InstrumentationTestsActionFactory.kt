@@ -1,61 +1,60 @@
 package com.avito.instrumentation.internal
 
+import com.avito.android.TestSuiteLoaderImpl
+import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
-import com.avito.android.stats.SeriesName
+import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.finalizer.FinalizerFactory
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
 import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
-import com.google.common.annotations.VisibleForTesting
+import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
+import com.avito.time.DefaultTimeProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
 internal interface InstrumentationTestsActionFactory {
+
     fun provideFinalizer(): InstrumentationTestActionFinalizer
-    fun provideScheduler(): TestsScheduler
 
-    class Impl : InstrumentationTestsActionFactory {
+    fun provideScheduler(devicesProviderFactory: DevicesProviderFactory): TestsScheduler
 
-        private val gson: Gson
-        private val sourceReport: Report
+    class Impl(
+        params: InstrumentationTestsAction.Params,
+        metricsConfig: RunnerMetricsConfig
+    ) : InstrumentationTestsActionFactory {
+
+        private val gson: Gson = Companion.gson
+
+        private val sourceReport: Report = params.reportFactory.createReport(params.reportConfig)
+
         private val schedulerFactory: TestsSchedulerFactory
+
         private val finalizerFactory: FinalizerFactory
 
-        constructor(params: InstrumentationTestsAction.Params) : this(
-            params = params,
-            sourceReport = params.reportFactory.createReport(params.reportConfig),
-            gson = Companion.gson,
-            runnerPrefix = SeriesName.create(
-                "testrunner",
-                params.projectName,
-                params.instrumentationConfiguration.name
-            )
-        )
+        init {
+            val timeProvider = DefaultTimeProvider()
 
-        @VisibleForTesting
-        internal constructor(
-            params: InstrumentationTestsAction.Params,
-            sourceReport: Report,
-            gson: Gson,
-            runnerPrefix: SeriesName
-        ) {
-            this.gson = gson
-            this.sourceReport = sourceReport
             this.schedulerFactory = TestsSchedulerFactory.Impl(
                 params = params,
                 sourceReport = sourceReport,
                 gson = gson,
-                runnerPrefix = runnerPrefix
+                timeProvider = timeProvider,
+                metricsConfig = metricsConfig,
+                testExecutorFactory = TestExecutorFactory.Implementation(),
+                testSuiteLoader = TestSuiteLoaderImpl()
             )
+
             this.finalizerFactory = FinalizerFactory.Impl(
                 params = params,
                 sourceReport = sourceReport,
                 gson = gson,
-                runnerPrefix = runnerPrefix
+                metricsConfig = metricsConfig
             )
         }
 
-        override fun provideScheduler() = schedulerFactory.create()
+        override fun provideScheduler(devicesProviderFactory: DevicesProviderFactory) =
+            schedulerFactory.create(devicesProviderFactory)
 
         override fun provideFinalizer() = finalizerFactory.create()
     }

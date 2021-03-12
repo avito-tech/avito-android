@@ -10,6 +10,8 @@ import com.avito.android.runner.devices.internal.kubernetes.KubernetesReservatio
 import com.avito.android.runner.devices.internal.kubernetes.ReservationDeploymentFactoryImpl
 import com.avito.android.runner.devices.internal.kubernetes.UUIDDeploymentNameGenerator
 import com.avito.android.runner.devices.model.DeviceType
+import com.avito.android.stats.SeriesName
+import com.avito.android.stats.StatsDConfig
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
@@ -23,19 +25,20 @@ public class DeviceProviderFactoryImpl(
     private val kubernetesCredentials: KubernetesCredentials,
     private val buildId: String,
     private val buildType: String,
-    private val projectName: String,
-    private val output: File,
-    private val logcatDir: File,
     private val loggerFactory: LoggerFactory,
     private val timeProvider: TimeProvider,
-    private val metricsConfig: RunnerMetricsConfig
+    private val statsDConfig: StatsDConfig
 ) : DevicesProviderFactory {
 
     override fun create(
         deviceType: DeviceType,
+        projectName: String,
         configurationName: String,
+        tempLogcatDir: File,
+        outputDir: File,
         logcatTags: Collection<String>,
-        kubernetesNamespace: String
+        kubernetesNamespace: String,
+        runnerPrefix: SeriesName
     ): DevicesProvider {
         val adb = Adb()
         val androidDebugBridge = AndroidDebugBridgeImpl(
@@ -43,9 +46,9 @@ public class DeviceProviderFactoryImpl(
             loggerFactory = loggerFactory
         )
         val emulatorsLogsReporter = EmulatorsLogsReporterImpl(
-            outputFolder = output,
+            outputFolder = outputDir,
             logcatTags = logcatTags,
-            logcatDir = logcatDir
+            logcatDir = tempLogcatDir
         )
         val devicesManager = AdbDevicesManager(
             adb = adb,
@@ -91,7 +94,7 @@ public class DeviceProviderFactoryImpl(
                     adb = adb,
                     loggerFactory = loggerFactory,
                     timeProvider = timeProvider,
-                    metricsConfig = metricsConfig
+                    metricsConfig = RunnerMetricsConfig(statsDConfig, runnerPrefix)
                 )
         }
     }

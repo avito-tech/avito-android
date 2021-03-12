@@ -1,12 +1,10 @@
 package com.avito.instrumentation.internal.scheduling
 
 import com.avito.android.TestSuiteLoader
-import com.avito.android.TestSuiteLoaderImpl
+import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
-import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.ReportViewerTestReporter
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
@@ -15,56 +13,28 @@ import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
-import com.avito.time.DefaultTimeProvider
-import com.google.common.annotations.VisibleForTesting
+import com.avito.time.TimeProvider
 import com.google.gson.Gson
+import java.io.File
+import java.nio.file.Files
 
 internal interface TestsSchedulerFactory {
 
-    fun create(): TestsScheduler
+    fun create(devicesProviderFactory: DevicesProviderFactory): TestsScheduler
 
-    class Impl : TestsSchedulerFactory {
-
-        private val params: InstrumentationTestsAction.Params
-        private val sourceReport: Report
-        private val gson: Gson
-        private val testExecutorFactory: TestExecutorFactory
+    class Impl(
+        private val params: InstrumentationTestsAction.Params,
+        private val sourceReport: Report,
+        private val gson: Gson,
+        private val timeProvider: TimeProvider,
+        private val metricsConfig: RunnerMetricsConfig,
+        private val testExecutorFactory: TestExecutorFactory,
         private val testSuiteLoader: TestSuiteLoader
-        private val runnerPrefix: SeriesName
+    ) : TestsSchedulerFactory {
 
-        @VisibleForTesting
-        internal constructor(
-            params: InstrumentationTestsAction.Params,
-            sourceReport: Report,
-            gson: Gson = InstrumentationTestsActionFactory.gson,
-            testExecutorFactory: TestExecutorFactory,
-            testSuiteLoader: TestSuiteLoader,
-            runnerPrefix: SeriesName
-        ) {
-            this.params = params
-            this.sourceReport = sourceReport
-            this.gson = gson
-            this.testExecutorFactory = testExecutorFactory
-            this.testSuiteLoader = testSuiteLoader
-            this.runnerPrefix = runnerPrefix
-        }
-
-        constructor(
-            params: InstrumentationTestsAction.Params,
-            sourceReport: Report,
-            gson: Gson,
-            runnerPrefix: SeriesName
-        ) : this(
-            params = params,
-            sourceReport = sourceReport,
-            gson = gson,
-            testExecutorFactory = TestExecutorFactory.Implementation(),
-            testSuiteLoader = TestSuiteLoaderImpl(),
-            runnerPrefix = runnerPrefix
-        )
-
-        override fun create(): TestsScheduler {
-            val testRunner: TestsRunner = createTestRunner()
+        override fun create(devicesProviderFactory: DevicesProviderFactory): TestsScheduler {
+            val tempDir = Files.createTempDirectory(null).toFile()
+            val testRunner: TestsRunner = createTestRunner(devicesProviderFactory, tempDir)
             val testSuiteProvider: TestSuiteProvider = createTestSuiteProvider()
 
             return InstrumentationTestsScheduler(
@@ -83,58 +53,47 @@ internal interface TestsSchedulerFactory {
             )
         }
 
-        private fun createTestSuiteProvider(): TestSuiteProvider.Impl {
-            return TestSuiteProvider.Impl(
-                report = sourceReport,
-                targets = params.instrumentationConfiguration.targets,
-                filterFactory = FilterFactory.create(
-                    filterData = params.instrumentationConfiguration.filter,
-                    impactAnalysisResult = params.impactAnalysisResult,
-                    factory = params.reportFactory,
-                    reportConfig = params.reportConfig
-                ),
-                reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
-            )
-        }
+        private fun createTestSuiteProvider(): TestSuiteProvider = TestSuiteProvider.Impl(
+            report = sourceReport,
+            targets = params.instrumentationConfiguration.targets,
+            filterFactory = FilterFactory.create(
+                filterData = params.instrumentationConfiguration.filter,
+                impactAnalysisResult = params.impactAnalysisResult,
+                factory = params.reportFactory,
+                reportConfig = params.reportConfig
+            ),
+            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
+        )
 
-        private fun createTestRunner(): TestsRunnerImplementation {
-            // todo pass though constructor but needs to be serializable
-            val timeProvider = DefaultTimeProvider()
-
-            return TestsRunnerImplementation(
+        private fun createTestRunner(devicesProviderFactory: DevicesProviderFactory, tempDir: File): TestsRunner =
+            TestsRunnerImplementation(
                 testExecutorFactory = testExecutorFactory,
-                kubernetesCredentials = params.kubernetesCredentials,
-                testReporterFactory = { testSuite, outputDir, report ->
+                testReporterFactory = { testSuite, logcatDir, report ->
                     ReportViewerTestReporter(
                         loggerFactory = params.loggerFactory,
                         timeProvider = timeProvider,
                         testSuite = testSuite,
                         report = report,
                         fileStorageUrl = params.fileStorageUrl,
-                        logcatDir = outputDir,
+                        logcatDir = logcatDir,
                         retracer = ProguardRetracer.Impl(params.proguardMappings),
                         metricsSender = InstrumentationMetricsSender(
                             statsDSender = StatsDSender.Impl(
-                                config = params.statsDConfig,
+                                config = metricsConfig.statsDConfig,
                                 loggerFactory = params.loggerFactory
                             ),
-                            runnerPrefix = runnerPrefix
+                            runnerPrefix = metricsConfig.runnerPrefix
                         )
                     )
                 },
                 loggerFactory = params.loggerFactory,
-                buildId = params.buildId,
-                buildType = params.buildType,
-                projectName = params.projectName,
                 executionParameters = params.executionParameters,
-                outputDirectory = params.outputDir,
+                outputDir = params.outputDir,
                 instrumentationConfiguration = params.instrumentationConfiguration,
-                metricsConfig = RunnerMetricsConfig(
-                    statsDConfig = params.statsDConfig,
-                    runnerPrefix = runnerPrefix
-                ),
-                timeProvider = timeProvider
+                metricsConfig = metricsConfig,
+                devicesProviderFactory = devicesProviderFactory,
+                tempLogcatDir = tempDir,
+                projectName = params.projectName
             )
-        }
     }
 }

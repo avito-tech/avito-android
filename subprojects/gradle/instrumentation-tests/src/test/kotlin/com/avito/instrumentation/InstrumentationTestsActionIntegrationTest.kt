@@ -4,11 +4,13 @@ import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.android.runner.devices.DevicesProviderFactory
+import com.avito.android.runner.devices.StubDeviceProviderFactory
 import com.avito.android.runner.report.createStubInstance
 import com.avito.android.stats.SeriesName
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.internal.InstrumentationTestsAction
+import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
@@ -28,6 +30,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
+import com.avito.time.StubTimeProvider
 import com.avito.utils.StubBuildFailer
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -51,11 +54,13 @@ internal class InstrumentationTestsActionIntegrationTest {
         override fun createExecutor(
             devicesProviderFactory: DevicesProviderFactory,
             testReporter: TestReporter,
-            buildId: String,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,
-            metricsConfig: RunnerMetricsConfig
+            metricsConfig: RunnerMetricsConfig,
+            outputDir: File,
+            projectName: String,
+            tempLogcatDir: File
         ): TestExecutor {
             return testRunner
         }
@@ -165,10 +170,12 @@ internal class InstrumentationTestsActionIntegrationTest {
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId,
             ),
-            runnerPrefix = seriesName,
+            gson = InstrumentationTestsActionFactory.gson,
+            timeProvider = StubTimeProvider(),
+            metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader
-        ).create(),
+        ).create(devicesProviderFactory = StubDeviceProviderFactory),
         finalizer = FinalizerFactory.Impl(
             params = params,
             sourceReport = com.avito.android.runner.report.Report.createStubInstance(
@@ -176,7 +183,7 @@ internal class InstrumentationTestsActionIntegrationTest {
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId
             ),
-            runnerPrefix = seriesName,
+            metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),
             buildFailer = buildFailer
         ).create()
     )

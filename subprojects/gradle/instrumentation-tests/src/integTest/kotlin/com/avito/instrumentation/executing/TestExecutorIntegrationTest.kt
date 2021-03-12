@@ -1,6 +1,6 @@
 package com.avito.instrumentation.executing
 
-import com.avito.android.runner.devices.createKubernetesDeviceProvider
+import com.avito.android.runner.devices.internal.createKubernetesDeviceProvider
 import com.avito.android.runner.devices.model.createStubInstance
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
