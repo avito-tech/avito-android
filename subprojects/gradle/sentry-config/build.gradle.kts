@@ -10,7 +10,7 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":common:okhttp"))
     implementation(project(":common:logger"))
-    implementation(project(":gradle:git"))
+    implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(libs.funktionaleTry)
 }

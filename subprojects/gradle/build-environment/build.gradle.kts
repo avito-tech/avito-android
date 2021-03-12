@@ -6,4 +6,6 @@ plugins {
 dependencies {
     api(gradleApi())
     api(project(":gradle:gradle-extensions"))
+    implementation(project(":common:logger"))
+    implementation(project(":gradle:git"))
 }

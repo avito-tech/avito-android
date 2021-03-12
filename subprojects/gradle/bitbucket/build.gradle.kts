@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)

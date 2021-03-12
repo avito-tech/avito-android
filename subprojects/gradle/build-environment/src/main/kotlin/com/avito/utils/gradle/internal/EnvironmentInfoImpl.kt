@@ -1,8 +1,10 @@
-package com.avito.android.sentry
+package com.avito.utils.gradle.internal
 
+import com.avito.android.sentry.EnvironmentInfo
 import com.avito.git.Git
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.utils.gradle.BuildEnvironment
+import com.avito.utils.gradle.Environment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
 
