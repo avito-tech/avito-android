@@ -39,7 +39,7 @@ public class StubReport : Report {
 
     public var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())
 
-    override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
+    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
     }
 
     override fun tryGetId(): String? = reportId

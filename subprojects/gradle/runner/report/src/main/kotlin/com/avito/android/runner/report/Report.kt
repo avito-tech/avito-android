@@ -7,7 +7,7 @@ import org.funktionale.tries.Try
 
 public interface Report : ReadReport {
 
-    public fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String)
+    public fun tryCreate(testHost: String, gitBranch: String, gitCommit: String)
 
     public fun tryGetId(): String?
 
