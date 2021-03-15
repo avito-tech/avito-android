@@ -9,6 +9,7 @@ import com.avito.report.internal.getHttpClient
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.Request
 
 object ReportsApiFactory {
 
@@ -32,7 +33,8 @@ object ReportsApiFactory {
         logger: Logger = loggerFactory.create<ReportsApi>(),
         retryInterceptor: RetryInterceptor? = RetryInterceptor(
             logger = logger,
-            allowedMethods = listOf("POST")
+            allowedMethods = listOf("POST"),
+            describeRequest = { it.describeJsonRpc() }
         )
     ): ReportsApi {
         return ReportsApiImpl(
@@ -50,4 +52,7 @@ object ReportsApiFactory {
             )
         )
     }
+
+    // for tests
+    internal fun Request.describeJsonRpc(): String = "${url.redact()} method: ${tag()}"
 }

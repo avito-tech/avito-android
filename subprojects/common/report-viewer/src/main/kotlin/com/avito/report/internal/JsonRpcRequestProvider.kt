@@ -20,21 +20,44 @@ internal class JsonRpcRequestProvider(
 
     inline fun <reified T : Any> batchRequest(request: List<RfcRpcRequest>): T = internalRequest(request)
 
-    private inline fun <reified Response : Any> internalRequest(request: Any): Response {
-        val response = httpClient.newCall(
-            Request.Builder()
-                .url(host.removeSuffix("/"))
-                .header("Accept", jsonMime)
-                .header("Content-Type", jsonMime)
-                .post(gson.toJson(request).toRequestBody(jsonMime.toMediaType()))
-                .build()
-        ).execute()
+    private inline fun <reified Response : Any> internalRequest(jsonRpcRequest: Any): Response {
+
+        val httpRequest = Request.Builder()
+            .url(host.removeSuffix("/"))
+            .header("Accept", jsonMime)
+            .header("Content-Type", jsonMime)
+            .post(gson.toJson(jsonRpcRequest).toRequestBody(jsonMime.toMediaType()))
+
+        val jsonRpcMethod = getMethod(jsonRpcRequest)
+
+        if (!jsonRpcMethod.isNullOrBlank()) {
+            httpRequest.tag(jsonRpcMethod)
+        }
+
+        val response = httpClient.newCall(httpRequest.build()).execute()
 
         val responseBody = response.body?.string()
         if (responseBody != null && response.isSuccessful) {
-            return gson.fromJson(responseBody)
+            return try {
+                gson.fromJson(responseBody)
+            } catch (e: Throwable) {
+                throw IllegalStateException("Can't parse response body", e)
+            }
         } else {
-            throw Exception("Request failed: ${response.message} ${responseBody}\n$request")
+            throw Exception("Request failed: ${response.message} ${responseBody}\n$jsonRpcRequest")
         }
+    }
+
+    private fun getMethod(request: Any): String? = if (request is RfcRpcRequest) {
+        request.method
+    } else if (request is List<*>) {
+        val firstRequest = request.firstOrNull()
+        if (firstRequest != null && firstRequest is RfcRpcRequest) {
+            firstRequest.method
+        } else {
+            null
+        }
+    } else {
+        null
     }
 }

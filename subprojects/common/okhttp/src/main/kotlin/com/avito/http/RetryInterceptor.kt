@@ -24,9 +24,8 @@ public class RetryInterceptor constructor(
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,
     private val logger: Logger,
-    private val onSuccess: (Response) -> Unit = {},
-    private val onFailure: (Response) -> Unit = {},
-    private val modifyRetryRequest: (Request) -> Request = { it }
+    private val modifyRetryRequest: (Request) -> Request = { it },
+    private val describeRequest: (Request) -> String = { it.url.redact() }
 ) : Interceptor {
 
     init {
@@ -42,27 +41,24 @@ public class RetryInterceptor constructor(
         while (response.shouldTry() && tryCount < retries) {
             tryCount++
 
+            prepareForRetry(response)
+
+            val request = if (tryCount > 1) {
+                val modifiedRequest = modifyRetryRequest(originalRequest)
+                logger.debug("Retrying request ($tryCount / $retries) to ${describeRequest(modifiedRequest)}")
+                modifiedRequest
+            } else {
+                originalRequest
+            }
+
             try {
-                prepareForRetry(response)
-                val request = if (tryCount > 1) {
-                    val modifiedRequest = modifyRetryRequest(originalRequest)
-                    logger.debug("Retrying request ($tryCount / $retries) to ${modifiedRequest.url.redact()}")
-                    modifiedRequest
-                } else {
-                    originalRequest
-                }
                 response = chain.proceed(request)
             } catch (exception: IOException) {
                 error = exception
-                logger.warn("Failed to execute request. Error: ${error.message}", exception)
-            }
-
-            if (response != null) {
-                if (response.isSuccessful) {
-                    onSuccess.invoke(response)
-                } else {
-                    onFailure.invoke(response)
-                }
+                logger.warn(
+                    "Failed to execute request ${describeRequest(request)}. Error: ${error.message}",
+                    exception
+                )
             }
 
             TimeUnit.MILLISECONDS.sleep(if (useIncreasingDelay) tryCount * delayMs else delayMs)
