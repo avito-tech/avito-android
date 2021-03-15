@@ -30,12 +30,12 @@ internal class AvitoReport(
 
     private val logger = loggerFactory.create<Report>()
 
-    override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
-        return when (val result = reportsApi.create(reportCoordinates, buildId, apiUrl, gitBranch, gitCommit)) {
+    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
+        return when (val result = reportsApi.create(reportCoordinates, buildId, testHost, gitBranch, gitCommit)) {
             is CreateResult.Created ->
-                logger.info("Report created, id=${result.id}")
+                logger.debug("Report created, id=${result.id}")
             CreateResult.AlreadyCreated ->
-                logger.info(
+                logger.debug(
                     "Can't tryCreate report, already created, " +
                         "it's ok if we call it N(=release configurations) times"
                 )
