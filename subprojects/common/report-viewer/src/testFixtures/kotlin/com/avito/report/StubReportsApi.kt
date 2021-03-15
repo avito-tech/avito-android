@@ -39,7 +39,7 @@ class StubReportsApi(
     override fun create(
         reportCoordinates: ReportCoordinates,
         buildId: String,
-        apiUrl: String,
+        testHost: String,
         gitBranch: String,
         gitCommit: String,
         tmsBranch: String

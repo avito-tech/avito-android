@@ -11,11 +11,6 @@ dependencies {
     implementation(libs.kotson)
 }
 
-repositories {
-    jcenter()
-    google()
-}
-
 kotlinDslPluginOptions {
     experimentalWarning.set(false)
 }

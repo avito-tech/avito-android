@@ -21,6 +21,19 @@ internal val buildToolsVersion: String by lazy { System.getProperty("buildToolsV
 internal val agpVersion: String by lazy { System.getProperty("androidGradlePluginVersion") }
 internal val kotlinVersion: String by lazy { System.getProperty("kotlinVersion") }
 
+internal val artifactoryUrl: String? by lazy {
+    try {
+        val result = System.getProperty("artifactoryUrl")
+        if (result.isNullOrBlank() || result == "null") {
+            null
+        } else {
+            result
+        }
+    } catch (e: Throwable) {
+        null
+    }
+}
+
 interface Generator {
     fun generateIn(file: File)
 }
@@ -66,10 +79,7 @@ class TestProjectGenerator(
                     |${plugins()}
                     |
                     |subprojects {
-                    |    repositories {
-                    |         google()
-                    |         jcenter()
-                    |     }
+                    |    ${repositories()}
                     |}
                     |$buildGradleExtra
                     """.trimMargin()
@@ -85,11 +95,7 @@ pluginManagement {
             }
         }
     }
-    repositories {
-        gradlePluginPortal()
-        google()
-        jcenter()
-    }
+    ${repositories()}
 }
 
 rootProject.name = "${this@TestProjectGenerator.name}"
@@ -153,3 +159,30 @@ private fun generateIncludes(modules: List<Module>, prefix: String): String =
     modules.joinToString(separator = "\n") {
         "include('$prefix:${it.name}')" + "\n" + generateIncludes(it.modules, "$prefix:${it.name}")
     }
+
+private fun repositories(): String = if (artifactoryUrl == null) {
+    """
+    repositories {
+        gradlePluginPortal()
+        google()
+        jcenter()
+    }
+    """.trimIndent()
+} else {
+    """
+    repositories {
+        maven {
+            name = "Proxy for https://dl.google.com/dl/android/maven2/"
+            setUrl("$artifactoryUrl/google-android")
+        }
+        maven {
+            name = "Proxy for https://plugins.gradle.org/m2/"
+            setUrl("$artifactoryUrl/gradle-plugins")
+        }
+        maven {
+            name = "Proxy for https://jcenter.bintray.com"
+            setUrl("$artifactoryUrl/jcenter")
+        }
+    }
+    """.trimIndent()
+}
