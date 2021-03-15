@@ -3,11 +3,9 @@ package com.avito.instrumentation.internal.report.listener
 import com.avito.android.runner.report.Report
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
-import com.avito.http.RetryInterceptor
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.internal.getHttpClient
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.TestRuntimeData
@@ -16,7 +14,6 @@ import com.avito.report.model.TestStaticData
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
-import com.avito.time.TimeProvider
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -26,11 +23,9 @@ import java.io.FileReader
 
 internal class ReportViewerTestReporter(
     loggerFactory: LoggerFactory,
-    timeProvider: TimeProvider,
     private val testSuite: Map<TestCase, TestStaticData>,
     private val report: Report,
-    // todo extract write to file
-    fileStorageUrl: String,
+    private val remoteStorage: RemoteStorage,
     private val logcatDir: File,
     private val retracer: ProguardRetracer,
     private val metricsSender: InstrumentationMetricsSender
@@ -38,33 +33,9 @@ internal class ReportViewerTestReporter(
 
     private val logger = loggerFactory.create<ReportViewerTestReporter>()
 
-    private val httpTimeoutSec = 30L
-
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapterFactory(EntryTypeAdapterFactory())
         .create()
-
-    private val httpClient = getHttpClient(
-        verbose = false, // do not enable for production, generates a ton of logs
-        logger = logger,
-        readTimeoutSec = httpTimeoutSec,
-        writeTimeoutSec = httpTimeoutSec,
-        retryInterceptor = RetryInterceptor(
-            logger = logger,
-            allowedMethods = listOf("POST")
-        )
-    )
-
-    /**
-     * todo need implementation for in memory report
-     */
-    private val remoteStorage: RemoteStorage =
-        RemoteStorage.create(
-            endpoint = fileStorageUrl,
-            loggerFactory = loggerFactory,
-            httpClient = httpClient,
-            timeProvider = timeProvider
-        )
 
     private val logcatBuffers = mutableMapOf<Pair<TestCase, Int>, LogcatBuffer>()
 

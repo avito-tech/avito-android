@@ -31,8 +31,6 @@ class HttpRemoteStorage(
      */
     fun fullUrl(result: RemoteStorage.Result.Success): String = "$endpoint${result.url}"
 
-    fun isFileStorageHost(url: HttpUrl): Boolean = url.host == endpoint.host
-
     override fun upload(
         uploadRequest: RemoteStorage.Request,
         comment: String,

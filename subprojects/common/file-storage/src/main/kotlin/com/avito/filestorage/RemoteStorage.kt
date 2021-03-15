@@ -1,11 +1,7 @@
 package com.avito.filestorage
 
-import com.avito.logger.LoggerFactory
-import com.avito.time.TimeProvider
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import java.io.File
 
 interface RemoteStorage {
@@ -65,20 +61,5 @@ interface RemoteStorage {
         data class Error(
             val t: Throwable
         ) : Result()
-    }
-
-    companion object {
-
-        fun create(
-            endpoint: String,
-            loggerFactory: LoggerFactory,
-            timeProvider: TimeProvider,
-            httpClient: OkHttpClient
-        ): RemoteStorage = HttpRemoteStorage(
-            endpoint = requireNotNull(endpoint.toHttpUrlOrNull()) { "Can't parse endpoint: $endpoint" },
-            httpClient = httpClient,
-            loggerFactory = loggerFactory,
-            timeProvider = timeProvider
-        )
     }
 }

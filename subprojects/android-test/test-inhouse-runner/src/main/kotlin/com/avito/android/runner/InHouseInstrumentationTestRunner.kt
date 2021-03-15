@@ -36,6 +36,7 @@ import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
+import com.avito.filestorage.RemoteStorageFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApiFactory
 import com.avito.report.model.DeviceName
@@ -48,7 +49,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.sentry.SentryClient
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
 
@@ -95,9 +95,8 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override val remoteStorage: RemoteStorage by lazy {
-        RemoteStorage.create(
+        RemoteStorageFactory.create(
             loggerFactory = loggerFactory,
-            httpClient = reportHttpClient,
             endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
             timeProvider = timeProvider
         )
@@ -176,10 +175,6 @@ abstract class InHouseInstrumentationTestRunner :
     val mockDispatcher by lazy { MockDispatcher(loggerFactory = loggerFactory) }
 
     private lateinit var instrumentationArguments: Bundle
-
-    private val reportHttpClient: OkHttpClient by lazy {
-        createReportHttpClient(loggerFactory.create("ReportViewerHttp"))
-    }
 
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 
@@ -332,11 +327,9 @@ abstract class InHouseInstrumentationTestRunner :
             VideoCaptureTestListener(
                 videoFeatureValue = runEnvironment.videoRecordingFeature,
                 onDeviceCacheDirectory = runEnvironment.outputDirectory,
-                httpClient = reportHttpClient,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
-                fileStorageUrl = runEnvironment.fileStorageUrl,
                 loggerFactory = loggerFactory,
-                timeProvider = timeProvider
+                remoteStorage = remoteStorage
             )
         )
     }
