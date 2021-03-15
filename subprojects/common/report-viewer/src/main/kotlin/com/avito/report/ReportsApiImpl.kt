@@ -25,7 +25,7 @@ internal class ReportsApiImpl(
     override fun create(
         reportCoordinates: ReportCoordinates,
         buildId: String,
-        apiUrl: String,
+        testHost: String,
         gitBranch: String,
         gitCommit: String,
         tmsBranch: String
@@ -40,7 +40,7 @@ internal class ReportsApiImpl(
                         "run_id" to reportCoordinates.runId,
                         "report_data" to mapOf(
                             "build" to buildId,
-                            "testHost" to apiUrl,
+                            "testHost" to testHost,
                             "testsBranch" to tmsBranch,
                             "appBranch" to gitBranch,
 

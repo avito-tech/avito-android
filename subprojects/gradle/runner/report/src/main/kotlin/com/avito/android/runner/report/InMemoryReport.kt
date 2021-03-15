@@ -16,8 +16,8 @@ internal class InMemoryReport(
     private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
 
-    override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
-        gitInfo = "$apiUrl;$gitBranch$;$gitCommit"
+    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
+        gitInfo = "$testHost;$gitBranch$;$gitCommit"
     }
 
     override fun tryGetId(): String? {
@@ -77,7 +77,9 @@ internal class InMemoryReport(
                 val lastAttempt = attempts.last()
                 SimpleRunTest(
                     id = testCoordinate, // todo unique in one run
-                    reportId = requireNotNull(tryGetId()), // todo fix failure
+                    reportId = requireNotNull(tryGetId()) {
+                        "InMemoryReport reportId must be present"
+                    },
                     name = lastAttempt.name.name,
                     className = lastAttempt.name.className,
                     methodName = lastAttempt.name.methodName,

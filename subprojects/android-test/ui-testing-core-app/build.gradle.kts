@@ -58,12 +58,12 @@ val avitoRegistry = getOptionalStringProperty("avito.registry")
 
 instrumentation {
 
-    // todo remove after release 2021.9
-    reportApiUrl = getOptionalStringProperty("avito.report.url") ?: "http://stub"
-    reportViewerUrl = getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
-    fileStorageUrl = getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
-
     testReport {
+        reportViewer {
+            reportApiUrl = getOptionalStringProperty("avito.report.url") ?: "http://stub"
+            reportViewerUrl = getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
+            fileStorageUrl = getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
+        }
     }
 
     sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"

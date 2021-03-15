@@ -6,6 +6,6 @@ set -e
 
 source $(dirname $0)/_main.sh
 
-runInBuilder "set -e; ./gradlew -p subprojects build ${GRADLE_ARGS}"
+runInBuilder "set -e; ./gradlew -p subprojects build ${GRADLE_ARGS} --stacktrace"
 
 bash $(dirname $0)/documentation/lint.sh
