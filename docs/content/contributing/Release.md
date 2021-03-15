@@ -122,15 +122,6 @@ Run from Avito project directory
 - If you pick a branch from github, it will run against develop on avito
 - To build both projects of special branch, they should have the same name
 
-If you want to run a real CI build against not published release, 
-you could publish it manually as a temporary version to the internal Artifactory:
-
-```text
-make publish_to_artifactory version=<custom version>
-```
-
-Or using [Publish to Artifactory](http://links.k.avito.ru/publishToArtifactoryConfiguration) CI configuration.
-
 ## CI integration configurations
 
 - [fast check configuration (internal)](http://links.k.avito.ru/fastCheck) - pull request's builds

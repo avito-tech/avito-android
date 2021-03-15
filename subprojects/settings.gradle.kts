@@ -140,14 +140,6 @@ pluginManagement {
             forRepository {
                 mavenLocal()
             }
-            if (!artifactoryUrl.isNullOrBlank()) {
-                forRepository {
-                    maven {
-                        name = "Local Artifactory"
-                        setUrl("$artifactoryUrl/libs-release-local")
-                    }
-                }
-            }
             forRepository {
                 maven {
                     setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")

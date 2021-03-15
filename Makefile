@@ -121,9 +121,6 @@ help:
 publish_to_maven_local:
 	$(docker_command) ./gradlew $(project) $(log_level) $(params) publishToMavenLocal -PprojectVersion=local
 
-publish_to_artifactory:
-	$(docker_command) ./gradlew $(project) $(log_level) $(params) publishToArtifactory -PprojectVersion=$(version) -Dorg.gradle.internal.publish.checksums.insecure=true
-
 stage_ui_tests:
 	make publish_to_maven_local
 	./gradlew $(project) $(log_level) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
