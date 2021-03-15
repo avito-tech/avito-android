@@ -3,7 +3,7 @@ package com.avito.git
 class Branch(
     val name: String,
     val commit: String,
-    val remoteName: String = defaultRemote
+    remoteName: String = defaultRemote
 ) {
     val fullName = if (remoteName.isNotBlank()) {
         "$remoteName/$name"

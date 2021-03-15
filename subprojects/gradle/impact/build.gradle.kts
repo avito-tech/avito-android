@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:files"))
     implementation(project(":gradle:git"))
+    implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:statsd-config"))

@@ -35,6 +35,7 @@ dependencies {
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":common:files"))
+    implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:instrumentation-changed-tests-finder"))
     implementation(project(":gradle:instrumentation-tests-dex-loader"))

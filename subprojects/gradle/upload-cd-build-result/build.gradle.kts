@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:git"))
+    implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":common:test-okhttp"))

@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":common:sentry"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:bitbucket"))
+    implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact-shared"))

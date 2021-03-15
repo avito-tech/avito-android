@@ -5,9 +5,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:build-environment")) {
-        because("project.buildEnvironment only")
-    }
     api(project(":gradle:process"))
 
     implementation(gradleApi())
