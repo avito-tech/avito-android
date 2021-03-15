@@ -278,7 +278,6 @@ dependencyResolutionManagement {
                 includeModuleByRegex("com\\.google\\.android.*", ".*")
                 includeGroupByRegex("androidx\\..*")
                 includeGroup("com.google.test.platform")
-                includeGroup("com.google.testing.platform")
             }
         }
         exclusiveContent {

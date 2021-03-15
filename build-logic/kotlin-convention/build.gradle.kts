@@ -12,10 +12,6 @@ dependencies {
     implementation(libs.nebulaIntegTest)
 }
 
-repositories {
-    mavenCentral()
-}
-
 kotlinDslPluginOptions {
     experimentalWarning.set(false)
 }
