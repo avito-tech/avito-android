@@ -15,6 +15,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.net.UnknownHostException
@@ -25,6 +26,7 @@ internal class KubernetesReservationClientIntegrationTest {
     private var clientOne: ReservationClient? = null
     private var clientTwo: ReservationClient? = null
 
+    @Disabled("MBS-10461")
     @Test
     fun `claim - throws exception - unknown host`() {
         clientOne = KubernetesReservationClient.createStubInstance(
@@ -64,6 +66,7 @@ internal class KubernetesReservationClientIntegrationTest {
     /**
      * see MBS-8662
      */
+    @Disabled("MBS-10461")
     @Test
     fun `claim - throws exception - deployment already exists`() {
         // to generate single name for two different clients
