@@ -11,7 +11,6 @@ import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
 import org.funktionale.tries.Try
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class ReportsApiTest {
@@ -19,24 +18,6 @@ internal class ReportsApiTest {
     private val mockWebServer = MockWebServerFactory.create()
 
     private val loggerFactory = StubLoggerFactory
-
-    private lateinit var noRetriesReportsApi: ReportsApi
-
-    @BeforeEach
-    fun setup() {
-        mockWebServer.start()
-        val host = mockWebServer.url("/").toString()
-        noRetriesReportsApi = ReportsApiFactory.create(
-            host = host,
-            loggerFactory = loggerFactory,
-            retryInterceptor = null
-        )
-    }
-
-    @AfterEach
-    fun teardown() {
-        mockWebServer.shutdown()
-    }
 
     @Test
     fun `getReport - returns NotFound - when throws exception with no data`() {
@@ -50,7 +31,7 @@ internal class ReportsApiTest {
                 )
         )
 
-        val result = noRetriesReportsApi.getReport(
+        val result = createNoRetriesReportsApi().getReport(
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
         )
 
@@ -61,7 +42,7 @@ internal class ReportsApiTest {
     fun `getReport - returns Error - when throws exception with no data`() {
         mockWebServer.enqueue(MockResponse().setResponseCode(500))
 
-        val result = noRetriesReportsApi.getReport(
+        val result = createNoRetriesReportsApi().getReport(
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
         )
 
@@ -75,7 +56,7 @@ internal class ReportsApiTest {
                 .setBody(fileFromJarResources<ReportsApiTest>("getReport.json").readText())
         )
 
-        val result = noRetriesReportsApi.getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", ""))
+        val result = createNoRetriesReportsApi().getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", ""))
 
         assertThat(result).isInstanceOf<GetReportResult.Found>()
 
@@ -94,7 +75,7 @@ internal class ReportsApiTest {
             MockResponse().setBody(fileFromJarResources<ReportsApiTest>("getTestsForRunId.json").readText())
         )
 
-        val result = noRetriesReportsApi.getTestsForRunId(
+        val result = createNoRetriesReportsApi().getTestsForRunId(
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "")
         )
 
@@ -111,8 +92,19 @@ internal class ReportsApiTest {
             MockResponse().setBody(fileFromJarResources<ReportsApiTest>("pushPreparedData.json").readText())
         )
 
-        val result = noRetriesReportsApi.pushPreparedData("any", "any", jsonObject("any" to "any"))
+        val result = createNoRetriesReportsApi().pushPreparedData("any", "any", jsonObject("any" to "any"))
 
         assertThat(result).isInstanceOf<Try.Success<*>>()
     }
+
+    @AfterEach
+    fun teardown() {
+        mockWebServer.shutdown()
+    }
+
+    private fun createNoRetriesReportsApi(): ReportsApi = ReportsApiFactory.create(
+        host = mockWebServer.url("/").toString(),
+        loggerFactory = loggerFactory,
+        retryInterceptor = null
+    )
 }

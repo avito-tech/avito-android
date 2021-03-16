@@ -8,30 +8,19 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
-import com.avito.time.TimeProvider
-import okhttp3.OkHttpClient
 import java.io.File
 
 class VideoCaptureTestListener(
     videoFeatureValue: VideoFeatureValue,
     onDeviceCacheDirectory: Lazy<File>,
-    httpClient: OkHttpClient,
-    fileStorageUrl: String,
     loggerFactory: LoggerFactory,
-    timeProvider: TimeProvider,
+    private val remoteStorage: RemoteStorage,
     private val shouldRecord: Boolean,
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
     private val videoCapturer: VideoCapturer = VideoCapturerImpl(onDeviceCacheDirectory, loggerFactory)
 ) : TestLifecycleListener {
 
     private val logger = loggerFactory.create<VideoCaptureTestListener>()
-
-    private val remoteStorage: RemoteStorage = RemoteStorage.create(
-        loggerFactory = loggerFactory,
-        httpClient = httpClient,
-        endpoint = fileStorageUrl,
-        timeProvider = timeProvider
-    )
 
     private var savedIncident: Incident? = null
 

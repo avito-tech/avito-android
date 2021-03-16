@@ -1,6 +1,5 @@
 package com.avito.android.test.report
 
-import com.avito.filestorage.RemoteStorage
 import com.avito.http.internal.isPlaintext
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.GsonBuilder
@@ -35,7 +34,7 @@ class ReportViewerHttpInterceptor(
         val request = chain.request()
 
         // чтобы не улететь в stackoverflow
-        if (RemoteStorage.isFileStorageHost(request.url)) return chain.proceed(request)
+        if (isFileStorageHost(request.url)) return chain.proceed(request)
 
         val reportViewerMessage = StringBuilder()
         reportViewerMessage.appendLine(request.printUrl())
@@ -182,7 +181,7 @@ class ReportViewerHttpInterceptor(
         return mediaType?.charset(default) ?: default
     }
 
-    private fun RemoteStorage.Companion.isFileStorageHost(url: HttpUrl): Boolean =
+    private fun isFileStorageHost(url: HttpUrl): Boolean =
         url.host == remoteFileStorageEndpointHost
 
     private fun tryPrettify(source: String): String {
