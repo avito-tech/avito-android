@@ -16,9 +16,7 @@ import java.util.concurrent.TimeUnit
 
 object ReportsApiFactory {
 
-    private const val READ_TIMEOUT = 60L
-    private const val WRITE_TIMEOUT = 10L
-    private const val VERBOSE_HTTP = false
+    private const val TIMEOUT_SEC = 30L
 
     /**
      * for tests
@@ -30,9 +28,6 @@ object ReportsApiFactory {
     fun create(
         host: String,
         loggerFactory: LoggerFactory,
-        readTimeout: Long = READ_TIMEOUT,
-        writeTimeout: Long = WRITE_TIMEOUT,
-        verboseHttp: Boolean = VERBOSE_HTTP,
         logger: Logger = loggerFactory.create<ReportsApi>(),
         retryInterceptor: RetryInterceptor? = RetryInterceptor(
             logger = logger,
@@ -45,10 +40,8 @@ object ReportsApiFactory {
             requestProvider = JsonRpcRequestProvider(
                 host = host,
                 httpClient = getHttpClient(
-                    verbose = verboseHttp,
+                    verbose = false, // do not enable for production, generates a ton of logs
                     logger = logger,
-                    readTimeoutSec = readTimeout,
-                    writeTimeoutSec = writeTimeout,
                     retryInterceptor = retryInterceptor
                 ),
                 gson = gson
@@ -60,16 +53,14 @@ object ReportsApiFactory {
     internal fun Request.describeJsonRpc(): String = "${url.redact()} method: ${tag()}"
 
     private fun getHttpClient(
-        verbose: Boolean = false,
+        verbose: Boolean,
         logger: Logger,
-        readTimeoutSec: Long,
-        writeTimeoutSec: Long,
         retryInterceptor: RetryInterceptor?
     ): OkHttpClient {
-
         return OkHttpClient.Builder()
-            .readTimeout(readTimeoutSec, TimeUnit.SECONDS)
-            .writeTimeout(writeTimeoutSec, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
             .apply {
                 if (verbose) {
                     addInterceptor(

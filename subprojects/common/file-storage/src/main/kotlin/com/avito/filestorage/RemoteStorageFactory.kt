@@ -21,7 +21,8 @@ object RemoteStorageFactory {
         timeProvider: TimeProvider,
         httpClient: OkHttpClient = getHttpClient(
             logger = loggerFactory.create<RemoteStorage>(),
-            retryInterceptor = null
+            retryInterceptor = null,
+            verbose = false // do not enable for production, generates a ton of logs
         )
     ): RemoteStorage = HttpRemoteStorage(
         endpoint = requireNotNull(endpoint.toHttpUrlOrNull()) { "Can't parse endpoint: $endpoint" },
@@ -31,7 +32,7 @@ object RemoteStorageFactory {
     )
 
     private fun getHttpClient(
-        verbose: Boolean = false,
+        verbose: Boolean,
         logger: Logger,
         retryInterceptor: RetryInterceptor?
     ): OkHttpClient {

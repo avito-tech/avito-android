@@ -11,8 +11,7 @@ import com.avito.time.TimeProvider
 public class ReportViewerFactory(
     public val reportApiUrl: String,
     public val loggerFactory: LoggerFactory,
-    public val timeProvider: TimeProvider,
-    public val verboseHttp: Boolean
+    public val timeProvider: TimeProvider
 ) : ReportFactory {
 
     @Transient
@@ -62,8 +61,7 @@ public class ReportViewerFactory(
         if (!::reportsApi.isInitialized) {
             reportsApi = ReportsApiFactory.create(
                 host = reportApiUrl,
-                loggerFactory = loggerFactory,
-                verboseHttp = verboseHttp
+                loggerFactory = loggerFactory
             )
         }
     }
