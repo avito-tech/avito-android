@@ -262,7 +262,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
                     loggerFactory = loggerFactory,
                     timeProvider = timeProvider,
-                    verboseHttp = false // do not enable for production, generates a ton of logs
                 )
         }
 

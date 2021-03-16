@@ -4,6 +4,7 @@ import com.avito.android.TestSuiteLoader
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
 import com.avito.android.stats.StatsDSender
+import com.avito.filestorage.RemoteStorageFactory
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.ReportViewerTestReporter
@@ -71,10 +72,8 @@ internal interface TestsSchedulerFactory {
                 testReporterFactory = { testSuite, logcatDir, report ->
                     ReportViewerTestReporter(
                         loggerFactory = params.loggerFactory,
-                        timeProvider = timeProvider,
                         testSuite = testSuite,
                         report = report,
-                        fileStorageUrl = params.fileStorageUrl,
                         logcatDir = logcatDir,
                         retracer = ProguardRetracer.Impl(params.proguardMappings),
                         metricsSender = InstrumentationMetricsSender(
@@ -83,6 +82,11 @@ internal interface TestsSchedulerFactory {
                                 loggerFactory = params.loggerFactory
                             ),
                             runnerPrefix = metricsConfig.runnerPrefix
+                        ),
+                        remoteStorage = RemoteStorageFactory.create(
+                            endpoint = params.fileStorageUrl,
+                            loggerFactory = params.loggerFactory,
+                            timeProvider = timeProvider
                         )
                     )
                 },
