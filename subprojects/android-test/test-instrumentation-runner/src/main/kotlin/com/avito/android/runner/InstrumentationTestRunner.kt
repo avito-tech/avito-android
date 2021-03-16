@@ -8,17 +8,43 @@ abstract class InstrumentationTestRunner : AndroidJUnitRunner(), OrchestratorDel
 
     abstract val loggerFactory: LoggerFactory
 
-    private var delegate: InstrumentationDelegate? = null
+    private var delegateRegistry: DelegatesRegistry? = null
 
-    override fun onCreate(arguments: Bundle) {
-        if (isRealRun(arguments)) {
-            delegate = InstrumentationDelegate(loggerFactory)
+    protected open fun getDelegates(arguments: Bundle): List<InstrumentationTestRunnerDelegate> {
+        return emptyList()
+    }
+
+    /**
+     * WARNING: Shouldn't crash in this method.
+     * Otherwise we can't pass an error to the report
+     */
+    final override fun onCreate(arguments: Bundle) {
+        val isRealRun = isRealRun(arguments)
+        if (isRealRun) {
+            beforeOnCreate(arguments)
+            delegateRegistry = DelegatesRegistry(
+                getDelegates(arguments) + SystemDialogsManagerDelegate(loggerFactory)
+            )
+            delegateRegistry?.beforeOnCreate(arguments)
         }
+
         super.onCreate(arguments)
+        if (isRealRun) {
+            afterOnCreate(arguments)
+            delegateRegistry?.afterOnCreate(arguments)
+        }
+    }
+
+    protected open fun beforeOnCreate(arguments: Bundle) {
+        // empty
+    }
+
+    protected open fun afterOnCreate(arguments: Bundle) {
+        // empty
     }
 
     override fun onStart() {
-        delegate?.beforeOnStart()
+        delegateRegistry?.beforeOnStart()
         super.onStart()
     }
 }
