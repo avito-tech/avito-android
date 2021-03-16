@@ -192,41 +192,32 @@ abstract class InHouseInstrumentationTestRunner :
         runEnvironment: TestRunEnvironment.RunEnvironment,
         bundleWithTestAnnotationValues: Bundle
     ) {
+        // empty
     }
 
-    /**
-     * WARNING: Shouldn't crash in this method.
-     * Otherwise we can't pass an error to the report
-     */
-    override fun onCreate(arguments: Bundle) {
+    override fun beforeOnCreate(arguments: Bundle) {
         instrumentationArguments = arguments
         injectTestMetadata(arguments)
+        logger.debug("Instrumentation arguments: $instrumentationArguments")
+        logger.debug("TestRunEnvironment: $testRunEnvironment")
+        val environment = testRunEnvironment.asRunEnvironmentOrThrow()
+        initApplicationCrashHandling()
+        addReportListener(arguments)
+        initTestCase(environment)
+        initListeners(environment)
+        beforeApplicationCreated(
+            runEnvironment = environment,
+            bundleWithTestAnnotationValues = arguments
+        )
+    }
 
-        testRunEnvironment.executeIfRealRun {
-            logger.debug("Instrumentation arguments: $instrumentationArguments")
-            logger.debug("TestRunEnvironment: $testRunEnvironment")
-
-            initApplicationCrashHandling()
-
-            addReportListener(arguments)
-            initTestCase(runEnvironment = it)
-            initListeners(runEnvironment = it)
-            beforeApplicationCreated(
-                runEnvironment = it,
-                bundleWithTestAnnotationValues = arguments
-            )
-        }
-
-        super.onCreate(arguments)
-
-        testRunEnvironment.executeIfRealRun {
-            Espresso.setFailureHandler(ReportFriendlyFailureHandler())
-            initUITestConfig()
-            DeviceSettingsChecker(
-                context = targetContext,
-                loggerFactory = loggerFactory
-            ).check()
-        }
+    override fun afterOnCreate(arguments: Bundle) {
+        Espresso.setFailureHandler(ReportFriendlyFailureHandler())
+        initUITestConfig()
+        DeviceSettingsChecker(
+            context = targetContext,
+            loggerFactory = loggerFactory
+        ).check()
     }
 
     private fun injectTestMetadata(arguments: Bundle) {
