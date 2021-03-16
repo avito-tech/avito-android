@@ -66,7 +66,6 @@ params +=-PtestBuildType=$(test_build_type)
 params +=-Pci=$(ci)
 params +=$(log_level)
 params +=-PkubernetesContext=$(kubernetesContext)
-params +=-PartifactoryUrl=$(ARTIFACTORY_URL)
 
 ifeq ($(gradle_debug),true)
 params +=-Dorg.gradle.debug=true --no-daemon
@@ -220,3 +219,7 @@ dynamic_properties:
 	$(eval skipSucceedTestsFromPreviousRun=true)
 	$(eval testFilter?=empty)
 	$(eval dynamicPrefixFilter?=)
+
+check_avito_configuration:
+	make publish_to_maven_local
+	cd ../avito-android && ./gradlew tasks -DinfraVersion=local
