@@ -12,6 +12,7 @@ import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
+import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryClient
 import com.avito.android.stats.StatsDConfig
@@ -186,6 +187,12 @@ abstract class InHouseInstrumentationTestRunner :
         bundleWithTestAnnotationValues: Bundle
     ) {
         // empty
+    }
+
+    override fun getDelegates(arguments: Bundle): List<InstrumentationTestRunnerDelegate> {
+        return listOf(
+            ReportLifecycleEventsDelegate(report)
+        )
     }
 
     override fun beforeOnCreate(arguments: Bundle) {
