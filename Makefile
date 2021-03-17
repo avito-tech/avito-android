@@ -95,7 +95,7 @@ __check_defined = \
       $(error Undefined $1$(if $2, ($2))))
 
 clean:
-	rm -rf `find -type d -name build`
+	rm -rf `find . -type d -name build`
 
 # Warning. Hack!
 # Мы можем удалять эти локи, т.к. гарантированно никакие другие процессы не используют этот шаренный кеш на начало новой сборки

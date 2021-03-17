@@ -2,13 +2,13 @@ package com.avito.android.runner
 
 import com.avito.logger.LoggerFactory
 
-class InstrumentationDelegate(loggerFactory: LoggerFactory) {
+class SystemDialogsManagerDelegate(loggerFactory: LoggerFactory) : InstrumentationTestRunnerDelegate() {
 
     private val systemDialogsManager = SystemDialogsManager(
         loggerFactory = loggerFactory
     )
 
-    fun beforeOnStart() {
+    override fun beforeOnStart() {
         systemDialogsManager.closeSystemDialogs()
     }
 }
