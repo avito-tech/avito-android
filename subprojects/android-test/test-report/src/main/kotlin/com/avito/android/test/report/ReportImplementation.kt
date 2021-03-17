@@ -2,10 +2,11 @@ package com.avito.android.test.report
 
 import androidx.annotation.VisibleForTesting
 import androidx.test.espresso.EspressoException
+import com.avito.android.test.report.dump.MainLooperDumper
 import com.avito.android.test.report.dump.ThreadDumper
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
-import com.avito.android.test.report.incident.IncidentChain
+import com.avito.android.test.report.incident.IncidentChainFactory
 import com.avito.android.test.report.incident.RequestIncidentPresenter
 import com.avito.android.test.report.incident.ResourceIncidentPresenter
 import com.avito.android.test.report.incident.ResourceManagerIncidentPresenter
@@ -39,7 +40,6 @@ import java.io.File
  */
 class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
-    private val onIncident: (Throwable) -> Unit = {},
     private val loggerFactory: LoggerFactory,
     private val transport: List<Transport>,
     private val remoteStorage: RemoteStorage,
@@ -113,37 +113,43 @@ class ReportImplementation(
         screenshot: FutureValue<RemoteStorage.Result>?,
     ) = methodExecutionTracing("registerIncident") {
         val currentState = getCastedState<ReportState.Initialized>()
-        val type = exception.determineIncidentType()
-        if (currentState.incident == null) {
-            val incidentChain = IncidentChain.Impl(
-                customViewPresenters = setOf(
-                    TestCaseIncidentPresenter(),
-                    RequestIncidentPresenter(),
-                    ResourceIncidentPresenter(),
-                    ResourceManagerIncidentPresenter(),
-                    AppCrashIncidentPresenter()
-                ),
-                fallbackPresenter = FallbackIncidentPresenter()
-            ).toChain(exception)
 
+        if (currentState.incident == null) {
+            if (screenshot != null) {
+                incidentFutureUploads.add(screenshot)
+            }
+
+            val type = exception.determineIncidentType()
+            val chainFactory = createIncidentChainFactory()
             val incidentToAdd = Incident(
                 type = type,
-                chain = incidentChain,
+                chain = chainFactory.toChain(exception),
                 timestamp = timeProvider.nowInSeconds(),
                 entryList = emptyList(),
                 trace = exception.formatStackTrace()
             )
-
-            if (screenshot != null) {
-                incidentFutureUploads.add(screenshot)
-            }
-            addText("Threads dump", ThreadDumper.getThreadDump())
-
-            onIncident.invoke(exception)
-
+            addTroubleshootingEntries()
             currentState.incident = incidentToAdd
             afterIncident(incidentToAdd)
+        } else {
+            logger.warn("Fail to register incident. Incident already exist", exception)
         }
+    }
+
+    private fun createIncidentChainFactory() = IncidentChainFactory.Impl(
+        customViewPresenters = setOf(
+            TestCaseIncidentPresenter(),
+            RequestIncidentPresenter(),
+            ResourceIncidentPresenter(),
+            ResourceManagerIncidentPresenter(),
+            AppCrashIncidentPresenter()
+        ),
+        fallbackPresenter = FallbackIncidentPresenter()
+    )
+
+    private fun addTroubleshootingEntries() {
+        addText("Threads dump", ThreadDumper.getThreadDump())
+        addText("Main looper dump", MainLooperDumper.getDump())
     }
 
     @Synchronized

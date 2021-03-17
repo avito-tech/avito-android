@@ -13,7 +13,7 @@ class IncidentChainTest {
     fun `chain - contain three elements - two cause deep`() {
         val rootException = Exception("root", Exception("firstLevelDeep", Exception("secondLevelDeep")))
 
-        val chain = IncidentChain.Impl(setOf(), FallbackIncidentPresenter()).toChain(rootException)
+        val chain = IncidentChainFactory.Impl(setOf(), FallbackIncidentPresenter()).toChain(rootException)
 
         assertThat(chain)
             .comparingElementsUsing(incidentMessageCorrespondence)
@@ -29,7 +29,10 @@ class IncidentChainTest {
         val rootException = AppCrashException(Exception("firstLevelDeep"))
 
         val chain =
-            IncidentChain.Impl(setOf(AppCrashIncidentPresenter()), FallbackIncidentPresenter()).toChain(rootException)
+            IncidentChainFactory.Impl(
+                setOf(AppCrashIncidentPresenter()),
+                FallbackIncidentPresenter()
+            ).toChain(rootException)
 
         assertThat(chain)
             .comparingElementsUsing(incidentMessageCorrespondence)
@@ -49,7 +52,10 @@ class IncidentChainTest {
         )
 
         val chain =
-            IncidentChain.Impl(setOf(TestCaseIncidentPresenter()), FallbackIncidentPresenter()).toChain(rootException)
+            IncidentChainFactory.Impl(
+                setOf(TestCaseIncidentPresenter()),
+                FallbackIncidentPresenter()
+            ).toChain(rootException)
 
         assertThat(chain)
             .comparingElementsUsing(incidentMessageCorrespondence)
