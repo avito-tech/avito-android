@@ -3,6 +3,7 @@ package com.avito.android.test.report.troubleshooting
 import com.avito.android.test.report.Report
 import com.avito.android.test.report.troubleshooting.dump.MainLooperDumper
 import com.avito.android.test.report.troubleshooting.dump.ThreadDumper
+import com.avito.android.test.report.troubleshooting.dump.ViewHierarchyDumper
 
 interface Troubleshooter {
 
@@ -14,6 +15,7 @@ interface Troubleshooter {
             with(report) {
                 addText("Threads dump", ThreadDumper.getThreadDump())
                 addText("Main looper dump", MainLooperDumper.getDump())
+                addText("View hierarchy dump", ViewHierarchyDumper.getDump())
             }
         }
     }
