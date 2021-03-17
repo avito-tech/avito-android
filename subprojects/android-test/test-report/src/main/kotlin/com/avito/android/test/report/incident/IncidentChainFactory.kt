@@ -2,14 +2,14 @@ package com.avito.android.test.report.incident
 
 import com.avito.report.model.IncidentElement
 
-internal interface IncidentChain {
+internal interface IncidentChainFactory {
 
     fun toChain(e: Throwable): List<IncidentElement>
 
     class Impl(
         private val customViewPresenters: Set<IncidentPresenter>,
         private val fallbackPresenter: IncidentPresenter
-    ) : IncidentChain {
+    ) : IncidentChainFactory {
 
         init {
             val genericException = GenericException()

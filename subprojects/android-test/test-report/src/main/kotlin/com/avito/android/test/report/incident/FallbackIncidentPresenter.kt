@@ -9,7 +9,7 @@ internal class FallbackIncidentPresenter : IncidentPresenter {
     override fun canCustomize(exception: Throwable): Boolean = true
 
     override fun customize(exception: Throwable): IncidentPresenter.Result {
-        val data: JsonPrimitive? = if (exception is IncidentChain.CustomizeFailException) {
+        val data: JsonPrimitive? = if (exception is IncidentChainFactory.CustomizeFailException) {
             exception.failReason.message?.toJson()
         } else null
 

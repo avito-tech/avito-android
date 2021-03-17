@@ -5,6 +5,7 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.future.StubFutureValue
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotUploader
+import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.logger.LoggerFactory
@@ -41,7 +42,8 @@ class ReportTestExtension(
                 .build(),
             loggerFactory = loggerFactory,
             timeProvider = timeProvider
-        )
+        ),
+        troubleshooter = NoOp
     )
 ) : BeforeEachCallback, Report by report {
 
@@ -93,5 +95,11 @@ class ReportTestExtension(
                 flakiness = flakiness
             )
         )
+    }
+}
+
+private object NoOp : Troubleshooter {
+    override fun troubleshootTo(report: Report) {
+        // no op
     }
 }
