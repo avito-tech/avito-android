@@ -1,4 +1,4 @@
-package com.avito.android.test.report.dump
+package com.avito.android.test.report.troubleshooting.dump
 
 object ThreadDumper {
 

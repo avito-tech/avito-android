@@ -2,8 +2,6 @@ package com.avito.android.test.report
 
 import androidx.annotation.VisibleForTesting
 import androidx.test.espresso.EspressoException
-import com.avito.android.test.report.dump.MainLooperDumper
-import com.avito.android.test.report.dump.ThreadDumper
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
 import com.avito.android.test.report.incident.IncidentChainFactory
@@ -22,6 +20,7 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.transport.Transport
+import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.util.formatStackTrace
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
@@ -48,7 +47,8 @@ class ReportImplementation(
         remoteStorage = remoteStorage,
         loggerFactory = loggerFactory
     ),
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val troubleshooter: Troubleshooter = Troubleshooter.Impl
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
@@ -148,8 +148,7 @@ class ReportImplementation(
     )
 
     private fun addTroubleshootingEntries() {
-        addText("Threads dump", ThreadDumper.getThreadDump())
-        addText("Main looper dump", MainLooperDumper.getDump())
+        troubleshooter.troubleshootTo(this)
     }
 
     @Synchronized
