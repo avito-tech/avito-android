@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-internal class DependenciesGraphTest {
+// TODO: try to use ProjectBuilder to test models
+internal class AppsDependenciesGraphTest {
 
     lateinit var projectDir: File
 
@@ -18,12 +19,12 @@ internal class DependenciesGraphTest {
 
     @Test
     fun `print dependencies graph`() {
-        gradlew(projectDir, "printDependenciesGraph")
+        gradlew(projectDir, "printAppsDependenciesGraph")
             .assertThat()
             .buildSuccessful()
             .outputContains(
                 """
-                |> Task :printDependenciesGraph
+                |> Task :printAppsDependenciesGraph
                 |Root Node :CopyRootB
                 |:CopyRootB depends on :LeafG in ConfigurationType.AndroidTests
                 |:CopyRootB depends on :UniqueCopyB in ConfigurationType.AndroidTests
@@ -64,12 +65,12 @@ internal class DependenciesGraphTest {
 
     @Test
     fun `print android_test flatten dependencies graph`() {
-        gradlew(projectDir, "printDependenciesGraph", "--flatten")
+        gradlew(projectDir, "printAppsDependenciesGraph", "--flatten")
             .assertThat()
             .buildSuccessful()
             .outputContains(
                 """
-                |> Task :printDependenciesGraph
+                |> Task :printAppsDependenciesGraph
                 |Root :CopyRootB
                 |:CopyRootB graph contains :LeafG
                 |:CopyRootB graph contains :LeafE
@@ -87,12 +88,12 @@ internal class DependenciesGraphTest {
 
     @Test
     fun `print main flatten dependencies graph`() {
-        gradlew(projectDir, "printDependenciesGraph", "--flatten", "--configuration=main")
+        gradlew(projectDir, "printAppsDependenciesGraph", "--flatten", "--configuration=main")
             .assertThat()
             .buildSuccessful()
             .outputContains(
                 """
-                |> Task :printDependenciesGraph
+                |> Task :printAppsDependenciesGraph
                 |Root :CopyRootB
                 |:CopyRootB graph contains :LeafC
                 |:CopyRootB graph contains :LeafD

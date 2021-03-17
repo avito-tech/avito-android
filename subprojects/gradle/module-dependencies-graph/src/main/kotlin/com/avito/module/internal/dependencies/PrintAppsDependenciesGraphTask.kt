@@ -13,7 +13,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import javax.inject.Inject
 
-internal abstract class PrintDependenciesGraphTask @Inject constructor(
+internal abstract class PrintAppsDependenciesGraphTask @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {
 
@@ -47,7 +47,7 @@ internal abstract class PrintDependenciesGraphTask @Inject constructor(
     }
 
     private fun printDependenciesGraph() {
-        DependenciesGraphBuilder(project, GradleLoggerFactory.fromTask(this))
+        AndroidAppsGraphBuilder(project, graphBuilder())
             .buildDependenciesGraph()
             .forEach { node ->
                 node.print("Root ")
@@ -55,7 +55,7 @@ internal abstract class PrintDependenciesGraphTask @Inject constructor(
     }
 
     private fun printDependenciesGraphFlatten() {
-        DependenciesGraphBuilder(project, GradleLoggerFactory.fromTask(this))
+        AndroidAppsGraphBuilder(project, graphBuilder())
             .buildDependenciesGraphFlatten(configuration.getOrElse(android_test).mapToType())
             .forEach { (project, deps) ->
                 logger.lifecycle("Root ${project.path}")
@@ -64,6 +64,9 @@ internal abstract class PrintDependenciesGraphTask @Inject constructor(
                 }
             }
     }
+
+    private fun graphBuilder(): DependenciesGraphBuilder =
+        DependenciesGraphBuilder(project, GradleLoggerFactory.fromTask(this))
 
     private fun ModuleProjectDependenciesNode.print(prefix: String = "") {
         logger.lifecycle("${prefix}Node ${project.path}")

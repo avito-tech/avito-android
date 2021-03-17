@@ -7,6 +7,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 internal class FindAndroidAppTaskNegativeScenariosTest {
+
     private lateinit var projectDir: File
 
     @BeforeEach

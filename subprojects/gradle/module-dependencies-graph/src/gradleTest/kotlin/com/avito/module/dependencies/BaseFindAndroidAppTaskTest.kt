@@ -4,7 +4,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-abstract class BaseFindAndroidAppTaskTest {
+internal abstract class BaseFindAndroidAppTaskTest {
+
     lateinit var projectDir: File
 
     @BeforeEach
@@ -17,7 +18,7 @@ abstract class BaseFindAndroidAppTaskTest {
 
     abstract fun `find multiple same suitable apps - advice that you could choose both`()
 
-    abstract fun `find multiple suitable apps - advice with that has least dependencies`()
+    abstract fun `find multiple suitable apps - advice with that has the least dependencies`()
 
     abstract fun `don't find any suitable app - advice that there are no apps`()
 }

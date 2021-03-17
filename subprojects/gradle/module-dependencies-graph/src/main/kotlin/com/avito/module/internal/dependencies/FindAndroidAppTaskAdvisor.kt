@@ -22,7 +22,7 @@ internal class FindAndroidAppTaskAdvisor {
         val advice = when {
             mostSuitableApps.size == 1 -> {
                 val app = mostSuitableApps[0]
-                Advice(app.first.path, "it has least dependencies in graph size=${app.second.size}")
+                Advice(app.first.path, "it has the least dependencies in graph size=${app.second.size}")
             }
             else -> {
                 val app = mostSuitableApps[0]
@@ -32,12 +32,12 @@ internal class FindAndroidAppTaskAdvisor {
                             prefix = "[",
                             postfix = "]"
                         ) { it.first.path },
-                    reason = "they have least dependencies in graph size=${app.second.size}"
+                    reason = "they have the least dependencies in graph size=${app.second.size}"
                 )
             }
         }
         return """
-            |In your project are multiple suitable apps ${projects.map { it.first.path }}
+            |There are multiple suitable apps ${projects.map { it.first.path }}
             |You should prefer ${advice.projects} because ${advice.reason}
             """.trimMargin()
     }

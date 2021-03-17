@@ -5,6 +5,7 @@ import com.avito.module.configurations.ConfigurationType
 import com.avito.module.configurations.ConfigurationType.AndroidTests
 import com.avito.module.configurations.ConfigurationType.Main
 import com.avito.module.dependencies.FindAndroidAppTask.Options.CONFIGURATION
+import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAdvisor
@@ -36,7 +37,7 @@ public abstract class FindAndroidAppTask @Inject constructor(
 
     @get:Option(
         option = "modules",
-        description = "Modules for which we will look for android-app." +
+        description = "Modules for which we will look for Android app." +
             " If you want to search for list of modules split them by coma ','"
     )
     @get:Input
@@ -47,7 +48,8 @@ public abstract class FindAndroidAppTask @Inject constructor(
         val modules = parseModules()
         val inputConfiguration = configuration.get()
         val graphBuilder = DependenciesGraphBuilder(project.rootProject, GradleLoggerFactory.fromTask(this))
-        val action = FindAndroidAppTaskAction(graphBuilder)
+        val androidAppsGraphBuilder = AndroidAppsGraphBuilder(project.rootProject, graphBuilder)
+        val action = FindAndroidAppTaskAction(androidAppsGraphBuilder)
         val advisor = FindAndroidAppTaskAdvisor()
         val verdict = action.findAppFor(modules, inputConfiguration.mapToType())
         logger.lifecycle(advisor.giveAdvice(verdict))
@@ -70,6 +72,7 @@ public abstract class FindAndroidAppTask @Inject constructor(
     }
 
     public object Options {
+
         @Suppress("EnumEntryName")
         public enum class CONFIGURATION {
             main {

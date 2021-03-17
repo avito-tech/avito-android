@@ -7,7 +7,7 @@ internal class TestPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
-            tasks.register("printDependenciesGraph", PrintDependenciesGraphTask::class.java)
+            tasks.register("printAppsDependenciesGraph", PrintAppsDependenciesGraphTask::class.java)
         }
     }
 }

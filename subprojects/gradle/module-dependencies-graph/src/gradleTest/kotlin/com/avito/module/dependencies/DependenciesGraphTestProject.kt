@@ -8,7 +8,7 @@ import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.gradle.plugin.plugins
 import java.io.File
 
-object DependenciesGraphTestProject {
+internal object DependenciesGraphTestProject {
 
     fun generate(dir: File) {
         TestProjectGenerator(

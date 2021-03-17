@@ -8,7 +8,7 @@ import org.gradle.api.Project
 import org.gradle.util.Path
 
 internal class FindAndroidAppTaskAction(
-    private val graphBuilder: DependenciesGraphBuilder
+    private val graphBuilder: AndroidAppsGraphBuilder
 ) {
 
     fun findAppFor(modules: List<Path>, configuration: ConfigurationType): Verdict {

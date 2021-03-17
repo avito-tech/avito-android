@@ -13,50 +13,24 @@ internal class DependenciesGraphBuilder(
 ) {
 
     init {
-        require(root == root.rootProject)
+        require(root == root.rootProject) {
+            "Project $root must be the root"
+        }
     }
 
     private val logger = loggerFactory.create<DependenciesGraphBuilder>()
-    private val rootProjects = mutableListOf<Project>()
+
     private val visited = mutableMapOf<Project, ModuleProjectDependenciesNode>()
 
-    fun buildDependenciesGraph(): Set<ModuleProjectDependenciesNode> {
+    fun buildDependenciesGraph(): List<ModuleProjectDependenciesNode> {
         root.allprojects.forEach { project ->
-            if (project.plugins.hasPlugin("com.android.application")) {
-                rootProjects.add(project)
-            }
             dependenciesOnProjects(project)
         }
-        return rootProjects.map {
-            visited.getOrElse(it) {
-                throw IllegalStateException("Project $it must be visited")
+        return root.subprojects.map { project ->
+            visited.getOrElse(project) {
+                throw IllegalStateException("Project $project must be visited")
             }
-        }.toSet()
-    }
-
-    fun buildDependenciesGraphFlatten(type: ConfigurationType): List<Pair<Project, Set<Project>>> {
-        return buildDependenciesGraph()
-            .map { rootNode ->
-                rootNode.project to rootNode.dependencies
-                    .filterKeys { it.type == type }
-                    .flatDependencies(ConfigurationType.Main)
-            }
-    }
-
-    private fun Map<ConfigurationCoordinate, Set<ModuleProjectDependenciesNode>>.flatDependencies(
-        type: ConfigurationType
-    ): Set<Project> {
-        return mapValues { (_, nodeSet) ->
-            nodeSet.flatMap { node ->
-                mutableSetOf(node.project).also {
-                    it.addAll(
-                        node.dependencies
-                            .filterKeys { it.type == type }
-                            .flatDependencies(type)
-                    )
-                }
-            }
-        }.values.flatten().toSet()
+        }
     }
 
     private fun dependenciesOnProjects(project: Project): ModuleProjectDependenciesNode {
@@ -68,11 +42,11 @@ internal class DependenciesGraphBuilder(
                     coordinate to conf.dependencies
                         .withType(DefaultProjectDependency::class.java)
                         .filter { projectDependency ->
-                            val result = projectDependency.dependencyProject != project
-                            if (!result) {
+                            val isOtherProject = projectDependency.dependencyProject != project
+                            if (!isOtherProject) {
                                 logger.debug("Project $project depends on self in configuration ${conf.name}")
                             }
-                            result
+                            isOtherProject
                         }
                         .map { projectDependency ->
                             dependenciesOnProjects(projectDependency.dependencyProject)
