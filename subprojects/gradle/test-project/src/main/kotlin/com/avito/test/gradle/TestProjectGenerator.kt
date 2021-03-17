@@ -163,14 +163,18 @@ private fun generateIncludes(modules: List<Module>, prefix: String): String =
 private fun repositories(): String = if (artifactoryUrl == null) {
     """
     repositories {
+        mavenCentral()
         gradlePluginPortal()
         google()
-        jcenter()
     }
     """.trimIndent()
 } else {
     """
     repositories {
+        maven {
+            name = "Proxy for https://repo1.maven.org/maven2"
+            setUrl("$artifactoryUrl/mavenCentral")
+        }
         maven {
             name = "Proxy for https://dl.google.com/dl/android/maven2/"
             setUrl("$artifactoryUrl/google-android")
@@ -178,10 +182,6 @@ private fun repositories(): String = if (artifactoryUrl == null) {
         maven {
             name = "Proxy for https://plugins.gradle.org/m2/"
             setUrl("$artifactoryUrl/gradle-plugins")
-        }
-        maven {
-            name = "Proxy for https://jcenter.bintray.com"
-            setUrl("$artifactoryUrl/jcenter")
         }
     }
     """.trimIndent()

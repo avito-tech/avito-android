@@ -4,18 +4,12 @@ import com.avito.kotlin.dsl.typedNamed
 import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.report.model.ReportCoordinates
 import com.google.common.annotations.VisibleForTesting
-import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 
 internal fun instrumentationTaskName(configuration: String): String =
     "instrumentation${configuration.capitalize()}"
-
-internal fun preInstrumentationTaskName(configuration: String): String =
-    "preInstrumentation${configuration.capitalize()}"
-
-internal const val preInstrumentationTaskName: String = "preInstrumentation"
 
 // todo доступен только afterEvaluate и то ненадежно MBS-6926
 public fun TaskContainer.instrumentationTask(configuration: String): TaskProvider<InstrumentationTestsTask> =
@@ -28,11 +22,6 @@ public fun TaskProvider<InstrumentationTestsTask>.extractReportCoordinates(): Pr
             config.instrumentationParams.reportCoordinates()
         }
     }
-
-public fun TaskContainer.preInstrumentationTask(configuration: String): TaskProvider<Task> =
-    typedNamed(preInstrumentationTaskName(configuration))
-
-public fun TaskContainer.preInstrumentationTask(): TaskProvider<Task> = named(preInstrumentationTaskName)
 
 public fun TaskContainer.instrumentationTask(
     configuration: String,
