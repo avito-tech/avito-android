@@ -12,7 +12,8 @@ open class UiTestCheck(context: String, name: String) : SuppressibleBuildStep(co
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl(),
     FlakyAwareBuildStep by FlakyAwareBuildStep.Impl() {
 
-    internal var configurations = mutableListOf<String>()
+    // public, used in build scripts
+    var configurations = mutableListOf<String>()
 
     @Suppress("unused") // used in build scripts
     fun configurations(vararg configs: String) {
