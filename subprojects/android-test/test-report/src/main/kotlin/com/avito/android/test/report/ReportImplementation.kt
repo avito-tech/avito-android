@@ -265,14 +265,9 @@ class ReportImplementation(
             comment = label
         )
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val futureUploads = started?.getCurrentStepOrCreate {
-            StepResult(
-                isSynthetic = true,
-                timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
-            )
-        }?.futureUploads ?: earlyFuturesUploads
+        val futureUploads = started
+            ?.currentStepOrSynthetic()
+            ?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(html)
     }
 
@@ -285,14 +280,9 @@ class ReportImplementation(
             comment = label
         )
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val futureUploads = started?.getCurrentStepOrCreate {
-            StepResult(
-                isSynthetic = true,
-                timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
-            )
-        }?.futureUploads ?: earlyFuturesUploads
+        val futureUploads = started
+            ?.currentStepOrSynthetic()
+            ?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(txt)
     }
 
@@ -308,16 +298,21 @@ class ReportImplementation(
 
     private fun addEntry(entry: Entry) {
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val entriesList = started?.getCurrentStepOrCreate {
+        val entriesList = started
+            ?.currentStepOrSynthetic()
+            ?.entryList ?: earlyEntries
+        entriesList.add(entry)
+    }
+
+    private fun ReportState.Initialized.Started.currentStepOrSynthetic() =
+        getCurrentStepOrCreate {
             StepResult(
                 isSynthetic = true,
                 timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
+                number = stepNumber++,
+                title = "Out of step"
             )
-        }?.entryList ?: earlyEntries
-        entriesList.add(entry)
-    }
+        }
 
     private fun Throwable.determineIncidentType(): Incident.Type {
         return when {
