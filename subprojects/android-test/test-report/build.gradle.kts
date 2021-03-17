@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.funktionaleTry)
     implementation(libs.okhttp)
     implementation(libs.sentryAndroid) // todo use common:sentry
+    implementation(libs.radiography)
 
     testImplementation(project(":common:resources"))
     testImplementation(project(":common:junit-utils"))

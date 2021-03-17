@@ -103,6 +103,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val ddmlib = "com.android.tools.ddms:ddmlib:26.2.0"
     val espressoDescendantActions = "com.forkingcode.espresso.contrib:espresso-descendant-actions:1.4.0"
     val rx3Ilder = "com.squareup.rx.idler:rx3-idler:0.11.0"
+    val radiography = "com.squareup.radiography:radiography:2.3.0"
 
     val okhttpMockWebServer = "com.squareup.okhttp3:mockwebserver:${Versions.okhttp}"
     val okhttpMock = "com.github.gmazzo:okhttp-mock:1.4.0"
