@@ -51,7 +51,7 @@ public abstract class FindAndroidAppTask @Inject constructor(
         val androidAppsGraphBuilder = AndroidAppsGraphBuilder(project.rootProject, graphBuilder)
         val action = FindAndroidAppTaskAction(androidAppsGraphBuilder)
         val advisor = FindAndroidAppTaskAdvisor()
-        val verdict = action.findAppFor(modules, inputConfiguration.mapToType())
+        val verdict = action.findAppFor(modules, inputConfiguration.mapToTypes())
         logger.lifecycle(advisor.giveAdvice(verdict))
     }
 
@@ -76,13 +76,13 @@ public abstract class FindAndroidAppTask @Inject constructor(
         @Suppress("EnumEntryName")
         public enum class CONFIGURATION {
             main {
-                override fun mapToType(): Main = Main
+                override fun mapToTypes(): Set<ConfigurationType> = setOf(Main)
             },
             android_test {
-                override fun mapToType(): AndroidTests = AndroidTests
+                override fun mapToTypes(): Set<ConfigurationType> = setOf(AndroidTests, Main)
             };
 
-            public abstract fun mapToType(): ConfigurationType
+            public abstract fun mapToTypes(): Set<ConfigurationType>
         }
     }
 }

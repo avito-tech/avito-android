@@ -35,7 +35,7 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     @Suppress("MagicNumber")
     maxParallelForks = 8
 
-    failFast = true
+    failFast = false
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("kotlinVersion", kotlinVersion)

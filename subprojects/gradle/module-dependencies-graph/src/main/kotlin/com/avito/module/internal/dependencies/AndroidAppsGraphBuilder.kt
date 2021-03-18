@@ -1,7 +1,6 @@
 package com.avito.module.internal.dependencies
 
 import com.avito.module.configurations.ConfigurationType
-import com.avito.module.internal.configurations.ConfigurationCoordinate
 import org.gradle.api.Project
 
 internal class AndroidAppsGraphBuilder(
@@ -15,60 +14,17 @@ internal class AndroidAppsGraphBuilder(
         }
     }
 
-    fun buildDependenciesGraph(): Set<ModuleProjectDependenciesNode> {
-        val appsProjects = mutableListOf<Project>()
-
-        root.allprojects.forEach { project ->
-            if (project.plugins.hasPlugin("com.android.application")) {
-                appsProjects.add(project)
-            }
-        }
-        val appsNodes = mutableSetOf<ModuleProjectDependenciesNode>()
-
-        graphBuilder.buildDependenciesGraph().forEach { node ->
-            traverseGraph(node) { visitedNode ->
-                if (appsProjects.contains(visitedNode.project)) {
-                    appsNodes.add(visitedNode)
-                }
-            }
-        }
-        return appsNodes
+    fun buildDependenciesGraph(type: ConfigurationType): Set<ModuleProjectConfigurationDependenciesNode> {
+        return graphBuilder.buildDependenciesGraph(type)
+            .filter { node ->
+                node.project.plugins.hasPlugin("com.android.application")
+            }.toSet()
     }
 
-    fun buildDependenciesGraphFlatten(type: ConfigurationType): List<Pair<Project, Set<Project>>> {
-        return buildDependenciesGraph()
+    fun buildDependenciesGraphFlatten(type: ConfigurationType): List<ProjectWithDeps> {
+        return buildDependenciesGraph(type)
             .map { rootNode ->
-                rootNode.project to rootNode.dependencies
-                    .filterKeys { it.type == type }
-                    .flatDependencies(ConfigurationType.Main)
+                ProjectWithDeps(rootNode.project, rootNode.allDependencies())
             }
-    }
-
-    private fun Map<ConfigurationCoordinate, Set<ModuleProjectDependenciesNode>>.flatDependencies(
-        type: ConfigurationType
-    ): Set<Project> {
-        return mapValues { (_, nodeSet) ->
-            nodeSet.flatMap { node ->
-                mutableSetOf(node.project).also {
-                    it.addAll(
-                        node.dependencies
-                            .filterKeys { it.type == type }
-                            .flatDependencies(type)
-                    )
-                }
-            }
-        }.values.flatten().toSet()
-    }
-
-    private fun traverseGraph(
-        node: ModuleProjectDependenciesNode,
-        visit: (ModuleProjectDependenciesNode) -> Unit
-    ) {
-        visit(node)
-        node.dependencies.values.forEach { deps ->
-            deps.forEach {
-                traverseGraph(it, visit)
-            }
-        }
     }
 }

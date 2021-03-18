@@ -20,40 +20,53 @@ internal class DependenciesGraphBuilder(
 
     private val logger = loggerFactory.create<DependenciesGraphBuilder>()
 
-    private val visited = mutableMapOf<Project, ModuleProjectDependenciesNode>()
+    private val visited = mutableMapOf<ProjectConfigurationCoordinate, ModuleProjectConfigurationDependenciesNode>()
 
-    fun buildDependenciesGraph(): List<ModuleProjectDependenciesNode> {
+    fun buildDependenciesGraph(configurationType: ConfigurationType): Set<ModuleProjectConfigurationDependenciesNode> {
         root.allprojects.forEach { project ->
-            dependenciesOnProjects(project)
+            dependenciesOnProjects(project, configurationType)
         }
-        return root.subprojects.map { project ->
-            visited.getOrElse(project) {
-                throw IllegalStateException("Project $project must be visited")
-            }
-        }
+        return visited.filterKeys { it.configurationType == configurationType }
+            .values
+            .toSet()
     }
 
-    private fun dependenciesOnProjects(project: Project): ModuleProjectDependenciesNode {
-        return visited.getOrPut(project) {
-            ModuleProjectDependenciesNode(
+    private fun dependenciesOnProjects(
+        project: Project,
+        configurationType: ConfigurationType
+    ): ModuleProjectConfigurationDependenciesNode {
+        return visited.getOrPut(ProjectConfigurationCoordinate(project, configurationType)) {
+            ModuleProjectConfigurationDependenciesNode(
                 project = project,
-                dependencies = project.configurations.map { conf ->
-                    val coordinate = ConfigurationCoordinate(conf.name, ConfigurationType.of(conf))
-                    coordinate to conf.dependencies
-                        .withType(DefaultProjectDependency::class.java)
-                        .filter { projectDependency ->
-                            val isOtherProject = projectDependency.dependencyProject != project
-                            if (!isOtherProject) {
-                                logger.debug("Project $project depends on self in configuration ${conf.name}")
+                configurationType = configurationType,
+                dependencies = project.configurations
+                    .map { conf ->
+                        ConfigurationCoordinate(conf.name, ConfigurationType.of(conf)) to conf
+                    }
+                    .filter { (coordinate, _) ->
+                        coordinate.type == configurationType
+                    }
+                    .map { (coordinate, conf) ->
+                        coordinate.gradleName to conf.dependencies
+                            .withType(DefaultProjectDependency::class.java)
+                            .filter { projectDependency ->
+                                val isOtherProject = projectDependency.dependencyProject != project
+                                if (!isOtherProject) {
+                                    logger.debug("Project $project depends on self in configuration ${conf.name}")
+                                }
+                                isOtherProject
                             }
-                            isOtherProject
-                        }
-                        .map { projectDependency ->
-                            dependenciesOnProjects(projectDependency.dependencyProject)
-                        }
-                        .toSet()
-                }.toMap()
+                            .map { projectDependency ->
+                                dependenciesOnProjects(projectDependency.dependencyProject, ConfigurationType.Main)
+                            }
+                            .toSet()
+                    }.toMap()
             )
         }
     }
+
+    private data class ProjectConfigurationCoordinate(
+        val project: Project,
+        val configurationType: ConfigurationType
+    )
 }

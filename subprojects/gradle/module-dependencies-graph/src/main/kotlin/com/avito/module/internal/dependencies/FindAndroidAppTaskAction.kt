@@ -4,22 +4,30 @@ import com.avito.module.configurations.ConfigurationType
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction.Verdict.MultipleSuitableApps
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction.Verdict.NoSuitableApps
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction.Verdict.OneSuitableApp
-import org.gradle.api.Project
 import org.gradle.util.Path
 
 internal class FindAndroidAppTaskAction(
     private val graphBuilder: AndroidAppsGraphBuilder
 ) {
 
-    fun findAppFor(modules: List<Path>, configuration: ConfigurationType): Verdict {
-        val suitableApps = graphBuilder
-            .buildDependenciesGraphFlatten(configuration)
+    fun findAppFor(modules: List<Path>, configurations: Set<ConfigurationType>): Verdict {
+        val suitableApps = configurations
+            .map {
+                graphBuilder.buildDependenciesGraphFlatten(it)
+            }
+            .flatten()
+            .groupBy { it.project }
+            .mapValues { it.value.flatMap { it.dependencies }.toSet() }
             .filter { (_, dependencyProjects) ->
                 dependencyProjects
                     .map { Path.path(it.path) }
                     .toSet()
                     .containsAll(modules)
             }
+            .map {
+                ProjectWithDeps(it.key, it.value)
+            }
+
         return when {
             suitableApps.isEmpty() -> NoSuitableApps
             suitableApps.size == 1 -> OneSuitableApp(suitableApps.first())
@@ -28,8 +36,8 @@ internal class FindAndroidAppTaskAction(
     }
 
     sealed class Verdict {
-        data class OneSuitableApp(val project: Pair<Project, Set<Project>>) : Verdict()
-        data class MultipleSuitableApps(val projects: Set<Pair<Project, Set<Project>>>) : Verdict()
+        data class OneSuitableApp(val projectWithDeps: ProjectWithDeps) : Verdict()
+        data class MultipleSuitableApps(val projectsWithDeps: Set<ProjectWithDeps>) : Verdict()
         object NoSuitableApps : Verdict()
     }
 }

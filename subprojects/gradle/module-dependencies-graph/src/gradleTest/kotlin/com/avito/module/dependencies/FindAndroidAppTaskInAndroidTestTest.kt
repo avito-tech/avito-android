@@ -21,7 +21,7 @@ internal class FindAndroidAppTaskInAndroidTestTest : BaseFindAndroidAppTaskTest(
             .outputContains(
                 """
             |There are multiple suitable apps [:CopyRootB, :RootB]
-            |You should prefer [:CopyRootB, :RootB] because they have the least dependencies in graph size=3
+            |You should prefer [:CopyRootB, :RootB] because they have the least dependencies in graph size=5
             """.trimMargin()
             )
     }
@@ -34,7 +34,7 @@ internal class FindAndroidAppTaskInAndroidTestTest : BaseFindAndroidAppTaskTest(
             .outputContains(
                 """
             |There are multiple suitable apps [:CopyRootB, :RootA, :RootB]
-            |You should prefer :RootA because it has the least dependencies in graph size=2
+            |You should prefer :RootA because it has the least dependencies in graph size=3
             """.trimMargin()
             )
     }
