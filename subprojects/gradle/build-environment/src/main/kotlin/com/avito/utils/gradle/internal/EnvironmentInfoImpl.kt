@@ -36,7 +36,11 @@ internal class EnvironmentInfoImpl(
 
     private val gitUserEmail: String? by lazy {
         if (hasGit) {
-            git.config("user.email").toOption().orNull()?.substringBefore('@')
+            try {
+                git.config("user.email").map { it.substringBefore('@') }.getOrThrow()
+            } catch (e: Throwable) {
+                null
+            }
         } else {
             null
         }
@@ -46,7 +50,11 @@ internal class EnvironmentInfoImpl(
 
     override val commit: String? by lazy {
         if (hasGit) {
-            git.tryParseRev("HEAD").toOption().orNull()
+            try {
+                git.tryParseRev("HEAD").getOrThrow()
+            } catch (e: Throwable) {
+                null
+            }
         } else {
             null
         }

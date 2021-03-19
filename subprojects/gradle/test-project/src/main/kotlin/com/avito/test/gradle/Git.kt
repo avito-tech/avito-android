@@ -6,7 +6,7 @@ import java.io.File
 import java.security.MessageDigest
 import java.util.Random
 
-fun File.git(command: String): String = processRunner().run("git $command").get()
+fun File.git(command: String): String = processRunner().run("git $command").getOrThrow()
 
 fun File.getCommitHash(): String = git("rev-parse HEAD")
 

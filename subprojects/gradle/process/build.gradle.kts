@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(libs.funktionaleTry)
+    api(project(":common:result"))
 
     // todo used only for Commandline.translateCommandline(source)
     implementation(gradleApi())

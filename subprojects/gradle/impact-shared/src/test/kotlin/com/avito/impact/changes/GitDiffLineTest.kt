@@ -1,8 +1,8 @@
 package com.avito.impact.changes
 
+import com.avito.android.Result
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.TestFactory
@@ -23,7 +23,7 @@ class GitDiffLineTest {
             .map { case ->
                 dynamicTest("${case.line} parses to ${case.expected.changeType}") {
                     val actual = case.line.parseGitDiffLine()
-                    assertThat(actual.get()).isEqualTo(case.expected)
+                    assertThat(actual.getOrThrow()).isEqualTo(case.expected)
                 }
             }
     }
@@ -37,7 +37,7 @@ class GitDiffLineTest {
             .map { line ->
                 dynamicTest("'$line' parses to Failure") {
                     val actual = line.parseGitDiffLine()
-                    assertThat(actual).isInstanceOf<Try.Failure<Any>>()
+                    assertThat(actual).isInstanceOf<Result.Failure<Any>>()
                 }
             }
     }

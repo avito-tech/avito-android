@@ -13,23 +13,23 @@ sealed class Result<T> {
         is Failure -> throw throwable
     }
 
-    fun getOrElse(transform: () -> T): T = when (this) {
+    fun getOrElse(func: () -> T): T = when (this) {
         is Success -> value
-        is Failure -> transform()
+        is Failure -> func()
     }
 
-    fun <R> map(transform: (value: T) -> R): Result<R> = when (this) {
+    fun <R> map(func: (value: T) -> R): Result<R> = when (this) {
         is Success -> try {
-            Success(transform(value))
+            Success(func(value))
         } catch (throwable: Throwable) {
             Failure(throwable)
         }
         is Failure -> Failure(throwable)
     }
 
-    fun <R> flatMap(transform: (value: T) -> Result<R>): Result<R> = when (this) {
+    fun <R> flatMap(func: (value: T) -> Result<R>): Result<R> = when (this) {
         is Success -> try {
-            transform(getOrThrow())
+            func(getOrThrow())
         } catch (e: Throwable) {
             Failure(e)
         }
@@ -41,14 +41,52 @@ sealed class Result<T> {
         is Failure -> onFailure(throwable)
     }
 
-    fun recover(transform: (Throwable) -> T): Result<T> = when (this) {
+    fun recover(func: (Throwable) -> T): Result<T> = when (this) {
         is Success -> this
         is Failure -> try {
-            Success(transform(throwable))
+            Success(func(throwable))
         } catch (t: Throwable) {
             Failure(t)
         }
     }
+
+    fun rescue(f: (Throwable) -> Result<T>): Result<T> = when (this) {
+        is Success -> this
+        is Failure -> try {
+            f(throwable)
+        } catch (t: Throwable) {
+            Failure(t)
+        }
+    }
+
+    fun exists(predicate: (T) -> Boolean): Boolean = when (this) {
+        is Success -> try {
+            predicate(getOrThrow())
+        } catch (e: Throwable) {
+            false
+        }
+        is Failure -> false
+    }
+
+    fun onSuccess(func: (T) -> Unit): Result<T> = when (this) {
+        is Success -> {
+            func(value)
+            this
+        }
+        is Failure -> this
+    }
+
+    fun onFailure(func: (Throwable) -> Unit): Result<T> = when (this) {
+        is Success -> this
+        is Failure -> {
+            func(throwable)
+            this
+        }
+    }
+
+    fun isSuccess(): Boolean = this is Success
+
+    fun isFailure(): Boolean = this is Failure
 
     class Success<T>(val value: T) : Result<T>() {
 
@@ -84,8 +122,8 @@ sealed class Result<T> {
 
     companion object {
 
-        fun <T> tryCatch(body: () -> T): Result<T> = try {
-            Success(body.invoke())
+        fun <T> tryCatch(func: () -> T): Result<T> = try {
+            Success(func.invoke())
         } catch (e: Throwable) {
             Failure(e)
         }

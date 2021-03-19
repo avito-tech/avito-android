@@ -12,12 +12,13 @@ dependencies {
         excludeTransitiveAgpDependencies()
     }
 
+    api(project(":common:result"))
+
     implementation(gradleApi())
     implementation(project(":common:files"))
     implementation(project(":gradle:process"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
-    implementation(libs.funktionaleTry)
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:process-test-fixtures"))
