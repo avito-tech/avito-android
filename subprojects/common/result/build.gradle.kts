@@ -5,6 +5,4 @@ plugins {
 }
 
 dependencies {
-    // todo remove
-    implementation(libs.funktionaleTry)
 }

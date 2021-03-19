@@ -248,7 +248,6 @@ dependencyResolutionManagement {
                 }
             }
             filter {
-                includeGroup("org.funktionale")
                 includeGroup("org.jetbrains.trove4j")
                 includeGroup("com.forkingcode.espresso.contrib")
                 includeModule("org.jetbrains.teamcity", "teamcity-rest-client")

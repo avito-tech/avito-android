@@ -1,7 +1,5 @@
 package com.avito.android
 
-import org.funktionale.tries.Try
-
 sealed class Result<T> {
 
     abstract operator fun component1(): T?
@@ -128,12 +126,4 @@ sealed class Result<T> {
             Failure(e)
         }
     }
-}
-
-/**
- * todo remove with funktionale
- */
-fun <T> Result<T>.toTry(): Try<T> = when (this) {
-    is Result.Success -> Try.Success(value)
-    is Result.Failure -> Try.Failure(throwable)
 }

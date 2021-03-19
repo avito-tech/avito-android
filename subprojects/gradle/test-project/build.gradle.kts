@@ -15,7 +15,6 @@ dependencies {
     implementation(testFixtures(project(":common:logger")))
 
     implementation(libs.kotlinReflect)
-    implementation(libs.funktionaleTry)
     implementation(libs.truth)
 
     testImplementation(libs.kotlinTest)
