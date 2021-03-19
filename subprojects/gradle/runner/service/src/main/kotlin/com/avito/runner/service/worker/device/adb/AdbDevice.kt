@@ -4,6 +4,7 @@ import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
 import com.avito.android.stats.StatsDSender
+import com.avito.android.toTry
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import com.avito.runner.CommandLineExecutor

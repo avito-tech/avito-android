@@ -1,4 +1,4 @@
-package com.avito.runner.service.worker.device.adb
+package com.avito.android
 
 import org.funktionale.tries.Try
 
