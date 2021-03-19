@@ -14,7 +14,6 @@ dependencies {
     api(project(":common:time"))
     implementation(project(":gradle:runner:shared"))
     implementation(project(":common:result"))
-    implementation(libs.funktionaleTry)
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
 

@@ -1,5 +1,6 @@
 package com.avito.runner.service.worker
 
+import com.avito.android.Result
 import com.avito.coroutines.extensions.Dispatchers
 import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
@@ -18,7 +19,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.funktionale.tries.Try
 import java.io.File
 
 internal class DeviceWorker(
@@ -66,10 +66,10 @@ internal class DeviceWorker(
 
                 is Alive -> {
 
-                    val (preparingError, newState) = prepareDeviceState(
+                    val (newState, preparingError) = prepareDeviceState(
                         currentState = state,
                         intendedState = intention.state
-                    ).toEither()
+                    )
 
                     when {
 
@@ -104,7 +104,7 @@ internal class DeviceWorker(
     private suspend fun prepareDeviceState(
         currentState: State,
         intendedState: State
-    ): Try<State> = if (intendedState.digest != currentState.digest) {
+    ): Result<State> = if (intendedState.digest != currentState.digest) {
 
         device.logger.debug(
             "Current state=${currentState.digest}, " +

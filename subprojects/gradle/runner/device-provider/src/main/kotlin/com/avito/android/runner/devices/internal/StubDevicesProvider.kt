@@ -1,5 +1,6 @@
 package com.avito.android.runner.devices.internal
 
+import com.avito.android.Result
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.logger.LoggerFactory
@@ -14,7 +15,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
-import org.funktionale.tries.Try
 
 internal class StubDevicesProvider(
     private val loggerFactory: LoggerFactory
@@ -90,9 +90,7 @@ internal class StubDevicesProvider(
         )
     }
 
-    private fun succeedClearPackage(): StubActionResult.Success<Try<Unit>> {
-        return StubActionResult.Success(
-            Try.Success(Unit)
-        )
+    private fun succeedClearPackage(): StubActionResult.Success<Result<Unit>> {
+        return StubActionResult.Success(Result.Success(Unit))
     }
 }

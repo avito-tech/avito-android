@@ -1,8 +1,8 @@
 package com.avito.runner.scheduler.listener
 
+import com.avito.android.Result
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
-import org.funktionale.tries.Try
 import java.io.File
 
 interface TestLifecycleListener {
@@ -14,7 +14,7 @@ interface TestLifecycleListener {
     )
 
     fun finished(
-        artifacts: Try<File>,
+        artifacts: Result<File>,
         test: TestCase,
         executionNumber: Int
     )

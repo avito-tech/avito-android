@@ -1,9 +1,9 @@
 package com.avito.instrumentation.internal.report.listener
 
+import com.avito.android.Result
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
-import org.funktionale.tries.Try
 import java.io.File
 
 internal abstract class TestReporter : TestLifecycleListener {
@@ -16,7 +16,7 @@ internal abstract class TestReporter : TestLifecycleListener {
     }
 
     override fun finished(
-        artifacts: Try<File>,
+        artifacts: Result<File>,
         test: TestCase,
         executionNumber: Int
     ) {
@@ -28,7 +28,7 @@ internal abstract class TestReporter : TestLifecycleListener {
     }
 
     protected abstract fun report(
-        artifacts: Try<File>,
+        artifacts: Result<File>,
         test: TestCase,
         executionNumber: Int
     )
