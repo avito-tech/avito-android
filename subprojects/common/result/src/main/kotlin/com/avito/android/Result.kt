@@ -9,6 +9,11 @@ sealed class Result<T> {
         is Failure -> throw throwable
     }
 
+    fun getOrElse(transform: () -> T): T = when (this) {
+        is Success -> value
+        is Failure -> transform()
+    }
+
     fun <R> map(transform: (value: T) -> R): Result<R> = when (this) {
         is Success -> try {
             Success(transform(value))

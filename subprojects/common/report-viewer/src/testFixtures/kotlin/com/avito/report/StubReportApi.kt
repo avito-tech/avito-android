@@ -32,8 +32,7 @@ class StubReportApi(
 
         val request = mockDispatcher.captureRequest { true }.checks
 
-        realApi.addTest(reportCoordinates, buildId, test)
-            .onFailure { throw it }
+        realApi.addTest(reportCoordinates, buildId, test).getOrThrow()
 
         return request
     }

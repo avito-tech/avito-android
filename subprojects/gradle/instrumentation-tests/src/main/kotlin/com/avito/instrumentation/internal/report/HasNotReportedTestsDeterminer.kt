@@ -4,12 +4,11 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
-import org.funktionale.tries.Try
 
 internal interface HasNotReportedTestsDeterminer {
 
     fun determine(
-        runResult: Try<List<SimpleRunTest>>,
+        runResult: com.avito.android.Result<List<SimpleRunTest>>,
         allTests: List<TestStaticData>
     ): Result
 
@@ -30,7 +29,7 @@ internal interface HasNotReportedTestsDeterminer {
     class Impl : HasNotReportedTestsDeterminer {
 
         override fun determine(
-            runResult: Try<List<SimpleRunTest>>,
+            runResult: com.avito.android.Result<List<SimpleRunTest>>,
             allTests: List<TestStaticData>
         ): Result {
             return runResult.fold(
@@ -41,7 +40,6 @@ internal interface HasNotReportedTestsDeterminer {
                         .map { testMetadata ->
                             AndroidTest.Lost.fromTestMetadata(
                                 testStaticData = testMetadata,
-                                // todo это норм разве?
                                 startTime = 0,
                                 lastSignalTime = 0,
                                 stdout = "",

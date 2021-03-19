@@ -1,11 +1,10 @@
 package com.avito.android
 
-import com.avito.truth.isInstanceOf
+import com.avito.truth.ResultSubject.Companion.assertThat
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import org.funktionale.tries.Try
 import org.jf.dexlib2.iface.Annotation
 import org.jf.dexlib2.iface.AnnotationElement
 import org.jf.dexlib2.iface.ClassDef
@@ -37,8 +36,8 @@ class TestSuiteLoaderTest {
 
     @Test
     fun `load test suite - returns error - on incorrect file`() {
-        val tests = testSuiteLoader.loadTestSuite(File("."))
-        assertThat(tests).isInstanceOf<Try.Failure<*>>()
+        val result = testSuiteLoader.loadTestSuite(File("."))
+        assertThat(result).isFailure()
     }
 
     @Test
@@ -76,7 +75,7 @@ class TestSuiteLoaderTest {
 
         val tests = testSuiteLoader.loadTestSuite(mock())
 
-        assertThat(tests).isInstanceOf<Try.Failure<*>>()
+        assertThat(tests).isFailure()
     }
 
     @Test
@@ -276,7 +275,7 @@ class TestSuiteLoaderTest {
     }
 
     private fun loadTestSuite(): List<TestInApk> {
-        return testSuiteLoader.loadTestSuite(mock()).get()
+        return testSuiteLoader.loadTestSuite(mock()).getOrThrow()
     }
 
     private fun createClass(type: String, block: ClassDef.() -> Unit = {}): ClassDef {

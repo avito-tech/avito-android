@@ -18,6 +18,12 @@ class ResultSubject private constructor(
         }
     }
 
+    fun isFailure() {
+        if (actual is Result.Success) {
+            failWithActual(Fact.simpleFact("expected to be Failure, but was Success"))
+        }
+    }
+
     companion object {
 
         @JvmStatic

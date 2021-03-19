@@ -2,12 +2,11 @@ package com.avito.instrumentation.internal.report
 
 import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
-import org.funktionale.tries.Try
 
 internal interface HasFailedTestDeterminer {
 
     fun determine(
-        runResult: Try<List<SimpleRunTest>>
+        runResult: com.avito.android.Result<List<SimpleRunTest>>
     ): Result
 
     sealed class Result {
@@ -54,7 +53,7 @@ internal interface HasFailedTestDeterminer {
     ) : HasFailedTestDeterminer {
 
         override fun determine(
-            runResult: Try<List<SimpleRunTest>>
+            runResult: com.avito.android.Result<List<SimpleRunTest>>
         ): Result {
 
             return runResult.fold(

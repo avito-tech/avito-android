@@ -1,10 +1,10 @@
 package com.avito.test.summary
 
+import com.avito.android.Result
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 
 internal class FlakyTestInfoTest {
@@ -14,7 +14,7 @@ internal class FlakyTestInfoTest {
     @Test
     fun `test info summarized`() {
         flakyTestInfo.addReport(
-            report = Try.Success(
+            report = Result.Success(
                 listOf(
                     SimpleRunTest.createStubInstance(
                         name = "com.avito.Test.test",
@@ -26,7 +26,7 @@ internal class FlakyTestInfoTest {
         )
 
         flakyTestInfo.addReport(
-            report = Try.Success(
+            report = Result.Success(
                 listOf(
                     SimpleRunTest.createStubInstance(
                         name = "com.avito.Test.test",

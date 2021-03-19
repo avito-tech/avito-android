@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.android.Result
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.report.internal.JsonRpcRequestProvider
@@ -14,7 +15,6 @@ import com.avito.report.model.Status
 import com.avito.report.model.Step
 import com.avito.report.model.Video
 import com.avito.report.model.team
-import org.funktionale.tries.Try
 
 internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProvider) : ReportsAddApi {
 
@@ -30,8 +30,8 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
         reportCoordinates: ReportCoordinates,
         buildId: String?,
         tests: Collection<AndroidTest>
-    ): Try<List<String>> {
-        return Try {
+    ): Result<List<String>> {
+        return Result.tryCatch {
             val requests = tests.map { test ->
                 when (test) {
                     is AndroidTest.Skipped -> createAddFullRequest(
@@ -92,7 +92,7 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
         }
     }
 
-    override fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): Try<String> {
+    override fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): Result<String> {
         return addTests(reportCoordinates, buildId, listOf(test)).map { it.first() }
     }
 
