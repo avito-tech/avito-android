@@ -35,6 +35,15 @@ sealed class Result<T> {
     data class Success<T>(val value: T) : Result<T>()
 
     data class Failure<T>(val throwable: Throwable) : Result<T>()
+
+    companion object {
+
+        fun <T> tryCatch(body: () -> T): Result<T> = try {
+            Success(body.invoke())
+        } catch (e: Throwable) {
+            Failure(e)
+        }
+    }
 }
 
 /**
