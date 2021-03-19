@@ -3,7 +3,7 @@ package com.avito.module.dependencies
 import com.avito.test.gradle.gradlew
 import org.junit.jupiter.api.Test
 
-public class FindAndroidAppTaskInAndroidTestTest : BaseFindAndroidAppTaskTest() {
+internal class FindAndroidAppTaskInAndroidTestTest : BaseFindAndroidAppTaskTest() {
 
     @Test
     override fun `find one suitable app - advice this app`() {
@@ -20,21 +20,21 @@ public class FindAndroidAppTaskInAndroidTestTest : BaseFindAndroidAppTaskTest() 
             .buildSuccessful()
             .outputContains(
                 """
-            |In your project are multiple suitable apps [:CopyRootB, :RootB]
-            |You should prefer [:CopyRootB, :RootB] because they have least dependencies in graph size=3
+            |There are multiple suitable apps [:CopyRootB, :RootB]
+            |You should prefer [:CopyRootB, :RootB] because they have the least dependencies in graph size=5
             """.trimMargin()
             )
     }
 
     @Test
-    override fun `find multiple suitable apps - advice with that has least dependencies`() {
+    override fun `find multiple suitable apps - advice with that has the least dependencies`() {
         gradlew(projectDir, "findAndroidApp", "--modules=:LeafE", "--configuration=android_test")
             .assertThat()
             .buildSuccessful()
             .outputContains(
                 """
-            |In your project are multiple suitable apps [:CopyRootB, :RootA, :RootB]
-            |You should prefer :RootA because it has least dependencies in graph size=2
+            |There are multiple suitable apps [:CopyRootB, :RootA, :RootB]
+            |You should prefer :RootA because it has the least dependencies in graph size=3
             """.trimMargin()
             )
     }

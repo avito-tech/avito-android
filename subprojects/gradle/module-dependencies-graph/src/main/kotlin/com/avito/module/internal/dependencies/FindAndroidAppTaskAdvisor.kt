@@ -8,7 +8,7 @@ internal class FindAndroidAppTaskAdvisor {
 
     fun giveAdvice(verdict: FindAndroidAppTaskAction.Verdict): String {
         return when (verdict) {
-            is OneSuitableApp -> "In your project is only one suitable app ${verdict.project.first.path}"
+            is OneSuitableApp -> "In your project is only one suitable app ${verdict.projectWithDeps.project.path}"
             is MultipleSuitableApps -> verdict.advice()
             is NoSuitableApps -> "There are no suitable Android apps"
         }
@@ -16,13 +16,13 @@ internal class FindAndroidAppTaskAdvisor {
 
     private fun MultipleSuitableApps.advice(): String {
         val minimumDependencies = requireNotNull(
-            projects.minByOrNull { it.second.size }
-        ).second.size
-        val mostSuitableApps = projects.filter { it.second.size == minimumDependencies }
+            projectsWithDeps.minByOrNull { it.dependencies.size }
+        ).dependencies.size
+        val mostSuitableApps = projectsWithDeps.filter { it.dependencies.size == minimumDependencies }
         val advice = when {
             mostSuitableApps.size == 1 -> {
                 val app = mostSuitableApps[0]
-                Advice(app.first.path, "it has least dependencies in graph size=${app.second.size}")
+                Advice(app.project.path, "it has the least dependencies in graph size=${app.dependencies.size}")
             }
             else -> {
                 val app = mostSuitableApps[0]
@@ -31,13 +31,13 @@ internal class FindAndroidAppTaskAdvisor {
                         .joinToString(
                             prefix = "[",
                             postfix = "]"
-                        ) { it.first.path },
-                    reason = "they have least dependencies in graph size=${app.second.size}"
+                        ) { it.project.path },
+                    reason = "they have the least dependencies in graph size=${app.dependencies.size}"
                 )
             }
         }
         return """
-            |In your project are multiple suitable apps ${projects.map { it.first.path }}
+            |There are multiple suitable apps ${projectsWithDeps.map { it.project.path }}
             |You should prefer ${advice.projects} because ${advice.reason}
             """.trimMargin()
     }

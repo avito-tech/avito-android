@@ -7,7 +7,11 @@ plugins {
 
 dependencies {
     compileOnly(gradleApi())
+
     implementation(project(":gradle:gradle-logger"))
+
+    gradleTestImplementation(project(":common:truth-extensions"))
+    gradleTestImplementation(testFixtures(project(":common:logger")))
     gradleTestImplementation(project(":gradle:test-project"))
 }
 

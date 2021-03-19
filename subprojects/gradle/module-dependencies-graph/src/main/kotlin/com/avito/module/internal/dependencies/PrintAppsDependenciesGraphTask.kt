@@ -13,7 +13,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import javax.inject.Inject
 
-internal abstract class PrintDependenciesGraphTask @Inject constructor(
+internal abstract class PrintAppsDependenciesGraphTask @Inject constructor(
     objects: ObjectFactory
 ) : DefaultTask() {
 
@@ -47,34 +47,44 @@ internal abstract class PrintDependenciesGraphTask @Inject constructor(
     }
 
     private fun printDependenciesGraph() {
-        DependenciesGraphBuilder(project, GradleLoggerFactory.fromTask(this))
-            .buildDependenciesGraph()
-            .forEach { node ->
-                node.print("Root ")
+        val graphBuilder = AndroidAppsGraphBuilder(project, graphBuilder())
+
+        configuration.getOrElse(android_test).mapToTypes()
+            .forEach { configurationType ->
+                logger.lifecycle("Configuration type: $configurationType")
+                graphBuilder.buildDependenciesGraph(configurationType).forEach { node ->
+                    node.print("Root ")
+                }
             }
     }
 
     private fun printDependenciesGraphFlatten() {
-        DependenciesGraphBuilder(project, GradleLoggerFactory.fromTask(this))
-            .buildDependenciesGraphFlatten(configuration.getOrElse(android_test).mapToType())
-            .forEach { (project, deps) ->
-                logger.lifecycle("Root ${project.path}")
-                deps.forEach { dependencyProject ->
-                    logger.lifecycle("${project.path} graph contains ${dependencyProject.path}")
-                }
+        val graphBuilder = AndroidAppsGraphBuilder(project, graphBuilder())
+
+        configuration.getOrElse(android_test).mapToTypes()
+            .forEach { configurationType ->
+                logger.lifecycle("Configuration type: $configurationType")
+                graphBuilder.buildDependenciesGraphFlatten(configurationType)
+                    .forEach { (project, deps) ->
+                        logger.lifecycle("Root ${project.path}")
+                        deps.forEach { dependencyProject ->
+                            logger.lifecycle("${project.path} graph contains ${dependencyProject.path}")
+                        }
+                    }
             }
     }
 
-    private fun ModuleProjectDependenciesNode.print(prefix: String = "") {
+    private fun graphBuilder(): DependenciesGraphBuilder =
+        DependenciesGraphBuilder(project, GradleLoggerFactory.fromTask(this))
+
+    private fun ModuleProjectConfigurationDependenciesNode.print(prefix: String = "") {
         logger.lifecycle("${prefix}Node ${project.path}")
-        dependencies
-            .mapValues { (_, nodeSet) -> nodeSet.map { it.project.path } }
-            .forEach { conf, projects ->
-                projects.forEach { project ->
-                    logger.lifecycle("${this.project.path} depends on $project in ${conf.type}")
-                }
+        val directDependencies = directDependencies()
+        directDependencies
+            .forEach { node ->
+                logger.lifecycle("${this.project.path} depends on ${node.project.path} in $configurationType")
             }
-        dependencies.values.flatten().toSet().forEach { node ->
+        directDependencies.forEach { node ->
             node.print("${project.path} ")
         }
     }
