@@ -59,6 +59,8 @@ class ReportTestExtension(
             .thenReturn(
                 StubFutureValue(
                     RemoteStorage.Result.Error(
+                        "stub screenshot",
+                        0L,
                         RuntimeException()
                     )
                 )
