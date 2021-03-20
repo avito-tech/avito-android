@@ -6,10 +6,10 @@ plugins {
 }
 
 dependencies {
-    api(libs.funktionaleTry)
     api(libs.gson)
 
     api(project(":common:okhttp"))
+    api(project(":common:result"))
 
     implementation(project(":common:math"))
     implementation(project(":common:logger"))

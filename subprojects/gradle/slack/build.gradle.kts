@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    api(libs.funktionaleTry)
+    api(project(":common:result"))
 
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:time"))

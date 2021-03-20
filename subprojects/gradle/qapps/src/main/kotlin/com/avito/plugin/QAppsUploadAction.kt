@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.android.Result
 import com.avito.http.HttpLogger
 import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
@@ -9,7 +10,6 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
-import org.funktionale.tries.Try
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -40,7 +40,7 @@ internal class QAppsUploadAction(
             .create(QAppsUploadApi::class.java)
     }
 
-    fun upload(): Try<Unit> = Try {
+    fun upload(): Result<Unit> = Result.tryCatch {
         val response = uploadRequest().execute()
         if (!response.isSuccessful) {
             val error = response.errorBody()?.string() ?: "unknown error"

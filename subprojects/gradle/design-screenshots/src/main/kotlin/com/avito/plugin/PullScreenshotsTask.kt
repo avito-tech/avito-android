@@ -36,23 +36,27 @@ abstract class PullScreenshotsTask : DefaultTask() {
 
         val referencePath = Paths.get("${project.projectDir.path}/src/androidTest/assets/screenshots/")
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
-        currentDevice.list(remotePath.toString()).onSuccess { result ->
-            result.firstOrNull { it.trim().isNotEmpty() }
-                ?.let { directory ->
-                    if (directory.trim().isNotEmpty()) {
-                        referencePath.toFile().mkdirs()
-                        val remoteEmulatorPath = remotePath.resolve(directory)
-                        currentDevice.pull(
-                            from = remoteEmulatorPath,
-                            to = referencePath
-                        )
+
+        currentDevice.list(remotePath.toString()).fold(
+            onSuccess = { result ->
+                result.firstOrNull { it.trim().isNotEmpty() }
+                    ?.let { directory ->
+                        if (directory.trim().isNotEmpty()) {
+                            referencePath.toFile().mkdirs()
+                            val remoteEmulatorPath = remotePath.resolve(directory)
+                            currentDevice.pull(
+                                from = remoteEmulatorPath,
+                                to = referencePath
+                            )
+                        }
                     }
-                }
-            logger.debug("Screenshots are pulled to $referencePath")
-            clearOutputFiles(logger)
-        }.onFailure {
-            logger.warn("Cannot list screenshot directory")
-        }
+                logger.debug("Screenshots are pulled to $referencePath")
+                clearOutputFiles(logger)
+            },
+            onFailure = {
+                logger.warn("Cannot list screenshot directory", it)
+            }
+        )
     }
 
     private fun clearOutputFiles(logger: Logger) {

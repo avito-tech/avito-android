@@ -1,18 +1,18 @@
 package com.avito.report
 
+import com.avito.android.Result
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
-import org.funktionale.tries.Try
 
 interface ReportsFetchApi {
 
     /**
      * Run.List
      */
-    fun getReportsList(planSlug: String, jobSlug: String, pageNumber: Int): Try<List<Report>>
+    fun getReportsList(planSlug: String, jobSlug: String, pageNumber: Int): Result<List<Report>>
 
     /**
      * Run.GetByParams
@@ -23,9 +23,9 @@ interface ReportsFetchApi {
      * RunTest.List
      * получение краткого списка результатов тестов по запуску
      */
-    fun getTestsForRunId(reportCoordinates: ReportCoordinates): Try<List<SimpleRunTest>>
+    fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>>
 
-    fun getTestsForReportId(reportId: String): Try<List<SimpleRunTest>>
+    fun getTestsForReportId(reportId: String): Result<List<SimpleRunTest>>
 
-    fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Try<CrossDeviceSuite>
+    fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite>
 }

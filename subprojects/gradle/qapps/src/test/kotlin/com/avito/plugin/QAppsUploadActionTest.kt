@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
@@ -9,7 +10,6 @@ import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -73,7 +73,7 @@ class QAppsUploadActionTest {
 
         val result = action.upload()
 
-        assertThat<Try.Failure<*>>(result) {
+        assertThat<Result.Failure<*>>(result) {
             assertThat(throwable.message).contains("Can't upload apk to qapps")
             assertThat(throwable.message).contains("[error reason]")
         }
@@ -89,7 +89,7 @@ class QAppsUploadActionTest {
 
         val result = action.upload()
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
+        assertThat(result).isInstanceOf<Result.Success<*>>()
         assertThat(server.requestCount).isEqualTo(2)
     }
 
@@ -105,6 +105,6 @@ class QAppsUploadActionTest {
         assertThat(recordedRequest.path).isEqualTo("/qapps/api/os/android/upload")
         assertThat(recordedRequest.body.readUtf8()).contains("content")
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
+        assertThat(result).isInstanceOf<Result.Success<*>>()
     }
 }

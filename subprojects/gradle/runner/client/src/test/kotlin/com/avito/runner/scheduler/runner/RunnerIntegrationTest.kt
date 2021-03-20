@@ -1,5 +1,6 @@
 package com.avito.runner.scheduler.runner
 
+import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
 import com.avito.runner.reservation.DeviceReservationWatcher
 import com.avito.runner.scheduler.runner.client.TestExecutionClient
@@ -36,7 +37,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.File
@@ -586,7 +586,7 @@ class RunnerIntegrationTest {
         )
     }
 
-    private fun succeedClearPackage() = StubActionResult.Success<Try<Unit>>(Try.Success(Unit))
+    private fun succeedClearPackage() = StubActionResult.Success<Result<Unit>>(Result.Success(Unit))
 
     private fun provideRunner(
         devices: ReceiveChannel<Device>,

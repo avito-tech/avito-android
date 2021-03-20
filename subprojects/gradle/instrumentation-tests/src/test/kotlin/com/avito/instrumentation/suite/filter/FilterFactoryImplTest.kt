@@ -1,5 +1,6 @@
 package com.avito.instrumentation.suite.filter
 
+import com.avito.android.Result
 import com.avito.android.runner.report.StubReport
 import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
@@ -20,7 +21,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.report.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 
 internal class FilterFactoryImplTest {
@@ -128,7 +128,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData includePrevious statuses and Report return list then filters contain IncludeTestSignaturesFilters#Previous with included statuses`() {
         val report = StubReport()
-        report.getTestsResult = Try.Success(
+        report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
                     name = "test1",
@@ -179,7 +179,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData excludePrevious statuses and Report return list then filters contain ExcludeTestSignaturesFilters#Previous with included statuses`() {
         val report = StubReport()
-        report.getTestsResult = Try.Success(
+        report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
                     name = "test1",
@@ -267,7 +267,7 @@ internal class FilterFactoryImplTest {
         val reportId = "reportId"
         val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
-        report.getTestsResult = Try.Success(
+        report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
                     name = "test1",
@@ -320,7 +320,7 @@ internal class FilterFactoryImplTest {
         val reportId = "reportId"
         val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
-        report.getTestsResult = Try.Success(
+        report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
                     name = "test1",
@@ -373,7 +373,7 @@ internal class FilterFactoryImplTest {
         val reportId = "reportId"
         val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
-        report.getTestsResult = Try.Success(
+        report.getTestsResult = Result.Success(
             listOf(
                 SimpleRunTest.createStubInstance(
                     name = "test1",

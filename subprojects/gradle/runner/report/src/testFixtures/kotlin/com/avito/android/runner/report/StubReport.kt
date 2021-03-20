@@ -1,5 +1,6 @@
 package com.avito.android.runner.report
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.ReportsApi
@@ -11,7 +12,6 @@ import com.avito.report.model.TestStaticData
 import com.avito.report.model.createStubInstance
 import com.avito.time.StubTimeProvider
 import com.avito.time.TimeProvider
-import org.funktionale.tries.Try
 
 public fun Report.Companion.createStubInstance(
     reportsApi: ReportsApi,
@@ -37,7 +37,7 @@ public class StubReport : Report {
 
     public var reportId: String? = null
 
-    public var getTestsResult: Try<List<SimpleRunTest>> = Try.Success(emptyList())
+    public var getTestsResult: Result<List<SimpleRunTest>> = Result.Success(emptyList())
 
     override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
     }
@@ -59,15 +59,15 @@ public class StubReport : Report {
     override fun finish() {
     }
 
-    override fun getTests(): Try<List<SimpleRunTest>> {
+    override fun getTests(): Result<List<SimpleRunTest>> {
         return getTestsResult
     }
 
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit> {
+    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
         TODO("Not yet implemented")
     }
 
-    override fun getCrossDeviceTestData(): Try<CrossDeviceSuite> {
+    override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
         TODO("Not yet implemented")
     }
 }

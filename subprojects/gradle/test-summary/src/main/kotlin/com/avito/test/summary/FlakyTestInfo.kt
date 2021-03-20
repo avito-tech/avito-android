@@ -1,16 +1,16 @@
 package com.avito.test.summary
 
+import com.avito.android.Result
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
-import org.funktionale.tries.Try
 
 internal class FlakyTestInfo {
 
     private val info: MutableList<FlakyInfo> = mutableListOf()
 
-    fun addReport(report: Try<List<SimpleRunTest>>) {
-        if (report is Try.Success) {
-            extractFlakyInfo(report.get()).forEach { newInfo ->
+    fun addReport(report: Result<List<SimpleRunTest>>) {
+        if (report is Result.Success) {
+            extractFlakyInfo(report.getOrThrow()).forEach { newInfo ->
                 val oldInfo = info.find { it.testName == newInfo.testName }
                 if (oldInfo != null) {
                     info.remove(oldInfo)

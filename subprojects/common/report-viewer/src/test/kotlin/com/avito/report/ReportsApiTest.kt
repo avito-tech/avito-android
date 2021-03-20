@@ -4,12 +4,12 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.truth.isInstanceOf
 import com.avito.utils.fileFromJarResources
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
@@ -79,10 +79,10 @@ internal class ReportsApiTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "")
         )
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
+        assertThat(result).isSuccess()
 
         assertThat(
-            result.get().first().name
+            result.getOrThrow().first().name
         ).isEqualTo("ru.domofond.features.RemoteToggleMonitorTest.check_remote_toggle")
     }
 
@@ -94,7 +94,7 @@ internal class ReportsApiTest {
 
         val result = createNoRetriesReportsApi().pushPreparedData("any", "any", jsonObject("any" to "any"))
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
+        assertThat(result).isSuccess()
     }
 
     @AfterEach

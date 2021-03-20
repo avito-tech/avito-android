@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.android.Result
 import com.avito.http.HttpLogger
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -12,7 +13,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
-import org.funktionale.tries.Try
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -28,8 +28,8 @@ internal class SignViaServiceAction(
 
     private val apiPath = "/sign"
 
-    fun sign(): Try<ExistingFile> {
-        return Try {
+    fun sign(): Result<ExistingFile> {
+        return Result.tryCatch {
             retry(
                 retriesCount = 6,
                 delaySeconds = 0,

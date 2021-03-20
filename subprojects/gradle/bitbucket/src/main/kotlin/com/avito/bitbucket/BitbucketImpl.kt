@@ -1,12 +1,12 @@
 package com.avito.bitbucket
 
+import com.avito.android.Result
 import com.avito.http.BasicAuthenticator
 import com.avito.impact.changes.newChangesDetector
 import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
-import org.funktionale.tries.Try
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -71,7 +71,7 @@ class BitbucketImpl(
         title: String,
         link: HttpUrl,
         issues: List<Bitbucket.InsightIssue>
-    ): Try<Unit> =
+    ): Result<Unit> =
         // todo extract
         newChangesDetector(
             rootDir = rootDir,
@@ -135,7 +135,7 @@ class BitbucketImpl(
         details: String,
         link: HttpUrl,
         data: List<InsightData>
-    ) = Try {
+    ) = Result.tryCatch {
         insightsApi.createReport(
             projectKey = config.projectKey,
             repositorySlug = config.repositorySlug,

@@ -4,11 +4,11 @@
 package com.avito.impact.configuration
 
 import com.android.build.gradle.api.AndroidSourceSet
+import com.avito.android.Result
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.configuration.sets.isImplementation
 import com.avito.impact.fallback.ImpactFallbackDetector
 import com.avito.module.configurations.ConfigurationType.Main
-import org.funktionale.tries.Try
 
 class MainConfiguration(module: InternalModule) : BaseConfiguration(
     module,
@@ -42,7 +42,7 @@ class MainConfiguration(module: InternalModule) : BaseConfiguration(
         super.dependencies
     }
 
-    override fun changedFiles(): Try<List<ChangedFile>> {
+    override fun changedFiles(): Result<List<ChangedFile>> {
         val excludes = (module.testConfiguration.sourceSets() +
             module.androidTestConfiguration.sourceSets())
             .minus(project.projectDir)

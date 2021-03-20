@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.scheduling
 
+import com.avito.android.Result
 import com.avito.android.TestInApk
 import com.avito.android.TestSuiteLoader
 import com.avito.android.check.AllChecks
@@ -11,7 +12,6 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.Gson
-import org.funktionale.tries.Try
 import java.io.File
 
 internal class InstrumentationTestsScheduler(
@@ -45,7 +45,7 @@ internal class InstrumentationTestsScheduler(
         writeParsedTests(tests)
 
         val testSuite = testSuiteProvider.getTestSuite(
-            tests = tests.get()
+            tests = tests.getOrThrow()
         )
 
         val skippedTests = testSuite.skippedTests.map {
@@ -75,7 +75,7 @@ internal class InstrumentationTestsScheduler(
         )
     }
 
-    private fun writeParsedTests(parsedTests: Try<List<TestInApk>>) {
+    private fun writeParsedTests(parsedTests: Result<List<TestInApk>>) {
         val file = File(params.outputDir, "parsed-tests.json")
         parsedTests.fold(
             { tests -> file.writeText(gson.toJson(tests)) },

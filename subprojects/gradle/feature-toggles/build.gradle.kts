@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:gradle-logger"))
-    implementation(libs.funktionaleTry)
     implementation(libs.gson)
 
     testImplementation(testFixtures(project(":common:logger")))

@@ -1,6 +1,6 @@
 package com.avito.impact.changes
 
-import org.funktionale.tries.Try
+import com.avito.android.Result
 import java.io.File
 
 internal data class GitDiffLine(val path: String, val changeType: ChangeType)
@@ -17,19 +17,19 @@ internal fun GitDiffLine.asChangedFile(rootDir: File): ChangedFile {
  *  R95 old_name.kt new_name.kt
  *  ```
  */
-internal fun String.parseGitDiffLine(): Try<GitDiffLine> {
+internal fun String.parseGitDiffLine(): Result<GitDiffLine> {
     val parts = this.split(Regex("[ \t]"))
         .map { it.trim() }
     if (parts.size < 2) {
-        return Try.Failure(IllegalArgumentException("Line has invalid syntax: $this "))
+        return Result.Failure(IllegalArgumentException("Line has invalid syntax: $this "))
     }
     val diffTypeCode = extractDiffTypeCode(parts)
     return ChangeType.getTypeByCode(diffTypeCode)
         .flatMap { changeType: ChangeType ->
             if (isSyntaxCorrect(parts, changeType)) {
-                Try.Success<GitDiffLine>(GitDiffLine(extractFilePath(parts, changeType), changeType))
+                Result.Success(GitDiffLine(extractFilePath(parts, changeType), changeType))
             } else {
-                Try.Failure<GitDiffLine>(IllegalArgumentException("Line has invalid syntax: $this "))
+                Result.Failure(IllegalArgumentException("Line has invalid syntax: $this "))
             }
         }
 }

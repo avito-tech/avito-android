@@ -17,7 +17,6 @@ dependencies {
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:teamcity"))
-    implementation(libs.funktionaleTry)
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
