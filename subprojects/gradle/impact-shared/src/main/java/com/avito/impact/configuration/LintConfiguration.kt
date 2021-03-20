@@ -4,10 +4,9 @@
 package com.avito.impact.configuration
 
 import com.android.build.gradle.api.AndroidSourceSet
-import com.avito.module.configurations.ConfigurationType.LINT
-import java.io.File
+import com.avito.module.configurations.ConfigurationType.Lint
 
-class LintConfiguration(module: InternalModule) : SimpleConfiguration(module, LINT) {
+class LintConfiguration(module: InternalModule) : BaseConfiguration(module, setOf(Lint::class.java)) {
 
     override val isModified: Boolean by lazy {
         dependencies.any { it.isModified }
@@ -15,14 +14,7 @@ class LintConfiguration(module: InternalModule) : SimpleConfiguration(module, LI
             || hasChangedFiles
     }
 
-    override val fullBytecodeSets: Set<File> by lazy {
-        bytecodeSets() +
-            dependencies.flatMap { it.fullBytecodeSets } +
-            module.androidTestConfiguration.fullBytecodeSets
-    }
-
     override fun containsSources(sourceSet: AndroidSourceSet) = false
-    override fun containsBytecode(bytecodeDirectory: File) = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

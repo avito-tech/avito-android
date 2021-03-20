@@ -1,9 +1,10 @@
 package com.avito.android.build_checks.internal.params
 
-import org.funktionale.tries.Try
+import com.avito.android.Result
 
 internal interface ParameterCheck {
-    fun getMismatches(): Try<Collection<ParameterMismatch>>
+
+    fun getMismatches(): Result<Collection<ParameterMismatch>>
 }
 
 internal class ParameterMismatch(

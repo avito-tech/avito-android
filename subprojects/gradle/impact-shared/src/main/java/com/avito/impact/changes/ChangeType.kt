@@ -1,6 +1,6 @@
 package com.avito.impact.changes
 
-import org.funktionale.tries.Try
+import com.avito.android.Result
 
 /**
  * @param code code of --diff-filter in git diff
@@ -14,11 +14,12 @@ enum class ChangeType(val code: Char) {
     RENAMED('R');
 
     companion object {
-        fun getTypeByCode(code: Char): Try<ChangeType> {
+
+        fun getTypeByCode(code: Char): Result<ChangeType> {
             return values()
                 .firstOrNull { it.code == code }
-                ?.let { Try.Success(it) }
-                ?: Try.Failure(IllegalArgumentException("Cannot parse diff type with code $code"))
+                ?.let { Result.Success(it) }
+                ?: Result.Failure(IllegalArgumentException("Cannot parse diff type with code $code"))
         }
     }
 }

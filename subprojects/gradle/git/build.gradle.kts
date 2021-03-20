@@ -5,18 +5,15 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:build-environment")) {
-        because("project.buildEnvironment only")
-    }
-    api(project(":subprojects:gradle:process"))
+    api(project(":gradle:process"))
+    api(project(":common:result"))
 
     implementation(gradleApi())
-    implementation(project(":subprojects:common:logger"))
-    implementation(project(":subprojects:common:slf4j-logger"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(libs.funktionaleTry)
+    implementation(project(":common:logger"))
+    implementation(project(":common:slf4j-logger"))
+    implementation(project(":gradle:gradle-extensions"))
 
-    testImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    testImplementation(project(":gradle:test-project"))
+    testImplementation(testFixtures(project(":common:logger")))
     testImplementation(libs.mockitoJUnitJupiter)
 }

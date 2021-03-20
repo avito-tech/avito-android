@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import com.avito.android.test.report.model.StepResult
 import com.avito.report.model.Entry
 import com.avito.time.TimeMachineProvider
 import com.avito.truth.assertThat
@@ -39,16 +40,17 @@ class ReportSyntheticStepsTest {
         val state = report.reportTestCase()
 
         // then
-        state.assertThat(
+        state.assertStep(
             stepsCount = 2,
-            syntheticStepIndex = 1,
-            syntheticStepTitle = "Synthetic step",
-            syntheticStepEntriesCount = 3
+            preconditionsCount = 0,
+            stepIndex = 1,
+            stepTitle = "Out of step",
+            stepEntriesCount = 3
         )
     }
 
     @Test
-    fun `when add htmlEntry before steps than synthetic step will be created`() {
+    fun `when add htmlEntry before steps - synthetic step will be added to preconditions`() {
         // when
         report.addEntriesOutOfStep()
 
@@ -56,11 +58,12 @@ class ReportSyntheticStepsTest {
         val state = report.reportTestCase()
 
         // then
-        state.assertThat(
-            stepsCount = 2,
-            syntheticStepIndex = 0,
-            syntheticStepTitle = "Synthetic step",
-            syntheticStepEntriesCount = 3
+        state.assertPrecondition(
+            stepsCount = 1,
+            preconditionsCount = 1,
+            preconditionIndex = 0,
+            preconditionTitle = "Out of step",
+            preconditionEntriesCount = 3
         )
     }
 
@@ -75,11 +78,12 @@ class ReportSyntheticStepsTest {
         val state = report.reportTestCase()
 
         // then
-        state.assertThat(
+        state.assertStep(
             stepsCount = 3,
-            syntheticStepIndex = 1,
-            syntheticStepTitle = "Synthetic step",
-            syntheticStepEntriesCount = 3
+            preconditionsCount = 0,
+            stepIndex = 1,
+            stepTitle = "Out of step",
+            stepEntriesCount = 3
         )
     }
 
@@ -91,31 +95,60 @@ class ReportSyntheticStepsTest {
         addAssertion(assertionMessage)
     }
 
-    private fun ReportState.Initialized.Started.assertThat(
+    private fun ReportState.Initialized.Started.assertStep(
         stepsCount: Int,
-        syntheticStepIndex: Int,
-        syntheticStepTitle: String,
-        syntheticStepEntriesCount: Int
+        preconditionsCount: Int,
+        stepIndex: Int,
+        stepTitle: String,
+        stepEntriesCount: Int
     ) {
         assertThat(testCaseStepList).hasSize(stepsCount)
-        val syntheticStep = testCaseStepList[syntheticStepIndex]
+        assertThat(preconditionStepList).hasSize(preconditionsCount)
+        val step = testCaseStepList[stepIndex]
 
-        assertThat(syntheticStep.title)
-            .isEqualTo(syntheticStepTitle)
+        step.assertStep(
+            title = stepTitle,
+            entriesCount = stepEntriesCount
+        )
+    }
 
-        assertThat(syntheticStep.entryList)
-            .hasSize(syntheticStepEntriesCount)
+    private fun ReportState.Initialized.Started.assertPrecondition(
+        stepsCount: Int,
+        preconditionsCount: Int,
+        preconditionIndex: Int,
+        preconditionTitle: String,
+        preconditionEntriesCount: Int
+    ) {
+        assertThat(testCaseStepList).hasSize(stepsCount)
+        assertThat(preconditionStepList).hasSize(preconditionsCount)
+        val precondition = preconditionStepList[preconditionIndex]
 
-        assertThat<Entry.File>(syntheticStep.entryList[0]) {
+        precondition.assertStep(
+            title = preconditionTitle,
+            entriesCount = preconditionEntriesCount
+        )
+    }
+
+    private fun StepResult.assertStep(
+        title: String,
+        entriesCount: Int
+    ) {
+        assertThat(this.title)
+            .isEqualTo(title)
+
+        assertThat(entryList)
+            .hasSize(entriesCount)
+
+        assertThat<Entry.File>(entryList[0]) {
             assertThat(fileType).isEqualTo(Entry.File.Type.html)
         }
 
-        assertThat<Entry.Comment>(syntheticStep.entryList[1]) {
-            assertThat(title).isEqualTo(comment)
+        assertThat<Entry.Comment>(entryList[1]) {
+            assertThat(this.title).isEqualTo(comment)
         }
 
-        assertThat<Entry.Check>(syntheticStep.entryList[2]) {
-            assertThat(title).isEqualTo(assertionMessage)
+        assertThat<Entry.Check>(entryList[2]) {
+            assertThat(this.title).isEqualTo(assertionMessage)
         }
     }
 }

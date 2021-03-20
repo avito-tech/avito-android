@@ -88,8 +88,12 @@ internal interface InstrumentationTestActionFinalizer {
                 )
             )
 
+            logger.debug("Test run verdict: \n\t$verdict")
+
             when (verdict) {
-                is TestRunResult.Verdict.Success -> logger.debug(verdict.message)
+                is TestRunResult.Verdict.Success -> {
+                    // empty
+                }
                 is TestRunResult.Verdict.Failure -> buildFailer.failBuild(
                     "Instrumentation task failed. Look at verdict in the file: $verdictFile"
                 )

@@ -9,25 +9,25 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:build-verdict-tasks-api"))
+    api(project(":gradle:build-verdict-tasks-api"))
 
-    implementation(libs.funktionaleTry)
     implementation(libs.kotlinHtml)
     implementation(libs.okhttp)
 
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:common:sentry"))
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:bitbucket"))
-    implementation(project(":subprojects:gradle:gradle-logger"))
-    implementation(project(":subprojects:gradle:git"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(project(":subprojects:gradle:slack"))
+    implementation(project(":common:okhttp"))
+    implementation(project(":common:sentry"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:bitbucket"))
+    implementation(project(":gradle:build-environment"))
+    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":gradle:git"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:slack"))
 
-    gradleTestImplementation(project(":subprojects:gradle:test-project"))
-    testImplementation(project(":subprojects:common:truth-extensions"))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    gradleTestImplementation(project(":gradle:test-project"))
+    testImplementation(project(":common:truth-extensions"))
+    testImplementation(testFixtures(project(":common:logger")))
 }
 
 gradlePlugin {

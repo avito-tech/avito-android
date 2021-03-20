@@ -41,15 +41,15 @@ dependencies {
     implementation(libs.playServicesMaps)
     implementation(libs.recyclerView)
 
-    implementation(project(":subprojects:android-lib:proxy-toast"))
+    implementation(project(":android-lib:proxy-toast"))
 
-    androidTestImplementation(project(":subprojects:android-test:toast-rule"))
-    androidTestImplementation(project(":subprojects:android-test:ui-testing-core"))
-    androidTestImplementation(project(":subprojects:android-test:test-inhouse-runner"))
-    androidTestImplementation(project(":subprojects:common:junit-utils"))
-    androidTestImplementation(project(":subprojects:common:truth-extensions"))
-    androidTestImplementation(project(":subprojects:common:test-annotations"))
-    androidTestImplementation(project(":subprojects:common:report-viewer"))
+    androidTestImplementation(project(":android-test:toast-rule"))
+    androidTestImplementation(project(":android-test:ui-testing-core"))
+    androidTestImplementation(project(":android-test:test-inhouse-runner"))
+    androidTestImplementation(project(":common:junit-utils"))
+    androidTestImplementation(project(":common:truth-extensions"))
+    androidTestImplementation(project(":common:test-annotations"))
+    androidTestImplementation(project(":common:report-viewer"))
 
     androidTestUtil(libs.testOrchestrator)
 }
@@ -57,12 +57,17 @@ dependencies {
 val avitoRegistry = getOptionalStringProperty("avito.registry")
 
 instrumentation {
-    reportApiUrl = getOptionalStringProperty("avito.report.url") ?: "http://stub"
-    reportViewerUrl = getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
+
+    testReport {
+        reportViewer {
+            reportApiUrl = getOptionalStringProperty("avito.report.url") ?: "http://stub"
+            reportViewerUrl = getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
+            fileStorageUrl = getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
+        }
+    }
 
     sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
     slackToken = getOptionalStringProperty("avito.slack.test.token") ?: "stub"
-    fileStorageUrl = getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
 
     logcatTags = setOf(
         "UITestRunner:*",

@@ -1,17 +1,17 @@
 package com.avito.runner.service.worker
 
+import com.avito.android.Result
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.model.intention.State.Layer.InstalledApplication
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.model.DeviceInstallation
-import org.funktionale.tries.Try
 
 internal class DeviceStateWorker(private val device: Device) {
 
     inline fun installApplications(
         state: State,
         onAllSucceeded: (List<DeviceInstallation>) -> Unit
-    ): Try<Unit> = state.layers
+    ): Result<Unit> = state.layers
         .filterIsInstance<InstalledApplication>()
         .map {
             device.installApplication(applicationPackage = it.applicationPath)
@@ -25,7 +25,7 @@ internal class DeviceStateWorker(private val device: Device) {
             resultAggregator = {}
         )
 
-    fun clearPackages(state: State): Try<Any> = state.layers
+    fun clearPackages(state: State): Result<Unit> = state.layers
         .asSequence()
         .filterIsInstance<InstalledApplication>()
         .map {
@@ -33,17 +33,17 @@ internal class DeviceStateWorker(private val device: Device) {
         }
         .reduce { _, unusedValue -> unusedValue }
 
-    private inline fun <T, R> List<Try<T>>.aggregate(
+    private inline fun <T, R> List<Result<T>>.aggregate(
         onAllSucceeded: (List<T>) -> Unit,
         errorsAggregator: (List<Throwable>) -> Throwable,
         resultAggregator: (List<T>) -> R
-    ): Try<R> =
-        if (all { it.isSuccess() }) {
-            val results = map { it.get() }
+    ): Result<R> =
+        if (all { it is Result.Success }) {
+            val results = map { it.getOrThrow() }
             onAllSucceeded(results)
-            Try.Success(resultAggregator(results))
+            Result.Success(resultAggregator(results))
         } else {
-            val errors = filterIsInstance<Try.Failure<T>>().map { it.throwable }
-            Try.Failure(errorsAggregator(errors))
+            val errors = filterIsInstance<Result.Failure<T>>().map { it.throwable }
+            Result.Failure(errorsAggregator(errors))
         }
 }

@@ -6,16 +6,16 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:gradle:build-verdict-tasks-api"))
+    api(project(":gradle:build-verdict-tasks-api"))
 
     implementation(gradleApi())
-    implementation(project(":subprojects:common:throwable-utils"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(project(":subprojects:gradle:gradle-logger"))
+    implementation(project(":common:throwable-utils"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(libs.gson)
     implementation(libs.kotlinHtml)
 
-    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

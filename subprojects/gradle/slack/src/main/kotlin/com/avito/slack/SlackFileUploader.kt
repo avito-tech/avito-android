@@ -1,7 +1,7 @@
 package com.avito.slack
 
+import com.avito.android.Result
 import com.avito.slack.model.SlackChannel
-import org.funktionale.tries.Try
 import java.io.File
 
 interface SlackFileUploader {
@@ -10,5 +10,5 @@ interface SlackFileUploader {
         channel: SlackChannel,
         message: String,
         file: File
-    ): Try<Unit>
+    ): Result<Unit>
 }

@@ -1,5 +1,6 @@
 package com.avito.runner.test
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
@@ -15,7 +16,6 @@ import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.google.gson.Gson
-import org.funktionale.tries.Try
 import java.io.File
 import java.nio.file.Path
 import java.util.ArrayDeque
@@ -26,10 +26,10 @@ open class StubDevice(
     tag: String = "StubDevice",
     override val coordinate: DeviceCoordinate = DeviceCoordinate.Local(Serial.Local("stub")),
     loggerFactory: LoggerFactory,
-    installApplicationResults: List<Try<DeviceInstallation>> = emptyList(),
+    installApplicationResults: List<Result<DeviceInstallation>> = emptyList(),
     gettingDeviceStatusResults: List<Device.DeviceStatus> = emptyList(),
     runTestsResults: List<StubActionResult<TestCaseRun.Result>> = emptyList(),
-    clearPackageResults: List<StubActionResult<Try<Any>>> = emptyList(),
+    clearPackageResults: List<StubActionResult<Result<Unit>>> = emptyList(),
     private val apiResult: StubActionResult<Int> = StubActionResult.Success(22),
     override val online: Boolean = true,
     override val model: String = "model"
@@ -37,13 +37,13 @@ open class StubDevice(
 
     private val gson = Gson()
 
-    private val installApplicationResultsQueue: Queue<Try<DeviceInstallation>> =
+    private val installApplicationResultsQueue: Queue<Result<DeviceInstallation>> =
         ArrayDeque(installApplicationResults)
     private val gettingDeviceStatusResultsQueue: Queue<Device.DeviceStatus> =
         ArrayDeque(gettingDeviceStatusResults)
     private val runTestsResultsQueue: Queue<StubActionResult<TestCaseRun.Result>> =
         ArrayDeque(runTestsResults)
-    private val clearPackageResultsQueue: Queue<StubActionResult<Try<Any>>> =
+    private val clearPackageResultsQueue: Queue<StubActionResult<Result<Unit>>> =
         ArrayDeque(clearPackageResults)
 
     override val logger = loggerFactory.create(tag)
@@ -51,7 +51,7 @@ open class StubDevice(
     override val api: Int
         get() = apiResult.get()
 
-    override fun installApplication(applicationPackage: String): Try<DeviceInstallation> {
+    override fun installApplication(applicationPackage: String): Result<DeviceInstallation> {
         resultQueuePrecondition(
             queue = installApplicationResultsQueue,
             functionName = "installApplication",
@@ -90,7 +90,7 @@ open class StubDevice(
         )
     }
 
-    override fun clearPackage(name: String): Try<Any> {
+    override fun clearPackage(name: String): Result<Unit> {
         resultQueuePrecondition(
             queue = clearPackageResultsQueue,
             functionName = "clearPackage",
@@ -104,7 +104,7 @@ open class StubDevice(
         return result
     }
 
-    override fun pull(from: Path, to: Path): Try<Any> {
+    override fun pull(from: Path, to: Path): Result<Unit> {
 
         logger.debug("pull called [from: $from to: $to]")
 
@@ -130,15 +130,15 @@ open class StubDevice(
 
             resultFile.writeText(gson.toJson(testRuntimeData))
 
-            Try.Success(Any())
+            Result.Success(Unit)
         } else {
-            Try.Success(Any())
+            Result.Success(Unit)
         }
     }
 
-    override fun clearDirectory(remotePath: Path): Try<Any> = Try {}
+    override fun clearDirectory(remotePath: Path): Result<Unit> = Result.tryCatch {}
 
-    override fun list(remotePath: String): Try<List<String>> = Try { emptyList() }
+    override fun list(remotePath: String): Result<List<String>> = Result.tryCatch { emptyList() }
 
     override fun deviceStatus(): Device.DeviceStatus {
         resultQueuePrecondition(
@@ -188,8 +188,8 @@ open class StubDevice(
 
     companion object {
 
-        fun installApplicationSuccess(applicationPackage: String = "doesntmatter"): Try<DeviceInstallation> {
-            return Try.Success(
+        fun installApplicationSuccess(applicationPackage: String = "doesntmatter"): Result<DeviceInstallation> {
+            return Result.Success(
                 DeviceInstallation(
                     installation = Installation(
                         application = applicationPackage,
@@ -204,8 +204,8 @@ open class StubDevice(
             )
         }
 
-        fun installApplicationFailure(): Try<DeviceInstallation> {
-            return Try.Failure(Exception())
+        fun installApplicationFailure(): Result<DeviceInstallation> {
+            return Result.Failure(Exception())
         }
     }
 }

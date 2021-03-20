@@ -21,6 +21,8 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPlu
 
 val testTimeoutSeconds = 600
 
+val artifactoryUrl: Provider<String> = providers.gradleProperty("artifactoryUrl").forUseAtConfigurationTime()
+
 val gradleTestTask = tasks.register<Test>("gradleTest") {
     description = "Runs gradle test kit tests"
     group = "verification"
@@ -33,13 +35,14 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
     @Suppress("MagicNumber")
     maxParallelForks = 8
 
-    failFast = true
+    failFast = false
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("kotlinVersion", kotlinVersion)
     systemProperty("compileSdkVersion", libs.compileSdkVersion)
     systemProperty("buildToolsVersion", libs.buildToolsVersion)
     systemProperty("androidGradlePluginVersion", libs.androidGradlePluginVersion)
+    systemProperty("artifactoryUrl", artifactoryUrl.getOrElse(""))
     systemProperty("isTest", true)
 
     systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)

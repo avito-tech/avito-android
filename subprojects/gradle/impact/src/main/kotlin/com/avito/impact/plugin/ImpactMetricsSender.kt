@@ -1,6 +1,5 @@
 package com.avito.impact.plugin
 
-import com.avito.android.sentry.Environment
 import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.SeriesName
@@ -8,6 +7,7 @@ import com.avito.android.stats.StatsDSender
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.impact.configuration.internalModule
 import com.avito.module.configurations.ConfigurationType
+import com.avito.utils.gradle.Environment
 
 class ImpactMetricsSender(
     private val statsDSender: StatsDSender,
@@ -22,12 +22,22 @@ class ImpactMetricsSender(
 
     private val prefix by lazy {
         val envName = environmentInfo.environment.publicName
-        val node = environmentInfo.node?.take(GRAPHITE_SERIES_LIMIT) ?: "_"
+        val node = "_" // Don't need when we have build id. Empty value for backward compatibility in series name
         val buildId = requireNotNull(environmentInfo.teamcityBuildId()) {
             "ImpactMetricsSender should run only if teamcityBuildInfo available"
         }
         SeriesName.create(envName, node, buildId)
     }
+
+    private val ConfigurationType.name: String
+        get() {
+            return when (this) {
+                ConfigurationType.AndroidTests -> "androidtests"
+                ConfigurationType.Main -> "implementation"
+                ConfigurationType.Lint -> "lint"
+                ConfigurationType.UnitTests -> "unittests"
+            }
+        }
 
     fun sendModifiedProjectCounters(modifiedProjectsFinder: ModifiedProjectsFinder) {
         modifiedProjectsFinder.getProjects().forEach { (type, projects) ->
@@ -45,8 +55,3 @@ class ImpactMetricsSender(
         )
     }
 }
-
-/**
- * todo check if this is a real reason
- */
-private const val GRAPHITE_SERIES_LIMIT = 32

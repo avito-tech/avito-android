@@ -1,10 +1,10 @@
 package com.avito.slack
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import org.funktionale.tries.Try
 
 /**
  * Сокращаем количество сообщений в канале путем обновления имеющегося сообщения
@@ -19,7 +19,7 @@ class SlackConditionalSender(
 
     private val logger = loggerFactory.create<SlackConditionalSender>()
 
-    override fun sendMessage(message: SlackSendMessageRequest): Try<SlackMessage> {
+    override fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage> {
         logger.info(
             "Sending message using SlackConditionalSender, " +
                 "trying to find previous message in channel: ${message.channel.name}"

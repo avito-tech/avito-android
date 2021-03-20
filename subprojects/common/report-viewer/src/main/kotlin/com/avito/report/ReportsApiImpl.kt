@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.internal.model.ConclusionStatus
@@ -13,7 +14,6 @@ import com.avito.report.model.CreateResult.Failed
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.JsonElement
-import org.funktionale.tries.Try
 
 internal class ReportsApiImpl(
     private val loggerFactory: LoggerFactory,
@@ -25,7 +25,7 @@ internal class ReportsApiImpl(
     override fun create(
         reportCoordinates: ReportCoordinates,
         buildId: String,
-        apiUrl: String,
+        testHost: String,
         gitBranch: String,
         gitCommit: String,
         tmsBranch: String
@@ -40,13 +40,12 @@ internal class ReportsApiImpl(
                         "run_id" to reportCoordinates.runId,
                         "report_data" to mapOf(
                             "build" to buildId,
-                            "testHost" to apiUrl,
+                            "testHost" to testHost,
                             "testsBranch" to tmsBranch,
                             "appBranch" to gitBranch,
 
                             /**
-                             * Секретный массив, в который добавляются параметры в таком формате,
-                             * чтобы потом по ним фильтровать в бекенде истории
+                             * to filter report history
                              */
                             "tags" to listOf(
                                 "buildBranch:$gitBranch",
@@ -67,9 +66,9 @@ internal class ReportsApiImpl(
         }
     }
 
-    override fun setFinished(reportCoordinates: ReportCoordinates): Try<Unit> {
+    override fun setFinished(reportCoordinates: ReportCoordinates): Result<Unit> {
         return when (val getReportResult = getReport(reportCoordinates)) {
-            is GetReportResult.Found -> Try {
+            is GetReportResult.Found -> Result.tryCatch {
                 requestProvider.jsonRpcRequest<Unit>(
                     RfcRpcRequest(
                         method = "Run.SetFinished",
@@ -79,12 +78,12 @@ internal class ReportsApiImpl(
                     )
                 )
             }
-            GetReportResult.NotFound -> Try.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Try.Failure(getReportResult.exception)
+            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
+            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
         }
     }
 
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit> {
+    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
         return addConclusion(
             testRunId,
             author,
@@ -93,7 +92,7 @@ internal class ReportsApiImpl(
         )
     }
 
-    override fun markAsFailed(testRunId: String, author: String, comment: String): Try<Unit> {
+    override fun markAsFailed(testRunId: String, author: String, comment: String): Result<Unit> {
         return addConclusion(
             testRunId,
             author,
@@ -102,8 +101,8 @@ internal class ReportsApiImpl(
         )
     }
 
-    override fun pushPreparedData(reportId: String, analyzerKey: String, preparedData: JsonElement): Try<Unit> {
-        return Try {
+    override fun pushPreparedData(reportId: String, analyzerKey: String, preparedData: JsonElement): Result<Unit> {
+        return Result.tryCatch {
             requestProvider.jsonRpcRequest<Unit>(
                 RfcRpcRequest(
                     method = "Run.PushPreparedData",
@@ -121,8 +120,8 @@ internal class ReportsApiImpl(
      * RunTest.AddConclusion
      * @param status 'ok','fail','irrelevant' ('irrelevant' допустим только для тестов в статусе 32 - testcase)
      */
-    private fun addConclusion(id: String, author: String, status: ConclusionStatus, comment: String): Try<Unit> {
-        return Try {
+    private fun addConclusion(id: String, author: String, status: ConclusionStatus, comment: String): Result<Unit> {
+        return Result.tryCatch {
             requestProvider.jsonRpcRequest<Unit>(
                 RfcRpcRequest(
                     method = "RunTest.AddConclusion",

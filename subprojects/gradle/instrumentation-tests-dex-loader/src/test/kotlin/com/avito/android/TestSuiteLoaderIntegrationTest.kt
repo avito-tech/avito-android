@@ -17,7 +17,7 @@ class TestSuiteLoaderIntegrationTest {
 
     @Test
     fun `load test suite - returns all test cases - without annotation filter`() {
-        val actualTests = testSuiteLoader.loadTestSuite(getTestApk()).get()
+        val actualTests = testSuiteLoader.loadTestSuite(getTestApk()).getOrThrow()
 
         val expectedTests = listOf(
             TestInApk.createStubInstance(
@@ -97,14 +97,14 @@ class TestSuiteLoaderIntegrationTest {
     @Test
     fun `get tests - pass - when parsed apk contains test classes without CaseId annotation and missed case if is allowed`() {
         testSuiteLoader = TestSuiteLoaderImpl()
-        val suite = testSuiteLoader.loadTestSuite(getTestApkWithoutAnnotations()).get()
+        val suite = testSuiteLoader.loadTestSuite(getTestApkWithoutAnnotations()).getOrThrow()
         assertThat(suite.size).isEqualTo(9)
     }
 
     @Test
     fun `get tests - returns annotation with values`() {
         testSuiteLoader = TestSuiteLoaderImpl()
-        val suite = testSuiteLoader.loadTestSuite(getTestApkWithAnnotationWithValues()).get()
+        val suite = testSuiteLoader.loadTestSuite(getTestApkWithAnnotationWithValues()).getOrThrow()
         assertThat(suite.size).isEqualTo(1)
         val loadedTest = suite.first()
 

@@ -39,7 +39,7 @@ open class VerifyArtifactsStep(
         }
 
         val copyTask = project.tasks.register<CopyArtifactsTask>("${context}CopyArtifacts") {
-            group = "cd"
+            group = cdTaskGroup
             description = "Copies all defined release artifacts to outputs directory"
 
             sourceDir.set(project.rootDir)

@@ -10,6 +10,8 @@ abstract class BuildStep(
     private val name: String
 ) : Named {
 
+    protected val cdTaskGroup = "cd"
+
     internal abstract fun registerTask(project: Project, rootTask: TaskProvider<out Task>)
 
     override fun getName() = name

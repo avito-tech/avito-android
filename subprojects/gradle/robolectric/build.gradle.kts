@@ -6,10 +6,10 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:gradle-extensions"))
 
-    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

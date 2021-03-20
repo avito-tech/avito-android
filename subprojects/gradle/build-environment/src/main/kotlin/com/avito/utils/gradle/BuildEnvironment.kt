@@ -9,7 +9,7 @@ import org.gradle.api.provider.ProviderFactory
  * @param reason Причина почему было выбрано то или иное окружение
  */
 sealed class BuildEnvironment(
-    private val providers: ProviderFactory,
+    providers: ProviderFactory,
     private val reason: String,
     val inGradleTestKit: Boolean = isRunInGradleTestKit(providers)
 ) {
@@ -55,12 +55,12 @@ val Project.buildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { pro
     result
 }
 
-fun isRunFromGradleTestKit(project: Project): Boolean {
+internal fun isRunFromGradleTestKit(project: Project): Boolean {
     return project.hasProperty("injected.from.gradle_testkit")
 }
 
 @Suppress("UnstableApiUsage")
-fun isRunInGradleTestKit(providers: ProviderFactory): Boolean =
+internal fun isRunInGradleTestKit(providers: ProviderFactory): Boolean =
     providers.systemProperty("isTest")
         .forUseAtConfigurationTime()
         .getOrElse("false")

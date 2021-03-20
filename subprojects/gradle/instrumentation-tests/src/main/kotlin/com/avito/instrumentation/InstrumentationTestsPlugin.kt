@@ -12,6 +12,7 @@ import com.avito.android.LoadTestsFromApkTask
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
 import com.avito.android.runner.devices.model.DeviceType.CLOUD
+import com.avito.android.stats.statsdConfig
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
@@ -23,7 +24,6 @@ import com.avito.instrumentation.configuration.withInstrumentationExtensionData
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.test.DumpConfigurationTask
 import com.avito.instrumentation.service.TestRunnerService
-import com.avito.instrumentation.util.DelayTask
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
@@ -32,7 +32,6 @@ import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.kotlin.dsl.register
@@ -58,14 +57,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             )
         }
 
-        // see LintWorkerApiWorkaround.md
-        project.tasks.register<DelayTask>(preInstrumentationTaskName) {
-            group = ciTaskGroup
-            description = "Executed when all inputs of all instrumentation tasks in the module are ready"
-
-            delayMillis.set(MAGIC_DELAY)
-        }
-
         project.withInstrumentationExtensionData { extensionData ->
 
             val testRunnerServiceProvider = if (extensionData.useService) {
@@ -73,7 +64,12 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     "testRunnerService",
                     TestRunnerService::class.java
                 ) { spec ->
-                    spec.parameters
+                    with(spec.parameters) {
+                        kubernetesCredentials.set(project.kubernetesCredentials)
+                        statsDConfig.set(project.statsdConfig.get())
+                        buildId.set(env.build.id.toString())
+                        buildType.set(env.build.type)
+                    }
                 }
             } else {
                 Providers.notDefined()
@@ -95,13 +91,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                 }
 
                 val configurationOutputFolder = File(extensionData.output, instrumentationConfiguration.name)
-
-                // see LintWorkerApiWorkaround.md
-                val preInstrumentationTask = project.tasks.register<Task>(
-                    preInstrumentationTaskName(instrumentationConfiguration.name)
-                ) {
-                    group = ciTaskGroup
-                }
 
                 if (instrumentationConfiguration.runOnlyChangedTests) {
                     if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
@@ -128,12 +117,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
                     this.buildId.set(env.build.id.toString())
                     this.buildType.set(env.build.type)
-                    this.buildUrl.set(env.build.url)
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
-                    this.defaultBranch.set(gitState.map { it.defaultBranch })
-                    this.sourceCommitHash.set(gitState.map { it.originalBranch.commit })
-                    this.slackToken.set(extensionData.slackToken)
                     this.testRunnerService.set(testRunnerServiceProvider)
                     this.output.set(configurationOutputFolder)
                     if (extensionData.reportViewer != null) {
@@ -178,8 +163,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                             }
                         }
 
-                        preInstrumentationTask.configure { it.dependsOn(testApkProvider) }
-
                         instrumentationTaskProvider.configure { instrumentationTask ->
                             instrumentationTask.parameters.set(runFunctionalTestsParameters)
 
@@ -220,13 +203,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                                 logcatTags = extensionData.logcatTags,
                                 enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
                             )
-
-                            preInstrumentationTask.configure {
-                                it.dependsOn(
-                                    testedVariantPackageTask,
-                                    testVariantPackageTask
-                                )
-                            }
 
                             instrumentationTaskProvider.configure { task ->
                                 task.parameters.set(runFunctionalTestsParameters)
@@ -345,9 +321,3 @@ private fun DefaultConfig.getTestInstrumentationRunnerOrThrow(): String {
     }
     return runner
 }
-
-/**
- * Some empirical value that seems to solve project lock problem
- * see LintWorkerApiWorkaround.md
- */
-private const val MAGIC_DELAY = 500L

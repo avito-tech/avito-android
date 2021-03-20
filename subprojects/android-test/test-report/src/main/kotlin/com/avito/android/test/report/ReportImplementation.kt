@@ -2,10 +2,9 @@ package com.avito.android.test.report
 
 import androidx.annotation.VisibleForTesting
 import androidx.test.espresso.EspressoException
-import com.avito.android.test.report.dump.ThreadDumper
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
-import com.avito.android.test.report.incident.IncidentChain
+import com.avito.android.test.report.incident.IncidentChainFactory
 import com.avito.android.test.report.incident.RequestIncidentPresenter
 import com.avito.android.test.report.incident.ResourceIncidentPresenter
 import com.avito.android.test.report.incident.ResourceManagerIncidentPresenter
@@ -18,9 +17,11 @@ import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.screenshot.ScreenshotCapturer
+import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
 import com.avito.android.test.report.screenshot.ScreenshotUploader
+import com.avito.android.test.report.screenshot.ScreenshotUploaderImpl
 import com.avito.android.test.report.transport.Transport
+import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.util.formatStackTrace
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
@@ -39,16 +40,16 @@ import java.io.File
  */
 class ReportImplementation(
     onDeviceCacheDirectory: Lazy<File>,
-    private val onIncident: (Throwable) -> Unit = {},
     private val loggerFactory: LoggerFactory,
     private val transport: List<Transport>,
     private val remoteStorage: RemoteStorage,
-    private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
-        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, loggerFactory),
+    private val screenshotUploader: ScreenshotUploader = ScreenshotUploaderImpl(
+        screenshotCapturer = ScreenshotCapturerImpl(onDeviceCacheDirectory),
         remoteStorage = remoteStorage,
         loggerFactory = loggerFactory
     ),
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
+    private val troubleshooter: Troubleshooter = Troubleshooter.Impl
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
@@ -113,37 +114,42 @@ class ReportImplementation(
         screenshot: FutureValue<RemoteStorage.Result>?,
     ) = methodExecutionTracing("registerIncident") {
         val currentState = getCastedState<ReportState.Initialized>()
-        val type = exception.determineIncidentType()
-        if (currentState.incident == null) {
-            val incidentChain = IncidentChain.Impl(
-                customViewPresenters = setOf(
-                    TestCaseIncidentPresenter(),
-                    RequestIncidentPresenter(),
-                    ResourceIncidentPresenter(),
-                    ResourceManagerIncidentPresenter(),
-                    AppCrashIncidentPresenter()
-                ),
-                fallbackPresenter = FallbackIncidentPresenter()
-            ).toChain(exception)
 
+        if (currentState.incident == null) {
+            if (screenshot != null) {
+                incidentFutureUploads.add(screenshot)
+            }
+
+            val type = exception.determineIncidentType()
+            val chainFactory = createIncidentChainFactory()
             val incidentToAdd = Incident(
                 type = type,
-                chain = incidentChain,
+                chain = chainFactory.toChain(exception),
                 timestamp = timeProvider.nowInSeconds(),
                 entryList = emptyList(),
                 trace = exception.formatStackTrace()
             )
-
-            if (screenshot != null) {
-                incidentFutureUploads.add(screenshot)
-            }
-            addText("Threads dump", ThreadDumper.getThreadDump())
-
-            onIncident.invoke(exception)
-
+            addTroubleshootingEntries()
             currentState.incident = incidentToAdd
             afterIncident(incidentToAdd)
+        } else {
+            logger.warn("Fail to register incident. Incident already exist", exception)
         }
+    }
+
+    private fun createIncidentChainFactory() = IncidentChainFactory.Impl(
+        customViewPresenters = setOf(
+            TestCaseIncidentPresenter(),
+            RequestIncidentPresenter(),
+            ResourceIncidentPresenter(),
+            ResourceManagerIncidentPresenter(),
+            AppCrashIncidentPresenter()
+        ),
+        fallbackPresenter = FallbackIncidentPresenter()
+    )
+
+    private fun addTroubleshootingEntries() {
+        troubleshooter.troubleshootTo(this)
     }
 
     @Synchronized
@@ -260,14 +266,9 @@ class ReportImplementation(
             comment = label
         )
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val futureUploads = started?.getCurrentStepOrCreate {
-            StepResult(
-                isSynthetic = true,
-                timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
-            )
-        }?.futureUploads ?: earlyFuturesUploads
+        val futureUploads = started
+            ?.currentStepOrSynthetic()
+            ?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(html)
     }
 
@@ -280,14 +281,9 @@ class ReportImplementation(
             comment = label
         )
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val futureUploads = started?.getCurrentStepOrCreate {
-            StepResult(
-                isSynthetic = true,
-                timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
-            )
-        }?.futureUploads ?: earlyFuturesUploads
+        val futureUploads = started
+            ?.currentStepOrSynthetic()
+            ?.futureUploads ?: earlyFuturesUploads
         futureUploads.add(txt)
     }
 
@@ -303,16 +299,21 @@ class ReportImplementation(
 
     private fun addEntry(entry: Entry) {
         val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val entriesList = started?.getCurrentStepOrCreate {
+        val entriesList = started
+            ?.currentStepOrSynthetic()
+            ?.entryList ?: earlyEntries
+        entriesList.add(entry)
+    }
+
+    private fun ReportState.Initialized.Started.currentStepOrSynthetic() =
+        getCurrentStepOrCreate {
             StepResult(
                 isSynthetic = true,
                 timestamp = timeProvider.nowInSeconds(),
-                number = started.stepNumber++,
-                title = "Synthetic step"
+                number = stepNumber++,
+                title = "Out of step"
             )
-        }?.entryList ?: earlyEntries
-        entriesList.add(entry)
-    }
+        }
 
     private fun Throwable.determineIncidentType(): Incident.Type {
         return when {

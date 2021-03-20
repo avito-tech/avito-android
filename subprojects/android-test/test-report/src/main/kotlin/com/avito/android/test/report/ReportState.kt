@@ -38,7 +38,10 @@ sealed class ReportState {
             internal fun getCurrentStepOrCreate(factory: () -> StepResult): StepResult {
                 return currentStep ?: factory().also { step ->
                     currentStep = step
-                    testCaseStepList.add(step)
+                    when {
+                        testCaseStepList.isNotEmpty() -> testCaseStepList.add(step)
+                        else -> preconditionStepList.add(step)
+                    }
                 }
             }
 

@@ -1,11 +1,11 @@
 package com.avito.android.runner.report
 
+import com.avito.android.Result
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
-import org.funktionale.tries.Try
 
 internal class InMemoryReport(
     private val id: String,
@@ -16,8 +16,8 @@ internal class InMemoryReport(
     private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
 
-    override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
-        gitInfo = "$apiUrl;$gitBranch$;$gitCommit"
+    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
+        gitInfo = "$testHost;$gitBranch$;$gitCommit"
     }
 
     override fun tryGetId(): String? {
@@ -58,17 +58,17 @@ internal class InMemoryReport(
     }
 
     @Synchronized
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit> {
+    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
         TODO("Need to implement")
     }
 
     @Synchronized
-    override fun getCrossDeviceTestData(): Try<CrossDeviceSuite> {
+    override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
         TODO("Not yet implemented")
     }
 
     @Synchronized
-    override fun getTests(): Try<List<SimpleRunTest>> {
+    override fun getTests(): Result<List<SimpleRunTest>> {
         val result = testAttempts
             .groupBy { testAttempt ->
                 "${testAttempt.name};${testAttempt.device}"
@@ -77,7 +77,9 @@ internal class InMemoryReport(
                 val lastAttempt = attempts.last()
                 SimpleRunTest(
                     id = testCoordinate, // todo unique in one run
-                    reportId = requireNotNull(tryGetId()), // todo fix failure
+                    reportId = requireNotNull(tryGetId()) {
+                        "InMemoryReport reportId must be present"
+                    },
                     name = lastAttempt.name.name,
                     className = lastAttempt.name.className,
                     methodName = lastAttempt.name.methodName,
@@ -104,6 +106,6 @@ internal class InMemoryReport(
                     flakiness = lastAttempt.flakiness
                 )
             }
-        return Try.Success(result)
+        return Result.Success(result)
     }
 }

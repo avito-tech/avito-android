@@ -1,9 +1,9 @@
 package com.avito.test.summary
 
-import org.funktionale.tries.Try
+import com.avito.android.Result
 
 internal interface FlakyTestReporter {
     fun reportSummary(
         info: List<FlakyInfo>
-    ): Try<Unit>
+    ): Result<Unit>
 }

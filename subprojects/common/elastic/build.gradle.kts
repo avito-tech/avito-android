@@ -7,17 +7,17 @@ plugins {
 dependencies {
     api(libs.okhttp)
 
-    implementation(project(":subprojects:common:time"))
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:common:slf4j-logger"))
+    implementation(project(":common:time"))
+    implementation(project(":common:okhttp"))
+    implementation(project(":common:slf4j-logger"))
 
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
 
-    testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:common:time")))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    testImplementation(project(":common:test-okhttp"))
+    testImplementation(testFixtures(project(":common:time")))
+    testImplementation(testFixtures(project(":common:logger")))
 }
 
 kotlin {

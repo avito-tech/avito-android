@@ -160,7 +160,7 @@ class RealTest {
             commitHash = Git.Impl(
                 rootDir = projectDir,
                 loggerFactory = loggerFactory
-            ).tryParseRev("HEAD").get()
+            ).tryParseRev("HEAD").getOrThrow()
         )
 
         val runId = "runId"
@@ -243,7 +243,7 @@ class RealTest {
             commitHash = Git.Impl(
                 rootDir = projectDir,
                 loggerFactory = loggerFactory
-            ).tryParseRev("HEAD").get()
+            ).tryParseRev("HEAD").getOrThrow()
         )
         val cdBuildConfig = """
         {
@@ -380,7 +380,6 @@ class RealTest {
             }
             instrumentation {
                  sentryDsn = "stub"
-                 slackToken = "stub"
                  
                  instrumentationParams = [
                     "deviceName"    : "regress",

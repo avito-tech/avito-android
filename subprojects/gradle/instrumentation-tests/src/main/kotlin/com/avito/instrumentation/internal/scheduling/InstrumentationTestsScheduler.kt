@@ -1,18 +1,17 @@
 package com.avito.instrumentation.internal.scheduling
 
+import com.avito.android.Result
 import com.avito.android.TestInApk
 import com.avito.android.TestSuiteLoader
 import com.avito.android.check.AllChecks
 import com.avito.android.runner.report.Report
 import com.avito.instrumentation.internal.InstrumentationTestsAction
-import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.Gson
-import org.funktionale.tries.Try
 import java.io.File
 
 internal class InstrumentationTestsScheduler(
@@ -24,7 +23,7 @@ internal class InstrumentationTestsScheduler(
     private val testSuiteLoader: TestSuiteLoader,
     private val gson: Gson,
     private val filterInfoWriter: FilterInfoWriter,
-    private val loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory
 ) : TestsScheduler {
 
     private val logger = loggerFactory.create<InstrumentationTestsScheduler>()
@@ -46,7 +45,7 @@ internal class InstrumentationTestsScheduler(
         writeParsedTests(tests)
 
         val testSuite = testSuiteProvider.getTestSuite(
-            tests = tests.get()
+            tests = tests.getOrThrow()
         )
 
         val skippedTests = testSuite.skippedTests.map {
@@ -65,7 +64,6 @@ internal class InstrumentationTestsScheduler(
         val testsResult = testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
-            runType = TestExecutor.RunType(id = "initialRun"),
             reportCoordinates = reportCoordinates,
             report = sourceReport,
             testsToRun = testSuite.testsToRun
@@ -77,7 +75,7 @@ internal class InstrumentationTestsScheduler(
         )
     }
 
-    private fun writeParsedTests(parsedTests: Try<List<TestInApk>>) {
+    private fun writeParsedTests(parsedTests: Result<List<TestInApk>>) {
         val file = File(params.outputDir, "parsed-tests.json")
         parsedTests.fold(
             { tests -> file.writeText(gson.toJson(tests)) },

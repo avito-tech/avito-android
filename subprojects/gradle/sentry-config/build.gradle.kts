@@ -5,12 +5,11 @@ plugins {
 }
 
 dependencies {
-    api(project(":subprojects:common:sentry"))
+    api(project(":common:sentry"))
 
     implementation(gradleApi())
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:common:logger"))
-    implementation(project(":subprojects:gradle:git"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(libs.funktionaleTry)
+    implementation(project(":common:okhttp"))
+    implementation(project(":common:logger"))
+    implementation(project(":gradle:build-environment"))
+    implementation(project(":gradle:gradle-extensions"))
 }

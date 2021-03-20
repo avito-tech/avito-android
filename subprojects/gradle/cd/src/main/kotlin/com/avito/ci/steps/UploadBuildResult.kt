@@ -38,7 +38,7 @@ class UploadBuildResult(context: String, name: String) : SuppressibleBuildStep(c
                     suppressFailures
                 )
             ) {
-                group = "cd"
+                group = cdTaskGroup
                 description = "Task for send CD build result"
                 project.tasks.namedOrNull(deployTaskName)?.also { deployTask -> dependsOn(deployTask) }
                 mustRunAfter(project.tasks.artifactoryAppBackupTask())

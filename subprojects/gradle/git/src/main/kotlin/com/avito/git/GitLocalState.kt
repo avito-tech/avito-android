@@ -30,8 +30,8 @@ class GitLocalStateImpl(
             loggerFactory = loggerFactory
         )
 
-        val gitBranch: String = git.tryParseRev("HEAD", abbrevRef = true).get()
-        val gitCommit: String = git.tryParseRev("HEAD", abbrevRef = false).get()
+        val gitBranch: String = git.tryParseRev("HEAD", abbrevRef = true).getOrThrow()
+        val gitCommit: String = git.tryParseRev("HEAD", abbrevRef = false).getOrThrow()
 
         this.currentBranch = Branch(
             name = gitBranch,

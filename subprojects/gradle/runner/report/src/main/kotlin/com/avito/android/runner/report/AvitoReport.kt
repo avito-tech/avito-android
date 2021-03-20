@@ -1,5 +1,6 @@
 package com.avito.android.runner.report
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
@@ -11,7 +12,6 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
-import org.funktionale.tries.Try
 
 /**
  * Implementation for inhouse Avito report backend
@@ -30,12 +30,12 @@ internal class AvitoReport(
 
     private val logger = loggerFactory.create<Report>()
 
-    override fun tryCreate(apiUrl: String, gitBranch: String, gitCommit: String) {
-        return when (val result = reportsApi.create(reportCoordinates, buildId, apiUrl, gitBranch, gitCommit)) {
+    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
+        return when (val result = reportsApi.create(reportCoordinates, buildId, testHost, gitBranch, gitCommit)) {
             is CreateResult.Created ->
-                logger.info("Report created, id=${result.id}")
+                logger.debug("Report created, id=${result.id}")
             CreateResult.AlreadyCreated ->
-                logger.info(
+                logger.debug(
                     "Can't tryCreate report, already created, " +
                         "it's ok if we call it N(=release configurations) times"
                 )
@@ -136,15 +136,15 @@ internal class AvitoReport(
         }
     }
 
-    override fun getTests(): Try<List<SimpleRunTest>> {
+    override fun getTests(): Result<List<SimpleRunTest>> {
         return reportsApi.getTestsForRunId(reportCoordinates)
     }
 
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit> {
+    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
         return reportsApi.markAsSuccessful(testRunId, author, comment)
     }
 
-    override fun getCrossDeviceTestData(): Try<CrossDeviceSuite> {
+    override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
         return reportsApi.getCrossDeviceTestData(reportCoordinates)
     }
 

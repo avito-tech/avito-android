@@ -4,6 +4,7 @@ import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.StatsMetric
+import com.avito.utils.gradle.Environment
 import org.gradle.api.provider.Provider
 
 public class BuildMetricTracker(
@@ -12,7 +13,12 @@ public class BuildMetricTracker(
 ) {
 
     private val node by lazy {
-        env.get().node?.take(32) ?: "unknown"
+        val env = env.get()
+        // Don't need details from CI. Empty value for backward compatibility in series name
+        when (env.environment) {
+            is Environment.CI -> "_"
+            else -> env.node ?: "unknown"
+        }
     }
 
     public fun track(buildStatus: BuildStatus, metric: StatsMetric) {

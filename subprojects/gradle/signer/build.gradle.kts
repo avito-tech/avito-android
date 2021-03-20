@@ -6,24 +6,24 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:gradle-extensions"))
-    implementation(project(":subprojects:gradle:build-failer"))
-    implementation(project(":subprojects:gradle:gradle-logger"))
-    implementation(project(":subprojects:common:okhttp"))
-    implementation(project(":subprojects:common:throwable-utils"))
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:common:files"))
+    implementation(project(":common:files"))
+    implementation(project(":common:okhttp"))
+    implementation(project(":common:result"))
+    implementation(project(":common:throwable-utils"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:build-failer"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:gradle-logger"))
 
-    implementation(libs.funktionaleTry)
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
 
-    testImplementation(project(":subprojects:common:truth-extensions"))
-    testImplementation(project(":subprojects:common:test-okhttp"))
-    testImplementation(testFixtures(project(":subprojects:common:logger")))
+    testImplementation(project(":common:truth-extensions"))
+    testImplementation(project(":common:test-okhttp"))
+    testImplementation(testFixtures(project(":common:logger")))
 
-    gradleTestImplementation(project(":subprojects:gradle:test-project"))
-    gradleTestImplementation(project(":subprojects:common:test-okhttp"))
+    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(project(":common:test-okhttp"))
 }
 
 gradlePlugin {

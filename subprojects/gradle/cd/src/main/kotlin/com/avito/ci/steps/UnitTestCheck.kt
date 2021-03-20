@@ -12,13 +12,13 @@ open class UnitTestCheck(context: String, name: String) : BuildStep(context, nam
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         val allTestTask = project.tasks.register("${context}AllUnitTests") { allTestTask ->
-            allTestTask.group = "cd"
+            allTestTask.group = cdTaskGroup
             allTestTask.description = "Run all unit test in app module and all dependant modules"
 
             val configurations = project.internalModule.let {
                 listOf(
                     it.testConfiguration,
-                    it.implementationConfiguration
+                    it.mainConfiguration
                 )
             }
 

@@ -31,7 +31,6 @@ internal fun registerUiTestConfigurations(vararg names: String): String {
         }
         instrumentation {
             sentryDsn = "stub"
-            slackToken = "stub"
             instrumentationParams = [
                 "deviceName"    : "regress",
                 "jobSlug"       : "regress"

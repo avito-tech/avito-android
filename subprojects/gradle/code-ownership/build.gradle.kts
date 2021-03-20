@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:cd"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:module-types"))
-    implementation(project(":subprojects:gradle:pre-build"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":gradle:cd"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:module-types"))
+    implementation(project(":gradle:pre-build"))
+    implementation(project(":gradle:gradle-extensions"))
 
-    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

@@ -6,24 +6,24 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":subprojects:gradle:build-failer"))
-    implementation(project(":subprojects:gradle:gradle-logger"))
-    implementation(project(":subprojects:gradle:android"))
-    implementation(project(":subprojects:gradle:impact-shared"))
-    implementation(project(":subprojects:gradle:build-metrics"))
-    implementation(project(":subprojects:gradle:sentry-config"))
-    implementation(project(":subprojects:gradle:build-environment"))
-    implementation(project(":subprojects:common:files"))
-    implementation(project(":subprojects:gradle:statsd-config"))
-    implementation(project(":subprojects:gradle:gradle-extensions"))
+    implementation(project(":gradle:build-failer"))
+    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:impact-shared"))
+    implementation(project(":gradle:build-metrics"))
+    implementation(project(":gradle:sentry-config"))
+    implementation(project(":gradle:build-environment"))
+    implementation(project(":common:files"))
+    implementation(project(":common:result"))
+    implementation(project(":gradle:statsd-config"))
+    implementation(project(":gradle:gradle-extensions"))
     implementation(libs.kotlinPlugin)
-    implementation(libs.funktionaleTry)
 
     // for test
-    implementation(project(":subprojects:gradle:module-types"))
-    implementation(project(":subprojects:gradle:room-config"))
+    implementation(project(":gradle:module-types"))
+    implementation(project(":gradle:room-config"))
 
-    gradleTestImplementation(project(":subprojects:gradle:test-project"))
+    gradleTestImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {

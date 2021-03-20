@@ -83,7 +83,7 @@ internal class FilterFactoryImpl(
             val previousRunTests = factory
                 .createReadReport(reportConfig)
                 .getTests()
-                .get()
+                .getOrThrow()
             if (previousStatuses.included.isNotEmpty()) {
                 add(
                     IncludeByTestSignaturesFilter(
@@ -112,7 +112,7 @@ internal class FilterFactoryImpl(
             val statuses = reportFilter.statuses
             val previousRunTests = factory.createReadReport(reportFilter.reportConfig)
                 .getTests()
-                .get()
+                .getOrThrow()
             if (statuses.included.isNotEmpty()) {
                 add(
                     IncludeByTestSignaturesFilter(
@@ -146,10 +146,8 @@ internal class FilterFactoryImpl(
     }
 
     private fun MutableList<TestsFilter>.addImpactAnalysisFilter() {
-        return if (impactAnalysisResult.runOnlyChangedTests) {
+        if (impactAnalysisResult.runOnlyChangedTests) {
             addImpactTests(impactAnalysisResult.changedTests)
-        } else {
-            // do nothing
         }
     }
 

@@ -1,5 +1,6 @@
 package com.avito.slack
 
+import com.avito.android.Result
 import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.model.SlackChannel
@@ -7,7 +8,6 @@ import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -42,8 +42,8 @@ internal class SlackConditionalSenderIntegrationTest {
 
         val message = slackClient.findMessage(testChannel, condition)
 
-        assertThat(message).isInstanceOf<Try.Success<*>>()
-        assertThat(message.get().text).contains("second message")
+        assertThat(message).isInstanceOf<Result.Success<*>>()
+        assertThat(message.getOrThrow().text).contains("second message")
 
         // todo assert thread message
     }
@@ -68,20 +68,20 @@ internal class SlackConditionalSenderIntegrationTest {
         val firstMessageTry = sender.sendMessage("first message", author = author)
         val secondMessageTry = sender.sendMessage("second message", author = author)
 
-        assertThat(firstMessageTry).isInstanceOf<Try.Success<*>>()
-        val firstMessage = firstMessageTry.get()
+        assertThat(firstMessageTry).isInstanceOf<Result.Success<*>>()
+        val firstMessage = firstMessageTry.getOrThrow()
         assertThat(firstMessage.text).contains("first message")
 
-        assertThat(secondMessageTry).isInstanceOf<Try.Success<*>>()
-        assertThat(secondMessageTry.get().text).contains("second message")
+        assertThat(secondMessageTry).isInstanceOf<Result.Success<*>>()
+        assertThat(secondMessageTry.getOrThrow().text).contains("second message")
 
-        assertThat(secondMessageTry.get().threadId).isEqualTo(firstMessage.id)
+        assertThat(secondMessageTry.getOrThrow().threadId).isEqualTo(firstMessage.id)
     }
 
     private fun SlackConditionalSender.sendMessage(
         text: String,
         author: String = "integration test"
-    ): Try<SlackMessage> = sendMessage(
+    ): Result<SlackMessage> = sendMessage(
         SlackSendMessageRequest(
             channel = testChannel,
             text = text,

@@ -1,8 +1,8 @@
 package com.avito.report
 
+import com.avito.android.Result
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
-import org.funktionale.tries.Try
 
 interface ReportsAddApi {
 
@@ -17,7 +17,7 @@ interface ReportsAddApi {
         reportCoordinates: ReportCoordinates,
         buildId: String?,
         tests: Collection<AndroidTest>
-    ): Try<List<String>>
+    ): Result<List<String>>
 
     /**
      * RunTest.AddFull
@@ -30,5 +30,5 @@ interface ReportsAddApi {
         reportCoordinates: ReportCoordinates,
         buildId: String?,
         test: AndroidTest
-    ): Try<String>
+    ): Result<String>
 }
