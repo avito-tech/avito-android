@@ -12,5 +12,4 @@ dependencies {
     implementation(project(":common:logger"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
-    implementation(libs.funktionaleTry)
 }

@@ -1,5 +1,6 @@
 package com.avito.test.summary
 
+import com.avito.android.Result
 import com.avito.report.ReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
@@ -7,7 +8,6 @@ import com.avito.slack.SlackMessageSender
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import org.funktionale.tries.Try
 
 internal class FlakyTestReporterImpl(
     private val slackClient: SlackMessageSender,
@@ -21,14 +21,14 @@ internal class FlakyTestReporterImpl(
 
     private val emoji = ":open-eye-laugh-crying:"
 
-    override fun reportSummary(info: List<FlakyInfo>): Try<Unit> = Try {
+    override fun reportSummary(info: List<FlakyInfo>): Result<Unit> = Result.tryCatch {
 
         if (info.isNotEmpty()) {
 
             val topBadTests = determineBadTests(info)
 
             if (topBadTests.isEmpty()) {
-                return@Try
+                return@tryCatch
             }
 
             sendMessage(
@@ -51,7 +51,7 @@ internal class FlakyTestReporterImpl(
         reportUrl: String,
         buildUrl: String,
         currentBranch: String
-    ): Try<SlackMessage> {
+    ): Result<SlackMessage> {
 
         //language=TEXT
         return slackClient.sendMessage(

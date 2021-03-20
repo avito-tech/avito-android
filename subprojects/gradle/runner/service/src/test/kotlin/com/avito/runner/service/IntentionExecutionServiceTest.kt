@@ -1,5 +1,6 @@
 package com.avito.runner.service
 
+import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
@@ -23,7 +24,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.test.runBlockingTest
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -82,8 +82,8 @@ class IntentionExecutionServiceTest {
                 ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
-                        StubActionResult.Success(Try.Success(Unit)),
-                        StubActionResult.Success(Try.Success(Unit))
+                        StubActionResult.Success(Result.Success(Unit)),
+                        StubActionResult.Success(Result.Success(Unit))
                     )
                 },
                 runTestsResults = intentions.map {
@@ -162,12 +162,8 @@ class IntentionExecutionServiceTest {
                 ),
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
-                        StubActionResult.Success(
-                            Try.Success(Unit)
-                        ),
-                        StubActionResult.Success(
-                            Try.Success(Unit)
-                        )
+                        StubActionResult.Success(Result.Success(Unit)),
+                        StubActionResult.Success(Result.Success(Unit))
                     )
                 },
                 gettingDeviceStatusResults = listOf(

@@ -18,7 +18,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
     implementation(libs.sentry)
-    implementation(libs.funktionaleTry)
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:test-okhttp"))

@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":common:logger"))
     implementation(project(":common:elastic-logger"))
     implementation(project(":common:sentry"))
+    implementation(project(":common:result"))
     implementation(project(":common:test-annotations"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":android-test:android-log"))
@@ -20,9 +21,7 @@ dependencies {
     implementation(project(":android-test:websocket-reporter"))
     implementation(libs.okio)
     implementation(libs.kotson)
-    implementation(libs.funktionaleTry)
     implementation(libs.okhttp)
-    implementation(libs.sentryAndroid) // todo use common:sentry
     implementation(libs.radiography)
 
     testImplementation(project(":common:resources"))

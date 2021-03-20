@@ -1,9 +1,9 @@
 package com.avito.utils
 
+import com.avito.android.Result
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
 import org.apache.tools.ant.types.Commandline
-import org.funktionale.tries.Try
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStream
@@ -16,14 +16,14 @@ interface ProcessRunner {
      *
      * @return output команды, если exit code = 0
      */
-    fun run(command: String): Try<String>
+    fun run(command: String): Result<String>
 
     class Real(
         private val workingDirectory: File?,
         private val loggerFactory: LoggerFactory
     ) : ProcessRunner {
 
-        override fun run(command: String): Try<String> = runCommand(
+        override fun run(command: String): Result<String> = runCommand(
             command = command,
             workingDirectory = workingDirectory,
             loggerFactory = loggerFactory
@@ -62,7 +62,7 @@ fun runCommand(
     command: String,
     workingDirectory: File? = null,
     loggerFactory: LoggerFactory
-): Try<String> = try {
+): Result<String> = try {
     val binary = splitCommand(command).firstOrNull()
 
     val logger = loggerFactory.create(binary ?: "runCommand")
@@ -96,12 +96,12 @@ fun runCommand(
     val output = processOutput.toString().trim()
 
     if (process.exitValue() != 0) {
-        Try.Failure(Throwable("Unknown error: exit code=[${process.exitValue()}]; output=$output"))
+        Result.Failure(Throwable("Unknown error: exit code=[${process.exitValue()}]; output=$output"))
     } else {
-        Try.Success(output)
+        Result.Success(output)
     }
 } catch (t: Throwable) {
-    Try.Failure(t)
+    Result.Failure(t)
 }
 
 private class IOThread(

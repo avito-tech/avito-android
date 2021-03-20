@@ -1,5 +1,6 @@
 package com.avito.plugin
 
+import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
@@ -9,7 +10,6 @@ import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -62,7 +62,7 @@ class SignViaServiceActionTest {
 
         val result = signViaServiceAction.sign()
 
-        assertThat<Try.Failure<*>>(result) {
+        assertThat<Result.Failure<*>>(result) {
             assertThat(throwable.message).contains("Failed to sign apk via service")
         }
 
@@ -77,7 +77,7 @@ class SignViaServiceActionTest {
 
         val result = signViaServiceAction.sign()
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
+        assertThat(result).isInstanceOf<Result.Success<*>>()
         assertThat(server.requestCount).isEqualTo(2)
     }
 
@@ -93,6 +93,6 @@ class SignViaServiceActionTest {
         assertThat(recordedRequest.path).isEqualTo("/sign")
         assertThat(recordedRequest.body.readUtf8()).contains("12345")
 
-        assertThat(result).isInstanceOf<Try.Success<*>>()
+        assertThat(result).isInstanceOf<Result.Success<*>>()
     }
 }

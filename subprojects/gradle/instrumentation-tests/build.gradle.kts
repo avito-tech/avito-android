@@ -19,7 +19,6 @@ dependencies {
     }
     implementation(libs.commonsText)
     implementation(libs.coroutinesCore)
-    implementation(libs.funktionaleTry)
     implementation(libs.gson)
     implementation(libs.kotson)
     implementation(libs.retrofit)
@@ -29,6 +28,7 @@ dependencies {
     implementation(project(":common:logger"))
     implementation(project(":common:report-viewer"))
     implementation(project(":common:retrace"))
+    implementation(project(":common:result"))
     implementation(project(":common:sentry"))
     implementation(project(":common:test-annotations"))
     implementation(project(":gradle:android"))

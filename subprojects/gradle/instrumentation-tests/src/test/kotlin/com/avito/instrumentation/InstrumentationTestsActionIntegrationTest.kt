@@ -1,5 +1,6 @@
 package com.avito.instrumentation
 
+import com.avito.android.Result
 import com.avito.android.StubTestSuiteLoader
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
@@ -34,7 +35,6 @@ import com.avito.time.StubTimeProvider
 import com.avito.utils.StubBuildFailer
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -91,7 +91,7 @@ internal class InstrumentationTestsActionIntegrationTest {
                 buildBranch = "buildBranch"
             )
         )
-        reportsApi.enqueueTestsForRunId(reportCoordinates, Try.Success(emptyList()))
+        reportsApi.enqueueTestsForRunId(reportCoordinates, Result.Success(emptyList()))
 
         createAction(configuration = configuration).run()
 
@@ -129,7 +129,7 @@ internal class InstrumentationTestsActionIntegrationTest {
 
         reportsApi.enqueueTestsForRunId(
             reportCoordinates = reportCoordinates,
-            value = Try.Success(
+            value = Result.Success(
                 listOf(
                     SimpleRunTest.createStubInstance(name = "com.Test.test1", deviceName = "api22"),
                     SimpleRunTest.createStubInstance(
@@ -141,7 +141,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             )
         )
 
-        reportsApi.finished = Try.Success(Unit)
+        reportsApi.finished = Result.Success(Unit)
 
         createAction(configuration).run()
 

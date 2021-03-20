@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:android"))
-    implementation(project(":common:okhttp"))
-    implementation(project(":gradle:build-failer"))
-    implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:logger"))
-    implementation(libs.funktionaleTry)
+    implementation(project(":common:okhttp"))
+    implementation(project(":common:result"))
+    implementation(project(":gradle:android"))
+    implementation(project(":gradle:build-failer"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:gradle-logger"))
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttpLogging)

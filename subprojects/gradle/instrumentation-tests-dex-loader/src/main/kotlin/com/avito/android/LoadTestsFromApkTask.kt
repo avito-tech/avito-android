@@ -37,7 +37,7 @@ open class LoadTestsFromApkTask @Inject constructor(
         val testsInApk = testSuiteLoader.loadTestSuite(
             file = apkFile,
             testSignatureCheck = checks // todo extract checks somehow
-        ).get()
+        ).getOrThrow()
 
         testsInApkFile.writeTestsInApk(testsInApk)
     }

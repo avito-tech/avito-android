@@ -1,9 +1,9 @@
 package com.avito.impact.changes
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.utils.ProcessRunner
-import org.funktionale.tries.Try
 import java.io.File
 
 interface ChangesDetector {
@@ -13,13 +13,16 @@ interface ChangesDetector {
      *
      * @return list of changed files; could fail on git problems
      */
-    fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File> = emptyList()): Try<List<ChangedFile>>
+    fun computeChanges(
+        targetDirectory: File,
+        excludedDirectories: Iterable<File> = emptyList()
+    ): Result<List<ChangedFile>>
 }
 
 class ChangesDetectorStub(private val reason: String) : ChangesDetector {
 
-    override fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File>): Try<List<ChangedFile>> {
-        return Try.Failure(IllegalStateException(reason))
+    override fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File>): Result<List<ChangedFile>> {
+        return Result.Failure(IllegalStateException(reason))
     }
 }
 
@@ -31,7 +34,7 @@ class GitChangesDetector(
 ) : ChangesDetector {
 
     private val logger = loggerFactory.create<GitChangesDetector>()
-    private val cache: MutableMap<Key, Try<List<ChangedFile>>> = mutableMapOf()
+    private val cache: MutableMap<Key, Result<List<ChangedFile>>> = mutableMapOf()
     private val gitDiffWithTargetBranch by lazy { gitDiffWith() }
     private val processRunner = ProcessRunner.Real(gitRootDir, loggerFactory)
 
@@ -45,7 +48,7 @@ class GitChangesDetector(
      *
      * @return list of changed files; could fail on git problems
      */
-    override fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File>): Try<List<ChangedFile>> {
+    override fun computeChanges(targetDirectory: File, excludedDirectories: Iterable<File>): Result<List<ChangedFile>> {
         return cache.getOrPut(Key(targetDirectory, excludedDirectories)) {
             computeChangedFiles(targetDirectory, excludedDirectories)
         }
@@ -54,25 +57,25 @@ class GitChangesDetector(
     /**
      * Just a git diff between HEAD and [targetCommit]
      */
-    private fun gitDiffWith(): Try<Sequence<ChangedFile>> {
+    private fun gitDiffWith(): Result<Sequence<ChangedFile>> {
         return processRunner.run("git diff --name-status $targetCommit").map { output: String ->
             output.lineSequence()
                 .filterNot { it.isBlank() }
                 .map { line ->
                     line.parseGitDiffLine().map { it.asChangedFile(gitRootDir) }
                 }
-                .filter { it is Try.Success }
-                .map { it as Try.Success<ChangedFile> }
-                .map { it.get() }
+                .filter { it is Result.Success }
+                .map { it as Result.Success<ChangedFile> }
+                .map { it.getOrThrow() }
         }
     }
 
     private fun computeChangedFiles(
         targetDirectory: File,
         excludedDirectories: Iterable<File> = emptyList()
-    ): Try<List<ChangedFile>> {
+    ): Result<List<ChangedFile>> {
         if (!targetDirectory.toPath().startsWith(gitRootDir.toPath())) {
-            return Try.Failure(IllegalArgumentException("$targetDirectory must be inside $gitRootDir"))
+            return Result.Failure(IllegalArgumentException("$targetDirectory must be inside $gitRootDir"))
         }
         val targetPath = targetDirectory.toPath()
 

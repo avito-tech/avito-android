@@ -1,5 +1,6 @@
 package com.avito.instrumentation.report
 
+import com.avito.android.Result
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
@@ -8,7 +9,6 @@ import com.avito.report.model.createStubInstance
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 
 internal class HasFailedTestDeterminerTest {
@@ -17,7 +17,7 @@ internal class HasFailedTestDeterminerTest {
     fun `determine - results OK - all tests success or skipped`() {
         val result = createImpl()
             .determine(
-                runResult = Try.Success(
+                runResult = Result.Success(
                     listOf(
                         SimpleRunTest.createStubInstance(
                             name = "com.Test.test1",
@@ -43,7 +43,7 @@ internal class HasFailedTestDeterminerTest {
     fun `determine - results OK - empty test results`() {
         val result = createImpl()
             .determine(
-                runResult = Try.Success(
+                runResult = Result.Success(
                     listOf()
                 )
             )
@@ -55,7 +55,7 @@ internal class HasFailedTestDeterminerTest {
     fun `determine - results OK - all tests reported`() {
         val result = createImpl()
             .determine(
-                runResult = Try.Success(
+                runResult = Result.Success(
                     listOf(
                         SimpleRunTest.createStubInstance(
                             name = "com.Test.test1",
@@ -80,7 +80,7 @@ internal class HasFailedTestDeterminerTest {
     fun `determine - results failure - one test failed`() {
         val result = createImpl()
             .determine(
-                runResult = Try.Success(
+                runResult = Result.Success(
                     listOf(
                         SimpleRunTest.createStubInstance(
                             name = "com.Test.test1",
@@ -106,7 +106,7 @@ internal class HasFailedTestDeterminerTest {
     fun `determine - results failed - suppress flaky is true`() {
         val result = createImpl(suppressFlaky = true)
             .determine(
-                runResult = Try.Success(
+                runResult = Result.Success(
                     listOf(
                         SimpleRunTest.createStubInstance(
                             name = "com.Test.test1",
@@ -138,7 +138,7 @@ internal class HasFailedTestDeterminerTest {
     fun `determine - results failed - suppress flaky is false`() {
         val result = createImpl(suppressFlaky = false)
             .determine(
-                runResult = Try.Success(
+                runResult = Result.Success(
                     listOf(
                         SimpleRunTest.createStubInstance(
                             name = "com.Test.test1",
@@ -169,7 +169,7 @@ internal class HasFailedTestDeterminerTest {
     fun `determine - results failed - suppress flaky is true but there is failed stable test`() {
         val result = createImpl(suppressFlaky = true)
             .determine(
-                runResult = Try.Success(
+                runResult = Result.Success(
                     listOf(
                         SimpleRunTest.createStubInstance(
                             name = "com.Test.test1",

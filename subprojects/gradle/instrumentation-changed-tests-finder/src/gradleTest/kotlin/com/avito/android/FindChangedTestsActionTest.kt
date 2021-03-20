@@ -110,20 +110,20 @@ internal class FindChangedTestsActionTest {
         """.trimIndent()
         )
 
-        git.init().get()
-        git.checkout(branchName = "develop", create = true).get()
-        git.addAll().get()
-        git.commit("initial").get()
+        git.init().getOrThrow()
+        git.checkout(branchName = "develop", create = true).getOrThrow()
+        git.addAll().getOrThrow()
+        git.commit("initial").getOrThrow()
 
-        targetCommit = git.tryParseRev("develop").get()
+        targetCommit = git.tryParseRev("develop").getOrThrow()
     }
 
     @Test
     fun `finds modified file's class`() {
-        git.checkout(branchName = "changes", create = true).get()
+        git.checkout(branchName = "changes", create = true).getOrThrow()
         mutateKotlinFile(anotherTestFile)
-        git.addAll().get()
-        git.commit("some changes").get()
+        git.addAll().getOrThrow()
+        git.commit("some changes").getOrThrow()
 
         gradlew(projectDir, changedTestsFinderTaskName, "-PtargetCommit=$targetCommit")
             .assertThat()
@@ -141,7 +141,7 @@ internal class FindChangedTestsActionTest {
 
     @Test
     fun `finds added file's class`() {
-        git.checkout(branchName = "addition", create = true).get()
+        git.checkout(branchName = "addition", create = true).getOrThrow()
         androidTestDir.file(
             "NewTest.kt",
             """
@@ -157,8 +157,8 @@ internal class FindChangedTestsActionTest {
             }
         """.trimIndent()
         )
-        git.addAll().get()
-        git.commit("new test added").get()
+        git.addAll().getOrThrow()
+        git.commit("new test added").getOrThrow()
 
         gradlew(projectDir, changedTestsFinderTaskName, "-PtargetCommit=$targetCommit")
             .assertThat()
@@ -172,10 +172,10 @@ internal class FindChangedTestsActionTest {
 
     @Test
     fun `finds all tests in modified file with multiple classes`() {
-        git.checkout(branchName = "multiple-classes", create = true).get()
+        git.checkout(branchName = "multiple-classes", create = true).getOrThrow()
         mutateKotlinFile(multipleClassesTestFile)
-        git.addAll().get()
-        git.commit("change in test").get()
+        git.addAll().getOrThrow()
+        git.commit("change in test").getOrThrow()
 
         gradlew(projectDir, changedTestsFinderTaskName, "-PtargetCommit=$targetCommit")
             .assertThat()

@@ -1,9 +1,9 @@
 package com.avito.report
 
+import com.avito.android.Result
 import com.avito.report.model.CreateResult
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.JsonElement
-import org.funktionale.tries.Try
 
 interface ReportsApi : ReportsAddApi, ReportsFetchApi {
 
@@ -22,17 +22,17 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
     /**
      * Run.SetFinished
      */
-    fun setFinished(reportCoordinates: ReportCoordinates): Try<Unit>
+    fun setFinished(reportCoordinates: ReportCoordinates): Result<Unit>
 
     /**
      * RunTest.AddConclusion - Successful
      */
-    fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit>
+    fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit>
 
     /**
      * RunTest.AddConclusion - Failed
      */
-    fun markAsFailed(testRunId: String, author: String, comment: String): Try<Unit>
+    fun markAsFailed(testRunId: String, author: String, comment: String): Result<Unit>
 
     /**
      * Run.PushPreparedData
@@ -41,5 +41,5 @@ interface ReportsApi : ReportsAddApi, ReportsFetchApi {
      * @param analyzerKey имя анализатора
      * @param preparedData произвольные данные анализатора
      */
-    fun pushPreparedData(reportId: String, analyzerKey: String, preparedData: JsonElement): Try<Unit>
+    fun pushPreparedData(reportId: String, analyzerKey: String, preparedData: JsonElement): Result<Unit>
 }

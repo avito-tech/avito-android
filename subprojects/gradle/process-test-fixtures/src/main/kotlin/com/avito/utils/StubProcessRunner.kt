@@ -1,10 +1,10 @@
 package com.avito.utils
 
-import org.funktionale.tries.Try
+import com.avito.android.Result
 
 class StubProcessRunner : ProcessRunner {
 
-    lateinit var result: Try<String>
+    lateinit var result: Result<String>
 
-    override fun run(command: String): Try<String> = result
+    override fun run(command: String): Result<String> = result
 }

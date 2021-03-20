@@ -1,9 +1,9 @@
 package com.avito.android.runner.report
 
+import com.avito.android.Result
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.TestStaticData
-import org.funktionale.tries.Try
 
 public interface Report : ReadReport {
 
@@ -19,9 +19,9 @@ public interface Report : ReadReport {
 
     public fun finish()
 
-    public fun markAsSuccessful(testRunId: String, author: String, comment: String): Try<Unit>
+    public fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit>
 
-    public fun getCrossDeviceTestData(): Try<CrossDeviceSuite>
+    public fun getCrossDeviceTestData(): Result<CrossDeviceSuite>
 
     public companion object
 }

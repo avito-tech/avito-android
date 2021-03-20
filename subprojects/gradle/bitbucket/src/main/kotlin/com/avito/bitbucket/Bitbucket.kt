@@ -1,8 +1,8 @@
 package com.avito.bitbucket
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
-import org.funktionale.tries.Try
 import java.io.File
 
 interface Bitbucket {
@@ -26,7 +26,7 @@ interface Bitbucket {
         title: String,
         link: HttpUrl,
         issues: List<InsightIssue>
-    ): Try<Unit>
+    ): Result<Unit>
 
     /**
      * Вариант без issues
@@ -38,7 +38,7 @@ interface Bitbucket {
         details: String,
         link: HttpUrl,
         data: List<InsightData>
-    ): Try<Unit>
+    ): Result<Unit>
 
     companion object {
 

@@ -1,11 +1,11 @@
 package com.avito.slack
 
+import com.avito.android.Result
 import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.slack.model.createStubInstance
-import org.funktionale.tries.Try
 import java.io.File
 
 class StubSlackClient : SlackClient {
@@ -26,23 +26,23 @@ class StubSlackClient : SlackClient {
 
     var updatedMessageText: String? = null
 
-    override fun sendMessage(message: SlackSendMessageRequest): Try<SlackMessage> {
+    override fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage> {
         return if (message.threadId == null) {
             sentMessage = message.text
             requestCount++
-            Try.Success(SlackMessage.createStubInstance())
+            Result.Success(SlackMessage.createStubInstance())
         } else {
             answeredMessageText = message.text
             answeredMessageTimestamp = message.threadId
-            Try.Success(SlackMessage.createStubInstance())
+            Result.Success(SlackMessage.createStubInstance())
         }
     }
 
-    override fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Try<FoundMessage> {
+    override fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Result<FoundMessage> {
         return if (previousMessageFailsWithException) {
-            Try.Failure(Exception("no matter"))
+            Result.Failure(Exception("no matter"))
         } else {
-            Try.Success(
+            Result.Success(
                 previousMessageTimestamp.let { FoundMessage.createStubInstance(timestamp = it) }
             )
         }
@@ -52,14 +52,14 @@ class StubSlackClient : SlackClient {
         channel: SlackChannel,
         text: String,
         messageTimestamp: String
-    ): Try<SlackMessage> {
+    ): Result<SlackMessage> {
         requestCount++
         updatedMessageText = text
         updatedMessageTimestamp = messageTimestamp
-        return Try.Success(SlackMessage.createStubInstance())
+        return Result.Success(SlackMessage.createStubInstance())
     }
 
-    override fun uploadHtml(channel: SlackChannel, message: String, file: File): Try<Unit> {
+    override fun uploadHtml(channel: SlackChannel, message: String, file: File): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

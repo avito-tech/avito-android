@@ -1,11 +1,11 @@
 package com.avito.slack
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import org.funktionale.tries.Try
 
 /**
  * Чтобы не упустить из-за чего обновлено сообщение в канале,
@@ -22,7 +22,7 @@ class SlackMessageUpdaterWithThreadMark(
     override fun updateMessage(
         previousMessage: FoundMessage,
         newContent: String
-    ): Try<SlackMessage> {
+    ): Result<SlackMessage> {
         logger.info(
             "Updating message with thread mark; channel: ${previousMessage.channel.name}; " +
                 "oldMessage: '${SlackStringFormat.ellipsize(string = previousMessage.text, limit = 50)}'; "

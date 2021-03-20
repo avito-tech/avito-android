@@ -5,7 +5,6 @@ import com.avito.android.internal.AnnotationExtractor
 import com.avito.android.internal.AnnotationType
 import com.avito.android.internal.ApkDexFileExtractor
 import com.avito.report.model.TestName
-import org.funktionale.tries.Try
 import org.jf.dexlib2.iface.Annotation
 import org.jf.dexlib2.iface.ClassDef
 import org.jf.dexlib2.iface.Method
@@ -27,9 +26,9 @@ class TestSuiteLoaderImpl(
     override fun loadTestSuite(
         file: File,
         testSignatureCheck: TestSignatureCheck?
-    ): Try<List<TestInApk>> {
+    ): Result<List<TestInApk>> {
 
-        return Try {
+        return Result.tryCatch {
             val tests = dexExtractor
                 .getDexFiles(file)
                 .flatMap { dexFile -> dexFile.classes }
@@ -76,7 +75,7 @@ class TestSuiteLoaderImpl(
     private fun Set<Annotation>.filterUtilityAnnotations(): List<Annotation> =
         filter { annotation -> utilityAnnotations.none { annotation.type.contains(it) } }
 
-    private fun ClassDef.isAbstract() = this.accessFlags.and(com.avito.android.TestSuiteLoaderImpl.ACC_ABSTRACT) != 0
+    private fun ClassDef.isAbstract() = this.accessFlags.and(ACC_ABSTRACT) != 0
 
     private fun ClassDef.hasTestMethods() = methods.find { it.hasTestAnnotation() } != null
 

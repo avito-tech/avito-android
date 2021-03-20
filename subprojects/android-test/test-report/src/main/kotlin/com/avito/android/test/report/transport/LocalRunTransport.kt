@@ -78,7 +78,8 @@ class LocalRunTransport(
             )
 
             logger.info(
-                "Report link for test ${testName.name}: ${reportViewer.generateSingleTestRunUrl(result.get())}"
+                "Report link for test ${testName.name}: " +
+                    "${reportViewer.generateSingleTestRunUrl(result.getOrThrow())}"
             )
 
             @Suppress("ControlFlowWithEmptyBody")
