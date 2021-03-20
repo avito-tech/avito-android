@@ -1,8 +1,8 @@
 package com.avito.android.build_checks.internal.params
 
+import com.avito.android.Result
 import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.kotlin.dsl.getOptionalStringProperty
-import org.funktionale.tries.Try
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileInputStream
@@ -21,7 +21,7 @@ internal class GradlePropertiesCheck(
         "android.builder.sdkDownload"
     )
 
-    override fun getMismatches(): Try<Collection<ParameterMismatch>> {
+    override fun getMismatches(): Result<Collection<ParameterMismatch>> {
         val references = readReferenceValues(project)
         return references.map {
             val mismatches = mutableListOf<ParameterMismatch>()
@@ -64,8 +64,8 @@ internal class GradlePropertiesCheck(
         }
     }
 
-    private fun readReferenceValues(project: Project): Try<Map<String, String>> =
-        Try {
+    private fun readReferenceValues(project: Project): Result<Map<String, String>> =
+        Result.tryCatch {
             FileInputStream(File(project.rootDir, "gradle.properties")).use { properties ->
                 val references = Properties()
                 references.load(properties)

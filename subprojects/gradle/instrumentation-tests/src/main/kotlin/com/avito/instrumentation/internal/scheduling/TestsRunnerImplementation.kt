@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.scheduling
 
+import com.avito.android.Result
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
@@ -15,7 +16,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
-import org.funktionale.tries.Try
 import java.io.File
 
 internal class TestsRunnerImplementation(
@@ -39,9 +39,9 @@ internal class TestsRunnerImplementation(
         reportCoordinates: ReportCoordinates,
         report: Report,
         testsToRun: List<TestWithTarget>
-    ): Try<List<SimpleRunTest>> {
+    ): Result<List<SimpleRunTest>> {
         return if (testsToRun.isEmpty()) {
-            Try.Success(emptyList())
+            Result.Success(emptyList())
         } else {
 
             val testReporter = testReporterFactory.invoke(

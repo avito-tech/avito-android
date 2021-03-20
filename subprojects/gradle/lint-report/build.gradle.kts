@@ -11,7 +11,6 @@ plugins {
 dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
 
-    implementation(libs.funktionaleTry)
     implementation(libs.kotlinHtml)
     implementation(libs.okhttp)
 

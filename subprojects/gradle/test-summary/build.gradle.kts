@@ -12,7 +12,6 @@ dependencies {
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:slack"))
-    implementation(libs.funktionaleTry)
     implementation(libs.okhttp)
 
     testImplementation(project(":common:truth-extensions"))

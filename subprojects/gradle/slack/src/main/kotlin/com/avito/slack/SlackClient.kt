@@ -3,6 +3,7 @@
 
 package com.avito.slack
 
+import com.avito.android.Result
 import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
@@ -16,7 +17,6 @@ import com.github.seratch.jslack.api.methods.request.channels.ChannelsListReques
 import com.github.seratch.jslack.api.methods.request.chat.ChatPostMessageRequest
 import com.github.seratch.jslack.api.methods.request.chat.ChatUpdateRequest
 import com.github.seratch.jslack.api.model.Channel
-import org.funktionale.tries.Try
 import java.io.File
 
 interface SlackClient : SlackMessageSender, SlackFileUploader {
@@ -25,9 +25,9 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
         channel: SlackChannel,
         text: String,
         messageTimestamp: String
-    ): Try<SlackMessage>
+    ): Result<SlackMessage>
 
-    fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Try<FoundMessage>
+    fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Result<FoundMessage>
 
     class Impl(private val token: String, private val workspace: String) : SlackClient {
 
@@ -38,7 +38,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
          */
         private val messagesLookupCount = 25
 
-        override fun sendMessage(message: SlackSendMessageRequest): Try<SlackMessage> {
+        override fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage> {
 
             val requestBuilder = ChatPostMessageRequest.builder()
                 .token(token)
@@ -52,7 +52,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
 
             val request = requestBuilder.build()
             return methodsClient.chatPostMessage(request)
-                .toTry()
+                .toResult()
                 .map { response ->
                     SlackMessage(
                         workspace = workspace,
@@ -66,7 +66,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                 }
         }
 
-        override fun uploadHtml(channel: SlackChannel, message: String, file: File): Try<Unit> {
+        override fun uploadHtml(channel: SlackChannel, message: String, file: File): Result<Unit> {
             return findChannelByName(channel.strippedName).flatMap { channelInfo ->
                 methodsClient.filesUpload {
                     it.file(file)
@@ -74,15 +74,15 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                     it.filename(file.name)
                     it.initialComment(message)
                     it.token(token)
-                }.toTry()
-            }.map { Unit }
+                }.toResult()
+            }.map { }
         }
 
         override fun updateMessage(
             channel: SlackChannel,
             text: String,
             messageTimestamp: String
-        ): Try<SlackMessage> {
+        ): Result<SlackMessage> {
             return findChannelByName(channel.strippedName)
                 .flatMap { channelInfo ->
 
@@ -93,7 +93,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                         .text(text)
                         .build()
 
-                    methodsClient.chatUpdate(request).toTry()
+                    methodsClient.chatUpdate(request).toResult()
                 }.map {
                     SlackMessage(
                         workspace = workspace,
@@ -106,7 +106,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                 }
         }
 
-        override fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Try<FoundMessage> {
+        override fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Result<FoundMessage> {
             return findChannelByName(channel.strippedName)
                 .map { channelInfo ->
                     ChannelsHistoryRequest.builder()
@@ -116,7 +116,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                         .build()
                 }.flatMap { request ->
                     methodsClient.channelsHistory(request)
-                        .toTry()
+                        .toResult()
                         .map { response ->
                             response.messages.asSequence()
                                 .map { message ->
@@ -138,7 +138,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
         /**
          * https://stackoverflow.com/a/50114874/2893307
          */
-        private fun findChannelByName(name: String): Try<Channel> {
+        private fun findChannelByName(name: String): Result<Channel> {
             val request = ChannelsListRequest.builder()
                 .token(token)
                 .excludeArchived(true)
@@ -146,25 +146,25 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
 
             @Suppress("RemoveExplicitTypeArguments") // Type inference failed for flatMap<Channel>
             return methodsClient.channelsList(request)
-                .toTry()
+                .toResult()
                 .map { response ->
                     response.channels.find { channel -> channel.name == name }
                 }
                 .flatMap<Channel> { channel ->
                     if (channel != null) {
-                        Try.Success(channel)
+                        Result.Success(channel)
                     } else {
-                        Try.Failure(IllegalArgumentException("Cannot find channel with name $name"))
+                        Result.Failure(IllegalArgumentException("Cannot find channel with name $name"))
                     }
                 }
         }
     }
 }
 
-private fun <T : SlackApiResponse> T.toTry(): Try<T> {
+private fun <T : SlackApiResponse> T.toResult(): Result<T> {
     return if (isOk) {
-        Try.Success(this)
+        Result.Success(this)
     } else {
-        Try.Failure(RuntimeException("Slack request failed; error=$error [needed=$needed; provided=$provided]"))
+        Result.Failure(RuntimeException("Slack request failed; error=$error [needed=$needed; provided=$provided]"))
     }
 }

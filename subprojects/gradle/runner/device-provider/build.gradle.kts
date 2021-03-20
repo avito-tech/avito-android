@@ -18,9 +18,9 @@ dependencies {
     api(project(":gradle:runner:stub"))
     api(project(":gradle:kubernetes"))
 
-    implementation(libs.funktionaleTry)
     implementation(project(":gradle:process"))
     implementation(project(":common:logger"))
+    implementation(project(":common:result"))
 
     integTestImplementation(project(":common:truth-extensions"))
 

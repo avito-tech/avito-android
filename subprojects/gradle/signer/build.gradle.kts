@@ -6,15 +6,15 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:build-failer"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":common:files"))
     implementation(project(":common:okhttp"))
+    implementation(project(":common:result"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:android"))
-    implementation(project(":common:files"))
+    implementation(project(":gradle:build-failer"))
+    implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:gradle-logger"))
 
-    implementation(libs.funktionaleTry)
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
 

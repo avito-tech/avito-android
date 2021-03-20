@@ -2,7 +2,6 @@ package com.avito.instrumentation.internal.scheduling
 
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.report.model.SimpleRunTest
-import org.funktionale.tries.Try
 
 internal interface TestsScheduler {
 
@@ -10,6 +9,6 @@ internal interface TestsScheduler {
 
     data class Result(
         val testSuite: TestSuiteProvider.TestSuite,
-        val testsResult: Try<List<SimpleRunTest>>
+        val testsResult: com.avito.android.Result<List<SimpleRunTest>>
     )
 }

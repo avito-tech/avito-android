@@ -1,10 +1,10 @@
 package com.avito.runner.service.worker.device
 
+import com.avito.android.Result
 import com.avito.logger.Logger
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.model.DeviceInstallation
-import org.funktionale.tries.Try
 import java.io.File
 import java.nio.file.Path
 
@@ -24,20 +24,20 @@ interface Device {
 
     val logger: Logger
 
-    fun installApplication(applicationPackage: String): Try<DeviceInstallation>
+    fun installApplication(applicationPackage: String): Result<DeviceInstallation>
 
     fun runIsolatedTest(
         action: InstrumentationTestRunAction,
         outputDir: File
     ): DeviceTestCaseRun
 
-    fun clearPackage(name: String): Try<Unit>
+    fun clearPackage(name: String): Result<Unit>
 
-    fun pull(from: Path, to: Path): Try<Unit>
+    fun pull(from: Path, to: Path): Result<Unit>
 
-    fun clearDirectory(remotePath: Path): Try<Unit>
+    fun clearDirectory(remotePath: Path): Result<Unit>
 
-    fun list(remotePath: String): Try<List<String>>
+    fun list(remotePath: String): Result<List<String>>
 
     fun deviceStatus(): DeviceStatus
 

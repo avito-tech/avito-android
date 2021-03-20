@@ -34,7 +34,7 @@ class GitStateFromEnvironment(
             loggerFactory = loggerFactory
         )
 
-        val gitCommit = git.tryParseRev("HEAD").get()
+        val gitCommit = git.tryParseRev("HEAD").getOrThrow()
 
         this.currentBranch = Branch(
             name = gitBranch,

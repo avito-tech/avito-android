@@ -15,7 +15,6 @@ dependencies {
     compileOnly(gradleApi())
 
     implementation(libs.coroutinesCore)
-    implementation(libs.funktionaleTry)
     implementation(libs.kotson)
     implementation(project(":common:report-viewer"))
     implementation(project(":gradle:runner:service"))

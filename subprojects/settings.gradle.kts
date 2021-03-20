@@ -72,6 +72,7 @@ include(":common:okhttp")
 include(":common:file-storage")
 include(":common:test-okhttp")
 include(":common:report-viewer")
+include(":common:result")
 include(":common:elastic-logger")
 include(":common:elastic")
 include(":common:sentry-logger")
@@ -247,7 +248,6 @@ dependencyResolutionManagement {
                 }
             }
             filter {
-                includeGroup("org.funktionale")
                 includeGroup("org.jetbrains.trove4j")
                 includeGroup("com.forkingcode.espresso.contrib")
                 includeModule("org.jetbrains.teamcity", "teamcity-rest-client")

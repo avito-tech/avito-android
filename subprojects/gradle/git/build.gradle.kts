@@ -6,12 +6,12 @@ plugins {
 
 dependencies {
     api(project(":gradle:process"))
+    api(project(":common:result"))
 
     implementation(gradleApi())
     implementation(project(":common:logger"))
     implementation(project(":common:slf4j-logger"))
     implementation(project(":gradle:gradle-extensions"))
-    implementation(libs.funktionaleTry)
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(testFixtures(project(":common:logger")))

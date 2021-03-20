@@ -1,6 +1,6 @@
 package com.avito.report.model
 
-import org.funktionale.tries.Try
+import com.avito.android.Result
 
 /**
  * Универсальный runId для идентификации сьюта тестов
@@ -15,17 +15,17 @@ data class RunId(val commitHash: String, val buildTypeId: String) {
 
         private const val DELIMITER = '.'
 
-        fun fromString(runId: String): Try<RunId> {
+        fun fromString(runId: String): Result<RunId> {
             val split = runId.split(DELIMITER)
 
             return when (split.size) {
-                2 -> Try.Success(
+                2 -> Result.Success(
                     RunId(
                         commitHash = split.component1(),
                         buildTypeId = split.component2()
                     )
                 )
-                else -> Try.Failure(IllegalArgumentException("Invalid runId: $runId"))
+                else -> Result.Failure(IllegalArgumentException("Invalid runId: $runId"))
             }
         }
     }

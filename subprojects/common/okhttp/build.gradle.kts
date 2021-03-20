@@ -12,8 +12,8 @@ dependencies {
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":common:test-okhttp"))
+    testImplementation(project(":common:result"))
     testImplementation(testFixtures(project(":common:logger")))
-    testImplementation(libs.funktionaleTry)
     testImplementation(libs.retrofit)
     testImplementation(libs.retrofitConverterGson)
 }

@@ -15,7 +15,7 @@ dependencies {
 
     implementation(project(":gradle:trace-event"))
     implementation(project(":common:math"))
-    implementation(libs.funktionaleTry)
+    implementation(project(":common:result"))
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
 

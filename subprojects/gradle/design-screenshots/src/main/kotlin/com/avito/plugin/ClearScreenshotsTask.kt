@@ -36,10 +36,13 @@ abstract class ClearScreenshotsTask : DefaultTask() {
         ).getDevice()
 
         val remotePath = Paths.get("/sdcard/screenshots/$applicationId")
-        currentDevice.clearDirectory(remotePath).onSuccess {
-            logger.debug("Screenshot directory is cleared up")
-        }.onFailure {
-            logger.warn("Cannot list screenshot directory")
-        }
+        currentDevice.clearDirectory(remotePath).fold(
+            onSuccess = {
+                logger.debug("Screenshot directory is cleared up")
+            },
+            onFailure = {
+                logger.warn("Cannot list screenshot directory")
+            }
+        )
     }
 }

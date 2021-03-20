@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:runner:service"))
     implementation(project(":gradle:runner:shared"))
-    implementation(libs.funktionaleTry)
+    implementation(project(":common:result"))
 
     gradleTestImplementation(project(":gradle:test-project"))
 }

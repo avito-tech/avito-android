@@ -4,13 +4,13 @@
 package com.avito.impact.configuration
 
 import com.android.build.gradle.api.AndroidSourceSet
+import com.avito.android.Result
 import com.avito.android.androidBaseExtension
 import com.avito.android.isAndroid
 import com.avito.impact.changes.ChangedFile
 import com.avito.impact.util.Equality
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.dependencies.dependenciesOnProjects
-import org.funktionale.tries.Try
 import java.io.File
 
 /**
@@ -72,11 +72,11 @@ abstract class BaseConfiguration(
         }
     }
 
-    open fun changedFiles(): Try<List<ChangedFile>> {
+    open fun changedFiles(): Result<List<ChangedFile>> {
         return sourceSets()
             .map { sourceDir -> changesDetector.computeChanges(sourceDir) }
-            .fold(Try { listOf() }) { accumulator, element ->
-                Try { accumulator.get() + element.get() }
+            .fold(Result.tryCatch { listOf() }) { accumulator, element ->
+                Result.tryCatch { accumulator.getOrThrow() + element.getOrThrow() }
             }
     }
 
