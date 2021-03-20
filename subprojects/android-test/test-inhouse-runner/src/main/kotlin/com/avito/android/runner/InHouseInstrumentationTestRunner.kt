@@ -14,9 +14,6 @@ import com.avito.android.runner.annotation.validation.CompositeTestMetadataValid
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
-import com.avito.android.sentry.sentryClient
-import com.avito.android.stats.StatsDConfig
-import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
@@ -48,7 +45,6 @@ import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.sentry.SentryClient
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
@@ -63,17 +59,9 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val sentryConfig: SentryConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().sentryConfig }
 
-    private val statsDConfig: StatsDConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig }
-
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
-
-    @Suppress("unused") // used in avito
-    val sentryClient: SentryClient by lazy { sentryClient(config = sentryConfig) }
-
-    @Suppress("unused") // used in avito
-    val statsDSender: StatsDSender by lazy { StatsDSender.Impl(statsDConfig, loggerFactory) }
 
     /**
      * Public for *TestApp to skip on orchestrator runs
