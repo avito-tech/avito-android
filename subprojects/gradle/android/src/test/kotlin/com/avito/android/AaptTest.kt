@@ -4,7 +4,6 @@ import com.avito.truth.isInstanceOf
 import com.avito.utils.ExistingDirectory
 import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -26,11 +25,11 @@ internal class AaptTest {
         val processRunner = StubProcessRunner()
         val aapt = Aapt.Impl(ExistingDirectory.Stub, processRunner)
 
-        processRunner.result = Try.Success(aaptOutput)
+        processRunner.result = Result.Success(aaptOutput)
 
         val actual = aapt.getPackageName(irrelevant)
 
-        assertThat(actual).isEqualTo(Try.Success(expected))
+        assertThat(actual).isEqualTo(Result.Success(expected))
     }
 
     @Test
@@ -42,10 +41,10 @@ internal class AaptTest {
         val processRunner = StubProcessRunner()
         val aapt = Aapt.Impl(ExistingDirectory.Stub, processRunner)
 
-        processRunner.result = Try.Success(aaptOutput)
+        processRunner.result = Result.Success(aaptOutput)
 
         val actual = aapt.getPackageName(irrelevant)
 
-        assertThat(actual).isInstanceOf<Try.Failure<*>>()
+        assertThat(actual).isInstanceOf<Result.Failure<*>>()
     }
 }

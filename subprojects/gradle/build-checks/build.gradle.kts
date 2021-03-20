@@ -14,10 +14,10 @@ dependencies {
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":common:files"))
+    implementation(project(":common:result"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(libs.kotlinPlugin)
-    implementation(libs.funktionaleTry)
 
     // for test
     implementation(project(":gradle:module-types"))

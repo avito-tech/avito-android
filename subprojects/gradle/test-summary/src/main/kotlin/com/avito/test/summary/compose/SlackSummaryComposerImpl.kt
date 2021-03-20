@@ -1,5 +1,6 @@
 package com.avito.test.summary.compose
 
+import com.avito.android.Result
 import com.avito.report.ReportViewer
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.FailureOnDevice
@@ -7,7 +8,6 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.SlackStringFormat
 import com.avito.test.summary.analysis.analyzeFailures
-import org.funktionale.tries.Try
 
 internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) : SlackSummaryComposer {
 
@@ -20,8 +20,8 @@ internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) 
         reportCoordinates: ReportCoordinates,
         reportId: String,
         buildUrl: String
-    ): Try<String> {
-        val reportViewerUrl = Try { reportViewer.generateReportUrl(reportId, team = team) }
+    ): Result<String> {
+        val reportViewerUrl = Result.tryCatch { reportViewer.generateReportUrl(reportId, team = team) }
         val reportIdentifier = reportCoordinates.runId
 
         val failures = testData.analyzeFailures()
@@ -44,28 +44,28 @@ internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) 
                 // todo адекватная разбивка по flaky
                 appendLine(
                     ":green_heart: " +
-                            "*Зеленые тесты*: " +
-                            "${testData.success} (${testData.percentSuccessOfAutomated})"
+                        "*Зеленые тесты*: " +
+                        "${testData.success} (${testData.percentSuccessOfAutomated})"
                 )
                 appendLine(
                     ":warning: " +
-                            "*Тесты упали только на некоторых девайсах*: " +
-                            "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated})"
+                        "*Тесты упали только на некоторых девайсах*: " +
+                        "${testData.failedOnSomeDevicesCount} (${testData.percentFailedOnSomeDevicesOfAutomated})"
                 )
                 appendLine(
                     ":red_circle: " +
-                            "*Тесты упали на всех девайсах*: " +
-                            "${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated})"
+                        "*Тесты упали на всех девайсах*: " +
+                        "${testData.failedOnAllDevicesCount} (${testData.percentFailedOnAllDevicesOfAutomated})"
                 )
                 appendLine(
                     ":white_circle: " +
-                            "*Пропущенные тесты (например, заигнорен) на всех девайсах*: " +
-                            "${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated})"
+                        "*Пропущенные тесты (например, заигнорен) на всех девайсах*: " +
+                        "${testData.skippedOnAllDevicesCount} (${testData.percentSkippedOnAllDevicesOfAutomated})"
                 )
                 appendLine(
                     ":black_circle: " +
-                            "*Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: " +
-                            "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated})"
+                        "*Потерянные тесты (например, зависли и не зарепортились) на некоторых девайсах*: " +
+                        "${testData.lostOnSomeDevicesCount} (${testData.percentLostOnSomeDevicesOfAutomated})"
                 )
 
                 val hasFailures = testData.failedOnSomeDevicesCount + testData.failedOnAllDevicesCount > 0

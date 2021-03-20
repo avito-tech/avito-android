@@ -149,7 +149,7 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
     private fun readBlameCodeLines(processRunner: ProcessRunner) =
         BlameParser().parseBlameCodeLines(processRunner.getBlame())
 
-    private fun ProcessRunner.getBlame() = run(command = "git blame -w ${featureTogglesFile.path} -et").get()
+    private fun ProcessRunner.getBlame() = run(command = "git blame -w ${featureTogglesFile.path} -et").getOrThrow()
 }
 
 private const val newLineEscaped = "\\n"

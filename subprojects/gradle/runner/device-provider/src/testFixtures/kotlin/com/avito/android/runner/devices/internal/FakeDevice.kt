@@ -1,7 +1,7 @@
 package com.avito.android.runner.devices.internal
 
+import com.avito.android.Result
 import com.avito.runner.service.worker.device.Serial
-import org.funktionale.tries.Try
 import java.io.File
 
 internal open class FakeDevice(
@@ -23,7 +23,7 @@ internal class FakeRemoteDevice(
     override val serial: Serial.Remote
 ) : FakeDevice(serial), RemoteDevice {
 
-    override fun disconnect() = Try.Success("stub-disconnect")
+    override fun disconnect() = Result.Success("stub-disconnect")
 
-    override fun connect() = Try.Success("stub-connect")
+    override fun connect() = Result.Success("stub-connect")
 }

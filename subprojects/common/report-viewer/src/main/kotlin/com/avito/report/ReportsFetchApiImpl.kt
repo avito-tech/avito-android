@@ -1,5 +1,6 @@
 package com.avito.report
 
+import com.avito.android.Result
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.logger.LoggerFactory
@@ -24,7 +25,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
 import com.avito.report.model.TestName
-import org.funktionale.tries.Try
 
 /**
  * TODO Move test status logic to [com.avito.instrumentation.report.TestStatusFinalizer]
@@ -40,8 +40,8 @@ internal class ReportsFetchApiImpl(
         planSlug: String,
         jobSlug: String,
         pageNumber: Int
-    ): Try<List<Report>> {
-        return Try {
+    ): Result<List<Report>> {
+        return Result.tryCatch {
             requestProvider.jsonRpcRequest<RpcResult<List<Run>>>(
                 RfcRpcRequest(
                     method = "Run.List",
@@ -65,7 +65,7 @@ internal class ReportsFetchApiImpl(
     }
 
     override fun getReport(reportCoordinates: ReportCoordinates): GetReportResult {
-        return Try {
+        return Result.tryCatch {
             requestProvider.jsonRpcRequest<RpcResult<Report>>(
                 RfcRpcRequest(
                     method = "Run.GetByParams",
@@ -76,7 +76,7 @@ internal class ReportsFetchApiImpl(
                     )
                 )
             ).result
-        }.fold<GetReportResult>(
+        }.fold(
             { report -> GetReportResult.Found(report) },
             { exception ->
                 val isNotFoundError = exception.message?.contains("\"data\":\"not found\"") ?: false
@@ -89,24 +89,24 @@ internal class ReportsFetchApiImpl(
         )
     }
 
-    override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Try<List<SimpleRunTest>> {
+    override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
         return when (val getReportResult = getReport(reportCoordinates)) {
             is GetReportResult.Found -> getTestData(getReportResult.report.id)
-            GetReportResult.NotFound -> Try.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Try.Failure(getReportResult.exception)
+            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
+            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
         }
     }
 
-    override fun getTestsForReportId(reportId: String): Try<List<SimpleRunTest>> {
+    override fun getTestsForReportId(reportId: String): Result<List<SimpleRunTest>> {
         return getTestData(reportId)
     }
 
-    override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Try<CrossDeviceSuite> {
+    override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> {
         return when (val getReportResult = getReport(reportCoordinates)) {
             is GetReportResult.Found -> getTestData(getReportResult.report.id)
                 .map { testData -> toCrossDeviceTestData(testData) }
-            GetReportResult.NotFound -> Try.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Try.Failure(getReportResult.exception)
+            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
+            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
         }
     }
 
@@ -158,8 +158,8 @@ internal class ReportsFetchApiImpl(
             ?.substringAfter(':')
     }
 
-    private fun getTestData(reportId: String): Try<List<SimpleRunTest>> {
-        return Try {
+    private fun getTestData(reportId: String): Result<List<SimpleRunTest>> {
+        return Result.tryCatch {
             requestProvider.jsonRpcRequest<RpcResult<List<ListResult>?>>(
                 RfcRpcRequest(
                     method = "RunTest.List",

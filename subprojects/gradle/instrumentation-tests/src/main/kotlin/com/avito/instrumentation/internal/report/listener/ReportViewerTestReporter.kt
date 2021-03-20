@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.report.listener
 
+import com.avito.android.Result
 import com.avito.android.runner.report.Report
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
@@ -17,7 +18,6 @@ import com.avito.runner.service.worker.device.Device
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.funktionale.tries.Try
 import java.io.File
 import java.io.FileReader
 
@@ -55,7 +55,7 @@ internal class ReportViewerTestReporter(
     }
 
     override fun finished(
-        artifacts: Try<File>,
+        artifacts: Result<File>,
         test: TestCase,
         executionNumber: Int
     ) {
@@ -65,7 +65,7 @@ internal class ReportViewerTestReporter(
     }
 
     override fun report(
-        artifacts: Try<File>,
+        artifacts: Result<File>,
         test: TestCase,
         executionNumber: Int
     ) {

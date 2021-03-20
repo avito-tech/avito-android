@@ -1,12 +1,12 @@
 package com.avito.runner.scheduler.listener
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
-import org.funktionale.tries.Try
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
@@ -62,12 +62,12 @@ internal class ArtifactsTestListener(
 
             device.clearDirectory(
                 remotePath = testMetadataDirectory.toPath()
-            ).invoke()
+            ).getOrThrow()
 
             resultDirectory
         } catch (t: Throwable) {
             logger.warn("Failed to process artifacts from $device", t)
-            Try.Failure(t)
+            Result.Failure(t)
         } finally {
             tempDirectory.toFile().delete()
         }

@@ -13,7 +13,7 @@ dependencies {
     api(project(":common:statsd"))
     api(project(":common:time"))
     implementation(project(":gradle:runner:shared"))
-    implementation(libs.funktionaleTry)
+    implementation(project(":common:result"))
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
 

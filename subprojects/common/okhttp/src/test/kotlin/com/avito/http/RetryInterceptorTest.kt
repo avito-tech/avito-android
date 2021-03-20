@@ -1,14 +1,15 @@
 package com.avito.http
 
+import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
 import com.avito.logger.create
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.SocketPolicy
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
@@ -65,8 +66,8 @@ internal class RetryInterceptorTest {
 
                 val response = makeRequest()
 
-                assertThat(response.isSuccess()).isTrue()
-                assertThat(response.get().isSuccessful).isTrue()
+                assertThat(response).isSuccess()
+
                 assertThat(server.requestCount).isEqualTo(maxAttempts)
 
                 tearDown()
@@ -115,7 +116,7 @@ internal class RetryInterceptorTest {
         }
     }
 
-    private fun makeRequest() = Try {
+    private fun makeRequest() = Result.tryCatch {
         createApi().request().execute()
     }
 }

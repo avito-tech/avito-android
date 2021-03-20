@@ -4,7 +4,6 @@ import com.avito.truth.isInstanceOf
 import com.avito.utils.ExistingFile
 import com.avito.utils.StubProcessRunner
 import com.google.common.truth.Truth.assertThat
-import org.funktionale.tries.Try
 import org.junit.jupiter.api.Test
 
 internal class KeyToolTest {
@@ -37,11 +36,11 @@ internal class KeyToolTest {
         val processRunner = StubProcessRunner()
         val keyTool = KeyTool(processRunner)
 
-        processRunner.result = Try.Success(keytoolOutput)
+        processRunner.result = Result.Success(keytoolOutput)
 
         val actual = keyTool.getJarSha1(irrelevant)
 
-        assertThat(actual).isEqualTo(Try.Success(expected))
+        assertThat(actual).isEqualTo(Result.Success(expected))
     }
 
     @Test
@@ -53,10 +52,10 @@ internal class KeyToolTest {
         val processRunner = StubProcessRunner()
         val keyTool = KeyTool(processRunner)
 
-        processRunner.result = Try.Success(keytoolOutput)
+        processRunner.result = Result.Success(keytoolOutput)
 
         val actual = keyTool.getJarSha1(irrelevant)
 
-        assertThat(actual).isInstanceOf<Try.Failure<*>>()
+        assertThat(actual).isInstanceOf<Result.Failure<*>>()
     }
 }

@@ -3,6 +3,7 @@ package com.avito.runner.service.worker.device.adb
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
+import com.avito.android.Result
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
@@ -25,7 +26,6 @@ import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.runner.service.worker.model.Installation
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
 import com.avito.time.TimeProvider
-import org.funktionale.tries.Try
 import rx.Observable
 import rx.Single
 import java.io.File
@@ -75,7 +75,7 @@ data class AdbDevice(
         ).getOrThrow()
     }
 
-    override fun installApplication(applicationPackage: String): Try<DeviceInstallation> {
+    override fun installApplication(applicationPackage: String): Result<DeviceInstallation> {
         var installStartedTimestamp: Long
         return getAdbDevice().flatMap { adbDevice ->
 
@@ -123,7 +123,6 @@ data class AdbDevice(
                         device = this.getData()
                     )
                 }
-                .toTry()
         }
     }
 
@@ -266,7 +265,7 @@ data class AdbDevice(
             { throwable: Throwable -> Device.DeviceStatus.Freeze(reason = throwable) }
         )
 
-    override fun clearPackage(name: String): Try<Unit> = retryAction.retry(
+    override fun clearPackage(name: String): Result<Unit> = retryAction.retry(
         retriesCount = 10,
         delaySeconds = 2,
         action = {
@@ -305,9 +304,9 @@ data class AdbDevice(
                 durationMs = durationMs
             )
         }
-    ).toTry()
+    )
 
-    override fun pull(from: Path, to: Path): Try<Unit> = retryAction.retry(
+    override fun pull(from: Path, to: Path): Result<Unit> = retryAction.retry(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,
         action = {
@@ -356,9 +355,9 @@ data class AdbDevice(
                 durationMs = durationMs
             )
         }
-    ).toTry()
+    )
 
-    override fun clearDirectory(remotePath: Path): Try<Unit> = retryAction.retry(
+    override fun clearDirectory(remotePath: Path): Result<Unit> = retryAction.retry(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,
         action = {
@@ -395,9 +394,9 @@ data class AdbDevice(
                 durationMs = durationMs
             )
         }
-    ).map { }.toTry()
+    ).map { }
 
-    override fun list(remotePath: String): Try<List<String>> = retryAction.retry(
+    override fun list(remotePath: String): Result<List<String>> = retryAction.retry(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,
         action = {
@@ -432,7 +431,7 @@ data class AdbDevice(
                 durationMs = durationMs
             )
         }
-    ).toTry()
+    )
 
     private fun runTest(
         test: TestCase,
@@ -481,7 +480,7 @@ data class AdbDevice(
             .toSingle()
     }
 
-    private fun getAdbDevice(): Try<IDevice> = Try {
+    private fun getAdbDevice(): Result<IDevice> = Result.tryCatch {
         AndroidDebugBridge.initIfNeeded(false)
         DdmPreferences.setTimeOut(Duration.ofSeconds(DDMLIB_SOCKET_TIME_OUT_SECONDS).toMillis().toInt())
 

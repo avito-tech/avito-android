@@ -1,5 +1,6 @@
 package com.avito.runner.service.worker.device.adb
 
+import com.avito.android.Result
 import com.avito.time.TimeProvider
 import java.util.concurrent.TimeUnit
 

@@ -3,7 +3,6 @@ package com.avito.test.gradle.dependencies
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Coordinate.External
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Coordinate.Platform
 import com.avito.test.gradle.dependencies.GradleDependency.Safe.Coordinate.Project
-import org.funktionale.either.Either
 import org.gradle.util.Path
 
 sealed class GradleDependency : GradleScriptCompatible {
@@ -37,13 +36,16 @@ sealed class GradleDependency : GradleScriptCompatible {
                 override fun getScriptRepresentation() = "project('${path.path}')"
             }
 
-            data class Platform(val coordinate: Either<External, Project>) : Coordinate() {
+            data class Platform(val coordinate: Coordinate) : Coordinate() {
                 override fun getScriptRepresentation(): String {
                     return "platform(${
-                        coordinate.fold(
-                            { external -> external.getScriptRepresentation() },
-                            { project -> project.getScriptRepresentation() }
-                        )
+                        when (coordinate) {
+                            is External -> coordinate.getScriptRepresentation()
+                            is Project -> coordinate.getScriptRepresentation()
+                            else -> throw IllegalArgumentException(
+                                "Platform coordinate could be either External or Project"
+                            )
+                        }
                     })"
                 }
             }
@@ -70,13 +72,13 @@ sealed class GradleDependency : GradleScriptCompatible {
                 configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
             ): Safe = Safe(
                 configuration,
-                Platform(Either.right(Project(Path.path(path))))
+                Platform(Project(Path.path(path)))
             )
 
             fun platformExternal(
                 coordinate: String,
                 configuration: CONFIGURATION = CONFIGURATION.IMPLEMENTATION
-            ): Safe = Safe(configuration, Platform(Either.left(External(coordinate))))
+            ): Safe = Safe(configuration, External(coordinate))
         }
     }
 }

@@ -17,8 +17,9 @@ import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.screenshot.ScreenshotCapturer
+import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
 import com.avito.android.test.report.screenshot.ScreenshotUploader
+import com.avito.android.test.report.screenshot.ScreenshotUploaderImpl
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.util.formatStackTrace
@@ -42,8 +43,8 @@ class ReportImplementation(
     private val loggerFactory: LoggerFactory,
     private val transport: List<Transport>,
     private val remoteStorage: RemoteStorage,
-    private val screenshotUploader: ScreenshotUploader = ScreenshotUploader.Impl(
-        screenshotCapturer = ScreenshotCapturer.Impl(onDeviceCacheDirectory, loggerFactory),
+    private val screenshotUploader: ScreenshotUploader = ScreenshotUploaderImpl(
+        screenshotCapturer = ScreenshotCapturerImpl(onDeviceCacheDirectory),
         remoteStorage = remoteStorage,
         loggerFactory = loggerFactory
     ),
