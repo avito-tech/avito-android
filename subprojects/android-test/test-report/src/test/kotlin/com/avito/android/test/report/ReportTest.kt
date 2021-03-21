@@ -196,13 +196,14 @@ class ReportTest {
         val state = report.reportTestCase()
         val stepEntries = state.testCaseStepList.first().entryList
 
-        assertThat(stepEntries).hasSize(3)
+        assertThat(stepEntries).hasSize(4)
 
-        stepEntries[0].assertCommentIs(
+        stepEntries[0].assertCommentIs("FAILED to add: stub screenshot")
+        stepEntries[1].assertCommentIs(
             "[x2] performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
         )
-        stepEntries[1].assertCommentIs("its fine")
-        stepEntries[2].assertCommentIs(
+        stepEntries[2].assertCommentIs("its fine")
+        stepEntries[3].assertCommentIs(
             "[x3] performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
         )
     }
@@ -228,9 +229,9 @@ class ReportTest {
         val state = report.reportTestCase()
         val stepEntries = state.testCaseStepList.first().entryList
 
-        assertThat(stepEntries).hasSize(1)
-
-        stepEntries[0].assertCommentIs(
+        assertThat(stepEntries).hasSize(2)
+        stepEntries[0].assertCommentIs("FAILED to add: stub screenshot")
+        stepEntries[1].assertCommentIs(
             "[x4] performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
         )
     }
