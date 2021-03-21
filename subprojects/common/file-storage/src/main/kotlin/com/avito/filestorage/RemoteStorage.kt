@@ -59,6 +59,8 @@ interface RemoteStorage {
         ) : Result()
 
         data class Error(
+            val comment: String,
+            val timeInSeconds: Long,
             val t: Throwable
         ) : Result()
     }
