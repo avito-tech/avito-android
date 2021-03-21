@@ -351,20 +351,25 @@ class ReportImplementation(
     private fun List<FutureValue<RemoteStorage.Result>>.getInitializedEntries(): List<Entry> =
         asSequence()
             .map(FutureValue<RemoteStorage.Result>::get)
-            .filterIsInstance<RemoteStorage.Result.Success>()
             .map {
-                Entry.File(
-                    comment = it.comment,
-                    fileAddress = it.url,
-                    timeInSeconds = it.timeInSeconds,
-                    fileType = when (it.uploadRequest) {
-                        is RemoteStorage.Request.FileRequest.Image -> Entry.File.Type.img_png
-                        is RemoteStorage.Request.FileRequest.Video -> Entry.File.Type.video
-                        is RemoteStorage.Request.ContentRequest.Html -> Entry.File.Type.html
-                        is RemoteStorage.Request.ContentRequest.PlainText -> Entry.File.Type.plain_text
-                        is RemoteStorage.Request.ContentRequest.AnyContent -> Entry.File.Type.plain_text
-                    }
-                )
+                when (it) {
+                    is RemoteStorage.Result.Error -> Entry.Comment(
+                        title = "FAILED to add: ${it.comment}",
+                        timeInSeconds = it.timeInSeconds
+                    )
+                    is RemoteStorage.Result.Success -> Entry.File(
+                        comment = it.comment,
+                        fileAddress = it.url,
+                        timeInSeconds = it.timeInSeconds,
+                        fileType = when (it.uploadRequest) {
+                            is RemoteStorage.Request.FileRequest.Image -> Entry.File.Type.img_png
+                            is RemoteStorage.Request.FileRequest.Video -> Entry.File.Type.video
+                            is RemoteStorage.Request.ContentRequest.Html -> Entry.File.Type.html
+                            is RemoteStorage.Request.ContentRequest.PlainText -> Entry.File.Type.plain_text
+                            is RemoteStorage.Request.ContentRequest.AnyContent -> Entry.File.Type.plain_text
+                        }
+                    )
+                }
             }
             .toList()
 
