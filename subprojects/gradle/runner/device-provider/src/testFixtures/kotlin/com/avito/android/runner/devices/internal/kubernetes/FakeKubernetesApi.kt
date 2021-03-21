@@ -1,5 +1,6 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
+import com.avito.android.Result
 import io.fabric8.kubernetes.api.model.Pod
 import io.fabric8.kubernetes.api.model.apps.Deployment
 
@@ -8,7 +9,7 @@ internal class FakeKubernetesApi(
 ) : KubernetesApi {
 
     var createDeployment: (Deployment) -> Unit = {}
-    var getPods: (String) -> List<Pod> = { emptyList() }
+    var getPods: (String) -> Result<List<Pod>> = { Result.Success(emptyList()) }
 
     override suspend fun deletePod(podName: String): Boolean {
         return true
@@ -34,7 +35,7 @@ internal class FakeKubernetesApi(
         createDeployment.invoke(deployment)
     }
 
-    override suspend fun getPods(deploymentName: String): List<Pod> {
+    override suspend fun getPods(deploymentName: String): Result<List<Pod>> {
         return getPods.invoke(deploymentName)
     }
 }

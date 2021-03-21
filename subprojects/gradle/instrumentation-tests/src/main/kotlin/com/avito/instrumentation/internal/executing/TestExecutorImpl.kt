@@ -18,9 +18,11 @@ import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.File
 
 internal class TestExecutorImpl(
@@ -126,9 +128,11 @@ internal class TestExecutorImpl(
                 } catch (e: Throwable) {
                     logger.critical("Error during action in $configurationName job", e)
                 } finally {
-                    logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
-                    devicesProvider.releaseDevices()
-                    logger.info("Devices: Devices released for configuration: $configurationName")
+                    withContext(NonCancellable) {
+                        logger.info("Devices: Starting releasing devices for configuration: $configurationName...")
+                        devicesProvider.releaseDevices()
+                        logger.info("Devices: Devices released for configuration: $configurationName")
+                    }
                 }
             }.join()
         }

@@ -1,5 +1,6 @@
 package com.avito.android.runner.devices.internal
 
+import com.avito.android.Result
 import com.avito.runner.service.worker.device.Serial
 import java.io.File
 
@@ -12,5 +13,5 @@ internal interface Device {
         tags: Collection<String>
     )
 
-    suspend fun waitForBoot(): Boolean
+    suspend fun waitForBoot(): Result<String>
 }

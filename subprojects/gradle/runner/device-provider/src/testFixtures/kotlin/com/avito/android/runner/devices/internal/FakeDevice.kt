@@ -8,13 +8,13 @@ internal open class FakeDevice(
     override val serial: Serial
 ) : Device {
 
-    var waitForBoot: suspend () -> Boolean = { true }
+    var waitForBoot: suspend () -> Result<String> = { Result.Success("stub") }
 
     override fun redirectLogcatToFile(file: File, tags: Collection<String>) {
         // empty
     }
 
-    override suspend fun waitForBoot(): Boolean {
+    override suspend fun waitForBoot(): Result<String> {
         return this.waitForBoot.invoke()
     }
 }
