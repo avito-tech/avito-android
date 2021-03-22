@@ -5,35 +5,28 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Looper
 import com.avito.android.Result
+import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
 import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
-import com.avito.android.util.toPng
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 
 /**
  * Source: https://github.com/square/spoon/blob/master/spoon-client/src/main/java/com/squareup/spoon/Screenshot.java
  */
 class ScreenshotCapturerImpl(private val outputDirectory: Lazy<File>) : ScreenshotCapturer {
 
-    override fun captureBitmap(): Result<Bitmap> {
+    override fun captureBitmap(): Result<Capture> {
         // todo use di: pass activity getter as constructor argument
         val activity = getCurrentActivityOrNull()
         return if (activity != null) {
             try {
-                Result.Success(drawCanvas(activity))
+                Result.Success(Capture.Bitmap(drawCanvas(activity)))
             } catch (e: Throwable) {
                 Result.Failure(IllegalStateException("Can't make screenshot, drawCanvas() exception", e))
             }
         } else {
-            Result.Failure(IllegalStateException("There is no RESUMED activity when capturingBitmap"))
-        }
-    }
-
-    override fun captureAsStream(): Result<InputStream> {
-        return captureBitmap().map { bitmap ->
-            bitmap.toPng()
+            Result.Success(Capture.NoActivity)
         }
     }
 
@@ -41,13 +34,18 @@ class ScreenshotCapturerImpl(private val outputDirectory: Lazy<File>) : Screensh
         filename: String,
         compressFormat: Bitmap.CompressFormat,
         quality: Int
-    ): Result<File> {
-        return captureBitmap().map { bitmap ->
-            File(outputDirectory.value, filename).also { file ->
-                FileOutputStream(file).use {
-                    bitmap.compress(compressFormat, quality, it)
+    ): Result<File?> {
+        return captureBitmap().flatMap { capture ->
+            Result.Success(
+                when (capture) {
+                    is Capture.Bitmap -> File(outputDirectory.value, filename).also { file ->
+                        FileOutputStream(file).use {
+                            capture.value.compress(compressFormat, quality, it)
+                        }
+                    }
+                    Capture.NoActivity -> null // no Activity in RESUMED
                 }
-            }
+            )
         }
     }
 

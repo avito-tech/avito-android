@@ -18,12 +18,16 @@ class ScreenshotUploaderImpl(
         // using file, and not an inputStream, because okhttp could use it multiple times (retries)
         return screenshotCapturer.captureAsFile().fold(
             { screenshot ->
-                remoteStorage.upload(
-                    uploadRequest = RemoteStorage.Request.FileRequest.Image(
-                        file = screenshot
-                    ),
-                    comment = comment
-                )
+                if (screenshot != null) {
+                    remoteStorage.upload(
+                        uploadRequest = RemoteStorage.Request.FileRequest.Image(
+                            file = screenshot
+                        ),
+                        comment = comment
+                    )
+                } else {
+                    null
+                }
             },
             { error ->
                 logger.warn("Unable to make screenshot: ${error.message}", error)
