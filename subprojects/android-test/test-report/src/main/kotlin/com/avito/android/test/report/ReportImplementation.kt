@@ -336,25 +336,24 @@ class ReportImplementation(
     private inline fun <reified T : ReportState> getCastedState(cause: Throwable? = null): T {
         val castedClass = getCastedStateOrNull<T>()
 
-        if (castedClass == null) {
+        if (castedClass != null) {
+            return castedClass
+        } else {
             val _state = state
 
-            val detailedCause = cause ?: when (_state) {
-                is ReportState.Initialized.NotStarted ->
+            val detailedCause = when {
+                cause != null -> cause
+
+                _state is ReportState.Initialized ->
                     IllegalStateException("Test not started, incident = ${_state.incident}")
 
-                is ReportState.Initialized.Started -> null
-                ReportState.Nothing -> null
-                ReportState.Written -> null
+                else -> null
             }
 
             throw IllegalStateException(
-                "Invalid state. " +
-                    "Expected ${T::class.simpleName} actual ${state::class.java.simpleName}",
+                "Invalid state. Expected ${T::class.simpleName} actual ${state::class.java.simpleName}",
                 detailedCause
             )
-        } else {
-            return castedClass
         }
     }
 
