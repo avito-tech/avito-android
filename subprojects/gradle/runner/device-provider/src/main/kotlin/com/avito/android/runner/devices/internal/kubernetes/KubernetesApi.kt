@@ -1,5 +1,6 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
+import com.avito.android.Result
 import com.avito.instrumentation.internal.reservation.adb.waitForCondition
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -15,7 +16,7 @@ internal interface KubernetesApi {
     suspend fun getPodDescription(podName: String): String
     suspend fun deleteDeployment(deploymentName: String)
     suspend fun createDeployment(deployment: Deployment)
-    suspend fun getPods(deploymentName: String): List<Pod>
+    suspend fun getPods(deploymentName: String): Result<List<Pod>>
 
     class Impl(
         private val kubernetesClient: KubernetesClient,
@@ -75,20 +76,25 @@ internal interface KubernetesApi {
             count: Int
         ) {
             logger.debug("waitForDeploymentCreationDone name=$deploymentName count=$count")
-            val isDeploymentDone = waitForCondition(
+            waitForCondition(
                 logger = logger,
                 conditionName = "Deployment $deploymentName deployed"
             ) {
                 getPods(
                     deploymentName = deploymentName
-                ).size == count
-            }
-            if (!isDeploymentDone) {
-                throw RuntimeException("Can't create deployment: $deploymentName")
+                ).flatMap { pods ->
+                    if (pods.size == count) {
+                        Result.Success(pods)
+                    } else {
+                        Result.Failure(IllegalStateException("Pods count is ${pods.size} but expected $count"))
+                    }
+                }
+            }.onFailure {
+                throw IllegalStateException("Can't create deployment: $deploymentName", it)
             }
         }
 
-        override suspend fun getPods(deploymentName: String): List<Pod> = try {
+        override suspend fun getPods(deploymentName: String): Result<List<Pod>> = Result.tryCatch {
 
             logger.debug("Getting pods for deployment: $deploymentName")
 
@@ -139,11 +145,7 @@ internal interface KubernetesApi {
                 "Getting pods for deployment: $deploymentName completed. " +
                     "Received ${pods.size} pods (running: ${runningPods.size})."
             )
-
             pods
-        } catch (t: Throwable) {
-            logger.warn("Failed to get pods for deployment: $deploymentName", t)
-            emptyList()
         }
     }
 

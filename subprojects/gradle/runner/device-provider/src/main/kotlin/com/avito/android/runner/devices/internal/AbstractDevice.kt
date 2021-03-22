@@ -33,22 +33,14 @@ internal abstract class AbstractDevice(protected val loggerFactory: LoggerFactor
 
     protected fun isBootCompleted() = executeCommand(CHECK_BOOT_COMPLETED_COMMAND)
 
-    protected suspend fun waitForCommand(
-        runner: () -> Result<String>,
-        checker: (Result<String>) -> Boolean,
-        successMessage: String,
-        errorMessage: String
+    protected suspend fun <T> waitForCommand(
+        runner: suspend () -> Result<T>,
     ) = waitForCondition(
         logger = logger,
         conditionName = "Wait device with serial: $serial",
-        successMessage = successMessage,
-        errorMessage = errorMessage,
-        maxAttempts = 50
-    ) {
-        checker(
-            runner()
-        )
-    }
+        maxAttempts = 50,
+        condition = runner
+    )
 
     private fun executeCommand(command: String): Result<String> = runCommand(
         command = "$adb -s $serial $command",

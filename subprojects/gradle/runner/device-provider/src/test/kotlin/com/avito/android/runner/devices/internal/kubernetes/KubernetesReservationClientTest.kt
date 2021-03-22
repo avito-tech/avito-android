@@ -1,11 +1,13 @@
 package com.avito.android.runner.devices.internal.kubernetes
 
+import com.avito.android.Result
 import com.avito.android.runner.devices.internal.FakeAndroidDebugBridge
 import com.avito.android.runner.devices.internal.StubEmulatorsLogsReporter
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.android.runner.devices.model.stub
 import com.avito.logger.StubLoggerFactory
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -70,33 +72,32 @@ internal class KubernetesReservationClientTest {
     @Test
     fun `claim twice - throws exception`() {
         val client = client()
-        val exception = assertThrows<IllegalStateException> {
+        val exception = assertThrows<CancellationException> {
             runBlockingTest {
                 // first
                 client.claim(listOf(ReservationData.stub()), this)
-
                 // second
                 client.claim(listOf(ReservationData.stub()), this)
             }
         }
         assertThat(exception.message)
-            .isEqualTo("Unable to start reservation job. Already started")
+            .isEqualTo("Unable claim reservation. State is already started")
     }
 
     @Test
-    fun `get one pod then empty - success`() {
+    fun `get one pod then fail - success`() {
         val client = client()
         val results = LinkedList(
             listOf(
-                listOf(StubPod()),
-                emptyList()
+                Result.Success(listOf(StubPod())),
+                Result.Failure(RuntimeException())
             ),
         )
 
         kubernetesApi.getPods = {
             results.poll()
         }
-        dispatcher.runBlockingTest {
+        runBlockingTest {
             client.claim(listOf(ReservationData.stub()), this)
         }
     }
@@ -106,7 +107,7 @@ internal class KubernetesReservationClientTest {
     fun `devices channel cancel - success`() {
         val client = client(dispatcher = Dispatchers.Default)
         kubernetesApi.getPods = {
-            listOf(StubPod())
+            Result.Success(listOf(StubPod()))
         }
         runBlocking {
             val result = client.claim(listOf(ReservationData.stub()), this)
@@ -119,7 +120,7 @@ internal class KubernetesReservationClientTest {
     fun `claim then release - success`() {
         val client = client(dispatcher = Dispatchers.Default)
         kubernetesApi.getPods = {
-            listOf(StubPod())
+            Result.Success(listOf(StubPod()))
         }
         runBlocking {
             client.claim(listOf(ReservationData.stub()), this)
