@@ -65,7 +65,7 @@ class HttpRemoteStorage(
                             deleteOnUpload = deleteOnUpload
                         )
 
-                        futureValue.set(RemoteStorage.Result.Error(t))
+                        futureValue.set(RemoteStorage.Result.Error(comment, timestamp, t))
                     }
 
                     override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -89,6 +89,8 @@ class HttpRemoteStorage(
                                 val exception = IllegalStateException("Uploading failed response body is absent")
                                 logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
                                 RemoteStorage.Result.Error(
+                                    comment = comment,
+                                    timeInSeconds = timestamp,
                                     t = exception
                                 )
                             }
@@ -96,6 +98,8 @@ class HttpRemoteStorage(
                                 val exception = RuntimeException("Uploading failed with response: ${response.body()}")
                                 logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
                                 RemoteStorage.Result.Error(
+                                    comment = comment,
+                                    timeInSeconds = timestamp,
                                     t = exception
                                 )
                             }

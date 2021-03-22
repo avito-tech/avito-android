@@ -15,4 +15,8 @@ abstract class InstrumentationTestRunnerDelegate {
     open fun afterOnCreate(arguments: Bundle) {
         // empty
     }
+
+    open fun beforeFinish(resultCode: Int, results: Bundle?) {
+        // empty
+    }
 }
