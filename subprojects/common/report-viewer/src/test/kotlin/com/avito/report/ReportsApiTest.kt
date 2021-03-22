@@ -79,11 +79,9 @@ internal class ReportsApiTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "")
         )
 
-        assertThat(result).isSuccess()
-
-        assertThat(
-            result.getOrThrow().first().name
-        ).isEqualTo("ru.domofond.features.RemoteToggleMonitorTest.check_remote_toggle")
+        assertThat(result).isSuccess().withValue {
+            assertThat(it.first().name).isEqualTo("ru.domofond.features.RemoteToggleMonitorTest.check_remote_toggle")
+        }
     }
 
     @Test
