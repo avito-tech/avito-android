@@ -39,21 +39,19 @@ internal interface IncidentChainFactory {
                         "can handle ${this::class.java.name}, " +
                         "than could lead to undesirable behavior. Please narrow canCustomize expressions"
                 )
-                canCustomize.size == 1 ->
-                    when (val result = canCustomize[0].customize(this)) {
-                        is IncidentPresenter.Result.OK -> result.chain
-                        is IncidentPresenter.Result.Fail ->
-                            customizeByFallback(CustomizeFailException(result.exception, this))
-                    }
+                canCustomize.size == 1 -> canCustomize[0].customize(this).fold(
+                    onSuccess = { it },
+                    onFailure = { throwable -> customizeByFallback(CustomizeFailException(throwable, this)) }
+                )
                 else -> customizeByFallback(this)
             }
         }
 
         private fun customizeByFallback(e: Throwable): List<IncidentElement> {
-            return when (val result = fallbackPresenter.customize(e)) {
-                is IncidentPresenter.Result.OK -> result.chain
-                is IncidentPresenter.Result.Fail -> error("Failed to customize by fallback customizer, please fix!")
-            }
+            return fallbackPresenter.customize(e).fold(
+                onSuccess = { it },
+                onFailure = { error("Failed to customize by fallback customizer, please fix!") }
+            )
         }
     }
 

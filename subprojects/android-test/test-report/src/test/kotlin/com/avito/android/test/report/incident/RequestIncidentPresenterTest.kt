@@ -1,5 +1,8 @@
 package com.avito.android.test.report.incident
 
+import com.avito.truth.ResultSubject.Companion.assertThat
+import com.avito.truth.isNotInstanceOf
+import com.google.common.truth.Truth.assertThat
 import com.google.gson.JsonPrimitive
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
@@ -44,8 +47,9 @@ class RequestIncidentPresenterTest {
     fun dataIsJsonObject() {
         val result = RequestIncidentPresenter().customize(RequestIncidentException("kk", sampleJson, null))
 
-        assert(result is IncidentPresenter.Result.OK)
-        val data = (result as IncidentPresenter.Result.OK).chain[0].data
-        assert(data !is JsonPrimitive)
+        assertThat(result).isSuccess().withValue {
+            val data = it[0].data
+            assertThat(data).isNotInstanceOf<JsonPrimitive>()
+        }
     }
 }

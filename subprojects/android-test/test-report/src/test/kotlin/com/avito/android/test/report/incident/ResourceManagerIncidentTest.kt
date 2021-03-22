@@ -2,7 +2,7 @@ package com.avito.android.test.report.incident
 
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.IncidentElement
-import com.avito.truth.isInstanceOf
+import com.avito.truth.ResultSubject.Companion.assertThat
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -36,14 +36,15 @@ class ResourceManagerIncidentTest {
             incidentChain = emptyList()
         )
         val result = presenter.customize(exception)
-        assertThat(result).isInstanceOf<IncidentPresenter.Result.OK>()
+
+        assertThat(result).isSuccess()
     }
 
     @Test
     fun `incedent chain must be after main incedent`() {
         val result = presenter.customize(exceptionWithIncedentChain)
-        assert(result is IncidentPresenter.Result.OK)
-        with(result as IncidentPresenter.Result.OK) {
+
+        assertThat(result).isSuccess().withValue { chain ->
             assertThat(chain.size)
                 .isEqualTo(4)
 
