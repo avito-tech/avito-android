@@ -47,21 +47,16 @@ interface GooglePlayDeployer {
         }
 
         override fun deploy(deploys: List<GooglePlayDeploy>) {
-            return try {
-                val editIdWithDeploy = deploys
-                    .map { deploy ->
-                        val editId = insertEdit(deploy.applicationId)
-                        val versionCode = uploadBinary(deploy, editId)
-                        setTrack(deploy, editId, versionCode)
-                        validate(deploy, editId)
-                        editId to deploy
-                    }
-                commitAll(editIdWithDeploy)
-                logger.info("SUCCESS: Deploy $deploys")
-            } catch (e: Exception) {
-                logger.critical("FAILED: Deploy", e)
-                throw e
-            }
+            val editIdWithDeploy = deploys
+                .map { deploy ->
+                    val editId = insertEdit(deploy.applicationId)
+                    val versionCode = uploadBinary(deploy, editId)
+                    setTrack(deploy, editId, versionCode)
+                    validate(deploy, editId)
+                    editId to deploy
+                }
+            commitAll(editIdWithDeploy)
+            logger.debug("SUCCESS: Deploy $deploys")
         }
 
         private fun insertEdit(applicationId: String): String {
