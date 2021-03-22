@@ -113,7 +113,9 @@ class ReportImplementation(
         exception: Throwable,
         screenshot: FutureValue<RemoteStorage.Result>?,
     ) = methodExecutionTracing("registerIncident") {
-        val currentState = getCastedState<ReportState.Initialized>()
+        val currentState = getCastedState<ReportState.Initialized> {
+            IllegalStateException(it, exception)
+        }
 
         if (currentState.incident == null) {
             if (screenshot != null) {
@@ -333,9 +335,11 @@ class ReportImplementation(
         }
     }
 
-    private inline fun <reified T : ReportState> getCastedState(): T {
+    private inline fun <reified T : ReportState> getCastedState(
+        exceptionBuilder: (String) -> IllegalStateException = { IllegalStateException(it) }
+    ): T {
         return getCastedStateOrNull()
-            ?: throw IllegalStateException("Invalid state. Expected ${T::class.java} actual $state")
+            ?: throw exceptionBuilder("Invalid state. Expected ${T::class.java} actual $state")
     }
 
     private fun StepResult.appendFutureEntries(): StepResult {
