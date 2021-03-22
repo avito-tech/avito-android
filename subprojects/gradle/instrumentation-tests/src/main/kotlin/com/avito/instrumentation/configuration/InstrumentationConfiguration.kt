@@ -13,9 +13,6 @@ public abstract class InstrumentationConfiguration(public val name: String) {
 
     public var reportSkippedTests: Boolean = false
 
-    @Deprecated("use runOnlyChangedTests instead")
-    public var impactAnalysisPolicy: ImpactAnalysisPolicy = ImpactAnalysisPolicy.Off
-
     public var runOnlyChangedTests: Boolean = false
 
     public var kubernetesNamespace: String = "android-emulator"
