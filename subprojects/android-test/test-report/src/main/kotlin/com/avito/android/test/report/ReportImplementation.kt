@@ -113,9 +113,7 @@ class ReportImplementation(
         exception: Throwable,
         screenshot: FutureValue<RemoteStorage.Result>?,
     ) = methodExecutionTracing("registerIncident") {
-        val currentState = getCastedState<ReportState.Initialized> {
-            IllegalStateException(it, exception)
-        }
+        val currentState = getCastedState<ReportState.Initialized>(cause = exception)
 
         if (currentState.incident == null) {
             if (screenshot != null) {
@@ -335,11 +333,29 @@ class ReportImplementation(
         }
     }
 
-    private inline fun <reified T : ReportState> getCastedState(
-        exceptionBuilder: (String) -> IllegalStateException = { IllegalStateException(it) }
-    ): T {
-        return getCastedStateOrNull()
-            ?: throw exceptionBuilder("Invalid state. Expected ${T::class.java} actual $state")
+    private inline fun <reified T : ReportState> getCastedState(cause: Throwable? = null): T {
+        val castedClass = getCastedStateOrNull<T>()
+
+        if (castedClass == null) {
+            val _state = state
+
+            val detailedCause = cause ?: when (_state) {
+                is ReportState.Initialized.NotStarted ->
+                    IllegalStateException("Test not started, incident = ${_state.incident}")
+
+                is ReportState.Initialized.Started -> null
+                ReportState.Nothing -> null
+                ReportState.Written -> null
+            }
+
+            throw IllegalStateException(
+                "Invalid state. " +
+                    "Expected ${T::class.simpleName} actual ${state::class.java.simpleName}",
+                detailedCause
+            )
+        } else {
+            return castedClass
+        }
     }
 
     private fun StepResult.appendFutureEntries(): StepResult {
