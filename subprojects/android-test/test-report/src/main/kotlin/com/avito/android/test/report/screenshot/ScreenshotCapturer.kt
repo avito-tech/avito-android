@@ -1,20 +1,25 @@
 package com.avito.android.test.report.screenshot
 
-import android.graphics.Bitmap
 import com.avito.android.Result
 import java.io.File
-import java.io.InputStream
 import java.util.UUID
+import android.graphics.Bitmap as AndroidBitmap
 
 interface ScreenshotCapturer {
 
-    fun captureBitmap(): Result<Bitmap>
+    fun captureBitmap(): Result<Capture>
 
-    fun captureAsStream(): Result<InputStream>
-
+    /**
+     * @return null when no Activity in RESUMED state
+     */
     fun captureAsFile(
         filename: String = "${UUID.randomUUID()}.png",
-        compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,
+        compressFormat: AndroidBitmap.CompressFormat = AndroidBitmap.CompressFormat.PNG,
         quality: Int = 100
-    ): Result<File>
+    ): Result<File?>
+
+    sealed class Capture {
+        class Bitmap(val value: AndroidBitmap) : Capture()
+        object NoActivity : Capture()
+    }
 }
