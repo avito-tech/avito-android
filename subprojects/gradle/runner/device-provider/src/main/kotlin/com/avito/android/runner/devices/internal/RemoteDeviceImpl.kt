@@ -22,10 +22,15 @@ internal class RemoteDeviceImpl(
     }
 
     override suspend fun waitForBoot() = waitForCommand(
-        runner = { connectAndCheck() },
-        checker = { it.exists { output -> output == "1" } },
-        successMessage = "$serial connected",
-        errorMessage = "failed to connect to $serial"
+        runner = {
+            connectAndCheck().flatMap { output ->
+                if (output == "1") {
+                    Result.Success(output)
+                } else {
+                    Result.Failure(RuntimeException("Failed to connect to $serial"))
+                }
+            }
+        }
     )
 
     private fun connectAndCheck(): Result<String> {

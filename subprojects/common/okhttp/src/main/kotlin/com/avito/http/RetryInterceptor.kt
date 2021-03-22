@@ -44,9 +44,7 @@ public class RetryInterceptor constructor(
             prepareForRetry(response)
 
             val request = if (tryCount > 1) {
-                val modifiedRequest = modifyRetryRequest(originalRequest)
-                logger.debug("Retrying request ($tryCount / $retries) to ${describeRequest(modifiedRequest)}")
-                modifiedRequest
+                modifyRetryRequest(originalRequest)
             } else {
                 originalRequest
             }
@@ -55,9 +53,8 @@ public class RetryInterceptor constructor(
                 response = chain.proceed(request)
             } catch (exception: IOException) {
                 error = exception
-                logger.warn(
-                    "Failed to execute request ${describeRequest(request)}. Error: ${error.message}",
-                    exception
+                logger.debug(
+                    "Failed to execute request attempt $tryCount ${describeRequest(request)}. Error: ${error.message}"
                 )
             }
 
