@@ -5,6 +5,7 @@ import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
 import com.avito.android.stats.StatsDSender
 import com.avito.filestorage.RemoteStorageFactory
+import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.ReportViewerTestReporter
@@ -28,6 +29,7 @@ internal interface TestsSchedulerFactory {
         private val sourceReport: Report,
         private val gson: Gson,
         private val timeProvider: TimeProvider,
+        private val httpClientProvider: HttpClientProvider,
         private val metricsConfig: RunnerMetricsConfig,
         private val testExecutorFactory: TestExecutorFactory,
         private val testSuiteLoader: TestSuiteLoader
@@ -86,7 +88,8 @@ internal interface TestsSchedulerFactory {
                         remoteStorage = RemoteStorageFactory.create(
                             endpoint = params.fileStorageUrl,
                             loggerFactory = params.loggerFactory,
-                            timeProvider = timeProvider
+                            timeProvider = timeProvider,
+                            httpClientProvider = httpClientProvider
                         )
                     )
                 },

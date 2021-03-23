@@ -15,6 +15,7 @@ import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.MainLooperMessagesLogDelegate
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
+import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
@@ -38,6 +39,7 @@ import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
+import com.avito.http.HttpClientProvider
 import com.avito.logger.create
 import com.avito.report.ReportsApiFactory
 import com.avito.report.model.DeviceName
@@ -68,6 +70,15 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val mainLooperMessagesLogDumper by lazy { MainLooperMessagesLogDumper() }
 
+    private val httpClientProvider: HttpClientProvider by lazy {
+        HttpClientProvider(
+            StatsDSender.Impl(
+                config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
+                loggerFactory = loggerFactory
+            )
+        )
+    }
+
     /**
      * Public for *TestApp to skip on orchestrator runs
      */
@@ -92,7 +103,8 @@ abstract class InHouseInstrumentationTestRunner :
         RemoteStorageFactory.create(
             loggerFactory = loggerFactory,
             endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
-            timeProvider = timeProvider
+            timeProvider = timeProvider,
+            httpClientProvider = httpClientProvider
         )
     }
 

@@ -8,6 +8,8 @@ import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.devices.StubDeviceProviderFactory
 import com.avito.android.runner.report.createStubInstance
 import com.avito.android.stats.SeriesName
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.internal.InstrumentationTestsAction
@@ -174,7 +176,8 @@ internal class InstrumentationTestsActionIntegrationTest {
             timeProvider = StubTimeProvider(),
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testExecutorFactory = testExecutorFactory,
-            testSuiteLoader = testSuiteLoader
+            testSuiteLoader = testSuiteLoader,
+            httpClientProvider = HttpClientProvider.createStubInstance()
         ).create(devicesProviderFactory = StubDeviceProviderFactory),
         finalizer = FinalizerFactory.Impl(
             params = params,

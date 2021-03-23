@@ -15,7 +15,7 @@ dependencies {
     testImplementation(testFixtures(project(":common:statsd")))
     testImplementation(testFixtures(project(":common:logger")))
 
-    testFixturesImplementation(testFixtures(project(":common:statsd")))
+    testFixturesApi(testFixtures(project(":common:statsd")))
 }
 
 kotlin {

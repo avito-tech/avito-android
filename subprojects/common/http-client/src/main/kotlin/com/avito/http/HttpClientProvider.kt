@@ -10,7 +10,10 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.concurrent.TimeUnit
 
-public class HttpClientProvider(private val statsDSender: StatsDSender) {
+public class HttpClientProvider(
+    private val statsDSender: StatsDSender,
+    private val builderTransform: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }
+) {
 
     private val builder = OkHttpClient.Builder()
 
@@ -23,6 +26,7 @@ public class HttpClientProvider(private val statsDSender: StatsDSender) {
         val seriesName = SeriesName.create("service", serviceName)
 
         return builder
+            .also { builderTransform(it) }
             .apply {
                 if (timeoutMs != null) {
                     readTimeout(timeoutMs, TimeUnit.MILLISECONDS)

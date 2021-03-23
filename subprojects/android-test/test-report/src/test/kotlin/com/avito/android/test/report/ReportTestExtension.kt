@@ -8,6 +8,8 @@ import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.Flakiness
@@ -16,7 +18,6 @@ import com.avito.time.TimeProvider
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.mock.MockInterceptor
 import okhttp3.mock.Rule
@@ -37,9 +38,9 @@ class ReportTestExtension(
         timeProvider = timeProvider,
         remoteStorage = RemoteStorageFactory.create(
             endpoint = fileStorageUrl,
-            httpClient = OkHttpClient.Builder()
-                .addInterceptor(mockInterceptor)
-                .build(),
+            httpClientProvider = HttpClientProvider.createStubInstance(
+                builderTransform = { it.addInterceptor(mockInterceptor) }
+            ),
             loggerFactory = loggerFactory,
             timeProvider = timeProvider
         ),
