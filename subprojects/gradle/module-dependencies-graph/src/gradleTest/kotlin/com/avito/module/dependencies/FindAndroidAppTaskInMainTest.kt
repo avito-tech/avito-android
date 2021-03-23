@@ -44,6 +44,14 @@ internal class FindAndroidAppTaskInMainTest : BaseFindAndroidAppTaskTest() {
         gradlew(projectDir, "findAndroidApp", "--modules=:UniqueA", "--configuration=main")
             .assertThat()
             .buildSuccessful()
-            .outputContains("There are no suitable Android apps")
+            .outputContains(
+                """
+                |There are no suitable Android apps
+                |Apps are sorted by missing modules:
+                |App :RootA contains [] but missed [:UniqueA]
+                |App :CopyRootB contains [] but missed [:UniqueA]
+                |App :RootB contains [] but missed [:UniqueA]
+            """.trimMargin()
+            )
     }
 }

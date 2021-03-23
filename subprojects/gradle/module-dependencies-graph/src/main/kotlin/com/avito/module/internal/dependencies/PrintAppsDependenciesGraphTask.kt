@@ -47,7 +47,7 @@ internal abstract class PrintAppsDependenciesGraphTask @Inject constructor(
     }
 
     private fun printDependenciesGraph() {
-        val graphBuilder = AndroidAppsGraphBuilder(project, graphBuilder())
+        val graphBuilder = AndroidAppsGraphBuilder(graphBuilder())
 
         configuration.getOrElse(android_test).mapToTypes()
             .forEach { configurationType ->
@@ -59,7 +59,7 @@ internal abstract class PrintAppsDependenciesGraphTask @Inject constructor(
     }
 
     private fun printDependenciesGraphFlatten() {
-        val graphBuilder = AndroidAppsGraphBuilder(project, graphBuilder())
+        val graphBuilder = AndroidAppsGraphBuilder(graphBuilder())
 
         configuration.getOrElse(android_test).mapToTypes()
             .forEach { configurationType ->

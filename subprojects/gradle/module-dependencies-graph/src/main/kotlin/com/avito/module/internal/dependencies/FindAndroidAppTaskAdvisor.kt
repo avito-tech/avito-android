@@ -10,8 +10,29 @@ internal class FindAndroidAppTaskAdvisor {
         return when (verdict) {
             is OneSuitableApp -> "In your project is only one suitable app ${verdict.projectWithDeps.project.path}"
             is MultipleSuitableApps -> verdict.advice()
-            is NoSuitableApps -> "There are no suitable Android apps"
+            is NoSuitableApps -> verdict.advice()
         }
+    }
+
+    private fun NoSuitableApps.advice(): String {
+        val resultsSortedByRelevance = result
+            .groupBy { it.missedModules.size }
+            .mapValues { (_, results) ->
+                results.sortedBy { it.dependencies.size }
+            }
+            .map { it.key to it.value }
+            .sortedBy { it.first }
+
+        return buildString {
+            appendLine("There are no suitable Android apps")
+            appendLine("Apps are sorted by missing modules:")
+            resultsSortedByRelevance.forEach { (_, results) ->
+                results.forEach { result ->
+                    append("App ${result.project.path}")
+                    appendLine(" contains ${result.presentedModules} but missed ${result.missedModules}")
+                }
+            }
+        }.trimIndent()
     }
 
     private fun MultipleSuitableApps.advice(): String {
