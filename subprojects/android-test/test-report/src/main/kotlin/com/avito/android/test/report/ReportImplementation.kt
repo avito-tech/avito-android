@@ -371,6 +371,8 @@ class ReportImplementation(
         asSequence()
             .map(FutureValue<RemoteStorage.Result>::get)
             .map {
+                // false positive 'must be exhaustive' error in IDE,
+                // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
                 when (it) {
                     is RemoteStorage.Result.Error -> Entry.Comment(
                         title = "FAILED to add: ${it.comment}",
