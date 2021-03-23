@@ -280,7 +280,7 @@ internal class KubernetesReservationClient(
                 }
             }
         }
-        logger.debug("listenPodsFromDeployment finished")
+        logger.debug("listenPodsFromDeployment finished, [deploymentName=$deploymentName]")
     }
 
     private fun emulatorSerialName(name: String): Serial.Remote = Serial.Remote("$name:$ADB_DEFAULT_PORT")
