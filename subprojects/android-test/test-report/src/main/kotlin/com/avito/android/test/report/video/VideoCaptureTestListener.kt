@@ -27,16 +27,15 @@ class VideoCaptureTestListener(
     override fun beforeTestStart(state: ReportState.Initialized.Started) {
         if (videoFeature.videoRecordingEnabled(shouldRecord)) {
             logger.debug("Video recording feature enabled. Recording starting")
-            when (val startingResult = videoCapturer.start()) {
-                is VideoCapturer.StartingRecordResult.Success ->
-                    logger.debug("Video recording feature enabled. Recording started")
-                is VideoCapturer.StartingRecordResult.Error ->
+            videoCapturer.start().fold(
+                onSuccess = { logger.debug("Video recording feature enabled. Recording started") },
+                onFailure = { throwable ->
                     logger.warn(
-                        "Video recording feature enabled. Failed to start recording. " +
-                            "Reason: ${startingResult.message}",
-                        startingResult.error
+                        "Video recording feature enabled. Failed to start recording.",
+                        throwable
                     )
-            }
+                }
+            )
         } else {
             logger.debug("Video recording feature disabled.")
         }
@@ -49,27 +48,27 @@ class VideoCaptureTestListener(
     override fun afterTestStop(state: ReportState.Initialized.Started) {
         if (videoFeature.videoUploadingEnabled(shouldRecord, savedIncident)) {
             logger.debug("Video uploading enabled. Recording stopping...")
-            when (val result = videoCapturer.stop()) {
-                is VideoCapturer.RecordResult.Success -> {
+            videoCapturer.stop().fold(
+                onSuccess = { videoFile ->
                     logger.debug("Video uploading enabled. Recording stopped")
                     val video = remoteStorage.upload(
                         uploadRequest = RemoteStorage.Request.FileRequest.Video(
-                            file = result.video
+                            file = videoFile
                         ),
                         comment = "video"
                     )
                     logger.debug("Video uploading enabled. Video uploaded")
                     waitUploads(state = state, video = video)
-                }
-                is VideoCapturer.RecordResult.Error ->
+                },
+                onFailure = { throwable ->
                     logger.warn(
                         "Video uploading enabled. " +
                             "Failed to upload video for " +
-                            "${state.testMetadata.testName}. " +
-                            "Reason: ${result.message}",
-                        result.error
+                            "${state.testMetadata.testName}.",
+                        throwable
                     )
-            }
+                }
+            )
         } else {
             videoCapturer.abort()
             logger.debug("Video uploading disabled. Video recording process aborted")

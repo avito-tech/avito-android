@@ -4,6 +4,7 @@ import android.media.MediaMetadataRetriever
 import android.os.ParcelFileDescriptor
 import android.os.ParcelFileDescriptor.MODE_READ_WRITE
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.Result
 import com.avito.android.test.waitFor
 import com.avito.android.util.executeMethod
 import com.avito.android.util.getFieldValue
@@ -16,21 +17,11 @@ import java.util.concurrent.TimeUnit
 
 interface VideoCapturer {
 
-    fun start(): StartingRecordResult
+    fun start(): Result<Unit>
 
-    fun stop(): RecordResult
+    fun stop(): Result<File>
 
     fun abort()
-
-    sealed class StartingRecordResult {
-        object Success : StartingRecordResult()
-        data class Error(val message: String, val error: Throwable? = null) : StartingRecordResult()
-    }
-
-    sealed class RecordResult {
-        data class Success(val video: File) : RecordResult()
-        data class Error(val message: String, val error: Throwable? = null) : RecordResult()
-    }
 }
 
 class VideoCapturerImpl(
@@ -43,7 +34,7 @@ class VideoCapturerImpl(
     private var state: State = State.Idling
 
     @Synchronized
-    override fun start(): VideoCapturer.StartingRecordResult {
+    override fun start(): Result<Unit> {
         // checks if execute start() concurrently
         return if (state is State.Idling) {
             val uuid = UUID.randomUUID().toString()
@@ -52,27 +43,27 @@ class VideoCapturerImpl(
             try {
                 executeRecorderCommand("start ${videoFile.absolutePath}", outputFile)
                 state = State.Recording(videoFile, outputFile)
-                VideoCapturer.StartingRecordResult.Success
+                Result.Success(Unit)
             } catch (t: Throwable) {
                 if (videoFile.exists()) {
                     videoFile.delete()
                 }
-                VideoCapturer.StartingRecordResult.Error("Can't start video capturing", t)
+                Result.Failure(IllegalStateException("Can't start video capturing", t))
             }
         } else {
-            VideoCapturer.StartingRecordResult.Error("Can't start video capturing. Capturer isn't Idling")
+            Result.Failure(IllegalStateException("Can't start video capturing. Capturer isn't Idling"))
         }
     }
 
     @Synchronized
-    override fun stop(): VideoCapturer.RecordResult =
+    override fun stop(): Result<File> =
         when (val castHelperLocalState = state) {
             is State.Recording -> {
                 val (videoFile, outputFile) = castHelperLocalState
                 val result = try {
                     executeRecorderCommand("stop", outputFile)
                     waitForVideoSaving(videoFile)
-                    VideoCapturer.RecordResult.Success(videoFile)
+                    Result.Success(videoFile)
                 } catch (t: Throwable) {
                     if (videoFile.exists()) {
                         videoFile.delete()
@@ -84,12 +75,12 @@ class VideoCapturerImpl(
                     } else {
                         "empty"
                     }
-                    VideoCapturer.RecordResult.Error("Failed when stopping video record. Output: $output", t)
+                    Result.Failure(IllegalStateException("Failed when stopping video record. Output: $output", t))
                 }
                 this.state = State.Idling
                 result
             }
-            else -> VideoCapturer.RecordResult.Error("Can't stop video capturing. Capturer isn't recording")
+            else -> Result.Failure(IllegalStateException("Can't stop video capturing. Capturer isn't recording"))
         }
 
     @Synchronized

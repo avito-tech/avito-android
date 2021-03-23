@@ -7,14 +7,19 @@ import com.google.common.truth.Subject
 import com.google.common.truth.Subject.Factory
 import com.google.common.truth.Truth
 
-class ResultSubject private constructor(
-    failureMetadata: FailureMetadata,
-    private val actual: Result<*>
+class ResultSubject<T> private constructor(
+    private val failureMetadata: FailureMetadata,
+    private val actual: Result<T>
 ) : Subject(failureMetadata, actual) {
 
-    fun isSuccess() {
-        if (actual is Result.Failure) {
-            failWithActual(Fact.simpleFact("expected to be Success, but failure with ${actual.throwable}"))
+    fun isSuccess(): SuccessSubject<T> {
+        when (actual) {
+            is Result.Failure -> {
+                failWithActual(Fact.simpleFact("expected to be Success, but failure with ${actual.throwable}"))
+                throw IllegalStateException("Can't be here")
+            }
+            is Result.Success ->
+                return SuccessSubject(failureMetadata, actual.value)
         }
     }
 
@@ -24,17 +29,28 @@ class ResultSubject private constructor(
         }
     }
 
+    class SuccessSubject<T> internal constructor(
+        failureMetadata: FailureMetadata,
+        private val actual: T
+    ) : Subject(failureMetadata, actual) {
+
+        fun withValue(body: (T) -> Unit) {
+            body(actual)
+        }
+    }
+
     companion object {
 
         @JvmStatic
-        private val RESULT_SUBJECT_FACTORY: Factory<ResultSubject, Result<*>> =
-            Factory<ResultSubject, Result<*>> { metadata, actual -> ResultSubject(metadata, actual) }
+        private val RESULT_SUBJECT_FACTORY: Factory<ResultSubject<*>, Result<*>> =
+            Factory<ResultSubject<*>, Result<*>> { metadata, actual -> ResultSubject(metadata, actual) }
 
         @JvmStatic
-        fun results(): Factory<ResultSubject, Result<*>> = RESULT_SUBJECT_FACTORY
+        fun results(): Factory<ResultSubject<*>, Result<*>> = RESULT_SUBJECT_FACTORY
 
+        @Suppress("UNCHECKED_CAST")
         @JvmStatic
-        fun assertThat(result: Result<*>): ResultSubject =
-            Truth.assertAbout(RESULT_SUBJECT_FACTORY).that(result)
+        fun <T> assertThat(result: Result<T>): ResultSubject<T> =
+            Truth.assertAbout(RESULT_SUBJECT_FACTORY).that(result) as ResultSubject<T>
     }
 }

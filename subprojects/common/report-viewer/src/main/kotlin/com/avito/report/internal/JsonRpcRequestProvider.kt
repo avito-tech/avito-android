@@ -44,7 +44,10 @@ internal class JsonRpcRequestProvider(
                 throw IllegalStateException("Can't parse response body", e)
             }
         } else {
-            throw Exception("Request failed: ${response.message} ${responseBody}\n$jsonRpcRequest")
+            throw Exception(
+                "JsonRpcRequest failed: $host method:$jsonRpcMethod " +
+                    "returns: ${response.message} $responseBody"
+            )
         }
     }
 
