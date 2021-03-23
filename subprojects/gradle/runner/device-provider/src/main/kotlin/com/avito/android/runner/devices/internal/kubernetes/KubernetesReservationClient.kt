@@ -32,6 +32,12 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * You should know that canceling jobs manually or via throwing exception
+ * will cancel whole parent job and all consuming channels.
+ *
+ * In [KubernetesReservationClient] case podsChannel will close automatically when [claim] job failed or canceled
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class KubernetesReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
@@ -280,7 +286,7 @@ internal class KubernetesReservationClient(
                 }
             }
         }
-        logger.debug("listenPodsFromDeployment finished")
+        logger.debug("listenPodsFromDeployment finished, [deploymentName=$deploymentName]")
     }
 
     private fun emulatorSerialName(name: String): Serial.Remote = Serial.Remote("$name:$ADB_DEFAULT_PORT")

@@ -70,6 +70,34 @@ internal class KubernetesReservationClientTest {
     }
 
     @Test
+    @Timeout(1, unit = TimeUnit.SECONDS)
+    fun `creating second deployment fail - throws exception`() {
+        val client = client(dispatcher = Dispatchers.Default)
+        val message = "Failed to create deployment"
+        val results = LinkedList(
+            listOf(
+                { /*success*/ },
+                { throw RuntimeException(message) }
+            ),
+        )
+        kubernetesApi.createDeployment = { results.poll().invoke() }
+        kubernetesApi.getPods = { Result.Success(listOf(StubPod())) }
+        val exception = assertThrows<RuntimeException>(message = message) {
+            runBlocking {
+                client.claim(
+                    listOf(
+                        ReservationData.stub(),
+                        ReservationData.stub()
+                    ),
+                    this
+                )
+            }
+        }
+        assertThat(exception.message)
+            .isEqualTo(message)
+    }
+
+    @Test
     fun `claim twice - throws exception`() {
         val client = client()
         val exception = assertThrows<CancellationException> {
