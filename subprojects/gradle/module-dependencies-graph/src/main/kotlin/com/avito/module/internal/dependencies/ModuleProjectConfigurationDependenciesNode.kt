@@ -17,15 +17,26 @@ internal class ModuleProjectConfigurationDependenciesNode(
     }
 
     fun allDependencies(): Set<Project> {
-        return dependencies.mapValues { (_, nodeSet) ->
-            nodeSet.flatMap { node ->
-                mutableSetOf(node.project).also {
-                    it.addAll(
-                        node.allDependencies()
-                    )
-                }
+        val dependencies = mutableSetOf<Project>()
+        // To avoid redundant revisiting the same nodes by different routes
+        val visited = mutableSetOf<ModuleProjectConfigurationDependenciesNode>()
+        traverseDependencies(visited) { node: ModuleProjectConfigurationDependenciesNode ->
+            dependencies.add(node.project)
+        }
+        return dependencies
+    }
+
+    private fun ModuleProjectConfigurationDependenciesNode.traverseDependencies(
+        visited: MutableSet<ModuleProjectConfigurationDependenciesNode>,
+        visitor: (ModuleProjectConfigurationDependenciesNode) -> Unit
+    ) {
+        dependencies.values.flatten().forEach { node ->
+            if (!visited.contains(node)) {
+                visitor(node)
+                node.traverseDependencies(visited, visitor)
+                visited.add(node)
             }
-        }.values.flatten().toSet()
+        }
     }
 
     override fun equals(other: Any?): Boolean {
