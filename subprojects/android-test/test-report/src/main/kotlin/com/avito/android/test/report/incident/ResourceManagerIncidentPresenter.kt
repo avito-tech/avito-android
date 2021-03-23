@@ -1,5 +1,6 @@
 package com.avito.android.test.report.incident
 
+import com.avito.android.Result
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.IncidentElement
 import com.github.salomonbrys.kotson.toJson
@@ -8,7 +9,7 @@ internal class ResourceManagerIncidentPresenter : IncidentPresenter {
 
     override fun canCustomize(exception: Throwable): Boolean = exception is ResourceManagerException
 
-    override fun customize(exception: Throwable): IncidentPresenter.Result {
+    override fun customize(exception: Throwable): Result<List<IncidentElement>> {
         exception as ResourceManagerException
 
         val mainElement = IncidentElement(
@@ -17,6 +18,6 @@ internal class ResourceManagerIncidentPresenter : IncidentPresenter {
             data = exception.requestBody?.toJson()
         )
 
-        return IncidentPresenter.Result.OK(listOf(mainElement) + exception.incidentChain)
+        return Result.Success(listOf(mainElement) + exception.incidentChain)
     }
 }

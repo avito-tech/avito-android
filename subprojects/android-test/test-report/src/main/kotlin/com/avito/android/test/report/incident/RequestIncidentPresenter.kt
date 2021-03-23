@@ -1,5 +1,6 @@
 package com.avito.android.test.report.incident
 
+import com.avito.android.Result
 import com.avito.report.model.IncidentElement
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -14,7 +15,7 @@ internal class RequestIncidentPresenter : IncidentPresenter {
 
     private data class Data(val title: String, val body: String)
 
-    override fun customize(exception: Throwable): IncidentPresenter.Result {
+    override fun customize(exception: Throwable): Result<List<IncidentElement>> {
         return try {
             val data = if (exception is RequestIncidentException) {
                 Data(exception.message, exception.body)
@@ -22,15 +23,17 @@ internal class RequestIncidentPresenter : IncidentPresenter {
                 exception.message!!.split(DELIMITER).let { Data(it[0], it[1]) }
             }
 
-            IncidentPresenter.Result.ok(
-                IncidentElement(
-                    message = data.title,
-                    data = gson.fromJson(data.body),
-                    origin = "request"
+            Result.Success(
+                listOf(
+                    IncidentElement(
+                        message = data.title,
+                        data = gson.fromJson(data.body),
+                        origin = "request"
+                    )
                 )
             )
         } catch (e: Exception) {
-            IncidentPresenter.Result.Fail(e)
+            Result.Failure(e)
         }
     }
 }
