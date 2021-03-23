@@ -36,12 +36,6 @@ dependencies {
     add("detektPlugins", libs.detektFormatting)
 }
 
-tasks.withType<Wrapper> {
-    // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
-    distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.8.3"
-}
-
 val detektAll = tasks.register<Detekt>("detektAll") {
     description = "Runs over whole code base without the starting overhead for each module."
     parallel = true
