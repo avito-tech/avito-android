@@ -32,6 +32,12 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * You should know that canceling jobs manually or via throwing exception
+ * will cancel whole parent job and all consuming channels.
+ *
+ * In [KubernetesReservationClient] case podsChannel will close automatically when [claim] job failed or canceled
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class KubernetesReservationClient(
     private val androidDebugBridge: AndroidDebugBridge,
