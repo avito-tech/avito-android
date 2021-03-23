@@ -1,6 +1,5 @@
 package com.avito.http
 
-import com.avito.logger.Logger
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -11,7 +10,7 @@ import java.util.concurrent.TimeUnit
  * See also:
  * - [okhttp3.internal.http.RetryAndFollowUpInterceptor]
  */
-public class RetryInterceptor constructor(
+public class RetryInterceptor(
     private val retries: Int = 5,
     private val allowedMethods: List<String> = listOf("GET"),
     private val allowedCodes: List<Int> = listOf(
@@ -23,14 +22,23 @@ public class RetryInterceptor constructor(
     ),
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,
-    private val logger: Logger,
     private val modifyRetryRequest: (Request) -> Request = { it },
-    private val describeRequest: (Request) -> String = { it.url.redact() }
+    private val onTryFail: TryFailCallback = TryFailCallback.STUB
 ) : Interceptor {
 
     init {
         require(retries >= 1)
     }
+
+    public constructor(policy: RetryPolicy) : this(
+        retries = policy.tries,
+        allowedMethods = policy.allowedMethods,
+        allowedCodes = policy.allowedCodes,
+        delayMs = policy.delayBetweenTriesMs,
+        useIncreasingDelay = policy.useIncreasingDelay,
+        modifyRetryRequest = policy.modifyRetryRequest,
+        onTryFail = policy.onTryFail
+    )
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
@@ -53,9 +61,7 @@ public class RetryInterceptor constructor(
                 response = chain.proceed(request)
             } catch (exception: IOException) {
                 error = exception
-                logger.debug(
-                    "Failed to execute request attempt $tryCount ${describeRequest(request)}. Error: ${error.message}"
-                )
+                onTryFail.onTryFail(tryCount, request, exception)
             }
 
             TimeUnit.MILLISECONDS.sleep(if (useIncreasingDelay) tryCount * delayMs else delayMs)

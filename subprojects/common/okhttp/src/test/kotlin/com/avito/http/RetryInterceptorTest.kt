@@ -1,8 +1,6 @@
 package com.avito.http
 
 import com.avito.android.Result
-import com.avito.logger.StubLoggerFactory
-import com.avito.logger.create
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.truth.isInstanceOf
@@ -28,8 +26,6 @@ internal class RetryInterceptorTest {
     )
 
     private val successfulResponse = MockResponse()
-
-    private val loggerFactory = StubLoggerFactory
 
     @BeforeEach
     private fun setup() {
@@ -108,7 +104,6 @@ internal class RetryInterceptorTest {
                 RetryInterceptor(
                     retries = maxAttempts,
                     delayMs = 1,
-                    logger = loggerFactory.create<StubApi>(),
                     allowedMethods = listOf("GET", "POST"),
                     useIncreasingDelay = false
                 )

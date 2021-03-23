@@ -40,7 +40,6 @@ internal class ElasticRoundRobinHttpServiceFactory(
                             retries = 6,
                             allowedMethods = listOf("GET", "POST"),
                             delayMs = 500,
-                            logger = logger,
                             modifyRetryRequest = { originalRequest ->
                                 RoundRobinInterceptor.requestOnNextUrl(
                                     originalRequest = originalRequest,

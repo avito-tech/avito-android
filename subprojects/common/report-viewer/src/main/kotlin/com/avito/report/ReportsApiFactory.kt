@@ -30,9 +30,7 @@ object ReportsApiFactory {
         loggerFactory: LoggerFactory,
         logger: Logger = loggerFactory.create<ReportsApi>(),
         retryInterceptor: RetryInterceptor? = RetryInterceptor(
-            logger = logger,
-            allowedMethods = listOf("POST"),
-            describeRequest = { it.describeJsonRpc() }
+            allowedMethods = listOf("POST")
         )
     ): ReportsApi {
         return ReportsApiImpl(

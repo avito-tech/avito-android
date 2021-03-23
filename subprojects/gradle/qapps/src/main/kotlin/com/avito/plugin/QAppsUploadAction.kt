@@ -13,6 +13,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +38,7 @@ internal class QAppsUploadAction(
             .client(httpClient())
             .validateEagerly(true)
             .build()
-            .create(QAppsUploadApi::class.java)
+            .create<QAppsUploadApi>()
     }
 
     fun upload(): Result<Unit> = Result.tryCatch {
@@ -81,8 +82,7 @@ internal class QAppsUploadAction(
         .addInterceptor(
             RetryInterceptor(
                 retries = 3,
-                allowedMethods = listOf("POST", "GET"),
-                logger = logger
+                allowedMethods = listOf("POST", "GET")
             )
         )
         .addInterceptor(
