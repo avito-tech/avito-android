@@ -27,11 +27,11 @@ internal class AppsDependenciesGraphTest {
                 """
                 |Configuration type: ConfigurationType.AndroidTests
                 |Root Node :CopyRootB
-                |:CopyRootB depends on :LeafG in ConfigurationType.AndroidTests
+                |:CopyRootB depends on :NodeG in ConfigurationType.AndroidTests
                 |:CopyRootB depends on :UniqueCopyB in ConfigurationType.AndroidTests
-                |:CopyRootB Node :LeafG
-                |:LeafG depends on :LeafE in ConfigurationType.Main
-                |:LeafG Node :LeafE
+                |:CopyRootB Node :NodeG
+                |:NodeG depends on :LeafE in ConfigurationType.Main
+                |:NodeG Node :LeafE
                 |:CopyRootB Node :UniqueCopyB
                 |Root Node :RootA
                 |:RootA depends on :LeafE in ConfigurationType.AndroidTests
@@ -39,32 +39,32 @@ internal class AppsDependenciesGraphTest {
                 |:RootA Node :LeafE
                 |:RootA Node :UniqueA
                 |Root Node :RootB
-                |:RootB depends on :LeafG in ConfigurationType.AndroidTests
+                |:RootB depends on :NodeG in ConfigurationType.AndroidTests
                 |:RootB depends on :UniqueB in ConfigurationType.AndroidTests
-                |:RootB Node :LeafG
-                |:LeafG depends on :LeafE in ConfigurationType.Main
-                |:LeafG Node :LeafE
+                |:RootB Node :NodeG
+                |:NodeG depends on :LeafE in ConfigurationType.Main
+                |:NodeG Node :LeafE
                 |:RootB Node :UniqueB
                 |Configuration type: ConfigurationType.Main
                 |Root Node :CopyRootB
-                |:CopyRootB depends on :LeafC in ConfigurationType.Main
-                |:CopyRootB Node :LeafC
-                |:LeafC depends on :LeafD in ConfigurationType.Main
-                |:LeafC Node :LeafD
-                |:LeafD depends on :LeafE in ConfigurationType.Main
-                |:LeafD Node :LeafE
+                |:CopyRootB depends on :NodeC in ConfigurationType.Main
+                |:CopyRootB Node :NodeC
+                |:NodeC depends on :NodeD in ConfigurationType.Main
+                |:NodeC Node :NodeD
+                |:NodeD depends on :LeafE in ConfigurationType.Main
+                |:NodeD Node :LeafE
                 |Root Node :RootA
                 |:RootA depends on :LeafF in ConfigurationType.Main
                 |:RootA depends on :LeafE in ConfigurationType.Main
                 |:RootA Node :LeafF
                 |:RootA Node :LeafE
                 |Root Node :RootB
-                |:RootB depends on :LeafC in ConfigurationType.Main
-                |:RootB Node :LeafC
-                |:LeafC depends on :LeafD in ConfigurationType.Main
-                |:LeafC Node :LeafD
-                |:LeafD depends on :LeafE in ConfigurationType.Main
-                |:LeafD Node :LeafE
+                |:RootB depends on :NodeC in ConfigurationType.Main
+                |:RootB Node :NodeC
+                |:NodeC depends on :NodeD in ConfigurationType.Main
+                |:NodeC Node :NodeD
+                |:NodeD depends on :LeafE in ConfigurationType.Main
+                |:NodeD Node :LeafE
                 |print ended""".trimMargin()
             )
     }
@@ -79,24 +79,24 @@ internal class AppsDependenciesGraphTest {
                 |> Task :printAppsDependenciesGraph
                 |Configuration type: ConfigurationType.Main
                 |Root Node :CopyRootB
-                |:CopyRootB depends on :LeafC in ConfigurationType.Main
-                |:CopyRootB Node :LeafC
-                |:LeafC depends on :LeafD in ConfigurationType.Main
-                |:LeafC Node :LeafD
-                |:LeafD depends on :LeafE in ConfigurationType.Main
-                |:LeafD Node :LeafE
+                |:CopyRootB depends on :NodeC in ConfigurationType.Main
+                |:CopyRootB Node :NodeC
+                |:NodeC depends on :NodeD in ConfigurationType.Main
+                |:NodeC Node :NodeD
+                |:NodeD depends on :LeafE in ConfigurationType.Main
+                |:NodeD Node :LeafE
                 |Root Node :RootA
                 |:RootA depends on :LeafF in ConfigurationType.Main
                 |:RootA depends on :LeafE in ConfigurationType.Main
                 |:RootA Node :LeafF
                 |:RootA Node :LeafE
                 |Root Node :RootB
-                |:RootB depends on :LeafC in ConfigurationType.Main
-                |:RootB Node :LeafC
-                |:LeafC depends on :LeafD in ConfigurationType.Main
-                |:LeafC Node :LeafD
-                |:LeafD depends on :LeafE in ConfigurationType.Main
-                |:LeafD Node :LeafE
+                |:RootB depends on :NodeC in ConfigurationType.Main
+                |:RootB Node :NodeC
+                |:NodeC depends on :NodeD in ConfigurationType.Main
+                |:NodeC Node :NodeD
+                |:NodeD depends on :LeafE in ConfigurationType.Main
+                |:NodeD Node :LeafE
                 |print ended""".trimMargin()
             )
     }
@@ -111,27 +111,27 @@ internal class AppsDependenciesGraphTest {
                 |> Task :printAppsDependenciesGraph
                 |Configuration type: ConfigurationType.AndroidTests
                 |Root :CopyRootB
-                |:CopyRootB graph contains :LeafG
+                |:CopyRootB graph contains :NodeG
                 |:CopyRootB graph contains :LeafE
                 |:CopyRootB graph contains :UniqueCopyB
                 |Root :RootA
                 |:RootA graph contains :LeafE
                 |:RootA graph contains :UniqueA
                 |Root :RootB
-                |:RootB graph contains :LeafG
+                |:RootB graph contains :NodeG
                 |:RootB graph contains :LeafE
                 |:RootB graph contains :UniqueB
                 |Configuration type: ConfigurationType.Main
                 |Root :CopyRootB
-                |:CopyRootB graph contains :LeafC
-                |:CopyRootB graph contains :LeafD
+                |:CopyRootB graph contains :NodeC
+                |:CopyRootB graph contains :NodeD
                 |:CopyRootB graph contains :LeafE
                 |Root :RootA
                 |:RootA graph contains :LeafF
                 |:RootA graph contains :LeafE
                 |Root :RootB
-                |:RootB graph contains :LeafC
-                |:RootB graph contains :LeafD
+                |:RootB graph contains :NodeC
+                |:RootB graph contains :NodeD
                 |:RootB graph contains :LeafE
                 |print ended""".trimMargin()
             )
@@ -147,15 +147,15 @@ internal class AppsDependenciesGraphTest {
                 |> Task :printAppsDependenciesGraph
                 |Configuration type: ConfigurationType.Main
                 |Root :CopyRootB
-                |:CopyRootB graph contains :LeafC
-                |:CopyRootB graph contains :LeafD
+                |:CopyRootB graph contains :NodeC
+                |:CopyRootB graph contains :NodeD
                 |:CopyRootB graph contains :LeafE
                 |Root :RootA
                 |:RootA graph contains :LeafF
                 |:RootA graph contains :LeafE
                 |Root :RootB
-                |:RootB graph contains :LeafC
-                |:RootB graph contains :LeafD
+                |:RootB graph contains :NodeC
+                |:RootB graph contains :NodeD
                 |:RootB graph contains :LeafE
                 |print ended""".trimMargin()
             )

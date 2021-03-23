@@ -32,9 +32,9 @@ internal object DependenciesGraphTestProject {
                 AndroidAppModule(
                     name = "RootB",
                     dependencies = setOf(
-                        GradleDependency.Safe.project(":LeafC"),
+                        GradleDependency.Safe.project(":NodeC"),
                         GradleDependency.Safe.project(
-                            ":LeafG",
+                            ":NodeG",
                             GradleDependency.Safe.CONFIGURATION.ANDROID_TEST_IMPLEMENTATION
                         ),
                         GradleDependency.Safe.project(
@@ -46,9 +46,9 @@ internal object DependenciesGraphTestProject {
                 AndroidAppModule(
                     name = "CopyRootB",
                     dependencies = setOf(
-                        GradleDependency.Safe.project(":LeafC"),
+                        GradleDependency.Safe.project(":NodeC"),
                         GradleDependency.Safe.project(
-                            ":LeafG",
+                            ":NodeG",
                             GradleDependency.Safe.CONFIGURATION.ANDROID_TEST_IMPLEMENTATION
                         ),
                         GradleDependency.Safe.project(
@@ -57,15 +57,15 @@ internal object DependenciesGraphTestProject {
                         ),
                     )
                 ),
-                AndroidLibModule(name = "LeafC", dependencies = setOf(GradleDependency.Safe.project(":LeafD"))),
-                AndroidLibModule(name = "LeafG", dependencies = setOf(GradleDependency.Safe.project(":LeafE"))),
-                KotlinModule(name = "LeafD", dependencies = setOf(GradleDependency.Safe.project(":LeafE"))),
+                AndroidLibModule(name = "NodeC", dependencies = setOf(GradleDependency.Safe.project(":NodeD"))),
+                AndroidLibModule(name = "NodeG", dependencies = setOf(GradleDependency.Safe.project(":LeafE"))),
+                KotlinModule(name = "NodeD", dependencies = setOf(GradleDependency.Safe.project(":LeafE"))),
                 KotlinModule(name = "LeafE"),
                 KotlinModule(name = "LeafF"),
                 KotlinModule(name = "UniqueA"),
                 KotlinModule(name = "UniqueB"),
                 KotlinModule(name = "UniqueCopyB"),
-                KotlinModule(name = "FakeRoot", dependencies = setOf(GradleDependency.Safe.project(":LeafC"))),
+                KotlinModule(name = "FakeRoot", dependencies = setOf(GradleDependency.Safe.project(":NodeC"))),
             )
         )
             .generateIn(dir)
