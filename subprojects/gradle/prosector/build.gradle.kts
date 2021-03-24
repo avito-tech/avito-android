@@ -8,7 +8,9 @@ plugins {
 dependencies {
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:android"))
+    implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
 
     implementation(libs.retrofit)
