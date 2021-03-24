@@ -29,7 +29,6 @@ class ExternalStorageTransport(
                 try {
                     val json = gson.toJson(testRuntimeDataBuilder.fromState(state))
                     file.writeText(json)
-                    logger.info("Wrote report for test to file: ${file.absolutePath}")
                 } catch (e: Throwable) {
                     logger.critical("Can't write report runtime data; leads to LOST test", e)
                 }
