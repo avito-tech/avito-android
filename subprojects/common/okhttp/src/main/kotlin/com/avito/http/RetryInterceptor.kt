@@ -24,32 +24,34 @@ public class RetryInterceptor(
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,
     private val logger: Logger, // todo remove after release
-    private val modifyRetryRequest: (Request) -> Request = { it },
-    private val onTryFail: TryFailCallback = TryFailCallback.STUB
+    private val modifyRetryRequest: (Request) -> Request = { it }
 ) : Interceptor {
 
     init {
         require(retries >= 1)
     }
 
-    public constructor(policy: RetryPolicy, logger: Logger) : this(
+    public constructor(
+        policy: RetryPolicy,
+        logger: Logger
+    ) : this(
         retries = policy.tries,
         allowedMethods = policy.allowedMethods,
         allowedCodes = policy.allowedCodes,
         delayMs = policy.delayBetweenTriesMs,
         useIncreasingDelay = policy.useIncreasingDelay,
         logger = logger,
-        modifyRetryRequest = policy.modifyRetryRequest,
-        onTryFail = policy.onTryFail
+        modifyRetryRequest = policy.modifyRetryRequest
     )
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         var response: Response? = null
-        var error: Throwable = IOException("Failed to execute request for unknown reason")
+        var error = IOException("Failed to execute request for unknown reason")
 
         var tryCount = 0
         while (response.shouldTry() && tryCount < retries) {
+
             tryCount++
 
             prepareForRetry(response)
@@ -64,7 +66,7 @@ public class RetryInterceptor(
                 response = chain.proceed(request)
             } catch (exception: IOException) {
                 error = exception
-                onTryFail.onTryFail(tryCount, request, exception)
+                response = null
             }
 
             TimeUnit.MILLISECONDS.sleep(if (useIncreasingDelay) tryCount * delayMs else delayMs)

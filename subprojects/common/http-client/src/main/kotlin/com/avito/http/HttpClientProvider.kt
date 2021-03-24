@@ -1,14 +1,12 @@
 package com.avito.http
 
 import com.avito.android.stats.StatsDSender
-import com.avito.http.TryFailCallback.Companion.combine
 import com.avito.http.internal.ServiceMetricsInterceptor
-import com.avito.http.internal.StatsdServiceEventsListener
+import com.avito.http.internal.StatsdHttpEventsListener
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.TimeProvider
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.util.concurrent.TimeUnit
 
 public class HttpClientProvider(
@@ -41,7 +39,6 @@ public class HttpClientProvider(
         retryPolicy: RetryPolicy? = null,
         metadataInterceptor: RequestMetadataInterceptor?
     ): OkHttpClient.Builder {
-
         return builder
             .apply {
                 if (metadataInterceptor != null) {
@@ -58,25 +55,17 @@ public class HttpClientProvider(
             }
             .apply {
                 if (retryPolicy != null) {
-                    val onTryFail = object : TryFailCallback {
-
-                        override fun onTryFail(attemptNumber: Int, request: Request, exception: Throwable) {
-                        }
-                    }
-
                     addInterceptor(
                         RetryInterceptor(
-                            policy = retryPolicy.copy(
-                                onTryFail = retryPolicy.onTryFail.combine(onTryFail)
-                            ),
-                            logger = loggerFactory.create<HttpClientProvider>()
+                            policy = retryPolicy,
+                            logger = loggerFactory.create<HttpClientProvider>(),
                         )
                     )
                 }
             }
             .addInterceptor(
                 ServiceMetricsInterceptor(
-                    StatsdServiceEventsListener(statsDSender = statsDSender),
+                    StatsdHttpEventsListener(statsDSender = statsDSender),
                     timeProvider
                 )
             )

@@ -14,6 +14,5 @@ public data class RetryPolicy(
     ),
     val delayBetweenTriesMs: Long = 1000,
     val useIncreasingDelay: Boolean = true,
-    val modifyRetryRequest: (Request) -> Request = { it },
-    val onTryFail: TryFailCallback = TryFailCallback.STUB
+    val modifyRetryRequest: (Request) -> Request = { it }
 )

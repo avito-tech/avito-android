@@ -6,7 +6,7 @@ import okhttp3.Response
 import okio.IOException
 
 internal class ServiceMetricsInterceptor(
-    private val listener: ServiceEventsListener,
+    private val listener: HttpEventsListener,
     private val timeProvider: TimeProvider
 ) : Interceptor {
 

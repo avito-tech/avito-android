@@ -3,7 +3,7 @@ package com.avito.http.internal
 import okhttp3.Request
 import java.io.IOException
 
-internal interface ServiceEventsListener {
+internal interface HttpEventsListener {
 
     fun onResponse(request: Request, code: Int, latencyMs: Long)
 

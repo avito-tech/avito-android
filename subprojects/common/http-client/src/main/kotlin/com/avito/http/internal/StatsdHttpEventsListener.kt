@@ -7,9 +7,7 @@ import okhttp3.Request
 import java.io.IOException
 import java.net.SocketTimeoutException
 
-internal class StatsdServiceEventsListener(
-    private val statsDSender: StatsDSender
-) : ServiceEventsListener {
+internal class StatsdHttpEventsListener(private val statsDSender: StatsDSender) : HttpEventsListener {
 
     override fun onResponse(request: Request, code: Int, latencyMs: Long) {
         statsDSender.send(TimeMetric(serviceMetric(request).append("$code"), latencyMs))
