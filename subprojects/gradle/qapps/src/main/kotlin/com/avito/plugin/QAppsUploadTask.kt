@@ -1,5 +1,7 @@
 package com.avito.plugin
 
+import com.avito.android.stats.statsd
+import com.avito.http.HttpClientProvider
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import com.avito.utils.BuildFailer
@@ -53,6 +55,8 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
 
         val loggerFactory = GradleLoggerFactory.fromTask(this)
 
+        val httpClientProvider = HttpClientProvider(project.statsd.get())
+
         val uploadResult = QAppsUploadAction(
             apk = apk,
             comment = comment.get(),
@@ -62,6 +66,7 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
             versionCode = versionCode.get(),
             packageName = packageName.get(),
             releaseChain = releaseChain.get(),
+            httpClientProvider = httpClientProvider,
             loggerFactory = loggerFactory
         ).upload()
 

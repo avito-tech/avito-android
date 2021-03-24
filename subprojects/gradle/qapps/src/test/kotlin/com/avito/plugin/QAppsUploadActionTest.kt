@@ -1,6 +1,8 @@
 package com.avito.plugin
 
 import com.avito.android.Result
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
@@ -43,6 +45,7 @@ class QAppsUploadActionTest {
             versionCode = "0",
             packageName = "com.avito.android",
             releaseChain = false,
+            httpClientProvider = HttpClientProvider.createStubInstance(),
             loggerFactory = loggerFactory
         )
 
