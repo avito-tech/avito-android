@@ -1,5 +1,7 @@
 package com.avito.report
 
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
@@ -27,7 +29,8 @@ internal class ReportsApiRetryTest {
         val host = mockWebServer.url("/").toString()
         reportsApi = ReportsApiFactory.create(
             host = host,
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            httpClientProvider = HttpClientProvider.createStubInstance()
         )
     }
 

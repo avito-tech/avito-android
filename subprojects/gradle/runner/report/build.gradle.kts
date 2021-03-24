@@ -13,6 +13,7 @@ dependencies {
     api(project(":common:report-viewer"))
 
     implementation(project(":common:time"))
+    implementation(project(":common:http-client"))
 
     testFixturesImplementation(testFixtures(project(":common:logger")))
     testFixturesImplementation(testFixtures(project(":common:time")))

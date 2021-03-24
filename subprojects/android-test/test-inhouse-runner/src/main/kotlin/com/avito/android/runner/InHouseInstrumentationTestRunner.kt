@@ -124,7 +124,8 @@ abstract class InHouseInstrumentationTestRunner :
                             logger = testReportLogger,
                             reportsApi = ReportsApiFactory.create(
                                 host = reportConfig.reportApiUrl,
-                                loggerFactory = loggerFactory
+                                loggerFactory = loggerFactory,
+                                httpClientProvider = httpClientProvider
                             )
                         )
                     )

@@ -9,9 +9,11 @@ dependencies {
     implementation(project(":common:report-viewer"))
     implementation(project(":common:time"))
     implementation(project(":common:math"))
+    implementation(project(":common:http-client"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:slack"))
+    implementation(project(":gradle:statsd-config"))
     implementation(libs.okhttp)
 
     testImplementation(project(":common:truth-extensions"))

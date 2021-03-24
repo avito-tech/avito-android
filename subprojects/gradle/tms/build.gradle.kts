@@ -8,9 +8,11 @@ plugins {
 dependencies {
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:gradle-logger"))
+    implementation(project(":gradle:statsd-config"))
 
     implementation(project(":common:report-viewer"))
     implementation(project(":common:time"))
+    implementation(project(":common:http-client"))
 
     implementation(libs.gson)
     implementation(libs.kotson)
