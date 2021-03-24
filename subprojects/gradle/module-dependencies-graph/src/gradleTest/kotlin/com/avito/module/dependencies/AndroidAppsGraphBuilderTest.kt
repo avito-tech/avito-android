@@ -4,7 +4,7 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
-import com.avito.module.internal.dependencies.ModuleProjectConfigurationDependenciesNode
+import com.avito.module.internal.dependencies.ProjectConfigurationNode
 import com.avito.module.internal.dependencies.ProjectWithDeps
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -108,36 +108,36 @@ internal class AndroidAppsGraphBuilderTest {
     }
 
     @Test
-    fun `flatten dependencies - main configuration`() {
-        val projectsWithDeps = graphBuilder()
-            .buildDependenciesGraphFlatten(ConfigurationType.Main)
+    fun `all dependencies - main configuration`() {
+        val apps = graphBuilder()
+            .buildDependenciesGraph(ConfigurationType.Main)
 
-        assertThat(projectsWithDeps).hasSize(2)
-        projectsWithDeps.findOrThrow(":appA").also { projectWithDeps ->
-            val dependencies = projectWithDeps.dependencies.map { it.path }
+        assertThat(apps).hasSize(2)
+        apps.findOrThrow(":appA").also { app ->
+            val dependencies = app.allDependencies().map { it.path }
             assertThat(dependencies).containsExactly(":nodeC", ":nodeD", ":leafF")
         }
-        projectsWithDeps.findOrThrow(":appB").also { projectWithDeps ->
-            val dependencies = projectWithDeps.dependencies.map { it.path }
+        apps.findOrThrow(":appB").also { app ->
+            val dependencies = app.allDependencies().map { it.path }
             assertThat(dependencies).containsExactly(":nodeE", ":leafF", ":leafG")
         }
     }
 
     @Test
-    fun `flatten dependencies - androidTest configuration`() {
-        val projectsWithDeps = graphBuilder()
-            .buildDependenciesGraphFlatten(ConfigurationType.AndroidTests)
+    fun `all dependencies - androidTest configuration`() {
+        val apps = graphBuilder()
+            .buildDependenciesGraph(ConfigurationType.AndroidTests)
 
-        assertThat(projectsWithDeps).hasSize(2)
-        projectsWithDeps.findOrThrow(":appA").also { projectWithDeps ->
-            val dependencies = projectWithDeps.dependencies.map { it.path }
+        assertThat(apps).hasSize(2)
+        apps.findOrThrow(":appA").also { app ->
+            val dependencies = app.allDependencies().map { it.path }
             assertThat(dependencies).containsExactly(
                 ":nodeCtest", // direct dependency
                 ":nodeC" // transitive dependency
             )
         }
-        projectsWithDeps.findOrThrow(":appB").also { projectWithDeps ->
-            assertThat(projectWithDeps.dependencies).isEmpty()
+        apps.findOrThrow(":appB").also { app ->
+            assertThat(app.allDependencies()).isEmpty()
         }
     }
 
@@ -147,8 +147,8 @@ internal class AndroidAppsGraphBuilderTest {
         }
     }
 
-    private fun Set<ModuleProjectConfigurationDependenciesNode>.findOrThrow(path: String):
-        ModuleProjectConfigurationDependenciesNode {
+    private fun Set<ProjectConfigurationNode>.findOrThrow(path: String):
+        ProjectConfigurationNode {
         return requireNotNull(find { it.project.path == path }) {
             fail("$this doesn't contain $path")
         }
