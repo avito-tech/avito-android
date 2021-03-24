@@ -8,6 +8,7 @@ import com.avito.report.model.EntryTypeAdapterFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Request
+import java.util.concurrent.TimeUnit
 
 object ReportsApiFactory {
 
@@ -30,7 +31,7 @@ object ReportsApiFactory {
                 host = host,
                 httpClient = httpClientProvider.provide(
                     serviceName = "reports",
-                    timeoutMs = 30L,
+                    timeoutMs = TimeUnit.SECONDS.toMillis(30),
                     retryPolicy = retryPolicy
                 ),
                 gson = gson

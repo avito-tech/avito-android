@@ -4,6 +4,7 @@ import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import java.util.concurrent.TimeUnit
 
 object RemoteStorageFactory {
 
@@ -16,7 +17,7 @@ object RemoteStorageFactory {
         endpoint = requireNotNull(endpoint.toHttpUrlOrNull()) { "Can't parse endpoint: $endpoint" },
         httpClient = httpClientProvider.provide(
             serviceName = "file-storage",
-            timeoutMs = 120L,
+            timeoutMs = TimeUnit.SECONDS.toMillis(120),
             retryPolicy = null
         ),
         loggerFactory = loggerFactory,
