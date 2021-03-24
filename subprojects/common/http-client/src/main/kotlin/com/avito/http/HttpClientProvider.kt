@@ -6,12 +6,14 @@ import com.avito.android.stats.StatsDSender
 import com.avito.http.TryFailCallback.Companion.combine
 import com.avito.http.internal.ServiceMetricsInterceptor
 import com.avito.http.internal.StatsdServiceEventsListener
+import com.avito.logger.LoggerFactory
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.concurrent.TimeUnit
 
 public class HttpClientProvider(
     private val statsDSender: StatsDSender,
+    private val loggerFactory: LoggerFactory,
     private val builderTransform: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }
 ) {
 
@@ -47,9 +49,10 @@ public class HttpClientProvider(
 
                     addInterceptor(
                         RetryInterceptor(
-                            retryPolicy.copy(
+                            policy = retryPolicy.copy(
                                 onTryFail = retryPolicy.onTryFail.combine(onTryFail)
-                            )
+                            ),
+                            logger = loggerFactory.create(serviceName)
                         )
                     )
                 }

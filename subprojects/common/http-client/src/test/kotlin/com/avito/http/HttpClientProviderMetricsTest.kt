@@ -142,6 +142,6 @@ internal class HttpClientProviderMetricsTest {
     }
 
     private fun createClientProvider(): HttpClientProvider {
-        return HttpClientProvider(statsDSender)
+        return HttpClientProvider(statsDSender, loggerFactory)
     }
 }

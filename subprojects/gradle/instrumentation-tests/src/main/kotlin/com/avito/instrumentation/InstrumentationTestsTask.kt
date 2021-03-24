@@ -141,7 +141,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             statsDSender = StatsDSender.Impl(
                 config = project.statsdConfig.get(),
                 loggerFactory = loggerFactory
-            )
+            ),
+            loggerFactory
         )
 
         val reportFactory = createReportFactory(

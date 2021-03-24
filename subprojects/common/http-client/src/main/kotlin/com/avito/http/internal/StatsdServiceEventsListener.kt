@@ -1,7 +1,6 @@
 package com.avito.http.internal
 
 import com.avito.android.stats.CountMetric
-import com.avito.android.stats.GaugeMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.TimeMetric

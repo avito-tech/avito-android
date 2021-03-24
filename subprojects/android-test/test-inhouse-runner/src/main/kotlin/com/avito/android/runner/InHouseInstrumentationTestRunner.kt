@@ -75,7 +75,8 @@ abstract class InHouseInstrumentationTestRunner :
             StatsDSender.Impl(
                 config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
                 loggerFactory = loggerFactory
-            )
+            ),
+            loggerFactory
         )
     }
 

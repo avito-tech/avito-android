@@ -36,7 +36,7 @@ class TestSummaryPlugin : Plugin<Project> {
             createReportsApi(
                 reportsHost = it,
                 loggerFactory = loggerFactory,
-                httpClientProvider = HttpClientProvider(statsDSender = target.statsd.get())
+                httpClientProvider = HttpClientProvider(statsDSender = target.statsd.get(), loggerFactory)
             )
         }
 

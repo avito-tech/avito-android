@@ -1,5 +1,6 @@
 package com.avito.http
 
+import com.avito.logger.Logger
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -22,6 +23,7 @@ public class RetryInterceptor(
     ),
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,
+    private val logger: Logger, // todo remove after release
     private val modifyRetryRequest: (Request) -> Request = { it },
     private val onTryFail: TryFailCallback = TryFailCallback.STUB
 ) : Interceptor {
@@ -30,12 +32,13 @@ public class RetryInterceptor(
         require(retries >= 1)
     }
 
-    public constructor(policy: RetryPolicy) : this(
+    public constructor(policy: RetryPolicy, logger: Logger) : this(
         retries = policy.tries,
         allowedMethods = policy.allowedMethods,
         allowedCodes = policy.allowedCodes,
         delayMs = policy.delayBetweenTriesMs,
         useIncreasingDelay = policy.useIncreasingDelay,
+        logger = logger,
         modifyRetryRequest = policy.modifyRetryRequest,
         onTryFail = policy.onTryFail
     )

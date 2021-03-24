@@ -42,7 +42,10 @@ internal interface InstrumentationTestsActionFactory {
                 loggerFactory = params.loggerFactory
             )
 
-            val httpClientProvider = HttpClientProvider(statsDSender = statsdSender)
+            val httpClientProvider = HttpClientProvider(
+                statsDSender = statsdSender,
+                loggerFactory = params.loggerFactory
+            )
 
             this.schedulerFactory = TestsSchedulerFactory.Impl(
                 params = params,

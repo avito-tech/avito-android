@@ -39,7 +39,10 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
         val unsignedFile = unsignedFile()
         val signedFile = signedFile()
         val serviceUrl: String = serviceUrl.get()
-        val httpClient = HttpClientProvider(statsDSender = project.statsd.get()).provide(
+        val httpClient = HttpClientProvider(
+            statsDSender = project.statsd.get(),
+            loggerFactory = loggerFactory
+        ).provide(
             serviceName = "signer",
             timeoutMs = 1000L,
             retryPolicy = null

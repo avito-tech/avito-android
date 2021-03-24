@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit
 
 object ReportsApiFactory {
 
+    private const val TIMEOUT_SEC = 30L
+
     /**
      * for tests
      */
@@ -31,7 +33,7 @@ object ReportsApiFactory {
                 host = host,
                 httpClient = httpClientProvider.provide(
                     serviceName = "reports",
-                    timeoutMs = TimeUnit.SECONDS.toMillis(30),
+                    timeoutMs = TimeUnit.SECONDS.toMillis(TIMEOUT_SEC),
                     retryPolicy = retryPolicy
                 ),
                 gson = gson

@@ -25,7 +25,7 @@ abstract class MarkReportAsSourceTask : DefaultTask() {
     fun doWork() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val timeProvider: TimeProvider = DefaultTimeProvider()
-        val httpClientProvider = HttpClientProvider(project.statsd.get())
+        val httpClientProvider = HttpClientProvider(project.statsd.get(), loggerFactory)
 
         MarkReportAsSourceAction(
             reportsApi = ReportsApiFactory.create(

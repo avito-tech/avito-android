@@ -16,6 +16,7 @@ dependencies {
     testImplementation(testFixtures(project(":common:logger")))
 
     testFixturesApi(testFixtures(project(":common:statsd")))
+    testFixturesApi(testFixtures(project(":common:logger")))
 }
 
 kotlin {

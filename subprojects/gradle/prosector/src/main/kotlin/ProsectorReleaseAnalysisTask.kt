@@ -1,6 +1,7 @@
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
 import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.create
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
@@ -35,9 +36,10 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
 
     @TaskAction
     fun doWork() {
-        val logger = GradleLoggerFactory.getLogger(this)
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val logger = loggerFactory.create<ProsectorReleaseAnalysisTask>()
 
-        val httpClientProvider = HttpClientProvider(project.statsd.get())
+        val httpClientProvider = HttpClientProvider(project.statsd.get(), loggerFactory)
 
         try {
             val result = createClient(httpClientProvider).releaseAnalysis(

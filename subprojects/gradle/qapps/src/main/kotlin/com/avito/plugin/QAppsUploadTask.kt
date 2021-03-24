@@ -55,7 +55,7 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
 
         val loggerFactory = GradleLoggerFactory.fromTask(this)
 
-        val httpClientProvider = HttpClientProvider(project.statsd.get())
+        val httpClientProvider = HttpClientProvider(project.statsd.get(), loggerFactory)
 
         val uploadResult = QAppsUploadAction(
             apk = apk,
