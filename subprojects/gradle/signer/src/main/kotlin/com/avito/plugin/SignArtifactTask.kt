@@ -2,8 +2,12 @@ package com.avito.plugin
 
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
+import com.avito.http.RequestMetadataInterceptor
+import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.avito.utils.BuildFailer
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
@@ -38,15 +42,17 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val unsignedFile = unsignedFile()
         val signedFile = signedFile()
+        val timeProvider: TimeProvider = DefaultTimeProvider()
         val serviceUrl: String = serviceUrl.get()
         val httpClient = HttpClientProvider(
             statsDSender = project.statsd.get(),
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider,
         ).provide(
-            serviceName = "signer",
             timeoutMs = 1000L,
-            retryPolicy = null
-        )
+            retryPolicy = null,
+            metadataInterceptor = RequestMetadataInterceptor(lastPathSegmentAsMethod("signer"))
+        ).build()
         val signResult = SignViaServiceAction(
             serviceUrl = serviceUrl,
             httpClient = httpClient,

@@ -1,28 +1,38 @@
 package com.avito.http.internal
 
+import com.avito.time.TimeProvider
 import okhttp3.Interceptor
 import okhttp3.Response
 import okio.IOException
-import java.net.SocketTimeoutException
 
-internal class ServiceMetricsInterceptor(private val listener: ServiceEventsListener) : Interceptor {
+internal class ServiceMetricsInterceptor(
+    private val listener: ServiceEventsListener,
+    private val timeProvider: TimeProvider
+) : Interceptor {
 
-    override fun intercept(chain: Interceptor.Chain): Response = try {
-        val response = chain.proceed(chain.request())
+    override fun intercept(chain: Interceptor.Chain): Response {
 
-        val latency = response.receivedResponseAtMillis - response.sentRequestAtMillis
+        val request = chain.request()
 
-        listener.onResponse(
-            code = response.code,
-            latencyMs = latency
-        )
-        response
-    } catch (e: IOException) {
-        if (e is SocketTimeoutException) {
-            listener.onTimeout(e)
-        } else {
-            listener.onUnknownException(e)
+        val startTime = timeProvider.nowInMillis()
+
+        return try {
+            val response = chain.proceed(request)
+
+            listener.onResponse(
+                request = request,
+                code = response.code,
+                latencyMs = response.receivedResponseAtMillis - response.sentRequestAtMillis
+            )
+
+            response
+        } catch (e: IOException) {
+            listener.onException(
+                request = request,
+                exception = e,
+                latencyMs = timeProvider.nowInMillis() - startTime
+            )
+            throw e
         }
-        throw e
     }
 }

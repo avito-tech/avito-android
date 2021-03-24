@@ -3,6 +3,8 @@ package com.avito.bitbucket
 import com.avito.android.Result
 import com.avito.http.BasicAuthenticator
 import com.avito.http.HttpClientProvider
+import com.avito.http.RequestMetadataInterceptor
+import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
 import com.avito.impact.changes.newChangesDetector
 import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
@@ -27,14 +29,15 @@ class BitbucketImpl(
     private val retrofit = Retrofit.Builder()
         .baseUrl(config.baseUrl.toHttpUrl())
         .client(
-            httpClientProvider.provide("bitbucket") {
-                authenticator(
+            httpClientProvider
+                .provide(
+                    metadataInterceptor = RequestMetadataInterceptor(lastPathSegmentAsMethod("bitbucket"))
+                ).authenticator(
                     BasicAuthenticator(
                         user = config.credentials.user,
                         password = config.credentials.password
                     )
-                )
-            }
+                ).build()
         )
         .addConverterFactory(GsonConverterFactory.create())
         .build()

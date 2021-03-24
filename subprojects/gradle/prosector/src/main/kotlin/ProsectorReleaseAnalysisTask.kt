@@ -1,7 +1,11 @@
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
+import com.avito.http.RequestMetadataInterceptor
+import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
@@ -38,8 +42,13 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     fun doWork() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val logger = loggerFactory.create<ProsectorReleaseAnalysisTask>()
+        val timeProvider: TimeProvider = DefaultTimeProvider()
 
-        val httpClientProvider = HttpClientProvider(project.statsd.get(), loggerFactory)
+        val httpClientProvider = HttpClientProvider(
+            statsDSender = project.statsd.get(),
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
+        )
 
         try {
             val result = createClient(httpClientProvider).releaseAnalysis(
@@ -72,7 +81,12 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     ): ProsectorApi = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .client(httpClientProvider.provide("prosector"))
+        .client(
+            httpClientProvider.provide(
+                metadataInterceptor = RequestMetadataInterceptor(lastPathSegmentAsMethod("prosector"))
+            )
+                .build()
+        )
         .build()
         .create(ProsectorApi::class.java)
 }

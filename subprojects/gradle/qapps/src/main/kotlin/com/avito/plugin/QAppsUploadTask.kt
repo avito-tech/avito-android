@@ -4,6 +4,8 @@ import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.avito.utils.BuildFailer
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -54,8 +56,13 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
         val apk = getApk().asFile.get()
 
         val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val timeProvider: TimeProvider = DefaultTimeProvider()
 
-        val httpClientProvider = HttpClientProvider(project.statsd.get(), loggerFactory)
+        val httpClientProvider = HttpClientProvider(
+            statsDSender = project.statsd.get(),
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
+        )
 
         val uploadResult = QAppsUploadAction(
             apk = apk,

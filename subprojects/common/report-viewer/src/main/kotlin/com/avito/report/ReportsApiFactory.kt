@@ -7,7 +7,6 @@ import com.avito.report.internal.JsonRpcRequestProvider
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import okhttp3.Request
 import java.util.concurrent.TimeUnit
 
 object ReportsApiFactory {
@@ -32,15 +31,12 @@ object ReportsApiFactory {
             requestProvider = JsonRpcRequestProvider(
                 host = host,
                 httpClient = httpClientProvider.provide(
-                    serviceName = "reports",
                     timeoutMs = TimeUnit.SECONDS.toMillis(TIMEOUT_SEC),
-                    retryPolicy = retryPolicy
-                ),
+                    retryPolicy = retryPolicy,
+                    metadataInterceptor = null
+                ).build(),
                 gson = gson
             )
         )
     }
-
-    // for tests
-    internal fun Request.describeJsonRpc(): String = "${url.redact()} method: ${tag()}"
 }

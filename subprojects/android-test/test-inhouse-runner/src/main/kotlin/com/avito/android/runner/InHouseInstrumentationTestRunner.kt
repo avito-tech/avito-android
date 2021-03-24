@@ -72,11 +72,12 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val httpClientProvider: HttpClientProvider by lazy {
         HttpClientProvider(
-            StatsDSender.Impl(
+            statsDSender = StatsDSender.Impl(
                 config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
                 loggerFactory = loggerFactory
             ),
-            loggerFactory
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
         )
     }
 

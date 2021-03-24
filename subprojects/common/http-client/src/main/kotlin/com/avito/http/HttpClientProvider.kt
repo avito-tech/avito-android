@@ -1,12 +1,12 @@
 package com.avito.http
 
-import com.avito.android.stats.CountMetric
-import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.http.TryFailCallback.Companion.combine
 import com.avito.http.internal.ServiceMetricsInterceptor
 import com.avito.http.internal.StatsdServiceEventsListener
 import com.avito.logger.LoggerFactory
+import com.avito.logger.create
+import com.avito.time.TimeProvider
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.util.concurrent.TimeUnit
@@ -14,23 +14,41 @@ import java.util.concurrent.TimeUnit
 public class HttpClientProvider(
     private val statsDSender: StatsDSender,
     private val loggerFactory: LoggerFactory,
-    private val builderTransform: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }
+    private val timeProvider: TimeProvider
 ) {
+
+    private var builderTransform: (OkHttpClient.Builder.() -> OkHttpClient.Builder)? = null
 
     private val builder = OkHttpClient.Builder()
 
+    /**
+     * for testing only
+     */
+    internal constructor(
+        statsDSender: StatsDSender,
+        loggerFactory: LoggerFactory,
+        timeProvider: TimeProvider,
+        builderTransform: OkHttpClient.Builder.() -> OkHttpClient.Builder
+    ) : this(statsDSender, loggerFactory, timeProvider) {
+        this.builderTransform = builderTransform
+    }
+
+    /**
+     * @param metadataInterceptor null if RequestMetadata set manually (see JsonRpcRequestProvider)
+     */
     public fun provide(
-        serviceName: String,
         timeoutMs: Long? = null,
         retryPolicy: RetryPolicy? = null,
-        builderTransform: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }
-    ): OkHttpClient {
-
-        val seriesName = SeriesName.create("service", serviceName)
+        metadataInterceptor: RequestMetadataInterceptor?
+    ): OkHttpClient.Builder {
 
         return builder
-            .also { this.builderTransform(it) }
-            .also { builderTransform(it) }
+            .apply {
+                if (metadataInterceptor != null) {
+                    addInterceptor(metadataInterceptor)
+                }
+            }
+            .apply { builderTransform?.invoke(this) }
             .apply {
                 if (timeoutMs != null) {
                     readTimeout(timeoutMs, TimeUnit.MILLISECONDS)
@@ -43,7 +61,6 @@ public class HttpClientProvider(
                     val onTryFail = object : TryFailCallback {
 
                         override fun onTryFail(attemptNumber: Int, request: Request, exception: Throwable) {
-                            statsDSender.send(CountMetric(seriesName.append("try-fail")))
                         }
                     }
 
@@ -52,20 +69,17 @@ public class HttpClientProvider(
                             policy = retryPolicy.copy(
                                 onTryFail = retryPolicy.onTryFail.combine(onTryFail)
                             ),
-                            logger = loggerFactory.create(serviceName)
+                            logger = loggerFactory.create<HttpClientProvider>()
                         )
                     )
                 }
             }
             .addInterceptor(
                 ServiceMetricsInterceptor(
-                    StatsdServiceEventsListener(
-                        statsDSender = statsDSender,
-                        prefix = seriesName
-                    )
+                    StatsdServiceEventsListener(statsDSender = statsDSender),
+                    timeProvider
                 )
             )
-            .build()
     }
 
     public companion object

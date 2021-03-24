@@ -1,13 +1,11 @@
 package com.avito.http.internal
 
+import okhttp3.Request
 import java.io.IOException
-import java.net.SocketTimeoutException
 
 internal interface ServiceEventsListener {
 
-    fun onResponse(code: Int, latencyMs: Long)
+    fun onResponse(request: Request, code: Int, latencyMs: Long)
 
-    fun onTimeout(e: SocketTimeoutException)
-
-    fun onUnknownException(e: IOException)
+    fun onException(request: Request, exception: IOException, latencyMs: Long)
 }

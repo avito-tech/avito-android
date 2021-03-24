@@ -2,6 +2,8 @@ package com.avito.plugin
 
 import com.avito.android.Result
 import com.avito.http.HttpClientProvider
+import com.avito.http.RequestMetadataInterceptor
+import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
 import com.avito.http.RetryPolicy
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -36,10 +38,10 @@ internal class QAppsUploadAction(
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .client(
                 httpClientProvider.provide(
-                    "qapps",
                     TimeUnit.SECONDS.toMillis(60),
-                    retryPolicy = RetryPolicy(tries = 3, allowedMethods = listOf("POST", "GET"))
-                )
+                    retryPolicy = RetryPolicy(tries = 3, allowedMethods = listOf("POST", "GET")),
+                    metadataInterceptor = RequestMetadataInterceptor(lastPathSegmentAsMethod("qapps"))
+                ).build()
             )
             .validateEagerly(true)
             .build()
