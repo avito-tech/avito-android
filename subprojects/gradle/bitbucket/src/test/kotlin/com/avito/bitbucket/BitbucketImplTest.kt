@@ -1,5 +1,7 @@
 package com.avito.bitbucket
 
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.commit
@@ -103,7 +105,8 @@ internal class BitbucketImplTest {
             credentials = AtlassianCredentials("", "")
         ),
         pullRequestId = null,
-        loggerFactory = loggerFactory
+        loggerFactory = loggerFactory,
+        httpClientProvider = HttpClientProvider.createStubInstance()
     )
 
     private fun File.createSourceFiles(fileToBeModifiedPath: String, notModifiedFilePath: String) {

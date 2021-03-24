@@ -39,7 +39,7 @@ class ReportTestExtension(
         remoteStorage = RemoteStorageFactory.create(
             endpoint = fileStorageUrl,
             httpClientProvider = HttpClientProvider.createStubInstance(
-                builderTransform = { it.addInterceptor(mockInterceptor) }
+                builderTransform = { addInterceptor(mockInterceptor) }
             ),
             loggerFactory = loggerFactory,
             timeProvider = timeProvider

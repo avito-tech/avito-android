@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 
 public fun HttpClientProvider.Companion.createStubInstance(
     statsdSender: StatsDSender = StubStatsdSender(),
-    builderTransform: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }
+    builderTransform: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }
 ): HttpClientProvider {
     return HttpClientProvider(statsdSender, builderTransform)
 }

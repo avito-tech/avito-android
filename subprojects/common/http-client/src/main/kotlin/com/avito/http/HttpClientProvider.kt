@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 public class HttpClientProvider(
     private val statsDSender: StatsDSender,
-    private val builderTransform: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }
+    private val builderTransform: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }
 ) {
 
     private val builder = OkHttpClient.Builder()
@@ -20,12 +20,14 @@ public class HttpClientProvider(
     public fun provide(
         serviceName: String,
         timeoutMs: Long? = null,
-        retryPolicy: RetryPolicy? = null
+        retryPolicy: RetryPolicy? = null,
+        builderTransform: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }
     ): OkHttpClient {
 
         val seriesName = SeriesName.create("service", serviceName)
 
         return builder
+            .also { this.builderTransform(it) }
             .also { builderTransform(it) }
             .apply {
                 if (timeoutMs != null) {
