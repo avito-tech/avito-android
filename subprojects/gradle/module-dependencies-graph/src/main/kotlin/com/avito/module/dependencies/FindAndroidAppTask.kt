@@ -48,14 +48,14 @@ public abstract class FindAndroidAppTask @Inject constructor(
         val modules = parseModules()
         val inputConfiguration = configuration.get()
         val graphBuilder = DependenciesGraphBuilder(project.rootProject, GradleLoggerFactory.fromTask(this))
-        val androidAppsGraphBuilder = AndroidAppsGraphBuilder(project.rootProject, graphBuilder)
+        val androidAppsGraphBuilder = AndroidAppsGraphBuilder(graphBuilder)
         val action = FindAndroidAppTaskAction(androidAppsGraphBuilder)
         val advisor = FindAndroidAppTaskAdvisor()
         val verdict = action.findAppFor(modules, inputConfiguration.mapToTypes())
         logger.lifecycle(advisor.giveAdvice(verdict))
     }
 
-    private fun parseModules(): List<Path> {
+    private fun parseModules(): Set<Path> {
         return modules
             .map {
                 it.split(',').map { module ->
@@ -67,7 +67,7 @@ public abstract class FindAndroidAppTask @Inject constructor(
                         "module '$path' does not exist"
                     }
                     path
-                }
+                }.toSet()
             }.get()
     }
 
