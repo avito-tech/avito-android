@@ -31,13 +31,8 @@ abstract class AbstractLaunchRule : TestRule {
     private inner class LaunchStatement(private val base: Statement) : Statement() {
 
         override fun evaluate() {
-            try {
-                beforeTest()
-                base.evaluate()
-            } catch (t: Throwable) {
-                logger.warn("Test execution failed", t)
-                throw t
-            }
+            beforeTest()
+            base.evaluate()
         }
     }
 
