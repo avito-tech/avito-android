@@ -2,7 +2,7 @@ package com.avito.android.test.report.troubleshooting.dump
 
 import android.os.Looper
 
-object MainLooperDumper {
+object MainLooperQueueDumper {
 
     fun getDump(): String {
         val dump = StringBuilder()

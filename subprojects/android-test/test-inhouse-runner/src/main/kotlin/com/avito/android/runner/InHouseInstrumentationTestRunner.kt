@@ -12,6 +12,7 @@ import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
+import com.avito.android.runner.delegates.MainLooperMessagesLogDelegate
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.test.UITestConfig
@@ -30,6 +31,8 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.transport.ExternalStorageTransport
 import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.android.test.report.transport.Transport
+import com.avito.android.test.report.troubleshooting.Troubleshooter
+import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumper
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
@@ -62,6 +65,8 @@ abstract class InHouseInstrumentationTestRunner :
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
+
+    private val mainLooperMessagesLogDumper by lazy { MainLooperMessagesLogDumper() }
 
     /**
      * Public for *TestApp to skip on orchestrator runs
@@ -135,7 +140,8 @@ abstract class InHouseInstrumentationTestRunner :
             transport = transport,
             loggerFactory = loggerFactory,
             remoteStorage = remoteStorage,
-            timeProvider = timeProvider
+            timeProvider = timeProvider,
+            troubleshooter = Troubleshooter.Impl(mainLooperMessagesLogDumper)
         )
     }
 
@@ -179,7 +185,8 @@ abstract class InHouseInstrumentationTestRunner :
 
     override fun getDelegates(arguments: Bundle): List<InstrumentationTestRunnerDelegate> {
         return listOf(
-            ReportLifecycleEventsDelegate(report)
+            ReportLifecycleEventsDelegate(report),
+            MainLooperMessagesLogDelegate(mainLooperMessagesLogDumper)
         )
     }
 
