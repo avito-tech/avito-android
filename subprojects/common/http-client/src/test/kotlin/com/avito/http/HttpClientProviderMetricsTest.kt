@@ -5,13 +5,11 @@ import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.StubStatsdSender
 import com.avito.android.stats.TimeMetric
 import com.avito.http.internal.RequestMetadata
-import com.avito.http.internal.createStubInstance
 import com.avito.logger.StubLoggerFactory
-import com.avito.test.http.Mock
-import com.avito.test.http.MockDispatcher
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -31,9 +29,6 @@ internal class HttpClientProviderMetricsTest {
 
     private val mockWebServer = MockWebServer()
 
-    private val dispatcher = MockDispatcher(loggerFactory = loggerFactory)
-        .also { dispatcher -> mockWebServer.dispatcher = dispatcher }
-
     private val metricNamesCorrespondence: Correspondence<StatsMetric, StatsMetric> = Correspondence.from(
         { actual, expected ->
             if (actual != null && expected != null) {
@@ -49,21 +44,14 @@ internal class HttpClientProviderMetricsTest {
     fun `timeout metric`() {
         val provider = createClientProvider()
 
-        val httpClient = provider.provide(
-            timeoutMs = 1,
-            retryPolicy = null,
-            metadataInterceptor = createMetadataInterceptor()
-        ).build()
+        val httpClient = provider.provide()
+            .readTimeout(1, TimeUnit.MILLISECONDS)
+            .build()
 
-        dispatcher.registerMock(
-            Mock(
-                requestMatcher = { true },
-                response = MockResponse().setHeadersDelay(10, TimeUnit.MILLISECONDS)
-            )
-        )
+        mockWebServer.enqueue(MockResponse().setHeadersDelay(10, TimeUnit.MILLISECONDS))
 
         assertThrows<SocketTimeoutException> {
-            httpClient.newCall(Request.Builder().url(mockWebServer.url("/")).build()).execute()
+            httpClient.call()
         }
 
         assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsExactly(
@@ -75,19 +63,11 @@ internal class HttpClientProviderMetricsTest {
     fun `response 200 metric`() {
         val provider = createClientProvider()
 
-        val httpClient = provider.provide(
-            retryPolicy = null,
-            metadataInterceptor = createMetadataInterceptor()
-        ).build()
+        val httpClient = provider.provide().build()
 
-        dispatcher.registerMock(
-            Mock(
-                requestMatcher = { true },
-                response = MockResponse().setResponseCode(200)
-            )
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(200))
 
-        httpClient.newCall(Request.Builder().url(mockWebServer.url("/")).build()).execute()
+        httpClient.call()
 
         assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).contains(
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "200"), doesNotMatter)
@@ -98,23 +78,36 @@ internal class HttpClientProviderMetricsTest {
     fun `response 502 metric`() {
         val provider = createClientProvider()
 
-        val httpClient = provider.provide(
-            retryPolicy = null,
-            metadataInterceptor = createMetadataInterceptor()
-        ).build()
+        val httpClient = provider.provide().build()
 
-        dispatcher.registerMock(
-            Mock(
-                requestMatcher = { true },
-                response = MockResponse().setResponseCode(502)
-            )
-        )
+        mockWebServer.enqueue(MockResponse().setResponseCode(502))
 
-        httpClient.newCall(Request.Builder().url(mockWebServer.url("/")).build()).execute()
+        httpClient.call()
 
         assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).contains(
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "502"), doesNotMatter)
         )
+    }
+
+    @Test
+    fun `retries counts`() {
+        val provider = createClientProvider()
+
+        val httpClient = provider.provide()
+            .addInterceptor(RetryInterceptor(retries = 3, logger = loggerFactory.create("tag")))
+            .build()
+
+        mockWebServer.enqueue(MockResponse().setResponseCode(502))
+        mockWebServer.enqueue(MockResponse().setResponseCode(500))
+        mockWebServer.enqueue(MockResponse().setResponseCode(200))
+
+        httpClient.call()
+
+        assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsAtLeast(
+            TimeMetric(SeriesName.create("service", "some-service", "some-method", "502"), doesNotMatter),
+            TimeMetric(SeriesName.create("service", "some-service", "some-method", "500"), doesNotMatter),
+            TimeMetric(SeriesName.create("service", "some-service", "some-method", "200"), doesNotMatter)
+        ).inOrder()
     }
 
     @AfterEach
@@ -122,11 +115,16 @@ internal class HttpClientProviderMetricsTest {
         mockWebServer.shutdown()
     }
 
-    private fun createClientProvider(): HttpClientProvider {
-        return HttpClientProvider(statsDSender, loggerFactory, timeProvider)
+    private fun OkHttpClient.call() {
+        newCall(
+            Request.Builder()
+                .url(mockWebServer.url("/"))
+                .tag(RequestMetadata::class.java, RequestMetadata("some-service", "some-method"))
+                .build()
+        ).execute()
     }
 
-    private fun createMetadataInterceptor(): RequestMetadataInterceptor {
-        return RequestMetadataInterceptor { RequestMetadata.createStubInstance() }
+    private fun createClientProvider(): HttpClientProvider {
+        return HttpClientProvider(statsDSender, timeProvider)
     }
 }

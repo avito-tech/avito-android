@@ -1,6 +1,7 @@
 package com.avito.plugin
 
 import com.avito.android.Result
+import com.avito.http.internal.RequestMetadata
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.utils.ExistingFile
@@ -73,6 +74,7 @@ internal class SignViaServiceAction(
         return Request.Builder()
             .url(hostWithoutSlash + apiPath)
             .post(body)
+            .tag(RequestMetadata::class.java, RequestMetadata("signer", "sign"))
             .build()
     }
 

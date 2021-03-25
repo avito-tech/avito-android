@@ -76,7 +76,6 @@ abstract class InHouseInstrumentationTestRunner :
                 config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
                 loggerFactory = loggerFactory
             ),
-            loggerFactory = loggerFactory,
             timeProvider = timeProvider
         )
     }

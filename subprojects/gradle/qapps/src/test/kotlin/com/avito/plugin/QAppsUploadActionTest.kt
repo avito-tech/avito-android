@@ -5,8 +5,8 @@ import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.ResultSubject.Companion.assertThat
 import com.avito.truth.assertThat
-import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.Dispatcher
@@ -92,7 +92,7 @@ class QAppsUploadActionTest {
 
         val result = action.upload()
 
-        assertThat(result).isInstanceOf<Result.Success<*>>()
+        assertThat(result).isSuccess()
         assertThat(server.requestCount).isEqualTo(2)
     }
 
@@ -108,6 +108,6 @@ class QAppsUploadActionTest {
         assertThat(recordedRequest.path).isEqualTo("/qapps/api/os/android/upload")
         assertThat(recordedRequest.body.readUtf8()).contains("content")
 
-        assertThat(result).isInstanceOf<Result.Success<*>>()
+        assertThat(result).isSuccess()
     }
 }

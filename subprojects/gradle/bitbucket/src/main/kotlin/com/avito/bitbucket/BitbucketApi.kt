@@ -1,10 +1,12 @@
 package com.avito.bitbucket
 
+import com.avito.http.internal.RequestMetadata
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Tag
 
 internal interface BitbucketApi {
 
@@ -21,11 +23,15 @@ internal interface BitbucketApi {
         @Path("projectKey") projectKey: String,
         @Path("repositorySlug") repositorySlug: String,
         @Path("pullRequestId") pullRequestId: Int,
-        @Body comment: Comment
+        @Body comment: Comment,
+        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-comment")
     ): Call<CommentResponse>
 
     @POST("/rest/api/1.0/tasks")
-    fun addTask(@Body task: Task): Call<JsonObject>
+    fun addTask(
+        @Body task: Task,
+        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-task")
+    ): Call<JsonObject>
 }
 
 internal data class CommentResponse(
@@ -43,3 +49,5 @@ internal data class Task(
 )
 
 internal data class Comment(val text: String)
+
+private const val serviceName = "bitbucket"

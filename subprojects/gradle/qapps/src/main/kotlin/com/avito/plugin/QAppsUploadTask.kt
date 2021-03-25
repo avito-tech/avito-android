@@ -60,7 +60,6 @@ abstract class QAppsUploadTask @Inject constructor(objects: ObjectFactory) : Def
 
         val httpClientProvider = HttpClientProvider(
             statsDSender = project.statsd.get(),
-            loggerFactory = loggerFactory,
             timeProvider = timeProvider
         )
 

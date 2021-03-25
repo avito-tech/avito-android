@@ -106,6 +106,6 @@ internal class ReportsApiTest {
         host = mockWebServer.url("/").toString(),
         loggerFactory = loggerFactory,
         httpClientProvider = HttpClientProvider.createStubInstance(),
-        retryPolicy = null
+        retryRequests = false
     )
 }

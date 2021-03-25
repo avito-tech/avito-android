@@ -38,11 +38,10 @@ class ReportTestExtension(
         timeProvider = timeProvider,
         remoteStorage = RemoteStorageFactory.create(
             endpoint = fileStorageUrl,
-            httpClientProvider = HttpClientProvider.createStubInstance(
-                builderTransform = { addInterceptor(mockInterceptor) }
-            ),
+            httpClientProvider = HttpClientProvider.createStubInstance(),
             loggerFactory = loggerFactory,
-            timeProvider = timeProvider
+            timeProvider = timeProvider,
+            testInterceptor = mockInterceptor
         ),
         troubleshooter = NoOp
     )

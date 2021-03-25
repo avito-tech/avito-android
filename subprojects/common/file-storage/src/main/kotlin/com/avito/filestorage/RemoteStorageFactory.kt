@@ -1,12 +1,10 @@
 package com.avito.filestorage
 
 import com.avito.http.HttpClientProvider
-import com.avito.http.RequestMetadataInterceptor
-import com.avito.http.internal.RequestMetadata
 import com.avito.logger.LoggerFactory
 import com.avito.time.TimeProvider
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.Request
+import okhttp3.Interceptor
 import java.util.concurrent.TimeUnit
 
 object RemoteStorageFactory {
@@ -17,26 +15,17 @@ object RemoteStorageFactory {
         endpoint: String,
         httpClientProvider: HttpClientProvider,
         loggerFactory: LoggerFactory,
-        timeProvider: TimeProvider
+        timeProvider: TimeProvider,
+        testInterceptor: Interceptor? = null,
     ): RemoteStorage = HttpRemoteStorage(
         endpoint = requireNotNull(endpoint.toHttpUrlOrNull()) { "Can't parse endpoint: $endpoint" },
-        httpClient = httpClientProvider.provide(
-            timeoutMs = TimeUnit.SECONDS.toMillis(TIMEOUT_SEC),
-            retryPolicy = null,
-            metadataInterceptor = RequestMetadataInterceptor { request ->
-                RequestMetadata(
-                    serviceName = "file-storage",
-                    methodName = getMethodInfo(request)
-                )
-            }
-        ).build(),
+        httpClient = httpClientProvider.provide()
+            .apply { if (testInterceptor != null) addInterceptor(testInterceptor) }
+            .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .build(),
         loggerFactory = loggerFactory,
         timeProvider = timeProvider
     )
-
-    private fun getMethodInfo(request: Request): String {
-        val path = request.url.encodedPath.trimStart('/').replace('/', '_')
-        val fileType = request.header("X-Extension") ?: "txt"
-        return "${path}_$fileType"
-    }
 }

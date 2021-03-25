@@ -3,8 +3,6 @@ package com.avito.bitbucket
 import com.avito.android.Result
 import com.avito.http.BasicAuthenticator
 import com.avito.http.HttpClientProvider
-import com.avito.http.RequestMetadataInterceptor
-import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
 import com.avito.impact.changes.newChangesDetector
 import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
@@ -30,9 +28,7 @@ class BitbucketImpl(
         .baseUrl(config.baseUrl.toHttpUrl())
         .client(
             httpClientProvider
-                .provide(
-                    metadataInterceptor = RequestMetadataInterceptor(lastPathSegmentAsMethod("bitbucket"))
-                ).authenticator(
+                .provide().authenticator(
                     BasicAuthenticator(
                         user = config.credentials.user,
                         password = config.credentials.password

@@ -28,7 +28,6 @@ abstract class MarkReportAsSourceTask : DefaultTask() {
 
         val httpClientProvider = HttpClientProvider(
             statsDSender = project.statsd.get(),
-            loggerFactory = loggerFactory,
             timeProvider = timeProvider
         )
 

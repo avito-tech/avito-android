@@ -44,7 +44,6 @@ internal interface InstrumentationTestsActionFactory {
 
             val httpClientProvider = HttpClientProvider(
                 statsDSender = statsdSender,
-                loggerFactory = params.loggerFactory,
                 timeProvider = timeProvider
             )
 

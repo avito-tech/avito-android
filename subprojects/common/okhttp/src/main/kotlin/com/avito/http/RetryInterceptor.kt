@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
  * - [okhttp3.internal.http.RetryAndFollowUpInterceptor]
  */
 public class RetryInterceptor(
-    private val retries: Int = 5,
+    private val retries: Int = 5, // todo rename, it's tries
     private val allowedMethods: List<String> = listOf("GET"),
     private val allowedCodes: List<Int> = listOf(
         HttpCodes.CLIENT_TIMEOUT,
@@ -30,19 +30,6 @@ public class RetryInterceptor(
     init {
         require(retries >= 1)
     }
-
-    public constructor(
-        policy: RetryPolicy,
-        logger: Logger
-    ) : this(
-        retries = policy.tries,
-        allowedMethods = policy.allowedMethods,
-        allowedCodes = policy.allowedCodes,
-        delayMs = policy.delayBetweenTriesMs,
-        useIncreasingDelay = policy.useIncreasingDelay,
-        logger = logger,
-        modifyRetryRequest = policy.modifyRetryRequest
-    )
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()

@@ -2,8 +2,6 @@ package com.avito.plugin
 
 import com.avito.android.Result
 import com.avito.http.HttpClientProvider
-import com.avito.http.RequestMetadataInterceptor
-import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
 import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
@@ -37,13 +35,7 @@ class SignViaServiceActionTest {
     private val signViaServiceAction: SignViaServiceAction
         get() = SignViaServiceAction(
             serviceUrl = server.url("/").toString(),
-            httpClient = httpClientProvider.provide(
-                metadataInterceptor = RequestMetadataInterceptor(
-                    lastPathSegmentAsMethod(
-                        "signer"
-                    )
-                )
-            ).build(),
+            httpClient = httpClientProvider.provide().build(),
             token = "123456",
             unsignedFile = apk,
             signedFile = apk,

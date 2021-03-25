@@ -22,6 +22,7 @@ dependencies {
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:test-okhttp"))
+    testImplementation(project(":common:truth-extensions"))
     testImplementation(testFixtures(project(":common:logger")))
     testImplementation(testFixtures(project(":common:http-client")))
 }

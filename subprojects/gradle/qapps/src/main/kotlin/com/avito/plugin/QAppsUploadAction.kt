@@ -2,9 +2,7 @@ package com.avito.plugin
 
 import com.avito.android.Result
 import com.avito.http.HttpClientProvider
-import com.avito.http.RequestMetadataInterceptor
-import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
-import com.avito.http.RetryPolicy
+import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.google.gson.GsonBuilder
@@ -37,11 +35,18 @@ internal class QAppsUploadAction(
             .baseUrl(host)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .client(
-                httpClientProvider.provide(
-                    TimeUnit.SECONDS.toMillis(60),
-                    retryPolicy = RetryPolicy(tries = 3, allowedMethods = listOf("POST", "GET")),
-                    metadataInterceptor = RequestMetadataInterceptor(lastPathSegmentAsMethod("qapps"))
-                ).build()
+                httpClientProvider.provide()
+                    .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                    .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                    .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                    .addInterceptor(
+                        RetryInterceptor(
+                            retries = 3,
+                            allowedMethods = listOf("GET", "POST"),
+                            logger = loggerFactory.create<QAppsUploadAction>()
+                        )
+                    )
+                    .build()
             )
             .validateEagerly(true)
             .build()
@@ -82,3 +87,5 @@ internal class QAppsUploadAction(
         )
     }
 }
+
+private const val TIMEOUT_SEC = 60L

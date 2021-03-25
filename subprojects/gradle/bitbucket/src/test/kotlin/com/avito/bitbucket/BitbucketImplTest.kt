@@ -12,6 +12,7 @@ import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.ResultSubject.Companion.assertThat
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
@@ -62,7 +63,7 @@ internal class BitbucketImplTest {
             val addAnnotationsRequest =
                 dispatcher.captureRequest { path.contains("rest/insights/1.0") && method == "POST" }
 
-            createBitbucket().addInsights(
+            val result = createBitbucket().addInsights(
                 rootDir = tempDir,
                 sourceCommitHash = sourceHash,
                 targetCommitHash = targetCommit,
@@ -84,6 +85,8 @@ internal class BitbucketImplTest {
                     )
                 )
             )
+
+            assertThat(result).isSuccess()
 
             @Suppress("MaxLineLength")
             addAnnotationsRequest.checks.singleRequestCaptured().bodyContains(

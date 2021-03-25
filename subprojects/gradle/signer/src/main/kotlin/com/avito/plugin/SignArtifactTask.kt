@@ -2,8 +2,6 @@ package com.avito.plugin
 
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
-import com.avito.http.RequestMetadataInterceptor
-import com.avito.http.RequestMetadataInterceptor.Companion.lastPathSegmentAsMethod
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
@@ -15,6 +13,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
@@ -46,13 +45,12 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
         val serviceUrl: String = serviceUrl.get()
         val httpClient = HttpClientProvider(
             statsDSender = project.statsd.get(),
-            loggerFactory = loggerFactory,
             timeProvider = timeProvider,
-        ).provide(
-            timeoutMs = 1000L,
-            retryPolicy = null,
-            metadataInterceptor = RequestMetadataInterceptor(lastPathSegmentAsMethod("signer"))
-        ).build()
+        ).provide()
+            .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .build()
         val signResult = SignViaServiceAction(
             serviceUrl = serviceUrl,
             httpClient = httpClient,
@@ -74,3 +72,5 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
         )
     }
 }
+
+private const val TIMEOUT_SEC = 1L
