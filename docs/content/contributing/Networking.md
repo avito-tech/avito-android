@@ -19,7 +19,7 @@ Create an instance of `HttpClientProvider`
 val httpClientProvider = HttpClientProvider(statsdSender, timeProvider)
 ```
 
-Get client
+Get the client:
 
 ```kotlin
 val httpClient = httpClientProvider.provide().build()
