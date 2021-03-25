@@ -49,7 +49,7 @@ class ReportImplementation(
         loggerFactory = loggerFactory
     ),
     private val timeProvider: TimeProvider,
-    private val troubleshooter: Troubleshooter = Troubleshooter.Impl
+    private val troubleshooter: Troubleshooter
 ) : Report,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
