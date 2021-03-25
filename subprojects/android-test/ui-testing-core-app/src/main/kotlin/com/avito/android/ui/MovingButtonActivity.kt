@@ -25,7 +25,9 @@ class MovingButtonActivity : AppCompatActivity() {
 
         thread {
             val fps = 30
-            val iterationsCount = fps * 5 // 5 seconds (30 frames per every second)
+
+            // 5 seconds (30 frames per every second)
+            val iterationsCount = fps * 5
             val radius = 50
 
             (0..iterationsCount).forEach { iterationNumber ->

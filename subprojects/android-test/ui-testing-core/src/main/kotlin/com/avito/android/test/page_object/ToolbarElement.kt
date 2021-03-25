@@ -165,8 +165,11 @@ open class ToolbarElement(interactionContext: InteractionContext) :
                 anyOf(withText(titleMatcher), withContentDescription(titleMatcher))
             )
         )
+
+        // Overflow menu is shown in system PopupWindow
         private val overflowInteraction = Espresso.onView(withText(titleMatcher))
-            .inRoot(RootMatchers.isPlatformPopup()) // Overflow menu is shown in system PopupWindow
+            .inRoot(RootMatchers.isPlatformPopup())
+
         private val toolbarInteraction = Espresso.onView(toolbarMatcher)
 
         override fun perform(vararg actions: ViewAction) {

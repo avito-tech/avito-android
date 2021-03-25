@@ -327,8 +327,8 @@ class ReportImplementation(
     private inline fun <reified T : ReportState> checkStateIs() = getCastedState<T>()
 
     private inline fun <reified T : ReportState> getCastedStateOrNull(): T? {
-        return when (val _state = state) {
-            is T -> _state
+        return when (val localState = state) {
+            is T -> localState
             else -> null
         }
     }
@@ -339,13 +339,13 @@ class ReportImplementation(
         if (castedClass != null) {
             return castedClass
         } else {
-            val _state = state
+            val localState = state
 
             val detailedCause = when {
                 cause != null -> cause
 
-                _state is ReportState.Initialized ->
-                    IllegalStateException("Test not started, incident = ${_state.incident}")
+                localState is ReportState.Initialized ->
+                    IllegalStateException("Test not started, incident = ${localState.incident}")
 
                 else -> null
             }
