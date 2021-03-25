@@ -103,10 +103,10 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val remoteStorage: RemoteStorage by lazy {
         RemoteStorageFactory.create(
-            loggerFactory = loggerFactory,
             endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
-            timeProvider = timeProvider,
-            httpClientProvider = httpClientProvider
+            httpClientProvider = httpClientProvider,
+            loggerFactory = loggerFactory,
+            timeProvider = timeProvider
         )
     }
 
