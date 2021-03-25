@@ -46,6 +46,7 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
         val httpClient = HttpClientProvider(
             statsDSender = project.statsd.get(),
             timeProvider = timeProvider,
+            loggerFactory = loggerFactory
         ).provide()
             .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)

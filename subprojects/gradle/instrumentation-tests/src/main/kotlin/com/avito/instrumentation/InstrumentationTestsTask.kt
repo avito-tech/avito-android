@@ -142,7 +142,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 config = project.statsdConfig.get(),
                 loggerFactory = loggerFactory
             ),
-            timeProvider = timeProvider
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
         )
 
         val reportFactory = createReportFactory(

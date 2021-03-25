@@ -40,7 +40,8 @@ class TestSummaryPlugin : Plugin<Project> {
                 loggerFactory = loggerFactory,
                 httpClientProvider = HttpClientProvider(
                     statsDSender = target.statsd.get(),
-                    timeProvider = timeProvider
+                    timeProvider = timeProvider,
+                    loggerFactory = loggerFactory
                 )
             )
         }

@@ -44,7 +44,8 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
 
         val httpClientProvider = HttpClientProvider(
             statsDSender = project.statsd.get(),
-            timeProvider = timeProvider
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
         )
 
         try {
