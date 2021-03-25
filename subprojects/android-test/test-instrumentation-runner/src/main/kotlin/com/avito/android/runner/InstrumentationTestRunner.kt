@@ -51,5 +51,6 @@ abstract class InstrumentationTestRunner : AndroidJUnitRunner(), OrchestratorDel
     override fun finish(resultCode: Int, results: Bundle?) {
         delegateRegistry?.beforeFinish(resultCode, results)
         super.finish(resultCode, results)
+        delegateRegistry?.afterFinish(resultCode, results)
     }
 }
