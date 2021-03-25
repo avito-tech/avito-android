@@ -15,7 +15,7 @@ internal class FindAndroidAppTaskInAndroidTestTest : BaseFindAndroidAppTaskTest(
 
     @Test
     override fun `find multiple same suitable apps - advice that you could choose both`() {
-        gradlew(projectDir, "findAndroidApp", "--modules=:LeafG", "--configuration=android_test")
+        gradlew(projectDir, "findAndroidApp", "--modules=:NodeG", "--configuration=android_test")
             .assertThat()
             .buildSuccessful()
             .outputContains(

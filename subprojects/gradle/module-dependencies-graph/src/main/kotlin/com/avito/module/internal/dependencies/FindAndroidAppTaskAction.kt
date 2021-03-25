@@ -14,7 +14,10 @@ internal class FindAndroidAppTaskAction(
     fun findAppFor(modules: Set<Path>, configurations: Set<ConfigurationType>): Verdict {
         val apps = configurations
             .map {
-                graphBuilder.buildDependenciesGraphFlatten(it)
+                graphBuilder.buildDependenciesGraph(it)
+                    .map { rootNode ->
+                        ProjectWithDeps(rootNode.project, rootNode.allDependencies())
+                    }
             }
             .flatten()
             .groupBy { it.project }

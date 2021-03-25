@@ -4,6 +4,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.module.configurations.ConfigurationType
 import com.avito.module.internal.configurations.ConfigurationCoordinate
+import com.avito.module.internal.dependencies.ProjectConfigurationNode.ConfigurationNode
 import org.gradle.api.Project
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 
@@ -20,9 +21,9 @@ internal class DependenciesGraphBuilder(
 
     private val logger = loggerFactory.create<DependenciesGraphBuilder>()
 
-    private val visited = mutableMapOf<ProjectConfigurationCoordinate, ModuleProjectConfigurationDependenciesNode>()
+    private val visited = mutableMapOf<ProjectConfigurationCoordinate, ProjectConfigurationNode>()
 
-    fun buildDependenciesGraph(configurationType: ConfigurationType): Set<ModuleProjectConfigurationDependenciesNode> {
+    fun buildDependenciesGraph(configurationType: ConfigurationType): Set<ProjectConfigurationNode> {
         root.allprojects.forEach { project ->
             dependenciesOnProjects(project, configurationType)
         }
@@ -34,12 +35,13 @@ internal class DependenciesGraphBuilder(
     private fun dependenciesOnProjects(
         project: Project,
         configurationType: ConfigurationType
-    ): ModuleProjectConfigurationDependenciesNode {
+    ): ProjectConfigurationNode {
         return visited.getOrPut(ProjectConfigurationCoordinate(project, configurationType)) {
-            ModuleProjectConfigurationDependenciesNode(
+            ProjectConfigurationNode(
                 project = project,
                 configurationType = configurationType,
-                dependencies = project.configurations
+                configurations = project.configurations
+                    .asSequence()
                     .map { conf ->
                         ConfigurationCoordinate(conf.name, ConfigurationType.of(conf)) to conf
                     }
@@ -60,7 +62,11 @@ internal class DependenciesGraphBuilder(
                                 dependenciesOnProjects(projectDependency.dependencyProject, ConfigurationType.Main)
                             }
                             .toSet()
-                    }.toMap()
+                    }
+                    .map { (configurationName, dependencies) ->
+                        ConfigurationNode(configurationName, dependencies)
+                    }
+                    .toSet()
             )
         }
     }
