@@ -1,7 +1,7 @@
 # Networking
 
 We using [Okhttp](https://square.github.io/okhttp/) sometimes with [Retrofit](https://square.github.io/retrofit/) for
-networking in gradle plugins and android.
+networking in Gradle plugins and Android libraries.
 
 ## Obtain an OkHttpClient
 
