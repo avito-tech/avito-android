@@ -41,7 +41,6 @@ output-reports:
 
 comments:
     active: true
-    excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
     # https://detekt.github.io/detekt/comments.html#absentorwrongfilelicense
     # we don't use licenses per file, only root one
     AbsentOrWrongFileLicense:
@@ -117,14 +116,14 @@ complexity:
         active: false
     StringLiteralDuplication:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         threshold: 3
         ignoreAnnotation: true
         excludeStringsWithLessThan5Characters: true
         ignoreStringsRegex: '$^'
     TooManyFunctions:
         active: true
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         thresholdInFiles: 11
         thresholdInClasses: 11
         thresholdInInterfaces: 11
@@ -201,7 +200,7 @@ exceptions:
         methodNames: [ toString, hashCode, equals, finalize ]
     InstanceOfCheckForException:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
     NotImplementedDeclaration:
         active: false
     PrintStackTrace:
@@ -225,7 +224,7 @@ exceptions:
         active: false
     ThrowingExceptionsWithoutMessageOrCause:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         exceptions:
             - IllegalArgumentException
             - IllegalStateException
@@ -234,7 +233,7 @@ exceptions:
         active: false
     TooGenericExceptionCaught:
         active: true
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         exceptionNames:
             - ArrayIndexOutOfBoundsException
             - Error
@@ -356,11 +355,12 @@ formatting:
         active: true
     SpacingAroundRangeOperator:
         active: true
+    # https://detekt.github.io/detekt/formatting.html#spacingbetweendeclarationswithannotations
     SpacingBetweenDeclarationsWithAnnotations:
         active: true
+    # https://detekt.github.io/detekt/formatting.html#spacingbetweendeclarationswithcomments
     SpacingBetweenDeclarationsWithComments:
         active: true
-
     # https://ktlint.github.io/#rule-string-template
     StringTemplate:
         active: true
@@ -370,44 +370,42 @@ naming:
     # https://detekt.github.io/detekt/naming.html#classnaming
     ClassNaming:
         active: true
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         classPattern: '[A-Z][a-zA-Z0-9]*'
     # https://detekt.github.io/detekt/naming.html#constructorparameternaming
     ConstructorParameterNaming:
         active: true
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         parameterPattern: '[a-z][A-Za-z0-9]*'
         privateParameterPattern: '[a-z][A-Za-z0-9]*'
         excludeClassPattern: '$^'
         ignoreOverridden: true
     EnumNaming:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         enumEntryPattern: '[A-Z][_a-zA-Z0-9]*'
     ForbiddenClassName:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         forbiddenName: [ ]
     FunctionMaxLength:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         maximumFunctionNameLength: 30
     # blocked by `Is` functions
     FunctionMinLength:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         minimumFunctionNameLength: 3
     # blocked by `Is` functions
     FunctionNaming:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         functionPattern: '([a-z][a-zA-Z0-9]*)|(`.*`)'
         excludeClassPattern: '$^'
         ignoreOverridden: true
         ignoreAnnotated: [ 'Composable' ]
     FunctionParameterNaming:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         parameterPattern: '[a-z][A-Za-z0-9]*'
         excludeClassPattern: '$^'
         ignoreOverridden: true
@@ -425,35 +423,34 @@ naming:
         ignoreOverridden: true
     NonBooleanPropertyPrefixedWithIs:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
     ObjectPropertyNaming:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         constantPattern: '[A-Za-z][_A-Za-z0-9]*'
         propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
         privatePropertyPattern: '(_)?[A-Za-z][_A-Za-z0-9]*'
     PackageNaming:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
     TopLevelPropertyNaming:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         constantPattern: '[A-Z][_A-Z0-9]*'
         propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
         privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
     VariableMaxLength:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         maximumVariableNameLength: 64
     VariableMinLength:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         minimumVariableNameLength: 1
     # https://detekt.github.io/detekt/naming.html#variablenaming
     VariableNaming:
         active: true
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
         variablePattern: '[a-z][A-Za-z0-9]*'
         privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
         excludeClassPattern: '$^'
@@ -465,10 +462,10 @@ performance:
         active: true
     ForEachOnRange:
         active: true
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
     SpreadOperator:
         active: true
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
     UnnecessaryTemporaryInstantiation:
         active: true
 
@@ -503,7 +500,7 @@ potential-bugs:
         active: false
     LateinitUsage:
         active: false
-        excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/test/**', '**/androidTest/**' ]
         excludeAnnotatedProperties: [ ]
         ignoreOnClassesPattern: ''
     MapGetWithNotNullAssertionOperator:
@@ -616,7 +613,7 @@ style:
     # https://detekt.github.io/detekt/style.html#magicnumber
     MagicNumber:
         active: true
-        excludes: [ '**/build.gradle.kts', '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**' ]
+        excludes: [ '**/build.gradle.kts', '**/test/**', '**/androidTest/**' ]
         ignoreNumbers: [ '-1', '0', '1', '2' ]
         ignoreHashCodeFunction: true
         ignorePropertyDeclaration: true

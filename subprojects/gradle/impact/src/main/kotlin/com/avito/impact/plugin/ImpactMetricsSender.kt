@@ -22,7 +22,9 @@ class ImpactMetricsSender(
 
     private val prefix by lazy {
         val envName = environmentInfo.environment.publicName
-        val node = "_" // Don't need when we have build id. Empty value for backward compatibility in series name
+
+        // Don't need when we have build id. Empty value for backward compatibility in series name
+        val node = "_"
         val buildId = requireNotNull(environmentInfo.teamcityBuildId()) {
             "ImpactMetricsSender should run only if teamcityBuildInfo available"
         }

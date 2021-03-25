@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 
 class IsEqualIgnoringAllWhiteSpaceTest : AbstractMatcherTest() {
 
-    private val THIN_SPACE = '\u2009'
-    private val matcher = equalToIgnoringAllWhiteSpace(" Hello World$THIN_SPACE  how\n are we? ")
+    private val thinSpace = '\u2009'
+    private val matcher = equalToIgnoringAllWhiteSpace(" Hello World$thinSpace  how\n are we? ")
 
     override fun createMatcher(): Matcher<*> {
         return matcher
@@ -21,7 +21,7 @@ class IsEqualIgnoringAllWhiteSpaceTest : AbstractMatcherTest() {
 
     @Test
     fun `matches - only whitespaces order differs, ignoring words`() {
-        assertMatches(matcher, "HelloWorld${THIN_SPACE}how are we?")
+        assertMatches(matcher, "HelloWorld${thinSpace}how are we?")
         assertMatches(matcher, "Hello Wo rld how are we?")
         assertMatches(matcher, "HelloWorldhowarewe?")
         assertMatches(matcher, "   HelloWorldhowarewe?    ")
@@ -52,7 +52,7 @@ class IsEqualIgnoringAllWhiteSpaceTest : AbstractMatcherTest() {
     @Test
     fun `has a readable description`() {
         assertDescription(
-            "a string equal to \" Hello World$THIN_SPACE  how\n" +
+            "a string equal to \" Hello World$thinSpace  how\n" +
                 " are we? \" ignoring all white spaces",
             matcher
         )

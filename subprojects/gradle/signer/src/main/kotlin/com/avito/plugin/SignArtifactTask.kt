@@ -52,6 +52,8 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
             .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
             .build()
+
+        // TODO: Use workers
         val signResult = SignViaServiceAction(
             serviceUrl = serviceUrl,
             httpClient = httpClient,
@@ -59,7 +61,7 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
             unsignedFile = unsignedFile,
             signedFile = signedFile,
             loggerFactory = loggerFactory
-        ).sign() // TODO: Use workers
+        ).sign()
 
         hackForArtifactsApi()
 
