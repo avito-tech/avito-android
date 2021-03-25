@@ -7,12 +7,23 @@ import com.avito.android.test.report.Report
 import com.avito.android.test.report.lifecycle.ReportActivityLifecycleListener
 
 class ReportLifecycleEventsDelegate(
-    private val report: Report
+    report: Report
 ) : InstrumentationTestRunnerDelegate() {
+    /**
+     * ActivityLifecycleMonitorRegistry wraps callbacks by WeakReference.
+     * So we holding a reference to avoid the garbage collection
+     */
+    private val listener = ReportActivityLifecycleListener(report)
 
     override fun afterOnCreate(arguments: Bundle) {
         ActivityLifecycleMonitorRegistry
             .getInstance()
-            .addLifecycleCallback(ReportActivityLifecycleListener(report))
+            .addLifecycleCallback(listener)
+    }
+
+    override fun afterFinish(resultCode: Int, results: Bundle?) {
+        ActivityLifecycleMonitorRegistry
+            .getInstance()
+            .removeLifecycleCallback(listener)
     }
 }
