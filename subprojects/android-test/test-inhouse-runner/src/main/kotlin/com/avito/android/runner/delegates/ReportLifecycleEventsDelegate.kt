@@ -11,7 +11,7 @@ class ReportLifecycleEventsDelegate(
 ) : InstrumentationTestRunnerDelegate() {
     /**
      * ActivityLifecycleMonitorRegistry wraps callbacks by WeakReference.
-     * So we need to hold reference else where for not be garbage collecting
+     * So we holding a reference to avoid the garbage collection
      */
     private val listener = ReportActivityLifecycleListener(report)
 
