@@ -50,7 +50,9 @@ internal class StatsHttpEventListener(
         val metadata = request.tag(RequestMetadata::class.java)
 
         return if (metadata == null) {
-            val urlWithoutParams = request.url.newBuilder().query(null).build()
+            val urlWithoutParams = request.url.newBuilder()
+                .query(null)
+                .build()
 
             logger.warn(
                 msg = "RequestMetadata not available for: $urlWithoutParams\n" +
