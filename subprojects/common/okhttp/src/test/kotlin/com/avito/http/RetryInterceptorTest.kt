@@ -22,14 +22,14 @@ internal class RetryInterceptorTest {
 
     private lateinit var server: MockWebServer
 
+    private val logger = StubLoggerFactory.create<RetryInterceptorTest>()
+
     private val errorResponseCases = mapOf(
         "500" to MockResponse().setResponseCode(500),
         "DISCONNECT_AT_START" to MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START)
     )
 
     private val successfulResponse = MockResponse()
-
-    private val loggerFactory = StubLoggerFactory
 
     @BeforeEach
     private fun setup() {
@@ -108,8 +108,8 @@ internal class RetryInterceptorTest {
                 RetryInterceptor(
                     retries = maxAttempts,
                     delayMs = 1,
-                    logger = loggerFactory.create<StubApi>(),
                     allowedMethods = listOf("GET", "POST"),
+                    logger = logger,
                     useIncreasingDelay = false
                 )
             )

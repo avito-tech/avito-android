@@ -1,12 +1,13 @@
-import com.avito.http.HttpLogger
+import com.avito.android.stats.statsd
+import com.avito.http.HttpClientProvider
 import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.Logger
+import com.avito.logger.create
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -37,10 +38,18 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
 
     @TaskAction
     fun doWork() {
-        val logger = GradleLoggerFactory.getLogger(this)
+        val loggerFactory = GradleLoggerFactory.fromTask(this)
+        val logger = loggerFactory.create<ProsectorReleaseAnalysisTask>()
+        val timeProvider: TimeProvider = DefaultTimeProvider()
+
+        val httpClientProvider = HttpClientProvider(
+            statsDSender = project.statsd.get(),
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
+        )
 
         try {
-            val result = createClient(logger).releaseAnalysis(
+            val result = createClient(httpClientProvider).releaseAnalysis(
                 meta = meta,
                 apk = MultipartBody.Part.createFormData(
                     "build_after",
@@ -65,22 +74,12 @@ abstract class ProsectorReleaseAnalysisTask : DefaultTask() {
     }
 
     private fun createClient(
-        logger: Logger,
+        httpClientProvider: HttpClientProvider,
         gson: Gson = GsonBuilder().setLenient().create()
     ): ProsectorApi = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create(gson))
-        .client(
-            OkHttpClient.Builder().apply {
-                if (debug) {
-                    addInterceptor(
-                        HttpLoggingInterceptor(HttpLogger(logger)).apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        }
-                    )
-                }
-            }.build()
-        )
+        .client(httpClientProvider.provide().build())
         .build()
         .create(ProsectorApi::class.java)
 }

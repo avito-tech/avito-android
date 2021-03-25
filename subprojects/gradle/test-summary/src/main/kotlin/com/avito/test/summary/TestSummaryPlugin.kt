@@ -1,5 +1,7 @@
 package com.avito.test.summary
 
+import com.avito.android.stats.statsd
+import com.avito.http.HttpClientProvider
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
@@ -28,11 +30,21 @@ class TestSummaryPlugin : Plugin<Project> {
                 createSlackClient(token, workspace)
             }
 
-        val reportsApi: Provider<ReportsApi> = extension.reportsHost.map {
-            createReportsApi(it, GradleLoggerFactory.fromPlugin(this, target))
-        }
+        val loggerFactory = GradleLoggerFactory.fromPlugin(this, target)
 
         val timeProvider: TimeProvider = DefaultTimeProvider()
+
+        val reportsApi: Provider<ReportsApi> = extension.reportsHost.map {
+            createReportsApi(
+                reportsHost = it,
+                loggerFactory = loggerFactory,
+                httpClientProvider = HttpClientProvider(
+                    statsDSender = target.statsd.get(),
+                    timeProvider = timeProvider,
+                    loggerFactory = loggerFactory
+                )
+            )
+        }
 
         val reportViewer: Provider<ReportViewer> = extension.reportViewerUrl.map { createReportViewer(it) }
 
@@ -81,10 +93,15 @@ class TestSummaryPlugin : Plugin<Project> {
         )
     }
 
-    private fun createReportsApi(reportsHost: String, loggerFactory: LoggerFactory): ReportsApi {
+    private fun createReportsApi(
+        reportsHost: String,
+        loggerFactory: LoggerFactory,
+        httpClientProvider: HttpClientProvider
+    ): ReportsApi {
         return ReportsApiFactory.create(
             host = reportsHost,
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            httpClientProvider = httpClientProvider
         )
     }
 }

@@ -15,6 +15,7 @@ import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.MainLooperMessagesLogDelegate
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
+import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
@@ -38,6 +39,7 @@ import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
+import com.avito.http.HttpClientProvider
 import com.avito.logger.create
 import com.avito.report.ReportsApiFactory
 import com.avito.report.model.DeviceName
@@ -68,6 +70,17 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val mainLooperMessagesLogDumper by lazy { MainLooperMessagesLogDumper() }
 
+    private val httpClientProvider: HttpClientProvider by lazy {
+        HttpClientProvider(
+            statsDSender = StatsDSender.Impl(
+                config = testRunEnvironment.asRunEnvironmentOrThrow().statsDConfig,
+                loggerFactory = loggerFactory
+            ),
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
+        )
+    }
+
     /**
      * Public for *TestApp to skip on orchestrator runs
      */
@@ -90,8 +103,9 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val remoteStorage: RemoteStorage by lazy {
         RemoteStorageFactory.create(
-            loggerFactory = loggerFactory,
             endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
+            httpClientProvider = httpClientProvider,
+            loggerFactory = loggerFactory,
             timeProvider = timeProvider
         )
     }
@@ -112,7 +126,8 @@ abstract class InHouseInstrumentationTestRunner :
                             logger = testReportLogger,
                             reportsApi = ReportsApiFactory.create(
                                 host = reportConfig.reportApiUrl,
-                                loggerFactory = loggerFactory
+                                loggerFactory = loggerFactory,
+                                httpClientProvider = httpClientProvider
                             )
                         )
                     )

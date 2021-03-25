@@ -24,12 +24,13 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.radiography)
 
-    testImplementation(project(":common:resources"))
+    testImplementation(libs.jsonPathAssert)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.okhttpMock)
     testImplementation(project(":common:junit-utils"))
+    testImplementation(project(":common:resources"))
+    testImplementation(project(":common:truth-extensions"))
     testImplementation(testFixtures(project(":common:logger")))
     testImplementation(testFixtures(project(":common:time")))
-    testImplementation(libs.okhttpMock)
-    testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.jsonPathAssert)
-    testImplementation(project(":common:truth-extensions"))
+    testImplementation(testFixtures(project(":common:http-client")))
 }

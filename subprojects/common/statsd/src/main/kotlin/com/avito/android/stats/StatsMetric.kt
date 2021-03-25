@@ -6,26 +6,26 @@ sealed class StatsMetric {
     abstract val type: String
 }
 
-class TimeMetric(
+data class TimeMetric(
     override val name: SeriesName,
-    timeInMs: Long
+    val timeInMs: Long
 ) : StatsMetric() {
     override val value: Long = timeInMs
     override val type = "time"
 }
 
-class CountMetric(
+data class CountMetric(
     override val name: SeriesName,
-    delta: Long = 1
+    val delta: Long = 1
 ) : StatsMetric() {
     override val value: Long = delta
     override val type = "count"
 }
 
-class GaugeMetric(
+data class GaugeMetric(
     override val name: SeriesName,
-    value: Number
+    val gauge: Number
 ) : StatsMetric() {
-    override val value: Long = value.toLong()
+    override val value: Long = gauge.toLong()
     override val type = "gauge"
 }

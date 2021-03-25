@@ -1,5 +1,7 @@
 package com.avito.plugin
 
+import com.avito.android.stats.statsd
+import com.avito.http.HttpClientProvider
 import com.avito.logger.GradleLoggerFactory
 import com.avito.report.ReportsApiFactory
 import com.avito.report.model.ReportCoordinates
@@ -24,10 +26,17 @@ abstract class MarkReportAsSourceTask : DefaultTask() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val timeProvider: TimeProvider = DefaultTimeProvider()
 
+        val httpClientProvider = HttpClientProvider(
+            statsDSender = project.statsd.get(),
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
+        )
+
         MarkReportAsSourceAction(
             reportsApi = ReportsApiFactory.create(
                 host = reportsHost.get(),
-                loggerFactory = loggerFactory
+                loggerFactory = loggerFactory,
+                httpClientProvider = httpClientProvider
             ),
             timeProvider = timeProvider,
             loggerFactory = loggerFactory

@@ -3,15 +3,17 @@ package com.avito.android.runner.report.factory
 import com.avito.android.runner.report.AvitoReport
 import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
+import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportsApi
 import com.avito.report.ReportsApiFactory
 import com.avito.time.TimeProvider
 
 public class ReportViewerFactory(
-    public val reportApiUrl: String,
-    public val loggerFactory: LoggerFactory,
-    public val timeProvider: TimeProvider
+    private val reportApiUrl: String,
+    private val loggerFactory: LoggerFactory,
+    private val timeProvider: TimeProvider,
+    private val httpClientProvider: HttpClientProvider
 ) : ReportFactory {
 
     @Transient
@@ -61,7 +63,8 @@ public class ReportViewerFactory(
         if (!::reportsApi.isInitialized) {
             reportsApi = ReportsApiFactory.create(
                 host = reportApiUrl,
-                loggerFactory = loggerFactory
+                loggerFactory = loggerFactory,
+                httpClientProvider = httpClientProvider
             )
         }
     }

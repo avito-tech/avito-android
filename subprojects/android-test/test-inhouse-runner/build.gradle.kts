@@ -14,6 +14,7 @@ dependencies {
 
     implementation(project(":common:sentry"))
     implementation(project(":common:elastic-logger"))
+    implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:statsd"))
     implementation(project(":common:report-viewer"))

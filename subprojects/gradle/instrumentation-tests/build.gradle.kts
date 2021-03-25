@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":common:logger"))
     implementation(project(":common:report-viewer"))
     implementation(project(":common:retrace"))
+    implementation(project(":common:http-client"))
     implementation(project(":common:result"))
     implementation(project(":common:sentry"))
     implementation(project(":common:test-annotations"))
@@ -53,6 +54,7 @@ dependencies {
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:build-failer-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
+    testImplementation(testFixtures(project(":common:http-client")))
 
     gradleTestImplementation(project(":gradle:test-project"))
 

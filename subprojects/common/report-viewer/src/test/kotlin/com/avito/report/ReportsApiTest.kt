@@ -1,5 +1,7 @@
 package com.avito.report
 
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
@@ -103,6 +105,7 @@ internal class ReportsApiTest {
     private fun createNoRetriesReportsApi(): ReportsApi = ReportsApiFactory.create(
         host = mockWebServer.url("/").toString(),
         loggerFactory = loggerFactory,
-        retryInterceptor = null
+        httpClientProvider = HttpClientProvider.createStubInstance(),
+        retryRequests = false
     )
 }

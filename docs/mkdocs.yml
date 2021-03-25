@@ -71,7 +71,9 @@ nav:
             -   Contributing:
                     -   Gradle Plugins: contributing/GradlePlugins.md
                     -   Documentation: contributing/Documentation.md
-                    -   contributing/Release.md
+                    -   Logging: contributing/Logging.md
+                    -   Networking: contributing/Networking.md
+                    -   Release: contributing/Release.md
     -   Projects:
             -   Build checks: projects/BuildChecks.md
             -   Build properties: projects/BuildProperties.md
@@ -84,7 +86,6 @@ nav:
             -   CI Gradle Plugin: projects/CiSteps.md
             -   Impact analysis: ci/ImpactAnalysis.md
             -   Containers: ci/Containers.md
-            -   Logging: ci/Logging.md
     -   Testing:
             -   Flaky annotation: test/FlakyAnnotation.md
             -   Toast: test/Toast.md

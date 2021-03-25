@@ -1,7 +1,7 @@
 package com.avito.plugin
 
 import com.avito.android.Result
-import com.avito.http.HttpLogger
+import com.avito.http.internal.RequestMetadata
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.utils.ExistingFile
@@ -12,12 +12,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 internal class SignViaServiceAction(
     private val serviceUrl: String,
+    private val httpClient: OkHttpClient,
     private val token: String,
     private val unsignedFile: File,
     private val signedFile: File,
@@ -44,23 +44,15 @@ internal class SignViaServiceAction(
             ) {
                 val request = buildRequest()
 
-                val response =
-                    buildHttpClient()
-                        .newCall(request)
-                        .execute()
+                val response = httpClient
+                    .newCall(request)
+                    .execute()
 
                 response.process(outputFile = signedFile)
                 signedFile.toExisting()
             }
         }
     }
-
-    private fun buildHttpClient() = OkHttpClient.Builder()
-        .connectTimeout(1, TimeUnit.MINUTES)
-        .writeTimeout(1, TimeUnit.MINUTES)
-        .readTimeout(1, TimeUnit.MINUTES)
-        .addInterceptor(HttpLoggingInterceptor(HttpLogger(logger)).setLevel(HttpLoggingInterceptor.Level.BASIC))
-        .build()
 
     private fun buildRequest(): Request {
         val body = MultipartBody.Builder()
@@ -82,6 +74,7 @@ internal class SignViaServiceAction(
         return Request.Builder()
             .url(hostWithoutSlash + apiPath)
             .post(body)
+            .tag(RequestMetadata::class.java, RequestMetadata("signer", "sign"))
             .build()
     }
 

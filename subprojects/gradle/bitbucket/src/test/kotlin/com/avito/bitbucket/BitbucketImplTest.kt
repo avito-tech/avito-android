@@ -1,5 +1,7 @@
 package com.avito.bitbucket
 
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.commit
@@ -10,6 +12,7 @@ import com.avito.test.gradle.module.KotlinModule
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.MockWebServerFactory
+import com.avito.truth.ResultSubject.Companion.assertThat
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
@@ -60,7 +63,7 @@ internal class BitbucketImplTest {
             val addAnnotationsRequest =
                 dispatcher.captureRequest { path.contains("rest/insights/1.0") && method == "POST" }
 
-            createBitbucket().addInsights(
+            val result = createBitbucket().addInsights(
                 rootDir = tempDir,
                 sourceCommitHash = sourceHash,
                 targetCommitHash = targetCommit,
@@ -83,6 +86,8 @@ internal class BitbucketImplTest {
                 )
             )
 
+            assertThat(result).isSuccess()
+
             @Suppress("MaxLineLength")
             addAnnotationsRequest.checks.singleRequestCaptured().bodyContains(
                 """{"annotations":[{"path":"$fileToBeModifiedPath","line":6,"message":"Unsafe use of nullable receiver of type URL?","severity":"MEDIUM"}]}"""
@@ -103,7 +108,8 @@ internal class BitbucketImplTest {
             credentials = AtlassianCredentials("", "")
         ),
         pullRequestId = null,
-        loggerFactory = loggerFactory
+        loggerFactory = loggerFactory,
+        httpClientProvider = HttpClientProvider.createStubInstance()
     )
 
     private fun File.createSourceFiles(fileToBeModifiedPath: String, notModifiedFilePath: String) {

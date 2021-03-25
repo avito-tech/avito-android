@@ -1,6 +1,8 @@
 package com.avito.plugin
 
 import com.avito.android.Result
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
@@ -25,16 +27,19 @@ class SignViaServiceActionTest {
 
     private val loggerFactory = StubLoggerFactory
 
+    private val httpClientProvider = HttpClientProvider.createStubInstance()
+
     private val apk: File
         get() = File(testProjectDir, "test.apk").apply { createNewFile() }
 
     private val signViaServiceAction: SignViaServiceAction
         get() = SignViaServiceAction(
-            server.url("/").toString(),
-            "123456",
-            apk,
-            apk,
-            loggerFactory
+            serviceUrl = server.url("/").toString(),
+            httpClient = httpClientProvider.provide().build(),
+            token = "123456",
+            unsignedFile = apk,
+            signedFile = apk,
+            loggerFactory = loggerFactory
         )
 
     private val failedResponse = MockResponse().setResponseCode(500)

@@ -9,9 +9,11 @@ import com.avito.android.runner.report.StrategyFactory
 import com.avito.android.runner.report.factory.InMemoryReportFactory
 import com.avito.android.runner.report.factory.ReportFactory
 import com.avito.android.runner.report.factory.ReportViewerFactory
+import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
+import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.internal.GetTestResultsAction
@@ -135,10 +137,19 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         val reportConfig = createReportConfig(reportCoordinates)
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val timeProvider: TimeProvider = DefaultTimeProvider()
+        val httpClientProvider = HttpClientProvider(
+            statsDSender = StatsDSender.Impl(
+                config = project.statsdConfig.get(),
+                loggerFactory = loggerFactory
+            ),
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
+        )
 
         val reportFactory = createReportFactory(
             loggerFactory = loggerFactory,
-            timeProvider = timeProvider
+            timeProvider = timeProvider,
+            httpClientProvider = httpClientProvider
         )
 
         saveTestResultsToBuildOutput(
@@ -252,7 +263,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     private fun createReportFactory(
         loggerFactory: LoggerFactory,
-        timeProvider: TimeProvider
+        timeProvider: TimeProvider,
+        httpClientProvider: HttpClientProvider
     ): ReportFactory {
         val reportViewerConfig = reportViewerConfig.orNull
         val factories = mutableMapOf<String, ReportFactory>()
@@ -262,6 +274,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
                     loggerFactory = loggerFactory,
                     timeProvider = timeProvider,
+                    httpClientProvider = httpClientProvider
                 )
         }
 

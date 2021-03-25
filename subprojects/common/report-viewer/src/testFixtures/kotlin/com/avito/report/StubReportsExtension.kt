@@ -1,5 +1,7 @@
 package com.avito.report
 
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockDispatcher
 import okhttp3.mockwebserver.MockWebServer
@@ -22,7 +24,8 @@ class StubReportsExtension : BeforeEachCallback, AfterEachCallback, ParameterRes
             stubReportApi = StubReportApi(
                 realApi = ReportsApiFactory.create(
                     host = mockWebServer.url("/").toString(),
-                    loggerFactory = StubLoggerFactory
+                    loggerFactory = StubLoggerFactory,
+                    httpClientProvider = HttpClientProvider.createStubInstance()
                 ),
                 mockDispatcher = mockDispatcher
             )

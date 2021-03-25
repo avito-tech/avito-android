@@ -1,18 +1,17 @@
 package com.avito.plugin
 
 import com.avito.android.Result
-import com.avito.http.HttpLogger
+import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -25,6 +24,7 @@ internal class QAppsUploadAction(
     private val versionCode: String,
     private val packageName: String,
     private val releaseChain: Boolean,
+    private val httpClientProvider: HttpClientProvider,
     loggerFactory: LoggerFactory
 ) {
 
@@ -34,10 +34,23 @@ internal class QAppsUploadAction(
         Retrofit.Builder()
             .baseUrl(host)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
-            .client(httpClient())
+            .client(
+                httpClientProvider.provide()
+                    .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                    .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                    .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+                    .addInterceptor(
+                        RetryInterceptor(
+                            retries = 3,
+                            allowedMethods = listOf("GET", "POST"),
+                            logger = loggerFactory.create<QAppsUploadAction>()
+                        )
+                    )
+                    .build()
+            )
             .validateEagerly(true)
             .build()
-            .create(QAppsUploadApi::class.java)
+            .create<QAppsUploadApi>()
     }
 
     fun upload(): Result<Unit> = Result.tryCatch {
@@ -73,22 +86,6 @@ internal class QAppsUploadAction(
             )
         )
     }
-
-    private fun httpClient() = OkHttpClient.Builder()
-        .connectTimeout(1, TimeUnit.MINUTES)
-        .writeTimeout(1, TimeUnit.MINUTES)
-        .readTimeout(1, TimeUnit.MINUTES)
-        .addInterceptor(
-            RetryInterceptor(
-                retries = 3,
-                allowedMethods = listOf("POST", "GET"),
-                logger = logger
-            )
-        )
-        .addInterceptor(
-            HttpLoggingInterceptor(HttpLogger(logger)).apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            }
-        )
-        .build()
 }
+
+private const val TIMEOUT_SEC = 60L

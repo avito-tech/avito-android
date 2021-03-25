@@ -3,6 +3,8 @@ package com.avito.instrumentation.internal
 import com.avito.android.TestSuiteLoaderImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
+import com.avito.android.stats.StatsDSender
+import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.finalizer.FinalizerFactory
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
@@ -35,6 +37,17 @@ internal interface InstrumentationTestsActionFactory {
         init {
             val timeProvider = DefaultTimeProvider()
 
+            val statsdSender = StatsDSender.Impl(
+                config = metricsConfig.statsDConfig,
+                loggerFactory = params.loggerFactory
+            )
+
+            val httpClientProvider = HttpClientProvider(
+                statsDSender = statsdSender,
+                timeProvider = timeProvider,
+                loggerFactory = params.loggerFactory
+            )
+
             this.schedulerFactory = TestsSchedulerFactory.Impl(
                 params = params,
                 sourceReport = sourceReport,
@@ -42,7 +55,8 @@ internal interface InstrumentationTestsActionFactory {
                 timeProvider = timeProvider,
                 metricsConfig = metricsConfig,
                 testExecutorFactory = TestExecutorFactory.Implementation(),
-                testSuiteLoader = TestSuiteLoaderImpl()
+                testSuiteLoader = TestSuiteLoaderImpl(),
+                httpClientProvider = httpClientProvider
             )
 
             this.finalizerFactory = FinalizerFactory.Impl(

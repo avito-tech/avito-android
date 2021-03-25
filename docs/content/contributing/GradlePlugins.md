@@ -156,4 +156,4 @@ open class MyPlugin : Plugin<Project> {
 }
 ```
 
-### [Logging](../ci/Logging.md)
+### [Logging](Logging.md)

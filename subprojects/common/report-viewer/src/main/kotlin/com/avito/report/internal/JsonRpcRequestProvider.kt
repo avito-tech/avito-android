@@ -1,5 +1,6 @@
 package com.avito.report.internal
 
+import com.avito.http.internal.RequestMetadata
 import com.avito.report.internal.model.RfcRpcRequest
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -30,9 +31,10 @@ internal class JsonRpcRequestProvider(
 
         val jsonRpcMethod = getMethod(jsonRpcRequest)
 
-        if (!jsonRpcMethod.isNullOrBlank()) {
-            httpRequest.tag(jsonRpcMethod)
-        }
+        httpRequest.tag(
+            type = RequestMetadata::class.java,
+            tag = RequestMetadata(serviceName = "reports", methodName = jsonRpcMethod)
+        )
 
         val response = httpClient.newCall(httpRequest.build()).execute()
 
@@ -51,16 +53,16 @@ internal class JsonRpcRequestProvider(
         }
     }
 
-    private fun getMethod(request: Any): String? = if (request is RfcRpcRequest) {
-        request.method
-    } else if (request is List<*>) {
-        val firstRequest = request.firstOrNull()
-        if (firstRequest != null && firstRequest is RfcRpcRequest) {
-            firstRequest.method
-        } else {
-            null
+    private fun getMethod(request: Any): String = when (request) {
+        is RfcRpcRequest -> request.method
+        is List<*> -> {
+            val methods = request.filterIsInstance<RfcRpcRequest>().map { it.method }.distinct()
+            when (methods.size) {
+                0 -> throw IllegalArgumentException("Trying to send empty or non json rpc requests")
+                1 -> methods.first()
+                else -> "multiple-methods"
+            }
         }
-    } else {
-        null
+        else -> "unknown"
     }
 }
