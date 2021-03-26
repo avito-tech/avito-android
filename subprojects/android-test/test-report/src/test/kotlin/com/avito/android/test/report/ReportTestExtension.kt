@@ -23,6 +23,7 @@ import okhttp3.mock.MockInterceptor
 import okhttp3.mock.Rule
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
+import java.io.File
 
 class ReportTestExtension(
     val timeProvider: TimeProvider = mock(),
@@ -62,6 +63,7 @@ class ReportTestExtension(
                     RemoteStorage.Result.Error(
                         "stub screenshot",
                         0L,
+                        RemoteStorage.Request.FileRequest.Image(File("stub")),
                         RuntimeException()
                     )
                 )

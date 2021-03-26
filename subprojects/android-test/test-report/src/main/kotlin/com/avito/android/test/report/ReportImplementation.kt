@@ -25,6 +25,7 @@ import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.util.formatStackTrace
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
+import com.avito.filestorage.RemoteStorage.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
@@ -61,9 +62,9 @@ class ReportImplementation(
      * Entries that occurred before first step/precondition
      */
     private val earlyEntries = mutableListOf<Entry>()
-    private val earlyFuturesUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
+    private val earlyFuturesUploads = mutableListOf<FutureValue<Result>>()
 
-    private val incidentFutureUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
+    private val incidentFutureUploads = mutableListOf<FutureValue<Result>>()
 
     private var state: ReportState = ReportState.Nothing
 
@@ -111,7 +112,7 @@ class ReportImplementation(
     @Synchronized
     override fun registerIncident(
         exception: Throwable,
-        screenshot: FutureValue<RemoteStorage.Result>?,
+        screenshot: FutureValue<Result>?,
     ) = methodExecutionTracing("registerIncident") {
         val currentState = getCastedState<ReportState.Initialized>(cause = exception)
 
@@ -238,7 +239,7 @@ class ReportImplementation(
         }
 
     @Synchronized
-    override fun makeScreenshot(comment: String): FutureValue<RemoteStorage.Result>? =
+    override fun makeScreenshot(comment: String): FutureValue<Result>? =
         methodExecutionTracing("stopStep") {
             val screenshotFuture = screenshotUploader.makeAndUploadScreenshot(comment)
 
@@ -367,34 +368,43 @@ class ReportImplementation(
         return copy(entryList = entryList + incidentFutureUploads.getInitializedEntries())
     }
 
-    private fun List<FutureValue<RemoteStorage.Result>>.getInitializedEntries(): List<Entry> =
+    private fun List<FutureValue<Result>>.getInitializedEntries(): List<Entry> =
         asSequence()
-            .map(FutureValue<RemoteStorage.Result>::get)
+            .map(FutureValue<Result>::get)
             .map {
-                // false positive 'must be exhaustive' error in IDE,
-                // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
-                when (it) {
-                    is RemoteStorage.Result.Error -> Entry.Comment(
-                        title = "FAILED to add: ${it.comment}",
-                        timeInSeconds = it.timeInSeconds
-                    )
-                    is RemoteStorage.Result.Success -> Entry.File(
-                        comment = it.comment,
-                        fileAddress = it.url,
-                        timeInSeconds = it.timeInSeconds,
-                        fileType = when (it.uploadRequest) {
-                            is RemoteStorage.Request.FileRequest.Image -> Entry.File.Type.img_png
-                            is RemoteStorage.Request.FileRequest.Video -> Entry.File.Type.video
-                            is RemoteStorage.Request.ContentRequest.Html -> Entry.File.Type.html
-                            is RemoteStorage.Request.ContentRequest.PlainText -> Entry.File.Type.plain_text
-                            is RemoteStorage.Request.ContentRequest.AnyContent -> Entry.File.Type.plain_text
-                        }
-                    )
-                }
+                Entry.File(
+                    comment = it.comment,
+                    timeInSeconds = it.timeInSeconds,
+                    fileType = it.uploadRequest.toFileType(),
+                    fileAddress = it.getUrl()
+                )
             }
             .toList()
 
-    private fun ReportState.Initialized.Started.writeTestCase() =
+    private fun RemoteStorage.Result.getUrl(): String {
+        // false positive 'must be exhaustive' error in IDE,
+        // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
+        return when (this) {
+            is Result.Success -> url
+            is Result.Error -> "no-file"
+        }
+    }
+
+    private fun RemoteStorage.Request.toFileType(): Entry.File.Type {
+        // false positive 'must be exhaustive' error in IDE,
+        // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
+        return when (this) {
+            is RemoteStorage.Request.ContentRequest.AnyContent -> Entry.File.Type.plain_text
+            is RemoteStorage.Request.ContentRequest.Html -> Entry.File.Type.html
+            is RemoteStorage.Request.ContentRequest.PlainText -> Entry.File.Type.plain_text
+            is RemoteStorage.Request.FileRequest.Image -> Entry.File.Type.img_png
+            is RemoteStorage.Request.FileRequest.Video -> Entry.File.Type.video
+        }
+    }
+
+    private
+
+    fun ReportState.Initialized.Started.writeTestCase() =
         methodExecutionTracing("writeTestCase") {
             beforeTestWrite(this)
             transport.forEach { it.send(this) }
