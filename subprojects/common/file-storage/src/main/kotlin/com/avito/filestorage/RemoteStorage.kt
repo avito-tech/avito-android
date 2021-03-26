@@ -48,20 +48,25 @@ interface RemoteStorage {
 
     sealed class Result {
 
+        abstract val comment: String
+        abstract val timeInSeconds: Long
+        abstract val uploadRequest: Request
+
         /**
          * @param url relative to the host
          */
-        data class Success(
-            val comment: String,
+        class Success(
+            override val comment: String,
+            override val timeInSeconds: Long,
+            override val uploadRequest: Request,
             val url: String,
-            val timeInSeconds: Long,
-            val uploadRequest: Request
         ) : Result()
 
-        data class Error(
-            val comment: String,
-            val timeInSeconds: Long,
-            val t: Throwable
+        class Error(
+            override val comment: String,
+            override val timeInSeconds: Long,
+            override val uploadRequest: Request,
+            val t: Throwable,
         ) : Result()
     }
 }
