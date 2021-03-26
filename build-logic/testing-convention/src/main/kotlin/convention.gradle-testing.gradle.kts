@@ -32,8 +32,7 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 
     useJUnitPlatform()
 
-    @Suppress("MagicNumber")
-    maxParallelForks = 8
+    maxParallelForks = 1
 
     failFast = false
 
