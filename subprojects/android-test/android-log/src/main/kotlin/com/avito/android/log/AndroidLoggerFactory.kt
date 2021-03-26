@@ -16,6 +16,18 @@ class AndroidLoggerFactory(
     private val testName: String?
 ) : LoggerFactory {
 
+    fun newFactory(
+        newElasticConfig: ElasticConfig? = null,
+        newSentryConfig: SentryConfig? = null,
+        newTestName: String? = null
+    ): AndroidLoggerFactory {
+        return AndroidLoggerFactory(
+            elasticConfig = newElasticConfig ?: elasticConfig,
+            sentryConfig = newSentryConfig ?: sentryConfig,
+            testName = newTestName ?: testName
+        )
+    }
+
     override fun create(tag: String): Logger {
 
         val metadata = AndroidTestMetadata(

@@ -5,15 +5,17 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import com.avito.android.runner.InstrumentationTestRunnerDelegate
 import com.avito.android.test.report.Report
 import com.avito.android.test.report.lifecycle.ReportActivityLifecycleListener
+import com.avito.logger.LoggerFactory
 
 class ReportLifecycleEventsDelegate(
-    report: Report
+    report: Report,
+    factory: LoggerFactory
 ) : InstrumentationTestRunnerDelegate() {
     /**
      * ActivityLifecycleMonitorRegistry wraps callbacks by WeakReference.
      * So we holding a reference to avoid the garbage collection
      */
-    private val listener = ReportActivityLifecycleListener(report)
+    private val listener = ReportActivityLifecycleListener(report, factory)
 
     override fun afterOnCreate(arguments: Bundle) {
         ActivityLifecycleMonitorRegistry

@@ -65,7 +65,7 @@ class HttpRemoteStorage(
                             deleteOnUpload = deleteOnUpload
                         )
 
-                        futureValue.set(RemoteStorage.Result.Error(comment, timestamp, t))
+                        futureValue.set(RemoteStorage.Result.Error(comment, timestamp, uploadRequest, t))
                     }
 
                     override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -91,6 +91,7 @@ class HttpRemoteStorage(
                                 RemoteStorage.Result.Error(
                                     comment = comment,
                                     timeInSeconds = timestamp,
+                                    uploadRequest = uploadRequest,
                                     t = exception
                                 )
                             }
@@ -100,6 +101,7 @@ class HttpRemoteStorage(
                                 RemoteStorage.Result.Error(
                                     comment = comment,
                                     timeInSeconds = timestamp,
+                                    uploadRequest = uploadRequest,
                                     t = exception
                                 )
                             }

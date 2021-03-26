@@ -200,7 +200,13 @@ abstract class InHouseInstrumentationTestRunner :
 
     override fun getDelegates(arguments: Bundle): List<InstrumentationTestRunnerDelegate> {
         return listOf(
-            ReportLifecycleEventsDelegate(report),
+            ReportLifecycleEventsDelegate(
+                report,
+                loggerFactory.newFactory(
+                    // Because LifecycleEvents logs are needed only for test reports
+                    newElasticConfig = ElasticConfig.Disabled
+                )
+            ),
             MainLooperMessagesLogDelegate(mainLooperMessagesLogDumper)
         )
     }
