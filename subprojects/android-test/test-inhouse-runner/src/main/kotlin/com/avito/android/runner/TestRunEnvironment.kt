@@ -4,6 +4,7 @@ import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.ElasticConfigFactory
+import com.avito.android.runner.TestRunEnvironment.RunEnvironment.ReportDestination
 import com.avito.android.runner.annotation.resolver.HostAnnotationResolver
 import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
 import com.avito.android.runner.annotation.resolver.NetworkingType
@@ -21,11 +22,6 @@ import java.io.File
 import java.util.UUID
 
 sealed class TestRunEnvironment {
-
-    data class ReportConfig(
-        val reportApiUrl: String,
-        val reportViewerUrl: String
-    )
 
     fun asRunEnvironmentOrThrow(): RunEnvironment {
         if (this !is RunEnvironment) {
@@ -56,15 +52,8 @@ sealed class TestRunEnvironment {
 
     data class InitError(val error: String) : TestRunEnvironment()
 
-    data class RunEnvironment(
-        val isImitation: Boolean,
-
+    data class RunEnvironment internal constructor(
         val deviceId: String,
-        val deviceName: String,
-        val teamcityBuildId: Int,
-
-        val buildBranch: String,
-        val buildCommit: String,
         val testMetadata: TestMetadata,
         val networkType: NetworkingType,
         /**
@@ -83,17 +72,30 @@ sealed class TestRunEnvironment {
          */
         val apiUrl: HttpUrl,
         val mockWebServerUrl: String,
-        val slackToken: String,
-        val videoRecordingFeature: VideoFeatureValue,
         val outputDirectory: Lazy<File>,
-        val elasticConfig: ElasticConfig,
-        val sentryConfig: SentryConfig,
-        val statsDConfig: StatsDConfig,
-        val fileStorageUrl: String,
-        val reportConfig: ReportConfig?,
         val testRunCoordinates: ReportCoordinates,
-        val isSyntheticStepsEnabled: Boolean
-    ) : TestRunEnvironment()
+        internal val reportDestination: ReportDestination,
+        internal val isImitation: Boolean,
+        internal val videoRecordingFeature: VideoFeatureValue,
+        internal val elasticConfig: ElasticConfig,
+        internal val sentryConfig: SentryConfig,
+        internal val statsDConfig: StatsDConfig,
+        internal val fileStorageUrl: String,
+    ) : TestRunEnvironment() {
+
+        sealed class ReportDestination {
+
+            class Backend(
+                val reportApiUrl: String,
+                val reportViewerUrl: String,
+                val deviceName: String
+            ) : ReportDestination()
+
+            object File : ReportDestination()
+
+            object NoOp : ReportDestination()
+        }
+    }
 
     companion object {
         internal const val LOCAL_STUDIO_RUN_ID = -1
@@ -111,23 +113,10 @@ fun provideEnvironment(
             jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
             runId = argumentsProvider.getMandatoryArgument("runId")
         )
-        val isReportEnabled = argumentsProvider.getOptionalArgument("avito.report.enabled")?.toBoolean() ?: false
-        val reportConfig = if (isReportEnabled) {
-            TestRunEnvironment.ReportConfig(
-                reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
-                reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl")
-            )
-        } else {
-            null
-        }
         TestRunEnvironment.RunEnvironment(
             isImitation = argumentsProvider.getOptionalArgument("imitation") == "true",
             deviceId = argumentsProvider.getOptionalArgument("deviceId")
                 ?: UUID.randomUUID().toString(),
-            deviceName = argumentsProvider.getMandatoryArgument("deviceName"),
-            teamcityBuildId = argumentsProvider.getMandatoryArgument("teamcityBuildId").toInt(),
-            buildBranch = argumentsProvider.getMandatoryArgument("buildBranch"),
-            buildCommit = argumentsProvider.getMandatoryArgument("buildCommit"),
             testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
             networkType = argumentsProvider.getMandatorySerializableArgument(NETWORKING_TYPE_KEY),
             // todo url'ы не обязательные параметры
@@ -145,19 +134,33 @@ fun provideEnvironment(
                     null
                 )[0]
             },
-            // from GradleInstrumentationPluginConfiguration
-            slackToken = argumentsProvider.getMandatoryArgument("slackToken"),
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),
             fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
             testRunCoordinates = coordinates,
-            reportConfig = reportConfig,
-            isSyntheticStepsEnabled =
-            argumentsProvider.getOptionalArgument("isSyntheticStepsEnabled")?.toBoolean() ?: false
+            reportDestination = parseReportDestination(argumentsProvider)
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
+    }
+}
+
+private fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDestination {
+    val buildId = argumentsProvider.getMandatoryArgument("teamcityBuildId").toInt()
+    return if (buildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID) {
+        val isReportEnabled = argumentsProvider.getOptionalArgument("avito.report.enabled")?.toBoolean() ?: false
+        if (isReportEnabled) {
+            ReportDestination.Backend(
+                reportApiUrl = argumentsProvider.getMandatoryArgument("reportApiUrl"),
+                reportViewerUrl = argumentsProvider.getMandatoryArgument("reportViewerUrl"),
+                deviceName = argumentsProvider.getMandatoryArgument("deviceName")
+            )
+        } else {
+            ReportDestination.NoOp
+        }
+    } else {
+        ReportDestination.File
     }
 }
 
