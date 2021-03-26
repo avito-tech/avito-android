@@ -9,6 +9,7 @@ dependencies {
     compileOnly(gradleApi())
 
     implementation(project(":gradle:gradle-logger"))
+    implementation(project(":common:math"))
 
     gradleTestImplementation(project(":common:truth-extensions"))
     gradleTestImplementation(testFixtures(project(":common:logger")))
