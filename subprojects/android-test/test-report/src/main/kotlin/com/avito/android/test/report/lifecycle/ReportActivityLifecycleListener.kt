@@ -6,29 +6,37 @@ import androidx.test.runner.lifecycle.ActivityLifecycleCallback
 import androidx.test.runner.lifecycle.Stage
 import com.avito.android.test.report.Report
 
-class ReportActivityLifecycleListener(private val report: Report) : ActivityLifecycleCallback {
+class ReportActivityLifecycleListener(
+    private val report: Report,
+    factory: com.avito.logger.LoggerFactory
+) : ActivityLifecycleCallback {
 
-    private val fragmentLifecycleListener = ReportFragmentLifecycleListener(report)
+    private val logger = factory.create("ReportActivityLifecycle")
+    private val fragmentLifecycleListener = ReportFragmentLifecycleListener(report, factory)
 
     override fun onActivityLifecycleChanged(activity: Activity, stage: Stage) {
-        report.addComment("Activity ${activity::class.java.simpleName} was $stage")
+        val message = "Activity ${activity::class.java.simpleName} was $stage"
+        logger.info(message)
         when (stage) {
-            Stage.PRE_ON_CREATE ->
-                if (activity is FragmentActivity) {
-                    /**
-                     * Look to [androidx.fragment.app.FragmentManager.unregisterFragmentLifecycleCallbacks]
-                     * All registered callbacks will be
-                     * automatically unregistered when this FragmentManager is destroyed
-                     */
-                    activity
-                        .supportFragmentManager
-                        .registerFragmentLifecycleCallbacks(
-                            fragmentLifecycleListener,
-                            true
-                        )
-                }
+            Stage.PRE_ON_CREATE -> if (activity is FragmentActivity) {
+                /**
+                 * Look to [androidx.fragment.app.FragmentManager.unregisterFragmentLifecycleCallbacks]
+                 * All registered callbacks will be
+                 * automatically unregistered when this FragmentManager is destroyed
+                 */
+                activity
+                    .supportFragmentManager
+                    .registerFragmentLifecycleCallbacks(
+                        fragmentLifecycleListener,
+                        true
+                    )
+            }
+            Stage.CREATED,
+            Stage.RESUMED,
+            Stage.PAUSED,
+            Stage.DESTROYED -> report.addComment(message)
             else -> {
-                // register only on PRE_CREATE
+                // do nothing to avoid a lot of events
             }
         }
     }

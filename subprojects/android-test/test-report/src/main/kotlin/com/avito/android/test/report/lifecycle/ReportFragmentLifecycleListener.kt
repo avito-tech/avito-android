@@ -6,48 +6,62 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.avito.android.test.report.Report
+import com.avito.logger.LoggerFactory
 
 class ReportFragmentLifecycleListener(
-    private val report: Report
+    private val report: Report,
+    factory: LoggerFactory,
 ) : FragmentManager.FragmentLifecycleCallbacks() {
 
+    private val logger = factory.create("ReportFragmentLifecycle")
+
     override fun onFragmentAttached(fm: FragmentManager, f: Fragment, context: Context) {
-        report.addComment("Fragment ${f::class.java.simpleName} was ATTACHED to ${context::class.java.simpleName}")
+        val message = "Fragment ${f::class.java.simpleName} was ATTACHED to ${context::class.java.simpleName}"
+        logger.info(message)
+        report.addComment(message)
     }
 
     override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
-        report.addComment("Fragment ${f::class.java.simpleName} was CREATED")
+        logger.info("Fragment ${f::class.java.simpleName} was CREATED")
     }
 
     override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {
-        report.addComment("Fragment ${f::class.java.simpleName} VIEW was CREATED")
+        logger.info("Fragment ${f::class.java.simpleName} VIEW was CREATED")
     }
 
     override fun onFragmentStarted(fm: FragmentManager, f: Fragment) {
-        report.addComment("Fragment ${f::class.java.simpleName} was STARTED")
+        logger.info("Fragment ${f::class.java.simpleName} was STARTED")
     }
 
     override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
-        report.addComment("Fragment ${f::class.java.simpleName} was RESUMED")
+        val message = "Fragment ${f::class.java.simpleName} was RESUMED"
+        logger.info(message)
+        report.addComment(message)
     }
 
     override fun onFragmentPaused(fm: FragmentManager, f: Fragment) {
-        report.addComment("Fragment ${f::class.java.simpleName} was PAUSED")
+        val message = "Fragment ${f::class.java.simpleName} was PAUSED"
+        logger.info(message)
+        report.addComment(message)
     }
 
     override fun onFragmentStopped(fm: FragmentManager, f: Fragment) {
-        report.addComment("Fragment ${f::class.java.simpleName} was STOPPED")
+        logger.info("Fragment ${f::class.java.simpleName} was STOPPED")
     }
 
     override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
-        report.addComment("Fragment ${f::class.java.simpleName} VIEW was DESTROYED")
+        logger.info("Fragment ${f::class.java.simpleName} VIEW was DESTROYED")
     }
 
     override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
-        report.addComment("Fragment ${f::class.java.simpleName} was DESTROYED")
+        val message = "Fragment ${f::class.java.simpleName} was DESTROYED"
+        logger.info(message)
+        report.addComment(message)
     }
 
     override fun onFragmentDetached(fm: FragmentManager, f: Fragment) {
-        report.addComment("Fragment ${f::class.java.simpleName} was DETACHED")
+        val message = "Fragment ${f::class.java.simpleName} was DETACHED"
+        logger.info(message)
+        report.addComment(message)
     }
 }
