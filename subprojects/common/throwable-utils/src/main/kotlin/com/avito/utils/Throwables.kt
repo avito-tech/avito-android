@@ -1,18 +1,7 @@
 package com.avito.utils
 
+import org.apache.commons.text.TextStringBuilder
 import java.io.PrintWriter
-import java.io.StringWriter
-
-fun Throwable.getStackTraceString(): String {
-    val stringWriter = StringWriter()
-    val printWriter = PrintWriter(stringWriter, false)
-
-    printWriter.use {
-        printStackTrace(it)
-    }
-
-    return stringWriter.buffer.toString()
-}
 
 fun Throwable.getCausesRecursively(): List<Throwable> {
     val causes = mutableListOf<Throwable>()
@@ -23,4 +12,10 @@ fun Throwable.getCausesRecursively(): List<Throwable> {
         current = cause
     }
     return causes
+}
+
+fun Throwable.stackTraceToList(): List<String> {
+    val stringBuilder = TextStringBuilder()
+    printStackTrace(PrintWriter(stringBuilder.asWriter()))
+    return stringBuilder.lines()
 }

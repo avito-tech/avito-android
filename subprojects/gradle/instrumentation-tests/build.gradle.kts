@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":common:report-viewer"))
     implementation(project(":common:retrace"))
     implementation(project(":common:http-client"))
+    implementation(project(":common:throwable-utils"))
     implementation(project(":common:result"))
     implementation(project(":common:sentry"))
     implementation(project(":common:test-annotations"))

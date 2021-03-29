@@ -99,7 +99,8 @@ fun AndroidTest.Lost.Companion.createStubInstance(
     kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable,
     stdout: String = "",
-    stderr: String = ""
+    stderr: String = "",
+    incident: Incident? = null
 ): AndroidTest.Lost = fromTestMetadata(
     TestStaticDataPackage(
         name = TestName(name),
@@ -118,7 +119,8 @@ fun AndroidTest.Lost.Companion.createStubInstance(
     startTime = startTime,
     lastSignalTime = lastSignalTime,
     stdout = stdout,
-    stderr = stderr
+    stderr = stderr,
+    incident = incident
 )
 
 fun AndroidTest.Completed.Companion.createStubInstance(
@@ -131,4 +133,18 @@ fun AndroidTest.Completed.Companion.createStubInstance(
     testRuntimeData = testRuntimeData,
     stdout = stdout,
     stderr = stderr
+)
+
+fun Incident.Companion.createStubInstance(
+    type: Incident.Type = Incident.Type.ASSERTION_FAILED,
+    timestamp: Long = 0,
+    trace: List<String> = emptyList(),
+    chain: List<IncidentElement> = emptyList(),
+    entryList: List<Entry> = emptyList()
+) = Incident(
+    type = type,
+    timestamp = timestamp,
+    trace = trace,
+    chain = chain,
+    entryList = entryList
 )
