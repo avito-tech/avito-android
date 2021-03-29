@@ -11,7 +11,18 @@ class MainLooperMessagesLogDumperImpl(
     private val logs = StringBuilder()
 
     override fun println(log: String) {
-        logs.appendLine("[${timeProvider.nowInMillis()}]: $log")
+        val message = sanitizeMessage(log)
+        logs.appendLine("[${timeProvider.nowInMillis()}]: $message")
+    }
+
+    private fun sanitizeMessage(message: String): String {
+        if (message.startsWith(START_PREFIX)) {
+            return message.replace(START_PREFIX, ">", ignoreCase = true)
+        }
+        if (message.startsWith(FINISH_PREFIX)) {
+            return message.replace(FINISH_PREFIX, "<", ignoreCase = true)
+        }
+        return message
     }
 
     override fun getMessagesLogDump(): String {
@@ -27,3 +38,6 @@ class MainLooperMessagesLogDumperImpl(
         Looper.getMainLooper().setMessageLogging(null)
     }
 }
+
+private const val START_PREFIX = ">>>>> Dispatching to Handler"
+private const val FINISH_PREFIX = "<<<<< Finished to Handler"
