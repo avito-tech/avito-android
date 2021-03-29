@@ -6,6 +6,7 @@ import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.AndroidLoggerFactory
+import com.avito.android.runner.TestRunEnvironment.RunEnvironment.ReportDestination
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.runner.annotation.resolver.TestMethodOrClass
@@ -112,30 +113,24 @@ abstract class InHouseInstrumentationTestRunner :
 
     override val report: Report by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
-        val testReportLogger = loggerFactory.create<Report>()
-        val isLocalRun = runEnvironment.teamcityBuildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID
-        val transport: List<Transport> = when {
-            isLocalRun -> {
-                val reportConfig = runEnvironment.reportConfig
-                if (reportConfig != null) {
-                    listOf(
-                        LocalRunTransport(
-                            reportViewerUrl = reportConfig.reportViewerUrl,
-                            reportCoordinates = runEnvironment.testRunCoordinates,
-                            deviceName = DeviceName(runEnvironment.deviceName),
-                            logger = testReportLogger,
-                            reportsApi = ReportsApiFactory.create(
-                                host = reportConfig.reportApiUrl,
-                                loggerFactory = loggerFactory,
-                                httpClientProvider = httpClientProvider
-                            )
+        val transport: List<Transport> = when (val dest = runEnvironment.reportDestination) {
+            is ReportDestination.Backend -> {
+                val testReportLogger = loggerFactory.create<Report>()
+                listOf(
+                    LocalRunTransport(
+                        reportViewerUrl = dest.reportViewerUrl,
+                        reportCoordinates = runEnvironment.testRunCoordinates,
+                        deviceName = DeviceName(dest.deviceName),
+                        logger = testReportLogger,
+                        reportsApi = ReportsApiFactory.create(
+                            host = dest.reportApiUrl,
+                            loggerFactory = loggerFactory,
+                            httpClientProvider = httpClientProvider
                         )
                     )
-                } else {
-                    emptyList()
-                }
+                )
             }
-            else -> {
+            ReportDestination.File -> {
                 val gson: Gson = GsonBuilder()
                     .registerTypeAdapterFactory(EntryTypeAdapterFactory())
                     .create()
@@ -148,6 +143,7 @@ abstract class InHouseInstrumentationTestRunner :
                     )
                 )
             }
+            ReportDestination.NoOp -> emptyList()
         }
 
         ReportImplementation(
