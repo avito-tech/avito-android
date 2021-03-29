@@ -35,6 +35,8 @@ import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumper
+import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumperImpl
+import com.avito.android.test.report.troubleshooting.dump.NoOpMainLooper
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
@@ -69,7 +71,13 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
 
-    private val mainLooperMessagesLogDumper by lazy { MainLooperMessagesLogDumper() }
+    private val mainLooperMessagesLogDumper: MainLooperMessagesLogDumper by lazy {
+        if (testRunEnvironment.asRunEnvironmentOrThrow().dumpMainLooperMessagesEnabled) {
+            MainLooperMessagesLogDumperImpl()
+        } else {
+            NoOpMainLooper
+        }
+    }
 
     private val httpClientProvider: HttpClientProvider by lazy {
         HttpClientProvider(
@@ -145,7 +153,6 @@ abstract class InHouseInstrumentationTestRunner :
             }
             ReportDestination.NoOp -> emptyList()
         }
-
         ReportImplementation(
             onDeviceCacheDirectory = runEnvironment.outputDirectory,
             transport = transport,
