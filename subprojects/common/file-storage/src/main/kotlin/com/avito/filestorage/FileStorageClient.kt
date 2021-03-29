@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -14,8 +15,6 @@ import retrofit2.http.Tag
 import java.util.concurrent.Executors
 
 private const val xSourceValue = "android_ui_tests"
-
-private const val serviceName = "file-storage"
 
 internal interface FileStorageClient {
 
@@ -26,7 +25,7 @@ internal interface FileStorageClient {
     fun upload(
         @Header("X-Extension") extension: String,
         @Body content: String,
-        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-text")
+        @Tag metadata: RequestMetadata
     ): Call<String>
 
     @POST("/file/addBinary")
@@ -36,7 +35,7 @@ internal interface FileStorageClient {
     )
     fun uploadPng(
         @Body content: RequestBody,
-        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-png")
+        @Tag metadata: RequestMetadata
     ): Call<String>
 
     @POST("/file/addBinary")
@@ -46,7 +45,7 @@ internal interface FileStorageClient {
     )
     fun uploadMp4(
         @Body content: RequestBody,
-        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-video")
+        @Tag metadata: RequestMetadata
     ): Call<String>
 
     companion object {
@@ -74,6 +73,6 @@ internal interface FileStorageClient {
             .callbackExecutor(Executors.newSingleThreadExecutor())
             .addConverterFactory(ToStringConverterFactory())
             .build()
-            .create(FileStorageClient::class.java)
+            .create()
     }
 }

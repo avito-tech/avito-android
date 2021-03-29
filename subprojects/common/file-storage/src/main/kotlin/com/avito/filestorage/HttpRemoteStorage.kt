@@ -1,5 +1,6 @@
 package com.avito.filestorage
 
+import com.avito.http.internal.RequestMetadata
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.TimeProvider
@@ -45,14 +46,17 @@ class HttpRemoteStorage(
 
         when (uploadRequest) {
             is RemoteStorage.Request.FileRequest.Image -> storageClient.uploadPng(
-                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
+                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType),
+                metadata = RequestMetadata(serviceName, "add-binary-png")
             )
             is RemoteStorage.Request.FileRequest.Video -> storageClient.uploadMp4(
-                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
+                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType),
+                metadata = RequestMetadata(serviceName, "add-binary-mp4")
             )
             is RemoteStorage.Request.ContentRequest -> storageClient.upload(
                 extension = uploadRequest.extension,
-                content = uploadRequest.content
+                content = uploadRequest.content,
+                metadata = RequestMetadata(serviceName, "add-binary-text")
             )
         }
             .enqueue(
@@ -180,3 +184,5 @@ class HttpRemoteStorage(
                     if (body != null) " with body: $body" else ""
         }
 }
+
+private const val serviceName = "file-storage"
