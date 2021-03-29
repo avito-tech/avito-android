@@ -26,7 +26,8 @@ sealed class AndroidTest : TestStaticData {
         val startTime: Long,
         val lastSignalTime: Long,
         val stdout: String,
-        val stderr: String
+        val stderr: String,
+        val incident: Incident?
     ) : AndroidTest() {
 
         override fun equals(other: Any?): Boolean {
@@ -51,7 +52,8 @@ sealed class AndroidTest : TestStaticData {
                 startTime: Long,
                 lastSignalTime: Long,
                 stdout: String,
-                stderr: String
+                stderr: String,
+                incident: Incident?
             ) = Lost(
                 name = testStaticData.name,
                 device = testStaticData.device,
@@ -68,7 +70,8 @@ sealed class AndroidTest : TestStaticData {
                 startTime = startTime,
                 lastSignalTime = lastSignalTime,
                 stdout = stdout,
-                stderr = stderr
+                stderr = stderr,
+                incident = incident
             )
         }
     }

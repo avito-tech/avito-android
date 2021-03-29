@@ -23,4 +23,6 @@ data class Incident(
         @SerializedName("failure")
         ASSERTION_FAILED
     }
+
+    companion object
 }

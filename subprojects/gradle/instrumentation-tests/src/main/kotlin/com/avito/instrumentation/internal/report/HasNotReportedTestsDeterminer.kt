@@ -43,7 +43,8 @@ internal interface HasNotReportedTestsDeterminer {
                                 startTime = 0,
                                 lastSignalTime = 0,
                                 stdout = "",
-                                stderr = ""
+                                stderr = "",
+                                incident = null
                             )
                         }
 
