@@ -9,7 +9,7 @@ import com.avito.android.lint.model.LintReportModel
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import okhttp3.HttpUrl
 import java.io.File
 
@@ -17,8 +17,8 @@ interface LintSlackReporter {
 
     fun report(
         lintReport: LintReportModel,
-        channel: SlackChannel,
-        channelForLintBugs: SlackChannel,
+        channel: SlackChannelId,
+        channelForLintBugs: SlackChannelId,
         buildUrl: HttpUrl
     )
 
@@ -31,8 +31,8 @@ interface LintSlackReporter {
 
         override fun report(
             lintReport: LintReportModel,
-            channel: SlackChannel,
-            channelForLintBugs: SlackChannel,
+            channel: SlackChannelId,
+            channelForLintBugs: SlackChannelId,
             buildUrl: HttpUrl
         ) {
             when (lintReport) {
@@ -45,7 +45,7 @@ interface LintSlackReporter {
 
                     if (shouldBeAlerted.isNotEmpty()) {
                         sendReport(
-                            channel = channel,
+                            channelId = channel,
                             message = buildSlackMessage(
                                 projectPath = lintReport.projectRelativePath,
                                 errors = shouldBeAlerted,
@@ -65,7 +65,7 @@ interface LintSlackReporter {
 
                     if (shouldBeReportedAsUnexpectedProblem.isNotEmpty() || shouldBeReportedAsParseError.isNotEmpty()) {
                         sendReport(
-                            channel = channelForLintBugs,
+                            channelId = channelForLintBugs,
                             message = buildSlackMessageAboutLintBugs(
                                 projectPath = lintReport.projectRelativePath,
                                 fatalErrors = shouldBeReportedAsUnexpectedProblem,
@@ -89,17 +89,17 @@ interface LintSlackReporter {
         }
 
         private fun sendReport(
-            channel: SlackChannel,
+            channelId: SlackChannelId,
             message: String,
             htmlReport: File
         ) {
             slackClient.uploadHtml(
-                channel = channel,
+                channelId = channelId,
                 message = message,
                 file = htmlReport
             ).fold(
-                { logger.debug("Report sent successfully to $channel") },
-                { error -> logger.critical("Can't send report to $channel", error) }
+                { logger.debug("Report sent successfully to $channelId") },
+                { error -> logger.critical("Can't send report to $channelId", error) }
             )
         }
 

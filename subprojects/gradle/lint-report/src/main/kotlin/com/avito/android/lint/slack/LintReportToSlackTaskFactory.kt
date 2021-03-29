@@ -7,6 +7,7 @@ import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.logger.Logger
 import com.avito.slack.SlackClient
+import com.avito.slack.model.SlackChannelId
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -36,9 +37,11 @@ class LintReportToSlackTaskFactory(
     /**
      * To be used in CiStep, because slack channel only known from there
      */
-    fun registerLintReportToSlackTask(slackChannel: String): TaskProvider<LintSlackReportTask> {
+    fun registerLintReportToSlackTask(slackChannelId: String): TaskProvider<LintSlackReportTask> {
 
-        val taskName = "lintReportTo${slackChannel.validInGradleTaskName()}"
+        val channelId = SlackChannelId(slackChannelId)
+
+        val taskName = "lintReportTo${channelId.value.validInGradleTaskName()}"
 
         var taskProvider = project.tasks.typedNamedOrNull<LintSlackReportTask>(taskName)
 
@@ -47,14 +50,14 @@ class LintReportToSlackTaskFactory(
 
             taskProvider = project.tasks.register<LintSlackReportTask>(taskName) {
                 group = "ci"
-                description = "Report to slackChannel $slackChannel about lint errors if any"
+                description = "Report to slackChannel $channelId about lint errors if any"
 
                 dependencyOn(androidLintAccessor.taskProvider()) {
                     lintXml.set(androidLintAccessor.resultXml())
                     lintHtml.set(androidLintAccessor.resultHtml())
                 }
 
-                slackReportChannel.set(slackChannel)
+                slackReportChannel.set(channelId)
                 slackChannelForLintBugs.set(extension.slackChannelToReportLintBugs)
 
                 slackClient.set(slackClientProvider)

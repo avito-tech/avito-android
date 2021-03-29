@@ -12,7 +12,8 @@ internal class ValidGradleTaskNameTest {
     @TestFactory
     fun `validInGradleTaskName - for various slack channels`(): List<DynamicTest> = listOf(
         Case("#android-dev", "AndroidDev"),
-        Case("#regression-android", "RegressionAndroid")
+        Case("#regression-android", "RegressionAndroid"),
+        Case("C01D88JT6CX", "C01D88JT6CX")
     )
         .map { case ->
             dynamicTest("${case.input} become ${case.expectedOutput}") {

@@ -22,9 +22,9 @@ class SlackConditionalSender(
     override fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage> {
         logger.info(
             "Sending message using SlackConditionalSender, " +
-                "trying to find previous message in channel: ${message.channel.name}"
+                "trying to find previous message in channel: ${message.id}"
         )
-        return slackClient.findMessage(message.channel, condition)
+        return slackClient.findMessage(message.id, condition)
             .fold(
                 { previousMessage ->
                     logger.info("Previous message found, updating it instead of posting new one")
@@ -33,7 +33,7 @@ class SlackConditionalSender(
                 { throwable ->
                     logger.warn(
                         "Previous message not found, " +
-                            "posting new one to channel: ${message.channel.name}; " +
+                            "posting new one to channel: ${message.id}; " +
                             "message: '${SlackStringFormat.ellipsize(string = message.text, limit = 50)}'",
                         throwable
                     )

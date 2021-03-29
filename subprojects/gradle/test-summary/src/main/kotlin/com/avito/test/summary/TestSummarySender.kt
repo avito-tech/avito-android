@@ -17,7 +17,7 @@ import com.avito.slack.SlackConditionalSender
 import com.avito.slack.SlackMessageUpdater
 import com.avito.slack.SlackMessageUpdaterWithThreadMark
 import com.avito.slack.TextContainsStringCondition
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.test.summary.compose.SlackSummaryComposer
 import com.avito.test.summary.compose.SlackSummaryComposerImpl
@@ -34,8 +34,8 @@ internal class TestSummarySenderImpl(
     loggerFactory: LoggerFactory,
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
-    private val globalSummaryChannel: SlackChannel,
-    private val unitToChannelMapping: Map<Team, SlackChannel>,
+    private val globalSummaryChannel: SlackChannelId,
+    private val unitToChannelMapping: Map<Team, SlackChannelId>,
     private val mentionOnFailures: Set<Team>,
     private val slackUserName: String
 ) : TestSummarySender {
@@ -89,7 +89,7 @@ internal class TestSummarySenderImpl(
                     ).onSuccess { message ->
                         sendMessage(
                             SlackSendMessageRequest(
-                                channel = channel,
+                                id = channel,
                                 text = message,
                                 author = slackUserName,
                                 emoji = slackEmojiProvider.emojiName(unitSuite.percentSuccessOfAutomated.toInt())
@@ -114,7 +114,7 @@ internal class TestSummarySenderImpl(
             ).onSuccess {
                 sendMessage(
                     SlackSendMessageRequest(
-                        channel = globalSummaryChannel,
+                        id = globalSummaryChannel,
                         text = it,
                         author = slackUserName,
                         emoji = slackEmojiProvider.emojiName(suite.percentSuccessOfAutomated.toInt())

@@ -5,29 +5,29 @@ package com.avito.slack
 
 import com.avito.android.Result
 import com.avito.slack.model.FoundMessage
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import com.avito.slack.model.strippedName
 import com.github.seratch.jslack.Slack
 import com.github.seratch.jslack.api.methods.MethodsClient
 import com.github.seratch.jslack.api.methods.SlackApiResponse
-import com.github.seratch.jslack.api.methods.request.channels.ChannelsHistoryRequest
-import com.github.seratch.jslack.api.methods.request.channels.ChannelsListRequest
 import com.github.seratch.jslack.api.methods.request.chat.ChatPostMessageRequest
 import com.github.seratch.jslack.api.methods.request.chat.ChatUpdateRequest
-import com.github.seratch.jslack.api.model.Channel
+import com.github.seratch.jslack.api.methods.request.conversations.ConversationsHistoryRequest
 import java.io.File
 
 interface SlackClient : SlackMessageSender, SlackFileUploader {
 
     fun updateMessage(
-        channel: SlackChannel,
+        channelId: SlackChannelId,
         text: String,
         messageTimestamp: String
     ): Result<SlackMessage>
 
-    fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Result<FoundMessage>
+    fun findMessage(
+        channelId: SlackChannelId,
+        predicate: SlackMessageUpdateCondition
+    ): Result<FoundMessage>
 
     class Impl(private val token: String, private val workspace: String) : SlackClient {
 
@@ -42,7 +42,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
 
             val requestBuilder = ChatPostMessageRequest.builder()
                 .token(token)
-                .channel(message.channel.name)
+                .channel(message.id.value)
                 .text(message.text)
                 .username(message.author)
 
@@ -58,7 +58,6 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                         workspace = workspace,
                         id = response.ts,
                         text = response.message?.text ?: "",
-                        channel = message.channel,
                         channelId = response.channel,
                         author = response.message.username,
                         threadId = response.message.threadTs
@@ -66,96 +65,68 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                 }
         }
 
-        override fun uploadHtml(channel: SlackChannel, message: String, file: File): Result<Unit> {
-            return findChannelByName(channel.strippedName).flatMap { channelInfo ->
-                methodsClient.filesUpload {
-                    it.file(file)
-                    it.channels(listOf(channelInfo.id))
-                    it.filename(file.name)
-                    it.initialComment(message)
-                    it.token(token)
-                }.toResult()
-            }.map { }
+        override fun uploadHtml(channelId: SlackChannelId, message: String, file: File): Result<Unit> {
+            return methodsClient.filesUpload {
+                it.file(file)
+                it.channels(listOf(channelId.value))
+                it.filename(file.name)
+                it.initialComment(message)
+                it.token(token)
+            }.toResult().map { }
         }
 
         override fun updateMessage(
-            channel: SlackChannel,
+            channelId: SlackChannelId,
             text: String,
             messageTimestamp: String
         ): Result<SlackMessage> {
-            return findChannelByName(channel.strippedName)
-                .flatMap { channelInfo ->
 
-                    val request = ChatUpdateRequest.builder()
-                        .token(token)
-                        .channel(channelInfo.id)
-                        .ts(messageTimestamp)
-                        .text(text)
-                        .build()
+            val request = ChatUpdateRequest.builder()
+                .token(token)
+                .channel(channelId.value)
+                .ts(messageTimestamp)
+                .text(text)
+                .build()
 
-                    methodsClient.chatUpdate(request).toResult()
-                }.map {
+            return methodsClient.chatUpdate(request).toResult()
+                .map { message ->
                     SlackMessage(
                         workspace = workspace,
-                        id = it.ts,
-                        text = it.text,
-                        channel = channel,
-                        channelId = it.channel,
-                        author = it.message.username
+                        id = message.ts,
+                        text = message.text,
+                        channelId = message.channel,
+                        author = message.message.username
                     )
                 }
         }
 
-        override fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Result<FoundMessage> {
-            return findChannelByName(channel.strippedName)
-                .map { channelInfo ->
-                    ChannelsHistoryRequest.builder()
-                        .token(token)
-                        .count(messagesLookupCount)
-                        .channel(channelInfo.id)
-                        .build()
-                }.flatMap { request ->
-                    methodsClient.channelsHistory(request)
-                        .toResult()
-                        .map { response ->
-                            response.messages.asSequence()
-                                .map { message ->
-                                    FoundMessage(
-                                        timestamp = message.ts,
-                                        text = message.text,
-                                        botId = message.botId,
-                                        author = message.username,
-                                        channel = channel,
-                                        emoji = message.icons?.emoji
-                                    )
-                                }
-                                .find { slackMessage -> predicate.updateIf(slackMessage) }
-                                ?: throw Exception("Message that satisfies provided predicate not found")
-                        }
-                }
-        }
+        override fun findMessage(
+            channelId: SlackChannelId,
+            predicate: SlackMessageUpdateCondition
+        ): Result<FoundMessage> {
 
-        /**
-         * https://stackoverflow.com/a/50114874/2893307
-         */
-        private fun findChannelByName(name: String): Result<Channel> {
-            val request = ChannelsListRequest.builder()
+            val request = ConversationsHistoryRequest.builder()
                 .token(token)
-                .excludeArchived(true)
+                .limit(messagesLookupCount)
+                .channel(channelId.value)
                 .build()
 
-            @Suppress("RemoveExplicitTypeArguments") // Type inference failed for flatMap<Channel>
-            return methodsClient.channelsList(request)
+            return methodsClient.conversationsHistory(request)
                 .toResult()
                 .map { response ->
-                    response.channels.find { channel -> channel.name == name }
-                }
-                .flatMap<Channel> { channel ->
-                    if (channel != null) {
-                        Result.Success(channel)
-                    } else {
-                        Result.Failure(IllegalArgumentException("Cannot find channel with name $name"))
-                    }
+                    response.messages.asSequence()
+                        .map { message ->
+                            FoundMessage(
+                                timestamp = message.ts,
+                                text = message.text,
+                                botId = message.botId,
+                                author = message.username,
+                                channelId = channelId,
+                                emoji = message.icons?.emoji
+                            )
+                        }
+                        .find { slackMessage -> predicate.updateIf(slackMessage) }
+                        ?: throw Exception("Message that satisfies provided predicate not found")
                 }
         }
     }

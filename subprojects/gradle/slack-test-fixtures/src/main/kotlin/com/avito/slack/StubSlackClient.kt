@@ -2,7 +2,7 @@ package com.avito.slack
 
 import com.avito.android.Result
 import com.avito.slack.model.FoundMessage
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.slack.model.createStubInstance
@@ -38,7 +38,10 @@ class StubSlackClient : SlackClient {
         }
     }
 
-    override fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Result<FoundMessage> {
+    override fun findMessage(
+        channelId: SlackChannelId,
+        predicate: SlackMessageUpdateCondition
+    ): Result<FoundMessage> {
         return if (previousMessageFailsWithException) {
             Result.Failure(Exception("no matter"))
         } else {
@@ -49,7 +52,7 @@ class StubSlackClient : SlackClient {
     }
 
     override fun updateMessage(
-        channel: SlackChannel,
+        channelId: SlackChannelId,
         text: String,
         messageTimestamp: String
     ): Result<SlackMessage> {
@@ -59,7 +62,11 @@ class StubSlackClient : SlackClient {
         return Result.Success(SlackMessage.createStubInstance())
     }
 
-    override fun uploadHtml(channel: SlackChannel, message: String, file: File): Result<Unit> {
+    override fun uploadHtml(
+        channelId: SlackChannelId,
+        message: String,
+        file: File
+    ): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

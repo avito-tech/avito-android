@@ -3,23 +3,21 @@ package com.avito.slack
 import com.avito.android.Result
 import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.logger.StubLoggerFactory
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
-    private val testChannel = SlackChannel(getSystemProperty("avito.slack.test.channel"))
+    private val testChannelId = SlackChannelId(getSystemProperty("avito.slack.test.channelid"))
     private val testToken = getSystemProperty("avito.slack.test.token")
     private val slackClient: SlackClient = SlackClient.Impl(testToken, getSystemProperty("avito.slack.test.workspace"))
     private val loggerFactory = StubLoggerFactory
 
-    @Disabled("broken in develop")
     @Test
     fun `second message - updates with thread message - if contains same unique string as first one`() {
         val uniqueId = UUID.randomUUID().toString()
@@ -40,7 +38,7 @@ internal class SlackConditionalSenderIntegrationTest {
         sender.sendMessage("$uniqueId first message")
         sender.sendMessage("$uniqueId second message")
 
-        val message = slackClient.findMessage(testChannel, condition)
+        val message = slackClient.findMessage(testChannelId, condition)
 
         assertThat(message).isInstanceOf<Result.Success<*>>()
         assertThat(message.getOrThrow().text).contains("second message")
@@ -48,7 +46,6 @@ internal class SlackConditionalSenderIntegrationTest {
         // todo assert thread message
     }
 
-    @Disabled("broken in develop")
     @Test
     fun `second message - updates with thread message - if same author`() {
         val author = UUID.randomUUID().toString()
@@ -83,7 +80,7 @@ internal class SlackConditionalSenderIntegrationTest {
         author: String = "integration test"
     ): Result<SlackMessage> = sendMessage(
         SlackSendMessageRequest(
-            channel = testChannel,
+            id = testChannelId,
             text = text,
             author = author,
             emoji = ":crazy-robot:"

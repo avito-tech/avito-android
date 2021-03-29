@@ -11,7 +11,7 @@ import com.avito.slack.SlackClient
 import com.avito.slack.SlackConditionalSender
 import com.avito.slack.SlackMessageUpdaterDirectlyToThread
 import com.avito.slack.TodayMessageCondition
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import org.gradle.api.DefaultTask
@@ -26,7 +26,7 @@ abstract class FlakyReportTask : DefaultTask() {
     abstract val reportCoordinates: Property<ReportCoordinates>
 
     @get:Input
-    abstract val summaryChannel: Property<SlackChannel>
+    abstract val summaryChannel: Property<SlackChannelId>
 
     @get:Input
     abstract val slackUsername: Property<String>
@@ -71,7 +71,7 @@ abstract class FlakyReportTask : DefaultTask() {
     }
 
     private fun createFlakyTestReporter(
-        summaryChannel: SlackChannel,
+        summaryChannel: SlackChannelId,
         slackUsername: String,
         reportCoordinates: ReportCoordinates,
         reportViewer: ReportViewer,

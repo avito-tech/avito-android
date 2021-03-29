@@ -44,7 +44,7 @@ class CoroutinesSlackBulkSender(
             for (request in tickedQueue) {
                 sender.sendMessage(request)
                     .onFailure { throwable ->
-                        logger.critical("Can't send slack report to ${request.channel}", throwable)
+                        logger.critical("Can't send slack report to ${request.id}", throwable)
                     }
                 executedRequests.send(request)
             }

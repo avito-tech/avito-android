@@ -36,7 +36,7 @@ class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, 
                 error("Please provide slackChannelForAlerts for chain $context; lint without reporting is a waste")
             } else {
                 val lintSlackReportTaskProvider = factory.registerLintReportToSlackTask(
-                    slackChannel = slackChannelForAlerts
+                    slackChannelId = slackChannelForAlerts
                 )
                 rootTask.dependsOn(lintSlackReportTaskProvider)
             }

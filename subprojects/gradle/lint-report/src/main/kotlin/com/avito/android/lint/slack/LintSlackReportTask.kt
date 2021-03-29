@@ -5,7 +5,7 @@ import com.avito.android.lint.teamcity.TeamcityBuildLinkAccessor
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -17,10 +17,10 @@ import org.gradle.api.tasks.TaskAction
 abstract class LintSlackReportTask : DefaultTask() {
 
     @get:Input
-    abstract val slackReportChannel: Property<String>
+    abstract val slackReportChannel: Property<SlackChannelId>
 
     @get:Input
-    abstract val slackChannelForLintBugs: Property<String>
+    abstract val slackChannelForLintBugs: Property<SlackChannelId>
 
     @get:InputFile
     abstract val lintXml: RegularFileProperty
@@ -45,8 +45,8 @@ abstract class LintSlackReportTask : DefaultTask() {
 
         createLintSlackAlert(loggerFactory).report(
             lintReport = models,
-            channel = SlackChannel(slackReportChannel.get()),
-            channelForLintBugs = SlackChannel(slackChannelForLintBugs.get()),
+            channel = slackReportChannel.get(),
+            channelForLintBugs = slackChannelForLintBugs.get(),
             buildUrl = teamcityBuildLinkAccessor.getBuildUrl()
         )
     }

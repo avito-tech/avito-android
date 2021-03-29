@@ -3,14 +3,14 @@ package com.avito.android.lint
 import com.avito.android.lint.slack.LintSlackReporter
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.SlackChannelId
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class LintSlackAlertIntegrationTest {
 
-    private val testChannel = SlackChannel(requireNotNull(System.getProperty("avito.slack.test.channel")))
+    private val testChannelId = SlackChannelId(requireNotNull(System.getProperty("avito.slack.test.channelid")))
     private val testToken = requireNotNull(System.getProperty("avito.slack.test.token"))
     private val workspace = requireNotNull(System.getProperty("avito.slack.test.workspace"))
     private val slackClient: SlackClient = SlackClient.Impl(testToken, workspace)
@@ -30,8 +30,8 @@ internal class LintSlackAlertIntegrationTest {
 
         lintSlackReporter.report(
             lintReport = reportModels,
-            channel = testChannel,
-            channelForLintBugs = testChannel,
+            channel = testChannelId,
+            channelForLintBugs = testChannelId,
             buildUrl = "https://stubbuildurl".toHttpUrl()
         )
     }
