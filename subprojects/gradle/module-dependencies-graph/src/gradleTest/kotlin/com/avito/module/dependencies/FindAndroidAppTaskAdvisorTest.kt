@@ -5,6 +5,10 @@ import com.avito.module.internal.dependencies.FindAndroidAppTaskAction.Verdict.N
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction.Verdict.OneSuitableApp
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAdvisor
 import com.avito.module.internal.dependencies.ProjectWithDeps
+import com.avito.test.gradle.androidApp
+import com.avito.test.gradle.androidLib
+import com.avito.test.gradle.javaLib
+import com.avito.test.gradle.rootProject
 import com.google.common.truth.Truth.assertThat
 import org.gradle.util.Path
 import org.junit.jupiter.api.Test
