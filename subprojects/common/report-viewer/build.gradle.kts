@@ -19,13 +19,12 @@ dependencies {
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":common:files"))
     testImplementation(project(":common:resources"))
+    testImplementation(project(":common:test-okhttp"))
     testImplementation(testFixtures(project(":common:logger")))
     testImplementation(testFixtures(project(":common:report-viewer")))
     testImplementation(libs.okhttpMockWebServer)
     testImplementation(libs.jsonPathAssert)
 
-    testFixturesImplementation(libs.junitJupiterApi)
-    testFixturesImplementation(project(":common:test-okhttp"))
     testFixturesImplementation(testFixtures(project(":common:logger")))
     testFixturesImplementation(testFixtures(project(":common:http-client")))
 }
