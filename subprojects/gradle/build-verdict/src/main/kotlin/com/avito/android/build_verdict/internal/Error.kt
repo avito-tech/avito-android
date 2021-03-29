@@ -1,7 +1,6 @@
 package com.avito.android.build_verdict.internal
 
 import com.avito.utils.getCausesRecursively
-import com.avito.utils.getStackTraceString
 import org.gradle.internal.exceptions.MultiCauseException
 
 internal sealed class Error {
@@ -32,7 +31,7 @@ internal sealed class Error {
 
         private fun Throwable.toSingle() = Single(
             message = localizedMessage,
-            stackTrace = getStackTraceString(),
+            stackTrace = stackTraceToString(),
             causes = getCausesRecursively().map { Cause(it.localizedMessage ?: "${it::class.java} (no error message)") }
         )
     }

@@ -9,12 +9,16 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.EntryTypeAdapterFactory
+import com.avito.report.model.Incident
+import com.avito.report.model.IncidentElement
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
+import com.avito.time.TimeProvider
+import com.avito.utils.stackTraceToList
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -23,6 +27,7 @@ import java.io.FileReader
 
 internal class ReportViewerTestReporter(
     loggerFactory: LoggerFactory,
+    private val timeProvider: TimeProvider,
     private val testSuite: Map<TestCase, TestStaticData>,
     private val report: Report,
     private val remoteStorage: RemoteStorage,
@@ -82,7 +87,7 @@ internal class ReportViewerTestReporter(
                         FileReader(reportJson)
                     )
 
-                    // отправляем только для упавших тестов
+                    // send only for failed tests
                     val (stdout: String, stderr: String) = if (testRuntimeData.incident != null) {
                         logcatBuffers.getLogcat(key)
                     } else {
@@ -97,24 +102,51 @@ internal class ReportViewerTestReporter(
                             stderr = stderr
                         )
                     )
-                } catch (e: Throwable) {
+                } catch (throwable: Throwable) {
+                    val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
+
                     val errorMessage = "Can't parse testRuntimeData: ${test.testName}; ${reportJson.readText()}"
-                    logger.warn(errorMessage, e)
-                    sendLostTest(testFromSuite, "", errorMessage)
+
+                    logger.warn(errorMessage, throwable)
+
+                    sendLostTest(
+                        testFromSuite = testFromSuite,
+                        errorMessage = errorMessage,
+                        stdout = stdout,
+                        stderr = stderr,
+                        throwable = throwable
+                    )
+
                     metricsSender.sendReportFileParseErrors()
                 }
             },
             { throwable ->
                 val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
 
-                logger.warn("Can't get report from file: $test", throwable)
-                sendLostTest(testFromSuite, stdout, stderr)
+                val errorMessage = "Can't get report from file: $test"
+
+                logger.warn(errorMessage, throwable)
+
+                sendLostTest(
+                    testFromSuite = testFromSuite,
+                    errorMessage = errorMessage,
+                    stdout = stdout,
+                    stderr = stderr,
+                    throwable = throwable
+                )
+
                 metricsSender.sendReportFileNotAvailable()
             }
         )
     }
 
-    private fun sendLostTest(testFromSuite: TestStaticData, stdout: String, stderr: String) {
+    private fun sendLostTest(
+        testFromSuite: TestStaticData,
+        errorMessage: String,
+        stdout: String,
+        stderr: String,
+        throwable: Throwable
+    ) {
         report.sendLostTests(
             listOf(
                 AndroidTest.Lost.fromTestMetadata(
@@ -122,7 +154,18 @@ internal class ReportViewerTestReporter(
                     startTime = 0,
                     lastSignalTime = 0,
                     stdout = stdout,
-                    stderr = stderr
+                    stderr = stderr,
+                    incident = Incident(
+                        type = Incident.Type.INFRASTRUCTURE_ERROR,
+                        timestamp = timeProvider.nowInSeconds(),
+                        trace = throwable.stackTraceToList(),
+                        chain = listOf(
+                            IncidentElement(
+                                message = errorMessage
+                            )
+                        ),
+                        entryList = emptyList()
+                    )
                 )
             )
         )

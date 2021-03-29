@@ -53,10 +53,11 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
                         reportCoordinates = reportCoordinates,
                         buildId = buildId,
                         test = test,
-                        status = Status.Lost,
+                        // if incident available let backend decide status based on incident type
+                        status = if (test.incident == null) Status.Lost else null,
                         stdout = test.stdout,
                         stderr = test.stderr,
-                        incident = null,
+                        incident = test.incident,
                         video = null,
                         startTime = test.startTime,
                         endTime = test.lastSignalTime,

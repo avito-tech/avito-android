@@ -22,7 +22,6 @@ import com.avito.android.test.report.screenshot.ScreenshotUploader
 import com.avito.android.test.report.screenshot.ScreenshotUploaderImpl
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
-import com.avito.android.util.formatStackTrace
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorage.Result
@@ -31,6 +30,7 @@ import com.avito.logger.create
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.time.TimeProvider
+import com.avito.utils.stackTraceToList
 import java.io.File
 
 /**
@@ -128,7 +128,7 @@ class ReportImplementation(
                 chain = chainFactory.toChain(exception),
                 timestamp = timeProvider.nowInSeconds(),
                 entryList = emptyList(),
-                trace = exception.formatStackTrace()
+                trace = exception.stackTraceToList()
             )
             addTroubleshootingEntries()
             currentState.incident = incidentToAdd

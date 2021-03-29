@@ -74,6 +74,7 @@ internal interface TestsSchedulerFactory {
                 testReporterFactory = { testSuite, logcatDir, report ->
                     ReportViewerTestReporter(
                         loggerFactory = params.loggerFactory,
+                        timeProvider = timeProvider,
                         testSuite = testSuite,
                         report = report,
                         logcatDir = logcatDir,
