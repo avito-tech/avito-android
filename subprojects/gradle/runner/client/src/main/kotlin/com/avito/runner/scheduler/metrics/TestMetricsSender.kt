@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.metrics
 
-import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 
@@ -10,30 +10,30 @@ internal class TestMetricsSender(
 ) {
 
     fun sendInitialDelay(delayMs: Long) {
-        statsDSender.send(GaugeMetric(prefix.append("initial-delay"), delayMs))
+        statsDSender.send(GaugeLongMetric(prefix.append("initial-delay"), delayMs))
     }
 
     fun sendEndDelay(delayMs: Long) {
-        statsDSender.send(GaugeMetric(prefix.append("end-delay"), delayMs))
+        statsDSender.send(GaugeLongMetric(prefix.append("end-delay"), delayMs))
     }
 
     fun sendMedianQueueTime(value: Long) {
-        statsDSender.send(GaugeMetric(prefix.append("queue-median"), value))
+        statsDSender.send(GaugeLongMetric(prefix.append("queue-median"), value))
     }
 
     fun sendMedianInstallationTime(value: Long) {
-        statsDSender.send(GaugeMetric(prefix.append("install-median"), value))
+        statsDSender.send(GaugeLongMetric(prefix.append("install-median"), value))
     }
 
     fun sendSuiteTime(suiteTimeMs: Long) {
-        statsDSender.send(GaugeMetric(prefix.append("suite"), suiteTimeMs))
+        statsDSender.send(GaugeLongMetric(prefix.append("suite"), suiteTimeMs))
     }
 
     fun sendTotalTime(timeMs: Long) {
-        statsDSender.send(GaugeMetric(prefix.append("total"), timeMs))
+        statsDSender.send(GaugeLongMetric(prefix.append("total"), timeMs))
     }
 
     fun sendMedianDeviceUtilization(percent: Int) {
-        statsDSender.send(GaugeMetric(prefix.append("device-utilization.median"), percent))
+        statsDSender.send(GaugeLongMetric(prefix.append("device-utilization.median"), percent.toLong()))
     }
 }

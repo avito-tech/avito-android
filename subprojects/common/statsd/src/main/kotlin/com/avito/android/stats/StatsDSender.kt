@@ -74,13 +74,15 @@ interface StatsDSender {
             when (metric) {
                 is TimeMetric -> client.time(aspect, metric.value)
                 is CountMetric -> client.count(aspect, metric.value)
-                is GaugeMetric -> client.gauge(aspect, metric.value)
+                is GaugeMetric -> client.gauge(aspect, metric.value.toLong()) // incorrect conversion for backward compatibility
+                is GaugeLongMetric -> client.gauge(aspect, metric.value)
+                is GaugeDoubleMetric -> client.gauge(aspect, metric.value)
             }
 
             if (config is StatsDConfig.Enabled) {
                 logger.debug("${metric.type}:${config.namespace}.$aspect:${metric.value}")
             } else {
-                logger.debug("Skip sending event: $aspect")
+                logger.debug("Skip sending event: ${metric.type}:<namespace>:$aspect:${metric.value}")
             }
         }
     }

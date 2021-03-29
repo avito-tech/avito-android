@@ -4,7 +4,7 @@ import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.Operation
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.plugin.build_metrics.BuildMetricTracker
-import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
 import com.avito.math.percentOf
@@ -28,7 +28,7 @@ internal class SlowTasksListener(
             it.internalState.outcome == TaskExecutionOutcome.FROM_CACHE
         }
         val missedPercentages = executed.percentOf(executed + hits).toLong()
-        val metric = GaugeMetric(SeriesName.create("tasks", "from_cache", "miss"), missedPercentages)
+        val metric = GaugeLongMetric(SeriesName.create("tasks", "from_cache", "miss"), missedPercentages)
 
         metricTracker.track(status, metric)
 
