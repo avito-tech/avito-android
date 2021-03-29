@@ -73,7 +73,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     private val mainLooperMessagesLogDumper: MainLooperMessagesLogDumper by lazy {
         if (testRunEnvironment.asRunEnvironmentOrThrow().dumpMainLooperMessagesEnabled) {
-            MainLooperMessagesLogDumperImpl()
+            MainLooperMessagesLogDumperImpl(timeProvider)
         } else {
             NoOpMainLooper
         }

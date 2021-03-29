@@ -2,13 +2,16 @@ package com.avito.android.test.report.troubleshooting.dump
 
 import android.os.Looper
 import android.util.Printer
+import com.avito.time.TimeProvider
 
-class MainLooperMessagesLogDumperImpl : Printer, MainLooperMessagesLogDumper {
+class MainLooperMessagesLogDumperImpl(
+    private val timeProvider: TimeProvider
+) : Printer, MainLooperMessagesLogDumper {
 
     private val logs = StringBuilder()
 
     override fun println(log: String) {
-        logs.appendLine(log)
+        logs.appendLine("[${timeProvider.nowInMillis()}]: $log")
     }
 
     override fun getMessagesLogDump(): String {
