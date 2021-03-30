@@ -6,6 +6,7 @@ import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
@@ -151,9 +152,8 @@ internal class DeviceWorker(
             DeviceTestCaseRun(
                 testCaseRun = TestCaseRun(
                     test = action.test,
-                    result = TestCaseRun.Result.Failed.InfrastructureError(
-                        errorMessage = "Unexpected infrastructure error: ${t.message}",
-                        cause = t
+                    result = Failed.InfrastructureError.Unexpected(
+                        error = RuntimeException("Unexpected infrastructure error", t),
                     ),
                     timestampStartedMilliseconds = now,
                     timestampCompletedMilliseconds = now

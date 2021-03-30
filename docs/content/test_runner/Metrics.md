@@ -96,6 +96,22 @@ These are cases when file was not found on device for some reason
 
 If test file was pulled, but there was a parsing error
 
+### `instr-parsing`
+
+If fail when parse `am instrument` output
+
+### `instr-start`
+
+If fail when staring `am instrument`
+
+### `instr-timeout`
+
+If fail with timeout when executing `am instrument`
+
+### `instr-unexpected`
+
+If catch unexpected error when executing `am instrument`
+
 ## `adb`
 
 Lower level metrics from AdbDevice, to observe device connection issues. \
