@@ -1,7 +1,7 @@
 package com.avito.impact.plugin
 
 import com.avito.android.sentry.EnvironmentInfo
-import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 import com.avito.impact.ModifiedProjectsFinder
@@ -45,15 +45,15 @@ class ImpactMetricsSender(
         modifiedProjectsFinder.getProjects().forEach { (type, projects) ->
             val modified = projects.filter { it.project.internalModule.isModified(type) }
 
-            sendMetric(type, "all", projects.size)
-            sendMetric(type, "modified", modified.size)
+            sendMetric(type, "all", projects.size.toLong())
+            sendMetric(type, "modified", modified.size.toLong())
         }
     }
 
     @Suppress("DefaultLocale")
-    private fun sendMetric(type: ConfigurationType, name: String, value: Number) {
+    private fun sendMetric(type: ConfigurationType, name: String, value: Long) {
         statsDSender.send(
-            GaugeMetric(prefix.append("impact", type.name.toLowerCase(), name), value)
+            GaugeLongMetric(prefix.append("impact", type.name.toLowerCase(), name), value)
         )
     }
 }

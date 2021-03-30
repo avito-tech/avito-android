@@ -1,7 +1,7 @@
 package com.avito.instrumentation.metrics
 
 import com.avito.android.stats.CountMetric
-import com.avito.android.stats.GaugeMetric
+import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDSender
 
@@ -13,7 +13,7 @@ public class InstrumentationMetricsSender(
     private val prefix = runnerPrefix.append("tests", "status")
 
     public fun sendNotReportedCount(count: Int) {
-        statsDSender.send(GaugeMetric(prefix.append("lost.not-reported"), count))
+        statsDSender.send(GaugeLongMetric(prefix.append("lost.not-reported"), count.toLong()))
     }
 
     public fun sendReportFileParseErrors() {
