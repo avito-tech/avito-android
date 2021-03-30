@@ -1,13 +1,13 @@
 package com.avito.module.metrics
 
 import com.avito.logger.StubLoggerFactory
-import com.avito.module.dependencies.androidApp
-import com.avito.module.dependencies.androidLib
-import com.avito.module.dependencies.rootProject
 import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
 import com.avito.module.metrics.metrics.AppsHealthData
 import com.avito.module.metrics.metrics.CollectAppsMetricsAction
+import com.avito.test.gradle.androidApp
+import com.avito.test.gradle.androidLib
+import com.avito.test.gradle.rootProject
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
 import org.gradle.util.Path
