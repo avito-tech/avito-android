@@ -3,9 +3,14 @@ package com.avito.runner.scheduler.listener
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.runner.scheduler.listener.TestLifecycleListener.TestResult
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.TestCaseRun.Result.Failed
+import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureError
+import com.avito.runner.service.model.TestCaseRun.Result.Ignored
+import com.avito.runner.service.model.TestCaseRun.Result.Passed
 import com.avito.runner.service.worker.device.Device
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
@@ -40,13 +45,39 @@ internal class ArtifactsTestListener(
         durationMilliseconds: Long,
         executionNumber: Int
     ) {
-        val tempDirectory = createTempDirectory()
-        val testMetadataDirectory = testMetadataFullDirectory(
-            targetPackage = targetPackage,
-            test = test
-        )
+        val testResult = when (result) {
+            Passed,
+            is Failed.InRun ->
+                pullArtifacts(device, test, targetPackage)
+            is InfrastructureError ->
+                TestResult.InComplete(result)
+            Ignored ->
+                TestResult.InComplete(
+                    InfrastructureError.Unexpected(
+                        IllegalStateException("Instrumentation executed Ignored test")
+                    )
+                )
+        }
 
+        lifecycleListener.finished(
+            result = testResult,
+            test = test,
+            executionNumber = executionNumber,
+        )
+    }
+
+    @ExperimentalPathApi
+    private fun pullArtifacts(
+        device: Device,
+        test: TestCase,
+        targetPackage: String
+    ): TestResult.Complete {
+        val tempDirectory = createTempDirectory()
         val artifacts = try {
+            val testMetadataDirectory = testMetadataFullDirectory(
+                targetPackage = targetPackage,
+                test = test
+            )
             val pullingResult = device.pull(
                 from = testMetadataDirectory.toPath(),
                 to = tempDirectory
@@ -71,12 +102,7 @@ internal class ArtifactsTestListener(
         } finally {
             tempDirectory.toFile().delete()
         }
-
-        lifecycleListener.finished(
-            artifacts = artifacts,
-            test = test,
-            executionNumber = executionNumber
-        )
+        return TestResult.Complete(artifacts)
     }
 
     @Suppress("SdCardPath") // android API's are unavailable here

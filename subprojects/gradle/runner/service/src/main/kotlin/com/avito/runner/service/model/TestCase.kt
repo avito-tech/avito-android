@@ -7,7 +7,7 @@ data class TestCase(
     val methodName: String,
     val deviceName: String
 ) : Serializable {
-    val testName: String = "$className.$methodName"
+    val testName: String = "$className.$methodName.$deviceName"
 
     companion object
 }

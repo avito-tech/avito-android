@@ -6,6 +6,9 @@ import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
 import com.avito.module.internal.dependencies.ProjectConfigurationNode
 import com.avito.module.internal.dependencies.ProjectWithDeps
+import com.avito.test.gradle.androidApp
+import com.avito.test.gradle.androidLib
+import com.avito.test.gradle.rootProject
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.gradle.api.Project

@@ -143,7 +143,7 @@ fun provideEnvironment(
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
             dumpMainLooperMessagesEnabled = argumentsProvider.getOptionalArgument("dumpMainLooperMessages")?.toBoolean()
-                ?: true
+                ?: false
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")

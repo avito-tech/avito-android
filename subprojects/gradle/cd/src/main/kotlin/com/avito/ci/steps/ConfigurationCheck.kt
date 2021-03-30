@@ -34,6 +34,6 @@ class ConfigurationCheck(context: String, name: String) : SuppressibleBuildStep(
     }
 
     private fun hasAnyChanges(project: Project): Boolean {
-        return ModifiedProjectsFinder.from(project).findModifiedProjects().isNotEmpty()
+        return ModifiedProjectsFinder.from(project).modifiedProjects().isNotEmpty()
     }
 }

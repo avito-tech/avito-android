@@ -15,10 +15,14 @@ data class TestCaseRun(
         sealed class Failed : Result() {
             data class InRun(val errorMessage: String) : Failed()
 
-            data class InfrastructureError(
-                val errorMessage: String,
-                val cause: Throwable? = null
-            ) : Failed()
+            sealed class InfrastructureError : Failed() {
+                abstract val error: Throwable
+
+                class Unexpected(override val error: Throwable) : InfrastructureError()
+                class FailedOnStart(override val error: Throwable) : InfrastructureError()
+                class FailedOnParsing(override val error: Throwable) : InfrastructureError()
+                class Timeout(override val error: Throwable) : InfrastructureError()
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:files"))
+    implementation(project(":common:math"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
@@ -21,6 +22,9 @@ dependencies {
     implementation(libs.antPattern)
     implementation(libs.kotlinPlugin)
 
+    gradleTestImplementation(testFixtures(project(":gradle:build-environment")))
+    gradleTestImplementation(testFixtures(project(":gradle:impact-shared")))
+    gradleTestImplementation(testFixtures(project(":common:statsd")))
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":gradle:impact-shared-test-fixtures"))
 }

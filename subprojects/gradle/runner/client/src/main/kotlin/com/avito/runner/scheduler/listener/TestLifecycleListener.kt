@@ -2,6 +2,7 @@ package com.avito.runner.scheduler.listener
 
 import com.avito.android.Result
 import com.avito.runner.service.model.TestCase
+import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureError
 import com.avito.runner.service.worker.device.Device
 import java.io.File
 
@@ -14,8 +15,13 @@ interface TestLifecycleListener {
     )
 
     fun finished(
-        artifacts: Result<File>,
+        result: TestResult,
         test: TestCase,
         executionNumber: Int
     )
+
+    sealed class TestResult {
+        class Complete(val artifacts: Result<File>) : TestResult()
+        class InComplete(val infraError: InfrastructureError) : TestResult()
+    }
 }
