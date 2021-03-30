@@ -12,6 +12,7 @@ import com.avito.runner.ProcessNotification
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
@@ -161,19 +162,19 @@ data class AdbDevice(
                                 testName = testName,
                                 durationMs = timeProvider.nowInMillis() - startTime
                             )
-                            is TestCaseRun.Result.Failed.InRun ->
+                            is Failed.InRun ->
                                 eventsListener.onRunTestRunError(
                                     device = this,
                                     testName = testName,
                                     errorMessage = it.result.errorMessage,
                                     durationMs = timeProvider.nowInMillis() - startTime
                                 )
-                            is TestCaseRun.Result.Failed.InfrastructureError ->
+                            is Failed.InfrastructureError ->
                                 eventsListener.onRunTestInfrastructureError(
                                     device = this,
                                     testName = testName,
-                                    errorMessage = it.result.errorMessage,
-                                    throwable = it.result.cause,
+                                    errorMessage = it.result.error.message ?: "Empty error message",
+                                    throwable = it.result.error,
                                     durationMs = timeProvider.nowInMillis() - startTime
                                 )
                         }
@@ -200,8 +201,8 @@ data class AdbDevice(
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
-                                result = TestCaseRun.Result.Failed.InfrastructureError(
-                                    errorMessage = "Failed on start test case: ${it.message}"
+                                result = Failed.InfrastructureError.FailedOnStart(
+                                    error = RuntimeException("Failed on start test case: ${it.message}")
                                 ),
                                 timestampStartedMilliseconds = timeProvider.nowInMillis(),
                                 timestampCompletedMilliseconds = timeProvider.nowInMillis()
@@ -219,9 +220,8 @@ data class AdbDevice(
                         DeviceTestCaseRun(
                             testCaseRun = TestCaseRun(
                                 test = action.test,
-                                result = TestCaseRun.Result.Failed.InfrastructureError(
-                                    errorMessage = "Failed on instrumentation parsing: ${it.message}",
-                                    cause = it.throwable
+                                result = Failed.InfrastructureError.FailedOnParsing(
+                                    error = RuntimeException("Failed on instrumentation parsing", it.throwable),
                                 ),
                                 timestampStartedMilliseconds = timeProvider.nowInMillis(),
                                 timestampCompletedMilliseconds = timeProvider.nowInMillis()
@@ -468,8 +468,8 @@ data class AdbDevice(
                     InstrumentationTestCaseRun.CompletedTestCaseRun(
                         className = test.className,
                         name = test.methodName,
-                        result = TestCaseRun.Result.Failed.InfrastructureError(
-                            "Failed on Timeout"
+                        result = Failed.InfrastructureError.Timeout(
+                            error = RuntimeException("Failed on Timeout")
                         ),
                         timestampStartedMilliseconds = started,
                         timestampCompletedMilliseconds = started + TimeUnit.MINUTES.toMillis(timeoutMinutes)

@@ -1,6 +1,5 @@
 package com.avito.instrumentation.internal.report.listener
 
-import com.avito.android.Result
 import com.avito.android.runner.report.Report
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
@@ -15,7 +14,12 @@ import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
 import com.avito.retrace.ProguardRetracer
+import com.avito.runner.scheduler.listener.TestLifecycleListener.TestResult
 import com.avito.runner.service.model.TestCase
+import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureError.FailedOnParsing
+import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureError.FailedOnStart
+import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureError.Timeout
+import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureError.Unexpected
 import com.avito.runner.service.worker.device.Device
 import com.avito.time.TimeProvider
 import com.avito.utils.stackTraceToList
@@ -60,84 +64,108 @@ internal class ReportViewerTestReporter(
     }
 
     override fun finished(
-        artifacts: Result<File>,
+        result: TestResult,
         test: TestCase,
         executionNumber: Int
     ) {
-        super.finished(artifacts, test, executionNumber)
+        super.finished(result, test, executionNumber)
         val key = test to executionNumber
         logcatBuffers.remove(key)?.stop()
     }
 
     override fun report(
-        artifacts: Result<File>,
+        result: TestResult,
         test: TestCase,
         executionNumber: Int
     ) {
-
         val testFromSuite = requireNotNull(testSuite[test]) { "Can't find test in suite: ${test.testName}" }
-
         val key = test to executionNumber
-        artifacts.fold(
-            { reportFile ->
-                val reportJson = File(reportFile, REPORT_JSON_ARTIFACT)
 
-                try {
-                    val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(
-                        FileReader(reportJson)
-                    )
+        when (result) {
+            is TestResult.Complete -> {
+                result.artifacts.fold(
+                    { reportFile ->
+                        val reportJson = File(reportFile, REPORT_JSON_ARTIFACT)
 
-                    // send only for failed tests
-                    val (stdout: String, stderr: String) = if (testRuntimeData.incident != null) {
-                        logcatBuffers.getLogcat(key)
-                    } else {
-                        "" to ""
-                    }
+                        try {
+                            val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(
+                                FileReader(reportJson)
+                            )
 
-                    report.sendCompletedTest(
-                        AndroidTest.Completed.create(
-                            testStaticData = testFromSuite,
-                            testRuntimeData = testRuntimeData,
+                            // send only for failed tests
+                            val (stdout: String, stderr: String) = if (testRuntimeData.incident != null) {
+                                logcatBuffers.getLogcat(key)
+                            } else {
+                                "" to ""
+                            }
+
+                            report.sendCompletedTest(
+                                AndroidTest.Completed.create(
+                                    testStaticData = testFromSuite,
+                                    testRuntimeData = testRuntimeData,
+                                    stdout = stdout,
+                                    stderr = stderr
+                                )
+                            )
+                        } catch (throwable: Throwable) {
+                            val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
+
+                            val errorMessage = "Can't parse testRuntimeData: ${test.testName}; ${reportJson.readText()}"
+
+                            logger.warn(errorMessage, throwable)
+
+                            sendLostTest(
+                                testFromSuite = testFromSuite,
+                                errorMessage = errorMessage,
+                                stdout = stdout,
+                                stderr = stderr,
+                                throwable = throwable
+                            )
+
+                            metricsSender.sendReportFileParseErrors()
+                        }
+                    },
+                    { throwable ->
+                        val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
+
+                        val errorMessage = "Can't get report from file: $test"
+
+                        logger.warn(errorMessage, throwable)
+
+                        sendLostTest(
+                            testFromSuite = testFromSuite,
+                            errorMessage = errorMessage,
                             stdout = stdout,
-                            stderr = stderr
+                            stderr = stderr,
+                            throwable = throwable
                         )
-                    )
-                } catch (throwable: Throwable) {
-                    val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
 
-                    val errorMessage = "Can't parse testRuntimeData: ${test.testName}; ${reportJson.readText()}"
+                        metricsSender.sendReportFileNotAvailable()
+                    }
+                )
+            }
+            is TestResult.InComplete -> {
+                val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
 
-                    logger.warn(errorMessage, throwable)
+                with(result.infraError) {
+                    logger.warn("${error.message} while executing ${test.testName}", this.error)
 
                     sendLostTest(
                         testFromSuite = testFromSuite,
-                        errorMessage = errorMessage,
+                        errorMessage = error.message ?: "Empty message",
                         stdout = stdout,
                         stderr = stderr,
-                        throwable = throwable
+                        throwable = error
                     )
-
-                    metricsSender.sendReportFileParseErrors()
+                    when (this) {
+                        is FailedOnParsing -> metricsSender.sendFailedOnParsingInstrumentation()
+                        is FailedOnStart -> metricsSender.sendFailedOnStartInstrumentation()
+                        is Timeout -> metricsSender.sendTimeOut()
+                        is Unexpected -> metricsSender.sendUnexpectedInfraError()
+                    }
                 }
-            },
-            { throwable ->
-                val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
-
-                val errorMessage = "Can't get report from file: $test"
-
-                logger.warn(errorMessage, throwable)
-
-                sendLostTest(
-                    testFromSuite = testFromSuite,
-                    errorMessage = errorMessage,
-                    stdout = stdout,
-                    stderr = stderr,
-                    throwable = throwable
-                )
-
-                metricsSender.sendReportFileNotAvailable()
             }
-        )
+        }
     }
 
     private fun sendLostTest(

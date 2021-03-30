@@ -23,4 +23,20 @@ public class InstrumentationMetricsSender(
     public fun sendReportFileNotAvailable() {
         statsDSender.send(CountMetric(prefix.append("lost.no-file")))
     }
+
+    public fun sendUnexpectedInfraError() {
+        statsDSender.send(CountMetric(prefix.append("lost.instr-unexpected")))
+    }
+
+    public fun sendFailedOnParsingInstrumentation() {
+        statsDSender.send(CountMetric(prefix.append("lost.instr-parsing")))
+    }
+
+    public fun sendFailedOnStartInstrumentation() {
+        statsDSender.send(CountMetric(prefix.append("lost.instr-start")))
+    }
+
+    public fun sendTimeOut() {
+        statsDSender.send(CountMetric(prefix.append("lost.instr-timeout")))
+    }
 }
