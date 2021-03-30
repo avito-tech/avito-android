@@ -14,8 +14,6 @@ import retrofit2.http.POST
 import retrofit2.http.Tag
 import java.util.concurrent.Executors
 
-private const val xSourceValue = "android_ui_tests"
-
 internal interface FileStorageClient {
 
     @POST("/file/addBinary")
@@ -25,7 +23,7 @@ internal interface FileStorageClient {
     fun upload(
         @Header("X-Extension") extension: String,
         @Body content: String,
-        @Tag metadata: RequestMetadata
+        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-text")
     ): Call<String>
 
     @POST("/file/addBinary")
@@ -35,7 +33,7 @@ internal interface FileStorageClient {
     )
     fun uploadPng(
         @Body content: RequestBody,
-        @Tag metadata: RequestMetadata
+        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-png")
     ): Call<String>
 
     @POST("/file/addBinary")
@@ -45,7 +43,7 @@ internal interface FileStorageClient {
     )
     fun uploadMp4(
         @Body content: RequestBody,
-        @Tag metadata: RequestMetadata
+        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-mp4")
     ): Call<String>
 
     companion object {
@@ -76,3 +74,7 @@ internal interface FileStorageClient {
             .create()
     }
 }
+
+private const val xSourceValue = "android_ui_tests"
+
+private const val serviceName = "file-storage"

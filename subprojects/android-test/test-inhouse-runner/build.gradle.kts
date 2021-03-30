@@ -36,4 +36,5 @@ dependencies {
 
     testImplementation(libs.kotlinPoet)
     testImplementation(libs.kotlinCompileTesting)
+    testImplementation(project(":common:truth-extensions"))
 }
