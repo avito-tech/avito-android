@@ -6,6 +6,11 @@ import com.avito.module.internal.dependencies.AndroidAppsGraphBuilder
 import com.avito.module.internal.dependencies.DependenciesGraphBuilder
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction
 import com.avito.module.internal.dependencies.FindAndroidAppTaskAction.Verdict.NoSuitableApps
+import com.avito.test.gradle.androidApp
+import com.avito.test.gradle.apiDependency
+import com.avito.test.gradle.implementationDependency
+import com.avito.test.gradle.javaLib
+import com.avito.test.gradle.rootProject
 import com.google.common.truth.Truth.assertThat
 import org.gradle.util.Path.path
 import org.junit.jupiter.api.Test

@@ -5,20 +5,40 @@ import com.avito.impact.fallback.ImpactFallbackDetector
 import com.avito.module.configurations.ConfigurationType
 import org.gradle.api.Project
 
-class ModifiedProjectsFinder(
+interface ModifiedProjectsFinder {
+
+    fun allProjects(): Set<Project>
+
+    fun modifiedProjects(): Set<ModifiedProject>
+
+    fun modifiedProjects(configurationType: ConfigurationType): Set<ModifiedProject>
+
+    companion object {
+
+        fun from(project: Project): ModifiedProjectsFinder {
+            return ModifiedProjectsFinderImpl(project, project.impactFallbackDetector)
+        }
+    }
+}
+
+internal class ModifiedProjectsFinderImpl(
     project: Project,
     private val fallbackDetector: ImpactFallbackDetector
-) {
+) : ModifiedProjectsFinder {
+
     private val rootProject = project.rootProject
 
     private val skipAnalysis: Boolean by lazy {
         fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
     }
 
-    fun getProjects(): Map<ConfigurationType, Set<ModifiedProject>> {
+    override fun allProjects(): Set<Project> =
+        supportedByImpactAnalysisProjects(rootProject)
+
+    override fun modifiedProjects(): Set<ModifiedProject> {
         return ConfigurationType.values()
-            .map { type -> type to findProjects(rootProject, type, predicate = { true }) }
-            .toMap()
+            .flatMap { modifiedProjects(it) }
+            .toSet()
     }
 
     /**
@@ -27,46 +47,10 @@ class ModifiedProjectsFinder(
      *
      * @return only modified projects by [configurationType]
      */
-    fun findModifiedProjects(configurationType: ConfigurationType? = null): Set<ModifiedProject> {
-        val reportTypes = if (configurationType == null) {
-            ConfigurationType.values()
-        } else {
-            setOf(configurationType)
+    override fun modifiedProjects(configurationType: ConfigurationType): Set<ModifiedProject> {
+        return findProjects(rootProject) {
+            it.internalModule.isModified(configurationType)
         }
-        return reportTypes
-            .flatMap { type ->
-                findProjects(rootProject, type) {
-                    it.internalModule.isModified(type)
-                }
-            }.toSet()
-    }
-
-    @Deprecated(
-        "Используется только для поиска по ReportType.ANDROID_TESTS. " +
-            "Оптимизация для UI тестов, явно игнорируем изменения в реализации, чтобы не сваливаться всегда в fallback"
-    )
-    fun findModifiedProjectsWithoutDependencyToAnotherConfigurations(
-        configurationType: ConfigurationType
-    ): Set<ModifiedProject> =
-        findProjects(rootProject, configurationType) {
-            it.internalModule.getConfiguration(configurationType).let { configuration ->
-                configuration.dependencies.any { dependency -> dependency.isModified }
-                    || configuration.hasChangedFiles
-            }
-        }
-
-    private fun findProjects(
-        rootProject: Project,
-        configurationType: ConfigurationType,
-        predicate: (project: Project) -> Boolean
-    ): Set<ModifiedProject> {
-        val projects = if (skipAnalysis) {
-            supportedByImpactAnalysisProjects(rootProject)
-        } else {
-            supportedByImpactAnalysisProjects(rootProject).filter { predicate(it) }
-        }
-
-        return projects
             .map {
                 ModifiedProject(
                     project = it,
@@ -78,10 +62,14 @@ class ModifiedProjectsFinder(
             .toSet()
     }
 
-    companion object {
-
-        fun from(project: Project): ModifiedProjectsFinder {
-            return ModifiedProjectsFinder(project, project.impactFallbackDetector)
+    private fun findProjects(
+        rootProject: Project,
+        predicate: (project: Project) -> Boolean
+    ): Set<Project> {
+        return if (skipAnalysis) {
+            supportedByImpactAnalysisProjects(rootProject)
+        } else {
+            supportedByImpactAnalysisProjects(rootProject).filter { predicate(it) }.toSet()
         }
     }
 }

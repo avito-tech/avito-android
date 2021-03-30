@@ -1,15 +1,15 @@
-package com.avito.module.dependencies
+package com.avito.test.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.testfixtures.ProjectBuilder
 
-internal fun rootProject(): Project =
+fun rootProject(): Project =
     ProjectBuilder.builder()
         .withName("root")
         .build()
 
-internal fun androidApp(name: String, parent: Project): Project {
+fun androidApp(name: String, parent: Project): Project {
     val project = buildProject(name, parent)
     project.plugins.apply("com.android.application")
     project.repositories.run {
@@ -19,7 +19,7 @@ internal fun androidApp(name: String, parent: Project): Project {
     return project
 }
 
-internal fun androidLib(name: String, parent: Project): Project {
+fun androidLib(name: String, parent: Project): Project {
     val project = buildProject(name, parent)
     project.plugins.apply("com.android.library")
     project.repositories.run {
@@ -29,17 +29,17 @@ internal fun androidLib(name: String, parent: Project): Project {
     return project
 }
 
-internal fun javaLib(name: String, parent: Project): Project {
+fun javaLib(name: String, parent: Project): Project {
     val project = buildProject(name, parent)
     project.plugins.apply(JavaLibraryPlugin::class.java)
     return project
 }
 
-internal fun Project.apiDependency(dependency: Project) {
+fun Project.apiDependency(dependency: Project) {
     dependency("api", dependency)
 }
 
-internal fun Project.implementationDependency(dependency: Project) {
+fun Project.implementationDependency(dependency: Project) {
     dependency("implementation", dependency)
 }
 

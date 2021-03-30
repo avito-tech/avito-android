@@ -49,7 +49,7 @@ abstract class GenerateModulesReport : DefaultTask() {
     }
 
     private fun ModifiedProjectsFinder.determineImpact(configurationType: ConfigurationType): Set<Project> {
-        return findModifiedProjects(configurationType).map { it.project }.toSet()
+        return modifiedProjects(configurationType).map { it.project }.toSet()
     }
 
     private fun printReport(
