@@ -1,11 +1,8 @@
-@file:Suppress("DEPRECATION")
-// todo use new slack api
-
 package com.avito.slack
 
 import com.avito.android.Result
 import com.avito.slack.model.FoundMessage
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.github.seratch.jslack.Slack
@@ -19,14 +16,14 @@ import java.io.File
 interface SlackClient : SlackMessageSender, SlackFileUploader {
 
     fun updateMessage(
-        channelId: SlackChannelId,
+        channel: SlackChannel,
         text: String,
         messageTimestamp: String
     ): Result<SlackMessage>
 
     fun findMessage(
-        channelId: SlackChannelId,
-        predicate: SlackMessageUpdateCondition
+        channel: SlackChannel,
+        predicate: SlackMessagePredicate
     ): Result<FoundMessage>
 
     class Impl(private val token: String, private val workspace: String) : SlackClient {
@@ -42,7 +39,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
 
             val requestBuilder = ChatPostMessageRequest.builder()
                 .token(token)
-                .channel(message.id.value)
+                .channel(message.id.id)
                 .text(message.text)
                 .username(message.author)
 
@@ -65,10 +62,10 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                 }
         }
 
-        override fun uploadHtml(channelId: SlackChannelId, message: String, file: File): Result<Unit> {
+        override fun uploadHtml(channel: SlackChannel, message: String, file: File): Result<Unit> {
             return methodsClient.filesUpload {
                 it.file(file)
-                it.channels(listOf(channelId.value))
+                it.channels(listOf(channel.id))
                 it.filename(file.name)
                 it.initialComment(message)
                 it.token(token)
@@ -76,14 +73,14 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
         }
 
         override fun updateMessage(
-            channelId: SlackChannelId,
+            channel: SlackChannel,
             text: String,
             messageTimestamp: String
         ): Result<SlackMessage> {
 
             val request = ChatUpdateRequest.builder()
                 .token(token)
-                .channel(channelId.value)
+                .channel(channel.id)
                 .ts(messageTimestamp)
                 .text(text)
                 .build()
@@ -101,14 +98,14 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
         }
 
         override fun findMessage(
-            channelId: SlackChannelId,
-            predicate: SlackMessageUpdateCondition
+            channel: SlackChannel,
+            predicate: SlackMessagePredicate
         ): Result<FoundMessage> {
 
             val request = ConversationsHistoryRequest.builder()
                 .token(token)
                 .limit(messagesLookupCount)
-                .channel(channelId.value)
+                .channel(channel.id)
                 .build()
 
             return methodsClient.conversationsHistory(request)
@@ -121,11 +118,11 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                                 text = message.text,
                                 botId = message.botId,
                                 author = message.username,
-                                channelId = channelId,
+                                channel = channel,
                                 emoji = message.icons?.emoji
                             )
                         }
-                        .find { slackMessage -> predicate.updateIf(slackMessage) }
+                        .find { slackMessage -> predicate.matches(slackMessage) }
                         ?: throw Exception("Message that satisfies provided predicate not found")
                 }
         }

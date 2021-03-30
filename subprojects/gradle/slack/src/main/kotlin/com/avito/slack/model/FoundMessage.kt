@@ -6,7 +6,7 @@ data class FoundMessage(
     val timestamp: String,
     val author: String?,
     val emoji: String?,
-    val channelId: SlackChannelId
+    val channel: SlackChannel
 ) {
     companion object
 }

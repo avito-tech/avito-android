@@ -6,7 +6,7 @@ import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -21,20 +21,20 @@ abstract class TestSummaryTask : DefaultTask() {
     abstract val reportCoordinates: Property<ReportCoordinates>
 
     @get:Input
-    abstract val summaryChannel: Property<SlackChannelId>
+    abstract val summaryChannel: Property<SlackChannel>
 
     @get:Input
     abstract val buildUrl: Property<String>
 
     @Suppress("UnstableApiUsage")
     @get:Input
-    abstract val unitToChannelMapping: MapProperty<Team, SlackChannelId>
+    abstract val unitToChannelMapping: MapProperty<Team, SlackChannel>
 
     @get:Input
     abstract val mentionOnFailures: SetProperty<Team>
 
     @get:Input
-    abstract val reserveSlackChannel: Property<SlackChannelId>
+    abstract val reserveSlackChannel: Property<SlackChannel>
 
     @get:Input
     abstract val slackUserName: Property<String>

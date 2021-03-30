@@ -3,7 +3,7 @@ package com.avito.slack
 import com.avito.android.Result
 import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.logger.StubLoggerFactory
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.truth.isInstanceOf
@@ -13,7 +13,10 @@ import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
-    private val testChannelId = SlackChannelId(getSystemProperty("avito.slack.test.channelid"))
+    private val testChannelId = SlackChannel(
+        id = getSystemProperty("avito.slack.test.channelId"),
+        name = getSystemProperty("avito.slack.test.channel")
+    )
     private val testToken = getSystemProperty("avito.slack.test.token")
     private val slackClient: SlackClient = SlackClient.Impl(testToken, getSystemProperty("avito.slack.test.workspace"))
     private val loggerFactory = StubLoggerFactory
@@ -50,7 +53,7 @@ internal class SlackConditionalSenderIntegrationTest {
     fun `second message - updates with thread message - if same author`() {
         val author = UUID.randomUUID().toString()
 
-        val condition = SameAuthorUpdateCondition(author)
+        val condition = SameAuthorPredicate(author)
 
         val sender = SlackConditionalSender(
             slackClient = slackClient,

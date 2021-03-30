@@ -1,7 +1,7 @@
 package com.avito.slack.model
 
 data class SlackSendMessageRequest(
-    val id: SlackChannelId,
+    val id: SlackChannel,
     val text: String,
     val author: String?,
     val emoji: String? = null,

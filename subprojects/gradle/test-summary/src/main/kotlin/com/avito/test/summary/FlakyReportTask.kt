@@ -5,13 +5,13 @@ import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
-import com.avito.slack.ConjunctionMessageUpdateCondition
-import com.avito.slack.SameAuthorUpdateCondition
+import com.avito.slack.ConjunctionMessagePredicate
+import com.avito.slack.SameAuthorPredicate
 import com.avito.slack.SlackClient
 import com.avito.slack.SlackConditionalSender
 import com.avito.slack.SlackMessageUpdaterDirectlyToThread
 import com.avito.slack.TodayMessageCondition
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import org.gradle.api.DefaultTask
@@ -26,7 +26,7 @@ abstract class FlakyReportTask : DefaultTask() {
     abstract val reportCoordinates: Property<ReportCoordinates>
 
     @get:Input
-    abstract val summaryChannel: Property<SlackChannelId>
+    abstract val summaryChannel: Property<SlackChannel>
 
     @get:Input
     abstract val slackUsername: Property<String>
@@ -71,7 +71,7 @@ abstract class FlakyReportTask : DefaultTask() {
     }
 
     private fun createFlakyTestReporter(
-        summaryChannel: SlackChannelId,
+        summaryChannel: SlackChannel,
         slackUsername: String,
         reportCoordinates: ReportCoordinates,
         reportViewer: ReportViewer,
@@ -84,9 +84,9 @@ abstract class FlakyReportTask : DefaultTask() {
             slackClient = SlackConditionalSender(
                 slackClient = slackClient.get(),
                 updater = SlackMessageUpdaterDirectlyToThread(slackClient.get(), loggerFactory),
-                condition = ConjunctionMessageUpdateCondition(
+                condition = ConjunctionMessagePredicate(
                     listOf(
-                        SameAuthorUpdateCondition(slackUsername),
+                        SameAuthorPredicate(slackUsername),
                         TodayMessageCondition(timeProvider)
                     )
                 ),

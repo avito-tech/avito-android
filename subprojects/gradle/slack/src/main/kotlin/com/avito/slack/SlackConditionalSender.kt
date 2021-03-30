@@ -13,7 +13,7 @@ import com.avito.slack.model.SlackSendMessageRequest
 class SlackConditionalSender(
     private val slackClient: SlackClient,
     private val updater: SlackMessageUpdater,
-    private val condition: SlackMessageUpdateCondition,
+    private val condition: SlackMessagePredicate,
     loggerFactory: LoggerFactory
 ) : SlackMessageSender {
 

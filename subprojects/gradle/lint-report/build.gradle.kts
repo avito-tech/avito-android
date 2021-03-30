@@ -27,6 +27,7 @@ dependencies {
 
     gradleTestImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:truth-extensions"))
+    testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":common:logger")))
 }
 

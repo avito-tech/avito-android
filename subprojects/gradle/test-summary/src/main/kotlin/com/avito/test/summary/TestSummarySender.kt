@@ -8,16 +8,16 @@ import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
-import com.avito.slack.ConjunctionMessageUpdateCondition
+import com.avito.slack.ConjunctionMessagePredicate
 import com.avito.slack.CoroutinesSlackBulkSender
-import com.avito.slack.SameAuthorUpdateCondition
+import com.avito.slack.SameAuthorPredicate
 import com.avito.slack.SlackBulkSender
 import com.avito.slack.SlackClient
 import com.avito.slack.SlackConditionalSender
 import com.avito.slack.SlackMessageUpdater
 import com.avito.slack.SlackMessageUpdaterWithThreadMark
 import com.avito.slack.TextContainsStringCondition
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackSendMessageRequest
 import com.avito.test.summary.compose.SlackSummaryComposer
 import com.avito.test.summary.compose.SlackSummaryComposerImpl
@@ -34,8 +34,8 @@ internal class TestSummarySenderImpl(
     loggerFactory: LoggerFactory,
     private val buildUrl: String,
     private val reportCoordinates: ReportCoordinates,
-    private val globalSummaryChannel: SlackChannelId,
-    private val unitToChannelMapping: Map<Team, SlackChannelId>,
+    private val globalSummaryChannel: SlackChannel,
+    private val unitToChannelMapping: Map<Team, SlackChannel>,
     private val mentionOnFailures: Set<Team>,
     private val slackUserName: String
 ) : TestSummarySender {
@@ -51,9 +51,9 @@ internal class TestSummarySenderImpl(
     private val slackConditionalSender: SlackConditionalSender = SlackConditionalSender(
         slackClient = slackClient,
         updater = slackMessageUpdater,
-        condition = ConjunctionMessageUpdateCondition(
+        condition = ConjunctionMessagePredicate(
             listOf(
-                SameAuthorUpdateCondition(slackUserName),
+                SameAuthorPredicate(slackUserName),
                 TextContainsStringCondition(reportCoordinates.runId)
             )
         ),

@@ -6,12 +6,12 @@ fun FoundMessage.Companion.createStubInstance(
     timestamp: String = "",
     emoji: String? = null,
     author: String? = null,
-    channelId: SlackChannelId = SlackChannelId("C01D88JT6CX")
+    channel: SlackChannel = SlackChannel.createStubInstance()
 ) = FoundMessage(
     text = text,
     botId = botId,
     timestamp = timestamp,
     author = author,
-    channelId = channelId,
+    channel = channel,
     emoji = emoji
 )

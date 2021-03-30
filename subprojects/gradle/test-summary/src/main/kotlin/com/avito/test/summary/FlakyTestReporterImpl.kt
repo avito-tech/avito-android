@@ -5,13 +5,13 @@ import com.avito.report.ReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.SlackMessageSender
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
 
 internal class FlakyTestReporterImpl(
     private val slackClient: SlackMessageSender,
-    private val summaryChannel: SlackChannelId,
+    private val summaryChannel: SlackChannel,
     private val messageAuthor: String,
     private val reportViewer: ReportViewer,
     private val buildUrl: String,
@@ -47,7 +47,7 @@ internal class FlakyTestReporterImpl(
 
     private fun sendMessage(
         badTests: List<FlakyInfo>,
-        channel: SlackChannelId,
+        channel: SlackChannel,
         reportUrl: String,
         buildUrl: String,
         currentBranch: String

@@ -16,13 +16,13 @@ class SlackMessageUpdaterDirectlyToThread(
 
     override fun updateMessage(previousMessage: FoundMessage, newContent: String): Result<SlackMessage> {
         logger.info(
-            "Updating message by posting to its thread; channel=${previousMessage.channelId}; " +
+            "Updating message by posting to its thread; channel=${previousMessage.channel}; " +
                 "oldMessage=${SlackStringFormat.ellipsize(string = previousMessage.text, limit = 50)}; "
         )
 
         return slackClient.sendMessage(
             SlackSendMessageRequest(
-                id = previousMessage.channelId,
+                id = previousMessage.channel,
                 text = newContent,
                 author = previousMessage.author,
                 emoji = previousMessage.emoji,

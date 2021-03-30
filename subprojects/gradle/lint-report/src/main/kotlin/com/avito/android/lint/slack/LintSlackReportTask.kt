@@ -5,7 +5,7 @@ import com.avito.android.lint.teamcity.TeamcityBuildLinkAccessor
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
@@ -17,10 +17,10 @@ import org.gradle.api.tasks.TaskAction
 abstract class LintSlackReportTask : DefaultTask() {
 
     @get:Input
-    abstract val slackReportChannel: Property<SlackChannelId>
+    abstract val slackReportChannel: Property<SlackChannel>
 
     @get:Input
-    abstract val slackChannelForLintBugs: Property<SlackChannelId>
+    abstract val slackChannelForLintBugs: Property<SlackChannel>
 
     @get:InputFile
     abstract val lintXml: RegularFileProperty

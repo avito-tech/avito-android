@@ -7,16 +7,16 @@ import org.junit.jupiter.api.Test
 
 internal class ConjunctionMessageUpdateConditionTest {
 
-    private object TrueCondition : SlackMessageUpdateCondition {
-        override fun updateIf(existingMessage: FoundMessage): Boolean = true
+    private object TrueCondition : SlackMessagePredicate {
+        override fun matches(existingMessage: FoundMessage): Boolean = true
     }
 
     @Test
     fun `conjunction - returns true - for multiple true conditions`() {
         val irrelevantMessage = FoundMessage.createStubInstance()
 
-        val result = ConjunctionMessageUpdateCondition(listOf(TrueCondition, TrueCondition, TrueCondition))
-            .updateIf(irrelevantMessage)
+        val result = ConjunctionMessagePredicate(listOf(TrueCondition, TrueCondition, TrueCondition))
+            .matches(irrelevantMessage)
 
         assertThat(result).isTrue()
     }

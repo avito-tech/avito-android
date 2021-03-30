@@ -3,14 +3,17 @@ package com.avito.android.lint
 import com.avito.android.lint.slack.LintSlackReporter
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannelId
+import com.avito.slack.model.SlackChannel
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.jupiter.api.Test
 import java.io.File
 
 internal class LintSlackAlertIntegrationTest {
 
-    private val testChannelId = SlackChannelId(requireNotNull(System.getProperty("avito.slack.test.channelid")))
+    private val testChannelId = SlackChannel(
+        id = requireNotNull(System.getProperty("avito.slack.test.channelId")),
+        name = requireNotNull(System.getProperty("avito.slack.test.channel"))
+    )
     private val testToken = requireNotNull(System.getProperty("avito.slack.test.token"))
     private val workspace = requireNotNull(System.getProperty("avito.slack.test.workspace"))
     private val slackClient: SlackClient = SlackClient.Impl(testToken, workspace)

@@ -21,7 +21,7 @@ internal class SlackConditionalSenderTest {
             }
             .time
 
-        val result = TodayMessageCondition(timeProvider).updateIf(existingMessage)
+        val result = TodayMessageCondition(timeProvider).matches(existingMessage)
 
         assertThat(result).isTrue()
     }
@@ -36,7 +36,7 @@ internal class SlackConditionalSenderTest {
             }
             .time
 
-        val result = TodayMessageCondition(timeProvider).updateIf(existingMessage)
+        val result = TodayMessageCondition(timeProvider).matches(existingMessage)
 
         assertThat(result).isTrue()
     }

@@ -1,5 +1,7 @@
 package com.avito.android.lint
 
+import com.avito.slack.model.SlackChannel
+import com.avito.slack.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -13,7 +15,7 @@ internal class ValidGradleTaskNameTest {
     fun `validInGradleTaskName - for various slack channels`(): List<DynamicTest> = listOf(
         Case("#android-dev", "AndroidDev"),
         Case("#regression-android", "RegressionAndroid"),
-        Case("C01D88JT6CX", "C01D88JT6CX")
+        Case(slackChannel.id, slackChannel.id)
     )
         .map { case ->
             dynamicTest("${case.input} become ${case.expectedOutput}") {
@@ -21,3 +23,5 @@ internal class ValidGradleTaskNameTest {
             }
         }
 }
+
+private val slackChannel = SlackChannel.createStubInstance()
