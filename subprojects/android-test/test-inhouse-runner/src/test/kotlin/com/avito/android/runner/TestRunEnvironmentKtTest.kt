@@ -19,4 +19,16 @@ internal class TestRunEnvironmentKtTest {
 
         assertThat(result).isInstanceOf<StatsDConfig.Enabled>()
     }
+
+    @Test
+    fun `statsdconfig disabled - at least one required arg not available`() {
+        val params = StubArgsProvider()
+
+        params.add("statsDHost", "http://stub.com")
+        params.add("statsDNamespace", "apps.namespace")
+
+        val result = parseStatsDConfig(params)
+
+        assertThat(result).isInstanceOf<StatsDConfig.Disabled>()
+    }
 }
