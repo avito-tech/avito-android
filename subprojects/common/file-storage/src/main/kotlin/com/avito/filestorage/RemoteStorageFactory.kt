@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit
 
 object RemoteStorageFactory {
 
-    private const val TIMEOUT_SEC = 120L
-
     fun create(
         endpoint: String,
         httpClientProvider: HttpClientProvider,
@@ -18,9 +16,9 @@ object RemoteStorageFactory {
     ): RemoteStorage = HttpRemoteStorage(
         endpoint = requireNotNull(endpoint.toHttpUrlOrNull()) { "Can't parse endpoint: $endpoint" },
         httpClient = httpClientProvider.provide()
-            .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .connectTimeout(10L, TimeUnit.SECONDS)
+            .writeTimeout(30L, TimeUnit.SECONDS)
+            .readTimeout(10L, TimeUnit.SECONDS)
             .build(),
         loggerFactory = loggerFactory,
         timeProvider = timeProvider

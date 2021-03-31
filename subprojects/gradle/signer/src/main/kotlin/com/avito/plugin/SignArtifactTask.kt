@@ -48,9 +48,9 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
             timeProvider = timeProvider,
             loggerFactory = loggerFactory
         ).provide()
-            .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
+            .connectTimeout(10L, TimeUnit.SECONDS)
+            .writeTimeout(40L, TimeUnit.SECONDS)
+            .readTimeout(40L, TimeUnit.SECONDS)
             .build()
 
         // TODO: Use workers
@@ -75,5 +75,3 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
         )
     }
 }
-
-private const val TIMEOUT_SEC = 1L

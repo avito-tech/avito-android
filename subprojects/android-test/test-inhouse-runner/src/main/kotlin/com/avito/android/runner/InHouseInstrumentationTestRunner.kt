@@ -185,8 +185,6 @@ abstract class InHouseInstrumentationTestRunner :
 
     val mockDispatcher by lazy { MockDispatcher(loggerFactory = loggerFactory) }
 
-    private lateinit var instrumentationArguments: Bundle
-
     protected abstract val metadataToBundleInjector: TestMetadataInjector
 
     protected open val testMetadataValidator: TestMetadataValidator =
@@ -215,11 +213,10 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun beforeOnCreate(arguments: Bundle) {
-        instrumentationArguments = arguments
-        injectTestMetadata(arguments)
+        injectTestMetadata(instrumentationArguments)
         logger.debug("Instrumentation arguments: $instrumentationArguments")
-        logger.debug("TestRunEnvironment: $testRunEnvironment")
         val environment = testRunEnvironment.asRunEnvironmentOrThrow()
+        logger.debug("TestRunEnvironment: $environment")
         initApplicationCrashHandling()
         addReportListener(arguments)
         initTestCase(environment)

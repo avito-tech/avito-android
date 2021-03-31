@@ -8,6 +8,8 @@ abstract class InstrumentationTestRunner : AndroidJUnitRunner(), OrchestratorDel
 
     abstract val loggerFactory: LoggerFactory
 
+    protected lateinit var instrumentationArguments: Bundle
+
     private var delegateRegistry: DelegatesRegistry? = null
 
     protected open fun getDelegates(arguments: Bundle): List<InstrumentationTestRunnerDelegate> {
@@ -19,6 +21,7 @@ abstract class InstrumentationTestRunner : AndroidJUnitRunner(), OrchestratorDel
      * Otherwise we can't pass an error to the report
      */
     final override fun onCreate(arguments: Bundle) {
+        instrumentationArguments = arguments
         val isRealRun = isRealRun(arguments)
         if (isRealRun) {
             beforeOnCreate(arguments)
