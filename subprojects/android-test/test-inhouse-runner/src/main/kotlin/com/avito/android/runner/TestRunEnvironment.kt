@@ -216,14 +216,15 @@ private fun provideApiUrl(
 }
 
 private fun provideVideoRecordingFeature(argumentsProvider: ArgsProvider): VideoFeatureValue {
-    val videoRecordingArgument = argumentsProvider.getOptionalArgument("videoRecording")
+    argumentsProvider.getOptionalArgument("videoRecording")
+    return VideoFeatureValue.Disabled
 
-    return when (argumentsProvider.getOptionalArgument("videoRecording")) {
-        null, "disabled" -> VideoFeatureValue.Disabled
-        "failed" -> VideoFeatureValue.Enabled.OnlyFailed
-        "all" -> VideoFeatureValue.Enabled.All
-        else -> throw IllegalArgumentException(
-            "Failed to resolve video recording resolution from argument: $videoRecordingArgument"
-        )
-    }
+//    return when (argumentsProvider.getOptionalArgument("videoRecording")) {
+//        null, "disabled" -> VideoFeatureValue.Disabled
+//        "failed" -> VideoFeatureValue.Enabled.OnlyFailed
+//        "all" -> VideoFeatureValue.Enabled.All
+//        else -> throw IllegalArgumentException(
+//            "Failed to resolve video recording resolution from argument: $videoRecordingArgument"
+//        )
+//    }
 }

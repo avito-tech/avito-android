@@ -64,7 +64,7 @@ abstract class InHouseInstrumentationTestRunner :
     ImitateFlagProvider,
     RemoteStorageProvider {
 
-    private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
+    private val elasticConfig: ElasticConfig by lazy { ElasticConfig.Disabled }
 
     private val sentryConfig: SentryConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().sentryConfig }
 
