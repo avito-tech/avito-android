@@ -264,6 +264,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun onException(obj: Any?, e: Throwable): Boolean {
+        Log.e("InstrumentationTest", "onException; $obj", e)
         testRunEnvironment.executeIfRealRun {
             logger.warn("Application crash captured by onException handler inside instrumentation", e)
             tryToReportUnexpectedIncident(incident = e)
