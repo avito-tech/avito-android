@@ -213,10 +213,10 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun beforeOnCreate(arguments: Bundle) {
-        injectTestMetadata(arguments)
-        logger.debug("Instrumentation arguments: $arguments")
-        logger.debug("TestRunEnvironment: $testRunEnvironment")
+        injectTestMetadata(instrumentationArguments)
+        logger.debug("Instrumentation arguments: $instrumentationArguments")
         val environment = testRunEnvironment.asRunEnvironmentOrThrow()
+        logger.debug("TestRunEnvironment: $environment")
         initApplicationCrashHandling()
         addReportListener(arguments)
         initTestCase(environment)
