@@ -1,6 +1,7 @@
 package com.avito.filestorage
 
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 interface FutureValue<T> {
@@ -13,7 +14,7 @@ internal class SettableFutureValue<T> : FutureValue<T> {
     private var slot: T? = null
 
     override fun get(): T {
-        latch.await()
+        latch.await(5, TimeUnit.SECONDS)
         return slot!!
     }
 
