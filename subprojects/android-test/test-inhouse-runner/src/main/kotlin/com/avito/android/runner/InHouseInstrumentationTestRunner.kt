@@ -95,10 +95,7 @@ abstract class InHouseInstrumentationTestRunner :
      */
     val testRunEnvironment: TestRunEnvironment by lazy {
         if (isRealRun(instrumentationArguments)) {
-            logger.debug("Instrumentation arguments: $instrumentationArguments")
-            val result = createRunnerEnvironment(instrumentationArguments)
-            logger.debug("TestRunEnvironment: $result")
-            result
+            createRunnerEnvironment(instrumentationArguments)
         } else {
             TestRunEnvironment.OrchestratorFakeRunEnvironment
         }
@@ -216,8 +213,10 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun beforeOnCreate(arguments: Bundle) {
-        injectTestMetadata(arguments)
+        injectTestMetadata(instrumentationArguments)
+        logger.debug("Instrumentation arguments: $instrumentationArguments")
         val environment = testRunEnvironment.asRunEnvironmentOrThrow()
+        logger.debug("TestRunEnvironment: $environment")
         initApplicationCrashHandling()
         addReportListener(arguments)
         initTestCase(environment)
