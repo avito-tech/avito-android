@@ -8,5 +8,5 @@ data class SlackSendMessageRequest(
     val threadId: String? = null
 ) {
 
-    override fun toString(): String = "Message "
+    override fun toString(): String = "Message"
 }

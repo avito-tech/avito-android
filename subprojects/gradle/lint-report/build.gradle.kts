@@ -27,6 +27,7 @@ dependencies {
 
     gradleTestImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:truth-extensions"))
+    testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":common:logger")))
 }
 
@@ -41,6 +42,7 @@ gradlePlugin {
 }
 
 tasks.named<Test>("integrationTest").configure {
+    applyOptionalSystemProperty("avito.slack.test.channelId")
     applyOptionalSystemProperty("avito.slack.test.channel")
     applyOptionalSystemProperty("avito.slack.test.token")
     applyOptionalSystemProperty("avito.slack.test.workspace")

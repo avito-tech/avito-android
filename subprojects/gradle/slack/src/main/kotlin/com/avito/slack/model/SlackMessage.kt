@@ -11,7 +11,6 @@ data class SlackMessage(
     val workspace: String,
     val id: String,
     val text: String,
-    val channel: SlackChannel,
     val channelId: String,
     val author: String,
     val threadId: String? = null

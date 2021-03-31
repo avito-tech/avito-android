@@ -8,9 +8,9 @@ import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
-import com.avito.slack.ConjunctionMessageUpdateCondition
+import com.avito.slack.ConjunctionMessagePredicate
 import com.avito.slack.CoroutinesSlackBulkSender
-import com.avito.slack.SameAuthorUpdateCondition
+import com.avito.slack.SameAuthorPredicate
 import com.avito.slack.SlackBulkSender
 import com.avito.slack.SlackClient
 import com.avito.slack.SlackConditionalSender
@@ -51,9 +51,9 @@ internal class TestSummarySenderImpl(
     private val slackConditionalSender: SlackConditionalSender = SlackConditionalSender(
         slackClient = slackClient,
         updater = slackMessageUpdater,
-        condition = ConjunctionMessageUpdateCondition(
+        condition = ConjunctionMessagePredicate(
             listOf(
-                SameAuthorUpdateCondition(slackUserName),
+                SameAuthorPredicate(slackUserName),
                 TextContainsStringCondition(reportCoordinates.runId)
             )
         ),

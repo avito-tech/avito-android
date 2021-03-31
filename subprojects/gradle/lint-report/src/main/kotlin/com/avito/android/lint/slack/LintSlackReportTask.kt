@@ -17,10 +17,10 @@ import org.gradle.api.tasks.TaskAction
 abstract class LintSlackReportTask : DefaultTask() {
 
     @get:Input
-    abstract val slackReportChannel: Property<String>
+    abstract val slackReportChannel: Property<SlackChannel>
 
     @get:Input
-    abstract val slackChannelForLintBugs: Property<String>
+    abstract val slackChannelForLintBugs: Property<SlackChannel>
 
     @get:InputFile
     abstract val lintXml: RegularFileProperty
@@ -45,8 +45,8 @@ abstract class LintSlackReportTask : DefaultTask() {
 
         createLintSlackAlert(loggerFactory).report(
             lintReport = models,
-            channel = SlackChannel(slackReportChannel.get()),
-            channelForLintBugs = SlackChannel(slackChannelForLintBugs.get()),
+            channel = slackReportChannel.get(),
+            channelForLintBugs = slackChannelForLintBugs.get(),
             buildUrl = teamcityBuildLinkAccessor.getBuildUrl()
         )
     }

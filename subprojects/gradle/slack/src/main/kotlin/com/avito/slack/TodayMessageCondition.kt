@@ -5,9 +5,9 @@ import com.avito.time.TimeProvider
 import com.avito.time.isSameDay
 import java.util.Date
 
-class TodayMessageCondition(private val timeProvider: TimeProvider) : SlackMessageUpdateCondition {
+class TodayMessageCondition(private val timeProvider: TimeProvider) : SlackMessagePredicate {
 
-    override fun updateIf(existingMessage: FoundMessage): Boolean {
+    override fun matches(existingMessage: FoundMessage): Boolean {
         return slackTimeToDate(existingMessage.timestamp).isSameDay(timeProvider.now())
     }
 

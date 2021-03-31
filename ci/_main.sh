@@ -75,6 +75,7 @@ GRADLE_ARGS="-PartifactoryUrl=$ARTIFACTORY_URL \\
              -Pavito.elastic.enabled=true \\
              -Pavito.elastic.endpoints=$ELASTIC_ENDPOINTS \\
              -Pavito.elastic.indexpattern=speed-android \\
+             -Pavito.slack.test.channelId=$SLACK_TEST_CHANNEL_ID \\
              -Pavito.slack.test.channel=$SLACK_TEST_CHANNEL \\
              -Pavito.slack.test.token=$SLACK_TEST_TOKEN \\
              -Pavito.slack.test.workspace=$SLACK_TEST_WORKSPACE \\
