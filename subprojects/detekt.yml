@@ -612,7 +612,7 @@ style:
         maxJumpCount: 1
     # https://detekt.github.io/detekt/style.html#magicnumber
     MagicNumber:
-        active: true
+        active: false
         excludes: [ '**/build.gradle.kts', '**/test/**', '**/androidTest/**' ]
         ignoreNumbers: [ '-1', '0', '1', '2' ]
         ignoreHashCodeFunction: true

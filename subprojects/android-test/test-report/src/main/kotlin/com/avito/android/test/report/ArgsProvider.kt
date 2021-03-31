@@ -13,8 +13,6 @@ interface ArgsProvider {
 
     fun getMandatoryArgument(name: String): String
 
-    fun getOptionalIntArgument(name: String): Int?
-
     fun <T : Serializable> getMandatorySerializableArgument(name: String): T
 
     fun <T : Serializable> getOptionalSerializableArgument(name: String): T?
@@ -49,16 +47,6 @@ class BundleArgsProvider(
             )
         } else {
             return result
-        }
-    }
-
-    override fun getOptionalIntArgument(name: String): Int? {
-        val defaultValue = Int.MIN_VALUE
-        val result = bundle.getInt(name, defaultValue)
-        return if (result == defaultValue) {
-            null
-        } else {
-            result
         }
     }
 }
