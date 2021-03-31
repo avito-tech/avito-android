@@ -1,6 +1,7 @@
 package com.avito.android.runner
 
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
@@ -41,7 +42,7 @@ import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
-import com.avito.filestorage.RemoteStorageFactory
+import com.avito.filestorage.StubRemoteStorage
 import com.avito.http.HttpClientProvider
 import com.avito.logger.create
 import com.avito.report.ReportsApiFactory
@@ -111,12 +112,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override val remoteStorage: RemoteStorage by lazy {
-        RemoteStorageFactory.create(
-            endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
-            httpClientProvider = httpClientProvider,
-            loggerFactory = loggerFactory,
-            timeProvider = timeProvider
-        )
+        StubRemoteStorage { Log.e("FILE-STORAGE", it) }
     }
 
     override val report: Report by lazy {
@@ -214,6 +210,7 @@ abstract class InHouseInstrumentationTestRunner :
 
     override fun beforeOnCreate(arguments: Bundle) {
         injectTestMetadata(instrumentationArguments)
+        logger.debug("beforeOnCreate")
         logger.debug("Instrumentation arguments: $instrumentationArguments")
         val environment = testRunEnvironment.asRunEnvironmentOrThrow()
         logger.debug("TestRunEnvironment: $environment")
@@ -228,6 +225,8 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun afterOnCreate(arguments: Bundle) {
+        logger.debug("afterOnCreate")
+
         Espresso.setFailureHandler(ReportFriendlyFailureHandler())
         initUITestConfig()
         DeviceSettingsChecker(
@@ -255,6 +254,8 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun onStart() {
+        logger.debug("onStart")
+
         super.onStart()
 
         testRunEnvironment.executeIfRealRun {
@@ -359,6 +360,7 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun finish(resultCode: Int, results: Bundle?) {
+        logger.debug("finish")
         try {
             super.finish(resultCode, results)
         } catch (e: IllegalStateException) {

@@ -195,12 +195,18 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
 
                             val runner: String = appExtension.defaultConfig.getTestInstrumentationRunnerOrThrow()
 
+                            val essentialTags = listOf(
+                                "InHouseInstrumentationTestRunner:*",
+                                "AbstractReportTestListener:*",
+                                "*:I"
+                            )
+
                             val runFunctionalTestsParameters = ExecutionParameters(
                                 applicationPackageName = testedVariant.applicationId,
                                 applicationTestPackageName = testVariant.applicationId,
                                 testRunner = runner,
                                 namespace = instrumentationConfiguration.kubernetesNamespace,
-                                logcatTags = extensionData.logcatTags,
+                                logcatTags = essentialTags + extensionData.logcatTags,
                                 enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
                             )
 
