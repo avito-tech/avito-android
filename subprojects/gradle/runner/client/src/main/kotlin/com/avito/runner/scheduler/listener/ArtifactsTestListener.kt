@@ -50,9 +50,9 @@ internal class ArtifactsTestListener(
             is Failed.InRun ->
                 pullArtifacts(device, test, targetPackage)
             is InfrastructureError ->
-                TestResult.InComplete(result)
+                TestResult.Incomplete(result)
             Ignored ->
-                TestResult.InComplete(
+                TestResult.Incomplete(
                     InfrastructureError.Unexpected(
                         IllegalStateException("Instrumentation executed Ignored test")
                     )
