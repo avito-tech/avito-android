@@ -39,7 +39,7 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
 
             val requestBuilder = ChatPostMessageRequest.builder()
                 .token(token)
-                .channel(message.id.id)
+                .channel(message.channel.id)
                 .text(message.text)
                 .username(message.author)
 

@@ -89,7 +89,7 @@ internal class TestSummarySenderImpl(
                     ).onSuccess { message ->
                         sendMessage(
                             SlackSendMessageRequest(
-                                id = channel,
+                                channel = channel,
                                 text = message,
                                 author = slackUserName,
                                 emoji = slackEmojiProvider.emojiName(unitSuite.percentSuccessOfAutomated.toInt())
@@ -114,7 +114,7 @@ internal class TestSummarySenderImpl(
             ).onSuccess {
                 sendMessage(
                     SlackSendMessageRequest(
-                        id = globalSummaryChannel,
+                        channel = globalSummaryChannel,
                         text = it,
                         author = slackUserName,
                         emoji = slackEmojiProvider.emojiName(suite.percentSuccessOfAutomated.toInt())

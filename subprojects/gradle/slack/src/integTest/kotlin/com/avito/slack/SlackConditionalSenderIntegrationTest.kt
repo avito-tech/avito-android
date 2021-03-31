@@ -83,7 +83,7 @@ internal class SlackConditionalSenderIntegrationTest {
         author: String = "integration test"
     ): Result<SlackMessage> = sendMessage(
         SlackSendMessageRequest(
-            id = testChannelId,
+            channel = testChannelId,
             text = text,
             author = author,
             emoji = ":crazy-robot:"

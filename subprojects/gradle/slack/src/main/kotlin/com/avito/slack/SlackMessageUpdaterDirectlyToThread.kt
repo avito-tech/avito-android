@@ -22,7 +22,7 @@ class SlackMessageUpdaterDirectlyToThread(
 
         return slackClient.sendMessage(
             SlackSendMessageRequest(
-                id = previousMessage.channel,
+                channel = previousMessage.channel,
                 text = newContent,
                 author = previousMessage.author,
                 emoji = previousMessage.emoji,

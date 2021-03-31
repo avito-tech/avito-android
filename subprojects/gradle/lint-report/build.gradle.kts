@@ -42,7 +42,8 @@ gradlePlugin {
 }
 
 tasks.named<Test>("integrationTest").configure {
-    applyOptionalSystemProperty("avito.slack.test.channelid")
+    applyOptionalSystemProperty("avito.slack.test.channelId")
+    applyOptionalSystemProperty("avito.slack.test.channel")
     applyOptionalSystemProperty("avito.slack.test.token")
     applyOptionalSystemProperty("avito.slack.test.workspace")
 }

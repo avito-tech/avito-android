@@ -29,7 +29,7 @@ class SlackMessageUpdaterWithThreadMark(
         )
         return slackClient.sendMessage(
             SlackSendMessageRequest(
-                id = previousMessage.channel,
+                channel = previousMessage.channel,
                 text = threadMessage,
                 author = previousMessage.author,
                 emoji = previousMessage.emoji,

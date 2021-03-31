@@ -56,7 +56,7 @@ internal class FlakyTestReporterImpl(
         //language=TEXT
         return slackClient.sendMessage(
             SlackSendMessageRequest(
-                id = channel,
+                channel = channel,
                 text =
                 """<$buildUrl|Билд на ветке $currentBranch> шел дольше чем нужно, и виноваты эти тесты:
 ```

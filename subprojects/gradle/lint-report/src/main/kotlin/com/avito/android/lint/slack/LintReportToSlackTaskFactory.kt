@@ -39,7 +39,7 @@ class LintReportToSlackTaskFactory(
      */
     fun registerLintReportToSlackTask(channel: SlackChannel): TaskProvider<LintSlackReportTask> {
 
-        val taskName = "lintReportTo${channel.id.validInGradleTaskName()}"
+        val taskName = "lintReportTo${channel.name.validInGradleTaskName()}"
 
         var taskProvider = project.tasks.typedNamedOrNull<LintSlackReportTask>(taskName)
 
@@ -48,7 +48,7 @@ class LintReportToSlackTaskFactory(
 
             taskProvider = project.tasks.register<LintSlackReportTask>(taskName) {
                 group = "ci"
-                description = "Report to slackChannel $channel about lint errors if any"
+                description = "Report to slack channel ${channel.name} about lint errors if any"
 
                 dependencyOn(androidLintAccessor.taskProvider()) {
                     lintXml.set(androidLintAccessor.resultXml())
