@@ -145,7 +145,7 @@ internal class ReportViewerTestReporter(
                     }
                 )
             }
-            is TestResult.InComplete -> {
+            is TestResult.Incomplete -> {
                 val (stdout: String, stderr: String) = logcatBuffers.getLogcat(key)
 
                 with(result.infraError) {
