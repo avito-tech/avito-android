@@ -183,19 +183,24 @@ private fun parseSentryConfig(argumentsProvider: ArgsProvider): SentryConfig {
     }
 }
 
-private fun parseStatsDConfig(argumentsProvider: ArgsProvider): StatsDConfig {
+internal fun parseStatsDConfig(argumentsProvider: ArgsProvider): StatsDConfig {
     val host = argumentsProvider.getOptionalArgument("statsDHost")
-    val port = argumentsProvider.getOptionalIntArgument("statsDPort")
+    val port = argumentsProvider.getOptionalArgument("statsDPort")
     val namespace = argumentsProvider.getOptionalArgument("statsDNamespace")
-    return if (!host.isNullOrBlank() && port != null && !namespace.isNullOrBlank()) {
-        StatsDConfig.Enabled(
-            host = host,
-            fallbackHost = host,
-            port = port,
-            namespace = SeriesName.create(namespace, multipart = true)
-        )
-    } else {
+    return if (host.isNullOrBlank() || port.isNullOrBlank() || namespace.isNullOrBlank()) {
         StatsDConfig.Disabled
+    } else {
+        val portInt = port.toIntOrNull()
+        if (portInt == null) {
+            StatsDConfig.Disabled
+        } else {
+            StatsDConfig.Enabled(
+                host = host,
+                fallbackHost = host,
+                port = portInt,
+                namespace = SeriesName.create(namespace, multipart = true)
+            )
+        }
     }
 }
 

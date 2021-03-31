@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.runner.report.Report
+import com.avito.filestorage.FutureValue
 import com.avito.filestorage.HttpRemoteStorage
 import com.avito.filestorage.RemoteStorage
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
@@ -204,7 +205,11 @@ internal class ReportViewerTestReporter(
         return if (logcatBuffer != null) {
             logcatBuffer
                 .getLogs()
-                .let { (stdout, stderr) -> uploadLogcat(stdout) to uploadLogcat(stderr) }
+                .let { (stdout, stderr) ->
+                    val stdoutFuture = uploadLogcat(stdout)
+                    val stderrFuture = uploadLogcat(stderr)
+                    stdoutFuture.getUrl() to stderrFuture.getUrl()
+                }
         } else {
             logger.critical("Can't find logBuffer", IllegalStateException("No logBuffer by key:$test"))
             return "" to ""
@@ -212,21 +217,20 @@ internal class ReportViewerTestReporter(
     }
 
     // todo coroutine
-    private fun uploadLogcat(logcat: List<String>): String {
-        return if (logcat.isEmpty()) {
-            logger.warn("Logcat is empty")
-            ""
-        } else {
-            when (val result = remoteStorage.upload(
-                RemoteStorage.Request.ContentRequest.AnyContent(
-                    content = retracer.retrace(logcat.joinToString(separator = "\n")),
-                    extension = "log"
-                ),
-                comment = "logcat"
-            ).get()) {
-                is RemoteStorage.Result.Success -> remoteStorageFullUrl(result)
-                is RemoteStorage.Result.Error -> "Failed to upload logcat: ${result.t.message}"
-            }
+    private fun uploadLogcat(logcat: List<String>): FutureValue<RemoteStorage.Result> {
+        return remoteStorage.upload(
+            RemoteStorage.Request.ContentRequest.AnyContent(
+                content = retracer.retrace(logcat.joinToString(separator = "\n")),
+                extension = "log"
+            ),
+            comment = "logcat"
+        )
+    }
+
+    private fun FutureValue<RemoteStorage.Result>.getUrl(): String {
+        return when (val result = get()) {
+            is RemoteStorage.Result.Success -> remoteStorageFullUrl(result)
+            is RemoteStorage.Result.Error -> "Failed to upload logcat: ${result.t.message}"
         }
     }
 
