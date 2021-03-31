@@ -5,8 +5,8 @@ import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
-import com.avito.slack.ConjunctionMessageUpdateCondition
-import com.avito.slack.SameAuthorUpdateCondition
+import com.avito.slack.ConjunctionMessagePredicate
+import com.avito.slack.SameAuthorPredicate
 import com.avito.slack.SlackClient
 import com.avito.slack.SlackConditionalSender
 import com.avito.slack.SlackMessageUpdaterDirectlyToThread
@@ -84,9 +84,9 @@ abstract class FlakyReportTask : DefaultTask() {
             slackClient = SlackConditionalSender(
                 slackClient = slackClient.get(),
                 updater = SlackMessageUpdaterDirectlyToThread(slackClient.get(), loggerFactory),
-                condition = ConjunctionMessageUpdateCondition(
+                condition = ConjunctionMessagePredicate(
                     listOf(
-                        SameAuthorUpdateCondition(slackUsername),
+                        SameAuthorPredicate(slackUsername),
                         TodayMessageCondition(timeProvider)
                     )
                 ),

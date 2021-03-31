@@ -10,7 +10,10 @@ import java.io.File
 
 internal class LintSlackAlertIntegrationTest {
 
-    private val testChannel = SlackChannel(requireNotNull(System.getProperty("avito.slack.test.channel")))
+    private val testChannelId = SlackChannel(
+        id = requireNotNull(System.getProperty("avito.slack.test.channelId")),
+        name = requireNotNull(System.getProperty("avito.slack.test.channel"))
+    )
     private val testToken = requireNotNull(System.getProperty("avito.slack.test.token"))
     private val workspace = requireNotNull(System.getProperty("avito.slack.test.workspace"))
     private val slackClient: SlackClient = SlackClient.Impl(testToken, workspace)
@@ -30,8 +33,8 @@ internal class LintSlackAlertIntegrationTest {
 
         lintSlackReporter.report(
             lintReport = reportModels,
-            channel = testChannel,
-            channelForLintBugs = testChannel,
+            channel = testChannelId,
+            channelForLintBugs = testChannelId,
             buildUrl = "https://stubbuildurl".toHttpUrl()
         )
     }

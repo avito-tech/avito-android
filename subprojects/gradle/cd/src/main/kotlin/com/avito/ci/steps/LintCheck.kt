@@ -6,6 +6,7 @@ import com.avito.android.lint.slack.LintReportToSlackTaskFactory
 import com.avito.impact.configuration.internalModule
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
+import com.avito.slack.model.SlackChannel
 import com.avito.utils.gradle.BuildEnvironment
 import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Project
@@ -15,7 +16,9 @@ import org.gradle.api.tasks.TaskProvider
 class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, name),
     ImpactAnalysisAwareBuildStep by ImpactAnalysisAwareBuildStep.Impl() {
 
-    var slackChannelForAlerts = ""
+    // public api
+    @Suppress("MemberVisibilityCanBePrivate")
+    var slackChannelForAlerts: SlackChannel? = null
 
     override fun registerTask(project: Project, rootTask: TaskProvider<out Task>) {
         require(project.isAndroidApp()) {
@@ -31,12 +34,13 @@ class LintCheck(context: String, name: String) : SuppressibleBuildStep(context, 
             val logger = GradleLoggerFactory.fromProject(project).create<LintCheck>()
             val factory = LintReportToSlackTaskFactory(project, logger)
 
-            if (slackChannelForAlerts.isBlank()) {
+            val slackChannel = slackChannelForAlerts
+            if (slackChannel == null) {
                 // for now it makes sense, but with lint on PR it should be reevaluated
                 error("Please provide slackChannelForAlerts for chain $context; lint without reporting is a waste")
             } else {
                 val lintSlackReportTaskProvider = factory.registerLintReportToSlackTask(
-                    slackChannel = slackChannelForAlerts
+                    channel = slackChannel
                 )
                 rootTask.dependsOn(lintSlackReportTaskProvider)
             }

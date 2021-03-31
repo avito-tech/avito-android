@@ -13,7 +13,7 @@ import com.avito.slack.model.SlackSendMessageRequest
 class SlackConditionalSender(
     private val slackClient: SlackClient,
     private val updater: SlackMessageUpdater,
-    private val condition: SlackMessageUpdateCondition,
+    private val condition: SlackMessagePredicate,
     loggerFactory: LoggerFactory
 ) : SlackMessageSender {
 
@@ -22,7 +22,7 @@ class SlackConditionalSender(
     override fun sendMessage(message: SlackSendMessageRequest): Result<SlackMessage> {
         logger.info(
             "Sending message using SlackConditionalSender, " +
-                "trying to find previous message in channel: ${message.channel.name}"
+                "trying to find previous message in channel: ${message.channel}"
         )
         return slackClient.findMessage(message.channel, condition)
             .fold(
@@ -33,7 +33,7 @@ class SlackConditionalSender(
                 { throwable ->
                     logger.warn(
                         "Previous message not found, " +
-                            "posting new one to channel: ${message.channel.name}; " +
+                            "posting new one to channel: ${message.channel}; " +
                             "message: '${SlackStringFormat.ellipsize(string = message.text, limit = 50)}'",
                         throwable
                     )

@@ -9,7 +9,6 @@ import com.avito.report.ReportsApi
 import com.avito.report.ReportsApiFactory
 import com.avito.report.model.Team
 import com.avito.slack.SlackClient
-import com.avito.slack.model.SlackChannel
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
 import org.gradle.api.Plugin
@@ -57,7 +56,7 @@ class TestSummaryPlugin : Plugin<Project> {
             @Suppress("UnstableApiUsage")
             unitToChannelMapping.set(
                 extension.unitToChannelMapping
-                    .map { map -> map.map { (key, value) -> Team(key) to SlackChannel(value) }.toMap() }
+                    .map { map -> map.map { (key, value) -> key to value }.toMap() }
             )
 
             mentionOnFailures.set(extension.mentionOnFailures.map { set -> set.map { Team(it) }.toSet() })

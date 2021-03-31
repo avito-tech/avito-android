@@ -60,7 +60,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     // https://github.com/JetBrains/teamcity-rest-client
     val teamcityClient = "org.jetbrains.teamcity:teamcity-rest-client:1.6.2"
     val googlePublish = "com.google.apis:google-api-services-androidpublisher:v3-rev86-1.25.0"
-    val slackClient = "com.github.seratch:jslack-api-client:3.4.1"
+    val slackClient = "com.github.seratch:jslack-api-client:3.4.2"
     val rxJava = "io.reactivex:rxjava:1.3.8"
     val statsd = "com.timgroup:java-statsd-client:3.1.0"
 

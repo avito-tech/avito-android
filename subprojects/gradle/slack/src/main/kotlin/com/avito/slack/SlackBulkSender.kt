@@ -24,7 +24,7 @@ interface SlackBulkSender {
 @OptIn(ObsoleteCoroutinesApi::class)
 class CoroutinesSlackBulkSender(
     private val sender: SlackMessageSender,
-    private val loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory
 ) : SlackBulkSender {
 
     private val logger = loggerFactory.create<SlackBulkSender>()

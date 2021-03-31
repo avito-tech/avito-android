@@ -38,7 +38,10 @@ class StubSlackClient : SlackClient {
         }
     }
 
-    override fun findMessage(channel: SlackChannel, predicate: SlackMessageUpdateCondition): Result<FoundMessage> {
+    override fun findMessage(
+        channel: SlackChannel,
+        predicate: SlackMessagePredicate
+    ): Result<FoundMessage> {
         return if (previousMessageFailsWithException) {
             Result.Failure(Exception("no matter"))
         } else {
@@ -59,7 +62,11 @@ class StubSlackClient : SlackClient {
         return Result.Success(SlackMessage.createStubInstance())
     }
 
-    override fun uploadHtml(channel: SlackChannel, message: String, file: File): Result<Unit> {
+    override fun uploadHtml(
+        channel: SlackChannel,
+        message: String,
+        file: File
+    ): Result<Unit> {
         TODO("Not yet implemented")
     }
 }
