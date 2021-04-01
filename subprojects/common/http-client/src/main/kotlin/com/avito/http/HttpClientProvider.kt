@@ -12,10 +12,8 @@ public class HttpClientProvider(
     private val loggerFactory: LoggerFactory
 ) {
 
-    private val builder = OkHttpClient.Builder()
-
     public fun provide(): OkHttpClient.Builder {
-        return builder.eventListenerFactory {
+        return OkHttpClient.Builder().eventListenerFactory {
             StatsHttpEventListener(
                 statsDSender = statsDSender,
                 timeProvider = timeProvider,
