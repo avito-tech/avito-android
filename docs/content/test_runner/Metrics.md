@@ -2,7 +2,7 @@
 
 ![grafana](https://user-images.githubusercontent.com/1105133/106182950-a2e53200-61b0-11eb-9615-f892fa879c84.png)
 
-Metrics available at:
+Metrics are available at:
 
 `$namespace.testrunner.$projectName.$instrumentationConfigName.`
 
@@ -79,36 +79,52 @@ graph LR
     id1[Test runner start] -->|ms|id2[Test runner finished]
 ```
 
-## `tests.status.lost.`
+## `tests`
+
+Tests running statistics.
+
+### `tests.status.`
+
+Tests runs by statuses.
+
+#### `success`
+
+#### `failure`
+
+#### `skipped`
+
+#### `manual`
+
+#### `lost.`
 
 Tests count with lost status with categorized reasons:
 
-### `not-reported`
+##### `not-reported`
 
 Don't know exact reason, delta between initial test suite and reported tests
 
-### `no-file`
+##### `no-file`
 
 Test report data pulled from device and then pushed to report service. \
 These are cases when file was not found on device for some reason
 
-### `parse-errors`
+##### `parse-errors`
 
 If test file was pulled, but there was a parsing error
 
-### `instr-parsing`
+##### `instr-parsing`
 
 If fail when parse `am instrument` output
 
-### `instr-start`
+##### `instr-start`
 
 If fail when staring `am instrument`
 
-### `instr-timeout`
+##### `instr-timeout`
 
 If fail with timeout when executing `am instrument`
 
-### `instr-unexpected`
+##### `instr-unexpected`
 
 If catch unexpected error when executing `am instrument`
 
