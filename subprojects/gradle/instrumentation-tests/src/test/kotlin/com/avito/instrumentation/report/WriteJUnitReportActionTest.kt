@@ -3,7 +3,7 @@ package com.avito.instrumentation.report
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.report.JUnitReportWriter
+import com.avito.instrumentation.internal.report.WriteJUnitReportAction
 import com.avito.report.StubReportViewer
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-internal class JUnitReportWriterTest {
+internal class WriteJUnitReportActionTest {
 
     lateinit var file: File
 
@@ -98,10 +98,13 @@ internal class JUnitReportWriterTest {
             jobSlug = "FunctionalTests",
             runId = "49.0.275.32855"
         )
-        JUnitReportWriter(StubReportViewer(reportViewerUrl)).write(
+        val reportViewer = StubReportViewer(reportViewerUrl)
+        WriteJUnitReportAction(
+            reportViewer = reportViewer,
             reportCoordinates = runIdentifier,
-            testRunResult = testRunResult,
             destination = file
+        ).action(
+            testRunResult = testRunResult,
         )
     }
 }
