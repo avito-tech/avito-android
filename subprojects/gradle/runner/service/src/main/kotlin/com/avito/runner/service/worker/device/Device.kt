@@ -42,6 +42,7 @@ interface Device {
     fun deviceStatus(): DeviceStatus
 
     sealed class DeviceStatus {
+
         object Alive : DeviceStatus() {
             override fun toString(): String = "alive"
         }

@@ -5,6 +5,7 @@ import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
+import java.io.File
 
 internal class LogListener : TestListener {
 
@@ -23,7 +24,9 @@ internal class LogListener : TestListener {
         targetPackage: String,
         result: TestCaseRun.Result,
         durationMilliseconds: Long,
-        executionNumber: Int
+        executionNumber: Int,
+        testMetadataDirectory: File,
+        testFolder: String
     ) {
         val status = when (result) {
             is TestCaseRun.Result.Passed -> "PASSED"
