@@ -159,25 +159,13 @@ pluginManagement {
                 }
             }
             filter {
-                includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("androidx.*")
+                includeGroup("com.google.test.platform")
             }
         }
-        exclusiveContent {
-            forRepository {
-                maven {
-                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
-                }
-            }
-            filter {
-                includeGroup("com.slack.keeper")
-                includeGroup("com.gradle")
-                includeGroup("com.gradle.enterprise")
-                includeGroup("org.jetbrains.kotlin.jvm")
-                includeGroup("org.gradle.kotlin.kotlin-dsl")
-                includeGroupByRegex("nebula\\..*")
-                includeGroup("io.gitlab.arturbosch.detekt")
-                includeGroup("com.autonomousapps.dependency-analysis")
-            }
+        maven {
+            setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
         }
     }
 
@@ -295,19 +283,7 @@ dependencyResolutionManagement {
     }
 }
 
-plugins {
-    id("com.gradle.enterprise") version "3.5.1"
-}
-
 val isCI = booleanProperty("ci", false)
-
-gradleEnterprise {
-    buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
-        publishOnFailureIf(isCI)
-    }
-}
 
 fun booleanProperty(name: String, defaultValue: Boolean): Boolean {
     return if (settings.extra.has(name)) {
