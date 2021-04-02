@@ -45,6 +45,7 @@ class CiStepsPluginTest {
                         id("com.avito.android.qapps")
                         id("com.avito.android.artifactory-app-backup")
                         id("com.avito.android.cd")
+                        id("org.gradle.maven-publish")
                     },
                     customScript = """
                             import com.avito.cd.BuildVariant

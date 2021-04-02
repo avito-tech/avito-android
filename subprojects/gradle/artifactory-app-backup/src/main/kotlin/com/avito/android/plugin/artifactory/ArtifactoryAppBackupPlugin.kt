@@ -24,9 +24,10 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
 
         project.extensions.configure<DefaultArtifactoryAppBackupExtension>(artifactoryBackupExtensionName) {
             it.backups.all { backup ->
-                if (!project.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
-                    applyMavenPublishPlugin(project)
+                require(project.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
+                    "'maven-publish' plugin should be applied to use artifactory app backup plugin"
                 }
+                configureMavenPublishPlugin(project)
                 project.createBackupPublication(backup)
                 val publishTask = project.findMavenPublishTask(backup)
                 publishTask.addSetArtifactsBuildOutputAction()
@@ -41,7 +42,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
     ): PublishToMavenRepository {
         return tasks.withType(PublishToMavenRepository::class.java).matching {
             it.repository.name == artifactoryRepositoryName &&
-            it.publication.name == backup.name
+                it.publication.name == backup.name
         }.first()
     }
 
@@ -59,8 +60,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
         }
     }
 
-    private fun applyMavenPublishPlugin(project: Project) {
-        project.plugins.apply(MavenPublishPlugin::class.java)
+    private fun configureMavenPublishPlugin(project: Project) {
         val publishing = project.extensions.getByType<PublishingExtension>()
         val artifactoryUrl = project.getMandatoryStringProperty("artifactoryUrl").removeSuffix("/")
         val backupUrl = URI.create("$artifactoryUrl/apps-release-local/")
@@ -69,6 +69,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
             repo.url = backupUrl
             repo.credentials.username = project.artifactoryUser
             repo.credentials.password = project.artifactoryPassword
+            repo.isAllowInsecureProtocol = true
         }
         project.tasks.register(artifactoryAppBackupTaskName)
     }
