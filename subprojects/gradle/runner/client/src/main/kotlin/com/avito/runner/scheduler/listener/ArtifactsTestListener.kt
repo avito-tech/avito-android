@@ -93,7 +93,7 @@ internal class ArtifactsTestListener(
 
             device.clearDirectory(
                 remotePath = testMetadataDirectory.toPath()
-            ).getOrThrow()
+            ).getOrElse { /* ignore errors */ }
 
             resultDirectory
         } catch (t: Throwable) {
