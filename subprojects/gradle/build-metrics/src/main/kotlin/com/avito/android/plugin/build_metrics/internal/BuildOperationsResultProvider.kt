@@ -21,6 +21,7 @@ import org.gradle.execution.RunRootBuildWorkBuildOperationType
 import org.gradle.internal.operations.BuildOperationCategory
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.BuildOperationListener
+import org.gradle.internal.operations.BuildOperationMetadata
 import org.gradle.internal.operations.OperationFinishEvent
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
@@ -180,7 +181,11 @@ internal class BuildOperationsResultProvider(
 
     private fun BuildOperationDescriptor.isRunTasksOperation(): Boolean {
         return details is RunRootBuildWorkBuildOperationType.Details
-            && metadata == BuildOperationCategory.RUN_WORK_ROOT_BUILD
+            && (metadata == BuildOperationCategory.RUN_WORK || metadata.isRunTaskGradle6())
+    }
+
+    private fun BuildOperationMetadata.isRunTaskGradle6(): Boolean {
+        return (this as? BuildOperationCategory)?.name == "RUN_WORK_ROOT_BUILD"
     }
 
     companion object {

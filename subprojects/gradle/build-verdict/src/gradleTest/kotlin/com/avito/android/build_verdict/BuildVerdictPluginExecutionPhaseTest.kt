@@ -194,11 +194,13 @@ class BuildVerdictPluginExecutionPhaseTest : BaseBuildVerdictTest() {
                 buildGradleExtra = """
                 import com.avito.android.build_verdict.BuildVerdictTask
                 import com.avito.android.build_verdict.span.SpannedString
+                import org.gradle.api.tasks.Input
                 
                 class CustomTask extends DefaultTask implements BuildVerdictTask {
                 
-                    private String verdict = null
+                    private String verdict = ""
                     
+                    @Input
                     @Override
                     SpannedString getVerdict() {
                         return SpannedString.toSpanned(verdict)

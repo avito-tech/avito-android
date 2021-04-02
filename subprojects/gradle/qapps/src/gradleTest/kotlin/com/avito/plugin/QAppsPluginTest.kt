@@ -38,9 +38,9 @@ internal class QAppsPluginTest {
 
         result.assertThat().apply {
             buildFailed()
-            outputContains("No value has been specified for property 'branch'")
-            outputContains("No value has been specified for property 'comment'")
-            outputContains("No value has been specified for property 'host'")
+            outputContains("property 'branch' doesn't have a configured value")
+            outputContains("property 'comment' doesn't have a configured value")
+            outputContains("property 'host' doesn't have a configured value")
         }
     }
 

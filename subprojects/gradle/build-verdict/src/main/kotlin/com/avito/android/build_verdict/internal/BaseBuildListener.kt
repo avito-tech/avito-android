@@ -6,7 +6,6 @@ import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 
 abstract class BaseBuildListener : BuildListener {
-    override fun buildStarted(gradle: Gradle) {}
 
     override fun settingsEvaluated(settings: Settings) {}
 

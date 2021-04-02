@@ -41,7 +41,7 @@ internal class CriticalPathTest {
             abstract class ConsumerTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
             
                 @InputFile
-                var input = objects.fileProperty()
+                val input = objects.fileProperty()
             
                 @OutputFile
                 val outputFile = objects.fileProperty()
