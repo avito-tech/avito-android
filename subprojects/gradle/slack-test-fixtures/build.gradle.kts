@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:slack"))
+    api(projects.gradle.slack)
 }

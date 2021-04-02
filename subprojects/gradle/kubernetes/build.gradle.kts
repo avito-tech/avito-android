@@ -9,7 +9,7 @@ dependencies {
     api(libs.kubernetesDsl)
     // because kubernetes dsl uses old version
     api(libs.kotlinReflect)
-    api(project(":gradle:gradle-extensions"))
+    api(projects.gradle.gradleExtensions)
 
     implementation(gradleApi())
     implementation(libs.officialKubernetesClient)

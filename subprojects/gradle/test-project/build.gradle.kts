@@ -9,10 +9,10 @@ dependencies {
     api(libs.okhttpMockWebServer)
     api(gradleTestKit())
 
-    implementation(project(":gradle:process"))
-    implementation(project(":gradle:android"))
-    implementation(project(":common:truth-extensions"))
-    implementation(testFixtures(project(":common:logger")))
+    implementation(projects.gradle.process)
+    implementation(projects.gradle.android)
+    implementation(projects.common.truthExtensions)
+    implementation(testFixtures(projects.common.logger))
 
     implementation(libs.kotlinReflect)
     implementation(libs.truth)

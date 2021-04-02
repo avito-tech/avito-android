@@ -9,7 +9,7 @@ Add dependency on `http-client` module:
 
 ```kotlin
 dependencies {
-    implementation(project(":common:http-client"))
+    implementation(projects.common.httpClient)
 }
 ```
 

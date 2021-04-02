@@ -6,8 +6,8 @@ plugins {
 group = "com.avito.android.buildlogic"
 
 dependencies {
+    implementation(projects.testingConvention)
     implementation("com.avito.android.buildlogic:libraries")
-    implementation("com.avito.android.buildlogic:testing-convention")
     implementation(libs.kotlinPlugin)
     implementation(libs.nebulaIntegTest)
 }

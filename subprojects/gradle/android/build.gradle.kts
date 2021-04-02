@@ -4,24 +4,21 @@ plugins {
     id("convention.libraries")
 }
 
-@Suppress("UnstableApiUsage")
-val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
-
 dependencies {
     api(libs.androidGradlePlugin) {
         excludeTransitiveAgpDependencies()
     }
 
-    api(project(":common:result"))
+    api(projects.common.result)
 
     implementation(gradleApi())
-    implementation(project(":common:files"))
-    implementation(project(":gradle:process"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.common.files)
+    implementation(projects.gradle.process)
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.gradle.gradleExtensions)
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":gradle:process-test-fixtures"))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.gradle.processTestFixtures)
 }
 
 /**

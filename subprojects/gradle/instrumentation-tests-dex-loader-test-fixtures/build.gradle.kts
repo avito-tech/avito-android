@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:instrumentation-tests-dex-loader"))
-    api(testFixtures(project(":common:report-viewer")))
+    api(projects.gradle.instrumentationTestsDexLoader)
+    api(testFixtures(projects.common.reportViewer))
 }

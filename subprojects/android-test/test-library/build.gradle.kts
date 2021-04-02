@@ -26,7 +26,7 @@ android {
 dependencies {
     implementation(libs.appcompat)
 
-    androidTestImplementation(project(":android-test:ui-testing-core"))
+    androidTestImplementation(projects.androidTest.uiTestingCore)
 
     androidTestUtil(libs.testOrchestrator)
 }

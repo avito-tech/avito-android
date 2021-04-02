@@ -6,18 +6,18 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:statsd-config"))
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.gradle.statsdConfig)
 
-    implementation(project(":common:report-viewer"))
-    implementation(project(":common:time"))
-    implementation(project(":common:http-client"))
+    implementation(projects.common.reportViewer)
+    implementation(projects.common.time)
+    implementation(projects.common.httpClient)
 
     implementation(libs.gson)
     implementation(libs.kotson)
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

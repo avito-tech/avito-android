@@ -10,6 +10,6 @@ publish {
 
 dependencies {
     compileOnly(gradleApi())
-    api(project(":common:logger"))
+    api(projects.common.logger)
     implementation(libs.rxJava)
 }

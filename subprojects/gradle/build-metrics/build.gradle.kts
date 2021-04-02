@@ -6,25 +6,25 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:math"))
-    implementation(project(":gradle:build-environment"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-profile"))
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:graphite-config"))
-    implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:sentry-config"))
-    implementation(project(":gradle:statsd-config"))
-    implementation(project(":gradle:teamcity"))
+    implementation(projects.common.math)
+    implementation(projects.gradle.buildEnvironment)
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.gradle.gradleProfile)
+    implementation(projects.gradle.android)
+    implementation(projects.gradle.graphiteConfig)
+    implementation(projects.gradle.impactShared)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.sentryConfig)
+    implementation(projects.gradle.statsdConfig)
+    implementation(projects.gradle.teamcity)
 
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
-    testImplementation(testFixtures(project(":common:graphite")))
+    testImplementation(testFixtures(projects.common.graphite))
 
-    gradleTestImplementation(project(":gradle:test-project"))
-    gradleTestImplementation(project(":gradle:git"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
+    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.gradle.git)
+    gradleTestImplementation(testFixtures(projects.common.logger))
 }
 
 gradlePlugin {

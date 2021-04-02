@@ -6,19 +6,19 @@ plugins {
 
 dependencies {
     api(libs.okhttpMockWebServer)
-    api(project(":common:logger"))
-    api(project(":common:okhttp"))
+    api(projects.common.logger)
+    api(projects.common.okhttp)
 
     implementation(libs.truth)
     implementation(libs.kotson)
     implementation(libs.commonsLang)
 
-    implementation(project(":common:junit-utils"))
-    implementation(project(":common:resources"))
-    implementation(project(":common:waiter"))
-    implementation(project(":common:result"))
+    implementation(projects.common.junitUtils)
+    implementation(projects.common.resources)
+    implementation(projects.common.waiter)
+    implementation(projects.common.result)
 
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(projects.common.logger))
 }
 
 kotlin {

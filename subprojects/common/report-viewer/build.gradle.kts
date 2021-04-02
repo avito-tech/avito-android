@@ -8,23 +8,23 @@ plugins {
 dependencies {
     api(libs.gson)
 
-    api(project(":common:okhttp"))
-    api(project(":common:result"))
+    api(projects.common.okhttp)
+    api(projects.common.result)
 
-    implementation(project(":common:math"))
-    implementation(project(":common:logger"))
-    implementation(project(":common:http-client"))
+    implementation(projects.common.math)
+    implementation(projects.common.logger)
+    implementation(projects.common.httpClient)
     implementation(libs.kotson)
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":common:files"))
-    testImplementation(project(":common:resources"))
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(testFixtures(project(":common:logger")))
-    testImplementation(testFixtures(project(":common:report-viewer")))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.common.files)
+    testImplementation(projects.common.resources)
+    testImplementation(projects.common.testOkhttp)
+    testImplementation(testFixtures(projects.common.logger))
+    testImplementation(testFixtures(projects.common.reportViewer))
     testImplementation(libs.okhttpMockWebServer)
     testImplementation(libs.jsonPathAssert)
 
-    testFixturesImplementation(testFixtures(project(":common:logger")))
-    testFixturesImplementation(testFixtures(project(":common:http-client")))
+    testFixturesImplementation(testFixtures(projects.common.logger))
+    testFixturesImplementation(testFixtures(projects.common.httpClient))
 }

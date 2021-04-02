@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:process"))
+    api(projects.gradle.process)
 }

@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 includeBuild("../libraries")
 includeBuild("../build-logic")
 

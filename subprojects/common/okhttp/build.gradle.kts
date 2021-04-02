@@ -7,13 +7,13 @@ plugins {
 dependencies {
     api(libs.okhttp)
 
-    implementation(project(":common:logger"))
+    implementation(projects.common.logger)
     implementation(libs.okhttpLogging)
 
-    testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":common:test-okhttp"))
-    testImplementation(project(":common:result"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(projects.common.truthExtensions)
+    testImplementation(projects.common.testOkhttp)
+    testImplementation(projects.common.result)
+    testImplementation(testFixtures(projects.common.logger))
     testImplementation(libs.retrofit)
     testImplementation(libs.retrofitConverterGson)
 }

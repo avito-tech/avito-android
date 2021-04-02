@@ -5,5 +5,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:logger"))
+    api(projects.common.logger)
 }

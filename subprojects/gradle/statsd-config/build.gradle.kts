@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:statsd"))
+    api(projects.common.statsd)
 
     implementation(gradleApi())
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.gradle.gradleExtensions)
 }

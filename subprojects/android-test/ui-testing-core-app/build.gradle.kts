@@ -41,15 +41,15 @@ dependencies {
     implementation(libs.playServicesMaps)
     implementation(libs.recyclerView)
 
-    implementation(project(":android-lib:proxy-toast"))
+    implementation(projects.androidLib.proxyToast)
 
-    androidTestImplementation(project(":android-test:toast-rule"))
-    androidTestImplementation(project(":android-test:ui-testing-core"))
-    androidTestImplementation(project(":android-test:test-inhouse-runner"))
-    androidTestImplementation(project(":common:junit-utils"))
-    androidTestImplementation(project(":common:truth-extensions"))
-    androidTestImplementation(project(":common:test-annotations"))
-    androidTestImplementation(project(":common:report-viewer"))
+    androidTestImplementation(projects.androidTest.toastRule)
+    androidTestImplementation(projects.androidTest.uiTestingCore)
+    androidTestImplementation(projects.androidTest.testInhouseRunner)
+    androidTestImplementation(projects.common.junitUtils)
+    androidTestImplementation(projects.common.truthExtensions)
+    androidTestImplementation(projects.common.testAnnotations)
+    androidTestImplementation(projects.common.reportViewer)
 
     androidTestUtil(libs.testOrchestrator)
 }

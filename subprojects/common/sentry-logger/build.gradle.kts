@@ -5,6 +5,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:sentry"))
-    api(project(":common:logger"))
+    api(projects.common.sentry)
+    api(projects.common.logger)
 }

@@ -6,17 +6,17 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:signer"))
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:upload-cd-build-result"))
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.signer)
+    implementation(projects.gradle.android)
+    implementation(projects.gradle.uploadCdBuildResult)
 
-    testImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))
+    testImplementation(projects.gradle.artifactoryAppBackupTestFixtures)
 
-    gradleTestImplementation(project(":gradle:test-project"))
-    gradleTestImplementation(project(":common:test-okhttp"))
-    gradleTestImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
+    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.common.testOkhttp)
+    gradleTestImplementation(projects.gradle.artifactoryAppBackupTestFixtures)
+    gradleTestImplementation(testFixtures(projects.common.logger))
 }
 
 gradlePlugin {

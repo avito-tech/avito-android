@@ -6,14 +6,14 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:trace-event"))
-    implementation(project(":gradle:gradle-profile"))
-    implementation(project(":gradle:build-environment"))
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.traceEvent)
+    implementation(projects.gradle.gradleProfile)
+    implementation(projects.gradle.buildEnvironment)
     implementation(gradleApi())
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

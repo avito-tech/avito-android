@@ -8,7 +8,7 @@ publish {
 }
 
 dependencies {
-    implementation(project(":common:report-viewer"))
-    implementation(project(":gradle:runner:service"))
-    implementation(project(":gradle:runner:shared"))
+    implementation(projects.common.reportViewer)
+    implementation(projects.gradle.runner.service)
+    implementation(projects.gradle.runner.shared)
 }

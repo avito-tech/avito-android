@@ -6,27 +6,27 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:impact-shared"))
+    api(projects.gradle.impactShared)
 
     implementation(gradleApi())
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":common:files"))
-    implementation(project(":common:math"))
-    implementation(project(":gradle:git"))
-    implementation(project(":gradle:build-environment"))
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:sentry-config"))
-    implementation(project(":gradle:statsd-config"))
+    implementation(projects.gradle.android)
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.common.files)
+    implementation(projects.common.math)
+    implementation(projects.gradle.git)
+    implementation(projects.gradle.buildEnvironment)
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.sentryConfig)
+    implementation(projects.gradle.statsdConfig)
 
     implementation(libs.antPattern)
     implementation(libs.kotlinPlugin)
 
-    gradleTestImplementation(testFixtures(project(":gradle:build-environment")))
-    gradleTestImplementation(testFixtures(project(":gradle:impact-shared")))
-    gradleTestImplementation(testFixtures(project(":common:statsd")))
-    gradleTestImplementation(project(":gradle:test-project"))
-    gradleTestImplementation(project(":gradle:impact-shared-test-fixtures"))
+    gradleTestImplementation(testFixtures(projects.gradle.buildEnvironment))
+    gradleTestImplementation(testFixtures(projects.gradle.impactShared))
+    gradleTestImplementation(testFixtures(projects.common.statsd))
+    gradleTestImplementation(projects.gradle.testProject)
+    gradleTestImplementation(projects.gradle.impactSharedTestFixtures)
 }
 
 gradlePlugin {

@@ -5,15 +5,15 @@ plugins {
 }
 
 dependencies {
-    api(project(":gradle:process"))
-    api(project(":common:result"))
+    api(projects.gradle.process)
+    api(projects.common.result)
 
     implementation(gradleApi())
-    implementation(project(":common:logger"))
-    implementation(project(":common:slf4j-logger"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.common.logger)
+    implementation(projects.common.slf4jLogger)
+    implementation(projects.gradle.gradleExtensions)
 
-    testImplementation(project(":gradle:test-project"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(projects.gradle.testProject)
+    testImplementation(testFixtures(projects.common.logger))
     testImplementation(libs.mockitoJUnitJupiter)
 }

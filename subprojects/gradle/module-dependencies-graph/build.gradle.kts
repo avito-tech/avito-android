@@ -8,12 +8,12 @@ plugins {
 dependencies {
     compileOnly(gradleApi())
 
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":common:math"))
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.common.math)
 
-    gradleTestImplementation(project(":common:truth-extensions"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.common.truthExtensions)
+    gradleTestImplementation(testFixtures(projects.common.logger))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 kotlin {

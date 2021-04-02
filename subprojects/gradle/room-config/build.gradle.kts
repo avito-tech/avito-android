@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.gradle.android)
+    implementation(projects.gradle.gradleExtensions)
     implementation(libs.kotlinPlugin)
 
-    testImplementation(project(":gradle:test-project"))
+    testImplementation(projects.gradle.testProject)
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

@@ -7,14 +7,14 @@ plugins {
 dependencies {
     compileOnly(gradleApi())
 
-    api(project(":common:logger"))
-    api(project(":common:time"))
+    api(projects.common.logger)
+    api(projects.common.time)
 
-    implementation(project(":gradle:sentry-config"))
-    implementation(project(":gradle:build-environment"))
-    implementation(project(":common:elastic-logger"))
-    implementation(project(":common:sentry-logger"))
-    implementation(project(":common:slf4j-logger"))
+    implementation(projects.gradle.sentryConfig)
+    implementation(projects.gradle.buildEnvironment)
+    implementation(projects.common.elasticLogger)
+    implementation(projects.common.sentryLogger)
+    implementation(projects.common.slf4jLogger)
 
     testImplementation(libs.mockitoJUnitJupiter)
 }

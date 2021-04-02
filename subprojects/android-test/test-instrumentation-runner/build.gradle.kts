@@ -7,5 +7,5 @@ plugins {
 dependencies {
     api(libs.androidXTestRunner)
     implementation(libs.uiAutomator)
-    implementation(project(":common:logger"))
+    implementation(projects.common.logger)
 }

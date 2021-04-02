@@ -6,14 +6,14 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:runner:service"))
-    implementation(project(":gradle:runner:shared"))
-    implementation(project(":common:result"))
+    implementation(projects.gradle.gradleExtensions)
+    implementation(projects.gradle.android)
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.gradle.runner.service)
+    implementation(projects.gradle.runner.shared)
+    implementation(projects.common.result)
 
-    gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(projects.gradle.testProject)
 }
 
 gradlePlugin {

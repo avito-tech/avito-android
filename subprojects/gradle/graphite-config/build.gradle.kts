@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:graphite"))
+    api(projects.common.graphite)
 
     implementation(gradleApi())
-    implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:gradle-extensions"))
+    implementation(projects.gradle.gradleLogger)
+    implementation(projects.gradle.gradleExtensions)
 }
