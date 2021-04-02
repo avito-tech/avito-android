@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
     id("convention.test-fixtures")
 }
 
@@ -14,6 +13,7 @@ dependencies {
     implementation(project(":common:math"))
     implementation(project(":common:logger"))
     implementation(project(":common:http-client"))
+    implementation(libs.kotlinStdlib)
     implementation(libs.kotson)
 
     testImplementation(project(":common:truth-extensions"))

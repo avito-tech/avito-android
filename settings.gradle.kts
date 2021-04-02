@@ -1,5 +1,6 @@
+enableFeaturePreview("VERSION_CATALOGS")
+
 rootProject.name = "avito-android-infra"
 
-includeBuild("libraries")
 includeBuild("build-logic")
 includeBuild("subprojects")

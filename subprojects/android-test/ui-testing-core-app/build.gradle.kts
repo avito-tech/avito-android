@@ -8,7 +8,6 @@ import com.avito.utils.gradle.kubernetesCredentials
 plugins {
     id("convention.kotlin-android-app")
     id("com.avito.android.instrumentation-tests")
-    id("convention.libraries")
 }
 
 android {
@@ -36,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinStdlib)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.playServicesMaps)

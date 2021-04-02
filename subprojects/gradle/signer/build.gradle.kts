@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -19,6 +18,7 @@ dependencies {
 
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
+    implementation(libs.kotlinStdlib)
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":common:test-okhttp"))

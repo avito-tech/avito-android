@@ -6,4 +6,6 @@ plugins {
 
 dependencies {
     api(project(":common:logger"))
+
+    implementation(libs.kotlinStdlib)
 }

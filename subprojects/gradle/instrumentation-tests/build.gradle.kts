@@ -5,7 +5,6 @@ plugins {
     id("convention.test-fixtures")
     id("convention.publish-gradle-plugin")
     id("convention.integration-testing")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -23,6 +22,7 @@ dependencies {
     implementation(libs.kotson)
     implementation(libs.retrofit)
     implementation(libs.teamcityClient)
+    implementation(libs.kotlinStdlib)
     implementation(project(":common:composite-exception"))
     implementation(project(":common:file-storage"))
     implementation(project(":common:logger"))

@@ -1,4 +1,5 @@
-includeBuild("../libraries")
+enableFeaturePreview("VERSION_CATALOGS")
+
 includeBuild("../build-logic")
 
 include(":gradle:artifactory-app-backup")
@@ -178,7 +179,6 @@ pluginManagement {
     val detektVersion = systemProperty("detektVersion")
     val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion")
     val infraVersion = systemProperty("infraVersion")
-    val nebulaIntegTestVersion = systemProperty("nebulaIntegTestVersion")
 
     resolutionStrategy {
         eachPlugin {
@@ -195,9 +195,6 @@ pluginManagement {
 
                 pluginId == "com.slack.keeper" ->
                     useModule("com.slack.keeper:keeper:0.7.0")
-
-                pluginId == "nebula.integtest" ->
-                    useVersion(nebulaIntegTestVersion.get())
 
                 pluginId == "io.gitlab.arturbosch.detekt" ->
                     useVersion(detektVersion.get())
@@ -225,6 +222,13 @@ fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: 
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
+
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+
     repositories {
         maven {
             setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")

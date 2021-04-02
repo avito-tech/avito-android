@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 
 plugins {
     id("kotlin")
-    id("convention.libraries")
+    id("convention.junit5")
     id("java-gradle-plugin")
     idea
 }
@@ -39,22 +39,13 @@ val gradleTestTask = tasks.register<Test>("gradleTest") {
 
     systemProperty("rootDir", "${project.rootDir}")
     systemProperty("kotlinVersion", kotlinVersion)
-    systemProperty("compileSdkVersion", libs.compileSdkVersion)
-    systemProperty("buildToolsVersion", libs.buildToolsVersion)
-    systemProperty("androidGradlePluginVersion", libs.androidGradlePluginVersion)
+    systemProperty("compileSdkVersion", 29)
+    systemProperty("buildToolsVersion", "29.0.3")
+    systemProperty("androidGradlePluginVersion", "4.1.2")
     systemProperty("artifactoryUrl", artifactoryUrl.getOrElse(""))
     systemProperty("isTest", true)
 
     systemProperty("junit.jupiter.execution.timeout.default", testTimeoutSeconds)
-}
-
-dependencies {
-    "gradleTestImplementation"(gradleTestKit())
-    "gradleTestImplementation"(libs.junitJupiterApi)
-    "gradleTestImplementation"(libs.truth)
-    "gradleTestRuntimeOnly"(libs.junitJupiterEngine)
-    "gradleTestRuntimeOnly"(libs.junitPlatformRunner)
-    "gradleTestRuntimeOnly"(libs.junitPlatformLauncher)
 }
 
 gradlePlugin {

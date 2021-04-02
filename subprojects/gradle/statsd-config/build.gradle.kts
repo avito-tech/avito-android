@@ -9,4 +9,6 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
+
+    implementation(libs.kotlinStdlib)
 }

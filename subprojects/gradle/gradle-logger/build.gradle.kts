@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
@@ -15,6 +14,8 @@ dependencies {
     implementation(project(":common:elastic-logger"))
     implementation(project(":common:sentry-logger"))
     implementation(project(":common:slf4j-logger"))
+
+    implementation(libs.kotlinStdlib)
 
     testImplementation(libs.mockitoJUnitJupiter)
 }

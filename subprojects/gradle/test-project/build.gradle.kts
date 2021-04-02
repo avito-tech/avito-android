@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -16,6 +15,7 @@ dependencies {
 
     implementation(libs.kotlinReflect)
     implementation(libs.truth)
+    implementation(libs.kotlinStdlib)
 
     testImplementation(libs.kotlinTest)
     testImplementation(libs.kotlinTestJUnit)

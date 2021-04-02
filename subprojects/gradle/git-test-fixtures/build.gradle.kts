@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     api(project(":gradle:git"))
+
+    implementation(libs.kotlinStdlib)
 }

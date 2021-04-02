@@ -5,7 +5,6 @@ plugins {
     id("convention.publish-kotlin-library")
     id("convention.test-fixtures")
     id("convention.integration-testing")
-    id("convention.libraries")
 }
 
 publish {
@@ -21,6 +20,8 @@ dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":common:logger"))
     implementation(project(":common:result"))
+
+    implementation(libs.kotlinStdlib)
 
     integTestImplementation(project(":common:truth-extensions"))
 

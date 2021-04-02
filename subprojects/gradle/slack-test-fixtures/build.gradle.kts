@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     api(project(":gradle:slack"))
+
+    implementation(libs.kotlinStdlib)
 }

@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -15,6 +14,7 @@ dependencies {
     implementation(project(":gradle:slack"))
     implementation(project(":gradle:statsd-config"))
     implementation(libs.okhttp)
+    implementation(libs.kotlinStdlib)
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(testFixtures(project(":common:report-viewer")))

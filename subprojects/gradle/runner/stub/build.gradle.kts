@@ -11,4 +11,6 @@ dependencies {
     implementation(project(":common:report-viewer"))
     implementation(project(":gradle:runner:service"))
     implementation(project(":gradle:runner:shared"))
+
+    implementation(libs.kotlinStdlib)
 }

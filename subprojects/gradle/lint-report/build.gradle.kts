@@ -4,7 +4,6 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
     id("convention.integration-testing")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -13,6 +12,7 @@ dependencies {
 
     implementation(libs.kotlinHtml)
     implementation(libs.okhttp)
+    implementation(libs.kotlinStdlib)
 
     implementation(project(":common:okhttp"))
     implementation(project(":common:sentry"))

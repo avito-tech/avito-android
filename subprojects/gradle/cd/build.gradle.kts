@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -28,6 +27,8 @@ dependencies {
     implementation(project(":gradle:tms"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(project(":gradle:upload-to-googleplay"))
+
+    implementation(libs.kotlinStdlib)
 
     gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))

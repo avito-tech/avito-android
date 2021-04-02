@@ -1,11 +1,11 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
     implementation(gradleApi())
+    implementation(libs.kotlinStdlib)
 
     testImplementation(project(":gradle:test-project"))
 }

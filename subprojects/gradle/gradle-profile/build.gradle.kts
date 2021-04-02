@@ -6,4 +6,6 @@ plugins {
 dependencies {
     implementation(gradleApi())
     implementation(project(":gradle:gradle-extensions"))
+
+    implementation(libs.kotlinStdlib)
 }

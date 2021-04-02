@@ -1,10 +1,10 @@
 plugins {
     id("convention.kotlin-android-library")
     id("convention.publish-android-library")
-    id("convention.libraries")
 }
 
 dependencies {
+    implementation(libs.kotlinStdlib)
     implementation(libs.androidAnnotations)
     implementation(libs.junit)
 

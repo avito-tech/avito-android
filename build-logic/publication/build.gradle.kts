@@ -1,6 +1,5 @@
 plugins {
     `kotlin-dsl`
-    id("convention.libraries")
 }
 
 group = "com.avito.android.buildlogic"

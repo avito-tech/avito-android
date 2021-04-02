@@ -1,11 +1,12 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
 dependencies {
+    implementation(libs.kotlinStdlib)
+
     implementation(project(":common:math"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-logger"))

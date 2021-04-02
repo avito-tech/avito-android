@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":gradle:impact-shared")) {
         because("ChangesDetector reuse")
     }
+    implementation(libs.kotlinStdlib)
 
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":gradle:git"))

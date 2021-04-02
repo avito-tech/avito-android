@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
-    id("convention.libraries")
     `java-test-fixtures`
 }
 

@@ -1,11 +1,7 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
-
-@Suppress("UnstableApiUsage")
-val androidGradlePluginVersion = providers.systemProperty("androidGradlePluginVersion").forUseAtConfigurationTime()
 
 dependencies {
     api(libs.androidGradlePlugin) {
@@ -14,6 +10,7 @@ dependencies {
 
     api(project(":common:result"))
 
+    implementation(libs.kotlinStdlib)
     implementation(gradleApi())
     implementation(project(":common:files"))
     implementation(project(":gradle:process"))

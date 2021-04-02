@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -10,6 +9,7 @@ dependencies {
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:gradle-logger"))
     implementation(libs.gson)
+    implementation(libs.kotlinStdlib)
 
     testImplementation(testFixtures(project(":common:logger")))
 

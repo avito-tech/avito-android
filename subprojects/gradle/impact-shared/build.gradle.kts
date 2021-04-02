@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
     id("convention.test-fixtures")
 }
 
@@ -18,6 +17,7 @@ dependencies {
 
     implementation(libs.antPattern)
     implementation(libs.kotlinPlugin)
+    implementation(libs.kotlinStdlib)
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:git-test-fixtures"))

@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     api(project(":gradle:process"))
+
+    implementation(libs.kotlinStdlib)
 }

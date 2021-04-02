@@ -5,4 +5,6 @@ plugins {
 
 dependencies {
     implementation(project(":common:report-viewer"))
+
+    implementation(libs.kotlinStdlib)
 }

@@ -1,10 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
 plugins {
-    id("convention.libraries")
+    id("convention.junit5")
 }
 
 tasks.withType<Test>().configureEach {
@@ -37,18 +36,7 @@ tasks.withType<Test>().configureEach {
     )
 }
 
-plugins.withType<KotlinBasePluginWrapper>() {
-    dependencies {
-        add("testImplementation", libs.junitJupiterApi)
-        add("testImplementation", libs.truth)
-
-        add("testRuntimeOnly", libs.junitJupiterEngine)
-        add("testRuntimeOnly", libs.junitPlatformRunner)
-        add("testRuntimeOnly", libs.junitPlatformLauncher)
-    }
-}
-
-plugins.withType<JavaTestFixturesPlugin>() {
+plugins.withType<JavaTestFixturesPlugin> {
 
     configure<KotlinJvmProjectExtension> {
         target.compilations.getByName("test")

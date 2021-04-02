@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
@@ -14,4 +13,5 @@ dependencies {
     implementation(gradleApi())
     implementation(libs.officialKubernetesClient)
     implementation(libs.googleAuthLibrary)
+    implementation(libs.kotlinStdlib)
 }

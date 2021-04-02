@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -16,6 +15,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttpLogging)
+    implementation(libs.kotlinStdlib)
 
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":common:test-okhttp"))

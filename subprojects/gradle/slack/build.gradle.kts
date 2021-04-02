@@ -4,7 +4,6 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     id("convention.integration-testing")
-    id("convention.libraries")
 }
 
 dependencies {
@@ -15,6 +14,7 @@ dependencies {
     implementation(libs.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(libs.okhttp)
     implementation(libs.coroutinesCore)
+    implementation(libs.kotlinStdlib)
 
     integTestImplementation(project(":common:truth-extensions"))
     integTestImplementation(project(":gradle:gradle-extensions"))

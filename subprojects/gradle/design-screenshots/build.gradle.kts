@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.libraries")
     id("convention.gradle-testing")
 }
 
@@ -12,6 +11,8 @@ dependencies {
     implementation(project(":gradle:runner:service"))
     implementation(project(":gradle:runner:shared"))
     implementation(project(":common:result"))
+
+    implementation(libs.kotlinStdlib)
 
     gradleTestImplementation(project(":gradle:test-project"))
 }

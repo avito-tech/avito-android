@@ -3,3 +3,7 @@ plugins {
     id("convention.publish-kotlin-library")
     id("convention.test-fixtures")
 }
+
+dependencies {
+    implementation(libs.kotlinStdlib)
+}

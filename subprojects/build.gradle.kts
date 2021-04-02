@@ -8,7 +8,6 @@ plugins {
     base
     id("io.gitlab.arturbosch.detekt")
     id("com.autonomousapps.dependency-analysis") version "0.55.0" apply false
-    id("convention.libraries")
 
     // workaround to load plugin classes once:
     // https://youtrack.jetbrains.com/issue/KT-31643#focus=Comments-27-3510019.0-0

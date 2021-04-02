@@ -5,4 +5,6 @@ plugins {
 
 dependencies {
     api(gradleApi())
+
+    implementation(libs.kotlinStdlib)
 }

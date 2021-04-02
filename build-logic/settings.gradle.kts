@@ -1,3 +1,5 @@
+enableFeaturePreview("VERSION_CATALOGS")
+
 rootProject.name = "build-logic"
 
 include("kotlin-convention")
@@ -47,8 +49,15 @@ fun MavenArtifactRepository.setUrlOrProxy(repositoryName: String, originalRepo: 
     }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
-    @Suppress("UnstableApiUsage")
+
+    versionCatalogs {
+        create("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
+
     repositories {
         maven {
             setUrlOrProxy("mavenCentral", "https://repo1.maven.org/maven2")

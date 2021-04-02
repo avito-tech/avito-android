@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     api(project(":gradle:build-failer"))
+
+    implementation(libs.kotlinStdlib)
 }

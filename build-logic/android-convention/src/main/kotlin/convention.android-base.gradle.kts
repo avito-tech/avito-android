@@ -1,9 +1,5 @@
 import com.android.build.gradle.BaseExtension
 
-plugins {
-    id("convention.libraries")
-}
-
 configure<BaseExtension> {
     sourceSets {
         named("main").configure { java.srcDir("src/main/kotlin") }
@@ -11,17 +7,17 @@ configure<BaseExtension> {
         named("test").configure { java.srcDir("src/test/kotlin") }
     }
 
-    buildToolsVersion(libs.buildToolsVersion)
-    compileSdkVersion(libs.compileSdkVersion)
+    buildToolsVersion("29.0.3")
+    compileSdkVersion(29)
 
     compileOptions {
-        sourceCompatibility = libs.javaVersion
-        targetCompatibility = libs.javaVersion
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
-        minSdkVersion(libs.minSdkVersion)
-        targetSdkVersion(libs.targetSdkVersion)
+        minSdkVersion(21)
+        targetSdkVersion(28)
     }
 
     lintOptions {

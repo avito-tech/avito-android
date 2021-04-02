@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
@@ -14,6 +13,7 @@ dependencies {
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:impact-shared"))
+    implementation(libs.kotlinStdlib)
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
     implementation(libs.okhttp)

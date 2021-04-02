@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
@@ -11,6 +10,7 @@ dependencies {
     implementation(gradleApi())
     implementation(libs.dexlib)
     implementation(libs.kotson)
+    implementation(libs.kotlinStdlib)
     implementation(project(":common:files"))
     implementation(project(":gradle:android")) {
         because("For getApkOrThrow function only")

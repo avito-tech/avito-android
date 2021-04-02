@@ -1,13 +1,13 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
     api(libs.okhttp)
 
     implementation(project(":common:logger"))
+    implementation(libs.kotlinStdlib)
     implementation(libs.okhttpLogging)
 
     testImplementation(project(":common:truth-extensions"))

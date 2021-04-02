@@ -9,4 +9,5 @@ dependencies {
     api(project(":gradle:gradle-extensions"))
     implementation(project(":common:logger"))
     implementation(project(":gradle:git"))
+    implementation(libs.kotlinStdlib)
 }

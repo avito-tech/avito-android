@@ -1,7 +1,6 @@
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
-    id("convention.libraries")
 }
 
 dependencies {
@@ -11,6 +10,7 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":common:slf4j-logger"))
 
+    implementation(libs.kotlinStdlib)
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.retrofitConverterGson)
