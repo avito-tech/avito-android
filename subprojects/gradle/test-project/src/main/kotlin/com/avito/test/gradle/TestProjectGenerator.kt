@@ -174,14 +174,17 @@ private fun repositories(): String = if (artifactoryUrl == null) {
         maven {
             name = "Proxy for https://repo1.maven.org/maven2"
             setUrl("$artifactoryUrl/mavenCentral")
+            allowInsecureProtocol = true
         }
         maven {
             name = "Proxy for https://dl.google.com/dl/android/maven2/"
             setUrl("$artifactoryUrl/google-android")
+            allowInsecureProtocol = true
         }
         maven {
             name = "Proxy for https://plugins.gradle.org/m2/"
             setUrl("$artifactoryUrl/gradle-plugins")
+            allowInsecureProtocol = true
         }
     }
     """.trimIndent()
