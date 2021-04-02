@@ -22,18 +22,6 @@ data class CountMetric(
     override val type = "count"
 }
 
-// TODO: delete after 2021.12
-@Deprecated(
-    "Use typed alternative: [GaugeLongMetric] or [GaugeDoubleMetric]. Statsd can't consume any Number.",
-)
-data class GaugeMetric(
-    override val name: SeriesName,
-    val gauge: Number
-) : StatsMetric() {
-    override val value: Number = gauge
-    override val type = "gauge"
-}
-
 data class GaugeLongMetric(
     override val name: SeriesName,
     val gauge: Long
