@@ -3,6 +3,7 @@ package com.avito.runner.service.listener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
+import java.io.File
 
 class CompositeListener(
     val listeners: List<TestListener>
@@ -30,7 +31,9 @@ class CompositeListener(
         targetPackage: String,
         result: TestCaseRun.Result,
         durationMilliseconds: Long,
-        executionNumber: Int
+        executionNumber: Int,
+        testMetadataDirectory: File,
+        testFolder: String
     ) {
         listeners.forEach {
             it.finished(
@@ -39,7 +42,9 @@ class CompositeListener(
                 targetPackage = targetPackage,
                 result = result,
                 durationMilliseconds = durationMilliseconds,
-                executionNumber = executionNumber
+                executionNumber = executionNumber,
+                testMetadataDirectory = testMetadataDirectory,
+                testFolder = testFolder
             )
         }
     }
