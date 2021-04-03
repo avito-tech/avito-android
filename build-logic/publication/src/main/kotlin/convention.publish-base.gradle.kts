@@ -11,7 +11,7 @@ version = providers.gradleProperty("projectVersion")
     .forUseAtConfigurationTime()
     .get()
 
-tasks.withType(Jar::class.java) {
+tasks.withType<Jar> {
     manifest {
         attributes(
             mapOf(
