@@ -42,6 +42,7 @@ internal class ArtifactoryAppBackupPluginTest {
                     name = moduleName,
                     plugins = plugins {
                         id("com.avito.android.artifactory-app-backup")
+                        id("org.gradle.maven-publish")
                     },
                     customScript = """
                         import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt.getArtifactoryAndroidArtifactsBuildVariants
@@ -124,6 +125,7 @@ internal class ArtifactoryAppBackupPluginTest {
                     name = moduleName,
                     plugins = plugins {
                         id("com.avito.android.artifactory-app-backup")
+                        id("org.gradle.maven-publish")
                     },
                     buildGradleExtra = """
                     """.trimIndent(),

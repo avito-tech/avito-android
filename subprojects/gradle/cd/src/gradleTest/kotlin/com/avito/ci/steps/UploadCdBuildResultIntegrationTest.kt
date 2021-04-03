@@ -76,6 +76,7 @@ class UploadCdBuildResultIntegrationTest {
                 id("com.avito.android.instrumentation-tests")
                 id("com.avito.android.artifactory-app-backup")
                 id("com.avito.android.cd")
+                id("org.gradle.maven-publish")
             },
             customScript = """
                         import com.avito.cd.BuildVariant
