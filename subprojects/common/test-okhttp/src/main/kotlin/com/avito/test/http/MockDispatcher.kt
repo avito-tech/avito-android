@@ -1,7 +1,10 @@
 package com.avito.test.http
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.resourceFrom
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import okhttp3.mockwebserver.Dispatcher
@@ -14,7 +17,7 @@ class MockDispatcher(
     loggerFactory: LoggerFactory
 ) : Dispatcher() {
 
-    private val logger = loggerFactory.create("MOCK_WEB_SERVER")
+    private val logger = loggerFactory.create<MockDispatcher>()
 
     private val mocks = Collections.synchronizedList(mutableListOf<Mock>())
 
@@ -70,20 +73,12 @@ private val gson = Gson()
 fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
     val text = resourceFrom<MockDispatcher>(fileName).readText()
     if (fileName.endsWith(".json")) {
-        val exception = validateJson(text)
-        if (exception != null) {
-            throw IllegalArgumentException("$fileName contains invalid json", exception)
+        validateJson(text).onFailure {
+            throw IllegalArgumentException("$fileName contains invalid json", it)
         }
     }
     setBody(text)
     return this
 }
 
-private fun validateJson(json: String): Throwable? {
-    return try {
-        gson.fromJson(json, JsonElement::class.java)
-        null
-    } catch (t: Throwable) {
-        t
-    }
-}
+private fun validateJson(json: String): Result<Unit> = Result.tryCatch { gson.fromJson<JsonElement>(json) }
