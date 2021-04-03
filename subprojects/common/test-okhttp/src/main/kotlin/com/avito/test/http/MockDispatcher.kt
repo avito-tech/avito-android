@@ -12,7 +12,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import java.util.Collections
 
-class MockDispatcher(
+public class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
     loggerFactory: LoggerFactory
 ) : Dispatcher() {
@@ -23,11 +23,11 @@ class MockDispatcher(
 
     private val capturers = Collections.synchronizedList(mutableListOf<RequestCapturer>())
 
-    fun registerMock(mock: Mock) {
+    public fun registerMock(mock: Mock) {
         mocks.add(mock)
     }
 
-    fun captureRequest(requestMatcher: RequestData.() -> Boolean): RequestCapturer {
+    public fun captureRequest(requestMatcher: RequestData.() -> Boolean): RequestCapturer {
         val capturer = RequestCapturer(requestMatcher)
         capturers.add(capturer)
         return capturer
@@ -70,7 +70,7 @@ private val gson = Gson()
  * @param fileName specify file path, relative to assets dir
  *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
  */
-fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
+public fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
     val text = resourceFrom<MockDispatcher>(fileName).readText()
     if (fileName.endsWith(".json")) {
         validateJson(text).onFailure {

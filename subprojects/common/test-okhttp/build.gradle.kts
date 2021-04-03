@@ -20,3 +20,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":common:logger")))
 }
+
+kotlin {
+    explicitApi()
+}
