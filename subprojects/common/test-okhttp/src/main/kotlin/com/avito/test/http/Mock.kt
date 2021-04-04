@@ -2,8 +2,8 @@ package com.avito.test.http
 
 import okhttp3.mockwebserver.MockResponse
 
-class Mock(
-    val requestMatcher: RequestData.() -> Boolean,
-    val response: MockResponse,
-    val removeAfterMatched: Boolean = false
+public class Mock(
+    public val requestMatcher: RequestData.() -> Boolean,
+    public val response: MockResponse,
+    public val removeAfterMatched: Boolean = false
 )
