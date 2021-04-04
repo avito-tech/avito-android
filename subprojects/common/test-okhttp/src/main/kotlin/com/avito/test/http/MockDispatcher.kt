@@ -1,7 +1,10 @@
 package com.avito.test.http
 
+import com.avito.android.Result
 import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.resourceFrom
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import okhttp3.mockwebserver.Dispatcher
@@ -9,22 +12,22 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import java.util.Collections
 
-class MockDispatcher(
+public class MockDispatcher(
     private val unmockedResponse: MockResponse = MockResponse().setResponseCode(418).setBody("Not mocked"),
     loggerFactory: LoggerFactory
 ) : Dispatcher() {
 
-    private val logger = loggerFactory.create("MOCK_WEB_SERVER")
+    private val logger = loggerFactory.create<MockDispatcher>()
 
     private val mocks = Collections.synchronizedList(mutableListOf<Mock>())
 
     private val capturers = Collections.synchronizedList(mutableListOf<RequestCapturer>())
 
-    fun registerMock(mock: Mock) {
+    public fun registerMock(mock: Mock) {
         mocks.add(mock)
     }
 
-    fun captureRequest(requestMatcher: RequestData.() -> Boolean): RequestCapturer {
+    public fun captureRequest(requestMatcher: RequestData.() -> Boolean): RequestCapturer {
         val capturer = RequestCapturer(requestMatcher)
         capturers.add(capturer)
         return capturer
@@ -67,23 +70,15 @@ private val gson = Gson()
  * @param fileName specify file path, relative to assets dir
  *                 example: "assets/mock/seller_x/publish/parameters/ok.json"
  */
-fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
+public fun MockResponse.setBodyFromFile(fileName: String): MockResponse {
     val text = resourceFrom<MockDispatcher>(fileName).readText()
     if (fileName.endsWith(".json")) {
-        val exception = validateJson(text)
-        if (exception != null) {
-            throw IllegalArgumentException("$fileName contains invalid json", exception)
+        validateJson(text).onFailure {
+            throw IllegalArgumentException("$fileName contains invalid json", it)
         }
     }
     setBody(text)
     return this
 }
 
-private fun validateJson(json: String): Throwable? {
-    return try {
-        gson.fromJson(json, JsonElement::class.java)
-        null
-    } catch (t: Throwable) {
-        t
-    }
-}
+private fun validateJson(json: String): Result<Unit> = Result.tryCatch { gson.fromJson<JsonElement>(json) }

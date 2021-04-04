@@ -7,19 +7,21 @@ import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.StringContains
 
-class RequestCapturer(val requestMatcher: RequestData.() -> Boolean) {
+public class RequestCapturer(
+    public val requestMatcher: RequestData.() -> Boolean
+) {
 
     private val requests = mutableListOf<RecordedRequest>()
 
-    val checks = Checks()
+    public val checks: Checks = Checks()
 
-    fun capture(recordedRequest: RecordedRequest) = synchronized(this) {
+    public fun capture(recordedRequest: RecordedRequest): Unit = synchronized(this) {
         requests.add(recordedRequest)
     }
 
-    inner class Checks {
+    public inner class Checks {
 
-        fun singleRequestCaptured(): RequestChecks = waitForAssertion {
+        public fun singleRequestCaptured(): RequestChecks = waitForAssertion {
             synchronized(this@RequestCapturer) {
                 assertThat("", requests.size == 1)
                 RequestChecks(RequestData(requests.first()))
@@ -27,19 +29,19 @@ class RequestCapturer(val requestMatcher: RequestData.() -> Boolean) {
         }
     }
 
-    inner class RequestChecks(private val requestData: RequestData) {
+    public inner class RequestChecks(private val requestData: RequestData) {
 
-        val formUrlEncodedBody: FormUrlEncodedBodyChecks = FormUrlEncodedBodyChecks(
+        public val formUrlEncodedBody: FormUrlEncodedBodyChecks = FormUrlEncodedBodyChecks(
             recordedRequest = requestData.recordedRequest,
             stringBody = requestData.body
         )
 
-        fun pathContains(substring: String): RequestChecks {
+        public fun pathContains(substring: String): RequestChecks {
             assertThat(requestData.path, StringContains(substring))
             return this
         }
 
-        fun bodyContains(vararg substrings: String): RequestChecks {
+        public fun bodyContains(vararg substrings: String): RequestChecks {
             substrings.forEach {
                 waitForAssertion {
                     assertThat(requestData.body, StringContains(it))
@@ -48,17 +50,17 @@ class RequestCapturer(val requestMatcher: RequestData.() -> Boolean) {
             return this
         }
 
-        fun bodyDoesntContain(substring: String): RequestChecks {
+        public fun bodyDoesntContain(substring: String): RequestChecks {
             assertThat(requestData.body).doesNotContain(substring)
             return this
         }
 
-        fun containsHeader(name: String, value: String): RequestChecks {
+        public fun containsHeader(name: String, value: String): RequestChecks {
             assertThat(requestData.headers).contains(name to value)
             return this
         }
 
-        fun bodyMatches(matcher: Matcher<Any?>): RequestChecks {
+        public fun bodyMatches(matcher: Matcher<Any?>): RequestChecks {
             assertThat(requestData.body, matcher)
             return this
         }

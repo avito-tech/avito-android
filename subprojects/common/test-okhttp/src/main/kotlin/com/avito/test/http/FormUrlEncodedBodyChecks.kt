@@ -9,12 +9,12 @@ import org.hamcrest.core.Is
 import java.net.URLDecoder
 import java.net.URLEncoder
 
-class FormUrlEncodedBodyChecks(
+public class FormUrlEncodedBodyChecks(
     private val recordedRequest: RecordedRequest,
     private val stringBody: String
 ) {
 
-    sealed class Result {
+    private sealed class Result {
         object NoProblem : Result()
         data class KeyNotFound(val key: String) : Result()
         data class ValueDoesNotMatch(val key: String, val value: String, val actualValue: String?) :
@@ -34,7 +34,7 @@ class FormUrlEncodedBodyChecks(
             .toMap()
     }
 
-    fun contains(vararg parameters: Pair<String, String>) {
+    public fun contains(vararg parameters: Pair<String, String>) {
         val results = parameters.map { (key, value) ->
             val encodedKey = encode(key)
             if (actualParameters.containsKey(encodedKey)) {
