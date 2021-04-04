@@ -7,7 +7,7 @@ import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 
 internal class SendMetricsAction(
     private val metricsSender: InstrumentationMetricsSender
-): FinalizeAction {
+) : FinalizeAction {
 
     override fun action(testRunResult: TestRunResult) {
         if (testRunResult.notReported is HasNotReportedTestsDeterminer.Result.HasNotReportedTests) {

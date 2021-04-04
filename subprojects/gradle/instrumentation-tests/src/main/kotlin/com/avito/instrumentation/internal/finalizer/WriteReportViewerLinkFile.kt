@@ -12,7 +12,7 @@ internal class WriteReportViewerLinkFile(
     private val reportViewer: ReportViewer,
     private val reportCoordinates: ReportCoordinates,
     private val outputDir: File
-): FinalizeAction {
+) : FinalizeAction {
 
     override fun action(testRunResult: TestRunResult) {
         val reportUrl = reportViewer.generateReportUrl(
