@@ -5,6 +5,7 @@ import com.avito.coroutines.extensions.Dispatchers
 import com.avito.runner.service.IntentionsRouter
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
+import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.TestCaseRun.Result.Failed
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
@@ -132,7 +133,7 @@ internal class DeviceWorker(
         stateWorker.clearPackages(currentState)
     }.map { intendedState }
 
-    private fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun {
+    private suspend fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun {
         val deviceTestCaseRun = try {
 
             testListener.started(
@@ -162,14 +163,30 @@ internal class DeviceWorker(
             )
         }
 
+        val testMetadataDirectory = testMetadataDirectory(targetPackage = action.targetPackage)
+
+        val testFolder = testFolder(action.test)
+
         testListener.finished(
             device = device,
             test = action.test,
             targetPackage = action.targetPackage,
             result = deviceTestCaseRun.testCaseRun.result,
             durationMilliseconds = deviceTestCaseRun.testCaseRun.durationMilliseconds,
-            executionNumber = action.executionNumber
+            executionNumber = action.executionNumber,
+            testMetadataDirectory = testMetadataDirectory,
+            testFolder = testFolder
         )
+
+        val testMetadataFullDir = File(testMetadataDirectory, testFolder)
+
+        val (_, throwable) = device.clearDirectory(
+            remotePath = testMetadataFullDir.toPath()
+        )
+
+        if (throwable != null) {
+            deviceListener.onDeviceDied(device, "Can't clear test metadata dir", throwable)
+        }
 
         return deviceTestCaseRun
     }
@@ -200,4 +217,15 @@ internal class DeviceWorker(
                 State.Layer.Model(model = model)
             )
         )
+
+    @Suppress("SdCardPath") // android API's are unavailable here
+    private fun testMetadataDirectory(targetPackage: String): File =
+        File("/sdcard/Android/data/$targetPackage/files/$RUNNER_OUTPUT_FOLDER")
+
+    private fun testFolder(test: TestCase): String = "${test.className}#${test.methodName}"
+
+    companion object {
+        // todo should be passed with instrumentation params, see [ExternalStorageTransport]
+        private const val RUNNER_OUTPUT_FOLDER = "runner"
+    }
 }

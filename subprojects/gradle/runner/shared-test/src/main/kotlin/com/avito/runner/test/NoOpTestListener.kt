@@ -4,6 +4,7 @@ import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
+import java.io.File
 
 object NoOpTestListener : TestListener {
 
@@ -21,7 +22,9 @@ object NoOpTestListener : TestListener {
         targetPackage: String,
         result: TestCaseRun.Result,
         durationMilliseconds: Long,
-        executionNumber: Int
+        executionNumber: Int,
+        testMetadataDirectory: File,
+        testFolder: String
     ) {
     }
 }

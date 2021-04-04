@@ -43,12 +43,18 @@ internal class ArtifactsTestListener(
         targetPackage: String,
         result: TestCaseRun.Result,
         durationMilliseconds: Long,
-        executionNumber: Int
+        executionNumber: Int,
+        testMetadataDirectory: File,
+        testFolder: String
     ) {
         val testResult = when (result) {
             Passed,
             is Failed.InRun ->
-                pullArtifacts(device, test, targetPackage)
+                pullArtifacts(
+                    device = device,
+                    runnerOutputDirectory = testMetadataDirectory,
+                    testFolder = testFolder
+                )
             is InfrastructureError ->
                 TestResult.Incomplete(result)
             Ignored ->
@@ -69,50 +75,32 @@ internal class ArtifactsTestListener(
     @ExperimentalPathApi
     private fun pullArtifacts(
         device: Device,
-        test: TestCase,
-        targetPackage: String
+        runnerOutputDirectory: File,
+        testFolder: String
     ): TestResult.Complete {
         val tempDirectory = createTempDirectory()
         val artifacts = try {
-            val testMetadataDirectory = testMetadataFullDirectory(
-                targetPackage = targetPackage,
-                test = test
-            )
+
+            val testMetadataDirectory = File(runnerOutputDirectory, testFolder)
+
             val pullingResult = device.pull(
                 from = testMetadataDirectory.toPath(),
                 to = tempDirectory
             )
 
-            val resultDirectory = pullingResult
-                .map {
-                    File(
-                        tempDirectory.toFile(),
-                        testMetadataDirectoryPath(test)
-                    )
-                }
-
-            device.clearDirectory(
-                remotePath = testMetadataDirectory.toPath()
-            ).getOrThrow()
+            val resultDirectory = pullingResult.map { File(tempDirectory.toFile(), testFolder) }
 
             resultDirectory
         } catch (t: Throwable) {
             logger.warn("Failed to process artifacts from $device", t)
             Result.Failure(t)
         } finally {
-            tempDirectory.toFile().delete()
+            try {
+                tempDirectory.toFile().delete()
+            } catch (e: Throwable) {
+                // ignore
+            }
         }
         return TestResult.Complete(artifacts)
-    }
-
-    @Suppress("SdCardPath") // android API's are unavailable here
-    private fun testMetadataFullDirectory(targetPackage: String, test: TestCase): File =
-        File("/sdcard/Android/data/$targetPackage/files/$RUNNER_OUTPUT_FOLDER/${testMetadataDirectoryPath(test)}")
-
-    private fun testMetadataDirectoryPath(test: TestCase): String = "${test.className}#${test.methodName}"
-
-    companion object {
-        // todo should be passed with instrumentation params, see [ExternalStorageTransport]
-        private const val RUNNER_OUTPUT_FOLDER = "runner"
     }
 }
