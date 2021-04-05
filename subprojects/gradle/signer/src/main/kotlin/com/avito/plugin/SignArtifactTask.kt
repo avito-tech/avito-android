@@ -2,6 +2,7 @@ package com.avito.plugin
 
 import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
+import com.avito.http.RetryInterceptor
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import com.avito.time.DefaultTimeProvider
@@ -51,6 +52,13 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
             .connectTimeout(10L, TimeUnit.SECONDS)
             .writeTimeout(40L, TimeUnit.SECONDS)
             .readTimeout(40L, TimeUnit.SECONDS)
+            .addInterceptor(
+                RetryInterceptor(
+                    retries = 3,
+                    allowedMethods = listOf("GET", "POST"),
+                    logger = loggerFactory.create<SignViaServiceAction>()
+                )
+            )
             .build()
 
         // TODO: Use workers
@@ -60,7 +68,6 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
             token = tokenProperty.get(),
             unsignedFile = unsignedFile,
             signedFile = signedFile,
-            loggerFactory = loggerFactory
         ).sign()
 
         hackForArtifactsApi()
