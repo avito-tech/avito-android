@@ -1,5 +1,6 @@
 package com.avito.android.runner
 
+import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
@@ -169,16 +170,19 @@ private fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDesti
 }
 
 private fun parseSentryConfig(argumentsProvider: ArgsProvider): SentryConfig {
-    val sentryDsn = argumentsProvider.getOptionalArgument("sentryDsn")
-    return if (sentryDsn.isNullOrBlank()) {
+    val dsn = argumentsProvider.getOptionalArgument("sentryDsn")
+    val tags = mapOf(
+        "API" to Build.VERSION.SDK_INT.toString()
+    )
+    return if (dsn.isNullOrBlank()) {
         SentryConfig.Disabled
     } else {
         SentryConfig.Enabled(
-            dsn = sentryDsn,
+            dsn = dsn,
             environment = "android-test",
             serverName = "",
             release = "",
-            tags = emptyMap()
+            tags = tags
         )
     }
 }
