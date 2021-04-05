@@ -6,10 +6,10 @@ import android.graphics.Canvas
 import android.os.Looper
 import com.avito.android.Result
 import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
-import com.avito.android.test.report.transport.ReportFileProvider
-import com.avito.android.test.report.transport.ReportFileProviderImpl
 import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
+import com.avito.report.ReportFileProvider
+import com.avito.report.internal.ReportFileProviderImpl
 import java.io.File
 import java.io.FileOutputStream
 
@@ -44,7 +44,11 @@ class ScreenshotCapturerImpl(private val reportFileProvider: ReportFileProvider)
         compressFormat: Bitmap.CompressFormat,
         quality: Int
     ): Result<File?> {
-        return reportFileProvider.provideReportDir().flatMap { dir ->
+        return Result.tryCatch {
+            val reportDir = reportFileProvider.provideReportDir()
+            reportDir.mkdirs()
+            reportDir
+        }.flatMap { dir ->
             captureBitmap().flatMap { capture ->
                 Result.Success(
                     when (capture) {

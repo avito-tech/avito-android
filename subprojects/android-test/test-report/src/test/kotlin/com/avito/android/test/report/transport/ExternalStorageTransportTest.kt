@@ -6,6 +6,8 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.StubLoggerFactory
+import com.avito.report.ReportFileProvider
+import com.avito.report.internal.ReportFileProviderImpl
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
@@ -55,8 +57,7 @@ internal class ExternalStorageTransportTest {
         )
 
         assertThat<RemoteStorage.Result.Success>(result.get()) {
-            val fileName = outputFileProvider.fromUploadPlaceholder(url)
-            val contentFile = File(tempDir, "runner/com.Test#test/$fileName")
+            val contentFile = File(tempDir, "runner/com.Test#test/$url")
 
             assertThat(contentFile.exists()).isTrue()
 

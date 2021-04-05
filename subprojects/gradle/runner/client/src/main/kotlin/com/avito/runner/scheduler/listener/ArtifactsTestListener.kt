@@ -3,7 +3,6 @@ package com.avito.runner.scheduler.listener
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.runner.scheduler.listener.TestLifecycleListener.TestResult
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun

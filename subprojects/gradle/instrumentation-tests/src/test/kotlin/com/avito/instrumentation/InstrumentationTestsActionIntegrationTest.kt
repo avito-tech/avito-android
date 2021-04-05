@@ -18,7 +18,6 @@ import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.finalizer.FinalizerFactory
-import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
 import com.avito.instrumentation.stub.createStubInstance
 import com.avito.instrumentation.stub.executing.StubTestExecutor
@@ -32,6 +31,7 @@ import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
+import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.StubTimeProvider
 import com.avito.utils.StubBuildFailer
@@ -55,7 +55,7 @@ internal class InstrumentationTestsActionIntegrationTest {
     private val testExecutorFactory = object : TestExecutorFactory {
         override fun createExecutor(
             devicesProviderFactory: DevicesProviderFactory,
-            testReporter: TestReporter,
+            testReporter: TestLifecycleListener,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,
@@ -173,10 +173,10 @@ internal class InstrumentationTestsActionIntegrationTest {
                 buildId = params.buildId,
             ),
             gson = InstrumentationTestsActionFactory.gson,
-            timeProvider = StubTimeProvider(),
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader,
+            timeProvider = StubTimeProvider(),
             httpClientProvider = HttpClientProvider.createStubInstance()
         ).create(devicesProviderFactory = StubDeviceProviderFactory),
         finalizer = FinalizerFactory.Impl(

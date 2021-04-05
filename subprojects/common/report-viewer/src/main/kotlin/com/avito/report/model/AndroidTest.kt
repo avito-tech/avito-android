@@ -219,6 +219,7 @@ sealed class AndroidTest : TestStaticData {
  * Только данные которые мы можем получить выполнив тест
  */
 interface TestRuntimeData {
+
     val incident: Incident?
 
     /**

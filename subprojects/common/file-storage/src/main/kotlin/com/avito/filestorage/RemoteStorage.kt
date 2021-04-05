@@ -12,6 +12,12 @@ interface RemoteStorage {
         deleteOnUpload: Boolean = true
     ): FutureValue<Result>
 
+    /**
+     * если нужен полный путь до файла
+     * при отрисовки Entity в ReportViewer это не требуется, т.к. это делает фронт
+     */
+    fun fullUrl(result: Result.Success): String
+
     sealed class Request {
 
         sealed class FileRequest : Request() {

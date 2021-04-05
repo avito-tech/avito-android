@@ -26,9 +26,11 @@ import com.avito.filestorage.RemoteStorage.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
+import com.avito.report.model.FileAddress
 import com.avito.report.model.Incident
 import com.avito.time.TimeProvider
 import com.avito.utils.stackTraceToList
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 
 /**
@@ -404,17 +406,21 @@ class ReportImplementation(
                     comment = it.comment,
                     timeInSeconds = it.timeInSeconds,
                     fileType = it.uploadRequest.toFileType(),
-                    fileAddress = it.getUrl()
+                    fileAddress = it.fileAddress()
                 )
             }
             .toList()
 
-    private fun RemoteStorage.Result.getUrl(): String {
+    private fun RemoteStorage.Result.fileAddress(): FileAddress {
         // false positive 'must be exhaustive' error in IDE,
         // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
         return when (this) {
-            is Result.Success -> url
-            is Result.Error -> "no-file"
+            is Result.Success -> try {
+                FileAddress.URL(url.toHttpUrl())
+            } catch (e: IllegalArgumentException) {
+                FileAddress.Error(e)
+            }
+            is Result.Error -> FileAddress.Error(t)
         }
     }
 

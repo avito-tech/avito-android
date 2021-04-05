@@ -31,8 +31,6 @@ import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
-import com.avito.android.test.report.transport.ReportFileProvider
-import com.avito.android.test.report.transport.ReportFileProviderImpl
 import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
@@ -46,6 +44,8 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
 import com.avito.logger.create
+import com.avito.report.ReportFileProvider
+import com.avito.report.internal.ReportFileProviderImpl
 import com.avito.report.model.Kind
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider

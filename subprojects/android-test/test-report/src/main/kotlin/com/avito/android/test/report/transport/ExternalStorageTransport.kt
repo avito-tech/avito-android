@@ -1,11 +1,13 @@
 package com.avito.android.test.report.transport
 
+import com.avito.android.Result
 import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.ReportFileProvider
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
 
@@ -25,7 +27,11 @@ internal class ExternalStorageTransport(
     private val testRuntimeDataBuilder = TestRuntimeDataBuilder(timeProvider)
 
     override fun sendReport(state: ReportState.Initialized.Started) {
-        reportFileProvider.provideReportFile().fold(
+        Result.tryCatch {
+            reportFileProvider.provideReportFile().apply {
+                parentFile?.mkdirs()
+            }
+        }.fold(
             onSuccess = { file ->
                 try {
                     val json = gson.toJson(testRuntimeDataBuilder.fromState(state))
@@ -49,12 +55,12 @@ internal class ExternalStorageTransport(
         request: RemoteStorage.Request,
         comment: String
     ): FutureValue<RemoteStorage.Result> {
-        val url = when (request) {
+        val fileName = when (request) {
             is RemoteStorage.Request.ContentRequest ->
                 reportFileProvider.generateUniqueFile(extension = request.extension).fold(
                     { file ->
                         file.writeText(request.content)
-                        reportFileProvider.toUploadPlaceholder(file)
+                        file.name
                     },
                     { throwable ->
                         val errorMessage = "no-file"
@@ -64,7 +70,7 @@ internal class ExternalStorageTransport(
                 )
 
             is RemoteStorage.Request.FileRequest ->
-                reportFileProvider.toUploadPlaceholder(request.file)
+                request.file.name
         }
 
         return FutureValue.create(
@@ -72,7 +78,7 @@ internal class ExternalStorageTransport(
                 comment = comment,
                 timeInSeconds = timeProvider.nowInSeconds(),
                 uploadRequest = request,
-                url = url
+                url = fileName // todo FileAddress
             )
         )
     }

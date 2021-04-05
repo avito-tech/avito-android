@@ -101,6 +101,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     @Input
     public val parameters: Property<ExecutionParameters> = objects.property()
 
+    @Input
+    public val uploadAllTestArtifacts: Property<Boolean> = objects.property<Boolean>().convention(false)
+
     @Internal
     public val reportViewerConfig: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
 
@@ -190,7 +193,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
-            ).mapNotNull { it.orNull?.asFile }
+            ).mapNotNull { it.orNull?.asFile },
+            uploadTestArtifacts = uploadAllTestArtifacts.get()
         )
 
         if (testRunnerService.isPresent) {

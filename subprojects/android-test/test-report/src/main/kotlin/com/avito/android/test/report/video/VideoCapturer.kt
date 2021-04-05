@@ -5,12 +5,12 @@ import android.os.ParcelFileDescriptor
 import android.os.ParcelFileDescriptor.MODE_READ_WRITE
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.Result
-import com.avito.android.test.report.transport.ReportFileProvider
 import com.avito.android.test.waitFor
 import com.avito.android.util.executeMethod
 import com.avito.android.util.getFieldValue
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.ReportFileProvider
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit

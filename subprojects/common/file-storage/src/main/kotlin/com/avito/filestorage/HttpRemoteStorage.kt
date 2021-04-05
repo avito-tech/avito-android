@@ -25,11 +25,7 @@ class HttpRemoteStorage(
             httpClient = httpClient
         )
 
-    /**
-     * если нужен полный путь до файла
-     * при отрисовки Entity в ReportViewer это не требуется, т.к. это делает фронт
-     */
-    fun fullUrl(result: RemoteStorage.Result.Success): String = "$endpoint${result.url}"
+    override fun fullUrl(result: RemoteStorage.Result.Success): String = "$endpoint${result.url}"
 
     override fun upload(
         uploadRequest: RemoteStorage.Request,
