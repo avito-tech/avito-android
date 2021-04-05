@@ -3,12 +3,10 @@ package com.avito.plugin
 import com.avito.android.Result
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.logger.StubLoggerFactory
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.assertThat
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth.assertWithMessage
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
@@ -25,8 +23,6 @@ class SignViaServiceActionTest {
 
     private val server = MockWebServerFactory.create()
 
-    private val loggerFactory = StubLoggerFactory
-
     private val httpClientProvider = HttpClientProvider.createStubInstance()
 
     private val apk: File
@@ -39,7 +35,6 @@ class SignViaServiceActionTest {
             token = "123456",
             unsignedFile = apk,
             signedFile = apk,
-            loggerFactory = loggerFactory
         )
 
     private val failedResponse = MockResponse().setResponseCode(500)
@@ -58,7 +53,7 @@ class SignViaServiceActionTest {
     }
 
     @Test
-    fun `action failed - when http request failed all attempts`() {
+    fun `action failed - when http request failed`() {
         server.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 return failedResponse
@@ -68,22 +63,8 @@ class SignViaServiceActionTest {
         val result = signViaServiceAction.sign()
 
         assertThat<Result.Failure<*>>(result) {
-            assertThat(throwable.message).contains("Failed to sign apk via service")
+            assertThat(throwable.message).contains("Failed to sign APK via service: code 500")
         }
-
-        assertWithMessage("retry to send")
-            .that(server.requestCount).isAtLeast(5)
-    }
-
-    @Test
-    fun `action success - successful request after failed`() {
-        server.enqueue(failedResponse)
-        server.enqueue(successResponse)
-
-        val result = signViaServiceAction.sign()
-
-        assertThat(result).isInstanceOf<Result.Success<*>>()
-        assertThat(server.requestCount).isEqualTo(2)
     }
 
     @Test
