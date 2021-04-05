@@ -106,7 +106,7 @@ sealed class Result<T> {
 
         override fun component1(): T? = null
 
-        override fun component2(): Throwable? = throwable
+        override fun component2(): Throwable = throwable
 
         override fun equals(other: Any?): Boolean = when (other) {
             is Failure<*> -> throwable == other.throwable

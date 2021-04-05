@@ -1,21 +1,16 @@
 package com.avito.instrumentation.internal.finalizer
 
-import com.avito.android.runner.report.Report
 import com.avito.instrumentation.InstrumentationTestsTask
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.report.JUnitReportWriter
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
-import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.utils.BuildFailer
-import com.avito.utils.createOrClear
 import com.google.gson.Gson
-import okhttp3.HttpUrl
 import java.io.File
 
 internal interface InstrumentationTestActionFinalizer {
@@ -24,16 +19,19 @@ internal interface InstrumentationTestActionFinalizer {
         testsExecutionResults: TestsScheduler.Result
     )
 
+    interface FinalizeAction {
+
+        fun action(testRunResult: TestRunResult)
+    }
+
     class Impl(
         private val hasFailedTestDeterminer: HasFailedTestDeterminer,
         private val hasNotReportedTestsDeterminer: HasNotReportedTestsDeterminer,
-        private val sourceReport: Report,
         private val params: InstrumentationTestsAction.Params,
         private val reportViewer: ReportViewer,
-        private val jUnitReportWriter: JUnitReportWriter,
         private val buildFailer: BuildFailer,
-        private val metricsSender: InstrumentationMetricsSender,
         private val gson: Gson,
+        private val actions: List<FinalizeAction>,
         loggerFactory: LoggerFactory
     ) : InstrumentationTestActionFinalizer {
 
@@ -52,41 +50,10 @@ internal interface InstrumentationTestActionFinalizer {
                     allTests = testsExecutionResults.testSuite.testsToRun.map { it.test }
                 )
             )
-
-            if (testRunResult.notReported is HasNotReportedTestsDeterminer.Result.HasNotReportedTests) {
-                val lostTests = testRunResult.notReported.lostTests
-                sourceReport.sendLostTests(lostTests)
-                metricsSender.sendNotReportedCount(lostTests.size)
-            }
-
-            sourceReport.finish()
-
-            jUnitReportWriter.write(
-                reportCoordinates = params.reportCoordinates,
-                testRunResult = testRunResult,
-                destination = junitFile(params.outputDir)
-            )
+            actions.forEach { it.action(testRunResult) }
 
             val verdict = testRunResult.verdict
-            val reportViewerUrl = reportViewer.generateReportUrl(
-                params.reportCoordinates,
-                onlyFailures = verdict is TestRunResult.Verdict.Failure
-            )
-
-            writeReportViewerLinkFile(
-                reportViewerUrl,
-                reportViewerFile(params.outputDir)
-            )
-
-            val verdictFile = params.verdictFile
-            verdictFile.writeText(
-                gson.toJson(
-                    InstrumentationTestsTask.Verdict(
-                        reportUrl = reportViewerUrl.toString(),
-                        testRunVerdict = verdict
-                    )
-                )
-            )
+            val verdictFile = writeVerdict(testRunResult)
 
             logger.debug("Test run verdict: \n\t$verdict")
 
@@ -100,22 +67,19 @@ internal interface InstrumentationTestActionFinalizer {
             }
         }
 
-        /**
-         * teamcity report tab
-         */
-        private fun reportViewerFile(outputDir: File): File = File(outputDir, "rv.html")
+        private fun writeVerdict(testRunResult: TestRunResult): File {
+            val reportViewerUrl = reportViewer.generateReportUrl(params.reportCoordinates)
 
-        private fun writeReportViewerLinkFile(
-            reportViewerUrl: HttpUrl,
-            reportFile: File
-        ) {
-            reportFile.createOrClear()
-            reportFile.writeText("<script>location=\"${reportViewerUrl}\"</script>")
+            val verdictFile = params.verdictFile
+            verdictFile.writeText(
+                gson.toJson(
+                    InstrumentationTestsTask.Verdict(
+                        reportUrl = reportViewerUrl.toString(),
+                        testRunVerdict = testRunResult.verdict
+                    )
+                )
+            )
+            return verdictFile
         }
-
-        /**
-         * teamcity XML report processing
-         */
-        private fun junitFile(outputDir: File): File = File(outputDir, "junit-report.xml")
     }
 }

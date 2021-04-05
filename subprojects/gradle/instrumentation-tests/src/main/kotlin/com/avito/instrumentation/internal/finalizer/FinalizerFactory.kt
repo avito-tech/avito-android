@@ -6,7 +6,7 @@ import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.report.JUnitReportWriter
+import com.avito.instrumentation.internal.report.WriteJUnitReportAction
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.report.ReportViewer
@@ -14,6 +14,7 @@ import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.utils.BuildFailer
 import com.google.common.annotations.VisibleForTesting
 import com.google.gson.Gson
+import java.io.File
 
 internal interface FinalizerFactory {
 
@@ -67,20 +68,35 @@ internal interface FinalizerFactory {
                 suppressFlaky = params.suppressFlaky
             )
 
+            val metricsSender = InstrumentationMetricsSender(
+                statsDSender = StatsDSender.Impl(metricsConfig.statsDConfig, loggerFactory),
+                runnerPrefix = metricsConfig.runnerPrefix
+            )
+
+            val actions = listOf(
+                SendMetricsAction(metricsSender),
+                WriteJUnitReportAction(
+                    reportViewer = reportViewer,
+                    reportCoordinates = params.reportCoordinates,
+                    // For Teamcity XML report processing
+                    destination = File(params.outputDir, "junit-report.xml")
+                ),
+                ReportFinishAction(sourceReport),
+                WriteReportViewerLinkFile(
+                    reportViewer = reportViewer,
+                    reportCoordinates = params.reportCoordinates,
+                    outputDir = params.outputDir
+                )
+            )
             return InstrumentationTestActionFinalizer.Impl(
                 hasFailedTestDeterminer = hasFailedTestDeterminer,
                 hasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
-                sourceReport = sourceReport,
                 params = params,
                 reportViewer = reportViewer,
                 gson = gson,
-                jUnitReportWriter = JUnitReportWriter(reportViewer),
                 buildFailer = buildFailer,
                 loggerFactory = loggerFactory,
-                metricsSender = InstrumentationMetricsSender(
-                    statsDSender = StatsDSender.Impl(metricsConfig.statsDConfig, loggerFactory),
-                    runnerPrefix = metricsConfig.runnerPrefix
-                )
+                actions = actions
             )
         }
     }
