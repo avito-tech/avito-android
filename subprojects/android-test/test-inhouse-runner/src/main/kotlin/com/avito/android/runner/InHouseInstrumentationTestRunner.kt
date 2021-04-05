@@ -29,9 +29,13 @@ import com.avito.android.test.report.ReportViewerWebsocketReporter
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
+import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
 import com.avito.android.test.report.transport.ExternalStorageTransport
+import com.avito.android.test.report.transport.LegacyTransport
 import com.avito.android.test.report.transport.LocalRunTransport
+import com.avito.android.test.report.transport.StubTransport
 import com.avito.android.test.report.transport.Transport
+import com.avito.android.test.report.transport.UploadToAvitoRemoteStorageTransport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumper
 import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumperImpl
@@ -89,6 +93,48 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
+    private val transport: Transport by lazy {
+
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+
+        val gson: Gson = GsonBuilder()
+            .registerTypeAdapterFactory(EntryTypeAdapterFactory())
+            .create()
+
+        val externalStorageTransport = ExternalStorageTransport(
+            gson = gson,
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
+        )
+
+        val uploadFromDevice = UploadToAvitoRemoteStorageTransport(remoteStorage)
+
+        when (val destination = runEnvironment.reportDestination) {
+            is ReportDestination.Backend -> {
+                val testReportLogger = loggerFactory.create<Report>()
+
+                LocalRunTransport(
+                    reportViewerUrl = destination.reportViewerUrl,
+                    reportCoordinates = runEnvironment.testRunCoordinates,
+                    deviceName = DeviceName(destination.deviceName),
+                    logger = testReportLogger,
+                    reportsApi = ReportsApiFactory.create(
+                        host = destination.reportApiUrl,
+                        loggerFactory = loggerFactory,
+                        httpClientProvider = httpClientProvider
+                    ),
+                    uploadToRemoteStorageTransport = uploadFromDevice
+                )
+            }
+            is ReportDestination.Legacy -> LegacyTransport(
+                uploadToAvitoRemoteStorageTransport = uploadFromDevice,
+                externalStorageTransport = externalStorageTransport
+            )
+            ReportDestination.File -> externalStorageTransport
+            ReportDestination.NoOp -> StubTransport
+        }
+    }
+
     /**
      * Public for *TestApp to skip on orchestrator runs
      */
@@ -119,44 +165,13 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override val report: Report by lazy {
-        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
-        val transport: List<Transport> = when (val dest = runEnvironment.reportDestination) {
-            is ReportDestination.Backend -> {
-                val testReportLogger = loggerFactory.create<Report>()
-                listOf(
-                    LocalRunTransport(
-                        reportViewerUrl = dest.reportViewerUrl,
-                        reportCoordinates = runEnvironment.testRunCoordinates,
-                        deviceName = DeviceName(dest.deviceName),
-                        logger = testReportLogger,
-                        reportsApi = ReportsApiFactory.create(
-                            host = dest.reportApiUrl,
-                            loggerFactory = loggerFactory,
-                            httpClientProvider = httpClientProvider
-                        )
-                    )
-                )
-            }
-            ReportDestination.File -> {
-                val gson: Gson = GsonBuilder()
-                    .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-                    .create()
 
-                listOf(
-                    ExternalStorageTransport(
-                        gson = gson,
-                        timeProvider = timeProvider,
-                        loggerFactory = loggerFactory
-                    )
-                )
-            }
-            ReportDestination.NoOp -> emptyList()
-        }
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+
         ReportImplementation(
-            onDeviceCacheDirectory = runEnvironment.outputDirectory,
-            transport = transport,
             loggerFactory = loggerFactory,
-            remoteStorage = remoteStorage,
+            transport = transport,
+            screenshotCapturer = ScreenshotCapturerImpl(runEnvironment.outputDirectory),
             timeProvider = timeProvider,
             troubleshooter = Troubleshooter.Impl(mainLooperMessagesLogDumper)
         )
@@ -333,7 +348,7 @@ abstract class InHouseInstrumentationTestRunner :
                 onDeviceCacheDirectory = runEnvironment.outputDirectory,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
                 loggerFactory = loggerFactory,
-                remoteStorage = remoteStorage
+                transport = transport,
             )
         )
     }

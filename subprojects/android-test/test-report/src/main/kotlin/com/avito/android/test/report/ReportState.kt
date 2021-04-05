@@ -8,6 +8,7 @@ import com.avito.report.model.Incident
 import com.avito.report.model.Video
 
 sealed class ReportState {
+
     abstract val isFirstStepOrPrecondition: Boolean
 
     object Nothing : ReportState() {

@@ -95,6 +95,11 @@ sealed class TestRunEnvironment {
 
             object File : ReportDestination()
 
+            /**
+             * Combination of [File] and [Backend], report.json saved to file, but screenshots and other data uploaded
+             */
+            object Legacy : ReportDestination()
+
             object NoOp : ReportDestination()
         }
     }
@@ -164,7 +169,14 @@ private fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDesti
             ReportDestination.NoOp
         }
     } else {
-        ReportDestination.File
+        val uploadFromRunner =
+            argumentsProvider.getOptionalArgument("avito.report.fromRunner")?.toBoolean() ?: false
+
+        if (uploadFromRunner) {
+            ReportDestination.File
+        } else {
+            ReportDestination.Legacy
+        }
     }
 }
 

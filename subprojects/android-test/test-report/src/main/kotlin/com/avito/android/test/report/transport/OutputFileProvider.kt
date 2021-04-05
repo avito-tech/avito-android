@@ -12,7 +12,15 @@ internal class OutputFileProvider {
     // todo should be passed with instrumentation params, see [ReportViewerTestReporter]
     private val reportFileName = "report.json"
 
-    fun provideReportFile(className: String, methodName: String): Result<File> {
+    /**
+     * special string, that indicates that file should be uploaded
+     * and string should be changed with url later by test runner
+     */
+    fun toUploadPlaceholder(file: File): String {
+        return "#upload:${file.absolutePath}"
+    }
+
+    fun provideReportDir(className: String, methodName: String): Result<File> {
         return try {
             val testFolderName = "$className#$methodName"
             val externalStorage = InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(null)
@@ -24,9 +32,13 @@ internal class OutputFileProvider {
                 mkdirs()
             }
 
-            Result.Success(File(testMetadataDirectory, reportFileName))
+            Result.Success(testMetadataDirectory)
         } catch (e: Throwable) {
             Result.Failure(e)
         }
+    }
+
+    fun provideReportFile(className: String, methodName: String): Result<File> {
+        return provideReportDir(className, methodName).map { File(it, reportFileName) }
     }
 }

@@ -1,26 +1,32 @@
 package com.avito.android.test.report.transport
 
 import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.model.TestMetadata
+import com.avito.filestorage.FutureValue
+import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
+import java.io.File
+import java.util.UUID
 
 /**
- * Save report to json that will be parsed from runner
+ * Send all to device external storage
+ * Test runner will read it and prepare reports
  */
 class ExternalStorageTransport(
     private val gson: Gson,
-    timeProvider: TimeProvider,
+    private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
-) : Transport, PreTransportMappers {
+) : Transport {
 
     private val logger = loggerFactory.create<ExternalStorageTransport>()
 
     private val outputFileProvider = OutputFileProvider()
     private val testRuntimeDataBuilder = TestRuntimeDataBuilder(timeProvider)
 
-    override fun send(state: ReportState.Initialized.Started) {
+    override fun sendReport(state: ReportState.Initialized.Started) {
         outputFileProvider.provideReportFile(
             className = state.testMetadata.className,
             methodName = state.testMetadata.methodName!!
@@ -37,6 +43,52 @@ class ExternalStorageTransport(
                 logger.critical(
                     "Can't create output file for test runtime data; leads to LOST test",
                     throwable
+                )
+            }
+        )
+    }
+
+    override fun sendContent(
+        test: TestMetadata,
+        request: RemoteStorage.Request,
+        comment: String
+    ): FutureValue<RemoteStorage.Result> {
+        return outputFileProvider.provideReportDir(
+            className = test.className,
+            methodName = test.methodName!!
+        ).fold(
+            onSuccess = { dir ->
+                val url = when (request) {
+                    is RemoteStorage.Request.ContentRequest -> {
+                        val filename = "${UUID.randomUUID()}.${request.extension}"
+                        val file = File(dir, filename)
+                        file.writeText(request.content)
+                        outputFileProvider.toUploadPlaceholder(file)
+                    }
+
+                    is RemoteStorage.Request.FileRequest -> {
+                        // todo copy files to dir, or save it there in first place (later preferred)
+                        outputFileProvider.toUploadPlaceholder(request.file)
+                    }
+                }
+
+                FutureValue.stub(
+                    RemoteStorage.Result.Success(
+                        comment = comment,
+                        timeInSeconds = timeProvider.nowInSeconds(),
+                        uploadRequest = request,
+                        url = url
+                    )
+                )
+            },
+            onFailure = { throwable ->
+                FutureValue.stub(
+                    RemoteStorage.Result.Error(
+                        comment = comment,
+                        timeInSeconds = timeProvider.nowInSeconds(),
+                        uploadRequest = request,
+                        t = throwable
+                    )
                 )
             }
         )

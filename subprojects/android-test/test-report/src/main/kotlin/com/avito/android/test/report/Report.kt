@@ -51,7 +51,7 @@ interface Report {
     fun addAssertion(assertionMessage: String)
 
     /**
-     * stop request info as current test step entry
+     * Add request info as current test step entry
      *
      * @param label one-liner you see in test step comments
      * @param content detailed info about request, accessible via click on label in report
