@@ -44,7 +44,7 @@ sealed class SentryConfig : Serializable {
         val dsn: String,
         val environment: String,
         val serverName: String,
-        val release: String,
+        val release: String?,
         val tags: Map<String, String>,
         val maxStringLength: Int = DEFAULT_SENTRY_MAX_STRING
     ) : SentryConfig()

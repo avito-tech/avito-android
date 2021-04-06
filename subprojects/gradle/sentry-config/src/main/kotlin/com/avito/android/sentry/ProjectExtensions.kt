@@ -36,11 +36,13 @@ private fun from(project: Project): SentryConfig {
             tags[buildIdTag] = buildId
         }
 
+        val infraVersion = SentryConfig::class.java.`package`.implementationVersion
+
         val config = SentryConfig.Enabled(
             dsn = project.getMandatoryStringProperty("avito.sentry.dsn"),
             environment = buildEnv::class.java.simpleName,
             serverName = info.node ?: "unknown",
-            release = info.commit ?: "unknown",
+            release = infraVersion,
             tags = tags
         )
 

@@ -48,18 +48,6 @@ internal class EnvironmentInfoImpl(
 
     private val hasGit: Boolean = project.buildEnvironment !is BuildEnvironment.Mirkale
 
-    override val commit: String? by lazy {
-        if (hasGit) {
-            try {
-                git.tryParseRev("HEAD").getOrThrow()
-            } catch (e: Throwable) {
-                null
-            }
-        } else {
-            null
-        }
-    }
-
     private fun userName(): String? = System.getProperty("user.name")
 
     private fun teamcityAgentName(): String? {
