@@ -91,6 +91,8 @@ sealed class ReportState {
                         counted.t
                     }
                 } as List<T>
+
+            companion object
         }
 
         data class NotStarted(

@@ -29,6 +29,8 @@ import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
+import com.avito.android.test.report.transport.ReportFileProvider
+import com.avito.android.test.report.transport.ReportFileProviderImpl
 import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
@@ -83,6 +85,16 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
+    private val reportFileProvider: ReportFileProvider by lazy {
+        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
+
+        ReportFileProviderImpl(
+            runEnvironment.outputDirectory.value,
+            runEnvironment.testMetadata.className,
+            runEnvironment.testMetadata.methodName!!
+        )
+    }
+
     private val reportTransport: Transport by lazy {
 
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
@@ -91,7 +103,8 @@ abstract class InHouseInstrumentationTestRunner :
             timeProvider = timeProvider,
             loggerFactory = loggerFactory,
             remoteStorage = remoteStorage,
-            httpClientProvider = httpClientProvider
+            httpClientProvider = httpClientProvider,
+            reportFileProvider = reportFileProvider
         ).create(
             testRunCoordinates = runEnvironment.testRunCoordinates,
             reportDestination = runEnvironment.reportDestination
@@ -128,13 +141,10 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override val report: Report by lazy {
-
-        val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
-
         ReportImplementation(
             loggerFactory = loggerFactory,
             transport = reportTransport,
-            screenshotCapturer = ScreenshotCapturerImpl(runEnvironment.outputDirectory),
+            screenshotCapturer = ScreenshotCapturerImpl(reportFileProvider),
             timeProvider = timeProvider,
             troubleshooter = Troubleshooter.Impl(mainLooperMessagesLogDumper)
         )
@@ -308,7 +318,7 @@ abstract class InHouseInstrumentationTestRunner :
         TestLifecycleNotifier.addListener(
             VideoCaptureTestListener(
                 videoFeatureValue = runEnvironment.videoRecordingFeature,
-                onDeviceCacheDirectory = runEnvironment.outputDirectory,
+                reportFileProvider = reportFileProvider,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
                 loggerFactory = loggerFactory,
                 transport = reportTransport,

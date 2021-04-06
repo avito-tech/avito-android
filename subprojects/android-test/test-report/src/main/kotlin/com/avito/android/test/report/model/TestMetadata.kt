@@ -22,4 +22,6 @@ data class TestMetadata(
 ) : Serializable {
 
     val testName = "$className.$methodName"
+
+    companion object
 }
