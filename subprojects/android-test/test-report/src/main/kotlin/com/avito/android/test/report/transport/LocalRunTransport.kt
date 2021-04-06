@@ -5,7 +5,8 @@ import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
@@ -15,14 +16,16 @@ import com.avito.report.model.TestName
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
 
-class LocalRunTransport(
+internal class LocalRunTransport(
     reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val deviceName: DeviceName,
-    private val logger: Logger,
+    loggerFactory: LoggerFactory,
     private val reportsApi: ReportsApi,
     private val remoteStorageTransport: AvitoRemoteStorageTransport
 ) : Transport, PreTransportMappers {
+
+    private val logger = loggerFactory.create<LocalRunTransport>()
 
     private val localBuildId: String? = null
 

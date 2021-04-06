@@ -6,7 +6,6 @@ import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.AndroidLoggerFactory
-import com.avito.android.runner.TestRunEnvironment.RunEnvironment.ReportDestination
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
 import com.avito.android.runner.annotation.resolver.TestMethodOrClass
@@ -30,11 +29,7 @@ import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
-import com.avito.android.test.report.transport.AvitoRemoteStorageTransport
-import com.avito.android.test.report.transport.ExternalStorageTransport
-import com.avito.android.test.report.transport.LegacyTransport
-import com.avito.android.test.report.transport.LocalRunTransport
-import com.avito.android.test.report.transport.StubTransport
+import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumper
@@ -47,15 +42,10 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
 import com.avito.logger.create
-import com.avito.report.ReportsApiFactory
-import com.avito.report.model.DeviceName
-import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.Kind
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
@@ -93,46 +83,19 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    private val transport: Transport by lazy {
+    private val reportTransport: Transport by lazy {
 
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
 
-        val gson: Gson = GsonBuilder()
-            .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-            .create()
-
-        val externalStorageTransport = ExternalStorageTransport(
-            gson = gson,
+        ReportTransportFactory(
             timeProvider = timeProvider,
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            remoteStorage = remoteStorage,
+            httpClientProvider = httpClientProvider
+        ).create(
+            testRunCoordinates = runEnvironment.testRunCoordinates,
+            reportDestination = runEnvironment.reportDestination
         )
-
-        val uploadFromDevice = AvitoRemoteStorageTransport(remoteStorage)
-
-        when (val destination = runEnvironment.reportDestination) {
-            is ReportDestination.Backend -> {
-                val testReportLogger = loggerFactory.create<Report>()
-
-                LocalRunTransport(
-                    reportViewerUrl = destination.reportViewerUrl,
-                    reportCoordinates = runEnvironment.testRunCoordinates,
-                    deviceName = DeviceName(destination.deviceName),
-                    logger = testReportLogger,
-                    reportsApi = ReportsApiFactory.create(
-                        host = destination.reportApiUrl,
-                        loggerFactory = loggerFactory,
-                        httpClientProvider = httpClientProvider
-                    ),
-                    remoteStorageTransport = uploadFromDevice
-                )
-            }
-            is ReportDestination.Legacy -> LegacyTransport(
-                remoteStorageTransport = uploadFromDevice,
-                externalStorageTransport = externalStorageTransport
-            )
-            ReportDestination.File -> externalStorageTransport
-            ReportDestination.NoOp -> StubTransport
-        }
     }
 
     /**
@@ -170,7 +133,7 @@ abstract class InHouseInstrumentationTestRunner :
 
         ReportImplementation(
             loggerFactory = loggerFactory,
-            transport = transport,
+            transport = reportTransport,
             screenshotCapturer = ScreenshotCapturerImpl(runEnvironment.outputDirectory),
             timeProvider = timeProvider,
             troubleshooter = Troubleshooter.Impl(mainLooperMessagesLogDumper)
@@ -348,7 +311,7 @@ abstract class InHouseInstrumentationTestRunner :
                 onDeviceCacheDirectory = runEnvironment.outputDirectory,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
                 loggerFactory = loggerFactory,
-                transport = transport,
+                transport = reportTransport,
             )
         )
     }

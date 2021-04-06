@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     implementation(project(":common:okhttp"))
+    implementation(project(":common:http-client"))
     implementation(project(":common:time"))
     implementation(project(":common:file-storage"))
     implementation(project(":common:report-viewer"))

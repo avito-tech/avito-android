@@ -15,7 +15,7 @@ import java.util.UUID
  * Send all to device external storage
  * Test runner will read it and prepare reports
  */
-class ExternalStorageTransport(
+internal class ExternalStorageTransport(
     private val gson: Gson,
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory

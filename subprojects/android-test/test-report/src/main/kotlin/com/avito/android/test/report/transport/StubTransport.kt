@@ -5,7 +5,7 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 
-object StubTransport : Transport {
+internal object StubTransport : Transport {
 
     override fun sendReport(state: ReportState.Initialized.Started) {
     }

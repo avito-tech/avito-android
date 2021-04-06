@@ -5,7 +5,7 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 
-class AvitoRemoteStorageTransport(
+internal class AvitoRemoteStorageTransport(
     private val avitoFileStorage: RemoteStorage
 ) : Transport {
 

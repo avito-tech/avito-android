@@ -11,7 +11,7 @@ import com.avito.filestorage.RemoteStorage
  *
  * Legacy way; see [ExternalStorageTransport]
  */
-class LegacyTransport(
+internal class LegacyTransport(
     private val remoteStorageTransport: AvitoRemoteStorageTransport,
     private val externalStorageTransport: ExternalStorageTransport
 ) : Transport, PreTransportMappers {
