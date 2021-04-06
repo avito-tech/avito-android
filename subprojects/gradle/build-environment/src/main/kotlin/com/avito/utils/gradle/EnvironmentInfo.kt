@@ -19,7 +19,6 @@ import org.gradle.api.provider.Provider
 interface EnvironmentInfo { // TODO: merge with BuildEnvironment and EnvArgs
     val node: String?
     val environment: Environment
-    val commit: String?
     fun teamcityBuildId(): String?
 }
 
