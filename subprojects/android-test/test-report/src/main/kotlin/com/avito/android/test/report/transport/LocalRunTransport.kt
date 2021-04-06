@@ -21,7 +21,7 @@ class LocalRunTransport(
     private val deviceName: DeviceName,
     private val logger: Logger,
     private val reportsApi: ReportsApi,
-    private val uploadToRemoteStorageTransport: UploadToAvitoRemoteStorageTransport
+    private val remoteStorageTransport: AvitoRemoteStorageTransport
 ) : Transport, PreTransportMappers {
 
     private val localBuildId: String? = null
@@ -100,6 +100,6 @@ class LocalRunTransport(
         request: RemoteStorage.Request,
         comment: String
     ): FutureValue<RemoteStorage.Result> {
-        return uploadToRemoteStorageTransport.sendContent(test, request, comment)
+        return remoteStorageTransport.sendContent(test, request, comment)
     }
 }

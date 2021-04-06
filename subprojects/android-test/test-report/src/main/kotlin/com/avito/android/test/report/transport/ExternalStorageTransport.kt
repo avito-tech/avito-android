@@ -72,7 +72,7 @@ class ExternalStorageTransport(
                     }
                 }
 
-                FutureValue.stub(
+                FutureValue.create(
                     RemoteStorage.Result.Success(
                         comment = comment,
                         timeInSeconds = timeProvider.nowInSeconds(),
@@ -82,7 +82,7 @@ class ExternalStorageTransport(
                 )
             },
             onFailure = { throwable ->
-                FutureValue.stub(
+                FutureValue.create(
                     RemoteStorage.Result.Error(
                         comment = comment,
                         timeInSeconds = timeProvider.nowInSeconds(),

@@ -7,7 +7,8 @@ interface FutureValue<T> {
     fun get(): T
 
     companion object {
-        fun <T> stub(stubValue: T): FutureValue<T> = object : FutureValue<T> {
+
+        fun <T> create(stubValue: T): FutureValue<T> = object : FutureValue<T> {
             override fun get(): T = stubValue
         }
     }

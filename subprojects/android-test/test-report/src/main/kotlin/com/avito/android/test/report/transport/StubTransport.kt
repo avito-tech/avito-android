@@ -15,7 +15,7 @@ object StubTransport : Transport {
         request: RemoteStorage.Request,
         comment: String
     ): FutureValue<RemoteStorage.Result> {
-        return FutureValue.stub(stubError(request))
+        return FutureValue.create(stubError(request))
     }
 
     private fun stubError(request: RemoteStorage.Request) = RemoteStorage.Result.Error(

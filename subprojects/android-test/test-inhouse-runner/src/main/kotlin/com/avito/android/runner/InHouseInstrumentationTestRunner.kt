@@ -30,12 +30,12 @@ import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
+import com.avito.android.test.report.transport.AvitoRemoteStorageTransport
 import com.avito.android.test.report.transport.ExternalStorageTransport
 import com.avito.android.test.report.transport.LegacyTransport
 import com.avito.android.test.report.transport.LocalRunTransport
 import com.avito.android.test.report.transport.StubTransport
 import com.avito.android.test.report.transport.Transport
-import com.avito.android.test.report.transport.UploadToAvitoRemoteStorageTransport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumper
 import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumperImpl
@@ -107,7 +107,7 @@ abstract class InHouseInstrumentationTestRunner :
             loggerFactory = loggerFactory
         )
 
-        val uploadFromDevice = UploadToAvitoRemoteStorageTransport(remoteStorage)
+        val uploadFromDevice = AvitoRemoteStorageTransport(remoteStorage)
 
         when (val destination = runEnvironment.reportDestination) {
             is ReportDestination.Backend -> {
@@ -123,11 +123,11 @@ abstract class InHouseInstrumentationTestRunner :
                         loggerFactory = loggerFactory,
                         httpClientProvider = httpClientProvider
                     ),
-                    uploadToRemoteStorageTransport = uploadFromDevice
+                    remoteStorageTransport = uploadFromDevice
                 )
             }
             is ReportDestination.Legacy -> LegacyTransport(
-                uploadToAvitoRemoteStorageTransport = uploadFromDevice,
+                remoteStorageTransport = uploadFromDevice,
                 externalStorageTransport = externalStorageTransport
             )
             ReportDestination.File -> externalStorageTransport

@@ -12,7 +12,7 @@ import com.avito.filestorage.RemoteStorage
  * Legacy way; see [ExternalStorageTransport]
  */
 class LegacyTransport(
-    private val uploadToAvitoRemoteStorageTransport: UploadToAvitoRemoteStorageTransport,
+    private val remoteStorageTransport: AvitoRemoteStorageTransport,
     private val externalStorageTransport: ExternalStorageTransport
 ) : Transport, PreTransportMappers {
 
@@ -26,6 +26,6 @@ class LegacyTransport(
         request: RemoteStorage.Request,
         comment: String
     ): FutureValue<RemoteStorage.Result> {
-        return uploadToAvitoRemoteStorageTransport.sendContent(test, request, comment)
+        return remoteStorageTransport.sendContent(test, request, comment)
     }
 }

@@ -6,7 +6,7 @@ import com.avito.report.model.IncidentElement
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.time.TimeProvider
 
-class TestRuntimeDataBuilder(private val timeProvider: TimeProvider) : PreTransportMappers {
+internal class TestRuntimeDataBuilder(private val timeProvider: TimeProvider) : PreTransportMappers {
 
     fun fromState(state: ReportState.Initialized.Started): TestRuntimeDataPackage {
         return try {
