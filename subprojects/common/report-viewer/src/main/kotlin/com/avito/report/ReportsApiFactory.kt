@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 object ReportsApiFactory {
 
-    private const val TIMEOUT_SEC = 30L
+    private const val TIMEOUT_SEC = 10L
 
     /**
      * for tests
@@ -25,7 +25,7 @@ object ReportsApiFactory {
         host: String,
         httpClientProvider: HttpClientProvider,
         loggerFactory: LoggerFactory,
-        retryRequests: Boolean = false
+        retryRequests: Boolean = true
     ): ReportsApi {
         return ReportsApiImpl(
             loggerFactory = loggerFactory,
@@ -39,6 +39,7 @@ object ReportsApiFactory {
                         if (retryRequests) {
                             addInterceptor(
                                 RetryInterceptor(
+                                    retries = 3,
                                     allowedMethods = listOf("POST"),
                                     logger = loggerFactory.create<ReportsApi>()
                                 )
