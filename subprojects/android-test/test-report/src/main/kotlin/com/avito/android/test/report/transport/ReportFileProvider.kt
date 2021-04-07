@@ -5,7 +5,7 @@ import java.io.File
 
 interface ReportFileProvider {
 
-    val rootDir: File
+    val rootDir: Lazy<File>
 
     /**
      * special string, that indicates that file should be uploaded

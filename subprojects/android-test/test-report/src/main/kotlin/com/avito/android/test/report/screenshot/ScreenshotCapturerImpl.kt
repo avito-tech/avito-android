@@ -22,7 +22,7 @@ class ScreenshotCapturerImpl(private val reportFileProvider: ReportFileProvider)
     // for backward compatibility in synthetic monitoring
     @Suppress("unused")
     constructor(outputDirectory: Lazy<File>) : this(
-        reportFileProvider = ReportFileProviderImpl(outputDirectory.value, "temp", "temp")
+        reportFileProvider = ReportFileProviderImpl(outputDirectory, "temp", "temp")
     )
 
     override fun captureBitmap(): Result<Capture> {

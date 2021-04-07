@@ -90,7 +90,7 @@ abstract class InHouseInstrumentationTestRunner :
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
 
         ReportFileProviderImpl(
-            runEnvironment.outputDirectory.value,
+            runEnvironment.outputDirectory,
             runEnvironment.testMetadata.className,
             runEnvironment.testMetadata.methodName!!
         )

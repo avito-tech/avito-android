@@ -5,7 +5,7 @@ import java.io.File
 import java.util.UUID
 
 class ReportFileProviderImpl(
-    override val rootDir: File,
+    override val rootDir: Lazy<File>,
     private val className: String,
     private val methodName: String,
     private val randomFileNameGenerator: () -> String = { UUID.randomUUID().toString() }
@@ -29,7 +29,7 @@ class ReportFileProviderImpl(
         return try {
             val testFolderName = "$className#$methodName" // todo add deviceName
 
-            val runnerDirectory = File(rootDir, runnerOutputFolder)
+            val runnerDirectory = File(rootDir.value, runnerOutputFolder)
 
             val testMetadataDirectory = File(runnerDirectory, testFolderName).apply {
                 mkdirs()

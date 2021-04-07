@@ -121,7 +121,7 @@ class VideoCapturerImpl(
 
     private fun createRecorderBinary(): String {
         val binary = File(
-            reportFileProvider.rootDir,
+            reportFileProvider.rootDir.value,
             RECORDER_BINARY_NAME
         )
 
