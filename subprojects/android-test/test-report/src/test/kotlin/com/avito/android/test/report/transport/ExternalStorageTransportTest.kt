@@ -80,6 +80,6 @@ internal class ExternalStorageTransportTest {
         className: String,
         methodName: String
     ): ReportFileProvider {
-        return ReportFileProviderImpl(rootDir, className, methodName)
+        return ReportFileProviderImpl(lazy { rootDir }, className, methodName)
     }
 }
