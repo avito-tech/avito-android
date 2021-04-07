@@ -38,7 +38,7 @@ class VideoCapturerImpl(
         // checks if execute start() concurrently
         return if (state is State.Idling) {
 
-            val (videoFile, videoError) = reportFileProvider.generateFileWithRandomName("mp4")
+            val (videoFile, videoError) = reportFileProvider.generateUniqueFile("mp4")
 
             if (videoError != null) {
                 Result.Failure(IllegalStateException("Can't create video file", videoError))

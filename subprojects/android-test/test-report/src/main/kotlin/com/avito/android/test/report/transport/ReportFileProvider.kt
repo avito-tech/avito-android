@@ -24,5 +24,5 @@ interface ReportFileProvider {
 
     fun generateFile(name: String, extension: String, create: Boolean = false): Result<File>
 
-    fun generateFileWithRandomName(extension: String, create: Boolean = false): Result<File>
+    fun generateUniqueFile(extension: String, create: Boolean = false): Result<File>
 }

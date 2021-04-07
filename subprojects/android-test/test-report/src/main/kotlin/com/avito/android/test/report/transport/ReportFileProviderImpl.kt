@@ -55,7 +55,7 @@ class ReportFileProviderImpl(
         }
     }
 
-    override fun generateFileWithRandomName(extension: String, create: Boolean): Result<File> {
+    override fun generateUniqueFile(extension: String, create: Boolean): Result<File> {
         return generateFile(name = randomFileNameGenerator.invoke(), extension = extension, create = create)
     }
 }

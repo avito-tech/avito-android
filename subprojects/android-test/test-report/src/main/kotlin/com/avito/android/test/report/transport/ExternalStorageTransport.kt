@@ -51,7 +51,7 @@ internal class ExternalStorageTransport(
     ): FutureValue<RemoteStorage.Result> {
         val url = when (request) {
             is RemoteStorage.Request.ContentRequest ->
-                reportFileProvider.generateFileWithRandomName(extension = request.extension).fold(
+                reportFileProvider.generateUniqueFile(extension = request.extension).fold(
                     { file ->
                         file.writeText(request.content)
                         reportFileProvider.toUploadPlaceholder(file)
