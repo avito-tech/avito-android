@@ -28,6 +28,7 @@ import com.avito.android.test.report.ReportViewerWebsocketReporter
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
+import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
 import com.avito.android.test.report.transport.ReportFileProvider
 import com.avito.android.test.report.transport.ReportFileProviderImpl
@@ -122,6 +123,13 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
+    /**
+     * Public for synth monitoring
+     */
+    val screenshotCapturer: ScreenshotCapturer by lazy {
+        ScreenshotCapturerImpl(reportFileProvider)
+    }
+
     override val loggerFactory by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         AndroidLoggerFactory(
@@ -144,7 +152,7 @@ abstract class InHouseInstrumentationTestRunner :
         ReportImplementation(
             loggerFactory = loggerFactory,
             transport = reportTransport,
-            screenshotCapturer = ScreenshotCapturerImpl(reportFileProvider),
+            screenshotCapturer = screenshotCapturer,
             timeProvider = timeProvider,
             troubleshooter = Troubleshooter.Impl(mainLooperMessagesLogDumper)
         )
