@@ -2,7 +2,11 @@ package com.avito.android.test.report.transport
 
 import android.os.Looper
 import com.avito.android.test.report.ReportState
-import com.avito.logger.Logger
+import com.avito.android.test.report.model.TestMetadata
+import com.avito.filestorage.FutureValue
+import com.avito.filestorage.RemoteStorage
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
@@ -12,19 +16,22 @@ import com.avito.report.model.TestName
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
 
-class LocalRunTransport(
+internal class LocalRunTransport(
     reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
     private val deviceName: DeviceName,
-    private val logger: Logger,
-    private val reportsApi: ReportsApi
+    loggerFactory: LoggerFactory,
+    private val reportsApi: ReportsApi,
+    private val remoteStorageTransport: AvitoRemoteStorageTransport
 ) : Transport, PreTransportMappers {
+
+    private val logger = loggerFactory.create<LocalRunTransport>()
 
     private val localBuildId: String? = null
 
     private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl)
 
-    override fun send(state: ReportState.Initialized.Started) {
+    override fun sendReport(state: ReportState.Initialized.Started) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             Thread { sendInternal(state) }.apply {
                 start()
@@ -89,5 +96,13 @@ class LocalRunTransport(
         } catch (e: Exception) {
             logger.warn("Report send failed", e)
         }
+    }
+
+    override fun sendContent(
+        test: TestMetadata,
+        request: RemoteStorage.Request,
+        comment: String
+    ): FutureValue<RemoteStorage.Result> {
+        return remoteStorageTransport.sendContent(test, request, comment)
     }
 }

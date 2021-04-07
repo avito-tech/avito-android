@@ -5,6 +5,7 @@ import android.os.ParcelFileDescriptor
 import android.os.ParcelFileDescriptor.MODE_READ_WRITE
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.Result
+import com.avito.android.test.report.transport.ReportFileProvider
 import com.avito.android.test.waitFor
 import com.avito.android.util.executeMethod
 import com.avito.android.util.getFieldValue
@@ -12,7 +13,6 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import java.io.File
 import java.io.IOException
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 interface VideoCapturer {
@@ -25,7 +25,7 @@ interface VideoCapturer {
 }
 
 class VideoCapturerImpl(
-    private val outputDirectory: Lazy<File>,
+    private val reportFileProvider: ReportFileProvider,
     loggerFactory: LoggerFactory
 ) : VideoCapturer {
 
@@ -37,18 +37,28 @@ class VideoCapturerImpl(
     override fun start(): Result<Unit> {
         // checks if execute start() concurrently
         return if (state is State.Idling) {
-            val uuid = UUID.randomUUID().toString()
-            val videoFile = testVideoFile(uuid)
-            val outputFile = outputFile()
-            try {
-                executeRecorderCommand("start ${videoFile.absolutePath}", outputFile)
-                state = State.Recording(videoFile, outputFile)
-                Result.Success(Unit)
-            } catch (t: Throwable) {
-                if (videoFile.exists()) {
-                    videoFile.delete()
+
+            val (videoFile, videoError) = reportFileProvider.generateUniqueFile("mp4")
+
+            if (videoError != null) {
+                Result.Failure(IllegalStateException("Can't create video file", videoError))
+            } else {
+                val (stdout, stdoutError) = reportFileProvider.generateFile("video-output", "txt", create = true)
+
+                if (stdoutError != null) {
+                    Result.Failure(IllegalStateException("Can't create video output file", videoError))
+                } else {
+                    try {
+                        executeRecorderCommand("start ${videoFile!!.absolutePath}", stdout!!)
+                        state = State.Recording(videoFile, stdout)
+                        Result.Success(Unit)
+                    } catch (t: Throwable) {
+                        if (videoFile!!.exists()) {
+                            videoFile.delete()
+                        }
+                        Result.Failure(IllegalStateException("Can't start video capturing", t))
+                    }
                 }
-                Result.Failure(IllegalStateException("Can't start video capturing", t))
             }
         } else {
             Result.Failure(IllegalStateException("Can't start video capturing. Capturer isn't Idling"))
@@ -111,7 +121,7 @@ class VideoCapturerImpl(
 
     private fun createRecorderBinary(): String {
         val binary = File(
-            outputDirectory.value,
+            reportFileProvider.rootDir.value,
             RECORDER_BINARY_NAME
         )
 
@@ -128,18 +138,6 @@ class VideoCapturerImpl(
             parentFile?.mkdirs()
             createNewFile()
         }
-    }
-
-    private fun testVideoFile(testName: String) = File(
-        outputDirectory.value,
-        "$testName.mp4"
-    )
-
-    private fun outputFile() = File(
-        outputDirectory.value,
-        "output.txt"
-    ).apply {
-        createNewFile()
     }
 
     private fun waitForVideoSaving(video: File) {

@@ -5,6 +5,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 interface FutureValue<T> {
     fun get(): T
+
+    companion object {
+
+        fun <T> create(stubValue: T): FutureValue<T> = object : FutureValue<T> {
+            override fun get(): T = stubValue
+        }
+    }
 }
 
 internal class SettableFutureValue<T> : FutureValue<T> {

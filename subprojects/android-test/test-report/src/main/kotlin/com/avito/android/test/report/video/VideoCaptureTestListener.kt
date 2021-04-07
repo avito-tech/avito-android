@@ -2,22 +2,23 @@ package com.avito.android.test.report.video
 
 import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.listener.TestLifecycleListener
+import com.avito.android.test.report.transport.ReportFileProvider
+import com.avito.android.test.report.transport.Transport
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
-import java.io.File
 
 class VideoCaptureTestListener(
     videoFeatureValue: VideoFeatureValue,
-    onDeviceCacheDirectory: Lazy<File>,
+    reportFileProvider: ReportFileProvider,
     loggerFactory: LoggerFactory,
-    private val remoteStorage: RemoteStorage,
+    private val transport: Transport,
     private val shouldRecord: Boolean,
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
-    private val videoCapturer: VideoCapturer = VideoCapturerImpl(onDeviceCacheDirectory, loggerFactory)
+    private val videoCapturer: VideoCapturer = VideoCapturerImpl(reportFileProvider, loggerFactory)
 ) : TestLifecycleListener {
 
     private val logger = loggerFactory.create<VideoCaptureTestListener>()
@@ -51,11 +52,10 @@ class VideoCaptureTestListener(
             videoCapturer.stop().fold(
                 onSuccess = { videoFile ->
                     logger.debug("Video uploading enabled. Recording stopped")
-                    val video = remoteStorage.upload(
-                        uploadRequest = RemoteStorage.Request.FileRequest.Video(
-                            file = videoFile
-                        ),
-                        comment = "video"
+                    val video = transport.sendContent(
+                        test = state.testMetadata,
+                        request = RemoteStorage.Request.FileRequest.Video(videoFile),
+                        comment = "video" // ignored, no field in report viewer
                     )
                     logger.debug("Video uploading enabled. Video uploaded")
                     waitUploads(state = state, video = video)

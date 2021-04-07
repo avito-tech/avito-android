@@ -1,33 +1,35 @@
 package com.avito.android.test.report.transport
 
 import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.model.TestMetadata
+import com.avito.filestorage.FutureValue
+import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
 
 /**
- * Save report to json that will be parsed from runner
+ * Send all to device external storage
+ * Test runner will read it and prepare reports
  */
-class ExternalStorageTransport(
+internal class ExternalStorageTransport(
     private val gson: Gson,
-    timeProvider: TimeProvider,
-    loggerFactory: LoggerFactory
-) : Transport, PreTransportMappers {
+    private val timeProvider: TimeProvider,
+    loggerFactory: LoggerFactory,
+    private val reportFileProvider: ReportFileProvider
+) : Transport {
 
     private val logger = loggerFactory.create<ExternalStorageTransport>()
 
-    private val outputFileProvider = OutputFileProvider()
     private val testRuntimeDataBuilder = TestRuntimeDataBuilder(timeProvider)
 
-    override fun send(state: ReportState.Initialized.Started) {
-        outputFileProvider.provideReportFile(
-            className = state.testMetadata.className,
-            methodName = state.testMetadata.methodName!!
-        ).fold(
+    override fun sendReport(state: ReportState.Initialized.Started) {
+        reportFileProvider.provideReportFile().fold(
             onSuccess = { file ->
                 try {
                     val json = gson.toJson(testRuntimeDataBuilder.fromState(state))
+                    logger.debug("Write report to file: $file")
                     file.writeText(json)
                 } catch (e: Throwable) {
                     logger.critical("Can't write report runtime data; leads to LOST test", e)
@@ -39,6 +41,39 @@ class ExternalStorageTransport(
                     throwable
                 )
             }
+        )
+    }
+
+    override fun sendContent(
+        test: TestMetadata,
+        request: RemoteStorage.Request,
+        comment: String
+    ): FutureValue<RemoteStorage.Result> {
+        val url = when (request) {
+            is RemoteStorage.Request.ContentRequest ->
+                reportFileProvider.generateUniqueFile(extension = request.extension).fold(
+                    { file ->
+                        file.writeText(request.content)
+                        reportFileProvider.toUploadPlaceholder(file)
+                    },
+                    { throwable ->
+                        val errorMessage = "no-file"
+                        logger.warn(errorMessage, throwable)
+                        errorMessage
+                    }
+                )
+
+            is RemoteStorage.Request.FileRequest ->
+                reportFileProvider.toUploadPlaceholder(request.file)
+        }
+
+        return FutureValue.create(
+            RemoteStorage.Result.Success(
+                comment = comment,
+                timeInSeconds = timeProvider.nowInSeconds(),
+                uploadRequest = request,
+                url = url
+            )
         )
     }
 }
