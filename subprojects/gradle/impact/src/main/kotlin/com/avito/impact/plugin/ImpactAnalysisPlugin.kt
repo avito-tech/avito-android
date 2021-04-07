@@ -46,6 +46,9 @@ class ImpactAnalysisPlugin : Plugin<Project> {
         rootProject.tasks.register<GenerateModulesReport>("generateModulesReport") {
             group = tasksGroup
             description = "Print modified projects to files. For testing purposes only"
+            outputs.upToDateWhen {
+                false // heavy to calculate correct inputs for impact analysis
+            }
         }
 
         rootProject.tasks.register<ImpactMetricsTask>("impactMetrics") {
