@@ -15,7 +15,7 @@ import java.nio.file.Paths
 
 /**
  * Prints impact analysis to files
- * FOR TESTING PURPOSES ONLY (assertion on gradle outputs)
+ * FOR TESTING PURPOSES ONLY (assertion on Gradle outputs)
  */
 abstract class GenerateModulesReport : DefaultTask() {
 
