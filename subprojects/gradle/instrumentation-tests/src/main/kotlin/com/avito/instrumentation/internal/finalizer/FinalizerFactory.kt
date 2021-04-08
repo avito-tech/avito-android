@@ -86,16 +86,19 @@ internal interface FinalizerFactory {
                     reportViewer = reportViewer,
                     reportCoordinates = params.reportCoordinates,
                     outputDir = params.outputDir
+                ),
+                WriteTaskVerdictAction(
+                    coordinates = params.reportCoordinates,
+                    verdictDestination = params.verdictFile,
+                    reportViewer = reportViewer,
+                    gson = gson,
                 )
             )
             return InstrumentationTestActionFinalizer.Impl(
                 hasFailedTestDeterminer = hasFailedTestDeterminer,
                 hasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
                 params = params,
-                reportViewer = reportViewer,
-                gson = gson,
                 buildFailer = buildFailer,
-                loggerFactory = loggerFactory,
                 actions = actions
             )
         }

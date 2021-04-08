@@ -1,7 +1,7 @@
 package com.avito.android.build_verdict.internal.task.lifecycle
 
 import com.avito.android.build_verdict.UserDefinedTaskVerdictProducer
-import com.avito.android.build_verdict.internal.span.SpannedStringBuilder
+import com.avito.android.build_verdict.span.SpannedStringBuilder
 import org.gradle.api.Task
 import org.gradle.util.Path
 
@@ -12,13 +12,12 @@ internal class UserDefinedVerdictProducerTaskLifecycleListener(
     override val acceptedTask: Class<in Task> = Task::class.java
 
     override fun afterFailedExecute(task: Task, error: Throwable) {
-        taskVerdictProducers
-            .value
-            .filter { it.accept(task) }
-            .map { it.produce(task) }
-            .forEach { verdict ->
-                verdicts.getOrPut(Path.path(task.path)) { SpannedStringBuilder() }
-                    .addLine(verdict)
-            }
+        val builder = verdicts.getOrPut(Path.path(task.path)) { SpannedStringBuilder() }
+        builder.addLines(
+            newLines = taskVerdictProducers
+                .value
+                .filter { it.accept(task) }
+                .map { it.produce(task) }
+        )
     }
 }

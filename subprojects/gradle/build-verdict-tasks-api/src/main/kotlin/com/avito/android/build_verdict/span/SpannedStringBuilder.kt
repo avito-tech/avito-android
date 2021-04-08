@@ -1,6 +1,4 @@
-package com.avito.android.build_verdict.internal.span
-
-import com.avito.android.build_verdict.span.SpannedString
+package com.avito.android.build_verdict.span
 
 class SpannedStringBuilder {
     private val lines: MutableList<SpannedString>
@@ -13,8 +11,14 @@ class SpannedStringBuilder {
         lines = mutableListOf(initialLine)
     }
 
-    fun addLine(line: SpannedString) {
+    fun addLine(line: SpannedString): SpannedStringBuilder {
         lines.add(line)
+        return this
+    }
+
+    fun addLines(newLines: Collection<SpannedString>): SpannedStringBuilder {
+        lines.addAll(newLines)
+        return this
     }
 
     fun build(): SpannedString {

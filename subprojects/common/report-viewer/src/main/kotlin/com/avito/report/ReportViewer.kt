@@ -21,6 +21,17 @@ interface ReportViewer {
 
     fun generateSingleTestRunUrl(testRunId: String): HttpUrl
 
+    /**
+     * Create url with applied [test] String to the `search field`
+     *
+     * Use when you don't have a testRunId
+     */
+    fun generateSingleTestRunUrl(
+        reportCoordinates: ReportCoordinates,
+        testClass: String,
+        testMethod: String
+    ): HttpUrl
+
     class Impl(
         host: String,
         private val reportViewerQuery: ReportViewerQuery = ReportViewerQuery()
@@ -48,6 +59,18 @@ interface ReportViewer {
             val url =
                 "$host/run/$reportId" +
                     reportViewerQuery.createQuery(onlyFailures, team)
+
+            return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
+        }
+
+        override fun generateSingleTestRunUrl(
+            reportCoordinates: ReportCoordinates,
+            testClass: String,
+            testMethod: String
+        ): HttpUrl {
+            val url =
+                "$host/report/${reportCoordinates.planSlug}/${reportCoordinates.jobSlug}/${reportCoordinates.runId}" +
+                    reportViewerQuery.createQuery(testClass, testMethod)
 
             return requireNotNull(url.toHttpUrl()) { "Invalid url: $url" }
         }

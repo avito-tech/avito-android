@@ -3,6 +3,7 @@ package com.avito.instrumentation
 import com.avito.android.build_verdict.BuildVerdictTask
 import com.avito.android.build_verdict.span.SpannedString
 import com.avito.android.build_verdict.span.SpannedString.Companion.link
+import com.avito.android.build_verdict.span.SpannedString.Companion.multiline
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
 import com.avito.android.runner.report.StrategyFactory
@@ -19,9 +20,9 @@ import com.avito.instrumentation.configuration.InstrumentationPluginConfiguratio
 import com.avito.instrumentation.internal.GetTestResultsAction
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Companion.gson
-import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
+import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
 import com.avito.instrumentation.service.TestRunParams
 import com.avito.instrumentation.service.TestRunnerService
 import com.avito.instrumentation.service.TestRunnerWorkAction
@@ -53,11 +54,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask(), BuildVerdictTask {
-
-    internal class Verdict(
-        val reportUrl: String,
-        val testRunVerdict: TestRunResult.Verdict
-    )
 
     @Optional
     @InputDirectory
@@ -123,10 +119,15 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     override val verdict: SpannedString
         get() {
             val verdictRaw = verdictFile.asFile.get().reader()
-            val verdict = gson.fromJson<Verdict>(verdictRaw)
-            return link(
-                url = verdict.reportUrl,
-                text = verdict.testRunVerdict.message
+            val verdict = gson.fromJson<InstrumentationTestsTaskVerdict>(verdictRaw)
+            return multiline(
+                mutableListOf<SpannedString>()
+                    .apply {
+                        add(link(verdict.reportUrl, verdict.title))
+                        addAll(verdict.causeFailureTests.map { test ->
+                            link(test.testUrl, test.title)
+                        })
+                    }
             )
         }
 

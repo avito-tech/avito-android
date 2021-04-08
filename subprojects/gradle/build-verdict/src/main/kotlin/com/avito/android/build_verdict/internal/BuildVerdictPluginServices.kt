@@ -1,7 +1,6 @@
 package com.avito.android.build_verdict.internal
 
 import com.avito.android.build_verdict.BuildVerdictPluginExtension
-import com.avito.android.build_verdict.internal.span.SpannedStringBuilder
 import com.avito.android.build_verdict.internal.task.lifecycle.BuildVerdictTaskLifecycleListener
 import com.avito.android.build_verdict.internal.task.lifecycle.DefaultTaskLifecycleListener
 import com.avito.android.build_verdict.internal.task.lifecycle.TaskExecutionListenerBridge
@@ -10,6 +9,7 @@ import com.avito.android.build_verdict.internal.task.lifecycle.UserDefinedVerdic
 import com.avito.android.build_verdict.internal.writer.HtmlBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.PlainTextBuildVerdictWriter
 import com.avito.android.build_verdict.internal.writer.RawBuildVerdictWriter
+import com.avito.android.build_verdict.span.SpannedStringBuilder
 import com.avito.logger.Logger
 import com.google.gson.GsonBuilder
 import org.gradle.BuildListener

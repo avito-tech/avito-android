@@ -13,7 +13,11 @@ class ReportViewerQuery {
     private val encoder by lazy { Base64.getEncoder() }
 
     /**
-     * пример ответа: {"filter":{"error":1,"fail":1,"groups":["messenger"],"other":1}}
+     * Result example:
+     *
+     *```json
+     * {"filter":{"error":1,"fail":1,"groups":["messenger"],"other":1}}
+     * ```
      */
     fun createQuery(onlyFailures: Boolean, team: Team): String {
         val query = jsonObject()
@@ -33,5 +37,22 @@ class ReportViewerQuery {
         } else {
             ""
         }
+    }
+
+    /**
+     * Result example:
+     *
+     * ```json
+     * {"filter":{"search": "com.avito.android.test.Test::click_bottom_button__close_the_screen" }}
+     * ```
+     */
+    fun createQuery(
+        testClass: String,
+        testMethod: String
+    ): String {
+        val query = jsonObject()
+        query += "search" to "$testClass::$testMethod"
+        val resultFilter = jsonObject("filter" to query)
+        return "?q=${encoder.encodeToString(resultFilter.toString().toByteArray())}"
     }
 }

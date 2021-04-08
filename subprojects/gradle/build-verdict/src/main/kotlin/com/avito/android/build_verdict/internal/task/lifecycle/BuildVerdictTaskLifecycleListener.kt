@@ -1,7 +1,7 @@
 package com.avito.android.build_verdict.internal.task.lifecycle
 
 import com.avito.android.build_verdict.BuildVerdictTask
-import com.avito.android.build_verdict.internal.span.SpannedStringBuilder
+import com.avito.android.build_verdict.span.SpannedStringBuilder
 import org.gradle.api.Task
 import org.gradle.util.Path
 
