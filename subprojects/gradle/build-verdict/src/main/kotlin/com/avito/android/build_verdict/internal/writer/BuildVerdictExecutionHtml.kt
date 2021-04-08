@@ -59,7 +59,7 @@ private fun BODY.task(titlePostfix: String = "", task: FailedTask) {
         text("${titlePostfix}What went wrong:")
     }
     error(task.error)
-    if (task.verdict != null) {
+    if (task.verdict != null && !task.verdict.isEmpty()) {
         h3 {
             text("Task verdict:")
         }

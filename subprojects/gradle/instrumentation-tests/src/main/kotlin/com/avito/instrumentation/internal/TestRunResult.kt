@@ -1,10 +1,12 @@
 package com.avito.instrumentation.internal
 
 import com.avito.composite_exception.composeWith
+import com.avito.instrumentation.internal.TestRunResult.Verdict.Failure.Details
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
+import com.avito.report.model.TestName
 
 internal data class TestRunResult(
     val reportedTests: List<SimpleRunTest>,
@@ -35,35 +37,37 @@ internal data class TestRunResult(
                     )
                 }
 
-                data class Test(val name: String, val devices: Set<String>)
+                data class Test(
+                    val name: TestName,
+                    val devices: Set<String>
+                )
             }
         }
     }
 
-    val verdict: Verdict
-        get() {
-            val failedVerdict = getFailedVerdict()
-            val notReportedVerdict = getNotReportedVerdict()
-            return when {
-                failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success ->
-                    Verdict.Success(
-                        """
+    val verdict: Verdict by lazy {
+        val failedVerdict = getFailedVerdict()
+        val notReportedVerdict = getNotReportedVerdict()
+        when {
+            failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success ->
+                Verdict.Success(
+                    """
                         |${failedVerdict.message}.
                         |${notReportedVerdict.message}.""".trimMargin()
-                    )
-                failedVerdict is Verdict.Failure && notReportedVerdict is Verdict.Failure -> {
-                    val message = "${failedVerdict.message}. \n ${notReportedVerdict.message}"
-                    Verdict.Failure(
-                        message = message,
-                        prettifiedDetails = failedVerdict.prettifiedDetails + notReportedVerdict.prettifiedDetails,
-                        cause = failedVerdict.cause.composeWith(notReportedVerdict.cause)
-                    )
-                }
-                failedVerdict is Verdict.Failure -> failedVerdict
-                notReportedVerdict is Verdict.Failure -> notReportedVerdict
-                else -> throw IllegalStateException("Must be unreach")
+                )
+            failedVerdict is Verdict.Failure && notReportedVerdict is Verdict.Failure -> {
+                val message = "${failedVerdict.message}. \n${notReportedVerdict.message}"
+                Verdict.Failure(
+                    message = message,
+                    prettifiedDetails = failedVerdict.prettifiedDetails + notReportedVerdict.prettifiedDetails,
+                    cause = failedVerdict.cause.composeWith(notReportedVerdict.cause)
+                )
             }
+            failedVerdict is Verdict.Failure -> failedVerdict
+            notReportedVerdict is Verdict.Failure -> notReportedVerdict
+            else -> throw IllegalStateException("Must be unreached")
         }
+    }
 
     val testsDuration
         get() = reportedTests.sumBy { it.lastAttemptDurationInSeconds }
@@ -72,7 +76,7 @@ internal data class TestRunResult(
         is HasNotReportedTestsDeterminer.Result.AllTestsReported -> Verdict.Success("All tests reported")
         is HasNotReportedTestsDeterminer.Result.DetermineError -> Verdict.Failure(
             message = "Failed. Couldn't determine not reported tests",
-            prettifiedDetails = Verdict.Failure.Details(
+            prettifiedDetails = Details(
                 lostTests = emptySet(),
                 failedTests = emptySet()
             ),
@@ -80,7 +84,7 @@ internal data class TestRunResult(
         )
         is HasNotReportedTestsDeterminer.Result.HasNotReportedTests -> Verdict.Failure(
             message = "Failed. There are ${notReported.lostTests.size} not reported tests.",
-            prettifiedDetails = Verdict.Failure.Details(
+            prettifiedDetails = Details(
                 lostTests = notReported.getLostFailureDetailsTests(),
                 failedTests = emptySet()
             ),
@@ -91,8 +95,8 @@ internal data class TestRunResult(
     private fun HasNotReportedTestsDeterminer.Result.HasNotReportedTests.getLostFailureDetailsTests() =
         lostTests.groupBy({ test -> test.name }, { test -> test.device.name })
             .map { (testName, devices) ->
-                Verdict.Failure.Details.Test(
-                    name = testName.name,
+                Details.Test(
+                    name = testName,
                     devices = devices.toSet()
                 )
             }
@@ -102,7 +106,7 @@ internal data class TestRunResult(
         is HasFailedTestDeterminer.Result.NoFailed -> Verdict.Success("No failed tests")
         is HasFailedTestDeterminer.Result.DetermineError -> Verdict.Failure(
             message = "Failed. Couldn't determine failed tests",
-            prettifiedDetails = Verdict.Failure.Details(
+            prettifiedDetails = Details(
                 lostTests = emptySet(),
                 failedTests = emptySet()
             ),
@@ -112,7 +116,7 @@ internal data class TestRunResult(
             if (failed.notSuppressedCount > 0) {
                 Verdict.Failure(
                     message = "Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests",
-                    prettifiedDetails = Verdict.Failure.Details(
+                    prettifiedDetails = Details(
                         lostTests = emptySet(),
                         failedTests = failed.getNotSuppressedFailedDetailsTests()
                     ),
@@ -124,8 +128,16 @@ internal data class TestRunResult(
     }
 
     private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests() =
-        notSuppressed.groupBy({ test -> test.name }, { test -> test.deviceName })
-            .map { (testName, devices) -> Verdict.Failure.Details.Test(testName, devices.toSet()) }
+        notSuppressed.groupBy(
+            { test -> TestName(test.className, test.methodName) },
+            { test -> test.deviceName }
+        )
+            .map { (testName, devices) ->
+                Details.Test(
+                    name = testName,
+                    devices = devices.toSet()
+                )
+            }
             .toSet()
 
     fun testCount(): Int = reportedTests.size + notReported.lostTests.size

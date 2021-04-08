@@ -97,7 +97,15 @@ internal class WriteJUnitReportAction(
                 appendLine(">")
 
                 appendLine("<error>")
-                appendLine("Not reported")
+                appendLine(
+                    "Not reported: ${
+                        reportViewer.generateSingleTestRunUrl(
+                            reportCoordinates,
+                            test.name.className,
+                            test.name.methodName
+                        )
+                    }"
+                )
                 appendLine("</error>")
 
                 appendLine("</testcase>")

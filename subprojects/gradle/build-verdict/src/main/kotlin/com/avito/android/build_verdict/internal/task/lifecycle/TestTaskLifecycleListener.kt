@@ -1,8 +1,8 @@
 package com.avito.android.build_verdict.internal.task.lifecycle
 
 import com.avito.android.build_verdict.internal.DefaultTestListener
-import com.avito.android.build_verdict.internal.span.SpannedStringBuilder
 import com.avito.android.build_verdict.span.SpannedString.Companion.toSpanned
+import com.avito.android.build_verdict.span.SpannedStringBuilder
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestResult

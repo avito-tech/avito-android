@@ -1,17 +1,16 @@
 package com.avito.instrumentation
 
 import com.avito.instrumentation.internal.TestRunResult
+import com.avito.instrumentation.internal.TestRunResult.Verdict.Failure
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
+import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 
 internal class TestRunResultTest {
-
-    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     @Test
     fun `has 1 unsuppresed test`() {
@@ -27,28 +26,16 @@ internal class TestRunResultTest {
 
         assertThat(verdict).apply {
             isInstanceOf(
-                TestRunResult.Verdict.Failure::class.java
+                Failure::class.java
             )
         }
 
-        assertThat(gson.toJson(verdict))
-            .isEqualTo(
-                """
-{
-  "message": "Failed. There are 1 unsuppressed failed tests",
-  "prettifiedDetails": {
-    "lostTests": [],
-    "failedTests": [
-      {
-        "name": "com.Test.test",
-        "devices": [
-          "api22"
-        ]
-      }
-    ]
-  }
-}""".trimIndent()
+        verdict.assertVerdictFailure(
+            Failure.Details.Test(
+                name = TestName("com.Test", "test"),
+                devices = setOf("api22")
             )
+        )
     }
 
     @Test
@@ -64,30 +51,37 @@ internal class TestRunResultTest {
             notReported = HasNotReportedTestsDeterminer.Result.AllTestsReported
         ).verdict
 
-        assertThat(verdict).apply {
+        verdict.assertVerdictFailure(
+            Failure.Details.Test(
+                name = TestName("com.Test", "test"),
+                devices = setOf("api21", "api27")
+            )
+        )
+    }
+
+    private fun TestRunResult.Verdict.assertVerdictFailure(
+        failedTest: Failure.Details.Test
+    ) {
+        assertThat(this).apply {
             isInstanceOf(
-                TestRunResult.Verdict.Failure::class.java
+                Failure::class.java
             )
         }
 
-        assertThat(gson.toJson(verdict))
-            .isEqualTo(
-                """
-{
-  "message": "Failed. There are 2 unsuppressed failed tests",
-  "prettifiedDetails": {
-    "lostTests": [],
-    "failedTests": [
-      {
-        "name": "com.Test.test",
-        "devices": [
-          "api21",
-          "api27"
-        ]
-      }
-    ]
-  }
-}""".trimIndent()
+        with(this as Failure) {
+            assertThat(
+                prettifiedDetails.lostTests
+            ).isEmpty()
+
+            assertThat(
+                prettifiedDetails.failedTests
+            ).hasSize(1)
+
+            assertThat(
+                prettifiedDetails.failedTests.first()
+            ).isEqualTo(
+                failedTest
             )
+        }
     }
 }

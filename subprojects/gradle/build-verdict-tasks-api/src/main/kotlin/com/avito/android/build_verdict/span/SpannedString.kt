@@ -8,6 +8,10 @@ data class SpannedString(
 ) {
     constructor(value: String) : this(value, value)
 
+    fun isEmpty(): Boolean {
+        return plain.isEmpty() && html.isEmpty()
+    }
+
     companion object {
 
         @JvmStatic
@@ -24,6 +28,13 @@ data class SpannedString(
                 plain = "$text: $url",
                 html = """<a href="$url" target="_blank">$text</a>"""
             )
+        }
+
+        @JvmStatic
+        fun multiline(lines: List<SpannedString>): SpannedString {
+            return SpannedStringBuilder()
+                .addLines(lines)
+                .build()
         }
     }
 }
