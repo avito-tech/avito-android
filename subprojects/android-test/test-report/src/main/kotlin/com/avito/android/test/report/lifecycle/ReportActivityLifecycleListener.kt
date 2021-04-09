@@ -4,15 +4,13 @@ import android.app.Activity
 import androidx.fragment.app.FragmentActivity
 import androidx.test.runner.lifecycle.ActivityLifecycleCallback
 import androidx.test.runner.lifecycle.Stage
-import com.avito.android.test.report.Report
 
 class ReportActivityLifecycleListener(
-    private val report: Report,
     factory: com.avito.logger.LoggerFactory
 ) : ActivityLifecycleCallback {
 
     private val logger = factory.create("ReportActivityLifecycle")
-    private val fragmentLifecycleListener = ReportFragmentLifecycleListener(report, factory)
+    private val fragmentLifecycleListener = ReportFragmentLifecycleListener(factory)
 
     override fun onActivityLifecycleChanged(activity: Activity, stage: Stage) {
         val message = "Activity ${activity::class.java.simpleName} was $stage"
@@ -34,7 +32,9 @@ class ReportActivityLifecycleListener(
             Stage.CREATED,
             Stage.RESUMED,
             Stage.PAUSED,
-            Stage.DESTROYED -> report.addComment(message)
+            Stage.DESTROYED -> {
+                // todo Enable after MBS-11010 report.addComment(message)
+            }
             else -> {
                 // do nothing to avoid a lot of events
             }

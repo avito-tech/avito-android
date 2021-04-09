@@ -13,6 +13,7 @@ import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
 import com.avito.android.runner.delegates.MainLooperMessagesLogDelegate
+import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
@@ -196,6 +197,12 @@ abstract class InHouseInstrumentationTestRunner :
 
     override fun getDelegates(arguments: Bundle): List<InstrumentationTestRunnerDelegate> {
         return listOf(
+            ReportLifecycleEventsDelegate(
+                loggerFactory.newFactory(
+                    // Because LifecycleEvents logs are needed only for test reports
+                    newElasticConfig = ElasticConfig.Disabled
+                )
+            ),
             MainLooperMessagesLogDelegate(mainLooperMessagesLogDumper)
         )
     }
