@@ -222,18 +222,6 @@ class ReportImplementation(
         currentState.currentStep = null
     }
 
-    private fun updateStep(update: StepResult.() -> Unit): Unit =
-        methodExecutionTracing("updateStep") {
-            val currentState = getCastedState<ReportState.Initialized.Started>()
-            val currentStep = requireNotNull(currentState.currentStep) {
-                "Couldn't update step because it hasn't started yet"
-            }
-
-            beforeStepUpdate(currentStep)
-            currentStep.update()
-            afterStepUpdate(currentStep)
-        }
-
     @Synchronized
     override fun makeScreenshot(comment: String): FutureValue<Result>? =
         methodExecutionTracing("makeScreenshot") {
@@ -272,51 +260,70 @@ class ReportImplementation(
 
     @Synchronized
     override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
-        val wrappedContentIfNeeded = if (wrapHtml) wrapInHtml(content) else content
+        methodExecutionTracing("addHtml") {
+            val initialized = getCastedState<ReportState.Initialized>()
 
-        val initialized = getCastedState<ReportState.Initialized>()
+            val wrappedContentIfNeeded = if (wrapHtml) wrapInHtml(content) else content
 
-        val html = transport.sendContent(
-            test = initialized.testMetadata,
-            request = RemoteStorage.Request.ContentRequest.Html(
-                content = wrappedContentIfNeeded,
-            ),
-            comment = label
-        )
+            val html = transport.sendContent(
+                test = initialized.testMetadata,
+                request = RemoteStorage.Request.ContentRequest.Html(
+                    content = wrappedContentIfNeeded,
+                ),
+                comment = label
+            )
 
-        val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val futureUploads = started
-            ?.currentStepOrSynthetic()
-            ?.futureUploads ?: earlyFuturesUploads
-        futureUploads.add(html)
+            val started = getCastedStateOrNull<ReportState.Initialized.Started>()
+            val futureUploads = started
+                ?.currentStepOrSynthetic()
+                ?.futureUploads ?: earlyFuturesUploads
+            futureUploads.add(html)
+        }
     }
 
     @Synchronized
     override fun addText(label: String, text: String) {
-        val initialized = getCastedState<ReportState.Initialized>()
+        methodExecutionTracing("addText") {
+            val initialized = getCastedState<ReportState.Initialized>()
 
-        val txt = transport.sendContent(
-            test = initialized.testMetadata,
-            request = RemoteStorage.Request.ContentRequest.PlainText(
-                content = text,
-            ),
-            comment = label
-        )
-        val started = getCastedStateOrNull<ReportState.Initialized.Started>()
-        val futureUploads = started
-            ?.currentStepOrSynthetic()
-            ?.futureUploads ?: earlyFuturesUploads
-        futureUploads.add(txt)
+            val txt = transport.sendContent(
+                test = initialized.testMetadata,
+                request = RemoteStorage.Request.ContentRequest.PlainText(
+                    content = text,
+                ),
+                comment = label
+            )
+            val started = getCastedStateOrNull<ReportState.Initialized.Started>()
+            val futureUploads = started
+                ?.currentStepOrSynthetic()
+                ?.futureUploads ?: earlyFuturesUploads
+            futureUploads.add(txt)
+        }
     }
 
     @Synchronized
     override fun addComment(comment: String) {
-        addEntry(Entry.Comment(comment, timeProvider.nowInSeconds()))
+        methodExecutionTracing("addComment") {
+            addEntry(Entry.Comment(comment, timeProvider.nowInSeconds()))
+        }
     }
 
     @Synchronized
     override fun addAssertion(assertionMessage: String) {
-        addEntry(Entry.Check(assertionMessage, timeProvider.nowInSeconds()))
+        methodExecutionTracing("addAssertion") {
+            addEntry(Entry.Check(assertionMessage, timeProvider.nowInSeconds()))
+        }
+    }
+
+    private fun updateStep(update: StepResult.() -> Unit) {
+        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentStep = requireNotNull(currentState.currentStep) {
+            "Couldn't update step because it hasn't started yet"
+        }
+
+        beforeStepUpdate(currentStep)
+        currentStep.update()
+        afterStepUpdate(currentStep)
     }
 
     private fun addEntry(entry: Entry) {

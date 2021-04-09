@@ -73,16 +73,15 @@ class ScreenshotCapturerImpl(private val reportFileProvider: ReportFileProvider)
             )
         }
 
-        return Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-            .apply {
-                if (Looper.myLooper() == Looper.getMainLooper()) {
-                    activity.drawDecorViewToBitmap(this)
-                } else {
-                    activity.runOnMainThreadSync {
-                        activity.drawDecorViewToBitmap(this)
-                    }
-                }
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            activity.drawDecorViewToBitmap(bitmap)
+        } else {
+            activity.runOnMainThreadSync {
+                activity.drawDecorViewToBitmap(bitmap)
             }
+        }
+        return bitmap
     }
 
     private fun Activity.drawDecorViewToBitmap(bitmap: Bitmap) {
