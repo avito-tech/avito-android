@@ -9,7 +9,7 @@ val subprojectsWrapper by tasks.registering(Copy::class) {
 tasks.withType<Wrapper> {
     // sources unavailable with BIN until https://youtrack.jetbrains.com/issue/IDEA-231667 resolved
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "7.0-rc-2"
+    gradleVersion = "7.0"
 
     finalizedBy(subprojectsWrapper)
 }
