@@ -1,5 +1,3 @@
-import java.util.jar.Attributes
-
 plugins {
     `maven-publish`
 }
@@ -10,16 +8,6 @@ group = "com.avito.android"
 version = providers.gradleProperty("projectVersion")
     .forUseAtConfigurationTime()
     .get()
-
-tasks.withType<Jar> {
-    manifest {
-        attributes(
-            mapOf(
-                Attributes.Name.IMPLEMENTATION_VERSION.toString() to project.version
-            )
-        )
-    }
-}
 
 publishing.publications.withType<MavenPublication> {
     pom {

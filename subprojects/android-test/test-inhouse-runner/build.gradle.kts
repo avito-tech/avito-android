@@ -12,6 +12,7 @@ dependencies {
         because("InHouseInstrumentationTestRunner.sentry")
     }
 
+    implementation(project(":common:build-metadata"))
     implementation(project(":common:sentry"))
     implementation(project(":common:elastic-logger"))
     implementation(project(":common:http-client"))

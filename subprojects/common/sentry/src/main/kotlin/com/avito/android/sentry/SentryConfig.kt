@@ -31,7 +31,7 @@ fun sentryClient(config: SentryConfig): SentryClient {
  *
  * https://github.com/getsentry/sentry-java/issues/543
  */
-private const val DEFAULT_SENTRY_MAX_STRING: Int = 50000
+private const val DEFAULT_SENTRY_MAX_STRING: Int = 50_000
 
 /**
  * Default config for SentryClient
