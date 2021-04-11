@@ -16,7 +16,7 @@ sealed class BuildEnvironment(
     class Local(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
     class GradleTestKit(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
     class Mirkale(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
-    class IDE(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
+    class IDE(providers: ProviderFactory, val isSync: Boolean, reason: String) : BuildEnvironment(providers, reason)
     class CI(providers: ProviderFactory, reason: String) : BuildEnvironment(providers, reason)
 
     override fun toString(): String = "${javaClass.simpleName}, because: $reason"
@@ -37,6 +37,7 @@ val Project.buildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { pro
         )
         isRunFromIDE(project) -> BuildEnvironment.IDE(
             project.providers,
+            isSync = isIDESync(project),
             "has 'android.injected.invoked.from.ide' start parameter"
         )
         isRunFromGradleTestKit(project) -> BuildEnvironment.GradleTestKit(
@@ -45,6 +46,7 @@ val Project.buildEnvironment by ProjectProperty.lazy(scope = ROOT_PROJECT) { pro
         )
         isKotlinDSLResolving(project) -> BuildEnvironment.IDE(
             project.providers,
+            isSync = isIDESync(project),
             "has 'org.gradle.kotlin.dsl.provider.script' start parameter"
         )
         else -> BuildEnvironment.Local(
@@ -73,14 +75,11 @@ private fun isRunViaMirakle(project: Project): Boolean {
 private fun isRunInCI(project: Project): Boolean =
     project.hasProperty("ci") && project.property("ci") == "true"
 
-private fun isKotlinDSLResolving(project: Project): Boolean {
-    val properties = project.gradle.startParameter.projectProperties
-    val scriptKey = "org.gradle.kotlin.dsl.provider.script"
-    return properties.containsKey(scriptKey) && !properties[scriptKey].isNullOrBlank()
-}
+private fun isKotlinDSLResolving(project: Project): Boolean =
+    !project.gradle.startParameter.projectProperties["org.gradle.kotlin.dsl.provider.script"].isNullOrBlank()
 
-private fun isRunFromIDE(project: Project): Boolean {
-    val properties = project.gradle.startParameter.projectProperties
-    val ideRunKey = "android.injected.invoked.from.ide"
-    return properties.containsKey(ideRunKey) && properties[ideRunKey] == "true"
-}
+private fun isRunFromIDE(project: Project): Boolean =
+    project.gradle.startParameter.projectProperties["android.injected.invoked.from.ide"] == "true"
+
+private fun isIDESync(project: Project): Boolean =
+    project.gradle.startParameter.systemPropertiesArgs["idea.sync.active"] == "true"

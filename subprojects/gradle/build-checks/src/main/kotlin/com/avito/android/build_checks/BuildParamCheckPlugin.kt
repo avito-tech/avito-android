@@ -19,6 +19,8 @@ import com.avito.android.build_checks.internal.unique_r.UniqueRClassesTaskCreato
 import com.avito.android.withAndroidApp
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
+import com.avito.utils.gradle.BuildEnvironment
+import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -28,14 +30,6 @@ import org.gradle.kotlin.dsl.register
 
 @Suppress("unused")
 public open class BuildParamCheckPlugin : Plugin<Project> {
-
-    @Suppress("UnstableApiUsage")
-    private val Project.pluginIsEnabled: Boolean
-        get() = providers
-            .gradleProperty(enabledProp)
-            .forUseAtConfigurationTime()
-            .map { it.toBoolean() }
-            .getOrElse(true)
 
     override fun apply(project: Project) {
         if (project.isRoot()) {
@@ -56,7 +50,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     private fun applyForRootProject(project: Project) {
         val extension = project.extensions.create<RootProjectChecksExtension>(extensionName)
 
-        if (!project.pluginIsEnabled) return
+        if (isPluginDisabled(project)) return
 
         val logger = GradleLoggerFactory.getLogger(this, project)
         val envInfo = BuildEnvironmentInfo(project.providers)
@@ -88,7 +82,7 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
     private fun applyForAndroidApp(project: Project) {
         val extension = project.extensions.create<AndroidAppChecksExtension>(extensionName)
 
-        if (!project.pluginIsEnabled) return
+        if (isPluginDisabled(project)) return
 
         project.afterEvaluate {
             val checks = extension.enabledChecks()
@@ -181,6 +175,21 @@ public open class BuildParamCheckPlugin : Plugin<Project> {
                 dependsOn(task)
             }
         }
+    }
+
+    private fun isPluginDisabled(project: Project): Boolean {
+        @Suppress("UnstableApiUsage") val isEnabled = project.providers
+            .gradleProperty(enabledProp)
+            .forUseAtConfigurationTime()
+            .map { it.toBoolean() }
+            .getOrElse(true)
+
+        if (!isEnabled) return true
+
+        val buildEnv = project.buildEnvironment
+        if (buildEnv is BuildEnvironment.IDE && buildEnv.isSync) return true
+
+        return false
     }
 }
 

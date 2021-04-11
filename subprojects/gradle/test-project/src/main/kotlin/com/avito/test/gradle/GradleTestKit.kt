@@ -40,7 +40,7 @@ fun gradlew(
 
     val finalArgs = args.asList() + defaultArguments
 
-    println("Running gradle test kit with args: $finalArgs")
+    println("Running gradle test kit with args: $finalArgs, env: $environment")
 
     val isInvokedFromIde = System.getProperty("isInvokedFromIde")?.toBoolean() ?: false
 
