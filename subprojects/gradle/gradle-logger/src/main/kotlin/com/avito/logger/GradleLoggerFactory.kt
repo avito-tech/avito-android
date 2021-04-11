@@ -13,6 +13,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import java.io.Serializable
+import java.util.Locale
 
 class GradleLoggerFactory(
     private val isCiRun: Boolean,
@@ -20,7 +21,8 @@ class GradleLoggerFactory(
     private val elasticConfig: ElasticConfig,
     private val projectPath: String,
     private val pluginName: String? = null,
-    private val taskName: String? = null
+    private val taskName: String? = null,
+    private val verboseMode: LogLevel
 ) : LoggerFactory, Serializable {
 
     override fun create(tag: String): Logger = provideLogger(
@@ -32,30 +34,33 @@ class GradleLoggerFactory(
             pluginName = pluginName,
             projectPath = projectPath,
             taskName = taskName
-        )
+        ),
+        verboseMode = verboseMode
     )
 
     private fun provideLogger(
         isCiRun: Boolean,
         sentryConfig: SentryConfig,
         elasticConfig: ElasticConfig,
-        metadata: LoggerMetadata
+        metadata: LoggerMetadata,
+        verboseMode: LogLevel
     ): Logger = if (isCiRun) {
-        createCiLogger(sentryConfig, elasticConfig, metadata)
+        createCiLogger(sentryConfig, elasticConfig, metadata, verboseMode)
     } else {
-        createLocalBuildLogger(metadata)
+        createLocalBuildLogger(metadata, verboseMode)
     }
 
     private fun createCiLogger(
         sentryConfig: SentryConfig,
         elasticConfig: ElasticConfig,
-        metadata: LoggerMetadata
+        metadata: LoggerMetadata,
+        verboseMode: LogLevel
     ): Logger {
 
         val defaultHandler = when (elasticConfig) {
             is ElasticConfig.Disabled ->
                 DefaultLoggingHandler(
-                    destination = Slf4jDestination(metadata.tag)
+                    destination = Slf4jDestination(metadata.tag, verboseMode)
                 )
             is ElasticConfig.Enabled ->
                 DefaultLoggingHandler(
@@ -82,11 +87,11 @@ class GradleLoggerFactory(
         )
     }
 
-    private fun createLocalBuildLogger(metadata: LoggerMetadata): Logger {
+    private fun createLocalBuildLogger(metadata: LoggerMetadata, verboseMode: LogLevel): Logger {
 
         val gradleLoggerHandler = DefaultLoggingHandler(
             formatter = AppendMetadataFormatter(metadata),
-            destination = Slf4jDestination(metadata.tag)
+            destination = Slf4jDestination(metadata.tag, verboseMode)
         )
 
         return DefaultLogger(
@@ -127,8 +132,24 @@ class GradleLoggerFactory(
             elasticConfig = ElasticConfigFactory.config(project),
             projectPath = project.path,
             pluginName = pluginName,
-            taskName = taskName
+            taskName = taskName,
+            verboseMode = readVerboseMode(project)
         )
+
+        @Suppress("UnstableApiUsage")
+        private fun readVerboseMode(project: Project): LogLevel {
+            return project.providers
+                .gradleProperty("avito.logging.verbose")
+                .forUseAtConfigurationTime()
+                .map {
+                    try {
+                        LogLevel.valueOf(it.toUpperCase(Locale.getDefault()))
+                    } catch (e: Throwable) {
+                        LogLevel.CRITICAL
+                    }
+                }
+                .getOrElse(LogLevel.CRITICAL)
+        }
 
         private fun Project.isCiRun(): Boolean =
             project.buildEnvironment is BuildEnvironment.CI && !project.buildEnvironment.inGradleTestKit

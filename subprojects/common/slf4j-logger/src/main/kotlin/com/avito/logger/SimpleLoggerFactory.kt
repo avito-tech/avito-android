@@ -9,7 +9,7 @@ class SimpleLoggerFactory : LoggerFactory {
     override fun create(tag: String): Logger {
 
         val defaultHandler = DefaultLoggingHandler(
-            destination = Slf4jDestination(tag),
+            destination = Slf4jDestination(tag, verboseMode = LogLevel.CRITICAL),
             formatter = AppendClassNameFormatter(tag)
         )
 
