@@ -65,6 +65,7 @@ include(":gradle:worker")
 include(":gradle:gradle-logger")
 include(":gradle:module-dependencies-graph")
 
+include(":common:build-metadata")
 include(":common:resources")
 include(":common:files")
 include(":common:time")

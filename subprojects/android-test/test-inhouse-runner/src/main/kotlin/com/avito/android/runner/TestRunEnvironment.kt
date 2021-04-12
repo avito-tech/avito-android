@@ -17,6 +17,7 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.transport.ReportDestination
 import com.avito.android.test.report.video.VideoFeatureValue
 import com.avito.report.model.ReportCoordinates
+import com.avito.utils.BuildMetadata
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
@@ -167,6 +168,8 @@ private fun parseSentryConfig(argumentsProvider: ArgsProvider): SentryConfig {
     val tags = mapOf(
         "API" to Build.VERSION.SDK_INT.toString()
     )
+    val release = BuildMetadata.androidLibVersion("test-inhouse-runner")
+
     return if (dsn.isNullOrBlank()) {
         SentryConfig.Disabled
     } else {
@@ -174,7 +177,7 @@ private fun parseSentryConfig(argumentsProvider: ArgsProvider): SentryConfig {
             dsn = dsn,
             environment = "android-test",
             serverName = "",
-            release = "",
+            release = release,
             tags = tags
         )
     }
