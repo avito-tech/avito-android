@@ -28,7 +28,7 @@ fun createKubernetesClient(
             // todo move validation to configuration phase
             require(kubernetesCredentials.context.isNotBlank()) { "kubernetes.context should be set" }
 
-            val configFile = File(kubernetesCredentials.configFile)
+            val configFile = kubernetesCredentials.configFile
             require(configFile.exists() && configFile.length() > 0) {
                 "kubernetes.configFile:(${kubernetesCredentials.configFile}) is unavailable"
             }
@@ -36,8 +36,9 @@ fun createKubernetesClient(
             val configContents = configFile.readText()
 
             Config.fromKubeconfig(kubernetesCredentials.context, configContents, "").apply {
-                if (!kubernetesCredentials.caCertFile.isNullOrBlank()) {
-                    caCertFile = kubernetesCredentials.caCertFile
+                val caCert = kubernetesCredentials.caCertFile
+                if (caCert != null && caCert.exists()) {
+                    caCertFile = caCert.absolutePath
                 }
 
                 val namespaceFromKubeConfig = getNamespace()
@@ -98,7 +99,9 @@ val Project.kubernetesCredentials: KubernetesCredentials
                 KubernetesCredentials.Empty
             }
         } else {
-            val caCertFile = getOptionalStringProperty("kubernetesCaCertFile", nullIfBlank = true)
+            val caCertFile = getOptionalStringProperty("kubernetesCaCertFile", nullIfBlank = true)?.let {
+                File(it)
+            }
             KubernetesCredentials.Config(context, caCertFile = caCertFile)
         }
     }
