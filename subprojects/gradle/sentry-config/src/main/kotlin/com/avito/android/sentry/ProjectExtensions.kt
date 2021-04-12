@@ -7,6 +7,7 @@ import com.avito.kotlin.dsl.PropertyScope.ROOT_PROJECT
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.utils.BuildMetadata
 import com.avito.utils.gradle.buildEnvironment
 import io.sentry.SentryClient
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -36,7 +37,7 @@ private fun from(project: Project): SentryConfig {
             tags[buildIdTag] = buildId
         }
 
-        val infraVersion = SentryConfig::class.java.`package`.implementationVersion
+        val infraVersion = BuildMetadata.kotlinLibraryVersion(SentryConfig::class.java)
 
         val config = SentryConfig.Enabled(
             dsn = project.getMandatoryStringProperty("avito.sentry.dsn"),
