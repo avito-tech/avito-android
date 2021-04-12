@@ -49,14 +49,14 @@ val logger = loggerFactory.create("MyCustomTag")
 
 ## Verbose mode
 
-Use gradle property `avito.logging.verbose` to override gradle logging level and send avito logs with gradle's error
+Use gradle property `avito.logging.verbose` to override gradle logging level and send avito logs with gradle's quiet
 level.
 
 Value defines which levels to override.
 
-For example: `-Pavito.logging.verbose=INFO` makes `INFO` and `WARNING` levels act like error
+For example: `-Pavito.logging.verbose=INFO` makes `INFO` and higher(`WARNING`) levels act like level quiet
 
-`CRITICAL`, which is mapped to gradle's `error` level, always acts as an error
+`CRITICAL`, which is mapped to gradle's `error` level is visible already on quiet level
 
 Possible values are in `DEBUG`, `INFO`, `WARNING`, `CRITICAL` (see `com.avito.logger.LogLevel`)
 

@@ -24,12 +24,12 @@ class Slf4jDestination(
         with(logger()) {
             when (level) {
                 LogLevel.DEBUG -> if (verboseMode == LogLevel.DEBUG) {
-                    error(message, throwable)
+                    println(message)
                 } else {
                     debug(message, throwable)
                 }
                 LogLevel.INFO -> if (verboseMode == LogLevel.DEBUG || verboseMode == LogLevel.INFO) {
-                    error(message, throwable)
+                    println(message)
                 } else {
                     info(message, throwable)
                 }
@@ -37,7 +37,7 @@ class Slf4jDestination(
                     || verboseMode == LogLevel.INFO
                     || verboseMode == LogLevel.WARNING
                 ) {
-                    error(message, throwable)
+                    println(message)
                 } else {
                     warn(message, throwable)
                 }
