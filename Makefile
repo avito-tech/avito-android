@@ -27,7 +27,7 @@ stacktrace?=
 project=-p subprojects
 
 # see Logging.md#Verbose-mode
-verbose?=CRITICAL
+verbose?=
 
 docker_command?=
 
@@ -66,7 +66,7 @@ params +=-PinfraVersion=$(infra)
 endif
 
 ifdef verbose
-params +=-Pavito.logging.verbose=$(verbose)
+params +=-Pavito.logging.verbosity=$(verbose)
 endif
 
 params +=-PtestBuildType=$(test_build_type)

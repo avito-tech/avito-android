@@ -5,10 +5,7 @@ import com.avito.logger.LoggingDestination
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Slf4jDestination(
-    private val tag: String,
-    private val verboseMode: LogLevel
-) : LoggingDestination {
+class Slf4jDestination(private val tag: String) : LoggingDestination {
 
     @Transient
     private lateinit var _logger: Logger
@@ -23,24 +20,9 @@ class Slf4jDestination(
     override fun write(level: LogLevel, message: String, throwable: Throwable?) {
         with(logger()) {
             when (level) {
-                LogLevel.DEBUG -> if (verboseMode == LogLevel.DEBUG) {
-                    println(message)
-                } else {
-                    debug(message, throwable)
-                }
-                LogLevel.INFO -> if (verboseMode == LogLevel.DEBUG || verboseMode == LogLevel.INFO) {
-                    println(message)
-                } else {
-                    info(message, throwable)
-                }
-                LogLevel.WARNING -> if (verboseMode == LogLevel.DEBUG
-                    || verboseMode == LogLevel.INFO
-                    || verboseMode == LogLevel.WARNING
-                ) {
-                    println(message)
-                } else {
-                    warn(message, throwable)
-                }
+                LogLevel.DEBUG -> debug(message, throwable)
+                LogLevel.INFO -> info(message, throwable)
+                LogLevel.WARNING -> warn(message, throwable)
                 LogLevel.CRITICAL -> error(message, throwable)
             }
         }

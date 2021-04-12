@@ -49,18 +49,22 @@ val logger = loggerFactory.create("MyCustomTag")
 
 ## Verbose mode
 
-Use gradle property `avito.logging.verbose` to override gradle logging level and send avito logs with gradle's quiet
-level.
+Use gradle property `avito.logging.verbosity` to override gradle logging level and send avito logs to stdout (e.g. with
+gradle's `quiet` level.)
 
 Value defines which levels to override.
 
-For example: `-Pavito.logging.verbose=INFO` makes `INFO` and higher(`WARNING`) levels act like level quiet
+For example: `-Pavito.logging.verbosity=INFO` makes `INFO` and higher(`WARNING`) levels act like level quiet
 
 `CRITICAL`, which is mapped to gradle's `error` level is visible already on quiet level
 
 Possible values are in `DEBUG`, `INFO`, `WARNING`, `CRITICAL` (see `com.avito.logger.LogLevel`)
 
-Default is `CRITICAL`
+Default is not defined
+
+### Stacktrace
+
+Add gradle's `--stacktrace` to also print stacktraces in verbose mode if available
 
 ### Why is it needed?
 
@@ -70,4 +74,6 @@ via `--info` or `--debug`, which made console output unreadable and build slow.
 There is an issue for
 that: [gradle/#1010 Ability to set log level for specific task](https://github.com/gradle/gradle/issues/1010)
 
-With verbose flag you are able to tune log level for avito plugins separately. 
+With verbose flag you are able to tune log level for avito plugins separately.
+
+It only affects console output, and not affecting custom loggers like elastic.
