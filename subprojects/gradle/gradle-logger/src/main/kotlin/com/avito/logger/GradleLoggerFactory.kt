@@ -4,6 +4,8 @@ import com.avito.android.elastic.ElasticConfig
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.sentry.sentryConfig
 import com.avito.logger.destination.Slf4jDestination
+import com.avito.logger.destination.VerboseDestination
+import com.avito.logger.destination.VerboseMode
 import com.avito.logger.formatter.AppendMetadataFormatter
 import com.avito.logger.handler.CombinedHandler
 import com.avito.logger.handler.DefaultLoggingHandler
@@ -12,7 +14,9 @@ import com.avito.utils.gradle.buildEnvironment
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.logging.configuration.ShowStacktrace
 import java.io.Serializable
+import java.util.Locale
 
 class GradleLoggerFactory(
     private val isCiRun: Boolean,
@@ -20,7 +24,8 @@ class GradleLoggerFactory(
     private val elasticConfig: ElasticConfig,
     private val projectPath: String,
     private val pluginName: String? = null,
-    private val taskName: String? = null
+    private val taskName: String? = null,
+    private val verboseMode: VerboseMode?,
 ) : LoggerFactory, Serializable {
 
     override fun create(tag: String): Logger = provideLogger(
@@ -32,31 +37,40 @@ class GradleLoggerFactory(
             pluginName = pluginName,
             projectPath = projectPath,
             taskName = taskName
-        )
+        ),
+        verboseMode = verboseMode
     )
 
     private fun provideLogger(
         isCiRun: Boolean,
         sentryConfig: SentryConfig,
         elasticConfig: ElasticConfig,
-        metadata: LoggerMetadata
+        metadata: LoggerMetadata,
+        verboseMode: VerboseMode?
     ): Logger = if (isCiRun) {
-        createCiLogger(sentryConfig, elasticConfig, metadata)
+        createCiLogger(sentryConfig, elasticConfig, metadata, verboseMode)
     } else {
-        createLocalBuildLogger(metadata)
+        createLocalBuildLogger(metadata, verboseMode)
     }
 
     private fun createCiLogger(
         sentryConfig: SentryConfig,
         elasticConfig: ElasticConfig,
-        metadata: LoggerMetadata
+        metadata: LoggerMetadata,
+        verboseMode: VerboseMode?
     ): Logger {
 
         val defaultHandler = when (elasticConfig) {
-            is ElasticConfig.Disabled ->
-                DefaultLoggingHandler(
-                    destination = Slf4jDestination(metadata.tag)
-                )
+            is ElasticConfig.Disabled -> {
+
+                val destination: LoggingDestination = if (verboseMode != null) {
+                    VerboseDestination(verboseMode)
+                } else {
+                    Slf4jDestination(metadata.tag)
+                }
+
+                DefaultLoggingHandler(destination = destination)
+            }
             is ElasticConfig.Enabled ->
                 DefaultLoggingHandler(
                     destination = ElasticDestinationFactory.create(elasticConfig, metadata)
@@ -82,11 +96,20 @@ class GradleLoggerFactory(
         )
     }
 
-    private fun createLocalBuildLogger(metadata: LoggerMetadata): Logger {
+    private fun createLocalBuildLogger(
+        metadata: LoggerMetadata,
+        verboseMode: VerboseMode?
+    ): Logger {
+
+        val destination: LoggingDestination = if (verboseMode != null) {
+            VerboseDestination(verboseMode)
+        } else {
+            Slf4jDestination(metadata.tag)
+        }
 
         val gradleLoggerHandler = DefaultLoggingHandler(
             formatter = AppendMetadataFormatter(metadata),
-            destination = Slf4jDestination(metadata.tag)
+            destination = destination
         )
 
         return DefaultLogger(
@@ -127,8 +150,32 @@ class GradleLoggerFactory(
             elasticConfig = ElasticConfigFactory.config(project),
             projectPath = project.path,
             pluginName = pluginName,
-            taskName = taskName
+            taskName = taskName,
+            verboseMode = getVerbosity(project)?.let { VerboseMode(it, doPrintStackTrace(project)) }
         )
+
+        @Suppress("UnstableApiUsage")
+        private fun getVerbosity(project: Project): LogLevel? {
+            return project.providers
+                .gradleProperty("avito.logging.verbosity")
+                .forUseAtConfigurationTime()
+                .map { value ->
+                    try {
+                        LogLevel.valueOf(value.toUpperCase(Locale.getDefault()))
+                    } catch (e: Throwable) {
+                        throw IllegalArgumentException(
+                            "`avito.logging.verbosity` should be one of: " +
+                                "${LogLevel.values().map { it.name }} but was $value"
+                        )
+                    }
+                }
+                .orNull
+        }
+
+        private fun doPrintStackTrace(project: Project): Boolean {
+            val showStacktrace = project.gradle.startParameter.showStacktrace
+            return showStacktrace == ShowStacktrace.ALWAYS || showStacktrace == ShowStacktrace.ALWAYS_FULL
+        }
 
         private fun Project.isCiRun(): Boolean =
             project.buildEnvironment is BuildEnvironment.CI && !project.buildEnvironment.inGradleTestKit

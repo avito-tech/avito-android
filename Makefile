@@ -26,6 +26,9 @@ instrumentation=Ui
 stacktrace?=
 project=-p subprojects
 
+# see Logging.md#Verbose-mode
+verbose?=
+
 docker_command?=
 
 ifeq ($(docker),true)
@@ -60,6 +63,10 @@ endif
 
 ifdef infra
 params +=-PinfraVersion=$(infra)
+endif
+
+ifdef verbose
+params +=-Pavito.logging.verbosity=$(verbose)
 endif
 
 params +=-PtestBuildType=$(test_build_type)
