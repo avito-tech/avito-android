@@ -29,8 +29,9 @@ object ReportsApiFactory {
     ): ReportsApi {
         return ReportsApiImpl(
             loggerFactory = loggerFactory,
-            requestProvider = JsonRpcClient(
+            client = JsonRpcClient(
                 host = host,
+                loggerFactory = loggerFactory,
                 httpClient = httpClientProvider.provide()
                     .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
                     .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
