@@ -67,4 +67,55 @@ internal class EntryTypeAdapterFactoryTest {
             assertThat(fileName).contains("name.txt")
         }
     }
+
+    @Test
+    fun `serialize list - uses type adapter`() {
+        val entryList = listOf(
+            Entry.File.createStubInstance(
+                fileAddress = FileAddress.File("name.txt")
+            ),
+            Entry.File.createStubInstance(
+                fileAddress = FileAddress.URL("http://stub/name.txt".toHttpUrl())
+            ),
+            Entry.File.createStubInstance(
+                fileAddress = FileAddress.Error(RuntimeException("something went wrong"))
+            )
+        )
+
+        val result = gsonWithEntryAdapter.toJson(entryList)
+        assertThat(result).apply {
+            contains("\"#upload:name.txt\"")
+            contains("\"http://stub/name.txt\"")
+            contains("\"#error:something went wrong\"")
+        }
+    }
+
+    @Test
+    fun `deserialize list - uses type adapter`() {
+        val json = """[
+            |{"type":"img_png","timestamp":0,"comment":"","file_address":"#upload:name.txt"},
+            |{"type":"img_png","timestamp":0,"comment":"","file_address":"http://stub/name.txt"},
+            |{"type":"img_png","timestamp":0,"comment":"","file_address":"#error:something went wrong"}
+            |]""".trimMargin()
+
+        val result = gsonWithEntryAdapter.fromJson<List<Entry>>(json)
+
+        assertThat<List<Entry>>(result) {
+            assertThat<Entry.File>(get(0)) {
+                assertThat<FileAddress.File>(fileAddress) {
+                    assertThat(fileName).contains("name.txt")
+                }
+            }
+            assertThat<Entry.File>(get(1)) {
+                assertThat<FileAddress.URL>(fileAddress) {
+                    assertThat(url.toString()).contains("http://stub/name.txt")
+                }
+            }
+            assertThat<Entry.File>(get(2)) {
+                assertThat<FileAddress.Error>(fileAddress) {
+                    assertThat(error.message).contains("something went wrong")
+                }
+            }
+        }
+    }
 }

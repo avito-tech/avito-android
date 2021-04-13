@@ -78,7 +78,7 @@ internal class ExternalStorageTransport(
                 comment = comment,
                 timeInSeconds = timeProvider.nowInSeconds(),
                 uploadRequest = request,
-                url = fileName // todo FileAddress
+                url = fileName
             )
         )
     }

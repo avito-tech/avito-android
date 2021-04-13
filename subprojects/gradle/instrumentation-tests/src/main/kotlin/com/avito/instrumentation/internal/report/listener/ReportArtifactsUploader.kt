@@ -32,15 +32,10 @@ internal class ReportArtifactsUploader(
         }
     }
 
-    @Suppress("IfThenToElvis")
     suspend fun processIncident(
         incident: Incident?
     ): Incident? {
-        return if (incident != null) {
-            incident.copy(entryList = processEntryList(incident.entryList))
-        } else {
-            incident
-        }
+        return incident?.copy(entryList = processEntryList(incident.entryList)) ?: incident
     }
 
     private suspend fun processEntryList(
