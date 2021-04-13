@@ -20,19 +20,6 @@ internal class InMemoryReport(
         this.testAttempts.add(test)
     }
 
-    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
-        gitInfo = "$testHost;$gitBranch$;$gitCommit"
-    }
-
-    override fun tryGetId(): String? {
-        val gitInfo = gitInfo
-        return if (gitInfo != null) {
-            id + gitInfo
-        } else {
-            null
-        }
-    }
-
     @Synchronized
     override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         this.testAttempts.addAll(
@@ -96,5 +83,14 @@ internal class InMemoryReport(
                 )
             }
         return Result.Success(result)
+    }
+
+    private fun tryGetId(): String? {
+        val gitInfo = gitInfo
+        return if (gitInfo != null) {
+            id + gitInfo
+        } else {
+            null
+        }
     }
 }

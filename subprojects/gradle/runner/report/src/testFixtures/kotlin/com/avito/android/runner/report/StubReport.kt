@@ -58,11 +58,6 @@ public class StubReport : Report, LegacyReport, ReadReport {
         TODO("not implemented")
     }
 
-    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
-    }
-
-    override fun tryGetId(): String? = reportId
-
     override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         reportedSkippedTests = skippedTests
     }
