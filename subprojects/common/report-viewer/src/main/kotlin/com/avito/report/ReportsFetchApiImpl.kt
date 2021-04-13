@@ -5,7 +5,7 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.internal.JsonRpcRequestProvider
+import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.model.ConclusionStatus
 import com.avito.report.internal.model.ListResult
 import com.avito.report.internal.model.RfcRpcRequest
@@ -30,7 +30,7 @@ import com.avito.report.model.TestName
  * TODO Move test status logic to [com.avito.instrumentation.report.TestStatusFinalizer]
  */
 internal class ReportsFetchApiImpl(
-    private val requestProvider: JsonRpcRequestProvider,
+    private val client: JsonRpcClient,
     loggerFactory: LoggerFactory
 ) : ReportsFetchApi {
 
@@ -42,7 +42,7 @@ internal class ReportsFetchApiImpl(
         pageNumber: Int
     ): Result<List<Report>> {
         return Result.tryCatch {
-            requestProvider.jsonRpcRequest<RpcResult<List<Run>>>(
+            client.jsonRpcRequest<RpcResult<List<Run>>>(
                 RfcRpcRequest(
                     method = "Run.List",
                     params = mapOf(
@@ -66,7 +66,7 @@ internal class ReportsFetchApiImpl(
 
     override fun getReport(reportCoordinates: ReportCoordinates): GetReportResult {
         return Result.tryCatch {
-            requestProvider.jsonRpcRequest<RpcResult<Report>>(
+            client.jsonRpcRequest<RpcResult<Report>>(
                 RfcRpcRequest(
                     method = "Run.GetByParams",
                     params = mapOf(
@@ -160,7 +160,7 @@ internal class ReportsFetchApiImpl(
 
     private fun getTestData(reportId: String): Result<List<SimpleRunTest>> {
         return Result.tryCatch {
-            requestProvider.jsonRpcRequest<RpcResult<List<ListResult>?>>(
+            client.jsonRpcRequest<RpcResult<List<ListResult>?>>(
                 RfcRpcRequest(
                     method = "RunTest.List",
                     params = mapOf("run_id" to reportId)

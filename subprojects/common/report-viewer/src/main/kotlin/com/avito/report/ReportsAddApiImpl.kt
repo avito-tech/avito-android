@@ -3,7 +3,7 @@ package com.avito.report
 import com.avito.android.Result
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
-import com.avito.report.internal.JsonRpcRequestProvider
+import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.internal.model.TestStatus
@@ -16,7 +16,7 @@ import com.avito.report.model.Step
 import com.avito.report.model.Video
 import com.avito.report.model.team
 
-internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProvider) : ReportsAddApi {
+internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAddApi {
 
     /**
      * status
@@ -86,8 +86,8 @@ internal class ReportsAddApiImpl(private val requestProvider: JsonRpcRequestProv
             }
 
             when {
-                requests.size == 1 -> listOf(requestProvider.jsonRpcRequest<RpcResult<String>>(requests[0]).result)
-                requests.size > 1 -> requestProvider.batchRequest<List<RpcResult<String>>>(requests).map { it.result }
+                requests.size == 1 -> listOf(client.jsonRpcRequest<RpcResult<String>>(requests[0]).result)
+                requests.size > 1 -> client.batchRequest<List<RpcResult<String>>>(requests).map { it.result }
                 else -> emptyList()
             }
         }

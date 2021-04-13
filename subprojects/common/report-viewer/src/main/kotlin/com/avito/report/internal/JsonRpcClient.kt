@@ -9,7 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
-internal class JsonRpcRequestProvider(
+internal class JsonRpcClient(
     private val host: String,
     private val httpClient: OkHttpClient,
     private val gson: Gson

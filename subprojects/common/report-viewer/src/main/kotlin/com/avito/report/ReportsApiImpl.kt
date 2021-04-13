@@ -2,7 +2,7 @@ package com.avito.report
 
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
-import com.avito.report.internal.JsonRpcRequestProvider
+import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.model.ConclusionStatus
 import com.avito.report.internal.model.CreateResponse
 import com.avito.report.internal.model.RfcRpcRequest
@@ -17,10 +17,10 @@ import com.google.gson.JsonElement
 
 internal class ReportsApiImpl(
     private val loggerFactory: LoggerFactory,
-    private val requestProvider: JsonRpcRequestProvider
+    private val client: JsonRpcClient
 ) : ReportsApi,
-    ReportsAddApi by ReportsAddApiImpl(requestProvider),
-    ReportsFetchApi by ReportsFetchApiImpl(requestProvider, loggerFactory) {
+    ReportsAddApi by ReportsAddApiImpl(client),
+    ReportsFetchApi by ReportsFetchApiImpl(client, loggerFactory) {
 
     override fun create(
         reportCoordinates: ReportCoordinates,
@@ -31,7 +31,7 @@ internal class ReportsApiImpl(
         tmsBranch: String
     ): CreateResult {
         return try {
-            val result = requestProvider.jsonRpcRequest<RpcResult<CreateResponse>>(
+            val result = client.jsonRpcRequest<RpcResult<CreateResponse>>(
                 RfcRpcRequest(
                     method = "Run.Create",
                     params = mapOf(
@@ -69,7 +69,7 @@ internal class ReportsApiImpl(
     override fun setFinished(reportCoordinates: ReportCoordinates): Result<Unit> {
         return when (val getReportResult = getReport(reportCoordinates)) {
             is GetReportResult.Found -> Result.tryCatch {
-                requestProvider.jsonRpcRequest<Unit>(
+                client.jsonRpcRequest<Unit>(
                     RfcRpcRequest(
                         method = "Run.SetFinished",
                         params = mapOf(
@@ -103,7 +103,7 @@ internal class ReportsApiImpl(
 
     override fun pushPreparedData(reportId: String, analyzerKey: String, preparedData: JsonElement): Result<Unit> {
         return Result.tryCatch {
-            requestProvider.jsonRpcRequest<Unit>(
+            client.jsonRpcRequest<Unit>(
                 RfcRpcRequest(
                     method = "Run.PushPreparedData",
                     params = mapOf(
@@ -122,7 +122,7 @@ internal class ReportsApiImpl(
      */
     private fun addConclusion(id: String, author: String, status: ConclusionStatus, comment: String): Result<Unit> {
         return Result.tryCatch {
-            requestProvider.jsonRpcRequest<Unit>(
+            client.jsonRpcRequest<Unit>(
                 RfcRpcRequest(
                     method = "RunTest.AddConclusion",
                     params = mapOf(
