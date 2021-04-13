@@ -19,6 +19,8 @@ sealed class Entry(
             video,
             plain_text
         }
+
+        companion object
     }
 
     data class Comment(

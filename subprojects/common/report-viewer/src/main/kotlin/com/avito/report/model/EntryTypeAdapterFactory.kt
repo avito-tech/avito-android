@@ -15,16 +15,17 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
         val entryTypeAdapter = EntryTypeAdapter()
-        return when {
+        val result = when {
             type.rawType.isAssignableFrom(List::class.java) ->
                 if ((type.type as ParameterizedType).actualTypeArguments[0] == Entry::class.java) {
                     ListEntryTypeAdapter(entryTypeAdapter) as TypeAdapter<T>
                 } else {
                     null
                 }
-            type.rawType.isAssignableFrom(Entry::class.java) -> entryTypeAdapter as TypeAdapter<T>
+            Entry::class.java.isAssignableFrom(type.rawType) -> entryTypeAdapter as TypeAdapter<T>
             else -> null
         }
+        return result
     }
 
     private class FileAddressTypeAdapter : TypeAdapter<FileAddress>() {
