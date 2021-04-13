@@ -9,7 +9,9 @@ import com.avito.instrumentation.internal.suite.filter.TestsFilter.Result.Exclud
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.suite.parseTest
+import com.avito.report.model.AndroidTest
 import com.avito.report.model.DeviceName
+import com.avito.time.TimeProvider
 
 internal interface TestSuiteProvider {
 
@@ -25,7 +27,9 @@ internal interface TestSuiteProvider {
         private val report: Report,
         private val targets: List<TargetConfiguration.Data>,
         private val reportSkippedTests: Boolean,
-        private val filterFactory: FilterFactory
+        private val filterFactory: FilterFactory,
+        private val timeProvider: TimeProvider,
+        private val useInMemoryReport: Boolean
     ) : TestSuiteProvider {
 
         override fun getTestSuite(tests: List<TestInApk>): TestSuite {
@@ -36,16 +40,28 @@ internal interface TestSuiteProvider {
             )
 
             if (reportSkippedTests) {
-                report.sendSkippedTests(
-                    skippedTests = suite.skippedTests
-                        // do not report skip here, to prevent final test status rewrite (green from last run - ok)
-                        .filter { (_, verdict) ->
-                            verdict !is Excluded.BySignatures || verdict.source != Signatures.Source.PreviousRun
-                        }
-                        .map { (targetTest, verdict) ->
-                            targetTest.test to verdict.reason
-                        }
-                )
+                val skippedTests = suite.skippedTests
+                    // do not report skip here, to prevent final test status rewrite (green from last run - ok)
+                    .filter { (_, verdict) ->
+                        verdict !is Excluded.BySignatures || verdict.source != Signatures.Source.PreviousRun
+                    }
+                    .map { (targetTest, verdict) ->
+                        targetTest.test to verdict.reason
+                    }
+
+                if (useInMemoryReport) {
+                    skippedTests.forEach { (testStaticData, reason) ->
+                        report.addTest(
+                            AndroidTest.Skipped.fromTestMetadata(
+                                testStaticData = testStaticData,
+                                skipReason = reason,
+                                reportTime = timeProvider.nowInSeconds()
+                            )
+                        )
+                    }
+                } else {
+                    report.sendSkippedTests(skippedTests)
+                }
             }
 
             return suite

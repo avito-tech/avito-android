@@ -11,6 +11,8 @@ import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.TestsFilter
 import com.avito.instrumentation.stub.suite.filter.StubFilterFactory
 import com.avito.instrumentation.stub.suite.filter.excludedFilter
+import com.avito.time.StubTimeProvider
+import com.avito.time.TimeProvider
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -61,13 +63,17 @@ internal class TestSuiteProviderTest {
         report: Report = StubReport(),
         targets: List<TargetConfiguration.Data> = listOf(TargetConfiguration.Data.createStubInstance()),
         reportSkippedTests: Boolean = false,
-        filterFactory: FilterFactory = StubFilterFactory()
+        filterFactory: FilterFactory = StubFilterFactory(),
+        timeProvider: TimeProvider = StubTimeProvider(),
+        useInMemoryReport: Boolean = false
     ): TestSuiteProvider {
         return TestSuiteProvider.Impl(
             report = report,
             targets = targets,
             reportSkippedTests = reportSkippedTests,
-            filterFactory = filterFactory
+            filterFactory = filterFactory,
+            timeProvider = timeProvider,
+            useInMemoryReport = useInMemoryReport
         )
     }
 }

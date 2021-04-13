@@ -40,6 +40,7 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     fileStorageUrl: String = "https://files",
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     statsDConfig: StatsDConfig = StatsDConfig.Disabled,
+    useInMemoryReport: Boolean = false,
     uploadTestArtifacts: Boolean = false
 ) = InstrumentationTestsAction.Params(
     mainApk = mainApk,
@@ -71,5 +72,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     ),
     reportCoordinates = reportCoordinates,
     proguardMappings = emptyList(),
+    useInMemoryReport = useInMemoryReport,
     uploadTestArtifacts = uploadTestArtifacts
 )

@@ -61,9 +61,7 @@ internal class InstrumentationTestsAction(
 
         val testsExecutionResults = scheduler.schedule()
 
-        finalizer.finalize(
-            testsExecutionResults = testsExecutionResults
-        )
+        finalizer.finalize(testsExecutionResults = testsExecutionResults)
     }
 
     data class Params(
@@ -88,6 +86,7 @@ internal class InstrumentationTestsAction(
         val reportConfig: ReportFactory.Config,
         val reportCoordinates: ReportCoordinates,
         val proguardMappings: List<File>,
+        val useInMemoryReport: Boolean,
         val uploadTestArtifacts: Boolean
     ) : Serializable {
         companion object

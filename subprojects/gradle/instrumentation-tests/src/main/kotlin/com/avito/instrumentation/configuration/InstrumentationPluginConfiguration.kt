@@ -32,6 +32,8 @@ public object InstrumentationPluginConfiguration {
          */
         public var useService: Boolean = false
 
+        public var useInMemoryReport: Boolean = false
+
         public abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
         public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
 
@@ -113,7 +115,8 @@ public object InstrumentationPluginConfiguration {
                 reportViewer = reportViewer,
                 useService = useService,
                 applicationProguardMapping = applicationProguardMapping,
-                testProguardMapping = testProguardMapping
+                testProguardMapping = testProguardMapping,
+                useInMemoryReport = useInMemoryReport
             )
         }
 
@@ -127,7 +130,8 @@ public object InstrumentationPluginConfiguration {
             val reportViewer: ReportViewer?,
             val useService: Boolean,
             val applicationProguardMapping: File?,
-            val testProguardMapping: File?
+            val testProguardMapping: File?,
+            val useInMemoryReport: Boolean
         ) : Serializable {
 
             public data class ReportViewer(

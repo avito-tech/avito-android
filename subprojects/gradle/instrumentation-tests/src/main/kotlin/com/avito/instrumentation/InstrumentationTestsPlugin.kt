@@ -119,6 +119,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
                     this.buildId.set(env.build.id.toString())
                     this.buildType.set(env.build.type)
+                    this.useInMemoryReport.set(extensionData.useInMemoryReport)
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
                     this.testRunnerService.set(testRunnerServiceProvider)

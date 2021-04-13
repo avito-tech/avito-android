@@ -30,6 +30,17 @@ internal class AvitoReport(
 
     private val logger = loggerFactory.create<Report>()
 
+    override fun addTest(test: AndroidTest) {
+        reportsApi.addTest(
+            reportCoordinates = reportCoordinates,
+            buildId = buildId,
+            test = test
+        ).fold(
+            { logger.info("Test ${test.name} successfully reported") },
+            { logger.critical("Can't report test ${test.name}", it) }
+        )
+    }
+
     override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
         return when (val result = reportsApi.create(reportCoordinates, buildId, testHost, gitBranch, gitCommit)) {
             is CreateResult.Created ->
@@ -110,13 +121,6 @@ internal class AvitoReport(
 
             logger.debug("Reporting lost tests for batch: $index completed")
         }
-    }
-
-    override fun sendCompletedTest(completedTest: AndroidTest.Completed) {
-        reportsApi.addTests(reportCoordinates, buildId, tests = listOf(completedTest)).fold(
-            { logger.info("Test ${completedTest.name} successfully reported") },
-            { logger.critical("Can't report test ${completedTest.name}", it) }
-        )
     }
 
     override fun finish() {

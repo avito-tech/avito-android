@@ -90,6 +90,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val gitBranch: Property<String> = objects.property()
 
     @Input
+    public val useInMemoryReport: Property<Boolean> = objects.property()
+
+    @Input
     public val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Input
@@ -194,6 +197,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 applicationProguardMapping,
                 testProguardMapping
             ).mapNotNull { it.orNull?.asFile },
+            useInMemoryReport = useInMemoryReport.get(),
             uploadTestArtifacts = uploadAllTestArtifacts.get()
         )
 

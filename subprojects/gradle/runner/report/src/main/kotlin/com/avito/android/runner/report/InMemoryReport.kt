@@ -16,6 +16,11 @@ internal class InMemoryReport(
     private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
 
+    @Synchronized
+    override fun addTest(test: AndroidTest) {
+        this.testAttempts.add(test)
+    }
+
     override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
         gitInfo = "$testHost;$gitBranch$;$gitCommit"
     }
@@ -45,11 +50,6 @@ internal class InMemoryReport(
     @Synchronized
     override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {
         this.testAttempts.addAll(lostTests)
-    }
-
-    @Synchronized
-    override fun sendCompletedTest(completedTest: AndroidTest.Completed) {
-        this.testAttempts.add(completedTest)
     }
 
     @Synchronized

@@ -39,6 +39,10 @@ public class StubReport : Report {
 
     public var getTestsResult: Result<List<SimpleRunTest>> = Result.Success(emptyList())
 
+    override fun addTest(test: AndroidTest) {
+        TODO("not implemented")
+    }
+
     override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
     }
 
@@ -50,10 +54,6 @@ public class StubReport : Report {
 
     override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {
         reportedMissingTests = lostTests
-    }
-
-    override fun sendCompletedTest(completedTest: AndroidTest.Completed) {
-        TODO("not implemented")
     }
 
     override fun finish() {

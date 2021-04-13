@@ -77,7 +77,9 @@ internal interface TestsSchedulerFactory {
                 factory = params.reportFactory,
                 reportConfig = params.reportConfig
             ),
-            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
+            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
+            useInMemoryReport = params.useInMemoryReport,
+            timeProvider = timeProvider
         )
 
         private fun createTestRunner(devicesProviderFactory: DevicesProviderFactory, tempDir: File): TestsRunner {

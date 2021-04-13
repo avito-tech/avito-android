@@ -81,7 +81,7 @@ internal interface FinalizerFactory {
                     // For Teamcity XML report processing
                     destination = File(params.outputDir, "junit-report.xml")
                 ),
-                ReportFinishAction(sourceReport),
+                SendAvitoReport(legacyReport = sourceReport), // todo optional
                 WriteReportViewerLinkFile(
                     reportViewer = reportViewer,
                     reportCoordinates = params.reportCoordinates,
