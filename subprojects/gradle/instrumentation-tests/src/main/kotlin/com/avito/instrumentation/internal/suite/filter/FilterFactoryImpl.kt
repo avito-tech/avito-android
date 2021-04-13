@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal.suite.filter
 
-import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
@@ -10,8 +10,8 @@ import com.avito.report.model.SimpleRunTest
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilter.Data,
     private val impactAnalysisResult: ImpactAnalysisResult,
-    private val factory: ReportFactory,
-    private val reportConfig: ReportFactory.Config
+    private val factoryLegacy: LegacyReportFactory,
+    private val legacyReportConfig: LegacyReportFactory.Config
 ) : FilterFactory {
 
     override fun createFilter(): TestsFilter {
@@ -80,8 +80,8 @@ internal class FilterFactoryImpl(
     private fun MutableList<TestsFilter>.addSourcePreviousSignatureFilters() {
         val previousStatuses = filterData.fromRunHistory.previousStatuses
         if (previousStatuses.included.isNotEmpty() || previousStatuses.excluded.isNotEmpty()) {
-            val previousRunTests = factory
-                .createReadReport(reportConfig)
+            val previousRunTests = factoryLegacy
+                .createReadReport(legacyReportConfig)
                 .getTests()
                 .getOrThrow()
             if (previousStatuses.included.isNotEmpty()) {
@@ -110,7 +110,7 @@ internal class FilterFactoryImpl(
                 || reportFilter.statuses.excluded.isNotEmpty())
         ) {
             val statuses = reportFilter.statuses
-            val previousRunTests = factory.createReadReport(reportFilter.reportConfig)
+            val previousRunTests = factoryLegacy.createReadReport(reportFilter.legacyReportConfig)
                 .getTests()
                 .getOrThrow()
             if (statuses.included.isNotEmpty()) {

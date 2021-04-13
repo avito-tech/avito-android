@@ -28,7 +28,7 @@ internal interface InstrumentationTestsActionFactory {
 
         private val gson: Gson = Companion.gson
 
-        private val sourceReport: Report = params.reportFactory.createReport(params.reportConfig)
+        private val sourceReport: Report = params.legacyReportFactory.createReport(params.legacyReportConfig)
 
         private val schedulerFactory: TestsSchedulerFactory
 

@@ -2,7 +2,7 @@ package com.avito.instrumentation.suite.filter
 
 import com.avito.android.Result
 import com.avito.android.runner.report.StubReport
-import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.Data.FromRunHistory.ReportFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory.RunStatus
@@ -97,7 +97,8 @@ internal class FilterFactoryImplTest {
     @Suppress("MaxLineLength")
     @Test
     fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
-        val reportConfig = ReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
+        val reportConfig =
+            LegacyReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -108,7 +109,7 @@ internal class FilterFactoryImplTest {
             reportsByConfig = mapOf(
                 reportConfig to StubReport()
             ),
-            reportConfig = reportConfig
+            legacyReportConfig = reportConfig
         )
 
         val filter = factory.createFilter() as CompositionFilter
@@ -143,7 +144,8 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val reportConfig = ReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
+        val reportConfig =
+            LegacyReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -154,7 +156,7 @@ internal class FilterFactoryImplTest {
             reportsByConfig = mapOf(
                 reportConfig to report
             ),
-            reportConfig = reportConfig
+            legacyReportConfig = reportConfig
         )
 
         val filter = factory.createFilter() as CompositionFilter
@@ -193,7 +195,8 @@ internal class FilterFactoryImplTest {
                 )
             )
         )
-        val reportConfig = ReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
+        val reportConfig =
+            LegacyReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
@@ -204,7 +207,7 @@ internal class FilterFactoryImplTest {
             reportsByConfig = mapOf(
                 reportConfig to report
             ),
-            reportConfig = reportConfig
+            legacyReportConfig = reportConfig
         )
 
         val filter = factory.createFilter() as CompositionFilter
@@ -265,7 +268,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData report is present and has includes then filters contain Report include filter`() {
         val reportId = "reportId"
-        val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
+        val reportConfig = LegacyReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
         report.getTestsResult = Result.Success(
             listOf(
@@ -285,7 +288,7 @@ internal class FilterFactoryImplTest {
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
-                    reportConfig = reportConfig,
+                    legacyReportConfig = reportConfig,
                     statuses = Filter.Value(
                         included = setOf(RunStatus.Success),
                         excluded = emptySet()
@@ -318,7 +321,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData report is present and has excludes then filters contain Report exclude filter`() {
         val reportId = "reportId"
-        val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
+        val reportConfig = LegacyReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
         report.getTestsResult = Result.Success(
             listOf(
@@ -338,7 +341,7 @@ internal class FilterFactoryImplTest {
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
-                    reportConfig = ReportFactory.Config.ReportViewerId(reportId),
+                    legacyReportConfig = LegacyReportFactory.Config.ReportViewerId(reportId),
                     statuses = Filter.Value(
                         included = emptySet(),
                         excluded = setOf(RunStatus.Success)
@@ -371,7 +374,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData report is present and statuses empty then filters don't contain Report filter`() {
         val reportId = "reportId"
-        val reportConfig = ReportFactory.Config.ReportViewerId(reportId)
+        val reportConfig = LegacyReportFactory.Config.ReportViewerId(reportId)
         val report = StubReport()
         report.getTestsResult = Result.Success(
             listOf(
@@ -391,7 +394,7 @@ internal class FilterFactoryImplTest {
         val factory = FilterFactoryFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
-                    reportConfig = ReportFactory.Config.ReportViewerId(reportId),
+                    legacyReportConfig = LegacyReportFactory.Config.ReportViewerId(reportId),
                     statuses = Filter.Value(
                         included = emptySet(),
                         excluded = emptySet()

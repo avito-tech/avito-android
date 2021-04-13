@@ -5,7 +5,7 @@ import com.avito.android.runner.report.Report
 import com.avito.report.model.ReportCoordinates
 import java.io.Serializable
 
-public interface ReportFactory : Serializable {
+public interface LegacyReportFactory : Serializable {
 
     public sealed class Config : Serializable {
 
