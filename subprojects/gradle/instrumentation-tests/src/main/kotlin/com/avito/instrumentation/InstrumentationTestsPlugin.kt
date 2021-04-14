@@ -27,6 +27,7 @@ import com.avito.instrumentation.service.TestRunnerService
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
+import com.avito.logger.GradleLoggerFactory
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
@@ -59,9 +60,18 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             )
         }
 
+        val logger = GradleLoggerFactory.getLogger(this, project)
+
         project.withInstrumentationExtensionData { extensionData ->
 
-            val testRunnerServiceProvider = if (extensionData.useService) {
+            if (extensionData.experimental.useInMemoryReport) {
+                logger.info("Experimental feature enabled: useInMemoryReport")
+            }
+
+            val testRunnerServiceProvider = if (extensionData.experimental.useService) {
+
+                logger.info("Experimental feature enabled: useService")
+
                 project.gradle.sharedServices.registerIfAbsent(
                     "testRunnerService",
                     TestRunnerService::class.java
@@ -119,7 +129,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.instrumentationConfiguration.set(instrumentationConfiguration)
                     this.buildId.set(env.build.id.toString())
                     this.buildType.set(env.build.type)
-                    this.useInMemoryReport.set(extensionData.useInMemoryReport)
+                    this.useInMemoryReport.set(extensionData.experimental.useInMemoryReport)
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
                     this.testRunnerService.set(testRunnerServiceProvider)
