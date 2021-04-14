@@ -145,7 +145,7 @@ public object InstrumentationPluginConfiguration {
             public data class Experimental(
                 val useService: Boolean,
                 val useInMemoryReport: Boolean
-            )
+            ) : Serializable
 
             public data class ReportViewer(
                 val reportApiUrl: String,
