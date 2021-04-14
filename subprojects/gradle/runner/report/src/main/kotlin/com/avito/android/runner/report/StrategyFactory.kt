@@ -10,6 +10,9 @@ public class StrategyFactory(
     override fun createReport(config: LegacyReportFactory.Config): Report =
         getFactory(config).createReport(config)
 
+    override fun createLegacyReport(config: LegacyReportFactory.Config): LegacyReport =
+        getFactory(config).createLegacyReport(config)
+
     override fun createReadReport(config: LegacyReportFactory.Config): ReadReport =
         getFactory(config).createReadReport(config)
 

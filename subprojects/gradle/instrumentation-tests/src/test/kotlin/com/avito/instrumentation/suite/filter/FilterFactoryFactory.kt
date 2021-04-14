@@ -1,5 +1,6 @@
 package com.avito.instrumentation.suite.filter
 
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.factory.LegacyReportFactory
@@ -28,6 +29,10 @@ internal object FilterFactoryFactory {
             legacyReportConfig = legacyReportConfig,
             factoryLegacy = object : LegacyReportFactory {
                 override fun createReport(config: LegacyReportFactory.Config): Report {
+                    TODO("Not yet implemented")
+                }
+
+                override fun createLegacyReport(config: LegacyReportFactory.Config): LegacyReport {
                     TODO("Not yet implemented")
                 }
 

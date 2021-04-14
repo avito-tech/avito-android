@@ -17,4 +17,6 @@ public interface LegacyReport {
     public fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)
 
     public fun sendLostTests(lostTests: List<AndroidTest.Lost>)
+
+    public companion object
 }

@@ -257,7 +257,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             val getTestResultsAction = GetTestResultsAction(
                 reportViewerUrl = reportViewerConfig.reportViewerUrl,
                 reportCoordinates = reportCoordinates,
-                legacyReport = legacyReportFactory.createReport(legacyReportConfig),
+                legacyReport = legacyReportFactory.createLegacyReport(legacyReportConfig),
                 gitBranch = gitBranch.get(),
                 gitCommit = gitCommit.get()
             )

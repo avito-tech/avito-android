@@ -9,7 +9,7 @@ import com.avito.time.TimeProvider
 internal class InMemoryReport(
     private val id: String,
     private val timeProvider: TimeProvider
-) : Report {
+) : Report, LegacyReport, ReadReport {
 
     private var gitInfo: String? = null
     private val testStatusFinalizer = TestStatusFinalizer.create()

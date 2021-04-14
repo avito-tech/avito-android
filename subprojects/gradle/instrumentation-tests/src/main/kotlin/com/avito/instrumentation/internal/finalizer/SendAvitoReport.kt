@@ -6,14 +6,14 @@ import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFin
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 
 internal class SendAvitoReport(
-    private val legacyReport: LegacyReport
+    private val avitoReport: LegacyReport
 ) : FinalizeAction {
 
     override fun action(testRunResult: TestRunResult) {
         if (testRunResult.notReported is HasNotReportedTestsDeterminer.Result.HasNotReportedTests) {
             val lostTests = testRunResult.notReported.lostTests
-            legacyReport.sendLostTests(lostTests)
+            avitoReport.sendLostTests(lostTests)
         }
-        legacyReport.finish()
+        avitoReport.finish()
     }
 }

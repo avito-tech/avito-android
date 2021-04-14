@@ -2,6 +2,7 @@ package com.avito.instrumentation.suite
 
 import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.StubReport
 import com.avito.instrumentation.configuration.target.TargetConfiguration
@@ -39,7 +40,7 @@ internal class TestSuiteProviderTest {
     fun `test suite - skip test - if rerun enabled and test passed in previous run`() {
         val report = StubReport()
         val testSuiteProvider = createTestSuiteProvider(
-            report = report,
+            legacyReport = report,
             reportSkippedTests = true,
             filterFactory = StubFilterFactory(
                 filter = excludedFilter(
@@ -61,6 +62,7 @@ internal class TestSuiteProviderTest {
 
     private fun createTestSuiteProvider(
         report: Report = StubReport(),
+        legacyReport: LegacyReport = StubReport(),
         targets: List<TargetConfiguration.Data> = listOf(TargetConfiguration.Data.createStubInstance()),
         reportSkippedTests: Boolean = false,
         filterFactory: FilterFactory = StubFilterFactory(),
@@ -69,7 +71,7 @@ internal class TestSuiteProviderTest {
     ): TestSuiteProvider {
         return TestSuiteProvider.Impl(
             report = report,
-            legacyReport = report,
+            legacyReport = legacyReport,
             targets = targets,
             reportSkippedTests = reportSkippedTests,
             filterFactory = filterFactory,

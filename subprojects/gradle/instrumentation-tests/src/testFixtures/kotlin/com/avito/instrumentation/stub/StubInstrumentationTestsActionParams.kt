@@ -1,5 +1,6 @@
 package com.avito.instrumentation.stub
 
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.StubReport
@@ -63,6 +64,8 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     legacyReportFactory = object : LegacyReportFactory {
 
         override fun createReport(config: LegacyReportFactory.Config): Report = StubReport()
+
+        override fun createLegacyReport(config: LegacyReportFactory.Config): LegacyReport = StubReport()
 
         override fun createReadReport(config: LegacyReportFactory.Config): ReadReport = StubReport()
     },

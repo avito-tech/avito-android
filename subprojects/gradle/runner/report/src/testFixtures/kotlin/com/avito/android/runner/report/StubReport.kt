@@ -28,7 +28,23 @@ public fun Report.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-public class StubReport : Report {
+public fun LegacyReport.Companion.createStubInstance(
+    reportsApi: ReportsApi,
+    loggerFactory: LoggerFactory = StubLoggerFactory,
+    batchSize: Int = 1,
+    buildId: String = "1",
+    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
+    timeProvider: TimeProvider = StubTimeProvider()
+): LegacyReport = AvitoReport(
+    reportsApi = reportsApi,
+    loggerFactory = loggerFactory,
+    batchSize = batchSize,
+    buildId = buildId,
+    reportCoordinates = reportCoordinates,
+    timeProvider = timeProvider
+)
+
+public class StubReport : Report, LegacyReport, ReadReport {
 
     public var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
 

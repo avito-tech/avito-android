@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal.finalizer
 
-import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
@@ -22,7 +22,7 @@ internal interface FinalizerFactory {
 
     class Impl : FinalizerFactory {
         private val params: InstrumentationTestsAction.Params
-        private val sourceReport: Report
+        private val avitoReport: LegacyReport
         private val gson: Gson
         private val buildFailer: BuildFailer
 
@@ -34,13 +34,13 @@ internal interface FinalizerFactory {
         @VisibleForTesting
         internal constructor(
             params: InstrumentationTestsAction.Params,
-            sourceReport: Report,
+            avitoReport: LegacyReport,
             gson: Gson = InstrumentationTestsActionFactory.gson,
             buildFailer: BuildFailer,
             metricsConfig: RunnerMetricsConfig
         ) {
             this.params = params
-            this.sourceReport = sourceReport
+            this.avitoReport = avitoReport
             this.gson = gson
             this.reportViewer = ReportViewer.Impl(params.reportViewerUrl)
             this.loggerFactory = params.loggerFactory
@@ -50,12 +50,12 @@ internal interface FinalizerFactory {
 
         constructor(
             params: InstrumentationTestsAction.Params,
-            sourceReport: Report,
+            avitoReport: LegacyReport,
             gson: Gson,
             metricsConfig: RunnerMetricsConfig
         ) : this(
             params = params,
-            sourceReport = sourceReport,
+            avitoReport = avitoReport,
             gson = gson,
             buildFailer = BuildFailer.RealFailer(),
             metricsConfig = metricsConfig
@@ -81,7 +81,7 @@ internal interface FinalizerFactory {
                     // For Teamcity XML report processing
                     destination = File(params.outputDir, "junit-report.xml")
                 ),
-                SendAvitoReport(legacyReport = sourceReport), // todo optional
+                SendAvitoReport(avitoReport = avitoReport), // todo optional
                 WriteReportViewerLinkFile(
                     reportViewer = reportViewer,
                     reportCoordinates = params.reportCoordinates,

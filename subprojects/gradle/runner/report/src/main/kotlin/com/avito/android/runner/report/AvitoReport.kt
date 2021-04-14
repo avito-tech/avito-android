@@ -25,7 +25,7 @@ internal class AvitoReport(
     private val buildId: String,
     private val timeProvider: TimeProvider,
     private val batchSize: Int = 400
-) : Report {
+) : LegacyReport, Report, ReadReport {
 
     private val logger = loggerFactory.create<Report>()
 
