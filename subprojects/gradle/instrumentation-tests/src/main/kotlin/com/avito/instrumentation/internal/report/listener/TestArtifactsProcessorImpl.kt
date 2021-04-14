@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
 import com.avito.report.ReportFileProvider
+import com.avito.report.ReportFileProviderFactory
 import com.avito.report.internal.ReportFileProviderImpl
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
@@ -37,7 +38,7 @@ internal class TestArtifactsProcessorImpl(
         logcatBuffer: LogcatBuffer?
     ): Result<AndroidTest> {
 
-        val reportFileProvider = createReportFileProvider(
+        val reportFileProvider = ReportFileProviderFactory.create(
             testReportRootDir = lazy { reportDir },
             testStaticData = testStaticData
         )
@@ -137,17 +138,6 @@ internal class TestArtifactsProcessorImpl(
                 )
             }
         }
-    }
-
-    private fun createReportFileProvider(
-        testReportRootDir: Lazy<File>,
-        testStaticData: TestStaticData
-    ): ReportFileProvider {
-        return ReportFileProviderImpl(
-            rootDir = testReportRootDir,
-            className = testStaticData.name.className,
-            methodName = testStaticData.name.methodName
-        )
     }
 
     private suspend fun uploadLogcat(logcat: List<String>?, isUploadNeeded: Boolean): String {

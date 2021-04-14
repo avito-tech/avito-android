@@ -24,8 +24,6 @@ internal interface TestArtifactsProcessor {
 
     companion object {
 
-        internal const val REPORT_JSON_ARTIFACT = "report.json"
-
         internal val gson: Gson = GsonBuilder()
             .registerTypeAdapterFactory(EntryTypeAdapterFactory())
             .create()

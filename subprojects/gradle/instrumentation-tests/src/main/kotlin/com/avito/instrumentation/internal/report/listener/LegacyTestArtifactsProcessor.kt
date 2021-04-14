@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
+import com.avito.report.ReportFileProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentElement
@@ -35,7 +36,12 @@ internal class LegacyTestArtifactsProcessor(
 
         val scope = CoroutineScope(CoroutineName("test-artifacts-${testStaticData.name}") + Dispatchers.IO)
 
-        val reportJson = File(reportDir, TestArtifactsProcessor.REPORT_JSON_ARTIFACT)
+        val reportFileProvider = ReportFileProviderFactory.create(
+            testReportRootDir = lazy { reportDir },
+            testStaticData = testStaticData
+        )
+
+        val reportJson = reportFileProvider.provideReportFile()
 
         return Result.tryCatch {
             val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(
