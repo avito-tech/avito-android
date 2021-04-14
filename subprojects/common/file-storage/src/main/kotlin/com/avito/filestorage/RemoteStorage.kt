@@ -13,8 +13,8 @@ interface RemoteStorage {
     ): FutureValue<Result>
 
     /**
-     * если нужен полный путь до файла
-     * при отрисовки Entity в ReportViewer это не требуется, т.к. это делает фронт
+     * Avito remote storage returns path relative to baseUrl, full url built on web
+     * Use this func if you need full anyway
      */
     fun fullUrl(result: Result.Success): String
 
