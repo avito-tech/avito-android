@@ -47,11 +47,11 @@ internal class LegacyTestArtifactsProcessor(
                 withContext(scope.coroutineContext) {
 
                     val stdout = async {
-                        logcatProcessor.uploadLogcat(logcatBuffer?.getStdout(), isUploadNeeded = isTestFailed)
+                        logcatProcessor.process(logcatBuffer?.getStdout(), isUploadNeeded = isTestFailed)
                     }
 
                     val stderr = async {
-                        logcatProcessor.uploadLogcat(logcatBuffer?.getStderr(), isUploadNeeded = isTestFailed)
+                        logcatProcessor.process(logcatBuffer?.getStderr(), isUploadNeeded = isTestFailed)
                     }
 
                     AndroidTest.Completed.create(

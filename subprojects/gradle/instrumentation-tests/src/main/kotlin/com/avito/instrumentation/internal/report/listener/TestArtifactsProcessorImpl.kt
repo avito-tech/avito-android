@@ -69,11 +69,11 @@ internal class TestArtifactsProcessorImpl(
                     }
 
                     val stdout = async {
-                        logcatProcessor.uploadLogcat(logcatBuffer?.getStdout(), isUploadNeeded = isTestFailed)
+                        logcatProcessor.process(logcatBuffer?.getStdout(), isUploadNeeded = isTestFailed)
                     }
 
                     val stdErr = async {
-                        logcatProcessor.uploadLogcat(logcatBuffer?.getStderr(), isUploadNeeded = isTestFailed)
+                        logcatProcessor.process(logcatBuffer?.getStderr(), isUploadNeeded = isTestFailed)
                     }
 
                     AndroidTest.Completed.create(

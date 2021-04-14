@@ -103,11 +103,11 @@ internal class ReportProcessorImpl(
             withContext(scope.coroutineContext) {
 
                 val stdout = async {
-                    logcatProcessor.uploadLogcat(logcatBuffer?.getStdout(), isUploadNeeded = true)
+                    logcatProcessor.process(logcatBuffer?.getStdout(), isUploadNeeded = true)
                 }
 
                 val stderr = async {
-                    logcatProcessor.uploadLogcat(logcatBuffer?.getStderr(), isUploadNeeded = true)
+                    logcatProcessor.process(logcatBuffer?.getStderr(), isUploadNeeded = true)
                 }
 
                 Result.Success(
