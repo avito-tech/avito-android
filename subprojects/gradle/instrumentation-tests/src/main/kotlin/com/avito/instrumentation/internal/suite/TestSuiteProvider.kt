@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal.suite
 
 import com.avito.android.TestInApk
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.internal.suite.filter.FilterFactory
@@ -25,6 +26,7 @@ internal interface TestSuiteProvider {
 
     class Impl(
         private val report: Report,
+        private val legacyReport: LegacyReport,
         private val targets: List<TargetConfiguration.Data>,
         private val reportSkippedTests: Boolean,
         private val filterFactory: FilterFactory,
@@ -60,7 +62,7 @@ internal interface TestSuiteProvider {
                         )
                     }
                 } else {
-                    report.sendSkippedTests(skippedTests)
+                    legacyReport.sendSkippedTests(skippedTests)
                 }
             }
 

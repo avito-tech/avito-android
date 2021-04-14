@@ -70,6 +70,7 @@ internal interface TestsSchedulerFactory {
 
         private fun createTestSuiteProvider(): TestSuiteProvider = TestSuiteProvider.Impl(
             report = sourceReport,
+            legacyReport = sourceReport,
             targets = params.instrumentationConfiguration.targets,
             filterFactory = FilterFactory.create(
                 filterData = params.instrumentationConfiguration.filter,

@@ -69,6 +69,7 @@ internal class TestSuiteProviderTest {
     ): TestSuiteProvider {
         return TestSuiteProvider.Impl(
             report = report,
+            legacyReport = report,
             targets = targets,
             reportSkippedTests = reportSkippedTests,
             filterFactory = filterFactory,
