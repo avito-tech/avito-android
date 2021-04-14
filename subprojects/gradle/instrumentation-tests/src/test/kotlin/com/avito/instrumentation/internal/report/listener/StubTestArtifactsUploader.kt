@@ -9,10 +9,10 @@ import java.io.File
 internal class StubTestArtifactsUploader : TestArtifactsUploader {
 
     override suspend fun upload(file: File, type: Entry.File.Type): Result<HttpUrl> {
-        return Result.Success("http://stub".toHttpUrl())
+        return Result.Success("https://stub".toHttpUrl())
     }
 
     override suspend fun upload(content: String, type: Entry.File.Type): Result<HttpUrl> {
-        return Result.Success("http://stub".toHttpUrl())
+        return Result.Success("https://stub".toHttpUrl())
     }
 }

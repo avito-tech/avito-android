@@ -16,12 +16,6 @@ internal interface TestArtifactsProcessor {
         logcatBuffer: LogcatBuffer?
     ): Result<AndroidTest>
 
-    fun processFailure(
-        throwable: Throwable,
-        testStaticData: TestStaticData,
-        logcatBuffer: LogcatBuffer?
-    ): Result<AndroidTest>
-
     companion object {
 
         internal val gson: Gson = GsonBuilder()

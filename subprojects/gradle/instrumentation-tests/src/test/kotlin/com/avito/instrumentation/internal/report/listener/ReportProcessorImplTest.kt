@@ -1,13 +1,11 @@
 package com.avito.instrumentation.internal.report.listener
 
-import com.avito.android.Result
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StubStatsdSender
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.ReportFileProviderFactory
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
@@ -23,9 +21,8 @@ import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
-import kotlinx.coroutines.delay
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -35,6 +32,7 @@ internal class ReportProcessorImplTest {
     private val loggerFactory = StubLoggerFactory
     private val statsdSender = StubStatsdSender()
     private val artifactsUploader = StubTestArtifactsUploader()
+    private val logcatProcessor = LogcatProcessor.Impl(artifactsUploader, ProguardRetracer.Stub)
     private val timeProvider = StubTimeProvider()
     private val gson = TestArtifactsProcessor.gson
 
@@ -46,7 +44,7 @@ internal class ReportProcessorImplTest {
             testSuite = mapOf(
                 testCase to TestStaticDataPackage.createStubInstance()
             ),
-            artifactsUploader = artifactsUploader
+            logcatProcessor = logcatProcessor
         )
 
         val testResult = postProcessor.createTestReport(
@@ -83,7 +81,7 @@ internal class ReportProcessorImplTest {
             testSuite = mapOf(
                 testCase to testStaticData
             ),
-            artifactsUploader = artifactsUploader
+            logcatProcessor = logcatProcessor
         )
 
         val testResult = postProcessor.createTestReport(
@@ -101,7 +99,7 @@ internal class ReportProcessorImplTest {
     }
 
     @Test
-    fun `process - returns ok test with logcat stub - logcat upload failed`(@TempDir tempDir: File) {
+    fun `process - returns ok test with logcat stub - no logcat`(@TempDir tempDir: File) {
         val testStaticData = TestStaticDataPackage.createStubInstance()
 
         createReportJson(
@@ -121,17 +119,7 @@ internal class ReportProcessorImplTest {
             testSuite = mapOf(
                 testCase to testStaticData
             ),
-            artifactsUploader = object : TestArtifactsUploader {
-
-                override suspend fun upload(content: String, type: Entry.File.Type): Result<HttpUrl> {
-                    delay(100)
-                    return Result.Success("http://stub".toHttpUrl())
-                }
-
-                override suspend fun upload(file: File, type: Entry.File.Type): Result<HttpUrl> {
-                    return Result.Success("http://stub".toHttpUrl())
-                }
-            }
+            logcatProcessor = logcatProcessor
         )
 
         val testResult = postProcessor.createTestReport(
@@ -150,22 +138,31 @@ internal class ReportProcessorImplTest {
 
     private fun createReportProcessor(
         testSuite: Map<TestCase, TestStaticData> = emptyMap(),
-        artifactsUploader: TestArtifactsUploader
+        logcatProcessor: LogcatProcessor,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO
     ): ReportProcessorImpl {
         return ReportProcessorImpl(
             loggerFactory = loggerFactory,
             testSuite = testSuite,
             metricsSender = InstrumentationMetricsSender(statsdSender, SeriesName.create("")),
-            testArtifactsProcessor = createTestArtifactsProcessor(artifactsUploader)
+            testArtifactsProcessor = createTestArtifactsProcessor(
+                logcatProcessor = logcatProcessor,
+                dispatcher = dispatcher
+            ),
+            logcatProcessor = logcatProcessor,
+            timeProvider = timeProvider,
+            dispatcher = dispatcher
         )
     }
 
-    private fun createTestArtifactsProcessor(artifactsUploader: TestArtifactsUploader): TestArtifactsProcessor {
+    private fun createTestArtifactsProcessor(
+        logcatProcessor: LogcatProcessor,
+        dispatcher: CoroutineDispatcher
+    ): TestArtifactsProcessor {
         return LegacyTestArtifactsProcessor(
             gson = gson,
-            testArtifactsUploader = artifactsUploader,
-            retracer = ProguardRetracer.Stub,
-            timeProvider = timeProvider
+            logcatProcessor = logcatProcessor,
+            dispatcher = dispatcher
         )
     }
 
