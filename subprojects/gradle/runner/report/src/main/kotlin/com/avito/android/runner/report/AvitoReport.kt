@@ -144,10 +144,6 @@ internal class AvitoReport(
         return reportsApi.getTestsForRunId(reportCoordinates)
     }
 
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
-        return reportsApi.markAsSuccessful(testRunId, author, comment)
-    }
-
     override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
         return reportsApi.getCrossDeviceTestData(reportCoordinates)
     }

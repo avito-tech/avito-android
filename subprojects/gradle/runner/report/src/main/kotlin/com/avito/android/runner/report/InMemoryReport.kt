@@ -58,11 +58,6 @@ internal class InMemoryReport(
     }
 
     @Synchronized
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
-        TODO("Need to implement")
-    }
-
-    @Synchronized
     override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
         TODO("Not yet implemented")
     }

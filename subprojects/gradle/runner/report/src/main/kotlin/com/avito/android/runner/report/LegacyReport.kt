@@ -16,8 +16,6 @@ public interface LegacyReport {
 
     public fun finish()
 
-    public fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit>
-
     public fun getCrossDeviceTestData(): Result<CrossDeviceSuite>
 
     public fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)

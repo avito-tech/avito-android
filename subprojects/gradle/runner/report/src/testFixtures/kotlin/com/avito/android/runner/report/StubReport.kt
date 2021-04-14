@@ -63,10 +63,6 @@ public class StubReport : Report {
         return getTestsResult
     }
 
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
     override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
         TODO("Not yet implemented")
     }
