@@ -6,7 +6,6 @@ import com.avito.logger.create
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
-import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -142,10 +141,6 @@ internal class AvitoReport(
 
     override fun getTests(): Result<List<SimpleRunTest>> {
         return reportsApi.getTestsForRunId(reportCoordinates)
-    }
-
-    override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
-        return reportsApi.getCrossDeviceTestData(reportCoordinates)
     }
 
     private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) {

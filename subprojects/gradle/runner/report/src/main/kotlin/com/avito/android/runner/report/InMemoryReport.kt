@@ -2,7 +2,6 @@ package com.avito.android.runner.report
 
 import com.avito.android.Result
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
@@ -55,11 +54,6 @@ internal class InMemoryReport(
     @Synchronized
     override fun finish() {
         // empty
-    }
-
-    @Synchronized
-    override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
-        TODO("Not yet implemented")
     }
 
     @Synchronized

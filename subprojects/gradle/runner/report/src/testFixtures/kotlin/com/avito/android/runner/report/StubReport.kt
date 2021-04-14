@@ -5,7 +5,6 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
@@ -61,9 +60,5 @@ public class StubReport : Report {
 
     override fun getTests(): Result<List<SimpleRunTest>> {
         return getTestsResult
-    }
-
-    override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
-        TODO("Not yet implemented")
     }
 }
