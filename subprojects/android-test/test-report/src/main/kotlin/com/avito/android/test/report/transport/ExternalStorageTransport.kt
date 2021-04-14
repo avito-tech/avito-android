@@ -1,6 +1,5 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.Result
 import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
@@ -27,11 +26,7 @@ internal class ExternalStorageTransport(
     private val testRuntimeDataBuilder = TestRuntimeDataBuilder(timeProvider)
 
     override fun sendReport(state: ReportState.Initialized.Started) {
-        Result.tryCatch {
-            reportFileProvider.provideReportFile().apply {
-                parentFile?.mkdirs()
-            }
-        }.fold(
+        reportFileProvider.provideReportFile().fold(
             onSuccess = { file ->
                 try {
                     val json = gson.toJson(testRuntimeDataBuilder.fromState(state))

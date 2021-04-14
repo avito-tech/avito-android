@@ -7,11 +7,11 @@ interface ReportFileProvider {
 
     val rootDir: Lazy<File>
 
-    fun provideReportDir(): File
+    fun provideReportDir(): Result<File>
 
-    fun provideReportFile(): File
+    fun provideReportFile(): Result<File>
 
-    fun getFile(relativePath: String): File
+    fun getFile(relativePath: String): Result<File>
 
     fun generateFile(name: String, extension: String, create: Boolean = false): Result<File>
 

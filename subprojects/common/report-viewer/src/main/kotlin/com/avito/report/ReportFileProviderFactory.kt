@@ -12,8 +12,7 @@ object ReportFileProviderFactory {
     ): ReportFileProvider {
         return ReportFileProviderImpl(
             rootDir = testReportRootDir,
-            className = testStaticData.name.className,
-            methodName = testStaticData.name.methodName
+            testDirGenerator = TestDirGenerator.StaticData(testStaticData)
         )
     }
 }

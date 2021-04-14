@@ -45,6 +45,7 @@ import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
 import com.avito.logger.create
 import com.avito.report.ReportFileProvider
+import com.avito.report.TestDirGenerator
 import com.avito.report.internal.ReportFileProviderImpl
 import com.avito.report.model.Kind
 import com.avito.test.http.MockDispatcher
@@ -92,8 +93,10 @@ abstract class InHouseInstrumentationTestRunner :
 
         ReportFileProviderImpl(
             runEnvironment.outputDirectory,
-            runEnvironment.testMetadata.className,
-            runEnvironment.testMetadata.methodName!!
+            testDirGenerator = TestDirGenerator.Impl(
+                className = runEnvironment.testMetadata.className,
+                methodName = runEnvironment.testMetadata.methodName!!
+            )
         )
     }
 

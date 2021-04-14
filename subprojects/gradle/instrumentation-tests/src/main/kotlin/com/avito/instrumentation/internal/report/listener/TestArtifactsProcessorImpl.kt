@@ -1,10 +1,9 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
-import com.avito.report.ReportFileProvider
 import com.avito.report.ReportFileProviderFactory
-import com.avito.report.internal.ReportFileProviderImpl
 import com.avito.report.model.AndroidTest
+import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentElement
 import com.avito.report.model.TestRuntimeData
@@ -52,8 +51,7 @@ internal class TestArtifactsProcessorImpl(
         // check if coroutine name kept
         val scope = CoroutineScope(CoroutineName("test-artifacts-${testStaticData.name}") + coroutineDispatcher)
 
-        return Result.tryCatch {
-            val reportJson = reportFileProvider.provideReportFile()
+        return reportFileProvider.provideReportFile().map { reportJson ->
 
             val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(
                 FileReader(reportJson)
@@ -143,7 +141,10 @@ internal class TestArtifactsProcessorImpl(
     private suspend fun uploadLogcat(logcat: List<String>?, isUploadNeeded: Boolean): String {
         return if (isUploadNeeded) {
             if (logcat != null) {
-                testArtifactsUploader.uploadLogcat(retracer.retrace(logcat.joinToString(separator = "\n")))
+                testArtifactsUploader.upload(
+                    content = retracer.retrace(logcat.joinToString(separator = "\n")),
+                    type = Entry.File.Type.plain_text
+                )
                     .fold(
                         onSuccess = { it.toString() },
                         onFailure = { "Can't upload logcat: ${it.message}" }

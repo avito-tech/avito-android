@@ -7,7 +7,7 @@ import java.io.File
 
 internal interface TestArtifactsUploader {
 
-    suspend fun uploadLogcat(logcat: String): Result<HttpUrl>
+    suspend fun upload(content: String, type: Entry.File.Type): Result<HttpUrl>
 
-    suspend fun uploadFile(file: File, type: Entry.File.Type): Result<HttpUrl>
+    suspend fun upload(file: File, type: Entry.File.Type): Result<HttpUrl>
 }

@@ -7,6 +7,7 @@ import com.avito.android.test.report.model.createStubInstance
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.ReportFileProvider
+import com.avito.report.TestDirGenerator
 import com.avito.report.internal.ReportFileProviderImpl
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
@@ -29,8 +30,7 @@ internal class ExternalStorageTransportTest {
 
         val outputFileProvider = createOutputFileProvider(
             rootDir = tempDir,
-            className = testMetadata.className,
-            methodName = testMetadata.methodName!!
+            testMetadata = testMetadata
         )
 
         createTransport(outputFileProvider).sendReport(reportState)
@@ -46,8 +46,7 @@ internal class ExternalStorageTransportTest {
 
         val outputFileProvider = createOutputFileProvider(
             rootDir = tempDir,
-            className = testMetadata.className,
-            methodName = testMetadata.methodName!!
+            testMetadata = testMetadata
         )
 
         val result = createTransport(outputFileProvider).sendContent(
@@ -78,9 +77,14 @@ internal class ExternalStorageTransportTest {
 
     private fun createOutputFileProvider(
         rootDir: File,
-        className: String,
-        methodName: String
+        testMetadata: TestMetadata
     ): ReportFileProvider {
-        return ReportFileProviderImpl(lazy { rootDir }, className, methodName)
+        return ReportFileProviderImpl(
+            lazy { rootDir },
+            testDirGenerator = TestDirGenerator.Impl(
+                className = testMetadata.className,
+                methodName = testMetadata.methodName!!
+            )
+        )
     }
 }

@@ -2,48 +2,65 @@ package com.avito.report.internal
 
 import com.avito.android.Result
 import com.avito.report.ReportFileProvider
+import com.avito.report.TestDirGenerator
 import java.io.File
+import java.io.IOException
 import java.util.UUID
 
 class ReportFileProviderImpl(
     override val rootDir: Lazy<File>,
-    private val className: String,
-    private val methodName: String,
-    private val randomFileNameGenerator: () -> String = { UUID.randomUUID().toString() }
+    private val testDirGenerator: TestDirGenerator,
+    private val uniqueFileNameGenerator: () -> String = { UUID.randomUUID().toString() }
 ) : ReportFileProvider {
 
-    // todo should be passed with instrumentation params, see [ArtifactsTestListener]
     private val runnerOutputFolder = "runner"
 
-    // todo should be passed with instrumentation params, see [ReportViewerTestReporter]
     private val reportFileName = "report.json"
 
-    override fun provideReportDir(): File {
-        val testFolderName = "$className#$methodName" // todo add deviceName
+    override fun provideReportDir(): Result<File> {
+        val testFolderName = testDirGenerator.generateUniqueDir()
 
         val runnerDirectory = File(rootDir.value, runnerOutputFolder)
 
-        return File(runnerDirectory, testFolderName)
+        return Result.tryCatch {
+            File(runnerDirectory, testFolderName).apply {
+                parentFile?.mkdirs()
+                mkdir()
+            }
+        }
     }
 
-    override fun provideReportFile(): File {
-        return File(provideReportDir(), reportFileName)
+    override fun provideReportFile(): Result<File> {
+        return provideReportDir().map { dir ->
+            File(dir, reportFileName).apply {
+                createNewFile(this)
+            }
+        }
     }
 
-    override fun getFile(relativePath: String): File {
-        return File(provideReportDir(), relativePath)
+    override fun getFile(relativePath: String): Result<File> {
+        return provideReportDir().map { dir ->
+            File(dir, relativePath)
+        }
     }
 
     override fun generateFile(name: String, extension: String, create: Boolean): Result<File> {
-        return Result.tryCatch {
-            File(provideReportDir(), "$name.$extension").apply {
-                parentFile?.mkdirs()
-                createNewFile()
+        return provideReportDir().map { dir ->
+            File(dir, "$name.$extension").apply {
+                createNewFile(this)
             }
         }
     }
 
     override fun generateUniqueFile(extension: String, create: Boolean): Result<File> {
-        return generateFile(name = randomFileNameGenerator.invoke(), extension = extension, create = create)
+        return generateFile(name = uniqueFileNameGenerator.invoke(), extension = extension, create = create)
+    }
+
+    private fun createNewFile(file: File) {
+        try {
+            file.createNewFile()
+        } catch (e: IOException) {
+            throw IOException("Cannot create file with path: ${file.path}", e)
+        }
     }
 }

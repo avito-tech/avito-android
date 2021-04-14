@@ -3,6 +3,7 @@ package com.avito.instrumentation.internal.report.listener
 import com.avito.android.Result
 import com.avito.report.ReportFileProviderFactory
 import com.avito.report.model.AndroidTest
+import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentElement
 import com.avito.report.model.TestRuntimeData
@@ -41,9 +42,7 @@ internal class LegacyTestArtifactsProcessor(
             testStaticData = testStaticData
         )
 
-        val reportJson = reportFileProvider.provideReportFile()
-
-        return Result.tryCatch {
+        return reportFileProvider.provideReportFile().map { reportJson ->
             val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(
                 FileReader(reportJson)
             )
@@ -100,7 +99,10 @@ internal class LegacyTestArtifactsProcessor(
     private suspend fun uploadLogcat(logcat: List<String>?, isUploadNeeded: Boolean): String {
         return if (isUploadNeeded) {
             if (logcat != null) {
-                testArtifactsUploader.uploadLogcat(retracer.retrace(logcat.joinToString(separator = "\n"))).fold(
+                testArtifactsUploader.upload(
+                    retracer.retrace(logcat.joinToString(separator = "\n")),
+                    Entry.File.Type.plain_text
+                ).fold(
                     onSuccess = { it.toString() },
                     onFailure = { "Can't upload logcat: ${it.message}" }
                 )

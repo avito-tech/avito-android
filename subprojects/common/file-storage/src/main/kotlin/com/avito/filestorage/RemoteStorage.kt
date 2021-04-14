@@ -47,8 +47,6 @@ interface RemoteStorage {
             data class PlainText(override val content: String) : ContentRequest() {
                 override val extension: String = "txt"
             }
-
-            data class AnyContent(override val content: String, override val extension: String) : ContentRequest()
         }
     }
 

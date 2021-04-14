@@ -58,13 +58,14 @@ internal class ReportArtifactsUploader(
      */
     private suspend fun processFileAddress(fileAddress: FileAddress, type: Entry.File.Type): FileAddress? {
         return when (fileAddress) {
-            is FileAddress.File -> {
-                val fullPath = reportFileProvider.getFile(fileAddress.fileName)
-                testArtifactsUploader.uploadFile(file = fullPath, type = type).fold(
-                    onSuccess = { url -> FileAddress.URL(url) },
-                    onFailure = { throwable -> FileAddress.Error(throwable) }
-                )
-            }
+            is FileAddress.File ->
+                reportFileProvider.getFile(fileAddress.fileName)
+                    .flatMap { fullPath -> testArtifactsUploader.upload(file = fullPath, type = type) }
+                    .fold(
+                        onSuccess = { url -> FileAddress.URL(url) },
+                        onFailure = { throwable -> FileAddress.Error(throwable) }
+                    )
+
             is FileAddress.URL,
             is FileAddress.Error -> null
         }

@@ -5,6 +5,7 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StubStatsdSender
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.StubLoggerFactory
+import com.avito.report.ReportFileProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
@@ -63,13 +64,24 @@ internal class ReportProcessorImplTest {
 
     @Test
     fun `process - returns ok test with logcat stub - logcat upload not needed`(@TempDir tempDir: File) {
-        createReportJson(reportDir = tempDir, gson = gson, test = TestRuntimeDataPackage.createStubInstance())
+        val testStaticData = TestStaticDataPackage.createStubInstance()
 
-        val testCase = TestCase(className = "com.avito.Test", methodName = "test", deviceName = "29")
+        createReportJson(
+            reportDir = tempDir,
+            gson = gson,
+            testStaticData = testStaticData,
+            testRuntimeData = TestRuntimeDataPackage.createStubInstance()
+        )
+
+        val testCase = TestCase(
+            className = testStaticData.name.className,
+            methodName = testStaticData.name.methodName,
+            deviceName = testStaticData.device.name
+        )
 
         val postProcessor = createReportProcessor(
             testSuite = mapOf(
-                testCase to TestStaticDataPackage.createStubInstance()
+                testCase to testStaticData
             ),
             artifactsUploader = artifactsUploader
         )
@@ -90,26 +102,33 @@ internal class ReportProcessorImplTest {
 
     @Test
     fun `process - returns ok test with logcat stub - logcat upload failed`(@TempDir tempDir: File) {
+        val testStaticData = TestStaticDataPackage.createStubInstance()
+
         createReportJson(
             reportDir = tempDir,
             gson = gson,
-            test = TestRuntimeDataPackage.createStubInstance(incident = Incident.createStubInstance())
+            testStaticData = testStaticData,
+            testRuntimeData = TestRuntimeDataPackage.createStubInstance(incident = Incident.createStubInstance())
         )
 
-        val testCase = TestCase(className = "com.avito.Test", methodName = "test", deviceName = "29")
+        val testCase = TestCase(
+            className = testStaticData.name.className,
+            methodName = testStaticData.name.methodName,
+            deviceName = testStaticData.device.name
+        )
 
         val postProcessor = createReportProcessor(
             testSuite = mapOf(
-                testCase to TestStaticDataPackage.createStubInstance()
+                testCase to testStaticData
             ),
             artifactsUploader = object : TestArtifactsUploader {
 
-                override suspend fun uploadLogcat(logcat: String): Result<HttpUrl> {
+                override suspend fun upload(content: String, type: Entry.File.Type): Result<HttpUrl> {
                     delay(100)
                     return Result.Success("http://stub".toHttpUrl())
                 }
 
-                override suspend fun uploadFile(file: File, type: Entry.File.Type): Result<HttpUrl> {
+                override suspend fun upload(file: File, type: Entry.File.Type): Result<HttpUrl> {
                     return Result.Success("http://stub".toHttpUrl())
                 }
             }
@@ -150,7 +169,16 @@ internal class ReportProcessorImplTest {
         )
     }
 
-    private fun createReportJson(reportDir: File, gson: Gson, test: TestRuntimeData) {
-        File(reportDir, "report.json").writeText(gson.toJson(test))
+    private fun createReportJson(
+        reportDir: File,
+        gson: Gson,
+        testStaticData: TestStaticData,
+        testRuntimeData: TestRuntimeData
+    ) {
+        val reportFile = ReportFileProviderFactory.create(lazy { reportDir }, testStaticData)
+            .provideReportFile()
+            .getOrThrow()
+
+        reportFile.writeText(gson.toJson(testRuntimeData))
     }
 }
