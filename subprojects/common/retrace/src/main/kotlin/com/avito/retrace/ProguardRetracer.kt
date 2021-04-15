@@ -35,4 +35,9 @@ interface ProguardRetracer {
             return resultWriter.toString()
         }
     }
+
+    object Stub : ProguardRetracer {
+
+        override fun retrace(content: String): String = content
+    }
 }

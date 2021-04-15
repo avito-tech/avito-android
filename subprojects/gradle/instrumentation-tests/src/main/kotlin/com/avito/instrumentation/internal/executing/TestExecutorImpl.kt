@@ -2,7 +2,6 @@ package com.avito.instrumentation.internal.executing
 
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
-import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.reservation.request.QuotaConfigurationData
 import com.avito.instrumentation.reservation.request.Reservation
@@ -10,6 +9,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.scheduler.TestsRunnerClient
 import com.avito.runner.scheduler.args.Arguments
+import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
@@ -27,7 +27,7 @@ import java.io.File
 
 internal class TestExecutorImpl(
     private val devicesProvider: DevicesProvider,
-    private val testReporter: TestReporter,
+    private val testReporter: TestLifecycleListener,
     private val configurationName: String,
     private val loggerFactory: LoggerFactory,
     private val metricsConfig: RunnerMetricsConfig

@@ -6,23 +6,24 @@ import android.graphics.Canvas
 import android.os.Looper
 import com.avito.android.Result
 import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
-import com.avito.android.test.report.transport.ReportFileProvider
-import com.avito.android.test.report.transport.ReportFileProviderImpl
 import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
+import com.avito.report.ReportFileProvider
+import com.avito.report.TestDirGenerator
+import com.avito.report.internal.ReportFileProviderImpl
 import java.io.File
 import java.io.FileOutputStream
-
-/**
- * Source: https://github.com/square/spoon/blob/master/spoon-client/src/main/java/com/squareup/spoon/Screenshot.java
- */
 
 class ScreenshotCapturerImpl(private val reportFileProvider: ReportFileProvider) : ScreenshotCapturer {
 
     // for backward compatibility in synthetic monitoring
+    // todo remove in avito and then here
     @Suppress("unused")
     constructor(outputDirectory: Lazy<File>) : this(
-        reportFileProvider = ReportFileProviderImpl(outputDirectory, "temp", "temp")
+        reportFileProvider = ReportFileProviderImpl(
+            rootDir = outputDirectory,
+            testDirGenerator = TestDirGenerator.Stub
+        )
     )
 
     override fun captureBitmap(): Result<Capture> {
@@ -44,22 +45,23 @@ class ScreenshotCapturerImpl(private val reportFileProvider: ReportFileProvider)
         compressFormat: Bitmap.CompressFormat,
         quality: Int
     ): Result<File?> {
-        return reportFileProvider.provideReportDir().flatMap { dir ->
-            captureBitmap().flatMap { capture ->
-                Result.Success(
-                    when (capture) {
-                        is Capture.Bitmap ->
-                            File(dir, filename).also { file ->
-                                FileOutputStream(file).use {
-                                    capture.value.compress(compressFormat, quality, it)
+        return reportFileProvider.provideReportDir()
+            .flatMap { dir ->
+                captureBitmap().flatMap { capture ->
+                    Result.Success(
+                        when (capture) {
+                            is Capture.Bitmap ->
+                                File(dir, filename).also { file ->
+                                    FileOutputStream(file).use {
+                                        capture.value.compress(compressFormat, quality, it)
+                                    }
                                 }
-                            }
 
-                        Capture.NoActivity -> null // no Activity in RESUMED
-                    }
-                )
+                            Capture.NoActivity -> null // no Activity in RESUMED
+                        }
+                    )
+                }
             }
-        }
     }
 
     private fun drawCanvas(activity: Activity): Bitmap {

@@ -16,7 +16,7 @@ sealed class Result<T> {
         is Failure -> func()
     }
 
-    fun <R> map(func: (value: T) -> R): Result<R> = when (this) {
+    inline fun <R> map(func: (value: T) -> R): Result<R> = when (this) {
         is Success -> try {
             Success(func(value))
         } catch (throwable: Throwable) {
@@ -25,7 +25,7 @@ sealed class Result<T> {
         is Failure -> Failure(throwable)
     }
 
-    fun <R> flatMap(func: (value: T) -> Result<R>): Result<R> = when (this) {
+    inline fun <R> flatMap(func: (value: T) -> Result<R>): Result<R> = when (this) {
         is Success -> try {
             func(getOrThrow())
         } catch (e: Throwable) {

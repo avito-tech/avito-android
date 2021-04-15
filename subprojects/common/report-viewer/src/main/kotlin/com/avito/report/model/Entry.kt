@@ -7,7 +7,7 @@ sealed class Entry(
 
     data class File(
         val comment: String,
-        val fileAddress: String,
+        val fileAddress: FileAddress,
         override val timeInSeconds: Long,
         val fileType: Type
     ) : Entry(type = fileType.name) {
@@ -19,6 +19,8 @@ sealed class Entry(
             video,
             plain_text
         }
+
+        companion object
     }
 
     data class Comment(

@@ -8,15 +8,27 @@ import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
-import com.avito.instrumentation.internal.report.listener.ReportViewerTestReporter
+import com.avito.instrumentation.internal.report.listener.AvitoFileStorageUploader
+import com.avito.instrumentation.internal.report.listener.LegacyTestArtifactsProcessor
+import com.avito.instrumentation.internal.report.listener.LogcatProcessor
+import com.avito.instrumentation.internal.report.listener.LogcatTestLifecycleListener
+import com.avito.instrumentation.internal.report.listener.ReportProcessor
+import com.avito.instrumentation.internal.report.listener.ReportProcessorImpl
+import com.avito.instrumentation.internal.report.listener.TestArtifactsProcessor
+import com.avito.instrumentation.internal.report.listener.TestArtifactsProcessorImpl
+import com.avito.instrumentation.internal.report.listener.TestArtifactsUploader
 import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
+import com.avito.report.model.TestStaticData
 import com.avito.retrace.ProguardRetracer
+import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import java.io.File
 import java.nio.file.Files
 
@@ -68,30 +80,25 @@ internal interface TestsSchedulerFactory {
             reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
         )
 
-        private fun createTestRunner(devicesProviderFactory: DevicesProviderFactory, tempDir: File): TestsRunner =
-            TestsRunnerImplementation(
+        private fun createTestRunner(devicesProviderFactory: DevicesProviderFactory, tempDir: File): TestsRunner {
+
+            val statsDSender: StatsDSender = StatsDSender.Impl(
+                config = metricsConfig.statsDConfig,
+                loggerFactory = params.loggerFactory
+            )
+
+            val metricsSender = InstrumentationMetricsSender(
+                statsDSender = statsDSender,
+                runnerPrefix = metricsConfig.runnerPrefix
+            )
+
+            return TestsRunnerImplementation(
                 testExecutorFactory = testExecutorFactory,
                 testReporterFactory = { testSuite, logcatDir, report ->
-                    ReportViewerTestReporter(
-                        loggerFactory = params.loggerFactory,
-                        timeProvider = timeProvider,
-                        testSuite = testSuite,
-                        report = report,
+                    LogcatTestLifecycleListener(
                         logcatDir = logcatDir,
-                        retracer = ProguardRetracer.Impl(params.proguardMappings),
-                        metricsSender = InstrumentationMetricsSender(
-                            statsDSender = StatsDSender.Impl(
-                                config = metricsConfig.statsDConfig,
-                                loggerFactory = params.loggerFactory
-                            ),
-                            runnerPrefix = metricsConfig.runnerPrefix
-                        ),
-                        remoteStorage = RemoteStorageFactory.create(
-                            endpoint = params.fileStorageUrl,
-                            httpClientProvider = httpClientProvider,
-                            loggerFactory = params.loggerFactory,
-                            timeProvider = timeProvider
-                        )
+                        reportProcessor = createReportProcessor(testSuite, metricsSender),
+                        report = report,
                     )
                 },
                 loggerFactory = params.loggerFactory,
@@ -103,5 +110,70 @@ internal interface TestsSchedulerFactory {
                 tempLogcatDir = tempDir,
                 projectName = params.projectName
             )
+        }
+
+        private fun createReportProcessor(
+            testSuite: Map<TestCase, TestStaticData>,
+            metricsSender: InstrumentationMetricsSender
+        ): ReportProcessor {
+
+            val dispatcher = Dispatchers.IO
+
+            val retracer: ProguardRetracer = ProguardRetracer.Impl(params.proguardMappings)
+
+            val artifactsUploader: TestArtifactsUploader = AvitoFileStorageUploader(
+                RemoteStorageFactory.create(
+                    endpoint = params.fileStorageUrl,
+                    httpClientProvider = httpClientProvider,
+                    loggerFactory = params.loggerFactory,
+                    timeProvider = timeProvider
+                )
+            )
+
+            val logcatUploader = LogcatProcessor.Impl(
+                testArtifactsUploader = artifactsUploader,
+                retracer = retracer
+            )
+
+            return ReportProcessorImpl(
+                loggerFactory = params.loggerFactory,
+                testSuite = testSuite,
+                metricsSender = metricsSender,
+                testArtifactsProcessor = createTestArtifactsProcessor(
+                    uploadTestArtifacts = params.uploadTestArtifacts,
+                    gson = TestArtifactsProcessor.gson,
+                    dispatcher = dispatcher,
+                    logcatProcessor = logcatUploader,
+                    testArtifactsUploader = artifactsUploader
+                ),
+                logcatProcessor = logcatUploader,
+                timeProvider = timeProvider,
+                dispatcher = dispatcher
+            )
+        }
+
+        private fun createTestArtifactsProcessor(
+            uploadTestArtifacts: Boolean,
+            gson: Gson,
+            dispatcher: CoroutineDispatcher,
+            logcatProcessor: LogcatProcessor,
+            testArtifactsUploader: TestArtifactsUploader
+        ): TestArtifactsProcessor {
+
+            return if (uploadTestArtifacts) {
+                TestArtifactsProcessorImpl(
+                    gson = gson,
+                    testArtifactsUploader = testArtifactsUploader,
+                    dispatcher = dispatcher,
+                    logcatProcessor = logcatProcessor
+                )
+            } else {
+                LegacyTestArtifactsProcessor(
+                    gson = gson,
+                    logcatProcessor = logcatProcessor,
+                    dispatcher = dispatcher
+                )
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.lang.reflect.ParameterizedType
 
 class EntryTypeAdapterFactory : TypeAdapterFactory {
@@ -14,19 +15,54 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
         val entryTypeAdapter = EntryTypeAdapter()
-        return when {
+        val result = when {
             type.rawType.isAssignableFrom(List::class.java) ->
                 if ((type.type as ParameterizedType).actualTypeArguments[0] == Entry::class.java) {
                     ListEntryTypeAdapter(entryTypeAdapter) as TypeAdapter<T>
                 } else {
                     null
                 }
-            type.rawType.isAssignableFrom(Entry::class.java) -> entryTypeAdapter as TypeAdapter<T>
+            Entry::class.java.isAssignableFrom(type.rawType) -> entryTypeAdapter as TypeAdapter<T>
             else -> null
+        }
+        return result
+    }
+
+    private class FileAddressTypeAdapter : TypeAdapter<FileAddress>() {
+
+        private val placeholderPrefix = "#upload:"
+
+        private val errorPrefix = "#error:"
+
+        override fun write(out: JsonWriter, value: FileAddress) {
+            when (value) {
+                is FileAddress.Error -> out.value("$errorPrefix${value.error.message}")
+                is FileAddress.File -> out.value("$placeholderPrefix${value.fileName}")
+                is FileAddress.URL -> out.value(value.url.toString())
+            }
+        }
+
+        override fun read(`in`: JsonReader): FileAddress {
+            val raw = `in`.nextString()
+            return when {
+                raw.startsWith(placeholderPrefix) ->
+                    FileAddress.File(fileName = raw.replace(placeholderPrefix, ""))
+
+                raw.startsWith(errorPrefix) ->
+                    FileAddress.Error(error = IllegalStateException(raw.replace(errorPrefix, "")))
+
+                else -> try {
+                    FileAddress.URL(url = raw.toHttpUrl())
+                } catch (exception: IllegalArgumentException) {
+                    FileAddress.Error(error = exception)
+                }
+            }
         }
     }
 
     private class EntryTypeAdapter : TypeAdapter<Entry>() {
+
+        private val fileAddressTypeAdapter = FileAddressTypeAdapter()
 
         override fun write(out: JsonWriter, value: Entry) {
             with(out) {
@@ -41,7 +77,7 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
                         name("comment")
                         value(value.comment)
                         name("file_address")
-                        value(value.fileAddress)
+                        fileAddressTypeAdapter.write(out, value.fileAddress)
                     }
                     is Entry.Comment -> {
                         name("title")
@@ -68,7 +104,7 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
             var comment = ""
             var title = ""
             var value = ""
-            var fileAddress = ""
+            var fileAddress: FileAddress? = null
 
             with(`in`) {
                 check(peek() == JsonToken.BEGIN_OBJECT) {
@@ -83,7 +119,7 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
                         "comment" -> comment = nextString()
                         "title" -> title = nextString()
                         "value" -> value = nextString()
-                        "file_address" -> fileAddress = nextString()
+                        "file_address" -> fileAddress = fileAddressTypeAdapter.read(`in`)
                     }
                 }
                 endObject()
@@ -94,25 +130,25 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
                 "check" -> Entry.Check(title = title, timeInSeconds = timestamp)
                 "html" -> Entry.File(
                     comment = comment,
-                    fileAddress = fileAddress,
+                    fileAddress = requireNotNull(fileAddress),
                     timeInSeconds = timestamp,
                     fileType = Entry.File.Type.html
                 )
                 "img_png" -> Entry.File(
                     comment = comment,
-                    fileAddress = fileAddress,
+                    fileAddress = requireNotNull(fileAddress),
                     timeInSeconds = timestamp,
                     fileType = Entry.File.Type.img_png
                 )
                 "video" -> Entry.File(
                     comment = comment,
-                    fileAddress = fileAddress,
+                    fileAddress = requireNotNull(fileAddress),
                     timeInSeconds = timestamp,
                     fileType = Entry.File.Type.video
                 )
                 "plain_text" -> Entry.File(
                     comment = comment,
-                    fileAddress = fileAddress,
+                    fileAddress = requireNotNull(fileAddress),
                     timeInSeconds = timestamp,
                     fileType = Entry.File.Type.plain_text
                 )

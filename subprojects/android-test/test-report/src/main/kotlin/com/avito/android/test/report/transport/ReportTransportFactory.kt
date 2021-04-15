@@ -3,6 +3,7 @@ package com.avito.android.test.report.transport
 import com.avito.filestorage.RemoteStorage
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
+import com.avito.report.ReportFileProvider
 import com.avito.report.ReportsApiFactory
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory

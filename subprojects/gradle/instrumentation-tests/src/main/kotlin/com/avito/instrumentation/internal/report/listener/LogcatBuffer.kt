@@ -11,6 +11,10 @@ internal interface LogcatBuffer {
         val stderr: List<String>
     )
 
+    fun getStdout(): List<String>
+
+    fun getStderr(): List<String>
+
     fun getLogs(): Logcat
 
     fun stop()
@@ -24,13 +28,13 @@ internal interface LogcatBuffer {
         private val stderrBuffer = mutableListOf<String>()
 
         private val tailerListener = object : TailerListenerAdapter() {
+
             override fun handle(line: String?) {
                 if (line != null) {
-                    // todo более надежное определение что есть ошибка
+                    stdoutBuffer.add(line)
+
                     if (line.contains(" E ") || line.startsWith("E/")) {
                         stderrBuffer.add(line)
-                    } else {
-                        stdoutBuffer.add(line)
                     }
                 }
             }
@@ -47,6 +51,14 @@ internal interface LogcatBuffer {
 
         override fun stop() {
             tailer.stop()
+        }
+
+        override fun getStdout(): List<String> {
+            return stdoutBuffer.toList()
+        }
+
+        override fun getStderr(): List<String> {
+            return stderrBuffer.toList()
         }
 
         override fun getLogs(): Logcat {

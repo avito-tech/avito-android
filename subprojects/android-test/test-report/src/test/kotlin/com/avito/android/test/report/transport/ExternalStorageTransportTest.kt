@@ -6,6 +6,9 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.StubLoggerFactory
+import com.avito.report.ReportFileProvider
+import com.avito.report.TestDirGenerator
+import com.avito.report.internal.ReportFileProviderImpl
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
@@ -27,8 +30,7 @@ internal class ExternalStorageTransportTest {
 
         val outputFileProvider = createOutputFileProvider(
             rootDir = tempDir,
-            className = testMetadata.className,
-            methodName = testMetadata.methodName!!
+            testMetadata = testMetadata
         )
 
         createTransport(outputFileProvider).sendReport(reportState)
@@ -44,8 +46,7 @@ internal class ExternalStorageTransportTest {
 
         val outputFileProvider = createOutputFileProvider(
             rootDir = tempDir,
-            className = testMetadata.className,
-            methodName = testMetadata.methodName!!
+            testMetadata = testMetadata
         )
 
         val result = createTransport(outputFileProvider).sendContent(
@@ -55,8 +56,7 @@ internal class ExternalStorageTransportTest {
         )
 
         assertThat<RemoteStorage.Result.Success>(result.get()) {
-            val fileName = outputFileProvider.fromUploadPlaceholder(url)
-            val contentFile = File(tempDir, "runner/com.Test#test/$fileName")
+            val contentFile = File(tempDir, "runner/com.Test#test/$url")
 
             assertThat(contentFile.exists()).isTrue()
 
@@ -77,9 +77,14 @@ internal class ExternalStorageTransportTest {
 
     private fun createOutputFileProvider(
         rootDir: File,
-        className: String,
-        methodName: String
+        testMetadata: TestMetadata
     ): ReportFileProvider {
-        return ReportFileProviderImpl(lazy { rootDir }, className, methodName)
+        return ReportFileProviderImpl(
+            lazy { rootDir },
+            testDirGenerator = TestDirGenerator.Impl(
+                className = testMetadata.className,
+                methodName = testMetadata.methodName!!
+            )
+        )
     }
 }

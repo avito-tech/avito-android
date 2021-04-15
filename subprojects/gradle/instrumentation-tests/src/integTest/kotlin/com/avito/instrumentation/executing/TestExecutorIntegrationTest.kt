@@ -9,7 +9,6 @@ import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutor
 import com.avito.instrumentation.internal.executing.TestExecutorImpl
-import com.avito.instrumentation.internal.report.listener.StubTestReporter
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.reservation.request.Device
 import com.avito.instrumentation.reservation.request.QuotaConfigurationData
@@ -18,6 +17,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
+import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.StubTimeProvider
@@ -90,7 +90,7 @@ internal class TestExecutorIntegrationTest {
             loggerFactory = loggerFactory,
             timeProvider = timeProvider
         ),
-        testReporter = StubTestReporter(),
+        testReporter = TestLifecycleListener.STUB,
         configurationName = configurationName,
         loggerFactory = loggerFactory,
         metricsConfig = metricsConfig

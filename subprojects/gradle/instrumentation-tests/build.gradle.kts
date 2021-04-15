@@ -66,6 +66,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":common:report-viewer")))
     testFixturesApi(testFixtures(project(":gradle:runner:device-provider")))
     testFixturesApi(testFixtures(project(":gradle:runner:report")))
+    testFixturesApi(testFixtures(project(":gradle:runner:client")))
 }
 
 kotlin {

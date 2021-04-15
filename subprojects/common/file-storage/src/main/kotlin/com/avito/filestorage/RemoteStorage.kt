@@ -12,6 +12,12 @@ interface RemoteStorage {
         deleteOnUpload: Boolean = true
     ): FutureValue<Result>
 
+    /**
+     * Avito remote storage returns path relative to baseUrl, full url built on web
+     * Use this func if you need full anyway
+     */
+    fun fullUrl(result: Result.Success): String
+
     sealed class Request {
 
         sealed class FileRequest : Request() {
@@ -41,8 +47,6 @@ interface RemoteStorage {
             data class PlainText(override val content: String) : ContentRequest() {
                 override val extension: String = "txt"
             }
-
-            data class AnyContent(override val content: String, override val extension: String) : ContentRequest()
         }
     }
 

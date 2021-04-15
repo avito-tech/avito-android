@@ -52,10 +52,10 @@ internal interface InstrumentationTestsActionFactory {
                 params = params,
                 sourceReport = sourceReport,
                 gson = gson,
-                timeProvider = timeProvider,
                 metricsConfig = metricsConfig,
                 testExecutorFactory = TestExecutorFactory.Implementation(),
                 testSuiteLoader = TestSuiteLoaderImpl(),
+                timeProvider = timeProvider,
                 httpClientProvider = httpClientProvider
             )
 
