@@ -43,8 +43,9 @@ internal class LogcatTestLifecycleListener(
         )
 
         when (testReport) {
-            is AndroidTest.Completed -> report.sendCompletedTest(testReport)
-            is AndroidTest.Lost -> report.sendLostTests(listOf(testReport))
+            is AndroidTest.Completed,
+            is AndroidTest.Lost -> report.addTest(testReport)
+
             is AndroidTest.Skipped -> {
                 /* do nothing */
             }
