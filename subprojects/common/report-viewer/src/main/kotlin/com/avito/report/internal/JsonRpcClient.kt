@@ -1,8 +1,6 @@
 package com.avito.report.internal
 
 import com.avito.http.internal.RequestMetadata
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.report.internal.model.RfcRpcRequest
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
@@ -15,13 +13,10 @@ import java.io.IOException
 internal class JsonRpcClient(
     private val host: String,
     private val httpClient: OkHttpClient,
-    private val gson: Gson,
-    loggerFactory: LoggerFactory
+    private val gson: Gson
 ) {
 
     private val jsonMime = "application/json"
-
-    private val logger = loggerFactory.create<JsonRpcClient>()
 
     inline fun <reified T : Any> jsonRpcRequest(request: RfcRpcRequest): T = internalRequest(request)
 
@@ -58,7 +53,6 @@ internal class JsonRpcClient(
                 |Response body: $responseBody
                 |Response headers: ${response.headers}
                 """.trimMargin()
-            logger.debug(failedRequestDescription) // TODO delete after Report Api problems investigation
             throw IOException(failedRequestDescription)
         }
     }

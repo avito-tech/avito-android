@@ -31,7 +31,6 @@ object ReportsApiFactory {
             loggerFactory = loggerFactory,
             client = JsonRpcClient(
                 host = host,
-                loggerFactory = loggerFactory,
                 httpClient = httpClientProvider.provide()
                     .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
                     .writeTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
