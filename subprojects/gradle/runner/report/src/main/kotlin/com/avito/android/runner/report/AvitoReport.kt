@@ -5,8 +5,6 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.CreateResult
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
@@ -38,35 +36,6 @@ internal class AvitoReport(
             { logger.info("Test ${test.name} successfully reported") },
             { logger.critical("Can't report test ${test.name}", it) }
         )
-    }
-
-    override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
-        return when (val result = reportsApi.create(reportCoordinates, buildId, testHost, gitBranch, gitCommit)) {
-            is CreateResult.Created ->
-                logger.debug("Report created, id=${result.id}")
-            CreateResult.AlreadyCreated ->
-                logger.debug(
-                    "Can't tryCreate report, already created, " +
-                        "it's ok if we call it N(=release configurations) times"
-                )
-            is CreateResult.Failed ->
-                logger.critical("Can't tryCreate report", result.exception)
-        }
-    }
-
-    // todo закешировать после разделения инстансов
-    override fun tryGetId(): String? {
-        return when (val result = reportsApi.getReport(reportCoordinates)) {
-            is GetReportResult.Found -> result.report.id
-            GetReportResult.NotFound -> {
-                logger.critical("Can't find report for runId=${reportCoordinates.runId}", NoSuchElementException())
-                null
-            }
-            is GetReportResult.Error -> {
-                logger.critical("Can't find report for runId=${reportCoordinates.runId}", result.exception)
-                null
-            }
-        }
     }
 
     override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {

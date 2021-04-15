@@ -15,7 +15,6 @@ data class CdBuildResult(
     )
 
     data class TestResultsLink(
-        val reportId: String?,
         val reportUrl: String,
         val reportCoordinates: ReportCoordinates
     ) {

@@ -17,7 +17,6 @@ private val expected = """
         "commit_hash": "commitHash"
       },
       "test_results": {
-        "report_id": "123",
         "report_url": "https://report/run/5cab53abc0c8b00001f03453?q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxfX0%3D",
         "report_coordinates": {
           "plan_slug": "AvitoAndroid",
@@ -58,7 +57,6 @@ class CdBuildResultSerializationTest {
                 buildNumber = "323",
                 releaseVersion = "52.0",
                 testResults = CdBuildResult.TestResultsLink(
-                    reportId = "123",
                     reportUrl =
                     "https://report/run/5cab53abc0c8b00001f03453?" +
                         "q=eyJmaWx0ZXIiOnsiZXJyb3IiOjEsImZhaWwiOjEsIm90aGVyIjoxfX0%3D",

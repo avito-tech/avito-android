@@ -8,10 +8,6 @@ import com.avito.report.model.TestStaticData
  */
 public interface LegacyReport {
 
-    public fun tryCreate(testHost: String, gitBranch: String, gitCommit: String)
-
-    public fun tryGetId(): String?
-
     public fun finish()
 
     public fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)

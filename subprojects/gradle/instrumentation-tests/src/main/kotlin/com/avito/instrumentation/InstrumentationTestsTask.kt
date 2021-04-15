@@ -160,7 +160,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         )
 
         saveTestResultsToBuildOutput(
-            reportFactory,
             reportConfig
         )
 
@@ -247,7 +246,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
      * todo Move into Report.Impl
      */
     private fun saveTestResultsToBuildOutput(
-        legacyReportFactory: LegacyReportFactory,
         legacyReportConfig: LegacyReportFactory.Config
     ) {
         val configuration = instrumentationConfiguration.get()
@@ -256,10 +254,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         if (reportViewerConfig != null && legacyReportConfig is LegacyReportFactory.Config.ReportViewerCoordinates) {
             val getTestResultsAction = GetTestResultsAction(
                 reportViewerUrl = reportViewerConfig.reportViewerUrl,
-                reportCoordinates = reportCoordinates,
-                legacyReport = legacyReportFactory.createLegacyReport(legacyReportConfig),
-                gitBranch = gitBranch.get(),
-                gitCommit = gitCommit.get()
+                reportCoordinates = reportCoordinates
             )
             // todo move that logic to task output. Instrumentation task mustn't know about Upload CD models
             // todo Extract Instrumentation contract to module.
