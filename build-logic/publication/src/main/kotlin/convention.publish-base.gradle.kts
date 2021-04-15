@@ -40,6 +40,11 @@ publishing.publications.withType<MavenPublication> {
                 name.set("Sergey Boishtyan")
                 url.set("https://github.com/sboishtyan")
             }
+            developer {
+                id.set("RuslanMingaliev")
+                name.set("Ruslan Mingaliev")
+                url.set("https://github.com/RuslanMingaliev")
+            }
         }
     }
 }

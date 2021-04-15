@@ -67,7 +67,6 @@ instrumentation {
     }
 
     sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
-    slackToken = getOptionalStringProperty("avito.slack.test.token") ?: "stub"
 
     logcatTags = setOf(
         "UITestRunner:*",

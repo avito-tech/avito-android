@@ -273,7 +273,6 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         args["deviceName"] = "local"
         args["buildBranch"] = gitState?.currentBranch?.name ?: "local"
         args["buildCommit"] = gitState?.currentBranch?.commit ?: "local"
-        args["slackToken"] = "stub"
         args["sentryDsn"] = "http://stub-project@stub-host/0"
         args["fileStorageUrl"] = "http://stub"
         args["teamcityBuildId"] = "-1"

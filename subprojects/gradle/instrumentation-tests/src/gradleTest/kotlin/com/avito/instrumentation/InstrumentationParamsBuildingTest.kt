@@ -41,7 +41,6 @@ internal class InstrumentationParamsBuildingTest {
             "reportViewerUrl" to "http://stub",
             "fileStorageUrl" to "http://stub",
             "sentryDsn" to "stub",
-            "slackToken" to "stub",
             "inHouse" to "true",
             "avito.report.enabled" to "false" // todo
         )
