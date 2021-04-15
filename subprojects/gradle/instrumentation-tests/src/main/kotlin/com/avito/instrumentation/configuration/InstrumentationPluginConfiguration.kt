@@ -24,13 +24,6 @@ public object InstrumentationPluginConfiguration {
         public var applicationProguardMapping: File? = null
         public var testProguardMapping: File? = null
 
-        /**
-         * Enable experimental test run via Shared Build Service
-         * https://docs.gradle.org/current/userguide/build_services.html
-         */
-        // todo remove in favor of ExperimentalExtension
-        public var useService: Boolean = false
-
         @get:Nested
         public abstract val experimental: ExperimentalExtension
 
@@ -120,7 +113,7 @@ public object InstrumentationPluginConfiguration {
                 applicationProguardMapping = applicationProguardMapping,
                 testProguardMapping = testProguardMapping,
                 experimental = Data.Experimental(
-                    useService = experimental.useService.getOrElse(useService),
+                    useService = experimental.useService.getOrElse(false),
                     useInMemoryReport = experimental.useInMemoryReport.getOrElse(false)
                 )
             )
