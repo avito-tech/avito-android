@@ -19,13 +19,14 @@ import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
-import com.avito.android.test.report.Report
+import com.avito.android.test.report.InternalReport
 import com.avito.android.test.report.ReportFriendlyFailureHandler
 import com.avito.android.test.report.ReportImplementation
 import com.avito.android.test.report.ReportProvider
 import com.avito.android.test.report.ReportTestListener
 import com.avito.android.test.report.ReportViewerHttpInterceptor
 import com.avito.android.test.report.ReportViewerWebsocketReporter
+import com.avito.android.test.report.StepDslProvider
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
@@ -38,8 +39,8 @@ import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogD
 import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumperImpl
 import com.avito.android.test.report.troubleshooting.dump.NoOpMainLooper
 import com.avito.android.test.report.video.VideoCaptureTestListener
+import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.android.util.DeviceSettingsChecker
-import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
@@ -58,7 +59,6 @@ import java.util.concurrent.TimeUnit
 abstract class InHouseInstrumentationTestRunner :
     InstrumentationTestRunner(),
     ReportProvider,
-    ImitateFlagProvider,
     RemoteStorageProvider {
 
     private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
@@ -152,7 +152,7 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    override val report: Report by lazy {
+    override val report: InternalReport by lazy {
         ReportImplementation(
             loggerFactory = loggerFactory,
             transport = reportTransport,
@@ -162,22 +162,18 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    override val isImitate: Boolean by lazy {
-        testRunEnvironment.asRunEnvironmentOrThrow().isImitation
-    }
-
     @Suppress("unused") // used in avito
     val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
-            reportProvider = this,
+            report = report,
             remoteFileStorageEndpointHost = runEnvironment.fileStorageUrl.toHttpUrl().host
         )
     }
 
     @Suppress("unused") // used in avito
     val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
-        ReportViewerWebsocketReporter(this)
+        ReportViewerWebsocketReporter(report)
     }
 
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
@@ -215,6 +211,12 @@ abstract class InHouseInstrumentationTestRunner :
         logger.debug("Instrumentation arguments: $instrumentationArguments")
         val environment = testRunEnvironment.asRunEnvironmentOrThrow()
         logger.debug("TestRunEnvironment: $environment")
+        StepDslProvider.initialize(
+            StepDslDelegateImpl(
+                reportLifecycle = report,
+                stepModelFactory = report,
+            )
+        )
         initApplicationCrashHandling()
         addReportListener(arguments)
         initTestCase(environment)
@@ -293,7 +295,7 @@ abstract class InHouseInstrumentationTestRunner :
         try {
             if (!report.isWritten) {
                 report.registerIncident(AppCrashException(incident))
-                report.reportTestCase()
+                report.finishTestCase()
             }
         } catch (t: Throwable) {
             logger.critical("Can't register and report unexpected incident", t)

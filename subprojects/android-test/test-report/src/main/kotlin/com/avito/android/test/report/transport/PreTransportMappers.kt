@@ -11,9 +11,9 @@ internal interface PreTransportMappers {
     fun transformStepList(stepList: List<StepResult>): List<Step> {
         return stepList.map { stepResult ->
             Step(
-                timestamp = stepResult.timestamp!!,
-                number = stepResult.number!!,
-                title = stepResult.title!!,
+                timestamp = stepResult.timestamp,
+                number = stepResult.number,
+                title = stepResult.title,
                 entryList = stepResult.entryList
             )
         }

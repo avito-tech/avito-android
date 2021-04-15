@@ -26,7 +26,7 @@ class BundleArgsProvider(
         val result: T? = getOptionalSerializableArgument(name)
 
         if (result == null) {
-            throw ReporterException("$name is a mandatory serializable argument")
+            throw IllegalStateException("$name is a mandatory serializable argument")
         } else {
             return result
         }
@@ -42,7 +42,7 @@ class BundleArgsProvider(
     override fun getMandatoryArgument(name: String): String {
         val result: String? = bundle.getString(name)
         if (result == null || result.isBlank()) {
-            throw ReporterException(
+            throw IllegalStateException(
                 "$name is a mandatory argument; all values=$bundle"
             )
         } else {

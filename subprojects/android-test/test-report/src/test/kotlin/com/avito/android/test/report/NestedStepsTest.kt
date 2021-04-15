@@ -1,11 +1,15 @@
+@file:Suppress("ImplicitThis")
+
 package com.avito.android.test.report
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 
+@ExtendWith(StepDslExtension::class)
 class NestedStepsTest {
 
     @JvmField
@@ -21,9 +25,8 @@ class NestedStepsTest {
     @Test
     fun `WHEN we create a nested step THEN we should FAIL`() {
         val error = assertThrows(StepException::class.java) {
-            step("Outer step", report, false) {
-                step("Inner step", report, false) {
-                }
+            step("Outer step") {
+                step("Inner step")
             }
         }
         val cause = error.cause
@@ -35,9 +38,8 @@ class NestedStepsTest {
     @Test
     fun `WHEN we create a precondition inside a step THEN we should FAIL`() {
         val error = assertThrows(StepException::class.java) {
-            step("Outer step", report, false) {
-                precondition("precondition", report, false) {
-                }
+            step("Outer step") {
+                precondition("precondition")
             }
         }
         val cause = error.cause
@@ -50,7 +52,7 @@ class NestedStepsTest {
     fun `WHEN we create a step and current step is Synthetic THEN we should overwrite the current step`() {
         // WHEN
         report.addComment("Comment") // that leads to the Synthetic step creation
-        step("Step", report, false) {}
+        step("Step")
 
         // THEN
         // No errors

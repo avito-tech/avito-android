@@ -1,19 +1,15 @@
 package com.avito.android.test.report
 
 import com.avito.logger.Logger
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import org.junit.runner.Description
 import org.junit.runner.notification.Failure
 import org.junit.runner.notification.RunListener
 
 abstract class AbstractReportTestListener : RunListener() {
 
-    private val report: Report by lazy { TestExecutionState.reportInstance }
+    protected abstract val report: ReportTestLifecycle<*>
 
-    private val logger: Logger by lazy { loggerFactory.create<AbstractReportTestListener>() }
-
-    protected abstract val loggerFactory: LoggerFactory
+    abstract val logger: Logger
 
     override fun testStarted(description: Description) {
         processEvent("start", description.displayName) {
@@ -23,7 +19,7 @@ abstract class AbstractReportTestListener : RunListener() {
 
     override fun testFinished(description: Description) {
         processEvent("finish", description.displayName) {
-            report.reportTestCase()
+            report.finishTestCase()
         }
     }
 
@@ -31,10 +27,7 @@ abstract class AbstractReportTestListener : RunListener() {
         processEvent("failure", failure.description.displayName) {
             // we already registered it
             if (failure.exception !is StepException) {
-                report.registerIncident(
-                    exception = failure.exception,
-                    screenshot = report.makeScreenshot("testFailure in listener")
-                )
+                report.failedTestCase(failure.exception)
             }
         }
     }

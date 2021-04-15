@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api(project(":android-test:test-instrumentation-runner"))
     api(project(":common:junit-utils"))
-    api(project(":android-test:test-report"))
+    api(project(":common:test-report-dsl-api"))
     api(libs.sentry) {
         because("InHouseInstrumentationTestRunner.sentry")
     }
@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":android-test:android-log"))
     implementation(project(":android-test:ui-testing-core"))
     implementation(project(":android-test:ui-testing-maps"))
+    implementation(project(":android-test:test-report"))
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)

@@ -6,9 +6,9 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import ru.avito.reporter.WebSocketReporter
 
-class ReportViewerWebsocketReporter(private val reportProvider: ReportProvider) : WebSocketReporter {
-
-    private val report: Report by lazy { reportProvider.report }
+class ReportViewerWebsocketReporter(
+    private val report: Report
+) : WebSocketReporter {
 
     private val gson = GsonBuilder()
         .setPrettyPrinting()
