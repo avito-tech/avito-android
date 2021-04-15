@@ -4,7 +4,7 @@ import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.internal.JsonRpcRequestProvider
+import com.avito.report.internal.JsonRpcClient
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -29,7 +29,7 @@ object ReportsApiFactory {
     ): ReportsApi {
         return ReportsApiImpl(
             loggerFactory = loggerFactory,
-            requestProvider = JsonRpcRequestProvider(
+            client = JsonRpcClient(
                 host = host,
                 httpClient = httpClientProvider.provide()
                     .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
