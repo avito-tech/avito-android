@@ -94,6 +94,11 @@ internal fun instrumentationConfiguration(): String = """
                             instrumentationParams = [
                                 "jobSlug": "FunctionalTests"
                             ]
+                            
+                            experimental {
+                                useService = true
+                                useInMemoryReport = true
+                            }
 
                             configurations {
 

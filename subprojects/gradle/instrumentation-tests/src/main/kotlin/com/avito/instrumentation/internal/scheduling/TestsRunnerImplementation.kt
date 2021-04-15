@@ -76,7 +76,6 @@ internal class TestsRunnerImplementation(
                 output = outputDir
             )
 
-            // todo through Report
             val raw = report.getTests()
 
             logger.debug("test results: $raw")

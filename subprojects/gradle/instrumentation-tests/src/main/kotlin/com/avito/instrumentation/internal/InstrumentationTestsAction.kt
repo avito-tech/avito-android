@@ -2,7 +2,7 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
@@ -61,9 +61,7 @@ internal class InstrumentationTestsAction(
 
         val testsExecutionResults = scheduler.schedule()
 
-        finalizer.finalize(
-            testsExecutionResults = testsExecutionResults
-        )
+        finalizer.finalize(testsExecutionResults = testsExecutionResults)
     }
 
     data class Params(
@@ -84,10 +82,11 @@ internal class InstrumentationTestsAction(
         val reportViewerUrl: String,
         val fileStorageUrl: String,
         val statsDConfig: StatsDConfig,
-        val reportFactory: ReportFactory,
-        val reportConfig: ReportFactory.Config,
+        val legacyReportFactory: LegacyReportFactory,
+        val legacyReportConfig: LegacyReportFactory.Config,
         val reportCoordinates: ReportCoordinates,
         val proguardMappings: List<File>,
+        val useInMemoryReport: Boolean,
         val uploadTestArtifacts: Boolean
     ) : Serializable {
         companion object

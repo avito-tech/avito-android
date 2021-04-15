@@ -1,9 +1,10 @@
 package com.avito.instrumentation.stub
 
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.StubReport
-import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.createStubInstance
@@ -40,6 +41,7 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     fileStorageUrl: String = "https://files",
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     statsDConfig: StatsDConfig = StatsDConfig.Disabled,
+    useInMemoryReport: Boolean = false,
     uploadTestArtifacts: Boolean = false
 ) = InstrumentationTestsAction.Params(
     mainApk = mainApk,
@@ -59,17 +61,20 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     reportViewerUrl = reportViewerUrl,
     fileStorageUrl = fileStorageUrl,
     statsDConfig = statsDConfig,
-    reportFactory = object : ReportFactory {
+    legacyReportFactory = object : LegacyReportFactory {
 
-        override fun createReport(config: ReportFactory.Config): Report = StubReport()
+        override fun createReport(config: LegacyReportFactory.Config): Report = StubReport()
 
-        override fun createReadReport(config: ReportFactory.Config): ReadReport = StubReport()
+        override fun createLegacyReport(config: LegacyReportFactory.Config): LegacyReport = StubReport()
+
+        override fun createReadReport(config: LegacyReportFactory.Config): ReadReport = StubReport()
     },
-    reportConfig = ReportFactory.Config.ReportViewerCoordinates(
+    legacyReportConfig = LegacyReportFactory.Config.ReportViewerCoordinates(
         ReportCoordinates.createStubInstance(),
         buildId
     ),
     reportCoordinates = reportCoordinates,
     proguardMappings = emptyList(),
+    useInMemoryReport = useInMemoryReport,
     uploadTestArtifacts = uploadTestArtifacts
 )

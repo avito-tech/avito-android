@@ -40,7 +40,6 @@ class UploadCdBuildResultTaskActionTest {
     private val uiTestConfiguration = "regression"
     private val stubTestResults = mapOf(
         uiTestConfiguration to CdBuildResult.TestResultsLink(
-            reportId = "123",
             reportUrl = "no matter url",
             reportCoordinates = CdBuildResult.TestResultsLink.ReportCoordinates(
                 planSlug = "2",

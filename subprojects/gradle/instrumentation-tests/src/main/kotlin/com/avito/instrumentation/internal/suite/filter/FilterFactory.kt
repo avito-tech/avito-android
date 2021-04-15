@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal.suite.filter
 
-import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
 
 internal interface FilterFactory {
@@ -14,14 +14,14 @@ internal interface FilterFactory {
         fun create(
             filterData: InstrumentationFilter.Data,
             impactAnalysisResult: ImpactAnalysisResult,
-            reportConfig: ReportFactory.Config,
-            factory: ReportFactory
+            legacyReportConfig: LegacyReportFactory.Config,
+            factoryLegacy: LegacyReportFactory
         ): FilterFactory {
             return FilterFactoryImpl(
                 filterData = filterData,
                 impactAnalysisResult = impactAnalysisResult,
-                reportConfig = reportConfig,
-                factory = factory
+                legacyReportConfig = legacyReportConfig,
+                factoryLegacy = factoryLegacy
             )
         }
     }

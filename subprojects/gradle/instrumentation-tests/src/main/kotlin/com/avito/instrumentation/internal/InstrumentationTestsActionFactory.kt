@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.TestSuiteLoaderImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
@@ -28,7 +29,11 @@ internal interface InstrumentationTestsActionFactory {
 
         private val gson: Gson = Companion.gson
 
-        private val sourceReport: Report = params.reportFactory.createReport(params.reportConfig)
+        private val report: Report =
+            params.legacyReportFactory.createReport(params.legacyReportConfig)
+
+        private val legacyReport: LegacyReport =
+            params.legacyReportFactory.createLegacyReport(params.legacyReportConfig)
 
         private val schedulerFactory: TestsSchedulerFactory
 
@@ -50,7 +55,8 @@ internal interface InstrumentationTestsActionFactory {
 
             this.schedulerFactory = TestsSchedulerFactory.Impl(
                 params = params,
-                sourceReport = sourceReport,
+                sourceReport = report,
+                avitoReport = legacyReport,
                 gson = gson,
                 metricsConfig = metricsConfig,
                 testExecutorFactory = TestExecutorFactory.Implementation(),
@@ -61,7 +67,7 @@ internal interface InstrumentationTestsActionFactory {
 
             this.finalizerFactory = FinalizerFactory.Impl(
                 params = params,
-                sourceReport = sourceReport,
+                avitoReport = legacyReport,
                 gson = gson,
                 metricsConfig = metricsConfig
             )
