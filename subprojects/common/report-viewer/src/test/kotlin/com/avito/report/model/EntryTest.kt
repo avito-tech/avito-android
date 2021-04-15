@@ -14,7 +14,7 @@ internal class EntryTest {
             Entry.Comment("comment", 12345),
             Entry.Check("check", 1234),
             Entry.Field("field", "value", 123),
-            Entry.File("file", "/file.png", 12, Entry.File.Type.img_png)
+            Entry.File("file", FileAddress.File("file.png"), 12, Entry.File.Type.img_png)
         )
 
         """[

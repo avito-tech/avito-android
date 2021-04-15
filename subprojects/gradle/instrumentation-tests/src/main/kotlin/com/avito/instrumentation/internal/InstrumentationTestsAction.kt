@@ -87,7 +87,8 @@ internal class InstrumentationTestsAction(
         val reportFactory: ReportFactory,
         val reportConfig: ReportFactory.Config,
         val reportCoordinates: ReportCoordinates,
-        val proguardMappings: List<File>
+        val proguardMappings: List<File>,
+        val uploadTestArtifacts: Boolean
     ) : Serializable {
         companion object
     }

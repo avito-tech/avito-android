@@ -39,7 +39,8 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     reportViewerUrl: String = "https://reports",
     fileStorageUrl: String = "https://files",
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
-    statsDConfig: StatsDConfig = StatsDConfig.Disabled
+    statsDConfig: StatsDConfig = StatsDConfig.Disabled,
+    uploadTestArtifacts: Boolean = false
 ) = InstrumentationTestsAction.Params(
     mainApk = mainApk,
     testApk = testApk,
@@ -69,5 +70,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
         buildId
     ),
     reportCoordinates = reportCoordinates,
-    proguardMappings = emptyList()
+    proguardMappings = emptyList(),
+    uploadTestArtifacts = uploadTestArtifacts
 )

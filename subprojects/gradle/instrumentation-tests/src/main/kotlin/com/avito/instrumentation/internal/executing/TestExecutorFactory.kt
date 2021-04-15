@@ -2,8 +2,8 @@ package com.avito.instrumentation.internal.executing
 
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
-import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.logger.LoggerFactory
+import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import java.io.File
 
@@ -14,7 +14,7 @@ internal interface TestExecutorFactory {
 
     fun createExecutor(
         devicesProviderFactory: DevicesProviderFactory,
-        testReporter: TestReporter,
+        testReporter: TestLifecycleListener,
         configuration: InstrumentationConfiguration.Data,
         executionParameters: ExecutionParameters,
         loggerFactory: LoggerFactory,
@@ -28,7 +28,7 @@ internal interface TestExecutorFactory {
 
         override fun createExecutor(
             devicesProviderFactory: DevicesProviderFactory,
-            testReporter: TestReporter,
+            testReporter: TestLifecycleListener,
             configuration: InstrumentationConfiguration.Data,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,

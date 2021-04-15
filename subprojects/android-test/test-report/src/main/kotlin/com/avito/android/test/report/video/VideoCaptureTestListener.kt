@@ -2,12 +2,13 @@ package com.avito.android.test.report.video
 
 import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.listener.TestLifecycleListener
-import com.avito.android.test.report.transport.ReportFileProvider
 import com.avito.android.test.report.transport.Transport
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.ReportFileProvider
+import com.avito.report.model.FileAddress
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
 
@@ -82,9 +83,7 @@ class VideoCaptureTestListener(
         val videoUploadResult = video.get()
 
         if (videoUploadResult is RemoteStorage.Result.Success) {
-            state.video = Video(
-                link = videoUploadResult.url
-            )
+            state.video = Video(fileAddress = FileAddress.File(videoUploadResult.url))
         }
     }
 }

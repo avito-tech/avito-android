@@ -6,7 +6,6 @@ import com.avito.android.runner.report.Report
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
-import com.avito.instrumentation.internal.report.listener.TestReporter
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.internal.suite.model.transformTestsWithNewJobSlug
 import com.avito.logger.LoggerFactory
@@ -14,13 +13,14 @@ import com.avito.logger.create
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
+import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import java.io.File
 
 internal class TestsRunnerImplementation(
     private val testExecutorFactory: TestExecutorFactory,
-    private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestReporter,
+    private val testReporterFactory: (Map<TestCase, TestStaticData>, File, Report) -> TestLifecycleListener,
     private val loggerFactory: LoggerFactory,
     private val executionParameters: ExecutionParameters,
     private val outputDir: File,

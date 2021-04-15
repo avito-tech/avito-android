@@ -49,6 +49,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         project.createInstrumentationPluginExtension()
         project.applyTestTasks()
 
+        val uploadAllTestArtifacts = project.getBooleanProperty("avito.report.fromRunner", default = false)
+
         project.withAndroidModule { baseExtension ->
             setupLocalInstrumentationArguments(
                 project = project,
@@ -127,6 +129,8 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.kubernetesCredentials.set(project.kubernetesCredentials)
 
                     this.runOnlyChangedTests.set(instrumentationConfiguration.runOnlyChangedTests)
+
+                    this.uploadAllTestArtifacts.set(uploadAllTestArtifacts)
 
                     if (instrumentationConfiguration.runOnlyChangedTests) {
                         if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
