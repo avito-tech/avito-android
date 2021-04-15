@@ -24,9 +24,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
 
         project.extensions.configure<DefaultArtifactoryAppBackupExtension>(artifactoryBackupExtensionName) {
             it.backups.all { backup ->
-                require(project.plugins.hasPlugin(MavenPublishPlugin::class.java)) {
-                    "'maven-publish' plugin should be applied to use artifactory app backup plugin"
-                }
+                project.plugins.apply(MavenPublishPlugin::class.java)
                 configureMavenPublishPlugin(project)
                 project.createBackupPublication(backup)
                 val publishTask = project.findMavenPublishTask(backup)
