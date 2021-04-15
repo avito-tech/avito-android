@@ -6,6 +6,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.gradle.api.tasks.Nested
 import java.io.File
 import java.io.Serializable
 
@@ -30,7 +31,11 @@ public object InstrumentationPluginConfiguration {
          * Enable experimental test run via Shared Build Service
          * https://docs.gradle.org/current/userguide/build_services.html
          */
+        // todo remove in favor of ExperimentalExtension
         public var useService: Boolean = false
+
+        @get:Nested
+        public abstract val experimental: ExperimentalExtension
 
         public abstract val configurationsContainer: NamedDomainObjectContainer<InstrumentationConfiguration>
         public abstract val filters: NamedDomainObjectContainer<InstrumentationFilter>
@@ -47,6 +52,10 @@ public object InstrumentationPluginConfiguration {
 
         public var output: String =
             project.rootProject.file("outputs/${project.name}/instrumentation").path
+
+        public fun experimental(action: Action<ExperimentalExtension>) {
+            action.execute(experimental)
+        }
 
         public fun configurations(closure: Closure<NamedDomainObjectSet<InstrumentationConfiguration>>) {
             configurationsContainer.configure(closure)
@@ -111,9 +120,12 @@ public object InstrumentationPluginConfiguration {
                 applicationApk = applicationApk,
                 testApplicationApk = testApplicationApk,
                 reportViewer = reportViewer,
-                useService = useService,
                 applicationProguardMapping = applicationProguardMapping,
-                testProguardMapping = testProguardMapping
+                testProguardMapping = testProguardMapping,
+                experimental = Data.Experimental(
+                    useService = experimental.useService.getOrElse(useService),
+                    useInMemoryReport = experimental.useInMemoryReport.getOrElse(false)
+                )
             )
         }
 
@@ -125,10 +137,15 @@ public object InstrumentationPluginConfiguration {
             val applicationApk: String?, // TODO file
             val testApplicationApk: String?, // TODO file
             val reportViewer: ReportViewer?,
-            val useService: Boolean,
             val applicationProguardMapping: File?,
-            val testProguardMapping: File?
+            val testProguardMapping: File?,
+            val experimental: Experimental
         ) : Serializable {
+
+            public data class Experimental(
+                val useService: Boolean,
+                val useInMemoryReport: Boolean
+            ) : Serializable
 
             public data class ReportViewer(
                 val reportApiUrl: String,

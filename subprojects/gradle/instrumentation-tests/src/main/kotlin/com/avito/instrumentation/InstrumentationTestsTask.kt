@@ -8,7 +8,7 @@ import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
 import com.avito.android.runner.report.StrategyFactory
 import com.avito.android.runner.report.factory.InMemoryReportFactory
-import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.android.runner.report.factory.ReportViewerFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.statsdConfig
@@ -88,6 +88,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     @Input
     public val gitBranch: Property<String> = objects.property()
+
+    @Input
+    public val useInMemoryReport: Property<Boolean> = objects.property()
 
     @Input
     public val suppressFailure: Property<Boolean> = objects.property<Boolean>().convention(false)
@@ -187,13 +190,14 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 ?: "http://stub",
             fileStorageUrl = getFileStorageUrl(),
             statsDConfig = statsDConfig,
-            reportFactory = reportFactory,
-            reportConfig = reportConfig,
+            legacyReportFactory = reportFactory,
+            legacyReportConfig = reportConfig,
             reportCoordinates = reportCoordinates, // stub for inmemory report
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
             ).mapNotNull { it.orNull?.asFile },
+            useInMemoryReport = useInMemoryReport.get(),
             uploadTestArtifacts = uploadAllTestArtifacts.get()
         )
 
@@ -228,14 +232,14 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
     private fun createReportConfig(
         reportCoordinates: ReportCoordinates
-    ): ReportFactory.Config {
+    ): LegacyReportFactory.Config {
         return if (reportViewerConfig.isPresent) {
-            ReportFactory.Config.ReportViewerCoordinates(
+            LegacyReportFactory.Config.ReportViewerCoordinates(
                 reportCoordinates = reportCoordinates,
                 buildId = buildId.get()
             )
         } else {
-            ReportFactory.Config.InMemory(buildId.get())
+            LegacyReportFactory.Config.InMemory(buildId.get())
         }
     }
 
@@ -243,17 +247,17 @@ public abstract class InstrumentationTestsTask @Inject constructor(
      * todo Move into Report.Impl
      */
     private fun saveTestResultsToBuildOutput(
-        reportFactory: ReportFactory,
-        reportConfig: ReportFactory.Config
+        legacyReportFactory: LegacyReportFactory,
+        legacyReportConfig: LegacyReportFactory.Config
     ) {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val reportViewerConfig = reportViewerConfig.orNull
-        if (reportViewerConfig != null && reportConfig is ReportFactory.Config.ReportViewerCoordinates) {
+        if (reportViewerConfig != null && legacyReportConfig is LegacyReportFactory.Config.ReportViewerCoordinates) {
             val getTestResultsAction = GetTestResultsAction(
                 reportViewerUrl = reportViewerConfig.reportViewerUrl,
                 reportCoordinates = reportCoordinates,
-                report = reportFactory.createReport(reportConfig),
+                legacyReport = legacyReportFactory.createLegacyReport(legacyReportConfig),
                 gitBranch = gitBranch.get(),
                 gitCommit = gitCommit.get()
             )
@@ -270,11 +274,11 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         loggerFactory: LoggerFactory,
         timeProvider: TimeProvider,
         httpClientProvider: HttpClientProvider
-    ): ReportFactory {
+    ): LegacyReportFactory {
         val reportViewerConfig = reportViewerConfig.orNull
-        val factories = mutableMapOf<String, ReportFactory>()
+        val factories = mutableMapOf<String, LegacyReportFactory>()
         if (reportViewerConfig != null) {
-            factories[ReportFactory.Config.ReportViewerCoordinates::class.java.simpleName] =
+            factories[LegacyReportFactory.Config.ReportViewerCoordinates::class.java.simpleName] =
                 ReportViewerFactory(
                     reportApiUrl = reportViewerConfig.reportApiUrl,
                     loggerFactory = loggerFactory,
@@ -283,7 +287,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 )
         }
 
-        factories[ReportFactory.Config.InMemory::class.java.simpleName] =
+        factories[LegacyReportFactory.Config.InMemory::class.java.simpleName] =
             InMemoryReportFactory(timeProvider = timeProvider)
 
         return StrategyFactory(

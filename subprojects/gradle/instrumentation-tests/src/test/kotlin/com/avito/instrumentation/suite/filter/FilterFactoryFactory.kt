@@ -1,8 +1,9 @@
 package com.avito.instrumentation.suite.filter
 
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
-import com.avito.android.runner.report.factory.ReportFactory
+import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.createStub
 import com.avito.instrumentation.createStubInstance
@@ -16,8 +17,8 @@ internal object FilterFactoryFactory {
     fun create(
         filter: InstrumentationFilter.Data = InstrumentationFilter.Data.createStub(),
         impactAnalysisResult: ImpactAnalysisResult = ImpactAnalysisResult.createStubInstance(),
-        reportsByConfig: Map<ReportFactory.Config, Report> = emptyMap(),
-        reportConfig: ReportFactory.Config = ReportFactory.Config.ReportViewerCoordinates(
+        reportsByConfig: Map<LegacyReportFactory.Config, Report> = emptyMap(),
+        legacyReportConfig: LegacyReportFactory.Config = LegacyReportFactory.Config.ReportViewerCoordinates(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "stub"
         )
@@ -25,13 +26,17 @@ internal object FilterFactoryFactory {
         return FilterFactory.create(
             filterData = filter,
             impactAnalysisResult = impactAnalysisResult,
-            reportConfig = reportConfig,
-            factory = object : ReportFactory {
-                override fun createReport(config: ReportFactory.Config): Report {
+            legacyReportConfig = legacyReportConfig,
+            factoryLegacy = object : LegacyReportFactory {
+                override fun createReport(config: LegacyReportFactory.Config): Report {
                     TODO("Not yet implemented")
                 }
 
-                override fun createReadReport(config: ReportFactory.Config): ReadReport {
+                override fun createLegacyReport(config: LegacyReportFactory.Config): LegacyReport {
+                    TODO("Not yet implemented")
+                }
+
+                override fun createReadReport(config: LegacyReportFactory.Config): ReadReport {
                     return reportsByConfig[config] ?: throw IllegalArgumentException("No report by config: $config")
                 }
             }

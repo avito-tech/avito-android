@@ -9,9 +9,7 @@ import com.avito.utils.BuildFailer
 
 internal interface InstrumentationTestActionFinalizer {
 
-    fun finalize(
-        testsExecutionResults: TestsScheduler.Result
-    )
+    fun finalize(testsExecutionResults: TestsScheduler.Result)
 
     interface FinalizeAction {
 
@@ -25,9 +23,8 @@ internal interface InstrumentationTestActionFinalizer {
         private val buildFailer: BuildFailer,
         private val params: InstrumentationTestsAction.Params,
     ) : InstrumentationTestActionFinalizer {
-        override fun finalize(
-            testsExecutionResults: TestsScheduler.Result
-        ) {
+
+        override fun finalize(testsExecutionResults: TestsScheduler.Result) {
             val testRunResult = TestRunResult(
                 reportedTests = testsExecutionResults.testsResult.getOrElse { emptyList() },
                 failed = hasFailedTestDeterminer.determine(

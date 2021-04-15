@@ -9,8 +9,6 @@ import com.avito.report.model.Status
  * It duplicates logic from
  * com.avito.report.ReportsFetchApiImpl.deserializeStatus
  * com.avito.report.ReportsFetchApiImpl.determineStability and etc.
- *
- * TODO Make it source of truth
  */
 public interface TestStatusFinalizer {
 

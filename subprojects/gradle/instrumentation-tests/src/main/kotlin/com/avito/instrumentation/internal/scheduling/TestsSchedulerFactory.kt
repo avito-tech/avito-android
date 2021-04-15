@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal.scheduling
 
 import com.avito.android.TestSuiteLoader
 import com.avito.android.runner.devices.DevicesProviderFactory
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
 import com.avito.android.stats.StatsDSender
 import com.avito.filestorage.RemoteStorageFactory
@@ -39,6 +40,7 @@ internal interface TestsSchedulerFactory {
     class Impl(
         private val params: InstrumentationTestsAction.Params,
         private val sourceReport: Report,
+        private val avitoReport: LegacyReport,
         private val gson: Gson,
         private val timeProvider: TimeProvider,
         private val httpClientProvider: HttpClientProvider,
@@ -70,14 +72,17 @@ internal interface TestsSchedulerFactory {
 
         private fun createTestSuiteProvider(): TestSuiteProvider = TestSuiteProvider.Impl(
             report = sourceReport,
+            legacyReport = avitoReport,
             targets = params.instrumentationConfiguration.targets,
             filterFactory = FilterFactory.create(
                 filterData = params.instrumentationConfiguration.filter,
                 impactAnalysisResult = params.impactAnalysisResult,
-                factory = params.reportFactory,
-                reportConfig = params.reportConfig
+                factoryLegacy = params.legacyReportFactory,
+                legacyReportConfig = params.legacyReportConfig
             ),
-            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests
+            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
+            useInMemoryReport = params.useInMemoryReport,
+            timeProvider = timeProvider
         )
 
         private fun createTestRunner(devicesProviderFactory: DevicesProviderFactory, tempDir: File): TestsRunner {

@@ -46,7 +46,7 @@ internal class GetTestResultsActionTest {
         return GetTestResultsAction(
             reportViewerUrl = "xxx",
             reportCoordinates = reportCoordinates,
-            report = report,
+            legacyReport = report,
             reportViewer = reportViewer,
             gitBranch = "gitBranch",
             gitCommit = "gitCommit"

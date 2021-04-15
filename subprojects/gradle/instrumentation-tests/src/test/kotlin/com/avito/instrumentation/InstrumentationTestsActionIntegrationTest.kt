@@ -172,6 +172,11 @@ internal class InstrumentationTestsActionIntegrationTest {
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId,
             ),
+            avitoReport = com.avito.android.runner.report.LegacyReport.createStubInstance(
+                reportsApi = reportsApi,
+                reportCoordinates = reportCoordinates,
+                buildId = params.buildId,
+            ),
             gson = InstrumentationTestsActionFactory.gson,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testExecutorFactory = testExecutorFactory,
@@ -181,7 +186,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         ).create(devicesProviderFactory = StubDeviceProviderFactory),
         finalizer = FinalizerFactory.Impl(
             params = params,
-            sourceReport = com.avito.android.runner.report.Report.createStubInstance(
+            avitoReport = com.avito.android.runner.report.LegacyReport.createStubInstance(
                 reportsApi = reportsApi,
                 reportCoordinates = reportCoordinates,
                 buildId = params.buildId

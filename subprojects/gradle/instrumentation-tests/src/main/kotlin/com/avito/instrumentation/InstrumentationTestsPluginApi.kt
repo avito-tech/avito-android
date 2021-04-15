@@ -41,4 +41,4 @@ public fun TaskContainer.instrumentationTask(
 }
 
 @VisibleForTesting
-internal val instrumentationDumpPath = "instrumentation-extension-dump.bin"
+internal val instrumentationDumpPath: String = "instrumentation-extension-dump.bin"

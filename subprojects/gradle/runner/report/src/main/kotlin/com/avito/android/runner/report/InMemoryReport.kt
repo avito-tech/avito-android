@@ -2,7 +2,6 @@ package com.avito.android.runner.report
 
 import com.avito.android.Result
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
@@ -10,11 +9,16 @@ import com.avito.time.TimeProvider
 internal class InMemoryReport(
     private val id: String,
     private val timeProvider: TimeProvider
-) : Report {
+) : Report, LegacyReport, ReadReport {
 
     private var gitInfo: String? = null
     private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
+
+    @Synchronized
+    override fun addTest(test: AndroidTest) {
+        this.testAttempts.add(test)
+    }
 
     override fun tryCreate(testHost: String, gitBranch: String, gitCommit: String) {
         gitInfo = "$testHost;$gitBranch$;$gitCommit"
@@ -48,23 +52,8 @@ internal class InMemoryReport(
     }
 
     @Synchronized
-    override fun sendCompletedTest(completedTest: AndroidTest.Completed) {
-        this.testAttempts.add(completedTest)
-    }
-
-    @Synchronized
     override fun finish() {
         // empty
-    }
-
-    @Synchronized
-    override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
-        TODO("Need to implement")
-    }
-
-    @Synchronized
-    override fun getCrossDeviceTestData(): Result<CrossDeviceSuite> {
-        TODO("Not yet implemented")
     }
 
     @Synchronized

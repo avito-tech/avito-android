@@ -1,6 +1,7 @@
 package com.avito.android.runner.report.factory
 
 import com.avito.android.runner.report.AvitoReport
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
 import com.avito.http.HttpClientProvider
@@ -14,14 +15,14 @@ public class ReportViewerFactory(
     private val loggerFactory: LoggerFactory,
     private val timeProvider: TimeProvider,
     private val httpClientProvider: HttpClientProvider
-) : ReportFactory {
+) : LegacyReportFactory {
 
     @Transient
     private lateinit var reportsApi: ReportsApi
 
-    override fun createReport(config: ReportFactory.Config): Report {
+    override fun createReport(config: LegacyReportFactory.Config): Report {
         return when (config) {
-            is ReportFactory.Config.ReportViewerCoordinates -> {
+            is LegacyReportFactory.Config.ReportViewerCoordinates -> {
                 ensureInitializedReportsApi()
                 AvitoReport(
                     reportsApi = reportsApi,
@@ -35,27 +36,43 @@ public class ReportViewerFactory(
         }
     }
 
-    override fun createReadReport(config: ReportFactory.Config): ReadReport {
+    override fun createLegacyReport(config: LegacyReportFactory.Config): LegacyReport {
         return when (config) {
-            is ReportFactory.Config.ReportViewerCoordinates -> {
+            is LegacyReportFactory.Config.ReportViewerCoordinates -> {
+                ensureInitializedReportsApi()
+                AvitoReport(
+                    reportsApi = reportsApi,
+                    loggerFactory = loggerFactory,
+                    reportCoordinates = config.reportCoordinates,
+                    buildId = config.buildId,
+                    timeProvider = timeProvider
+                )
+            }
+            else -> throwUnsupportedConfigException(config)
+        }
+    }
+
+    override fun createReadReport(config: LegacyReportFactory.Config): ReadReport {
+        return when (config) {
+            is LegacyReportFactory.Config.ReportViewerCoordinates -> {
                 ensureInitializedReportsApi()
                 ReadReport.ReportCoordinates(
                     reportsFetchApi = reportsApi,
                     coordinates = config.reportCoordinates
                 )
             }
-            is ReportFactory.Config.ReportViewerId -> {
+            is LegacyReportFactory.Config.ReportViewerId -> {
                 ensureInitializedReportsApi()
                 ReadReport.Id(
                     reportsFetchApi = reportsApi,
                     id = config.reportId
                 )
             }
-            is ReportFactory.Config.InMemory -> TODO("Unsupported type")
+            is LegacyReportFactory.Config.InMemory -> TODO("Unsupported type")
         }
     }
 
-    private fun throwUnsupportedConfigException(config: ReportFactory.Config): Nothing {
+    private fun throwUnsupportedConfigException(config: LegacyReportFactory.Config): Nothing {
         throw IllegalArgumentException("Unsupported config: $config")
     }
 
