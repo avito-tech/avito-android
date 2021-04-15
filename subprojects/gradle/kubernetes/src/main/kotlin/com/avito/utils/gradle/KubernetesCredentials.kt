@@ -1,5 +1,6 @@
 package com.avito.utils.gradle
 
+import java.io.File
 import java.io.Serializable
 
 sealed class KubernetesCredentials : Serializable {
@@ -20,23 +21,26 @@ sealed class KubernetesCredentials : Serializable {
 
     class Config(
         val context: String,
-        val caCertFile: String? = kubeDefaultCaCertFile,
-        val configFile: String = kubeConfigDefaultPath
+        val caCertFile: File? = kubeDefaultCaCertFile,
+        val configFile: File = kubeConfigDefaultPath
     ) : KubernetesCredentials() {
 
         override fun toString(): String = "KubernetesCredentials.Config"
     }
 }
 
-// TODO: get rid of this default. autoConfig is enabled by default
-private val kubeConfigDefaultPath: String by lazy {
+private val kubernetesHome: File by lazy {
     val userHome: String = requireUserHome()
-    "$userHome/.kube/config"
+    File(userHome, ".kube")
 }
 
-private val kubeDefaultCaCertFile: String by lazy {
-    val userHome: String = requireUserHome()
-    "$userHome/.kube/avito_ca.crt"
+// TODO: get rid of this default. autoConfig is enabled by default
+private val kubeConfigDefaultPath: File by lazy {
+    File(kubernetesHome, "config")
+}
+
+private val kubeDefaultCaCertFile: File by lazy {
+    File(kubernetesHome, "avito_ca.crt")
 }
 
 private fun requireUserHome(): String {
