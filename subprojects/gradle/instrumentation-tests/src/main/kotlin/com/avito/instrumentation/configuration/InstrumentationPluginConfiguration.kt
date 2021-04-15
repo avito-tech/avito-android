@@ -21,9 +21,6 @@ public object InstrumentationPluginConfiguration {
         // todo make optional
         public var sentryDsn: String = ""
 
-        // todo remove
-        public var slackToken: String = ""
-
         public var applicationProguardMapping: File? = null
         public var testProguardMapping: File? = null
 
