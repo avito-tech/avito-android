@@ -92,7 +92,6 @@ fun ciRun(
         "-PteamcityUrl=xxx",
         "-PteamcityApiUser=admin",
         "-PteamcityApiPassword=xxx",
-        "-PslackToken=xxx",
         "-PatlassianUser=xxx",
         "-PatlassianPassword=xxx",
         "-PkubernetesToken=xxx",
