@@ -8,8 +8,9 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
 
-internal class JsonRpcRequestProvider(
+internal class JsonRpcClient(
     private val host: String,
     private val httpClient: OkHttpClient,
     private val gson: Gson
@@ -46,10 +47,13 @@ internal class JsonRpcRequestProvider(
                 throw IllegalStateException("Can't parse response body", e)
             }
         } else {
-            throw Exception(
-                "JsonRpcRequest failed: $host method:$jsonRpcMethod " +
-                    "returns: ${response.message} $responseBody"
-            )
+            val failedRequestDescription = """
+                |Failed request: $host method:$jsonRpcMethod
+                |Response: $response
+                |Response body: $responseBody
+                |Response headers: ${response.headers}
+                """.trimMargin()
+            throw IOException(failedRequestDescription)
         }
     }
 

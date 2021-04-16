@@ -34,7 +34,7 @@ public class RetryInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         var response: Response? = null
-        var error = IOException("Failed to execute request for unknown reason")
+        var error: Throwable? = null
 
         var tryCount = 0
         while (response.shouldTry() && tryCount < retries) {
@@ -60,7 +60,7 @@ public class RetryInterceptor(
         }
 
         if (response == null) {
-            throw error
+            throw error ?: IllegalStateException("Failed to execute request for unknown reason")
         }
         return response
     }
