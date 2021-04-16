@@ -5,7 +5,6 @@ import com.avito.logger.create
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.CrossDeviceSuite
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
 import com.avito.slack.ConjunctionMessagePredicate
@@ -127,16 +126,14 @@ internal class TestSummarySenderImpl(
     }
 
     private fun ReportsApi.tryGetId(reportCoordinates: ReportCoordinates): String? {
-        return when (val result = getReport(reportCoordinates)) {
-            is GetReportResult.Found -> result.report.id
-            GetReportResult.NotFound -> {
-                logger.warn("Can't find report for runId=${reportCoordinates.runId}")
+        return getReport(reportCoordinates).fold(
+            onSuccess = { report ->
+                report.id
+            },
+            onFailure = { throwable ->
+                logger.warn("Can't find report for runId=${reportCoordinates.runId}", throwable)
                 null
             }
-            is GetReportResult.Error -> {
-                logger.warn("Can't find report for runId=${reportCoordinates.runId}", result.exception)
-                null
-            }
-        }
+        )
     }
 }

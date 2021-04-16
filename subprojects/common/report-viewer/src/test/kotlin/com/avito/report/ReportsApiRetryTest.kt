@@ -3,11 +3,9 @@ package com.avito.report
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
-import com.avito.truth.isInstanceOf
-import com.google.common.truth.Truth.assertThat
+import com.avito.truth.ResultSubject.Companion.assertThat
 import okhttp3.mockwebserver.MockResponse
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -49,6 +47,6 @@ internal class ReportsApiRetryTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
         )
 
-        assertThat(result).isInstanceOf<GetReportResult.Error>()
+        assertThat(result).isFailure()
     }
 }

@@ -11,7 +11,6 @@ import com.avito.report.model.CreateResult
 import com.avito.report.model.CreateResult.AlreadyCreated
 import com.avito.report.model.CreateResult.Created
 import com.avito.report.model.CreateResult.Failed
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.JsonElement
 
@@ -67,20 +66,23 @@ internal class ReportsApiImpl(
     }
 
     override fun setFinished(reportCoordinates: ReportCoordinates): Result<Unit> {
-        return when (val getReportResult = getReport(reportCoordinates)) {
-            is GetReportResult.Found -> Result.tryCatch {
-                client.jsonRpcRequest<Unit>(
-                    RfcRpcRequest(
-                        method = "Run.SetFinished",
-                        params = mapOf(
-                            "id" to getReportResult.report.id
+        return getReport(reportCoordinates).fold(
+            onSuccess = { report ->
+                Result.tryCatch {
+                    client.jsonRpcRequest<Unit>(
+                        RfcRpcRequest(
+                            method = "Run.SetFinished",
+                            params = mapOf(
+                                "id" to report.id
+                            )
                         )
                     )
-                )
+                }
+            },
+            onFailure = { throwable ->
+                Result.Failure(throwable)
             }
-            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
-        }
+        )
     }
 
     override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {

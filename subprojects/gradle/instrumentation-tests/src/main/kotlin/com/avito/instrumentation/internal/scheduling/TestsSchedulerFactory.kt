@@ -78,7 +78,8 @@ internal interface TestsSchedulerFactory {
                 filterData = params.instrumentationConfiguration.filter,
                 impactAnalysisResult = params.impactAnalysisResult,
                 factoryLegacy = params.legacyReportFactory,
-                legacyReportConfig = params.legacyReportConfig
+                legacyReportConfig = params.legacyReportConfig,
+                loggerFactory = params.loggerFactory
             ),
             reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
             useInMemoryReport = params.useInMemoryReport,

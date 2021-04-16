@@ -3,11 +3,9 @@ package com.avito.report
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
 import com.avito.logger.StubLoggerFactory
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.test.http.MockWebServerFactory
 import com.avito.truth.ResultSubject.Companion.assertThat
-import com.avito.truth.isInstanceOf
 import com.avito.utils.fileFromJarResources
 import com.github.salomonbrys.kotson.jsonObject
 import com.google.common.truth.Truth.assertThat
@@ -37,7 +35,7 @@ internal class ReportsApiTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
         )
 
-        assertThat(result).isInstanceOf<GetReportResult.NotFound>()
+        assertThat(result).isFailure()
     }
 
     @Test
@@ -48,7 +46,7 @@ internal class ReportsApiTest {
             ReportCoordinates("AvitoAndroid", "FunctionalTests", "12345")
         )
 
-        assertThat(result).isInstanceOf<GetReportResult.Error>()
+        assertThat(result).isFailure()
     }
 
     @Test
@@ -60,11 +58,8 @@ internal class ReportsApiTest {
 
         val result = createNoRetriesReportsApi().getReport(ReportCoordinates("AvitoAndroid", "FunctionalTests", ""))
 
-        assertThat(result).isInstanceOf<GetReportResult.Found>()
-
-        (result as GetReportResult.Found).report.run {
-            // see json
-            assertThat(id).isEqualTo("5c8032d5ccdf780001c49576")
+        assertThat(result).isSuccess().withValue {
+            assertThat(it.id).isEqualTo("5c8032d5ccdf780001c49576")
         }
     }
 
