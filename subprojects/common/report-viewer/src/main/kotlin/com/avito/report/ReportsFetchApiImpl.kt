@@ -7,6 +7,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.model.ConclusionStatus
+import com.avito.report.internal.model.GetReportResult
 import com.avito.report.internal.model.ListResult
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
@@ -17,7 +18,6 @@ import com.avito.report.model.CrossDeviceStatus
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.FailureOnDevice
 import com.avito.report.model.Flakiness
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.Kind
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
@@ -64,7 +64,36 @@ internal class ReportsFetchApiImpl(
         }
     }
 
-    override fun getReport(reportCoordinates: ReportCoordinates): GetReportResult {
+    override fun getReport(reportCoordinates: ReportCoordinates): Result<Report> {
+        return when (val result = getReportInternal(reportCoordinates)) {
+            is GetReportResult.Error -> Result.Failure(result.exception)
+            is GetReportResult.Found -> Result.Success(result.report)
+            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
+        }
+    }
+
+    override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
+        return when (val getReportResult = getReportInternal(reportCoordinates)) {
+            is GetReportResult.Found -> getTestData(getReportResult.report.id)
+            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
+            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
+        }
+    }
+
+    override fun getTestsForReportId(reportId: String): Result<List<SimpleRunTest>> {
+        return getTestData(reportId)
+    }
+
+    override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> {
+        return when (val getReportResult = getReportInternal(reportCoordinates)) {
+            is GetReportResult.Found -> getTestData(getReportResult.report.id)
+                .map { testData -> toCrossDeviceTestData(testData) }
+            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
+            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
+        }
+    }
+
+    private fun getReportInternal(reportCoordinates: ReportCoordinates): GetReportResult {
         return Result.tryCatch {
             client.jsonRpcRequest<RpcResult<Report>>(
                 RfcRpcRequest(
@@ -87,27 +116,6 @@ internal class ReportsFetchApiImpl(
                 }
             }
         )
-    }
-
-    override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
-        return when (val getReportResult = getReport(reportCoordinates)) {
-            is GetReportResult.Found -> getTestData(getReportResult.report.id)
-            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
-        }
-    }
-
-    override fun getTestsForReportId(reportId: String): Result<List<SimpleRunTest>> {
-        return getTestData(reportId)
-    }
-
-    override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> {
-        return when (val getReportResult = getReport(reportCoordinates)) {
-            is GetReportResult.Found -> getTestData(getReportResult.report.id)
-                .map { testData -> toCrossDeviceTestData(testData) }
-            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
-        }
     }
 
     private fun toCrossDeviceTestData(testData: List<SimpleRunTest>): CrossDeviceSuite {

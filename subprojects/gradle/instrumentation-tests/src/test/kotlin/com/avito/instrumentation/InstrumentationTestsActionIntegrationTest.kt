@@ -26,7 +26,6 @@ import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -83,7 +82,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             name = "newUi",
             targets = singletonList(TargetConfiguration.Data.createStubInstance())
         )
-        reportsApi.getReportResult = GetReportResult.Found(
+        reportsApi.getReportResult = Result.Success(
             Report(
                 id = "stub",
                 planSlug = "planSlug",
@@ -110,7 +109,7 @@ internal class InstrumentationTestsActionIntegrationTest {
 
         val reportId = "1234"
         reportsApi.createResult = CreateResult.Created(reportId)
-        reportsApi.getReportResult = GetReportResult.Found(
+        reportsApi.getReportResult = Result.Success(
             Report(
                 id = reportId,
                 planSlug = "planSlug",

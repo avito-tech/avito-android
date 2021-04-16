@@ -4,7 +4,6 @@ import com.avito.android.Result
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.CreateResult
 import com.avito.report.model.CrossDeviceSuite
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
@@ -27,7 +26,7 @@ class StubReportsApi(
 
     lateinit var createResult: CreateResult
 
-    lateinit var getReportResult: GetReportResult
+    lateinit var getReportResult: Result<Report>
 
     lateinit var finished: Result<Unit>
 
@@ -81,7 +80,7 @@ class StubReportsApi(
         crossDeviceTestData
 
     @Synchronized
-    override fun getReport(reportCoordinates: ReportCoordinates): GetReportResult = getReportResult
+    override fun getReport(reportCoordinates: ReportCoordinates): Result<Report> = getReportResult
 
     fun enqueueTestsForRunId(reportCoordinates: ReportCoordinates, value: Result<List<SimpleRunTest>>) {
         testsForRunId[reportCoordinates] = value

@@ -3,7 +3,6 @@ package com.avito.plugin
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
-import com.avito.report.model.GetReportResult
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import com.github.salomonbrys.kotson.jsonObject
@@ -26,10 +25,10 @@ class MarkReportAsSourceAction(
     fun mark(reportCoordinates: ReportCoordinates) {
         val testSuiteVersion = timeProvider.nowInMillis()
 
-        when (val result = reportsApi.getReport(reportCoordinates)) {
-            is GetReportResult.Found ->
+        reportsApi.getReport(reportCoordinates).fold(
+            onSuccess = { report ->
                 reportsApi.pushPreparedData(
-                    reportId = result.report.id,
+                    reportId = report.id,
                     analyzerKey = "test_suite",
                     preparedData = jsonObject(
                         "full" to true,
@@ -41,7 +40,7 @@ class MarkReportAsSourceAction(
                             {
                                 logger.info(
                                     "Test suite for tms version $testSuiteVersion, " +
-                                        "with id: ${result.report.id}, " +
+                                        "with id: ${report.id}, " +
                                         "coordinates: $reportCoordinates marked as source of truth for tms"
                                 )
                             },
@@ -54,13 +53,10 @@ class MarkReportAsSourceAction(
                         logger.critical("Can't push prepared data: testSuite info", error)
                     }
                 )
-            GetReportResult.NotFound ->
-                logger.critical(
-                    "Can't get reportId for coordinates: $reportCoordinates",
-                    IllegalStateException("stub")
-                )
-            is GetReportResult.Error ->
-                logger.critical("Can't find report for runId=${reportCoordinates.runId}", result.exception)
-        }
+            },
+            onFailure = { throwable ->
+                logger.critical("Can't find report for runId=${reportCoordinates.runId}", throwable)
+            }
+        )
     }
 }
