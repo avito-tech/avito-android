@@ -179,6 +179,40 @@ internal class FilterFactoryImplTest {
 
     @Suppress("MaxLineLength")
     @Test
+    fun `when filterData - includePrevious statuses and Report failed - then filters contain defaults`() {
+        val report = StubReport()
+        report.getTestsResult = Result.Failure(IllegalStateException("something went wrong"))
+
+        val reportConfig =
+            LegacyReportFactory.Config.ReportViewerCoordinates(ReportCoordinates.createStubInstance(), "stub")
+
+        val factory = FilterFactoryFactory.create(
+            filter = InstrumentationFilter.Data.createStub(
+                previousStatuses = Filter.Value(
+                    included = setOf(RunStatus.Success),
+                    excluded = emptySet()
+                )
+            ),
+            reportsByConfig = mapOf(
+                reportConfig to report
+            ),
+            legacyReportConfig = reportConfig
+        )
+
+        val filter = factory.createFilter() as CompositionFilter
+
+        val that = assertThat(filter.filters)
+
+        that.containsAtLeastElementsIn(
+            listOf(
+                ExcludeBySkipOnSdkFilter(),
+                ExcludeAnnotationsFilter(setOf(FilterFactory.JUNIT_IGNORE_ANNOTATION))
+            )
+        )
+    }
+
+    @Suppress("MaxLineLength")
+    @Test
     fun `when filterData excludePrevious statuses and Report return list then filters contain ExcludeTestSignaturesFilters#Previous with included statuses`() {
         val report = StubReport()
         report.getTestsResult = Result.Success(

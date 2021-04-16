@@ -9,6 +9,8 @@ import com.avito.instrumentation.createStub
 import com.avito.instrumentation.createStubInstance
 import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
+import com.avito.logger.LoggerFactory
+import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
 
@@ -21,7 +23,8 @@ internal object FilterFactoryFactory {
         legacyReportConfig: LegacyReportFactory.Config = LegacyReportFactory.Config.ReportViewerCoordinates(
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "stub"
-        )
+        ),
+        loggerFactory: LoggerFactory = StubLoggerFactory
     ): FilterFactory {
         return FilterFactory.create(
             filterData = filter,
@@ -39,7 +42,8 @@ internal object FilterFactoryFactory {
                 override fun createReadReport(config: LegacyReportFactory.Config): ReadReport {
                     return reportsByConfig[config] ?: throw IllegalArgumentException("No report by config: $config")
                 }
-            }
+            },
+            loggerFactory = loggerFactory
         )
     }
 }

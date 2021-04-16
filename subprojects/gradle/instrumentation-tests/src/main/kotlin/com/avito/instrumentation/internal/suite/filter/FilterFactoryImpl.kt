@@ -5,14 +5,19 @@ import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures.TestSignature
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.report.model.SimpleRunTest
 
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilter.Data,
     private val impactAnalysisResult: ImpactAnalysisResult,
     private val factoryLegacy: LegacyReportFactory,
-    private val legacyReportConfig: LegacyReportFactory.Config
+    private val legacyReportConfig: LegacyReportFactory.Config,
+    loggerFactory: LoggerFactory
 ) : FilterFactory {
+
+    private val logger = loggerFactory.create<FilterFactoryImpl>()
 
     override fun createFilter(): TestsFilter {
         val filters = mutableListOf<TestsFilter>()
@@ -80,26 +85,33 @@ internal class FilterFactoryImpl(
     private fun MutableList<TestsFilter>.addSourcePreviousSignatureFilters() {
         val previousStatuses = filterData.fromRunHistory.previousStatuses
         if (previousStatuses.included.isNotEmpty() || previousStatuses.excluded.isNotEmpty()) {
-            val previousRunTests = factoryLegacy
+
+            factoryLegacy
                 .createReadReport(legacyReportConfig)
                 .getTests()
-                .getOrThrow()
-            if (previousStatuses.included.isNotEmpty()) {
-                add(
-                    IncludeByTestSignaturesFilter(
-                        source = TestsFilter.Signatures.Source.PreviousRun,
-                        signatures = previousRunTests.filterBy(previousStatuses.included)
-                    )
+                .fold(
+                    onSuccess = { previousRunTests ->
+                        if (previousStatuses.included.isNotEmpty()) {
+                            add(
+                                IncludeByTestSignaturesFilter(
+                                    source = TestsFilter.Signatures.Source.PreviousRun,
+                                    signatures = previousRunTests.filterBy(previousStatuses.included)
+                                )
+                            )
+                        }
+                        if (previousStatuses.excluded.isNotEmpty()) {
+                            add(
+                                ExcludeByTestSignaturesFilter(
+                                    source = TestsFilter.Signatures.Source.PreviousRun,
+                                    signatures = previousRunTests.filterBy(previousStatuses.excluded)
+                                )
+                            )
+                        }
+                    },
+                    onFailure = { throwable ->
+                        logger.info("Can't get tests from previous run: ${throwable.message}")
+                    }
                 )
-            }
-            if (previousStatuses.excluded.isNotEmpty()) {
-                add(
-                    ExcludeByTestSignaturesFilter(
-                        source = TestsFilter.Signatures.Source.PreviousRun,
-                        signatures = previousRunTests.filterBy(previousStatuses.excluded)
-                    )
-                )
-            }
         }
     }
 
