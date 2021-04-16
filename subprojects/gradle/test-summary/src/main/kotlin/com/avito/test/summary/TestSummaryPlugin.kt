@@ -4,7 +4,6 @@ import com.avito.android.stats.statsd
 import com.avito.http.HttpClientProvider
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
-import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.ReportsApiFactory
 import com.avito.report.model.Team
@@ -45,8 +44,6 @@ class TestSummaryPlugin : Plugin<Project> {
             )
         }
 
-        val reportViewer: Provider<ReportViewer> = extension.reportViewerUrl.map { createReportViewer(it) }
-
         // report coordinates provided in TestSummaryStep
         // this plugin only works via steps for now
         target.tasks.register<TestSummaryTask>(testSummaryTaskName) {
@@ -65,7 +62,7 @@ class TestSummaryPlugin : Plugin<Project> {
 
             this.slackClient.set(slackClient)
             this.reportsApi.set(reportsApi)
-            this.reportViewer.set(reportViewer)
+            this.reportViewerUrl.set(reportViewerUrl)
         }
 
         target.tasks.register<FlakyReportTask>(flakyReportTaskName) {
@@ -79,10 +76,6 @@ class TestSummaryPlugin : Plugin<Project> {
             this.reportsApi.set(reportsApi)
             this.reportViewer.set(reportViewer)
         }
-    }
-
-    private fun createReportViewer(reportViewerUrl: String): ReportViewer {
-        return ReportViewer.Impl(reportViewerUrl)
     }
 
     private fun createSlackClient(slackToken: String, slackWorkspace: String): SlackClient {

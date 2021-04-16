@@ -3,25 +3,23 @@ package com.avito.instrumentation.internal.finalizer
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer.FinalizeAction
 import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
-import com.avito.report.ReportViewer
-import com.avito.report.model.ReportCoordinates
+import com.avito.report.ReportLinkGenerator
 import com.google.gson.Gson
 import java.io.File
 
 internal class WriteTaskVerdictAction(
-    private val coordinates: ReportCoordinates,
     private val verdictDestination: File,
-    private val reportViewer: ReportViewer,
-    private val gson: Gson
+    private val gson: Gson,
+    private val reportLinkGenerator: ReportLinkGenerator
 ) : FinalizeAction {
 
     override fun action(testRunResult: TestRunResult) {
-        val reportViewerUrl = reportViewer.generateReportUrl(coordinates)
+        val reportViewerUrl = reportLinkGenerator.generateReportLink()
         verdictDestination.writeText(
             gson.toJson(
                 InstrumentationTestsTaskVerdict(
                     title = testRunResult.verdict.message,
-                    reportUrl = reportViewerUrl.toString(),
+                    reportUrl = reportViewerUrl,
                     causeFailureTests = testRunResult.verdict.getCauseFailureTests()
                 )
             )
@@ -44,11 +42,7 @@ internal class WriteTaskVerdictAction(
     private fun TestRunResult.Verdict.Failure.Details.Test.toTaskVerdictTest(
         prefix: String
     ): InstrumentationTestsTaskVerdict.Test = InstrumentationTestsTaskVerdict.Test(
-        testUrl = reportViewer.generateSingleTestRunUrl(
-            coordinates,
-            name.className,
-            name.methodName
-        ).toString(),
+        testUrl = reportLinkGenerator.generateTestLink(name),
         title = "$name ${devices.joinToString(separator = ",")} $prefix"
     )
 }

@@ -2,22 +2,18 @@ package com.avito.instrumentation.internal.finalizer
 
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer.FinalizeAction
-import com.avito.report.ReportViewer
-import com.avito.report.model.ReportCoordinates
+import com.avito.report.ReportLinkGenerator
 import com.avito.utils.createOrClear
-import okhttp3.HttpUrl
 import java.io.File
 
 internal class WriteReportViewerLinkFile(
-    private val reportViewer: ReportViewer,
-    private val reportCoordinates: ReportCoordinates,
-    private val outputDir: File
+    private val outputDir: File,
+    private val reportLinkGenerator: ReportLinkGenerator
 ) : FinalizeAction {
 
     override fun action(testRunResult: TestRunResult) {
-        val reportUrl = reportViewer.generateReportUrl(
-            reportCoordinates,
-            onlyFailures = testRunResult.verdict is TestRunResult.Verdict.Failure
+        val reportUrl = reportLinkGenerator.generateReportLink(
+            filterOnlyFailtures = testRunResult.verdict is TestRunResult.Verdict.Failure
         )
         writeReportViewerLinkFile(
             reportUrl,
@@ -31,10 +27,10 @@ internal class WriteReportViewerLinkFile(
     private fun reportViewerFile(outputDir: File): File = File(outputDir, "rv.html")
 
     private fun writeReportViewerLinkFile(
-        reportViewerUrl: HttpUrl,
+        reportViewerUrl: String,
         reportFile: File
     ) {
         reportFile.createOrClear()
-        reportFile.writeText("<script>location=\"${reportViewerUrl}\"</script>")
+        reportFile.writeText("<script>location=\"$reportViewerUrl\"</script>")
     }
 }

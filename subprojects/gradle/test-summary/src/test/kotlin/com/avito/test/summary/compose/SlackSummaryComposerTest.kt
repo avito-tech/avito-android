@@ -1,7 +1,6 @@
 package com.avito.test.summary.compose
 
 import com.avito.android.Result
-import com.avito.report.StubReportViewer
 import com.avito.report.model.CrossDeviceRunTest
 import com.avito.report.model.CrossDeviceStatus.FailedOnAllDevices
 import com.avito.report.model.CrossDeviceStatus.FailedOnSomeDevices
@@ -20,8 +19,7 @@ import org.junit.jupiter.api.Test
 
 internal class SlackSummaryComposerTest {
 
-    private val reportViewer = StubReportViewer()
-    private val composer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewer)
+    private val composer: SlackSummaryComposer = SlackSummaryComposerImpl("http://localhost/")
 
     @Test
     fun `slack message - contains manual tests count`() {

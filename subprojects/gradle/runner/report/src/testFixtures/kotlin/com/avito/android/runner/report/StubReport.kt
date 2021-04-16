@@ -1,6 +1,7 @@
 package com.avito.android.runner.report
 
 import com.avito.android.Result
+import com.avito.android.runner.report.internal.AvitoReport
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.ReportsApi
@@ -28,14 +29,14 @@ public fun Report.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-public fun LegacyReport.Companion.createStubInstance(
+internal fun com.avito.android.runner.report.AvitoReport.Companion.createStubInstance(
     reportsApi: ReportsApi,
     loggerFactory: LoggerFactory = StubLoggerFactory,
     batchSize: Int = 1,
     buildId: String = "1",
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     timeProvider: TimeProvider = StubTimeProvider()
-): LegacyReport = AvitoReport(
+): AvitoReport = AvitoReport(
     reportsApi = reportsApi,
     loggerFactory = loggerFactory,
     batchSize = batchSize,
@@ -44,7 +45,7 @@ public fun LegacyReport.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-public class StubReport : Report, LegacyReport, ReadReport {
+public class StubReport : Report, com.avito.android.runner.report.AvitoReport, ReadReport {
 
     public var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
 
@@ -58,7 +59,7 @@ public class StubReport : Report, LegacyReport, ReadReport {
         TODO("not implemented")
     }
 
-    override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
+    override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         reportedSkippedTests = skippedTests
     }
 

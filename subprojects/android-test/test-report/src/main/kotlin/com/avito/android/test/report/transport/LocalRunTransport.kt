@@ -30,7 +30,7 @@ internal class LocalRunTransport(
 
     private val localBuildId: String? = null
 
-    private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl)
+    private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl, reportCoordinates)
 
     override fun sendReport(state: Started) {
         if (Looper.myLooper() == Looper.getMainLooper()) {

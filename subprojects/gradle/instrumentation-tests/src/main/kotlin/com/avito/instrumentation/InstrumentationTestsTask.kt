@@ -6,10 +6,9 @@ import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.build_verdict.span.SpannedString.Companion.multiline
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
-import com.avito.android.runner.report.StrategyFactory
-import com.avito.android.runner.report.factory.InMemoryReportFactory
-import com.avito.android.runner.report.factory.LegacyReportFactory
-import com.avito.android.runner.report.factory.ReportViewerFactory
+import com.avito.android.runner.report.ReportFactory
+import com.avito.android.runner.report.ReportFactoryImpl
+import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
@@ -108,7 +107,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val uploadAllTestArtifacts: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Internal
-    public val reportViewerConfig: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
+    public val reportViewerProperty: Property<Data.ReportViewer> = objects.property(Data.ReportViewer::class.java)
 
     @Internal
     public val kubernetesCredentials: Property<KubernetesCredentials> = objects.property()
@@ -141,7 +140,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public fun doWork() {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
-        val reportConfig = createReportConfig(reportCoordinates)
         val loggerFactory = GradleLoggerFactory.fromTask(this)
         val timeProvider: TimeProvider = DefaultTimeProvider()
         val httpClientProvider = HttpClientProvider(
@@ -154,16 +152,22 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         )
 
         val reportFactory = createReportFactory(
+            reportCoordinates = reportCoordinates,
             loggerFactory = loggerFactory,
             timeProvider = timeProvider,
             httpClientProvider = httpClientProvider
         )
 
-        saveTestResultsToBuildOutput(
-            reportConfig
-        )
+        saveTestResultsToBuildOutput()
 
         val statsDConfig = project.statsdConfig.get()
+
+        val reportViewerData = reportViewerProperty.orNull
+        val reportViewerConfig = if (reportViewerData != null) {
+            ReportViewerConfig(reportViewerData.reportApiUrl, reportCoordinates)
+        } else {
+            null
+        }
 
         val testRunParams = InstrumentationTestsAction.Params(
             mainApk = application.orNull?.getApk(),
@@ -185,19 +189,16 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             loggerFactory = loggerFactory,
             outputDir = output.get().asFile,
             verdictFile = verdictFile.get().asFile,
-            reportViewerUrl = reportViewerConfig.orNull?.reportViewerUrl
-                ?: "http://stub",
             fileStorageUrl = getFileStorageUrl(),
             statsDConfig = statsDConfig,
-            legacyReportFactory = reportFactory,
-            legacyReportConfig = reportConfig,
-            reportCoordinates = reportCoordinates, // stub for inmemory report
+            reportFactory = reportFactory,
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
             ).mapNotNull { it.orNull?.asFile },
             useInMemoryReport = useInMemoryReport.get(),
-            uploadTestArtifacts = uploadAllTestArtifacts.get()
+            uploadTestArtifacts = uploadAllTestArtifacts.get(),
+            reportViewerConfig = reportViewerConfig
         )
 
         if (testRunnerService.isPresent) {
@@ -226,32 +227,17 @@ public abstract class InstrumentationTestsTask @Inject constructor(
      * todo FileStorage needed only for ReportViewer
      */
     private fun getFileStorageUrl(): String {
-        return reportViewerConfig.orNull?.fileStorageUrl ?: "http://stub"
-    }
-
-    private fun createReportConfig(
-        reportCoordinates: ReportCoordinates
-    ): LegacyReportFactory.Config {
-        return if (reportViewerConfig.isPresent) {
-            LegacyReportFactory.Config.ReportViewerCoordinates(
-                reportCoordinates = reportCoordinates,
-                buildId = buildId.get()
-            )
-        } else {
-            LegacyReportFactory.Config.InMemory(buildId.get())
-        }
+        return reportViewerProperty.orNull?.fileStorageUrl ?: "http://stub"
     }
 
     /**
      * todo Move into Report.Impl
      */
-    private fun saveTestResultsToBuildOutput(
-        legacyReportConfig: LegacyReportFactory.Config
-    ) {
+    private fun saveTestResultsToBuildOutput() {
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
-        val reportViewerConfig = reportViewerConfig.orNull
-        if (reportViewerConfig != null && legacyReportConfig is LegacyReportFactory.Config.ReportViewerCoordinates) {
+        val reportViewerConfig = reportViewerProperty.orNull
+        if (reportViewerConfig != null) {
             val getTestResultsAction = GetTestResultsAction(
                 reportViewerUrl = reportViewerConfig.reportViewerUrl,
                 reportCoordinates = reportCoordinates
@@ -266,27 +252,25 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     }
 
     private fun createReportFactory(
+        reportCoordinates: ReportCoordinates,
         loggerFactory: LoggerFactory,
         timeProvider: TimeProvider,
         httpClientProvider: HttpClientProvider
-    ): LegacyReportFactory {
-        val reportViewerConfig = reportViewerConfig.orNull
-        val factories = mutableMapOf<String, LegacyReportFactory>()
-        if (reportViewerConfig != null) {
-            factories[LegacyReportFactory.Config.ReportViewerCoordinates::class.java.simpleName] =
-                ReportViewerFactory(
-                    reportApiUrl = reportViewerConfig.reportApiUrl,
-                    loggerFactory = loggerFactory,
-                    timeProvider = timeProvider,
-                    httpClientProvider = httpClientProvider
+    ): ReportFactory {
+        val reportViewerConfig = reportViewerProperty.orNull
+
+        return ReportFactoryImpl(
+            timeProvider = timeProvider,
+            useInMemoryReport = useInMemoryReport.get(),
+            buildId = buildId.get(),
+            loggerFactory = loggerFactory,
+            httpClientProvider = httpClientProvider,
+            reportViewerConfig = reportViewerConfig?.let {
+                ReportViewerConfig(
+                    url = reportViewerConfig.reportApiUrl,
+                    reportCoordinates = reportCoordinates
                 )
-        }
-
-        factories[LegacyReportFactory.Config.InMemory::class.java.simpleName] =
-            InMemoryReportFactory(timeProvider = timeProvider)
-
-        return StrategyFactory(
-            factories = factories.toMap()
+            }
         )
     }
 }

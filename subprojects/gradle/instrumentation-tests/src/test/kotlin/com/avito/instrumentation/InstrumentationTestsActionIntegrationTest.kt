@@ -6,7 +6,8 @@ import com.avito.android.TestInApk
 import com.avito.android.createStubInstance
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.devices.StubDeviceProviderFactory
-import com.avito.android.runner.report.createStubInstance
+import com.avito.android.runner.report.StubReport
+import com.avito.android.runner.report.StubReportFactory
 import com.avito.android.stats.SeriesName
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
@@ -166,32 +167,19 @@ internal class InstrumentationTestsActionIntegrationTest {
         loggerFactory = params.loggerFactory,
         scheduler = TestsSchedulerFactory.Impl(
             params = params,
-            sourceReport = com.avito.android.runner.report.Report.createStubInstance(
-                reportsApi = reportsApi,
-                reportCoordinates = reportCoordinates,
-                buildId = params.buildId,
-            ),
-            avitoReport = com.avito.android.runner.report.LegacyReport.createStubInstance(
-                reportsApi = reportsApi,
-                reportCoordinates = reportCoordinates,
-                buildId = params.buildId,
-            ),
             gson = InstrumentationTestsActionFactory.gson,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader,
             timeProvider = StubTimeProvider(),
-            httpClientProvider = HttpClientProvider.createStubInstance()
+            httpClientProvider = HttpClientProvider.createStubInstance(),
+            report = StubReport(),
         ).create(devicesProviderFactory = StubDeviceProviderFactory),
         finalizer = FinalizerFactory.Impl(
             params = params,
-            avitoReport = com.avito.android.runner.report.LegacyReport.createStubInstance(
-                reportsApi = reportsApi,
-                reportCoordinates = reportCoordinates,
-                buildId = params.buildId
-            ),
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),
-            buildFailer = buildFailer
+            reportFactory = StubReportFactory,
+            gson = InstrumentationTestsActionFactory.gson
         ).create()
     )
 
@@ -200,7 +188,6 @@ internal class InstrumentationTestsActionIntegrationTest {
     ) = InstrumentationTestsAction.Params.createStubInstance(
         instrumentationConfiguration = instrumentationConfiguration,
         loggerFactory = loggerFactory,
-        outputDir = outputDir,
-        reportCoordinates = reportCoordinates
+        outputDir = outputDir
     )
 }

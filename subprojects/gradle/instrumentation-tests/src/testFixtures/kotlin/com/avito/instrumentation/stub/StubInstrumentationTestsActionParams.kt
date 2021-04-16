@@ -1,10 +1,10 @@
 package com.avito.instrumentation.stub
 
-import com.avito.android.runner.report.LegacyReport
+import com.avito.android.runner.report.AvitoReport
 import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.StubReport
-import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.createStubInstance
@@ -12,8 +12,8 @@ import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.logger.LoggerFactory
-import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.createStubInstance
+import com.avito.report.ReportLinkGenerator
+import com.avito.report.TestSuiteNameProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
 
@@ -37,9 +37,7 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     loggerFactory: LoggerFactory,
     outputDir: File = File("."),
     verdictFile: File = File(outputDir, "verdict.json"),
-    reportViewerUrl: String = "https://reports",
     fileStorageUrl: String = "https://files",
-    reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     statsDConfig: StatsDConfig = StatsDConfig.Disabled,
     useInMemoryReport: Boolean = false,
     uploadTestArtifacts: Boolean = false
@@ -58,23 +56,32 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     loggerFactory = loggerFactory,
     outputDir = outputDir,
     verdictFile = verdictFile,
-    reportViewerUrl = reportViewerUrl,
     fileStorageUrl = fileStorageUrl,
     statsDConfig = statsDConfig,
-    legacyReportFactory = object : LegacyReportFactory {
+    reportFactory = object : ReportFactory {
 
-        override fun createReport(config: LegacyReportFactory.Config): Report = StubReport()
+        override fun createReport(): Report {
+            return StubReport()
+        }
 
-        override fun createLegacyReport(config: LegacyReportFactory.Config): LegacyReport = StubReport()
+        override fun createReadReport(): ReadReport {
+            return StubReport()
+        }
 
-        override fun createReadReport(config: LegacyReportFactory.Config): ReadReport = StubReport()
+        override fun createAvitoReport(): AvitoReport {
+            return StubReport()
+        }
+
+        override fun createReportLinkGenerator(): ReportLinkGenerator {
+            return ReportLinkGenerator.Stub
+        }
+
+        override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
+            return TestSuiteNameProvider.Stub
+        }
     },
-    legacyReportConfig = LegacyReportFactory.Config.ReportViewerCoordinates(
-        ReportCoordinates.createStubInstance(),
-        buildId
-    ),
-    reportCoordinates = reportCoordinates,
     proguardMappings = emptyList(),
     useInMemoryReport = useInMemoryReport,
-    uploadTestArtifacts = uploadTestArtifacts
+    uploadTestArtifacts = uploadTestArtifacts,
+    reportViewerConfig = null
 )

@@ -135,7 +135,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.testRunnerService.set(testRunnerServiceProvider)
                     this.output.set(configurationOutputFolder)
                     if (extensionData.reportViewer != null) {
-                        this.reportViewerConfig.set(extensionData.reportViewer)
+                        this.reportViewerProperty.set(extensionData.reportViewer)
                     }
                     this.kubernetesCredentials.set(project.kubernetesCredentials)
 

@@ -1,6 +1,10 @@
-package com.avito.android.runner.report
+package com.avito.android.runner.report.internal
 
 import com.avito.android.Result
+import com.avito.android.runner.report.AvitoReport
+import com.avito.android.runner.report.ReadReport
+import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.TestStatusFinalizer
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
@@ -9,9 +13,8 @@ import com.avito.time.TimeProvider
 internal class InMemoryReport(
     private val id: String,
     private val timeProvider: TimeProvider
-) : Report, LegacyReport, ReadReport {
+) : Report, AvitoReport, ReadReport {
 
-    private var gitInfo: String? = null
     private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
 
@@ -21,13 +24,13 @@ internal class InMemoryReport(
     }
 
     @Synchronized
-    override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
+    override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         this.testAttempts.addAll(
             skippedTests.map { (test, reason) ->
                 AndroidTest.Skipped.fromTestMetadata(
                     testStaticData = test,
                     skipReason = reason,
-                    reportTime = timeProvider.nowInMillis()
+                    reportTime = timeProvider.nowInSeconds()
                 )
             }
         )
@@ -53,9 +56,7 @@ internal class InMemoryReport(
                 val lastAttempt = attempts.last()
                 SimpleRunTest(
                     id = testCoordinate, // todo unique in one run
-                    reportId = requireNotNull(tryGetId()) {
-                        "InMemoryReport reportId must be present"
-                    },
+                    reportId = id,
                     name = lastAttempt.name.name,
                     className = lastAttempt.name.className,
                     methodName = lastAttempt.name.methodName,
@@ -83,14 +84,5 @@ internal class InMemoryReport(
                 )
             }
         return Result.Success(result)
-    }
-
-    private fun tryGetId(): String? {
-        val gitInfo = gitInfo
-        return if (gitInfo != null) {
-            id + gitInfo
-        } else {
-            null
-        }
     }
 }

@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal.suite.filter
 
-import com.avito.android.runner.report.factory.LegacyReportFactory
+import com.avito.android.runner.report.ReportFactory
 import com.avito.instrumentation.configuration.InstrumentationFilter
 import com.avito.instrumentation.configuration.InstrumentationFilter.FromRunHistory
 import com.avito.instrumentation.internal.suite.filter.FilterFactory.Companion.JUNIT_IGNORE_ANNOTATION
@@ -12,8 +12,7 @@ import com.avito.report.model.SimpleRunTest
 internal class FilterFactoryImpl(
     private val filterData: InstrumentationFilter.Data,
     private val impactAnalysisResult: ImpactAnalysisResult,
-    private val factoryLegacy: LegacyReportFactory,
-    private val legacyReportConfig: LegacyReportFactory.Config,
+    private val reportFactory: ReportFactory,
     loggerFactory: LoggerFactory
 ) : FilterFactory {
 
@@ -86,8 +85,8 @@ internal class FilterFactoryImpl(
         val previousStatuses = filterData.fromRunHistory.previousStatuses
         if (previousStatuses.included.isNotEmpty() || previousStatuses.excluded.isNotEmpty()) {
 
-            factoryLegacy
-                .createReadReport(legacyReportConfig)
+            reportFactory
+                .createReadReport()
                 .getTests()
                 .fold(
                     onSuccess = { previousRunTests ->
@@ -122,7 +121,7 @@ internal class FilterFactoryImpl(
                 || reportFilter.statuses.excluded.isNotEmpty())
         ) {
             val statuses = reportFilter.statuses
-            val previousRunTests = factoryLegacy.createReadReport(reportFilter.legacyReportConfig)
+            val previousRunTests = reportFactory.createReadReport()
                 .getTests()
                 .getOrThrow()
             if (statuses.included.isNotEmpty()) {

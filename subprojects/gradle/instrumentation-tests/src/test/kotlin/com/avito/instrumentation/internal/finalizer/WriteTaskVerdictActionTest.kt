@@ -5,9 +5,9 @@ import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
+import com.avito.report.ReportLinkGenerator
 import com.avito.report.StubReportViewer
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
 import com.github.salomonbrys.kotson.fromJson
@@ -37,10 +37,9 @@ public class WriteTaskVerdictActionTest {
 
     private fun createAction(verdict: File): WriteTaskVerdictAction {
         return WriteTaskVerdictAction(
-            coordinates = ReportCoordinates.createStubInstance(),
             verdictDestination = verdict,
-            reportViewer = reportViewer,
-            gson
+            gson = gson,
+            reportLinkGenerator = ReportLinkGenerator.Stub
         )
     }
 

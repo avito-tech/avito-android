@@ -10,14 +10,12 @@ import com.avito.instrumentation.internal.suite.TestSuiteProvider
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.ReportCoordinates
 import com.google.gson.Gson
 import java.io.File
 
 internal class InstrumentationTestsScheduler(
     private val testsRunner: TestsRunner,
     private val params: InstrumentationTestsAction.Params,
-    private val reportCoordinates: ReportCoordinates,
     private val sourceReport: Report,
     private val testSuiteProvider: TestSuiteProvider,
     private val testSuiteLoader: TestSuiteLoader,
@@ -64,7 +62,6 @@ internal class InstrumentationTestsScheduler(
         val testsResult = testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
-            reportCoordinates = reportCoordinates,
             report = sourceReport,
             testsToRun = testSuite.testsToRun
         )

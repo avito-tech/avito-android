@@ -7,10 +7,8 @@ import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
-import com.avito.instrumentation.internal.suite.model.transformTestsWithNewJobSlug
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.runner.scheduler.listener.TestLifecycleListener
@@ -36,7 +34,6 @@ internal class TestsRunnerImplementation(
     override fun runTests(
         mainApk: File?,
         testApk: File,
-        reportCoordinates: ReportCoordinates,
         report: Report,
         testsToRun: List<TestWithTarget>
     ): Result<List<SimpleRunTest>> {
@@ -71,7 +68,7 @@ internal class TestsRunnerImplementation(
             executor.execute(
                 application = mainApk,
                 testApplication = testApk,
-                testsToRun = testsToRun.transformTestsWithNewJobSlug(reportCoordinates.jobSlug),
+                testsToRun = testsToRun,
                 executionParameters = executionParameters,
                 output = outputDir
             )

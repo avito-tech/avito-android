@@ -2,6 +2,7 @@ package com.avito.report
 
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
+import com.avito.report.model.TestName
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -34,10 +35,29 @@ interface ReportViewer {
 
     class Impl(
         host: String,
+        private val reportCoordinates: ReportCoordinates,
         private val reportViewerQuery: ReportViewerQuery = ReportViewerQuery()
-    ) : ReportViewer {
+    ) : ReportViewer, ReportLinkGenerator, TestSuiteNameProvider {
 
         private val host = host.removeSuffix("/")
+
+        override fun getName(): String = "${reportCoordinates.planSlug}_${reportCoordinates.jobSlug}"
+
+        override fun generateReportLink(filterOnlyFailtures: Boolean, team: Team): String {
+            return generateReportUrl(
+                reportCoordinates,
+                onlyFailures = filterOnlyFailtures,
+                team = team
+            ).toString()
+        }
+
+        override fun generateTestLink(testName: TestName): String {
+            return generateSingleTestRunUrl(
+                reportCoordinates = reportCoordinates,
+                testClass = testName.className,
+                testMethod = testName.methodName
+            ).toString()
+        }
 
         override fun generateReportUrl(
             reportCoordinates: ReportCoordinates,
