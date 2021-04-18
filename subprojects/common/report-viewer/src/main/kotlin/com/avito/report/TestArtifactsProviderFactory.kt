@@ -34,7 +34,7 @@ object TestArtifactsProviderFactory {
 
     @Suppress("SdCardPath") // android API's are unavailable here
     fun createForAdbAccess(appUnderTestPackage: String, className: String, methodName: String): TestArtifactsProvider {
-        val dataPath = "/sdcard/Android/data/${appUnderTestPackage}files"
+        val dataPath = "/sdcard/Android/data/${appUnderTestPackage}/files"
         return UniqueDirTestArtifactsProvider(
             rootDir = lazy { File(dataPath) },
             testDirGenerator = TestDirGenerator.Impl(
