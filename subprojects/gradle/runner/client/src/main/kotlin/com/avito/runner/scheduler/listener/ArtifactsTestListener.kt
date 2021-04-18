@@ -15,6 +15,7 @@ import com.avito.utils.deleteRecursively
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
+import kotlin.io.path.div
 
 internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
@@ -52,7 +53,13 @@ internal class ArtifactsTestListener(
             Passed,
             is Failed.InRun -> {
                 val artifacts = testArtifactsDir.flatMap { dir ->
-                    device.pull(from = dir.toPath(), to = tempDirectory)
+
+                    // last /. means to adb to copy recursively, and not to copy last dir
+                    // example:
+                    //  - from: /sdcard/Android/someDir/ to: /xx ; will copy to /xx/someDir/ and not recursive
+                    //  - from: /sdcard/android/someDir/. to: /xx ; will copy to /xx and recursive
+                    // todo move this knowledge under adb layer
+                    device.pull(from = dir.toPath() / ".", to = tempDirectory)
                 }
                 TestResult.Complete(artifacts)
             }
