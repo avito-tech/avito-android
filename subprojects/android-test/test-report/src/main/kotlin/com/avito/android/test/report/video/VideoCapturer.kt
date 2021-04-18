@@ -14,7 +14,6 @@ import com.avito.report.TestArtifactsProvider
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
-import kotlin.io.path.ExperimentalPathApi
 
 interface VideoCapturer {
 
@@ -34,7 +33,6 @@ class VideoCapturerImpl(
 
     private var state: State = State.Idling
 
-    @ExperimentalPathApi
     @Synchronized
     override fun start(): Result<Unit> {
         // checks if execute start() concurrently
