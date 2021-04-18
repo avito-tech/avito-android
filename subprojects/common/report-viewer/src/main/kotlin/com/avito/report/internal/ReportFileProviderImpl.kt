@@ -4,7 +4,6 @@ import com.avito.android.Result
 import com.avito.report.ReportFileProvider
 import com.avito.report.TestDirGenerator
 import java.io.File
-import java.io.IOException
 import java.util.UUID
 
 class ReportFileProviderImpl(
@@ -32,9 +31,7 @@ class ReportFileProviderImpl(
 
     override fun provideReportFile(): Result<File> {
         return provideReportDir().map { dir ->
-            File(dir, reportFileName).apply {
-                createNewFile(this)
-            }
+            File(dir, reportFileName)
         }
     }
 
@@ -46,21 +43,11 @@ class ReportFileProviderImpl(
 
     override fun generateFile(name: String, extension: String, create: Boolean): Result<File> {
         return provideReportDir().map { dir ->
-            File(dir, "$name.$extension").apply {
-                createNewFile(this)
-            }
+            File(dir, "$name.$extension")
         }
     }
 
     override fun generateUniqueFile(extension: String, create: Boolean): Result<File> {
         return generateFile(name = uniqueFileNameGenerator.invoke(), extension = extension, create = create)
-    }
-
-    private fun createNewFile(file: File) {
-        try {
-            file.createNewFile()
-        } catch (e: IOException) {
-            throw IOException("Cannot create file with path: ${file.path}", e)
-        }
     }
 }

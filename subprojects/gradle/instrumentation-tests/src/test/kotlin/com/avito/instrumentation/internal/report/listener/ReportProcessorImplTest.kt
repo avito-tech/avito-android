@@ -34,7 +34,7 @@ internal class ReportProcessorImplTest {
     private val artifactsUploader = StubTestArtifactsUploader()
     private val logcatProcessor = LogcatProcessor.Impl(artifactsUploader, ProguardRetracer.Stub)
     private val timeProvider = StubTimeProvider()
-    private val gson = TestArtifactsProcessor.gson
+    private val gson = GsonReportParser.reportGson
 
     @Test
     fun `process - returns test with no status and contains timeout message - on test run timeout`() {
@@ -160,7 +160,7 @@ internal class ReportProcessorImplTest {
         dispatcher: CoroutineDispatcher
     ): TestArtifactsProcessor {
         return LegacyTestArtifactsProcessor(
-            gson = gson,
+            reportParser = GsonReportParser(gson),
             logcatProcessor = logcatProcessor,
             dispatcher = dispatcher
         )

@@ -23,9 +23,14 @@ class ResultSubject<T> private constructor(
         }
     }
 
-    fun isFailure() {
-        if (actual is Result.Success) {
-            failWithActual(Fact.simpleFact("expected to be Failure, but was Success"))
+    fun isFailure(): FailureSubject {
+        when (actual) {
+            is Result.Success -> {
+                failWithActual(Fact.simpleFact("expected to be Failure, but was Success"))
+                throw IllegalStateException("Can't be here")
+            }
+            is Result.Failure ->
+                return FailureSubject(failureMetadata, actual.throwable)
         }
     }
 
@@ -35,6 +40,16 @@ class ResultSubject<T> private constructor(
     ) : Subject(failureMetadata, actual) {
 
         fun withValue(body: (T) -> Unit) {
+            body(actual)
+        }
+    }
+
+    class FailureSubject internal constructor(
+        failureMetadata: FailureMetadata,
+        private val actual: Throwable
+    ) : Subject(failureMetadata, actual) {
+
+        fun withThrowable(body: (Throwable) -> Unit) {
             body(actual)
         }
     }

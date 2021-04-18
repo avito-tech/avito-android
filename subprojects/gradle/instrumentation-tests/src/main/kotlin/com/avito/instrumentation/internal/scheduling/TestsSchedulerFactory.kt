@@ -10,9 +10,11 @@ import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.AvitoFileStorageUploader
+import com.avito.instrumentation.internal.report.listener.GsonReportParser
 import com.avito.instrumentation.internal.report.listener.LegacyTestArtifactsProcessor
 import com.avito.instrumentation.internal.report.listener.LogcatProcessor
 import com.avito.instrumentation.internal.report.listener.LogcatTestLifecycleListener
+import com.avito.instrumentation.internal.report.listener.ReportParser
 import com.avito.instrumentation.internal.report.listener.ReportProcessor
 import com.avito.instrumentation.internal.report.listener.ReportProcessorImpl
 import com.avito.instrumentation.internal.report.listener.TestArtifactsProcessor
@@ -147,7 +149,7 @@ internal interface TestsSchedulerFactory {
                 metricsSender = metricsSender,
                 testArtifactsProcessor = createTestArtifactsProcessor(
                     uploadTestArtifacts = params.uploadTestArtifacts,
-                    gson = TestArtifactsProcessor.gson,
+                    reportParser = GsonReportParser(),
                     dispatcher = dispatcher,
                     logcatProcessor = logcatUploader,
                     testArtifactsUploader = artifactsUploader
@@ -160,7 +162,7 @@ internal interface TestsSchedulerFactory {
 
         private fun createTestArtifactsProcessor(
             uploadTestArtifacts: Boolean,
-            gson: Gson,
+            reportParser: ReportParser,
             dispatcher: CoroutineDispatcher,
             logcatProcessor: LogcatProcessor,
             testArtifactsUploader: TestArtifactsUploader
@@ -168,14 +170,14 @@ internal interface TestsSchedulerFactory {
 
             return if (uploadTestArtifacts) {
                 TestArtifactsProcessorImpl(
-                    gson = gson,
+                    reportParser = reportParser,
                     testArtifactsUploader = testArtifactsUploader,
                     dispatcher = dispatcher,
                     logcatProcessor = logcatProcessor
                 )
             } else {
                 LegacyTestArtifactsProcessor(
-                    gson = gson,
+                    reportParser = reportParser,
                     logcatProcessor = logcatProcessor,
                     dispatcher = dispatcher
                 )
