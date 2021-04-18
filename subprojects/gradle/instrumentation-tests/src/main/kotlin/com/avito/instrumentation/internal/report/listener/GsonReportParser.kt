@@ -14,8 +14,8 @@ internal class GsonReportParser(private val gson: Gson = reportGson) : ReportPar
     @Suppress("IfThenToElvis")
     override fun parse(reportFile: File): Result<TestRuntimeData> {
         return Result.tryCatch {
-            val testRuntimeData: TestRuntimeData? = FileReader(reportFile).use {
-                gson.fromJson(FileReader(reportFile), TestRuntimeDataPackage::class.java)
+            val testRuntimeData: TestRuntimeData? = FileReader(reportFile).use { reader ->
+                gson.fromJson(reader, TestRuntimeDataPackage::class.java)
             }
 
             if (testRuntimeData == null) {
