@@ -10,10 +10,11 @@ import com.avito.android.util.executeMethod
 import com.avito.android.util.getFieldValue
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.ReportFileProvider
+import com.avito.report.TestArtifactsProvider
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.ExperimentalPathApi
 
 interface VideoCapturer {
 
@@ -25,7 +26,7 @@ interface VideoCapturer {
 }
 
 class VideoCapturerImpl(
-    private val reportFileProvider: ReportFileProvider,
+    private val testArtifactsProvider: TestArtifactsProvider,
     loggerFactory: LoggerFactory
 ) : VideoCapturer {
 
@@ -33,23 +34,24 @@ class VideoCapturerImpl(
 
     private var state: State = State.Idling
 
+    @ExperimentalPathApi
     @Synchronized
     override fun start(): Result<Unit> {
         // checks if execute start() concurrently
         return if (state is State.Idling) {
 
-            val (videoFile, videoError) = reportFileProvider.generateUniqueFile("mp4")
+            val (videoFile, videoError) = testArtifactsProvider.generateUniqueFile("mp4")
 
             if (videoError != null) {
                 Result.Failure(IllegalStateException("Can't create video file", videoError))
             } else {
-                val (stdout, stdoutError) = reportFileProvider.generateFile("video-output", "txt", create = true)
+                val (stdout, stdoutError) = testArtifactsProvider.generateFile("video-output", "txt", create = true)
 
                 if (stdoutError != null) {
                     Result.Failure(IllegalStateException("Can't create video output file", videoError))
                 } else {
                     try {
-                        executeRecorderCommand("start ${videoFile!!.absolutePath}", stdout!!)
+                        executeRecorderCommand("start ${videoFile!!}", stdout!!)
                         state = State.Recording(videoFile, stdout)
                         Result.Success(Unit)
                     } catch (t: Throwable) {
@@ -121,7 +123,7 @@ class VideoCapturerImpl(
 
     private fun createRecorderBinary(): String {
         val binary = File(
-            reportFileProvider.rootDir.value,
+            testArtifactsProvider.rootDir.value,
             RECORDER_BINARY_NAME
         )
 

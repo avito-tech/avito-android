@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
-import com.avito.report.ReportFileProviderFactory
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,10 +26,7 @@ internal class LegacyTestArtifactsProcessor(
 
         val scope = CoroutineScope(CoroutineName("test-artifacts-${testStaticData.name}") + dispatcher)
 
-        val reportFileProvider = ReportFileProviderFactory.create(
-            testReportRootDir = lazy { reportDir },
-            testStaticData = testStaticData
-        )
+        val reportFileProvider = TestArtifactsProviderFactory.createForTempDir(reportDir)
 
         return reportFileProvider.provideReportFile()
             .flatMap { reportJson -> reportParser.parse(reportJson) }

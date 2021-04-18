@@ -44,9 +44,8 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
 import com.avito.logger.create
-import com.avito.report.ReportFileProvider
-import com.avito.report.TestDirGenerator
-import com.avito.report.internal.ReportFileProviderImpl
+import com.avito.report.TestArtifactsProvider
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Kind
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
@@ -88,15 +87,13 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    private val reportFileProvider: ReportFileProvider by lazy {
+    private val testArtifactsProvider: TestArtifactsProvider by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
 
-        ReportFileProviderImpl(
-            runEnvironment.outputDirectory,
-            testDirGenerator = TestDirGenerator.Impl(
-                className = runEnvironment.testMetadata.className,
-                methodName = runEnvironment.testMetadata.methodName!!
-            )
+        TestArtifactsProviderFactory.create(
+            testReportRootDir = runEnvironment.outputDirectory,
+            className = runEnvironment.testMetadata.className,
+            methodName = runEnvironment.testMetadata.methodName!!
         )
     }
 
@@ -109,7 +106,7 @@ abstract class InHouseInstrumentationTestRunner :
             loggerFactory = loggerFactory,
             remoteStorage = remoteStorage,
             httpClientProvider = httpClientProvider,
-            reportFileProvider = reportFileProvider
+            testArtifactsProvider = testArtifactsProvider
         ).create(
             testRunCoordinates = runEnvironment.testRunCoordinates,
             reportDestination = runEnvironment.reportDestination
@@ -131,7 +128,7 @@ abstract class InHouseInstrumentationTestRunner :
      * Public for synth monitoring
      */
     val screenshotCapturer: ScreenshotCapturer by lazy {
-        ScreenshotCapturerImpl(reportFileProvider)
+        ScreenshotCapturerImpl(testArtifactsProvider)
     }
 
     override val loggerFactory by lazy {
@@ -336,7 +333,7 @@ abstract class InHouseInstrumentationTestRunner :
         TestLifecycleNotifier.addListener(
             VideoCaptureTestListener(
                 videoFeatureValue = runEnvironment.videoRecordingFeature,
-                reportFileProvider = reportFileProvider,
+                testArtifactsProvider = testArtifactsProvider,
                 shouldRecord = shouldRecordVideo(runEnvironment.testMetadata),
                 loggerFactory = loggerFactory,
                 transport = reportTransport,

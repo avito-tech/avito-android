@@ -4,7 +4,7 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StubStatsdSender
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.StubLoggerFactory
-import com.avito.report.ReportFileProviderFactory
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Incident
 import com.avito.report.model.TestRuntimeData
@@ -67,7 +67,6 @@ internal class ReportProcessorImplTest {
         createReportJson(
             reportDir = tempDir,
             gson = gson,
-            testStaticData = testStaticData,
             testRuntimeData = TestRuntimeDataPackage.createStubInstance()
         )
 
@@ -105,7 +104,6 @@ internal class ReportProcessorImplTest {
         createReportJson(
             reportDir = tempDir,
             gson = gson,
-            testStaticData = testStaticData,
             testRuntimeData = TestRuntimeDataPackage.createStubInstance(incident = Incident.createStubInstance())
         )
 
@@ -169,10 +167,9 @@ internal class ReportProcessorImplTest {
     private fun createReportJson(
         reportDir: File,
         gson: Gson,
-        testStaticData: TestStaticData,
         testRuntimeData: TestRuntimeData
     ) {
-        val reportFile = ReportFileProviderFactory.create(lazy { reportDir }, testStaticData)
+        val reportFile = TestArtifactsProviderFactory.createForTempDir(reportDir)
             .provideReportFile()
             .getOrThrow()
 

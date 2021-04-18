@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
-import com.avito.report.ReportFileProviderFactory
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
@@ -26,14 +26,11 @@ internal class TestArtifactsProcessorImpl(
         logcatBuffer: LogcatBuffer?
     ): Result<AndroidTest> {
 
-        val reportFileProvider = ReportFileProviderFactory.create(
-            testReportRootDir = lazy { reportDir },
-            testStaticData = testStaticData
-        )
+        val reportFileProvider = TestArtifactsProviderFactory.createForTempDir(reportDir)
 
         val reportArtifactsUploader = ReportArtifactsUploader(
             testArtifactsUploader = testArtifactsUploader,
-            reportFileProvider = reportFileProvider
+            testArtifactsProvider = reportFileProvider
         )
 
         val scope = CoroutineScope(CoroutineName("test-artifacts-${testStaticData.name}") + dispatcher)

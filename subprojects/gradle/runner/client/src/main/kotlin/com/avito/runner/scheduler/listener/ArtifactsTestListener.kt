@@ -11,6 +11,7 @@ import com.avito.runner.service.model.TestCaseRun.Result.Failed.InfrastructureEr
 import com.avito.runner.service.model.TestCaseRun.Result.Ignored
 import com.avito.runner.service.model.TestCaseRun.Result.Passed
 import com.avito.runner.service.worker.device.Device
+import com.avito.utils.deleteRecursively
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
@@ -43,17 +44,18 @@ internal class ArtifactsTestListener(
         result: TestCaseRun.Result,
         durationMilliseconds: Long,
         executionNumber: Int,
-        testMetadataDirectory: File,
-        testFolder: String
+        testArtifactsDir: Result<File>
     ) {
+        val tempDirectory = createTempDirectory()
+
         val testResult = when (result) {
             Passed,
-            is Failed.InRun ->
-                pullArtifacts(
-                    device = device,
-                    runnerOutputDirectory = testMetadataDirectory,
-                    testFolder = testFolder
-                )
+            is Failed.InRun -> {
+                val artifacts = testArtifactsDir.flatMap { dir ->
+                    device.pull(from = dir.toPath(), to = tempDirectory)
+                }
+                TestResult.Complete(artifacts)
+            }
             is InfrastructureError ->
                 TestResult.Incomplete(result)
             Ignored ->
@@ -69,37 +71,9 @@ internal class ArtifactsTestListener(
             test = test,
             executionNumber = executionNumber,
         )
-    }
 
-    @ExperimentalPathApi
-    private fun pullArtifacts(
-        device: Device,
-        runnerOutputDirectory: File,
-        testFolder: String
-    ): TestResult.Complete {
-        val tempDirectory = createTempDirectory()
-        val artifacts = try {
-
-            val testMetadataDirectory = File(runnerOutputDirectory, testFolder)
-
-            val pullingResult = device.pull(
-                from = testMetadataDirectory.toPath(),
-                to = tempDirectory
-            )
-
-            val resultDirectory = pullingResult.map { File(tempDirectory.toFile(), testFolder) }
-
-            resultDirectory
-        } catch (t: Throwable) {
-            logger.warn("Failed to process artifacts from $device", t)
-            Result.Failure(t)
-        } finally {
-            try {
-                tempDirectory.toFile().delete()
-            } catch (e: Throwable) {
-                // ignore
-            }
+        tempDirectory.deleteRecursively().onFailure { error ->
+            logger.warn("Can't clear temp directory: $tempDirectory", error)
         }
-        return TestResult.Complete(artifacts)
     }
 }

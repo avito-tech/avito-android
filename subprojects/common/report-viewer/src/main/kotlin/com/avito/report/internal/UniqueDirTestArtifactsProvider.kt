@@ -1,20 +1,16 @@
 package com.avito.report.internal
 
 import com.avito.android.Result
-import com.avito.report.ReportFileProvider
+import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestDirGenerator
 import java.io.File
-import java.util.UUID
 
-class ReportFileProviderImpl(
+class UniqueDirTestArtifactsProvider(
     override val rootDir: Lazy<File>,
     private val testDirGenerator: TestDirGenerator,
-    private val uniqueFileNameGenerator: () -> String = { UUID.randomUUID().toString() }
-) : ReportFileProvider {
+) : TestArtifactsProvider {
 
     private val runnerOutputFolder = "runner"
-
-    private val reportFileName = "report.json"
 
     override fun provideReportDir(): Result<File> {
         val testFolderName = testDirGenerator.generateUniqueDir()
@@ -30,24 +26,32 @@ class ReportFileProviderImpl(
     }
 
     override fun provideReportFile(): Result<File> {
-        return provideReportDir().map { dir ->
-            File(dir, reportFileName)
+        return directTestArtifactsProvider().flatMap {
+            it.provideReportFile()
         }
     }
 
     override fun getFile(relativePath: String): Result<File> {
-        return provideReportDir().map { dir ->
-            File(dir, relativePath)
+        return directTestArtifactsProvider().flatMap {
+            it.getFile(relativePath)
         }
     }
 
     override fun generateFile(name: String, extension: String, create: Boolean): Result<File> {
-        return provideReportDir().map { dir ->
-            File(dir, "$name.$extension")
+        return directTestArtifactsProvider().flatMap {
+            it.generateFile(name, extension, create)
         }
     }
 
     override fun generateUniqueFile(extension: String, create: Boolean): Result<File> {
-        return generateFile(name = uniqueFileNameGenerator.invoke(), extension = extension, create = create)
+        return directTestArtifactsProvider().flatMap {
+            it.generateUniqueFile(extension, create)
+        }
+    }
+
+    private fun directTestArtifactsProvider(): Result<TestArtifactsProvider> {
+        return provideReportDir().map {
+            DirectTestArtifactsProvider(lazy { it })
+        }
     }
 }

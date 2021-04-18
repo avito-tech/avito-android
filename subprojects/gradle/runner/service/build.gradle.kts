@@ -14,6 +14,7 @@ dependencies {
     api(project(":common:time"))
     implementation(project(":gradle:runner:shared"))
     implementation(project(":common:result"))
+    implementation(project(":common:report-viewer"))
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
 

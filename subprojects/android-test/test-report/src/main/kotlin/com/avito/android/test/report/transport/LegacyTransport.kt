@@ -4,6 +4,7 @@ import com.avito.android.test.report.ReportState
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
+import kotlin.io.path.ExperimentalPathApi
 
 /**
  * Save report to extrnal storage
@@ -16,6 +17,7 @@ internal class LegacyTransport(
     private val externalStorageTransport: ExternalStorageTransport
 ) : Transport, PreTransportMappers {
 
+    @ExperimentalPathApi
     override fun sendReport(state: ReportState.Initialized.Started) {
         // todo handle result
         externalStorageTransport.sendReport(state)
