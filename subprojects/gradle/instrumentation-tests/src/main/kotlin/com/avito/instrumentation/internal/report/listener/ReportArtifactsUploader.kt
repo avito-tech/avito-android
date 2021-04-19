@@ -1,6 +1,6 @@
 package com.avito.instrumentation.internal.report.listener
 
-import com.avito.report.ReportFileProvider
+import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
 import com.avito.report.model.Incident
@@ -9,7 +9,7 @@ import com.avito.report.model.Video
 
 internal class ReportArtifactsUploader(
     private val testArtifactsUploader: TestArtifactsUploader,
-    private val reportFileProvider: ReportFileProvider
+    private val testArtifactsProvider: TestArtifactsProvider
 ) {
 
     suspend fun processVideo(video: Video?): Video? {
@@ -59,7 +59,7 @@ internal class ReportArtifactsUploader(
     private suspend fun processFileAddress(fileAddress: FileAddress, type: Entry.File.Type): FileAddress? {
         return when (fileAddress) {
             is FileAddress.File ->
-                reportFileProvider.getFile(fileAddress.fileName)
+                testArtifactsProvider.getFile(fileAddress.fileName)
                     .flatMap { fullPath -> testArtifactsUploader.upload(file = fullPath, type = type) }
                     .fold(
                         onSuccess = { url -> FileAddress.URL(url) },

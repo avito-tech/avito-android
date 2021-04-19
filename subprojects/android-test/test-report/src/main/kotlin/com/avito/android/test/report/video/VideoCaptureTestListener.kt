@@ -7,19 +7,19 @@ import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.ReportFileProvider
+import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.FileAddress
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
 
 class VideoCaptureTestListener(
     videoFeatureValue: VideoFeatureValue,
-    reportFileProvider: ReportFileProvider,
+    testArtifactsProvider: TestArtifactsProvider,
     loggerFactory: LoggerFactory,
     private val transport: Transport,
     private val shouldRecord: Boolean,
     private val videoFeature: VideoFeature = VideoFeatureImplementation(videoFeatureValue),
-    private val videoCapturer: VideoCapturer = VideoCapturerImpl(reportFileProvider, loggerFactory)
+    private val videoCapturer: VideoCapturer = VideoCapturerImpl(testArtifactsProvider, loggerFactory)
 ) : TestLifecycleListener {
 
     private val logger = loggerFactory.create<VideoCaptureTestListener>()

@@ -8,19 +8,19 @@ import com.avito.android.Result
 import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
 import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
-import com.avito.report.ReportFileProvider
+import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestDirGenerator
-import com.avito.report.internal.ReportFileProviderImpl
+import com.avito.report.internal.UniqueDirTestArtifactsProvider
 import java.io.File
 import java.io.FileOutputStream
 
-class ScreenshotCapturerImpl(private val reportFileProvider: ReportFileProvider) : ScreenshotCapturer {
+class ScreenshotCapturerImpl(private val testArtifactsProvider: TestArtifactsProvider) : ScreenshotCapturer {
 
     // for backward compatibility in synthetic monitoring
     // todo remove in avito and then here
     @Suppress("unused")
     constructor(outputDirectory: Lazy<File>) : this(
-        reportFileProvider = ReportFileProviderImpl(
+        testArtifactsProvider = UniqueDirTestArtifactsProvider(
             rootDir = outputDirectory,
             testDirGenerator = TestDirGenerator.Stub
         )
@@ -45,7 +45,7 @@ class ScreenshotCapturerImpl(private val reportFileProvider: ReportFileProvider)
         compressFormat: Bitmap.CompressFormat,
         quality: Int
     ): Result<File?> {
-        return reportFileProvider.provideReportDir()
+        return testArtifactsProvider.provideReportDir()
             .flatMap { dir ->
                 captureBitmap().flatMap { capture ->
                     Result.Success(

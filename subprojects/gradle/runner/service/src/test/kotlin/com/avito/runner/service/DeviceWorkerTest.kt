@@ -29,8 +29,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
 
 @ExperimentalCoroutinesApi
+@ExperimentalPathApi
 class DeviceWorkerTest {
 
     private val loggerFactory = StubLoggerFactory
@@ -231,11 +233,11 @@ class DeviceWorkerTest {
         router: IntentionsRouter
     ) = DeviceWorker(
         intentionsRouter = router,
-        deviceListener = MessagesDeviceListener(results),
         device = device,
         outputDirectory = File(""),
         testListener = NoOpTestListener,
-        dispatchers = TestDispatcher,
-        timeProvider = StubTimeProvider()
+        deviceListener = MessagesDeviceListener(results),
+        timeProvider = StubTimeProvider(),
+        dispatchers = TestDispatcher
     )
 }

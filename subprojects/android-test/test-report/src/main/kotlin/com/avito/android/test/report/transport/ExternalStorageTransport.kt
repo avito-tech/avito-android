@@ -6,7 +6,7 @@ import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.ReportFileProvider
+import com.avito.report.TestArtifactsProvider
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
 
@@ -18,7 +18,7 @@ internal class ExternalStorageTransport(
     private val gson: Gson,
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory,
-    private val reportFileProvider: ReportFileProvider
+    private val testArtifactsProvider: TestArtifactsProvider
 ) : Transport {
 
     private val logger = loggerFactory.create<ExternalStorageTransport>()
@@ -26,7 +26,7 @@ internal class ExternalStorageTransport(
     private val testRuntimeDataBuilder = TestRuntimeDataBuilder(timeProvider)
 
     override fun sendReport(state: ReportState.Initialized.Started) {
-        reportFileProvider.provideReportFile().fold(
+        testArtifactsProvider.provideReportFile().fold(
             onSuccess = { file ->
                 try {
                     val json = gson.toJson(testRuntimeDataBuilder.fromState(state))
@@ -52,7 +52,7 @@ internal class ExternalStorageTransport(
     ): FutureValue<RemoteStorage.Result> {
         val fileName = when (request) {
             is RemoteStorage.Request.ContentRequest ->
-                reportFileProvider.generateUniqueFile(extension = request.extension).fold(
+                testArtifactsProvider.generateUniqueFile(extension = request.extension).fold(
                     { file ->
                         file.writeText(request.content)
                         file.name

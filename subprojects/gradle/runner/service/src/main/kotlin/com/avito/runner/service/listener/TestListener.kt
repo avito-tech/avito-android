@@ -1,5 +1,6 @@
 package com.avito.runner.service.listener
 
+import com.avito.android.Result
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
@@ -25,7 +26,6 @@ interface TestListener {
         result: TestCaseRun.Result,
         durationMilliseconds: Long,
         executionNumber: Int,
-        testMetadataDirectory: File,
-        testFolder: String
+        testArtifactsDir: Result<File>
     )
 }

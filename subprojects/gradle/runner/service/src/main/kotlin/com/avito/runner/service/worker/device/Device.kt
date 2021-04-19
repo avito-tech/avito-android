@@ -33,7 +33,10 @@ interface Device {
 
     fun clearPackage(name: String): Result<Unit>
 
-    fun pull(from: Path, to: Path): Result<Unit>
+    /**
+     * @return `to` path
+     */
+    fun pull(from: Path, to: Path): Result<File>
 
     fun clearDirectory(remotePath: Path): Result<Unit>
 
