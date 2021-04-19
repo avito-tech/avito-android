@@ -8,7 +8,7 @@ import com.avito.report.model.TestStaticDataPackage
 internal interface HasNotReportedTestsDeterminer {
 
     fun determine(
-        runResult: com.avito.android.Result<List<SimpleRunTest>>,
+        runResult: List<SimpleRunTest>,
         allTests: List<TestStaticData>
     ): Result
 
@@ -29,33 +29,28 @@ internal interface HasNotReportedTestsDeterminer {
     class Impl : HasNotReportedTestsDeterminer {
 
         override fun determine(
-            runResult: com.avito.android.Result<List<SimpleRunTest>>,
+            runResult: List<SimpleRunTest>,
             allTests: List<TestStaticData>
         ): Result {
-            return runResult.fold(
-                { reportedTest ->
-                    val allReportedTests = reportedTest.map { TestStaticDataPackage.fromSimpleRunTest(it) }
+            val allReportedTests = runResult.map { TestStaticDataPackage.fromSimpleRunTest(it) }
 
-                    val notReportedTests = allTests.subtract(allReportedTests)
-                        .map { testMetadata ->
-                            AndroidTest.Lost.fromTestMetadata(
-                                testStaticData = testMetadata,
-                                startTime = 0,
-                                lastSignalTime = 0,
-                                stdout = "",
-                                stderr = "",
-                                incident = null
-                            )
-                        }
+            val notReportedTests = allTests.subtract(allReportedTests)
+                .map { testMetadata ->
+                    AndroidTest.Lost.fromTestMetadata(
+                        testStaticData = testMetadata,
+                        startTime = 0,
+                        lastSignalTime = 0,
+                        stdout = "",
+                        stderr = "",
+                        incident = null
+                    )
+                }
 
-                    if (notReportedTests.isEmpty()) {
-                        Result.AllTestsReported
-                    } else {
-                        Result.HasNotReportedTests(lostTests = notReportedTests)
-                    }
-                },
-                { exception -> Result.DetermineError(exception = exception) }
-            )
+            return if (notReportedTests.isEmpty()) {
+                Result.AllTestsReported
+            } else {
+                Result.HasNotReportedTests(lostTests = notReportedTests)
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
+import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
 
@@ -112,8 +113,10 @@ internal class AvitoReport(
         }
     }
 
-    override fun getTests(): Result<List<SimpleRunTest>> {
-        return reportsApi.getTestsForRunId(reportCoordinates)
+    override fun getTests(initialSuiteFilter: List<TestName>): Result<List<SimpleRunTest>> {
+        return reportsApi.getTestsForRunId(reportCoordinates).map { list ->
+            list.filter { TestName(it.className, it.methodName) in initialSuiteFilter }
+        }
     }
 
     private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) {

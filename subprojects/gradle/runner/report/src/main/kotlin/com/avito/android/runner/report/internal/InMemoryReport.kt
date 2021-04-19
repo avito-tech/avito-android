@@ -7,6 +7,7 @@ import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.TestStatusFinalizer
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
+import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
 
@@ -47,7 +48,7 @@ internal class InMemoryReport(
     }
 
     @Synchronized
-    override fun getTests(): Result<List<SimpleRunTest>> {
+    override fun getTests(initialSuiteFilter: List<TestName>): Result<List<SimpleRunTest>> {
         val result = testAttempts
             .groupBy { testAttempt ->
                 "${testAttempt.name};${testAttempt.device}"

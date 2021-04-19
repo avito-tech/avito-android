@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.finalizer
 
+import com.avito.android.runner.report.Report
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
@@ -22,30 +23,39 @@ internal interface InstrumentationTestActionFinalizer {
         private val actions: List<FinalizeAction>,
         private val buildFailer: BuildFailer,
         private val params: InstrumentationTestsAction.Params,
+        private val report: Report
     ) : InstrumentationTestActionFinalizer {
 
         override fun finalize(testsExecutionResults: TestsScheduler.Result) {
-            val testRunResult = TestRunResult(
-                reportedTests = testsExecutionResults.testsResult.getOrElse { emptyList() },
-                failed = hasFailedTestDeterminer.determine(
-                    runResult = testsExecutionResults.testsResult
-                ),
-                notReported = hasNotReportedTestsDeterminer.determine(
-                    runResult = testsExecutionResults.testsResult,
-                    allTests = testsExecutionResults.testSuite.testsToRun.map { it.test }
-                )
-            )
 
-            actions.forEach { it.action(testRunResult) }
+            val reportedTestsResult = report.getTests(testsExecutionResults.testSuite.testsToRun.map { it.test.name })
 
-            when (testRunResult.verdict) {
-                is TestRunResult.Verdict.Success -> {
-                    // empty
+            reportedTestsResult
+                .onSuccess { tests ->
+                    val testRunResult = TestRunResult(
+                        reportedTests = tests,
+                        failed = hasFailedTestDeterminer.determine(runResult = tests),
+                        notReported = hasNotReportedTestsDeterminer.determine(
+                            runResult = tests,
+                            allTests = testsExecutionResults.testSuite.testsToRun.map { it.test }
+                        )
+                    )
+
+                    actions.forEach { it.action(testRunResult) }
+
+                    when (testRunResult.verdict) {
+                        is TestRunResult.Verdict.Success -> {
+                            // empty
+                        }
+                        is TestRunResult.Verdict.Failure ->
+                            buildFailer.failBuild(
+                                "Instrumentation task failed. Look at verdict in the file: ${params.verdictFile}"
+                            )
+                    }
                 }
-                is TestRunResult.Verdict.Failure -> buildFailer.failBuild(
-                    "Instrumentation task failed. Look at verdict in the file: ${params.verdictFile}"
-                )
-            }
+                .onFailure { throwable ->
+                    buildFailer.failBuild("Instrumentation task failed. Can't get test results", throwable)
+                }
         }
     }
 }

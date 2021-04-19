@@ -59,17 +59,14 @@ internal class InstrumentationTestsScheduler(
 
         writeTestSuite(testSuite)
 
-        val testsResult = testsRunner.runTests(
+        testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
             report = sourceReport,
             testsToRun = testSuite.testsToRun
         )
 
-        return TestsScheduler.Result(
-            testSuite = testSuite,
-            testsResult = testsResult
-        )
+        return TestsScheduler.Result(testSuite = testSuite)
     }
 
     private fun writeParsedTests(parsedTests: Result<List<TestInApk>>) {

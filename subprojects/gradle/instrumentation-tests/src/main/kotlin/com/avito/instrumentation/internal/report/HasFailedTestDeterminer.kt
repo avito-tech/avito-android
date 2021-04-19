@@ -5,9 +5,7 @@ import com.avito.report.model.SimpleRunTest
 
 internal interface HasFailedTestDeterminer {
 
-    fun determine(
-        runResult: com.avito.android.Result<List<SimpleRunTest>>
-    ): Result
+    fun determine(runResult: List<SimpleRunTest>): Result
 
     sealed class Result {
 
@@ -52,43 +50,33 @@ internal interface HasFailedTestDeterminer {
         private val suppressFlaky: Boolean
     ) : HasFailedTestDeterminer {
 
-        override fun determine(
-            runResult: com.avito.android.Result<List<SimpleRunTest>>
-        ): Result {
+        override fun determine(runResult: List<SimpleRunTest>): Result {
+            val failedTests = runResult.filter { !it.status.isSuccessful }
+            val hasFailedTests = failedTests.isNotEmpty()
 
-            return runResult.fold(
-                { testData ->
-                    val failedTests = testData.filter { !it.status.isSuccessful }
-                    val hasFailedTests = failedTests.isNotEmpty()
-
+            return when {
+                hasFailedTests ->
                     when {
-                        hasFailedTests ->
-                            when {
-                                suppressFailure -> {
-                                    Result.Failed(
-                                        failed = failedTests,
-                                        suppression = Result.Failed.Suppression.SuppressedAll(
-                                            tests = failedTests
-                                        )
-                                    )
-                                }
-                                suppressFlaky -> {
-                                    Result.Failed(
-                                        failed = failedTests,
-                                        suppression = Result.Failed.Suppression.SuppressedFlaky(
-                                            tests = failedTests.filter { it.flakiness is Flakiness.Flaky }
-                                        )
-                                    )
-                                }
-                                else -> Result.Failed(failed = failedTests)
-                            }
-                        else -> Result.NoFailed
+                        suppressFailure -> {
+                            Result.Failed(
+                                failed = failedTests,
+                                suppression = Result.Failed.Suppression.SuppressedAll(
+                                    tests = failedTests
+                                )
+                            )
+                        }
+                        suppressFlaky -> {
+                            Result.Failed(
+                                failed = failedTests,
+                                suppression = Result.Failed.Suppression.SuppressedFlaky(
+                                    tests = failedTests.filter { it.flakiness is Flakiness.Flaky }
+                                )
+                            )
+                        }
+                        else -> Result.Failed(failed = failedTests)
                     }
-                },
-                { exception ->
-                    Result.DetermineError(exception)
-                }
-            )
+                else -> Result.NoFailed
+            }
         }
     }
 }

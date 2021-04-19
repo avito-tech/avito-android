@@ -103,7 +103,8 @@ internal interface FinalizerFactory {
                 hasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
                 params = params,
                 buildFailer = buildFailer,
-                actions = actions
+                actions = actions,
+                report = reportFactory.createReport() // todo pass report from constructor
             )
         }
     }
