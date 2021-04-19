@@ -306,7 +306,7 @@ data class AdbDevice(
         }
     )
 
-    override fun pull(from: Path, to: Path): Result<Unit> = retryAction.retry(
+    override fun pull(from: Path, to: Path): Result<File> = retryAction.retry(
         retriesCount = DEFAULT_RETRY_COUNT,
         delaySeconds = DEFAULT_DELAY_SEC,
         action = {
@@ -328,6 +328,8 @@ data class AdbDevice(
                     "Failed to pull file from ${from.toAbsolutePath()} to ${to.toAbsolutePath()}. " +
                         "Result file: ${resultFile.absolutePath} not found."
                 )
+            } else {
+                to.toFile()
             }
         },
         onError = { attempt: Int, throwable: Throwable, durationMs: Long ->

@@ -3,7 +3,7 @@ package com.avito.report
 import com.avito.android.Result
 import java.io.File
 
-interface ReportFileProvider {
+interface TestArtifactsProvider {
 
     val rootDir: Lazy<File>
 

@@ -16,7 +16,6 @@ import com.avito.runner.service.worker.listener.MessagesDeviceListener
 import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.launch
@@ -44,7 +43,6 @@ class IntentionExecutionServiceImplementation(
     private val deviceSignals: Channel<Device.Signal> =
         Channel(Channel.UNLIMITED)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun start(scope: CoroutineScope): IntentionExecutionService.Communication {
         scope.launch(CoroutineName("intention-execution-service")) {
             launch(CoroutineName("device-workers")) {
@@ -53,6 +51,7 @@ class IntentionExecutionServiceImplementation(
                         intentionsRouter = intentionsRouter,
                         device = device,
                         outputDirectory = outputDirectory,
+                        testListener = testListener,
                         deviceListener = CompositeDeviceListener(
                             listOf(
                                 MessagesDeviceListener(messages),
@@ -60,9 +59,8 @@ class IntentionExecutionServiceImplementation(
                                 deviceMetricsListener
                             )
                         ),
-                        testListener = testListener,
-                        dispatchers = deviceWorkersDispatcher,
-                        timeProvider = timeProvider
+                        timeProvider = timeProvider,
+                        dispatchers = deviceWorkersDispatcher
                     ).run(scope)
                 }
                 throw IllegalStateException("devices channel was closed")

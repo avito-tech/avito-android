@@ -1,13 +1,10 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
-import com.avito.report.ReportFileProviderFactory
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
-import com.github.salomonbrys.kotson.fromJson
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -15,10 +12,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileReader
 
 internal class TestArtifactsProcessorImpl(
-    private val gson: Gson,
+    private val reportParser: ReportParser,
     private val testArtifactsUploader: TestArtifactsUploader,
     private val dispatcher: CoroutineDispatcher,
     private val logcatProcessor: LogcatProcessor
@@ -30,23 +26,18 @@ internal class TestArtifactsProcessorImpl(
         logcatBuffer: LogcatBuffer?
     ): Result<AndroidTest> {
 
-        val reportFileProvider = ReportFileProviderFactory.create(
-            testReportRootDir = lazy { reportDir },
-            testStaticData = testStaticData
-        )
+        val reportFileProvider = TestArtifactsProviderFactory.createForTempDir(reportDir)
 
         val reportArtifactsUploader = ReportArtifactsUploader(
             testArtifactsUploader = testArtifactsUploader,
-            reportFileProvider = reportFileProvider
+            testArtifactsProvider = reportFileProvider
         )
 
         val scope = CoroutineScope(CoroutineName("test-artifacts-${testStaticData.name}") + dispatcher)
 
-        return reportFileProvider.provideReportFile().map { reportJson ->
-
-            val testRuntimeData: TestRuntimeData = gson.fromJson<TestRuntimeDataPackage>(
-                FileReader(reportJson)
-            )
+        return reportFileProvider.provideReportFile().flatMap { reportJson ->
+            reportParser.parse(reportJson)
+        }.map { testRuntimeData ->
 
             runBlocking {
                 withContext(scope.coroutineContext) {

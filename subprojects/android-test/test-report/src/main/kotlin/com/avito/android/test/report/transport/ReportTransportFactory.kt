@@ -3,8 +3,8 @@ package com.avito.android.test.report.transport
 import com.avito.filestorage.RemoteStorage
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
-import com.avito.report.ReportFileProvider
 import com.avito.report.ReportsApiFactory
+import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.DeviceName
 import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.ReportCoordinates
@@ -17,14 +17,14 @@ class ReportTransportFactory(
     private val loggerFactory: LoggerFactory,
     private val remoteStorage: RemoteStorage,
     private val httpClientProvider: HttpClientProvider,
-    reportFileProvider: ReportFileProvider
+    testArtifactsProvider: TestArtifactsProvider
 ) {
 
     private val externalStorageTransport = ExternalStorageTransport(
         gson = gson,
         timeProvider = timeProvider,
         loggerFactory = loggerFactory,
-        reportFileProvider = reportFileProvider
+        testArtifactsProvider = testArtifactsProvider
     )
 
     fun create(
