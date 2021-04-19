@@ -7,8 +7,7 @@ import com.avito.android.test.report.model.createStubInstance
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.TestArtifactsProvider
-import com.avito.report.TestDirGenerator
-import com.avito.report.internal.UniqueDirTestArtifactsProvider
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
@@ -79,12 +78,10 @@ internal class ExternalStorageTransportTest {
         rootDir: File,
         testMetadata: TestMetadata
     ): TestArtifactsProvider {
-        return UniqueDirTestArtifactsProvider(
-            lazy { rootDir },
-            testDirGenerator = TestDirGenerator.Impl(
-                className = testMetadata.className,
-                methodName = testMetadata.methodName!!
-            )
+        return TestArtifactsProviderFactory.create(
+            testReportRootDir = lazy { rootDir },
+            className = testMetadata.className,
+            methodName = testMetadata.methodName!!
         )
     }
 }
