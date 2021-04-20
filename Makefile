@@ -204,22 +204,23 @@ unsafe_clear_local_branches:
 	git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | \
 	awk '{print $$1}' | xargs git branch -D
 
-# precondition:
+# Precondition:
 # - installed CLI: https://cli.github.com/
 # - push $(version) branch
 #
-# post actions:
-# - go to link in output
-# - edit notes
-# - publish release
+# Post actions:
+# - Go to a link in output
+# - Edit notes
+# - Publish the release
 draft_release:
 	$(call check_defined, version)
 	$(call check_defined, prev_version)
+	git fetch --all
 	gh release create $(version) \
 		--draft \
 		--target $(version) \
 		--title $(version) \
-		--notes "$$(git log --pretty=format:%s $(prev_version)..$(version) | cat)"
+		--notes "$$(git log --pretty=format:%s origin/$(prev_version)..origin/$(version) | cat)"
 
 dynamic_properties:
 	$(eval keepFailedTestsFromReport?=)
