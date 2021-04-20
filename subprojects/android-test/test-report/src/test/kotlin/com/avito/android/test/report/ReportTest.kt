@@ -35,7 +35,7 @@ class ReportTest {
 
     @Test
     fun `report incident - step chain`() {
-        report.registerIncident(
+        report.stepFailed(
             StepException(
                 false,
                 "Тапнуть по кнопка",
@@ -55,7 +55,7 @@ class ReportTest {
     }
 
     @Test
-    fun `report incident - resourceManager chain`() {
+    fun `failed test case - resourceManager chain`() {
         val gson = Gson()
         val chain = listOf(
             IncidentElement(
@@ -89,7 +89,7 @@ class ReportTest {
             )
         )
 
-        report.registerIncident(
+        report.failedTestCase(
             exception = ResourceManagerException(
                 message = "Resource manager error: http://host.ru (https://host.ru/some/thing)",
                 cause = null,
