@@ -2,8 +2,8 @@
 
 About minimization: [link](https://developer.android.com/studio/build/shrink-code)
 
-We want to run UI tests against build as close as possible to a production one.\
-It's quite a challenging task, mostly because of tooling problems: [#126429384](https://issuetracker.google.com/issues/126429384)\
+We want to run UI tests against build as close as possible to a production one.  
+It's quite a challenging task, mostly because of tooling problems: [#126429384](https://issuetracker.google.com/issues/126429384).  
 Developers should maintain a list of keep rules of code referenced from a test app manually.
 
 We work around these problems by using [keeper](https://slackhq.github.io/keeper/).
@@ -12,7 +12,7 @@ We work around these problems by using [keeper](https://slackhq.github.io/keeper
 
 Android Gradle plugin uses `testBuildType` property to determine which build type to test.
 
-We chose `stagingAutoTest` as a type to test against in CI environment.\
+We chose `stagingAutoTest` as a type to test against in CI environment.  
 However local builds defaults to `debug` type for faster test writing cycle.
 
 Developer who wants to reproduce test problem specific to CI locally, should temporary change `<app name>.testBuildType` property
@@ -26,7 +26,7 @@ You can check an example in the `:test-app` module.
 
 ### Dynamically referenced resources
 
-You can see in `PageObjectTest`, that we referenced `R.layout.page_object_1`, dynamically creating layout.\
+You can see in `PageObjectTest`, that we referenced `R.layout.page_object_1`, dynamically creating layout.  
 These layouts referenced nowhere in app code, so if `shrinkResources` enabled you will face strange error:
 
 ```text
@@ -71,8 +71,8 @@ buildscript {
 ???+ info 
     For versions check tags here: [https://r8.googlesource.com/r8/](https://r8.googlesource.com/r8/)
 
-    Seems like 1.5 versions bundled with AGP 3.5.x\
-    1.6 -> 3.6.x\
+    Seems like 1.5 versions bundled with AGP 3.5.x  
+    1.6 -> 3.6.x  
     and 2.0 -> 4.0.x
 
 ???+ warning 
@@ -86,7 +86,7 @@ buildscript {
 
 ### Still NoSuchMethodError
 
-Take a look at module `:subprojects:android-test:keep-for-testing` for additional keep annotations.\
+Take a look at module `:subprojects:android-test:keep-for-testing` for additional keep annotations.  
 It's a workaround described here: [Issue #143419092](https://issuetracker.google.com/issues/143419092#comment4)
 
 You still need to add proguard rules as pointed in annotation classes comments.
