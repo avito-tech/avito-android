@@ -3,10 +3,12 @@ package com.avito.android.test.report
 import com.avito.android.Result
 import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
+import com.avito.android.test.report.StepDslExtension.delegate
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.transport.StubTransport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
+import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.Flakiness
@@ -28,16 +30,26 @@ class ReportTestExtension(
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotCapturer: ScreenshotCapturer = mock(),
     private val loggerFactory: LoggerFactory = StubLoggerFactory,
-    private val report: Report = ReportImplementation(
+    private val report: ReportImplementation = ReportImplementation(
         loggerFactory = loggerFactory,
         transport = StubTransport,
         screenshotCapturer = screenshotCapturer,
         timeProvider = timeProvider,
         troubleshooter = NoOp
     )
-) : BeforeEachCallback, Report by report {
+) : BeforeEachCallback,
+    InternalReport by report {
+
+    private val executor = StepDslDelegateImpl(
+        reportLifecycle = report,
+        stepModelFactory = report
+    )
+
+    val currentState: ReportState
+        get() = report.currentState
 
     override fun beforeEach(context: ExtensionContext) {
+        delegate = executor
         mockInterceptor.addRule(
             Rule.Builder()
                 .post()

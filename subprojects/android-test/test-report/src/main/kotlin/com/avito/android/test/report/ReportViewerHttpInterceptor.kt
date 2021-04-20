@@ -19,11 +19,9 @@ import java.util.concurrent.TimeUnit
  * Intercepts http requests with side-effect: append log entry to current test step
  */
 class ReportViewerHttpInterceptor(
-    private val reportProvider: ReportProvider,
+    private val report: Report,
     private val remoteFileStorageEndpointHost: String
 ) : Interceptor {
-
-    private val report: Report by lazy { reportProvider.report }
 
     private val prettifier = GsonBuilder()
         .setPrettyPrinting()

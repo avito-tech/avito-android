@@ -5,9 +5,9 @@ class StepException(
     val action: String,
     val assertion: String?,
     cause: Throwable?
-) : ReporterException(
-    message = title(isPrecondition) + "\n" + data(isPrecondition, action, assertion),
-    cause = cause
+) : RuntimeException(
+    title(isPrecondition) + "\n" + data(isPrecondition, action, assertion),
+    cause
 ) {
 
     companion object {

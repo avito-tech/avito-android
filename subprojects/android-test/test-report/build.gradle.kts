@@ -5,10 +5,14 @@ plugins {
 }
 
 dependencies {
+    api(project(":common:test-report-dsl"))
+    api(project(":common:file-storage"))
+    api(libs.espressoCore)
+    api(libs.appcompat)
+
     implementation(project(":common:okhttp"))
     implementation(project(":common:http-client"))
     implementation(project(":common:time"))
-    implementation(project(":common:file-storage"))
     implementation(project(":common:report-viewer"))
     implementation(project(":common:logger"))
     implementation(project(":common:elastic-logger"))
@@ -17,7 +21,11 @@ dependencies {
     implementation(project(":common:test-annotations"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":android-test:android-log"))
-    implementation(project(":android-test:ui-testing-core"))
+    implementation(libs.androidXTestCore)
+    // TODO delete
+    implementation(project(":android-test:ui-testing-core")) {
+        because("waitFor, getCurrentActivityOrNull")
+    }
     implementation(project(":android-test:resource-manager-exceptions"))
     implementation(project(":android-test:websocket-reporter"))
     implementation(libs.okio)

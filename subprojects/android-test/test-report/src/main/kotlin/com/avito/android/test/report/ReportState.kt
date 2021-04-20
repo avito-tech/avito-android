@@ -54,18 +54,23 @@ sealed class ReportState {
             }
 
             internal fun sortStepEntries() {
-                preconditionStepList.forEach {
-                    it.entryList = it.entryList
-                        .sortedBy { it.timeInSeconds }
-                        .distinctCounted()
-                        .toMutableList()
-                }
-                testCaseStepList.forEach {
-                    it.entryList = it.entryList
-                        .sortedBy { it.timeInSeconds }
-                        .distinctCounted()
-                        .toMutableList()
-                }
+                preconditionStepList = preconditionStepList.map {
+                    it.copy(
+                        entryList = it.entryList
+                            .sortedBy { it.timeInSeconds }
+                            .distinctCounted()
+                            .toMutableList()
+                    )
+                }.toMutableList()
+
+                testCaseStepList = testCaseStepList.map {
+                    it.copy(
+                        entryList = it.entryList
+                            .sortedBy { it.timeInSeconds }
+                            .distinctCounted()
+                            .toMutableList()
+                    )
+                }.toMutableList()
             }
 
             private data class Counted<T>(val t: T, var count: Int = 1)

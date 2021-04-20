@@ -2,6 +2,7 @@ package com.avito.android.test.report
 
 import androidx.annotation.VisibleForTesting
 import androidx.test.espresso.EspressoException
+import com.avito.android.Result
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
 import com.avito.android.test.report.incident.IncidentChainFactory
@@ -15,6 +16,7 @@ import com.avito.android.test.report.listener.StepLifecycleListener
 import com.avito.android.test.report.listener.StepLifecycleNotifier
 import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.android.test.report.listener.TestLifecycleNotifier
+import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
@@ -22,7 +24,6 @@ import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
-import com.avito.filestorage.RemoteStorage.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
@@ -45,20 +46,21 @@ class ReportImplementation(
     private val screenshotCapturer: ScreenshotCapturer,
     private val timeProvider: TimeProvider,
     private val troubleshooter: Troubleshooter
-) : Report,
+) : InternalReport,
+    ReportStepModelFactory<StepResult>,
     StepLifecycleListener by StepLifecycleNotifier,
     TestLifecycleListener by TestLifecycleNotifier,
     PreconditionLifecycleListener by PreconditionLifecycleNotifier {
 
-    private val logger = loggerFactory.create<Report>()
+    private val logger = loggerFactory.create<InternalReport>()
 
     /**
      * Entries that occurred before first step/precondition
      */
     private val earlyEntries = mutableListOf<Entry>()
-    private val earlyFuturesUploads = mutableListOf<FutureValue<Result>>()
+    private val earlyFuturesUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
 
-    private val incidentFutureUploads = mutableListOf<FutureValue<Result>>()
+    private val incidentFutureUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
 
     private var state: ReportState = ReportState.Nothing
 
@@ -66,47 +68,50 @@ class ReportImplementation(
     val currentState: ReportState
         get() = state
 
-    override val isFirstStepOrPrecondition: Boolean
-        get() = state.isFirstStepOrPrecondition
-
     override val isWritten: Boolean
         get() = currentState is ReportState.Written
 
-    @Synchronized
-    override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
-        checkStateIs<ReportState.Nothing>()
-        state = ReportState.Initialized.NotStarted(testMetadata)
-    }
+    override val isFirstStep: Boolean
+        get() = state.isFirstStepOrPrecondition
 
     @Synchronized
-    override fun startTestCase(): Unit = methodExecutionTracing("startTestCase") {
-        val currentState = getCastedState<ReportState.Initialized.NotStarted>()
-
-        val started = ReportState.Initialized.Started(
-            testMetadata = currentState.testMetadata,
-            currentStep = null,
-            incident = null,
-            stepNumber = 0,
-            preconditionNumber = 0,
-            startTime = timeProvider.nowInSeconds()
+    override fun createStepModel(stepName: String): StepResult {
+        val currentState = getCastedState<ReportState.Initialized.Started>()
+        return StepResult(
+            isSynthetic = false,
+            title = stepName,
+            timestamp = timeProvider.nowInSeconds(),
+            number = currentState.stepNumber++
         )
-        state = started
-        beforeTestStart(started)
     }
 
     @Synchronized
-    override fun updateTestCase(update: ReportState.Initialized.Started.() -> Unit): Unit =
-        methodExecutionTracing("updateTestCase") {
-            val currentState = getCastedState<ReportState.Initialized.Started>()
-            beforeTestUpdate(currentState)
-            update(currentState)
-            afterTestUpdate(currentState)
-        }
+    override fun createPreconditionModel(stepName: String): StepResult {
+        val currentState = getCastedState<ReportState.Initialized.Started>()
+        return StepResult(
+            isSynthetic = false,
+            title = stepName,
+            timestamp = timeProvider.nowInSeconds(),
+            number = currentState.preconditionNumber++
+        )
+    }
+
+    @Synchronized
+    override fun registerIncident(exception: Throwable) {
+        registerIncident(exception, null)
+    }
 
     @Synchronized
     override fun registerIncident(
         exception: Throwable,
-        screenshot: FutureValue<Result>?,
+        screenshotName: String
+    ) {
+        registerIncident(exception, makeScreenshot(screenshotName).getOrElse { null })
+    }
+
+    private fun registerIncident(
+        exception: Throwable,
+        screenshot: FutureValue<RemoteStorage.Result>?
     ) = methodExecutionTracing("registerIncident") {
         val currentState = getCastedState<ReportState.Initialized>(cause = exception)
 
@@ -132,24 +137,13 @@ class ReportImplementation(
         }
     }
 
-    private fun createIncidentChainFactory() = IncidentChainFactory.Impl(
-        customViewPresenters = setOf(
-            TestCaseIncidentPresenter(),
-            RequestIncidentPresenter(),
-            ResourceIncidentPresenter(),
-            ResourceManagerIncidentPresenter(),
-            AppCrashIncidentPresenter()
-        ),
-        fallbackPresenter = FallbackIncidentPresenter()
-    )
-
     private fun addTroubleshootingEntries() {
         troubleshooter.troubleshootTo(this)
     }
 
     @Synchronized
-    override fun reportTestCase(): ReportState.Initialized.Started =
-        methodExecutionTracing("reportTestCase") {
+    override fun finishTestCase() {
+        methodExecutionTracing("finishTestCase") {
             val startedState = getCastedState<ReportState.Initialized.Started>()
             startedState.endTime = timeProvider.nowInSeconds()
 
@@ -169,9 +163,93 @@ class ReportImplementation(
                 incident?.appendFutureEntries()
                 writeTestCase()
             }
-
-            startedState
         }
+    }
+
+    @Synchronized
+    override fun failedTestCase(exception: Throwable) {
+        registerIncident(exception, "Failed test case")
+    }
+
+    @Synchronized
+    override fun setDataSet(value: DataSet) {
+        methodExecutionTracing("setDataSet") {
+            val currentState = getCastedState<ReportState.Initialized.Started>()
+            with(currentState) {
+                // todo почему -1 это вообще валидное значение? попробовать использовать unsigned тип данных
+                require(testMetadata.dataSetNumber != null && testMetadata.dataSetNumber != -1) {
+                    "Please specify @DataSetNumber(Int) for test ${testMetadata.testName}"
+                }
+                dataSet = value
+            }
+        }
+    }
+
+    @Synchronized
+    override fun stepFailed(exception: StepException) {
+        registerIncident(exception, "Screenshot после падения step")
+    }
+
+    @Synchronized
+    override fun preconditionFailed(exception: StepException) {
+        registerIncident(exception, "Screenshot после падения precondition")
+    }
+
+    @Synchronized
+    override fun addScreenshot(label: String) {
+        methodExecutionTracing("addScreenshot") {
+            val futureResult: Result<FutureValue<RemoteStorage.Result>?> =
+                screenshotCapturer.captureAsFile().map { screenshot: File? ->
+                    if (screenshot == null) {
+                        // no resumed activity, can't capture
+                        null
+                    } else {
+                        val initialized = getCastedState<ReportState.Initialized>()
+
+                        transport.sendContent(
+                            test = initialized.testMetadata,
+                            request = RemoteStorage.Request.FileRequest.Image(screenshot),
+                            comment = label
+                        )
+                    }
+                }
+
+            futureResult.fold(
+                { futureValue ->
+                    if (futureValue != null) {
+                        updateStep {
+                            futureUploads.add(futureValue)
+                        }
+                    }
+                },
+                { throwable ->
+                    logger.warn("Failed to update step with captured screenshot", throwable)
+                }
+            )
+        }
+    }
+
+    @Synchronized
+    override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
+        checkStateIs<ReportState.Nothing>()
+        state = ReportState.Initialized.NotStarted(testMetadata)
+    }
+
+    @Synchronized
+    override fun startTestCase(): Unit = methodExecutionTracing("startTestCase") {
+        val currentState = getCastedState<ReportState.Initialized.NotStarted>()
+
+        val started = ReportState.Initialized.Started(
+            testMetadata = currentState.testMetadata,
+            currentStep = null,
+            incident = null,
+            stepNumber = 0,
+            preconditionNumber = 0,
+            startTime = timeProvider.nowInSeconds()
+        )
+        state = started
+        beforeTestStart(started)
+    }
 
     @Synchronized
     override fun startPrecondition(step: StepResult): Unit =
@@ -183,8 +261,6 @@ class ReportImplementation(
                     "Preconditions inside steps are not supported."
             }
             currentState.currentStep = step
-            step.timestamp = timeProvider.nowInSeconds()
-            step.number = currentState.preconditionNumber++
             beforePreconditionStart(step)
         }
 
@@ -208,8 +284,6 @@ class ReportImplementation(
                 "Nested steps are not supported."
         }
         currentState.currentStep = step
-        step.timestamp = timeProvider.nowInSeconds()
-        step.number = currentState.stepNumber++
         beforeStepStart(step)
     }
 
@@ -223,42 +297,6 @@ class ReportImplementation(
         afterStepStop(currentStep)
         currentState.currentStep = null
     }
-
-    @Synchronized
-    override fun makeScreenshot(comment: String): FutureValue<Result>? =
-        methodExecutionTracing("makeScreenshot") {
-            val futureResult = screenshotCapturer.captureAsFile().map { screenshot: File? ->
-                if (screenshot == null) {
-                    // no resumed activity, can't capture
-                    null
-                } else {
-                    val initialized = getCastedState<ReportState.Initialized>()
-
-                    transport.sendContent(
-                        test = initialized.testMetadata,
-                        request = RemoteStorage.Request.FileRequest.Image(screenshot),
-                        comment = comment
-                    )
-                }
-            }
-
-            futureResult.fold(
-                { futureValue ->
-                    if (futureValue != null) {
-                        updateStep {
-                            futureUploads.add(futureValue)
-                        }
-                        futureValue
-                    } else {
-                        null
-                    }
-                },
-                { throwable ->
-                    logger.warn("Failed to update step with captured screenshot", throwable)
-                    null
-                }
-            )
-        }
 
     @Synchronized
     override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
@@ -311,11 +349,40 @@ class ReportImplementation(
     }
 
     @Synchronized
-    override fun addAssertion(assertionMessage: String) {
+    override fun addAssertion(label: String) {
         methodExecutionTracing("addAssertion") {
-            addEntry(Entry.Check(assertionMessage, timeProvider.nowInSeconds()))
+            addEntry(Entry.Check(label, timeProvider.nowInSeconds()))
         }
     }
+
+    private fun createIncidentChainFactory() = IncidentChainFactory.Impl(
+        customViewPresenters = setOf(
+            TestCaseIncidentPresenter(),
+            RequestIncidentPresenter(),
+            ResourceIncidentPresenter(),
+            ResourceManagerIncidentPresenter(),
+            AppCrashIncidentPresenter()
+        ),
+        fallbackPresenter = FallbackIncidentPresenter()
+    )
+
+    private fun makeScreenshot(comment: String): Result<FutureValue<RemoteStorage.Result>?> =
+        methodExecutionTracing("makeScreenshot") {
+            screenshotCapturer.captureAsFile().map { screenshot: File? ->
+                if (screenshot == null) {
+                    // no resumed activity, can't capture
+                    null
+                } else {
+                    val initialized = getCastedState<ReportState.Initialized>()
+
+                    transport.sendContent(
+                        test = initialized.testMetadata,
+                        request = RemoteStorage.Request.FileRequest.Image(screenshot),
+                        comment = comment
+                    )
+                }
+            }
+        }
 
     private fun updateStep(update: StepResult.() -> Unit) {
         val currentState = getCastedState<ReportState.Initialized.Started>()
@@ -398,9 +465,9 @@ class ReportImplementation(
         return copy(entryList = entryList + incidentFutureUploads.getInitializedEntries())
     }
 
-    private fun List<FutureValue<Result>>.getInitializedEntries(): List<Entry> =
+    private fun List<FutureValue<RemoteStorage.Result>>.getInitializedEntries(): List<Entry> =
         asSequence()
-            .map(FutureValue<Result>::get)
+            .map(FutureValue<RemoteStorage.Result>::get)
             .map {
                 Entry.File(
                     comment = it.comment,
@@ -415,12 +482,12 @@ class ReportImplementation(
         // false positive 'must be exhaustive' error in IDE,
         // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
         return when (this) {
-            is Result.Success -> try {
+            is RemoteStorage.Result.Success -> try {
                 FileAddress.URL(url.toHttpUrl())
             } catch (e: IllegalArgumentException) {
                 FileAddress.Error(e)
             }
-            is Result.Error -> FileAddress.Error(t)
+            is RemoteStorage.Result.Error -> FileAddress.Error(t)
         }
     }
 
