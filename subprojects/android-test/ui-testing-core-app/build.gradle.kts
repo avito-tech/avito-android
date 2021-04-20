@@ -46,6 +46,7 @@ dependencies {
     androidTestImplementation(project(":android-test:toast-rule"))
     androidTestImplementation(project(":android-test:ui-testing-core"))
     androidTestImplementation(project(":android-test:test-inhouse-runner"))
+    androidTestImplementation(project(":android-test:test-report"))
     androidTestImplementation(project(":common:junit-utils"))
     androidTestImplementation(project(":common:truth-extensions"))
     androidTestImplementation(project(":common:test-annotations"))
