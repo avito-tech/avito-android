@@ -9,8 +9,7 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
 import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
 import com.avito.report.TestArtifactsProvider
-import com.avito.report.TestDirGenerator
-import com.avito.report.internal.UniqueDirTestArtifactsProvider
+import com.avito.report.TestArtifactsProviderFactory
 import java.io.File
 import java.io.FileOutputStream
 
@@ -20,10 +19,7 @@ class ScreenshotCapturerImpl(private val testArtifactsProvider: TestArtifactsPro
     // todo remove in avito and then here
     @Suppress("unused")
     constructor(outputDirectory: Lazy<File>) : this(
-        testArtifactsProvider = UniqueDirTestArtifactsProvider(
-            rootDir = outputDirectory,
-            testDirGenerator = TestDirGenerator.Stub
-        )
+        testArtifactsProvider = TestArtifactsProviderFactory.createStub(outputDirectory)
     )
 
     override fun captureBitmap(): Result<Capture> {
