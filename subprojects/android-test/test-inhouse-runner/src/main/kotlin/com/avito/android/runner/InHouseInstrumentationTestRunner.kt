@@ -12,7 +12,6 @@ import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
-import com.avito.android.runner.delegates.MainLooperMessagesLogDelegate
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.stats.StatsDSender
@@ -35,9 +34,6 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
 import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
-import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumper
-import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumperImpl
-import com.avito.android.test.report.troubleshooting.dump.NoOpMainLooper
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.android.util.DeviceSettingsChecker
@@ -67,14 +63,6 @@ abstract class InHouseInstrumentationTestRunner :
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
-
-    private val mainLooperMessagesLogDumper: MainLooperMessagesLogDumper by lazy {
-        if (testRunEnvironment.asRunEnvironmentOrThrow().dumpMainLooperMessagesEnabled) {
-            MainLooperMessagesLogDumperImpl(timeProvider)
-        } else {
-            NoOpMainLooper
-        }
-    }
 
     private val httpClientProvider: HttpClientProvider by lazy {
         HttpClientProvider(
@@ -155,7 +143,7 @@ abstract class InHouseInstrumentationTestRunner :
             transport = reportTransport,
             screenshotCapturer = screenshotCapturer,
             timeProvider = timeProvider,
-            troubleshooter = Troubleshooter.Impl(mainLooperMessagesLogDumper)
+            troubleshooter = Troubleshooter.Impl()
         )
     }
 
@@ -199,7 +187,6 @@ abstract class InHouseInstrumentationTestRunner :
                     newElasticConfig = ElasticConfig.Disabled
                 )
             ),
-            MainLooperMessagesLogDelegate(mainLooperMessagesLogDumper)
         )
     }
 
