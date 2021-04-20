@@ -27,7 +27,7 @@ Click happens via dispatch touch event on root view.
 
 ##### Overlapped view click details
 
-We tried to validate that click happens. \
+We tried to validate that click happens.  
 We were able to check that clicked view wasn't overlapped, but faced scenario when user clicked on container and expected it to delegate click handling to child.
 We don't want to restrict our user, because many tests behave like that.
 
