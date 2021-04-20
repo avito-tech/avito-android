@@ -89,7 +89,7 @@ Don't know exact reason, delta between initial test suite and reported tests
 
 ### `no-file`
 
-Test report data pulled from device and then pushed to report service. \
+Test report data pulled from device and then pushed to report service.  
 These are cases when file was not found on device for some reason
 
 ### `parse-errors`
@@ -114,7 +114,7 @@ If catch unexpected error when executing `am instrument`
 
 ## `adb`
 
-Lower level metrics from AdbDevice, to observe device connection issues. \
+Lower level metrics from AdbDevice, to observe device connection issues.  
 It is count metrics, aggregated by time windows
 
 ### `get-sdk-property`.[ `success` / `error` / `failure` ]

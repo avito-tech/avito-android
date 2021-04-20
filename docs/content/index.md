@@ -24,5 +24,5 @@ Besides these modules you will find:
   [How we document](contributing/Documentation.md)
 
 ???+ info ""
-    You could see links to "internal" resources that are not available for non-employees (links.k.avito.ru).\
+    You could see links to "internal" resources that are not available for non-employees (links.k.avito.ru).  
     It has been done on purpose to have single documentation and show the whole picture.

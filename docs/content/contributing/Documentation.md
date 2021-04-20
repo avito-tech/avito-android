@@ -6,7 +6,7 @@ _If the documentation is not good enough, people will not use what you do._
 
 ### Write simply and to the point
 
-Documentation is intended to solve problems. Thus, it has to be simple and clear.\
+Documentation is intended to solve problems. Thus, it has to be simple and clear.  
 We can recommend several definitive guides on writing in general:
 
 - The Elements of Style - William Strunk Jr.
@@ -93,7 +93,7 @@ Naming:
 ---
 
 - Ориентация на практический результат: как решить проблему.
-- Ключевое отличие от tutorial: уже знакомы с продуктом.\
+- Ключевое отличие от tutorial: уже знакомы с продуктом.  
 Может адресовать проблему, которую новички могут даже не сформулировать.
 - Не объясняет концепции, может только ссылаться при необходимости.
 
@@ -108,7 +108,7 @@ Analogy: an overview article
 
 Naming: "Testing infrastructure in CI"
 
-- Ориентация на понимание, не решает конкретных практических задач.\
+- Ориентация на понимание, не решает конкретных практических задач.  
 Это самый свободный формат описания.
 - Описывает концепции, поясняет контекст и историю развития
 - Дает альтернативные подходы и мнения, поясняет мотивацию
@@ -304,7 +304,7 @@ There are two components in the system:
 
 ### Interaction with UI
 
-- Use bold text for describing menu items and `>` as separator\
+- Use bold text for describing menu items and `>` as separator.  
 Open **Preferences > Build, Execution, Deployment > Debugger**
 - Use exact words as shown in UI 
 

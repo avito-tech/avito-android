@@ -108,7 +108,7 @@ val task = project.tasks.register<TestTask>("testTask") {}
 task.get().doStuff()
 ```
 
-When you need to run a real build, use [Gradle Test Kit](https://docs.gradle.org/current/userguide/test_kit.html).\
+When you need to run a real build, use [Gradle Test Kit](https://docs.gradle.org/current/userguide/test_kit.html).  
 See ready utilities in `:test-project` module.
 
 #### Debugging
