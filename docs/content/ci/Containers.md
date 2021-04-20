@@ -10,7 +10,7 @@ avito-disclaimer.md
 
 ## Android SDK image
 
-This is the base image with Android Build Tools.\
+This is the base image with Android Build Tools.  
 It's not ready yet, see MBS-7071.
 
 ## Android builder image
@@ -23,7 +23,7 @@ This is the image for building and testing Android applications. It contains And
 
 === "In CI"
 
-    Run [Build android-builder (internal)](http://links.k.avito.ru/tmctAvitoAndroidBuilder) teamcity configuration.\
+    Run [Build android-builder (internal)](http://links.k.avito.ru/tmctAvitoAndroidBuilder) teamcity configuration.  
     You will see the tag in stdout:
     
     ```text
@@ -44,7 +44,7 @@ This is the image for building and testing Android applications. It contains And
     Successfully built eb4a3b67e564
     ```
     
-    To push the image you must have registry credentials in these envs: `DOCKER_LOGIN`, `DOCKER_PASSWORD` .\
+    To push the image you must have registry credentials in these envs: `DOCKER_LOGIN`, `DOCKER_PASSWORD` .  
     Without it the script will stop after building.
 
 1. [Upload the image to Docker Hub](#uploading-image-to-docker-hub)
@@ -56,14 +56,14 @@ This is the image for building and testing Android applications. It contains And
 
 ## Docker in docker image
 
-Утилитарный образ с докером внутри.\ 
+Утилитарный образ с докером внутри.  
 Используем внутри скриптов для создания и публикации других образов, прежде всего эмулятора.
 
 ### How to update itself?
 
-Образ собирает сам себя с помощью предыдущей версии образа (bootstrapping):\
-`./publish.sh docker-in-docker-image`\
-`publish.sh` - использует текущую версию образа\
+Образ собирает сам себя с помощью предыдущей версии образа (bootstrapping):  
+`./publish.sh docker-in-docker-image`  
+`publish.sh` - использует текущую версию образа  
 `docker-in-docker-image` - содержит изменения
 
 Если меняем контракт с окружением, то вносим правки поэтапно, чтобы прошлая версия образа могла собрать новую.
@@ -189,9 +189,9 @@ This is the image for building and testing Android applications. It contains And
 
 ### Как проверить регрессию?
 
-- Прогони instrumentation dynamic чтобы выявить возможную утечку памяти.\
+- Прогони instrumentation dynamic чтобы выявить возможную утечку памяти.  
 Для этого запусти компонентный тест с большим числом повторов.
-- Прогони fullCheck\
+- Прогони fullCheck  
 Сравни количество тестов по всем статусам, не стало ли больше упавших или потерянных.
 
 ### Как проверить сколько ресурсов тратит эмулятор?

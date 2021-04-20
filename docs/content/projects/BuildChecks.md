@@ -155,7 +155,7 @@ See also [Android application checks](#android-application-checks).
 The Java version can influence the output of the Java compiler. It leads to
 Gradle [remote cache misses](https://guides.gradle.org/using-build-cache/#diagnosing_cache_miss)
 due
-to [Java version tracking](https://docs.gradle.org/nightly/userguide/common_caching_problems.html#java_version_tracking).\
+to [Java version tracking](https://docs.gradle.org/nightly/userguide/common_caching_problems.html#java_version_tracking).  
 This check forces the same major version for all builds.
 
 === "Kotlin"
@@ -182,7 +182,7 @@ This check forces the same major version for all builds.
 
 #### Android SDK version
 
-Android build tools uses android.jar (`$ANDROID_HOME/platforms/android-<compileSdkVersion>/android.jar`).\
+Android build tools uses android.jar (`$ANDROID_HOME/platforms/android-<compileSdkVersion>/android.jar`).  
 The version can be specified only without a revision ([#117789774](https://issuetracker.google.com/issues/117789774)).
 Different revisions lead to Gradle remote cache misses. This check forces the same revision:
 
