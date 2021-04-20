@@ -25,8 +25,8 @@ class MarkReportAsSourceAction(
     fun mark(reportCoordinates: ReportCoordinates) {
         val testSuiteVersion = timeProvider.nowInMillis()
 
-        reportsApi.getReport(reportCoordinates).fold(
-            onSuccess = { report ->
+        reportsApi.getReport(reportCoordinates)
+            .map { report ->
                 reportsApi.pushPreparedData(
                     reportId = report.id,
                     analyzerKey = "test_suite",
@@ -34,29 +34,22 @@ class MarkReportAsSourceAction(
                         "full" to true,
                         "version" to testSuiteVersion
                     )
-                ).fold(
-                    {
-                        reportsApi.setFinished(reportCoordinates).fold(
-                            {
-                                logger.info(
-                                    "Test suite for tms version $testSuiteVersion, " +
-                                        "with id: ${report.id}, " +
-                                        "coordinates: $reportCoordinates marked as source of truth for tms"
-                                )
-                            },
-                            { error ->
-                                logger.critical("Can't finish report for coordinates: $reportCoordinates", error)
-                            }
-                        )
-                    },
-                    { error ->
-                        logger.critical("Can't push prepared data: testSuite info", error)
-                    }
                 )
-            },
-            onFailure = { throwable ->
-                logger.critical("Can't find report for runId=${reportCoordinates.runId}", throwable)
+                report
             }
-        )
+            .map { report ->
+                reportsApi.setFinished(reportCoordinates)
+                report
+            }
+            .onSuccess { report ->
+                logger.info(
+                    "Test suite for tms version $testSuiteVersion, " +
+                        "with id: ${report.id}, " +
+                        "coordinates: $reportCoordinates marked as source of truth for tms"
+                )
+            }
+            .onFailure { throwable ->
+                logger.critical("Can't mark test suite for tms; runId=${reportCoordinates.runId}", throwable)
+            }
     }
 }

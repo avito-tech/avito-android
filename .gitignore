@@ -1,6 +1,4 @@
 .gradle/
-.idea/
-*.iml
 build/
 local.properties
 .pytest_cache
@@ -9,3 +7,7 @@ public/
 .DS_Store
 outputs/
 gh-pages-generated/
+# idea
+*.iml
+.idea/*
+!.idea/dictionaries/

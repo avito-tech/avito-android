@@ -1,5 +1,6 @@
 package com.avito.runner.scheduler.listener
 
+import com.avito.android.Result
 import com.avito.runner.millisecondsToHumanReadableTime
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
@@ -25,8 +26,7 @@ internal class LogListener : TestListener {
         result: TestCaseRun.Result,
         durationMilliseconds: Long,
         executionNumber: Int,
-        testMetadataDirectory: File,
-        testFolder: String
+        testArtifactsDir: Result<File>
     ) {
         val status = when (result) {
             is TestCaseRun.Result.Passed -> "PASSED"

@@ -104,7 +104,7 @@ open class StubDevice(
         return result
     }
 
-    override fun pull(from: Path, to: Path): Result<Unit> {
+    override fun pull(from: Path, to: Path): Result<File> {
 
         logger.debug("pull called [from: $from to: $to]")
 
@@ -130,9 +130,9 @@ open class StubDevice(
 
             resultFile.writeText(gson.toJson(testRuntimeData))
 
-            Result.Success(Unit)
+            Result.Success(to.toFile())
         } else {
-            Result.Success(Unit)
+            Result.Success(to.toFile())
         }
     }
 
