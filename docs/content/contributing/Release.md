@@ -14,9 +14,7 @@ We publish releases to Maven Central: [com.avito.android](https://search.maven.o
 
 1. Check if [diff against the last release](https://github.com/avito-tech/avito-android/compare/2021.%3CINSERT_HERE_THE_LAST_RELEASE%3E...develop) contains any changes for users.
 If not, then probably there are no reasons to make a release.
-1. Check current status of [Infra Gradle plugins configuration compatibility with Avito](http://links.k.avito.ru/80).\
-If it is `Failed` you could release from previous `Succeed` commits or fix compatibility problems.
-1. Check current status of [Nightly Avito integration build](http://links.k.avito.ru/gZ).\
+1. Check the current status of [Nightly Avito integration build](http://links.k.avito.ru/gZ).  
 If it is `Failed` you could release from previous `Succeed` commits or fix problems.
 1. Checkout a `release branch` with a name equals to `projectVersion`. For example, `2021.9`.  
 This branch must be persistent. It is used for automation.
