@@ -30,7 +30,7 @@ public fun Report.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-internal fun com.avito.android.runner.report.AvitoReport.Companion.createStubInstance(
+internal fun LegacyReport.Companion.createStubInstance(
     reportsApi: ReportsApi,
     loggerFactory: LoggerFactory = StubLoggerFactory,
     batchSize: Int = 1,
@@ -46,7 +46,7 @@ internal fun com.avito.android.runner.report.AvitoReport.Companion.createStubIns
     timeProvider = timeProvider
 )
 
-public class StubReport : Report, com.avito.android.runner.report.AvitoReport, ReadReport {
+public class StubReport : Report, LegacyReport {
 
     public var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
 
@@ -55,6 +55,8 @@ public class StubReport : Report, com.avito.android.runner.report.AvitoReport, R
     public var reportId: String? = null
 
     public var getTestsResult: Result<List<SimpleRunTest>> = Result.Success(emptyList())
+
+    public var getTests: List<AndroidTest> = emptyList()
 
     override fun addTest(test: AndroidTest) {
         TODO("not implemented")
@@ -73,5 +75,9 @@ public class StubReport : Report, com.avito.android.runner.report.AvitoReport, R
 
     override fun getTests(initialSuiteFilter: List<TestName>): Result<List<SimpleRunTest>> {
         return getTestsResult
+    }
+
+    override fun getTests(): List<AndroidTest> {
+        return getTests
     }
 }

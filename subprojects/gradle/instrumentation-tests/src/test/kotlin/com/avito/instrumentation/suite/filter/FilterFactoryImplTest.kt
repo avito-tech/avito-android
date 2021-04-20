@@ -25,7 +25,7 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData is empty then filters always contains ExcludedBySdk and ExcludeAnnotationFilter`() {
-        val factory = FilterFactoryFactory.create()
+        val factory = StubFilterFactory.create()
 
         val filter = factory.createFilter() as CompositionFilter
 
@@ -39,7 +39,7 @@ internal class FilterFactoryImplTest {
     @Test
     fun `when filterData contains included annotations then filters have IncludeAnnotationFilter`() {
         val annotation = "Annotation"
-        val factory = FilterFactoryFactory.create(
+        val factory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 annotations = Filter.Value(
                     included = setOf(annotation),
@@ -58,7 +58,7 @@ internal class FilterFactoryImplTest {
     fun `when filterData contains prefixes then filters have IncludeBySignatures, ExcludeBySignatures`() {
         val includedPrefix = "included_prefix"
         val excludedPrefix = "excluded_prefix"
-        val factory = FilterFactoryFactory.create(
+        val factory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 prefixes = Filter.Value(
                     included = setOf(includedPrefix),
@@ -95,7 +95,7 @@ internal class FilterFactoryImplTest {
     @Suppress("MaxLineLength")
     @Test
     fun `when filterData includePrevious statuses and Report return list without that status then filters contain IncludeTestSignaturesFilters#Previous with empty signatures`() {
-        val factory = FilterFactoryFactory.create(
+        val factory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = setOf(RunStatus.Failed),
@@ -119,57 +119,11 @@ internal class FilterFactoryImplTest {
 
     @Suppress("MaxLineLength")
     @Test
-    fun `when filterData includePrevious statuses and Report return list then filters contain IncludeTestSignaturesFilters#Previous with included statuses`() {
-        val report = StubReport()
-        report.getTestsResult = Result.Success(
-            listOf(
-                SimpleRunTest.createStubInstance(
-                    name = "test1",
-                    deviceName = "25",
-                    status = Status.Success
-                ),
-                SimpleRunTest.createStubInstance(
-                    name = "test2",
-                    deviceName = "25",
-                    status = Status.Lost
-                )
-            )
-        )
-
-        val factory = FilterFactoryFactory.create(
-            filter = InstrumentationFilter.Data.createStub(
-                previousStatuses = Filter.Value(
-                    included = setOf(RunStatus.Success),
-                    excluded = emptySet()
-                )
-            )
-        )
-
-        val filter = factory.createFilter() as CompositionFilter
-
-        val that = assertThat(filter.filters)
-        that.containsAtLeastElementsIn(
-            listOf(
-                IncludeByTestSignaturesFilter(
-                    source = Source.PreviousRun,
-                    signatures = setOf(
-                        TestSignature(
-                            name = "test1",
-                            deviceName = "25"
-                        )
-                    )
-                )
-            )
-        )
-    }
-
-    @Suppress("MaxLineLength")
-    @Test
     fun `when filterData - includePrevious statuses and Report failed - then filters contain defaults`() {
         val report = StubReport()
         report.getTestsResult = Result.Failure(IllegalStateException("something went wrong"))
 
-        val factory = FilterFactoryFactory.create(
+        val factory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = setOf(RunStatus.Success),
@@ -190,55 +144,9 @@ internal class FilterFactoryImplTest {
         )
     }
 
-    @Suppress("MaxLineLength")
-    @Test
-    fun `when filterData excludePrevious statuses and Report return list then filters contain ExcludeTestSignaturesFilters#Previous with included statuses`() {
-        val report = StubReport()
-        report.getTestsResult = Result.Success(
-            listOf(
-                SimpleRunTest.createStubInstance(
-                    name = "test1",
-                    deviceName = "25",
-                    status = Status.Success
-                ),
-                SimpleRunTest.createStubInstance(
-                    name = "test2",
-                    deviceName = "25",
-                    status = Status.Lost
-                )
-            )
-        )
-
-        val factory = FilterFactoryFactory.create(
-            filter = InstrumentationFilter.Data.createStub(
-                previousStatuses = Filter.Value(
-                    included = emptySet(),
-                    excluded = setOf(RunStatus.Success)
-                )
-            )
-        )
-
-        val filter = factory.createFilter() as CompositionFilter
-
-        val that = assertThat(filter.filters)
-        that.containsAtLeastElementsIn(
-            listOf(
-                ExcludeByTestSignaturesFilter(
-                    source = Source.PreviousRun,
-                    signatures = setOf(
-                        TestSignature(
-                            name = "test1",
-                            deviceName = "25"
-                        )
-                    )
-                )
-            )
-        )
-    }
-
     @Test
     fun `when filterData previousStatuses is empty then filters don't contain PreviousRun filters`() {
-        val factory = FilterFactoryFactory.create(
+        val factory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 previousStatuses = Filter.Value(
                     included = emptySet(),
@@ -259,7 +167,7 @@ internal class FilterFactoryImplTest {
 
     @Test
     fun `when filterData report is empty then filters don't contain Report filters`() {
-        val factory = FilterFactoryFactory.create(
+        val factory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub()
         )
 
@@ -271,100 +179,6 @@ internal class FilterFactoryImplTest {
                 isNotInstanceOf(ExcludeByTestSignaturesFilter::class.java)
             }
         }
-    }
-
-    @Test
-    fun `when filterData report is present and has includes then filters contain Report include filter`() {
-        val report = StubReport()
-        report.getTestsResult = Result.Success(
-            listOf(
-                SimpleRunTest.createStubInstance(
-                    name = "test1",
-                    deviceName = "25",
-                    status = Status.Success
-                ),
-                SimpleRunTest.createStubInstance(
-                    name = "test2",
-                    deviceName = "25",
-                    status = Status.Lost
-                )
-            )
-        )
-
-        val factory = FilterFactoryFactory.create(
-            filter = InstrumentationFilter.Data.createStub(
-                report = ReportFilter(
-                    statuses = Filter.Value(
-                        included = setOf(RunStatus.Success),
-                        excluded = emptySet()
-                    )
-                )
-            )
-        )
-
-        val filter = factory.createFilter() as CompositionFilter
-
-        assertThat(filter.filters)
-            .containsAtLeastElementsIn(
-                listOf(
-                    IncludeByTestSignaturesFilter(
-                        source = Source.Report,
-                        signatures = setOf(
-                            TestSignature(
-                                name = "test1",
-                                deviceName = "25"
-                            )
-                        )
-                    )
-                )
-            )
-    }
-
-    @Test
-    fun `when filterData report is present and has excludes then filters contain Report exclude filter`() {
-        val report = StubReport()
-        report.getTestsResult = Result.Success(
-            listOf(
-                SimpleRunTest.createStubInstance(
-                    name = "test1",
-                    deviceName = "25",
-                    status = Status.Success
-                ),
-                SimpleRunTest.createStubInstance(
-                    name = "test2",
-                    deviceName = "25",
-                    status = Status.Lost
-                )
-            )
-        )
-
-        val factory = FilterFactoryFactory.create(
-            filter = InstrumentationFilter.Data.createStub(
-                report = ReportFilter(
-                    statuses = Filter.Value(
-                        included = emptySet(),
-                        excluded = setOf(RunStatus.Success)
-                    )
-                )
-            )
-        )
-
-        val filter = factory.createFilter() as CompositionFilter
-
-        assertThat(filter.filters)
-            .containsAtLeastElementsIn(
-                listOf(
-                    ExcludeByTestSignaturesFilter(
-                        source = Source.Report,
-                        signatures = setOf(
-                            TestSignature(
-                                name = "test1",
-                                deviceName = "25"
-                            )
-                        )
-                    )
-                )
-            )
     }
 
     @Test
@@ -385,7 +199,7 @@ internal class FilterFactoryImplTest {
             )
         )
 
-        val factory = FilterFactoryFactory.create(
+        val factory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 report = ReportFilter(
                     statuses = Filter.Value(

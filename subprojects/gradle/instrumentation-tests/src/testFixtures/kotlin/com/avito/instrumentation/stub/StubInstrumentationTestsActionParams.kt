@@ -1,10 +1,5 @@
 package com.avito.instrumentation.stub
 
-import com.avito.android.runner.report.AvitoReport
-import com.avito.android.runner.report.ReadReport
-import com.avito.android.runner.report.Report
-import com.avito.android.runner.report.ReportFactory
-import com.avito.android.runner.report.StubReport
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.createStubInstance
@@ -12,8 +7,6 @@ import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.logger.LoggerFactory
-import com.avito.report.ReportLinkGenerator
-import com.avito.report.TestSuiteNameProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import java.io.File
 
@@ -58,28 +51,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     verdictFile = verdictFile,
     fileStorageUrl = fileStorageUrl,
     statsDConfig = statsDConfig,
-    reportFactory = object : ReportFactory {
-
-        override fun createReport(): Report {
-            return StubReport()
-        }
-
-        override fun createReadReport(): ReadReport {
-            return StubReport()
-        }
-
-        override fun createAvitoReport(): AvitoReport {
-            return StubReport()
-        }
-
-        override fun createReportLinkGenerator(): ReportLinkGenerator {
-            return ReportLinkGenerator.Stub
-        }
-
-        override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
-            return TestSuiteNameProvider.Stub
-        }
-    },
     proguardMappings = emptyList(),
     useInMemoryReport = useInMemoryReport,
     uploadTestArtifacts = uploadTestArtifacts,

@@ -2,8 +2,8 @@ package com.avito.instrumentation
 
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.TestRunResult.Verdict.Failure
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance

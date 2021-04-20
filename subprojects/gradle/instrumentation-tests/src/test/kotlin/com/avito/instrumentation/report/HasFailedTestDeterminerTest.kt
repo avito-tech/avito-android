@@ -1,6 +1,7 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.LegacyFailedTestDeterminer
 import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
@@ -185,7 +186,7 @@ internal class HasFailedTestDeterminerTest {
     private fun createImpl(
         suppressFailure: Boolean = false,
         suppressFlaky: Boolean = false
-    ) = HasFailedTestDeterminer.Impl(
+    ) = LegacyFailedTestDeterminer(
         suppressFailure = suppressFailure,
         suppressFlaky = suppressFlaky
     )

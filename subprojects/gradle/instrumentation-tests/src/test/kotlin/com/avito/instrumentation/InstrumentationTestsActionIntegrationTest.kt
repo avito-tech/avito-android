@@ -2,8 +2,6 @@ package com.avito.instrumentation
 
 import com.avito.android.Result
 import com.avito.android.StubTestSuiteLoader
-import com.avito.android.TestInApk
-import com.avito.android.createStubInstance
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.devices.StubDeviceProviderFactory
 import com.avito.android.runner.report.StubReport
@@ -25,18 +23,14 @@ import com.avito.instrumentation.stub.executing.StubTestExecutor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi
-import com.avito.report.model.AndroidTest
-import com.avito.report.model.CreateResult
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
-import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.StubTimeProvider
 import com.avito.utils.StubBuildFailer
 import com.google.common.truth.Truth.assertThat
-import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -100,68 +94,11 @@ internal class InstrumentationTestsActionIntegrationTest {
         assertThat(buildFailer.lastReason).isNull()
     }
 
-    @Test
-    fun `inconsistent test run - missing tests reported as lost and failed build`() {
-        val configuration = InstrumentationConfiguration.Data.createStubInstance(
-            targets = listOf(
-                TargetConfiguration.Data.createStubInstance(deviceName = "api22")
-            )
-        )
-
-        val reportId = "1234"
-        reportsApi.createResult = CreateResult.Created(reportId)
-        reportsApi.getReportResult = Result.Success(
-            Report(
-                id = reportId,
-                planSlug = "planSlug",
-                jobSlug = "jobSlug",
-                runId = "runId",
-                isFinished = false,
-                buildBranch = "buildBranch"
-            )
-        )
-
-        testSuiteLoader.result.addAll(
-            listOf(
-                TestInApk.createStubInstance(className = "com.Test", methodName = "test1"),
-                TestInApk.createStubInstance(className = "com.Test", methodName = "test2"),
-                TestInApk.createStubInstance(className = "com.Test", methodName = "test3")
-            )
-        )
-
-        reportsApi.enqueueTestsForRunId(
-            reportCoordinates = reportCoordinates,
-            value = Result.Success(
-                listOf(
-                    SimpleRunTest.createStubInstance(name = "com.Test.test1", deviceName = "api22"),
-                    SimpleRunTest.createStubInstance(
-                        name = "com.Test.test2",
-                        deviceName = "anotherApi"
-                    ),
-                    SimpleRunTest.createStubInstance(name = "com.Test.test3", deviceName = "api22")
-                )
-            )
-        )
-
-        reportsApi.finished = Result.Success(Unit)
-
-        createAction(configuration).run()
-
-        assertThat(reportsApi.addTestsRequests.last().tests).containsExactly(
-            AndroidTest.Lost.createStubInstance(
-                name = "com.Test.test2",
-                deviceName = "api22"
-            )
-        )
-
-        assertWithMessage("inconsistent test run should fail build").that(buildFailer.lastReason)
-            .isNotNull()
-    }
-
     private fun createAction(
         configuration: InstrumentationConfiguration.Data,
         params: InstrumentationTestsAction.Params = params(configuration),
-        seriesName: SeriesName = SeriesName.create("test")
+        seriesName: SeriesName = SeriesName.create("test"),
+        reportFactory: StubReportFactory = StubReportFactory()
     ) = InstrumentationTestsAction(
         params = params,
         loggerFactory = params.loggerFactory,
@@ -174,11 +111,13 @@ internal class InstrumentationTestsActionIntegrationTest {
             timeProvider = StubTimeProvider(),
             httpClientProvider = HttpClientProvider.createStubInstance(),
             report = StubReport(),
+            reportFactory = reportFactory
         ).create(devicesProviderFactory = StubDeviceProviderFactory),
         finalizer = FinalizerFactory.Impl(
             params = params,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),
-            reportFactory = StubReportFactory,
+            reportFactory = StubReportFactory(),
+            buildFailer = buildFailer,
             gson = InstrumentationTestsActionFactory.gson
         ).create()
     )

@@ -1,8 +1,8 @@
 package com.avito.instrumentation.report
 
 import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.report.WriteJUnitReportAction
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.TestSuiteNameProvider
@@ -70,7 +70,7 @@ internal class WriteJUnitReportActionTest {
             )
         )
         val rawFile = file.readText()
-        assertThat(rawFile).contains("<failure>\nSomething went wrong\nReport Viewer: $reportViewerUrl\n</failure>")
+        assertThat(rawFile).contains("<failure>\nSomething went wrong\n$reportViewerUrl\n</failure>")
     }
 
     @Test
@@ -93,16 +93,10 @@ internal class WriteJUnitReportActionTest {
     }
 
     private fun mockData(testRunResult: TestRunResult) {
-//        val runIdentifier = ReportCoordinates(
-//            planSlug = "AvitoAndroid",
-//            jobSlug = "FunctionalTests",
-//            runId = "49.0.275.32855"
-//        )
-//        val reportViewer = StubReportViewer(reportViewerUrl)
         WriteJUnitReportAction(
             destination = file,
             testSuiteNameProvider = TestSuiteNameProvider.Stub,
-            reportLinkGenerator = ReportLinkGenerator.Stub
+            reportLinkGenerator = ReportLinkGenerator.Stub(testLink = reportViewerUrl)
         ).action(
             testRunResult = testRunResult,
         )

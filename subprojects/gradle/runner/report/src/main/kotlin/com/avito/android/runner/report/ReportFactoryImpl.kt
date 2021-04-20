@@ -24,18 +24,13 @@ public class ReportFactoryImpl(
         return createReportInternal()
     }
 
-    override fun createReadReport(): ReadReport {
-        return createReportInternal()
-    }
-
-    override fun createAvitoReport(): com.avito.android.runner.report.AvitoReport {
+    override fun createAvitoReport(): LegacyReport {
         return createAvitoReport(reportViewerConfig!!)
     }
 
     private fun createReportInternal(): Report {
         return ReportImpl(
             inMemoryReport = InMemoryReport(
-                id = buildId,
                 timeProvider = timeProvider
             ),
             avitoReport = reportViewerConfig?.let { createAvitoReport(it) },
@@ -64,7 +59,7 @@ public class ReportFactoryImpl(
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
-            ReportLinkGenerator.Stub
+            ReportLinkGenerator.Stub()
         }
     }
 

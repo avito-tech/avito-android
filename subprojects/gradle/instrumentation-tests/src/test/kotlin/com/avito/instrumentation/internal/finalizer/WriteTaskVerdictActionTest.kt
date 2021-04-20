@@ -2,17 +2,13 @@ package com.avito.instrumentation.internal.finalizer
 
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
 import com.avito.report.ReportLinkGenerator
-import com.avito.report.StubReportViewer
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
 import com.github.salomonbrys.kotson.fromJson
 import com.google.common.truth.Truth.assertThat
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -20,18 +16,16 @@ import java.io.File
 public class WriteTaskVerdictActionTest {
 
     private val gson = InstrumentationTestsActionFactory.gson
-    private val reportViewer = StubReportViewer().apply {
-        byReportCoordinatesUrl = "https://byreportcoordinates".toHttpUrl()
-        byTestName = "https://bytestname".toHttpUrl()
-    }
+    private val byReportCoordinatesUrl = "https://byreportcoordinates/"
+    private val byTestName = "https://bytestname/"
 
     private val failedTest = InstrumentationTestsTaskVerdict.Test(
-        testUrl = reportViewer.byTestName.toString(),
+        testUrl = byTestName,
         title = "com.Test.test api22 FAILED"
     )
 
     private val lostTest = InstrumentationTestsTaskVerdict.Test(
-        testUrl = reportViewer.byTestName.toString(),
+        testUrl = byTestName,
         title = "com.avito.Test.test api22 LOST"
     )
 
@@ -39,7 +33,10 @@ public class WriteTaskVerdictActionTest {
         return WriteTaskVerdictAction(
             verdictDestination = verdict,
             gson = gson,
-            reportLinkGenerator = ReportLinkGenerator.Stub
+            reportLinkGenerator = ReportLinkGenerator.Stub(
+                reportLink = byReportCoordinatesUrl,
+                testLink = byTestName
+            )
         )
     }
 
@@ -59,14 +56,13 @@ public class WriteTaskVerdictActionTest {
 
         val expected = InstrumentationTestsTaskVerdict(
             title = "Failed. There are 1 unsuppressed failed tests",
-            reportUrl = reportViewer.byReportCoordinatesUrl.toString(),
+            reportUrl = byReportCoordinatesUrl,
             causeFailureTests = setOf(failedTest)
         )
 
         val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(verdict.reader())
 
-        assertThat(actual)
-            .isEqualTo(expected)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -85,14 +81,13 @@ public class WriteTaskVerdictActionTest {
 
         val expected = InstrumentationTestsTaskVerdict(
             title = "Failed. There are 1 not reported tests.",
-            reportUrl = reportViewer.byReportCoordinatesUrl.toString(),
+            reportUrl = byReportCoordinatesUrl,
             causeFailureTests = setOf(lostTest)
         )
 
         val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(verdict.reader())
 
-        assertThat(actual)
-            .isEqualTo(expected)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -114,13 +109,12 @@ public class WriteTaskVerdictActionTest {
         val expected = InstrumentationTestsTaskVerdict(
             title = "Failed. There are 1 unsuppressed failed tests. " +
                 "\nFailed. There are 1 not reported tests.",
-            reportUrl = reportViewer.byReportCoordinatesUrl.toString(),
+            reportUrl = byReportCoordinatesUrl,
             causeFailureTests = setOf(failedTest, lostTest)
         )
 
         val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(verdict.reader())
 
-        assertThat(actual)
-            .isEqualTo(expected)
+        assertThat(actual).isEqualTo(expected)
     }
 }

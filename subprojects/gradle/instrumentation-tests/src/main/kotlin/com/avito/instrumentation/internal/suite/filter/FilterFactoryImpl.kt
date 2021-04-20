@@ -86,7 +86,7 @@ internal class FilterFactoryImpl(
         if (previousStatuses.included.isNotEmpty() || previousStatuses.excluded.isNotEmpty()) {
 
             reportFactory
-                .createReadReport()
+                .createAvitoReport()
                 .getTests()
                 .fold(
                     onSuccess = { previousRunTests ->
@@ -121,7 +121,7 @@ internal class FilterFactoryImpl(
                 || reportFilter.statuses.excluded.isNotEmpty())
         ) {
             val statuses = reportFilter.statuses
-            val previousRunTests = reportFactory.createReadReport()
+            val previousRunTests = reportFactory.createAvitoReport()
                 .getTests()
                 .getOrThrow()
             if (statuses.included.isNotEmpty()) {

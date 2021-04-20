@@ -1,8 +1,7 @@
 package com.avito.android.runner.report.internal
 
 import com.avito.android.Result
-import com.avito.android.runner.report.AvitoReport
-import com.avito.android.runner.report.ReadReport
+import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -13,6 +12,7 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
+import java.lang.IllegalStateException
 
 /**
  * Implementation for inhouse Avito report backend
@@ -28,7 +28,7 @@ internal class AvitoReport(
     private val buildId: String,
     private val timeProvider: TimeProvider,
     private val batchSize: Int = 400
-) : AvitoReport, Report, ReadReport {
+) : LegacyReport, Report {
 
     private val logger = loggerFactory.create<Report>()
 
@@ -72,6 +72,10 @@ internal class AvitoReport(
 
             logger.info("Reporting skipped tests for batch: $index completed")
         }
+    }
+
+    override fun getTests(): List<AndroidTest> {
+        throw IllegalStateException("Use getTests(): List<SimpleRunTest>")
     }
 
     override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {

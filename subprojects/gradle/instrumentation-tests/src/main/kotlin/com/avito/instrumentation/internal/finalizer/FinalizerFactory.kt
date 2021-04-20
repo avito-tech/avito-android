@@ -4,8 +4,6 @@ import com.avito.android.runner.report.ReportFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.report.WriteJUnitReportAction
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
@@ -58,7 +56,7 @@ internal interface FinalizerFactory {
 
         override fun create(): InstrumentationTestActionFinalizer {
 
-            val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
+            val hasFailedTestDeterminer: HasFailedTestDeterminer = LegacyFailedTestDeterminer(
                 suppressFailure = params.suppressFailure,
                 suppressFlaky = params.suppressFlaky
             )
@@ -90,7 +88,7 @@ internal interface FinalizerFactory {
 
             if (params.reportViewerConfig != null) {
 
-                actions += AvitoReportViewerFinishAction(avitoReport = reportFactory.createAvitoReport())
+                actions += AvitoReportViewerFinishAction(legacyReport = reportFactory.createAvitoReport())
 
                 actions += WriteReportViewerLinkFile(
                     outputDir = params.outputDir,
@@ -98,13 +96,13 @@ internal interface FinalizerFactory {
                 )
             }
 
-            return InstrumentationTestActionFinalizer.Impl(
+            return LegacyFinalizer(
                 hasFailedTestDeterminer = hasFailedTestDeterminer,
-                hasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
+                hasNotReportedTestsDeterminer = LegacyNotReportedTestsDeterminer(),
                 params = params,
                 buildFailer = buildFailer,
                 actions = actions,
-                report = reportFactory.createReport() // todo pass report from constructor
+                report = reportFactory.createAvitoReport()
             )
         }
     }

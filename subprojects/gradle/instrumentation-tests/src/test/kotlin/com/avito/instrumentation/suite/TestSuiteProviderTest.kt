@@ -37,6 +37,7 @@ internal class TestSuiteProviderTest {
     fun `test suite - skip test - if rerun enabled and test passed in previous run`() {
         val report = StubReport()
         val testSuiteProvider = createTestSuiteProvider(
+            report = report,
             reportSkippedTests = true,
             filterFactory = StubFilterFactory(
                 filter = excludedFilter(
@@ -52,8 +53,9 @@ internal class TestSuiteProviderTest {
             tests = listOf(simpleTestInApk)
         )
 
-        assertThat(report.reportedSkippedTests?.map { it.first.name })
-            .isEmpty()
+        val result = report.reportedSkippedTests?.map { it.first.name }
+
+        assertThat(result).isEmpty()
     }
 
     private fun createTestSuiteProvider(

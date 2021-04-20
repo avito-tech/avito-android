@@ -1,10 +1,7 @@
 package com.avito.android.runner.report.internal
 
-import com.avito.android.Result
 import com.avito.android.runner.report.Report
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.SimpleRunTest
-import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 
 internal class ReportImpl(
@@ -33,11 +30,11 @@ internal class ReportImpl(
         }
     }
 
-    override fun getTests(initialSuiteFilter: List<TestName>): Result<List<SimpleRunTest>> {
+    override fun getTests(): List<AndroidTest> {
         return if (useInMemoryReport) {
             inMemoryReport.getTests()
         } else {
-            avitoReport!!.getTests(initialSuiteFilter)
+            throw IllegalStateException("use LegacyReport.getTests()")
         }
     }
 }

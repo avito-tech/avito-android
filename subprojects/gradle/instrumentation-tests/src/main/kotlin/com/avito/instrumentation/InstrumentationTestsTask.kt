@@ -6,14 +6,10 @@ import com.avito.android.build_verdict.span.SpannedString.Companion.link
 import com.avito.android.build_verdict.span.SpannedString.Companion.multiline
 import com.avito.android.getApk
 import com.avito.android.getApkOrThrow
-import com.avito.android.runner.report.ReportFactory
-import com.avito.android.runner.report.ReportFactoryImpl
 import com.avito.android.runner.report.ReportViewerConfig
-import com.avito.android.stats.StatsDSender
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
 import com.avito.instrumentation.internal.GetTestResultsAction
@@ -26,10 +22,6 @@ import com.avito.instrumentation.service.TestRunParams
 import com.avito.instrumentation.service.TestRunnerService
 import com.avito.instrumentation.service.TestRunnerWorkAction
 import com.avito.logger.GradleLoggerFactory
-import com.avito.logger.LoggerFactory
-import com.avito.report.model.ReportCoordinates
-import com.avito.time.DefaultTimeProvider
-import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
 import com.github.salomonbrys.kotson.fromJson
 import org.gradle.api.DefaultTask
@@ -141,22 +133,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
         val configuration = instrumentationConfiguration.get()
         val reportCoordinates = configuration.instrumentationParams.reportCoordinates()
         val loggerFactory = GradleLoggerFactory.fromTask(this)
-        val timeProvider: TimeProvider = DefaultTimeProvider()
-        val httpClientProvider = HttpClientProvider(
-            statsDSender = StatsDSender.Impl(
-                config = project.statsdConfig.get(),
-                loggerFactory = loggerFactory
-            ),
-            timeProvider = timeProvider,
-            loggerFactory = loggerFactory
-        )
-
-        val reportFactory = createReportFactory(
-            reportCoordinates = reportCoordinates,
-            loggerFactory = loggerFactory,
-            timeProvider = timeProvider,
-            httpClientProvider = httpClientProvider
-        )
 
         saveTestResultsToBuildOutput()
 
@@ -191,7 +167,6 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             verdictFile = verdictFile.get().asFile,
             fileStorageUrl = getFileStorageUrl(),
             statsDConfig = statsDConfig,
-            reportFactory = reportFactory,
             proguardMappings = listOf(
                 applicationProguardMapping,
                 testProguardMapping
@@ -249,28 +224,5 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             val testResults = getTestResultsAction.getTestResults()
             buildOutput.testResults[configuration.name] = testResults
         }
-    }
-
-    private fun createReportFactory(
-        reportCoordinates: ReportCoordinates,
-        loggerFactory: LoggerFactory,
-        timeProvider: TimeProvider,
-        httpClientProvider: HttpClientProvider
-    ): ReportFactory {
-        val reportViewerConfig = reportViewerProperty.orNull
-
-        return ReportFactoryImpl(
-            timeProvider = timeProvider,
-            useInMemoryReport = useInMemoryReport.get(),
-            buildId = buildId.get(),
-            loggerFactory = loggerFactory,
-            httpClientProvider = httpClientProvider,
-            reportViewerConfig = reportViewerConfig?.let {
-                ReportViewerConfig(
-                    url = reportViewerConfig.reportApiUrl,
-                    reportCoordinates = reportCoordinates
-                )
-            }
-        )
     }
 }

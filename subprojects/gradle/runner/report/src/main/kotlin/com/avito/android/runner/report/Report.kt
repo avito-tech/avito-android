@@ -3,7 +3,7 @@ package com.avito.android.runner.report
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
 
-public interface Report : ReadReport {
+public interface Report {
 
     public fun addTest(test: AndroidTest)
 
@@ -13,6 +13,8 @@ public interface Report : ReadReport {
      * Pair<TestStaticData, String> instead of AndroidTest.Skipped in interface because client don't know
      */
     public fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>)
+
+    public fun getTests(): List<AndroidTest>
 
     public companion object
 }

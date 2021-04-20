@@ -2,7 +2,6 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
@@ -81,7 +80,6 @@ internal class InstrumentationTestsAction(
         val verdictFile: File,
         val fileStorageUrl: String,
         val statsDConfig: StatsDConfig,
-        val reportFactory: ReportFactory,
         val reportViewerConfig: ReportViewerConfig?,
         val proguardMappings: List<File>,
         val useInMemoryReport: Boolean,

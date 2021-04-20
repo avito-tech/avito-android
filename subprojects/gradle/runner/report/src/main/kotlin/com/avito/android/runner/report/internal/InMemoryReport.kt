@@ -1,22 +1,12 @@
 package com.avito.android.runner.report.internal
 
-import com.avito.android.Result
-import com.avito.android.runner.report.AvitoReport
-import com.avito.android.runner.report.ReadReport
 import com.avito.android.runner.report.Report
-import com.avito.android.runner.report.TestStatusFinalizer
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.SimpleRunTest
-import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
 
-internal class InMemoryReport(
-    private val id: String,
-    private val timeProvider: TimeProvider
-) : Report, AvitoReport, ReadReport {
+internal class InMemoryReport(private val timeProvider: TimeProvider) : Report {
 
-    private val testStatusFinalizer = TestStatusFinalizer.create()
     private val testAttempts = mutableListOf<AndroidTest>()
 
     @Synchronized
@@ -38,52 +28,7 @@ internal class InMemoryReport(
     }
 
     @Synchronized
-    override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {
-        this.testAttempts.addAll(lostTests)
-    }
-
-    @Synchronized
-    override fun finish() {
-        // empty
-    }
-
-    @Synchronized
-    override fun getTests(initialSuiteFilter: List<TestName>): Result<List<SimpleRunTest>> {
-        val result = testAttempts
-            .groupBy { testAttempt ->
-                "${testAttempt.name};${testAttempt.device}"
-            }.map { (testCoordinate, attempts) ->
-                val status = testStatusFinalizer.getTestFinalStatus(attempts)
-                val lastAttempt = attempts.last()
-                SimpleRunTest(
-                    id = testCoordinate, // todo unique in one run
-                    reportId = id,
-                    name = lastAttempt.name.name,
-                    className = lastAttempt.name.className,
-                    methodName = lastAttempt.name.methodName,
-                    testCaseId = lastAttempt.testCaseId,
-                    deviceName = lastAttempt.device.name,
-                    status = status.status,
-                    stability = status.stability,
-                    buildId = null,
-                    groupList = emptyList(),
-                    startTime = status.startTime,
-                    endTime = status.endTime,
-                    skipReason = status.skippedReason,
-                    isFinished = status.isFinished,
-                    lastAttemptDurationInSeconds = status.lastAttemptDurationInSeconds,
-                    externalId = lastAttempt.externalId,
-                    description = lastAttempt.description,
-                    dataSetNumber = lastAttempt.dataSetNumber,
-                    featureIds = lastAttempt.featureIds,
-                    features = lastAttempt.featureIds.map { it.toString() },
-                    tagIds = lastAttempt.tagIds,
-                    priority = lastAttempt.priority,
-                    behavior = lastAttempt.behavior,
-                    kind = lastAttempt.kind,
-                    flakiness = lastAttempt.flakiness
-                )
-            }
-        return Result.Success(result)
+    override fun getTests(): List<AndroidTest> {
+        return testAttempts
     }
 }

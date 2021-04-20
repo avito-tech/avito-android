@@ -2,8 +2,8 @@ package com.avito.instrumentation.internal
 
 import com.avito.composite_exception.composeWith
 import com.avito.instrumentation.internal.TestRunResult.Verdict.Failure.Details
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.report.model.TestName
@@ -74,14 +74,6 @@ internal data class TestRunResult(
 
     private fun getNotReportedVerdict() = when (notReported) {
         is HasNotReportedTestsDeterminer.Result.AllTestsReported -> Verdict.Success("All tests reported")
-        is HasNotReportedTestsDeterminer.Result.DetermineError -> Verdict.Failure(
-            message = "Failed. Couldn't determine not reported tests",
-            prettifiedDetails = Details(
-                lostTests = emptySet(),
-                failedTests = emptySet()
-            ),
-            cause = notReported.exception
-        )
         is HasNotReportedTestsDeterminer.Result.HasNotReportedTests -> Verdict.Failure(
             message = "Failed. There are ${notReported.lostTests.size} not reported tests.",
             prettifiedDetails = Details(
@@ -104,14 +96,6 @@ internal data class TestRunResult(
 
     private fun getFailedVerdict() = when (failed) {
         is HasFailedTestDeterminer.Result.NoFailed -> Verdict.Success("No failed tests")
-        is HasFailedTestDeterminer.Result.DetermineError -> Verdict.Failure(
-            message = "Failed. Couldn't determine failed tests",
-            prettifiedDetails = Details(
-                lostTests = emptySet(),
-                failedTests = emptySet()
-            ),
-            cause = failed.throwable
-        )
         is HasFailedTestDeterminer.Result.Failed ->
             if (failed.notSuppressedCount > 0) {
                 Verdict.Failure(

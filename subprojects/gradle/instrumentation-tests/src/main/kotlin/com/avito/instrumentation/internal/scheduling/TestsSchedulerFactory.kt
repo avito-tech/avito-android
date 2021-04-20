@@ -3,6 +3,7 @@ package com.avito.instrumentation.internal.scheduling
 import com.avito.android.TestSuiteLoader
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.ReportFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
@@ -47,7 +48,8 @@ internal interface TestsSchedulerFactory {
         private val httpClientProvider: HttpClientProvider,
         private val metricsConfig: RunnerMetricsConfig,
         private val testExecutorFactory: TestExecutorFactory,
-        private val testSuiteLoader: TestSuiteLoader
+        private val testSuiteLoader: TestSuiteLoader,
+        private val reportFactory: ReportFactory
     ) : TestsSchedulerFactory {
 
         override fun create(devicesProviderFactory: DevicesProviderFactory): TestsScheduler {
@@ -77,7 +79,7 @@ internal interface TestsSchedulerFactory {
             filterFactory = FilterFactory.create(
                 filterData = params.instrumentationConfiguration.filter,
                 impactAnalysisResult = params.impactAnalysisResult,
-                reportFactory = params.reportFactory,
+                reportFactory = reportFactory,
                 loggerFactory = params.loggerFactory
             )
         )

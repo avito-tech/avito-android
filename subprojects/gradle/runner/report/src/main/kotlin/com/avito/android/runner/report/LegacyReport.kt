@@ -1,10 +1,18 @@
 package com.avito.android.runner.report
 
 import com.avito.android.Result
+import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
 
-public interface ReadReport {
+/**
+ * Legacy way of interacting with report model; internal ReportViewer service domain leaking here
+ */
+public interface LegacyReport {
+
+    public fun finish()
+
+    public fun sendLostTests(lostTests: List<AndroidTest.Lost>)
 
     /**
      * getTestsForRunId will fetch all tests, even not relatable to current run
@@ -13,4 +21,6 @@ public interface ReadReport {
      * todo initialSuiteFilter is avito report implementation detail
      */
     public fun getTests(initialSuiteFilter: List<TestName> = emptyList()): Result<List<SimpleRunTest>>
+
+    public companion object
 }

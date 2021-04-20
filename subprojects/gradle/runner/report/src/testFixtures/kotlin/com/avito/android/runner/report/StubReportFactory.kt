@@ -3,22 +3,20 @@ package com.avito.android.runner.report
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.TestSuiteNameProvider
 
-public object StubReportFactory : ReportFactory {
+public class StubReportFactory(
+    private val report: StubReport = StubReport()
+) : ReportFactory {
 
     override fun createReport(): Report {
-        return StubReport()
+        return report
     }
 
-    override fun createReadReport(): ReadReport {
-        return StubReport()
-    }
-
-    override fun createAvitoReport(): AvitoReport {
-        return StubReport()
+    override fun createAvitoReport(): LegacyReport {
+        return report
     }
 
     override fun createReportLinkGenerator(): ReportLinkGenerator {
-        return ReportLinkGenerator.Stub
+        return ReportLinkGenerator.Stub()
     }
 
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {

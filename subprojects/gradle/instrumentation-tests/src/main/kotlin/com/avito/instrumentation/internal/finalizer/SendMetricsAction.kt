@@ -2,7 +2,6 @@ package com.avito.instrumentation.internal.finalizer
 
 import com.avito.instrumentation.internal.TestRunResult
 import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer.FinalizeAction
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 
 internal class SendMetricsAction(
