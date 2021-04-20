@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# This is an entrypoint for CI build step, don't change it's relative path(name)
+# This is an entrypoint for CI build step, don't change it's relative path (name)
 
 source $(dirname $0)/_main.sh
 
-# force Envs be set up
+# force Envs to be set up
 set -uex
+
 function publish() {
     # PGP_KEY is a large 4kb key with unescaped symbols
     local readonly gradle_properties_path="subprojects/gradle.properties"
@@ -25,5 +26,12 @@ function publish() {
 
     runInBuilder "./gradlew -p subprojects publishRelease ${GRADLE_ARGS} ${CREDENTIALS} ${PGP} --no-parallel --stacktrace"
 }
+
+readonly CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$CURRENT_BRANCH" == "develop" ]; then
+    echo "ERROR: Releasing from develop branch. It can clash with a release from a release branch. Develop contains the next version. See a release process in docs."
+    exit 1
+fi
 
 publish
