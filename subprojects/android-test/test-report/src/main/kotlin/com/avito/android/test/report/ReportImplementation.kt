@@ -3,6 +3,11 @@ package com.avito.android.test.report
 import androidx.annotation.VisibleForTesting
 import androidx.test.espresso.EspressoException
 import com.avito.android.Result
+import com.avito.android.test.report.ReportState.NotFinished
+import com.avito.android.test.report.ReportState.NotFinished.Initialized
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.NotStarted
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
+import com.avito.android.test.report.ReportState.NotFinished.NotInitialized
 import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
@@ -28,11 +33,9 @@ import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
-import com.avito.report.model.FileAddress
 import com.avito.report.model.Incident
 import com.avito.time.TimeProvider
 import com.avito.utils.stackTraceToList
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 
 /**
@@ -55,29 +58,22 @@ class ReportImplementation(
 
     private val logger = loggerFactory.create<InternalReport>()
 
-    /**
-     * Entries that occurred before first step/precondition
-     */
-    private val earlyEntries = mutableListOf<Entry>()
-    private val earlyFuturesUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
-
-    private val incidentFutureUploads = mutableListOf<FutureValue<RemoteStorage.Result>>()
-
-    private var state: ReportState = ReportState.Nothing
+    private var state: ReportState = NotInitialized()
 
     @VisibleForTesting
     val currentState: ReportState
         get() = state
 
     override val isFirstStep: Boolean
-        get() = state.isFirstStepOrPrecondition
+        get() = getCastedStateOrNull<Started>()
+            ?.isFirstStepOrPrecondition ?: false
 
-    private val isWritten: Boolean
-        get() = currentState is ReportState.Written
+    private val isFinished: Boolean
+        get() = currentState is ReportState.Finished
 
     @Synchronized
     override fun createStepModel(stepName: String): StepResult {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = getCastedState<Started>()
         return StepResult(
             isSynthetic = false,
             title = stepName,
@@ -88,7 +84,7 @@ class ReportImplementation(
 
     @Synchronized
     override fun createPreconditionModel(stepName: String): StepResult {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = getCastedState<Started>()
         return StepResult(
             isSynthetic = false,
             title = stepName,
@@ -99,7 +95,7 @@ class ReportImplementation(
 
     @Synchronized
     override fun unexpectedFailedTestCase(exception: Throwable) {
-        if (!isWritten) {
+        if (!isFinished) {
             registerIncident(AppCrashException(exception), null)
             finishTestCase()
         } else {
@@ -118,11 +114,11 @@ class ReportImplementation(
         exception: Throwable,
         screenshot: FutureValue<RemoteStorage.Result>?
     ) = methodExecutionTracing("registerIncident") {
-        val currentState = getCastedState<ReportState.Initialized>(cause = exception)
+        val currentState = getCastedState<Initialized>(cause = exception)
 
         if (currentState.incident == null) {
             if (screenshot != null) {
-                incidentFutureUploads.add(screenshot)
+                currentState.incidentScreenshot = screenshot
             }
 
             val type = exception.determineIncidentType()
@@ -149,7 +145,7 @@ class ReportImplementation(
     @Synchronized
     override fun finishTestCase() {
         methodExecutionTracing("finishTestCase") {
-            val startedState = getCastedState<ReportState.Initialized.Started>()
+            val startedState = getCastedState<Started>()
             startedState.endTime = timeProvider.nowInSeconds()
 
             try {
@@ -157,16 +153,10 @@ class ReportImplementation(
             } catch (t: Throwable) {
                 logger.warn("Failed while afterTestStop were executing", t)
             }
-            earlyEntries.addAll(
-                earlyFuturesUploads.getInitializedEntries()
-            )
 
             with(startedState) {
                 waitUploads()
-                addEarlyEntries(earlyEntries)
-                sortStepEntries()
-                incident?.appendFutureEntries()
-                writeTestCase()
+                finishTestCase()
             }
         }
     }
@@ -179,7 +169,7 @@ class ReportImplementation(
     @Synchronized
     override fun setDataSet(value: DataSet) {
         methodExecutionTracing("setDataSet") {
-            val currentState = getCastedState<ReportState.Initialized.Started>()
+            val currentState = getCastedState<Started>()
             with(currentState) {
                 // todo почему -1 это вообще валидное значение? попробовать использовать unsigned тип данных
                 require(testMetadata.dataSetNumber != null && testMetadata.dataSetNumber != -1) {
@@ -209,7 +199,7 @@ class ReportImplementation(
                         // no resumed activity, can't capture
                         null
                     } else {
-                        val initialized = getCastedState<ReportState.Initialized>()
+                        val initialized = getCastedState<Initialized>()
 
                         transport.sendContent(
                             test = initialized.testMetadata,
@@ -236,20 +226,22 @@ class ReportImplementation(
 
     @Synchronized
     override fun initTestCase(testMetadata: TestMetadata) = methodExecutionTracing("initTestCase") {
-        checkStateIs<ReportState.Nothing>()
-        state = ReportState.Initialized.NotStarted(testMetadata)
+        val currentState = getCastedState<NotInitialized>()
+        state = NotStarted(
+            entriesBeforeSteps = currentState.entriesBeforeSteps,
+            uploadsBeforeSteps = currentState.uploadsBeforeSteps,
+            testMetadata = testMetadata
+        )
     }
 
     @Synchronized
     override fun startTestCase(): Unit = methodExecutionTracing("startTestCase") {
-        val currentState = getCastedState<ReportState.Initialized.NotStarted>()
+        val currentState = getCastedState<NotStarted>()
 
-        val started = ReportState.Initialized.Started(
+        val started = Started(
+            entriesBeforeSteps = currentState.entriesBeforeSteps,
+            uploadsBeforeSteps = currentState.uploadsBeforeSteps,
             testMetadata = currentState.testMetadata,
-            currentStep = null,
-            incident = null,
-            stepNumber = 0,
-            preconditionNumber = 0,
             startTime = timeProvider.nowInSeconds()
         )
         state = started
@@ -259,7 +251,7 @@ class ReportImplementation(
     @Synchronized
     override fun startPrecondition(step: StepResult): Unit =
         methodExecutionTracing("startPrecondition") {
-            val currentState = getCastedState<ReportState.Initialized.Started>()
+            val currentState = getCastedState<Started>()
             val currentStep = currentState.currentStep
             require(currentStep == null || currentStep.isSynthetic) {
                 "Can't start precondition \"${step.title}\" when another one exists: \"${currentStep?.title}\"." +
@@ -271,7 +263,7 @@ class ReportImplementation(
 
     @Synchronized
     override fun stopPrecondition(): Unit = methodExecutionTracing("stopPrecondition") {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = getCastedState<Started>()
         val currentStep = requireNotNull(currentState.currentStep) {
             "Can't stop precondition because it isn't started"
         }
@@ -282,7 +274,7 @@ class ReportImplementation(
 
     @Synchronized
     override fun startStep(step: StepResult): Unit = methodExecutionTracing("startStep") {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = getCastedState<Started>()
         val currentStep = currentState.currentStep
         require(currentStep == null || currentStep.isSynthetic) {
             "Can't start step \"${step.title}\" when another one exists: \"${currentStep?.title}\". " +
@@ -294,7 +286,7 @@ class ReportImplementation(
 
     @Synchronized
     override fun stopStep(): Unit = methodExecutionTracing("stopStep") {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = getCastedState<Started>()
         val currentStep = requireNotNull(currentState.currentStep) {
             "Can't stop step because it isn't started"
         }
@@ -306,7 +298,7 @@ class ReportImplementation(
     @Synchronized
     override fun addHtml(label: String, content: String, wrapHtml: Boolean) {
         methodExecutionTracing("addHtml") {
-            val initialized = getCastedState<ReportState.Initialized>()
+            val initialized = getCastedState<Initialized>()
 
             val wrappedContentIfNeeded = if (wrapHtml) wrapInHtml(content) else content
 
@@ -318,10 +310,10 @@ class ReportImplementation(
                 comment = label
             )
 
-            val started = getCastedStateOrNull<ReportState.Initialized.Started>()
+            val started = getCastedStateOrNull<Started>()
             val futureUploads = started
                 ?.currentStepOrSynthetic()
-                ?.futureUploads ?: earlyFuturesUploads
+                ?.futureUploads ?: initialized.uploadsBeforeSteps
             futureUploads.add(html)
         }
     }
@@ -329,7 +321,7 @@ class ReportImplementation(
     @Synchronized
     override fun addText(label: String, text: String) {
         methodExecutionTracing("addText") {
-            val initialized = getCastedState<ReportState.Initialized>()
+            val initialized = getCastedState<Initialized>()
 
             val txt = transport.sendContent(
                 test = initialized.testMetadata,
@@ -338,10 +330,10 @@ class ReportImplementation(
                 ),
                 comment = label
             )
-            val started = getCastedStateOrNull<ReportState.Initialized.Started>()
+            val started = getCastedStateOrNull<Started>()
             val futureUploads = started
                 ?.currentStepOrSynthetic()
-                ?.futureUploads ?: earlyFuturesUploads
+                ?.futureUploads ?: initialized.uploadsBeforeSteps
             futureUploads.add(txt)
         }
     }
@@ -378,7 +370,7 @@ class ReportImplementation(
                     // no resumed activity, can't capture
                     null
                 } else {
-                    val initialized = getCastedState<ReportState.Initialized>()
+                    val initialized = getCastedState<Initialized>()
 
                     transport.sendContent(
                         test = initialized.testMetadata,
@@ -390,7 +382,7 @@ class ReportImplementation(
         }
 
     private fun updateStep(update: StepResult.() -> Unit) {
-        val currentState = getCastedState<ReportState.Initialized.Started>()
+        val currentState = getCastedState<Started>()
         val currentStep = requireNotNull(currentState.currentStep) {
             "Couldn't update step because it hasn't started yet"
         }
@@ -401,14 +393,14 @@ class ReportImplementation(
     }
 
     private fun addEntry(entry: Entry) {
-        val started = getCastedStateOrNull<ReportState.Initialized.Started>()
+        val started = getCastedStateOrNull<Started>()
         val entriesList = started
             ?.currentStepOrSynthetic()
-            ?.entryList ?: earlyEntries
+            ?.entryList ?: getCastedState<NotFinished>().entriesBeforeSteps
         entriesList.add(entry)
     }
 
-    private fun ReportState.Initialized.Started.currentStepOrSynthetic() =
+    private fun Started.currentStepOrSynthetic() =
         getCurrentStepOrCreate {
             StepResult(
                 isSynthetic = true,
@@ -426,8 +418,6 @@ class ReportImplementation(
             }
         }
     }
-
-    private inline fun <reified T : ReportState> checkStateIs() = getCastedState<T>()
 
     private inline fun <reified T : ReportState> getCastedStateOrNull(): T? {
         return when (val localState = state) {
@@ -447,7 +437,7 @@ class ReportImplementation(
             val detailedCause = when {
                 cause != null -> cause
 
-                localState is ReportState.Initialized ->
+                localState is Initialized ->
                     IllegalStateException("Test not started, incident = ${localState.incident}")
 
                 else -> null
@@ -460,75 +450,12 @@ class ReportImplementation(
         }
     }
 
-    private fun StepResult.appendFutureEntries(): StepResult {
-        if (futureUploads.isEmpty()) return this
-        return copy(entryList = (entryList + futureUploads.getInitializedEntries()).toMutableList())
-    }
-
-    private fun Incident.appendFutureEntries(): Incident {
-        if (incidentFutureUploads.isEmpty()) return this
-        return copy(entryList = entryList + incidentFutureUploads.getInitializedEntries())
-    }
-
-    private fun List<FutureValue<RemoteStorage.Result>>.getInitializedEntries(): List<Entry> =
-        asSequence()
-            .map(FutureValue<RemoteStorage.Result>::get)
-            .map {
-                Entry.File(
-                    comment = it.comment,
-                    timeInSeconds = it.timeInSeconds,
-                    fileType = it.uploadRequest.toFileType(),
-                    fileAddress = it.fileAddress()
-                )
-            }
-            .toList()
-
-    private fun RemoteStorage.Result.fileAddress(): FileAddress {
-        // false positive 'must be exhaustive' error in IDE,
-        // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
-        return when (this) {
-            is RemoteStorage.Result.Success -> try {
-                FileAddress.URL(url.toHttpUrl())
-            } catch (e: IllegalArgumentException) {
-                FileAddress.Error(e)
-            }
-            is RemoteStorage.Result.Error -> FileAddress.Error(t)
-        }
-    }
-
-    private fun RemoteStorage.Request.toFileType(): Entry.File.Type {
-        // false positive 'must be exhaustive' error in IDE,
-        // should be fixed in kotlin 1.5 https://youtrack.jetbrains.com/issue/KT-44821
-        return when (this) {
-            is RemoteStorage.Request.ContentRequest.Html -> Entry.File.Type.html
-            is RemoteStorage.Request.ContentRequest.PlainText -> Entry.File.Type.plain_text
-            is RemoteStorage.Request.FileRequest.Image -> Entry.File.Type.img_png
-            is RemoteStorage.Request.FileRequest.Video -> Entry.File.Type.video
-        }
-    }
-
-    private fun ReportState.Initialized.Started.writeTestCase() =
-        methodExecutionTracing("writeTestCase") {
+    private fun Started.finishTestCase() =
+        methodExecutionTracing("finishTestCase") {
             beforeTestWrite(this)
             transport.sendReport(this)
-            state = ReportState.Written
+            state = ReportState.Finished
         }
-
-    /**
-     * Screenshots/HttpStatic are synchronous, but uploading runs on background thread
-     * We have to wait upload completion before sending report packages
-     */
-    private fun ReportState.Initialized.Started.waitUploads() {
-        testCaseStepList =
-            testCaseStepList
-                .map { it.appendFutureEntries() }
-                .toMutableList()
-
-        preconditionStepList =
-            preconditionStepList
-                .map { it.appendFutureEntries() }
-                .toMutableList()
-    }
 
     private fun wrapInHtml(content: String): String {
         return """<!DOCTYPE html>

@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
@@ -44,7 +45,7 @@ class ReportTest {
             )
         )
 
-        val reportPackage = report.currentState as ReportState.Initialized.Started
+        val reportPackage = report.currentState as Started
         report.finishTestCase()
 
         assertThat(reportPackage.incident).isNotNull()
@@ -100,7 +101,7 @@ class ReportTest {
             )
         )
 
-        val reportPackage = report.currentState as ReportState.Initialized.Started
+        val reportPackage = report.currentState as Started
         report.finishTestCase()
 
         assertThat(reportPackage.incident).isNotNull()
@@ -125,7 +126,7 @@ class ReportTest {
             assertion("assertion message") {}
         }
 
-        val state = report.currentState as ReportState.Initialized.Started
+        val state = report.currentState as Started
         report.finishTestCase()
 
         assertThat(state.testCaseStepList)
@@ -149,7 +150,7 @@ class ReportTest {
             assertion("assertion message") {}
         }
 
-        val state = report.currentState as ReportState.Initialized.Started
+        val state = report.currentState as Started
         report.finishTestCase()
 
         assertThat(state.testCaseStepList)
@@ -198,7 +199,7 @@ class ReportTest {
             }
         }
 
-        val state = report.currentState as ReportState.Initialized.Started
+        val state = report.currentState as Started
         report.finishTestCase()
         val stepEntries = state.testCaseStepList.first().entryList
 
@@ -232,7 +233,7 @@ class ReportTest {
             )
         }
 
-        val state = report.currentState as ReportState.Initialized.Started
+        val state = report.currentState as Started
         report.finishTestCase()
         val stepEntries = state.testCaseStepList.first().entryList
 
