@@ -26,7 +26,6 @@ import com.avito.android.test.report.ReportTestListener
 import com.avito.android.test.report.ReportViewerHttpInterceptor
 import com.avito.android.test.report.ReportViewerWebsocketReporter
 import com.avito.android.test.report.StepDslProvider
-import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
@@ -249,7 +248,7 @@ abstract class InHouseInstrumentationTestRunner :
     override fun onException(obj: Any?, e: Throwable): Boolean {
         testRunEnvironment.executeIfRealRun {
             logger.warn("Application crash captured by onException handler inside instrumentation", e)
-            tryToReportUnexpectedIncident(incident = e)
+            reportUnexpectedIncident(incident = e)
         }
 
         return super.onException(obj, e)
@@ -275,15 +274,8 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    fun tryToReportUnexpectedIncident(incident: Throwable) {
-        try {
-            if (!report.isWritten) {
-                report.registerIncident(AppCrashException(incident))
-                report.finishTestCase()
-            }
-        } catch (t: Throwable) {
-            logger.critical("Can't register and report unexpected incident", t)
-        }
+    internal fun reportUnexpectedIncident(incident: Throwable) {
+        report.unexpectedFailedTestCase(incident)
     }
 
     /**

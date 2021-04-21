@@ -3,6 +3,7 @@ package com.avito.android.test.report
 import androidx.annotation.VisibleForTesting
 import androidx.test.espresso.EspressoException
 import com.avito.android.Result
+import com.avito.android.test.report.incident.AppCrashException
 import com.avito.android.test.report.incident.AppCrashIncidentPresenter
 import com.avito.android.test.report.incident.FallbackIncidentPresenter
 import com.avito.android.test.report.incident.IncidentChainFactory
@@ -68,11 +69,11 @@ class ReportImplementation(
     val currentState: ReportState
         get() = state
 
-    override val isWritten: Boolean
-        get() = currentState is ReportState.Written
-
     override val isFirstStep: Boolean
         get() = state.isFirstStepOrPrecondition
+
+    private val isWritten: Boolean
+        get() = currentState is ReportState.Written
 
     @Synchronized
     override fun createStepModel(stepName: String): StepResult {
@@ -97,12 +98,16 @@ class ReportImplementation(
     }
 
     @Synchronized
-    override fun registerIncident(exception: Throwable) {
-        registerIncident(exception, null)
+    override fun unexpectedFailedTestCase(exception: Throwable) {
+        if (!isWritten) {
+            registerIncident(AppCrashException(exception), null)
+            finishTestCase()
+        } else {
+            logger.warn("Fail to register unexpected incident. Report is already written", exception)
+        }
     }
 
-    @Synchronized
-    override fun registerIncident(
+    private fun registerIncident(
         exception: Throwable,
         screenshotName: String
     ) {

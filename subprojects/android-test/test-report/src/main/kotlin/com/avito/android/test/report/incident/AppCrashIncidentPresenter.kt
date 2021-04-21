@@ -11,4 +11,4 @@ internal class AppCrashIncidentPresenter : IncidentPresenter {
         Result.Success(listOf(IncidentElement(message = "Crash приложения")))
 }
 
-class AppCrashException(cause: Throwable) : Exception(cause)
+internal class AppCrashException(cause: Throwable) : Exception(cause)
