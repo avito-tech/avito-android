@@ -17,17 +17,15 @@ dependencies {
     implementation(project(":common:logger"))
     implementation(project(":common:elastic-logger"))
     implementation(project(":common:sentry"))
+    implementation(project(":common:waiter"))
     implementation(project(":common:result"))
     implementation(project(":common:test-annotations"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":android-test:android-log"))
-    implementation(libs.androidXTestCore)
-    // TODO delete
-    implementation(project(":android-test:ui-testing-core")) {
-        because("waitFor, getCurrentActivityOrNull")
-    }
+    implementation(project(":android-test:instrumentation"))
     implementation(project(":android-test:resource-manager-exceptions"))
     implementation(project(":android-test:websocket-reporter"))
+    implementation(libs.androidXTestCore)
     implementation(libs.okio)
     implementation(libs.kotson)
     implementation(libs.okhttp)

@@ -5,18 +5,20 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Looper
 import com.avito.android.Result
+import com.avito.android.instrumentation.ActivityProvider
 import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
-import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
 import com.avito.report.TestArtifactsProvider
 import java.io.File
 import java.io.FileOutputStream
 
-internal class ScreenshotCapturerImpl(private val testArtifactsProvider: TestArtifactsProvider) : ScreenshotCapturer {
+internal class ScreenshotCapturerImpl(
+    private val testArtifactsProvider: TestArtifactsProvider,
+    private val activityProvider: ActivityProvider
+) : ScreenshotCapturer {
 
     override fun captureBitmap(): Result<Capture> {
-        // todo use di: pass activity getter as constructor argument
-        val activity = getCurrentActivityOrNull()
+        val activity = activityProvider.getCurrentActivity()
         return if (activity != null) {
             try {
                 Result.Success(Capture.Bitmap(drawCanvas(activity)))

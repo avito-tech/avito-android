@@ -1,7 +1,6 @@
 package com.avito.android.test.report.screenshot
 
 import com.avito.android.Result
-import com.avito.report.TestArtifactsProvider
 import java.io.File
 import java.util.UUID
 import android.graphics.Bitmap as AndroidBitmap
@@ -23,8 +22,4 @@ interface ScreenshotCapturer {
         class Bitmap(val value: AndroidBitmap) : Capture()
         object NoActivity : Capture()
     }
-}
-
-fun ScreenshotCapturer(testArtifactsProvider: TestArtifactsProvider): ScreenshotCapturer {
-    return ScreenshotCapturerImpl(testArtifactsProvider)
 }
