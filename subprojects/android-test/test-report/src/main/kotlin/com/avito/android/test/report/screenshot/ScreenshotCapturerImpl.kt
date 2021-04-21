@@ -9,18 +9,10 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
 import com.avito.android.test.util.getCurrentActivityOrNull
 import com.avito.android.util.runOnMainThreadSync
 import com.avito.report.TestArtifactsProvider
-import com.avito.report.TestArtifactsProviderFactory
 import java.io.File
 import java.io.FileOutputStream
 
-class ScreenshotCapturerImpl(private val testArtifactsProvider: TestArtifactsProvider) : ScreenshotCapturer {
-
-    // for backward compatibility in synthetic monitoring
-    // todo remove in avito and then here
-    @Suppress("unused")
-    constructor(outputDirectory: Lazy<File>) : this(
-        testArtifactsProvider = TestArtifactsProviderFactory.createStub(outputDirectory)
-    )
+internal class ScreenshotCapturerImpl(private val testArtifactsProvider: TestArtifactsProvider) : ScreenshotCapturer {
 
     override fun captureBitmap(): Result<Capture> {
         // todo use di: pass activity getter as constructor argument

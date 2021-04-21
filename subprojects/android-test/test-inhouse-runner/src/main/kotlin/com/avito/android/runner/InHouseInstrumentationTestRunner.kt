@@ -29,7 +29,6 @@ import com.avito.android.test.report.StepDslProvider
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
-import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
 import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
@@ -100,9 +99,7 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    /**
-     * Public for *TestApp to skip on orchestrator runs
-     */
+    @Suppress("MemberVisibilityCanBePrivate") // Public for *TestApp to skip on orchestrator runs
     val testRunEnvironment: TestRunEnvironment by lazy {
         if (isRealRun(instrumentationArguments)) {
             createRunnerEnvironment(instrumentationArguments)
@@ -111,11 +108,9 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    /**
-     * Public for synth monitoring
-     */
+    @Suppress("MemberVisibilityCanBePrivate") // Public for synth monitoring
     val screenshotCapturer: ScreenshotCapturer by lazy {
-        ScreenshotCapturerImpl(testArtifactsProvider)
+        ScreenshotCapturer(testArtifactsProvider)
     }
 
     override val loggerFactory by lazy {
