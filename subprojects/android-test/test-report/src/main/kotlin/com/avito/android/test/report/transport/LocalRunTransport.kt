@@ -1,7 +1,7 @@
 package com.avito.android.test.report.transport
 
 import android.os.Looper
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
@@ -31,7 +31,7 @@ internal class LocalRunTransport(
 
     private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl)
 
-    override fun sendReport(state: ReportState.Initialized.Started) {
+    override fun sendReport(state: Started) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             Thread { sendInternal(state) }.apply {
                 start()
@@ -42,7 +42,7 @@ internal class LocalRunTransport(
         }
     }
 
-    private fun sendInternal(state: ReportState.Initialized.Started) {
+    private fun sendInternal(state: Started) {
         try {
             val testName = TestName(
                 className = state.testMetadata.className,

@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.StepResult
 import com.avito.report.model.Entry
 import com.avito.time.TimeMachineProvider
@@ -39,7 +40,7 @@ class ReportSyntheticStepsTest {
 
         report.addEntriesOutOfStep()
 
-        val state = report.currentState as ReportState.Initialized.Started
+        val state = report.currentState as Started
         report.finishTestCase()
 
         // then
@@ -58,7 +59,7 @@ class ReportSyntheticStepsTest {
         report.addEntriesOutOfStep()
 
         step("Real step")
-        val state = report.currentState as ReportState.Initialized.Started
+        val state = report.currentState as Started
         report.finishTestCase()
 
         // then
@@ -79,7 +80,7 @@ class ReportSyntheticStepsTest {
         report.addEntriesOutOfStep()
 
         step("Real step")
-        val state = report.currentState as ReportState.Initialized.Started
+        val state = report.currentState as Started
         report.finishTestCase()
 
         // then
@@ -100,7 +101,7 @@ class ReportSyntheticStepsTest {
         addAssertion(assertionMessage)
     }
 
-    private fun ReportState.Initialized.Started.assertStep(
+    private fun Started.assertStep(
         stepsCount: Int,
         preconditionsCount: Int,
         stepIndex: Int,
@@ -117,7 +118,7 @@ class ReportSyntheticStepsTest {
         )
     }
 
-    private fun ReportState.Initialized.Started.assertPrecondition(
+    private fun Started.assertPrecondition(
         stepsCount: Int,
         preconditionsCount: Int,
         preconditionIndex: Int,

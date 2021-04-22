@@ -1,6 +1,6 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized
 import com.avito.android.test.report.createStubInstance
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
@@ -25,7 +25,7 @@ internal class ExternalStorageTransportTest {
     fun `sendReport - file written`(@TempDir tempDir: File) {
         val testMetadata = TestMetadata.createStubInstance(className = "com.Test", methodName = "test")
 
-        val reportState = ReportState.Initialized.Started.createStubInstance(testMetadata = testMetadata)
+        val reportState = Initialized.Started.createStubInstance(testMetadata = testMetadata)
 
         val outputFileProvider = createOutputFileProvider(
             rootDir = tempDir,
