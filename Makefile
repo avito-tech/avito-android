@@ -131,6 +131,9 @@ stage_ui_tests:
 	make publish_to_maven_local
 	./gradlew $(project) $(log_level) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
 
+composite_ui_tests:
+	./gradlew -p composite $(log_level) $(params) :instrumentation:instrumentationUi
+
 unit_tests:
 	$(docker_command) ./gradlew $(project) $(log_level) $(params) test
 
