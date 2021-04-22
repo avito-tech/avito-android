@@ -9,8 +9,8 @@ import androidx.test.runner.lifecycle.Stage
 import com.avito.android.Result
 
 internal class ActivityProviderImpl(
-    private val instrumentation: Instrumentation,
-    private val activityLifecycleMonitor: ActivityLifecycleMonitor
+    private val instrumentation: Lazy<Instrumentation>,
+    private val activityLifecycleMonitor: Lazy<ActivityLifecycleMonitor>
 ) : ActivityProvider {
 
     override fun getCurrentActivity(): Result<Activity> {
@@ -19,8 +19,12 @@ internal class ActivityProviderImpl(
         if (isMainThread()) {
             result = findResumedActivity()
         } else {
-            instrumentation.runOnMainSync {
-                result = findResumedActivity()
+            try {
+                instrumentation.value.runOnMainSync {
+                    result = findResumedActivity()
+                }
+            } catch (e: Throwable) {
+                result = Result.Failure(e)
             }
         }
 
@@ -28,9 +32,13 @@ internal class ActivityProviderImpl(
     }
 
     private fun findResumedActivity(): Result<Activity> {
-        val resumedActivities = activityLifecycleMonitor.getActivitiesInStage(Stage.RESUMED)
-        if (resumedActivities.iterator().hasNext()) {
-            return Result.Success(resumedActivities.iterator().next())
+        try {
+            val resumedActivities = activityLifecycleMonitor.value.getActivitiesInStage(Stage.RESUMED)
+            if (resumedActivities.iterator().hasNext()) {
+                return Result.Success(resumedActivities.iterator().next())
+            }
+        } catch (e: Throwable) {
+            return Result.Failure(e)
         }
         return notFoundResult()
     }

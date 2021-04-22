@@ -8,8 +8,12 @@ import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 object ActivityProviderFactory {
 
     fun create(
-        instrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation(),
-        activityLifecycleMonitor: ActivityLifecycleMonitor = ActivityLifecycleMonitorRegistry.getInstance()
+        instrumentation: Lazy<Instrumentation> = lazy {
+            InstrumentationRegistry.getInstrumentation()
+        },
+        activityLifecycleMonitor: Lazy<ActivityLifecycleMonitor> = lazy {
+            ActivityLifecycleMonitorRegistry.getInstance()
+        }
     ): ActivityProvider {
         return ActivityProviderImpl(instrumentation, activityLifecycleMonitor)
     }
