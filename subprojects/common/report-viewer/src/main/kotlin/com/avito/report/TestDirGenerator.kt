@@ -28,8 +28,6 @@ interface TestDirGenerator {
 
         /**
          * dataset number not needed because method names are unique for them
-         *
-         * todo need deviceName
          */
         override fun generateUniqueDir(): String {
             return buildString {
@@ -38,10 +36,5 @@ interface TestDirGenerator {
                 append(methodName)
             }
         }
-    }
-
-    object Stub : TestDirGenerator {
-
-        override fun generateUniqueDir(): String = "test#test"
     }
 }

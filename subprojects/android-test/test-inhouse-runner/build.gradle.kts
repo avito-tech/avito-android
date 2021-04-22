@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":android-test:android-log"))
     implementation(project(":android-test:ui-testing-core"))
     implementation(project(":android-test:ui-testing-maps"))
+    implementation(project(":android-test:instrumentation"))
     implementation(project(":android-test:test-report"))
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)

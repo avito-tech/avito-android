@@ -5,34 +5,21 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Looper
 import com.avito.android.Result
-import com.avito.android.test.report.screenshot.ScreenshotCapturer.Capture
-import com.avito.android.test.util.getCurrentActivityOrNull
+import com.avito.android.instrumentation.ActivityProvider
 import com.avito.android.util.runOnMainThreadSync
 import com.avito.report.TestArtifactsProvider
-import com.avito.report.TestArtifactsProviderFactory
 import java.io.File
 import java.io.FileOutputStream
+import android.graphics.Bitmap as AndroidBitmap
 
-class ScreenshotCapturerImpl(private val testArtifactsProvider: TestArtifactsProvider) : ScreenshotCapturer {
+internal class ScreenshotCapturerImpl(
+    private val testArtifactsProvider: TestArtifactsProvider,
+    private val activityProvider: ActivityProvider
+) : ScreenshotCapturer {
 
-    // for backward compatibility in synthetic monitoring
-    // todo remove in avito and then here
-    @Suppress("unused")
-    constructor(outputDirectory: Lazy<File>) : this(
-        testArtifactsProvider = TestArtifactsProviderFactory.createStub(outputDirectory)
-    )
-
-    override fun captureBitmap(): Result<Capture> {
-        // todo use di: pass activity getter as constructor argument
-        val activity = getCurrentActivityOrNull()
-        return if (activity != null) {
-            try {
-                Result.Success(Capture.Bitmap(drawCanvas(activity)))
-            } catch (e: Throwable) {
-                Result.Failure(IllegalStateException("Can't make screenshot, drawCanvas() exception", e))
-            }
-        } else {
-            Result.Success(Capture.NoActivity)
+    override fun captureBitmap(): Result<AndroidBitmap> {
+        return activityProvider.getCurrentActivity().map { activity ->
+            drawCanvas(activity)
         }
     }
 
@@ -40,24 +27,16 @@ class ScreenshotCapturerImpl(private val testArtifactsProvider: TestArtifactsPro
         filename: String,
         compressFormat: Bitmap.CompressFormat,
         quality: Int
-    ): Result<File?> {
-        return testArtifactsProvider.provideReportDir()
-            .flatMap { dir ->
-                captureBitmap().flatMap { capture ->
-                    Result.Success(
-                        when (capture) {
-                            is Capture.Bitmap ->
-                                File(dir, filename).also { file ->
-                                    FileOutputStream(file).use {
-                                        capture.value.compress(compressFormat, quality, it)
-                                    }
-                                }
-
-                            Capture.NoActivity -> null // no Activity in RESUMED
-                        }
-                    )
+    ): Result<File> {
+        return testArtifactsProvider.provideReportDir().flatMap { dir ->
+            captureBitmap().map { capture ->
+                File(dir, filename).also { file ->
+                    FileOutputStream(file).use {
+                        capture.compress(compressFormat, quality, it)
+                    }
                 }
             }
+        }
     }
 
     private fun drawCanvas(activity: Activity): Bitmap {

@@ -5,6 +5,8 @@ import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
+import com.avito.android.instrumentation.ActivityProvider
+import com.avito.android.instrumentation.ActivityProviderFactory
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
@@ -29,7 +31,7 @@ import com.avito.android.test.report.StepDslProvider
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
-import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
+import com.avito.android.test.report.screenshot.ScreenshotCapturerFactory
 import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
@@ -54,6 +56,8 @@ abstract class InHouseInstrumentationTestRunner :
     InstrumentationTestRunner(),
     ReportProvider,
     RemoteStorageProvider {
+
+    private val activityProvider: ActivityProvider by lazy { ActivityProviderFactory.create() }
 
     private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
 
@@ -100,9 +104,7 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    /**
-     * Public for *TestApp to skip on orchestrator runs
-     */
+    @Suppress("MemberVisibilityCanBePrivate") // Public for *TestApp to skip on orchestrator runs
     val testRunEnvironment: TestRunEnvironment by lazy {
         if (isRealRun(instrumentationArguments)) {
             createRunnerEnvironment(instrumentationArguments)
@@ -111,11 +113,9 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    /**
-     * Public for synth monitoring
-     */
+    @Suppress("MemberVisibilityCanBePrivate") // Public for synth monitoring
     val screenshotCapturer: ScreenshotCapturer by lazy {
-        ScreenshotCapturerImpl(testArtifactsProvider)
+        ScreenshotCapturerFactory.create(testArtifactsProvider, activityProvider)
     }
 
     override val loggerFactory by lazy {

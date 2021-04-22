@@ -7,13 +7,6 @@ import java.io.File
 
 object TestArtifactsProviderFactory {
 
-    fun createStub(testReportRootDir: Lazy<File>): TestArtifactsProvider {
-        return UniqueDirTestArtifactsProvider(
-            rootDir = testReportRootDir,
-            testDirGenerator = TestDirGenerator.Stub
-        )
-    }
-
     fun create(
         testReportRootDir: Lazy<File>,
         testStaticData: TestStaticData
