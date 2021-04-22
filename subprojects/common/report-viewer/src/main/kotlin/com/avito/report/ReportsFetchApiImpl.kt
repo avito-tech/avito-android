@@ -68,15 +68,19 @@ internal class ReportsFetchApiImpl(
         return when (val result = getReportInternal(reportCoordinates)) {
             is GetReportResult.Error -> Result.Failure(result.exception)
             is GetReportResult.Found -> Result.Success(result.report)
-            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
+            is GetReportResult.NotFound -> Result.Failure(
+                Exception("Report not found $reportCoordinates", result.exception)
+            )
         }
     }
 
     override fun getTestsForRunId(reportCoordinates: ReportCoordinates): Result<List<SimpleRunTest>> {
-        return when (val getReportResult = getReportInternal(reportCoordinates)) {
-            is GetReportResult.Found -> getTestData(getReportResult.report.id)
-            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
+        return when (val result = getReportInternal(reportCoordinates)) {
+            is GetReportResult.Found -> getTestData(result.report.id)
+            is GetReportResult.NotFound -> Result.Failure(
+                Exception("Report not found $reportCoordinates", result.exception)
+            )
+            is GetReportResult.Error -> Result.Failure(result.exception)
         }
     }
 
@@ -85,11 +89,15 @@ internal class ReportsFetchApiImpl(
     }
 
     override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> {
-        return when (val getReportResult = getReportInternal(reportCoordinates)) {
-            is GetReportResult.Found -> getTestData(getReportResult.report.id)
-                .map { testData -> toCrossDeviceTestData(testData) }
-            GetReportResult.NotFound -> Result.Failure(Exception("Report not found $reportCoordinates"))
-            is GetReportResult.Error -> Result.Failure(getReportResult.exception)
+        return when (val result = getReportInternal(reportCoordinates)) {
+            is GetReportResult.Found -> getTestData(result.report.id)
+                .map { testData ->
+                    toCrossDeviceTestData(testData)
+                }
+            is GetReportResult.NotFound -> Result.Failure(
+                Exception("Report not found $reportCoordinates", result.exception)
+            )
+            is GetReportResult.Error -> Result.Failure(result.exception)
         }
     }
 
@@ -110,7 +118,7 @@ internal class ReportsFetchApiImpl(
             { exception ->
                 val isNotFoundError = exception.message?.contains("\"data\":\"not found\"") ?: false
                 if (isNotFoundError) {
-                    GetReportResult.NotFound
+                    GetReportResult.NotFound(exception)
                 } else {
                     GetReportResult.Error(exception)
                 }
