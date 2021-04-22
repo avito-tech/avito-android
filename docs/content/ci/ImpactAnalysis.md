@@ -6,7 +6,7 @@ Test impact analysis finds automatically a minimum set of tests that can verify 
 
 ## On module level
 
-Besides tests, we have different work to do in modules: Android Lint, unit-tests, assemble, ...\
+Besides tests, we have different work to do in modules: Android Lint, unit-tests, assemble, ...  
 If a module is not affected by changes, we don't want to run anything in it.
 
 ```mermaid
@@ -20,5 +20,5 @@ AppY:::changed --> FeatureD:::changed
 classDef changed fill:#f96;
 ```
 
-These optimizations are supported in [CI Steps Plugin](../projects/CiSteps.md).\
+These optimizations are supported in [CI Steps Plugin](../projects/CiSteps.md).  
 See implementation in `impact` module.

@@ -1,12 +1,13 @@
 package com.avito.utils
 
+import androidx.annotation.RequiresApi
 import com.avito.android.Result
 import java.nio.file.Path
 
 /**
  * WARNING: only android 26+ supported
  */
-@Suppress("NewApi")
+@RequiresApi(api = 26)
 fun Path.deleteRecursively(): Result<Unit> {
     return Result.tryCatch {
         val isDeleted = toFile().deleteRecursively()

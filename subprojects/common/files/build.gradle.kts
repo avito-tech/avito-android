@@ -5,4 +5,5 @@ plugins {
 
 dependencies {
     api(project(":common:result"))
+    api(libs.androidAnnotations)
 }

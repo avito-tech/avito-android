@@ -54,7 +54,7 @@ internal class ArtifactsTestListener(
             is Failed.InRun -> {
                 val artifacts = testArtifactsDir.flatMap { dir ->
 
-                    // last /. means to adb to copy recursively, and not to copy last dir
+                    // last /. means to adb to copy recursively, and do not copy the last
                     // example:
                     //  - from: /sdcard/Android/someDir/ to: /xx ; will copy to /xx/someDir/ and not recursive
                     //  - from: /sdcard/android/someDir/. to: /xx ; will copy to /xx and recursive

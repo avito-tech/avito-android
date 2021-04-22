@@ -1,14 +1,13 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized
 import com.avito.android.test.report.createStubInstance
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
 import com.avito.filestorage.RemoteStorage
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.TestArtifactsProvider
-import com.avito.report.TestDirGenerator
-import com.avito.report.internal.UniqueDirTestArtifactsProvider
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
@@ -26,7 +25,7 @@ internal class ExternalStorageTransportTest {
     fun `sendReport - file written`(@TempDir tempDir: File) {
         val testMetadata = TestMetadata.createStubInstance(className = "com.Test", methodName = "test")
 
-        val reportState = ReportState.Initialized.Started.createStubInstance(testMetadata = testMetadata)
+        val reportState = Initialized.Started.createStubInstance(testMetadata = testMetadata)
 
         val outputFileProvider = createOutputFileProvider(
             rootDir = tempDir,
@@ -79,12 +78,10 @@ internal class ExternalStorageTransportTest {
         rootDir: File,
         testMetadata: TestMetadata
     ): TestArtifactsProvider {
-        return UniqueDirTestArtifactsProvider(
-            lazy { rootDir },
-            testDirGenerator = TestDirGenerator.Impl(
-                className = testMetadata.className,
-                methodName = testMetadata.methodName!!
-            )
+        return TestArtifactsProviderFactory.create(
+            testReportRootDir = lazy { rootDir },
+            className = testMetadata.className,
+            methodName = testMetadata.methodName!!
         )
     }
 }

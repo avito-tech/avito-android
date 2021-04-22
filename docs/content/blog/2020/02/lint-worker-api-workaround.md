@@ -5,8 +5,8 @@
 ## Problem
 
 We have a lot of modules in the project, and things build in parallel very well. 
-However, there is a contention between Android lint and UI-tests in CI builds. Both tasks are on a final application module.\
-We use workers to parallelize different UI-testing tasks and enable Gradle workers API for available Android Gradle plugin tasks.\
+However, there is a contention between Android lint and UI-tests in CI builds. Both tasks are on a final application module.  
+We use workers to parallelize different UI-testing tasks and enable Gradle workers API for available Android Gradle plugin tasks.  
 Android lint does not use Gradle Worker API yet and blocks any of these optimizations on most occasions.
 
 It is so, because Gradle [holds module (project) lock](https://github.com/gradle/gradle/issues/8630#issuecomment-488161594),

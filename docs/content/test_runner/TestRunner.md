@@ -7,12 +7,12 @@ It can do the following:
 - Filter tests by annotations, by packages, by previous runs.
 - Run tests in parallel. It orchestrates emulators in Kubernetes or uses local emulators.
 - Rerun failed tests to deal with flakiness
-- Save tests result in a report.\
+- Save tests result in a report.  
   It uses an internal TMS (test management system). We are working on support other formats.
 
 ## Getting started
 
-1. Apply the instrumentation-tests Gradle plugin \
+1. Apply the instrumentation-tests Gradle plugin:  
 
 === "Kotlin"
     Add to your `build.gradle.kts`
@@ -506,7 +506,7 @@ You can customize everything by adding custom properties to CLI command e.g.
 ## Find out how filters were applied
 
 If build finishes successfully It will produce files with debug information
-Files will be located at: \
+Files will be located at:  
  `<Project root folder>/outputs/<subproject name>/instrumentation/<instrumentation task name>/filter`
 
 ### Find out what filter config was
@@ -519,7 +519,7 @@ Look at file `filters-applied.json`
 
 ### Find out what tests were filtered
 
-Look at file `filters-excludes.json` \
+Look at file `filters-excludes.json`  
 - You may find filtered tests grouped by filter names declared in `filters-applied.json`
 - You may find a filtered test by name
 
@@ -533,7 +533,7 @@ avito-disclaimer.md
 
 1. Get access to kubernetes cloud: [internal doc](http://links.k.avito.ru/Kubectl)
 2. [Request](http://links.k.avito.ru/androidEmulatorServiceDesk) `exec` access to `android-emulator` namespace in `beta` cluster
-3. Setup a context on `beta`, `android-emulator` with your user access.\
+3. Setup a context on `beta`, `android-emulator` with your user access.  
 More about kubernetes context: [Official docs](https://kubernetes.io/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#define-clusters-users-and-contexts)
 4. Add a configuration with target on kubernetes
 
@@ -675,7 +675,7 @@ We will looking for `.kube/config` in your $HOME
 
 ## Run test on APK was built before
 
-Plugin builds APKs on his own by default.\
+Plugin builds APKs on his own by default.  
 If for any reason you have to build APK externally, you can pass files manually:
 
 ```kotlin

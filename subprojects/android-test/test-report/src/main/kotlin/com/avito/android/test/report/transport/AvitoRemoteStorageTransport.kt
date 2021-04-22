@@ -1,6 +1,6 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
@@ -9,7 +9,7 @@ internal class AvitoRemoteStorageTransport(
     private val avitoFileStorage: RemoteStorage
 ) : Transport {
 
-    override fun sendReport(state: ReportState.Initialized.Started) {
+    override fun sendReport(state: Started) {
         throw IllegalStateException("not implemented")
     }
 

@@ -5,7 +5,7 @@ import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestDirGenerator
 import java.io.File
 
-class UniqueDirTestArtifactsProvider(
+internal class UniqueDirTestArtifactsProvider(
     override val rootDir: Lazy<File>,
     private val testDirGenerator: TestDirGenerator,
 ) : TestArtifactsProvider {

@@ -1,6 +1,6 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.report.model.Incident
 import com.avito.report.model.IncidentElement
 import com.avito.report.model.TestRuntimeDataPackage
@@ -8,7 +8,7 @@ import com.avito.time.TimeProvider
 
 internal class TestRuntimeDataBuilder(private val timeProvider: TimeProvider) : PreTransportMappers {
 
-    fun fromState(state: ReportState.Initialized.Started): TestRuntimeDataPackage {
+    fun fromState(state: Started): TestRuntimeDataPackage {
         return try {
             TestRuntimeDataPackage(
                 incident = state.incident,

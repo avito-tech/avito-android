@@ -1,13 +1,13 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 
 internal object StubTransport : Transport {
 
-    override fun sendReport(state: ReportState.Initialized.Started) {
+    override fun sendReport(state: Started) {
     }
 
     override fun sendContent(

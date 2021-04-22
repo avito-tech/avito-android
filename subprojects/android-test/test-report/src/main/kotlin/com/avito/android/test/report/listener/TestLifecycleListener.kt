@@ -1,27 +1,19 @@
 package com.avito.android.test.report.listener
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.report.model.Incident
 
 interface TestLifecycleListener {
 
-    fun beforeTestStart(state: ReportState.Initialized.Started) {
+    fun beforeTestStart(state: Started) {
         // do nothing
     }
 
-    fun beforeTestUpdate(state: ReportState.Initialized.Started) {
+    fun afterTestStop(state: Started) {
         // do nothing
     }
 
-    fun afterTestUpdate(state: ReportState.Initialized.Started) {
-        // do nothing
-    }
-
-    fun afterTestStop(state: ReportState.Initialized.Started) {
-        // do nothing
-    }
-
-    fun beforeTestWrite(state: ReportState.Initialized.Started) {
+    fun beforeTestWrite(state: Started) {
         // do nothing
     }
 
@@ -43,23 +35,15 @@ object TestLifecycleNotifier : TestLifecycleListener {
 
     fun addListener(listener: TestLifecycleListener) = listeners.add(listener)
 
-    override fun beforeTestStart(state: ReportState.Initialized.Started) {
+    override fun beforeTestStart(state: Started) {
         listeners.forEach { it.beforeTestStart(state) }
     }
 
-    override fun beforeTestUpdate(state: ReportState.Initialized.Started) {
-        listeners.forEach { it.beforeTestUpdate(state) }
-    }
-
-    override fun afterTestUpdate(state: ReportState.Initialized.Started) {
-        listeners.forEach { it.afterTestUpdate(state) }
-    }
-
-    override fun afterTestStop(state: ReportState.Initialized.Started) {
+    override fun afterTestStop(state: Started) {
         listeners.forEach { it.afterTestStop(state) }
     }
 
-    override fun beforeTestWrite(state: ReportState.Initialized.Started) {
+    override fun beforeTestWrite(state: Started) {
         listeners.forEach { it.beforeTestWrite(state) }
     }
 

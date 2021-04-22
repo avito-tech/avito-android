@@ -7,7 +7,7 @@ import android.graphics.Bitmap as AndroidBitmap
 
 interface ScreenshotCapturer {
 
-    fun captureBitmap(): Result<Capture>
+    fun captureBitmap(): Result<AndroidBitmap>
 
     /**
      * @return null when no Activity in RESUMED state
@@ -16,10 +16,5 @@ interface ScreenshotCapturer {
         filename: String = "${UUID.randomUUID()}.png",
         compressFormat: AndroidBitmap.CompressFormat = AndroidBitmap.CompressFormat.PNG,
         quality: Int = 100
-    ): Result<File?>
-
-    sealed class Capture {
-        class Bitmap(val value: AndroidBitmap) : Capture()
-        object NoActivity : Capture()
-    }
+    ): Result<File>
 }

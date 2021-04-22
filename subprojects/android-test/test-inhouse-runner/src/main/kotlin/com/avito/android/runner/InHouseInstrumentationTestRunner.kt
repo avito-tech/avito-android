@@ -5,6 +5,8 @@ import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
+import com.avito.android.instrumentation.ActivityProvider
+import com.avito.android.instrumentation.ActivityProviderFactory
 import com.avito.android.log.AndroidLoggerFactory
 import com.avito.android.runner.annotation.resolver.MethodStringRepresentation
 import com.avito.android.runner.annotation.resolver.TestMetadataInjector
@@ -12,34 +14,30 @@ import com.avito.android.runner.annotation.resolver.TestMethodOrClass
 import com.avito.android.runner.annotation.resolver.getTestOrThrow
 import com.avito.android.runner.annotation.validation.CompositeTestMetadataValidator
 import com.avito.android.runner.annotation.validation.TestMetadataValidator
-import com.avito.android.runner.delegates.MainLooperMessagesLogDelegate
 import com.avito.android.runner.delegates.ReportLifecycleEventsDelegate
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.stats.StatsDSender
 import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
-import com.avito.android.test.report.Report
+import com.avito.android.test.report.InternalReport
 import com.avito.android.test.report.ReportFriendlyFailureHandler
 import com.avito.android.test.report.ReportImplementation
 import com.avito.android.test.report.ReportProvider
 import com.avito.android.test.report.ReportTestListener
 import com.avito.android.test.report.ReportViewerHttpInterceptor
 import com.avito.android.test.report.ReportViewerWebsocketReporter
-import com.avito.android.test.report.incident.AppCrashException
+import com.avito.android.test.report.StepDslProvider
 import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
-import com.avito.android.test.report.screenshot.ScreenshotCapturerImpl
+import com.avito.android.test.report.screenshot.ScreenshotCapturerFactory
 import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
-import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumper
-import com.avito.android.test.report.troubleshooting.dump.MainLooperMessagesLogDumperImpl
-import com.avito.android.test.report.troubleshooting.dump.NoOpMainLooper
 import com.avito.android.test.report.video.VideoCaptureTestListener
+import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.android.util.DeviceSettingsChecker
-import com.avito.android.util.ImitateFlagProvider
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
@@ -57,8 +55,9 @@ import java.util.concurrent.TimeUnit
 abstract class InHouseInstrumentationTestRunner :
     InstrumentationTestRunner(),
     ReportProvider,
-    ImitateFlagProvider,
     RemoteStorageProvider {
+
+    private val activityProvider: ActivityProvider by lazy { ActivityProviderFactory.create() }
 
     private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
 
@@ -67,14 +66,6 @@ abstract class InHouseInstrumentationTestRunner :
     private val logger by lazy { loggerFactory.create<InHouseInstrumentationTestRunner>() }
 
     private val timeProvider: TimeProvider by lazy { DefaultTimeProvider() }
-
-    private val mainLooperMessagesLogDumper: MainLooperMessagesLogDumper by lazy {
-        if (testRunEnvironment.asRunEnvironmentOrThrow().dumpMainLooperMessagesEnabled) {
-            MainLooperMessagesLogDumperImpl(timeProvider)
-        } else {
-            NoOpMainLooper
-        }
-    }
 
     private val httpClientProvider: HttpClientProvider by lazy {
         HttpClientProvider(
@@ -113,9 +104,7 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    /**
-     * Public for *TestApp to skip on orchestrator runs
-     */
+    @Suppress("MemberVisibilityCanBePrivate") // Public for *TestApp to skip on orchestrator runs
     val testRunEnvironment: TestRunEnvironment by lazy {
         if (isRealRun(instrumentationArguments)) {
             createRunnerEnvironment(instrumentationArguments)
@@ -124,11 +113,9 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    /**
-     * Public for synth monitoring
-     */
+    @Suppress("MemberVisibilityCanBePrivate") // Public for synth monitoring
     val screenshotCapturer: ScreenshotCapturer by lazy {
-        ScreenshotCapturerImpl(testArtifactsProvider)
+        ScreenshotCapturerFactory.create(testArtifactsProvider, activityProvider)
     }
 
     override val loggerFactory by lazy {
@@ -149,32 +136,28 @@ abstract class InHouseInstrumentationTestRunner :
         )
     }
 
-    override val report: Report by lazy {
+    override val report: InternalReport by lazy {
         ReportImplementation(
             loggerFactory = loggerFactory,
             transport = reportTransport,
             screenshotCapturer = screenshotCapturer,
             timeProvider = timeProvider,
-            troubleshooter = Troubleshooter.Impl(mainLooperMessagesLogDumper)
+            troubleshooter = Troubleshooter.Impl()
         )
-    }
-
-    override val isImitate: Boolean by lazy {
-        testRunEnvironment.asRunEnvironmentOrThrow().isImitation
     }
 
     @Suppress("unused") // used in avito
     val reportViewerHttpInterceptor: ReportViewerHttpInterceptor by lazy {
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
-            reportProvider = this,
+            report = report,
             remoteFileStorageEndpointHost = runEnvironment.fileStorageUrl.toHttpUrl().host
         )
     }
 
     @Suppress("unused") // used in avito
     val reportViewerWebsocketReporter: ReportViewerWebsocketReporter by lazy {
-        ReportViewerWebsocketReporter(this)
+        ReportViewerWebsocketReporter(report)
     }
 
     val mockWebServer: MockWebServer by lazy { MockWebServer() }
@@ -203,7 +186,6 @@ abstract class InHouseInstrumentationTestRunner :
                     newElasticConfig = ElasticConfig.Disabled
                 )
             ),
-            MainLooperMessagesLogDelegate(mainLooperMessagesLogDumper)
         )
     }
 
@@ -212,6 +194,12 @@ abstract class InHouseInstrumentationTestRunner :
         logger.debug("Instrumentation arguments: $instrumentationArguments")
         val environment = testRunEnvironment.asRunEnvironmentOrThrow()
         logger.debug("TestRunEnvironment: $environment")
+        StepDslProvider.initialize(
+            StepDslDelegateImpl(
+                reportLifecycle = report,
+                stepModelFactory = report,
+            )
+        )
         initApplicationCrashHandling()
         addReportListener(arguments)
         initTestCase(environment)
@@ -260,7 +248,7 @@ abstract class InHouseInstrumentationTestRunner :
     override fun onException(obj: Any?, e: Throwable): Boolean {
         testRunEnvironment.executeIfRealRun {
             logger.warn("Application crash captured by onException handler inside instrumentation", e)
-            tryToReportUnexpectedIncident(incident = e)
+            reportUnexpectedIncident(incident = e)
         }
 
         return super.onException(obj, e)
@@ -286,15 +274,8 @@ abstract class InHouseInstrumentationTestRunner :
         }
     }
 
-    fun tryToReportUnexpectedIncident(incident: Throwable) {
-        try {
-            if (!report.isWritten) {
-                report.registerIncident(AppCrashException(incident))
-                report.reportTestCase()
-            }
-        } catch (t: Throwable) {
-            logger.critical("Can't register and report unexpected incident", t)
-        }
+    internal fun reportUnexpectedIncident(incident: Throwable) {
+        report.unexpectedFailedTestCase(incident)
     }
 
     /**

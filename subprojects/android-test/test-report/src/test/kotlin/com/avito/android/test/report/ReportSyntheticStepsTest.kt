@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.StepResult
 import com.avito.report.model.Entry
 import com.avito.time.TimeMachineProvider
@@ -7,9 +8,11 @@ import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.concurrent.TimeUnit
 
+@ExtendWith(StepDslExtension::class)
 class ReportSyntheticStepsTest {
 
     private val timeMachine = TimeMachineProvider()
@@ -33,11 +36,12 @@ class ReportSyntheticStepsTest {
     @Test
     fun `when add Entries after steps than synthetic step will be created`() {
         // when
-        step("Real step", report, false) {}
+        step("Real step")
 
         report.addEntriesOutOfStep()
 
-        val state = report.reportTestCase()
+        val state = report.currentState as Started
+        report.finishTestCase()
 
         // then
         state.assertStep(
@@ -54,8 +58,9 @@ class ReportSyntheticStepsTest {
         // when
         report.addEntriesOutOfStep()
 
-        step("Real step", report, false) {}
-        val state = report.reportTestCase()
+        step("Real step")
+        val state = report.currentState as Started
+        report.finishTestCase()
 
         // then
         state.assertPrecondition(
@@ -70,12 +75,13 @@ class ReportSyntheticStepsTest {
     @Test
     fun `when add htmlEntry between steps than synthetic step will be created`() {
         // when
-        step("Real step", report, false) {}
+        step("Real step")
 
         report.addEntriesOutOfStep()
 
-        step("Real step", report, false) {}
-        val state = report.reportTestCase()
+        step("Real step")
+        val state = report.currentState as Started
+        report.finishTestCase()
 
         // then
         state.assertStep(
@@ -87,7 +93,7 @@ class ReportSyntheticStepsTest {
         )
     }
 
-    private fun Report.addEntriesOutOfStep() {
+    private fun InternalReport.addEntriesOutOfStep() {
         addHtml("label", "content")
         timeMachine.moveForwardOn(1, TimeUnit.SECONDS) // for step ordering
         addComment(comment)
@@ -95,7 +101,7 @@ class ReportSyntheticStepsTest {
         addAssertion(assertionMessage)
     }
 
-    private fun ReportState.Initialized.Started.assertStep(
+    private fun Started.assertStep(
         stepsCount: Int,
         preconditionsCount: Int,
         stepIndex: Int,
@@ -112,7 +118,7 @@ class ReportSyntheticStepsTest {
         )
     }
 
-    private fun ReportState.Initialized.Started.assertPrecondition(
+    private fun Started.assertPrecondition(
         stepsCount: Int,
         preconditionsCount: Int,
         preconditionIndex: Int,

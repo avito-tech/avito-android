@@ -1,6 +1,6 @@
 package com.avito.android.test.report.video
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.android.test.report.transport.Transport
 import com.avito.filestorage.FutureValue
@@ -26,7 +26,7 @@ class VideoCaptureTestListener(
 
     private var savedIncident: Incident? = null
 
-    override fun beforeTestStart(state: ReportState.Initialized.Started) {
+    override fun beforeTestStart(state: Started) {
         if (videoFeature.videoRecordingEnabled(shouldRecord)) {
             logger.debug("Video recording feature enabled. Recording starting")
             videoCapturer.start().fold(
@@ -47,7 +47,7 @@ class VideoCaptureTestListener(
         savedIncident = incident
     }
 
-    override fun afterTestStop(state: ReportState.Initialized.Started) {
+    override fun afterTestStop(state: Started) {
         if (videoFeature.videoUploadingEnabled(shouldRecord, savedIncident)) {
             logger.debug("Video uploading enabled. Recording stopping...")
             videoCapturer.stop().fold(
@@ -77,7 +77,7 @@ class VideoCaptureTestListener(
     }
 
     private fun waitUploads(
-        state: ReportState.Initialized.Started,
+        state: Started,
         video: FutureValue<RemoteStorage.Result>
     ) {
         val videoUploadResult = video.get()

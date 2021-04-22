@@ -1,13 +1,17 @@
 package com.avito.android.test.report
 
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
+import com.avito.filestorage.FutureValue
+import com.avito.filestorage.RemoteStorage
+import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
 
-internal fun ReportState.Initialized.Started.Companion.createStubInstance(
+internal fun Started.Companion.createStubInstance(
     testMetadata: TestMetadata = TestMetadata.createStubInstance(),
     incident: Incident? = null,
     currentStep: StepResult? = null,
@@ -18,8 +22,12 @@ internal fun ReportState.Initialized.Started.Companion.createStubInstance(
     startTime: Long = 0,
     endTime: Long = 0,
     preconditionStepList: MutableList<StepResult> = mutableListOf(),
-    testCaseStepList: MutableList<StepResult> = mutableListOf()
-) = ReportState.Initialized.Started(
+    testCaseStepList: MutableList<StepResult> = mutableListOf(),
+    entriesBeforeSteps: MutableList<Entry> = mutableListOf(),
+    uploadsBeforeSteps: MutableList<FutureValue<RemoteStorage.Result>> = mutableListOf(),
+) = Started(
+    entriesBeforeSteps = entriesBeforeSteps,
+    uploadsBeforeSteps = uploadsBeforeSteps,
     testMetadata = testMetadata,
     incident = incident,
     currentStep = currentStep,

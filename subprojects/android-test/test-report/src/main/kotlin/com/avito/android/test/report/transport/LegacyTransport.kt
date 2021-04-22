@@ -1,6 +1,6 @@
 package com.avito.android.test.report.transport
 
-import com.avito.android.test.report.ReportState
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
@@ -16,7 +16,7 @@ internal class LegacyTransport(
     private val externalStorageTransport: ExternalStorageTransport
 ) : Transport, PreTransportMappers {
 
-    override fun sendReport(state: ReportState.Initialized.Started) {
+    override fun sendReport(state: Started) {
         // todo handle result
         externalStorageTransport.sendReport(state)
     }

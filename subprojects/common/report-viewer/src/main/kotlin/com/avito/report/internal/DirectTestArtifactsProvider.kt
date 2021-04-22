@@ -5,7 +5,7 @@ import com.avito.report.TestArtifactsProvider
 import java.io.File
 import java.util.UUID
 
-class DirectTestArtifactsProvider(
+internal class DirectTestArtifactsProvider(
     override val rootDir: Lazy<File>,
     private val uniqueFileNameGenerator: () -> String = { UUID.randomUUID().toString() }
 ) : TestArtifactsProvider {

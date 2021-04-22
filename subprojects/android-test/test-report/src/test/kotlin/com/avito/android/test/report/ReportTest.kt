@@ -1,5 +1,6 @@
 package com.avito.android.test.report
 
+import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
@@ -11,10 +12,12 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.concurrent.TimeUnit
 
 @Suppress("MaxLineLength")
+@ExtendWith(StepDslExtension::class)
 class ReportTest {
 
     private val timeMachine = TimeMachineProvider()
@@ -33,17 +36,17 @@ class ReportTest {
 
     @Test
     fun `report incident - step chain`() {
-        report.registerIncident(
+        report.stepFailed(
             StepException(
                 false,
                 "Тапнуть по кнопка",
                 null,
                 AssertionError("No views in hierarchy found matching: with id: com.avito.android.dev:id/variant_list")
-            ),
-            null
+            )
         )
 
-        val reportPackage = report.reportTestCase()
+        val reportPackage = report.currentState as Started
+        report.finishTestCase()
 
         assertThat(reportPackage.incident).isNotNull()
         assertThat(reportPackage.incident!!.type).isEqualTo(Incident.Type.ASSERTION_FAILED)
@@ -53,7 +56,7 @@ class ReportTest {
     }
 
     @Test
-    fun `report incident - resourceManager chain`() {
+    fun `failed test case - resourceManager chain`() {
         val gson = Gson()
         val chain = listOf(
             IncidentElement(
@@ -87,7 +90,7 @@ class ReportTest {
             )
         )
 
-        report.registerIncident(
+        report.failedTestCase(
             exception = ResourceManagerException(
                 message = "Resource manager error: http://host.ru (https://host.ru/some/thing)",
                 cause = null,
@@ -95,11 +98,11 @@ class ReportTest {
                 requestBody = """{ "pls": true }""",
                 responseBody = null,
                 incidentChain = chain
-            ),
-            screenshot = null
+            )
         )
 
-        val reportPackage = report.reportTestCase()
+        val reportPackage = report.currentState as Started
+        report.finishTestCase()
 
         assertThat(reportPackage.incident).isNotNull()
         assertThat(reportPackage.incident!!.type).isEqualTo(Incident.Type.INFRASTRUCTURE_ERROR)
@@ -119,11 +122,12 @@ class ReportTest {
 
     @Test
     fun `test assertion reported - no incident`() {
-        step("step description", report, false) {
+        step("step description") {
             assertion("assertion message") {}
         }
 
-        val state = report.reportTestCase()
+        val state = report.currentState as Started
+        report.finishTestCase()
 
         assertThat(state.testCaseStepList)
             .hasSize(1)
@@ -135,17 +139,19 @@ class ReportTest {
 
     @Test
     fun `test assertion reported with multiple preconditions - no incident`() {
-        precondition("first precondition", report, false) {
+        precondition("first precondition") {
             assertion("first precondition assertion") {}
         }
-        precondition("second precondition", report, false) {
+
+        precondition("second precondition") {
             assertion("second precondition assertion") {}
         }
-        step("step description", report, false) {
+        step("step description") {
             assertion("assertion message") {}
         }
 
-        val state = report.reportTestCase()
+        val state = report.currentState as Started
+        report.finishTestCase()
 
         assertThat(state.testCaseStepList)
             .hasSize(1)
@@ -177,7 +183,7 @@ class ReportTest {
 
     @Test
     fun `duplicate entries should be merged - only in consequent groups`() {
-        step("Test step", report, false) {
+        step("Test step") {
             repeat(2) {
                 report.addComment(
                     "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
@@ -193,7 +199,8 @@ class ReportTest {
             }
         }
 
-        val state = report.reportTestCase()
+        val state = report.currentState as Started
+        report.finishTestCase()
         val stepEntries = state.testCaseStepList.first().entryList
 
         assertThat(stepEntries).hasSize(4)
@@ -210,7 +217,7 @@ class ReportTest {
 
     @Test
     fun `duplicate entries should be merged - consequent entries with different timestamps`() {
-        step("Test step", report, false) {
+        step("Test step") {
             report.addComment(
                 "performing ViewAction: Perform action single click on descendant view has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") on 0-th item matching: holder with view: (has descendant: has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\") or has child: (with text: is \"Адрес\" or with text: is \"Адрес компании\" or with text: is \"Место осмотра\" or with text: is \"Желаемый район\" or with text: is \"Место сделки\" or with text: is \"Место проживания\" or with text: is \"Место работы\" or with text: is \"Место оказания услуг\")) on RecyclerView(id=recycler_view)"
             )
@@ -226,7 +233,8 @@ class ReportTest {
             )
         }
 
-        val state = report.reportTestCase()
+        val state = report.currentState as Started
+        report.finishTestCase()
         val stepEntries = state.testCaseStepList.first().entryList
 
         assertThat(stepEntries).hasSize(2)

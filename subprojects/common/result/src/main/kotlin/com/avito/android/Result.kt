@@ -1,5 +1,14 @@
 package com.avito.android
 
+/**
+ * Why not [kotlin.Result]?
+ *  - It's usage as return type is experimental
+ *    [KEEP](https://github.com/Kotlin/KEEP/blob/master/proposals/stdlib/result.md#limitations)
+ *  - it requires to enable special compiler option to go without error
+ *  - it sometimes exposed in modules API, which will require clients to enable this compiler options
+ *
+ * Could be replace with [kotlin.Result] as it's return type usage matures to stable
+ */
 sealed class Result<T> {
 
     abstract operator fun component1(): T?

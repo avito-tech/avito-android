@@ -21,4 +21,5 @@ dependencies {
     implementation(libs.hamcrestLib)
     implementation(libs.junit)
     implementation(libs.freeReflection)
+    implementation(project(":android-test:instrumentation"))
 }

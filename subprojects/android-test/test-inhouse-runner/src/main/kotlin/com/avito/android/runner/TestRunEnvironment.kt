@@ -77,7 +77,6 @@ sealed class TestRunEnvironment {
         val outputDirectory: Lazy<File>,
         val testRunCoordinates: ReportCoordinates,
         internal val reportDestination: ReportDestination,
-        internal val isImitation: Boolean,
         internal val videoRecordingFeature: VideoFeatureValue,
         internal val elasticConfig: ElasticConfig,
         internal val sentryConfig: SentryConfig,
@@ -104,7 +103,6 @@ fun provideEnvironment(
             runId = argumentsProvider.getMandatoryArgument("runId")
         )
         TestRunEnvironment.RunEnvironment(
-            isImitation = argumentsProvider.getOptionalArgument("imitation") == "true",
             deviceId = argumentsProvider.getOptionalArgument("deviceId")
                 ?: UUID.randomUUID().toString(),
             testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
