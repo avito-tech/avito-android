@@ -63,6 +63,7 @@ instrumentation {
             reportApiUrl = getOptionalStringProperty("avito.report.url") ?: "http://stub"
             reportViewerUrl = getOptionalStringProperty("avito.report.viewerUrl") ?: "http://stub"
             fileStorageUrl = getOptionalStringProperty("avito.fileStorage.url") ?: "http://stub"
+            reportRunIdPrefix = "stub"
         }
     }
 

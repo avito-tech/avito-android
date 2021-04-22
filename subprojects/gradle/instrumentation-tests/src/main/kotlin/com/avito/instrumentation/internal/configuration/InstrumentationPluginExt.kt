@@ -35,6 +35,7 @@ internal fun Project.withInstrumentationExtensionData(action: (GradleInstrumenta
             val runId = project.gitState()
                 .map { gitState ->
                     RunId(
+                        prefix = extension.testReport.reportViewer?.reportRunIdPrefix ?: "",
                         commitHash = gitState.currentBranch.commit,
                         buildTypeId = env.build.type
                     )
