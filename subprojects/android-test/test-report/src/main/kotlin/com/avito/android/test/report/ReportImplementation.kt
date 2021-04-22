@@ -194,19 +194,14 @@ class ReportImplementation(
     override fun addScreenshot(label: String) {
         methodExecutionTracing("addScreenshot") {
             val futureResult: Result<FutureValue<RemoteStorage.Result>?> =
-                screenshotCapturer.captureAsFile().map { screenshot: File? ->
-                    if (screenshot == null) {
-                        // no resumed activity, can't capture
-                        null
-                    } else {
-                        val initialized = getCastedState<Initialized>()
+                screenshotCapturer.captureAsFile().map { screenshot: File ->
+                    val initialized = getCastedState<Initialized>()
 
-                        transport.sendContent(
-                            test = initialized.testMetadata,
-                            request = RemoteStorage.Request.FileRequest.Image(screenshot),
-                            comment = label
-                        )
-                    }
+                    transport.sendContent(
+                        test = initialized.testMetadata,
+                        request = RemoteStorage.Request.FileRequest.Image(screenshot),
+                        comment = label
+                    )
                 }
 
             futureResult.fold(
@@ -365,19 +360,14 @@ class ReportImplementation(
 
     private fun makeScreenshot(comment: String): Result<FutureValue<RemoteStorage.Result>?> =
         methodExecutionTracing("makeScreenshot") {
-            screenshotCapturer.captureAsFile().map { screenshot: File? ->
-                if (screenshot == null) {
-                    // no resumed activity, can't capture
-                    null
-                } else {
-                    val initialized = getCastedState<Initialized>()
+            screenshotCapturer.captureAsFile().map { screenshot: File ->
+                val initialized = getCastedState<Initialized>()
 
-                    transport.sendContent(
-                        test = initialized.testMetadata,
-                        request = RemoteStorage.Request.FileRequest.Image(screenshot),
-                        comment = comment
-                    )
-                }
+                transport.sendContent(
+                    test = initialized.testMetadata,
+                    request = RemoteStorage.Request.FileRequest.Image(screenshot),
+                    comment = comment
+                )
             }
         }
 

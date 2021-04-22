@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.instrumentation.ActivityProvider
 import com.avito.android.instrumentation.ActivityProviderFactory
@@ -57,7 +58,10 @@ abstract class InHouseInstrumentationTestRunner :
     ReportProvider,
     RemoteStorageProvider {
 
-    private val activityProvider: ActivityProvider = ActivityProviderFactory.create()
+    private val activityProvider: ActivityProvider = ActivityProviderFactory.create(
+        instrumentation = InstrumentationRegistry.getInstrumentation(),
+        activityLifecycleMonitor = ActivityLifecycleMonitorRegistry.getInstance()
+    )
 
     private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
 

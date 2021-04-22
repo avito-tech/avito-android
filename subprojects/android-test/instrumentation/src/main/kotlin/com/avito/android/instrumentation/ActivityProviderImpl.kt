@@ -1,29 +1,46 @@
 package com.avito.android.instrumentation
 
 import android.app.Activity
+import android.app.Instrumentation
+import android.content.ActivityNotFoundException
 import android.os.Looper
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitor
 import androidx.test.runner.lifecycle.Stage
+import com.avito.android.Result
 
-internal class ActivityProviderImpl : ActivityProvider {
+internal class ActivityProviderImpl(
+    private val instrumentation: Instrumentation,
+    private val activityLifecycleMonitor: ActivityLifecycleMonitor
+) : ActivityProvider {
 
-    override fun getCurrentActivity(): Activity? {
-        var currentActivity: Activity? = null
-        val findResumedActivity = {
-            val resumedActivities =
-                ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED)
-            if (resumedActivities.iterator().hasNext()) {
-                currentActivity = resumedActivities.iterator().next()
+    override fun getCurrentActivity(): Result<Activity> {
+        var result: Result<Activity> = notFoundResult()
+
+        if (isMainThread()) {
+            result = findResumedActivity()
+        } else {
+            instrumentation.runOnMainSync {
+                result = findResumedActivity()
             }
         }
-        if (isMainThread()) {
-            findResumedActivity()
-        } else {
-            InstrumentationRegistry.getInstrumentation().runOnMainSync(findResumedActivity)
-        }
-        return currentActivity
+
+        return result
     }
 
-    private fun isMainThread() = Looper.myLooper() == Looper.getMainLooper()
+    private fun findResumedActivity(): Result<Activity> {
+        val resumedActivities = activityLifecycleMonitor.getActivitiesInStage(Stage.RESUMED)
+        if (resumedActivities.iterator().hasNext()) {
+            return Result.Success(resumedActivities.iterator().next())
+        }
+        return notFoundResult()
+    }
+
+    private fun isMainThread(): Boolean {
+        val currentThreadLooper: Looper? = Looper.myLooper()
+        return currentThreadLooper == Looper.getMainLooper()
+    }
+
+    private fun notFoundResult(): Result<Activity> {
+        return Result.Failure(ActivityNotFoundException("No activities in RESUMED state found"))
+    }
 }
