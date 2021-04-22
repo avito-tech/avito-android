@@ -39,10 +39,7 @@ import com.avito.utils.stackTraceToList
 import java.io.File
 
 /**
- * Assume no parallelization
  * Assume single test per object
- *
- * @param onDeviceCacheDirectory for screenshots/videos/logs
  */
 class ReportImplementation(
     loggerFactory: LoggerFactory,
