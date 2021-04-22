@@ -57,7 +57,7 @@ abstract class InHouseInstrumentationTestRunner :
     ReportProvider,
     RemoteStorageProvider {
 
-    private val activityProvider: ActivityProvider = ActivityProviderFactory.create()
+    private val activityProvider: ActivityProvider by lazy { ActivityProviderFactory.create() }
 
     private val elasticConfig: ElasticConfig by lazy { testRunEnvironment.asRunEnvironmentOrThrow().elasticConfig }
 
