@@ -1,7 +1,8 @@
-package com.avito.instrumentation.internal.report
+package com.avito.instrumentation.internal.finalizer.action
 
-import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer.FinalizeAction
+import com.avito.instrumentation.internal.finalizer.TestRunResult
+import com.avito.instrumentation.internal.finalizer.verdict.TestStatisticsCounterFactory
+import com.avito.instrumentation.internal.finalizer.verdict.Verdict
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.TestSuiteNameProvider
 import com.avito.report.model.Stability
@@ -18,12 +19,19 @@ internal class WriteJUnitReportAction(
 
     private val estimatedTestRecordSize = 150
 
-    override fun action(testRunResult: TestRunResult) {
-        val testCountOverall = testRunResult.testCount()
-        val testCountSuccess = testRunResult.successCount()
-        val testCountFailures = testRunResult.failureCount()
-        val testCountErrors = testRunResult.notReportedCount()
-        val testCountSkipped = testRunResult.skippedCount()
+    override fun action(testRunResult: TestRunResult, verdict: Verdict) {
+
+        val testStatisticsCounter = TestStatisticsCounterFactory.createLegacy(
+            reportedTests = testRunResult.reportedTests,
+            failedTestDeterminer = testRunResult.failed,
+            notReportedTestsDeterminer = testRunResult.notReported
+        )
+
+        val testCountOverall = testStatisticsCounter.overallCount()
+        val testCountSuccess = testStatisticsCounter.successCount()
+        val testCountFailures = testStatisticsCounter.failureCount()
+        val testCountErrors = testStatisticsCounter.notReportedCount()
+        val testCountSkipped = testStatisticsCounter.skippedCount()
 
         require(testCountOverall == testCountSuccess + testCountFailures + testCountSkipped + testCountErrors)
 
@@ -36,7 +44,7 @@ internal class WriteJUnitReportAction(
             append("""failures="$testCountFailures" """)
             append("""errors="$testCountErrors" """)
             append("""skipped="$testCountSkipped" """)
-            append("""time="${testRunResult.testsDuration}" """)
+            append("""time="${testStatisticsCounter.overallDuration()}" """)
             appendLine(">")
 
             appendLine("<properties/>")

@@ -1,7 +1,7 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.internal.finalizer.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.finalizer.LegacyFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyFailedTestDeterminer
 import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status

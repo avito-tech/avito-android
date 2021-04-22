@@ -1,4 +1,4 @@
-package com.avito.instrumentation.internal.finalizer
+package com.avito.instrumentation.internal.finalizer.verdict
 
 import com.avito.report.model.SimpleRunTest
 

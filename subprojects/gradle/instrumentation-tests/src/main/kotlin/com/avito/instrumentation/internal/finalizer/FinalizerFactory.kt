@@ -4,7 +4,15 @@ import com.avito.android.runner.report.ReportFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.report.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.action.AvitoReportViewerFinishAction
+import com.avito.instrumentation.internal.finalizer.action.SendMetricsAction
+import com.avito.instrumentation.internal.finalizer.action.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.action.WriteReportViewerLinkFile
+import com.avito.instrumentation.internal.finalizer.action.WriteTaskVerdictAction
+import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminerFactory
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
@@ -99,6 +107,7 @@ internal interface FinalizerFactory {
             return LegacyFinalizer(
                 hasFailedTestDeterminer = hasFailedTestDeterminer,
                 hasNotReportedTestsDeterminer = LegacyNotReportedTestsDeterminer(),
+                verdictDeterminer = VerdictDeterminerFactory.create(),
                 params = params,
                 buildFailer = buildFailer,
                 actions = actions,

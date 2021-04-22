@@ -1,7 +1,7 @@
 package com.avito.instrumentation
 
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
+import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
 import com.github.salomonbrys.kotson.fromJson
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test

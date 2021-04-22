@@ -1,4 +1,4 @@
-package com.avito.instrumentation.internal
+package com.avito.instrumentation.internal.finalizer
 
 import com.avito.cd.CdBuildResult
 import com.avito.report.ReportViewer

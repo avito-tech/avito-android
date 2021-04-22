@@ -1,8 +1,8 @@
-package com.avito.instrumentation.internal.finalizer
+package com.avito.instrumentation.internal.finalizer.action
 
-import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer.FinalizeAction
-import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
+import com.avito.instrumentation.internal.finalizer.TestRunResult
+import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
+import com.avito.instrumentation.internal.finalizer.verdict.Verdict
 import com.avito.report.ReportLinkGenerator
 import com.google.gson.Gson
 import java.io.File
@@ -13,23 +13,23 @@ internal class WriteTaskVerdictAction(
     private val reportLinkGenerator: ReportLinkGenerator
 ) : FinalizeAction {
 
-    override fun action(testRunResult: TestRunResult) {
+    override fun action(testRunResult: TestRunResult, verdict: Verdict) {
         val reportViewerUrl = reportLinkGenerator.generateReportLink()
         verdictDestination.writeText(
             gson.toJson(
                 InstrumentationTestsTaskVerdict(
-                    title = testRunResult.verdict.message,
+                    title = verdict.message,
                     reportUrl = reportViewerUrl,
-                    causeFailureTests = testRunResult.verdict.getCauseFailureTests()
+                    causeFailureTests = verdict.getCauseFailureTests()
                 )
             )
         )
     }
 
-    private fun TestRunResult.Verdict.getCauseFailureTests() =
+    private fun Verdict.getCauseFailureTests() =
         when (this) {
-            is TestRunResult.Verdict.Success -> emptySet()
-            is TestRunResult.Verdict.Failure -> {
+            is Verdict.Success -> emptySet()
+            is Verdict.Failure -> {
                 val failedTestsVerdict = prettifiedDetails.failedTests
                     .map { test -> test.toTaskVerdictTest("FAILED") }
 
@@ -39,7 +39,7 @@ internal class WriteTaskVerdictAction(
             }
         }
 
-    private fun TestRunResult.Verdict.Failure.Details.Test.toTaskVerdictTest(
+    private fun Verdict.Failure.Details.Test.toTaskVerdictTest(
         prefix: String
     ): InstrumentationTestsTaskVerdict.Test = InstrumentationTestsTaskVerdict.Test(
         testUrl = reportLinkGenerator.generateTestLink(name),

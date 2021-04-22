@@ -1,9 +1,10 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.finalizer.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.finalizer.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.report.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.TestRunResult
+import com.avito.instrumentation.internal.finalizer.action.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.Verdict
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.TestSuiteNameProvider
 import com.avito.report.model.SimpleRunTest
@@ -92,13 +93,14 @@ internal class WriteJUnitReportActionTest {
         assertThat(rawFile).contains("name=\"resolve_advert_legacyFormat\"")
     }
 
-    private fun mockData(testRunResult: TestRunResult) {
+    private fun mockData(testRunResult: TestRunResult, verdict: Verdict = Verdict.Success("")) {
         WriteJUnitReportAction(
             destination = file,
             testSuiteNameProvider = TestSuiteNameProvider.Stub,
             reportLinkGenerator = ReportLinkGenerator.Stub(testLink = reportViewerUrl)
         ).action(
             testRunResult = testRunResult,
+            verdict = verdict
         )
     }
 }

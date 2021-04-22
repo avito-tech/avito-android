@@ -12,12 +12,12 @@ import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
-import com.avito.instrumentation.internal.GetTestResultsAction
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Companion.gson
 import com.avito.instrumentation.internal.executing.ExecutionParameters
+import com.avito.instrumentation.internal.finalizer.GetTestResultsAction
+import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
-import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
 import com.avito.instrumentation.service.TestRunParams
 import com.avito.instrumentation.service.TestRunnerService
 import com.avito.instrumentation.service.TestRunnerWorkAction

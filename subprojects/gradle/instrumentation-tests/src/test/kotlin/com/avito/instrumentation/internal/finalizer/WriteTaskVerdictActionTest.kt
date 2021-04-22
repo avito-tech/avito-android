@@ -1,8 +1,12 @@
 package com.avito.instrumentation.internal.finalizer
 
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.verdict.InstrumentationTestsTaskVerdict
+import com.avito.instrumentation.internal.finalizer.action.WriteTaskVerdictAction
+import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
+import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminerFactory
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
@@ -29,29 +33,23 @@ public class WriteTaskVerdictActionTest {
         title = "com.avito.Test.test api22 LOST"
     )
 
-    private fun createAction(verdict: File): WriteTaskVerdictAction {
-        return WriteTaskVerdictAction(
-            verdictDestination = verdict,
-            gson = gson,
-            reportLinkGenerator = ReportLinkGenerator.Stub(
-                reportLink = byReportCoordinatesUrl,
-                testLink = byTestName
-            )
-        )
-    }
-
     @Test
     public fun `write verdict with only failed test`(@TempDir dir: File) {
         val verdict = File(dir, "verdict.json")
+        val verdictDeterminer = createVerdictDeterminer()
         val action = createAction(verdict)
+        val failed = HasFailedTestDeterminer.Result.Failed(
+            failed = listOf(SimpleRunTest.createStubInstance())
+        )
+        val notReported = HasNotReportedTestsDeterminer.Result.AllTestsReported
+
         action.action(
             TestRunResult(
                 reportedTests = emptyList(),
-                failed = HasFailedTestDeterminer.Result.Failed(
-                    failed = listOf(SimpleRunTest.createStubInstance())
-                ),
-                notReported = HasNotReportedTestsDeterminer.Result.AllTestsReported
-            )
+                failed = failed,
+                notReported = notReported
+            ),
+            verdict = verdictDeterminer.determine(failed, notReported)
         )
 
         val expected = InstrumentationTestsTaskVerdict(
@@ -69,14 +67,19 @@ public class WriteTaskVerdictActionTest {
     public fun `write verdict with only lost test`(@TempDir dir: File) {
         val verdict = File(dir, "verdict.json")
         val action = createAction(verdict)
+        val verdictDeterminer = createVerdictDeterminer()
+        val failed = HasFailedTestDeterminer.Result.NoFailed
+        val notReported = HasNotReportedTestsDeterminer.Result.HasNotReportedTests(
+            lostTests = listOf(AndroidTest.Lost.createStubInstance())
+        )
+
         action.action(
             TestRunResult(
                 reportedTests = emptyList(),
-                failed = HasFailedTestDeterminer.Result.NoFailed,
-                notReported = HasNotReportedTestsDeterminer.Result.HasNotReportedTests(
-                    lostTests = listOf(AndroidTest.Lost.createStubInstance())
-                )
-            )
+                failed = failed,
+                notReported = notReported
+            ),
+            verdict = verdictDeterminer.determine(failed, notReported)
         )
 
         val expected = InstrumentationTestsTaskVerdict(
@@ -93,17 +96,21 @@ public class WriteTaskVerdictActionTest {
     @Test
     public fun `write verdict with lost and failed tests`(@TempDir dir: File) {
         val verdict = File(dir, "verdict.json")
+        val verdictDeterminer = createVerdictDeterminer()
         val action = createAction(verdict)
+        val failed = HasFailedTestDeterminer.Result.Failed(
+            failed = listOf(SimpleRunTest.createStubInstance())
+        )
+        val notReported = HasNotReportedTestsDeterminer.Result.HasNotReportedTests(
+            lostTests = listOf(AndroidTest.Lost.createStubInstance())
+        )
         action.action(
             TestRunResult(
                 reportedTests = emptyList(),
-                failed = HasFailedTestDeterminer.Result.Failed(
-                    failed = listOf(SimpleRunTest.createStubInstance())
-                ),
-                notReported = HasNotReportedTestsDeterminer.Result.HasNotReportedTests(
-                    lostTests = listOf(AndroidTest.Lost.createStubInstance())
-                )
-            )
+                failed = failed,
+                notReported = notReported
+            ),
+            verdict = verdictDeterminer.determine(failed, notReported)
         )
 
         val expected = InstrumentationTestsTaskVerdict(
@@ -116,5 +123,20 @@ public class WriteTaskVerdictActionTest {
         val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(verdict.reader())
 
         assertThat(actual).isEqualTo(expected)
+    }
+
+    private fun createAction(verdict: File): WriteTaskVerdictAction {
+        return WriteTaskVerdictAction(
+            verdictDestination = verdict,
+            gson = gson,
+            reportLinkGenerator = ReportLinkGenerator.Stub(
+                reportLink = byReportCoordinatesUrl,
+                testLink = byTestName
+            )
+        )
+    }
+
+    private fun createVerdictDeterminer(): VerdictDeterminer {
+        return VerdictDeterminerFactory.create()
     }
 }

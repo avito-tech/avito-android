@@ -1,7 +1,7 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.internal.finalizer.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.finalizer.LegacyNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
