@@ -35,14 +35,14 @@ internal fun Project.withInstrumentationExtensionData(action: (GradleInstrumenta
             val runId = project.gitState()
                 .map { gitState ->
                     RunId(
-                        prefix = extension.testReport.reportViewer?.reportRunIdPrefix ?: "",
+                        prefix = extension.testReport.reportViewer?.reportRunIdPrefix,
                         commitHash = gitState.currentBranch.commit,
                         buildTypeId = env.build.type
                     )
                 }.orNull
 
             val runIdOverride = runId?.let {
-                mapOf("runId" to it.toString())
+                mapOf("runId" to it.value())
             } ?: emptyMap()
 
             val instrumentationParameters = InstrumentationParameters()

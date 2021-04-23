@@ -37,7 +37,7 @@ internal class InstrumentationParamsBuildingTest {
                 prefix = "stub",
                 commitHash = commit,
                 buildTypeId = "teamcity-$buildType"
-            ).toString(),
+            ).value(),
             "reportApiUrl" to "http://stub", // from InstrumentationPluginConfiguration
             "reportViewerUrl" to "http://stub",
             "fileStorageUrl" to "http://stub",

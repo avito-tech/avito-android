@@ -7,18 +7,15 @@ package com.avito.report.model
  * @param buildTypeId is used to distinguish runs with the same API on `develop` branch
  */
 data class RunId(
-    val prefix: String = "",
-    val commitHash: String,
-    val buildTypeId: String
+    private val prefix: String? = null,
+    private val commitHash: String,
+    private val buildTypeId: String
 ) {
 
-    override fun toString(): String = when {
-        prefix.isBlank() -> "$commitHash$DELIMITER$buildTypeId"
+    fun value(): String = when {
+        prefix.isNullOrBlank() -> "$commitHash$DELIMITER$buildTypeId"
         else -> "$prefix$DELIMITER$commitHash$DELIMITER$buildTypeId"
     }
-
-    companion object {
-
-        internal const val DELIMITER = '.'
-    }
 }
+
+private const val DELIMITER = '.'
