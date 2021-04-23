@@ -1,12 +1,12 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.android.gradle.metric.GradleCollector
-import com.avito.android.gradle.metric.MetricsConsumer
 import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
 import com.avito.android.plugin.build_metrics.internal.SlowTasksListener
 import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
+import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheOperationListener
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -39,27 +39,28 @@ public open class BuildMetricsPlugin : Plugin<Project> {
             buildId.set(project.getOptionalStringProperty("avito.build.metrics.teamcityBuildId"))
         }
 
-        GradleCollector.initialize(
-            project,
-            consumers(project)
-        )
-    }
+        val buildCacheListener = BuildCacheOperationListener.register(project)
 
-    private fun consumers(project: Project): List<MetricsConsumer> {
         val metricTracker = BuildMetricTracker(
             project.environmentInfo(),
             project.statsd
         )
-        val buildResultListeners = listOf(
+        val buildListeners = listOf(
             ConfigurationTimeListener(metricTracker),
             TotalBuildTimeListener(metricTracker),
             SlowTasksListener(metricTracker),
             AppBuildTimeListener.from(project, metricTracker)
         )
-        return listOf(
+
+        val eventsListeners = listOf(
             CompositeBuildMetricsListener(
-                listeners = buildResultListeners,
-            )
+                listeners = buildListeners,
+            ),
+            buildCacheListener
+        )
+        GradleCollector.initialize(
+            project,
+            eventsListeners
         )
     }
 }

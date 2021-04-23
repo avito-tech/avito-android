@@ -8,6 +8,7 @@ public class MockWebServerFactory {
 
     public fun create(): MockWebServer {
         if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_11)) {
+            // Workaround for Robolectric pre 4.4:
             // https://github.com/robolectric/robolectric/issues/5115#issuecomment-593107140
             System.setProperty("javax.net.ssl.trustStoreType", "JKS")
         }

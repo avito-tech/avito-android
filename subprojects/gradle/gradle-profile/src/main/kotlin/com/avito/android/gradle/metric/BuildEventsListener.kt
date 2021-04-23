@@ -5,20 +5,12 @@ import com.avito.android.gradle.profile.TaskExecution
 import org.gradle.BuildResult
 import org.gradle.api.Task
 
-interface MetricsConsumer : com.avito.android.gradle.profile.TaskExecutionListener {
-
-    fun onOutput(output: CharSequence)
+interface BuildEventsListener : com.avito.android.gradle.profile.TaskExecutionListener {
 
     fun buildFinished(buildResult: BuildResult, profile: BuildProfile)
 }
 
-abstract class AbstractMetricsConsumer : MetricsConsumer {
-
-    /**
-     * Do not print or log in this method. It'll cause an infinite recursion.
-     */
-    override fun onOutput(output: CharSequence) {
-    }
+abstract class AbstractBuildEventsListener : BuildEventsListener {
 
     override fun buildFinished(buildResult: BuildResult, profile: BuildProfile) {
     }
@@ -29,3 +21,5 @@ abstract class AbstractMetricsConsumer : MetricsConsumer {
     override fun afterExecute(task: Task, state: TaskExecution) {
     }
 }
+
+class NoOpBuildEventsListener : AbstractBuildEventsListener()

@@ -1,13 +1,11 @@
 package com.avito.android.plugin.build_metrics
 
-import com.avito.git.Git
-import com.avito.logger.StubLoggerFactory
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import com.google.common.truth.Truth.assertWithMessage
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -17,20 +15,10 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 private const val rootAppName = "root"
-private const val loggerPrefix = "[StatsDSender@:] "
 
 internal class BuildMetricsPluginTest {
 
     private lateinit var projectDir: File
-    private val loggerFactory = StubLoggerFactory
-    private val git: Git by lazy {
-        Git.Impl(
-            rootDir = projectDir,
-            loggerFactory = loggerFactory
-        )
-    }
-
-    private val syncBranch = "develop"
 
     @BeforeEach
     fun setup(@TempDir tempDir: File) {
@@ -44,13 +32,6 @@ internal class BuildMetricsPluginTest {
                 AndroidAppModule(name = "app")
             )
         ).generateIn(tempDir)
-
-        with(git) {
-            init()
-            checkout(branchName = syncBranch, create = true)
-            addAll()
-            commit("initial commit")
-        }
     }
 
     @Test
@@ -59,7 +40,8 @@ internal class BuildMetricsPluginTest {
 
         result.assertThat().buildSuccessful()
 
-        result.expectNoMetrics()
+        val metrics = result.statsdMetrics()
+        assertThat(metrics).isEmpty()
     }
 
     @Test
@@ -113,35 +95,13 @@ internal class BuildMetricsPluginTest {
         }
     }
 
-    private fun TestResult.expectNoMetrics() {
-        assertWithMessage("").that(output).doesNotContain(loggerPrefix)
-    }
-
-    private fun TestResult.expectMetric(type: String, metricName: String) {
-        // Example: time:apps.mobile.statistic.android.local.user.id.success.init_configuration.total:5821
-        val metrics = output.lines()
-            .filter { it.contains(loggerPrefix) }
-            .map { it.substringAfter(loggerPrefix) }
-            .map { it.substringBeforeLast(':') }
-
-        val target = metrics
-            .filter { it.startsWith(type) }
-            .filter { it.endsWith(".$metricName") }
-
-        assertWithMessage("Expected metric $type $metricName in $metrics")
-            .that(target).hasSize(1)
-    }
-
     private fun build(vararg tasks: String, dryRun: Boolean = false): TestResult {
         return gradlew(
-            projectDir, *tasks,
+            projectDir,
+            *tasks,
             "-Pavito.build.metrics.enabled=true",
-            "-Pavito.stats.enabled=true",
-            "-Pavito.stats.host=http://stats",
-            "-Pavito.stats.fallbackHost=http://stats",
-            "-Pavito.stats.port=80",
-            "-Pavito.stats.namespace=android",
-            "--debug", // to read sentry logs from stdout
+            "-Pavito.stats.enabled=false",
+            "--debug", // to read statsd logs from stdout
             dryRun = dryRun
         )
     }
