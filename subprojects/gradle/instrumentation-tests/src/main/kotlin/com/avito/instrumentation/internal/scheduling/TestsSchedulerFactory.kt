@@ -32,6 +32,7 @@ import com.avito.time.TimeProvider
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 import java.nio.file.Files
 
@@ -131,7 +132,7 @@ internal interface TestsSchedulerFactory {
 
             val artifactsUploader: TestArtifactsUploader = AvitoFileStorageUploader(
                 RemoteStorageFactory.create(
-                    endpoint = params.fileStorageUrl,
+                    endpoint = params.fileStorageUrl.toHttpUrl(),
                     httpClientProvider = httpClientProvider,
                     loggerFactory = params.loggerFactory,
                     isAndroidRuntime = false

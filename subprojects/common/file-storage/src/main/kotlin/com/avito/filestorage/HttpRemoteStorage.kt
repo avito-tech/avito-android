@@ -4,28 +4,19 @@ import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class HttpRemoteStorage(
+internal class HttpRemoteStorage(
     private val endpoint: HttpUrl,
-    httpClient: OkHttpClient,
+    private val storageClient: FileStorageClient,
     loggerFactory: LoggerFactory,
-    isAndroidRuntime: Boolean,
 ) : RemoteStorage {
 
     private val logger = loggerFactory.create<HttpRemoteStorage>()
-
-    private val storageClient: FileStorageClient =
-        RemoteStorageFactory.createClient(
-            endpoint = endpoint,
-            httpClient = httpClient,
-            isAndroidRuntime = isAndroidRuntime
-        )
 
     override fun upload(
         uploadRequest: RemoteStorageRequest,
