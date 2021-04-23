@@ -131,7 +131,8 @@ abstract class InHouseInstrumentationTestRunner :
         RemoteStorageFactory.create(
             endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
             httpClientProvider = httpClientProvider,
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            isAndroidRuntime = true
         )
     }
 

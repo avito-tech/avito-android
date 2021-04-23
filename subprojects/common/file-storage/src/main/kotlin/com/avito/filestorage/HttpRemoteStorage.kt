@@ -13,15 +13,17 @@ import retrofit2.Response
 class HttpRemoteStorage(
     private val endpoint: HttpUrl,
     httpClient: OkHttpClient,
-    loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory,
+    isAndroidRuntime: Boolean,
 ) : RemoteStorage {
 
     private val logger = loggerFactory.create<HttpRemoteStorage>()
 
     private val storageClient: FileStorageClient =
-        FileStorageClient.create(
+        RemoteStorageFactory.createClient(
             endpoint = endpoint,
-            httpClient = httpClient
+            httpClient = httpClient,
+            isAndroidRuntime = isAndroidRuntime
         )
 
     override fun upload(
