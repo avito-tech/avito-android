@@ -32,8 +32,6 @@ class HttpRemoteStorage(
 
         val futureValue = SettableFutureValue<Result<HttpUrl>>()
 
-        logUploading(uploadRequest)
-
         when (uploadRequest) {
             is RemoteStorageRequest.FileRequest.Image -> storageClient.uploadPng(
                 content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
@@ -76,11 +74,6 @@ class HttpRemoteStorage(
                                     .addEncodedPathSegments(pathSegments)
                                     .build()
 
-                                logUploaded(
-                                    uploadRequest = uploadRequest,
-                                    url = fullUrl
-                                )
-
                                 Result.Success(fullUrl)
                             }
                             response.isSuccessful && response.body().isNullOrEmpty() -> {
@@ -118,41 +111,6 @@ class HttpRemoteStorage(
             if (uploadRequest is RemoteStorageRequest.FileRequest) {
                 uploadRequest.file.delete()
             }
-        }
-    }
-
-    private fun logUploading(
-        uploadRequest: RemoteStorageRequest
-    ) {
-        when (uploadRequest) {
-            is RemoteStorageRequest.FileRequest ->
-                logger.debug(
-                    "RemoteStorage: Uploading file: ${uploadRequest.file.absolutePath} " +
-                        "with size: ${uploadRequest.file.length()} bytes"
-                )
-
-            is RemoteStorageRequest.ContentRequest ->
-                logger.debug(
-                    "RemoteStorage: Uploading content with size: ${uploadRequest.content.length} " +
-                        "with extension: ${uploadRequest.extension}"
-                )
-        }
-    }
-
-    private fun logUploaded(
-        uploadRequest: RemoteStorageRequest,
-        url: HttpUrl
-    ) {
-        when (uploadRequest) {
-            is RemoteStorageRequest.FileRequest ->
-                logger.debug(
-                    "RemoteStorage: File: ${uploadRequest.file.absolutePath} uploaded to url: $url"
-                )
-
-            is RemoteStorageRequest.ContentRequest ->
-                logger.debug(
-                    "RemoteStorage: Content with size: ${uploadRequest.content.length} uploaded to url: $url"
-                )
         }
     }
 
