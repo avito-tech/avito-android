@@ -71,7 +71,8 @@ internal class ReportViewerExtensionTest {
             assertThat(fileStorageUrl).isEqualTo(fileStorageUrlStub)
         }
         assertThat(data.checkPluginLevelInstrumentationParameters()).containsEntry(
-            "runId", RunId(prefix = prefixStub, commitHash = commit, buildTypeId = "teamcity-$buildType").value()
+            "runId",
+            RunId(prefix = prefixStub, commitHash = commit, buildTypeId = "teamcity-$buildType").value()
         )
     }
 
@@ -97,7 +98,8 @@ internal class ReportViewerExtensionTest {
             assertThat(fileStorageUrl).isEqualTo(fileStorageUrlStub)
         }
         assertThat(data.checkPluginLevelInstrumentationParameters()).containsEntry(
-            "runId", RunId(commitHash = commit, buildTypeId = "teamcity-$buildType").value()
+            "runId",
+            RunId(commitHash = commit, buildTypeId = "teamcity-$buildType").value()
         )
     }
 
