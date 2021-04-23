@@ -3,10 +3,12 @@ package com.avito.android.test.report.transport
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorage
+import com.avito.filestorage.RemoteStorageRequest
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.TestArtifactsProvider
+import com.avito.report.model.Entry
+import com.avito.report.model.FileAddress
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
 
@@ -19,7 +21,7 @@ internal class ExternalStorageTransport(
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory,
     private val testArtifactsProvider: TestArtifactsProvider
-) : Transport {
+) : Transport, TransportMappers {
 
     private val logger = loggerFactory.create<ExternalStorageTransport>()
 
@@ -47,11 +49,11 @@ internal class ExternalStorageTransport(
 
     override fun sendContent(
         test: TestMetadata,
-        request: RemoteStorage.Request,
+        request: RemoteStorageRequest,
         comment: String
-    ): FutureValue<RemoteStorage.Result> {
+    ): FutureValue<Entry.File> {
         val fileName = when (request) {
-            is RemoteStorage.Request.ContentRequest ->
+            is RemoteStorageRequest.ContentRequest ->
                 testArtifactsProvider.generateUniqueFile(extension = request.extension).fold(
                     { file ->
                         file.writeText(request.content)
@@ -64,16 +66,15 @@ internal class ExternalStorageTransport(
                     }
                 )
 
-            is RemoteStorage.Request.FileRequest ->
+            is RemoteStorageRequest.FileRequest ->
                 request.file.name
         }
-
         return FutureValue.create(
-            RemoteStorage.Result.Success(
+            Entry.File(
                 comment = comment,
+                fileAddress = FileAddress.File(fileName),
                 timeInSeconds = timeProvider.nowInSeconds(),
-                uploadRequest = request,
-                url = fileName
+                fileType = request.toFileType()
             )
         )
     }

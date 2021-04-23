@@ -6,7 +6,6 @@ import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorage
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
@@ -24,7 +23,7 @@ internal fun Started.Companion.createStubInstance(
     preconditionStepList: MutableList<StepResult> = mutableListOf(),
     testCaseStepList: MutableList<StepResult> = mutableListOf(),
     entriesBeforeSteps: MutableList<Entry> = mutableListOf(),
-    uploadsBeforeSteps: MutableList<FutureValue<RemoteStorage.Result>> = mutableListOf(),
+    uploadsBeforeSteps: MutableList<FutureValue<Entry.File>> = mutableListOf(),
 ) = Started(
     entriesBeforeSteps = entriesBeforeSteps,
     uploadsBeforeSteps = uploadsBeforeSteps,

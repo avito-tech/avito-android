@@ -25,28 +25,26 @@ class HttpRemoteStorage(
             httpClient = httpClient
         )
 
-    override fun fullUrl(result: RemoteStorage.Result.Success): String = "$endpoint${result.url}"
-
     override fun upload(
-        uploadRequest: RemoteStorage.Request,
+        uploadRequest: RemoteStorageRequest,
         comment: String,
         deleteOnUpload: Boolean
-    ): FutureValue<RemoteStorage.Result> {
+    ): FutureValue<RemoteStorageResult> {
 
-        val futureValue = SettableFutureValue<RemoteStorage.Result>()
+        val futureValue = SettableFutureValue<RemoteStorageResult>()
 
         val timestamp = timeProvider.nowInSeconds()
 
         logUploading(uploadRequest)
 
         when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest.Image -> storageClient.uploadPng(
+            is RemoteStorageRequest.FileRequest.Image -> storageClient.uploadPng(
                 content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
             )
-            is RemoteStorage.Request.FileRequest.Video -> storageClient.uploadMp4(
+            is RemoteStorageRequest.FileRequest.Video -> storageClient.uploadMp4(
                 content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
             )
-            is RemoteStorage.Request.ContentRequest -> storageClient.upload(
+            is RemoteStorageRequest.ContentRequest -> storageClient.upload(
                 extension = uploadRequest.extension,
                 content = uploadRequest.content
             )
@@ -61,22 +59,33 @@ class HttpRemoteStorage(
                             deleteOnUpload = deleteOnUpload
                         )
 
-                        futureValue.set(RemoteStorage.Result.Error(comment, timestamp, uploadRequest, t))
+                        futureValue.set(RemoteStorageResult.Error(comment, timestamp, uploadRequest, t))
                     }
 
                     override fun onResponse(call: Call<String>, response: Response<String>) {
                         val result = when {
                             response.isSuccessful && !response.body().isNullOrEmpty() -> {
-                                val url = response.body()!!
+
+                                // responseBody contains only a string with relative file path
+                                // example: /static/m/2021-04-23/16-39/6082f85819b1d410fd11714e.png
+                                val responseBody = response.body()!!
+
+                                // addEncodedPathSegments accepts path segments separated with '/'
+                                // shouldn't start with '/' though
+                                val pathSegments = responseBody.trimStart('/')
+
+                                val fullUrl = endpoint.newBuilder()
+                                    .addEncodedPathSegments(pathSegments)
+                                    .build()
 
                                 logUploaded(
                                     uploadRequest = uploadRequest,
-                                    url = url
+                                    url = fullUrl
                                 )
 
-                                RemoteStorage.Result.Success(
+                                RemoteStorageResult.Success(
                                     comment = comment,
-                                    url = url,
+                                    url = fullUrl,
                                     timeInSeconds = timestamp,
                                     uploadRequest = uploadRequest
                                 )
@@ -84,7 +93,7 @@ class HttpRemoteStorage(
                             response.isSuccessful && response.body().isNullOrEmpty() -> {
                                 val exception = IllegalStateException("Uploading failed response body is absent")
                                 logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
-                                RemoteStorage.Result.Error(
+                                RemoteStorageResult.Error(
                                     comment = comment,
                                     timeInSeconds = timestamp,
                                     uploadRequest = uploadRequest,
@@ -94,7 +103,7 @@ class HttpRemoteStorage(
                             else -> {
                                 val exception = RuntimeException("Uploading failed with response: ${response.body()}")
                                 logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
-                                RemoteStorage.Result.Error(
+                                RemoteStorageResult.Error(
                                     comment = comment,
                                     timeInSeconds = timestamp,
                                     uploadRequest = uploadRequest,
@@ -117,27 +126,27 @@ class HttpRemoteStorage(
     }
 
     private fun deleteUploadedFile(
-        uploadRequest: RemoteStorage.Request,
+        uploadRequest: RemoteStorageRequest,
         deleteOnUpload: Boolean
     ) {
         if (deleteOnUpload) {
-            if (uploadRequest is RemoteStorage.Request.FileRequest) {
+            if (uploadRequest is RemoteStorageRequest.FileRequest) {
                 uploadRequest.file.delete()
             }
         }
     }
 
     private fun logUploading(
-        uploadRequest: RemoteStorage.Request
+        uploadRequest: RemoteStorageRequest
     ) {
         when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest ->
+            is RemoteStorageRequest.FileRequest ->
                 logger.debug(
                     "RemoteStorage: Uploading file: ${uploadRequest.file.absolutePath} " +
                         "with size: ${uploadRequest.file.length()} bytes"
                 )
 
-            is RemoteStorage.Request.ContentRequest ->
+            is RemoteStorageRequest.ContentRequest ->
                 logger.debug(
                     "RemoteStorage: Uploading content with size: ${uploadRequest.content.length} " +
                         "with extension: ${uploadRequest.extension}"
@@ -146,16 +155,16 @@ class HttpRemoteStorage(
     }
 
     private fun logUploaded(
-        uploadRequest: RemoteStorage.Request,
-        url: String
+        uploadRequest: RemoteStorageRequest,
+        url: HttpUrl
     ) {
         when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest ->
+            is RemoteStorageRequest.FileRequest ->
                 logger.debug(
                     "RemoteStorage: File: ${uploadRequest.file.absolutePath} uploaded to url: $url"
                 )
 
-            is RemoteStorage.Request.ContentRequest ->
+            is RemoteStorageRequest.ContentRequest ->
                 logger.debug(
                     "RemoteStorage: Content with size: ${uploadRequest.content.length} uploaded to url: $url"
                 )
@@ -163,14 +172,14 @@ class HttpRemoteStorage(
     }
 
     private fun getUploadRequestErrorMessage(
-        uploadRequest: RemoteStorage.Request,
+        uploadRequest: RemoteStorageRequest,
         body: String? = null
     ) =
         when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest ->
+            is RemoteStorageRequest.FileRequest ->
                 "RemoteStorage: Failed to upload file: ${uploadRequest.file.absolutePath}" +
                     if (body != null) " with body: $body" else ""
-            is RemoteStorage.Request.ContentRequest ->
+            is RemoteStorageRequest.ContentRequest ->
                 "RemoteStorage: Failed to upload content with size: ${uploadRequest.content.length} " +
                     "as ${uploadRequest.extension}" +
                     if (body != null) " with body: $body" else ""

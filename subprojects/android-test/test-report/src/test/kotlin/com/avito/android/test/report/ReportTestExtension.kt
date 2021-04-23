@@ -6,7 +6,7 @@ import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.StepDslExtension.delegate
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
-import com.avito.android.test.report.transport.StubTransport
+import com.avito.android.test.report.transport.NoOpTransport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.step.StepDslDelegateImpl
 import com.avito.logger.LoggerFactory
@@ -32,7 +32,7 @@ class ReportTestExtension(
     private val loggerFactory: LoggerFactory = StubLoggerFactory,
     private val report: ReportImplementation = ReportImplementation(
         loggerFactory = loggerFactory,
-        transport = StubTransport,
+        transport = NoOpTransport,
         screenshotCapturer = screenshotCapturer,
         timeProvider = timeProvider,
         troubleshooter = NoOp

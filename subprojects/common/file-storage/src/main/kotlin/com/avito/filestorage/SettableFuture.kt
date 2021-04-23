@@ -4,6 +4,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 
 interface FutureValue<T> {
+
     fun get(): T
 
     companion object {

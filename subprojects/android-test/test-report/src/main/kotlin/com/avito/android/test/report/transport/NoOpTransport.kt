@@ -5,21 +5,11 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorageRequest
 import com.avito.report.model.Entry
+import com.avito.report.model.FileAddress
 
-/**
- * Save report to extrnal storage
- * Send all data to remote storage
- *
- * Legacy way; see [ExternalStorageTransport]
- */
-internal class LegacyTransport(
-    private val remoteStorageTransport: AvitoRemoteStorageTransport,
-    private val externalStorageTransport: ExternalStorageTransport
-) : Transport, TransportMappers {
+internal object NoOpTransport : Transport, TransportMappers {
 
     override fun sendReport(state: Started) {
-        // todo handle result
-        externalStorageTransport.sendReport(state)
     }
 
     override fun sendContent(
@@ -27,6 +17,13 @@ internal class LegacyTransport(
         request: RemoteStorageRequest,
         comment: String
     ): FutureValue<Entry.File> {
-        return remoteStorageTransport.sendContent(test, request, comment)
+        return FutureValue.create(
+            Entry.File(
+                comment = comment,
+                fileAddress = FileAddress.Error(RuntimeException("File not available: NoOpTransport chosen")),
+                timeInSeconds = 0,
+                fileType = request.toFileType()
+            )
+        )
     }
 }
