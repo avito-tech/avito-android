@@ -19,14 +19,12 @@ internal class ScreenshotComparisonReporter(
         val generatedScreenshotFuture = remoteStorage.upload(
             RemoteStorageRequest.FileRequest.Image(
                 file = generated.path
-            ),
-            comment = "generated screenshot"
+            )
         )
         val referenceScreenshotFuture = remoteStorage.upload(
             RemoteStorageRequest.FileRequest.Image(
                 file = reference.path
-            ),
-            comment = "reference screenshot"
+            )
         )
 
         referenceScreenshotFuture.get().combine(generatedScreenshotFuture.get()) { referenceUrl, generatedUrl ->

@@ -7,7 +7,6 @@ interface RemoteStorage {
 
     fun upload(
         uploadRequest: RemoteStorageRequest,
-        comment: String,
         deleteOnUpload: Boolean = true
     ): FutureValue<Result<HttpUrl>>
 }

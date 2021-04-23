@@ -21,7 +21,7 @@ internal class AvitoFileStorageUploader(
                     throw IllegalArgumentException("Unsupported type $type ; direct file upload should be used")
             }
         }.flatMap { request ->
-            remoteStorage.upload(request, comment = "").get()
+            remoteStorage.upload(request).get()
         }
     }
 
@@ -36,7 +36,7 @@ internal class AvitoFileStorageUploader(
                 Entry.File.Type.plain_text -> RemoteStorageRequest.ContentRequest.PlainText(content = file.readText())
             }
         }.flatMap { request ->
-            remoteStorage.upload(request, comment = "").get()
+            remoteStorage.upload(request).get()
         }
     }
 }

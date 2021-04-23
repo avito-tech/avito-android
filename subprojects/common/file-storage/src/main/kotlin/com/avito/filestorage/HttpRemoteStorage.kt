@@ -20,19 +20,14 @@ internal class HttpRemoteStorage(
 
     override fun upload(
         uploadRequest: RemoteStorageRequest,
-        comment: String,
         deleteOnUpload: Boolean
     ): FutureValue<Result<HttpUrl>> {
 
         val futureValue = SettableFutureValue<Result<HttpUrl>>()
 
         when (uploadRequest) {
-            is RemoteStorageRequest.FileRequest.Image -> storageClient.upload(
-                extension = "png",
-                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
-            )
-            is RemoteStorageRequest.FileRequest.Video -> storageClient.upload(
-                extension = "mp4",
+            is RemoteStorageRequest.FileRequest -> storageClient.upload(
+                extension = uploadRequest.mediaType.subtype,
                 content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
             )
             is RemoteStorageRequest.ContentRequest -> storageClient.upload(

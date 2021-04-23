@@ -25,8 +25,7 @@ internal class AvitoRemoteStorageTransport(
         comment: String
     ): FutureValue<Entry.File> {
         return avitoFileStorage.upload(
-            uploadRequest = request,
-            comment = comment
+            uploadRequest = request
         ).map { result ->
             val fileAddress = result.fold(
                 onSuccess = { FileAddress.URL(it) },
