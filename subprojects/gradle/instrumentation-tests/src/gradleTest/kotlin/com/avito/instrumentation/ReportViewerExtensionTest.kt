@@ -16,7 +16,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.nio.file.Path
 
-internal class InstrumentationTestsReportViewerTest {
+internal class ReportViewerExtensionTest {
 
     private lateinit var projectDir: File
     private lateinit var commit: String
