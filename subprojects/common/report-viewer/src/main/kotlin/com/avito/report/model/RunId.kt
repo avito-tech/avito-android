@@ -16,6 +16,8 @@ data class RunId(
         prefix.isNullOrBlank() -> "$commitHash$DELIMITER$buildTypeId"
         else -> "$prefix$DELIMITER$commitHash$DELIMITER$buildTypeId"
     }
-}
 
-private const val DELIMITER = '.'
+    companion object {
+        internal const val DELIMITER = '.'
+    }
+}
