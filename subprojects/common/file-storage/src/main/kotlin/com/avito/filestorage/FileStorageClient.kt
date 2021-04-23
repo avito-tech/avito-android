@@ -12,33 +12,11 @@ import retrofit2.http.Tag
 internal interface FileStorageClient {
 
     @POST("/file/addBinary")
-    @Headers(
-        "X-Source: $xSourceValue"
-    )
+    @Headers("X-Source: $xSourceValue")
     fun upload(
+        @Body content: RequestBody,
         @Header("X-Extension") extension: String,
-        @Body content: String,
-        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-text")
-    ): Call<String>
-
-    @POST("/file/addBinary")
-    @Headers(
-        "X-Extension: png",
-        "X-Source: $xSourceValue"
-    )
-    fun uploadPng(
-        @Body content: RequestBody,
-        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-png")
-    ): Call<String>
-
-    @POST("/file/addBinary")
-    @Headers(
-        "X-Extension: mp4",
-        "X-Source: $xSourceValue"
-    )
-    fun uploadMp4(
-        @Body content: RequestBody,
-        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-mp4")
+        @Tag metadata: RequestMetadata = RequestMetadata(serviceName, "add-binary-$extension")
     ): Call<String>
 }
 

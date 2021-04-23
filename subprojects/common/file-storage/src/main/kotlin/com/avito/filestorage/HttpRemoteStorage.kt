@@ -6,6 +6,7 @@ import com.avito.logger.create
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,15 +36,17 @@ class HttpRemoteStorage(
         val futureValue = SettableFutureValue<Result<HttpUrl>>()
 
         when (uploadRequest) {
-            is RemoteStorageRequest.FileRequest.Image -> storageClient.uploadPng(
+            is RemoteStorageRequest.FileRequest.Image -> storageClient.upload(
+                extension = "png",
                 content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
             )
-            is RemoteStorageRequest.FileRequest.Video -> storageClient.uploadMp4(
+            is RemoteStorageRequest.FileRequest.Video -> storageClient.upload(
+                extension = "mp4",
                 content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
             )
             is RemoteStorageRequest.ContentRequest -> storageClient.upload(
                 extension = uploadRequest.extension,
-                content = uploadRequest.content
+                content = uploadRequest.content.toRequestBody()
             )
         }
             .enqueue(
