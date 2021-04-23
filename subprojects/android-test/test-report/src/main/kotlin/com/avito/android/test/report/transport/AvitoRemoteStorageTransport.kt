@@ -5,7 +5,6 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageRequest
-import com.avito.filestorage.RemoteStorageResult
 import com.avito.filestorage.map
 import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
@@ -29,10 +28,10 @@ internal class AvitoRemoteStorageTransport(
             uploadRequest = request,
             comment = comment
         ).map { result ->
-            val fileAddress = when (result) {
-                is RemoteStorageResult.Success -> FileAddress.URL(result.url)
-                is RemoteStorageResult.Error -> FileAddress.Error(result.t)
-            }
+            val fileAddress = result.fold(
+                onSuccess = { FileAddress.URL(it) },
+                onFailure = { FileAddress.Error(it) }
+            )
 
             Entry.File(
                 comment = comment,

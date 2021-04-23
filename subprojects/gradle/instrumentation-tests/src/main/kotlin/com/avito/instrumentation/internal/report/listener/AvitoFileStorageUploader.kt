@@ -3,7 +3,6 @@ package com.avito.instrumentation.internal.report.listener
 import com.avito.android.Result
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageRequest
-import com.avito.filestorage.RemoteStorageResult
 import com.avito.report.model.Entry
 import okhttp3.HttpUrl
 import java.io.File
@@ -22,10 +21,7 @@ internal class AvitoFileStorageUploader(
                     throw IllegalArgumentException("Unsupported type $type ; direct file upload should be used")
             }
         }.flatMap { request ->
-            when (val result = remoteStorage.upload(request, comment = "").get()) {
-                is RemoteStorageResult.Success -> Result.Success(result.url)
-                is RemoteStorageResult.Error -> Result.Failure(result.t)
-            }
+            remoteStorage.upload(request, comment = "").get()
         }
     }
 
@@ -40,10 +36,7 @@ internal class AvitoFileStorageUploader(
                 Entry.File.Type.plain_text -> RemoteStorageRequest.ContentRequest.PlainText(content = file.readText())
             }
         }.flatMap { request ->
-            when (val result = remoteStorage.upload(request, comment = "").get()) {
-                is RemoteStorageResult.Success -> Result.Success(result.url)
-                is RemoteStorageResult.Error -> Result.Failure(result.t)
-            }
+            remoteStorage.upload(request, comment = "").get()
         }
     }
 }

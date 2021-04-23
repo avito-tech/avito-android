@@ -2,10 +2,8 @@ package com.avito.android.test.screenshot_test.internal
 
 import android.content.Context
 import com.avito.android.test.report.Report
-import com.avito.composite_exception.composeWith
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageRequest
-import com.avito.filestorage.RemoteStorageResult
 import okhttp3.HttpUrl
 
 internal class ScreenshotComparisonReporter(
@@ -13,9 +11,6 @@ internal class ScreenshotComparisonReporter(
     private val report: Report,
     private val context: Context
 ) {
-
-    private val RemoteStorageResult.error: Throwable?
-        get() = (this as? RemoteStorageResult.Error)?.t
 
     fun reportScreenshotComparison(
         generated: Screenshot,
@@ -33,25 +28,19 @@ internal class ScreenshotComparisonReporter(
             ),
             comment = "reference screenshot"
         )
-        val generatedScreenshotResult = generatedScreenshotFuture.get()
-        val referenceScreenshotResult = referenceScreenshotFuture.get()
-        if (generatedScreenshotResult is RemoteStorageResult.Success
-            && referenceScreenshotResult is RemoteStorageResult.Success
-        ) {
+
+        referenceScreenshotFuture.get().combine(generatedScreenshotFuture.get()) { referenceUrl, generatedUrl ->
             val htmlReport = getReportAsString(
-                referenceUrl = referenceScreenshotResult.url,
-                generatedUrl = generatedScreenshotResult.url
+                referenceUrl = referenceUrl,
+                generatedUrl = generatedUrl
             )
             report.addHtml(
                 label = "Press me to see report",
                 content = htmlReport,
                 wrapHtml = false
             )
-        } else {
-            throw IllegalStateException(
-                "Can't upload screenshots",
-                generatedScreenshotResult.error.composeWith(referenceScreenshotResult.error)
-            )
+        }.onFailure {
+            throw IllegalStateException("Can't upload screenshots", it)
         }
     }
 

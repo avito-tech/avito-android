@@ -133,8 +133,7 @@ internal interface TestsSchedulerFactory {
                 RemoteStorageFactory.create(
                     endpoint = params.fileStorageUrl,
                     httpClientProvider = httpClientProvider,
-                    loggerFactory = params.loggerFactory,
-                    timeProvider = timeProvider
+                    loggerFactory = params.loggerFactory
                 )
             )
 
