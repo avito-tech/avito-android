@@ -1,7 +1,6 @@
 package com.avito.filestorage
 
 import com.avito.http.HttpClientProvider
-import com.avito.logger.LoggerFactory
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -14,7 +13,6 @@ object RemoteStorageFactory {
     fun create(
         endpoint: HttpUrl,
         httpClientProvider: HttpClientProvider,
-        loggerFactory: LoggerFactory,
         isAndroidRuntime: Boolean,
     ): RemoteStorage = HttpRemoteStorage(
         endpoint = endpoint,
@@ -27,7 +25,6 @@ object RemoteStorageFactory {
                 .build(),
             isAndroidRuntime = isAndroidRuntime,
         ),
-        loggerFactory = loggerFactory,
     )
 
     private fun createClient(

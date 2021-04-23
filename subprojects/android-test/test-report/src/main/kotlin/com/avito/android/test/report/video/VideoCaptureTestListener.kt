@@ -4,7 +4,6 @@ import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.listener.TestLifecycleListener
 import com.avito.android.test.report.transport.Transport
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorageRequest
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.TestArtifactsProvider
@@ -55,8 +54,9 @@ class VideoCaptureTestListener(
                     logger.debug("Video uploading enabled. Recording stopped")
                     val video = transport.sendContent(
                         test = state.testMetadata,
-                        request = RemoteStorageRequest.FileRequest.Video(videoFile),
-                        comment = "video" // ignored, no field in report viewer
+                        file = videoFile,
+                        type = Entry.File.Type.video,
+                        comment = "video"
                     )
                     logger.debug("Video uploading enabled. Video uploaded")
                     waitUploads(state = state, video = video)

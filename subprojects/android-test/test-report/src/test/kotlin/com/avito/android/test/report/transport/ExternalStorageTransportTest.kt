@@ -4,7 +4,6 @@ import com.avito.android.test.report.ReportState.NotFinished.Initialized
 import com.avito.android.test.report.createStubInstance
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
-import com.avito.filestorage.RemoteStorageRequest
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
@@ -52,7 +51,8 @@ internal class ExternalStorageTransportTest {
 
         val result = createTransport(outputFileProvider).sendContent(
             testMetadata,
-            request = RemoteStorageRequest.ContentRequest.PlainText("text"),
+            content = "text",
+            type = Entry.File.Type.plain_text,
             comment = "test"
         )
 

@@ -29,7 +29,6 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorageRequest
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
@@ -196,7 +195,8 @@ class ReportImplementation(
 
                     transport.sendContent(
                         test = initialized.testMetadata,
-                        request = RemoteStorageRequest.FileRequest.Image(screenshot),
+                        file = screenshot,
+                        type = Entry.File.Type.img_png,
                         comment = label
                     )
                 }
@@ -296,9 +296,8 @@ class ReportImplementation(
 
             val html = transport.sendContent(
                 test = initialized.testMetadata,
-                request = RemoteStorageRequest.ContentRequest.Html(
-                    content = wrappedContentIfNeeded,
-                ),
+                content = wrappedContentIfNeeded,
+                type = Entry.File.Type.html,
                 comment = label
             )
 
@@ -317,9 +316,8 @@ class ReportImplementation(
 
             val txt = transport.sendContent(
                 test = initialized.testMetadata,
-                request = RemoteStorageRequest.ContentRequest.PlainText(
-                    content = text,
-                ),
+                content = text,
+                type = Entry.File.Type.plain_text,
                 comment = label
             )
             val started = getCastedStateOrNull<Started>()
@@ -362,7 +360,8 @@ class ReportImplementation(
 
                 transport.sendContent(
                     test = initialized.testMetadata,
-                    request = RemoteStorageRequest.FileRequest.Image(screenshot),
+                    file = screenshot,
+                    type = Entry.File.Type.img_png,
                     comment = comment
                 )
             }

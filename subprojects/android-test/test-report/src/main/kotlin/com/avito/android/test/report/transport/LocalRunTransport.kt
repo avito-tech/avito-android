@@ -4,7 +4,6 @@ import android.os.Looper
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorageRequest
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportViewer
@@ -16,6 +15,7 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.TestName
 import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticDataPackage
+import java.io.File
 
 internal class LocalRunTransport(
     reportViewerUrl: String,
@@ -101,9 +101,19 @@ internal class LocalRunTransport(
 
     override fun sendContent(
         test: TestMetadata,
-        request: RemoteStorageRequest,
+        file: File,
+        type: Entry.File.Type,
         comment: String
     ): FutureValue<Entry.File> {
-        return remoteStorageTransport.sendContent(test, request, comment)
+        return remoteStorageTransport.sendContent(test, file, type, comment)
+    }
+
+    override fun sendContent(
+        test: TestMetadata,
+        content: String,
+        type: Entry.File.Type,
+        comment: String
+    ): FutureValue<Entry.File> {
+        return remoteStorageTransport.sendContent(test, content, type, comment)
     }
 }

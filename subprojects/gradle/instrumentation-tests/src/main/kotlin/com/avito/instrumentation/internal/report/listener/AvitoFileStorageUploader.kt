@@ -1,8 +1,8 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
+import com.avito.filestorage.ContentType
 import com.avito.filestorage.RemoteStorage
-import com.avito.filestorage.RemoteStorageRequest
 import com.avito.report.model.Entry
 import okhttp3.HttpUrl
 import java.io.File
@@ -12,31 +12,19 @@ internal class AvitoFileStorageUploader(
 ) : TestArtifactsUploader {
 
     override suspend fun upload(content: String, type: Entry.File.Type): Result<HttpUrl> {
-        return Result.tryCatch {
-            when (type) {
-                Entry.File.Type.html -> RemoteStorageRequest.ContentRequest.PlainText(content = content)
-                Entry.File.Type.plain_text -> RemoteStorageRequest.ContentRequest.PlainText(content = content)
-                Entry.File.Type.img_png,
-                Entry.File.Type.video ->
-                    throw IllegalArgumentException("Unsupported type $type ; direct file upload should be used")
-            }
-        }.flatMap { request ->
-            remoteStorage.upload(request).get()
-        }
+        return remoteStorage.upload(content, type.toContentType()).get()
     }
 
     override suspend fun upload(file: File, type: Entry.File.Type): Result<HttpUrl> {
-        return Result.tryCatch {
-            when (type) {
-                Entry.File.Type.video -> RemoteStorageRequest.FileRequest.Video(file = file)
-                Entry.File.Type.img_png -> RemoteStorageRequest.FileRequest.Image(file = file)
+        return remoteStorage.upload(file = file, type = type.toContentType()).get()
+    }
 
-                // todo optimize it, upload directly from file stream
-                Entry.File.Type.html -> RemoteStorageRequest.ContentRequest.Html(content = file.readText())
-                Entry.File.Type.plain_text -> RemoteStorageRequest.ContentRequest.PlainText(content = file.readText())
-            }
-        }.flatMap { request ->
-            remoteStorage.upload(request).get()
+    private fun Entry.File.Type.toContentType(): ContentType {
+        return when (this) {
+            Entry.File.Type.html -> ContentType.HTML
+            Entry.File.Type.img_png -> ContentType.PNG
+            Entry.File.Type.video -> ContentType.MP4
+            Entry.File.Type.plain_text -> ContentType.TXT
         }
     }
 }

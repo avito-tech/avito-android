@@ -2,8 +2,8 @@ package com.avito.android.test.screenshot_test.internal
 
 import android.content.Context
 import com.avito.android.test.report.Report
+import com.avito.filestorage.ContentType
 import com.avito.filestorage.RemoteStorage
-import com.avito.filestorage.RemoteStorageRequest
 import okhttp3.HttpUrl
 
 internal class ScreenshotComparisonReporter(
@@ -17,14 +17,12 @@ internal class ScreenshotComparisonReporter(
         reference: Screenshot
     ) {
         val generatedScreenshotFuture = remoteStorage.upload(
-            RemoteStorageRequest.FileRequest.Image(
-                file = generated.path
-            )
+            file = generated.path,
+            type = ContentType.PNG,
         )
         val referenceScreenshotFuture = remoteStorage.upload(
-            RemoteStorageRequest.FileRequest.Image(
-                file = reference.path
-            )
+            file = reference.path,
+            type = ContentType.PNG,
         )
 
         referenceScreenshotFuture.get().combine(generatedScreenshotFuture.get()) { referenceUrl, generatedUrl ->
