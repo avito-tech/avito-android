@@ -300,7 +300,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.5.1"
+    id("com.gradle.enterprise") version "3.6.1"
 }
 
 val isCI = booleanProperty("ci", false)
