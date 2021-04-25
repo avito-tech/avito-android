@@ -1,7 +1,7 @@
 package com.avito.android.build_trace
 
+import com.avito.android.gradle.metric.BuildEventsListener
 import com.avito.android.gradle.metric.GradleCollector
-import com.avito.android.gradle.metric.MetricsConsumer
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
@@ -22,7 +22,7 @@ open class BuildTracePlugin : Plugin<Project> {
         }
     }
 
-    private fun buildTraceConsumer(project: Project): MetricsConsumer = BuildTraceConsumer(
+    private fun buildTraceConsumer(project: Project): BuildEventsListener = BuildTraceConsumer(
         // TODO: pass it from an extension
         output = File(project.projectDir, "outputs/trace/build.trace"),
         loggerFactory = GradleLoggerFactory.fromPlugin(this, project)

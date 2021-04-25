@@ -1,6 +1,6 @@
 package com.avito.android.build_trace
 
-import com.avito.android.gradle.metric.AbstractMetricsConsumer
+import com.avito.android.gradle.metric.AbstractBuildEventsListener
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.CompleteEvent
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 internal class BuildTraceConsumer(
     private val output: File,
     loggerFactory: LoggerFactory
-) : AbstractMetricsConsumer() {
+) : AbstractBuildEventsListener() {
 
     private val logger = loggerFactory.create<BuildTraceConsumer>()
 

@@ -22,6 +22,7 @@ dependencies {
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(testFixtures(project(":common:graphite")))
 
+    gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":gradle:git"))
     gradleTestImplementation(testFixtures(project(":common:logger")))
