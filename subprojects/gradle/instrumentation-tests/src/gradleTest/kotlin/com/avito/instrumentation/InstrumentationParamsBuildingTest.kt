@@ -34,9 +34,10 @@ internal class InstrumentationParamsBuildingTest {
             "buildBranch" to "develop",
             "buildCommit" to commit,
             "runId" to RunId(
+                prefix = "stub",
                 commitHash = commit,
                 buildTypeId = "teamcity-$buildType"
-            ).toString(),
+            ).toReportViewerFormat(),
             "reportApiUrl" to "http://stub", // from InstrumentationPluginConfiguration
             "reportViewerUrl" to "http://stub",
             "fileStorageUrl" to "http://stub",
@@ -84,6 +85,7 @@ internal class InstrumentationParamsBuildingTest {
                                 reportViewer {
                                     reportApiUrl = "http://stub"
                                     reportViewerUrl = "http://stub"
+                                    reportRunIdPrefix = "stub"
                                     fileStorageUrl = "http://stub"
                                 }
                              }
@@ -199,6 +201,7 @@ internal class InstrumentationParamsBuildingTest {
                 Data.ReportViewer(
                     reportApiUrl = "http://stub",
                     reportViewerUrl = "http://stub",
+                    reportRunIdPrefix = "stub",
                     fileStorageUrl = "http://stub"
                 )
             )
