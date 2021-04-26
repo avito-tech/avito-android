@@ -37,7 +37,7 @@ internal object NoOpTransport : Transport, TransportMappers {
         return FutureValue.create(
             Entry.File(
                 comment = comment,
-                fileAddress = FileAddress.Error(RuntimeException("File not available: NoOpTransport chosen")),
+                fileAddress = FileAddress.Error(RuntimeException("File is not available: NoOpTransport chosen")),
                 timeInSeconds = 0,
                 fileType = type
             )
