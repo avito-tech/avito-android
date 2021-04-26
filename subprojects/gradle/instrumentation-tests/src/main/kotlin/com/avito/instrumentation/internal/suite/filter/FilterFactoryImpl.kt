@@ -121,27 +121,34 @@ internal class FilterFactoryImpl(
                 || reportFilter.statuses.excluded.isNotEmpty())
         ) {
             val statuses = reportFilter.statuses
-            val previousRunTests = reportFactory.createAvitoReport()
+
+            reportFactory.createAvitoReport()
                 .getTests()
-                .getOrThrow()
-            if (statuses.included.isNotEmpty()) {
-                add(
-                    IncludeByTestSignaturesFilter(
-                        source = TestsFilter.Signatures.Source.Report,
-                        signatures = previousRunTests.filterBy(statuses.included)
-                    )
+                .fold(
+                    onSuccess = { previousRunTests ->
+                        if (statuses.included.isNotEmpty()) {
+                            add(
+                                IncludeByTestSignaturesFilter(
+                                    source = TestsFilter.Signatures.Source.Report,
+                                    signatures = previousRunTests.filterBy(statuses.included)
+                                )
 
-                )
-            }
-            if (statuses.excluded.isNotEmpty()) {
-                add(
-                    ExcludeByTestSignaturesFilter(
-                        source = TestsFilter.Signatures.Source.Report,
-                        signatures = previousRunTests.filterBy(statuses.excluded)
-                    )
+                            )
+                        }
+                        if (statuses.excluded.isNotEmpty()) {
+                            add(
+                                ExcludeByTestSignaturesFilter(
+                                    source = TestsFilter.Signatures.Source.Report,
+                                    signatures = previousRunTests.filterBy(statuses.excluded)
+                                )
 
+                            )
+                        }
+                    },
+                    onFailure = { throwable ->
+                        logger.info("Can't get tests from source report: ${throwable.message}")
+                    }
                 )
-            }
         }
     }
 
