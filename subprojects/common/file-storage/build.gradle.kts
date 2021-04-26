@@ -16,3 +16,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
 }
+
+kotlin {
+    explicitApi()
+}

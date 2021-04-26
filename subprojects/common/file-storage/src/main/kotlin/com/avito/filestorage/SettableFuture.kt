@@ -3,13 +3,17 @@ package com.avito.filestorage
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 
-interface FutureValue<T> {
+public interface FutureValue<T> {
 
-    fun get(): T
+    public fun get(): T
 
-    companion object {
+    public fun <T, R> FutureValue<T>.map(transformer: (T) -> R): FutureValue<R> = object : FutureValue<R> {
+        override fun get(): R = transformer(this@map.get())
+    }
 
-        fun <T> create(stubValue: T): FutureValue<T> = object : FutureValue<T> {
+    public companion object {
+
+        public fun <T> create(stubValue: T): FutureValue<T> = object : FutureValue<T> {
             override fun get(): T = stubValue
         }
     }
@@ -35,8 +39,4 @@ internal class SettableFutureValue<T> : FutureValue<T> {
 
         return false
     }
-}
-
-fun <T, R> FutureValue<T>.map(transformer: (T) -> R): FutureValue<R> = object : FutureValue<R> {
-    override fun get(): R = transformer(this@map.get())
 }

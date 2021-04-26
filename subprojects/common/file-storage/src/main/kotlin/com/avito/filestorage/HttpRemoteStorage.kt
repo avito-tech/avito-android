@@ -2,8 +2,6 @@ package com.avito.filestorage
 
 import com.avito.android.Result
 import okhttp3.HttpUrl
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
@@ -34,22 +32,6 @@ internal class HttpRemoteStorage(
                 extension = type.toExtension()
             )
         )
-    }
-
-    private fun ContentType.toMediaType(): MediaType = when (this) {
-        ContentType.PNG -> "image/png"
-        ContentType.MP4 -> "video/mp4"
-        ContentType.TXT -> "text/plain"
-        ContentType.HTML -> "text/html"
-    }.toMediaType()
-
-    private fun ContentType.toExtension(): String {
-        return when (this) {
-            ContentType.PNG -> "png"
-            ContentType.MP4 -> "mp4"
-            ContentType.TXT -> "txt"
-            ContentType.HTML -> "txt"
-        }
     }
 
     private fun uploadInternal(call: Call<String>): FutureValue<Result<HttpUrl>> {

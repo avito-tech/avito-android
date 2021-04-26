@@ -6,7 +6,6 @@ import com.avito.android.test.report.model.StepResult
 import com.avito.android.util.isLambda
 import com.avito.filestorage.ContentType
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.map
 import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
 import com.avito.report.model.Step

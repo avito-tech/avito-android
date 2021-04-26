@@ -8,9 +8,9 @@ import retrofit2.create
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-object RemoteStorageFactory {
+public object RemoteStorageFactory {
 
-    fun create(
+    public fun create(
         endpoint: HttpUrl,
         httpClientProvider: HttpClientProvider,
         isAndroidRuntime: Boolean,
