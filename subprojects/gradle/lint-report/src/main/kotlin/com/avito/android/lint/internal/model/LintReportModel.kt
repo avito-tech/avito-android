@@ -2,7 +2,7 @@ package com.avito.android.lint.internal.model
 
 import java.io.File
 
-sealed class LintReportModel(
+internal sealed class LintReportModel(
     val projectRelativePath: String,
     val htmlFile: File
 ) {
@@ -18,13 +18,4 @@ sealed class LintReportModel(
         htmlFile: File,
         val error: Exception
     ) : LintReportModel(projectRelativePath, htmlFile)
-}
-
-internal fun LintReportModel.hasErrors(): Boolean {
-    return when {
-        this is LintReportModel.Invalid -> true
-        this is LintReportModel.Valid &&
-            issues.any { it.severity == LintIssue.Severity.ERROR } -> true
-        else -> false
-    }
 }

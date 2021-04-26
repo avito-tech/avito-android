@@ -1,9 +1,9 @@
 package com.avito.android.lint.model
 
-import com.avito.android.lint.LintResultsParser
-import com.avito.android.lint.UnsupportedFormatVersion
 import com.avito.android.lint.internal.model.LintIssue
 import com.avito.android.lint.internal.model.LintReportModel
+import com.avito.android.lint.internal.model.LintResultsParser
+import com.avito.android.lint.internal.model.UnsupportedFormatVersion
 import com.avito.logger.StubLoggerFactory
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
-class LintResultsParserTest {
+internal class LintResultsParserTest {
 
     private lateinit var tempDir: File
 

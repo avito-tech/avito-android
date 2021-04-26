@@ -13,7 +13,7 @@ import com.avito.slack.model.SlackChannel
 import okhttp3.HttpUrl
 import java.io.File
 
-interface LintSlackReporter {
+internal interface LintSlackReporter {
 
     fun report(
         lintReport: LintReportModel,

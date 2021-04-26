@@ -1,7 +1,5 @@
-package com.avito.android.lint
+package com.avito.android.lint.internal.model
 
-import com.avito.android.lint.internal.model.LintIssue
-import com.avito.android.lint.internal.model.LintReportModel
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import java.io.File
@@ -9,7 +7,7 @@ import java.io.InputStream
 import javax.xml.namespace.QName
 import javax.xml.stream.XMLInputFactory
 
-class LintResultsParser(loggerFactory: LoggerFactory) {
+internal class LintResultsParser(loggerFactory: LoggerFactory) {
 
     private val logger = loggerFactory.create<LintResultsParser>()
 

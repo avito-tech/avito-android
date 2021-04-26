@@ -1,4 +1,4 @@
-package com.avito.android.lint.internal
+package com.avito.android.lint
 
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -11,16 +11,16 @@ import java.io.File
  *
  * todo support build variants
  */
-class AndroidLintAccessor(private val project: Project) {
+public class AndroidLintAccessor(private val project: Project) {
 
-    fun taskProvider(): TaskProvider<Task> = try {
+    public fun taskProvider(): TaskProvider<Task> = try {
         project.tasks.named("lintRelease")
     } catch (e: UnknownTaskException) {
         // local android sync usually doesn't have release variant enabled
         project.tasks.named("lint")
     }
 
-    fun resultXml(): File = File("${project.buildDir}/reports/lint-results-release.xml")
+    internal fun resultXml(): File = File("${project.buildDir}/reports/lint-results-release.xml")
 
-    fun resultHtml(): File = File("${project.buildDir}/reports/lint-results-release.html")
+    internal fun resultHtml(): File = File("${project.buildDir}/reports/lint-results-release.html")
 }
