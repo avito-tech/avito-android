@@ -1,20 +1,12 @@
 package com.avito.report.model
 
+import com.avito.report.model.TestName.Companion.delimiter
+
 /**
  * Название теста устроено так:
  * [        префикс      ][  юнит  ][фича][        название теста     ]
  * com.avito.android.test.messenger.chat.ReceiveMessageFromBlocked.test
  */
-data class TestName(val className: String, val methodName: String) {
-
-    val packageName: String = className.substringBeforeLast(delimiter)
-
-    val name = "$className.$methodName"
-
-    constructor(name: String) : this(name.substringBeforeLast(delimiter), name.substringAfterLast(delimiter))
-
-    override fun toString(): String = name
-}
 
 // todo дать возможность указать юнит в аннотации
 val TestName.team: Team
@@ -42,6 +34,5 @@ val TestName.features: List<String>
         else -> emptyList()
     }
 
-private const val delimiter = '.'
 private const val avitoPrefix = "com.avito.android.test"
 private const val domofondPrefix = "ru.domofond.test"

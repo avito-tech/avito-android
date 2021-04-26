@@ -10,6 +10,7 @@ dependencies {
 
     api(project(":common:okhttp"))
     api(project(":common:result"))
+    api(project(":common:report-api"))
 
     implementation(project(":common:math"))
     implementation(project(":common:logger"))
@@ -22,6 +23,7 @@ dependencies {
     testImplementation(project(":common:test-okhttp"))
     testImplementation(testFixtures(project(":common:logger")))
     testImplementation(testFixtures(project(":common:report-viewer")))
+    testImplementation(testFixtures(project(":common:report-api")))
     testImplementation(libs.okhttpMockWebServer)
     testImplementation(libs.jsonPathAssert)
 

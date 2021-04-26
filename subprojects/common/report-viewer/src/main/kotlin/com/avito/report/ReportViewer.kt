@@ -43,11 +43,11 @@ interface ReportViewer {
 
         override fun getName(): String = "${reportCoordinates.planSlug}_${reportCoordinates.jobSlug}"
 
-        override fun generateReportLink(filterOnlyFailtures: Boolean, team: Team): String {
+        override fun generateReportLink(filterOnlyFailtures: Boolean, team: String?): String {
             return generateReportUrl(
                 reportCoordinates,
                 onlyFailures = filterOnlyFailtures,
-                team = team
+                team = team?.let { Team(it) } ?: Team.UNDEFINED
             ).toString()
         }
 

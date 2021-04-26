@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName
  * @param code http code for example
  * @param type determines how to display data (no info atm)
  */
-data class IncidentElement(
+public data class IncidentElement(
     @SerializedName("message") val message: String,
     @SerializedName("code") val code: Int? = null,
     @SerializedName("type") val type: String? = null,

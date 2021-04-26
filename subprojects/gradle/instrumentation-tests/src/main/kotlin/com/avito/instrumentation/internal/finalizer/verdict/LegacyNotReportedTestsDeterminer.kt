@@ -4,6 +4,7 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
+import com.avito.report.model.fromSimpleRunTest
 
 internal class LegacyNotReportedTestsDeterminer : HasNotReportedTestsDeterminer {
 

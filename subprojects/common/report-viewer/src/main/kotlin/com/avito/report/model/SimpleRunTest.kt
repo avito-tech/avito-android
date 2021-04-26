@@ -1,8 +1,5 @@
 package com.avito.report.model
 
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
-
 /**
  * Один тест в пределах репорта, включая все перезапуски, но на одном устройстве
  * Упрощенная версия, доступная при запросе RunTest.List

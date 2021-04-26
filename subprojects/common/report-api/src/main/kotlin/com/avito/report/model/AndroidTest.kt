@@ -1,16 +1,13 @@
 package com.avito.report.model
 
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
-
-sealed class AndroidTest : TestStaticData {
+public sealed class AndroidTest : TestStaticData {
 
     /**
      * Тест должен быть запущен, или даже запускался,
      * но мы не смогли собрать его артефакты или упали во время их парсинга.
      * Такой тест ближе всего к Failed, но мы хотим различать их
      */
-    class Lost(
+    public class Lost(
         override val name: TestName,
         override val device: DeviceName,
         override val description: String?,
@@ -23,11 +20,11 @@ sealed class AndroidTest : TestStaticData {
         override val behavior: TestCaseBehavior?,
         override val kind: Kind,
         override val flakiness: Flakiness,
-        val startTime: Long,
-        val lastSignalTime: Long,
-        val stdout: String,
-        val stderr: String,
-        val incident: Incident?
+        public val startTime: Long,
+        public val lastSignalTime: Long,
+        public val stdout: String,
+        public val stderr: String,
+        public val incident: Incident?
     ) : AndroidTest() {
 
         override fun equals(other: Any?): Boolean {
@@ -46,15 +43,16 @@ sealed class AndroidTest : TestStaticData {
             return result
         }
 
-        companion object {
-            fun fromTestMetadata(
+        public companion object {
+
+            public fun fromTestMetadata(
                 testStaticData: TestStaticData,
                 startTime: Long,
                 lastSignalTime: Long,
                 stdout: String,
                 stderr: String,
                 incident: Incident?
-            ) = Lost(
+            ): Lost = Lost(
                 name = testStaticData.name,
                 device = testStaticData.device,
                 description = testStaticData.description,
@@ -79,7 +77,7 @@ sealed class AndroidTest : TestStaticData {
     /**
      * Тест который мы сознательно решили не запускать: импакт анализ или @Ignore или еще какая-то причина
      */
-    class Skipped(
+    public class Skipped(
         override val name: TestName,
         override val device: DeviceName,
         override val description: String?,
@@ -92,8 +90,8 @@ sealed class AndroidTest : TestStaticData {
         override val behavior: TestCaseBehavior?,
         override val kind: Kind,
         override val flakiness: Flakiness,
-        val skipReason: String,
-        val reportTime: Long
+        public val skipReason: String,
+        public val reportTime: Long
     ) : AndroidTest() {
 
         override fun equals(other: Any?): Boolean {
@@ -112,15 +110,16 @@ sealed class AndroidTest : TestStaticData {
             return result
         }
 
-        companion object {
+        public companion object {
+
             /**
              * @param reportTime т.к. тест пропущен и не имеет периода выполнения, указываем время отправки в репорт
              */
-            fun fromTestMetadata(
+            public fun fromTestMetadata(
                 testStaticData: TestStaticData,
                 skipReason: String,
                 reportTime: Long
-            ) = Skipped(
+            ): Skipped = Skipped(
                 name = testStaticData.name,
                 device = testStaticData.device,
                 description = testStaticData.description,
@@ -142,7 +141,7 @@ sealed class AndroidTest : TestStaticData {
     /**
      * Тест который завершился (прошел или упал)
      */
-    class Completed(
+    public class Completed(
         override val incident: Incident?,
         override val dataSetData: Map<String, String>,
         override val video: Video?,
@@ -162,8 +161,8 @@ sealed class AndroidTest : TestStaticData {
         override val startTime: Long,
         override val endTime: Long,
         override val flakiness: Flakiness,
-        val stdout: String,
-        val stderr: String
+        public val stdout: String,
+        public val stderr: String
     ) : AndroidTest(), TestRuntimeData {
 
         override fun equals(other: Any?): Boolean {
@@ -182,13 +181,14 @@ sealed class AndroidTest : TestStaticData {
             return result
         }
 
-        companion object {
-            fun create(
+        public companion object {
+
+            public fun create(
                 testStaticData: TestStaticData,
                 testRuntimeData: TestRuntimeData,
                 stdout: String,
                 stderr: String
-            ) = Completed(
+            ): Completed = Completed(
                 name = testStaticData.name,
                 device = testStaticData.device,
                 description = testStaticData.description,
@@ -218,26 +218,26 @@ sealed class AndroidTest : TestStaticData {
 /**
  * Только данные которые мы можем получить выполнив тест
  */
-interface TestRuntimeData {
+public interface TestRuntimeData {
 
-    val incident: Incident?
-
-    /**
-     * Must be in seconds
-     */
-    val startTime: Long
+    public val incident: Incident?
 
     /**
      * Must be in seconds
      */
-    val endTime: Long
-    val dataSetData: Map<String, String>
-    val video: Video?
-    val preconditions: List<Step>
-    val steps: List<Step>
+    public val startTime: Long
+
+    /**
+     * Must be in seconds
+     */
+    public val endTime: Long
+    public val dataSetData: Map<String, String>
+    public val video: Video?
+    public val preconditions: List<Step>
+    public val steps: List<Step>
 }
 
-data class TestRuntimeDataPackage(
+public data class TestRuntimeDataPackage(
     override val incident: Incident?,
     override val startTime: Long,
     override val endTime: Long,
@@ -247,28 +247,29 @@ data class TestRuntimeDataPackage(
     override val steps: List<Step>
 ) : TestRuntimeData {
 
-    companion object
+    // for test fixtures
+    public companion object
 }
 
 /**
  * Только базовая информация, которую мы можем спарсить из dex, не запуская тест
  */
-interface TestStaticData {
-    val name: TestName
-    val device: DeviceName
-    val description: String?
-    val testCaseId: Int?
-    val dataSetNumber: Int?
-    val externalId: String?
-    val featureIds: List<Int>
-    val tagIds: List<Int>
-    val priority: TestCasePriority?
-    val behavior: TestCaseBehavior?
-    val kind: Kind
-    val flakiness: Flakiness
+public interface TestStaticData {
+    public val name: TestName
+    public val device: DeviceName
+    public val description: String?
+    public val testCaseId: Int?
+    public val dataSetNumber: Int?
+    public val externalId: String?
+    public val featureIds: List<Int>
+    public val tagIds: List<Int>
+    public val priority: TestCasePriority?
+    public val behavior: TestCaseBehavior?
+    public val kind: Kind
+    public val flakiness: Flakiness
 }
 
-data class TestStaticDataPackage(
+public data class TestStaticDataPackage(
     override val name: TestName,
     override val device: DeviceName,
     override val description: String?,
@@ -299,21 +300,5 @@ data class TestStaticDataPackage(
         return result
     }
 
-    companion object {
-
-        fun fromSimpleRunTest(simpleRunTest: SimpleRunTest) = TestStaticDataPackage(
-            name = TestName(simpleRunTest.name),
-            device = DeviceName(simpleRunTest.deviceName),
-            description = simpleRunTest.description,
-            testCaseId = simpleRunTest.testCaseId,
-            dataSetNumber = simpleRunTest.dataSetNumber,
-            externalId = simpleRunTest.externalId,
-            featureIds = simpleRunTest.featureIds,
-            tagIds = simpleRunTest.tagIds,
-            priority = simpleRunTest.priority,
-            behavior = simpleRunTest.behavior,
-            kind = simpleRunTest.kind,
-            flakiness = simpleRunTest.flakiness
-        )
-    }
+    public companion object
 }

@@ -1,8 +1,6 @@
 package com.avito.report
 
 import com.avito.android.Result
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
 import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
@@ -13,6 +11,8 @@ import com.avito.report.model.Incident
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Status
 import com.avito.report.model.Step
+import com.avito.report.model.TestCaseBehavior
+import com.avito.report.model.TestCasePriority
 import com.avito.report.model.Video
 import com.avito.report.model.team
 

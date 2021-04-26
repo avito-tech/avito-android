@@ -2,8 +2,9 @@ package com.avito.report.model
 
 /**
  * https://avito-tech.github.io/avito-android/docs/test/testcaseincode/
+ * todo move to report-viewer module (avito specific)
  */
-enum class Kind(val tmsId: String) {
+public enum class Kind(public val tmsId: String) {
     UNIT("unit"),
     UI_COMPONENT("ui-component"),
     INTEGRATION("integration"),
@@ -19,7 +20,7 @@ enum class Kind(val tmsId: String) {
      */
     UNKNOWN("unknown");
 
-    companion object {
-        fun fromTmdId(tmsId: String): Kind? = values().find { it.tmsId == tmsId }
+    public companion object {
+        public fun fromTmsId(tmsId: String): Kind? = values().find { it.tmsId == tmsId }
     }
 }

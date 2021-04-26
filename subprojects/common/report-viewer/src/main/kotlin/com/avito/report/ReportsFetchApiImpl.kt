@@ -1,8 +1,6 @@
 package com.avito.report
 
 import com.avito.android.Result
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.internal.JsonRpcClient
@@ -24,6 +22,8 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
+import com.avito.report.model.TestCaseBehavior
+import com.avito.report.model.TestCasePriority
 import com.avito.report.model.TestName
 
 /**
@@ -211,7 +211,7 @@ internal class ReportsFetchApiImpl(
                     featureIds = listResult.preparedData?.lastOrNull()?.featureIds ?: emptyList(),
                     priority = getPriority(listResult),
                     behavior = getBehavior(listResult),
-                    kind = listResult.kind?.let { Kind.fromTmdId(it) } ?: Kind.UNKNOWN,
+                    kind = listResult.kind?.let { Kind.fromTmsId(it) } ?: Kind.UNKNOWN,
                     flakiness = getFlakiness(listResult)
                 )
             } ?: emptyList()
