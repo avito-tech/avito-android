@@ -1,5 +1,6 @@
 package com.avito.report.model
 
+import com.avito.http.toHttpUrlResult
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
@@ -7,7 +8,6 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.lang.reflect.ParameterizedType
 
 class EntryTypeAdapterFactory : TypeAdapterFactory {
@@ -15,7 +15,7 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
         val entryTypeAdapter = EntryTypeAdapter()
-        val result = when {
+        return when {
             type.rawType.isAssignableFrom(List::class.java) ->
                 if ((type.type as ParameterizedType).actualTypeArguments[0] == Entry::class.java) {
                     ListEntryTypeAdapter(entryTypeAdapter) as TypeAdapter<T>
@@ -25,7 +25,6 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
             Entry::class.java.isAssignableFrom(type.rawType) -> entryTypeAdapter as TypeAdapter<T>
             else -> null
         }
-        return result
     }
 
     private class FileAddressTypeAdapter : TypeAdapter<FileAddress>() {
@@ -51,11 +50,10 @@ class EntryTypeAdapterFactory : TypeAdapterFactory {
                 raw.startsWith(errorPrefix) ->
                     FileAddress.Error(error = IllegalStateException(raw.replace(errorPrefix, "")))
 
-                else -> try {
-                    FileAddress.URL(url = raw.toHttpUrl())
-                } catch (exception: IllegalArgumentException) {
-                    FileAddress.Error(error = exception)
-                }
+                else -> raw.toHttpUrlResult().fold(
+                    { FileAddress.URL(it) },
+                    { FileAddress.Error(it) }
+                )
             }
         }
     }

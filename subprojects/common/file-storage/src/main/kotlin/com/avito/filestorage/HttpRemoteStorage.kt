@@ -1,178 +1,76 @@
 package com.avito.filestorage
 
-import com.avito.logger.LoggerFactory
-import com.avito.logger.create
-import com.avito.time.TimeProvider
+import com.avito.android.Result
 import okhttp3.HttpUrl
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
-class HttpRemoteStorage(
+internal class HttpRemoteStorage(
     private val endpoint: HttpUrl,
-    httpClient: OkHttpClient,
-    private val timeProvider: TimeProvider,
-    loggerFactory: LoggerFactory
+    private val storageClient: FileStorageClient,
 ) : RemoteStorage {
 
-    private val logger = loggerFactory.create<HttpRemoteStorage>()
-
-    private val storageClient: FileStorageClient =
-        FileStorageClient.create(
-            endpoint = endpoint,
-            httpClient = httpClient
+    override fun upload(file: File, type: ContentType): FutureValue<Result<HttpUrl>> {
+        val mediaType = type.toMediaType()
+        return uploadInternal(
+            storageClient.upload(
+                content = file.asRequestBody(mediaType),
+                extension = type.toExtension()
+            )
         )
+    }
 
-    override fun fullUrl(result: RemoteStorage.Result.Success): String = "$endpoint${result.url}"
-
-    override fun upload(
-        uploadRequest: RemoteStorage.Request,
-        comment: String,
-        deleteOnUpload: Boolean
-    ): FutureValue<RemoteStorage.Result> {
-
-        val futureValue = SettableFutureValue<RemoteStorage.Result>()
-
-        val timestamp = timeProvider.nowInSeconds()
-
-        logUploading(uploadRequest)
-
-        when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest.Image -> storageClient.uploadPng(
-                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
+    override fun upload(content: String, type: ContentType): FutureValue<Result<HttpUrl>> {
+        val mediaType = type.toMediaType()
+        return uploadInternal(
+            storageClient.upload(
+                content = content.toRequestBody(mediaType),
+                extension = type.toExtension()
             )
-            is RemoteStorage.Request.FileRequest.Video -> storageClient.uploadMp4(
-                content = uploadRequest.file.asRequestBody(uploadRequest.mediaType)
-            )
-            is RemoteStorage.Request.ContentRequest -> storageClient.upload(
-                extension = uploadRequest.extension,
-                content = uploadRequest.content
-            )
-        }
-            .enqueue(
-                object : Callback<String> {
-                    override fun onFailure(call: Call<String>, t: Throwable) {
-                        logger.warn(getUploadRequestErrorMessage(uploadRequest), t)
+        )
+    }
 
-                        deleteUploadedFile(
-                            uploadRequest = uploadRequest,
-                            deleteOnUpload = deleteOnUpload
-                        )
+    private fun uploadInternal(call: Call<String>): FutureValue<Result<HttpUrl>> {
+        val futureValue = SettableFutureValue<Result<HttpUrl>>()
+        call.enqueue(
+            object : Callback<String> {
 
-                        futureValue.set(RemoteStorage.Result.Error(comment, timestamp, uploadRequest, t))
-                    }
-
-                    override fun onResponse(call: Call<String>, response: Response<String>) {
-                        val result = when {
-                            response.isSuccessful && !response.body().isNullOrEmpty() -> {
-                                val url = response.body()!!
-
-                                logUploaded(
-                                    uploadRequest = uploadRequest,
-                                    url = url
-                                )
-
-                                RemoteStorage.Result.Success(
-                                    comment = comment,
-                                    url = url,
-                                    timeInSeconds = timestamp,
-                                    uploadRequest = uploadRequest
-                                )
-                            }
-                            response.isSuccessful && response.body().isNullOrEmpty() -> {
-                                val exception = IllegalStateException("Uploading failed response body is absent")
-                                logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
-                                RemoteStorage.Result.Error(
-                                    comment = comment,
-                                    timeInSeconds = timestamp,
-                                    uploadRequest = uploadRequest,
-                                    t = exception
-                                )
-                            }
-                            else -> {
-                                val exception = RuntimeException("Uploading failed with response: ${response.body()}")
-                                logger.warn(getUploadRequestErrorMessage(uploadRequest, response.body()), exception)
-                                RemoteStorage.Result.Error(
-                                    comment = comment,
-                                    timeInSeconds = timestamp,
-                                    uploadRequest = uploadRequest,
-                                    t = exception
-                                )
-                            }
-                        }
-
-                        deleteUploadedFile(
-                            uploadRequest = uploadRequest,
-                            deleteOnUpload = deleteOnUpload
-                        )
-
-                        futureValue.set(result)
-                    }
+                override fun onFailure(call: Call<String>, throwable: Throwable) {
+                    futureValue.set(Result.Failure(throwable))
                 }
-            )
 
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    val result = when {
+                        response.isSuccessful && !response.body().isNullOrEmpty() -> {
+
+                            // responseBody contains only a string with relative file path
+                            // example: /static/m/2021-04-23/16-39/6082f85819b1d410fd11714e.png
+                            val responseBody = response.body()!!
+
+                            // addEncodedPathSegments accepts path segments separated with '/'
+                            // shouldn't start with '/' though
+                            val pathSegments = responseBody.trimStart('/')
+
+                            val fullUrl = endpoint.newBuilder()
+                                .addEncodedPathSegments(pathSegments)
+                                .build()
+
+                            Result.Success(fullUrl)
+                        }
+                        response.isSuccessful && response.body().isNullOrEmpty() ->
+                            Result.Failure(IllegalStateException("Uploading failed response body is absent"))
+
+                        else -> Result.Failure(RuntimeException("Uploading failed with response: ${response.body()}"))
+                    }
+
+                    futureValue.set(result)
+                }
+            }
+        )
         return futureValue
     }
-
-    private fun deleteUploadedFile(
-        uploadRequest: RemoteStorage.Request,
-        deleteOnUpload: Boolean
-    ) {
-        if (deleteOnUpload) {
-            if (uploadRequest is RemoteStorage.Request.FileRequest) {
-                uploadRequest.file.delete()
-            }
-        }
-    }
-
-    private fun logUploading(
-        uploadRequest: RemoteStorage.Request
-    ) {
-        when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest ->
-                logger.debug(
-                    "RemoteStorage: Uploading file: ${uploadRequest.file.absolutePath} " +
-                        "with size: ${uploadRequest.file.length()} bytes"
-                )
-
-            is RemoteStorage.Request.ContentRequest ->
-                logger.debug(
-                    "RemoteStorage: Uploading content with size: ${uploadRequest.content.length} " +
-                        "with extension: ${uploadRequest.extension}"
-                )
-        }
-    }
-
-    private fun logUploaded(
-        uploadRequest: RemoteStorage.Request,
-        url: String
-    ) {
-        when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest ->
-                logger.debug(
-                    "RemoteStorage: File: ${uploadRequest.file.absolutePath} uploaded to url: $url"
-                )
-
-            is RemoteStorage.Request.ContentRequest ->
-                logger.debug(
-                    "RemoteStorage: Content with size: ${uploadRequest.content.length} uploaded to url: $url"
-                )
-        }
-    }
-
-    private fun getUploadRequestErrorMessage(
-        uploadRequest: RemoteStorage.Request,
-        body: String? = null
-    ) =
-        when (uploadRequest) {
-            is RemoteStorage.Request.FileRequest ->
-                "RemoteStorage: Failed to upload file: ${uploadRequest.file.absolutePath}" +
-                    if (body != null) " with body: $body" else ""
-            is RemoteStorage.Request.ContentRequest ->
-                "RemoteStorage: Failed to upload content with size: ${uploadRequest.content.length} " +
-                    "as ${uploadRequest.extension}" +
-                    if (body != null) " with body: $body" else ""
-        }
 }

@@ -4,10 +4,8 @@ import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.Operation
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.plugin.build_metrics.BuildMetricTracker
-import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
-import com.avito.math.percentOf
 import org.gradle.api.internal.tasks.TaskExecutionOutcome
 
 internal class SlowTasksListener(
@@ -18,19 +16,6 @@ internal class SlowTasksListener(
         val tasks = profile.getProjects()
             .flatMap { it.getTasks() }
             .filter { it.internalState.isActionable }
-
-        // TODO: filter only cacheable tasks after https://github.com/gradle/gradle/issues/9333 (MBS-7244)
-        val executed = tasks.count {
-            it.state!!.didWork
-                && it.internalState.outcome == TaskExecutionOutcome.EXECUTED
-        }
-        val hits = tasks.count {
-            it.internalState.outcome == TaskExecutionOutcome.FROM_CACHE
-        }
-        val missedPercentages = executed.percentOf(executed + hits).toLong()
-        val metric = GaugeLongMetric(SeriesName.create("tasks", "from_cache", "miss"), missedPercentages)
-
-        metricTracker.track(status, metric)
 
         // Other states are not needed yet
         // If you want to find same results as in build scan report use these filters:

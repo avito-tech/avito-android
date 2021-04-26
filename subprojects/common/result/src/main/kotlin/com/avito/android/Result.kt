@@ -1,5 +1,7 @@
 package com.avito.android
 
+import com.avito.composite_exception.CompositeException
+
 /**
  * Why not [kotlin.Result]?
  *  - It's usage as return type is experimental
@@ -88,6 +90,21 @@ sealed class Result<T> {
         is Failure -> {
             func(throwable)
             this
+        }
+    }
+
+    inline fun <R> combine(other: Result<T>, func: (T, T) -> R): Result<R> {
+        return when {
+            this is Success && other is Success -> Success(func(this.value, other.value))
+            this is Failure && other is Success -> Failure(this.throwable)
+            this is Success && other is Failure -> Failure(other.throwable)
+            this is Failure && other is Failure -> Failure(
+                CompositeException(
+                    "${this.throwable.message}\n${other.throwable.message}",
+                    arrayOf(this.throwable, other.throwable)
+                )
+            )
+            else -> throw IllegalStateException("this shouldn't happen")
         }
     }
 

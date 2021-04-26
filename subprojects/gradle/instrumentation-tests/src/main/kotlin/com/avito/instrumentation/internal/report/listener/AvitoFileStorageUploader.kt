@@ -1,10 +1,10 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
+import com.avito.filestorage.ContentType
 import com.avito.filestorage.RemoteStorage
 import com.avito.report.model.Entry
 import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
 
 internal class AvitoFileStorageUploader(
@@ -12,37 +12,19 @@ internal class AvitoFileStorageUploader(
 ) : TestArtifactsUploader {
 
     override suspend fun upload(content: String, type: Entry.File.Type): Result<HttpUrl> {
-        return Result.tryCatch {
-            when (type) {
-                Entry.File.Type.html -> RemoteStorage.Request.ContentRequest.PlainText(content = content)
-                Entry.File.Type.plain_text -> RemoteStorage.Request.ContentRequest.PlainText(content = content)
-                Entry.File.Type.img_png,
-                Entry.File.Type.video ->
-                    throw IllegalArgumentException("Unsupported type $type ; direct file upload should be used")
-            }
-        }.flatMap { request ->
-            when (val result = remoteStorage.upload(request, comment = "").get()) {
-                is RemoteStorage.Result.Success -> Result.Success(remoteStorage.fullUrl(result).toHttpUrl())
-                is RemoteStorage.Result.Error -> Result.Failure(result.t)
-            }
-        }
+        return remoteStorage.upload(content, type.toContentType()).get()
     }
 
     override suspend fun upload(file: File, type: Entry.File.Type): Result<HttpUrl> {
-        return Result.tryCatch {
-            when (type) {
-                Entry.File.Type.video -> RemoteStorage.Request.FileRequest.Video(file = file)
-                Entry.File.Type.img_png -> RemoteStorage.Request.FileRequest.Image(file = file)
+        return remoteStorage.upload(file = file, type = type.toContentType()).get()
+    }
 
-                // todo optimize it, upload directly from file stream
-                Entry.File.Type.html -> RemoteStorage.Request.ContentRequest.Html(content = file.readText())
-                Entry.File.Type.plain_text -> RemoteStorage.Request.ContentRequest.PlainText(content = file.readText())
-            }
-        }.flatMap { request ->
-            when (val result = remoteStorage.upload(request, comment = "").get()) {
-                is RemoteStorage.Result.Success -> Result.Success(remoteStorage.fullUrl(result).toHttpUrl())
-                is RemoteStorage.Result.Error -> Result.Failure(result.t)
-            }
+    private fun Entry.File.Type.toContentType(): ContentType {
+        return when (this) {
+            Entry.File.Type.html -> ContentType.HTML
+            Entry.File.Type.img_png -> ContentType.PNG
+            Entry.File.Type.video -> ContentType.MP4
+            Entry.File.Type.plain_text -> ContentType.TXT
         }
     }
 }

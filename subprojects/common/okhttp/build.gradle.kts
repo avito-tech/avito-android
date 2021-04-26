@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(libs.okhttp)
+    api(project(":common:result"))
 
     implementation(project(":common:logger"))
     implementation(libs.okhttpLogging)

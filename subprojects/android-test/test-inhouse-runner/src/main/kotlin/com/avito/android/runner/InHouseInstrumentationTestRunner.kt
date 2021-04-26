@@ -48,7 +48,6 @@ import com.avito.report.model.Kind
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockWebServer
 import java.util.concurrent.TimeUnit
 
@@ -131,8 +130,7 @@ abstract class InHouseInstrumentationTestRunner :
         RemoteStorageFactory.create(
             endpoint = testRunEnvironment.asRunEnvironmentOrThrow().fileStorageUrl,
             httpClientProvider = httpClientProvider,
-            loggerFactory = loggerFactory,
-            timeProvider = timeProvider
+            isAndroidRuntime = true
         )
     }
 
@@ -151,7 +149,7 @@ abstract class InHouseInstrumentationTestRunner :
         val runEnvironment = testRunEnvironment.asRunEnvironmentOrThrow()
         ReportViewerHttpInterceptor(
             report = report,
-            remoteFileStorageEndpointHost = runEnvironment.fileStorageUrl.toHttpUrl().host
+            remoteFileStorageEndpointHost = runEnvironment.fileStorageUrl.host
         )
     }
 

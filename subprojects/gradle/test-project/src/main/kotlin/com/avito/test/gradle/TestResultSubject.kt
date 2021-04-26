@@ -34,9 +34,10 @@ class TestResultSubject private constructor(
         return this
     }
 
-    fun taskWithOutcome(taskPath: String, outcome: TaskOutcome) {
+    fun taskWithOutcome(taskPath: String, outcome: TaskOutcome): TestResultSubject {
         check("task $taskPath has outcome ${outcome.name}").that(subject.task(taskPath)?.outcome)
             .isEquivalentAccordingToCompareTo(outcome)
+        return this
     }
 
     fun buildFailed(): TestResultSubject {

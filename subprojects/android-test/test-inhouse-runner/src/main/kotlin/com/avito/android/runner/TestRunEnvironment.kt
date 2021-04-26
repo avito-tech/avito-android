@@ -81,7 +81,7 @@ sealed class TestRunEnvironment {
         internal val elasticConfig: ElasticConfig,
         internal val sentryConfig: SentryConfig,
         internal val statsDConfig: StatsDConfig,
-        internal val fileStorageUrl: String,
+        internal val fileStorageUrl: HttpUrl,
         // TODO delete after MBS-10434 resolved
         internal val dumpMainLooperMessagesEnabled: Boolean
     ) : TestRunEnvironment()
@@ -125,7 +125,7 @@ fun provideEnvironment(
             elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
             sentryConfig = parseSentryConfig(argumentsProvider),
             statsDConfig = parseStatsDConfig(argumentsProvider),
-            fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl"),
+            fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
             dumpMainLooperMessagesEnabled = argumentsProvider.getOptionalArgument("dumpMainLooperMessages")?.toBoolean()

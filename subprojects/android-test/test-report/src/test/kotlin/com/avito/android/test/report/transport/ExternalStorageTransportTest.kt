@@ -4,10 +4,11 @@ import com.avito.android.test.report.ReportState.NotFinished.Initialized
 import com.avito.android.test.report.createStubInstance
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
-import com.avito.filestorage.RemoteStorage
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
+import com.avito.report.model.Entry
+import com.avito.report.model.FileAddress
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
@@ -50,18 +51,21 @@ internal class ExternalStorageTransportTest {
 
         val result = createTransport(outputFileProvider).sendContent(
             testMetadata,
-            request = RemoteStorage.Request.ContentRequest.PlainText("text"),
+            content = "text",
+            type = Entry.File.Type.plain_text,
             comment = "test"
         )
 
-        assertThat<RemoteStorage.Result.Success>(result.get()) {
-            val contentFile = File(tempDir, "runner/com.Test#test/$url")
+        assertThat<Entry.File>(result.get()) {
+            assertThat<FileAddress.File>(fileAddress) {
+                val contentFile = File(tempDir, "runner/com.Test#test/${this.fileName}")
 
-            assertThat(contentFile.exists()).isTrue()
+                assertThat(contentFile.exists()).isTrue()
 
-            val content = contentFile.readText()
+                val content = contentFile.readText()
 
-            assertThat(content).isEqualTo("text")
+                assertThat(content).isEqualTo("text")
+            }
         }
     }
 

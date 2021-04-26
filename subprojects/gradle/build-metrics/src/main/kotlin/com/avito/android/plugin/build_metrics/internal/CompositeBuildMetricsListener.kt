@@ -1,13 +1,13 @@
 package com.avito.android.plugin.build_metrics.internal
 
-import com.avito.android.gradle.metric.AbstractMetricsConsumer
+import com.avito.android.gradle.metric.AbstractBuildEventsListener
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.plugin.build_metrics.BuildMetricTracker.BuildStatus
 import org.gradle.BuildResult
 
 internal class CompositeBuildMetricsListener(
     private val listeners: List<BuildResultListener>,
-) : AbstractMetricsConsumer() {
+) : AbstractBuildEventsListener() {
 
     override fun buildFinished(buildResult: BuildResult, profile: BuildProfile) {
         if (!isRealBuild(buildResult)) return

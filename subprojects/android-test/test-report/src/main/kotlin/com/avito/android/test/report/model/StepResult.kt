@@ -1,7 +1,6 @@
 package com.avito.android.test.report.model
 
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorage
 import com.avito.report.model.Entry
 
 /**
@@ -21,5 +20,5 @@ data class StepResult(
     val timestamp: Long,
     val number: Int,
     val entryList: MutableList<Entry> = mutableListOf(),
-    val futureUploads: MutableList<FutureValue<RemoteStorage.Result>> = mutableListOf()
+    val futureUploads: MutableList<FutureValue<Entry.File>> = mutableListOf()
 ) : StepModel
