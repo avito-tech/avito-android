@@ -44,7 +44,7 @@ internal class WriteJUnitReportAction(
             append("""failures="$testCountFailures" """)
             append("""errors="$testCountErrors" """)
             append("""skipped="$testCountSkipped" """)
-            append("""time="${testStatisticsCounter.overallDuration()}" """)
+            append("""time="${testStatisticsCounter.overallDurationSec()}" """)
             appendLine(">")
 
             appendLine("<properties/>")
