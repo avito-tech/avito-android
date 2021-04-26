@@ -4,7 +4,9 @@ import com.avito.report.ReportLinkGenerator
 import com.avito.report.TestSuiteNameProvider
 
 public class StubReportFactory(
-    private val report: StubReport = StubReport()
+    private val report: StubReport = StubReport(),
+    private val linkGenerator: ReportLinkGenerator = ReportLinkGenerator.NoOp(),
+    private val nameProvider: TestSuiteNameProvider = TestSuiteNameProvider.NoOp()
 ) : ReportFactory {
 
     override fun createReport(): Report {
@@ -16,10 +18,10 @@ public class StubReportFactory(
     }
 
     override fun createReportLinkGenerator(): ReportLinkGenerator {
-        return ReportLinkGenerator.Stub()
+        return linkGenerator
     }
 
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
-        return TestSuiteNameProvider.NoOp
+        return nameProvider
     }
 }

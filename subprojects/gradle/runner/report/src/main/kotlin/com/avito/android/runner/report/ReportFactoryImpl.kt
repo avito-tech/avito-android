@@ -59,7 +59,7 @@ public class ReportFactoryImpl(
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
-            ReportLinkGenerator.Stub()
+            ReportLinkGenerator.NoOp()
         }
     }
 
@@ -70,7 +70,7 @@ public class ReportFactoryImpl(
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
-            TestSuiteNameProvider.NoOp
+            TestSuiteNameProvider.NoOp()
         }
     }
 }

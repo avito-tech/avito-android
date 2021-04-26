@@ -129,7 +129,7 @@ public class WriteTaskVerdictActionTest {
         return WriteTaskVerdictAction(
             verdictDestination = verdict,
             gson = gson,
-            reportLinkGenerator = ReportLinkGenerator.Stub(
+            reportLinkGenerator = ReportLinkGenerator.NoOp(
                 reportLink = byReportCoordinatesUrl,
                 testLink = byTestName
             )

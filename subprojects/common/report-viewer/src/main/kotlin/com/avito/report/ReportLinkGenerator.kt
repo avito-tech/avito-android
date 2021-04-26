@@ -9,7 +9,7 @@ interface ReportLinkGenerator {
 
     fun generateTestLink(testName: TestName): String
 
-    class Stub(
+    class NoOp(
         private val reportLink: String = "",
         private val testLink: String = ""
     ) : ReportLinkGenerator {
