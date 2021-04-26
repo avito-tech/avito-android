@@ -1,6 +1,5 @@
 package com.avito.instrumentation.configuration
 
-import com.avito.android.runner.report.factory.LegacyReportFactory
 import com.avito.instrumentation.suite.filter.Filter
 import com.avito.report.model.Status
 import org.gradle.api.Action
@@ -82,7 +81,6 @@ public abstract class InstrumentationFilter(public val name: String) {
                 previousStatuses = previous.value,
                 reportFilter = reportFilter?.let { filter ->
                     Data.FromRunHistory.ReportFilter(
-                        legacyReportConfig = LegacyReportFactory.Config.ReportViewerId(filter.id),
                         statuses = filter.statuses.value
                     )
                 }
@@ -124,7 +122,6 @@ public abstract class InstrumentationFilter(public val name: String) {
         ) : Serializable {
 
             public data class ReportFilter(
-                val legacyReportConfig: LegacyReportFactory.Config.ReportViewerId,
                 val statuses: Filter.Value<InstrumentationFilter.FromRunHistory.RunStatus>
             ) : Serializable
         }

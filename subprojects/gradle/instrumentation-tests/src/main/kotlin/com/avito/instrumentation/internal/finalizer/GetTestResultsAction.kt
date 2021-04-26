@@ -1,4 +1,4 @@
-package com.avito.instrumentation.internal
+package com.avito.instrumentation.internal.finalizer
 
 import com.avito.cd.CdBuildResult
 import com.avito.report.ReportViewer
@@ -10,7 +10,7 @@ import com.avito.report.model.ReportCoordinates
 internal class GetTestResultsAction(
     reportViewerUrl: String,
     private val reportCoordinates: ReportCoordinates,
-    private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl)
+    private val reportViewer: ReportViewer = ReportViewer.Impl(reportViewerUrl, reportCoordinates)
 ) {
 
     fun getTestResults(): CdBuildResult.TestResultsLink {

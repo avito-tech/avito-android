@@ -34,7 +34,6 @@ internal class LogcatTestLifecycleListener(
     ) {
         val key = LogcatBuffers.Key(test, executionNumber)
 
-        @Suppress("MoveVariableDeclarationIntoWhen")
         val testReport = reportProcessor.createTestReport(
             result = result,
             test = test,
@@ -47,7 +46,7 @@ internal class LogcatTestLifecycleListener(
             is AndroidTest.Lost -> report.addTest(testReport)
 
             is AndroidTest.Skipped -> {
-                /* do nothing */
+                /* do nothing, all skipped tests already sent via Report.addSkippedTests() */
             }
         }
 

@@ -1,4 +1,4 @@
-package com.avito.instrumentation.internal.verdict
+package com.avito.instrumentation.internal.finalizer.verdict
 
 internal data class InstrumentationTestsTaskVerdict(
     val title: String,

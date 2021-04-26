@@ -1,7 +1,6 @@
-package com.avito.instrumentation
+package com.avito.instrumentation.internal.finalizer
 
 import com.avito.cd.CdBuildResult
-import com.avito.instrumentation.internal.GetTestResultsAction
 import com.avito.report.ReportViewer
 import com.avito.report.StubReportViewer
 import com.avito.report.model.ReportCoordinates

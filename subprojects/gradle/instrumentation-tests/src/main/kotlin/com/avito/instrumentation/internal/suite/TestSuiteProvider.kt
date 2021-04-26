@@ -1,7 +1,6 @@
 package com.avito.instrumentation.internal.suite
 
 import com.avito.android.TestInApk
-import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
 import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.internal.suite.filter.FilterFactory
@@ -10,9 +9,7 @@ import com.avito.instrumentation.internal.suite.filter.TestsFilter.Result.Exclud
 import com.avito.instrumentation.internal.suite.filter.TestsFilter.Signatures
 import com.avito.instrumentation.internal.suite.model.TestWithTarget
 import com.avito.instrumentation.suite.parseTest
-import com.avito.report.model.AndroidTest
 import com.avito.report.model.DeviceName
-import com.avito.time.TimeProvider
 
 internal interface TestSuiteProvider {
 
@@ -26,12 +23,9 @@ internal interface TestSuiteProvider {
 
     class Impl(
         private val report: Report,
-        private val legacyReport: LegacyReport,
         private val targets: List<TargetConfiguration.Data>,
         private val reportSkippedTests: Boolean,
-        private val filterFactory: FilterFactory,
-        private val timeProvider: TimeProvider,
-        private val useInMemoryReport: Boolean
+        private val filterFactory: FilterFactory
     ) : TestSuiteProvider {
 
         override fun getTestSuite(tests: List<TestInApk>): TestSuite {
@@ -51,19 +45,7 @@ internal interface TestSuiteProvider {
                         targetTest.test to verdict.reason
                     }
 
-                if (useInMemoryReport) {
-                    skippedTests.forEach { (testStaticData, reason) ->
-                        report.addTest(
-                            AndroidTest.Skipped.fromTestMetadata(
-                                testStaticData = testStaticData,
-                                skipReason = reason,
-                                reportTime = timeProvider.nowInSeconds()
-                            )
-                        )
-                    }
-                } else {
-                    legacyReport.sendSkippedTests(skippedTests)
-                }
+                report.addSkippedTests(skippedTests)
             }
 
             return suite

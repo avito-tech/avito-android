@@ -1,20 +1,25 @@
-package com.avito.android.runner.report
+package com.avito.android.runner.report.internal
 
 import com.avito.android.Result
+import com.avito.android.runner.report.LegacyReport
+import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
+import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
+import java.lang.IllegalStateException
 
 /**
  * Implementation for inhouse Avito report backend
  *
  * todo new instance for every new reportCoordinates
  * todo extract batching logic
+ * todo move to separate module
  */
 internal class AvitoReport(
     private val reportsApi: ReportsApi,
@@ -23,7 +28,7 @@ internal class AvitoReport(
     private val buildId: String,
     private val timeProvider: TimeProvider,
     private val batchSize: Int = 400
-) : LegacyReport, Report, ReadReport {
+) : LegacyReport, Report {
 
     private val logger = loggerFactory.create<Report>()
 
@@ -38,7 +43,7 @@ internal class AvitoReport(
         )
     }
 
-    override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
+    override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         if (skippedTests.isEmpty()) {
             logger.info("No skipped tests to report")
             return
@@ -49,7 +54,7 @@ internal class AvitoReport(
                 AndroidTest.Skipped.fromTestMetadata(
                     testStaticData = test,
                     skipReason = reason,
-                    reportTime = timeProvider.nowInMillis()
+                    reportTime = timeProvider.nowInSeconds()
                 )
             }
 
@@ -67,6 +72,10 @@ internal class AvitoReport(
 
             logger.info("Reporting skipped tests for batch: $index completed")
         }
+    }
+
+    override fun getTests(): List<AndroidTest> {
+        throw IllegalStateException("Use getTests(): List<SimpleRunTest>")
     }
 
     override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {
@@ -108,8 +117,10 @@ internal class AvitoReport(
         }
     }
 
-    override fun getTests(): Result<List<SimpleRunTest>> {
-        return reportsApi.getTestsForRunId(reportCoordinates)
+    override fun getTests(initialSuiteFilter: List<TestName>): Result<List<SimpleRunTest>> {
+        return reportsApi.getTestsForRunId(reportCoordinates).map { list ->
+            list.filter { TestName(it.className, it.methodName) in initialSuiteFilter }
+        }
     }
 
     private fun <T> Collection<T>.actionOnBatches(batchAction: (index: Int, batch: Collection<T>) -> Unit) {

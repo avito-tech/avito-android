@@ -2,7 +2,6 @@ package com.avito.test.summary
 
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.ReportCoordinates
@@ -28,7 +27,7 @@ internal interface TestSummarySender {
 
 internal class TestSummarySenderImpl(
     slackClient: SlackClient,
-    reportViewer: ReportViewer,
+    reportViewerUrl: String,
     private val reportsApi: ReportsApi,
     loggerFactory: LoggerFactory,
     private val buildUrl: String,
@@ -41,7 +40,7 @@ internal class TestSummarySenderImpl(
 
     private val logger = loggerFactory.create<TestSummarySender>()
 
-    private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewer)
+    private val slackSummaryComposer: SlackSummaryComposer = SlackSummaryComposerImpl(reportViewerUrl)
     private val slackMessageUpdater: SlackMessageUpdater = SlackMessageUpdaterWithThreadMark(
         slackClient = slackClient,
         loggerFactory = loggerFactory,

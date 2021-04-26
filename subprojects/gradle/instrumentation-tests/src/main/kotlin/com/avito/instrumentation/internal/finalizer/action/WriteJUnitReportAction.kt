@@ -1,28 +1,37 @@
-package com.avito.instrumentation.internal.report
+package com.avito.instrumentation.internal.finalizer.action
 
-import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer.FinalizeAction
-import com.avito.report.ReportViewer
-import com.avito.report.model.ReportCoordinates
+import com.avito.instrumentation.internal.finalizer.TestRunResult
+import com.avito.instrumentation.internal.finalizer.verdict.TestStatisticsCounterFactory
+import com.avito.instrumentation.internal.finalizer.verdict.Verdict
+import com.avito.report.ReportLinkGenerator
+import com.avito.report.TestSuiteNameProvider
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
+import com.avito.report.model.TestName
 import org.apache.commons.text.StringEscapeUtils
 import java.io.File
 
 internal class WriteJUnitReportAction(
-    private val reportViewer: ReportViewer,
-    private val reportCoordinates: ReportCoordinates,
+    private val testSuiteNameProvider: TestSuiteNameProvider,
+    private val reportLinkGenerator: ReportLinkGenerator,
     private val destination: File
 ) : FinalizeAction {
 
     private val estimatedTestRecordSize = 150
 
-    override fun action(testRunResult: TestRunResult) {
-        val testCountOverall = testRunResult.testCount()
-        val testCountSuccess = testRunResult.successCount()
-        val testCountFailures = testRunResult.failureCount()
-        val testCountErrors = testRunResult.notReportedCount()
-        val testCountSkipped = testRunResult.skippedCount()
+    override fun action(testRunResult: TestRunResult, verdict: Verdict) {
+
+        val testStatisticsCounter = TestStatisticsCounterFactory.createLegacy(
+            reportedTests = testRunResult.reportedTests,
+            failedTestDeterminer = testRunResult.failed,
+            notReportedTestsDeterminer = testRunResult.notReported
+        )
+
+        val testCountOverall = testStatisticsCounter.overallCount()
+        val testCountSuccess = testStatisticsCounter.successCount()
+        val testCountFailures = testStatisticsCounter.failureCount()
+        val testCountErrors = testStatisticsCounter.notReportedCount()
+        val testCountSkipped = testStatisticsCounter.skippedCount()
 
         require(testCountOverall == testCountSuccess + testCountFailures + testCountSkipped + testCountErrors)
 
@@ -30,12 +39,12 @@ internal class WriteJUnitReportAction(
             appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")
 
             append("<testsuite ")
-            append("""name="${reportCoordinates.planSlug}_${reportCoordinates.jobSlug}" """)
+            append("""name="${testSuiteNameProvider.getName()}" """)
             append("""tests="$testCountOverall" """)
             append("""failures="$testCountFailures" """)
             append("""errors="$testCountErrors" """)
             append("""skipped="$testCountSkipped" """)
-            append("""time="${testRunResult.testsDuration}" """)
+            append("""time="${testStatisticsCounter.overallDurationSec()}" """)
             appendLine(">")
 
             appendLine("<properties/>")
@@ -70,13 +79,13 @@ internal class WriteJUnitReportAction(
                     is Status.Failure -> {
                         appendLine("<failure>")
                         appendEscapedLine((test.status as Status.Failure).verdict)
-                        appendLine("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
+                        appendLine(reportLinkGenerator.generateTestLink(TestName(test.className, test.methodName)))
                         appendLine("</failure>")
                     }
                     is Status.Lost -> {
                         appendLine("<error>")
                         appendLine("LOST (no info in report)")
-                        appendLine("Report Viewer: ${reportViewer.generateSingleTestRunUrl(test.id)}")
+                        appendLine(reportLinkGenerator.generateTestLink(TestName(test.className, test.methodName)))
                         appendLine("</error>")
                     }
                     Status.Success -> { /* do nothing */
@@ -97,15 +106,7 @@ internal class WriteJUnitReportAction(
                 appendLine(">")
 
                 appendLine("<error>")
-                appendLine(
-                    "Not reported: ${
-                        reportViewer.generateSingleTestRunUrl(
-                            reportCoordinates,
-                            test.name.className,
-                            test.name.methodName
-                        )
-                    }"
-                )
+                appendLine("Not reported ${reportLinkGenerator.generateTestLink(test.name)}")
                 appendLine("</error>")
 
                 appendLine("</testcase>")

@@ -1,12 +1,14 @@
 package com.avito.android.runner.report
 
 import com.avito.android.Result
+import com.avito.android.runner.report.internal.AvitoReport
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.ReportsApi
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
+import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.createStubInstance
 import com.avito.time.StubTimeProvider
@@ -28,14 +30,14 @@ public fun Report.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-public fun LegacyReport.Companion.createStubInstance(
+internal fun LegacyReport.Companion.createStubInstance(
     reportsApi: ReportsApi,
     loggerFactory: LoggerFactory = StubLoggerFactory,
     batchSize: Int = 1,
     buildId: String = "1",
     reportCoordinates: ReportCoordinates = ReportCoordinates.createStubInstance(),
     timeProvider: TimeProvider = StubTimeProvider()
-): LegacyReport = AvitoReport(
+): AvitoReport = AvitoReport(
     reportsApi = reportsApi,
     loggerFactory = loggerFactory,
     batchSize = batchSize,
@@ -44,7 +46,7 @@ public fun LegacyReport.Companion.createStubInstance(
     timeProvider = timeProvider
 )
 
-public class StubReport : Report, LegacyReport, ReadReport {
+public class StubReport : Report, LegacyReport {
 
     public var reportedSkippedTests: List<Pair<TestStaticData, String>>? = null
 
@@ -54,11 +56,13 @@ public class StubReport : Report, LegacyReport, ReadReport {
 
     public var getTestsResult: Result<List<SimpleRunTest>> = Result.Success(emptyList())
 
+    public var getTests: List<AndroidTest> = emptyList()
+
     override fun addTest(test: AndroidTest) {
         TODO("not implemented")
     }
 
-    override fun sendSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
+    override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         reportedSkippedTests = skippedTests
     }
 
@@ -69,7 +73,11 @@ public class StubReport : Report, LegacyReport, ReadReport {
     override fun finish() {
     }
 
-    override fun getTests(): Result<List<SimpleRunTest>> {
+    override fun getTests(initialSuiteFilter: List<TestName>): Result<List<SimpleRunTest>> {
         return getTestsResult
+    }
+
+    override fun getTests(): List<AndroidTest> {
+        return getTests
     }
 }
