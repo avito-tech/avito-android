@@ -4,8 +4,8 @@ interface TestSuiteNameProvider {
 
     fun getName(): String
 
-    object Stub : TestSuiteNameProvider {
+    object NoOp : TestSuiteNameProvider {
 
-        override fun getName(): String = ""
+        override fun getName(): String = "Unknown"
     }
 }

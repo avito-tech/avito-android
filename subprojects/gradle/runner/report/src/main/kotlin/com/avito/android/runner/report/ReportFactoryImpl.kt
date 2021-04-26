@@ -70,7 +70,7 @@ public class ReportFactoryImpl(
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
-            TestSuiteNameProvider.Stub
+            TestSuiteNameProvider.NoOp
         }
     }
 }

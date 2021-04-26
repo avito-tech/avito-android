@@ -20,6 +20,6 @@ public class StubReportFactory(
     }
 
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
-        return TestSuiteNameProvider.Stub
+        return TestSuiteNameProvider.NoOp
     }
 }

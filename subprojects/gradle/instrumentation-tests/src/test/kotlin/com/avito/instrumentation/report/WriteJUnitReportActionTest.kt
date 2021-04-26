@@ -96,7 +96,7 @@ internal class WriteJUnitReportActionTest {
     private fun mockData(testRunResult: TestRunResult, verdict: Verdict = Verdict.Success("")) {
         WriteJUnitReportAction(
             destination = file,
-            testSuiteNameProvider = TestSuiteNameProvider.Stub,
+            testSuiteNameProvider = TestSuiteNameProvider.NoOp,
             reportLinkGenerator = ReportLinkGenerator.Stub(testLink = reportViewerUrl)
         ).action(
             testRunResult = testRunResult,
