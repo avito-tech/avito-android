@@ -72,7 +72,7 @@ internal class ReportViewerExtensionTest {
         }
         assertThat(data.checkPluginLevelInstrumentationParameters()).containsEntry(
             "runId",
-            RunId(prefix = prefixStub, commitHash = commit, buildTypeId = "teamcity-$buildType").value()
+            RunId(prefix = prefixStub, commitHash = commit, buildTypeId = "teamcity-$buildType").toReportViewerFormat()
         )
     }
 
@@ -99,7 +99,7 @@ internal class ReportViewerExtensionTest {
         }
         assertThat(data.checkPluginLevelInstrumentationParameters()).containsEntry(
             "runId",
-            RunId(commitHash = commit, buildTypeId = "teamcity-$buildType").value()
+            RunId(commitHash = commit, buildTypeId = "teamcity-$buildType").toReportViewerFormat()
         )
     }
 

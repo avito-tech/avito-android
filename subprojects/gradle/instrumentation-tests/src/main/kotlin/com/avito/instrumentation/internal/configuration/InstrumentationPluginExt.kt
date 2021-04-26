@@ -42,7 +42,7 @@ internal fun Project.withInstrumentationExtensionData(action: (GradleInstrumenta
                 }.orNull
 
             val runIdOverride = runId?.let {
-                mapOf("runId" to it.value())
+                mapOf("runId" to it.toReportViewerFormat())
             } ?: emptyMap()
 
             val instrumentationParameters = InstrumentationParameters()

@@ -12,7 +12,7 @@ data class RunId(
     private val buildTypeId: String
 ) {
 
-    fun value(): String = when {
+    fun toReportViewerFormat(): String = when {
         prefix.isNullOrBlank() -> "$commitHash$DELIMITER$buildTypeId"
         else -> "$prefix$DELIMITER$commitHash$DELIMITER$buildTypeId"
     }
