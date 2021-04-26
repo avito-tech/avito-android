@@ -11,7 +11,6 @@ plugins {
 dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
 
-    implementation(libs.kotlinHtml)
     implementation(libs.okhttp)
 
     implementation(project(":common:okhttp"))
@@ -36,7 +35,7 @@ gradlePlugin {
         create("lintReport") {
             id = "com.avito.android.lint-report"
             implementationClass = "com.avito.android.lint.LintReportPlugin"
-            displayName = "Lint reports merge"
+            displayName = "Lint reports notifier"
         }
     }
 }
