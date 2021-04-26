@@ -13,7 +13,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
 class ReportTransportFactory(
-    timeProvider: TimeProvider,
+    private val timeProvider: TimeProvider,
     private val loggerFactory: LoggerFactory,
     private val remoteStorage: RemoteStorage,
     private val httpClientProvider: HttpClientProvider,
@@ -32,7 +32,7 @@ class ReportTransportFactory(
         reportDestination: ReportDestination
     ): Transport {
 
-        val uploadFromDevice = AvitoRemoteStorageTransport(remoteStorage)
+        val uploadFromDevice = AvitoRemoteStorageTransport(remoteStorage, timeProvider)
 
         return when (reportDestination) {
             is ReportDestination.Backend -> LocalRunTransport(
@@ -52,7 +52,7 @@ class ReportTransportFactory(
                 externalStorageTransport = externalStorageTransport
             )
             ReportDestination.File -> externalStorageTransport
-            ReportDestination.NoOp -> StubTransport
+            ReportDestination.NoOp -> NoOpTransport
         }
     }
 

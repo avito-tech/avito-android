@@ -2,8 +2,9 @@ package com.avito.android.test.screenshot_test.internal
 
 import android.content.Context
 import com.avito.android.test.report.Report
-import com.avito.composite_exception.composeWith
+import com.avito.filestorage.ContentType
 import com.avito.filestorage.RemoteStorage
+import okhttp3.HttpUrl
 
 internal class ScreenshotComparisonReporter(
     private val remoteStorage: RemoteStorage,
@@ -11,55 +12,42 @@ internal class ScreenshotComparisonReporter(
     private val context: Context
 ) {
 
-    private val RemoteStorage.Result.error: Throwable?
-        get() = (this as? RemoteStorage.Result.Error)?.t
-
     fun reportScreenshotComparison(
         generated: Screenshot,
         reference: Screenshot
     ) {
         val generatedScreenshotFuture = remoteStorage.upload(
-            RemoteStorage.Request.FileRequest.Image(
-                file = generated.path
-            ),
-            comment = "generated screenshot"
+            file = generated.path,
+            type = ContentType.PNG,
         )
         val referenceScreenshotFuture = remoteStorage.upload(
-            RemoteStorage.Request.FileRequest.Image(
-                file = reference.path
-            ),
-            comment = "reference screenshot"
+            file = reference.path,
+            type = ContentType.PNG,
         )
-        val generatedScreenshotResult = generatedScreenshotFuture.get()
-        val referenceScreenshotResult = referenceScreenshotFuture.get()
-        if (generatedScreenshotResult is RemoteStorage.Result.Success
-            && referenceScreenshotResult is RemoteStorage.Result.Success
-        ) {
+
+        referenceScreenshotFuture.get().combine(generatedScreenshotFuture.get()) { referenceUrl, generatedUrl ->
             val htmlReport = getReportAsString(
-                referenceUrl = referenceScreenshotResult.url,
-                generatedUrl = generatedScreenshotResult.url
+                referenceUrl = referenceUrl,
+                generatedUrl = generatedUrl
             )
             report.addHtml(
                 label = "Press me to see report",
                 content = htmlReport,
                 wrapHtml = false
             )
-        } else {
-            throw IllegalStateException(
-                "Can't upload screenshots",
-                generatedScreenshotResult.error.composeWith(referenceScreenshotResult.error)
-            )
+        }.onFailure {
+            throw IllegalStateException("Can't upload screenshots", it)
         }
     }
 
-    private fun getReportAsString(referenceUrl: String, generatedUrl: String): String {
+    private fun getReportAsString(referenceUrl: HttpUrl, generatedUrl: HttpUrl): String {
         context.assets.open("screenshot_test_report.html").use {
             val size: Int = it.available()
             val buffer = ByteArray(size)
             it.read(buffer)
             return String(buffer)
-                .replace("%referenceImage%", referenceUrl)
-                .replace("%generatedImage%", generatedUrl)
+                .replace("%referenceImage%", referenceUrl.toString())
+                .replace("%generatedImage%", generatedUrl.toString())
         }
     }
 }

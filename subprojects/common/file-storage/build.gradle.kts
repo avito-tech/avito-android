@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    api(project(":common:result"))
+
     implementation(project(":common:time"))
     implementation(project(":common:logger"))
     implementation(project(":common:okhttp"))
@@ -13,4 +15,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.okhttpLogging)
+}
+
+kotlin {
+    explicitApi()
 }

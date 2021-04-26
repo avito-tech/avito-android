@@ -29,7 +29,6 @@ import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorage
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.model.Entry
@@ -109,7 +108,7 @@ class ReportImplementation(
 
     private fun registerIncident(
         exception: Throwable,
-        screenshot: FutureValue<RemoteStorage.Result>?
+        screenshot: FutureValue<Entry.File>?
     ) = methodExecutionTracing("registerIncident") {
         val currentState = getCastedState<Initialized>(cause = exception)
 
@@ -190,13 +189,14 @@ class ReportImplementation(
     @Synchronized
     override fun addScreenshot(label: String) {
         methodExecutionTracing("addScreenshot") {
-            val futureResult: Result<FutureValue<RemoteStorage.Result>?> =
+            val futureResult: Result<FutureValue<Entry.File>?> =
                 screenshotCapturer.captureAsFile().map { screenshot: File ->
                     val initialized = getCastedState<Initialized>()
 
                     transport.sendContent(
                         test = initialized.testMetadata,
-                        request = RemoteStorage.Request.FileRequest.Image(screenshot),
+                        file = screenshot,
+                        type = Entry.File.Type.img_png,
                         comment = label
                     )
                 }
@@ -296,9 +296,8 @@ class ReportImplementation(
 
             val html = transport.sendContent(
                 test = initialized.testMetadata,
-                request = RemoteStorage.Request.ContentRequest.Html(
-                    content = wrappedContentIfNeeded,
-                ),
+                content = wrappedContentIfNeeded,
+                type = Entry.File.Type.html,
                 comment = label
             )
 
@@ -317,9 +316,8 @@ class ReportImplementation(
 
             val txt = transport.sendContent(
                 test = initialized.testMetadata,
-                request = RemoteStorage.Request.ContentRequest.PlainText(
-                    content = text,
-                ),
+                content = text,
+                type = Entry.File.Type.plain_text,
                 comment = label
             )
             val started = getCastedStateOrNull<Started>()
@@ -355,14 +353,15 @@ class ReportImplementation(
         fallbackPresenter = FallbackIncidentPresenter()
     )
 
-    private fun makeScreenshot(comment: String): Result<FutureValue<RemoteStorage.Result>?> =
+    private fun makeScreenshot(comment: String): Result<FutureValue<Entry.File>?> =
         methodExecutionTracing("makeScreenshot") {
             screenshotCapturer.captureAsFile().map { screenshot: File ->
                 val initialized = getCastedState<Initialized>()
 
                 transport.sendContent(
                     test = initialized.testMetadata,
-                    request = RemoteStorage.Request.FileRequest.Image(screenshot),
+                    file = screenshot,
+                    type = Entry.File.Type.img_png,
                     comment = comment
                 )
             }

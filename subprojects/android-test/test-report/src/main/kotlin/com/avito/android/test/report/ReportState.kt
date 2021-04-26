@@ -4,7 +4,6 @@ import com.avito.android.test.report.model.DataSet
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
-import com.avito.filestorage.RemoteStorage
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
@@ -13,32 +12,32 @@ sealed class ReportState {
 
     sealed class NotFinished : ReportState() {
         abstract val entriesBeforeSteps: MutableList<Entry>
-        abstract val uploadsBeforeSteps: MutableList<FutureValue<RemoteStorage.Result>>
+        abstract val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>>
 
         data class NotInitialized(
             override val entriesBeforeSteps: MutableList<Entry> = mutableListOf(),
-            override val uploadsBeforeSteps: MutableList<FutureValue<RemoteStorage.Result>> = mutableListOf()
+            override val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>> = mutableListOf()
         ) : NotFinished()
 
         sealed class Initialized : NotFinished() {
             abstract val testMetadata: TestMetadata
             abstract var incident: Incident?
-            abstract var incidentScreenshot: FutureValue<RemoteStorage.Result>?
+            abstract var incidentScreenshot: FutureValue<Entry.File>?
 
             data class NotStarted(
                 override val entriesBeforeSteps: MutableList<Entry>,
-                override val uploadsBeforeSteps: MutableList<FutureValue<RemoteStorage.Result>>,
+                override val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>>,
                 override val testMetadata: TestMetadata,
                 override var incident: Incident? = null,
-                override var incidentScreenshot: FutureValue<RemoteStorage.Result>? = null
+                override var incidentScreenshot: FutureValue<Entry.File>? = null
             ) : Initialized()
 
             data class Started(
                 override val entriesBeforeSteps: MutableList<Entry>,
-                override val uploadsBeforeSteps: MutableList<FutureValue<RemoteStorage.Result>>,
+                override val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>>,
                 override val testMetadata: TestMetadata,
                 override var incident: Incident? = null,
-                override var incidentScreenshot: FutureValue<RemoteStorage.Result>? = null,
+                override var incidentScreenshot: FutureValue<Entry.File>? = null,
                 var currentStep: StepResult? = null,
                 var stepNumber: Int = 0,
                 var preconditionNumber: Int = 0,
@@ -85,18 +84,18 @@ sealed class ReportState {
 
                 private fun StepResult.appendFutureEntries(): StepResult {
                     if (futureUploads.isEmpty()) return this
-                    return copy(entryList = (entryList + futureUploads.toEntries()).toMutableList())
+                    return copy(entryList = (entryList + futureUploads.map { it.get() }).toMutableList())
                 }
 
                 private fun Incident.appendScreenshot(): Incident {
                     val screenshot = incidentScreenshot ?: return this
-                    return copy(entryList = entryList + screenshot.toEntry())
+                    return copy(entryList = entryList + screenshot.get())
                 }
 
                 private fun addEarlyEntries() {
                     val firstPreconditionOrStep =
                         preconditionStepList.firstOrNull() ?: testCaseStepList.firstOrNull() ?: return
-                    entriesBeforeSteps.addAll(uploadsBeforeSteps.toEntries())
+                    entriesBeforeSteps.addAll(uploadsBeforeSteps.map { it.get() })
                     firstPreconditionOrStep.entryList.addAll(entriesBeforeSteps)
                 }
 
