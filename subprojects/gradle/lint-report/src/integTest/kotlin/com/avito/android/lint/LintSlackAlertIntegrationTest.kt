@@ -1,6 +1,6 @@
 package com.avito.android.lint
 
-import com.avito.android.lint.slack.LintSlackReporter
+import com.avito.android.lint.internal.slack.LintSlackReporter
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel

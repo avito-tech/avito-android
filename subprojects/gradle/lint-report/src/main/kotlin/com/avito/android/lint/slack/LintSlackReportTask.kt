@@ -1,7 +1,8 @@
 package com.avito.android.lint.slack
 
 import com.avito.android.lint.LintResultsParser
-import com.avito.android.lint.teamcity.TeamcityBuildLinkAccessor
+import com.avito.android.lint.internal.slack.LintSlackReporter
+import com.avito.android.lint.internal.teamcity.TeamcityBuildLinkAccessor
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.LoggerFactory
 import com.avito.slack.SlackClient

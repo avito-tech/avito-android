@@ -1,7 +1,9 @@
-package com.avito.android.lint
+package com.avito.android.lint.model
 
-import com.avito.android.lint.model.LintIssue
-import com.avito.android.lint.model.LintReportModel
+import com.avito.android.lint.LintResultsParser
+import com.avito.android.lint.UnsupportedFormatVersion
+import com.avito.android.lint.internal.model.LintIssue
+import com.avito.android.lint.internal.model.LintReportModel
 import com.avito.logger.StubLoggerFactory
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat

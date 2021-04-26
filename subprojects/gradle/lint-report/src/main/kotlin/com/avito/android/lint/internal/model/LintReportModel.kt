@@ -1,4 +1,4 @@
-package com.avito.android.lint.model
+package com.avito.android.lint.internal.model
 
 import java.io.File
 

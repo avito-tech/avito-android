@@ -1,8 +1,8 @@
 package com.avito.android.lint.slack
 
-import com.avito.android.lint.AndroidLintAccessor
 import com.avito.android.lint.LintReportExtension
-import com.avito.android.lint.validInGradleTaskName
+import com.avito.android.lint.internal.AndroidLintAccessor
+import com.avito.android.lint.internal.validInGradleTaskName
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.logger.Logger

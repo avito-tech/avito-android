@@ -1,11 +1,11 @@
-package com.avito.android.lint.slack
+package com.avito.android.lint.internal.slack
 
-import com.avito.android.lint.model.LintIssue
-import com.avito.android.lint.model.LintIssue.Severity.ERROR
-import com.avito.android.lint.model.LintIssue.Severity.INFORMATION
-import com.avito.android.lint.model.LintIssue.Severity.UNKNOWN
-import com.avito.android.lint.model.LintIssue.Severity.WARNING
-import com.avito.android.lint.model.LintReportModel
+import com.avito.android.lint.internal.model.LintIssue
+import com.avito.android.lint.internal.model.LintIssue.Severity.ERROR
+import com.avito.android.lint.internal.model.LintIssue.Severity.INFORMATION
+import com.avito.android.lint.internal.model.LintIssue.Severity.UNKNOWN
+import com.avito.android.lint.internal.model.LintIssue.Severity.WARNING
+import com.avito.android.lint.internal.model.LintReportModel
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.slack.SlackClient

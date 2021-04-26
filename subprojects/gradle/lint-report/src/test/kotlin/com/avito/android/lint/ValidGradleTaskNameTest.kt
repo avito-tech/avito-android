@@ -1,5 +1,6 @@
 package com.avito.android.lint
 
+import com.avito.android.lint.internal.validInGradleTaskName
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.createStubInstance
 import com.google.common.truth.Truth.assertThat

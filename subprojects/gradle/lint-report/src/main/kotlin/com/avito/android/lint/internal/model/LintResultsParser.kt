@@ -1,7 +1,7 @@
 package com.avito.android.lint
 
-import com.avito.android.lint.model.LintIssue
-import com.avito.android.lint.model.LintReportModel
+import com.avito.android.lint.internal.model.LintIssue
+import com.avito.android.lint.internal.model.LintReportModel
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import java.io.File
