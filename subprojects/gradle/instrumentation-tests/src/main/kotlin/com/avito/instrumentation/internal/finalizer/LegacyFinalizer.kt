@@ -22,43 +22,38 @@ internal class LegacyFinalizer(
 
     override fun finalize(testsExecutionResults: TestsScheduler.Result) {
 
-        val reportedTestsResult = report.getTests(testsExecutionResults.testSuite.testsToRun.map { it.test.name })
+        val testResults = report.getTests(
+            initialSuiteFilter = testsExecutionResults.testSuite.testsToRun.map { it.test.name }
+        ).getOrElse { emptyList() }
 
-        reportedTestsResult
-            .onSuccess { tests ->
+        val failedTests = hasFailedTestDeterminer.determine(runResult = testResults)
 
-                val failedTests = hasFailedTestDeterminer.determine(runResult = tests)
+        val notReportedTests = hasNotReportedTestsDeterminer.determine(
+            runResult = testResults,
+            allTests = testsExecutionResults.testSuite.testsToRun.map { it.test }
+        )
 
-                val notReportedTests = hasNotReportedTestsDeterminer.determine(
-                    runResult = tests,
-                    allTests = testsExecutionResults.testSuite.testsToRun.map { it.test }
-                )
+        val testRunResult = TestRunResult(
+            reportedTests = testResults,
+            failed = failedTests,
+            notReported = notReportedTests
+        )
 
-                val testRunResult = TestRunResult(
-                    reportedTests = tests,
-                    failed = failedTests,
-                    notReported = notReportedTests
-                )
+        val verdict = verdictDeterminer.determine(
+            failed = failedTests,
+            notReported = notReportedTests
+        )
 
-                val verdict = verdictDeterminer.determine(
-                    failed = failedTests,
-                    notReported = notReportedTests
-                )
+        actions.forEach { it.action(testRunResult, verdict) }
 
-                actions.forEach { it.action(testRunResult, verdict) }
-
-                when (verdict) {
-                    is Verdict.Success -> {
-                        // empty
-                    }
-                    is Verdict.Failure ->
-                        buildFailer.failBuild(
-                            "Instrumentation task failed. Look at verdict in the file: ${params.verdictFile}"
-                        )
-                }
+        when (verdict) {
+            is Verdict.Success -> {
+                // empty
             }
-            .onFailure { throwable ->
-                buildFailer.failBuild("Instrumentation task failed. Can't get test results", throwable)
-            }
+            is Verdict.Failure ->
+                buildFailer.failBuild(
+                    "Instrumentation task failed. Look at verdict in the file: ${params.verdictFile}"
+                )
+        }
     }
 }
