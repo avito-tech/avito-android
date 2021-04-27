@@ -1,12 +1,13 @@
 package com.avito.android.lint
 
-import com.avito.android.lint.slack.LintSlackReporter
+import com.avito.android.lint.internal.model.LintResultsParser
+import com.avito.android.lint.internal.slack.LintSlackReporter
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
+import com.avito.utils.fileFromJarResources
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.jupiter.api.Test
-import java.io.File
 
 internal class LintSlackAlertIntegrationTest {
 
@@ -38,13 +39,4 @@ internal class LintSlackAlertIntegrationTest {
             buildUrl = "https://stubbuildurl".toHttpUrl()
         )
     }
-}
-
-inline fun <reified C> fileFromJarResources(name: String): File {
-    val file = C::class.java.classLoader
-        ?.getResource(name)
-        ?.file
-        ?.let { File(it) }
-
-    return requireNotNull(file) { "$name not found in resources" }
 }

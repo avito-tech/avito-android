@@ -1,4 +1,4 @@
-package com.avito.android.lint.teamcity
+package com.avito.android.lint.internal.teamcity
 
 import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.utils.gradle.envArgs
