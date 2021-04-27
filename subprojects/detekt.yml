@@ -568,7 +568,7 @@ style:
     # we use todos a lot, maybe there is a better way
     ForbiddenComment:
         active: true
-        values: [ 'STOPSHIP:' ]
+        values: [ 'STOPSHIP' ]
         allowedPatterns: ''
     # https://detekt.github.io/detekt/style.html#forbiddenimport
     # todo maybe use it to ban junit 4 in test code
