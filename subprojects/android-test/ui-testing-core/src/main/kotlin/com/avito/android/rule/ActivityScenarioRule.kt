@@ -30,8 +30,10 @@ open class ActivityScenarioRule<A : Activity>(
 
     override fun before() {
         super.before()
-        if (launchActivity) scenario = ActivityScenario.launch(activityClass)
-        afterActivityLaunched()
+        if (launchActivity) {
+            scenario = ActivityScenario.launch(activityClass)
+            afterActivityLaunched()
+        }
     }
 
     override fun after() {
