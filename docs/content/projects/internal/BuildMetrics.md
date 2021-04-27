@@ -28,6 +28,12 @@ They will be referred in docs as `<placeholder>`.
 [Http build cache](https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_configure_remote) errors:
 
 - `<namespace>.build.cache.errors.[load|store].<http status code>`: errors counter
+  
+Remote cache statistics:
+
+- `<namespace>.build.cache.remote.[hit|miss].env.<environment>`: remote cache operations count by environments.
+Shows count of cacheable tasks that were requested from the remote cache.
+This is the same as **Performance** | **Build cache** | **Remote cache** | **Operations** | **Hit\Miss** in build scan.
 
 ### Common build metrics
 
