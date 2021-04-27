@@ -3,6 +3,7 @@ package com.avito.android.test.app.core
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
+import com.avito.android.rule.ActivityScenarioRule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -17,7 +18,7 @@ class GodRuleChain<out T : Activity>(private val chain: RuleChain) : TestRule {
     private val rules = chain.javaClass.getDeclaredField("rulesStartingWithInnerMost")
         .apply { isAccessible = true }.get(chain) as List<TestRule>
 
-    private val activityTestRule = rules.filterIsInstance<androidx.test.rule.ActivityTestRule<T>>().first()
+    private val activityTestRule = rules.filterIsInstance<ActivityScenarioRule<T>>().first()
 
     val activity: T
         get() = activityTestRule.activity
