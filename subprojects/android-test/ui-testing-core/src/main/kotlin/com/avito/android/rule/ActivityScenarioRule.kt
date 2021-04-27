@@ -38,9 +38,11 @@ open class ActivityScenarioRule<A : Activity>(
 
     override fun after() {
         super.after()
-        scenario?.close()
+        scenario?.run {
+            close()
+            afterActivityFinished()
+        }
         activityRef = null
-        afterActivityFinished()
     }
 
     fun launchActivity(intent: Intent?): A {
