@@ -9,23 +9,15 @@ interface TestLifecycleListener {
         // do nothing
     }
 
-    fun afterTestStop(state: Started) {
+    fun beforeTestFinished(state: Started) {
         // do nothing
     }
 
-    fun beforeTestWrite(state: Started) {
-        // do nothing
-    }
-
-    fun testWriteError(error: Throwable) {
+    fun afterTestFinished(state: Started) {
         // do nothing
     }
 
     fun afterIncident(incident: Incident) {
-        // do nothing
-    }
-
-    fun screenshotUploadError(error: Throwable) {
         // do nothing
     }
 }
@@ -39,23 +31,15 @@ object TestLifecycleNotifier : TestLifecycleListener {
         listeners.forEach { it.beforeTestStart(state) }
     }
 
-    override fun afterTestStop(state: Started) {
-        listeners.forEach { it.afterTestStop(state) }
+    override fun beforeTestFinished(state: Started) {
+        listeners.forEach { it.beforeTestFinished(state) }
     }
 
-    override fun beforeTestWrite(state: Started) {
-        listeners.forEach { it.beforeTestWrite(state) }
-    }
-
-    override fun testWriteError(error: Throwable) {
-        listeners.forEach { it.testWriteError(error) }
+    override fun afterTestFinished(state: Started) {
+        listeners.forEach { it.afterTestFinished(state) }
     }
 
     override fun afterIncident(incident: Incident) {
         listeners.forEach { it.afterIncident(incident) }
-    }
-
-    override fun screenshotUploadError(error: Throwable) {
-        listeners.forEach { it.screenshotUploadError(error) }
     }
 }

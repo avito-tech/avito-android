@@ -59,7 +59,7 @@ internal interface TransportMappers {
                 timestamp = stepResult.timestamp,
                 number = stepResult.number,
                 title = stepResult.title,
-                entryList = stepResult.entryList
+                entryList = stepResult.attachments.entries
             )
         }
     }
