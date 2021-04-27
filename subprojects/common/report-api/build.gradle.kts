@@ -7,10 +7,6 @@ plugins {
 
 dependencies {
     api(libs.okhttp)
-
-    implementation(libs.gson) {
-        because("@SerializedName") // todo move it to report-viewer
-    }
 }
 
 kotlin {

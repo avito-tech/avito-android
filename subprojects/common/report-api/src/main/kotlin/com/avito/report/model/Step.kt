@@ -1,10 +1,8 @@
 package com.avito.report.model
 
-import com.google.gson.annotations.SerializedName
-
 public data class Step(
-    @SerializedName("timestamp") val timestamp: Long,
-    @SerializedName("number") val number: Int,
-    @SerializedName("title") val title: String,
-    @SerializedName("entry_list") val entryList: List<Entry>
+    val timestamp: Long,
+    val number: Int,
+    val title: String,
+    val entryList: List<Entry>
 )

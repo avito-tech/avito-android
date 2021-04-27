@@ -2,18 +2,19 @@ package com.avito.report
 
 import com.avito.android.Result
 import com.avito.report.internal.JsonRpcClient
+import com.avito.report.internal.model.Incident
+import com.avito.report.internal.model.IncidentElement
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
+import com.avito.report.internal.model.Step
 import com.avito.report.internal.model.TestStatus
+import com.avito.report.internal.model.Video
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.Flakiness
-import com.avito.report.model.Incident
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Status
-import com.avito.report.model.Step
 import com.avito.report.model.TestCaseBehavior
 import com.avito.report.model.TestCasePriority
-import com.avito.report.model.Video
 import com.avito.report.model.team
 
 internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAddApi {
@@ -57,7 +58,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
                         status = if (test.incident == null) Status.Lost else null,
                         stdout = test.stdout,
                         stderr = test.stderr,
-                        incident = test.incident,
+                        incident = test.incident?.toInternal(),
                         video = null,
                         startTime = test.startTime,
                         endTime = test.lastSignalTime,
@@ -74,13 +75,13 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
                         status = null,
                         stdout = test.stdout,
                         stderr = test.stderr,
-                        incident = test.incident,
-                        video = test.video,
+                        incident = test.incident?.toInternal(),
+                        video = test.video?.let { Video(it.fileAddress, it.format) },
                         startTime = test.startTime,
                         endTime = test.endTime,
                         dataSetData = test.dataSetData,
-                        preconditionList = test.preconditions,
-                        stepList = test.steps
+                        preconditionList = test.preconditions.map { it.toInternal() },
+                        stepList = test.steps.map { it.toInternal() }
                     )
                 }
             }
@@ -245,5 +246,36 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
             Status.Manual -> TestStatus.MANUAL
             Status.Lost -> TestStatus.LOST
         }
+    }
+
+    private fun com.avito.report.model.Incident.toInternal(): Incident {
+        return Incident(
+            type = type.toInternal(),
+            timestamp = timestamp,
+            trace = trace,
+            chain = chain.map { it.toInternal() },
+            entryList = entryList
+        )
+    }
+
+    private fun com.avito.report.model.Incident.Type.toInternal(): Incident.Type {
+        return when (this) {
+            com.avito.report.model.Incident.Type.INFRASTRUCTURE_ERROR -> Incident.Type.INFRASTRUCTURE_ERROR
+            com.avito.report.model.Incident.Type.ASSERTION_FAILED -> Incident.Type.ASSERTION_FAILED
+        }
+    }
+
+    private fun com.avito.report.model.IncidentElement.toInternal(): IncidentElement {
+        return IncidentElement(
+            message = message,
+            code = code,
+            type = type,
+            origin = origin,
+            className = className,
+        )
+    }
+
+    private fun com.avito.report.model.Step.toInternal(): Step {
+        return Step(timestamp = timestamp, number = number, title = title, entryList = entryList)
     }
 }
