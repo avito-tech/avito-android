@@ -2,7 +2,6 @@ package com.avito.report
 
 import com.avito.android.Result
 import com.avito.report.model.AndroidTest
-import com.avito.report.model.CreateResult
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
@@ -24,8 +23,6 @@ class StubReportsApi(
 
     private val testsForRunId = mutableMapOf<ReportCoordinates, Result<List<SimpleRunTest>>>()
 
-    lateinit var createResult: CreateResult
-
     lateinit var getReportResult: Result<Report>
 
     lateinit var finished: Result<Unit>
@@ -33,16 +30,6 @@ class StubReportsApi(
     lateinit var crossDeviceTestData: Result<CrossDeviceSuite>
 
     val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
-
-    @Synchronized
-    override fun create(
-        reportCoordinates: ReportCoordinates,
-        buildId: String,
-        testHost: String,
-        gitBranch: String,
-        gitCommit: String,
-        tmsBranch: String
-    ): CreateResult = createResult
 
     override fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): Result<String> {
         TODO("not implemented")

@@ -4,13 +4,7 @@ import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.model.ConclusionStatus
-import com.avito.report.internal.model.CreateResponse
 import com.avito.report.internal.model.RfcRpcRequest
-import com.avito.report.internal.model.RpcResult
-import com.avito.report.model.CreateResult
-import com.avito.report.model.CreateResult.AlreadyCreated
-import com.avito.report.model.CreateResult.Created
-import com.avito.report.model.CreateResult.Failed
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.JsonElement
 
@@ -20,50 +14,6 @@ internal class ReportsApiImpl(
 ) : ReportsApi,
     ReportsAddApi by ReportsAddApiImpl(client),
     ReportsFetchApi by ReportsFetchApiImpl(client, loggerFactory) {
-
-    override fun create(
-        reportCoordinates: ReportCoordinates,
-        buildId: String,
-        testHost: String,
-        gitBranch: String,
-        gitCommit: String,
-        tmsBranch: String
-    ): CreateResult {
-        return try {
-            val result = client.jsonRpcRequest<RpcResult<CreateResponse>>(
-                RfcRpcRequest(
-                    method = "Run.Create",
-                    params = mapOf(
-                        "plan_slug" to reportCoordinates.planSlug,
-                        "job_slug" to reportCoordinates.jobSlug,
-                        "run_id" to reportCoordinates.runId,
-                        "report_data" to mapOf(
-                            "build" to buildId,
-                            "testHost" to testHost,
-                            "testsBranch" to tmsBranch,
-                            "appBranch" to gitBranch,
-
-                            /**
-                             * to filter report history
-                             */
-                            "tags" to listOf(
-                                "buildBranch:$gitBranch",
-                                "buildCommit:$gitCommit"
-                            )
-                        )
-                    )
-                )
-            )
-            Created(result.result.id)
-        } catch (e: Throwable) {
-            val isDuplicateKeyError = e.message?.contains("duplicate key error collection") ?: false
-            if (isDuplicateKeyError) {
-                AlreadyCreated
-            } else {
-                Failed(e)
-            }
-        }
-    }
 
     override fun setFinished(reportCoordinates: ReportCoordinates): Result<Unit> {
         return getReport(reportCoordinates).fold(

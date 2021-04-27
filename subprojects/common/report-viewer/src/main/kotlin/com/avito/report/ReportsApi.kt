@@ -1,23 +1,10 @@
 package com.avito.report
 
 import com.avito.android.Result
-import com.avito.report.model.CreateResult
 import com.avito.report.model.ReportCoordinates
 import com.google.gson.JsonElement
 
 interface ReportsApi : ReportsAddApi, ReportsFetchApi {
-
-    /**
-     * Run.Create
-     */
-    fun create(
-        reportCoordinates: ReportCoordinates,
-        buildId: String,
-        testHost: String,
-        gitBranch: String,
-        gitCommit: String,
-        tmsBranch: String = "master"
-    ): CreateResult
 
     /**
      * Run.SetFinished
