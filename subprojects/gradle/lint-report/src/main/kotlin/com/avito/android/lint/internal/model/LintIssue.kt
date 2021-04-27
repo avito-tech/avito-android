@@ -1,6 +1,6 @@
-package com.avito.android.lint.model
+package com.avito.android.lint.internal.model
 
-class LintIssue(
+internal class LintIssue(
     val id: String,
     val summary: String,
     val message: String,
@@ -13,5 +13,6 @@ class LintIssue(
     /**
      * "lint failed to parse file" type of errors
      */
-    val isFatal: Boolean = id == "LintError" || message.startsWith("Check failed")
+    @Suppress("UnnecessaryParentheses")
+    val isFatal: Boolean = (id == "LintError") || message.startsWith("Check failed")
 }

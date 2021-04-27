@@ -5,7 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 
-open class LintReportPlugin : Plugin<Project> {
+public open class LintReportPlugin : Plugin<Project> {
 
     override fun apply(app: Project) {
         check(app.isAndroidApp()) { "Plugin must be applied to an application but was applied to ${app.path}" }
