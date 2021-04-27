@@ -7,6 +7,11 @@ import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.operations.OperationProgressEvent
 import org.gradle.internal.operations.OperationStartEvent
 
+/**
+ * Not thread safe, see BuildOperationListener documentation
+ *
+ * Events are hierarchically organized by id <--> parentId relationships
+ */
 internal abstract class AbstractBuildOperationListener : BuildOperationListener {
 
     override fun started(descriptor: BuildOperationDescriptor, event: OperationStartEvent) {
