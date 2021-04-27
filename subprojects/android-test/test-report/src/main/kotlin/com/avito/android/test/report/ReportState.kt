@@ -1,6 +1,7 @@
 package com.avito.android.test.report
 
 import com.avito.android.test.report.model.DataSet
+import com.avito.android.test.report.model.StepAttachments
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
@@ -11,30 +12,24 @@ import com.avito.report.model.Video
 sealed class ReportState {
 
     sealed class NotFinished : ReportState() {
-        abstract val entriesBeforeSteps: MutableList<Entry>
-        abstract val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>>
 
-        data class NotInitialized(
-            override val entriesBeforeSteps: MutableList<Entry> = mutableListOf(),
-            override val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>> = mutableListOf()
-        ) : NotFinished()
+        object NotInitialized : NotFinished()
 
         sealed class Initialized : NotFinished() {
             abstract val testMetadata: TestMetadata
             abstract var incident: Incident?
             abstract var incidentScreenshot: FutureValue<Entry.File>?
+            abstract val attachmentsBeforeSteps: StepAttachments
 
-            data class NotStarted(
-                override val entriesBeforeSteps: MutableList<Entry>,
-                override val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>>,
+            class NotStarted(
+                override val attachmentsBeforeSteps: StepAttachments = StepAttachments(),
                 override val testMetadata: TestMetadata,
                 override var incident: Incident? = null,
                 override var incidentScreenshot: FutureValue<Entry.File>? = null
             ) : Initialized()
 
-            data class Started(
-                override val entriesBeforeSteps: MutableList<Entry>,
-                override val uploadsBeforeSteps: MutableList<FutureValue<Entry.File>>,
+            class Started(
+                override val attachmentsBeforeSteps: StepAttachments = StepAttachments(),
                 override val testMetadata: TestMetadata,
                 override var incident: Incident? = null,
                 override var incidentScreenshot: FutureValue<Entry.File>? = null,
@@ -83,8 +78,11 @@ sealed class ReportState {
                 }
 
                 private fun StepResult.appendFutureEntries(): StepResult {
-                    if (futureUploads.isEmpty()) return this
-                    return copy(entryList = (entryList + futureUploads.map { it.get() }).toMutableList())
+                    if (attachments.uploads.isEmpty()) return this
+                    val newAttachments = StepAttachments()
+                    newAttachments.entries.addAll(attachments.entries)
+                    newAttachments.entries.addAll(attachments.uploads.map { it.get() })
+                    return copy(attachments = newAttachments)
                 }
 
                 private fun Incident.appendScreenshot(): Incident {
@@ -95,26 +93,34 @@ sealed class ReportState {
                 private fun addEarlyEntries() {
                     val firstPreconditionOrStep =
                         preconditionStepList.firstOrNull() ?: testCaseStepList.firstOrNull() ?: return
-                    entriesBeforeSteps.addAll(uploadsBeforeSteps.map { it.get() })
-                    firstPreconditionOrStep.entryList.addAll(entriesBeforeSteps)
+                    with(firstPreconditionOrStep.attachments) {
+                        entries.addAll(attachmentsBeforeSteps.entries)
+                        entries.addAll(attachmentsBeforeSteps.uploads.map { it.get() })
+                    }
                 }
 
                 private fun sortStepEntries() {
                     preconditionStepList = preconditionStepList.map {
-                        it.copy(
-                            entryList = it.entryList
-                                .sortedBy { it.timeInSeconds }
+                        val newAttachment = StepAttachments()
+                        newAttachment.entries.addAll(
+                            it.attachments.entries
+                                .sortedBy { entry -> entry.timeInSeconds }
                                 .distinctCounted()
-                                .toMutableList()
+                        )
+                        it.copy(
+                            attachments = newAttachment
                         )
                     }.toMutableList()
 
                     testCaseStepList = testCaseStepList.map {
-                        it.copy(
-                            entryList = it.entryList
-                                .sortedBy { it.timeInSeconds }
+                        val newAttachment = StepAttachments()
+                        newAttachment.entries.addAll(
+                            it.attachments.entries
+                                .sortedBy { entry -> entry.timeInSeconds }
                                 .distinctCounted()
-                                .toMutableList()
+                        )
+                        it.copy(
+                            attachments = newAttachment
                         )
                     }.toMutableList()
                 }

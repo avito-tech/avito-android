@@ -3,7 +3,6 @@ package com.avito.android.test.report.screenshot
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.os.Looper
 import com.avito.android.Result
 import com.avito.android.instrumentation.ActivityProvider
 import com.avito.android.util.runOnMainThreadSync
@@ -51,12 +50,8 @@ internal class ScreenshotCapturerImpl(
         }
 
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        if (Looper.myLooper() == Looper.getMainLooper()) {
+        activity.runOnMainThreadSync {
             activity.drawDecorViewToBitmap(bitmap)
-        } else {
-            activity.runOnMainThreadSync {
-                activity.drawDecorViewToBitmap(bitmap)
-            }
         }
         return bitmap
     }
