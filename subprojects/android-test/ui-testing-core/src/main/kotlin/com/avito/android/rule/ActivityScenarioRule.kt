@@ -21,12 +21,12 @@ open class ActivityScenarioRule<A : Activity>(
 ) : ExternalResource() {
 
     val activity: A
-        get() = activityRef?.get() ?: throwUninitializedException()
+        get() = activityRef.get() ?: throwUninitializedException()
     val activityResult: Instrumentation.ActivityResult
         get() = scenario?.result ?: throwUninitializedException()
 
     private var scenario: ActivityScenario<A>? = null
-    private var activityRef: WeakReference<A>? = null
+    private var activityRef: WeakReference<A> = WeakReference(null)
 
     override fun before() {
         super.before()
@@ -42,10 +42,10 @@ open class ActivityScenarioRule<A : Activity>(
             close()
             afterActivityFinished()
         }
-        activityRef = null
+        activityRef.clear()
     }
 
-    fun launchActivity(intent: Intent?): A {
+    fun launchActivity(intent: Intent? = null): A {
         scenario = when (intent) {
             null -> ActivityScenario.launch(activityClass)
             else -> ActivityScenario.launch(
@@ -53,22 +53,24 @@ open class ActivityScenarioRule<A : Activity>(
             )
         }
         afterActivityLaunched()
-        return activityRef?.get() ?: throwUninitializedException()
+        return activityRef.get() ?: throwUninitializedException()
     }
 
     fun runOnUiThread(runnable: Runnable) {
         scenario?.onActivity {
             runnable.run()
-        } ?: error("Activity is not launched")
+        } ?: error("Activity $activityClass is not launched")
     }
 
-    private fun throwUninitializedException(): Nothing = error("Activity is not initialized")
+    private fun throwUninitializedException(): Nothing = error("Activity $activityClass is not initialized")
 
     @CallSuper
     open fun afterActivityLaunched() {
-        scenario?.onActivity { activityRef = WeakReference(it) }
+        checkNotNull(scenario).onActivity { activityRef = WeakReference(it) }
     }
 
     @CallSuper
-    open fun afterActivityFinished() { }
+    open fun afterActivityFinished() {
+        // empty
+    }
 }
