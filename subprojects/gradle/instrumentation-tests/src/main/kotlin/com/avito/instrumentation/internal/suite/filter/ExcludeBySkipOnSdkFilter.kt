@@ -1,5 +1,7 @@
 package com.avito.instrumentation.internal.suite.filter
 
+import com.avito.android.test.annotations.SkipOnSdk
+
 // it makes [name] instance field. It needs for gson
 internal class ExcludeBySkipOnSdkFilter : TestsFilter {
 
@@ -8,7 +10,7 @@ internal class ExcludeBySkipOnSdkFilter : TestsFilter {
     override fun filter(test: TestsFilter.Test): TestsFilter.Result {
         val testAnnotations = test.annotations
             .find {
-                it.name == "com.avito.android.test.annotations.SkipOnSdk"
+                it.name == SkipOnSdk::class.java.name
             }
 
         @Suppress("UNCHECKED_CAST")
