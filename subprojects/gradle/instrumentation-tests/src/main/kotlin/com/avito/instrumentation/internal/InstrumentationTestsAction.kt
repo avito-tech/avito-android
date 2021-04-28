@@ -58,9 +58,9 @@ internal class InstrumentationTestsAction(
         logger.debug("Starting instrumentation tests action for configuration: ${params.instrumentationConfiguration}")
         logger.debug("Impact analysis: ${params.impactAnalysisResult}")
 
-        val testsExecutionResults = scheduler.schedule()
+        val testSchedulerResults = scheduler.schedule()
 
-        finalizer.finalize(testsExecutionResults = testsExecutionResults)
+        finalizer.finalize(testSchedulerResults = testSchedulerResults)
     }
 
     data class Params(

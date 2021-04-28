@@ -15,7 +15,7 @@ public class InstrumentationTestsTaskVerdictSerializationTest {
         val expected = InstrumentationTestsTaskVerdict(
             title = "Stub title",
             reportUrl = "https://stub-url",
-            causeFailureTests = setOf(
+            problemTests = setOf(
                 InstrumentationTestsTaskVerdict.Test(
                     testUrl = "https://stub-url",
                     title = "stub test title"

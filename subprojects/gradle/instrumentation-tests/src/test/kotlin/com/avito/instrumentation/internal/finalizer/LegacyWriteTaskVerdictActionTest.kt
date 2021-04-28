@@ -1,12 +1,12 @@
 package com.avito.instrumentation.internal.finalizer
 
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.finalizer.action.WriteTaskVerdictAction
+import com.avito.instrumentation.internal.finalizer.action.LegacyWriteTaskVerdictAction
 import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
-import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminer
-import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminerFactory
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdictDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdictDeterminerFactory
 import com.avito.report.NoOpReportLinkGenerator
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-public class WriteTaskVerdictActionTest {
+public class LegacyWriteTaskVerdictActionTest {
 
     private val gson = InstrumentationTestsActionFactory.gson
     private val byReportCoordinatesUrl = "https://byreportcoordinates/"
@@ -55,7 +55,7 @@ public class WriteTaskVerdictActionTest {
         val expected = InstrumentationTestsTaskVerdict(
             title = "Failed. There are 1 unsuppressed failed tests",
             reportUrl = byReportCoordinatesUrl,
-            causeFailureTests = setOf(failedTest)
+            problemTests = setOf(failedTest)
         )
 
         val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(verdict.reader())
@@ -85,7 +85,7 @@ public class WriteTaskVerdictActionTest {
         val expected = InstrumentationTestsTaskVerdict(
             title = "Failed. There are 1 not reported tests.",
             reportUrl = byReportCoordinatesUrl,
-            causeFailureTests = setOf(lostTest)
+            problemTests = setOf(lostTest)
         )
 
         val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(verdict.reader())
@@ -117,7 +117,7 @@ public class WriteTaskVerdictActionTest {
             title = "Failed. There are 1 unsuppressed failed tests. " +
                 "\nFailed. There are 1 not reported tests.",
             reportUrl = byReportCoordinatesUrl,
-            causeFailureTests = setOf(failedTest, lostTest)
+            problemTests = setOf(failedTest, lostTest)
         )
 
         val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(verdict.reader())
@@ -125,8 +125,8 @@ public class WriteTaskVerdictActionTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-    private fun createAction(verdict: File): WriteTaskVerdictAction {
-        return WriteTaskVerdictAction(
+    private fun createAction(verdict: File): LegacyWriteTaskVerdictAction {
+        return LegacyWriteTaskVerdictAction(
             verdictDestination = verdict,
             gson = gson,
             reportLinkGenerator = NoOpReportLinkGenerator(
@@ -136,7 +136,7 @@ public class WriteTaskVerdictActionTest {
         )
     }
 
-    private fun createVerdictDeterminer(): VerdictDeterminer {
-        return VerdictDeterminerFactory.create()
+    private fun createVerdictDeterminer(): LegacyVerdictDeterminer {
+        return LegacyVerdictDeterminerFactory.create()
     }
 }

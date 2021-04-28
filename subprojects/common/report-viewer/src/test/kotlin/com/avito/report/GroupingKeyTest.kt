@@ -2,6 +2,7 @@ package com.avito.report
 
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
+import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import org.junit.jupiter.api.Test
@@ -19,7 +20,7 @@ internal class GroupingKeyTest {
                 testStaticData = TestStaticDataPackage.createStubInstance(
                     testCaseId = null,
                     dataSetNumber = 1,
-                    name = "com.avito.Test.test"
+                    name = TestName("com.avito.Test", "test")
                 )
             )
         )
@@ -36,7 +37,7 @@ internal class GroupingKeyTest {
                 testStaticData = TestStaticDataPackage.createStubInstance(
                     testCaseId = 12345,
                     dataSetNumber = 1,
-                    name = "com.avito.Test.test"
+                    name = TestName("com.avito.Test", "test")
                 )
             )
         )
@@ -53,7 +54,7 @@ internal class GroupingKeyTest {
                 testStaticData = TestStaticDataPackage.createStubInstance(
                     testCaseId = 12345,
                     dataSetNumber = null,
-                    name = "com.avito.Test.test"
+                    name = TestName("com.avito.Test", "test")
                 )
             )
         )

@@ -58,15 +58,15 @@ public class StubReport : Report, LegacyReport {
 
     public var getTests: List<AndroidTest> = emptyList()
 
-    override fun addTest(test: AndroidTest) {
-        TODO("not implemented")
+    override fun addTest(testAttempt: TestAttempt) {
+        TODO("Not yet implemented")
     }
 
     override fun addSkippedTests(skippedTests: List<Pair<TestStaticData, String>>) {
         reportedSkippedTests = skippedTests
     }
 
-    override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {
+    override fun sendLostTests(lostTests: Collection<AndroidTest.Lost>) {
         reportedMissingTests = lostTests
     }
 
@@ -77,7 +77,7 @@ public class StubReport : Report, LegacyReport {
         return getTestsResult
     }
 
-    override fun getTests(): List<AndroidTest> {
+    override fun getTestResults(): Collection<AndroidTest> {
         return getTests
     }
 }

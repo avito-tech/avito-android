@@ -4,7 +4,7 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 
 public fun AndroidTest.Completed.Companion.createStubInstance(
-    testStaticData: TestStaticDataPackage = TestStaticDataPackage.createStubInstance(),
+    testStaticData: TestStaticData = TestStaticDataPackage.createStubInstance(),
     testRuntimeData: TestRuntimeData = TestRuntimeDataPackage.createStubInstance(),
     stdout: String = "",
     stderr: String = ""
@@ -13,6 +13,22 @@ public fun AndroidTest.Completed.Companion.createStubInstance(
     testRuntimeData = testRuntimeData,
     stdout = stdout,
     stderr = stderr
+)
+
+public fun AndroidTest.Lost.Companion.createStubInstance(
+    testStaticData: TestStaticData = TestStaticDataPackage.createStubInstance(),
+    startTime: Long = 0,
+    lastSignalTime: Long = 0,
+    stdout: String = "",
+    stderr: String = "",
+    incident: Incident? = null
+): AndroidTest.Lost = fromTestStaticData(
+    testStaticData,
+    startTime,
+    lastSignalTime,
+    stdout,
+    stderr,
+    incident = incident
 )
 
 public fun AndroidTest.Lost.Companion.createStubInstance(
@@ -33,7 +49,7 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
     stdout: String = "",
     stderr: String = "",
     incident: Incident? = null
-): AndroidTest.Lost = fromTestMetadata(
+): AndroidTest.Lost = fromTestStaticData(
     TestStaticDataPackage(
         name = TestName(name),
         device = DeviceName(deviceName),

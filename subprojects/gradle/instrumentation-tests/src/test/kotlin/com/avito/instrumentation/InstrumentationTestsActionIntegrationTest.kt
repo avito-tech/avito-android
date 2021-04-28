@@ -98,7 +98,8 @@ internal class InstrumentationTestsActionIntegrationTest {
         configuration: InstrumentationConfiguration.Data,
         params: InstrumentationTestsAction.Params = params(configuration),
         seriesName: SeriesName = SeriesName.create("test"),
-        reportFactory: StubReportFactory = StubReportFactory()
+        reportFactory: StubReportFactory = StubReportFactory(),
+        timeProvider: StubTimeProvider = StubTimeProvider()
     ) = InstrumentationTestsAction(
         params = params,
         loggerFactory = params.loggerFactory,
@@ -108,7 +109,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader,
-            timeProvider = StubTimeProvider(),
+            timeProvider = timeProvider,
             httpClientProvider = HttpClientProvider.createStubInstance(),
             report = StubReport(),
             reportFactory = reportFactory
@@ -118,7 +119,8 @@ internal class InstrumentationTestsActionIntegrationTest {
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),
             reportFactory = StubReportFactory(),
             buildFailer = buildFailer,
-            gson = InstrumentationTestsActionFactory.gson
+            gson = InstrumentationTestsActionFactory.gson,
+            timeProvider = timeProvider
         ).create()
     )
 

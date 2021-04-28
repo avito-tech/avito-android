@@ -1,37 +1,25 @@
 package com.avito.instrumentation.internal.finalizer.verdict
 
-import com.avito.report.model.TestName
+import com.avito.report.model.AndroidTest
+import com.avito.report.model.TestStaticData
 
 internal sealed class Verdict {
 
-    abstract val message: String
+    abstract val testResults: Collection<AndroidTest>
 
-    data class Success(
-        override val message: String
-    ) : Verdict()
+    sealed class Success : Verdict() {
+
+        data class OK(override val testResults: Collection<AndroidTest>) : Success()
+
+        data class Suppressed(
+            override val testResults: Collection<AndroidTest>,
+            val failedTests: Collection<TestStaticData>,
+        ) : Success()
+    }
 
     data class Failure(
-        override val message: String,
-        val prettifiedDetails: Details,
-        @Transient val cause: Throwable? = null
-    ) : Verdict() {
-
-        data class Details(
-            val lostTests: Set<Test>,
-            val failedTests: Set<Test>
-        ) {
-
-            operator fun plus(other: Details): Details {
-                return Details(
-                    lostTests = lostTests + other.lostTests,
-                    failedTests = failedTests + other.failedTests
-                )
-            }
-
-            data class Test(
-                val name: TestName,
-                val devices: Set<String>
-            )
-        }
-    }
+        override val testResults: Collection<AndroidTest>,
+        val lostTests: Collection<AndroidTest.Lost>,
+        val failedTests: Collection<TestStaticData>
+    ) : Verdict()
 }
