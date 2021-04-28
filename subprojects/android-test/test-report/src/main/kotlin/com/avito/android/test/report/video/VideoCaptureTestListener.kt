@@ -46,7 +46,7 @@ class VideoCaptureTestListener(
         savedIncident = incident
     }
 
-    override fun afterTestStop(state: Started) {
+    override fun beforeTestFinished(state: Started) {
         if (videoFeature.videoUploadingEnabled(shouldRecord, savedIncident)) {
             logger.debug("Video uploading enabled. Recording stopping...")
             videoCapturer.stop().fold(
