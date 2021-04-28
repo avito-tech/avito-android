@@ -5,54 +5,54 @@ package com.avito.android.test.annotations
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class UIComponentTest
+public annotation class UIComponentTest
 
 /**
  * Kind.E2E
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class E2ETest
+public annotation class E2ETest
 
 /**
  * Kind.INTEGRATION
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class IntegrationTest
+public annotation class IntegrationTest
 
 /**
  * Kind.MANUAL
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class ManualTest
+public annotation class ManualTest
 
 /**
  * Kind.UI_COMPONENT_STUB
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class UIComponentStub
+public annotation class UIComponentStub
 
 /**
  * Kind.E2E_STUB
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class E2EStub
+public annotation class E2EStub
 
 /**
  * Kind.UNIT
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class UnitTest
+public annotation class UnitTest
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class ScreenshotTest
+public annotation class ScreenshotTest
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class SyntheticMonitoringTest
+public annotation class SyntheticMonitoringTest
