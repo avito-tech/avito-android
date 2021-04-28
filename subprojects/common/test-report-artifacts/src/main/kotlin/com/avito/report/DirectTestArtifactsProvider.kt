@@ -1,7 +1,6 @@
-package com.avito.report.internal
+package com.avito.report
 
 import com.avito.android.Result
-import com.avito.report.TestArtifactsProvider
 import java.io.File
 import java.util.UUID
 

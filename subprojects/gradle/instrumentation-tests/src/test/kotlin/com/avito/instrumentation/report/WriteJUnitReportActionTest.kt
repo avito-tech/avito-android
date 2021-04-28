@@ -5,8 +5,8 @@ import com.avito.instrumentation.internal.finalizer.action.WriteJUnitReportActio
 import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.Verdict
-import com.avito.report.ReportLinkGenerator
-import com.avito.report.TestSuiteNameProvider
+import com.avito.report.NoOpReportLinkGenerator
+import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.report.model.createStubInstance
@@ -96,8 +96,8 @@ internal class WriteJUnitReportActionTest {
     private fun mockData(testRunResult: TestRunResult, verdict: Verdict = Verdict.Success("")) {
         WriteJUnitReportAction(
             destination = file,
-            testSuiteNameProvider = TestSuiteNameProvider.NoOp(),
-            reportLinkGenerator = ReportLinkGenerator.NoOp(testLink = reportViewerUrl)
+            testSuiteNameProvider = NoOpTestSuiteNameProvider(),
+            reportLinkGenerator = NoOpReportLinkGenerator(testLink = reportViewerUrl)
         ).action(
             testRunResult = testRunResult,
             verdict = verdict

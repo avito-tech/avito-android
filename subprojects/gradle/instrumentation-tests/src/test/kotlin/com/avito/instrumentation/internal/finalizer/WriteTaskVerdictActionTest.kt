@@ -7,7 +7,7 @@ import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsD
 import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
 import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminerFactory
-import com.avito.report.ReportLinkGenerator
+import com.avito.report.NoOpReportLinkGenerator
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.createStubInstance
@@ -129,7 +129,7 @@ public class WriteTaskVerdictActionTest {
         return WriteTaskVerdictAction(
             verdictDestination = verdict,
             gson = gson,
-            reportLinkGenerator = ReportLinkGenerator.NoOp(
+            reportLinkGenerator = NoOpReportLinkGenerator(
                 reportLink = byReportCoordinatesUrl,
                 testLink = byTestName
             )

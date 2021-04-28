@@ -13,7 +13,13 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":common:http-client"))
     implementation(project(":common:time"))
-    implementation(project(":common:report-viewer"))
+    implementation(project(":common:test-report-artifacts")) {
+        because("ExternalStorageTransport need to know where to store artifacts")
+    }
+    implementation(project(":common:report-viewer")) {
+        // todo should be in separate, more avito-specific module
+        because("LocalRunTransport knows about AvitoReportApi")
+    }
     implementation(project(":common:logger"))
     implementation(project(":common:elastic-logger"))
     implementation(project(":common:sentry"))

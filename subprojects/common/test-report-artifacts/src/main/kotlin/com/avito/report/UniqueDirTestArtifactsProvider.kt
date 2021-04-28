@@ -1,8 +1,6 @@
-package com.avito.report.internal
+package com.avito.report
 
 import com.avito.android.Result
-import com.avito.report.TestArtifactsProvider
-import com.avito.report.TestDirGenerator
 import java.io.File
 
 internal class UniqueDirTestArtifactsProvider(

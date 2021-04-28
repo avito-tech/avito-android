@@ -1,7 +1,5 @@
 package com.avito.report
 
-import com.avito.report.internal.DirectTestArtifactsProvider
-import com.avito.report.internal.UniqueDirTestArtifactsProvider
 import com.avito.report.model.TestStaticData
 import java.io.File
 
