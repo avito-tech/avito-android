@@ -2,11 +2,10 @@ package com.avito.android.test.report
 
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.DataSet
+import com.avito.android.test.report.model.StepAttachments
 import com.avito.android.test.report.model.StepResult
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
-import com.avito.filestorage.FutureValue
-import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
 
@@ -22,11 +21,9 @@ internal fun Started.Companion.createStubInstance(
     endTime: Long = 0,
     preconditionStepList: MutableList<StepResult> = mutableListOf(),
     testCaseStepList: MutableList<StepResult> = mutableListOf(),
-    entriesBeforeSteps: MutableList<Entry> = mutableListOf(),
-    uploadsBeforeSteps: MutableList<FutureValue<Entry.File>> = mutableListOf(),
+    attachmentsBeforeSteps: StepAttachments = StepAttachments(),
 ) = Started(
-    entriesBeforeSteps = entriesBeforeSteps,
-    uploadsBeforeSteps = uploadsBeforeSteps,
+    attachmentsBeforeSteps = attachmentsBeforeSteps,
     testMetadata = testMetadata,
     incident = incident,
     currentStep = currentStep,
