@@ -140,7 +140,11 @@ public abstract class InstrumentationTestsTask @Inject constructor(
 
         val reportViewerData = reportViewerProperty.orNull
         val reportViewerConfig = if (reportViewerData != null) {
-            ReportViewerConfig(reportViewerData.reportApiUrl, reportCoordinates)
+            ReportViewerConfig(
+                apiUrl = reportViewerData.reportApiUrl,
+                viewerUrl = reportViewerData.reportViewerUrl,
+                reportCoordinates = reportCoordinates
+            )
         } else {
             null
         }
