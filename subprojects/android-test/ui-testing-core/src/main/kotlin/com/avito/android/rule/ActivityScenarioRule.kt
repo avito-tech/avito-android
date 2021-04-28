@@ -25,6 +25,8 @@ open class ActivityScenarioRule<A : Activity>(
     val activityResult: Instrumentation.ActivityResult
         get() = scenario?.result ?: throwActivityIsNotLaunchedException()
 
+    private val activityIsNotLaunchedMessage = "Activity $activityClass is not launched"
+
     private var scenario: ActivityScenario<A>? = null
     private var activityRef: WeakReference<A> = WeakReference(null)
 
@@ -38,10 +40,10 @@ open class ActivityScenarioRule<A : Activity>(
 
     override fun after() {
         super.after()
-        scenario?.run {
+        with(checkNotNull(scenario) { activityIsNotLaunchedMessage }) {
             close()
             afterActivityFinished()
-        } ?: throwActivityIsNotLaunchedException()
+        }
         activityRef.clear()
     }
 
@@ -57,12 +59,12 @@ open class ActivityScenarioRule<A : Activity>(
     }
 
     fun runOnUiThread(runnable: Runnable) {
-        scenario?.onActivity {
-            runnable.run()
-        } ?: throwActivityIsNotLaunchedException()
+        with(checkNotNull(scenario) { activityIsNotLaunchedMessage }) {
+            onActivity { runnable.run() }
+        }
     }
 
-    private fun throwActivityIsNotLaunchedException(): Nothing = error("Activity $activityClass is not launched")
+    private fun throwActivityIsNotLaunchedException(): Nothing = error(activityIsNotLaunchedMessage)
 
     @CallSuper
     open fun afterActivityLaunched() {
