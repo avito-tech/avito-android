@@ -32,11 +32,11 @@ import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotCapturerFactory
-import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.test.step.StepDslDelegateImpl
+import com.avito.android.transport.ReportTransportFactory
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory

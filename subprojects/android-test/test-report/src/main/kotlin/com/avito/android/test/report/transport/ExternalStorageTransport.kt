@@ -5,23 +5,28 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.EntryTypeAdapterFactory
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
 import com.avito.time.TimeProvider
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import java.io.File
 
 /**
  * Send all to device external storage
  * Test runner will read it and prepare reports
  */
-internal class ExternalStorageTransport(
-    private val gson: Gson,
+class ExternalStorageTransport(
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory,
     private val testArtifactsProvider: TestArtifactsProvider
 ) : Transport, TransportMappers {
+
+    private val gson: Gson = GsonBuilder()
+        .registerTypeAdapterFactory(EntryTypeAdapterFactory())
+        .create()
 
     private val logger = loggerFactory.create<ExternalStorageTransport>()
 

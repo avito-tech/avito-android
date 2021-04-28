@@ -6,7 +6,16 @@ plugins {
 }
 
 dependencies {
-    api(libs.okhttp)
+    api(libs.okhttp) {
+        because("HttpUrl used to type urls more strict")
+    }
+    api(libs.gson) {
+        because("module provides TypeAdapterFactory for Entries")
+    }
+
+    implementation(project(":common:okhttp")) {
+        because("Result extension used")
+    }
 }
 
 kotlin {

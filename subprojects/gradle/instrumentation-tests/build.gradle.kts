@@ -27,7 +27,6 @@ dependencies {
     implementation(project(":common:file-storage"))
     implementation(project(":common:logger"))
     implementation(project(":common:report-api"))
-//    implementation(project(":common:report-viewer"))
     implementation(project(":common:test-report-artifacts"))
     implementation(project(":common:retrace"))
     implementation(project(":common:http-client"))

@@ -1,7 +1,10 @@
-package com.avito.android.test.report.transport
+package com.avito.android.transport
 
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 import com.avito.android.test.report.model.TestMetadata
+import com.avito.android.test.report.transport.ExternalStorageTransport
+import com.avito.android.test.report.transport.Transport
+import com.avito.android.test.report.transport.TransportMappers
 import com.avito.filestorage.FutureValue
 import com.avito.report.model.Entry
 import java.io.File

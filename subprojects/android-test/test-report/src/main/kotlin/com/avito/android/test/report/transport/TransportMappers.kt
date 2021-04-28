@@ -13,7 +13,7 @@ import com.avito.time.TimeProvider
 import okhttp3.HttpUrl
 import java.lang.reflect.Field
 
-internal interface TransportMappers {
+interface TransportMappers {
 
     fun Entry.File.Type.toContentType(): ContentType {
         return when (this) {

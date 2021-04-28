@@ -1,4 +1,4 @@
-package com.avito.android.test.report.transport
+package com.avito.android.transport
 
 sealed class ReportDestination {
 
