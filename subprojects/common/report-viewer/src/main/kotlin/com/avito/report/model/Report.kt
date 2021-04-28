@@ -3,7 +3,7 @@ package com.avito.report.model
 /**
  * Один прогон тестов по координатам
  */
-data class Report(
+public data class Report(
     val id: String,
     val planSlug: String,
     val jobSlug: String,
@@ -11,5 +11,6 @@ data class Report(
     val isFinished: Boolean,
     val buildBranch: String?
 ) {
-    companion object
+
+    public companion object
 }

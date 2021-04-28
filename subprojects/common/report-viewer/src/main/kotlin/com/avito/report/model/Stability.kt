@@ -1,26 +1,26 @@
 package com.avito.report.model
 
-sealed class Stability {
+public sealed class Stability {
 
-    abstract val attemptsCount: Int
-    abstract val successCount: Int
+    public abstract val attemptsCount: Int
+    public abstract val successCount: Int
 
-    data class Unknown(
+    public data class Unknown(
         override val attemptsCount: Int,
         override val successCount: Int
     ) : Stability()
 
-    data class Stable(
+    public data class Stable(
         override val attemptsCount: Int,
         override val successCount: Int
     ) : Stability()
 
-    data class Flaky(
+    public data class Flaky(
         override val attemptsCount: Int,
         override val successCount: Int
     ) : Stability()
 
-    data class Failing(
+    public data class Failing(
         override val attemptsCount: Int
     ) : Stability() {
         override val successCount: Int = 0

@@ -1,5 +1,6 @@
 package com.avito.report.model
 
+import com.avito.report.EntryTypeAdapterFactory
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.typedToJson
 import com.google.common.truth.Truth.assertThat

@@ -8,8 +8,6 @@ import com.avito.report.model.IncidentElement
 import com.avito.time.TimeMachineProvider
 import com.avito.truth.ExtendedIterableSubject.Companion.assertIterable
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -57,7 +55,6 @@ class ReportTest {
 
     @Test
     fun `failed test case - resourceManager chain`() {
-        val gson = Gson()
         val chain = listOf(
             IncidentElement(
                 message = "Получен неожиданный ответ от 'service/pricing-adm', из-за этого: Не удалось установить скидку пользователю.\n" +
@@ -65,10 +62,7 @@ class ReportTest {
                 code = 500,
                 type = "external",
                 origin = "resource-manager",
-                data = gson.fromJson(
-                    """{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body": {"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""",
-                    JsonObject::class.java
-                )
+                data = """{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body":{"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""",
             ),
             IncidentElement(
                 message = "Не удалось установить скидку пользователю.",
@@ -83,10 +77,7 @@ class ReportTest {
                 type = "external",
                 origin = "service/pricing-adm",
                 className = "Avito\\QA\\DetailedException\\ExternalServiceException",
-                data = gson.fromJson(
-                    """{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body": {"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""",
-                    JsonObject::class.java
-                )
+                data = """{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body":{"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""",
             )
         )
 
@@ -108,12 +99,14 @@ class ReportTest {
         assertThat(reportPackage.incident!!.type).isEqualTo(Incident.Type.INFRASTRUCTURE_ERROR)
         assertThat(reportPackage.incident!!.chain.size).isEqualTo(4)
         assertThat(reportPackage.incident!!.chain[0].message).isEqualTo("Ошибка при обращении к http://host.ru")
-        assertThat(reportPackage.incident!!.chain[0].data!!.toString()).isEqualTo(""""{ \"pls\": true }"""")
+        assertThat(reportPackage.incident!!.chain[0].data!!).isEqualTo("""{ "pls": true }""")
         assertThat(reportPackage.incident!!.chain[1].message).isEqualTo(
             "Получен неожиданный ответ от 'service/pricing-adm', из-за этого: Не удалось установить скидку пользователю.\n" +
                 "Детали ошибки: В ответе от https://host.ru/some/thing получен HTTP код 400"
         )
-        assertThat(reportPackage.incident!!.chain[1].data!!.toString()).isEqualTo("""{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body":{"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}""")
+        assertThat(reportPackage.incident!!.chain[1].data!!.toString()).isEqualTo(
+            """{"request":{"url":"https://host.ru/some/thing","method":"POST","headers":{"Accept":"application/json","Content-Type":"application/json"}},"result":{"header":"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\nDate: Sun, 19 May 2019 13:36:59 GMT\r\nContent-Type: application/json\r\nContent-Length: 75\r\nConnection: keep-alive\r\nKeep-Alive: timeout=75\r\nCache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0\r\nAllow: POST, OPTIONS\r\nX-Frame-Options: SAMEORIGIN\r\nVary: Origin\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\n\r\n","effective_url":"https://host.ru/some/thing","body":{"error":{"code":400,"message":"'turbo' is not one of ['fix', 'melting']"}}}}"""
+        )
         assertThat(reportPackage.incident!!.chain[2].message).isEqualTo("Не удалось установить скидку пользователю.")
         assertThat(reportPackage.incident!!.chain[2].data).isNull()
         assertThat(reportPackage.incident!!.chain[3].message).isEqualTo("В ответе от https://host.ru/some/thing получен HTTP код 400")

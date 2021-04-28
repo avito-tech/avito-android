@@ -16,14 +16,14 @@ import com.avito.android.test.annotations.Priority
 import com.avito.android.test.annotations.ScreenshotTest
 import com.avito.android.test.annotations.SyntheticMonitoringTest
 import com.avito.android.test.annotations.TagId
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.annotations.UIComponentStub
 import com.avito.android.test.annotations.UIComponentTest
 import com.avito.android.test.annotations.UnitTest
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
+import com.avito.report.model.TestCaseBehavior
+import com.avito.report.model.TestCasePriority
 
 class TestMetadataAnnotationResolver : TestMetadataResolver {
 

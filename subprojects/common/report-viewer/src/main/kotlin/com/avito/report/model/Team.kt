@@ -5,8 +5,9 @@ import java.io.Serializable
 /**
  * Команда, которой принадлежит тест (юнит в Авито, но назван иначе, чтобы не было конфликтов с kotlin.Unit)
  */
-data class Team(val name: String) : Serializable {
-    companion object {
-        val UNDEFINED = Team("undefined")
+public data class Team(val name: String) : Serializable {
+
+    public companion object {
+        public val UNDEFINED: Team = Team("undefined")
     }
 }

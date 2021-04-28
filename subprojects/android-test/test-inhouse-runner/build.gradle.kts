@@ -18,7 +18,12 @@ dependencies {
     implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:statsd"))
-    implementation(project(":common:report-viewer"))
+    implementation(project(":common:report-viewer")) {
+        because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
+    }
+    implementation(project(":common:test-report-artifacts")) {
+        because("uses factory to create TestArtifactsProvider")
+    }
     implementation(project(":common:logger"))
     implementation(project(":common:junit-utils"))
     implementation(project(":common:test-okhttp"))

@@ -1,8 +1,5 @@
 package com.avito.report.model
 
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
-
 /**
  * Один тест в пределах репорта, включая все перезапуски, но на одном устройстве
  * Упрощенная версия, доступная при запросе RunTest.List
@@ -17,7 +14,7 @@ import com.avito.android.test.annotations.TestCasePriority
  * @param name имя теста вида: className.methodName, такой формат используется везде в instrumentation plugin
  *             в mongo же хранится className::methodName
  */
-data class SimpleRunTest(
+public data class SimpleRunTest(
     val id: String,
     val reportId: String,
     val name: String,
@@ -48,5 +45,5 @@ data class SimpleRunTest(
 
     override fun toString(): String = name
 
-    companion object
+    public companion object
 }

@@ -3,7 +3,6 @@ package com.avito.android.test.report.incident
 import com.avito.android.Result
 import com.avito.android.test.report.StepException
 import com.avito.report.model.IncidentElement
-import com.github.salomonbrys.kotson.toJson
 
 internal class TestCaseIncidentPresenter : IncidentPresenter {
 
@@ -21,7 +20,7 @@ internal class TestCaseIncidentPresenter : IncidentPresenter {
                 IncidentElement(
                     message = title,
                     origin = "testCase",
-                    data = data.toJson()
+                    data = data
                 )
             )
         )

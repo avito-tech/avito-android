@@ -3,6 +3,7 @@ package com.avito.report.internal.model
 import com.google.gson.annotations.SerializedName
 
 internal enum class TestStatus(val intValue: Int) {
+
     @SerializedName("1")
     OK(1),
 

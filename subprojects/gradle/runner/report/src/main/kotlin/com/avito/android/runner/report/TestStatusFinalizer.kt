@@ -7,8 +7,8 @@ import com.avito.report.model.Status
 
 /**
  * It duplicates logic from
- * com.avito.report.ReportsFetchApiImpl.deserializeStatus
- * com.avito.report.ReportsFetchApiImpl.determineStability and etc.
+ * com.avito.report.internal.ReportsFetchApiImpl.deserializeStatus
+ * com.avito.report.internal.ReportsFetchApiImpl.determineStability and etc.
  */
 public interface TestStatusFinalizer {
 

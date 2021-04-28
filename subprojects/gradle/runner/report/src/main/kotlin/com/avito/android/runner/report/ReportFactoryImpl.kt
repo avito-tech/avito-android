@@ -5,6 +5,8 @@ import com.avito.android.runner.report.internal.InMemoryReport
 import com.avito.android.runner.report.internal.ReportImpl
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
+import com.avito.report.NoOpReportLinkGenerator
+import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.ReportViewer
 import com.avito.report.ReportsApiFactory
@@ -59,7 +61,7 @@ public class ReportFactoryImpl(
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
-            ReportLinkGenerator.NoOp()
+            NoOpReportLinkGenerator()
         }
     }
 
@@ -70,7 +72,7 @@ public class ReportFactoryImpl(
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
-            TestSuiteNameProvider.NoOp()
+            NoOpTestSuiteNameProvider()
         }
     }
 }

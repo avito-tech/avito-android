@@ -8,6 +8,8 @@ import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsD
 import com.avito.instrumentation.internal.finalizer.verdict.Verdict
 import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminer
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.utils.BuildFailer
 
 internal class LegacyFinalizer(
@@ -17,14 +19,21 @@ internal class LegacyFinalizer(
     private val actions: List<FinalizeAction>,
     private val buildFailer: BuildFailer,
     private val params: InstrumentationTestsAction.Params,
+    loggerFactory: LoggerFactory,
     private val report: LegacyReport
 ) : InstrumentationTestActionFinalizer {
+
+    private val logger = loggerFactory.create<LegacyFinalizer>()
 
     override fun finalize(testsExecutionResults: TestsScheduler.Result) {
 
         val testResults = report.getTests(
             initialSuiteFilter = testsExecutionResults.testSuite.testsToRun.map { it.test.name }
-        ).getOrElse { emptyList() }
+        )
+            .onFailure { throwable ->
+                logger.critical("Can't get test results", throwable)
+            }
+            .getOrElse { emptyList() }
 
         val failedTests = hasFailedTestDeterminer.determine(runResult = testResults)
 

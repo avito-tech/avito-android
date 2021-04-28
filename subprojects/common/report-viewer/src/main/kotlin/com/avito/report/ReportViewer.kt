@@ -6,34 +6,34 @@ import com.avito.report.model.TestName
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-interface ReportViewer {
+public interface ReportViewer {
 
-    fun generateReportUrl(
+    public fun generateReportUrl(
         reportCoordinates: ReportCoordinates,
         onlyFailures: Boolean = true,
         team: Team = Team.UNDEFINED
     ): HttpUrl
 
-    fun generateReportUrl(
+    public fun generateReportUrl(
         reportId: String,
         onlyFailures: Boolean = true,
         team: Team = Team.UNDEFINED
     ): HttpUrl
 
-    fun generateSingleTestRunUrl(testRunId: String): HttpUrl
+    public fun generateSingleTestRunUrl(testRunId: String): HttpUrl
 
     /**
      * Create url with applied [test] String to the `search field`
      *
      * Use when you don't have a testRunId
      */
-    fun generateSingleTestRunUrl(
+    public fun generateSingleTestRunUrl(
         reportCoordinates: ReportCoordinates,
         testClass: String,
         testMethod: String
     ): HttpUrl
 
-    class Impl(
+    public class Impl(
         host: String,
         private val reportCoordinates: ReportCoordinates,
         private val reportViewerQuery: ReportViewerQuery = ReportViewerQuery()
@@ -43,11 +43,11 @@ interface ReportViewer {
 
         override fun getName(): String = "${reportCoordinates.planSlug}_${reportCoordinates.jobSlug}"
 
-        override fun generateReportLink(filterOnlyFailtures: Boolean, team: Team): String {
+        override fun generateReportLink(filterOnlyFailtures: Boolean, team: String?): String {
             return generateReportUrl(
                 reportCoordinates,
                 onlyFailures = filterOnlyFailtures,
-                team = team
+                team = team?.let { Team(it) } ?: Team.UNDEFINED
             ).toString()
         }
 

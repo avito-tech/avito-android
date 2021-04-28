@@ -1,8 +1,6 @@
 package com.avito.android.test.report
 
 import com.avito.android.Result
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.test.report.StepDslExtension.delegate
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
@@ -13,6 +11,8 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.model.Flakiness
 import com.avito.report.model.Kind
+import com.avito.report.model.TestCaseBehavior
+import com.avito.report.model.TestCasePriority
 import com.avito.time.TimeProvider
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
