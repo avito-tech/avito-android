@@ -111,7 +111,8 @@ internal interface FinalizerFactory {
                 params = params,
                 buildFailer = buildFailer,
                 actions = actions,
-                report = reportFactory.createAvitoReport()
+                report = reportFactory.createAvitoReport(),
+                loggerFactory = params.loggerFactory
             )
         }
     }
