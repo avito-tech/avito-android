@@ -275,6 +275,11 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
     }
 
     private fun com.avito.report.model.Step.toInternal(): Step {
-        return Step(timestamp = timestamp, number = number, title = title, entryList = entryList)
+        return Step(
+            timestamp = timestamp,
+            number = number,
+            title = title,
+            entryList = entryList
+        )
     }
 }

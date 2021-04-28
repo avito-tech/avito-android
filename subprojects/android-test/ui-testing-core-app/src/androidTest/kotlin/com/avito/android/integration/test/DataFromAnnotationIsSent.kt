@@ -1,14 +1,13 @@
 package com.avito.android.integration.test
 
-import InfrastructureTestRule
 import com.avito.android.integration.test.ReportTestUtils.simpleSuccessAssertion
 import com.avito.android.test.annotations.Description
 import com.avito.android.test.annotations.ExternalId
 import com.avito.android.test.annotations.IntegrationTest
 import com.avito.android.test.annotations.Priority
 import com.avito.android.test.annotations.TagId
+import com.avito.android.test.annotations.TestCasePriority
 import com.avito.android.util.Is
-import com.avito.report.model.TestCasePriority
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItems
 import org.junit.Rule

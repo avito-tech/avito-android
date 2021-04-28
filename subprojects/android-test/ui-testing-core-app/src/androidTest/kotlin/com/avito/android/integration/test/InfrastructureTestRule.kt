@@ -1,6 +1,8 @@
+package com.avito.android.integration.test
 
 import com.avito.android.rule.SimpleRule
 import com.avito.android.runner.InHouseInstrumentationTestRunner
+import com.avito.android.test.report.ReportImplementation
 import com.avito.android.test.report.ReportState.NotFinished.Initialized.Started
 
 class InfrastructureTestRule(
@@ -12,8 +14,8 @@ class InfrastructureTestRule(
     }
 
     private fun getStartedReportStateOrThrow(): Started {
-        val state = InHouseInstrumentationTestRunner.instance.report.currentState
-        return state as? Started
+        val report = InHouseInstrumentationTestRunner.instance.report as ReportImplementation
+        return report.currentState as? Started
             ?: throw IllegalStateException("Report state must be Initialized.Started during test execution")
     }
 }
