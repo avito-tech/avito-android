@@ -21,9 +21,9 @@ open class ActivityScenarioRule<A : Activity>(
 ) : ExternalResource() {
 
     val activity: A
-        get() = activityRef.get() ?: throwUninitializedException()
+        get() = activityRef.get() ?: throwActivityIsNotLaunchedException()
     val activityResult: Instrumentation.ActivityResult
-        get() = scenario?.result ?: throwUninitializedException()
+        get() = scenario?.result ?: throwActivityIsNotLaunchedException()
 
     private var scenario: ActivityScenario<A>? = null
     private var activityRef: WeakReference<A> = WeakReference(null)
@@ -41,7 +41,7 @@ open class ActivityScenarioRule<A : Activity>(
         scenario?.run {
             close()
             afterActivityFinished()
-        }
+        } ?: throwActivityIsNotLaunchedException()
         activityRef.clear()
     }
 
@@ -53,16 +53,16 @@ open class ActivityScenarioRule<A : Activity>(
             )
         }
         afterActivityLaunched()
-        return activityRef.get() ?: throwUninitializedException()
+        return activityRef.get() ?: throwActivityIsNotLaunchedException()
     }
 
     fun runOnUiThread(runnable: Runnable) {
         scenario?.onActivity {
             runnable.run()
-        } ?: error("Activity $activityClass is not launched")
+        } ?: throwActivityIsNotLaunchedException()
     }
 
-    private fun throwUninitializedException(): Nothing = error("Activity $activityClass is not initialized")
+    private fun throwActivityIsNotLaunchedException(): Nothing = error("Activity $activityClass is not launched")
 
     @CallSuper
     open fun afterActivityLaunched() {
