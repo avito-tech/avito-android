@@ -1,8 +1,10 @@
-package com.avito.report
+package com.avito.report.internal
 
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
-import com.avito.report.internal.JsonRpcClient
+import com.avito.report.ReportsAddApi
+import com.avito.report.ReportsApi
+import com.avito.report.ReportsFetchApi
 import com.avito.report.internal.model.ConclusionStatus
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.model.ReportCoordinates

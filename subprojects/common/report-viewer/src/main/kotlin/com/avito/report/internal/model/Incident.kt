@@ -3,7 +3,7 @@ package com.avito.report.internal.model
 import com.avito.report.model.Entry
 import com.google.gson.annotations.SerializedName
 
-public data class Incident(
+internal data class Incident(
     @SerializedName("type") val type: Type,
     @SerializedName("timestamp") val timestamp: Long,
     @SerializedName("trace") val trace: List<String>,
@@ -11,7 +11,7 @@ public data class Incident(
     @SerializedName("entry_list") val entryList: List<Entry>
 ) {
 
-    public enum class Type {
+    enum class Type {
 
         /**
          * abnormal test execution
@@ -27,5 +27,5 @@ public data class Incident(
     }
 
     // for test fixtures
-    public companion object
+    companion object
 }

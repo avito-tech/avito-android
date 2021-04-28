@@ -9,7 +9,7 @@ import com.avito.report.model.TestName.Companion.delimiter
  */
 
 // todo дать возможность указать юнит в аннотации
-val TestName.team: Team
+public val TestName.team: Team
     get() = when {
         packageName.startsWith(domofondPrefix) -> Team("domofond")
         packageName.startsWith(avitoPrefix) ->
@@ -23,7 +23,7 @@ val TestName.team: Team
     }
 
 // todo убрать определение features из пакета, будут явно указаны в аннотации к тесту
-val TestName.features: List<String>
+public val TestName.features: List<String>
     get() = when {
         packageName.startsWith(domofondPrefix) ->
             packageName.substringAfter("$domofondPrefix.")

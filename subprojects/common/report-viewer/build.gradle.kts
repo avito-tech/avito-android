@@ -30,3 +30,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":common:logger")))
     testFixturesImplementation(testFixtures(project(":common:http-client")))
 }
+
+kotlin {
+    explicitApi()
+}

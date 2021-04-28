@@ -5,9 +5,9 @@ import com.avito.report.internal.UniqueDirTestArtifactsProvider
 import com.avito.report.model.TestStaticData
 import java.io.File
 
-object TestArtifactsProviderFactory {
+public object TestArtifactsProviderFactory {
 
-    fun create(
+    public fun create(
         testReportRootDir: Lazy<File>,
         testStaticData: TestStaticData
     ): TestArtifactsProvider {
@@ -17,7 +17,7 @@ object TestArtifactsProviderFactory {
         )
     }
 
-    fun create(
+    public fun create(
         testReportRootDir: Lazy<File>,
         className: String,
         methodName: String
@@ -28,11 +28,12 @@ object TestArtifactsProviderFactory {
         )
     }
 
-    fun createForTempDir(tempDir: File): TestArtifactsProvider {
+    public fun createForTempDir(tempDir: File): TestArtifactsProvider {
         return DirectTestArtifactsProvider(lazy { tempDir })
     }
 
-    @Suppress("SdCardPath") // android API's are unavailable here
+    @Suppress("SdCardPath")
+    public // android API's are unavailable here
     fun createForAdbAccess(appUnderTestPackage: String, className: String, methodName: String): TestArtifactsProvider {
         val dataPath = "/sdcard/Android/data/$appUnderTestPackage/files"
         return UniqueDirTestArtifactsProvider(

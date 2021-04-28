@@ -3,10 +3,10 @@ package com.avito.android.test.report.transport
 import com.avito.filestorage.RemoteStorage
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
+import com.avito.report.EntryTypeAdapterFactory
 import com.avito.report.ReportsApiFactory
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.DeviceName
-import com.avito.report.model.EntryTypeAdapterFactory
 import com.avito.report.model.ReportCoordinates
 import com.avito.time.TimeProvider
 import com.google.gson.Gson

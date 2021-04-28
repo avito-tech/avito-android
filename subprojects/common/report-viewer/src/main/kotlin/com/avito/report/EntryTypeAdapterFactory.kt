@@ -1,6 +1,8 @@
-package com.avito.report.model
+package com.avito.report
 
 import com.avito.http.toHttpUrlResult
+import com.avito.report.model.Entry
+import com.avito.report.model.FileAddress
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
@@ -10,7 +12,7 @@ import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import java.lang.reflect.ParameterizedType
 
-class EntryTypeAdapterFactory : TypeAdapterFactory {
+public class EntryTypeAdapterFactory : TypeAdapterFactory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {

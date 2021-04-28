@@ -2,14 +2,14 @@ package com.avito.report
 
 import com.avito.report.model.TestStaticData
 
-interface TestDirGenerator {
+public interface TestDirGenerator {
 
     /**
      * should be unique through test suite run to avoid artifacts collision
      */
-    fun generateUniqueDir(): String
+    public fun generateUniqueDir(): String
 
-    class StaticData(testStaticData: TestStaticData) : TestDirGenerator {
+    public class StaticData(testStaticData: TestStaticData) : TestDirGenerator {
 
         private val generator = Impl(
             className = testStaticData.name.className,
@@ -21,7 +21,7 @@ interface TestDirGenerator {
         }
     }
 
-    class Impl(
+    public class Impl(
         private val className: String,
         private val methodName: String
     ) : TestDirGenerator {

@@ -1,6 +1,6 @@
 package com.avito.report.model
 
-fun TestStaticDataPackage.Companion.fromSimpleRunTest(simpleRunTest: SimpleRunTest): TestStaticDataPackage =
+public fun TestStaticDataPackage.Companion.fromSimpleRunTest(simpleRunTest: SimpleRunTest): TestStaticDataPackage =
     TestStaticDataPackage(
         name = TestName(simpleRunTest.name),
         device = DeviceName(simpleRunTest.deviceName),

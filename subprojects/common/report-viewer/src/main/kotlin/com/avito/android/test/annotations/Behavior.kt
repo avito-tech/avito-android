@@ -4,4 +4,4 @@ import com.avito.report.model.TestCaseBehavior
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class Behavior(val behavior: TestCaseBehavior)
+public annotation class Behavior(val behavior: TestCaseBehavior)

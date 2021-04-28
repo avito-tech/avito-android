@@ -14,17 +14,17 @@ import java.io.File
  *
  * use [TestArtifactsProviderFactory] to create instances
  */
-interface TestArtifactsProvider {
+public interface TestArtifactsProvider {
 
-    val rootDir: Lazy<File>
+    public val rootDir: Lazy<File>
 
-    fun provideReportDir(): Result<File>
+    public fun provideReportDir(): Result<File>
 
-    fun provideReportFile(): Result<File>
+    public fun provideReportFile(): Result<File>
 
-    fun getFile(relativePath: String): Result<File>
+    public fun getFile(relativePath: String): Result<File>
 
-    fun generateFile(name: String, extension: String, create: Boolean = false): Result<File>
+    public fun generateFile(name: String, extension: String, create: Boolean = false): Result<File>
 
-    fun generateUniqueFile(extension: String, create: Boolean = false): Result<File>
+    public fun generateUniqueFile(extension: String, create: Boolean = false): Result<File>
 }

@@ -1,7 +1,7 @@
-package com.avito.report
+package com.avito.report.internal
 
 import com.avito.android.Result
-import com.avito.report.internal.JsonRpcClient
+import com.avito.report.ReportsAddApi
 import com.avito.report.internal.model.Incident
 import com.avito.report.internal.model.IncidentElement
 import com.avito.report.internal.model.RfcRpcRequest
@@ -98,7 +98,6 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
         return addTests(reportCoordinates, buildId, listOf(test)).map { it.first() }
     }
 
-    // todo use only AndroidTest
     private fun createAddFullRequest(
         reportCoordinates: ReportCoordinates,
         buildId: String?,
