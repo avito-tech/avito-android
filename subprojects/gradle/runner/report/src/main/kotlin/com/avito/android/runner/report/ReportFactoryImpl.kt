@@ -41,7 +41,7 @@ public class ReportFactoryImpl(
     private fun createAvitoReport(reportViewerConfig: ReportViewerConfig): AvitoReport {
         return AvitoReport(
             reportsApi = ReportsApiFactory.create(
-                host = reportViewerConfig.url,
+                host = reportViewerConfig.apiUrl,
                 loggerFactory = loggerFactory,
                 httpClientProvider = httpClientProvider
             ),
@@ -55,7 +55,7 @@ public class ReportFactoryImpl(
     override fun createReportLinkGenerator(): ReportLinkGenerator {
         return if (reportViewerConfig != null) {
             ReportViewer.Impl(
-                host = reportViewerConfig.url,
+                host = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
@@ -66,7 +66,7 @@ public class ReportFactoryImpl(
     override fun createTestSuiteNameGenerator(): TestSuiteNameProvider {
         return if (reportViewerConfig != null) {
             ReportViewer.Impl(
-                host = reportViewerConfig.url,
+                host = reportViewerConfig.viewerUrl,
                 reportCoordinates = reportViewerConfig.reportCoordinates
             )
         } else {
