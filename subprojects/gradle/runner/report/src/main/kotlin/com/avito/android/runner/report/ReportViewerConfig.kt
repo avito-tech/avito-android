@@ -4,6 +4,7 @@ import com.avito.report.model.ReportCoordinates
 import java.io.Serializable
 
 public data class ReportViewerConfig(
-    val url: String,
+    val apiUrl: String,
+    val viewerUrl: String,
     val reportCoordinates: ReportCoordinates
 ) : Serializable
