@@ -1,4 +1,4 @@
-package com.avito.android.lint
+package com.avito.android.lint.internal
 
 private val noSymbols = Regex("[\\W]+")
 

@@ -30,7 +30,7 @@ class ReportTestExtension(
     private val mockInterceptor: MockInterceptor = MockInterceptor(),
     private val screenshotCapturer: ScreenshotCapturer = mock(),
     private val loggerFactory: LoggerFactory = StubLoggerFactory,
-    private val report: ReportImplementation = ReportImplementation(
+    private val report: InternalReport = ReportFactory.createReport(
         loggerFactory = loggerFactory,
         transport = NoOpTransport,
         screenshotCapturer = screenshotCapturer,
@@ -44,9 +44,6 @@ class ReportTestExtension(
         reportLifecycle = report,
         stepModelFactory = report
     )
-
-    val currentState: ReportState
-        get() = report.currentState
 
     override fun beforeEach(context: ExtensionContext) {
         delegate = executor

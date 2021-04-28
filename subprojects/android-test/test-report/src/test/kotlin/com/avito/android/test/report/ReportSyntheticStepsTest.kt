@@ -142,18 +142,18 @@ class ReportSyntheticStepsTest {
         assertThat(this.title)
             .isEqualTo(title)
 
-        assertThat(entryList)
+        assertThat(attachments.entries)
             .hasSize(entriesCount)
 
-        assertThat<Entry.File>(entryList[0]) {
+        assertThat<Entry.File>(attachments.entries[0]) {
             assertThat(fileType).isEqualTo(Entry.File.Type.html)
         }
 
-        assertThat<Entry.Comment>(entryList[1]) {
+        assertThat<Entry.Comment>(attachments.entries[1]) {
             assertThat(this.title).isEqualTo(comment)
         }
 
-        assertThat<Entry.Check>(entryList[2]) {
+        assertThat<Entry.Check>(attachments.entries[2]) {
             assertThat(this.title).isEqualTo(assertionMessage)
         }
     }

@@ -124,7 +124,7 @@ class ReportTest {
 
         assertThat(state.testCaseStepList)
             .hasSize(1)
-        assertIterable(state.testCaseStepList[0].entryList)
+        assertIterable(state.testCaseStepList[0].attachments.entries)
             .containsExactlyOne(Entry.Check::class.java) {
                 it.type == "check" && it.title == "assertion message"
             }
@@ -151,7 +151,7 @@ class ReportTest {
 
         assertThat(state.testCaseStepList[0].number)
             .isEqualTo(0)
-        assertIterable(state.testCaseStepList[0].entryList)
+        assertIterable(state.testCaseStepList[0].attachments.entries)
             .containsExactlyOne(Entry.Check::class.java) {
                 it.type == "check" && it.title == "assertion message"
             }
@@ -161,14 +161,14 @@ class ReportTest {
 
         assertThat(state.preconditionStepList[0].number)
             .isEqualTo(0)
-        assertIterable(state.preconditionStepList[0].entryList)
+        assertIterable(state.preconditionStepList[0].attachments.entries)
             .containsExactlyOne(Entry.Check::class.java) {
                 it.type == "check" && it.title == "first precondition assertion"
             }
 
         assertThat(state.preconditionStepList[1].number)
             .isEqualTo(1)
-        assertIterable(state.preconditionStepList[1].entryList)
+        assertIterable(state.preconditionStepList[1].attachments.entries)
             .containsExactlyOne(Entry.Check::class.java) {
                 it.type == "check" && it.title == "second precondition assertion"
             }
@@ -194,7 +194,7 @@ class ReportTest {
 
         val state = report.currentState as Started
         report.finishTestCase()
-        val stepEntries = state.testCaseStepList.first().entryList
+        val stepEntries = state.testCaseStepList.first().attachments.entries
 
         assertThat(stepEntries).hasSize(4)
 
@@ -228,7 +228,7 @@ class ReportTest {
 
         val state = report.currentState as Started
         report.finishTestCase()
-        val stepEntries = state.testCaseStepList.first().entryList
+        val stepEntries = state.testCaseStepList.first().attachments.entries
 
         assertThat(stepEntries).hasSize(2)
         stepEntries[0].assertImage("Screenshot после шага")

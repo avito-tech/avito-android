@@ -2,7 +2,7 @@ package com.avito.android.lint.slack
 
 import com.avito.android.lint.AndroidLintAccessor
 import com.avito.android.lint.LintReportExtension
-import com.avito.android.lint.validInGradleTaskName
+import com.avito.android.lint.internal.validInGradleTaskName
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.typedNamedOrNull
 import com.avito.logger.Logger
@@ -14,7 +14,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 
-class LintReportToSlackTaskFactory(
+public class LintReportToSlackTaskFactory(
     private val project: Project,
     private val logger: Logger,
     private val androidLintAccessor: AndroidLintAccessor = AndroidLintAccessor(project)
@@ -37,7 +37,7 @@ class LintReportToSlackTaskFactory(
     /**
      * To be used in CiStep, because slack channel only known from there
      */
-    fun registerLintReportToSlackTask(channel: SlackChannel): TaskProvider<LintSlackReportTask> {
+    public fun registerLintReportToSlackTask(channel: SlackChannel): TaskProvider<LintSlackReportTask> {
 
         val taskName = "lintReportTo${channel.name.validInGradleTaskName()}"
 

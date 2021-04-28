@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics
 
+import com.avito.android.stats.TimeMetric
 import com.avito.test.gradle.TestProjectGenerator
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
@@ -51,7 +52,7 @@ internal class BuildMetricsPluginTest {
         result.assertThat()
             .buildSuccessful()
 
-        result.expectMetric("time", "init_configuration.total")
+        result.assertHasMetric<TimeMetric>(".init_configuration.total")
     }
 
     @Test
@@ -61,7 +62,7 @@ internal class BuildMetricsPluginTest {
         result.assertThat()
             .buildSuccessful()
 
-        result.expectMetric("time", "build-time.total")
+        result.assertHasMetric<TimeMetric>(".build-time.total")
     }
 
     @TestFactory
@@ -90,7 +91,7 @@ internal class BuildMetricsPluginTest {
                 result.assertThat()
                     .buildSuccessful()
 
-                result.expectMetric("time", it.metricName)
+                result.assertHasMetric<TimeMetric>(it.metricName)
             }
         }
     }
