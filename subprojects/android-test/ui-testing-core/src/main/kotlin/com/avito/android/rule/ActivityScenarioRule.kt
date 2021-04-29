@@ -67,12 +67,12 @@ open class ActivityScenarioRule<A : Activity>(
     private fun throwActivityIsNotLaunchedException(): Nothing = error(activityIsNotLaunchedMessage)
 
     @CallSuper
-    open fun afterActivityLaunched() {
+    protected open fun afterActivityLaunched() {
         checkNotNull(scenario).onActivity { activityRef = WeakReference(it) }
     }
 
     @CallSuper
-    open fun afterActivityFinished() {
+    protected open fun afterActivityFinished() {
         // empty
     }
 }
