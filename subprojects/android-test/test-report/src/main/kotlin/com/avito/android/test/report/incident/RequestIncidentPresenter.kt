@@ -2,8 +2,12 @@ package com.avito.android.test.report.incident
 
 import com.avito.android.Result
 import com.avito.report.model.IncidentElement
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
 
 internal class RequestIncidentPresenter : IncidentPresenter {
+
+    private val gson = Gson()
 
     override fun canCustomize(exception: Throwable): Boolean =
         exception is RequestIncidentException ||
@@ -23,7 +27,7 @@ internal class RequestIncidentPresenter : IncidentPresenter {
                 listOf(
                     IncidentElement(
                         message = data.title,
-                        data = data.body,
+                        data = gson.fromJson(data.body),
                         origin = "request"
                     )
                 )

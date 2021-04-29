@@ -10,7 +10,9 @@ dependencies {
         because("HttpUrl used to type urls more strict")
     }
     api(libs.gson) {
-        because("module provides TypeAdapterFactory for Entries")
+        // todo hide parsing
+        // todo replace JsonElement with something more generic if possible
+        because("module provides TypeAdapterFactory for Entries; JsonElement in the IncidentElement")
     }
 
     implementation(project(":common:okhttp")) {

@@ -3,6 +3,7 @@ package com.avito.android.test.report.incident
 import com.avito.android.Result
 import com.avito.api.resourcemanager.ResourceManagerException
 import com.avito.report.model.IncidentElement
+import com.github.salomonbrys.kotson.toJson
 
 internal class ResourceManagerIncidentPresenter : IncidentPresenter {
 
@@ -14,7 +15,7 @@ internal class ResourceManagerIncidentPresenter : IncidentPresenter {
         val mainElement = IncidentElement(
             message = "Ошибка при обращении к ${exception.requestUrl}",
             origin = "ResourcesClient",
-            data = exception.requestBody
+            data = exception.requestBody?.toJson()
         )
 
         return Result.Success(listOf(mainElement) + exception.incidentChain)

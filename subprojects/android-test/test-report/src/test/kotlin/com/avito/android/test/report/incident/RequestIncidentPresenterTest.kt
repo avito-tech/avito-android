@@ -1,7 +1,9 @@
 package com.avito.android.test.report.incident
 
 import com.avito.truth.ResultSubject.Companion.assertThat
+import com.avito.truth.isNotInstanceOf
 import com.google.common.truth.Truth.assertThat
+import com.google.gson.JsonPrimitive
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
@@ -42,17 +44,12 @@ class RequestIncidentPresenterTest {
 }"""
 
     @Test
-    fun `data contains part of a json as is`() {
-        val result = RequestIncidentPresenter().customize(
-            RequestIncidentException(
-                message = "kk",
-                body = sampleJson,
-                cause = null
-            )
-        )
+    fun dataIsJsonObject() {
+        val result = RequestIncidentPresenter().customize(RequestIncidentException("kk", sampleJson, null))
 
         assertThat(result).isSuccess().withValue {
-            assertThat(it[0].data).contains(""""avito_host": "https://host.ru"""")
+            val data = it[0].data
+            assertThat(data).isNotInstanceOf<JsonPrimitive>()
         }
     }
 }
