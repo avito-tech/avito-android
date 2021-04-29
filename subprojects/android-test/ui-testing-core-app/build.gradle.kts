@@ -35,6 +35,11 @@ android {
     }
 }
 
+@Suppress("UnstableApiUsage")
+val infraVersion: String = providers.systemProperty("infraVersion")
+    .forUseAtConfigurationTime()
+    .get()
+
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -43,14 +48,16 @@ dependencies {
 
     implementation(project(":android-lib:proxy-toast"))
 
-    androidTestImplementation(project(":android-test:toast-rule"))
+    androidTestImplementation("com.avito.android:test-inhouse-runner:$infraVersion")
+    androidTestImplementation("com.avito.android:test-report:$infraVersion")
+    androidTestImplementation("com.avito.android:test-annotations:$infraVersion")
+    androidTestImplementation("com.avito.android:report-viewer:$infraVersion") {
+        because("Priority/Behavior test annotations still there")
+    }
+
     androidTestImplementation(project(":android-test:ui-testing-core"))
-    androidTestImplementation(project(":android-test:test-inhouse-runner"))
-    androidTestImplementation(project(":android-test:test-report"))
-    androidTestImplementation(project(":common:junit-utils"))
+    androidTestImplementation(project(":android-test:toast-rule"))
     androidTestImplementation(project(":common:truth-extensions"))
-    androidTestImplementation(project(":common:test-annotations"))
-    androidTestImplementation(project(":common:report-viewer"))
 
     androidTestUtil(libs.testOrchestrator)
 }

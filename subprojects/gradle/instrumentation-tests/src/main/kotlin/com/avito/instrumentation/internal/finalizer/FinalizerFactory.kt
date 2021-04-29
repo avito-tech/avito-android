@@ -1,15 +1,20 @@
 package com.avito.instrumentation.internal.finalizer
 
-import com.avito.android.runner.report.LegacyReport
+import com.avito.android.runner.report.ReportFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.report.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.action.AvitoReportViewerFinishAction
+import com.avito.instrumentation.internal.finalizer.action.SendMetricsAction
+import com.avito.instrumentation.internal.finalizer.action.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.action.WriteReportViewerLinkFile
+import com.avito.instrumentation.internal.finalizer.action.WriteTaskVerdictAction
+import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminerFactory
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
-import com.avito.report.ReportViewer
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.utils.BuildFailer
 import com.google.common.annotations.VisibleForTesting
@@ -22,27 +27,23 @@ internal interface FinalizerFactory {
 
     class Impl : FinalizerFactory {
         private val params: InstrumentationTestsAction.Params
-        private val avitoReport: LegacyReport
+        private val reportFactory: ReportFactory
         private val gson: Gson
         private val buildFailer: BuildFailer
-
-        // todo Make generic. Need two realization for InMemory and ReportViewer
-        private val reportViewer: ReportViewer
         private val loggerFactory: LoggerFactory
         private val metricsConfig: RunnerMetricsConfig
 
         @VisibleForTesting
         internal constructor(
             params: InstrumentationTestsAction.Params,
-            avitoReport: LegacyReport,
+            reportFactory: ReportFactory,
             gson: Gson = InstrumentationTestsActionFactory.gson,
             buildFailer: BuildFailer,
             metricsConfig: RunnerMetricsConfig
         ) {
             this.params = params
-            this.avitoReport = avitoReport
+            this.reportFactory = reportFactory
             this.gson = gson
-            this.reportViewer = ReportViewer.Impl(params.reportViewerUrl)
             this.loggerFactory = params.loggerFactory
             this.buildFailer = buildFailer
             this.metricsConfig = metricsConfig
@@ -50,12 +51,12 @@ internal interface FinalizerFactory {
 
         constructor(
             params: InstrumentationTestsAction.Params,
-            avitoReport: LegacyReport,
+            reportFactory: ReportFactory,
             gson: Gson,
             metricsConfig: RunnerMetricsConfig
         ) : this(
             params = params,
-            avitoReport = avitoReport,
+            reportFactory = reportFactory,
             gson = gson,
             buildFailer = BuildFailer.RealFailer(),
             metricsConfig = metricsConfig
@@ -63,7 +64,7 @@ internal interface FinalizerFactory {
 
         override fun create(): InstrumentationTestActionFinalizer {
 
-            val hasFailedTestDeterminer: HasFailedTestDeterminer = HasFailedTestDeterminer.Impl(
+            val hasFailedTestDeterminer: HasFailedTestDeterminer = LegacyFailedTestDeterminer(
                 suppressFailure = params.suppressFailure,
                 suppressFlaky = params.suppressFlaky
             )
@@ -73,33 +74,45 @@ internal interface FinalizerFactory {
                 runnerPrefix = metricsConfig.runnerPrefix
             )
 
-            val actions = listOf(
+            val reportLinkGenerator = reportFactory.createReportLinkGenerator()
+
+            val actions = mutableListOf(
+
                 SendMetricsAction(metricsSender),
+
                 WriteJUnitReportAction(
-                    reportViewer = reportViewer,
-                    reportCoordinates = params.reportCoordinates,
                     // For Teamcity XML report processing
-                    destination = File(params.outputDir, "junit-report.xml")
+                    destination = File(params.outputDir, "junit-report.xml"),
+                    reportLinkGenerator = reportLinkGenerator,
+                    testSuiteNameProvider = reportFactory.createTestSuiteNameGenerator()
                 ),
-                SendAvitoReport(avitoReport = avitoReport), // todo optional
-                WriteReportViewerLinkFile(
-                    reportViewer = reportViewer,
-                    reportCoordinates = params.reportCoordinates,
-                    outputDir = params.outputDir
-                ),
+
                 WriteTaskVerdictAction(
-                    coordinates = params.reportCoordinates,
                     verdictDestination = params.verdictFile,
-                    reportViewer = reportViewer,
                     gson = gson,
+                    reportLinkGenerator = reportLinkGenerator
                 )
             )
-            return InstrumentationTestActionFinalizer.Impl(
+
+            if (params.reportViewerConfig != null) {
+
+                actions += AvitoReportViewerFinishAction(legacyReport = reportFactory.createAvitoReport())
+
+                actions += WriteReportViewerLinkFile(
+                    outputDir = params.outputDir,
+                    reportLinkGenerator = reportLinkGenerator
+                )
+            }
+
+            return LegacyFinalizer(
                 hasFailedTestDeterminer = hasFailedTestDeterminer,
-                hasNotReportedTestsDeterminer = HasNotReportedTestsDeterminer.Impl(),
+                hasNotReportedTestsDeterminer = LegacyNotReportedTestsDeterminer(),
+                verdictDeterminer = VerdictDeterminerFactory.create(),
                 params = params,
                 buildFailer = buildFailer,
-                actions = actions
+                actions = actions,
+                report = reportFactory.createAvitoReport(),
+                loggerFactory = params.loggerFactory
             )
         }
     }

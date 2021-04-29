@@ -3,7 +3,7 @@ package com.avito.report.model
 import com.avito.math.Percent
 import com.avito.math.percentOf
 
-data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>) {
+public data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>) {
 
     private val consistentData: List<CrossDeviceRunTest>
         get() = crossDeviceRuns.filter { it.status !is CrossDeviceStatus.Inconsistent }
@@ -43,6 +43,6 @@ data class CrossDeviceSuite(val crossDeviceRuns: List<CrossDeviceRunTest>) {
 
     val percentFailedOnSomeDevicesOfAutomated: Percent = failedOnSomeDevicesCount.percentOf(automatedCount)
 
-    fun filterTeam(team: Team): CrossDeviceSuite =
+    public fun filterTeam(team: Team): CrossDeviceSuite =
         CrossDeviceSuite(crossDeviceRuns.filter { it.name.team == team })
 }

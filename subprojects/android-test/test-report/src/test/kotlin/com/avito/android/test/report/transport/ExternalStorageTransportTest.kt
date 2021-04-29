@@ -73,7 +73,6 @@ internal class ExternalStorageTransportTest {
         return ExternalStorageTransport(
             timeProvider = timeProvider,
             loggerFactory = loggerFactory,
-            gson = ReportTransportFactory.gson,
             testArtifactsProvider = testArtifactsProvider
         )
     }

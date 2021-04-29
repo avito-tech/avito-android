@@ -4,7 +4,7 @@ import com.avito.android.Result
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
 
-interface ReportsAddApi {
+public interface ReportsAddApi {
 
     /**
      * RunTest.AddFull
@@ -13,7 +13,7 @@ interface ReportsAddApi {
      *
      * @return set id
      */
-    fun addTests(
+    public fun addTests(
         reportCoordinates: ReportCoordinates,
         buildId: String?,
         tests: Collection<AndroidTest>
@@ -26,7 +26,7 @@ interface ReportsAddApi {
      *
      * @return set id
      */
-    fun addTest(
+    public fun addTest(
         reportCoordinates: ReportCoordinates,
         buildId: String?,
         test: AndroidTest

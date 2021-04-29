@@ -11,7 +11,6 @@ plugins {
 dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
 
-    implementation(libs.kotlinHtml)
     implementation(libs.okhttp)
 
     implementation(project(":common:okhttp"))
@@ -25,10 +24,13 @@ dependencies {
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:slack"))
 
-    gradleTestImplementation(project(":gradle:test-project"))
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":common:logger")))
+
+    integTestImplementation(project(":common:resources"))
+
+    gradleTestImplementation(project(":gradle:test-project"))
 }
 
 gradlePlugin {
@@ -36,9 +38,13 @@ gradlePlugin {
         create("lintReport") {
             id = "com.avito.android.lint-report"
             implementationClass = "com.avito.android.lint.LintReportPlugin"
-            displayName = "Lint reports merge"
+            displayName = "Lint reports notifier"
         }
     }
+}
+
+kotlin {
+    explicitApi()
 }
 
 tasks.named<Test>("integrationTest").configure {

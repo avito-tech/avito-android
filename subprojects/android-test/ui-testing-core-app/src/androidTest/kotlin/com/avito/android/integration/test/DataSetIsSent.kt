@@ -1,6 +1,5 @@
 package com.avito.android.integration.test
 
-import InfrastructureTestRule
 import com.avito.android.integration.test.ReportTestUtils.simpleSuccessAssertion
 import com.avito.android.test.annotations.CaseId
 import com.avito.android.test.annotations.DataSetNumber

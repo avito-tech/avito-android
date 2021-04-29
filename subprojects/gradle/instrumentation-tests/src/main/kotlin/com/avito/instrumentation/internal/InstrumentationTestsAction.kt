@@ -2,7 +2,7 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.factory.LegacyReportFactory
+import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.configuration.InstrumentationConfiguration
@@ -12,7 +12,6 @@ import com.avito.instrumentation.internal.scheduling.TestsScheduler
 import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.model.ReportCoordinates
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -79,12 +78,9 @@ internal class InstrumentationTestsAction(
         val loggerFactory: LoggerFactory,
         val outputDir: File,
         val verdictFile: File,
-        val reportViewerUrl: String,
         val fileStorageUrl: String,
         val statsDConfig: StatsDConfig,
-        val legacyReportFactory: LegacyReportFactory,
-        val legacyReportConfig: LegacyReportFactory.Config,
-        val reportCoordinates: ReportCoordinates,
+        val reportViewerConfig: ReportViewerConfig?,
         val proguardMappings: List<File>,
         val useInMemoryReport: Boolean,
         val uploadTestArtifacts: Boolean

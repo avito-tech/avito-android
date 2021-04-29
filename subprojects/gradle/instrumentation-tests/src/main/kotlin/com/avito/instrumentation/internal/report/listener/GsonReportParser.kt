@@ -1,7 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
-import com.avito.report.model.EntryTypeAdapterFactory
+import com.avito.report.EntryTypeAdapterFactory
 import com.avito.report.model.TestRuntimeData
 import com.avito.report.model.TestRuntimeDataPackage
 import com.google.gson.Gson

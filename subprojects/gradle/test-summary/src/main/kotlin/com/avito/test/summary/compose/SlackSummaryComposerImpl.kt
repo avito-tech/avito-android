@@ -1,6 +1,7 @@
 package com.avito.test.summary.compose
 
 import com.avito.android.Result
+import com.avito.report.ReportLinkGenerator
 import com.avito.report.ReportViewer
 import com.avito.report.model.CrossDeviceSuite
 import com.avito.report.model.FailureOnDevice
@@ -9,7 +10,7 @@ import com.avito.report.model.Team
 import com.avito.slack.SlackStringFormat
 import com.avito.test.summary.analysis.analyzeFailures
 
-internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) : SlackSummaryComposer {
+internal class SlackSummaryComposerImpl(private val reportViewerUrl: String) : SlackSummaryComposer {
 
     private val insightLimitLength = 400
 
@@ -21,7 +22,8 @@ internal class SlackSummaryComposerImpl(private val reportViewer: ReportViewer) 
         reportId: String,
         buildUrl: String
     ): Result<String> {
-        val reportViewerUrl = Result.tryCatch { reportViewer.generateReportUrl(reportId, team = team) }
+        val reportLinkGenerator: ReportLinkGenerator = ReportViewer.Impl(reportViewerUrl, reportCoordinates)
+        val reportViewerUrl = Result.tryCatch { reportLinkGenerator.generateReportLink(team = team.name) }
         val reportIdentifier = reportCoordinates.runId
 
         val failures = testData.analyzeFailures()

@@ -2,8 +2,8 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.TestSuiteLoaderImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.LegacyReport
-import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.ReportFactory
+import com.avito.android.runner.report.ReportFactoryImpl
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
@@ -29,12 +29,6 @@ internal interface InstrumentationTestsActionFactory {
 
         private val gson: Gson = Companion.gson
 
-        private val report: Report =
-            params.legacyReportFactory.createReport(params.legacyReportConfig)
-
-        private val legacyReport: LegacyReport =
-            params.legacyReportFactory.createLegacyReport(params.legacyReportConfig)
-
         private val schedulerFactory: TestsSchedulerFactory
 
         private val finalizerFactory: FinalizerFactory
@@ -53,23 +47,34 @@ internal interface InstrumentationTestsActionFactory {
                 loggerFactory = params.loggerFactory
             )
 
+            val reportFactory: ReportFactory = ReportFactoryImpl(
+                timeProvider = timeProvider,
+                useInMemoryReport = params.useInMemoryReport,
+                buildId = params.buildId,
+                loggerFactory = params.loggerFactory,
+                httpClientProvider = httpClientProvider,
+                reportViewerConfig = params.reportViewerConfig
+            )
+
+            val report = reportFactory.createReport()
+
             this.schedulerFactory = TestsSchedulerFactory.Impl(
                 params = params,
-                sourceReport = report,
-                avitoReport = legacyReport,
+                report = report,
                 gson = gson,
                 metricsConfig = metricsConfig,
                 testExecutorFactory = TestExecutorFactory.Implementation(),
                 testSuiteLoader = TestSuiteLoaderImpl(),
                 timeProvider = timeProvider,
-                httpClientProvider = httpClientProvider
+                httpClientProvider = httpClientProvider,
+                reportFactory = reportFactory
             )
 
             this.finalizerFactory = FinalizerFactory.Impl(
                 params = params,
-                avitoReport = legacyReport,
                 gson = gson,
-                metricsConfig = metricsConfig
+                metricsConfig = metricsConfig,
+                reportFactory = reportFactory
             )
         }
 

@@ -36,7 +36,7 @@ internal class ExcludeFlakyTest {
 
     @Test
     fun exclude_flaky_in_integration_with_filter_factory() {
-        val filterFactory = FilterFactoryFactory.create(
+        val filterFactory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 excludeFlaky = true
             )
@@ -53,7 +53,7 @@ internal class ExcludeFlakyTest {
 
     @Test
     fun include_stable_in_integration_with_filter_factory() {
-        val filterFactory = FilterFactoryFactory.create(
+        val filterFactory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 excludeFlaky = true
             )
@@ -71,7 +71,7 @@ internal class ExcludeFlakyTest {
 
     @Test
     fun include_flaky_in_integration_with_filter_factory() {
-        val filterFactory = FilterFactoryFactory.create(
+        val filterFactory = StubFilterFactory.create(
             filter = InstrumentationFilter.Data.createStub(
                 excludeFlaky = false
             )

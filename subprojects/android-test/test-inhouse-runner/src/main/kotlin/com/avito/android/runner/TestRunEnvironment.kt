@@ -14,8 +14,8 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
 import com.avito.android.test.report.ArgsProvider
 import com.avito.android.test.report.model.TestMetadata
-import com.avito.android.test.report.transport.ReportDestination
 import com.avito.android.test.report.video.VideoFeatureValue
+import com.avito.android.transport.ReportDestination
 import com.avito.report.model.ReportCoordinates
 import com.avito.utils.BuildMetadata
 import okhttp3.HttpUrl

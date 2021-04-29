@@ -21,7 +21,7 @@ internal class ResourceIncidentPresenter : IncidentPresenter {
         val responseElement = IncidentElement(
             message = "Ответ от ${exception.requestUrl}",
             origin = "ResourcesClient",
-            data = "${exception.errorBody}".toJson()
+            data = exception.requestBody?.toJson()
         )
 
         return Result.Success(listOf(mainElement, responseElement))

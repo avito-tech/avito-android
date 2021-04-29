@@ -1,3 +1,4 @@
+package com.avito.android.integration.test
 
 import com.avito.android.rule.SimpleRule
 import com.avito.android.runner.InHouseInstrumentationTestRunner

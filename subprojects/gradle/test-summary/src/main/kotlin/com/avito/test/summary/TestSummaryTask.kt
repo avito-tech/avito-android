@@ -1,7 +1,6 @@
 package com.avito.test.summary
 
 import com.avito.logger.GradleLoggerFactory
-import com.avito.report.ReportViewer
 import com.avito.report.ReportsApi
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Team
@@ -46,13 +45,13 @@ abstract class TestSummaryTask : DefaultTask() {
     abstract val reportsApi: Property<ReportsApi>
 
     @get:Internal
-    abstract val reportViewer: Property<ReportViewer>
+    abstract val reportViewerUrl: Property<String>
 
     @TaskAction
     fun doWork() {
         val testSummarySender: TestSummarySender = TestSummarySenderImpl(
             slackClient = slackClient.get(),
-            reportViewer = reportViewer.get(),
+            reportViewerUrl = reportViewerUrl.get(),
             reportsApi = reportsApi.get(),
             loggerFactory = GradleLoggerFactory.fromTask(this),
             buildUrl = buildUrl.get(),

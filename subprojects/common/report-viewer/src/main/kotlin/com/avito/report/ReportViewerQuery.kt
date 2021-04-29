@@ -7,7 +7,7 @@ import com.github.salomonbrys.kotson.jsonObject
 import com.github.salomonbrys.kotson.plusAssign
 import java.util.Base64
 
-class ReportViewerQuery {
+public class ReportViewerQuery {
 
     // todo use a universal encoder (android / jvm)
     private val encoder by lazy { Base64.getEncoder() }
@@ -19,7 +19,7 @@ class ReportViewerQuery {
      * {"filter":{"error":1,"fail":1,"groups":["messenger"],"other":1}}
      * ```
      */
-    fun createQuery(onlyFailures: Boolean, team: Team): String {
+    public fun createQuery(onlyFailures: Boolean, team: Team): String {
         val query = jsonObject()
 
         if (onlyFailures) {
@@ -46,7 +46,7 @@ class ReportViewerQuery {
      * {"filter":{"search": "com.avito.android.test.Test::click_bottom_button__close_the_screen" }}
      * ```
      */
-    fun createQuery(
+    public fun createQuery(
         testClass: String,
         testMethod: String
     ): String {

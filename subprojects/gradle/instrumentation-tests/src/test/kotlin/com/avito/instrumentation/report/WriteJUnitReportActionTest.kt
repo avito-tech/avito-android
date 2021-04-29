@@ -1,11 +1,12 @@
 package com.avito.instrumentation.report
 
-import com.avito.instrumentation.internal.TestRunResult
-import com.avito.instrumentation.internal.report.HasFailedTestDeterminer
-import com.avito.instrumentation.internal.report.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.report.WriteJUnitReportAction
-import com.avito.report.StubReportViewer
-import com.avito.report.model.ReportCoordinates
+import com.avito.instrumentation.internal.finalizer.TestRunResult
+import com.avito.instrumentation.internal.finalizer.action.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
+import com.avito.instrumentation.internal.finalizer.verdict.Verdict
+import com.avito.report.NoOpReportLinkGenerator
+import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Status
 import com.avito.report.model.createStubInstance
@@ -70,7 +71,7 @@ internal class WriteJUnitReportActionTest {
             )
         )
         val rawFile = file.readText()
-        assertThat(rawFile).contains("<failure>\nSomething went wrong\nReport Viewer: $reportViewerUrl\n</failure>")
+        assertThat(rawFile).contains("<failure>\nSomething went wrong\n$reportViewerUrl\n</failure>")
     }
 
     @Test
@@ -92,19 +93,14 @@ internal class WriteJUnitReportActionTest {
         assertThat(rawFile).contains("name=\"resolve_advert_legacyFormat\"")
     }
 
-    private fun mockData(testRunResult: TestRunResult) {
-        val runIdentifier = ReportCoordinates(
-            planSlug = "AvitoAndroid",
-            jobSlug = "FunctionalTests",
-            runId = "49.0.275.32855"
-        )
-        val reportViewer = StubReportViewer(reportViewerUrl)
+    private fun mockData(testRunResult: TestRunResult, verdict: Verdict = Verdict.Success("")) {
         WriteJUnitReportAction(
-            reportViewer = reportViewer,
-            reportCoordinates = runIdentifier,
-            destination = file
+            destination = file,
+            testSuiteNameProvider = NoOpTestSuiteNameProvider(),
+            reportLinkGenerator = NoOpReportLinkGenerator(testLink = reportViewerUrl)
         ).action(
             testRunResult = testRunResult,
+            verdict = verdict
         )
     }
 }

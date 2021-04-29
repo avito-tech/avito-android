@@ -7,9 +7,9 @@ package com.avito.android.test.annotations
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-annotation class Flaky(
+public annotation class Flaky(
     val reason: String = NO_REASON,
     vararg val onSdks: Int
 )
 
-const val NO_REASON = "Unknown reason"
+public const val NO_REASON: String = "Unknown reason"

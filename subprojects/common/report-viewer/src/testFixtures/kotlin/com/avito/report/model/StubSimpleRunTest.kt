@@ -1,8 +1,5 @@
 package com.avito.report.model
 
-import com.avito.android.test.annotations.TestCaseBehavior
-import com.avito.android.test.annotations.TestCasePriority
-
 fun SimpleRunTest.Companion.createStubInstance(
     id: String = "1234",
     reportId: String = "12345",

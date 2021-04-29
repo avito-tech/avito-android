@@ -52,7 +52,7 @@ internal abstract class HttpBuildCacheTestFixture {
     }
 
     // Overriding content is not supported yet, only statuses.
-    // Load should return task specific outputs as zip entry in a vendor specific format.
+    // Load should return task specific outputs as zip entry in an internal format (see BuildCacheCommandFactory).
     // See content of a cache entry for details.
     protected fun givenHttpBuildCache(
         loadHttpStatus: Int = 404,

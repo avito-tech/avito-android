@@ -71,6 +71,7 @@ public object InstrumentationPluginConfiguration {
                 Data.ReportViewer(
                     reportApiUrl = reportViewer.reportApiUrl,
                     reportViewerUrl = reportViewer.reportViewerUrl,
+                    reportRunIdPrefix = reportViewer.reportRunIdPrefix,
                     fileStorageUrl = reportViewer.fileStorageUrl
                 )
             } else {
@@ -140,6 +141,7 @@ public object InstrumentationPluginConfiguration {
             public data class ReportViewer(
                 val reportApiUrl: String,
                 val reportViewerUrl: String,
+                val reportRunIdPrefix: String,
                 val fileStorageUrl: String
             ) : Serializable
 

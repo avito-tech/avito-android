@@ -17,9 +17,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
 
-/**
- * Inspired by [gradle-metrics-plugin](https://github.com/nebula-plugins/gradle-metrics-plugin)
- */
 public open class BuildMetricsPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {

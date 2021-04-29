@@ -35,8 +35,14 @@ class TestResultSubject private constructor(
     }
 
     fun taskWithOutcome(taskPath: String, outcome: TaskOutcome): TestResultSubject {
-        check("task $taskPath has outcome ${outcome.name}").that(subject.task(taskPath)?.outcome)
-            .isEquivalentAccordingToCompareTo(outcome)
+        val actualOutcome: TaskOutcome? = subject.task(taskPath)?.outcome
+        if (actualOutcome == null) {
+            check("task $taskPath is executed")
+                .that(actualOutcome as Any?).isNotNull()
+        } else {
+            check("task $taskPath has outcome ${outcome.name}")
+                .that(actualOutcome).isEquivalentAccordingToCompareTo(outcome)
+        }
         return this
     }
 

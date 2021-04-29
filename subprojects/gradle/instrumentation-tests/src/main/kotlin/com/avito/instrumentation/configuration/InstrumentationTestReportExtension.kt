@@ -8,6 +8,7 @@ public class InstrumentationTestReportExtension {
     public class ReportViewer {
         public var reportApiUrl: String = ""
         public var reportViewerUrl: String = ""
+        public var reportRunIdPrefix: String = ""
         public var fileStorageUrl: String = ""
 
         internal fun validate() {

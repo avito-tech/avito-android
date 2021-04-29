@@ -5,12 +5,12 @@ import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.internal.JsonRpcClient
-import com.avito.report.model.EntryTypeAdapterFactory
+import com.avito.report.internal.ReportsApiImpl
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.util.concurrent.TimeUnit
 
-object ReportsApiFactory {
+public object ReportsApiFactory {
 
     private const val TIMEOUT_SEC = 10L
 
@@ -21,7 +21,7 @@ object ReportsApiFactory {
         .registerTypeAdapterFactory(EntryTypeAdapterFactory())
         .create()
 
-    fun create(
+    public fun create(
         host: String,
         httpClientProvider: HttpClientProvider,
         loggerFactory: LoggerFactory,

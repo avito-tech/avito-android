@@ -14,7 +14,9 @@ dependencies {
     api(project(":common:time"))
     implementation(project(":gradle:runner:shared"))
     implementation(project(":common:result"))
-    implementation(project(":common:report-viewer"))
+    implementation(project(":common:test-report-artifacts")) {
+        because("DeviceWorker pulls test artifacts")
+    }
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
 

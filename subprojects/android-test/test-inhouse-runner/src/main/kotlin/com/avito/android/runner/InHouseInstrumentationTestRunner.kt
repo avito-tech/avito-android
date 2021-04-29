@@ -21,8 +21,8 @@ import com.avito.android.test.UITestConfig
 import com.avito.android.test.interceptor.HumanReadableActionInterceptor
 import com.avito.android.test.interceptor.HumanReadableAssertionInterceptor
 import com.avito.android.test.report.InternalReport
+import com.avito.android.test.report.ReportFactory
 import com.avito.android.test.report.ReportFriendlyFailureHandler
-import com.avito.android.test.report.ReportImplementation
 import com.avito.android.test.report.ReportProvider
 import com.avito.android.test.report.ReportTestListener
 import com.avito.android.test.report.ReportViewerHttpInterceptor
@@ -32,11 +32,11 @@ import com.avito.android.test.report.listener.TestLifecycleNotifier
 import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.screenshot.ScreenshotCapturer
 import com.avito.android.test.report.screenshot.ScreenshotCapturerFactory
-import com.avito.android.test.report.transport.ReportTransportFactory
 import com.avito.android.test.report.transport.Transport
 import com.avito.android.test.report.troubleshooting.Troubleshooter
 import com.avito.android.test.report.video.VideoCaptureTestListener
 import com.avito.android.test.step.StepDslDelegateImpl
+import com.avito.android.transport.ReportTransportFactory
 import com.avito.android.util.DeviceSettingsChecker
 import com.avito.filestorage.RemoteStorage
 import com.avito.filestorage.RemoteStorageFactory
@@ -135,12 +135,12 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override val report: InternalReport by lazy {
-        ReportImplementation(
-            loggerFactory = loggerFactory,
-            transport = reportTransport,
-            screenshotCapturer = screenshotCapturer,
-            timeProvider = timeProvider,
-            troubleshooter = Troubleshooter.Impl()
+        ReportFactory.createReport(
+            loggerFactory,
+            reportTransport,
+            screenshotCapturer,
+            timeProvider,
+            Troubleshooter.Impl()
         )
     }
 
@@ -200,7 +200,6 @@ abstract class InHouseInstrumentationTestRunner :
         )
         initApplicationCrashHandling()
         addReportListener(arguments)
-        initTestCase(environment)
         initListeners(environment)
         beforeApplicationCreated(
             runEnvironment = environment,
@@ -236,11 +235,10 @@ abstract class InHouseInstrumentationTestRunner :
     }
 
     override fun onStart() {
-        super.onStart()
-
-        testRunEnvironment.executeIfRealRun {
-            validateEnvironment(runEnvironment = it)
+        testRunEnvironment.executeIfRealRun { env ->
+            initTestCase(env)
         }
+        super.onStart()
     }
 
     override fun onException(obj: Any?, e: Throwable): Boolean {
@@ -298,10 +296,6 @@ abstract class InHouseInstrumentationTestRunner :
                 nonCriticalErrorMessages = setOf("Error while disconnecting UiAutomation")
             )
         )
-    }
-
-    private fun validateEnvironment(@Suppress("UNUSED_PARAMETER") runEnvironment: TestRunEnvironment.RunEnvironment) {
-        // todo validate
     }
 
     private fun initTestCase(runEnvironment: TestRunEnvironment.RunEnvironment) {

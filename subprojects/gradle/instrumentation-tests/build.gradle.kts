@@ -26,7 +26,8 @@ dependencies {
     implementation(project(":common:composite-exception"))
     implementation(project(":common:file-storage"))
     implementation(project(":common:logger"))
-    implementation(project(":common:report-viewer"))
+    implementation(project(":common:report-api"))
+    implementation(project(":common:test-report-artifacts"))
     implementation(project(":common:retrace"))
     implementation(project(":common:http-client"))
     implementation(project(":common:throwable-utils"))
@@ -56,6 +57,7 @@ dependencies {
     testImplementation(project(":gradle:build-failer-test-fixtures"))
     testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(testFixtures(project(":common:http-client")))
+    testImplementation(testFixtures(project(":common:report-api")))
 
     gradleTestImplementation(project(":gradle:test-project"))
 

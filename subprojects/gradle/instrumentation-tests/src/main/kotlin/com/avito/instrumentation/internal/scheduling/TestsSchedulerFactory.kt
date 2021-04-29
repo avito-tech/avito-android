@@ -2,8 +2,8 @@ package com.avito.instrumentation.internal.scheduling
 
 import com.avito.android.TestSuiteLoader
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.ReportFactory
 import com.avito.android.stats.StatsDSender
 import com.avito.filestorage.RemoteStorageFactory
 import com.avito.http.HttpClientProvider
@@ -42,14 +42,14 @@ internal interface TestsSchedulerFactory {
 
     class Impl(
         private val params: InstrumentationTestsAction.Params,
-        private val sourceReport: Report,
-        private val avitoReport: LegacyReport,
+        private val report: Report,
         private val gson: Gson,
         private val timeProvider: TimeProvider,
         private val httpClientProvider: HttpClientProvider,
         private val metricsConfig: RunnerMetricsConfig,
         private val testExecutorFactory: TestExecutorFactory,
-        private val testSuiteLoader: TestSuiteLoader
+        private val testSuiteLoader: TestSuiteLoader,
+        private val reportFactory: ReportFactory
     ) : TestsSchedulerFactory {
 
         override fun create(devicesProviderFactory: DevicesProviderFactory): TestsScheduler {
@@ -60,8 +60,7 @@ internal interface TestsSchedulerFactory {
             return InstrumentationTestsScheduler(
                 testsRunner = testRunner,
                 params = params,
-                reportCoordinates = params.reportCoordinates,
-                sourceReport = sourceReport,
+                sourceReport = report,
                 testSuiteProvider = testSuiteProvider,
                 testSuiteLoader = testSuiteLoader,
                 gson = gson,
@@ -74,19 +73,15 @@ internal interface TestsSchedulerFactory {
         }
 
         private fun createTestSuiteProvider(): TestSuiteProvider = TestSuiteProvider.Impl(
-            report = sourceReport,
-            legacyReport = avitoReport,
+            report = report,
             targets = params.instrumentationConfiguration.targets,
+            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
             filterFactory = FilterFactory.create(
                 filterData = params.instrumentationConfiguration.filter,
                 impactAnalysisResult = params.impactAnalysisResult,
-                factoryLegacy = params.legacyReportFactory,
-                legacyReportConfig = params.legacyReportConfig,
+                reportFactory = reportFactory,
                 loggerFactory = params.loggerFactory
-            ),
-            reportSkippedTests = params.instrumentationConfiguration.reportSkippedTests,
-            useInMemoryReport = params.useInMemoryReport,
-            timeProvider = timeProvider
+            )
         )
 
         private fun createTestRunner(devicesProviderFactory: DevicesProviderFactory, tempDir: File): TestsRunner {

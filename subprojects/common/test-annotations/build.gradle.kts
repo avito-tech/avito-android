@@ -6,3 +6,7 @@ plugins {
 dependencies {
     implementation(project(":common:report-viewer"))
 }
+
+kotlin {
+    explicitApi()
+}

@@ -39,6 +39,7 @@ abstract class AbstractReportTestListener : RunListener() {
             logger.debug("Processed event: $event for test: $testName SUCCESSFULLY")
         } catch (t: Throwable) {
             logger.warn("Processed event: $event for test: $testName UNSUCCESSFULLY", t)
+            throw t
         }
     }
 }

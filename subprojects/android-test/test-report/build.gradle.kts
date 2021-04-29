@@ -13,7 +13,9 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":common:http-client"))
     implementation(project(":common:time"))
-    implementation(project(":common:report-viewer"))
+    implementation(project(":common:test-report-artifacts")) {
+        because("ExternalStorageTransport need to know where to store artifacts")
+    }
     implementation(project(":common:logger"))
     implementation(project(":common:elastic-logger"))
     implementation(project(":common:sentry"))
