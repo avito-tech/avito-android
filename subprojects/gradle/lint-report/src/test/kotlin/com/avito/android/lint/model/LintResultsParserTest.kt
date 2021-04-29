@@ -1,6 +1,6 @@
 package com.avito.android.lint.model
 
-import com.avito.android.lint.internal.model.LintIssue
+import com.android.tools.lint.detector.api.Severity
 import com.avito.android.lint.internal.model.LintReportModel
 import com.avito.android.lint.internal.model.LintResultsParser
 import com.avito.android.lint.internal.model.UnsupportedFormatVersion
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 
+@Suppress("UnstableApiUsage")
 internal class LintResultsParserTest {
 
     private lateinit var tempDir: File
@@ -25,11 +26,29 @@ internal class LintResultsParserTest {
     }
 
     @Test
-    fun `report with warnings and errors contains expected issues`() {
+    fun `report contains expected issues`() {
         val model = parse(
             xmlContent = """
             <?xml version="1.0" encoding="UTF-8"?>
-            <issues by="lint 3.3.2" format="5">
+            <issues by="lint 4.1.2" format="5">
+            
+                <issue
+                    id="GoogleAppIndexingWarning"
+                    severity="Information"
+                    message="App is not indexable ..."
+                    category="Usability"
+                    priority="5"
+                    summary="Missing support for Firebase App Indexing"
+                    explanation="Adds URLs to ..."
+                    url="https://g.co/AppIndexing/AndroidStudio"
+                    urls="https://g.co/AppIndexing/AndroidStudio"
+                    errorLine1="    &lt;application"
+                    errorLine2="    ^">
+                    <location
+                        file="/app/src/main/AndroidManifest.xml"
+                        line="2"
+                        column="5"/>
+                </issue>
 
                 <issue
                     id="ObsoleteLintCustomCheck"
@@ -58,21 +77,54 @@ internal class LintResultsParserTest {
                         line="1"
                         column="2"/>
                 </issue>
+                
+                <issue
+                    id="MissingDefaultResource"
+                    severity="Fatal"
+                    message="The plurals ..."
+                    category="Correctness"
+                    priority="6"
+                    summary="Missing Default"
+                    explanation="If a resource ..."
+                    errorLine1="..."
+                    errorLine2="...">
+                    <location
+                        file="/app/src/main/res/values-ru/plurals.xml"
+                        line="1"
+                        column="1"/>
+                </issue>
             </issues>
             """.trimIndent()
         )
 
         assertThat(model is LintReportModel.Valid)
         model as LintReportModel.Valid
-        assertThat(model.issues).hasSize(2)
-        assertThat(model.issues[0].severity).isEqualTo(LintIssue.Severity.WARNING)
-        assertThat(model.issues[0].message).isEqualTo("message")
-        assertThat(model.issues[0].path).isEqualTo("/full/path")
-        assertThat(model.issues[0].line).isEqualTo(0)
-        assertThat(model.issues[1].severity).isEqualTo(LintIssue.Severity.ERROR)
-        assertThat(model.issues[1].message).isEqualTo("...")
-        assertThat(model.issues[1].path).isEqualTo("/full/path/file.kt")
-        assertThat(model.issues[1].line).isEqualTo(1)
+        assertThat(model.issues).hasSize(4)
+
+        model.issues[0].apply {
+            assertThat(severity).isEqualTo(Severity.INFORMATIONAL)
+            assertThat(message).isEqualTo("App is not indexable ...")
+            assertThat(path).isEqualTo("/app/src/main/AndroidManifest.xml")
+            assertThat(line).isEqualTo(2)
+        }
+        model.issues[1].apply {
+            assertThat(severity).isEqualTo(Severity.WARNING)
+            assertThat(message).isEqualTo("message")
+            assertThat(path).isEqualTo("/full/path")
+            assertThat(line).isEqualTo(0)
+        }
+        model.issues[2].apply {
+            assertThat(severity).isEqualTo(Severity.ERROR)
+            assertThat(message).isEqualTo("...")
+            assertThat(path).isEqualTo("/full/path/file.kt")
+            assertThat(line).isEqualTo(1)
+        }
+        model.issues[3].apply {
+            assertThat(severity).isEqualTo(Severity.FATAL)
+            assertThat(message).isEqualTo("The plurals ...")
+            assertThat(path).isEqualTo("/app/src/main/res/values-ru/plurals.xml")
+            assertThat(line).isEqualTo(1)
+        }
     }
 
     @Test
