@@ -150,7 +150,8 @@ internal class TestMetricsListenerImpl(
 
             aggregator.medianDeviceUtilization()
                 ?.let { sendMedianDeviceUtilization(it.toInt()) }
-                ?: logger.warn("Not sending median device relative wasted time, no data")
+                ?: logger.warn("Not sending median device relative wasted time, no data. " +
+                    "Aggregator value is $aggregator")
         }
     }
 

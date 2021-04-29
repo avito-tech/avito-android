@@ -4,7 +4,7 @@ import com.avito.math.median
 import com.avito.runner.scheduler.metrics.model.DeviceKey
 import com.avito.runner.scheduler.metrics.model.DeviceTimestamps
 
-internal class TestMetricsAggregatorImpl(
+internal data class TestMetricsAggregatorImpl(
     private val testSuiteStartedTime: Long,
     private val testSuiteEndedTime: Long,
     private val deviceTimestamps: Map<DeviceKey, DeviceTimestamps>
