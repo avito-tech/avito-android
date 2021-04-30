@@ -12,6 +12,8 @@ import com.avito.android.runner.devices.internal.kubernetes.UUIDDeploymentNameGe
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsDConfig
+import com.avito.android.stats.StatsDSender
+import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.runner.service.worker.device.adb.AdbDevicesManager
@@ -74,6 +76,11 @@ public class DeviceProviderFactoryImpl(
                         androidDebugBridge = androidDebugBridge,
                         kubernetesApi = KubernetesApi.Impl(
                             kubernetesClient = createKubernetesClient(
+                                httpClientProvider = HttpClientProvider(
+                                    statsDSender = StatsDSender.Impl(statsDConfig, loggerFactory),
+                                    timeProvider = timeProvider,
+                                    loggerFactory = loggerFactory,
+                                ),
                                 kubernetesCredentials = kubernetesCredentials,
                                 namespace = kubernetesNamespace
                             ),
