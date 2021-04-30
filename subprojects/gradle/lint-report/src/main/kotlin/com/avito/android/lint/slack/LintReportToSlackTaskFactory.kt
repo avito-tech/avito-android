@@ -3,11 +3,15 @@ package com.avito.android.lint.slack
 import com.avito.android.lint.AndroidLintAccessor
 import com.avito.android.lint.LintReportExtension
 import com.avito.android.lint.internal.validInGradleTaskName
+import com.avito.android.stats.statsd
+import com.avito.http.HttpClientProvider
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.typedNamedOrNull
-import com.avito.logger.Logger
+import com.avito.logger.LoggerFactory
+import com.avito.logger.create
 import com.avito.slack.SlackClient
 import com.avito.slack.model.SlackChannel
+import com.avito.time.DefaultTimeProvider
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -16,9 +20,11 @@ import org.gradle.kotlin.dsl.register
 
 public class LintReportToSlackTaskFactory(
     private val project: Project,
-    private val logger: Logger,
+    loggerFactory: LoggerFactory,
     private val androidLintAccessor: AndroidLintAccessor = AndroidLintAccessor(project)
 ) {
+
+    private val logger = loggerFactory.create<LintReportToSlackTaskFactory>()
 
     private val extension: LintReportExtension by lazy {
         project.extensions.getByType()
@@ -28,8 +34,14 @@ public class LintReportToSlackTaskFactory(
     private val slackClientProvider: Provider<SlackClient> by lazy {
         extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
             SlackClient.Impl(
+                serviceName = "lint-report-slack",
                 token = token,
-                workspace = workspace
+                workspace = workspace,
+                httpClientProvider = HttpClientProvider(
+                    statsDSender = project.statsd.get(),
+                    timeProvider = DefaultTimeProvider(),
+                    loggerFactory = loggerFactory
+                )
             )
         }
     }
