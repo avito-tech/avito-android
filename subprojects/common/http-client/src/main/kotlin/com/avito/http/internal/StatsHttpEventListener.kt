@@ -16,7 +16,8 @@ import java.net.SocketTimeoutException
 internal class StatsHttpEventListener(
     private val statsDSender: StatsDSender,
     private val timeProvider: TimeProvider,
-    loggerFactory: LoggerFactory
+    private val requestMetadataProvider: RequestMetadataProvider,
+    loggerFactory: LoggerFactory,
 ) : EventListener() {
 
     private val logger = loggerFactory.create<StatsHttpEventListener>()
@@ -47,30 +48,36 @@ internal class StatsHttpEventListener(
     }
 
     private fun serviceMetric(request: Request): SeriesName {
-        val metadata = request.tag(RequestMetadata::class.java)
+        return requestMetadataProvider.provide(request).fold(
+            onSuccess = { metadata ->
+                SeriesName.create(
+                    "service",
+                    metadata.serviceName,
+                    metadata.methodName
+                )
+            },
+            onFailure = { throwable ->
+                val urlWithoutParams = request.url.newBuilder()
+                    .query(null)
+                    .build()
 
-        return if (metadata == null) {
-            val urlWithoutParams = request.url.newBuilder()
-                .query(null)
-                .build()
+                val seriesName = SeriesName.create(
+                    "service",
+                    "unknown-service",
+                    "unknown-method"
+                )
 
-            logger.warn(
-                msg = "RequestMetadata not available for: $urlWithoutParams\n" +
-                    "You should add okhttp.Request.tag() with additional request information for metrics\n" +
-                    "or use Retrofit @Tag annotation",
-                error = null
-            )
-            SeriesName.create(
-                "service",
-                "unknown-service",
-                "unknown-method"
-            )
-        } else {
-            SeriesName.create(
-                "service",
-                metadata.serviceName,
-                metadata.methodName
-            )
-        }
+                logger.warn(
+                    msg = "RequestMetadata not available for: $urlWithoutParams\n" +
+                        "Metrics will be send as: $seriesName\n" +
+                        "You should add okhttp.Request.tag() with additional request information for metrics\n" +
+                        "or use Retrofit @Tag annotation,\n" +
+                        "or use custom RequestMetadataProvider " +
+                        "if original request creation not available for modification",
+                    error = throwable
+                )
+                seriesName
+            }
+        )
     }
 }

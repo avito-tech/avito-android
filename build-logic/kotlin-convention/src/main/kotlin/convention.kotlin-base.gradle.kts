@@ -25,3 +25,18 @@ tasks.withType<KotlinCompile>().configureEach {
         freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
     }
 }
+
+val kotlinVersion: String = checkNotNull(
+    System.getProperty("kotlinVersion")
+)
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin"
+            && requested.name != "kotlin-stdlib-jre8" // deprecated and not updated anymore. It's replaced by jdk
+            && requested.name != "kotlin-stdlib-jre7"
+        ) {
+            useVersion(kotlinVersion)
+        }
+    }
+}

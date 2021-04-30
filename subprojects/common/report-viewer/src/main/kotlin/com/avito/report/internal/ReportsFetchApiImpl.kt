@@ -1,6 +1,8 @@
 package com.avito.report.internal
 
 import com.avito.android.Result
+import com.avito.android.test.annotations.TestCaseBehavior
+import com.avito.android.test.annotations.TestCasePriority
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsFetchApi
@@ -22,8 +24,6 @@ import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.Stability
 import com.avito.report.model.Status
-import com.avito.report.model.TestCaseBehavior
-import com.avito.report.model.TestCasePriority
 import com.avito.report.model.TestName
 
 /**

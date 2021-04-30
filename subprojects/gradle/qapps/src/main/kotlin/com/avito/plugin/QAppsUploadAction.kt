@@ -42,8 +42,7 @@ internal class QAppsUploadAction(
                     .addInterceptor(
                         RetryInterceptor(
                             retries = 3,
-                            allowedMethods = listOf("GET", "POST"),
-                            logger = loggerFactory.create<QAppsUploadAction>()
+                            allowedMethods = listOf("GET", "POST")
                         )
                     )
                     .build()

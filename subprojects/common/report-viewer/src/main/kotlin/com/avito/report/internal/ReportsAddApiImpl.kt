@@ -1,6 +1,8 @@
 package com.avito.report.internal
 
 import com.avito.android.Result
+import com.avito.android.test.annotations.TestCaseBehavior
+import com.avito.android.test.annotations.TestCasePriority
 import com.avito.report.ReportsAddApi
 import com.avito.report.internal.model.Incident
 import com.avito.report.internal.model.IncidentElement
@@ -13,8 +15,6 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.Flakiness
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.Status
-import com.avito.report.model.TestCaseBehavior
-import com.avito.report.model.TestCasePriority
 import com.avito.report.model.team
 
 internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAddApi {

@@ -1,5 +1,6 @@
 package com.avito.android.lint.internal.model
 
+import com.android.tools.lint.detector.api.Severity
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import java.io.File
@@ -32,7 +33,8 @@ internal class LintResultsParser(loggerFactory: LoggerFactory) {
         var id: String = "",
         var summary: String = "",
         var message: String = "",
-        var severity: LintIssue.Severity = LintIssue.Severity.UNKNOWN,
+        @Suppress("UnstableApiUsage")
+        var severity: Severity? = null,
         var path: String = "",
         var line: Int = 0
     )
@@ -64,11 +66,9 @@ internal class LintResultsParser(loggerFactory: LoggerFactory) {
                         issue.id = requireNotNull(startElement.getAttributeByName(QName("id"))?.value)
                         issue.summary = requireNotNull(startElement.getAttributeByName(QName("summary"))?.value)
                         issue.message = startElement.getAttributeByName(QName("message"))?.value ?: "No message"
-                        issue.severity = when (startElement.getAttributeByName(QName("severity"))?.value) {
-                            "Error" -> LintIssue.Severity.ERROR
-                            "Warning" -> LintIssue.Severity.WARNING
-                            "Information" -> LintIssue.Severity.INFORMATION
-                            else -> LintIssue.Severity.UNKNOWN
+                        @Suppress("UnstableApiUsage")
+                        issue.severity = Severity.values().firstOrNull { severity ->
+                            severity.description == startElement.getAttributeByName(QName("severity"))?.value.orEmpty()
                         }
                     }
 

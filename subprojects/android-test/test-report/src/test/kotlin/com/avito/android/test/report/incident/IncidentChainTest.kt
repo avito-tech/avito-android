@@ -4,6 +4,7 @@ import com.avito.android.test.report.StepException
 import com.avito.report.model.IncidentElement
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
+import com.google.gson.JsonPrimitive
 import org.junit.jupiter.api.Test
 
 class IncidentChainTest {
@@ -61,10 +62,12 @@ class IncidentChainTest {
             .containsExactly(
                 IncidentElement(
                     message = "Не удалось выполнить precondition",
-                    data = "Precondition:\n" +
-                        "    Нажать на кнопку\n" +
-                        "Проверка:\n" +
-                        "    Видно поле"
+                    data = JsonPrimitive(
+                        "Precondition:\n" +
+                            "    Нажать на кнопку\n" +
+                            "Проверка:\n" +
+                            "    Видно поле"
+                    )
                 ),
                 IncidentElement("firstLevelDeep")
             )

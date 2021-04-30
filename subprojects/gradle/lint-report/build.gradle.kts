@@ -12,7 +12,9 @@ dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
 
     implementation(libs.okhttp)
+    implementation(libs.androidToolsLintApi)
 
+    implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:sentry"))
     implementation(project(":gradle:android"))
@@ -23,12 +25,15 @@ dependencies {
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:slack"))
+    implementation(project(":gradle:statsd-config"))
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":common:logger")))
 
     integTestImplementation(project(":common:resources"))
+    integTestImplementation(testFixtures(project(":common:time")))
+    integTestImplementation(testFixtures(project(":common:statsd")))
 
     gradleTestImplementation(project(":gradle:test-project"))
 }

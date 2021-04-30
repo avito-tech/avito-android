@@ -1,4 +1,4 @@
-package com.avito.report.model
+package com.avito.android.test.annotations
 
 // todo move to report-viewer module (avito specific)
 public enum class TestCaseBehavior(public val tmsValue: Int) {

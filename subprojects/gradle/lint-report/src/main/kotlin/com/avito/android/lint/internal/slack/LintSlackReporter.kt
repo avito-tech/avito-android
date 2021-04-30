@@ -1,10 +1,9 @@
 package com.avito.android.lint.internal.slack
 
+import com.android.tools.lint.detector.api.Severity.ERROR
+import com.android.tools.lint.detector.api.Severity.INFORMATIONAL
+import com.android.tools.lint.detector.api.Severity.WARNING
 import com.avito.android.lint.internal.model.LintIssue
-import com.avito.android.lint.internal.model.LintIssue.Severity.ERROR
-import com.avito.android.lint.internal.model.LintIssue.Severity.INFORMATION
-import com.avito.android.lint.internal.model.LintIssue.Severity.UNKNOWN
-import com.avito.android.lint.internal.model.LintIssue.Severity.WARNING
 import com.avito.android.lint.internal.model.LintReportModel
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -151,19 +150,21 @@ internal interface LintSlackReporter {
         }
 
         private fun LintIssue.shouldBeAlerted(): Boolean {
+            @Suppress("UnstableApiUsage")
             return !isFatal && severity in arrayOf(ERROR)
         }
 
         private fun LintIssue.shouldBeMentionedInAlert(): Boolean {
-            return !isFatal && severity in arrayOf(WARNING, INFORMATION)
+            @Suppress("UnstableApiUsage")
+            return !isFatal && severity in arrayOf(WARNING, INFORMATIONAL)
         }
 
         private fun LintIssue.shouldBeReportedAsUnexpectedProblem(): Boolean {
             return isFatal
         }
 
-        private fun LintIssue.shouldBeReportedAsParseError(): Boolean {
-            return severity == UNKNOWN
+        private fun LintIssue?.shouldBeReportedAsParseError(): Boolean {
+            return this == null
         }
     }
 }
