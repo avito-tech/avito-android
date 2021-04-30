@@ -60,5 +60,6 @@ internal class MessagesDeviceListener(private val messagesChannel: Channel<Devic
     }
 
     override suspend fun onFinished(device: Device) {
+        // empty
     }
 }
