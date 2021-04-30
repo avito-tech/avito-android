@@ -1,27 +1,25 @@
 package com.avito.runner.scheduler.metrics.model
 
-internal data class TestTimestamps(
-    val onDevice: Long? = null,
-    val started: Long? = null,
-    val finished: Long? = null
-) {
-    val effectiveWorkTime: Long? = if (finished != null && onDevice != null) {
-        finished - onDevice
-    } else {
-        null
-    }
+internal sealed class TestTimestamps {
 
-    val installationTime: Long? = if (started != null && onDevice != null) {
-        started - onDevice
-    } else {
-        null
-    }
+    data class NotStarted(val onDevice: Long) : TestTimestamps()
 
-    val executionTime: Long? = if (finished != null && started != null) {
-        finished - started
-    } else {
-        null
-    }
+    data class Started(val onDevice: Long, val startTime: Long) : TestTimestamps()
 
-    companion object
+    data class Finished(val onDevice: Long, val startTime: Long, val finishTime: Long) : TestTimestamps() {
+        val effectiveWorkTime = finishTime - onDevice
+        val installationTime = startTime - onDevice
+    }
+}
+
+internal fun TestTimestamps.start(currentTimeMillis: Long): TestTimestamps = when (this) {
+    is TestTimestamps.NotStarted -> TestTimestamps.Started(this.onDevice, currentTimeMillis)
+    is TestTimestamps.Started -> error("Can't start already finished $this")
+    is TestTimestamps.Finished -> error("Can't start already started $this")
+}
+
+internal fun TestTimestamps.finish(currentTimeMillis: Long): TestTimestamps = when (this) {
+    is TestTimestamps.NotStarted -> error("Can't finish not started $this")
+    is TestTimestamps.Started -> TestTimestamps.Finished(this.onDevice, this.startTime, currentTimeMillis)
+    is TestTimestamps.Finished -> error("Can't finish already finished $this")
 }

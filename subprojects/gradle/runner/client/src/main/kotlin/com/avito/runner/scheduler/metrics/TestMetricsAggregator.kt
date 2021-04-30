@@ -1,18 +1,20 @@
 package com.avito.runner.scheduler.metrics
 
+import com.avito.android.Result
+
 internal interface TestMetricsAggregator {
 
-    fun initialDelay(): Long?
+    fun initialDelay(): Result<Long>
 
-    fun endDelay(): Long?
+    fun endDelay(): Result<Long>
 
-    fun medianQueueTime(): Long?
+    fun medianQueueTime(): Result<Long>
 
-    fun medianInstallationTime(): Long?
+    fun medianInstallationTime(): Result<Long>
 
-    fun suiteTime(): Long?
+    fun suiteTime(): Result<Long>
 
     fun totalTime(): Long
 
-    fun medianDeviceUtilization(): Long?
+    fun medianDeviceUtilization(): Result<Long>
 }

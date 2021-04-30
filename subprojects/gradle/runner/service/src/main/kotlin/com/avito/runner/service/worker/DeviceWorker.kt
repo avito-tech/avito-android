@@ -17,11 +17,11 @@ import com.avito.runner.service.worker.device.Device.DeviceStatus.Freeze
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.time.TimeProvider
+import java.io.File
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.io.File
 
 internal class DeviceWorker(
     private val intentionsRouter: IntentionsRouter,

@@ -2,31 +2,35 @@ package com.avito.runner.scheduler.metrics.model
 
 import com.avito.math.percentOf
 
-internal data class DeviceTimestamps(
-    val created: Long? = null,
-    val testTimestamps: MutableMap<TestKey, TestTimestamps>,
-    val finished: Long? = null
+internal sealed class DeviceTimestamps(
+    open val created: Long,
+    open val testTimestamps: MutableMap<TestKey, TestTimestamps>,
 ) {
 
-    private val totalTime: Long?
-        get() = if (finished != null && created != null) {
-            finished - created
-        } else {
-            null
-        }
+    data class Started(
+        override val created: Long,
+        override val testTimestamps: MutableMap<TestKey, TestTimestamps>,
+    ): DeviceTimestamps(created, testTimestamps)
 
-    private val effectiveWorkTime
-        get() = testTimestamps.values.mapNotNull { it.effectiveWorkTime }.sum()
+    data class Finished(
+        override val created: Long,
+        override val testTimestamps: MutableMap<TestKey, TestTimestamps>,
+        val finished: Long
+    ): DeviceTimestamps(created, testTimestamps) {
 
-    val utilizationPercent: Int?
-        get() {
-            val localTotalTime = totalTime
-            return if (localTotalTime != null) {
-                effectiveWorkTime.percentOf(localTotalTime).toInt()
-            } else {
-                null // in case if device died and finish time not logged
-            }
-        }
+        private val totalTime = finished - created
+
+        private val effectiveWorkTime = testTimestamps.values.filterIsInstance<TestTimestamps.Finished>()
+            .map { it.effectiveWorkTime }
+            .sum()
+
+        val utilizationPercent: Int = effectiveWorkTime.percentOf(totalTime).toInt()
+    }
 
     companion object
+}
+
+internal fun DeviceTimestamps.finish(finished: Long): DeviceTimestamps = when (this) {
+    is DeviceTimestamps.Started -> DeviceTimestamps.Finished(this.created, this.testTimestamps, finished)
+    is DeviceTimestamps.Finished -> error("$this is in its finished state already")
 }
