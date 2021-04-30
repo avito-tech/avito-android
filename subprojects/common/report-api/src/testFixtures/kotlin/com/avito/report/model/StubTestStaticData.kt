@@ -1,5 +1,8 @@
 package com.avito.report.model
 
+import com.avito.android.test.annotations.TestCaseBehavior
+import com.avito.android.test.annotations.TestCasePriority
+
 public fun TestStaticDataPackage.Companion.createStubInstance(
     name: String = "com.avito.Test.test",
     deviceName: String = "api22",

@@ -1,5 +1,8 @@
 package com.avito.report.model
 
+import com.avito.android.test.annotations.TestCaseBehavior
+import com.avito.android.test.annotations.TestCasePriority
+
 public sealed class AndroidTest : TestStaticData {
 
     /**
