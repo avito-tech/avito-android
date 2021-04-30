@@ -24,15 +24,29 @@ internal class StatsHttpEventListener(
 
     var callStarted = 0L
 
+    var responseCode: Int? = null
+
     override fun callStart(call: Call) {
         callStarted = timeProvider.nowInMillis()
     }
 
     override fun responseHeadersEnd(call: Call, response: Response) {
-        val prefix = serviceMetric(call.request())
+        if (response.isSuccessful) {
+            responseCode = response.code
+        } else {
+            sendCode(
+                call = call,
+                code = response.code.toString(),
+                latencyMs = response.receivedResponseAtMillis - response.sentRequestAtMillis
+            )
+        }
+    }
 
-        val latencyMs = response.receivedResponseAtMillis - response.sentRequestAtMillis
-        statsDSender.send(TimeMetric(prefix.append("${response.code}"), latencyMs))
+    override fun callEnd(call: Call) {
+        if (responseCode in 200..299) {
+            val latencyMs = timeProvider.nowInMillis() - callStarted
+            sendCode(call, responseCode.toString(), latencyMs)
+        }
     }
 
     override fun callFailed(call: Call, ioe: IOException) {
@@ -45,6 +59,11 @@ internal class StatsHttpEventListener(
         } else {
             statsDSender.send(TimeMetric(prefix.append("unknown"), latencyMs))
         }
+    }
+
+    private fun sendCode(call: Call, code: String, latencyMs: Long) {
+        val prefix = serviceMetric(call.request())
+        statsDSender.send(TimeMetric(prefix.append(code), latencyMs))
     }
 
     private fun serviceMetric(request: Request): SeriesName {
