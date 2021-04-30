@@ -3,7 +3,6 @@ package com.avito.report
 import com.avito.http.HttpClientProvider
 import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
-import com.avito.logger.create
 import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.ReportsApiImpl
 import com.google.gson.Gson
@@ -40,8 +39,7 @@ public object ReportsApiFactory {
                             addInterceptor(
                                 RetryInterceptor(
                                     retries = 3,
-                                    allowedMethods = listOf("POST"),
-                                    logger = loggerFactory.create<ReportsApi>()
+                                    allowedMethods = listOf("POST")
                                 )
                             )
                         }

@@ -12,6 +12,8 @@ dependencies {
 
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":common:time"))
+    implementation(project(":common:http-client"))
+    implementation(project(":common:okhttp"))
     implementation(libs.slackClient) { exclude(group = "com.squareup.okhttp3") }
     implementation(libs.okhttp)
     implementation(libs.coroutinesCore)
@@ -23,6 +25,7 @@ dependencies {
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":common:time")))
     testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":common:statsd")))
 }
 
 tasks.named<Test>("integrationTest").configure {

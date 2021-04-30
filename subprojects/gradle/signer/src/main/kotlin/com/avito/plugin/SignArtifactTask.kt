@@ -55,8 +55,7 @@ abstract class SignArtifactTask @Inject constructor(objects: ObjectFactory) : De
             .addInterceptor(
                 RetryInterceptor(
                     retries = 3,
-                    allowedMethods = listOf("GET", "POST"),
-                    logger = loggerFactory.create<SignViaServiceAction>()
+                    allowedMethods = listOf("GET", "POST")
                 )
             )
             .build()

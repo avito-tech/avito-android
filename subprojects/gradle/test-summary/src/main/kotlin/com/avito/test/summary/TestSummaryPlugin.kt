@@ -22,15 +22,23 @@ class TestSummaryPlugin : Plugin<Project> {
 
         val extension = target.extensions.create<TestSummaryExtension>(testSummaryExtensionName)
 
-        @Suppress("UnstableApiUsage")
-        val slackClient: Provider<SlackClient> =
-            extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
-                createSlackClient(token, workspace)
-            }
-
         val loggerFactory = GradleLoggerFactory.fromPlugin(this, target)
 
         val timeProvider: TimeProvider = DefaultTimeProvider()
+
+        @Suppress("UnstableApiUsage")
+        val slackClient: Provider<SlackClient> =
+            extension.slackToken.zip(extension.slackWorkspace) { token, workspace ->
+                createSlackClient(
+                    slackToken = token,
+                    slackWorkspace = workspace,
+                    httpClientProvider = HttpClientProvider(
+                        statsDSender = target.statsd.get(),
+                        timeProvider = timeProvider,
+                        loggerFactory = loggerFactory
+                    )
+                )
+            }
 
         val reportsApi: Provider<ReportsApi> = extension.reportsHost.map {
             createReportsApi(
@@ -78,10 +86,16 @@ class TestSummaryPlugin : Plugin<Project> {
         }
     }
 
-    private fun createSlackClient(slackToken: String, slackWorkspace: String): SlackClient {
+    private fun createSlackClient(
+        slackToken: String,
+        slackWorkspace: String,
+        httpClientProvider: HttpClientProvider
+    ): SlackClient {
         return SlackClient.Impl(
+            serviceName = "test-summary-slack",
             token = slackToken,
-            workspace = slackWorkspace
+            workspace = slackWorkspace,
+            httpClientProvider = httpClientProvider
         )
     }
 
