@@ -1,6 +1,10 @@
 package com.avito.slack
 
 import com.avito.android.Result
+import com.avito.http.HttpClientProvider
+import com.avito.http.RetryInterceptor
+import com.avito.http.internal.RequestMetadata
+import com.avito.http.internal.RequestMetadataProvider
 import com.avito.slack.model.FoundMessage
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
@@ -11,7 +15,10 @@ import com.github.seratch.jslack.api.methods.SlackApiResponse
 import com.github.seratch.jslack.api.methods.request.chat.ChatPostMessageRequest
 import com.github.seratch.jslack.api.methods.request.chat.ChatUpdateRequest
 import com.github.seratch.jslack.api.methods.request.conversations.ConversationsHistoryRequest
+import com.github.seratch.jslack.common.http.SlackHttpClient
+import okhttp3.Request
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 interface SlackClient : SlackMessageSender, SlackFileUploader {
 
@@ -26,9 +33,33 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
         predicate: SlackMessagePredicate
     ): Result<FoundMessage>
 
-    class Impl(private val token: String, private val workspace: String) : SlackClient {
+    /**
+     * @param serviceName to separate services metrics; example: `lint-slack`, `test-summary-slack`
+     */
+    class Impl(
+        serviceName: String,
+        private val token: String,
+        private val workspace: String,
+        httpClientProvider: HttpClientProvider
+    ) : SlackClient {
 
-        private val methodsClient: MethodsClient = Slack.getInstance().methods()
+        private val timeoutSec = 30L
+
+        private val methodsClient: MethodsClient = Slack.getInstance(
+            SlackHttpClient(
+                httpClientProvider.provide(requestMetadataProvider = SlackRequestMetadataProvider(serviceName))
+                    .connectTimeout(timeoutSec, TimeUnit.SECONDS)
+                    .writeTimeout(timeoutSec, TimeUnit.SECONDS)
+                    .readTimeout(timeoutSec, TimeUnit.SECONDS)
+                    .addInterceptor(
+                        RetryInterceptor(
+                            retries = 3,
+                            allowedMethods = listOf("GET", "POST")
+                        )
+                    )
+                    .build()
+            )
+        ).methods()
 
         /**
          * fetch [messagesLookupCount] messages back though history
@@ -125,6 +156,24 @@ interface SlackClient : SlackMessageSender, SlackFileUploader {
                         .find { slackMessage -> predicate.matches(slackMessage) }
                         ?: throw Exception("Message that satisfies provided predicate not found")
                 }
+        }
+
+        private class SlackRequestMetadataProvider(private val serviceName: String) : RequestMetadataProvider {
+
+            override fun provide(request: Request): Result<RequestMetadata> {
+                val apiMethod = request.url.pathSegments.lastOrNull()?.replace(".", "_")
+
+                return if (apiMethod != null) {
+                    Result.Success(
+                        RequestMetadata(
+                            serviceName = serviceName,
+                            methodName = "$apiMethod.${request.method}"
+                        )
+                    )
+                } else {
+                    Result.Failure(RuntimeException("Slack method unavailable, no pathSegments found"))
+                }
+            }
         }
     }
 }
