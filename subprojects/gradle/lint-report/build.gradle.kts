@@ -12,6 +12,7 @@ dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
 
     implementation(libs.okhttp)
+    implementation(libs.androidToolsLintApi)
 
     implementation(project(":common:okhttp"))
     implementation(project(":common:sentry"))
