@@ -1,5 +1,7 @@
 package com.avito.http
 
+import com.avito.logger.Logger
+import com.avito.logger.NoOpLogger
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -22,6 +24,7 @@ public class RetryInterceptor(
     ),
     private val delayMs: Long = TimeUnit.SECONDS.toMillis(1),
     private val useIncreasingDelay: Boolean = true,
+    private val logger: Logger = NoOpLogger, // todo remove after release
     private val modifyRetryRequest: (Request) -> Request = { it }
 ) : Interceptor {
 
