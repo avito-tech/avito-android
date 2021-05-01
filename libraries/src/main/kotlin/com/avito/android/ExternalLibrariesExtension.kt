@@ -35,6 +35,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val buildToolsVersion = "29.0.3"
 
     val androidGradlePluginVersion = systemProperty("androidGradlePluginVersion").get()
+    val androidLintVersion = systemProperty("androidLintVersion").get()
 
     val kotlinXCli = "org.jetbrains.kotlinx:kotlinx-cli:0.2.1"
     val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
@@ -80,6 +81,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
 
     // https://r8.googlesource.com/r8/ (2.1.x <-> AGP 4.1.x)
     val r8 = "com.android.tools:r8:2.1.80"
+    val androidToolsLintApi = "com.android.tools.lint:lint-api:$androidLintVersion"
     val proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
     val playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
     val appcompat = "androidx.appcompat:appcompat:${Versions.androidX}"

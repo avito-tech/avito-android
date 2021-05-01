@@ -120,7 +120,7 @@ internal class HttpClientProviderMetricsTest {
         val provider = createClientProvider()
 
         val httpClient = provider.provide()
-            .addInterceptor(RetryInterceptor(retries = 3, logger = loggerFactory.create("tag")))
+            .addInterceptor(RetryInterceptor(retries = 3))
             .build()
 
         mockWebServer.enqueue(MockResponse().setResponseCode(502))
@@ -129,7 +129,7 @@ internal class HttpClientProviderMetricsTest {
 
         httpClient.blockingCall()
 
-        assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsAtLeast(
+        assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsExactly(
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "502"), doesNotMatter),
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "500"), doesNotMatter),
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "200"), doesNotMatter)

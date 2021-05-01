@@ -1,11 +1,14 @@
 package com.avito.slack
 
 import com.avito.android.Result
+import com.avito.android.stats.StubStatsdSender
+import com.avito.http.HttpClientProvider
 import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
+import com.avito.time.StubTimeProvider
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -13,13 +16,29 @@ import java.util.UUID
 
 internal class SlackConditionalSenderIntegrationTest {
 
+    private val loggerFactory = StubLoggerFactory
+
+    private val timeProvider = StubTimeProvider()
+
+    private val statsdSender = StubStatsdSender()
+
     private val testChannelId = SlackChannel(
         id = getSystemProperty("avito.slack.test.channelId"),
         name = getSystemProperty("avito.slack.test.channel")
     )
+
     private val testToken = getSystemProperty("avito.slack.test.token")
-    private val slackClient: SlackClient = SlackClient.Impl(testToken, getSystemProperty("avito.slack.test.workspace"))
-    private val loggerFactory = StubLoggerFactory
+
+    private val slackClient: SlackClient = SlackClient.Impl(
+        serviceName = "slack-integration-tests",
+        token = testToken,
+        workspace = getSystemProperty("avito.slack.test.workspace"),
+        httpClientProvider = HttpClientProvider(
+            statsDSender = statsdSender,
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory
+        )
+    )
 
     @Test
     fun `second message - updates with thread message - if contains same unique string as first one`() {

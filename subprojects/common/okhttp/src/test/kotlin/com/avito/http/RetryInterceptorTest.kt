@@ -107,9 +107,8 @@ internal class RetryInterceptorTest {
             addInterceptor(
                 RetryInterceptor(
                     retries = maxAttempts,
-                    delayMs = 1,
                     allowedMethods = listOf("GET", "POST"),
-                    logger = logger,
+                    delayMs = 1,
                     useIncreasingDelay = false
                 )
             )

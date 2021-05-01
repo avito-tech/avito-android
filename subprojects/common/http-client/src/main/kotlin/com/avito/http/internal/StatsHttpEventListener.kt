@@ -16,22 +16,37 @@ import java.net.SocketTimeoutException
 internal class StatsHttpEventListener(
     private val statsDSender: StatsDSender,
     private val timeProvider: TimeProvider,
-    loggerFactory: LoggerFactory
+    private val requestMetadataProvider: RequestMetadataProvider,
+    loggerFactory: LoggerFactory,
 ) : EventListener() {
 
     private val logger = loggerFactory.create<StatsHttpEventListener>()
 
     var callStarted = 0L
 
+    var responseCode: Int? = null
+
     override fun callStart(call: Call) {
         callStarted = timeProvider.nowInMillis()
     }
 
     override fun responseHeadersEnd(call: Call, response: Response) {
-        val prefix = serviceMetric(call.request())
+        if (response.isSuccessful) {
+            responseCode = response.code
+        } else {
+            sendCode(
+                call = call,
+                code = response.code.toString(),
+                latencyMs = response.receivedResponseAtMillis - response.sentRequestAtMillis
+            )
+        }
+    }
 
-        val latencyMs = response.receivedResponseAtMillis - response.sentRequestAtMillis
-        statsDSender.send(TimeMetric(prefix.append("${response.code}"), latencyMs))
+    override fun callEnd(call: Call) {
+        if (responseCode in 200..299) {
+            val latencyMs = timeProvider.nowInMillis() - callStarted
+            sendCode(call, responseCode.toString(), latencyMs)
+        }
     }
 
     override fun callFailed(call: Call, ioe: IOException) {
@@ -46,31 +61,42 @@ internal class StatsHttpEventListener(
         }
     }
 
+    private fun sendCode(call: Call, code: String, latencyMs: Long) {
+        val prefix = serviceMetric(call.request())
+        statsDSender.send(TimeMetric(prefix.append(code), latencyMs))
+    }
+
     private fun serviceMetric(request: Request): SeriesName {
-        val metadata = request.tag(RequestMetadata::class.java)
+        return requestMetadataProvider.provide(request).fold(
+            onSuccess = { metadata ->
+                SeriesName.create(
+                    "service",
+                    metadata.serviceName,
+                    metadata.methodName
+                )
+            },
+            onFailure = { throwable ->
+                val urlWithoutParams = request.url.newBuilder()
+                    .query(null)
+                    .build()
 
-        return if (metadata == null) {
-            val urlWithoutParams = request.url.newBuilder()
-                .query(null)
-                .build()
+                val seriesName = SeriesName.create(
+                    "service",
+                    "unknown-service",
+                    "unknown-method"
+                )
 
-            logger.warn(
-                msg = "RequestMetadata not available for: $urlWithoutParams\n" +
-                    "You should add okhttp.Request.tag() with additional request information for metrics\n" +
-                    "or use Retrofit @Tag annotation",
-                error = null
-            )
-            SeriesName.create(
-                "service",
-                "unknown-service",
-                "unknown-method"
-            )
-        } else {
-            SeriesName.create(
-                "service",
-                metadata.serviceName,
-                metadata.methodName
-            )
-        }
+                logger.warn(
+                    msg = "RequestMetadata not available for: $urlWithoutParams\n" +
+                        "Metrics will be send as: $seriesName\n" +
+                        "You should add okhttp.Request.tag() with additional request information for metrics\n" +
+                        "or use Retrofit @Tag annotation,\n" +
+                        "or use custom RequestMetadataProvider " +
+                        "if original request creation not available for modification",
+                    error = throwable
+                )
+                seriesName
+            }
+        )
     }
 }
