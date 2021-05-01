@@ -89,6 +89,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val material = "com.google.android.material:material:${Versions.androidX}"
     val androidAnnotations = "androidx.annotation:annotation:1.1.0"
     val freeReflection = "me.weishu:free_reflection:2.2.0"
+    val jdgraphtCore = "org.jgrapht:jgrapht-core:1.5.1"
 
     val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     val androidGradlePlugin = "com.android.tools.build:gradle:$androidGradlePluginVersion"
