@@ -129,7 +129,7 @@ internal class HttpClientProviderMetricsTest {
 
         httpClient.blockingCall()
 
-        assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsAtLeast(
+        assertThat(statsDSender.getSentMetrics()).comparingElementsUsing(metricNamesCorrespondence).containsExactly(
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "502"), doesNotMatter),
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "500"), doesNotMatter),
             TimeMetric(SeriesName.create("service", "some-service", "some-method", "200"), doesNotMatter)
