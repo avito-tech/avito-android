@@ -2,6 +2,8 @@ package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.runner.devices.internal.FakeAndroidDebugBridge
 import com.avito.android.runner.devices.internal.StubEmulatorsLogsReporter
+import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.logger.LoggerFactory
 import com.avito.utils.gradle.KubernetesCredentials
@@ -11,6 +13,7 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
     loggerFactory: LoggerFactory,
     buildId: String = getSystemProperty(name = "teamcityBuildId", defaultValue = "local"),
     deploymentNameGenerator: DeploymentNameGenerator = StubDeploymentNameGenerator(),
+    httpClientProvider: HttpClientProvider = HttpClientProvider.createStubInstance(),
     kubernetesUrl: String = getSystemProperty("kubernetesUrl"),
     kubernetesNamespace: String = getSystemProperty("kubernetesNamespace"),
     configurationName: String = "integration-test",
@@ -27,6 +30,7 @@ internal fun KubernetesReservationClient.Companion.createStubInstance(
         androidDebugBridge = FakeAndroidDebugBridge(),
         kubernetesApi = KubernetesApi.Impl(
             kubernetesClient = createKubernetesClient(
+                httpClientProvider = httpClientProvider,
                 kubernetesCredentials = kubernetesCredentials,
                 namespace = kubernetesNamespace
             ),

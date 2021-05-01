@@ -2,6 +2,10 @@
 
 package com.avito.utils.gradle
 
+import com.avito.android.Result
+import com.avito.http.HttpClientProvider
+import com.avito.http.internal.RequestMetadata
+import com.avito.http.internal.RequestMetadataProvider
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import io.fabric8.kubernetes.client.Config
 import io.fabric8.kubernetes.client.ConfigBuilder
@@ -10,10 +14,12 @@ import io.fabric8.kubernetes.client.KubernetesClient
 import io.fabric8.kubernetes.client.OAuthTokenProvider
 import io.kubernetes.client.util.FilePersister
 import io.kubernetes.client.util.KubeConfig
+import okhttp3.Request
 import org.gradle.api.Project
 import java.io.File
 
 fun createKubernetesClient(
+    httpClientProvider: HttpClientProvider,
     kubernetesCredentials: KubernetesCredentials,
     namespace: String
 ): KubernetesClient {
@@ -67,10 +73,29 @@ fun createKubernetesClient(
             throw IllegalStateException("Can't create kubernetesClient without credentials")
     }
 
-    return DefaultKubernetesClient(config)
+    val httpClient = httpClientProvider
+        .provide(requestMetadataProvider = KubernetesRequestMetadataProvider())
+        .build()
+
+    return DefaultKubernetesClient(httpClient, config)
+}
+
+private class KubernetesRequestMetadataProvider : RequestMetadataProvider {
+
+    override fun provide(request: Request): Result<RequestMetadata> {
+        // example: apis_apps_v1_namespaces_android-emulator_deployments
+        // drop apis_
+        val methodName = request.url()
+            .pathSegments()
+            .drop(1)
+            .joinToString(separator = "_")
+
+        return Result.Success(RequestMetadata("k8s", methodName))
+    }
 }
 
 /**
+ * apis_apps_v1_namespaces_android-emulator_deployments
  * OAuth token provider that automatically refreshes an expired token and persists changes to kube config.
  * https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens
  */
