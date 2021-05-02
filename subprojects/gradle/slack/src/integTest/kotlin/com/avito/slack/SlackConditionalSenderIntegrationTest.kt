@@ -1,14 +1,13 @@
 package com.avito.slack
 
 import com.avito.android.Result
-import com.avito.android.stats.StubStatsdSender
 import com.avito.http.HttpClientProvider
+import com.avito.http.createStubInstance
 import com.avito.kotlin.dsl.getSystemProperty
 import com.avito.logger.StubLoggerFactory
 import com.avito.slack.model.SlackChannel
 import com.avito.slack.model.SlackMessage
 import com.avito.slack.model.SlackSendMessageRequest
-import com.avito.time.StubTimeProvider
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -17,10 +16,6 @@ import java.util.UUID
 internal class SlackConditionalSenderIntegrationTest {
 
     private val loggerFactory = StubLoggerFactory
-
-    private val timeProvider = StubTimeProvider()
-
-    private val statsdSender = StubStatsdSender()
 
     private val testChannelId = SlackChannel(
         id = getSystemProperty("avito.slack.test.channelId"),
@@ -33,11 +28,7 @@ internal class SlackConditionalSenderIntegrationTest {
         serviceName = "slack-integration-tests",
         token = testToken,
         workspace = getSystemProperty("avito.slack.test.workspace"),
-        httpClientProvider = HttpClientProvider(
-            statsDSender = statsdSender,
-            timeProvider = timeProvider,
-            loggerFactory = loggerFactory
-        )
+        httpClientProvider = HttpClientProvider.createStubInstance(loggerFactory = loggerFactory)
     )
 
     @Test

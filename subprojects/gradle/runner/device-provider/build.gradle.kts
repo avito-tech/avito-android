@@ -26,6 +26,8 @@ dependencies {
 
     testImplementation(testFixtures(project(":common:logger")))
     testImplementation(libs.coroutinesTest)
+
+    testFixturesApi(testFixtures(project(":common:http-client")))
 }
 
 kotlin {
