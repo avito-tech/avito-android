@@ -2,13 +2,11 @@ package com.avito.android.rule
 
 import android.app.Activity
 import androidx.test.espresso.intent.Intents
-import androidx.test.rule.ActivityTestRule
 import com.avito.android.test.Intents.stubEverything
 
-internal class ActivityRule<T : Activity>(aClass: Class<T>) : ActivityTestRule<T>(
-    aClass,
-    true, // initialTouchMode
-    false // launchActivity
+internal class ActivityRule<T : Activity>(aClass: Class<T>) : ActivityScenarioRule<T>(
+    activityClass = aClass,
+    launchActivity = false,
 ) {
 
     override fun afterActivityLaunched() {
