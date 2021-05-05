@@ -32,7 +32,7 @@ No error logs
         override fun kaptFails() = """
 * What went wrong:
 Execution failed for task ':app:kaptDebugKotlin'.
-	> A failure occurred while executing org.jetbrains.kotlin.gradle.internal.KaptExecution
+	> A failure occurred while executing org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask${'$'}KaptExecutionWorkAction
 		> class java.lang.reflect.InvocationTargetException (no error message)
 			> Error while annotation processing
 

@@ -2,41 +2,50 @@ package ru.avito.util
 
 public sealed class Characters(internal val chars: List<Char>) {
 
+    private companion object {
+        private val alphabeticLowercase = ('a'..'z').toList()
+        private val alphabeticUppercase = ('A'..'Z').toList()
+        private val alphabetic = alphabeticLowercase + alphabeticUppercase
+        private val digits = ('0'..'9').toList()
+        private val punctuations = listOf('.', ',', '!', '?', ';', ':', '-', '(', ')', '"').toList()
+        private val specials = listOf('@', '#', '$', '%', '^', '&', '*', '{', '}', '[', ']', '/', '\\', '|')
+    }
+
     public object AlphabeticLowercase : Characters(
-        chars = ('a'..'z').toList()
+        chars = alphabeticLowercase
     )
 
     public object AlphabeticUppercase : Characters(
-        chars = ('A'..'Z').toList()
+        chars = alphabeticUppercase
     )
 
     public object Alphabetic : Characters(
-        chars = AlphabeticLowercase.chars + AlphabeticUppercase.chars
+        chars = alphabetic
     )
 
     public object Digits : Characters(
-        chars = ('0'..'9').toList()
+        chars = digits
     )
 
     public object Punctuation : Characters(
-        chars = listOf('.', ',', '!', '?', ';', ':', '-', '(', ')', '"').toList()
+        chars = punctuations
     )
 
     public object Special : Characters(
-        chars = listOf('@', '#', '$', '%', '^', '&', '*', '{', '}', '[', ']', '/', '\\', '|')
+        chars = specials
     )
 
     public object Alphanumeric : Characters(
-        chars = Alphabetic.chars + Digits.chars
+        chars = alphabetic + digits
     )
 
     public object Text : Characters(
-        chars = Alphabetic.chars + Digits.chars + Punctuation.chars
+        chars = alphabetic + digits + punctuations
     )
 
     public class SingleChar(char: Char) : Characters(listOf(char))
 
     public object All : Characters(
-        chars = Alphabetic.chars + Digits.chars + Punctuation.chars + Special.chars
+        chars = alphabetic + digits + punctuations + specials
     )
 }
