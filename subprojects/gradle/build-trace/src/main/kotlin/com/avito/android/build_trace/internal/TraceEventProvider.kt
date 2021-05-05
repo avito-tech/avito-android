@@ -1,5 +1,6 @@
 package com.avito.android.build_trace.internal
 
+import com.avito.android.build_trace.internal.critical_path.TaskOperation
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.CompleteEvent
@@ -70,6 +71,17 @@ internal class TraceEventProvider {
         threadId = unknownThreadId,
         eventName = "execution end"
     )
+
+    fun criticalPathEvent(event: TraceEvent, path: List<TaskOperation>): TraceEvent {
+        if (event !is CompleteEvent) return event
+
+        val inPath = path.firstOrNull { it.path == event.eventName } != null
+        return if (inPath) {
+            event.copy(color = TraceEvent.COLOR_YELLOW)
+        } else {
+            event
+        }
+    }
 
     private fun taskShortDescription(task: Task, project: Project): String {
         return if (project == task.project) {

@@ -1,12 +1,14 @@
 package com.avito.android.build_trace
 
 import com.avito.android.build_trace.internal.BuildTraceListener
-import com.avito.android.build_trace.internal.CriticalPathListener
+import com.avito.android.build_trace.internal.critical_path.CriticalPathListener
+import com.avito.android.build_trace.internal.critical_path.CriticalPathSerialization
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.io.File
 
 open class BuildTracePlugin : Plugin<Project> {
 
@@ -27,9 +29,20 @@ open class BuildTracePlugin : Plugin<Project> {
 
         val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
 
-        val criticalPath = CriticalPathListener.from(project)
-        val buildTrace = BuildTraceListener.from(project, loggerFactory)
+        val criticalPathListener = criticalPathListener(project)
 
-        GradleCollector.initialize(project, listOf(criticalPath, buildTrace))
+        val buildTraceListener = BuildTraceListener(
+            output = File(project.projectDir, "outputs/avito/build-trace/build.trace"),
+            criticalPathProvider = criticalPathListener,
+            loggerFactory = loggerFactory
+        )
+        GradleCollector.initialize(project, listOf(criticalPathListener, buildTraceListener))
+    }
+
+    private fun criticalPathListener(project: Project): CriticalPathListener {
+        val writer = CriticalPathSerialization(
+            report = File(project.projectDir, "outputs/avito/build-trace/critical_path.json")
+        )
+        return CriticalPathListener(writer)
     }
 }

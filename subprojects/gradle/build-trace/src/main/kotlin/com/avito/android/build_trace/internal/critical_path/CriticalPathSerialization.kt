@@ -1,4 +1,4 @@
-package com.avito.android.build_trace.internal
+package com.avito.android.build_trace.internal.critical_path
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken

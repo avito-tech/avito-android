@@ -1,12 +1,14 @@
-package com.avito.android.build_trace.internal
+package com.avito.android.build_trace.internal.critical_path
 
+import com.avito.android.build_trace.internal.predecessors
+import com.avito.android.build_trace.internal.type
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.graph.Operation
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import org.gradle.api.Task
 
-internal class TaskOperation(
+internal data class TaskOperation(
 
     @Expose
     @SerializedName("path")
@@ -50,20 +52,6 @@ internal class TaskOperation(
     override fun hashCode(): Int {
         return id.hashCode()
     }
-
-    fun copy(
-        path: String = this.path,
-        type: String = this.type,
-        startMs: Long = this.startMs,
-        finishMs: Long = this.finishMs,
-        predecessors: Set<String> = this.predecessors
-    ) = TaskOperation(
-        path = path,
-        type = type,
-        startMs = startMs,
-        finishMs = finishMs,
-        predecessors = predecessors
-    )
 
     companion object {
 

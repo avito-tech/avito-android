@@ -1,24 +1,26 @@
-package com.avito.android.build_trace.internal
+package com.avito.android.build_trace.internal.critical_path
 
 import com.avito.android.gradle.metric.AbstractBuildEventsListener
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.graph.ShortestPath
 import org.gradle.BuildResult
-import org.gradle.api.Project
 import org.gradle.api.Task
-import java.io.File
 
 internal class CriticalPathListener(
     private val serialization: CriticalPathSerialization
-) : AbstractBuildEventsListener() {
+) : AbstractBuildEventsListener(), CriticalPathProvider {
 
     private val operations = mutableSetOf<TaskOperation>()
 
-    val criticalPath: List<TaskOperation> by lazy {
+    private val criticalPath: List<TaskOperation> by lazy {
         ShortestPath(operations)
             .find()
             .map { it.invertTime() }
+    }
+
+    override fun path(): List<TaskOperation> {
+        return criticalPath
     }
 
     // Using a TaskExecutionListener instead of OperationCompletionListener
@@ -33,18 +35,6 @@ internal class CriticalPathListener(
 
     override fun buildFinished(buildResult: BuildResult, profile: BuildProfile) {
         serialization.write(criticalPath)
-    }
-
-    companion object {
-
-        fun from(project: Project): CriticalPathListener {
-            val writer = CriticalPathSerialization(
-                report = File(project.projectDir, "outputs/avito/build-trace/critical_path.json")
-            )
-            return CriticalPathListener(
-                writer
-            )
-        }
     }
 }
 

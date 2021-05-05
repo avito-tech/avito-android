@@ -1,6 +1,6 @@
 package com.avito.android.build_trace
 
-import com.avito.android.build_trace.internal.CriticalPathSerialization
+import com.avito.android.build_trace.internal.critical_path.CriticalPathSerialization
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth.assertThat
@@ -272,7 +272,6 @@ class CriticalPathTest {
             // We don't consider task start time at all.
             // Disable parallel execution to eliminate even accidental assumptions.
             "--no-parallel",
-            "--profile", // TODO: eliminate
         )
     }
 

@@ -7,7 +7,7 @@ import org.jgrapht.graph.DefaultWeightedEdge
 import org.jgrapht.graph.DirectedWeightedMultigraph
 
 /**
- * @nodes nodes describing a DAG
+ * @operations nodes describing a DAG
  */
 class ShortestPath<T : Operation>(private val operations: Set<T>) {
 
@@ -26,7 +26,7 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
 
     /***
      * Builds a graph to find the shortest path.
-     * Let's see by example. We have nodes that describes the graph:
+     * Let's see by example. We have nodes describing the graph:
      *
      * ```
      * A(1) <----┐
@@ -159,7 +159,7 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
     }
 
     private fun Operation.findDependencies(): List<Operation> {
-        // Skip not existed but dependent operations
+        // Skip missing nodes
         return predecessors.mapNotNull { dependencyKey ->
             operationByKey[dependencyKey]
         }
