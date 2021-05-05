@@ -16,19 +16,19 @@ internal class CriticalPathListener(
     private val operations = mutableSetOf<TaskOperation>()
 
     val criticalPath: List<TaskOperation> by lazy {
-        ShortestPath(operations).find()
+        ShortestPath(operations)
+            .find()
+            .map { it.invertTime() }
     }
 
     // Using a TaskExecutionListener instead of OperationCompletionListener
     //   due to https://github.com/gradle/gradle/issues/15824
     override fun afterExecute(task: Task, state: TaskExecution) {
-        val operation = TaskOperation.from(task, state)
-        // invert time to find the shortest path as the longest
-        val inverted = operation.copy(
-            startMs = -operation.startMs,
-            finishMs = -operation.finishMs
+        operations.add(
+            TaskOperation
+                .from(task, state)
+                .invertTime()
         )
-        operations.add(inverted)
     }
 
     override fun buildFinished(buildResult: BuildResult, profile: BuildProfile) {
@@ -47,3 +47,11 @@ internal class CriticalPathListener(
         }
     }
 }
+
+/**
+ * To use the shortest path algorithm as the longest path
+ */
+private fun TaskOperation.invertTime() = copy(
+    startMs = -startMs,
+    finishMs = -finishMs
+)
