@@ -166,33 +166,6 @@ class CriticalPathTest {
     }
 
     @Test
-    fun `has only executed tasks  - parallel routes`() {
-        setupTasks(
-            """
-            ${delayTaskDeclaration()}
-            
-            tasks.register("first", DelayTask::class.java)
-            
-            tasks.register("intermediate_1", DelayTask::class.java){
-                durationMs.set(1)
-                dependsOn(":first")
-            }
-            tasks.register("intermediate_100", DelayTask::class.java){
-                durationMs.set(100)
-                dependsOn(":first")
-            }
-            
-            tasks.register("last", DelayTask::class.java) {
-                dependsOn(":intermediate_1", ":intermediate_100")
-            }
-            """.trimIndent()
-        )
-        val tasks = calculatePath(":last")
-
-        assertThat(tasks).containsExactly(":first", ":intermediate_100", ":last")
-    }
-
-    @Test
     fun `no report  - disabled plugin`() {
         setupTasks(
             enabledPlugin = false,
