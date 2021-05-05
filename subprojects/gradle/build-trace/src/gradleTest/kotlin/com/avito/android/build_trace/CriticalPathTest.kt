@@ -192,11 +192,37 @@ class CriticalPathTest {
         assertThat(tasks).containsExactly(":first", ":intermediate_100", ":last")
     }
 
-    private fun setupTasks(buildScript: String) {
+    @Test
+    fun `no report  - disabled plugin`() {
+        setupTasks(
+            enabledPlugin = false,
+            buildScript = """
+            ${delayTaskDeclaration()}
+            
+            tasks.register("work", DelayTask::class.java)
+            """.trimIndent()
+        )
+
+        val result = build(":work")
+
+        result.assertThat()
+            .buildSuccessful()
+            .taskWithOutcome(":work", TaskOutcome.SUCCESS)
+
+        assertThat(reportFile().exists()).isFalse()
+    }
+
+    private fun setupTasks(
+        buildScript: String,
+        enabledPlugin: Boolean = true
+    ) {
         File(projectDir, "build.gradle.kts").writeText(
             """
             plugins {
                 id("com.avito.android.build-trace")
+            }
+            buildTrace {
+                enabled.set($enabledPlugin)
             }
             $buildScript
             """.trimIndent()
@@ -229,9 +255,8 @@ class CriticalPathTest {
                 .taskWithOutcome(targetTask, TaskOutcome.SUCCESS)
         }
 
-        val reader = CriticalPathSerialization(
-            File(projectDir, "outputs/avito/build-trace/critical_path.json")
-        )
+        val reader = CriticalPathSerialization(reportFile())
+
         return reader.read()
             .map { it.path }
             .toSet()
@@ -250,4 +275,7 @@ class CriticalPathTest {
             "--profile", // TODO: eliminate
         )
     }
+
+    private fun reportFile(): File =
+        File(projectDir, "outputs/avito/build-trace/critical_path.json")
 }

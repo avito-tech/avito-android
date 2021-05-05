@@ -9,11 +9,15 @@ This plugin collects tasks execution time in a trace event format.
 
 ## Getting started
 
-Apply the plugin in the root `build.gradle` file:
+Apply the plugin in the root buildscript:
 
-```groovy
+```kotlin
 plugins {
     id("com.avito.android.build-trace")
+}
+
+buildTrace {
+    enabled.set(true)
 }
 ```
 
@@ -21,10 +25,10 @@ plugins {
 plugins-setup.md
 --8<--
 
-Run a build with `--profile` argument. You will get a message in a log:
+Run a build. You will get a message in a log:
 
 ```log
-Build trace: <path to the project>/outputs/trace/build.trace
+Build trace: <path to the project>/outputs/avito/build-trace/build.trace
 ```
 
 Open the file in `chrome://tracing`. 
