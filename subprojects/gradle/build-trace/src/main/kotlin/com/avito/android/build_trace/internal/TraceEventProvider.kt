@@ -77,7 +77,10 @@ internal class TraceEventProvider {
 
         val inPath = path.firstOrNull { it.path == event.eventName } != null
         return if (inPath) {
-            event.copy(color = TraceEvent.COLOR_YELLOW)
+            event.copy(
+                color = TraceEvent.COLOR_YELLOW,
+                args = event.args.orEmpty() + mapOf(argCriticalPath to true)
+            )
         } else {
             event
         }
@@ -122,5 +125,6 @@ internal class TraceEventProvider {
     }
 }
 
+private const val argCriticalPath = "CRITICAL_PATH"
 private const val unknownProcessId = "_"
 private const val unknownThreadId = "_"
