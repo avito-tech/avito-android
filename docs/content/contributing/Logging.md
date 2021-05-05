@@ -1,6 +1,6 @@
 # Logging
 
-`com.avito.logger.Logger` used both in Gradle and in Android Runtime
+`com.avito.logger.Logger` is used both in Gradle and in Android runtime.
 
 ## Logging in Gradle
 
@@ -18,7 +18,7 @@ abstract class MyTask : DefaultTask() {
 
 ## Logging in Android
 
-To obtain logger for android create `AndroidLoggerFactory`
+To obtain a logger for Android create `AndroidLoggerFactory`
 
 ```kotlin
 val loggerFactory: LoggerFactory = AndroidLoggerFactory(args)
@@ -43,32 +43,32 @@ val logger = loggerFactory.create("MyCustomTag")
 
 ## Testing
 
-`StubLoggerFactory` and `StubLogger` can be used in tests
+`StubLoggerFactory` and `StubLogger` can be used in tests.
 
-`StubLogger` will write to stdout only during test runs from IDE
+`StubLogger` will write to stdout only during test runs from IDE.
 
 ## Verbose mode
 
-Use gradle property `avito.logging.verbosity` to override gradle logging level and send avito logs to stdout (e.g. with
-gradle's `quiet` level.)
+Use Gradle property `avito.logging.verbosity` to override Gradle logging level and send avito logs to stdout 
+(e.g. with Gradle's `quiet` level.)
 
 Value defines which levels to override.
 
-For example: `-Pavito.logging.verbosity=INFO` makes `INFO` and higher(`WARNING`) levels act like level quiet
+For example: `-Pavito.logging.verbosity=INFO` makes `INFO` and higher (`WARNING`) levels act like level quiet
 
-`CRITICAL`, which is mapped to gradle's `error` level is visible already on quiet level
+`CRITICAL`, which is mapped to Gradle's `error` level is visible already on quiet level
 
 Possible values are in `DEBUG`, `INFO`, `WARNING`, `CRITICAL` (see `com.avito.logger.LogLevel`)
 
-Default is not defined
+Default is not defined.
 
 ### Stacktrace
 
-Add gradle's `--stacktrace` to also print stacktraces in verbose mode if available
+Add Gradle's `--stacktrace` to also print stacktraces in verbose mode if available.
 
 ### Why is it needed?
 
-Gradle use lifecycle level by default, but to see info or debug level you have to set it for whole gradle run
+Gradle use lifecycle level by default, but to see info or debug level you have to set it for whole Gradle run
 via `--info` or `--debug`, which made console output unreadable and build slow.
 
 There is an issue for

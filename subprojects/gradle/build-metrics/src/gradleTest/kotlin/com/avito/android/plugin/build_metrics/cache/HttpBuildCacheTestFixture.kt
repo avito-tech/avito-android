@@ -19,6 +19,9 @@ internal abstract class HttpBuildCacheTestFixture {
     @BeforeEach
     fun setup(@TempDir tempDir: File) {
         this.projectDir = tempDir
+    }
+
+    protected fun setup() {
         mockWebServer = MockWebServer()
 
         File(projectDir, "settings.gradle.kts").writeText(

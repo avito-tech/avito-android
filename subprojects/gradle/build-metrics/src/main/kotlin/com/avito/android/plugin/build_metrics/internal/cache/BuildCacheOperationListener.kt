@@ -2,11 +2,14 @@ package com.avito.android.plugin.build_metrics.internal.cache
 
 import com.avito.android.gradle.metric.BuildEventsListener
 import com.avito.android.gradle.metric.NoOpBuildEventsListener
+import com.avito.android.plugin.build_metrics.BuildMetricsPlugin
 import com.avito.android.plugin.build_metrics.internal.AbstractBuildOperationListener
 import com.avito.android.plugin.build_metrics.internal.buildOperationListenerManager
 import com.avito.android.plugin.build_metrics.internal.dump
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
+import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.Logger
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.project.ProjectInternal
@@ -24,7 +27,8 @@ import org.gradle.internal.operations.OperationIdentifier
 import java.util.concurrent.ConcurrentHashMap
 
 internal class BuildCacheOperationListener(
-    private val eventsConsumer: BuildCacheEventsConsumer
+    private val eventsConsumer: BuildCacheEventsConsumer,
+    private val logger: Logger
 ) : AbstractBuildOperationListener() {
 
     private val remoteLoadsByParentId: MutableMap<OperationIdentifier, BuildCacheRemoteLoadBuildOperationType.Result> =
@@ -132,6 +136,7 @@ internal class BuildCacheOperationListener(
             message.substringAfter(" response status ").substringBefore(':').trim()
                 .toInt()
         } else {
+            logger.warn("Unknown cache load error", error)
             null
         }
     }
@@ -147,6 +152,7 @@ internal class BuildCacheOperationListener(
             message.substringAfter(" response status ").substringBefore(':').trim()
                 .toInt()
         } else {
+            logger.warn("Unknown cache store error", error)
             null
         }
     }
@@ -156,13 +162,17 @@ internal class BuildCacheOperationListener(
         fun register(project: Project): BuildEventsListener {
             if (!canTrackRemoteCache(project)) return NoOpBuildEventsListener()
 
+            val loggerFactory = GradleLoggerFactory.fromProject(project, BuildMetricsPlugin::class.java.simpleName)
+            val logger = loggerFactory.create(BuildCacheOperationListener::class.java.simpleName)
+
             val eventsConsumer = BuildCacheEventsConsumerImpl(
                 statsd = project.statsd,
-                environmentInfo = project.environmentInfo()
+                environmentInfo = project.environmentInfo(),
             )
 
             val buildOperationListener = BuildCacheOperationListener(
-                eventsConsumer
+                eventsConsumer = eventsConsumer,
+                logger = logger
             )
             project.gradle.buildOperationListenerManager().addListener(buildOperationListener)
 

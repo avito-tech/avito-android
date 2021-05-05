@@ -565,7 +565,6 @@ style:
         active: false
         includeLineWrapping: true
     # https://detekt.github.io/detekt/style.html#forbiddencomment
-    # we use todos a lot, maybe there is a better way
     ForbiddenComment:
         active: true
         values: [ 'STOPSHIP' ]
