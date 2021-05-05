@@ -1,4 +1,4 @@
-package com.avito.android.plugin.build_metrics.internal
+package com.avito.android.gradle.profile
 
 import org.gradle.internal.operations.BuildOperationDescriptor
 import org.gradle.internal.operations.BuildOperationListener
@@ -12,7 +12,7 @@ import org.gradle.internal.operations.OperationStartEvent
  *
  * Events are hierarchically organized by id <--> parentId relationships
  */
-internal abstract class AbstractBuildOperationListener : BuildOperationListener {
+public abstract class AbstractBuildOperationListener : BuildOperationListener {
 
     override fun started(descriptor: BuildOperationDescriptor, event: OperationStartEvent) {
         // no-op

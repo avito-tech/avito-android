@@ -50,7 +50,8 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
      * ```
      *
      * - A node weight become an edge weight
-     * - Single source and sink are needed to find the shortest path without checking all combinations of roots and leafs
+     * - Single source and sink are needed to find the shortest path
+     *     without checking all combinations of roots and leaves
      * - Dependencies in graph are kinda inverted for faster computing in case we need to compare multiple paths.
      *   It's more efficient than recomputing paths for different sources.
      */
