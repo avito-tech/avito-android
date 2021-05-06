@@ -32,7 +32,7 @@ open class BuildTracePlugin : Plugin<Project> {
         val criticalPathListener = criticalPathListener(project)
 
         val buildTraceListener = BuildTraceListener(
-            output = File(project.projectDir, "outputs/avito/build-trace/build.trace"),
+            output = File(pluginOutputDir(project), "build.trace"),
             criticalPathProvider = criticalPathListener,
             loggerFactory = loggerFactory
         )
@@ -41,8 +41,11 @@ open class BuildTracePlugin : Plugin<Project> {
 
     private fun criticalPathListener(project: Project): CriticalPathListener {
         val writer = CriticalPathSerialization(
-            report = File(project.projectDir, "outputs/avito/build-trace/critical_path.json")
+            report = File(pluginOutputDir(project), "critical_path.json")
         )
         return CriticalPathListener(writer)
     }
+
+    private fun pluginOutputDir(project: Project): File =
+        File(project.projectDir, "outputs/build-trace")
 }

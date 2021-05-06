@@ -28,7 +28,7 @@ plugins-setup.md
 Run a build. You will get a message in a log:
 
 ```log
-Build trace: <path to the project>/outputs/avito/build-trace/build.trace
+Build trace: <path to the project>/outputs/build-trace/build.trace
 ```
 
 ## Inspecting a trace
@@ -61,6 +61,7 @@ ORDER BY slice.dur DESC
 [Critical path](https://en.wikipedia.org/wiki/Critical_path_method) is a set of tasks that define the build duration.  
 
 Tasks on this path are highlighted in a trace.  
+
 You can find them by query:
 
 ```sql
@@ -70,7 +71,7 @@ WHERE args.flat_KEY = "args.CRITICAL_PATH"
 ORDER BY slice.ts ASC
 ```
 
-Also there is raw data in `outputs/avito/build-trace/critical_path.json`:
+Also there is raw data in `outputs/build-trace/critical_path.json`:
 
 ???+ warning
     This report is auxiliary and is a subject of change.

@@ -249,5 +249,5 @@ class CriticalPathTest {
     }
 
     private fun reportFile(): File =
-        File(projectDir, "outputs/avito/build-trace/critical_path.json")
+        File(projectDir, "outputs/build-trace/critical_path.json")
 }
