@@ -5,7 +5,7 @@ Use it if you can't use a build scan for any reason.
 
 This plugin collects tasks execution time in a trace event format.
 
-![](https://user-images.githubusercontent.com/1104540/80872574-63d68e80-8cbb-11ea-9333-c7f5f8c9e557.png)
+![](https://user-images.githubusercontent.com/1104540/117260848-2b323d80-ae58-11eb-901f-9d2e2fda453f.png)
 
 ## Getting started
 
@@ -60,7 +60,7 @@ ORDER BY slice.dur DESC
 
 [Critical path](https://en.wikipedia.org/wiki/Critical_path_method) is a set of tasks that define the build duration.  
 
-Tasks on this path are highlighted in a trace.  
+Tasks on this path are [highlighted in a trace](#build-trace-gradle-plugin).  
 
 You can find them by query:
 

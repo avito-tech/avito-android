@@ -24,13 +24,16 @@ internal class TraceEventProvider {
                 taskShortDescription(it, task.project)
             }
 
-        val metadata = mapOf<String, String>(
+        val metadata = mutableMapOf<String, String>(
             "state" to state.state?.toTaskResult().toString(),
-            "type" to task.type.simpleName,
-            "predecessors" to predecessorTasks.toString(),
-            "finalizedBy" to finalizeTasks.toString(),
+            "type" to task.type.name
         )
-            .filterValues { it.isNotBlank() }
+        if (predecessorTasks.isNotEmpty()) {
+            metadata["predecessors"] = predecessorTasks.joinToString()
+        }
+        if (finalizeTasks.isNotEmpty()) {
+            metadata["finalizedBy"] = finalizeTasks.joinToString()
+        }
 
         return CompleteEvent(
             timestampMicroseconds = TimeUnit.MILLISECONDS.toMicros(state.startTime),
