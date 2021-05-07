@@ -2,8 +2,8 @@ package com.avito.android.plugin.build_metrics.internal.cache
 
 import com.avito.android.gradle.metric.BuildEventsListener
 import com.avito.android.gradle.metric.NoOpBuildEventsListener
+import com.avito.android.gradle.profile.AbstractBuildOperationListener
 import com.avito.android.plugin.build_metrics.BuildMetricsPlugin
-import com.avito.android.plugin.build_metrics.internal.AbstractBuildOperationListener
 import com.avito.android.plugin.build_metrics.internal.buildOperationListenerManager
 import com.avito.android.plugin.build_metrics.internal.dump
 import com.avito.android.sentry.environmentInfo

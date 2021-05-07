@@ -23,6 +23,11 @@ internal class ConfigurationCacheCompatibilityTest {
             plugins = plugins {
                 id("com.avito.android.build-trace")
             },
+            buildGradleExtra = """
+                buildTrace {
+                    enabled.set(true)
+                }
+                """.trimIndent(),
             modules = listOf(
                 AndroidAppModule(name = "app")
             )
@@ -37,7 +42,6 @@ internal class ConfigurationCacheCompatibilityTest {
         return gradlew(
             projectDir,
             "help",
-            "-Pandroid.enableProfileJson=true",
             dryRun = true,
             configurationCache = true
         )

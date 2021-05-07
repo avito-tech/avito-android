@@ -11,6 +11,8 @@ dependencies {
     implementation(project(":gradle:trace-event"))
     implementation(project(":gradle:gradle-profile"))
     implementation(project(":gradle:build-environment"))
+    implementation(project(":common:graph"))
+    implementation(libs.gson)
     implementation(gradleApi())
 
     gradleTestImplementation(project(":gradle:test-project"))
