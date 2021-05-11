@@ -12,7 +12,7 @@ public interface LegacyReport {
 
     public fun finish()
 
-    public fun sendLostTests(lostTests: List<AndroidTest.Lost>)
+    public fun sendLostTests(lostTests: Collection<AndroidTest.Lost>)
 
     /**
      * getTestsForRunId will fetch all tests, even not relatable to current run

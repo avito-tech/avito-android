@@ -104,6 +104,9 @@ __check_defined = \
 clean:
 	rm -rf `find . -type d -name build`
 
+unsafe_clean:
+	git clean -fdx
+
 # Warning. Hack!
 # Мы можем удалять эти локи, т.к. гарантированно никакие другие процессы не используют этот шаренный кеш на начало новой сборки
 # см. clearDockerContainers

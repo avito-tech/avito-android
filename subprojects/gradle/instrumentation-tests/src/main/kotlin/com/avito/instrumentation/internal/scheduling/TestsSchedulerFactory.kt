@@ -60,7 +60,7 @@ internal interface TestsSchedulerFactory {
             return InstrumentationTestsScheduler(
                 testsRunner = testRunner,
                 params = params,
-                sourceReport = report,
+                report = report,
                 testSuiteProvider = testSuiteProvider,
                 testSuiteLoader = testSuiteLoader,
                 gson = gson,

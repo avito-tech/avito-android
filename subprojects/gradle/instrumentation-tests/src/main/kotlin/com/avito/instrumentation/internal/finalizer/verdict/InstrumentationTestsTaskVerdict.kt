@@ -3,7 +3,7 @@ package com.avito.instrumentation.internal.finalizer.verdict
 internal data class InstrumentationTestsTaskVerdict(
     val title: String,
     val reportUrl: String,
-    val causeFailureTests: Set<Test>
+    val problemTests: Set<Test>
 ) {
     data class Test(
         val testUrl: String,

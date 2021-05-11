@@ -4,8 +4,8 @@ import com.avito.android.test.annotations.TestCaseBehavior
 import com.avito.android.test.annotations.TestCasePriority
 
 public fun TestStaticDataPackage.Companion.createStubInstance(
-    name: String = "com.avito.Test.test",
-    deviceName: String = "api22",
+    name: TestName = TestName("com.avito.Test.test"),
+    deviceName: DeviceName = DeviceName("api22"),
     description: String = "just a test",
     testCaseId: Int? = null,
     dataSetNumber: Int? = null,
@@ -17,8 +17,8 @@ public fun TestStaticDataPackage.Companion.createStubInstance(
     kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable
 ): TestStaticDataPackage = TestStaticDataPackage(
-    name = TestName(name),
-    device = DeviceName(deviceName),
+    name = name,
+    device = deviceName,
     description = description,
     testCaseId = testCaseId,
     dataSetNumber = dataSetNumber,

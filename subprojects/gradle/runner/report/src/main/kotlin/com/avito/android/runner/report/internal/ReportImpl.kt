@@ -1,6 +1,7 @@
 package com.avito.android.runner.report.internal
 
 import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.TestAttempt
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
 
@@ -10,13 +11,13 @@ internal class ReportImpl(
     private val useInMemoryReport: Boolean
 ) : Report {
 
-    override fun addTest(test: AndroidTest) {
-        inMemoryReport.addTest(test)
+    override fun addTest(testAttempt: TestAttempt) {
+        inMemoryReport.addTest(testAttempt)
 
         if (useInMemoryReport) {
-            avitoReport?.addTest(test)
+            avitoReport?.addTest(testAttempt)
         } else {
-            avitoReport!!.addTest(test)
+            avitoReport!!.addTest(testAttempt)
         }
     }
 
@@ -30,11 +31,12 @@ internal class ReportImpl(
         }
     }
 
-    override fun getTests(): List<AndroidTest> {
+    override fun getTestResults(): Collection<AndroidTest> {
         return if (useInMemoryReport) {
-            inMemoryReport.getTests()
+            inMemoryReport.getTestResults()
         } else {
-            throw IllegalStateException("use LegacyReport.getTests()")
+            // will be fetched in [LegacyFinalizer]
+            emptyList()
         }
     }
 }
