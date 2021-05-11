@@ -31,7 +31,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 
-// Bug is here
 @ExperimentalCoroutinesApi
 @ExperimentalPathApi
 class DeviceWorkerTest {

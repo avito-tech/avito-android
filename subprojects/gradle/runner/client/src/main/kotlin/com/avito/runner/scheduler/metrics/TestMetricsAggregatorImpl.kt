@@ -34,9 +34,9 @@ internal data class TestMetricsAggregatorImpl(
 
     override fun endDelay(): Result<Long> = lastTestEnded.map { testSuiteEndedTime - it }
 
-    override fun medianQueueTime(): Result<Long> = queueTimes.aggregateOrNull { it.median() }
+    override fun medianQueueTime(): Result<Long> = queueTimes.aggregate { it.median() }
 
-    override fun medianInstallationTime(): Result<Long> = installationTimes.aggregateOrNull { it.median() }
+    override fun medianInstallationTime(): Result<Long> = installationTimes.aggregate { it.median() }
 
     override fun suiteTime(): Result<Long> = lastTestEnded.combine(firstTestStarted) { last, first -> last - first }
 
@@ -45,14 +45,14 @@ internal data class TestMetricsAggregatorImpl(
     override fun medianDeviceUtilization(): Result<Long> =
         deviceTimestamps.values.filterIsInstance<DeviceTimestamps.Finished>()
             .map { it.utilizationPercent }
-            .aggregateOrNull { it.median() }
+            .aggregate { it.median() }
 
     private fun Long?.toResult(): Result<Long> = when (this) {
         null -> noDataResult()
         else -> Result.Success(this)
     }
 
-    private fun List<Number>.aggregateOrNull(aggregateFunc: (List<Number>) -> Number): Result<Long> {
+    private fun List<Number>.aggregate(aggregateFunc: (List<Number>) -> Number): Result<Long> {
         if (isEmpty()) return noDataResult()
         val result = aggregateFunc(this).toLong()
         return when {
@@ -61,6 +61,5 @@ internal data class TestMetricsAggregatorImpl(
         }
     }
 
-    // TODO: err message
-    private fun noDataResult() = Result.Failure<Long>(IllegalStateException("There is no data to collect"))
+    private fun noDataResult() = Result.Failure<Long>(IllegalStateException("There is no data to be collected"))
 }
