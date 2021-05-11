@@ -121,6 +121,7 @@ internal class TestMetricsListenerImpl(
 
     override fun onTestSuiteFinished() {
         val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
+        logger.debug("TestMetricsAggregator is $aggregator")
 
         with(testMetricsSender) {
             aggregator.initialDelay().fold(

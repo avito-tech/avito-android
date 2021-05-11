@@ -41,7 +41,7 @@ class IntentionsRouter(
     }
 
     fun cancel() {
-        intentionRoutings.forEach { (_, channel) -> channel.cancel() }
+        intentionRoutings.forEach { (_, channel) -> channel.close() }
         intentionRoutings.clear()
     }
 
