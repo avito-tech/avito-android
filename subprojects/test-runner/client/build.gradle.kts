@@ -22,7 +22,7 @@ dependencies {
     implementation(libs.gson)
 
     testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":gradle:runner:shared-test"))
+    testImplementation(project(":test-runner:shared-test"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(testFixtures(project(":common:logger")))
     testImplementation(testFixtures(project(":common:time")))

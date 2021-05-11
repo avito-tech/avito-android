@@ -26,7 +26,7 @@ dependencies {
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":common:resources"))
     testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":gradle:runner:shared-test"))
+    testImplementation(project(":test-runner:shared-test"))
     testImplementation(libs.kotlinReflect)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
