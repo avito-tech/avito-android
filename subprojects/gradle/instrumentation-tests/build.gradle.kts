@@ -46,7 +46,7 @@ dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":gradle:runner:report"))
     implementation(project(":test-runner:client"))
-    implementation(project(":gradle:runner:device-provider"))
+    implementation(project(":test-runner:device-provider"))
     implementation(project(":gradle:runner:stub"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:upload-cd-build-result"))
@@ -66,7 +66,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":common:logger")))
     testFixturesApi(testFixtures(project(":common:time")))
     testFixturesApi(testFixtures(project(":common:report-viewer")))
-    testFixturesApi(testFixtures(project(":gradle:runner:device-provider")))
+    testFixturesApi(testFixtures(project(":test-runner:device-provider")))
     testFixturesApi(testFixtures(project(":gradle:runner:report")))
     testFixturesApi(testFixtures(project(":test-runner:client")))
 }
