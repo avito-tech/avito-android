@@ -14,6 +14,7 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.time.TimeProvider
+import com.google.gson.Gson
 import java.util.concurrent.ConcurrentHashMap
 
 internal class TestMetricsListenerImpl(
@@ -112,7 +113,6 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onFinished(device: Device) {
-        logger.debug("onFinished")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
@@ -126,7 +126,8 @@ internal class TestMetricsListenerImpl(
     override fun onTestSuiteFinished() {
         logger.debug("onTestSuiteFinished")
         val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
-        logger.debug("TestMetricsAggregator: $aggregator")
+        val gson = Gson()
+        logger.debug("TestMetricsAggregator: ${gson.toJson(aggregator)}")
 
         with(testMetricsSender) {
             aggregator.initialDelay().fold(
