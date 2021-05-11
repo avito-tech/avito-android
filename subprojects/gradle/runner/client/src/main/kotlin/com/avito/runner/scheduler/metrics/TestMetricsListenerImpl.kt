@@ -29,10 +29,12 @@ internal class TestMetricsListenerImpl(
     private var testSuiteStartedTime: Long = 0
 
     override fun onTestSuiteStarted() {
+        logger.debug("onTestSuiteStarted")
         testSuiteStartedTime = timeProvider.nowInMillis()
     }
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
+        logger.debug("onDeviceCreated")
         deviceTimestamps[device.key()] = DeviceTimestamps.Started(
             created = timeProvider.nowInMillis(),
             testTimestamps = mutableMapOf(),
@@ -40,6 +42,7 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onIntentionReceived(device: Device, intention: Intention) {
+        logger.debug("onIntentionReceived")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
@@ -58,6 +61,7 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
+        logger.debug("onTestStarted")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
@@ -80,6 +84,7 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
+        logger.debug("onTestCompleted")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
@@ -102,13 +107,16 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
+        logger.debug("onIntentionFail")
     }
 
     override suspend fun onDeviceDied(device: Device, message: String, reason: Throwable) {
+        logger.debug("onDeviceDied")
         // alternative to onFinished terminated state
     }
 
     override suspend fun onFinished(device: Device) {
+        logger.debug("onFinished")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
@@ -120,8 +128,9 @@ internal class TestMetricsListenerImpl(
     }
 
     override fun onTestSuiteFinished() {
+        logger.debug("onTestSuiteFinished")
         val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
-        logger.debug("TestMetricsAggregator is $aggregator")
+        logger.debug("TestMetricsAggregator: $aggregator")
 
         with(testMetricsSender) {
             aggregator.initialDelay().fold(
