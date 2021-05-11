@@ -10,5 +10,5 @@ publish {
 dependencies {
     implementation(project(":common:report-viewer"))
     implementation(project(":test-runner:service"))
-    implementation(project(":gradle:runner:shared"))
+    implementation(project(":test-runner:shared"))
 }

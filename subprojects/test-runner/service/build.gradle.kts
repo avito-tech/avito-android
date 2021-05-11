@@ -12,7 +12,7 @@ dependencies {
     api(project(":common:coroutines-extension"))
     api(project(":common:statsd"))
     api(project(":common:time"))
-    implementation(project(":gradle:runner:shared"))
+    implementation(project(":test-runner:shared"))
     implementation(project(":common:result"))
     implementation(project(":common:test-report-artifacts")) {
         because("DeviceWorker pulls test artifacts")
