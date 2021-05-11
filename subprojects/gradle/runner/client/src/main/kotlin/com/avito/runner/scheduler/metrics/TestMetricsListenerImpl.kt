@@ -34,7 +34,6 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
-        logger.debug("onDeviceCreated")
         deviceTimestamps[device.key()] = DeviceTimestamps.Started(
             created = timeProvider.nowInMillis(),
             testTimestamps = mutableMapOf(),
