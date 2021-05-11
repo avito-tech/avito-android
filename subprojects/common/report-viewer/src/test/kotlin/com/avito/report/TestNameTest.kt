@@ -2,6 +2,7 @@ package com.avito.report
 
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
+import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
 import com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath
@@ -20,7 +21,7 @@ internal class TestNameTest {
             test = AndroidTest.Completed.createStubInstance(
                 testStaticData = TestStaticDataPackage.createStubInstance(
                     testCaseId = 123,
-                    name = "com.avito.Test.myTest",
+                    name = TestName("com.avito.Test", "myTest"),
                     dataSetNumber = 2
                 )
             )
@@ -37,7 +38,7 @@ internal class TestNameTest {
             test = AndroidTest.Completed.createStubInstance(
                 testStaticData = TestStaticDataPackage.createStubInstance(
                     testCaseId = null,
-                    name = "com.avito.Test.someDataSet",
+                    name = TestName("com.avito.Test", "someDataSet"),
                     dataSetNumber = 2
                 )
             )
@@ -54,7 +55,7 @@ internal class TestNameTest {
             test = AndroidTest.Completed.createStubInstance(
                 testStaticData = TestStaticDataPackage.createStubInstance(
                     testCaseId = 123,
-                    name = "com.avito.Test.someTest",
+                    name = TestName("com.avito.Test", "someTest"),
                     dataSetNumber = null
                 )
             )
@@ -71,7 +72,7 @@ internal class TestNameTest {
             test = AndroidTest.Completed.createStubInstance(
                 testStaticData = TestStaticDataPackage.createStubInstance(
                     testCaseId = null,
-                    name = "com.avito.Test.someTest",
+                    name = TestName("com.avito.Test", "someTest"),
                     dataSetNumber = null
                 )
             )

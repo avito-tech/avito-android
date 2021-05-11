@@ -1,86 +1,94 @@
 package com.avito.instrumentation.internal.finalizer.verdict
 
-import com.avito.composite_exception.composeWith
-import com.avito.report.model.TestName
+import com.avito.report.model.AndroidTest
+import com.avito.report.model.Flakiness
+import com.avito.report.model.TestStaticData
+import com.avito.time.TimeProvider
 
-internal class VerdictDeterminerImpl : VerdictDeterminer {
+internal class VerdictDeterminerImpl(
+    private val suppressFlaky: Boolean,
+    private val suppressFailure: Boolean,
+    private val timeProvider: TimeProvider
+) : VerdictDeterminer {
 
     override fun determine(
-        failed: HasFailedTestDeterminer.Result,
-        notReported: HasNotReportedTestsDeterminer.Result
+        initialTestSuite: Set<TestStaticData>,
+        testResults: Collection<AndroidTest>
     ): Verdict {
-        val failedVerdict = getFailedVerdict(failed)
-        val notReportedVerdict = getNotReportedVerdict(notReported)
-        return when {
-            failedVerdict is Verdict.Success && notReportedVerdict is Verdict.Success ->
-                Verdict.Success(
-                    """
-                        |${failedVerdict.message}.
-                        |${notReportedVerdict.message}.""".trimMargin()
+
+        val lostTests = getLostTests(
+            initialTestSuite = initialTestSuite,
+            testResults = testResults
+        )
+
+        val failedTests = getFailedTests(testResults)
+
+        val hasFailedTests = failedTests.isNotEmpty()
+
+        val intermediateResult = when {
+            hasFailedTests -> when {
+                suppressFailure -> Verdict.Success.Suppressed(
+                    testResults = testResults,
+                    failedTests = failedTests
                 )
-            failedVerdict is Verdict.Failure && notReportedVerdict is Verdict.Failure -> {
-                val message = "${failedVerdict.message}. \n${notReportedVerdict.message}"
-                Verdict.Failure(
-                    message = message,
-                    prettifiedDetails = failedVerdict.prettifiedDetails + notReportedVerdict.prettifiedDetails,
-                    cause = failedVerdict.cause.composeWith(notReportedVerdict.cause)
+
+                suppressFlaky -> {
+                    val (flaky, notFlaky) = failedTests.partition { it.flakiness is Flakiness.Flaky }
+
+                    val hasFailedTestsNotMarkedAsFlaky = notFlaky.isNotEmpty()
+
+                    when {
+                        hasFailedTestsNotMarkedAsFlaky -> Verdict.Failure(
+                            testResults = testResults,
+                            failedTests = notFlaky.toSet(),
+                            lostTests = lostTests
+                        )
+
+                        else -> Verdict.Success.Suppressed(
+                            testResults = testResults,
+                            failedTests = flaky.toSet()
+                        )
+                    }
+                }
+                else -> Verdict.Failure(
+                    testResults = testResults,
+                    failedTests = failedTests,
+                    lostTests = lostTests
                 )
             }
-            failedVerdict is Verdict.Failure -> failedVerdict
-            notReportedVerdict is Verdict.Failure -> notReportedVerdict
-            else -> throw IllegalStateException("Must be unreached")
+            else -> Verdict.Success.OK(testResults = testResults)
+        }
+
+        val hasLostTests = lostTests.isNotEmpty()
+
+        return if (hasLostTests) {
+            Verdict.Failure(
+                testResults = testResults,
+                lostTests = lostTests,
+                failedTests = failedTests
+            )
+        } else {
+            intermediateResult
         }
     }
 
-    private fun getNotReportedVerdict(notReported: HasNotReportedTestsDeterminer.Result): Verdict = when (notReported) {
-        is HasNotReportedTestsDeterminer.Result.AllTestsReported -> Verdict.Success("All tests reported")
-        is HasNotReportedTestsDeterminer.Result.HasNotReportedTests -> Verdict.Failure(
-            message = "Failed. There are ${notReported.lostTests.size} not reported tests.",
-            prettifiedDetails = Verdict.Failure.Details(
-                lostTests = notReported.getLostFailureDetailsTests(),
-                failedTests = emptySet()
-            ),
-            cause = null
-        )
+    private fun getFailedTests(testVerdicts: Collection<AndroidTest>): Set<TestStaticData> {
+        return testVerdicts.filterIsInstance<AndroidTest.Completed>().filter { it.incident != null }.toSet()
     }
 
-    private fun getFailedVerdict(failed: HasFailedTestDeterminer.Result): Verdict = when (failed) {
-        is HasFailedTestDeterminer.Result.NoFailed -> Verdict.Success("No failed tests")
-        is HasFailedTestDeterminer.Result.Failed ->
-            if (failed.notSuppressedCount > 0) {
-                Verdict.Failure(
-                    message = "Failed. There are ${failed.notSuppressedCount} unsuppressed failed tests",
-                    prettifiedDetails = Verdict.Failure.Details(
-                        lostTests = emptySet(),
-                        failedTests = failed.getNotSuppressedFailedDetailsTests()
-                    ),
-                    cause = null
-                )
-            } else {
-                Verdict.Success("Success. All failed tests suppressed by ${failed.suppression}")
-            }
+    private fun getLostTests(
+        initialTestSuite: Set<TestStaticData>,
+        testResults: Collection<AndroidTest>
+    ): Set<AndroidTest.Lost> {
+        val lostTests = testResults.filterIsInstance<AndroidTest.Lost>()
+
+        val notReportedTests: List<AndroidTest.Lost> = initialTestSuite.subtract(testResults).map {
+            AndroidTest.Lost.createWithoutInfo(
+                testStaticData = it,
+                currentTimeSec = timeProvider.nowInSeconds()
+            )
+        }
+
+        return (lostTests + notReportedTests).toSet()
     }
-
-    private fun HasNotReportedTestsDeterminer.Result.HasNotReportedTests.getLostFailureDetailsTests() =
-        lostTests.groupBy({ test -> test.name }, { test -> test.device.name })
-            .map { (testName, devices) ->
-                Verdict.Failure.Details.Test(
-                    name = testName,
-                    devices = devices.toSet()
-                )
-            }
-            .toSet()
-
-    private fun HasFailedTestDeterminer.Result.Failed.getNotSuppressedFailedDetailsTests() =
-        notSuppressed.groupBy(
-            { test -> TestName(test.className, test.methodName) },
-            { test -> test.deviceName }
-        )
-            .map { (testName, devices) ->
-                Verdict.Failure.Details.Test(
-                    name = testName,
-                    devices = devices.toSet()
-                )
-            }
-            .toSet()
 }

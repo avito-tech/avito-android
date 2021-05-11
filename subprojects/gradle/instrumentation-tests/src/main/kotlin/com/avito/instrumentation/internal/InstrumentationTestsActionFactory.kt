@@ -74,7 +74,8 @@ internal interface InstrumentationTestsActionFactory {
                 params = params,
                 gson = gson,
                 metricsConfig = metricsConfig,
-                reportFactory = reportFactory
+                reportFactory = reportFactory,
+                timeProvider = timeProvider
             )
         }
 

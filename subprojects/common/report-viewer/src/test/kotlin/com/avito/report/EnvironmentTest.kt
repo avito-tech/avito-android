@@ -1,6 +1,7 @@
 package com.avito.report
 
 import com.avito.report.model.AndroidTest
+import com.avito.report.model.DeviceName
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
@@ -18,7 +19,7 @@ internal class EnvironmentTest {
             reportCoordinates = ReportCoordinates.createStubInstance(),
             buildId = "1234",
             test = AndroidTest.Completed.createStubInstance(
-                testStaticData = TestStaticDataPackage.createStubInstance(deviceName = "API-22")
+                testStaticData = TestStaticDataPackage.createStubInstance(deviceName = DeviceName("API-22"))
             )
         )
             .singleRequestCaptured()

@@ -1,13 +1,12 @@
 package com.avito.instrumentation.internal.finalizer.action
 
-import com.avito.instrumentation.internal.finalizer.TestRunResult
 import com.avito.instrumentation.internal.finalizer.verdict.TestStatisticsCounterFactory
 import com.avito.instrumentation.internal.finalizer.verdict.Verdict
 import com.avito.report.ReportLinkGenerator
 import com.avito.report.TestSuiteNameProvider
-import com.avito.report.model.Stability
-import com.avito.report.model.Status
-import com.avito.report.model.TestName
+import com.avito.report.model.AndroidTest
+import com.avito.report.model.TestRuntimeData
+import com.avito.report.model.duration
 import org.apache.commons.text.StringEscapeUtils
 import java.io.File
 
@@ -19,13 +18,9 @@ internal class WriteJUnitReportAction(
 
     private val estimatedTestRecordSize = 150
 
-    override fun action(testRunResult: TestRunResult, verdict: Verdict) {
+    override fun action(verdict: Verdict) {
 
-        val testStatisticsCounter = TestStatisticsCounterFactory.createLegacy(
-            reportedTests = testRunResult.reportedTests,
-            failedTestDeterminer = testRunResult.failed,
-            notReportedTestsDeterminer = testRunResult.notReported
-        )
+        val testStatisticsCounter = TestStatisticsCounterFactory.create(verdict)
 
         val testCountOverall = testStatisticsCounter.overallCount()
         val testCountSuccess = testStatisticsCounter.successCount()
@@ -49,73 +44,53 @@ internal class WriteJUnitReportAction(
 
             appendLine("<properties/>")
 
-            testRunResult.reportedTests.forEach { test ->
-                append("<testcase ")
-                append("""classname="${test.className}" """)
-                append("""name="${test.methodName}" """)
-                append("""caseId="${test.testCaseId}" """)
-                append("""time="${test.lastAttemptDurationInSeconds}"""")
-                appendLine(">")
-
-                if (test.stability is Stability.Flaky) {
-                    appendLine("<system-out>")
-                    appendEscapedLine(
-                        "Flaky test. " +
-                            "Success runs: ${(test.stability as Stability.Flaky).successCount} " +
-                            "out of ${(test.stability as Stability.Flaky).attemptsCount}"
-                    )
-                    appendLine("</system-out>")
-                }
-
-                when (test.status) {
-                    is Status.Skipped -> {
-                        appendLine("<skipped/>")
-                        if (test.skipReason != null) {
-                            appendLine("<system-out>")
-                            appendEscapedLine("Тест не запускался: ${test.skipReason}")
-                            appendLine("</system-out>")
-                        }
-                    }
-                    is Status.Failure -> {
-                        appendLine("<failure>")
-                        appendEscapedLine((test.status as Status.Failure).verdict)
-                        appendLine(reportLinkGenerator.generateTestLink(TestName(test.className, test.methodName)))
-                        appendLine("</failure>")
-                    }
-                    is Status.Lost -> {
-                        appendLine("<error>")
-                        appendLine("LOST (no info in report)")
-                        appendLine(reportLinkGenerator.generateTestLink(TestName(test.className, test.methodName)))
-                        appendLine("</error>")
-                    }
-                    Status.Success -> { /* do nothing */
-                    }
-                    Status.Manual -> { /* do nothing */
-                    }
-                }
-
-                appendLine("</testcase>")
-            }
-
-            testRunResult.notReported.lostTests.forEach { test ->
-                append("<testcase ")
-                append("""classname="${test.name.className}" """)
-                append("""name="${test.name.methodName}" """)
-                append("""caseId="${test.testCaseId}" """)
-                append("""time="unknown"""")
-                appendLine(">")
-
-                appendLine("<error>")
-                appendLine("Not reported ${reportLinkGenerator.generateTestLink(test.name)}")
-                appendLine("</error>")
-
-                appendLine("</testcase>")
-            }
+            verdict.testResults.forEach { test -> appendTest(test) }
 
             appendLine("</testsuite>")
         }
 
         destination.writeText(xml)
+    }
+
+    private fun StringBuilder.appendTest(test: AndroidTest) {
+        append("<testcase ")
+        append("""classname="${test.name.className}" """)
+        append("""name="${test.name.methodName}" """)
+        append("""caseId="${test.testCaseId}" """)
+
+        if (test is TestRuntimeData) {
+            append("""time="${test.duration}"""")
+        } else {
+            append("""time="unknown"""")
+        }
+
+        appendLine(">")
+
+        when (test) {
+            is AndroidTest.Skipped -> {
+                appendLine("<skipped/>")
+                appendLine("<system-out>")
+                appendEscapedLine("Тест не запускался: ${test.skipReason}")
+                appendLine("</system-out>")
+            }
+            is AndroidTest.Completed -> {
+                val incident = test.incident
+                if (incident != null) {
+                    appendLine("<failure>")
+                    appendEscapedLine(incident.errorMessage)
+                    appendLine(reportLinkGenerator.generateTestLink(test.name))
+                    appendLine("</failure>")
+                }
+            }
+            is AndroidTest.Lost -> {
+                appendLine("<error>")
+                appendLine("LOST (no info in report)")
+                appendLine(reportLinkGenerator.generateTestLink(test.name))
+                appendLine("</error>")
+            }
+        }
+
+        appendLine("</testcase>")
     }
 
     private fun StringBuilder.appendEscapedLine(line: String) {

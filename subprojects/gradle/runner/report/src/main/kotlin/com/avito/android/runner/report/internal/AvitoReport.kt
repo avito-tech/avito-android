@@ -3,6 +3,7 @@ package com.avito.android.runner.report.internal
 import com.avito.android.Result
 import com.avito.android.runner.report.LegacyReport
 import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.TestAttempt
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.report.ReportsApi
@@ -12,7 +13,6 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
 import com.avito.report.model.TestStaticData
 import com.avito.time.TimeProvider
-import java.lang.IllegalStateException
 
 /**
  * Implementation for inhouse Avito report backend
@@ -32,14 +32,14 @@ internal class AvitoReport(
 
     private val logger = loggerFactory.create<Report>()
 
-    override fun addTest(test: AndroidTest) {
+    override fun addTest(testAttempt: TestAttempt) {
         reportsApi.addTest(
             reportCoordinates = reportCoordinates,
             buildId = buildId,
-            test = test
+            test = testAttempt.testResult
         ).fold(
-            { logger.info("Test ${test.name} successfully reported") },
-            { logger.critical("Can't report test ${test.name}", it) }
+            { logger.info("Test ${testAttempt.testResult.name} successfully reported") },
+            { logger.critical("Can't report test ${testAttempt.testResult.name}", it) }
         )
     }
 
@@ -74,11 +74,11 @@ internal class AvitoReport(
         }
     }
 
-    override fun getTests(): List<AndroidTest> {
-        throw IllegalStateException("Use getTests(): List<SimpleRunTest>")
+    override fun getTestResults(): Collection<AndroidTest> {
+        TODO("Not yet implemented")
     }
 
-    override fun sendLostTests(lostTests: List<AndroidTest.Lost>) {
+    override fun sendLostTests(lostTests: Collection<AndroidTest.Lost>) {
         if (lostTests.isEmpty()) {
             logger.debug("No lost tests to report")
             return

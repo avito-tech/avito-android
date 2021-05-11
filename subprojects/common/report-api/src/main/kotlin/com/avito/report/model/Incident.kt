@@ -8,6 +8,8 @@ public data class Incident(
     val entryList: List<Entry>
 ) {
 
+    public val errorMessage: String = chain.firstOrNull()?.message ?: "Unknown"
+
     public enum class Type {
 
         /**
