@@ -9,7 +9,7 @@ publish {
 }
 
 dependencies {
-    api(project(":gradle:runner:stub"))
+    api(project(":test-runner:stub"))
     api(libs.coroutinesTest)
 
     compileOnly(gradleApi())

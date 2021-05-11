@@ -47,7 +47,7 @@ dependencies {
     implementation(project(":test-runner:report"))
     implementation(project(":test-runner:client"))
     implementation(project(":test-runner:device-provider"))
-    implementation(project(":gradle:runner:stub"))
+    implementation(project(":test-runner:stub"))
     implementation(project(":gradle:teamcity"))
     implementation(project(":gradle:upload-cd-build-result"))
     implementation(project(":gradle:build-failer"))
