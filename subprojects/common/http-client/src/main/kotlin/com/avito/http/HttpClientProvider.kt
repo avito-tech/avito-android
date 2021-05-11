@@ -14,10 +14,17 @@ public class HttpClientProvider(
     private val loggerFactory: LoggerFactory,
 ) {
 
-    private val builder = OkHttpClient.Builder()
+    private val sharedBuilder = OkHttpClient.Builder()
 
     public fun provide(
-        requestMetadataProvider: RequestMetadataProvider = TagRequestMetadataProvider()
+        requestMetadataProvider: RequestMetadataProvider = defaultRequestMetadataProvider()
+    ): OkHttpClient.Builder {
+        return modifyExisting(sharedBuilder, requestMetadataProvider)
+    }
+
+    public fun modifyExisting(
+        builder: OkHttpClient.Builder,
+        requestMetadataProvider: RequestMetadataProvider = defaultRequestMetadataProvider()
     ): OkHttpClient.Builder {
         return builder.eventListenerFactory {
             StatsHttpEventListener(
@@ -27,6 +34,10 @@ public class HttpClientProvider(
                 loggerFactory = loggerFactory
             )
         }
+    }
+
+    private fun defaultRequestMetadataProvider(): RequestMetadataProvider {
+        return TagRequestMetadataProvider()
     }
 
     public companion object

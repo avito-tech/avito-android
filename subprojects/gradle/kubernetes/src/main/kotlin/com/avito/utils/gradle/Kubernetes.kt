@@ -12,6 +12,7 @@ import io.fabric8.kubernetes.client.ConfigBuilder
 import io.fabric8.kubernetes.client.DefaultKubernetesClient
 import io.fabric8.kubernetes.client.KubernetesClient
 import io.fabric8.kubernetes.client.OAuthTokenProvider
+import io.fabric8.kubernetes.client.utils.HttpClientUtils
 import io.kubernetes.client.util.FilePersister
 import io.kubernetes.client.util.KubeConfig
 import okhttp3.Request
@@ -73,13 +74,16 @@ fun createKubernetesClient(
             throw IllegalStateException("Can't create kubernetesClient without credentials")
     }
 
-    // TODO: certificate issue MBS-11224
-    @Suppress("UNUSED_VARIABLE")
+    val kubernetesHttpClient = HttpClientUtils.createHttpClient(config).newBuilder()
+
     val httpClient = httpClientProvider
-        .provide(requestMetadataProvider = KubernetesRequestMetadataProvider())
+        .modifyExisting(
+            builder = kubernetesHttpClient,
+            requestMetadataProvider = KubernetesRequestMetadataProvider()
+        )
         .build()
 
-    return DefaultKubernetesClient(config)
+    return DefaultKubernetesClient(httpClient, config)
 }
 
 private class KubernetesRequestMetadataProvider : RequestMetadataProvider {
