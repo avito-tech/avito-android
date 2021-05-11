@@ -5,8 +5,11 @@ import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.fromSimpleRunTest
+import com.avito.time.TimeProvider
 
-internal class LegacyNotReportedTestsDeterminer : HasNotReportedTestsDeterminer {
+internal class LegacyNotReportedTestsDeterminer(
+    private val timeProvider: TimeProvider
+) : HasNotReportedTestsDeterminer {
 
     override fun determine(
         runResult: List<SimpleRunTest>,
@@ -16,13 +19,9 @@ internal class LegacyNotReportedTestsDeterminer : HasNotReportedTestsDeterminer 
 
         val notReportedTests = allTests.subtract(allReportedTests)
             .map { testMetadata ->
-                AndroidTest.Lost.fromTestMetadata(
+                AndroidTest.Lost.createWithoutInfo(
                     testStaticData = testMetadata,
-                    startTime = 0,
-                    lastSignalTime = 0,
-                    stdout = "",
-                    stderr = "",
-                    incident = null
+                    currentTimeSec = timeProvider.nowInSeconds()
                 )
             }
 

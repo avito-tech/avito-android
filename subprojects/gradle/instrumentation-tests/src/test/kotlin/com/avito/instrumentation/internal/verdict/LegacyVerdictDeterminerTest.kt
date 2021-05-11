@@ -2,9 +2,9 @@ package com.avito.instrumentation.internal.verdict
 
 import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.finalizer.verdict.Verdict
-import com.avito.instrumentation.internal.finalizer.verdict.Verdict.Failure
-import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminerFactory
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdict
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdict.Failure
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdictDeterminerFactory
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestName
 import com.avito.report.model.createStubInstance
@@ -12,9 +12,9 @@ import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-internal class VerdictDeterminerTest {
+internal class LegacyVerdictDeterminerTest {
 
-    private val verdictDeterminer = VerdictDeterminerFactory.create()
+    private val verdictDeterminer = LegacyVerdictDeterminerFactory.create()
 
     @Test
     fun `has 1 unsuppresed test`() {
@@ -57,7 +57,7 @@ internal class VerdictDeterminerTest {
         )
     }
 
-    private fun Verdict.assertVerdictFailure(
+    private fun LegacyVerdict.assertVerdictFailure(
         failedTest: Failure.Details.Test
     ) {
         assertThat(this).apply {

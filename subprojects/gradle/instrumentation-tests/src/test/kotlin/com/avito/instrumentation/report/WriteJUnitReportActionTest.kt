@@ -1,10 +1,10 @@
 package com.avito.instrumentation.report
 
 import com.avito.instrumentation.internal.finalizer.TestRunResult
-import com.avito.instrumentation.internal.finalizer.action.WriteJUnitReportAction
+import com.avito.instrumentation.internal.finalizer.action.LegacyWriteJUnitReportAction
 import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
-import com.avito.instrumentation.internal.finalizer.verdict.Verdict
+import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdict
 import com.avito.report.NoOpReportLinkGenerator
 import com.avito.report.NoOpTestSuiteNameProvider
 import com.avito.report.model.SimpleRunTest
@@ -93,8 +93,8 @@ internal class WriteJUnitReportActionTest {
         assertThat(rawFile).contains("name=\"resolve_advert_legacyFormat\"")
     }
 
-    private fun mockData(testRunResult: TestRunResult, verdict: Verdict = Verdict.Success("")) {
-        WriteJUnitReportAction(
+    private fun mockData(testRunResult: TestRunResult, verdict: LegacyVerdict = LegacyVerdict.Success("")) {
+        LegacyWriteJUnitReportAction(
             destination = file,
             testSuiteNameProvider = NoOpTestSuiteNameProvider(),
             reportLinkGenerator = NoOpReportLinkGenerator(testLink = reportViewerUrl)

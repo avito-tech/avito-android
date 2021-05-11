@@ -2,7 +2,9 @@ package com.avito.android.runner.report
 
 import com.avito.android.runner.report.internal.AvitoReport
 import com.avito.android.runner.report.internal.InMemoryReport
+import com.avito.android.runner.report.internal.OnlyLastExecutionMattersStrategy
 import com.avito.android.runner.report.internal.ReportImpl
+import com.avito.android.runner.report.internal.TestAttemptsAggregateStrategy
 import com.avito.http.HttpClientProvider
 import com.avito.logger.LoggerFactory
 import com.avito.report.NoOpReportLinkGenerator
@@ -33,7 +35,8 @@ public class ReportFactoryImpl(
     private fun createReportInternal(): Report {
         return ReportImpl(
             inMemoryReport = InMemoryReport(
-                timeProvider = timeProvider
+                timeProvider = timeProvider,
+                testAttemptsAggregateStrategy = createTestAttemptsAggregateStrategy()
             ),
             avitoReport = reportViewerConfig?.let { createAvitoReport(it) },
             useInMemoryReport = useInMemoryReport
@@ -74,5 +77,9 @@ public class ReportFactoryImpl(
         } else {
             NoOpTestSuiteNameProvider()
         }
+    }
+
+    private fun createTestAttemptsAggregateStrategy(): TestAttemptsAggregateStrategy {
+        return OnlyLastExecutionMattersStrategy()
     }
 }

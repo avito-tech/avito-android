@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.runner.report.Report
+import com.avito.android.runner.report.TestAttempt
 import com.avito.report.model.AndroidTest
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.listener.TestResult
@@ -43,7 +44,7 @@ internal class LogcatTestLifecycleListener(
 
         when (testReport) {
             is AndroidTest.Completed,
-            is AndroidTest.Lost -> report.addTest(testReport)
+            is AndroidTest.Lost -> report.addTest(TestAttempt(testReport, executionNumber))
 
             is AndroidTest.Skipped -> {
                 /* do nothing, all skipped tests already sent via Report.addSkippedTests() */

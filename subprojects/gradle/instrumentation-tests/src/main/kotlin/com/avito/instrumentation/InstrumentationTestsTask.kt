@@ -121,7 +121,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 mutableListOf<SpannedString>()
                     .apply {
                         add(link(verdict.reportUrl, verdict.title))
-                        addAll(verdict.causeFailureTests.map { test ->
+                        addAll(verdict.problemTests.map { test ->
                             link(test.testUrl, test.title)
                         })
                     }
