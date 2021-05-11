@@ -357,7 +357,7 @@ formatting:
         active: true
     # https://detekt.github.io/detekt/formatting.html#spacingbetweendeclarationswithannotations
     SpacingBetweenDeclarationsWithAnnotations:
-        active: true
+        active: false
     # https://detekt.github.io/detekt/formatting.html#spacingbetweendeclarationswithcomments
     SpacingBetweenDeclarationsWithComments:
         active: true

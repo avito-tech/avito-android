@@ -58,6 +58,7 @@ internal class StatsHttpEventListener(
             statsDSender.send(TimeMetric(prefix.append("timeout"), latencyMs))
         } else {
             statsDSender.send(TimeMetric(prefix.append("unknown"), latencyMs))
+            logger.warn("Unexpected network problem", ioe)
         }
     }
 

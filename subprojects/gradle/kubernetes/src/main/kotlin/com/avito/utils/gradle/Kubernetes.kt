@@ -73,11 +73,13 @@ fun createKubernetesClient(
             throw IllegalStateException("Can't create kubernetesClient without credentials")
     }
 
+    // TODO: certificate issue MBS-11224
+    @Suppress("UNUSED_VARIABLE")
     val httpClient = httpClientProvider
         .provide(requestMetadataProvider = KubernetesRequestMetadataProvider())
         .build()
 
-    return DefaultKubernetesClient(httpClient, config)
+    return DefaultKubernetesClient(config)
 }
 
 private class KubernetesRequestMetadataProvider : RequestMetadataProvider {
