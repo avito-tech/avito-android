@@ -42,7 +42,6 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onIntentionReceived(device: Device, intention: Intention) {
-        logger.debug("onIntentionReceived")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
@@ -61,7 +60,6 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
-        logger.debug("onTestStarted")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
@@ -84,7 +82,6 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onTestCompleted(device: Device, intention: Intention, result: DeviceTestCaseRun) {
-        logger.debug("onTestCompleted")
         deviceTimestamps.compute(device.key()) { _: DeviceKey, oldValue: DeviceTimestamps? ->
             if (oldValue == null) {
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
