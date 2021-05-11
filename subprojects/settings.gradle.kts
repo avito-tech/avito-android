@@ -123,7 +123,7 @@ include(":android-test:rx3-idler")
 include(":android-lib:proxy-toast")
 include(":android-lib:snackbar-proxy")
 
-include(":ci:k8s-deployments-cleaner")
+include(":test-runner:k8s-deployments-cleaner")
 
 @Suppress("UnstableApiUsage")
 pluginManagement {
