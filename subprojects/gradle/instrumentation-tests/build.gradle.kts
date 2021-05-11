@@ -44,7 +44,7 @@ dependencies {
     implementation(project(":gradle:instrumentation-tests-dex-loader"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:process"))
-    implementation(project(":gradle:runner:report"))
+    implementation(project(":test-runner:report"))
     implementation(project(":test-runner:client"))
     implementation(project(":test-runner:device-provider"))
     implementation(project(":gradle:runner:stub"))
@@ -67,7 +67,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":common:time")))
     testFixturesApi(testFixtures(project(":common:report-viewer")))
     testFixturesApi(testFixtures(project(":test-runner:device-provider")))
-    testFixturesApi(testFixtures(project(":gradle:runner:report")))
+    testFixturesApi(testFixtures(project(":test-runner:report")))
     testFixturesApi(testFixtures(project(":test-runner:client")))
 }
 
