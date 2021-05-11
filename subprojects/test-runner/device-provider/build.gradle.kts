@@ -13,7 +13,7 @@ publish {
 }
 
 dependencies {
-    api(project(":gradle:runner:service"))
+    api(project(":test-runner:service"))
     api(project(":gradle:runner:shared"))
     api(project(":gradle:runner:stub"))
     api(project(":gradle:kubernetes"))

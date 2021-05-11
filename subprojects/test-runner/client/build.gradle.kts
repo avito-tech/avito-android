@@ -12,7 +12,7 @@ publish {
 dependencies {
     compileOnly(gradleApi())
     api(project(":gradle:runner:shared"))
-    api(project(":gradle:runner:service"))
+    api(project(":test-runner:service"))
 
     implementation(project(":gradle:trace-event"))
     implementation(project(":common:math"))

@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:gradle-logger"))
-    implementation(project(":gradle:runner:service"))
+    implementation(project(":test-runner:service"))
     implementation(project(":gradle:runner:shared"))
     implementation(project(":common:result"))
 
