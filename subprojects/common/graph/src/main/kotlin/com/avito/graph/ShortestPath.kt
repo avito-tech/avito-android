@@ -26,34 +26,45 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
 
     /***
      * Builds a graph to find the shortest path.
-     * Let's see by example. We have nodes describing the graph:
+     * Let's see by example. We have operations:
+     *
+     * - `A(duration = 1, predecessors = ())`
+     * - `B(duration = 2, predecessors = (A))`
+     *
+     * To calculate the shortest path these operations will be represented as graph:
      *
      * ```
-     * A(1) <----┐
-     *           │
-     * B(1) <--- D(3) <--- E(1)
-     *
-     * F(2) <------------- G(2)
+     * vertex SYNTHETIC SOURCE <--- vertex A <---(edge weight = 1)--- vertex B <---(edge weight = 2)--- vertex SYNTHETIC SINK
      * ```
      *
-     * Root nodes: E, G
-     * Leaf nodes: A, B, F
+     * Operation A and B become vertexes in graph.
+     * Durations of operations become edges weights.
      *
-     * This will be represented as:
+     * Synthetic vertexes for source and sink are needed mostly due to performance reasons.
+     * Graph can contain multiple sources and sinks. It's cheaper to calculate only one path from single source to single sink.
+     *
+     * Let's see on more complex case:
      *
      * ```
-     *   ┌-----(1)-- A <--(3)---┐
-     *   ↓                      │
-     * SINK <--(1)-- B <--(3)-- D <--(1)-- E <-- SOURCE
-     *   ↑                                         │
-     *   └-----(2)-- F <--(2)------------- G <-----┘
+     * operation A(duration = 1) <--------------┐
+     *                                          │
+     * operation B(duration = 2) <--- operation D(duration = 4) <--- operation E(duration = 1)
+     *
+     * operation F(duration = 3) <--- operation G(duration = 2)
      * ```
      *
-     * - A node weight become an edge weight
-     * - Single source and sink are needed to find the shortest path
-     *     without checking all combinations of roots and leaves
-     * - Dependencies in graph are kinda inverted for faster computing in case we need to compare multiple paths.
-     *   It's more efficient than recomputing paths for different sources.
+     * Sources: A, B, F
+     * Sinks: E, G
+     *
+     * These operations will be represented as graph:
+     *
+     * ```
+     *        ┌--------- vertex A <--(edge weight = 1)---------┐
+     *        ↓                                                │
+     * SYNTHETIC SOURCE <---- vertex B <--(edge weight = 2)-- vertex D <--(edge weight = 4)-- vertex E <--(edge weight = 1)-- SYNTHETIC SINK
+     *        ↑                                                                                                                │
+     *        └--------- vertex F <--(edge weight = 3)------------- vertex G <--(edge weight = 2)------------------------------┘
+     * ```
      */
     private fun build(): Graph<Operation, DefaultWeightedEdge> {
         val graph: Graph<Operation, DefaultWeightedEdge> =
@@ -73,8 +84,8 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
         // Bellman–Ford algorithm supports negative weights but Dijkstra doesn't.
         // TODO: try topological sorting, it will be more efficient - O(V+E) instead of O(V*E)
         return BellmanFordShortestPath(this)
-            .getPaths(source)
-            .getPath(sink)
+            .getPaths(syntheticSource)
+            .getPath(syntheticSink)
     }
 
     private fun checkGraphStructure(graph: Graph<Operation, DefaultWeightedEdge>) {
@@ -83,29 +94,23 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
     }
 
     private fun checkSinkLinks(graph: Graph<Operation, DefaultWeightedEdge>) {
-        graph.incomingEdgesOf(sink)
-            .forEach { edgeToSink ->
-                val leafNode = graph.getEdgeSource(edgeToSink)
+        graph.incomingEdgesOf(syntheticSink).forEach { edge ->
+            val sinkNode = graph.getEdgeSource(edge)
 
-                check(!leafNode.isSynthetic() && leafNode.isLeaf()) {
-                    "Expected structure: sink <-- leaf node <--- node ..."
-                }
-            }
-    }
-
-    private fun checkSourceLinks(graph: Graph<Operation, DefaultWeightedEdge>) {
-        graph.outgoingEdgesOf(source).forEach { edgeToRootNode ->
-            val rootNode = graph.getEdgeTarget(edgeToRootNode)
-
-            check(isRoot(rootNode) && !rootNode.isSynthetic()) {
-                "Expected structure: ... node <-- root node <-- source"
+            check(sinkNode.isSink() && !sinkNode.isSynthetic()) {
+                "Expected structure: ... <-- node <-- node <-- sink <-- synthetic sink"
             }
         }
     }
 
-    private fun isRoot(operation: Operation): Boolean {
-        return operations
-            .firstOrNull { it.predecessors.contains(operation.id) } == null
+    private fun checkSourceLinks(graph: Graph<Operation, DefaultWeightedEdge>) {
+        graph.outgoingEdgesOf(syntheticSource).forEach { edge ->
+            val sourceNode = graph.getEdgeTarget(edge)
+
+            check(sourceNode.isSource() && !sourceNode.isSynthetic()) {
+                "Expected structure: synthetic source <-- source <-- node <-- node <-- ..."
+            }
+        }
     }
 
     private fun addNodes(graph: Graph<Operation, DefaultWeightedEdge>) {
@@ -114,27 +119,28 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
         }
         operations.forEach { node ->
             node.findDependencies().forEach { dependency ->
-                graph.addWeightedEdge(node, dependency)
+                graph.addWeightedEdge(dependency, node)
             }
         }
     }
 
     private fun addSource(graph: Graph<Operation, DefaultWeightedEdge>) {
-        graph.addVertex(source)
+        graph.addVertex(syntheticSource)
 
-        rootNodes()
-            .forEach { root ->
-                graph.addWeightedEdge(source, root)
+        operations
+            .filter { it.isSource() }
+            .forEach { source ->
+                graph.addWeightedEdge(syntheticSource, source)
             }
     }
 
     private fun addSink(graph: Graph<Operation, DefaultWeightedEdge>) {
-        graph.addVertex(sink)
+        graph.addVertex(syntheticSink)
 
         operations
-            .filter { it.isLeaf() }
-            .forEach { leafNode ->
-                graph.addWeightedEdge(leafNode, sink)
+            .filter { it.isSink() }
+            .forEach { sink ->
+                graph.addWeightedEdge(sink, syntheticSink)
             }
     }
 
@@ -146,18 +152,6 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
         setEdgeWeight(from, to, from.duration)
     }
 
-    private fun rootNodes(): Set<Operation> {
-        val roots = mutableSetOf<Operation>()
-        operations.forEach { roots.add(it) }
-
-        operations.forEach { node ->
-            node.findDependencies().forEach { dependency ->
-                roots.remove(dependency)
-            }
-        }
-        return roots
-    }
-
     private fun Operation.findDependencies(): List<Operation> {
         // Skip missing nodes
         return predecessors.mapNotNull { dependencyKey ->
@@ -165,12 +159,20 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
         }
     }
 
+    private fun Operation.isSink(): Boolean {
+        return operations
+            .firstOrNull { it.predecessors.contains(this.id) } == null
+    }
+
+    private fun Operation.isSource() =
+        predecessors.isEmpty()
+
     /**
      * Synthetically added operation
      */
     private fun Operation.isSynthetic(): Boolean =
-        this == source || this == sink
+        this == syntheticSource || this == syntheticSink
 
-    private val source = SimpleOperation("source")
-    private val sink = SimpleOperation("sink")
+    private val syntheticSource = SimpleOperation("source")
+    private val syntheticSink = SimpleOperation("sink")
 }
