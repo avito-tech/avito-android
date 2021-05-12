@@ -10,18 +10,18 @@ class ShortestPathTest {
 
     @Test
     fun `zero operations - empty path`() {
-        val longestPath = path(emptySet())
+        val path = shortestPath(emptySet())
 
-        assertThat(longestPath).isEmpty()
+        assertThat(path).isEmpty()
     }
 
     @Test
     fun `one operation - path with it`() {
         val operation = SimpleOperation(id = "id")
 
-        val longestPath = path(setOf(operation))
+        val path = shortestPath(setOf(operation))
 
-        assertThat(longestPath).containsExactly(operation)
+        assertThat(path).containsExactly(operation)
     }
 
     @Test
@@ -30,9 +30,9 @@ class ShortestPathTest {
         val a2 = SimpleOperation(id = "a2", predecessors = setOf("a1"))
         val a3 = SimpleOperation(id = "a3", predecessors = setOf("a2"))
 
-        val longestPath = path(setOf(a3, a2, a1))
+        val path = shortestPath(setOf(a3, a2, a1))
 
-        assertThat(longestPath).containsExactly(a1, a2, a3)
+        assertThat(path).containsExactly(a1, a2, a3)
     }
 
     @Test
@@ -43,9 +43,9 @@ class ShortestPathTest {
         val b1 = SimpleOperation(id = "b1", duration = 3.0)
         val b2 = SimpleOperation(id = "b2", duration = 3.0, predecessors = setOf("b1"))
 
-        val longestPath = path(setOf(a1, a2, b1, b2))
+        val path = shortestPath(setOf(a1, a2, b1, b2))
 
-        assertThat(longestPath).containsExactly(a1, a2)
+        assertThat(path).containsExactly(a1, a2)
     }
 
     @Test
@@ -56,11 +56,11 @@ class ShortestPathTest {
         val intermediate3 = SimpleOperation(id = "intermediate3", duration = 3.0, predecessors = setOf("start"))
         val end = SimpleOperation(id = "end", predecessors = setOf("intermediate1", "intermediate2", "intermediate3"))
 
-        val longestPath = path(setOf(start, intermediate1, intermediate2, intermediate3, end))
+        val path = shortestPath(setOf(start, intermediate1, intermediate2, intermediate3, end))
 
-        assertThat(longestPath).containsExactly(start, intermediate1, end)
+        assertThat(path).containsExactly(start, intermediate1, end)
     }
 
-    private fun path(operations: Set<Operation>) =
+    private fun shortestPath(operations: Set<Operation>) =
         ShortestPath(operations).find()
 }
