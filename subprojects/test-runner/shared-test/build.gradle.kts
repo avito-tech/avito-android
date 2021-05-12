@@ -9,7 +9,7 @@ publish {
 }
 
 dependencies {
-    api(project(":gradle:runner:stub"))
+    api(project(":test-runner:stub"))
     api(libs.coroutinesTest)
 
     compileOnly(gradleApi())
@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.coroutinesCore)
     implementation(libs.kotson)
     implementation(project(":common:report-viewer"))
-    implementation(project(":gradle:runner:service"))
-    implementation(project(":gradle:runner:shared"))
+    implementation(project(":test-runner:service"))
+    implementation(project(":test-runner:shared"))
     implementation(project(":gradle:test-project"))
 }
