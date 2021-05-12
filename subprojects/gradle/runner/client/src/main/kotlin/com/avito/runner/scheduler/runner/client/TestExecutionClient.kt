@@ -64,8 +64,8 @@ class TestExecutionClient(
     }
 
     fun stop() {
-        requests.cancel()
-        results.cancel()
+        requests.close()
+        results.close()
     }
 
     class Communication(
