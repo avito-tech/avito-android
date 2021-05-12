@@ -14,7 +14,6 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.time.TimeProvider
-import com.google.gson.Gson
 import java.util.concurrent.ConcurrentHashMap
 
 internal class TestMetricsListenerImpl(
@@ -124,43 +123,48 @@ internal class TestMetricsListenerImpl(
     }
 
     override fun onTestSuiteFinished() {
-        logger.debug("onTestSuiteFinished")
-        val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
-        val gson = Gson()
-        logger.debug("TestMetricsAggregator: ${gson.toJson(aggregator)}")
+        try {
+            logger.debug("onTestSuiteFinished- started")
+            val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
+            logger.debug("TestMetricsAggregator: $aggregator")
 
-        with(testMetricsSender) {
-            aggregator.initialDelay().fold(
-                { sendInitialDelay(it) },
-                { logger.warn("Not sending initial delay, no data") }
-            )
+            with(testMetricsSender) {
+                aggregator.initialDelay().fold(
+                    { sendInitialDelay(it) },
+                    { logger.warn("Not sending initial delay, no data") }
+                )
 
-            aggregator.medianQueueTime().fold(
-                { sendMedianQueueTime(it) },
-                { logger.warn("Not sending median test queue time, no data") }
-            )
+                aggregator.medianQueueTime().fold(
+                    { sendMedianQueueTime(it) },
+                    { logger.warn("Not sending median test queue time, no data") }
+                )
 
-            aggregator.medianInstallationTime().fold(
-                { sendMedianInstallationTime(it) },
-                { logger.warn("Not sending median test start time, no data") }
-            )
+                aggregator.medianInstallationTime().fold(
+                    { sendMedianInstallationTime(it) },
+                    { logger.warn("Not sending median test start time, no data") }
+                )
 
-            aggregator.endDelay().fold(
-                { sendEndDelay(it) },
-                { logger.warn("Not sending end delay, no data") }
-            )
+                aggregator.endDelay().fold(
+                    { sendEndDelay(it) },
+                    { logger.warn("Not sending end delay, no data") }
+                )
 
-            aggregator.suiteTime().fold(
-                { sendSuiteTime(it) },
-                { logger.warn("Not sending suite time, no data") }
-            )
+                aggregator.suiteTime().fold(
+                    { sendSuiteTime(it) },
+                    { logger.warn("Not sending suite time, no data") }
+                )
 
-            sendTotalTime(aggregator.totalTime())
+                sendTotalTime(aggregator.totalTime())
 
-            aggregator.medianDeviceUtilization().fold(
-                { sendMedianDeviceUtilization(it.toInt()) },
-                { logger.warn("Not sending median device relative wasted time, no data") }
-            )
+                aggregator.medianDeviceUtilization().fold(
+                    { sendMedianDeviceUtilization(it.toInt()) },
+                    { logger.warn("Not sending median device relative wasted time, no data") }
+                )
+            }
+        } catch (throwable: Throwable) {
+            logger.warn("An error occurred while sending statistics", throwable)
+        } finally {
+            logger.debug("onTestSuiteFinished - finished")
         }
     }
 
