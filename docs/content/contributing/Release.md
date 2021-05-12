@@ -59,7 +59,9 @@ In an Activity tab you can track progress.
 ![oss-release](https://user-images.githubusercontent.com/1104540/109543639-9ae22000-7ad7-11eb-82d4-d3d2c1975521.png)
 1. Release the repository. It will publish the contents to Maven Central
 ![oss-release-confirm](https://user-images.githubusercontent.com/1104540/109543687-ac2b2c80-7ad7-11eb-8294-7d603c523156.png)
-1. Wait till new packages appear on [Maven Central](https://search.maven.org/search?q=com.avito.android). Should take ~15 min.
+1. Wait till new packages appear on Maven Central. It takes usually about 15-30 min.
+   You can check state manually in a [repository manager](https://oss.sonatype.org/#nexus-search;quick~com.avito.android) 
+   or in [public search](https://search.maven.org/search?q=com.avito.android). 
 
 Some additional info:
 
