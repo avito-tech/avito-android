@@ -21,7 +21,7 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
 
         @Suppress("UNCHECKED_CAST")
         return path.vertexList
-            .filterNot { it is PhantomOperation } as List<T>
+            .filterNot { it.isSynthetic() } as List<T>
     }
 
     /***
@@ -87,7 +87,7 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
             .forEach { edgeToSink ->
                 val leafNode = graph.getEdgeSource(edgeToSink)
 
-                check(leafNode !is PhantomOperation && leafNode.isLeaf()) {
+                check(!leafNode.isSynthetic() && leafNode.isLeaf()) {
                     "Expected structure: sink <-- leaf node <--- node ..."
                 }
             }
@@ -97,7 +97,7 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
         graph.outgoingEdgesOf(source).forEach { edgeToRootNode ->
             val rootNode = graph.getEdgeTarget(edgeToRootNode)
 
-            check(isRoot(rootNode) && rootNode !is PhantomOperation) {
+            check(isRoot(rootNode) && !rootNode.isSynthetic()) {
                 "Expected structure: ... node <-- root node <-- source"
             }
         }
@@ -164,11 +164,13 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
             operationByKey[dependencyKey]
         }
     }
+
+    /**
+     * Synthetically added operation
+     */
+    private fun Operation.isSynthetic(): Boolean =
+        this == source || this == sink
+
+    private val source = SimpleOperation("source")
+    private val sink = SimpleOperation("sink")
 }
-
-private class PhantomOperation(
-    key: String,
-) : SimpleOperation(key)
-
-private val source = PhantomOperation("source")
-private val sink = PhantomOperation("sink")
