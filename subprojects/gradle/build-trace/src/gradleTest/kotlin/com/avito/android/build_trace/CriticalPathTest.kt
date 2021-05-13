@@ -231,6 +231,7 @@ class CriticalPathTest {
         val reader = CriticalPathSerialization(reportFile())
 
         return reader.read()
+            .operations
             .map { it.path }
             .toSet()
     }

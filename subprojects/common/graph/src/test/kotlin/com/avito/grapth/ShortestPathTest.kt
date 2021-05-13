@@ -12,7 +12,7 @@ class ShortestPathTest {
     fun `zero operations - empty path`() {
         val path = shortestPath(emptySet())
 
-        assertThat(path).isEmpty()
+        assertThat(path.operations).isEmpty()
     }
 
     @Test
@@ -21,7 +21,7 @@ class ShortestPathTest {
 
         val path = shortestPath(setOf(operation))
 
-        assertThat(path).containsExactly(operation)
+        assertThat(path.operations).containsExactly(operation)
     }
 
     @Test
@@ -32,7 +32,7 @@ class ShortestPathTest {
 
         val path = shortestPath(setOf(a3, a2, a1))
 
-        assertThat(path).containsExactly(a1, a2, a3)
+        assertThat(path.operations).containsExactly(a1, a2, a3)
     }
 
     @Test
@@ -45,7 +45,7 @@ class ShortestPathTest {
 
         val path = shortestPath(setOf(a1, a2, b1, b2))
 
-        assertThat(path).containsExactly(a1, a2)
+        assertThat(path.operations).containsExactly(a1, a2)
     }
 
     @Test
@@ -62,7 +62,7 @@ class ShortestPathTest {
 
         val path = shortestPath(setOf(start, intermediate1, intermediate2, intermediate3, end))
 
-        assertThat(path).containsExactly(start, intermediate1, end)
+        assertThat(path.operations).containsExactly(start, intermediate1, end)
     }
 
     private fun shortestPath(operations: Set<Operation>) =

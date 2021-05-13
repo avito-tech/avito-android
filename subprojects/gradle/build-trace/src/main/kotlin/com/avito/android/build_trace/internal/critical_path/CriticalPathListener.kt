@@ -3,6 +3,7 @@ package com.avito.android.build_trace.internal.critical_path
 import com.avito.android.gradle.metric.AbstractBuildEventsListener
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
+import com.avito.graph.OperationsPath
 import com.avito.graph.ShortestPath
 import org.gradle.BuildResult
 import org.gradle.api.Task
@@ -13,13 +14,15 @@ internal class CriticalPathListener(
 
     private val operations = mutableSetOf<TaskOperation>()
 
-    private val criticalPath: List<TaskOperation> by lazy {
-        ShortestPath(operations)
-            .find()
-            .map { it.invertTime() }
+    private val criticalPath: OperationsPath<TaskOperation> by lazy {
+        val shortestPath = ShortestPath(operations).find()
+
+        OperationsPath(
+            shortestPath.operations.map { it.invertTime() }
+        )
     }
 
-    override fun path(): List<TaskOperation> {
+    override fun path(): OperationsPath<TaskOperation> {
         return criticalPath
     }
 

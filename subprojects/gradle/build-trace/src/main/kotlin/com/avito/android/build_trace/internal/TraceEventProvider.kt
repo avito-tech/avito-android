@@ -6,6 +6,7 @@ import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.CompleteEvent
 import com.avito.android.trace.InstantEvent
 import com.avito.android.trace.TraceEvent
+import com.avito.graph.OperationsPath
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskState
@@ -75,10 +76,10 @@ internal class TraceEventProvider {
         eventName = "execution end"
     )
 
-    fun criticalPathEvent(event: TraceEvent, path: List<TaskOperation>): TraceEvent {
+    fun criticalPathEvent(event: TraceEvent, path: OperationsPath<TaskOperation>): TraceEvent {
         if (event !is CompleteEvent) return event
 
-        val inPath = path.firstOrNull { it.path == event.eventName } != null
+        val inPath = path.operations.firstOrNull { it.path == event.eventName } != null
         return if (inPath) {
             event.copy(
                 color = TraceEvent.COLOR_YELLOW,

@@ -13,15 +13,17 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
 
     private val operationByKey: Map<String, Operation> = operations.map { it.id to it }.toMap()
 
-    fun find(): List<T> {
-        if (operations.size <= 1) return operations.toList()
+    fun find(): OperationsPath<T> {
+        if (operations.size <= 1) return OperationsPath(operations.toList())
 
         val graph = build()
         val path = graph.shortestPath()
 
         @Suppress("UNCHECKED_CAST")
-        return path.vertexList
+        val operations = path.vertexList
             .filterNot { it.isSynthetic() } as List<T>
+
+        return OperationsPath(operations)
     }
 
     /***
