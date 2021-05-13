@@ -34,6 +34,6 @@ internal class TestMetricsSender(
     }
 
     fun sendMedianDeviceUtilization(percent: Int) {
-        statsDSender.send(GaugeLongMetric(prefix.append("device-utilization-median"), percent.toLong()))
+        statsDSender.send(GaugeLongMetric(prefix.append("device-utilization", "median"), percent.toLong()))
     }
 }

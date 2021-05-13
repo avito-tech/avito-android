@@ -29,7 +29,6 @@ internal class TestMetricsListenerImpl(
     private var testSuiteStartedTime: Long = 0
 
     override fun onTestSuiteStarted() {
-        logger.debug("onTestSuiteStarted")
         testSuiteStartedTime = timeProvider.nowInMillis()
     }
 
@@ -53,9 +52,11 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onStatePrepared(device: Device, state: State) {
+        // empty
     }
 
     override suspend fun onApplicationInstalled(device: Device, installation: DeviceInstallation) {
+        // empty
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
@@ -103,11 +104,10 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
-        logger.debug("onIntentionFail")
+        // empty
     }
 
     override suspend fun onDeviceDied(device: Device, message: String, reason: Throwable) {
-        logger.debug("onDeviceDied")
         // alternative to onFinished terminated state
     }
 
@@ -123,48 +123,39 @@ internal class TestMetricsListenerImpl(
     }
 
     override fun onTestSuiteFinished() {
-        try {
-            logger.debug("onTestSuiteFinished- started")
-            val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
-            logger.debug("TestMetricsAggregator: $aggregator")
+        val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
 
-            with(testMetricsSender) {
-                aggregator.initialDelay().fold(
-                    { sendInitialDelay(it) },
-                    { logger.warn("Not sending initial delay, no data") }
-                )
+        with(testMetricsSender) {
+            aggregator.initialDelay().fold(
+                { sendInitialDelay(it) },
+                { logger.warn("Not sending initial delay, no data") }
+            )
 
-                aggregator.medianQueueTime().fold(
-                    { sendMedianQueueTime(it) },
-                    { logger.warn("Not sending median test queue time, no data") }
-                )
+            aggregator.medianQueueTime().fold(
+                { sendMedianQueueTime(it) },
+                { logger.warn("Not sending median test queue time, no data") }
+            )
+            aggregator.medianInstallationTime().fold(
+                { sendMedianInstallationTime(it) },
+                { logger.warn("Not sending median test start time, no data") }
+            )
 
-                aggregator.medianDeviceUtilization().fold(
-                    { sendMedianDeviceUtilization(it.toInt()) },
-                    { logger.warn("Not sending median device relative wasted time, no data") }
-                )
+            aggregator.endDelay().fold(
+                { sendEndDelay(it) },
+                { logger.warn("Not sending end delay, no data") }
+            )
 
-                aggregator.medianInstallationTime().fold(
-                    { sendMedianInstallationTime(it) },
-                    { logger.warn("Not sending median test start time, no data") }
-                )
+            aggregator.suiteTime().fold(
+                { sendSuiteTime(it) },
+                { logger.warn("Not sending suite time, no data") }
+            )
 
-                aggregator.endDelay().fold(
-                    { sendEndDelay(it) },
-                    { logger.warn("Not sending end delay, no data") }
-                )
+            sendTotalTime(aggregator.totalTime())
 
-                aggregator.suiteTime().fold(
-                    { sendSuiteTime(it) },
-                    { logger.warn("Not sending suite time, no data") }
-                )
-
-                sendTotalTime(aggregator.totalTime())
-            }
-        } catch (throwable: Throwable) {
-            logger.warn("An error occurred while sending statistics", throwable)
-        } finally {
-            logger.debug("onTestSuiteFinished - finished")
+            aggregator.medianDeviceUtilization().fold(
+                { sendMedianDeviceUtilization(it.toInt()) },
+                { logger.warn("Not sending median device relative wasted time, no data") }
+            )
         }
     }
 
