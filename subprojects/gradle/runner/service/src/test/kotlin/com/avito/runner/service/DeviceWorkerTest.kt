@@ -24,12 +24,12 @@ import com.avito.time.StubTimeProvider
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
-import java.io.File
-import kotlin.io.path.ExperimentalPathApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import java.io.File
+import kotlin.io.path.ExperimentalPathApi
 
 @ExperimentalCoroutinesApi
 @ExperimentalPathApi

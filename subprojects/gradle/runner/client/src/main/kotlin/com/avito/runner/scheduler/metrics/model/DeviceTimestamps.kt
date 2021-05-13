@@ -10,13 +10,13 @@ internal sealed class DeviceTimestamps(
     data class Started(
         override val created: Long,
         override val testTimestamps: MutableMap<TestKey, TestTimestamps>,
-    ): DeviceTimestamps(created, testTimestamps)
+    ) : DeviceTimestamps(created, testTimestamps)
 
     data class Finished(
         override val created: Long,
         override val testTimestamps: MutableMap<TestKey, TestTimestamps>,
         val finished: Long
-    ): DeviceTimestamps(created, testTimestamps) {
+    ) : DeviceTimestamps(created, testTimestamps) {
 
         private val totalTime = finished - created
 
