@@ -4,7 +4,6 @@ import com.avito.instrumentation.internal.finalizer.action.FinalizeAction
 import com.avito.instrumentation.internal.finalizer.verdict.Verdict
 import com.avito.instrumentation.internal.finalizer.verdict.VerdictDeterminer
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
-import com.avito.report.model.TestStaticData
 import com.avito.utils.BuildFailer
 import java.io.File
 
@@ -17,10 +16,8 @@ internal class InstrumentationTestActionFinalizerImpl(
 
     override fun finalize(testSchedulerResults: TestsScheduler.Result) {
 
-        val initialTestSuite: Set<TestStaticData> = testSchedulerResults.testSuite.testsToRun.map { it.test }.toSet()
-
         val verdict: Verdict = verdictDeterminer.determine(
-            initialTestSuite = initialTestSuite,
+            initialTestSuite = testSchedulerResults.initialTestSuite,
             testResults = testSchedulerResults.testResults
         )
 

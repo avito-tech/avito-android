@@ -12,7 +12,7 @@ internal class VerdictDeterminerImpl(
 ) : VerdictDeterminer {
 
     override fun determine(
-        initialTestSuite: Set<TestStaticData>,
+        initialTestSuite: Collection<TestStaticData>,
         testResults: Collection<AndroidTest>
     ): Verdict {
 
@@ -77,7 +77,7 @@ internal class VerdictDeterminerImpl(
     }
 
     private fun getLostTests(
-        initialTestSuite: Set<TestStaticData>,
+        initialTestSuite: Collection<TestStaticData>,
         testResults: Collection<AndroidTest>
     ): Set<AndroidTest.Lost> {
         val lostTests = testResults.filterIsInstance<AndroidTest.Lost>()

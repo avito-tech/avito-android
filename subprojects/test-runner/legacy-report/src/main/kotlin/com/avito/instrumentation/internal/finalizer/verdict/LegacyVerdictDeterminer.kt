@@ -1,8 +1,8 @@
 package com.avito.instrumentation.internal.finalizer.verdict
 
-internal interface LegacyVerdictDeterminer {
+public interface LegacyVerdictDeterminer {
 
-    fun determine(
+    public fun determine(
         failed: HasFailedTestDeterminer.Result,
         notReported: HasNotReportedTestsDeterminer.Result
     ): LegacyVerdict

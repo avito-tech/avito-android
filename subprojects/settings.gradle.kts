@@ -124,6 +124,7 @@ include(":android-lib:proxy-toast")
 include(":android-lib:snackbar-proxy")
 
 include(":test-runner:k8s-deployments-cleaner")
+include(":test-runner:legacy-report")
 
 @Suppress("UnstableApiUsage")
 pluginManagement {

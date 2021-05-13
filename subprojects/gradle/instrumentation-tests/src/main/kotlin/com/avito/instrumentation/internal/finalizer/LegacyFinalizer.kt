@@ -1,7 +1,6 @@
 package com.avito.instrumentation.internal.finalizer
 
 import com.avito.android.runner.report.LegacyReport
-import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.finalizer.action.LegacyFinalizeAction
 import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
@@ -11,6 +10,7 @@ import com.avito.instrumentation.internal.scheduling.TestsScheduler
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.utils.BuildFailer
+import java.io.File
 
 internal class LegacyFinalizer(
     private val hasFailedTestDeterminer: HasFailedTestDeterminer,
@@ -18,7 +18,7 @@ internal class LegacyFinalizer(
     private val legacyVerdictDeterminer: LegacyVerdictDeterminer,
     private val actions: List<LegacyFinalizeAction>,
     private val buildFailer: BuildFailer,
-    private val params: InstrumentationTestsAction.Params,
+    private val verdictFile: File,
     loggerFactory: LoggerFactory,
     private val report: LegacyReport,
 ) : InstrumentationTestActionFinalizer {
@@ -27,23 +27,20 @@ internal class LegacyFinalizer(
 
     override fun finalize(testSchedulerResults: TestsScheduler.Result) {
 
-        val testResults = report.getTests(
-            initialSuiteFilter = testSchedulerResults.testSuite.testsToRun.map { it.test.name }
-        )
-            .onFailure { throwable ->
-                logger.critical("Can't get test results", throwable)
-            }
-            .getOrElse { emptyList() }
+        val fetchedTestResults =
+            report.getTests(initialSuiteFilter = testSchedulerResults.initialTestSuite.map { it.name })
+                .onFailure { throwable -> logger.critical("Can't get test results", throwable) }
+                .getOrElse { emptyList() }
 
-        val failedTests = hasFailedTestDeterminer.determine(runResult = testResults)
+        val failedTests = hasFailedTestDeterminer.determine(runResult = fetchedTestResults)
 
         val notReportedTests = hasNotReportedTestsDeterminer.determine(
-            runResult = testResults,
-            allTests = testSchedulerResults.testSuite.testsToRun.map { it.test }
+            runResult = fetchedTestResults,
+            allTests = testSchedulerResults.initialTestSuite.toList()
         )
 
         val testRunResult = TestRunResult(
-            reportedTests = testResults,
+            reportedTests = fetchedTestResults,
             failed = failedTests,
             notReported = notReportedTests
         )
@@ -60,9 +57,7 @@ internal class LegacyFinalizer(
                 // do nothing
             }
             is LegacyVerdict.Failure ->
-                buildFailer.failBuild(
-                    "Instrumentation task failed. Look at verdict in the file: ${params.verdictFile}"
-                )
+                buildFailer.failBuild("Instrumentation task failed. Look at verdict in the file: $verdictFile")
         }
     }
 }

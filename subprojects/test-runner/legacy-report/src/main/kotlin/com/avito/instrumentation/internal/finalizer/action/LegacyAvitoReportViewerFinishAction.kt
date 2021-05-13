@@ -5,7 +5,7 @@ import com.avito.instrumentation.internal.finalizer.TestRunResult
 import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdict
 
-internal class LegacyAvitoReportViewerFinishAction(
+public class LegacyAvitoReportViewerFinishAction(
     private val legacyReport: LegacyReport
 ) : LegacyFinalizeAction {
 

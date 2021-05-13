@@ -7,7 +7,8 @@ import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.fromSimpleRunTest
 import com.avito.time.TimeProvider
 
-internal class LegacyNotReportedTestsDeterminer(
+// STOPSHIP: internal and factory
+public class LegacyNotReportedTestsDeterminer(
     private val timeProvider: TimeProvider
 ) : HasNotReportedTestsDeterminer {
 

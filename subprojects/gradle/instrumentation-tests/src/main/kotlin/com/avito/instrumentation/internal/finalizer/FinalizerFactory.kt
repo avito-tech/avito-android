@@ -194,7 +194,7 @@ internal interface FinalizerFactory {
                 legacyVerdictDeterminer = verdictDeterminer,
                 actions = actions,
                 buildFailer = buildFailer,
-                params = params,
+                verdictFile = params.verdictFile,
                 loggerFactory = params.loggerFactory,
                 report = reportFactory.createAvitoReport()
             )

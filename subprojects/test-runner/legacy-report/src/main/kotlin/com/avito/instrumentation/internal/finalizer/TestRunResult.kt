@@ -4,7 +4,7 @@ import com.avito.instrumentation.internal.finalizer.verdict.HasFailedTestDetermi
 import com.avito.instrumentation.internal.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.report.model.SimpleRunTest
 
-internal data class TestRunResult(
+public data class TestRunResult(
     val reportedTests: List<SimpleRunTest>,
     val failed: HasFailedTestDeterminer.Result,
     val notReported: HasNotReportedTestsDeterminer.Result

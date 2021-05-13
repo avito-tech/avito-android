@@ -1,8 +1,8 @@
 package com.avito.instrumentation.internal.finalizer.verdict
 
-internal object LegacyVerdictDeterminerFactory {
+public object LegacyVerdictDeterminerFactory {
 
-    fun create(): LegacyVerdictDeterminer {
+    public fun create(): LegacyVerdictDeterminer {
         return LegacyVerdictDeterminerImpl()
     }
 }

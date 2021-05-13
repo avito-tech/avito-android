@@ -6,7 +6,7 @@ import com.avito.report.ReportLinkGenerator
 import com.avito.utils.createOrClear
 import java.io.File
 
-internal class LegacyWriteReportViewerLinkFile(
+public class LegacyWriteReportViewerLinkFile(
     private val outputDir: File,
     private val reportLinkGenerator: ReportLinkGenerator
 ) : LegacyFinalizeAction {

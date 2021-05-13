@@ -67,7 +67,7 @@ internal class InstrumentationTestsScheduler(
         )
 
         return TestsScheduler.Result(
-            testSuite = testSuite,
+            initialTestSuite = testSuite.testsToRun.map { it.test },
             testResults = report.getTestResults()
         )
     }

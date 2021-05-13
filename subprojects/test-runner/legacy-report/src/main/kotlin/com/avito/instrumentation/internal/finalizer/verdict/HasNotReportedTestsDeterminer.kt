@@ -4,21 +4,22 @@ import com.avito.report.model.AndroidTest
 import com.avito.report.model.SimpleRunTest
 import com.avito.report.model.TestStaticData
 
-internal interface HasNotReportedTestsDeterminer {
+// STOPSHIP: internal and factory
+public interface HasNotReportedTestsDeterminer {
 
-    fun determine(
+    public fun determine(
         runResult: List<SimpleRunTest>,
         allTests: List<TestStaticData>
     ): Result
 
-    sealed class Result {
+    public sealed class Result {
 
-        open val lostTests
-            get() = emptyList<AndroidTest.Lost>()
+        public open val lostTests: List<AndroidTest.Lost>
+            get() = emptyList()
 
-        object AllTestsReported : Result()
+        public object AllTestsReported : Result()
 
-        data class HasNotReportedTests(
+        public data class HasNotReportedTests(
             override val lostTests: List<AndroidTest.Lost>
         ) : Result()
     }

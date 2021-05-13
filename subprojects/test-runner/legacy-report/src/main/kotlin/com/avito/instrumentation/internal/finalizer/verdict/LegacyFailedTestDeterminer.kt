@@ -3,7 +3,8 @@ package com.avito.instrumentation.internal.finalizer.verdict
 import com.avito.report.model.Flakiness
 import com.avito.report.model.SimpleRunTest
 
-internal class LegacyFailedTestDeterminer(
+// STOPSHIP: internal and factory
+public class LegacyFailedTestDeterminer(
     private val suppressFailure: Boolean,
     private val suppressFlaky: Boolean
 ) : HasFailedTestDeterminer {

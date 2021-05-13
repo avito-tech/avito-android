@@ -6,7 +6,7 @@ import com.avito.report.model.TestStaticData
 internal interface VerdictDeterminer {
 
     fun determine(
-        initialTestSuite: Set<TestStaticData>,
+        initialTestSuite: Collection<TestStaticData>,
         testResults: Collection<AndroidTest>
     ): Verdict
 }
