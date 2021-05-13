@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":test-runner:service"))
-    implementation(project(":test-runner:shared"))
+
     implementation(project(":common:result"))
 
     gradleTestImplementation(project(":gradle:test-project"))
