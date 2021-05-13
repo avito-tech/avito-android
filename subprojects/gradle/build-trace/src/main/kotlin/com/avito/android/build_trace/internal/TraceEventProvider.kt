@@ -19,7 +19,7 @@ internal class TraceEventProvider {
                 taskShortDescription(it, task.project)
             }
         val finalizeTasks = task.finalizedBy
-            .safeDependencies(task)
+            .getDependencies(task)
             .map {
                 taskShortDescription(it, task.project)
             }
