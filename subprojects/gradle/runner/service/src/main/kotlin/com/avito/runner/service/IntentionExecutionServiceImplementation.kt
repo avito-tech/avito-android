@@ -108,10 +108,10 @@ class IntentionExecutionServiceImplementation(
 
     override fun stop() {
         intentionsRouter.cancel()
-        intentions.close()
-        results.close()
-        messages.close()
+        intentions.cancel()
+        results.cancel()
+        messages.cancel()
         devices.cancel()
-        deviceSignals.close()
+        deviceSignals.cancel()
     }
 }

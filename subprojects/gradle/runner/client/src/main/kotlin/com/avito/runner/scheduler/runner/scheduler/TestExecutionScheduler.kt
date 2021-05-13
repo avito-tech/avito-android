@@ -86,7 +86,7 @@ class TestExecutionScheduler(
     }
 
     fun stop() {
-        resultChannel.close()
+        resultChannel.cancel()
     }
 
     class Communication(
