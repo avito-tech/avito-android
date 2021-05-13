@@ -196,6 +196,7 @@ class CriticalPathTest {
             }
             buildTrace {
                 enabled.set($enabledPlugin)
+                output.set(project.layout.projectDirectory.dir("output"))
             }
             $buildScript
             """.trimIndent()
@@ -250,5 +251,5 @@ class CriticalPathTest {
     }
 
     private fun reportFile(): File =
-        File(projectDir, "outputs/build-trace/critical_path.json")
+        File(projectDir, "output/critical_path.json")
 }
