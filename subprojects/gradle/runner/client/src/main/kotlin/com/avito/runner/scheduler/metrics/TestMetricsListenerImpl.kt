@@ -139,6 +139,11 @@ internal class TestMetricsListenerImpl(
                     { logger.warn("Not sending median test queue time, no data") }
                 )
 
+                aggregator.medianDeviceUtilization().fold(
+                    { sendMedianDeviceUtilization(it.toInt()) },
+                    { logger.warn("Not sending median device relative wasted time, no data") }
+                )
+
                 aggregator.medianInstallationTime().fold(
                     { sendMedianInstallationTime(it) },
                     { logger.warn("Not sending median test start time, no data") }
@@ -155,11 +160,6 @@ internal class TestMetricsListenerImpl(
                 )
 
                 sendTotalTime(aggregator.totalTime())
-
-                aggregator.medianDeviceUtilization().fold(
-                    { sendMedianDeviceUtilization(it.toInt()) },
-                    { logger.warn("Not sending median device relative wasted time, no data") }
-                )
             }
         } catch (throwable: Throwable) {
             logger.warn("An error occurred while sending statistics", throwable)
