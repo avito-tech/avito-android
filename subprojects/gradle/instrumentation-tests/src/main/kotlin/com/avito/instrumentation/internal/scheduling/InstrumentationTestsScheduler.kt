@@ -16,7 +16,7 @@ import java.io.File
 internal class InstrumentationTestsScheduler(
     private val testsRunner: TestsRunner,
     private val params: InstrumentationTestsAction.Params,
-    private val sourceReport: Report,
+    private val report: Report,
     private val testSuiteProvider: TestSuiteProvider,
     private val testSuiteLoader: TestSuiteLoader,
     private val gson: Gson,
@@ -62,11 +62,14 @@ internal class InstrumentationTestsScheduler(
         testsRunner.runTests(
             mainApk = params.mainApk,
             testApk = params.testApk,
-            report = sourceReport,
+            report = report,
             testsToRun = testSuite.testsToRun
         )
 
-        return TestsScheduler.Result(testSuite = testSuite)
+        return TestsScheduler.Result(
+            testSuite = testSuite,
+            testResults = report.getTestResults()
+        )
     }
 
     private fun writeParsedTests(parsedTests: Result<List<TestInApk>>) {

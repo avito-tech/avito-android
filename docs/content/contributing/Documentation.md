@@ -332,7 +332,7 @@ You can edit markdown files on the fly. Changes out of this directory usually re
 ### How to upgrade MkDocs and theme
 
 0. Change the version in
-   a [Dockerfile](https://github.com/avito-tech/avito-android/tree/develop/ci/docker/documentation);
+   a [documentation image](https://github.com/avito-tech/avito-android/tree/develop/ci/docker/documentation);
 0. Publish the image by [Build documentation docker](http://links.k.avito.ru/9M) configuration;
 0. Update a tag in `ci/_environment.sh`
 

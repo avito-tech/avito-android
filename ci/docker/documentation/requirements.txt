@@ -1,1 +1,1 @@
-mkdocs-material~=6.2
+mkdocs-material~=7.1

@@ -111,7 +111,7 @@ internal class ReportProcessorImpl(
                 }
 
                 Result.Success(
-                    AndroidTest.Lost.fromTestMetadata(
+                    AndroidTest.Lost.fromTestStaticData(
                         testStaticData,
                         startTime = 0,
                         lastSignalTime = 0,

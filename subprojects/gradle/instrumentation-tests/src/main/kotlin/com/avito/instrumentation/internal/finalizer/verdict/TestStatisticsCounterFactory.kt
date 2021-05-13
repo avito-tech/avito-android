@@ -13,4 +13,6 @@ internal object TestStatisticsCounterFactory {
         failed = failedTestDeterminer,
         notReported = notReportedTestsDeterminer
     )
+
+    fun create(verdict: Verdict): TestStatisticsCounter = TestStatisticsCounterImpl(verdict)
 }

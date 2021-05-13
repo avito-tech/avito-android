@@ -104,6 +104,9 @@ __check_defined = \
 clean:
 	rm -rf `find . -type d -name build`
 
+unsafe_clean:
+	git clean -fdx
+
 # Warning. Hack!
 # Мы можем удалять эти локи, т.к. гарантированно никакие другие процессы не используют этот шаренный кеш на начало новой сборки
 # см. clearDockerContainers
@@ -192,10 +195,10 @@ docs:
 	./ci/documentation/preview.sh
 
 clear_k8s_deployments_by_namespaces:
-	$(docker_command) ./gradlew subprojects\:ci\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
+	$(docker_command) ./gradlew subprojects\:test-runner\:k8s-deployments-cleaner\:clearByNamespaces -PteamcityApiPassword=$(teamcityApiPassword) $(log_level)
 
 clear_k8s_deployments_by_names:
-	$(docker_command) ./gradlew subprojects\:ci\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
+	$(docker_command) ./gradlew subprojects\:test-runner\:k8s-deployments-cleaner\:deleteByNames -Pci=true $(log_level)
 
 # Clear local branches that not on remote
 # from: https://stackoverflow.com/a/17029936/981330

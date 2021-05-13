@@ -1,0 +1,2 @@
+-keep class com.avito.report.model.** { *; }
+-keep interface com.avito.report.model.** { *; }

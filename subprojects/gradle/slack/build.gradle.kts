@@ -20,6 +20,7 @@ dependencies {
 
     integTestImplementation(project(":common:truth-extensions"))
     integTestImplementation(project(":gradle:gradle-extensions"))
+    integTestImplementation(testFixtures(project(":common:http-client")))
 
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:slack-test-fixtures"))

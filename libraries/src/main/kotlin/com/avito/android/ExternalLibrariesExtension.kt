@@ -89,6 +89,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val material = "com.google.android.material:material:${Versions.androidX}"
     val androidAnnotations = "androidx.annotation:annotation:1.1.0"
     val freeReflection = "me.weishu:free_reflection:2.2.0"
+    val jdgraphtCore = "org.jgrapht:jgrapht-core:1.5.1"
 
     val kotlinPlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     val androidGradlePlugin = "com.android.tools.build:gradle:$androidGradlePluginVersion"
@@ -110,7 +111,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val okhttpMock = "com.github.gmazzo:okhttp-mock:1.4.0"
     val junit = "junit:junit:4.13"
     val truth = "com.google.truth:truth:1.0"
-    val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.2.5"
+    val kotlinCompileTesting = "com.github.tschuchortdev:kotlin-compile-testing:1.4.0"
     val kotlinPoet = "com.squareup:kotlinpoet:1.7.2"
     val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     val mockitoJUnitJupiter = "org.mockito:mockito-junit-jupiter:${Versions.mockito}"

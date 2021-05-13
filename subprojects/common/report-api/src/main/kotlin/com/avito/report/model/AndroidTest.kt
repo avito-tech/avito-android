@@ -46,9 +46,30 @@ public sealed class AndroidTest : TestStaticData {
             return result
         }
 
+        override fun toString(): String {
+            return "Lost[$name]"
+        }
+
         public companion object {
 
-            public fun fromTestMetadata(
+            /**
+             * Lost instance without any info. Could be only in case of test suite inconsistency
+             */
+            public fun createWithoutInfo(
+                testStaticData: TestStaticData,
+                currentTimeSec: Long
+            ): Lost {
+                return fromTestStaticData(
+                    testStaticData = testStaticData,
+                    startTime = currentTimeSec,
+                    lastSignalTime = currentTimeSec,
+                    stdout = "",
+                    stderr = "",
+                    incident = null
+                )
+            }
+
+            public fun fromTestStaticData(
                 testStaticData: TestStaticData,
                 startTime: Long,
                 lastSignalTime: Long,
@@ -111,6 +132,10 @@ public sealed class AndroidTest : TestStaticData {
             var result = name.hashCode()
             result = 31 * result + device.hashCode()
             return result
+        }
+
+        override fun toString(): String {
+            return "Skipped[$name; reason=$skipReason]"
         }
 
         public companion object {
@@ -184,6 +209,14 @@ public sealed class AndroidTest : TestStaticData {
             return result
         }
 
+        override fun toString(): String {
+            return if (incident == null) {
+                "Success[$name]"
+            } else {
+                "Failed[$name; error=${incident.errorMessage}]"
+            }
+        }
+
         public companion object {
 
             public fun create(
@@ -216,92 +249,4 @@ public sealed class AndroidTest : TestStaticData {
             )
         }
     }
-}
-
-/**
- * Только данные которые мы можем получить выполнив тест
- */
-public interface TestRuntimeData {
-
-    public val incident: Incident?
-
-    /**
-     * Must be in seconds
-     */
-    public val startTime: Long
-
-    /**
-     * Must be in seconds
-     */
-    public val endTime: Long
-    public val dataSetData: Map<String, String>
-    public val video: Video?
-    public val preconditions: List<Step>
-    public val steps: List<Step>
-}
-
-public data class TestRuntimeDataPackage(
-    override val incident: Incident?,
-    override val startTime: Long,
-    override val endTime: Long,
-    override val dataSetData: Map<String, String>,
-    override val video: Video?,
-    override val preconditions: List<Step>,
-    override val steps: List<Step>
-) : TestRuntimeData {
-
-    // for test fixtures
-    public companion object
-}
-
-/**
- * Только базовая информация, которую мы можем спарсить из dex, не запуская тест
- */
-public interface TestStaticData {
-    public val name: TestName
-    public val device: DeviceName
-    public val description: String?
-    public val testCaseId: Int?
-    public val dataSetNumber: Int?
-    public val externalId: String?
-    public val featureIds: List<Int>
-    public val tagIds: List<Int>
-    public val priority: TestCasePriority?
-    public val behavior: TestCaseBehavior?
-    public val kind: Kind
-    public val flakiness: Flakiness
-}
-
-public data class TestStaticDataPackage(
-    override val name: TestName,
-    override val device: DeviceName,
-    override val description: String?,
-    override val testCaseId: Int?,
-    override val dataSetNumber: Int?,
-    override val externalId: String?,
-    override val featureIds: List<Int>,
-    override val tagIds: List<Int>,
-    override val priority: TestCasePriority?,
-    override val behavior: TestCaseBehavior?,
-    override val kind: Kind,
-    override val flakiness: Flakiness
-) : TestStaticData {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is TestStaticData) return false
-
-        if (name != other.name) return false
-        if (device != other.device) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + device.hashCode()
-        return result
-    }
-
-    public companion object
 }

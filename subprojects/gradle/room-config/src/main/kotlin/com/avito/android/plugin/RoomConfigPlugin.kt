@@ -7,12 +7,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
-import java.io.File
 
 /**
  * To share the same room config across modules.
- *
- * Plugin adds necessary dependencies and sets room.schemaLocation to point to <module>/room-schemas.
  */
 @Suppress("unused")
 class RoomConfigPlugin : Plugin<Project> {
@@ -34,8 +31,8 @@ class RoomConfigPlugin : Plugin<Project> {
 
             target.extensions.getByType<KaptExtension>().run {
                 arguments {
-                    arg("room.schemaLocation", File(target.projectDir, "room-schemas").absolutePath)
                     arg("room.incremental", kaptIncremental)
+                    // room.schemaLocation is configured by https://github.com/gradle/android-cache-fix-gradle-plugin#roomschemalocationworkaround
                 }
             }
         }

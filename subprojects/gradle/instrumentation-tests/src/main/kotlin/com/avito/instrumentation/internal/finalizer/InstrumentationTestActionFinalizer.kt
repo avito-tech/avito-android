@@ -4,5 +4,5 @@ import com.avito.instrumentation.internal.scheduling.TestsScheduler
 
 internal interface InstrumentationTestActionFinalizer {
 
-    fun finalize(testsExecutionResults: TestsScheduler.Result)
+    fun finalize(testSchedulerResults: TestsScheduler.Result)
 }
