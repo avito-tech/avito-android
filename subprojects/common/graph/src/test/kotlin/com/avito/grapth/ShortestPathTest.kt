@@ -17,7 +17,7 @@ class ShortestPathTest {
 
     @Test
     fun `one operation - path with it`() {
-        val operation = SimpleOperation(id = "id")
+        val operation = SimpleOperation(id = "id", duration = 1.0)
 
         val path = shortestPath(setOf(operation))
 
@@ -26,9 +26,9 @@ class ShortestPathTest {
 
     @Test
     fun `consecutive operations - all of them`() {
-        val a1 = SimpleOperation(id = "a1")
-        val a2 = SimpleOperation(id = "a2", predecessors = setOf("a1"))
-        val a3 = SimpleOperation(id = "a3", predecessors = setOf("a2"))
+        val a1 = SimpleOperation(id = "a1", duration = 1.0)
+        val a2 = SimpleOperation(id = "a2", duration = 1.0, predecessors = setOf("a1"))
+        val a3 = SimpleOperation(id = "a3", duration = 1.0, predecessors = setOf("a2"))
 
         val path = shortestPath(setOf(a3, a2, a1))
 
@@ -50,11 +50,15 @@ class ShortestPathTest {
 
     @Test
     fun `alternative parallel routes - the shortest route`() {
-        val start = SimpleOperation(id = "start")
+        val start = SimpleOperation(id = "start", duration = 1.0)
         val intermediate1 = SimpleOperation(id = "intermediate1", duration = 1.0, predecessors = setOf("start"))
         val intermediate2 = SimpleOperation(id = "intermediate2", duration = 2.0, predecessors = setOf("start"))
         val intermediate3 = SimpleOperation(id = "intermediate3", duration = 3.0, predecessors = setOf("start"))
-        val end = SimpleOperation(id = "end", predecessors = setOf("intermediate1", "intermediate2", "intermediate3"))
+        val end = SimpleOperation(
+            id = "end",
+            duration = 1.0,
+            predecessors = setOf("intermediate1", "intermediate2", "intermediate3")
+        )
 
         val path = shortestPath(setOf(start, intermediate1, intermediate2, intermediate3, end))
 

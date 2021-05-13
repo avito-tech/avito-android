@@ -2,7 +2,7 @@ package com.avito.graph
 
 data class SimpleOperation(
     override val id: String,
-    override val duration: Double = 1.0,
+    override val duration: Double,
     override val predecessors: Set<String> = emptySet()
 ) : Operation {
 

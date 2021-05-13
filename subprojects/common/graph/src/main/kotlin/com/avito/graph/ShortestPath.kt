@@ -173,6 +173,6 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
     private fun Operation.isSynthetic(): Boolean =
         this == syntheticSource || this == syntheticSink
 
-    private val syntheticSource = SimpleOperation("source")
-    private val syntheticSink = SimpleOperation("sink")
+    private val syntheticSource = SimpleOperation("source", duration = 0.toDouble())
+    private val syntheticSink = SimpleOperation("sink", duration = 0.toDouble())
 }
