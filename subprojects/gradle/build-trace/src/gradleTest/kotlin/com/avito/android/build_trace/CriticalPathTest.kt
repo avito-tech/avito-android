@@ -21,7 +21,7 @@ class CriticalPathTest {
     }
 
     @Test
-    fun `has a predecessor task - input-output`() {
+    fun `input-output dependent task - path has a dependent task`() {
         setupTasks(
             """
             abstract class ProducerTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
@@ -66,7 +66,7 @@ class CriticalPathTest {
     }
 
     @Test
-    fun `has a predecessor task - dependsOn`() {
+    fun `dependsOn dependent task - path has a dependent task`() {
         setupTasks(
             """
             ${delayTaskDeclaration()}
@@ -85,7 +85,7 @@ class CriticalPathTest {
     }
 
     @Test
-    fun `has a predecessor task - mustRunAfter`() {
+    fun `mustRunAfter dependent task - path has a dependent task`() {
         setupTasks(
             """
             ${delayTaskDeclaration()}
@@ -105,12 +105,12 @@ class CriticalPathTest {
 
     @Disabled("Undefined behaviour for shouldRunAfter. It can be ignored in parallel execution")
     @Test
-    fun `contains a predecessor task - shouldRunAfter`() {
+    fun `shouldRunAfter dependent task - no expectations`() {
         // no op
     }
 
     @Test
-    fun `has the longest task - independent routes`() {
+    fun `independent routes - path has the longest one`() {
         setupTasks(
             """
             ${delayTaskDeclaration()}
@@ -139,7 +139,7 @@ class CriticalPathTest {
     }
 
     @Test
-    fun `has the longest task  - parallel routes`() {
+    fun `parallel routes - path has the longest task`() {
         setupTasks(
             """
             ${delayTaskDeclaration()}
@@ -166,7 +166,7 @@ class CriticalPathTest {
     }
 
     @Test
-    fun `no report  - disabled plugin`() {
+    fun `disabled plugin - no report`() {
         setupTasks(
             enabledPlugin = false,
             buildScript = """
@@ -196,6 +196,7 @@ class CriticalPathTest {
             }
             buildTrace {
                 enabled.set($enabledPlugin)
+                output.set(project.layout.projectDirectory.dir("output"))
             }
             $buildScript
             """.trimIndent()
@@ -231,6 +232,7 @@ class CriticalPathTest {
         val reader = CriticalPathSerialization(reportFile())
 
         return reader.read()
+            .operations
             .map { it.path }
             .toSet()
     }
@@ -249,5 +251,5 @@ class CriticalPathTest {
     }
 
     private fun reportFile(): File =
-        File(projectDir, "outputs/build-trace/critical_path.json")
+        File(projectDir, "output/critical_path.json")
 }

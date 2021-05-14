@@ -8,7 +8,7 @@ import com.avito.kotlin.dsl.isRoot
 import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.io.File
+import org.gradle.api.file.DirectoryProperty
 
 open class BuildTracePlugin : Plugin<Project> {
 
@@ -27,25 +27,26 @@ open class BuildTracePlugin : Plugin<Project> {
         val isEnabled = extension.enabled.getOrElse(false)
         if (!isEnabled) return
 
+        val outputDir = extension.output.convention(
+            project.layout.buildDirectory.dir("reports/build-trace")
+        )
+
         val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
 
-        val criticalPathListener = criticalPathListener(project)
+        val criticalPathListener = criticalPathListener(outputDir)
 
         val buildTraceListener = BuildTraceListener(
-            output = File(pluginOutputDir(project), "build.trace"),
+            output = outputDir.file("build.trace").get().asFile,
             criticalPathProvider = criticalPathListener,
             loggerFactory = loggerFactory
         )
         GradleCollector.initialize(project, listOf(criticalPathListener, buildTraceListener))
     }
 
-    private fun criticalPathListener(project: Project): CriticalPathListener {
+    private fun criticalPathListener(output: DirectoryProperty): CriticalPathListener {
         val writer = CriticalPathSerialization(
-            report = File(pluginOutputDir(project), "critical_path.json")
+            report = output.file("critical_path.json").get().asFile
         )
         return CriticalPathListener(writer)
     }
-
-    private fun pluginOutputDir(project: Project): File =
-        File(project.projectDir, "outputs/build-trace")
 }
