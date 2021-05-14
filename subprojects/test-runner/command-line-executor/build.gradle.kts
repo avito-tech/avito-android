@@ -5,11 +5,9 @@ plugins {
 }
 
 publish {
-    artifactId.set("runner-shared")
+    artifactId.set("command-line-executor")
 }
 
 dependencies {
-    compileOnly(gradleApi())
-    api(project(":common:logger"))
     implementation(libs.rxJava)
 }

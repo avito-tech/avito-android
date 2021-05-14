@@ -12,7 +12,8 @@ dependencies {
     api(project(":common:coroutines-extension"))
     api(project(":common:statsd"))
     api(project(":common:time"))
-    implementation(project(":test-runner:shared"))
+    api(project(":test-runner:command-line-executor"))
+
     implementation(project(":common:result"))
     implementation(project(":common:test-report-artifacts")) {
         because("DeviceWorker pulls test artifacts")
