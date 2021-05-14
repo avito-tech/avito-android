@@ -12,5 +12,4 @@ class OperationsPath<T : Operation>(
 
     val duration: Double =
         operations.sumByDouble { it.duration }
-
 }

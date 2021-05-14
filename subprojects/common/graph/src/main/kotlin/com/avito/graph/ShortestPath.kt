@@ -12,6 +12,8 @@ import org.jgrapht.graph.DirectedWeightedMultigraph
 class ShortestPath<T : Operation>(private val operations: Set<T>) {
 
     private val operationByKey: Map<String, Operation> = operations.map { it.id to it }.toMap()
+    private val syntheticSource = SimpleOperation("source", duration = 0.toDouble())
+    private val syntheticSink = SimpleOperation("sink", duration = 0.toDouble())
 
     fun find(): OperationsPath<T> {
         if (operations.size <= 1) return OperationsPath(operations.toList())
@@ -174,7 +176,4 @@ class ShortestPath<T : Operation>(private val operations: Set<T>) {
      */
     private fun Operation.isSynthetic(): Boolean =
         this == syntheticSource || this == syntheticSink
-
-    private val syntheticSource = SimpleOperation("source", duration = 0.toDouble())
-    private val syntheticSink = SimpleOperation("sink", duration = 0.toDouble())
 }

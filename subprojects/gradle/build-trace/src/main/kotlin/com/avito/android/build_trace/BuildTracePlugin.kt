@@ -36,7 +36,7 @@ open class BuildTracePlugin : Plugin<Project> {
         val criticalPathListener = criticalPathListener(outputDir)
 
         val buildTraceListener = BuildTraceListener(
-            output = outputDir.file( "build.trace").get().asFile,
+            output = outputDir.file("build.trace").get().asFile,
             criticalPathProvider = criticalPathListener,
             loggerFactory = loggerFactory
         )

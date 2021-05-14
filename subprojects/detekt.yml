@@ -602,7 +602,7 @@ style:
     LibraryCodeMustSpecifyReturnType:
         active: false
     # https://detekt.github.io/detekt/style.html#libraryentitiesshouldnotbepublic
-    # todo enable expicit api https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors
+    # todo enable explicit API https://kotlinlang.org/docs/reference/whatsnew14.html#explicit-api-mode-for-library-authors
     LibraryEntitiesShouldNotBePublic:
         active: false
     # https://detekt.github.io/detekt/style.html#loopwithtoomanyjumpstatements
@@ -635,7 +635,7 @@ style:
         maxLineLength: 120
         excludePackageStatements: true
         excludeImportStatements: true
-        excludeCommentStatements: false
+        excludeCommentStatements: true
     # https://detekt.github.io/detekt/style.html#maybeconst
     MayBeConst:
         active: true
