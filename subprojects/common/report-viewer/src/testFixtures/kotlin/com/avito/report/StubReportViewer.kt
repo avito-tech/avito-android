@@ -5,12 +5,12 @@ import com.avito.report.model.Team
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
-class StubReportViewer(
+public class StubReportViewer(
     private val reportViewerUrl: String = "http://localhost/",
-    var byReportCoordinatesUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
-    var byReportIdUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
-    var byTestIdUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
-    var byTestName: HttpUrl = reportViewerUrl.toHttpUrl()
+    public var byReportCoordinatesUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
+    public var byReportIdUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
+    public var byTestIdUrl: HttpUrl = reportViewerUrl.toHttpUrl(),
+    public var byTestName: HttpUrl = reportViewerUrl.toHttpUrl()
 ) : ReportViewer {
 
     override fun generateReportUrl(
