@@ -23,12 +23,9 @@ internal class WriteJUnitReportAction(
         val testStatisticsCounter = TestStatisticsCounterFactory.create(verdict)
 
         val testCountOverall = testStatisticsCounter.overallCount()
-        val testCountSuccess = testStatisticsCounter.successCount()
         val testCountFailures = testStatisticsCounter.failureCount()
         val testCountErrors = testStatisticsCounter.notReportedCount()
         val testCountSkipped = testStatisticsCounter.skippedCount()
-
-        require(testCountOverall == testCountSuccess + testCountFailures + testCountSkipped + testCountErrors)
 
         val xml = buildString(testCountOverall * estimatedTestRecordSize) {
             appendLine("""<?xml version="1.0" encoding="UTF-8"?>""")

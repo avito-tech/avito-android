@@ -73,6 +73,7 @@ nav:
                     -   Documentation: contributing/Documentation.md
                     -   Logging: contributing/Logging.md
                     -   Networking: contributing/Networking.md
+                    -   Testing: contributing/Testing.md
                     -   Release: contributing/Release.md
     -   Projects:
             -   Build checks: projects/BuildChecks.md
