@@ -1,6 +1,6 @@
 package com.avito.report.model
 
-fun ReportCoordinates.Companion.createStubInstance(
+public fun ReportCoordinates.Companion.createStubInstance(
     planSlug: String = "planSlug",
     jobSlug: String = "jobSlug",
     runId: String = "runId"
