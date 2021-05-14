@@ -11,7 +11,6 @@ import com.avito.report.internal.model.GetReportResult
 import com.avito.report.internal.model.ListResult
 import com.avito.report.internal.model.RfcRpcRequest
 import com.avito.report.internal.model.RpcResult
-import com.avito.report.internal.model.Run
 import com.avito.report.internal.model.TestStatus
 import com.avito.report.model.CrossDeviceRunTest
 import com.avito.report.model.CrossDeviceStatus
@@ -26,43 +25,12 @@ import com.avito.report.model.Stability
 import com.avito.report.model.Status
 import com.avito.report.model.TestName
 
-/**
- * TODO Move test status logic to [com.avito.instrumentation.report.TestStatusFinalizer]
- */
 internal class ReportsFetchApiImpl(
     private val client: JsonRpcClient,
     loggerFactory: LoggerFactory
 ) : ReportsFetchApi {
 
     private val logger = loggerFactory.create<ReportsFetchApiImpl>()
-
-    override fun getReportsList(
-        planSlug: String,
-        jobSlug: String,
-        pageNumber: Int
-    ): Result<List<Report>> {
-        return Result.tryCatch {
-            client.jsonRpcRequest<RpcResult<List<Run>>>(
-                RfcRpcRequest(
-                    method = "Run.List",
-                    params = mapOf(
-                        "plan_slug" to planSlug,
-                        "job_slug" to jobSlug,
-                        "page_num" to pageNumber
-                    )
-                )
-            ).result.map { run ->
-                Report(
-                    id = run.id,
-                    planSlug = run.planSlug,
-                    jobSlug = run.jobSlug,
-                    runId = run.runId,
-                    isFinished = run.isFinished,
-                    buildBranch = tryToGetBuildBranch(run)
-                )
-            }
-        }
-    }
 
     override fun getReport(reportCoordinates: ReportCoordinates): Result<Report> {
         return when (val result = getReportInternal(reportCoordinates)) {
@@ -82,10 +50,6 @@ internal class ReportsFetchApiImpl(
             )
             is GetReportResult.Error -> Result.Failure(result.exception)
         }
-    }
-
-    override fun getTestsForReportId(reportId: String): Result<List<SimpleRunTest>> {
-        return getTestData(reportId)
     }
 
     override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> {
@@ -162,16 +126,6 @@ internal class ReportsFetchApiImpl(
                 CrossDeviceRunTest(TestName(testName), status)
             }
             .let { CrossDeviceSuite(it) }
-    }
-
-    /**
-     * todo выпилить и падать если не находим прямо тут
-     * после того как история уедет вперед достаточно чтобы не ловить эти падения
-     */
-    private fun tryToGetBuildBranch(run: Run): String? {
-        return run.reportData?.appBranch ?: run.reportData?.tags
-            ?.find { it.startsWith("buildBranch:") }
-            ?.substringAfter(':')
     }
 
     private fun getTestData(reportId: String): Result<List<SimpleRunTest>> {
