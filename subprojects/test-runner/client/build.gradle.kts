@@ -11,7 +11,6 @@ publish {
 
 dependencies {
     compileOnly(gradleApi())
-    api(project(":test-runner:shared"))
     api(project(":test-runner:service"))
 
     implementation(project(":gradle:trace-event"))
