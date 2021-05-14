@@ -14,8 +14,8 @@ internal sealed class TestTimestamps {
 
 internal fun TestTimestamps.start(currentTimeMillis: Long): TestTimestamps = when (this) {
     is TestTimestamps.NotStarted -> TestTimestamps.Started(this.onDevice, currentTimeMillis)
-    is TestTimestamps.Started -> error("Can't start already finished $this")
-    is TestTimestamps.Finished -> error("Can't start already started $this")
+    is TestTimestamps.Started -> error("Can't start already started $this")
+    is TestTimestamps.Finished -> error("Can't start already finished $this")
 }
 
 internal fun TestTimestamps.finish(currentTimeMillis: Long): TestTimestamps = when (this) {
