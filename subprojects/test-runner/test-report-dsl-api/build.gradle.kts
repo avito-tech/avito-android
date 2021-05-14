@@ -5,5 +5,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:test-report-api"))
+    api(project(":test-runner:test-report-api"))
 }

@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    api(project(":android-test:test-instrumentation-runner"))
+    api(project(":test-runner:test-instrumentation-runner"))
     api(project(":common:junit-utils"))
-    api(project(":common:test-report-dsl-api"))
+    api(project(":test-runner:test-report-dsl-api"))
     api(libs.sentry) {
         because("InHouseInstrumentationTestRunner.sentry")
     }
@@ -21,20 +21,20 @@ dependencies {
     implementation(project(":common:report-viewer")) {
         because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
     }
-    implementation(project(":common:test-report-artifacts")) {
+    implementation(project(":test-runner:test-report-artifacts")) {
         because("uses factory to create TestArtifactsProvider")
     }
     implementation(project(":common:logger"))
     implementation(project(":common:junit-utils"))
     implementation(project(":common:test-okhttp"))
-    implementation(project(":common:test-annotations"))
+    implementation(project(":test-runner:test-annotations"))
     implementation(project(":common:file-storage"))
     implementation(project(":common:time"))
     implementation(project(":android-test:android-log"))
     implementation(project(":android-test:ui-testing-core"))
     implementation(project(":android-test:ui-testing-maps"))
     implementation(project(":android-test:instrumentation"))
-    implementation(project(":android-test:test-report"))
+    implementation(project(":test-runner:test-report"))
     implementation(libs.androidXTestRunner)
     implementation(libs.truth)
     implementation(libs.mockitoKotlin)

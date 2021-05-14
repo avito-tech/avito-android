@@ -22,6 +22,8 @@ internal class StatsHttpEventListener(
 
     private val logger = loggerFactory.create<StatsHttpEventListener>()
 
+    private val successResponseCode = 200..299
+
     var callStarted = 0L
 
     var responseCode: Int? = null
@@ -43,9 +45,12 @@ internal class StatsHttpEventListener(
     }
 
     override fun callEnd(call: Call) {
-        if (responseCode in 200..299) {
-            val latencyMs = timeProvider.nowInMillis() - callStarted
-            sendCode(call, responseCode.toString(), latencyMs)
+        if (responseCode in successResponseCode) {
+            sendCode(
+                call = call,
+                code = responseCode.toString(),
+                latencyMs = timeProvider.nowInMillis() - callStarted
+            )
         }
     }
 

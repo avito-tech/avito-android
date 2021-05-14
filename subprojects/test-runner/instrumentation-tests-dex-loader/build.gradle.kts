@@ -17,7 +17,7 @@ dependencies {
     }
 
     testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":gradle:instrumentation-tests-dex-loader-test-fixtures"))
+    testImplementation(project(":test-runner:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":common:resources"))
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
