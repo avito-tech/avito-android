@@ -10,6 +10,7 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.listener.CompositeDeviceListener
 import com.avito.runner.service.worker.listener.DeviceListener
+import com.avito.runner.service.worker.listener.FakeMethodsInvocationDeviceListener
 import com.avito.runner.service.worker.listener.MessagesDeviceListener
 import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
@@ -30,8 +31,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 
@@ -190,7 +189,7 @@ class DeviceWorkerTest {
                 intentions.forEach { sendIntention(it) }
             }
 
-            val mockedListener: DeviceListener = mock(DeviceListener::class.java)
+            val fakeListener = FakeMethodsInvocationDeviceListener()
 
             val worker = provideDeviceWorker(
                 device = successfulDevice,
@@ -198,7 +197,7 @@ class DeviceWorkerTest {
                 deviceListener = CompositeDeviceListener(
                     listOf(
                         MessagesDeviceListener(resultsChannel),
-                        mockedListener
+                        fakeListener
                     )
                 )
             ).run(this)
@@ -206,7 +205,7 @@ class DeviceWorkerTest {
             router.cancel()
             worker.join()
 
-            verify(mockedListener).onFinished(successfulDevice)
+            assertThat(fakeListener.isFinished).isTrue()
         }
 
     @Test
