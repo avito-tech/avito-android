@@ -182,7 +182,8 @@ abstract class InHouseInstrumentationTestRunner :
                 loggerFactory.newFactory(
                     // Because LifecycleEvents logs are needed only for test reports
                     newElasticConfig = ElasticConfig.Disabled
-                )
+                ),
+                report
             ),
         )
     }
