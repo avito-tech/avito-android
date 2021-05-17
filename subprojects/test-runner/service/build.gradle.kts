@@ -15,7 +15,7 @@ dependencies {
     api(project(":test-runner:command-line-executor"))
 
     implementation(project(":common:result"))
-    implementation(project(":common:test-report-artifacts")) {
+    implementation(project(":test-runner:test-report-artifacts")) {
         because("DeviceWorker pulls test artifacts")
     }
     implementation(libs.ddmlib)
