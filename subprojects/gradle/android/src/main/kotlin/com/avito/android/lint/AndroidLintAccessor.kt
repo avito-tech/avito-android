@@ -20,7 +20,7 @@ public class AndroidLintAccessor(private val project: Project) {
         project.tasks.named("lint")
     }
 
-    internal fun resultXml(): File = File("${project.buildDir}/reports/lint-results-release.xml")
+    public fun resultXml(): File = File("${project.buildDir}/reports/lint-results-release.xml")
 
-    internal fun resultHtml(): File = File("${project.buildDir}/reports/lint-results-release.html")
+    public fun resultHtml(): File = File("${project.buildDir}/reports/lint-results-release.html")
 }
