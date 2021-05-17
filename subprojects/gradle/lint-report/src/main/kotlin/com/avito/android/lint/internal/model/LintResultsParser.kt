@@ -1,6 +1,5 @@
 package com.avito.android.lint.internal.model
 
-import com.android.tools.lint.detector.api.Severity
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import java.io.File
