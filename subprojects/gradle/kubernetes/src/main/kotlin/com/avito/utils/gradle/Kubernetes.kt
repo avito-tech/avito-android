@@ -77,7 +77,7 @@ fun createKubernetesClient(
     val kubernetesHttpClient = HttpClientUtils.createHttpClient(config).newBuilder()
 
     val httpClient = httpClientProvider
-        .modifyExisting(
+        .provide(
             builder = kubernetesHttpClient,
             requestMetadataProvider = KubernetesRequestMetadataProvider()
         )
