@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:test-report-dsl"))
+    api(project(":test-runner:test-report-dsl"))
     api(project(":common:file-storage"))
     api(libs.espressoCore)
     api(libs.appcompat)
@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":common:okhttp"))
     implementation(project(":common:http-client"))
     implementation(project(":common:time"))
-    implementation(project(":common:test-report-artifacts")) {
+    implementation(project(":test-runner:test-report-artifacts")) {
         because("ExternalStorageTransport need to know where to store artifacts")
     }
     implementation(project(":common:logger"))
@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":common:sentry"))
     implementation(project(":common:waiter"))
     implementation(project(":common:result"))
-    implementation(project(":common:test-annotations"))
+    implementation(project(":test-runner:test-annotations"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":android-test:android-log"))
     implementation(project(":android-test:instrumentation"))

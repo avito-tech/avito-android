@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":gradle:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:instrumentation-tests-dex-loader")) {
+    implementation(project(":test-runner:instrumentation-tests-dex-loader")) {
         because("TestInApkModel")
     }
     implementation(project(":gradle:impact-shared")) {
