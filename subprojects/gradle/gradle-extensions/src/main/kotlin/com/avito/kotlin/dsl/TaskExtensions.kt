@@ -9,8 +9,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.invoke
 
 /**
- * По мотивам ревью. Не очень очевидный у gradle синтаксис связывания тасок:
- * input таски цепляется за output другой и магически выставляет dependsOn
+ * Adds "dependsOn" explicitly to make relationships more obvious
  */
 inline fun <reified T : Task> Task.dependencyOn(anotherTaskProvider: TaskProvider<T>, configuration: (T) -> Unit) {
     configuration.invoke(anotherTaskProvider.get())

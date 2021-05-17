@@ -56,11 +56,9 @@ public class LintReportToSlackTaskFactory(
         var taskProvider = project.tasks.typedNamedOrNull<LintSlackReportTask>(taskName)
 
         if (taskProvider == null) {
-            logger.info("LintCheck: task $taskName already created in another ciStep; multiple reports are possible")
-
             taskProvider = project.tasks.register<LintSlackReportTask>(taskName) {
                 group = "ci"
-                description = "Report to slack channel ${channel.name} about lint errors if any"
+                description = "Report to slack channel ${channel.name} about lint errors"
 
                 dependencyOn(androidLintAccessor.taskProvider()) {
                     lintXml.set(androidLintAccessor.resultXml())
@@ -72,6 +70,8 @@ public class LintReportToSlackTaskFactory(
 
                 slackClient.set(slackClientProvider)
             }
+        } else {
+            logger.warn("LintCheck: task $taskName already created in another ciStep; multiple reports are possible")
         }
 
         return taskProvider
