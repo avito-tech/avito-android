@@ -12,10 +12,6 @@ dependencies {
     api(project(":gradle:build-verdict-tasks-api"))
 
     implementation(libs.okhttp)
-    compileOnly(libs.androidToolsLintApi) {
-        // Example: https://github.com/gradle/gradle/issues/11914
-        because("To avoid classloader constraint violation with lintClassPath")
-    }
 
     implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
@@ -30,7 +26,6 @@ dependencies {
     implementation(project(":gradle:slack"))
     implementation(project(":gradle:statsd-config"))
 
-    testImplementation(libs.androidToolsLintApi)
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":common:logger")))

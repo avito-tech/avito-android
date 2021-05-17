@@ -81,7 +81,6 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
 
     // https://r8.googlesource.com/r8/ (2.1.x <-> AGP 4.1.x)
     val r8 = "com.android.tools:r8:2.1.80"
-    val androidToolsLintApi = "com.android.tools.lint:lint-api:$androidLintVersion"
     val proguardRetrace = "net.sf.proguard:proguard-retrace:6.2.2"
     val playServicesMaps = "com.google.android.gms:play-services-maps:17.0.0"
     val appcompat = "androidx.appcompat:appcompat:${Versions.androidX}"

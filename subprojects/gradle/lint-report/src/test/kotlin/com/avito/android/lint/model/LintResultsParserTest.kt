@@ -1,8 +1,8 @@
 package com.avito.android.lint.model
 
-import com.android.tools.lint.detector.api.Severity
 import com.avito.android.lint.internal.model.LintReportModel
 import com.avito.android.lint.internal.model.LintResultsParser
+import com.avito.android.lint.internal.model.Severity
 import com.avito.android.lint.internal.model.UnsupportedFormatVersion
 import com.avito.logger.StubLoggerFactory
 import com.avito.truth.isInstanceOf
