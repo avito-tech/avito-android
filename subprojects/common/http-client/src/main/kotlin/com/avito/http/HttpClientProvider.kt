@@ -14,15 +14,15 @@ public class HttpClientProvider(
     private val loggerFactory: LoggerFactory,
 ) {
 
-    private val sharedBuilder = OkHttpClient.Builder()
+    private val client = OkHttpClient.Builder().build()
 
     public fun provide(
         requestMetadataProvider: RequestMetadataProvider = defaultRequestMetadataProvider()
     ): OkHttpClient.Builder {
-        return modifyExisting(sharedBuilder, requestMetadataProvider)
+        return provide(client.newBuilder(), requestMetadataProvider)
     }
 
-    public fun modifyExisting(
+    public fun provide(
         builder: OkHttpClient.Builder,
         requestMetadataProvider: RequestMetadataProvider = defaultRequestMetadataProvider()
     ): OkHttpClient.Builder {
