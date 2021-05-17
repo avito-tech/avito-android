@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.teamcityClient)
     implementation(project(":common:composite-exception"))
     implementation(project(":common:file-storage"))
+    implementation(project(":common:problem"))
     implementation(project(":common:logger"))
     implementation(project(":common:report-api"))
     implementation(project(":test-runner:test-report-artifacts"))

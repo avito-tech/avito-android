@@ -18,6 +18,7 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
         const val espresso = "3.2.0"
         const val mockito = "3.3.3"
         const val coroutines = "1.3.7"
+        const val jdoctor = "0.1"
     }
 
     val javaVersion = JavaVersion.VERSION_1_8
@@ -55,6 +56,8 @@ abstract class ExternalLibrariesExtension @Inject constructor(private val provid
     val sentry = "io.sentry:sentry:${Versions.sentry}"
     val sentryAndroid = "io.sentry:sentry-android:${Versions.sentry}"
     val slf4jApi = "org.slf4j:slf4j-api:1.7.28"
+    val jdoctorCore = "me.champeau.jdoctor:jdoctor-core:${Versions.jdoctor}"
+    val jdoctorUtils = "me.champeau.jdoctor:jdoctor-utils:${Versions.jdoctor}"
 
     val detektFormatting = "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
 

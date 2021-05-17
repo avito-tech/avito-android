@@ -1,6 +1,12 @@
 package com.avito.instrumentation.internal.report.listener
 
+import com.avito.android.ClassContext
 import com.avito.android.Result
+import com.avito.android.Severity
+import com.avito.android.SimpleProblem
+import com.avito.android.SimpleProblemBuilder
+import com.avito.android.asRuntimeException
+import com.avito.android.build
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -58,22 +64,32 @@ internal class ReportProcessorImpl(
 
                         metricsSender.sendReportFileNotAvailable()
 
-                        val problem = createException(
-                            shortDescription = errorMessage,
-                            context = "ReportProcessorImpl forms fallback Error status report",
-                            because = "There is not enough context here about cause",
-                            possibleSolutions = listOf(
-                                "MBS-11279 should help with correct error message from AdbDevice",
-                                "MBS-11281 to return tests with such errors back to retry queue"
-                            ),
-                            cause = throwable
+                        val problem = SimpleProblemBuilder.newBuilder(
+                            severity = Severity.WARNING,
+                            context = ClassContext(
+                                className = "ReportProcessorImpl",
+                                whatsGoingOn = "forming fallback Error status report"
+                            )
                         )
+                            .withShortDescription(errorMessage)
+                            .because("There is not enough context here about cause")
+                            .addSolution { builder ->
+                                builder.withShortDescription {
+                                    "MBS-11279 should help with correct error message from AdbDevice"
+                                }
+                            }
+                            .addSolution { builder ->
+                                builder.withShortDescription {
+                                    "MBS-11281 to return tests with such errors back to retry queue"
+                                }
+                            }
 
-                        processFailure(
-                            throwable = problem,
+                        val processFailure = processFailure(
+                            throwable = build<SimpleProblem>(problem).asRuntimeException(),
                             testStaticData = testFromSuite,
                             logcatBuffer = logcatBuffer
                         )
+                        processFailure
                     }.getOrThrow()
 
             is TestResult.Incomplete ->
@@ -101,32 +117,6 @@ internal class ReportProcessorImpl(
                     ).getOrThrow()
                 }
         }
-    }
-
-    private fun createException(
-        shortDescription: String,
-        context: String,
-        because: String,
-        possibleSolutions: List<String>,
-        documentedAt: String? = null,
-        cause: Throwable
-    ): RuntimeException {
-        val message = buildString {
-            appendLine(shortDescription)
-            appendLine("Where : $context")
-            appendLine("Why? : $because")
-            if (possibleSolutions.isNotEmpty()) {
-                appendLine("Possible solutions:")
-                possibleSolutions.forEach {
-                    appendLine(" - $it")
-                }
-            }
-            if (!documentedAt.isNullOrBlank()) {
-                appendLine("You can learn more about this problem at $documentedAt")
-            }
-        }
-
-        return RuntimeException(message, cause)
     }
 
     private fun processFailure(
