@@ -51,13 +51,9 @@ internal class TestArtifactsProcessorImpl(
                         reportArtifactsUploader.processVideo(testRuntimeData.video)
                     }
 
-                    val preconditionList = async {
-                        reportArtifactsUploader.processStepList(testRuntimeData.preconditions)
-                    }
+                    val preconditionList = reportArtifactsUploader.processStepList(testRuntimeData.preconditions)
 
-                    val stepList = async {
-                        reportArtifactsUploader.processStepList(testRuntimeData.steps)
-                    }
+                    val stepList = reportArtifactsUploader.processStepList(testRuntimeData.steps)
 
                     val stdout = async {
                         logcatProcessor.process(logcatBuffer?.getStdout(), isUploadNeeded = isTestFailed)
@@ -75,8 +71,8 @@ internal class TestArtifactsProcessorImpl(
                             endTime = testRuntimeData.endTime,
                             dataSetData = testRuntimeData.dataSetData,
                             video = video.await(),
-                            preconditions = preconditionList.await(),
-                            steps = stepList.await()
+                            preconditions = preconditionList.map { it.await() },
+                            steps = stepList.map { it.await() }
                         ),
                         stdout = stdout.await(),
                         stderr = stdErr.await()

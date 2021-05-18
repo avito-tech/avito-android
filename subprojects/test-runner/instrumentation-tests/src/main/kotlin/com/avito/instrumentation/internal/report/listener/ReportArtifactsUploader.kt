@@ -6,6 +6,10 @@ import com.avito.report.model.FileAddress
 import com.avito.report.model.Incident
 import com.avito.report.model.Step
 import com.avito.report.model.Video
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.withContext
 
 internal class ReportArtifactsUploader(
     private val testArtifactsUploader: TestArtifactsUploader,
@@ -24,32 +28,46 @@ internal class ReportArtifactsUploader(
 
     suspend fun processStepList(
         stepList: List<Step>
-    ): List<Step> {
-        return stepList.map { step ->
-            step.copy(
-                entryList = processEntryList(step.entryList)
-            )
+    ): List<Deferred<Step>> {
+        return withContext(currentCoroutineContext()) {
+            stepList.map { step ->
+                async {
+                    step.copy(
+                        entryList = processEntryList(step.entryList)
+                            .map { it.await() }
+                    )
+                }
+            }
         }
     }
 
     suspend fun processIncident(
         incident: Incident?
     ): Incident? {
-        return incident?.copy(entryList = processEntryList(incident.entryList)) ?: incident
+        if (incident == null) return null
+        return incident.copy(
+            entryList = processEntryList(incident.entryList)
+                .map { it.await() }
+        )
     }
 
     private suspend fun processEntryList(
         entryList: List<Entry>
-    ): List<Entry> {
-        return entryList.map { entry -> processEntry(entry) }
+    ): List<Deferred<Entry>> {
+        return entryList
+            .map { entry -> processEntryAsync(entry) }
     }
 
-    private suspend fun processEntry(entry: Entry): Entry {
-        return when (entry) {
-            is Entry.File -> processFileAddress(entry.fileAddress, entry.fileType)
-                ?.let { entry.copy(fileAddress = it) }
-                ?: entry
-            else -> entry
+    private suspend fun processEntryAsync(entry: Entry): Deferred<Entry> {
+        return withContext(currentCoroutineContext()) {
+            async {
+                when (entry) {
+                    is Entry.File -> processFileAddress(entry.fileAddress, entry.fileType)
+                        ?.let { entry.copy(fileAddress = it) }
+                        ?: entry
+                    else -> entry
+                }
+            }
         }
     }
 
