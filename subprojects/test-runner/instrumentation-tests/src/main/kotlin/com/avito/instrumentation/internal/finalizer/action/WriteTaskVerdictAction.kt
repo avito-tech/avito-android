@@ -36,12 +36,15 @@ internal class WriteTaskVerdictAction(
                 "OK. Failed tests were suppressed"
 
             is Verdict.Failure -> buildString {
-                if (lostTests.isNotEmpty()) {
-                    appendLine("Failed. There are ${lostTests.size} not reported tests")
+                appendLine("Test suite failed. Problems:")
+                appendLine()
+
+                if (notReportedTests.isNotEmpty()) {
+                    appendLine(" - Not reported tests: ${notReportedTests.size} ")
                 }
 
-                if (failedTests.isNotEmpty()) {
-                    appendLine("Failed. There are ${failedTests.size} not suppressed failed tests")
+                if (unsuppressedFailedTests.isNotEmpty()) {
+                    appendLine(" - Not suppressed failed tests: ${unsuppressedFailedTests.size} ")
                 }
             }
         }
@@ -53,8 +56,8 @@ internal class WriteTaskVerdictAction(
                 emptySet()
 
             is Verdict.Failure ->
-                failedTests.map { test -> test.toTaskVerdictTest("FAILED") }.toSet() +
-                    lostTests.map { test -> test.toTaskVerdictTest("LOST") }.toSet()
+                unsuppressedFailedTests.map { test -> test.toTaskVerdictTest("FAILED") }.toSet() +
+                    notReportedTests.map { test -> test.toTaskVerdictTest("NOT REPORTED") }.toSet()
         }
     }
 

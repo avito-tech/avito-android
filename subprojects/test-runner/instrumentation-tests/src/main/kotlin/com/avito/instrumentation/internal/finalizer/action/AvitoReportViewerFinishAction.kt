@@ -9,8 +9,8 @@ internal class AvitoReportViewerFinishAction(
 
     override fun action(verdict: Verdict) {
         if (verdict is Verdict.Failure) {
-            if (verdict.lostTests.isNotEmpty()) {
-                legacyReport.sendLostTests(verdict.lostTests)
+            if (verdict.notReportedTests.isNotEmpty()) {
+                legacyReport.sendLostTests(verdict.notReportedTests)
             }
         }
         legacyReport.finish()

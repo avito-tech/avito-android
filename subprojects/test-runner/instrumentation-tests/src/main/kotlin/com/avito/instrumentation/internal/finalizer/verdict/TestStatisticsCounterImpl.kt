@@ -20,10 +20,10 @@ internal class TestStatisticsCounterImpl(private val verdict: Verdict) : TestSta
     override fun skippedCount(): Int = verdict.testResults.filterIsInstance<AndroidTest.Skipped>().size
 
     override fun failureCount(): Int =
-        if (verdict is Verdict.Failure) verdict.failedTests.size else 0
+        if (verdict is Verdict.Failure) verdict.unsuppressedFailedTests.size else 0
 
     override fun notReportedCount(): Int =
-        if (verdict is Verdict.Failure) verdict.lostTests.size else 0
+        if (verdict is Verdict.Failure) verdict.notReportedTests.size else 0
 
     private fun completedTests(): List<AndroidTest.Completed> {
         return verdict.testResults.filterIsInstance<AndroidTest.Completed>()

@@ -16,17 +16,18 @@ internal class VerdictDeterminerImpl(
         testResults: Collection<AndroidTest>
     ): Verdict {
 
-        val lostTests = getLostTests(
+        val failedTests = getFailedTests(testResults)
+
+        val notReportedTests = getLostTests(
             initialTestSuite = initialTestSuite,
             testResults = testResults
         )
 
-        val failedTests = getFailedTests(testResults)
-
-        val hasFailedTests = failedTests.isNotEmpty()
+        val unsuppressedFailedTests = mutableListOf<TestStaticData>()
 
         val intermediateResult = when {
-            hasFailedTests -> when {
+
+            failedTests.isNotEmpty() -> when {
                 suppressFailure -> Verdict.Success.Suppressed(
                     testResults = testResults,
                     failedTests = failedTests
@@ -37,11 +38,13 @@ internal class VerdictDeterminerImpl(
 
                     val hasFailedTestsNotMarkedAsFlaky = notFlaky.isNotEmpty()
 
+                    unsuppressedFailedTests.addAll(notFlaky)
+
                     when {
                         hasFailedTestsNotMarkedAsFlaky -> Verdict.Failure(
                             testResults = testResults,
-                            failedTests = notFlaky.toSet(),
-                            lostTests = lostTests
+                            unsuppressedFailedTests = notFlaky.toSet(),
+                            notReportedTests = notReportedTests
                         )
 
                         else -> Verdict.Success.Suppressed(
@@ -50,22 +53,23 @@ internal class VerdictDeterminerImpl(
                         )
                     }
                 }
-                else -> Verdict.Failure(
-                    testResults = testResults,
-                    failedTests = failedTests,
-                    lostTests = lostTests
-                )
+                else -> {
+                    unsuppressedFailedTests.addAll(failedTests)
+                    Verdict.Failure(
+                        testResults = testResults,
+                        unsuppressedFailedTests = failedTests,
+                        notReportedTests = notReportedTests
+                    )
+                }
             }
             else -> Verdict.Success.OK(testResults = testResults)
         }
 
-        val hasLostTests = lostTests.isNotEmpty()
-
-        return if (hasLostTests) {
+        return if (notReportedTests.isNotEmpty()) {
             Verdict.Failure(
                 testResults = testResults,
-                lostTests = lostTests,
-                failedTests = failedTests
+                notReportedTests = notReportedTests,
+                unsuppressedFailedTests = unsuppressedFailedTests
             )
         } else {
             intermediateResult
