@@ -76,20 +76,20 @@ internal class WriteTaskVerdictActionTest {
                 ),
                 failedTest
             ),
-            failedTests = setOf(failedTest),
-            lostTests = emptyList()
+            unsuppressedFailedTests = setOf(failedTest),
+            notReportedTests = emptyList()
         )
         val action = createWriteTaskVerdictAction(tempDir)
         action.action(verdict)
 
         val verdictContent = readFile(tempDir)
 
-        assertThat(verdictContent).contains("Failed. There are 1 not suppressed failed tests")
+        assertThat(verdictContent).contains("Not suppressed failed tests: 1")
         assertThat(verdictContent).contains("com.test.Test2.test API22 FAILED")
     }
 
     @Test
-    fun `file - contains lost message with test - verdict is lost`(@TempDir tempDir: File) {
+    fun `file - contains lost message with test - verdict is failure`(@TempDir tempDir: File) {
         val lostTest = AndroidTest.Lost.createStubInstance(
             testStaticData = TestStaticDataPackage.createStubInstance(
                 name = TestName("com.test.Test2", "test"),
@@ -106,16 +106,46 @@ internal class WriteTaskVerdictActionTest {
                 ),
                 lostTest
             ),
-            failedTests = emptyList(),
-            lostTests = setOf(lostTest)
+            unsuppressedFailedTests = emptyList(),
+            notReportedTests = setOf(lostTest)
         )
         val action = createWriteTaskVerdictAction(tempDir)
         action.action(verdict)
 
         val verdictContent = readFile(tempDir)
 
-        assertThat(verdictContent).contains("Failed. There are 1 not reported tests")
-        assertThat(verdictContent).contains("com.test.Test2.test API22 LOST")
+        assertThat(verdictContent).contains("Not reported tests: 1")
+        assertThat(verdictContent).contains("com.test.Test2.test API22 NOT REPORTED")
+    }
+
+    @Test
+    fun `file - contains lost message without suppressed tests - verdict is failure`(@TempDir tempDir: File) {
+        val lostTest = AndroidTest.Lost.createStubInstance(
+            testStaticData = TestStaticDataPackage.createStubInstance(
+                name = TestName("com.test.Test2", "test"),
+                deviceName = DeviceName("API22")
+            )
+        )
+
+        val verdict = Verdict.Failure(
+            testResults = setOf(
+                AndroidTest.Completed.createStubInstance(
+                    testStaticData = TestStaticDataPackage.createStubInstance(
+                        name = TestName("com.test.Test1", "test")
+                    )
+                ),
+                lostTest
+            ),
+            unsuppressedFailedTests = emptyList(),
+            notReportedTests = setOf(lostTest)
+        )
+        val action = createWriteTaskVerdictAction(tempDir)
+        action.action(verdict)
+
+        val verdictContent = readFile(tempDir)
+
+        assertThat(verdictContent).contains("Not reported tests: 1")
+        assertThat(verdictContent).contains("com.test.Test2.test API22 NOT REPORTED")
     }
 
     private fun createWriteTaskVerdictAction(

@@ -9,8 +9,8 @@ internal class SendMetricsAction(
 
     override fun action(verdict: Verdict) {
         if (verdict is Verdict.Failure) {
-            if (verdict.lostTests.isNotEmpty()) {
-                metricsSender.sendNotReportedCount(verdict.lostTests.size)
+            if (verdict.notReportedTests.isNotEmpty()) {
+                metricsSender.sendNotReportedCount(verdict.notReportedTests.size)
             }
         }
     }
