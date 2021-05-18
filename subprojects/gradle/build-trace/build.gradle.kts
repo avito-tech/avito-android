@@ -11,11 +11,14 @@ dependencies {
     implementation(project(":gradle:trace-event"))
     implementation(project(":gradle:gradle-profile"))
     implementation(project(":gradle:build-environment"))
+    implementation(project(":common:composite-exception"))
     implementation(project(":common:graph"))
+    implementation(project(":common:result"))
     implementation(libs.gson)
     implementation(gradleApi())
 
     gradleTestImplementation(project(":gradle:test-project"))
+    gradleTestImplementation(testFixtures(project(":common:logger")))
 }
 
 gradlePlugin {

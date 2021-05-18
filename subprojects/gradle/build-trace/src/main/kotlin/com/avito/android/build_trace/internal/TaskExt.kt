@@ -1,19 +1,35 @@
 package com.avito.android.build_trace.internal
 
+import com.avito.android.Result
 import org.gradle.api.Task
 import org.gradle.api.internal.TaskInternal
+import org.gradle.api.tasks.TaskDependency
 
 internal val Task.type: Class<out Task>
     get() = (this as TaskInternal).taskIdentity.type
 
-internal val Task.predecessors: Set<Task>
+internal val Task.predecessors: TaskDependenciesResolutionResult
     get() {
         val dependenciesByInputs = project.gradle.taskGraph.getDependencies(this)
-        return (
-            dependenciesByInputs +
-                taskDependencies.getDependencies(this) +
-                mustRunAfter.getDependencies(this) +
-                shouldRunAfter.getDependencies(this)
-            )
-            .toSet()
+
+        val resolutionResults = listOf(
+            taskDependencies.resolveDependencies(this),
+            mustRunAfter.resolveDependencies(this),
+            shouldRunAfter.resolveDependencies(this)
+        )
+        val tasks: Set<Task> = dependenciesByInputs +
+            resolutionResults.flatMap {
+                it.getOrElse { emptySet() }
+            }
+
+        val errors = resolutionResults
+            .filterIsInstance(Result.Failure::class.java)
+            .map { it.throwable }
+
+        return TaskDependenciesResolutionResult.create(tasks, errors)
+    }
+
+internal fun TaskDependency.resolveDependencies(task: Task): Result<Set<Task>> =
+    Result.tryCatch {
+        getDependencies(task)
     }

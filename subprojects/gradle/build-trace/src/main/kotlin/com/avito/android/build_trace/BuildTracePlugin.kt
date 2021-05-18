@@ -16,7 +16,7 @@ open class BuildTracePlugin : Plugin<Project> {
         check(project.isRoot()) {
             "Plugin must be applied to the root project but was applied to ${project.path}"
         }
-        val extension = project.extensions.create("buildTrace", BuildTraceExtension::class.java)
+        val extension = project.extensions.create(extensionName, BuildTraceExtension::class.java)
 
         project.afterEvaluate {
             registerListeners(project, extension)
@@ -33,7 +33,7 @@ open class BuildTracePlugin : Plugin<Project> {
 
         val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
 
-        val criticalPathListener = criticalPathListener(outputDir)
+        val criticalPathListener = criticalPathListener(outputDir, loggerFactory)
 
         val buildTraceListener = BuildTraceListener(
             output = outputDir.file("build.trace").get().asFile,
@@ -43,10 +43,15 @@ open class BuildTracePlugin : Plugin<Project> {
         GradleCollector.initialize(project, listOf(criticalPathListener, buildTraceListener))
     }
 
-    private fun criticalPathListener(output: DirectoryProperty): CriticalPathListener {
+    private fun criticalPathListener(
+        output: DirectoryProperty,
+        loggerFactory: GradleLoggerFactory
+    ): CriticalPathListener {
         val writer = CriticalPathSerialization(
-            report = output.file("critical_path.json").get().asFile
+            report = output.file("critical_path.json").get().asFile,
         )
-        return CriticalPathListener(writer)
+        return CriticalPathListener(writer, loggerFactory)
     }
 }
+
+internal const val extensionName = "buildTrace"
