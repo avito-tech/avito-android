@@ -54,7 +54,7 @@ internal data class TestMetricsAggregatorImpl(
             .aggregate({ it.median() }) { "Cannot calculate median device utilization" }
 
     private inline fun Long?.toResult(lazyMessage: () -> String): Result<Long> = when (this) {
-        null -> Result.Failure(IllegalArgumentException(lazyMessage()))
+        null -> Result.Failure(IllegalStateException(lazyMessage()))
         else -> Result.Success(this)
     }
 
@@ -63,7 +63,7 @@ internal data class TestMetricsAggregatorImpl(
         lazyMessage: () -> String
     ): Result<Long> {
         return when {
-            this.isEmpty() -> Result.Failure(IllegalArgumentException(lazyMessage()))
+            this.isEmpty() -> Result.Failure(IllegalStateException(lazyMessage()))
             else -> Result.Success(aggregateFunc(this).toLong())
         }
     }
