@@ -9,6 +9,3 @@ interface Operation {
      */
     val predecessors: Set<String>
 }
-
-fun Operation.isLeaf() =
-    predecessors.isEmpty()

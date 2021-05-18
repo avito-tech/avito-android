@@ -7,40 +7,25 @@ import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.SimpleRunTest
 import com.google.gson.JsonElement
-import java.util.ArrayDeque
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class StubReportsApi(
-    reportListResults: List<Result<List<Report>>> = emptyList()
-) : ReportsApi {
-
-    private val reportListResultsQueue: Queue<Result<List<Report>>> = ArrayDeque(reportListResults)
-
-    private val testsForReportId = mutableMapOf<String, Result<List<SimpleRunTest>>>()
+public class StubReportsApi : ReportsApi {
 
     private val markAsSuccessfulRequests = mutableListOf<MarkAsRequest>()
 
     private val testsForRunId = mutableMapOf<ReportCoordinates, Result<List<SimpleRunTest>>>()
 
-    lateinit var getReportResult: Result<Report>
+    public lateinit var getReportResult: Result<Report>
 
-    lateinit var finished: Result<Unit>
+    public lateinit var finished: Result<Unit>
 
-    lateinit var crossDeviceTestData: Result<CrossDeviceSuite>
+    public lateinit var crossDeviceTestData: Result<CrossDeviceSuite>
 
-    val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
+    public val addTestsRequests: Queue<AddTestsRequest> = ConcurrentLinkedQueue()
 
     override fun addTest(reportCoordinates: ReportCoordinates, buildId: String?, test: AndroidTest): Result<String> {
         TODO("not implemented")
-    }
-
-    fun enqueueTestsForReportId(reportId: String, value: Result<List<SimpleRunTest>>) {
-        testsForReportId[reportId] = value
-    }
-
-    override fun getTestsForReportId(reportId: String): Result<List<SimpleRunTest>> {
-        return testsForReportId[reportId] ?: error("you need to enqueue result by reportId: $reportId")
     }
 
     override fun addTests(
@@ -53,23 +38,13 @@ class StubReportsApi(
     }
 
     @Synchronized
-    override fun getReportsList(planSlug: String, jobSlug: String, pageNumber: Int): Result<List<Report>> {
-        if (reportListResultsQueue.isEmpty()) {
-            throw IllegalArgumentException(
-                "getReportsList results queue is empty in StubReportsApi"
-            )
-        }
-        return reportListResultsQueue.poll()
-    }
-
-    @Synchronized
     override fun getCrossDeviceTestData(reportCoordinates: ReportCoordinates): Result<CrossDeviceSuite> =
         crossDeviceTestData
 
     @Synchronized
     override fun getReport(reportCoordinates: ReportCoordinates): Result<Report> = getReportResult
 
-    fun enqueueTestsForRunId(reportCoordinates: ReportCoordinates, value: Result<List<SimpleRunTest>>) {
+    public fun enqueueTestsForRunId(reportCoordinates: ReportCoordinates, value: Result<List<SimpleRunTest>>) {
         testsForRunId[reportCoordinates] = value
     }
 
@@ -80,8 +55,6 @@ class StubReportsApi(
 
     @Synchronized
     override fun setFinished(reportCoordinates: ReportCoordinates): Result<Unit> = finished
-
-    fun getLastMarkAsSuccessfulRequest(): MarkAsRequest? = markAsSuccessfulRequests.lastOrNull()
 
     @Synchronized
     override fun markAsSuccessful(testRunId: String, author: String, comment: String): Result<Unit> {
@@ -104,13 +77,13 @@ class StubReportsApi(
         TODO("not implemented")
     }
 
-    data class MarkAsRequest(
+    public data class MarkAsRequest(
         val testRunId: String,
         val author: String,
         val comment: String
     )
 
-    data class AddTestsRequest(
+    public data class AddTestsRequest(
         val reportCoordinates: ReportCoordinates,
         val buildId: String?,
         val tests: Collection<AndroidTest>

@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact"))
     implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:instrumentation-tests"))
+    implementation(project(":test-runner:instrumentation-tests"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:lint-report"))
     implementation(project(":gradle:prosector"))

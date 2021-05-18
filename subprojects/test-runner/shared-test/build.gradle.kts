@@ -18,6 +18,5 @@ dependencies {
     implementation(libs.kotson)
     implementation(project(":common:report-viewer"))
     implementation(project(":test-runner:service"))
-    implementation(project(":test-runner:shared"))
     implementation(project(":gradle:test-project"))
 }

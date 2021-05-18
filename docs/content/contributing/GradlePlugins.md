@@ -23,7 +23,7 @@ IntelliJ IDEA is preferred but could not work if current Android Gradle Plugin i
   Check if you can use Gradle Test Runner for tests in **Settings > Build, Execution, Deployment > Build Tools > Gradle > Runner**.  
   If not, create manually Gradle Run/Debug configuration.
 
-## Testing Gradle plugins
+## Testing
 
 ### Isolating business-logic for unit-tests
 

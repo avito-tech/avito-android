@@ -43,9 +43,9 @@ dependencies {
 
     implementation(project(":android-lib:proxy-toast"))
 
-    androidTestImplementation(project(":android-test:test-inhouse-runner"))
-    androidTestImplementation(project(":android-test:test-report"))
-    androidTestImplementation(project(":common:test-annotations"))
+    androidTestImplementation(project(":test-runner:test-inhouse-runner"))
+    androidTestImplementation(project(":test-runner:test-report"))
+    androidTestImplementation(project(":test-runner:test-annotations"))
     androidTestImplementation(project(":common:report-viewer")) {
         because("Priority/Behavior test annotations still there")
     }
