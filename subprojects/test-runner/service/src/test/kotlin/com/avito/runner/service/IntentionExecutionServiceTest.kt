@@ -208,7 +208,7 @@ class IntentionExecutionServiceTest {
         devices = devices,
         intentionsRouter = intentionsRouter,
         testListener = NoOpTestListener,
-        deviceMetricsListener = StubDeviceListener,
+        deviceMetricsListener = StubDeviceListener(),
         deviceWorkersDispatcher = TestDispatcher,
         timeProvider = StubTimeProvider()
     )

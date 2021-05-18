@@ -6,7 +6,7 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.model.DeviceInstallation
 
-class FakeMethodsInvocationDeviceListener : DeviceListener {
+class FakeMethodsInvocationDeviceListener : StubDeviceListener() {
 
     var isDeviceCreated: Boolean = false
         private set

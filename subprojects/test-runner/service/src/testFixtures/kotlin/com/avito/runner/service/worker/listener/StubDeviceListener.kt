@@ -6,7 +6,7 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.model.DeviceInstallation
 
-object StubDeviceListener : DeviceListener {
+open class StubDeviceListener : DeviceListener {
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
     }
