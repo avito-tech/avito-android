@@ -10,8 +10,8 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.listener.CompositeDeviceListener
 import com.avito.runner.service.worker.listener.DeviceListener
-import com.avito.runner.service.worker.listener.FakeMethodsInvocationDeviceListener
 import com.avito.runner.service.worker.listener.MessagesDeviceListener
+import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
@@ -128,7 +128,7 @@ class DeviceWorkerTest {
         }
 
     @Test
-    fun `onTestFinished should be called worker run`() =
+    fun `worker run completed - DeviceListener#onTestFinished should be called`() =
         runBlockingTest {
             val compatibleWithDeviceState = State(
                 layers = listOf(
@@ -189,7 +189,7 @@ class DeviceWorkerTest {
                 intentions.forEach { sendIntention(it) }
             }
 
-            val fakeListener = FakeMethodsInvocationDeviceListener()
+            val stubListener = StubDeviceListener()
 
             val worker = provideDeviceWorker(
                 device = successfulDevice,
@@ -197,7 +197,7 @@ class DeviceWorkerTest {
                 deviceListener = CompositeDeviceListener(
                     listOf(
                         MessagesDeviceListener(resultsChannel),
-                        fakeListener
+                        stubListener
                     )
                 )
             ).run(this)
@@ -205,7 +205,7 @@ class DeviceWorkerTest {
             router.cancel()
             worker.join()
 
-            assertThat(fakeListener.isFinished).isTrue()
+            assertThat(stubListener.isFinished).isTrue()
         }
 
     @Test
