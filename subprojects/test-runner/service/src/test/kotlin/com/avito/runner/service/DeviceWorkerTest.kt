@@ -8,7 +8,10 @@ import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
+import com.avito.runner.service.worker.listener.CompositeDeviceListener
+import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.runner.service.worker.listener.MessagesDeviceListener
+import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
@@ -99,9 +102,9 @@ class DeviceWorkerTest {
             }
 
             val worker = provideDeviceWorker(
-                results = resultsChannel,
                 device = successfulDevice,
-                router = router
+                router = router,
+                deviceListener = MessagesDeviceListener(resultsChannel)
             ).run(this)
 
             router.cancel()
@@ -125,6 +128,87 @@ class DeviceWorkerTest {
         }
 
     @Test
+    fun `worker run completed - DeviceListener#onTestFinished should be called`() =
+        runBlockingTest {
+            val compatibleWithDeviceState = State(
+                layers = listOf(
+                    State.Layer.Model(model = "model"),
+                    State.Layer.ApiLevel(api = 22),
+                    generateInstalledApplicationLayer(),
+                    generateInstalledApplicationLayer()
+                )
+            )
+            val intentions = listOf(
+                generateIntention(
+                    state = compatibleWithDeviceState,
+                    action = generateInstrumentationTestAction()
+                ),
+                generateIntention(
+                    state = compatibleWithDeviceState,
+                    action = generateInstrumentationTestAction()
+                ),
+                generateIntention(
+                    state = compatibleWithDeviceState,
+                    action = generateInstrumentationTestAction()
+                ),
+                generateIntention(
+                    state = compatibleWithDeviceState,
+                    action = generateInstrumentationTestAction()
+                )
+            )
+
+            val successfulDevice = StubDevice(
+                loggerFactory = loggerFactory,
+                coordinate = randomDeviceCoordinate(),
+                apiResult = StubActionResult.Success(22),
+                installApplicationResults = mutableListOf(
+                    installApplicationSuccess(), // Install application
+                    installApplicationSuccess() // Install test application
+                ),
+                clearPackageResults = (0 until intentions.size - 1).flatMap {
+                    listOf(
+                        StubActionResult.Success(Result.Success(Unit)),
+                        StubActionResult.Success(Result.Success(Unit))
+                    )
+                },
+                gettingDeviceStatusResults = listWithDefault(
+                    1 + intentions.size,
+                    DeviceStatus.Alive
+                ),
+                runTestsResults = intentions.map {
+                    StubActionResult.Success(
+                        TestCaseRun.Result.Passed
+                    )
+                }
+            )
+
+            val resultsChannel: Channel<DeviceWorkerMessage> =
+                Channel(Channel.UNLIMITED)
+
+            val router = IntentionsRouter(loggerFactory = loggerFactory).apply {
+                intentions.forEach { sendIntention(it) }
+            }
+
+            val stubListener = StubDeviceListener()
+
+            val worker = provideDeviceWorker(
+                device = successfulDevice,
+                router = router,
+                deviceListener = CompositeDeviceListener(
+                    listOf(
+                        MessagesDeviceListener(resultsChannel),
+                        stubListener
+                    )
+                )
+            ).run(this)
+
+            router.cancel()
+            worker.join()
+
+            assertThat(stubListener.isFinished).isTrue()
+        }
+
+    @Test
     fun `fail with device died event - device is freeze before processing intentions`() =
         runBlockingTest {
             val freezeDevice = StubDevice(
@@ -142,9 +226,9 @@ class DeviceWorkerTest {
             val router = IntentionsRouter(loggerFactory = loggerFactory)
 
             val worker = provideDeviceWorker(
-                results = resultsChannel,
                 device = freezeDevice,
-                router = router
+                router = router,
+                deviceListener = MessagesDeviceListener(resultsChannel)
             ).run(this)
 
             router.cancel()
@@ -202,9 +286,9 @@ class DeviceWorkerTest {
             }
 
             val worker = provideDeviceWorker(
-                results = resultsChannel,
                 device = freezeDevice,
-                router = router
+                router = router,
+                deviceListener = MessagesDeviceListener(resultsChannel)
             ).run(this)
 
             router.cancel()
@@ -228,15 +312,15 @@ class DeviceWorkerTest {
         }
 
     private fun provideDeviceWorker(
-        results: Channel<DeviceWorkerMessage>,
         device: Device,
-        router: IntentionsRouter
+        router: IntentionsRouter,
+        deviceListener: DeviceListener
     ) = DeviceWorker(
         intentionsRouter = router,
         device = device,
         outputDirectory = File(""),
         testListener = NoOpTestListener,
-        deviceListener = MessagesDeviceListener(results),
+        deviceListener = deviceListener,
         timeProvider = StubTimeProvider(),
         dispatchers = TestDispatcher
     )

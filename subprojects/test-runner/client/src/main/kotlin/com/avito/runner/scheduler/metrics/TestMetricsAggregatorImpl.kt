@@ -1,10 +1,12 @@
 package com.avito.runner.scheduler.metrics
 
+import com.avito.android.Result
 import com.avito.math.median
 import com.avito.runner.scheduler.metrics.model.DeviceKey
 import com.avito.runner.scheduler.metrics.model.DeviceTimestamps
+import com.avito.runner.scheduler.metrics.model.TestTimestamps
 
-internal class TestMetricsAggregatorImpl(
+internal data class TestMetricsAggregatorImpl(
     private val testSuiteStartedTime: Long,
     private val testSuiteEndedTime: Long,
     private val deviceTimestamps: Map<DeviceKey, DeviceTimestamps>
@@ -12,55 +14,57 @@ internal class TestMetricsAggregatorImpl(
 
     private val testTimestamps = deviceTimestamps.flatMap { it.value.testTimestamps.values }
 
-    private val firstTestStarted = testTimestamps
-        .mapNotNull { it.started }
+    private val firstTestStarted: Result<Long> = testTimestamps.filterIsInstance<TestTimestamps.Finished>()
+        .map { it.startTime }
         .minOrNull()
+        .toResult { "Cannot calculate first started test time" }
 
-    private val lastTestEnded = testTimestamps
-        .mapNotNull { it.finished }
+    private val lastTestEnded: Result<Long> = testTimestamps.filterIsInstance<TestTimestamps.Finished>()
+        .map { it.finishTime }
         .maxOrNull()
+        .toResult { "Cannot calculate last ended test time" }
 
-    private val queueTimes: List<Long> = testTimestamps
-        .mapNotNull { it.onDevice }
-        .map { it - testSuiteStartedTime }
+    private val queueTimes: List<Long> = testTimestamps.filterIsInstance<TestTimestamps.Finished>()
+        .map { it.onDevice - testSuiteStartedTime }
 
-    private val installationTimes: List<Long> = testTimestamps
-        .mapNotNull { it.installationTime }
+    private val installationTimes: List<Long> = testTimestamps.filterIsInstance<TestTimestamps.Finished>()
+        .map { it.installationTime }
 
-    override fun initialDelay(): Long? = firstTestStarted?.let { it - testSuiteStartedTime }
+    override fun initialDelay(): Result<Long> = firstTestStarted.map { it - testSuiteStartedTime }
 
-    override fun endDelay(): Long? = lastTestEnded?.let { testSuiteEndedTime - it }
+    override fun endDelay(): Result<Long> = lastTestEnded.map { testSuiteEndedTime - it }
 
-    override fun medianQueueTime(): Long? = queueTimes.aggregateOrNull { it.median() }
+    override fun medianQueueTime(): Result<Long> = queueTimes.aggregate(
+        { it.median() },
+        { "Cannot calculate median queue time" }
+    )
 
-    override fun medianInstallationTime(): Long? = installationTimes.aggregateOrNull { it.median() }
+    override fun medianInstallationTime(): Result<Long> = installationTimes.aggregate(
+        { it.median() },
+        { "Cannot calculate median installation time" }
+    )
 
-    override fun suiteTime(): Long? = if (lastTestEnded != null && firstTestStarted != null) {
-        lastTestEnded - firstTestStarted
-    } else {
-        null
-    }
+    override fun suiteTime(): Result<Long> = lastTestEnded.combine(firstTestStarted) { last, first -> last - first }
 
     override fun totalTime() = testSuiteEndedTime - testSuiteStartedTime
 
-    override fun medianDeviceUtilization(): Long? =
-        deviceTimestamps.values
-            .mapNotNull { it.utilizationPercent }
-            .aggregateOrNull { it.median() }
+    override fun medianDeviceUtilization(): Result<Long> =
+        deviceTimestamps.values.filterIsInstance<DeviceTimestamps.Finished>()
+            .map { it.utilizationPercent }
+            .aggregate({ it.median() }) { "Cannot calculate median device utilization" }
 
-    /**
-     * return null if no data
-     */
-    private fun List<Number>.aggregateOrNull(aggregateFunc: (List<Number>) -> Number): Long? {
-        return if (isNotEmpty()) {
-            val result = aggregateFunc.invoke(this).toLong()
-            if (result > 0) {
-                result
-            } else {
-                null
-            }
-        } else {
-            null
+    private inline fun Long?.toResult(lazyMessage: () -> String): Result<Long> = when (this) {
+        null -> Result.Failure(IllegalStateException(lazyMessage()))
+        else -> Result.Success(this)
+    }
+
+    private inline fun List<Number>.aggregate(
+        aggregateFunc: (List<Number>) -> Number,
+        lazyMessage: () -> String
+    ): Result<Long> {
+        return when {
+            this.isEmpty() -> Result.Failure(IllegalStateException(lazyMessage()))
+            else -> Result.Success(aggregateFunc(this).toLong())
         }
     }
 }

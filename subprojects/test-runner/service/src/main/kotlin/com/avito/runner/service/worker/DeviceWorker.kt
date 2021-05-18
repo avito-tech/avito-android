@@ -55,52 +55,55 @@ internal class DeviceWorker(
 
         deviceListener.onDeviceCreated(device, state)
 
-        for (intention in intentionsRouter.observeIntentions(state)) {
+        try {
 
-            deviceListener.onIntentionReceived(device, intention)
+            for (intention in intentionsRouter.observeIntentions(state)) {
 
-            when (val status = device.deviceStatus()) {
+                deviceListener.onIntentionReceived(device, intention)
 
-                is Freeze -> {
-                    onDeviceDieOnIntention(intention, status.reason)
-                    return@launch
-                }
+                when (val status = device.deviceStatus()) {
 
-                is Alive -> {
+                    is Freeze -> {
+                        onDeviceDieOnIntention(intention, status.reason)
+                        return@launch
+                    }
 
-                    val (newState, preparingError) = prepareDeviceState(
-                        currentState = state,
-                        intendedState = intention.state
-                    )
+                    is Alive -> {
 
-                    when {
+                        val (newState, preparingError) = prepareDeviceState(
+                            currentState = state,
+                            intendedState = intention.state
+                        )
 
-                        preparingError != null -> {
-                            onDeviceDieOnIntention(intention, preparingError)
-                            return@launch
-                        }
+                        when {
 
-                        newState != null -> {
-                            state = newState
+                            preparingError != null -> {
+                                onDeviceDieOnIntention(intention, preparingError)
+                                return@launch
+                            }
 
-                            deviceListener.onStatePrepared(device, newState)
+                            newState != null -> {
+                                state = newState
 
-                            deviceListener.onTestStarted(device, intention)
+                                deviceListener.onStatePrepared(device, newState)
 
-                            val result = executeAction(action = intention.action)
+                                deviceListener.onTestStarted(device, intention)
 
-                            deviceListener.onTestCompleted(
-                                device = device,
-                                intention = intention,
-                                result = result
-                            )
+                                val result = executeAction(action = intention.action)
+
+                                deviceListener.onTestCompleted(
+                                    device = device,
+                                    intention = intention,
+                                    result = result
+                                )
+                            }
                         }
                     }
                 }
             }
+        } finally {
+            deviceListener.onFinished(device)
         }
-
-        deviceListener.onFinished(device)
     }
 
     private suspend fun prepareDeviceState(

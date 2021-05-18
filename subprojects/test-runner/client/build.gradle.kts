@@ -25,6 +25,7 @@ dependencies {
     testImplementation(project(":gradle:test-project"))
     testImplementation(testFixtures(project(":common:logger")))
     testImplementation(testFixtures(project(":common:time")))
+    testImplementation(testFixtures(project(":test-runner:service")))
     testImplementation(libs.kotlinReflect)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)

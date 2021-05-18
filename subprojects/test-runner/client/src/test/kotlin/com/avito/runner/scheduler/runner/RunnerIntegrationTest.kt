@@ -603,7 +603,7 @@ class RunnerIntegrationTest {
             loggerFactory = loggerFactory,
             devices = devices,
             testListener = testListener,
-            deviceMetricsListener = StubDeviceListener,
+            deviceMetricsListener = StubDeviceListener(),
             deviceWorkersDispatcher = TestDispatcher,
             timeProvider = StubTimeProvider()
         )

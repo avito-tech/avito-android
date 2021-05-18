@@ -6,6 +6,8 @@ import com.avito.runner.scheduler.metrics.model.DeviceKey
 import com.avito.runner.scheduler.metrics.model.DeviceTimestamps
 import com.avito.runner.scheduler.metrics.model.TestKey
 import com.avito.runner.scheduler.metrics.model.TestTimestamps
+import com.avito.runner.scheduler.metrics.model.finish
+import com.avito.runner.scheduler.metrics.model.start
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
@@ -31,10 +33,9 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onDeviceCreated(device: Device, state: State) {
-        deviceTimestamps[device.key()] = DeviceTimestamps(
+        deviceTimestamps[device.key()] = DeviceTimestamps.Started(
             created = timeProvider.nowInMillis(),
             testTimestamps = mutableMapOf(),
-            finished = 0
         )
     }
 
@@ -44,20 +45,18 @@ internal class TestMetricsListenerImpl(
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
                 null
             } else {
-                oldValue.testTimestamps[intention.testKey()] = TestTimestamps(
-                    onDevice = timeProvider.nowInMillis(),
-                    started = null,
-                    finished = null
-                )
+                oldValue.testTimestamps[intention.testKey()] = TestTimestamps.NotStarted(timeProvider.nowInMillis())
                 oldValue
             }
         }
     }
 
     override suspend fun onStatePrepared(device: Device, state: State) {
+        // empty
     }
 
     override suspend fun onApplicationInstalled(device: Device, installation: DeviceInstallation) {
+        // empty
     }
 
     override suspend fun onTestStarted(device: Device, intention: Intention) {
@@ -74,7 +73,7 @@ internal class TestMetricsListenerImpl(
                         )
                         null
                     } else {
-                        testTimestamps.copy(started = timeProvider.nowInMillis())
+                        testTimestamps.start(timeProvider.nowInMillis())
                     }
                 }
                 oldValue
@@ -96,7 +95,7 @@ internal class TestMetricsListenerImpl(
                         )
                         null
                     } else {
-                        testTimestamps.copy(finished = timeProvider.nowInMillis())
+                        testTimestamps.finish(timeProvider.nowInMillis())
                     }
                 }
                 oldValue
@@ -105,6 +104,7 @@ internal class TestMetricsListenerImpl(
     }
 
     override suspend fun onIntentionFail(device: Device, intention: Intention, reason: Throwable) {
+        // empty
     }
 
     override suspend fun onDeviceDied(device: Device, message: String, reason: Throwable) {
@@ -117,7 +117,7 @@ internal class TestMetricsListenerImpl(
                 logger.warn("Fail to set timestamp value, previous required values not found, this shouldn't happen")
                 null
             } else {
-                oldValue.copy(finished = timeProvider.nowInMillis())
+                oldValue.finish(finished = timeProvider.nowInMillis())
             }
         }
     }
@@ -126,31 +126,36 @@ internal class TestMetricsListenerImpl(
         val aggregator: TestMetricsAggregator = createTestMetricsAggregator()
 
         with(testMetricsSender) {
-            aggregator.initialDelay()
-                ?.let { sendInitialDelay(it) }
-                ?: logger.warn("Not sending initial delay, no data")
+            aggregator.initialDelay().fold(
+                { sendInitialDelay(it) },
+                { logger.warn("Not sending initial delay, no data") }
+            )
 
-            aggregator.medianQueueTime()
-                ?.let { sendMedianQueueTime(it) }
-                ?: logger.warn("Not sending median test queue time, no data")
+            aggregator.medianQueueTime().fold(
+                { sendMedianQueueTime(it) },
+                { logger.warn("Not sending median test queue time, no data") }
+            )
+            aggregator.medianInstallationTime().fold(
+                { sendMedianInstallationTime(it) },
+                { logger.warn("Not sending median test start time, no data") }
+            )
 
-            aggregator.medianInstallationTime()
-                ?.let { sendMedianInstallationTime(it) }
-                ?: logger.warn("Not sending median test start time, no data")
+            aggregator.endDelay().fold(
+                { sendEndDelay(it) },
+                { logger.warn("Not sending end delay, no data") }
+            )
 
-            aggregator.endDelay()
-                ?.let { sendEndDelay(it) }
-                ?: logger.warn("Not sending end delay, no data")
-
-            aggregator.suiteTime()
-                ?.let { sendSuiteTime(it) }
-                ?: logger.warn("Not sending suite time, no data")
+            aggregator.suiteTime().fold(
+                { sendSuiteTime(it) },
+                { logger.warn("Not sending suite time, no data") }
+            )
 
             sendTotalTime(aggregator.totalTime())
 
-            aggregator.medianDeviceUtilization()
-                ?.let { sendMedianDeviceUtilization(it.toInt()) }
-                ?: logger.warn("Not sending median device relative wasted time, no data")
+            aggregator.medianDeviceUtilization().fold(
+                { sendMedianDeviceUtilization(it.toInt()) },
+                { logger.warn("Not sending median device relative wasted time, no data") }
+            )
         }
     }
 

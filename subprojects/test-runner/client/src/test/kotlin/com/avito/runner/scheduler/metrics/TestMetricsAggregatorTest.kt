@@ -18,8 +18,8 @@ internal class TestMetricsAggregatorTest {
             deviceTimestamps = mapOf(
                 "12345".toDeviceKey() to DeviceTimestamps.createStubInstance(
                     testTimestamps = mutableMapOf(
-                        "test1".toTestKey() to TestTimestamps.createStubInstance(started = 25),
-                        "test2".toTestKey() to TestTimestamps.createStubInstance(started = 35)
+                        "test1".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 25, finishTime = 30),
+                        "test2".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 25, finishTime = 30),
                     )
                 )
             )
@@ -27,7 +27,7 @@ internal class TestMetricsAggregatorTest {
 
         val result = aggregator.initialDelay()
 
-        assertThat(result).isEqualTo(15)
+        assertThat(result.getOrThrow()).isEqualTo(15)
     }
 
     @Test
@@ -37,8 +37,8 @@ internal class TestMetricsAggregatorTest {
             deviceTimestamps = mapOf(
                 "12345".toDeviceKey() to DeviceTimestamps.createStubInstance(
                     testTimestamps = mutableMapOf(
-                        "test1".toTestKey() to TestTimestamps.createStubInstance(finished = 25),
-                        "test2".toTestKey() to TestTimestamps.createStubInstance(finished = 35)
+                        "test1".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 20, finishTime = 25),
+                        "test2".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 30, finishTime = 35),
                     )
                 )
             )
@@ -46,7 +46,7 @@ internal class TestMetricsAggregatorTest {
 
         val result = aggregator.endDelay()
 
-        assertThat(result).isEqualTo(15)
+        assertThat(result.getOrThrow()).isEqualTo(15)
     }
 
     @Test
@@ -55,10 +55,10 @@ internal class TestMetricsAggregatorTest {
             deviceTimestamps = mapOf(
                 "12345".toDeviceKey() to DeviceTimestamps.createStubInstance(
                     testTimestamps = mutableMapOf(
-                        "test1".toTestKey() to TestTimestamps.createStubInstance(started = 10, finished = 20),
-                        "test2".toTestKey() to TestTimestamps.createStubInstance(started = 15, finished = 45),
-                        "test3".toTestKey() to TestTimestamps.createStubInstance(started = 10, finished = 25),
-                        "test4".toTestKey() to TestTimestamps.createStubInstance(started = 30, finished = 35)
+                        "test1".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 10, finishTime = 20),
+                        "test2".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 15, finishTime = 45),
+                        "test3".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 10, finishTime = 25),
+                        "test4".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 30, finishTime = 35),
                     )
                 )
             )
@@ -66,7 +66,7 @@ internal class TestMetricsAggregatorTest {
 
         val result = aggregator.suiteTime()
 
-        assertThat(result).isEqualTo(35)
+        assertThat(result.getOrThrow()).isEqualTo(35)
     }
 
     @Test
@@ -88,10 +88,10 @@ internal class TestMetricsAggregatorTest {
             deviceTimestamps = mapOf(
                 "12345".toDeviceKey() to DeviceTimestamps.createStubInstance(
                     testTimestamps = mutableMapOf(
-                        "test1".toTestKey() to TestTimestamps.createStubInstance(onDevice = 10),
-                        "test2".toTestKey() to TestTimestamps.createStubInstance(onDevice = 15),
-                        "test3".toTestKey() to TestTimestamps.createStubInstance(onDevice = 10),
-                        "test4".toTestKey() to TestTimestamps.createStubInstance(onDevice = 30)
+                        "test1".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 40, finishTime = 50),
+                        "test2".toTestKey() to TestTimestamps.Finished(onDevice = 15, startTime = 40, finishTime = 50),
+                        "test3".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 40, finishTime = 50),
+                        "test4".toTestKey() to TestTimestamps.Finished(onDevice = 30, startTime = 40, finishTime = 50),
                     )
                 )
             )
@@ -99,7 +99,7 @@ internal class TestMetricsAggregatorTest {
 
         val result = aggregator.medianQueueTime()
 
-        assertThat(result).isEqualTo(7) // median is 7.5, but rounded (ok for unix time)
+        assertThat(result.getOrThrow()).isEqualTo(7) // median is 7.5, but rounded (ok for unix time)
     }
 
     @Test
@@ -108,10 +108,10 @@ internal class TestMetricsAggregatorTest {
             deviceTimestamps = mapOf(
                 "12345".toDeviceKey() to DeviceTimestamps.createStubInstance(
                     testTimestamps = mutableMapOf(
-                        "test1".toTestKey() to TestTimestamps.createStubInstance(onDevice = 10, started = 13),
-                        "test2".toTestKey() to TestTimestamps.createStubInstance(onDevice = 15, started = 16),
-                        "test3".toTestKey() to TestTimestamps.createStubInstance(onDevice = 10, started = 19),
-                        "test4".toTestKey() to TestTimestamps.createStubInstance(onDevice = 30, started = 35)
+                        "test1".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 13, finishTime = 15),
+                        "test2".toTestKey() to TestTimestamps.Finished(onDevice = 15, startTime = 16, finishTime = 18),
+                        "test3".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 19, finishTime = 25),
+                        "test4".toTestKey() to TestTimestamps.Finished(onDevice = 30, startTime = 35, finishTime = 36),
                     )
                 )
             )
@@ -119,7 +119,7 @@ internal class TestMetricsAggregatorTest {
 
         val result = aggregator.medianInstallationTime()
 
-        assertThat(result).isEqualTo(4)
+        assertThat(result.getOrThrow()).isEqualTo(4)
     }
 
     @Test
@@ -129,9 +129,9 @@ internal class TestMetricsAggregatorTest {
                 "12345".toDeviceKey() to DeviceTimestamps.createStubInstance(
                     created = 0,
                     testTimestamps = mutableMapOf(
-                        "test1".toTestKey() to TestTimestamps.createStubInstance(onDevice = 10, finished = 15),
-                        "test2".toTestKey() to TestTimestamps.createStubInstance(onDevice = 20, finished = 25),
-                        "test4".toTestKey() to TestTimestamps.createStubInstance(onDevice = 35, finished = 45)
+                        "test1".toTestKey() to TestTimestamps.Finished(onDevice = 10, startTime = 10, finishTime = 15),
+                        "test2".toTestKey() to TestTimestamps.Finished(onDevice = 20, startTime = 20, finishTime = 25),
+                        "test4".toTestKey() to TestTimestamps.Finished(onDevice = 35, startTime = 35, finishTime = 45),
                     ),
                     finished = 50
                 )
@@ -140,7 +140,7 @@ internal class TestMetricsAggregatorTest {
 
         val result = aggregator.medianDeviceUtilization()
 
-        assertThat(result).isEqualTo(40)
+        assertThat(result.getOrThrow()).isEqualTo(40)
     }
 
     private fun createTestMetricsAggregator(
