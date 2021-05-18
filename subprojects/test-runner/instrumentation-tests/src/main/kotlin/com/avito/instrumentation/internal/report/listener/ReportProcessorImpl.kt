@@ -52,14 +52,25 @@ internal class ReportProcessorImpl(
                         )
                     }
                     .rescue { throwable ->
-                        val errorMessage = "Can't get report from file: $test"
+                        val errorMessage = "Can't get report artifacts for test: $test"
 
                         logger.warn(errorMessage, throwable)
 
                         metricsSender.sendReportFileNotAvailable()
 
+                        val problem = createException(
+                            shortDescription = errorMessage,
+                            context = "ReportProcessorImpl forms fallback Error status report",
+                            because = "There is not enough context here about cause",
+                            possibleSolutions = listOf(
+                                "MBS-11279 should help with correct error message from AdbDevice",
+                                "MBS-11281 to return tests with such errors back to retry queue"
+                            ),
+                            cause = throwable
+                        )
+
                         processFailure(
-                            throwable = throwable,
+                            throwable = problem,
                             testStaticData = testFromSuite,
                             logcatBuffer = logcatBuffer
                         )
@@ -90,6 +101,32 @@ internal class ReportProcessorImpl(
                     ).getOrThrow()
                 }
         }
+    }
+
+    private fun createException(
+        shortDescription: String,
+        context: String,
+        because: String,
+        possibleSolutions: List<String>,
+        documentedAt: String? = null,
+        cause: Throwable
+    ): RuntimeException {
+        val message = buildString {
+            appendLine(shortDescription)
+            appendLine("Where : $context")
+            appendLine("Why? : $because")
+            if (possibleSolutions.isNotEmpty()) {
+                appendLine("Possible solutions:")
+                possibleSolutions.forEach {
+                    appendLine(" - $it")
+                }
+            }
+            if (!documentedAt.isNullOrBlank()) {
+                appendLine("You can learn more about this problem at $documentedAt")
+            }
+        }
+
+        return RuntimeException(message, cause)
     }
 
     private fun processFailure(
