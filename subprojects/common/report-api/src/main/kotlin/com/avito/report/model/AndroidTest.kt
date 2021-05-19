@@ -47,7 +47,7 @@ public sealed class AndroidTest : TestStaticData {
         }
 
         override fun toString(): String {
-            return "Lost[$name]"
+            return "Lost[name=$name; device=$device;]"
         }
 
         public companion object {
@@ -135,7 +135,7 @@ public sealed class AndroidTest : TestStaticData {
         }
 
         override fun toString(): String {
-            return "Skipped[$name; reason=$skipReason]"
+            return "Skipped[name=$name; device=$device; reason=$skipReason]"
         }
 
         public companion object {
@@ -211,9 +211,9 @@ public sealed class AndroidTest : TestStaticData {
 
         override fun toString(): String {
             return if (incident == null) {
-                "Success[$name]"
+                "Success[name=$name; device=$device]"
             } else {
-                "Failed[$name; error=${incident.errorMessage}]"
+                "Failed[name=$name; device=$device; error=${incident.errorMessage}]"
             }
         }
 

@@ -36,6 +36,7 @@ public class ReportFactoryImpl(
         return ReportImpl(
             inMemoryReport = InMemoryReport(
                 timeProvider = timeProvider,
+                loggerFactory = loggerFactory,
                 testAttemptsAggregateStrategy = createTestAttemptsAggregateStrategy()
             ),
             avitoReport = reportViewerConfig?.let { createAvitoReport(it) },
