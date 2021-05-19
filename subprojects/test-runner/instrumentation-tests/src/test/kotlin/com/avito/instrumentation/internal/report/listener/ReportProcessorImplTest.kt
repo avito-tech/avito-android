@@ -48,7 +48,7 @@ internal class ReportProcessorImplTest {
         )
 
         val testResult = postProcessor.createTestReport(
-            result = TestResult.timeout("timeout happened"),
+            result = TestResult.timeout(exceptionMessage = "timeout happened"),
             test = testCase,
             executionNumber = 1,
             logcatBuffer = null

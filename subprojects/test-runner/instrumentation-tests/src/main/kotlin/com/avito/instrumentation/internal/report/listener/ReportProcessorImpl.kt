@@ -52,25 +52,25 @@ internal class ReportProcessorImpl(
                         )
                     }
                     .rescue { throwable ->
-                        val errorMessage = "Can't get report artifacts for test: $test"
+                        val errorMessage = "Can't get report artifacts"
 
                         logger.warn(errorMessage, throwable)
 
                         metricsSender.sendReportFileNotAvailable()
 
-                        val problem = createException(
+                        val problem = Problem(
                             shortDescription = errorMessage,
-                            context = "ReportProcessorImpl forms fallback Error status report",
+                            context = "ReportProcessor forms fallback Error status report",
                             because = "There is not enough context here about cause",
                             possibleSolutions = listOf(
                                 "MBS-11279 should help with correct error message from AdbDevice",
                                 "MBS-11281 to return tests with such errors back to retry queue"
                             ),
-                            cause = throwable
+                            throwable = throwable
                         )
 
                         processFailure(
-                            throwable = problem,
+                            problem = problem,
                             testStaticData = testFromSuite,
                             logcatBuffer = logcatBuffer
                         )
@@ -78,24 +78,44 @@ internal class ReportProcessorImpl(
 
             is TestResult.Incomplete ->
                 with(result.infraError) {
-                    logger.warn("${error.message} while executing ${test.testName}", this.error)
+
+                    val problemBuilder = Problem.Builder(
+                        shortDescription = "Can't complete test execution",
+                        context = "ReportProcessor handling incomplete test result",
+                    )
+
+                    problemBuilder.throwable(error)
 
                     when (this) {
-                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnParsing ->
+                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnParsing -> {
                             metricsSender.sendFailedOnParsingInstrumentation()
+                            problemBuilder.because("Can't parse instrumentation output, see underlying exception")
+                        }
 
-                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnStart ->
+                        is TestCaseRun.Result.Failed.InfrastructureError.FailedOnStart -> {
                             metricsSender.sendFailedOnStartInstrumentation()
+                            problemBuilder.because("Can't start test")
+                        }
 
-                        is TestCaseRun.Result.Failed.InfrastructureError.Timeout ->
+                        is TestCaseRun.Result.Failed.InfrastructureError.Timeout -> {
                             metricsSender.sendTimeOut()
+                            problemBuilder.because(
+                                "Test didn't finish in time. " +
+                                    "Test Runner has hardcoded timeout of $timeoutMin minutes"
+                            )
+                        }
 
-                        is TestCaseRun.Result.Failed.InfrastructureError.Unexpected ->
+                        is TestCaseRun.Result.Failed.InfrastructureError.Unexpected -> {
                             metricsSender.sendUnexpectedInfraError()
+                        }
                     }
 
+                    val problem = problemBuilder.build()
+
+                    logger.warn(problem.asPlainText(), this.error)
+
                     processFailure(
-                        throwable = error,
+                        problem = problem,
                         testStaticData = testFromSuite,
                         logcatBuffer = logcatBuffer
                     ).getOrThrow()
@@ -103,34 +123,8 @@ internal class ReportProcessorImpl(
         }
     }
 
-    private fun createException(
-        shortDescription: String,
-        context: String,
-        because: String,
-        possibleSolutions: List<String>,
-        documentedAt: String? = null,
-        cause: Throwable
-    ): RuntimeException {
-        val message = buildString {
-            appendLine(shortDescription)
-            appendLine("Where : $context")
-            appendLine("Why? : $because")
-            if (possibleSolutions.isNotEmpty()) {
-                appendLine("Possible solutions:")
-                possibleSolutions.forEach {
-                    appendLine(" - $it")
-                }
-            }
-            if (!documentedAt.isNullOrBlank()) {
-                appendLine("You can learn more about this problem at $documentedAt")
-            }
-        }
-
-        return RuntimeException(message, cause)
-    }
-
     private fun processFailure(
-        throwable: Throwable,
+        problem: Problem,
         testStaticData: TestStaticData,
         logcatBuffer: LogcatBuffer?
     ): Result<AndroidTest> {
@@ -147,20 +141,22 @@ internal class ReportProcessorImpl(
                     logcatProcessor.process(logcatBuffer?.getStderr(), isUploadNeeded = true)
                 }
 
+                val now = timeProvider.nowInSeconds()
+
                 Result.Success(
                     AndroidTest.Lost.fromTestStaticData(
                         testStaticData,
-                        startTime = 0,
-                        lastSignalTime = 0,
+                        startTime = now,
+                        lastSignalTime = now,
                         stdout = stdout.await(),
                         stderr = stderr.await(),
                         incident = Incident(
                             type = Incident.Type.INFRASTRUCTURE_ERROR,
-                            timestamp = timeProvider.nowInSeconds(),
-                            trace = throwable.stackTraceToList(),
+                            timestamp = now,
+                            trace = problem.asRuntimeException().stackTraceToList(),
                             chain = listOf(
                                 IncidentElement(
-                                    message = throwable.message ?: "no error message"
+                                    message = problem.asPlainText()
                                 )
                             ),
                             entryList = emptyList()
