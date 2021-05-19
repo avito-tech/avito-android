@@ -143,7 +143,11 @@ internal interface FinalizerFactory {
                 actions = actions,
                 buildFailer = buildFailer,
                 verdictFile = params.verdictFile,
-                verdictDeterminer = verdictDeterminer
+                verdictDeterminer = verdictDeterminer,
+                finalizerFileDumper = FinalizerFileDumper(
+                    outputDir = params.outputDir,
+                    loggerFactory = loggerFactory
+                )
             )
         }
 

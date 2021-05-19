@@ -13,11 +13,17 @@ internal class InstrumentationTestActionFinalizerImpl(
     private val buildFailer: BuildFailer,
     private val verdictFile: File,
     private val verdictDeterminer: VerdictDeterminer,
+    private val finalizerFileDumper: FinalizerFileDumper,
 ) : InstrumentationTestActionFinalizer {
 
     override fun finalize(testSchedulerResults: TestsScheduler.Result) {
 
         val initialTestSuite: Set<TestStaticData> = testSchedulerResults.testSuite.testsToRun.map { it.test }.toSet()
+
+        finalizerFileDumper.dump(
+            initialTestSuite = initialTestSuite,
+            testResults = testSchedulerResults.testResults
+        )
 
         val verdict: Verdict = verdictDeterminer.determine(
             initialTestSuite = initialTestSuite,
