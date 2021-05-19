@@ -1,12 +1,8 @@
 package com.avito.android.build_trace.internal.critical_path
 
-import com.avito.android.build_trace.internal.predecessors
-import com.avito.android.build_trace.internal.type
-import com.avito.android.gradle.profile.TaskExecution
 import com.avito.graph.Operation
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import org.gradle.api.Task
 
 internal data class TaskOperation(
 
@@ -51,18 +47,5 @@ internal data class TaskOperation(
 
     override fun hashCode(): Int {
         return id.hashCode()
-    }
-
-    companion object {
-
-        fun from(task: Task, state: TaskExecution): TaskOperation {
-            return TaskOperation(
-                path = task.path,
-                type = task.type.name,
-                startMs = state.startTime,
-                finishMs = state.finish,
-                predecessors = task.predecessors.map { it.path }.toSet()
-            )
-        }
     }
 }

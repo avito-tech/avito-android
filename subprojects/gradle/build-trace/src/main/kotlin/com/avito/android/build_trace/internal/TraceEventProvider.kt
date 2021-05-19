@@ -16,6 +16,7 @@ internal class TraceEventProvider {
 
     fun taskExecutionEvent(task: Task, state: TaskExecution): TraceEvent {
         val predecessorTasks = task.predecessors
+            .tasks
             .map {
                 taskShortDescription(it, task.project)
             }
