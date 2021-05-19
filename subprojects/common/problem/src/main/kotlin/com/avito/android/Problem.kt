@@ -1,9 +1,9 @@
-package com.avito.instrumentation.internal.report.listener
+package com.avito.android
 
 /**
  * Inspired by https://github.com/melix/jdoctor
  */
-internal data class Problem(
+public data class Problem(
     val shortDescription: String,
     val context: String,
     val because: String? = null,
@@ -12,45 +12,45 @@ internal data class Problem(
     val throwable: Throwable? = null
 ) {
 
-    fun newBuilder(): Builder {
+    public fun newBuilder(): Builder {
         return Builder(this)
     }
 
-    class Builder(private val shortDescription: String, private val context: String) {
+    public class Builder(private val shortDescription: String, private val context: String) {
 
         private var because: String? = null
         private val possibleSolutions = mutableListOf<String>()
         private var documentedAt: String? = null
         private var throwable: Throwable? = null
 
-        constructor(source: Problem) : this(source.shortDescription, source.context) {
+        internal constructor(source: Problem) : this(source.shortDescription, source.context) {
             this.because = source.because
             this.possibleSolutions.addAll(source.possibleSolutions)
             this.documentedAt = source.documentedAt
             this.throwable = source.throwable
         }
 
-        fun because(reason: String): Builder {
+        public fun because(reason: String): Builder {
             this.because = reason
             return this
         }
 
-        fun addSolution(solution: String): Builder {
+        public fun addSolution(solution: String): Builder {
             this.possibleSolutions.add(solution)
             return this
         }
 
-        fun documentedAt(link: String): Builder {
+        public fun documentedAt(link: String): Builder {
             this.documentedAt = link
             return this
         }
 
-        fun throwable(throwable: Throwable): Builder {
+        public fun throwable(throwable: Throwable): Builder {
             this.throwable = throwable
             return this
         }
 
-        fun build(): Problem {
+        public fun build(): Problem {
             return Problem(
                 shortDescription = this.shortDescription,
                 context = this.context,
@@ -63,7 +63,7 @@ internal data class Problem(
     }
 }
 
-internal fun Problem.asPlainText(): String = buildString {
+public fun Problem.asPlainText(): String = buildString {
     appendLine(shortDescription)
     appendLine("Where : $context")
     appendLine("Why? : $because")
@@ -82,4 +82,4 @@ internal fun Problem.asPlainText(): String = buildString {
     }
 }
 
-internal fun Problem.asRuntimeException(): RuntimeException = RuntimeException(asPlainText(), throwable)
+public fun Problem.asRuntimeException(): RuntimeException = RuntimeException(asPlainText(), throwable)
