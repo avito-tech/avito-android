@@ -45,6 +45,17 @@ pluginManagement {
                 includeGroupByRegex("com\\.android\\.tools\\.build\\.*")
             }
         }
+        // not available in mavenCentral
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy("jcenter", "https://jcenter.bintray.com")
+                }
+            }
+            filter {
+                includeModule("com.fkorotkov", "kubernetes-dsl")
+            }
+        }
     }
 }
 
