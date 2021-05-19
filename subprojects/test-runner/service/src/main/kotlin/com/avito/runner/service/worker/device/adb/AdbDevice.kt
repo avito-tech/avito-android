@@ -471,6 +471,7 @@ data class AdbDevice(
                         className = test.className,
                         name = test.methodName,
                         result = Failed.InfrastructureError.Timeout(
+                            timeoutMin = timeoutMinutes,
                             error = RuntimeException("Failed on Timeout")
                         ),
                         timestampStartedMilliseconds = started,
