@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":gradle:gradle-extensions"))

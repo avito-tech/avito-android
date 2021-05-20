@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":gradle:android"))
     implementation(project(":common:truth-extensions"))
-    implementation(testFixtures(project(":common:logger")))
+    implementation(testFixtures(project(":logger:logger")))
 
     implementation(libs.kotlinReflect)
     implementation(libs.truth)

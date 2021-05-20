@@ -10,7 +10,7 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":common:build-metadata"))
     implementation(project(":common:okhttp"))
-    implementation(project(":common:logger"))
+    implementation(project(":logger:logger"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
 }

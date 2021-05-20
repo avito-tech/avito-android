@@ -9,7 +9,7 @@ dependencies {
     implementation(libs.mockitoKotlin)
     implementation(project(":test-runner:test-inhouse-runner"))
     implementation(project(":android-test:ui-testing-core"))
-    implementation(project(":common:logger"))
+    implementation(project(":logger:logger"))
     implementation(project(":common:file-storage"))
     implementation(project(":common:report-viewer"))
     implementation(project(":common:composite-exception"))

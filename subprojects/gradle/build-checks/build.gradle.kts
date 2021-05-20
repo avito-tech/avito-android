@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":gradle:build-failer"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:build-metrics"))

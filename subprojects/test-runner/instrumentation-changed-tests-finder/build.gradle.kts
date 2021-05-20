@@ -11,7 +11,7 @@ dependencies {
     }
     implementation(project(":common:files"))
     implementation(project(":gradle:process"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":test-runner:instrumentation-tests-dex-loader")) {
         because("TestInApkModel")
@@ -22,7 +22,7 @@ dependencies {
 
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":gradle:git"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
+    gradleTestImplementation(testFixtures(project(":logger:logger")))
 }
 
 gradlePlugin {

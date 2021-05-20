@@ -7,6 +7,6 @@ plugins {
 dependencies {
     api(project(":test-runner:test-report-api"))
     api(project(":test-runner:test-report-dsl-api"))
-    api(project(":common:logger"))
+    api(project(":logger:logger"))
     api(libs.junit)
 }

@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:trace-event"))
     implementation(project(":gradle:gradle-profile"))
@@ -18,7 +18,7 @@ dependencies {
     implementation(gradleApi())
 
     gradleTestImplementation(project(":gradle:test-project"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
+    gradleTestImplementation(testFixtures(project(":logger:logger")))
 }
 
 gradlePlugin {

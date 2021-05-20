@@ -8,7 +8,7 @@ dependencies {
     api(project(":common:result"))
 
     implementation(project(":common:time"))
-    implementation(project(":common:logger"))
+    implementation(project(":logger:logger"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:http-client"))
 

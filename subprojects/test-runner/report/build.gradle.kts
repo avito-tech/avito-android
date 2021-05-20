@@ -18,7 +18,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":common:report-api")))
 
-    testFixturesImplementation(testFixtures(project(":common:logger")))
+    testFixturesImplementation(testFixtures(project(":logger:logger")))
     testFixturesImplementation(testFixtures(project(":common:time")))
     testFixturesImplementation(testFixtures(project(":common:report-viewer")))
 }
