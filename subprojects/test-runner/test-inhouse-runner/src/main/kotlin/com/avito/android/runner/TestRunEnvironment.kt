@@ -81,9 +81,7 @@ sealed class TestRunEnvironment {
         internal val elasticConfig: ElasticConfig,
         internal val sentryConfig: SentryConfig,
         internal val statsDConfig: StatsDConfig,
-        internal val fileStorageUrl: HttpUrl,
-        // TODO delete after MBS-10434 resolved
-        internal val dumpMainLooperMessagesEnabled: Boolean
+        internal val fileStorageUrl: HttpUrl
     ) : TestRunEnvironment()
 
     companion object {
@@ -128,8 +126,6 @@ fun provideEnvironment(
             fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl").toHttpUrl(),
             testRunCoordinates = coordinates,
             reportDestination = parseReportDestination(argumentsProvider),
-            dumpMainLooperMessagesEnabled = argumentsProvider.getOptionalArgument("dumpMainLooperMessages")?.toBoolean()
-                ?: false
         )
     } catch (e: Throwable) {
         TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
