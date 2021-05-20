@@ -8,6 +8,7 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.android.test.report.model.createStubInstance
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
+import java.util.concurrent.CopyOnWriteArrayList
 
 internal fun Started.Companion.createStubInstance(
     testMetadata: TestMetadata = TestMetadata.createStubInstance(),
@@ -19,8 +20,8 @@ internal fun Started.Companion.createStubInstance(
     dataSet: DataSet? = null,
     startTime: Long = 0,
     endTime: Long = 0,
-    preconditionStepList: MutableList<StepResult> = mutableListOf(),
-    testCaseStepList: MutableList<StepResult> = mutableListOf(),
+    preconditionStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList(),
+    testCaseStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList(),
     attachmentsBeforeSteps: StepAttachments = StepAttachments(),
 ) = Started(
     attachmentsBeforeSteps = attachmentsBeforeSteps,
