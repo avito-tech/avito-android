@@ -18,7 +18,7 @@ import java.io.File
  */
 abstract class BaseConfiguration(
     val module: InternalModule,
-    val types: Set<Class<out ConfigurationType>>
+    val type: Class<out ConfigurationType>
 ) : Equality {
 
     abstract val isModified: Boolean
@@ -26,7 +26,7 @@ abstract class BaseConfiguration(
     protected val changesDetector = module.changesDetector
     val path: String = project.path
 
-    open val hasChangedFiles: Boolean by lazy {
+    val hasChangedFiles: Boolean by lazy {
         changedFiles()
             .map { it.isNotEmpty() }
             .onFailure {
@@ -36,7 +36,7 @@ abstract class BaseConfiguration(
     }
 
     open val dependencies: Set<MainConfiguration> by lazy {
-        module.project.dependenciesOnProjects(types)
+        module.project.dependenciesOnProjects(setOf(type))
             .map {
                 it.dependencyProject
                     .internalModule
