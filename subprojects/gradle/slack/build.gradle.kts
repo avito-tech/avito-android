@@ -10,7 +10,7 @@ plugins {
 dependencies {
     api(project(":common:result"))
 
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":common:time"))
     implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
@@ -25,7 +25,7 @@ dependencies {
     testImplementation(project(":gradle:test-project"))
     testImplementation(project(":gradle:slack-test-fixtures"))
     testImplementation(testFixtures(project(":common:time")))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:statsd")))
 }
 

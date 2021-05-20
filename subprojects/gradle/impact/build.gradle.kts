@@ -10,7 +10,7 @@ dependencies {
 
     implementation(gradleApi())
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":common:files"))
     implementation(project(":common:math"))
     implementation(project(":gradle:git"))

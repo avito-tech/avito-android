@@ -8,7 +8,7 @@ plugins {
 dependencies {
     implementation(project(":common:math"))
     implementation(project(":gradle:build-environment"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-profile"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:graphite-config"))
@@ -25,7 +25,7 @@ dependencies {
     gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(project(":gradle:git"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
+    gradleTestImplementation(testFixtures(project(":logger:logger")))
 }
 
 gradlePlugin {

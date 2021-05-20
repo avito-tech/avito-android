@@ -11,7 +11,7 @@ dependencies {
     implementation(gradleApi())
 
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:process"))
@@ -22,7 +22,7 @@ dependencies {
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:git-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
 
     testImplementation(libs.mockitoKotlin)
 }

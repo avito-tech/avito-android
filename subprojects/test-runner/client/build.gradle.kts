@@ -23,7 +23,7 @@ dependencies {
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":test-runner:shared-test"))
     testImplementation(project(":gradle:test-project"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:time")))
     testImplementation(testFixtures(project(":test-runner:service")))
     testImplementation(libs.kotlinReflect)

@@ -22,7 +22,7 @@ dependencies {
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
 
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:time")))
     testImplementation(project(":common:files"))
     testImplementation(project(":common:truth-extensions"))

@@ -12,13 +12,13 @@ dependencies {
 
     implementation(project(":common:okhttp"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":common:test-okhttp"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(project(":gradle:git-test-fixtures"))
     testImplementation(project(":gradle:test-project"))
 }
