@@ -69,6 +69,8 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 }
             }
         ),
+        // TODO: this case is flaky but enabled to collect more info
+        //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "store error - 500 response",
             loadStatus = 404,
