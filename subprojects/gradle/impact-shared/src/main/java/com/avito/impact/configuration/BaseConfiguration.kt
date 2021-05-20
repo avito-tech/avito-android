@@ -46,17 +46,31 @@ abstract class BaseConfiguration(
     }
 
     fun allDependencies(includeSelf: Boolean = true): Set<BaseConfiguration> {
-        val dependencies = this.dependencies
-            .flatMap {
-                it.allDependencies(includeSelf = true)
-            }
-            .toSet()
-
+        val dependencies = mutableSetOf<BaseConfiguration>()
+        val visited = mutableSetOf<BaseConfiguration>()
+        this.traverseDependencies(visited) { conf: BaseConfiguration ->
+            dependencies.add(conf)
+        }
         return if (includeSelf) {
             dependencies.plus(this)
         } else {
             dependencies
         }
+    }
+
+    @Suppress("unused") // false-positive for receiver
+    private fun BaseConfiguration.traverseDependencies(
+        visited: MutableSet<BaseConfiguration>,
+        visitor: (BaseConfiguration) -> Unit
+    ) {
+        this.dependencies
+            .forEach { node ->
+                if (!visited.contains(node)) {
+                    visitor(node)
+                    node.traverseDependencies(visited, visitor)
+                    visited.add(node)
+                }
+            }
     }
 
     fun sourceSets(): Set<File> {
