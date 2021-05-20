@@ -30,6 +30,7 @@ dependencies {
     implementation(project(":test-runner:test-report-artifacts"))
     implementation(project(":common:retrace"))
     implementation(project(":common:http-client"))
+    implementation(project(":common:problem"))
     implementation(project(":common:throwable-utils"))
     implementation(project(":common:result"))
     implementation(project(":common:sentry"))
