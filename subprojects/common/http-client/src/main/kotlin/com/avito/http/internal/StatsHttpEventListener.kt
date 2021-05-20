@@ -93,7 +93,7 @@ internal class StatsHttpEventListener(
                 )
 
                 logger.warn(
-                    msg = "RequestMetadata not available for: $urlWithoutParams\n" +
+                    msg = "RequestMetadata not available for: ${request.method} $urlWithoutParams\n" +
                         "Metrics will be send as: $seriesName\n" +
                         "You should add okhttp.Request.tag() with additional request information for metrics\n" +
                         "or use Retrofit @Tag annotation,\n" +
