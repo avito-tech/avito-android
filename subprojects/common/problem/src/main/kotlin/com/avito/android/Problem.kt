@@ -23,7 +23,7 @@ public data class Problem(
         private var documentedAt: String? = null
         private var throwable: Throwable? = null
 
-        internal constructor(source: Problem) : this(source.shortDescription, source.context) {
+        private constructor(source: Problem) : this(source.shortDescription, source.context) {
             this.because = source.because
             this.possibleSolutions.addAll(source.possibleSolutions)
             this.documentedAt = source.documentedAt
