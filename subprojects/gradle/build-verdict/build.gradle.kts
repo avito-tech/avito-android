@@ -11,7 +11,7 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":common:throwable-utils"))
     implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(libs.gson)
     implementation(libs.kotlinHtml)
 

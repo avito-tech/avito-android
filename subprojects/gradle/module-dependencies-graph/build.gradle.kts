@@ -8,11 +8,11 @@ plugins {
 dependencies {
     compileOnly(gradleApi())
 
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":common:math"))
 
     gradleTestImplementation(project(":common:truth-extensions"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
+    gradleTestImplementation(testFixtures(project(":logger:logger")))
     gradleTestImplementation(project(":gradle:test-project"))
 }
 

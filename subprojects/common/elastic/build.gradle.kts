@@ -9,7 +9,7 @@ dependencies {
 
     implementation(project(":common:time"))
     implementation(project(":common:okhttp"))
-    implementation(project(":common:slf4j-logger"))
+    implementation(project(":logger:slf4j-logger"))
 
     implementation(libs.gson)
     implementation(libs.retrofit)
@@ -17,7 +17,7 @@ dependencies {
 
     testImplementation(project(":common:test-okhttp"))
     testImplementation(testFixtures(project(":common:time")))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
 }
 
 kotlin {

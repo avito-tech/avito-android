@@ -9,11 +9,11 @@ dependencies {
     api(project(":common:result"))
 
     implementation(gradleApi())
-    implementation(project(":common:logger"))
-    implementation(project(":common:slf4j-logger"))
+    implementation(project(":logger:logger"))
+    implementation(project(":logger:slf4j-logger"))
     implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":gradle:test-project"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(libs.mockitoJUnitJupiter)
 }
