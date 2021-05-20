@@ -1,4 +1,7 @@
+import com.avito.instrumentation.reservation.request.Device.CloudEmulator
+import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
+import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.kubernetesCredentials
 
 plugins {
@@ -8,7 +11,7 @@ plugins {
 
 android {
     defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.avito.android.test.TestRunner"
 
         // TODO: describe in docs that they are updated in IDE configuration only after sync!
         testInstrumentationRunnerArguments(
@@ -29,12 +32,16 @@ android {
 
 dependencies {
     androidTestImplementation("com.avito.android:test-inhouse-runner")
+    androidTestImplementation("com.avito.android:test-report")
+    androidTestImplementation("com.avito.android:logger")
     androidTestImplementation(libs.truth)
 
     androidTestUtil(libs.testOrchestrator)
 }
 
 instrumentation {
+    output = "$buildDir/reports/test-runner"
+
     sentryDsn = getOptionalStringProperty("avito.instrumentaion.sentry.dsn") ?: "http://stub-project@stub-host/0"
 
     filters.register("ci") {
@@ -46,9 +53,9 @@ instrumentation {
     }
 
     val credentials = project.kubernetesCredentials
-    if (credentials is com.avito.utils.gradle.KubernetesCredentials.Service || credentials is com.avito.utils.gradle.KubernetesCredentials.Config) {
+    if (credentials is KubernetesCredentials.Service || credentials is KubernetesCredentials.Config) {
 
-        val emulator29 = com.avito.instrumentation.reservation.request.Device.CloudEmulator(
+        val emulator29 = CloudEmulator(
             name = "api29",
             api = 29,
             model = "Android_SDK_built_for_x86_64",
@@ -73,8 +80,8 @@ instrumentation {
 
                     testsCountBasedReservation {
                         device = emulator29
-                        maximum = 2
-                        minimum = 1
+                        maximum = 10
+                        minimum = 2
                         testsPerEmulator = 3
                     }
                 }
