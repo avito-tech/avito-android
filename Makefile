@@ -134,7 +134,7 @@ stage_ui_tests:
 	make publish_to_maven_local
 	./gradlew $(project) $(log_level) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
 
-test_runner_sample:
+test_runner_instrumentation:
 	./gradlew -p samples :test-runner:instrumentationUi --stacktrace
 
 unit_tests:
