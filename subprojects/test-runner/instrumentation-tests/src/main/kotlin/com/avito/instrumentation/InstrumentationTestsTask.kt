@@ -84,6 +84,9 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val useInMemoryReport: Property<Boolean> = objects.property()
 
     @Input
+    public val saveTestArtifactsInOutputs: Property<Boolean> = objects.property()
+
+    @Input
     public val fetchLogcatForIncompleteTests: Property<Boolean> = objects.property()
 
     @Input
@@ -181,7 +184,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             useInMemoryReport = useInMemoryReport.get(),
             uploadTestArtifacts = uploadAllTestArtifacts.get(),
             reportViewerConfig = reportViewerConfig,
-            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests.get()
+            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests.get(),
+            saveTestArtifactsInOutputs = saveTestArtifactsInOutputs.get(),
         )
 
         if (testRunnerService.isPresent) {

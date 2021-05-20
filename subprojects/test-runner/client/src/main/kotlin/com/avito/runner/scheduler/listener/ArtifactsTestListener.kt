@@ -19,8 +19,10 @@ import kotlin.io.path.div
 
 internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
-    loggerFactory: LoggerFactory,
+    private val outputDirectory: File,
+    private val saveTestArtifactsInOutputs: Boolean,
     private val fetchLogcatForIncompleteTests: Boolean,
+    loggerFactory: LoggerFactory,
 ) : TestListener {
 
     private val logger = loggerFactory.create<ArtifactsTestListener>()
@@ -48,7 +50,16 @@ internal class ArtifactsTestListener(
         executionNumber: Int,
         testArtifactsDir: Result<File>
     ) {
-        val tempDirectory = createTempDirectory()
+        val tempDirectory = if (saveTestArtifactsInOutputs) {
+            File(outputDirectory, "test-artifacts").apply {
+                parentFile.mkdirs()
+                require(mkdir()) { "can't mkdir $this" }
+            }.toPath()
+        } else {
+            createTempDirectory()
+        }
+
+        logger.info("Pulling artifacts to $tempDirectory")
 
         val testResult = when (result) {
             Passed,
@@ -94,8 +105,10 @@ internal class ArtifactsTestListener(
             executionNumber = executionNumber,
         )
 
-        tempDirectory.deleteRecursively().onFailure { error ->
-            logger.warn("Can't clear temp directory: $tempDirectory", error)
+        if (!saveTestArtifactsInOutputs) {
+            tempDirectory.deleteRecursively().onFailure { error ->
+                logger.warn("Can't clear temp directory: $tempDirectory", error)
+            }
         }
     }
 }

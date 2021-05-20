@@ -97,8 +97,10 @@ class TestsRunnerClient {
                 add(
                     ArtifactsTestListener(
                         lifecycleListener = arguments.listener,
+                        outputDirectory = arguments.outputDirectory,
                         loggerFactory = arguments.loggerFactory,
-                        fetchLogcatForIncompleteTests = arguments.fetchLogcatForIncompleteTests
+                        saveTestArtifactsInOutputs = arguments.saveTestArtifactsInOutputs,
+                        fetchLogcatForIncompleteTests = arguments.fetchLogcatForIncompleteTests,
                     )
                 )
             }

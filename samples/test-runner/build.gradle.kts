@@ -1,5 +1,4 @@
 import com.avito.instrumentation.reservation.request.Device.CloudEmulator
-import com.avito.kotlin.dsl.getMandatoryStringProperty
 import com.avito.kotlin.dsl.getOptionalStringProperty
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.kubernetesCredentials
@@ -50,6 +49,9 @@ instrumentation {
 
     experimental {
         useInMemoryReport.set(true)
+        useService.set(false) // todo fix broken
+        fetchLogcatForIncompleteTests.set(true)
+        saveTestArtifactsInOutputs.set(true)
     }
 
     val credentials = project.kubernetesCredentials
@@ -74,8 +76,8 @@ instrumentation {
 
                 scheduling {
                     quota {
-                        retryCount = 1
-                        minimumSuccessCount = 1
+                        retryCount = 10
+                        minimumSuccessCount = 10
                     }
 
                     testsCountBasedReservation {

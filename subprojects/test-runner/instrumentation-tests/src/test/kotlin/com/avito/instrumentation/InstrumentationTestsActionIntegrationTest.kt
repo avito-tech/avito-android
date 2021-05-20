@@ -57,6 +57,7 @@ internal class InstrumentationTestsActionIntegrationTest {
             outputDir: File,
             projectName: String,
             tempLogcatDir: File,
+            saveTestArtifactsInOutputs: Boolean,
             fetchLogcatForIncompleteTests: Boolean,
         ): TestExecutor {
             return testRunner

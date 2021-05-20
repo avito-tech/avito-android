@@ -113,7 +113,8 @@ internal interface TestsSchedulerFactory {
                 devicesProviderFactory = devicesProviderFactory,
                 tempLogcatDir = tempDir,
                 projectName = params.projectName,
-                fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests
+                saveTestArtifactsInOutputs = params.saveTestArtifactsInOutputs,
+                fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
             )
         }
 

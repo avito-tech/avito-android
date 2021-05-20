@@ -130,6 +130,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                     this.buildId.set(env.build.id.toString())
                     this.buildType.set(env.build.type)
                     this.useInMemoryReport.set(extensionData.experimental.useInMemoryReport)
+                    this.saveTestArtifactsInOutputs.set(extensionData.experimental.saveTestArtifactsInOutputs)
                     this.fetchLogcatForIncompleteTests.set(extensionData.experimental.fetchLogcatForIncompleteTests)
                     this.gitBranch.set(gitState.map { it.currentBranch.name })
                     this.gitCommit.set(gitState.map { it.currentBranch.commit })
