@@ -1,6 +1,9 @@
 package com.avito.instrumentation.internal.report.listener
 
+import com.avito.android.Problem
 import com.avito.android.Result
+import com.avito.android.asPlainText
+import com.avito.android.asRuntimeException
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -153,7 +156,8 @@ internal class ReportProcessorImpl(
                         incident = Incident(
                             type = Incident.Type.INFRASTRUCTURE_ERROR,
                             timestamp = now,
-                            trace = problem.asRuntimeException().stackTraceToList(),
+                            trace = problem.throwable?.stackTraceToList()
+                                ?: problem.asRuntimeException().stackTraceToList(),
                             chain = listOf(
                                 IncidentElement(
                                     message = problem.asPlainText()
