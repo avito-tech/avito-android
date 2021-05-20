@@ -13,18 +13,32 @@ internal class KubernetesRequestMetadataProvider : RequestMetadataProvider {
     override fun provide(request: Request): Result<RequestMetadata> {
         val pathSegments = request.url().pathSegments()
 
+        val serviceName = "kubernetes"
+
         try {
-            if (pathSegments[0] == "apis") {
-                val apiGroup = pathSegments[1]
-                if (apiGroup == "apps") {
-                    if (pathSegments[3] == "namespaces") {
-                        if (pathSegments[5] == "deployments") {
-                            return Result.Success(
-                                RequestMetadata(
-                                    serviceName = "kubernetes",
-                                    methodName = "deployments_${request.method().toLowerCase()}"
-                                )
+            when (pathSegments[0]) {
+                "api" -> if (pathSegments[2] == "namespaces") {
+                    if (pathSegments[4] == "pods") {
+                        return Result.Success(
+                            RequestMetadata(
+                                serviceName = serviceName,
+                                methodName = "pods_${request.method().toLowerCase()}"
                             )
+                        )
+                    }
+                }
+                "apis" -> {
+                    val apiGroup = pathSegments[1]
+                    if (apiGroup == "apps") {
+                        if (pathSegments[3] == "namespaces") {
+                            if (pathSegments[5] == "deployments") {
+                                return Result.Success(
+                                    RequestMetadata(
+                                        serviceName = serviceName,
+                                        methodName = "deployments_${request.method().toLowerCase()}"
+                                    )
+                                )
+                            }
                         }
                     }
                 }
