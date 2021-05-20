@@ -109,6 +109,8 @@ class CriticalPathTest {
         // no op
     }
 
+    // TODO: this test is flaky but enabled to collect more info
+    //  If it's failed, please add info to MBS-11302
     @Test
     fun `independent routes - path has the longest one`() {
         setupTasks(
@@ -116,10 +118,10 @@ class CriticalPathTest {
             ${delayTaskDeclaration()}
             
             tasks.register("short_first", DelayTask::class.java) {
-                durationMs.set(1)
+                durationMs.set(0)
             }
             tasks.register("short_last", DelayTask::class.java) {
-                durationMs.set(1)
+                durationMs.set(0)
                 dependsOn(":short_first")
             }
             
@@ -133,7 +135,8 @@ class CriticalPathTest {
             """.trimIndent()
         )
 
-        val tasks = calculatePath(":short_last", ":long_last")
+        // TODO: remove verbose logging after stabilizing tests MBS-11302
+        val tasks = calculatePath(":short_last", ":long_last", args = listOf("--info"))
 
         assertThat(tasks).containsExactly(":long_first", ":long_last")
     }
@@ -218,13 +221,16 @@ class CriticalPathTest {
         """.trimIndent()
     }
 
-    private fun calculatePath(vararg targetTasks: String): Set<String> {
-        val result = build(*targetTasks)
+    private fun calculatePath(
+        vararg tasks: String,
+        args: List<String> = emptyList()
+    ): Set<String> {
+        val result = build(*tasks, args = args)
 
         val resultSubject = result.assertThat()
             .buildSuccessful()
 
-        targetTasks.forEach { targetTask ->
+        tasks.forEach { targetTask ->
             resultSubject
                 .taskWithOutcome(targetTask, TaskOutcome.SUCCESS)
         }
@@ -239,10 +245,12 @@ class CriticalPathTest {
 
     private fun build(
         vararg tasks: String,
+        args: List<String> = emptyList()
     ): TestResult {
         return gradlew(
             projectDir,
             *tasks,
+            *args.toTypedArray(),
             "--rerun-tasks",
             // We don't consider task start time at all.
             // Disable parallel execution to eliminate even accidental assumptions.
