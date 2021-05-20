@@ -8,6 +8,7 @@ import com.avito.filestorage.FutureValue
 import com.avito.report.model.Entry
 import com.avito.report.model.Incident
 import com.avito.report.model.Video
+import java.util.concurrent.CopyOnWriteArrayList
 
 sealed class ReportState {
 
@@ -28,6 +29,11 @@ sealed class ReportState {
                 override var incidentScreenshot: FutureValue<Entry.File>? = null
             ) : Initialized()
 
+            /**
+             * This state is modified concurrently i.e.
+             * [preconditionStepList] and [testCaseStepList] are modified from StepsDsl and when creating synthetic step
+             * All collections must be thread-safe
+             */
             class Started(
                 override val attachmentsBeforeSteps: StepAttachments = StepAttachments(),
                 override val testMetadata: TestMetadata,
@@ -40,8 +46,8 @@ sealed class ReportState {
                 var dataSet: DataSet? = null,
                 var startTime: Long,
                 var endTime: Long = 0,
-                var preconditionStepList: MutableList<StepResult> = mutableListOf(),
-                var testCaseStepList: MutableList<StepResult> = mutableListOf()
+                var preconditionStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList(),
+                var testCaseStepList: CopyOnWriteArrayList<StepResult> = CopyOnWriteArrayList()
             ) : Initialized() {
 
                 val isFirstStepOrPrecondition: Boolean
@@ -63,14 +69,16 @@ sealed class ReportState {
                  */
                 internal fun waitUploads() {
                     testCaseStepList =
-                        testCaseStepList
-                            .map { it.appendFutureEntries() }
-                            .toMutableList()
+                        CopyOnWriteArrayList(
+                            testCaseStepList
+                                .map { it.appendFutureEntries() }
+                        )
 
                     preconditionStepList =
-                        preconditionStepList
-                            .map { it.appendFutureEntries() }
-                            .toMutableList()
+                        CopyOnWriteArrayList(
+                            preconditionStepList
+                                .map { it.appendFutureEntries() }
+                        )
 
                     addEarlyEntries()
                     sortStepEntries()
@@ -100,29 +108,33 @@ sealed class ReportState {
                 }
 
                 private fun sortStepEntries() {
-                    preconditionStepList = preconditionStepList.map {
-                        val newAttachment = StepAttachments()
-                        newAttachment.entries.addAll(
-                            it.attachments.entries
-                                .sortedBy { entry -> entry.timeInSeconds }
-                                .distinctCounted()
-                        )
-                        it.copy(
-                            attachments = newAttachment
-                        )
-                    }.toMutableList()
+                    preconditionStepList = CopyOnWriteArrayList(
+                        preconditionStepList.map {
+                            val newAttachment = StepAttachments()
+                            newAttachment.entries.addAll(
+                                it.attachments.entries
+                                    .sortedBy { entry -> entry.timeInSeconds }
+                                    .distinctCounted()
+                            )
+                            it.copy(
+                                attachments = newAttachment
+                            )
+                        }
+                    )
 
-                    testCaseStepList = testCaseStepList.map {
-                        val newAttachment = StepAttachments()
-                        newAttachment.entries.addAll(
-                            it.attachments.entries
-                                .sortedBy { entry -> entry.timeInSeconds }
-                                .distinctCounted()
-                        )
-                        it.copy(
-                            attachments = newAttachment
-                        )
-                    }.toMutableList()
+                    testCaseStepList = CopyOnWriteArrayList(
+                        testCaseStepList.map {
+                            val newAttachment = StepAttachments()
+                            newAttachment.entries.addAll(
+                                it.attachments.entries
+                                    .sortedBy { entry -> entry.timeInSeconds }
+                                    .distinctCounted()
+                            )
+                            it.copy(
+                                attachments = newAttachment
+                            )
+                        }
+                    )
                 }
 
                 private data class Counted<T>(val t: T, var count: Int = 1)
