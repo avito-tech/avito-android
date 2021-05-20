@@ -4,6 +4,7 @@
 val subprojectsWrapper by tasks.registering(Copy::class) {
     from("$rootDir/gradle/wrapper")
     into("$rootDir/subprojects/gradle/wrapper")
+    into("$rootDir/samples/gradle/wrapper")
 }
 
 tasks.withType<Wrapper> {
