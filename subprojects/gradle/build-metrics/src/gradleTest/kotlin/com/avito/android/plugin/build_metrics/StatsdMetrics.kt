@@ -20,7 +20,7 @@ internal inline fun <reified T : StatsMetric> TestResult.assertHasMetric(path: S
             it.name.toString().contains(path)
         }
 
-    assertWithMessage("Expected metric ${type.simpleName}($path) in $metrics")
+    assertWithMessage("Expected metric ${type.simpleName}($path) in $metrics. Logs: $output")
         .that(filtered).hasSize(1)
 
     return filtered.first()

@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:logger"))
-    api(project(":common:elastic"))
+    api(project(":logger:logger"))
+
+    implementation(libs.slf4jApi)
 }

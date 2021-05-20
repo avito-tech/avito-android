@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:statsd-config"))
 
     implementation(project(":common:report-viewer"))

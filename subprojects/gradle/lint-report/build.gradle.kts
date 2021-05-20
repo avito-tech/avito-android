@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":gradle:android"))
     implementation(project(":gradle:bitbucket"))
     implementation(project(":gradle:build-environment"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact-shared"))
     implementation(project(":gradle:gradle-extensions"))
@@ -28,7 +28,7 @@ dependencies {
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":gradle:slack-test-fixtures"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
 
     integTestImplementation(project(":common:resources"))
     integTestImplementation(testFixtures(project(":common:time")))

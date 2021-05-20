@@ -18,12 +18,12 @@ dependencies {
     api(project(":gradle:kubernetes"))
 
     implementation(project(":gradle:process"))
-    implementation(project(":common:logger"))
+    implementation(project(":logger:logger"))
     implementation(project(":common:result"))
 
     integTestImplementation(project(":common:truth-extensions"))
 
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(libs.coroutinesTest)
 
     testFixturesApi(testFixtures(project(":common:http-client")))

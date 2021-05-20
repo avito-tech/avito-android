@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":common:report-viewer"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:artifactory-app-backup"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":common:files"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:git"))
@@ -32,7 +32,7 @@ dependencies {
     gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:artifactory-app-backup-test-fixtures"))
     gradleTestImplementation(project(":gradle:test-project"))
-    gradleTestImplementation(testFixtures(project(":common:logger")))
+    gradleTestImplementation(testFixtures(project(":logger:logger")))
 }
 
 gradlePlugin {

@@ -8,10 +8,10 @@ plugins {
 dependencies {
     implementation(project(":gradle:process"))
     implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(libs.gson)
 
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
 
     gradleTestImplementation(project(":gradle:test-project"))
 }

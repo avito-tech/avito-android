@@ -10,10 +10,12 @@ import org.junit.jupiter.api.Test
 
 internal class KubernetesRequestMetadataProviderTest {
 
+    private val stubKubernetesBaseUrl = "https://k8s.service:8443"
+
     @Test
     fun `metadata contains get deployments request`() {
         val request = Request.Builder()
-            .url("https://k8s.service:8443/apis/apps/v1/namespaces/android-emulator/deployments")
+            .url("$stubKubernetesBaseUrl/apis/apps/v1/namespaces/android-emulator/deployments")
             .build()
 
         val metadataProvider: RequestMetadataProvider = createRequestMetadataProvider()
@@ -29,7 +31,7 @@ internal class KubernetesRequestMetadataProviderTest {
     fun `metadata contains put deployments request`() {
         val request = Request.Builder()
             .url(
-                "https://k8s.service:8443/" +
+                "$stubKubernetesBaseUrl/" +
                     "apis/apps/v1/namespaces/android-emulator/deployments/" +
                     "android-emulator-00f2f120-f5f7-4481-b34a-4466857701b6"
             )
@@ -42,6 +44,22 @@ internal class KubernetesRequestMetadataProviderTest {
 
         ResultSubject.assertThat(result).isSuccess().withValue {
             assertThat(it.methodName).isEqualTo("deployments_put")
+        }
+    }
+
+    @Test
+    fun `metadata contains get pods request`() {
+        val request = Request.Builder()
+            .url("$stubKubernetesBaseUrl/api/v1/namespaces/android-emulator/pods")
+            .method("GET", null)
+            .build()
+
+        val metadataProvider: RequestMetadataProvider = createRequestMetadataProvider()
+
+        val result = metadataProvider.provide(request)
+
+        ResultSubject.assertThat(result).isSuccess().withValue {
+            assertThat(it.methodName).isEqualTo("pods_get")
         }
     }
 
