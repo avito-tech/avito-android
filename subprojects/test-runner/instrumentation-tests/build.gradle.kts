@@ -25,7 +25,7 @@ dependencies {
     implementation(libs.teamcityClient)
     implementation(project(":common:composite-exception"))
     implementation(project(":common:file-storage"))
-    implementation(project(":common:logger"))
+    implementation(project(":logger:logger"))
     implementation(project(":common:report-api"))
     implementation(project(":test-runner:test-report-artifacts"))
     implementation(project(":common:retrace"))
@@ -36,7 +36,7 @@ dependencies {
     implementation(project(":common:sentry"))
     implementation(project(":test-runner:test-annotations"))
     implementation(project(":gradle:android"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:statsd-config"))
     implementation(project(":common:files"))
     implementation(project(":gradle:build-environment"))
@@ -64,7 +64,7 @@ dependencies {
 
     integTestImplementation(project(":common:statsd"))
 
-    testFixturesApi(testFixtures(project(":common:logger")))
+    testFixturesApi(testFixtures(project(":logger:logger")))
     testFixturesApi(testFixtures(project(":common:time")))
     testFixturesApi(testFixtures(project(":common:report-viewer")))
     testFixturesApi(testFixtures(project(":test-runner:device-provider")))

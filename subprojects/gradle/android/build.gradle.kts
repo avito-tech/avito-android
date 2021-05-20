@@ -17,7 +17,7 @@ dependencies {
     implementation(gradleApi())
     implementation(project(":common:files"))
     implementation(project(":gradle:process"))
-    implementation(project(":gradle:gradle-logger"))
+    implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":common:truth-extensions"))

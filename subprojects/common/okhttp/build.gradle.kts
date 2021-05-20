@@ -8,13 +8,13 @@ dependencies {
     api(libs.okhttp)
     api(project(":common:result"))
 
-    implementation(project(":common:logger"))
+    implementation(project(":logger:logger"))
     implementation(libs.okhttpLogging)
 
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":common:test-okhttp"))
     testImplementation(project(":common:result"))
-    testImplementation(testFixtures(project(":common:logger")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(libs.retrofit)
     testImplementation(libs.retrofitConverterGson)
 }
