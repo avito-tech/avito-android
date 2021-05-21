@@ -12,24 +12,13 @@ import com.avito.module.configurations.ConfigurationType.Main
 
 class MainConfiguration(module: InternalModule) : BaseConfiguration(
     module,
-    setOf(
-        Main::class.java
-    )
+    Main::class.java
 ) {
 
     override val isModified: Boolean by lazy {
         module.fallbackDetector.isFallback is ImpactFallbackDetector.Result.Skip
             || dependencies.any { it.isModified }
             || hasChangedFiles
-    }
-
-    override val hasChangedFiles: Boolean by lazy {
-        changedFiles()
-            .map { it.isNotEmpty() }
-            .onFailure {
-                project.logger.error("Can't find changes", it)
-            }
-            .getOrElse { true }
     }
 
     override val dependencies: Set<MainConfiguration> by lazy {

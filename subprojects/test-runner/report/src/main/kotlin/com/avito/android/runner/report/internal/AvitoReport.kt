@@ -30,7 +30,7 @@ internal class AvitoReport(
     private val batchSize: Int = 400
 ) : LegacyReport, Report {
 
-    private val logger = loggerFactory.create<Report>()
+    private val logger = loggerFactory.create<AvitoReport>()
 
     override fun addTest(testAttempt: TestAttempt) {
         reportsApi.addTest(
@@ -39,7 +39,7 @@ internal class AvitoReport(
             test = testAttempt.testResult
         ).fold(
             { logger.info("Test ${testAttempt.testResult.name} successfully reported") },
-            { logger.critical("Can't report test ${testAttempt.testResult.name}", it) }
+            { logger.warn("Can't report test ${testAttempt.testResult.name}", it) }
         )
     }
 
@@ -67,7 +67,7 @@ internal class AvitoReport(
                 tests = testsToSkipBatch
             ).fold(
                 { logger.info("Skipped tests successfully reported") },
-                { logger.critical("Can't report skipped tests", it) }
+                { logger.warn("Can't report skipped tests", it) }
             )
 
             logger.info("Reporting skipped tests for batch: $index completed")
@@ -104,13 +104,13 @@ internal class AvitoReport(
         val resultsInReport: List<SimpleRunTest> =
             reportsApi.getTestsForRunId(reportCoordinates = reportCoordinates).fold(
                 { logger.info("Getting test count in report before closing: ${it.size}"); it },
-                { error -> logger.critical("Failed to get tests from report before closing", error); emptyList() }
+                { error -> logger.warn("Failed to get tests from report before closing", error); emptyList() }
             )
 
         if (resultsInReport.isNotEmpty()) {
             reportsApi.setFinished(reportCoordinates = reportCoordinates).fold(
                 { logger.debug("Test run finished $reportCoordinates") },
-                { error -> logger.critical("Can't finish test run $reportCoordinates", error) }
+                { error -> logger.warn("Can't finish test run $reportCoordinates", error) }
             )
         } else {
             logger.info("Skipping finishing report. It is empty.")

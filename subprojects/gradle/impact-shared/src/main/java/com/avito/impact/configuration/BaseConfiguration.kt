@@ -18,7 +18,7 @@ import java.io.File
  */
 abstract class BaseConfiguration(
     val module: InternalModule,
-    val types: Set<Class<out ConfigurationType>>
+    val type: Class<out ConfigurationType>
 ) : Equality {
 
     abstract val isModified: Boolean
@@ -26,7 +26,7 @@ abstract class BaseConfiguration(
     protected val changesDetector = module.changesDetector
     val path: String = project.path
 
-    open val hasChangedFiles: Boolean by lazy {
+    val hasChangedFiles: Boolean by lazy {
         changedFiles()
             .map { it.isNotEmpty() }
             .onFailure {
@@ -36,7 +36,7 @@ abstract class BaseConfiguration(
     }
 
     open val dependencies: Set<MainConfiguration> by lazy {
-        module.project.dependenciesOnProjects(types)
+        module.project.dependenciesOnProjects(setOf(type))
             .map {
                 it.dependencyProject
                     .internalModule
@@ -46,17 +46,31 @@ abstract class BaseConfiguration(
     }
 
     fun allDependencies(includeSelf: Boolean = true): Set<BaseConfiguration> {
-        val dependencies = this.dependencies
-            .flatMap {
-                it.allDependencies(includeSelf = true)
-            }
-            .toSet()
-
+        val dependencies = mutableSetOf<BaseConfiguration>()
+        val visited = mutableSetOf<BaseConfiguration>()
+        this.traverseDependencies(visited) { conf: BaseConfiguration ->
+            dependencies.add(conf)
+        }
         return if (includeSelf) {
             dependencies.plus(this)
         } else {
             dependencies
         }
+    }
+
+    @Suppress("unused") // false-positive for receiver
+    private fun BaseConfiguration.traverseDependencies(
+        visited: MutableSet<BaseConfiguration>,
+        visitor: (BaseConfiguration) -> Unit
+    ) {
+        this.dependencies
+            .forEach { node ->
+                if (!visited.contains(node)) {
+                    visitor(node)
+                    node.traverseDependencies(visited, visitor)
+                    visited.add(node)
+                }
+            }
     }
 
     fun sourceSets(): Set<File> {
