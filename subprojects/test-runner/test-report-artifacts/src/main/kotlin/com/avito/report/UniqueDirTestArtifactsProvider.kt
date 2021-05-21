@@ -17,18 +17,8 @@ internal class UniqueDirTestArtifactsProvider(
 
         return Result.tryCatch {
             File(runnerDirectory, testFolderName).apply {
-                val parent = parentFile
-                if (parent != null && !parent.exists()) {
-                    require(parent.mkdirs()) {
-                        "Can't create parent dir for dir $this"
-                    }
-                }
-                require(!exists()) {
-                    "Dir $this already existed"
-                }
-                require(mkdir()) {
-                    "Can't create dir $this"
-                }
+                parentFile?.mkdirs()
+                mkdir()
             }
         }
     }
