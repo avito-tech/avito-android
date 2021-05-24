@@ -1,4 +1,4 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.plugin.build_metrics.internal.teamcity
 
 import com.avito.android.graphite.GraphiteMetric
 import com.avito.android.graphite.GraphiteSender

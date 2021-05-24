@@ -1,6 +1,7 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.android.graphite.StubGraphiteSender
+import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsAction
 import com.avito.teamcity.TeamcityApi
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
