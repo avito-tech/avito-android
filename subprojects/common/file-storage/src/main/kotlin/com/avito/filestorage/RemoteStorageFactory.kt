@@ -20,7 +20,9 @@ public object RemoteStorageFactory {
             endpoint = endpoint,
             httpClient = httpClientProvider.provide()
                 .connectTimeout(10L, TimeUnit.SECONDS)
-                .writeTimeout(30L, TimeUnit.SECONDS)
+                // Decreased to troubleshoot timeouts (MBS-9407)
+                // We could use custom timeout for specific heavy requests
+                .writeTimeout(10L, TimeUnit.SECONDS)
                 .readTimeout(10L, TimeUnit.SECONDS)
                 .build(),
             isAndroidRuntime = isAndroidRuntime,
