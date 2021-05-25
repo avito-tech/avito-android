@@ -1,6 +1,7 @@
 package com.avito.runner.service
 
 import com.avito.android.Result
+import com.avito.logger.StubLogger
 import com.avito.logger.StubLoggerFactory
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.State
@@ -10,6 +11,7 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.listener.CompositeDeviceListener
 import com.avito.runner.service.worker.listener.DeviceListener
+import com.avito.runner.service.worker.listener.DeviceLogListener
 import com.avito.runner.service.worker.listener.MessagesDeviceListener
 import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.runner.test.NoOpTestListener
@@ -320,7 +322,12 @@ class DeviceWorkerTest {
         device = device,
         outputDirectory = File(""),
         testListener = NoOpTestListener,
-        deviceListener = deviceListener,
+        deviceListener = CompositeDeviceListener(
+            listOf(
+                deviceListener,
+                DeviceLogListener(StubLogger("${device.coordinate}"))
+            )
+        ),
         timeProvider = StubTimeProvider(),
         dispatchers = TestDispatcher
     )
