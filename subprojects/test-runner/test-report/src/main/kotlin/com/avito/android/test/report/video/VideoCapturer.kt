@@ -36,33 +36,28 @@ class VideoCapturerImpl(
     @Synchronized
     override fun start(): Result<Unit> {
         // checks if execute start() concurrently
-        return if (state is State.Idling) {
-
-            val (videoFile, videoError) = testArtifactsProvider.generateUniqueFile("mp4")
-
-            if (videoError != null) {
-                Result.Failure(IllegalStateException("Can't create video file", videoError))
-            } else {
-                val (stdout, stdoutError) = testArtifactsProvider.generateFile("video-output", "txt", create = true)
-
-                if (stdoutError != null) {
-                    Result.Failure(IllegalStateException("Can't create video output file", videoError))
-                } else {
-                    try {
-                        executeRecorderCommand("start ${videoFile!!}", stdout!!)
-                        state = State.Recording(videoFile, stdout)
-                        Result.Success(Unit)
-                    } catch (t: Throwable) {
-                        if (videoFile!!.exists()) {
-                            videoFile.delete()
-                        }
-                        Result.Failure(IllegalStateException("Can't start video capturing", t))
-                    }
-                }
+        return Result.tryCatch {
+            require(state is State.Idling) {
+                "Can't start video capturing. Capturer isn't Idling"
             }
-        } else {
-            Result.Failure(IllegalStateException("Can't start video capturing. Capturer isn't Idling"))
-        }
+        }.flatMap {
+            testArtifactsProvider.generateUniqueFile("mp4")
+                .rescue { failure -> Result.Failure(IllegalStateException("Can't create video file", failure)) }
+                .flatMap { videoFile ->
+                    testArtifactsProvider.generateFile("video-output", "txt", create = true)
+                        .rescue { failure ->
+                            Result.Failure(IllegalStateException("Can't create video output file", failure))
+                        }
+                        .flatMap { videoOutput ->
+                            Result.tryCatch {
+                                executeRecorderCommand("start $videoFile", videoOutput)
+                                state = State.Recording(videoFile, videoOutput)
+                            }.rescue { failure ->
+                                Result.Failure(IllegalStateException("Can't start video capturing", failure))
+                            }
+                        }
+                }
+        }.map { /*Unit*/ }
     }
 
     @Synchronized
@@ -114,22 +109,20 @@ class VideoCapturerImpl(
     }
 
     private fun executeRecorderCommand(command: String, output: File) {
-        val recorderPath = createRecorderBinary()
-
-        execute("sh $recorderPath $command", output)
+        val recordingScript = createRecorderBinary().getOrThrow()
+        execute("sh $recordingScript $command", output)
     }
 
-    private fun createRecorderBinary(): String {
-        val binary = File(
-            testArtifactsProvider.rootDir.value,
-            RECORDER_BINARY_NAME
-        )
-
-        binary.createOrClear()
-        binary.writeText(RECORDER_BINARY_CONTENT)
-
-        return binary.absolutePath
-    }
+    private fun createRecorderBinary() = testArtifactsProvider
+        .provideReportDir().map { reportDir ->
+            val binary = File(
+                reportDir,
+                RECORDER_BINARY_NAME
+            )
+            binary.createOrClear()
+            binary.writeText(RECORDER_BINARY_CONTENT)
+            binary.absolutePath
+        }
 
     private fun File.createOrClear() {
         if (exists()) {
