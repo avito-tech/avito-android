@@ -1,25 +1,11 @@
 package com.avito.report
 
-import com.avito.report.model.TestStaticData
-
 public interface TestDirGenerator {
 
     /**
      * should be unique through test suite run to avoid artifacts collision
      */
     public fun generateUniqueDir(): String
-
-    public class StaticData(testStaticData: TestStaticData) : TestDirGenerator {
-
-        private val generator = Impl(
-            className = testStaticData.name.className,
-            methodName = testStaticData.name.methodName
-        )
-
-        override fun generateUniqueDir(): String {
-            return generator.generateUniqueDir()
-        }
-    }
 
     public class Impl(
         private val className: String,
