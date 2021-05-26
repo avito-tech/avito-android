@@ -5,8 +5,7 @@ import com.avito.android.test.app.core.screenRule
 import com.avito.android.test.util.ChangeClickType
 import com.avito.android.test.util.ClicksTypeRule
 import com.avito.android.ui.TextElementActivity
-import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
+import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,7 +22,9 @@ class TextElementsTest {
     fun clicksOnLink_espressoClicks() {
         rule.launchActivity(null)
         Screen.textsElements.textView.clickOnLink()
-        MatcherAssert.assertThat(rule.activity.count, CoreMatchers.equalTo(1))
+        rule.onActivity {
+            assertThat(count).isEqualTo(1)
+        }
     }
 
     @Test
@@ -31,7 +32,9 @@ class TextElementsTest {
     fun clicksOnText_espressoClicks() {
         rule.launchActivity(null)
         Screen.textsElements.textView.clickOnText("link")
-        MatcherAssert.assertThat(rule.activity.count, CoreMatchers.equalTo(1))
+        rule.onActivity {
+            assertThat(count).isEqualTo(1)
+        }
     }
 
     @Test
@@ -41,21 +44,27 @@ class TextElementsTest {
         Screen.textsElements.textViewLong.clickOnText("link 1")
         Screen.textsElements.textViewLong.clickOnText("link 2")
         Screen.textsElements.textViewLong.clickOnText("long link which can have\nmultiple lines")
-        MatcherAssert.assertThat(rule.activity.count, CoreMatchers.equalTo(3))
+        rule.onActivity {
+            assertThat(count).isEqualTo(3)
+        }
     }
 
     @Test
     fun clicksOnLink() {
         rule.launchActivity(null)
         Screen.textsElements.textView.clickOnLink()
-        MatcherAssert.assertThat(rule.activity.count, CoreMatchers.equalTo(1))
+        rule.onActivity {
+            assertThat(count).isEqualTo(1)
+        }
     }
 
     @Test
     fun clicksOnText() {
         rule.launchActivity(null)
         Screen.textsElements.textView.clickOnText("link")
-        MatcherAssert.assertThat(rule.activity.count, CoreMatchers.equalTo(1))
+        rule.onActivity {
+            assertThat(count).isEqualTo(1)
+        }
     }
 
     @Test
@@ -64,6 +73,8 @@ class TextElementsTest {
         Screen.textsElements.textViewLong.clickOnText("link 1")
         Screen.textsElements.textViewLong.clickOnText("link 2")
         Screen.textsElements.textViewLong.clickOnText("long link which can have\nmultiple lines")
-        MatcherAssert.assertThat(rule.activity.count, CoreMatchers.equalTo(3))
+        rule.onActivity {
+            assertThat(count).isEqualTo(3)
+        }
     }
 }

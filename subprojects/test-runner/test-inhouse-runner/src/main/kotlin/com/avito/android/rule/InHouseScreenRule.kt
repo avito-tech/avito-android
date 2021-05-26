@@ -44,6 +44,7 @@ import org.junit.runners.model.Statement
  *   }
  * }
  */
+@Deprecated("InHouseScreenRule is deprecated since AndroidX Test 1.3.0. Use InHouseScenarioScreenRule instead.")
 abstract class InHouseScreenRule<T : Activity>(activityClass: Class<T>) : TestRule {
 
     protected val androidInstrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()

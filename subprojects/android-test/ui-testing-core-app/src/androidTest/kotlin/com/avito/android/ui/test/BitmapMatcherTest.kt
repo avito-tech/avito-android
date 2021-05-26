@@ -2,6 +2,7 @@ package com.avito.android.ui.test
 
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
+import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.test.util.toBitmap
 import com.avito.android.ui.BitmapActivity
@@ -53,5 +54,6 @@ class BitmapMatcherTest {
         assertThat(error).hasMessageThat().contains("expected=#FF0000FF")
     }
 
-    private fun getDrawable(@DrawableRes id: Int): Drawable = rule.activity.getDrawable(id)!!
+    private fun getDrawable(@DrawableRes id: Int): Drawable =
+        InstrumentationRegistry.getInstrumentation().targetContext.getDrawable(id)!!
 }

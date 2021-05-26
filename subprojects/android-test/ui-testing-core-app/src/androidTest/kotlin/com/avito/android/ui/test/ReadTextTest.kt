@@ -22,8 +22,8 @@ class ReadTextTest {
     fun readNonBlankText_allowBlankIsFalse() = with(rule) {
         launchActivity(null)
 
-        rule.runOnUiThread {
-            activity.findViewById<EditText>(R.id.edit_text).setText("my_custom_text")
+        rule.onActivity {
+            findViewById<EditText>(R.id.edit_text).setText("my_custom_text")
         }
 
         val captured = Screen.editTextScreen.editText.read(allowBlank = false)
@@ -34,8 +34,8 @@ class ReadTextTest {
     fun readBlankText_allowBlankIsFalse() = with(rule) {
         launchActivity(null)
 
-        rule.runOnUiThread {
-            activity.findViewById<EditText>(R.id.edit_text).setText("")
+        rule.onActivity {
+            findViewById<EditText>(R.id.edit_text).setText("")
         }
 
         exception.expectMessage(
@@ -50,8 +50,8 @@ class ReadTextTest {
     fun readBlankText_allowBlankIsTrue() = with(rule) {
         launchActivity(null)
 
-        rule.runOnUiThread {
-            activity.findViewById<EditText>(R.id.edit_text).setText("")
+        rule.onActivity {
+            findViewById<EditText>(R.id.edit_text).setText("")
         }
 
         val captured = Screen.editTextScreen.editText.read(allowBlank = true)
@@ -62,8 +62,8 @@ class ReadTextTest {
     fun readText_with_delay() = with(rule) {
         launchActivity(null)
 
-        rule.runOnUiThread {
-            activity.findViewById<EditText>(R.id.edit_text).run {
+        rule.onActivity {
+            findViewById<EditText>(R.id.edit_text).run {
                 setText("")
                 postDelayed({ setText("delayedText") }, 1000)
             }

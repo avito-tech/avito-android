@@ -39,8 +39,8 @@ class OverlapTest {
     fun isNotOverlapped_when_overlapping_view_is_invisible() {
         rule.launchActivity(null)
 
-        rule.runOnUiThread {
-            rule.activity.findViewById<View>(R.id.green_group).visibility = View.INVISIBLE
+        rule.onActivity {
+            findViewById<View>(R.id.green_group).visibility = View.INVISIBLE
         }
 
         Screen.overlapScreen.overlappedText.checks.isNotOverlapped()

@@ -2,8 +2,7 @@ package com.avito.android.ui.test
 
 import com.avito.android.test.app.core.screenRule
 import com.avito.android.ui.SwipeRefreshActivity
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.MatcherAssert.assertThat
+import com.google.common.truth.Truth.assertThat
 import org.junit.Rule
 import org.junit.Test
 
@@ -19,7 +18,9 @@ class SwipeRefreshTest {
         Screen.swipeRefresh.list.actions.pullToRefresh()
 
         Screen.swipeRefresh.swipeRefreshElement.checks.isRefreshing()
-        assertThat(rule.activity.refreshedTimes, equalTo(1))
+        rule.onActivity {
+            assertThat(refreshedTimes).isEqualTo(1)
+        }
     }
 
     @Test
@@ -28,7 +29,9 @@ class SwipeRefreshTest {
 
         Screen.swipeRefresh.swipeRefreshElement.actions.pullToRefresh()
 
-        assertThat(rule.activity.refreshedTimes, equalTo(1))
+        rule.onActivity {
+            assertThat(refreshedTimes).isEqualTo(1)
+        }
     }
 
     @Test
@@ -37,7 +40,9 @@ class SwipeRefreshTest {
 
         Screen.swipeRefresh.swipeRefreshElement.actions.pullToRefresh()
 
-        rule.activity.postAndStopRefreshing()
+        rule.onActivity {
+            postAndStopRefreshing()
+        }
 
         Screen.swipeRefresh.swipeRefreshElement.checks.isNotRefreshing()
     }

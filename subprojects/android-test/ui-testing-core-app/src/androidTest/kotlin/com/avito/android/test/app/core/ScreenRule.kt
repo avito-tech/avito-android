@@ -1,11 +1,11 @@
 package com.avito.android.test.app.core
 
 import android.app.Activity
-import androidx.test.rule.ActivityTestRule
+import com.avito.android.rule.base.BaseActivityScenarioRule
 import org.junit.rules.RuleChain
 
 inline fun <reified T : Activity> screenRule(launchActivity: Boolean = false): GodRuleChain<T> =
     GodRuleChain(
         RuleChain.emptyRuleChain()
-            .around(ActivityTestRule<T>(T::class.java, true, launchActivity))
+            .around(BaseActivityScenarioRule(T::class.java, true, launchActivity))
     )
