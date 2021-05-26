@@ -10,6 +10,7 @@ import com.avito.instrumentation.internal.finalizer.verdict.LegacyVerdictDetermi
 import com.avito.instrumentation.internal.scheduling.TestsScheduler
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.model.TestName
 import com.avito.utils.BuildFailer
 
 internal class LegacyFinalizer(
@@ -27,9 +28,11 @@ internal class LegacyFinalizer(
 
     override fun finalize(testSchedulerResults: TestsScheduler.Result) {
 
-        val testResults = report.getTests(
-            initialSuiteFilter = testSchedulerResults.testSuite.testsToRun.map { it.test.name }
-        )
+        val testResults = report.getTests()
+            .map { testsFromReport ->
+                val testsToRun = testSchedulerResults.testSuite.testsToRun.map { it.test.name }
+                testsFromReport.filter { TestName(it.className, it.methodName) in testsToRun }
+            }
             .onFailure { throwable ->
                 logger.critical("Can't get test results", throwable)
             }
