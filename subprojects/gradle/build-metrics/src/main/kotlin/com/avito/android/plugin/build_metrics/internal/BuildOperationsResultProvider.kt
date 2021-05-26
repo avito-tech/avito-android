@@ -1,7 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal
 
 import com.avito.android.gradle.metric.BuildEventsListener
-import com.avito.android.gradle.metric.NoOpBuildEventsListener
 import com.avito.android.plugin.build_metrics.BuildMetricsPlugin
 import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheResultsListener
 import com.avito.android.sentry.environmentInfo
@@ -51,19 +50,25 @@ internal class BuildOperationsResultProvider(
 
         when {
             result is BuildCacheRemoteLoadBuildOperationType.Result -> onCacheRemoteLoad(descriptor, result)
-            result is ExecuteTaskBuildOperationType.Result -> onTaskExecuted(descriptor, result)
+            result is ExecuteTaskBuildOperationType.Result -> onTaskExecuted(descriptor, event, result)
             descriptor.isRunTasksOperation() -> onRunTasks()
             failure != null && descriptor.details is LoadOperationDetails -> onBuildCacheLoadError(failure)
             failure != null && descriptor.details is StoreOperationDetails -> onBuildCacheStoreError(failure)
         }
     }
 
-    private fun onTaskExecuted(descriptor: BuildOperationDescriptor, result: ExecuteTaskBuildOperationType.Result) {
+    private fun onTaskExecuted(
+        descriptor: BuildOperationDescriptor,
+        event: OperationFinishEvent,
+        result: ExecuteTaskBuildOperationType.Result
+    ) {
         val details = descriptor.details as ExecuteTaskBuildOperationDetails
 
         tasksExecutionsById[descriptor.id!!] = TaskExecutionIntermediateResult(
             path = details.taskPath,
             type = details.task.taskIdentity.type,
+            startMs = event.startTime,
+            endMs = event.endTime,
             result = result
         )
     }
@@ -96,6 +101,8 @@ internal class BuildOperationsResultProvider(
                 TaskExecutionResult(
                     path = Path.path(intermediateResult.path),
                     type = intermediateResult.type,
+                    startMs = intermediateResult.startMs,
+                    endMs = intermediateResult.endMs,
                     cacheResult = cacheResult,
                 )
             }
@@ -210,6 +217,8 @@ internal class BuildOperationsResultProvider(
 private data class TaskExecutionIntermediateResult(
     val path: String,
     val type: Class<out Task>,
+    val startMs: Long,
+    val endMs: Long,
     val result: ExecuteTaskBuildOperationType.Result
 )
 

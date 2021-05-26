@@ -6,6 +6,8 @@ import org.gradle.util.Path
 internal class TaskExecutionResult(
     val path: Path,
     val type: Class<out Task>,
+    val startMs: Long,
+    val endMs: Long,
     val cacheResult: TaskCacheResult,
 )
 
