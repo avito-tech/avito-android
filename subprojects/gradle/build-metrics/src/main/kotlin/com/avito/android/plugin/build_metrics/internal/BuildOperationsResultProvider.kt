@@ -177,20 +177,20 @@ internal class BuildOperationsResultProvider(
     companion object {
 
         fun register(project: Project): BuildEventsListener {
-            if (!canTrackRemoteCache(project)) return NoOpBuildEventsListener()
-
             val loggerFactory = GradleLoggerFactory.fromProject(project, BuildMetricsPlugin::class.java.simpleName)
 
-            val buildCacheListener = BuildCacheResultsListener(
-                statsd = project.statsd,
-                environmentInfo = project.environmentInfo(),
-                loggerFactory = loggerFactory
-            )
-            val resultListener = CompositeBuildOperationsResultListener(
-                listeners = listOf(
-                    buildCacheListener
+            val listeners = mutableListOf<BuildOperationsResultListener>()
+            if (canTrackRemoteCache(project)) {
+                listeners.add(
+                    BuildCacheResultsListener(
+                        statsd = project.statsd,
+                        environmentInfo = project.environmentInfo(),
+                        loggerFactory = loggerFactory
+                    )
                 )
-            )
+            }
+
+            val resultListener = CompositeBuildOperationsResultListener(listeners)
             val buildOperationListener = BuildOperationsResultProvider(
                 resultListener = resultListener,
             )
