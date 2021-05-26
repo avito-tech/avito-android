@@ -5,9 +5,6 @@ import androidx.core.content.ContextCompat
 import androidx.test.platform.app.InstrumentationRegistry
 import com.avito.android.elastic.ElasticConfig
 import com.avito.android.log.ElasticConfigFactory
-import com.avito.android.runner.annotation.resolver.HostAnnotationResolver
-import com.avito.android.runner.annotation.resolver.NETWORKING_TYPE_KEY
-import com.avito.android.runner.annotation.resolver.NetworkingType
 import com.avito.android.runner.annotation.resolver.TEST_METADATA_KEY
 import com.avito.android.sentry.SentryConfig
 import com.avito.android.stats.SeriesName
@@ -21,7 +18,6 @@ import com.avito.utils.BuildMetadata
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.File
-import java.util.UUID
 
 sealed class TestRunEnvironment {
 
@@ -55,25 +51,7 @@ sealed class TestRunEnvironment {
     data class InitError(val error: String) : TestRunEnvironment()
 
     data class RunEnvironment internal constructor(
-        val deviceId: String,
         val testMetadata: TestMetadata,
-        val networkType: NetworkingType,
-        /**
-         * Основное место где определяется apiUrl для тестов
-         * Будет использоваться как для всех запросов приложения,
-         * так и для всех сервисов ресурсов (RM, messenger, integration...)
-         *
-         * TestApplication подхватит значение из бандла, который там доступен в статике,
-         * putString здесь как раз переопредяет его чтобы оно не оказалось пустым
-         *
-         * Ресурсы инциализируются в графе даггера и получают этот инстанс HttpUrl
-         *
-         * 1. Аннотация имеет главный приоритет см. [com.avito.android.runner.annotation.resolver.AnnotationResolver]
-         *    и [HostAnnotationResolver] в частности
-         * 2. далее instrumentation аргумент apiUrlParameterKey
-         */
-        val apiUrl: HttpUrl,
-        val mockWebServerUrl: String,
         val outputDirectory: Lazy<File>,
         val testRunCoordinates: ReportCoordinates,
         internal val reportDestination: ReportDestination,
@@ -89,6 +67,8 @@ sealed class TestRunEnvironment {
     }
 }
 
+@Deprecated("Use parseEnvironment, fun will be deleted", replaceWith = ReplaceWith("parseEnvironment"))
+@Suppress("UnusedPrivateMember", "UNUSED_PARAMETER")
 fun provideEnvironment(
     apiUrlParameterKey: String = "unnecessaryUrl",
     mockWebServerUrl: String = "localhost",
@@ -101,16 +81,7 @@ fun provideEnvironment(
             runId = argumentsProvider.getMandatoryArgument("runId")
         )
         TestRunEnvironment.RunEnvironment(
-            deviceId = argumentsProvider.getOptionalArgument("deviceId")
-                ?: UUID.randomUUID().toString(),
             testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
-            networkType = argumentsProvider.getMandatorySerializableArgument(NETWORKING_TYPE_KEY),
-            // todo url'ы не обязательные параметры
-            apiUrl = provideApiUrl(
-                argumentsProvider = argumentsProvider,
-                apiUrlParameterKey = apiUrlParameterKey
-            ),
-            mockWebServerUrl = mockWebServerUrl,
             videoRecordingFeature = provideVideoRecordingFeature(
                 argumentsProvider = argumentsProvider
             ),
@@ -132,7 +103,39 @@ fun provideEnvironment(
     }
 }
 
-private fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDestination {
+fun parseEnvironment(
+    argumentsProvider: ArgsProvider,
+): TestRunEnvironment {
+    return try {
+        val coordinates = ReportCoordinates(
+            planSlug = argumentsProvider.getMandatoryArgument("planSlug"),
+            jobSlug = argumentsProvider.getMandatoryArgument("jobSlug"),
+            runId = argumentsProvider.getMandatoryArgument("runId")
+        )
+        TestRunEnvironment.RunEnvironment(
+            testMetadata = argumentsProvider.getMandatorySerializableArgument(TEST_METADATA_KEY),
+            videoRecordingFeature = provideVideoRecordingFeature(
+                argumentsProvider = argumentsProvider
+            ),
+            outputDirectory = lazy {
+                ContextCompat.getExternalFilesDirs(
+                    InstrumentationRegistry.getInstrumentation().targetContext,
+                    null
+                )[0]
+            },
+            elasticConfig = ElasticConfigFactory.parse(argumentsProvider),
+            sentryConfig = parseSentryConfig(argumentsProvider),
+            statsDConfig = parseStatsDConfig(argumentsProvider),
+            fileStorageUrl = argumentsProvider.getMandatoryArgument("fileStorageUrl").toHttpUrl(),
+            testRunCoordinates = coordinates,
+            reportDestination = parseReportDestination(argumentsProvider),
+        )
+    } catch (e: Throwable) {
+        TestRunEnvironment.InitError(e.message ?: "Can't parse arguments for creating TestRunEnvironment")
+    }
+}
+
+internal fun parseReportDestination(argumentsProvider: ArgsProvider): ReportDestination {
     val buildId = argumentsProvider.getMandatoryArgument("teamcityBuildId").toInt()
     return if (buildId == TestRunEnvironment.LOCAL_STUDIO_RUN_ID) {
         val isReportEnabled = argumentsProvider.getOptionalArgument("avito.report.enabled")?.toBoolean() ?: false
@@ -196,17 +199,6 @@ internal fun parseStatsDConfig(argumentsProvider: ArgsProvider): StatsDConfig {
             )
         }
     }
-}
-
-private fun provideApiUrl(
-    argumentsProvider: ArgsProvider,
-    apiUrlParameterKey: String
-): HttpUrl {
-    val host = argumentsProvider.getOptionalArgument(HostAnnotationResolver.KEY)
-        ?: argumentsProvider.getOptionalArgument(apiUrlParameterKey)
-        ?: "https://localhost"
-
-    return host.toHttpUrl()
 }
 
 private fun provideVideoRecordingFeature(argumentsProvider: ArgsProvider): VideoFeatureValue {
