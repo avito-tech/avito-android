@@ -68,36 +68,23 @@ internal class DeviceWorker(
                         return@launch
                     }
 
-                    is Alive -> {
-
-                        val (newState, preparingError) = prepareDeviceState(
-                            currentState = state,
-                            intendedState = intention.state
+                    is Alive -> prepareDeviceState(
+                        currentState = state,
+                        intendedState = intention.state
+                    ).flatMap { newState ->
+                        state = newState
+                        deviceListener.onStatePrepared(device, newState)
+                        deviceListener.onTestStarted(device, intention)
+                        executeAction(action = intention.action)
+                    }.onSuccess { result ->
+                        deviceListener.onTestCompleted(
+                            device = device,
+                            intention = intention,
+                            result = result
                         )
-
-                        when {
-
-                            preparingError != null -> {
-                                onDeviceDieOnIntention(intention, preparingError)
-                                return@launch
-                            }
-
-                            newState != null -> {
-                                state = newState
-
-                                deviceListener.onStatePrepared(device, newState)
-
-                                deviceListener.onTestStarted(device, intention)
-
-                                val result = executeAction(action = intention.action)
-
-                                deviceListener.onTestCompleted(
-                                    device = device,
-                                    intention = intention,
-                                    result = result
-                                )
-                            }
-                        }
+                    }.onFailure { failure ->
+                        onDeviceDieOnIntention(intention, failure)
+                        return@launch
                     }
                 }
             }
@@ -136,62 +123,62 @@ internal class DeviceWorker(
         stateWorker.clearPackages(currentState)
     }.map { intendedState }
 
-    private suspend fun executeAction(action: InstrumentationTestRunAction): DeviceTestCaseRun {
-        val deviceTestCaseRun = try {
+    private fun executeAction(action: InstrumentationTestRunAction): Result<DeviceTestCaseRun> {
+        return Result.tryCatch {
+            try {
 
-            testListener.started(
-                device = device,
-                targetPackage = action.targetPackage,
-                test = action.test,
-                executionNumber = action.executionNumber
-            )
-
-            device.runIsolatedTest(
-                action = action,
-                outputDir = outputDirectory
-            )
-        } catch (t: Throwable) {
-            val now = timeProvider.nowInMillis()
-
-            DeviceTestCaseRun(
-                testCaseRun = TestCaseRun(
+                testListener.started(
+                    device = device,
+                    targetPackage = action.targetPackage,
                     test = action.test,
-                    result = Failed.InfrastructureError.Unexpected(
-                        error = RuntimeException("Unexpected infrastructure error", t),
+                    executionNumber = action.executionNumber
+                )
+
+                device.runIsolatedTest(
+                    action = action,
+                    outputDir = outputDirectory
+                )
+            } catch (t: Throwable) {
+                val now = timeProvider.nowInMillis()
+
+                DeviceTestCaseRun(
+                    testCaseRun = TestCaseRun(
+                        test = action.test,
+                        result = Failed.InfrastructureError.Unexpected(
+                            error = RuntimeException("Unexpected infrastructure error", t),
+                        ),
+                        timestampStartedMilliseconds = now,
+                        timestampCompletedMilliseconds = now
                     ),
-                    timestampStartedMilliseconds = now,
-                    timestampCompletedMilliseconds = now
-                ),
-                device = device.getData()
+                    device = device.getData()
+                )
+            }
+        }.flatMap { deviceTestCaseRun ->
+
+            val reportFileProvider = TestArtifactsProviderFactory.createForAdbAccess(
+                appUnderTestPackage = action.targetPackage,
+                className = action.test.className,
+                methodName = action.test.methodName
             )
-        }
 
-        val reportFileProvider = TestArtifactsProviderFactory.createForAdbAccess(
-            appUnderTestPackage = action.targetPackage,
-            className = action.test.className,
-            methodName = action.test.methodName
-        )
+            val testArtifactsDir = reportFileProvider.provideReportDir()
 
-        val testArtifactsDir = reportFileProvider.provideReportDir()
+            testListener.finished(
+                device = device,
+                test = action.test,
+                targetPackage = action.targetPackage,
+                result = deviceTestCaseRun.testCaseRun.result,
+                durationMilliseconds = deviceTestCaseRun.testCaseRun.durationMilliseconds,
+                executionNumber = action.executionNumber,
+                testArtifactsDir = testArtifactsDir
+            )
 
-        testListener.finished(
-            device = device,
-            test = action.test,
-            targetPackage = action.targetPackage,
-            result = deviceTestCaseRun.testCaseRun.result,
-            durationMilliseconds = deviceTestCaseRun.testCaseRun.durationMilliseconds,
-            executionNumber = action.executionNumber,
-            testArtifactsDir = testArtifactsDir
-        )
-
-        testArtifactsDir.map { dir ->
-            val (_, clearError) = device.clearDirectory(remotePath = dir.toPath())
-            if (clearError != null) {
-                deviceListener.onDeviceDied(device, "Can't clear test metadata dir", clearError)
+            testArtifactsDir.flatMap { dir ->
+                device.clearDirectory(remotePath = dir.toPath())
+            }.map {
+                deviceTestCaseRun
             }
         }
-
-        return deviceTestCaseRun
     }
 
     private suspend fun onDeviceDieOnIntention(
