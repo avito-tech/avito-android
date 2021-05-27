@@ -70,9 +70,11 @@ class TestSummaryPlugin : Plugin<Project> {
 
             this.slackClient.set(slackClient)
             this.reportsApi.set(reportsApi)
-            this.reportViewerUrl.set(reportViewerUrl)
+            this.reportViewerUrl.set(extension.reportViewerUrl)
         }
 
+        // report coordinates provided in FlakyReportStep
+        // this plugin only works via steps for now
         target.tasks.register<FlakyReportTask>(flakyReportTaskName) {
             summaryChannel.set(extension.summaryChannel)
             slackUsername.set(extension.slackUserName)
@@ -82,7 +84,7 @@ class TestSummaryPlugin : Plugin<Project> {
             this.slackClient.set(slackClient)
             this.timeProvider.set(timeProvider)
             this.reportsApi.set(reportsApi)
-            this.reportViewer.set(reportViewer)
+            this.reportViewerUrl.set(extension.reportViewerUrl)
         }
     }
 
