@@ -1,5 +1,6 @@
 package com.avito.android.ui.test
 
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.test.platform.app.InstrumentationRegistry
@@ -55,5 +56,6 @@ class BitmapMatcherTest {
     }
 
     private fun getDrawable(@DrawableRes id: Int): Drawable =
-        InstrumentationRegistry.getInstrumentation().targetContext.getDrawable(id)!!
+        InstrumentationRegistry.getInstrumentation().targetContext.getDrawable(id)
+            ?: throw Resources.NotFoundException("Can't find drawable by id = $id")
 }

@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.Instrumentation
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
@@ -19,7 +18,6 @@ import org.junit.runners.model.Statement
 abstract class InHouseScenarioScreenRule<A : Activity>(activityClass: Class<A>) : TestRule {
 
     protected val androidInstrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()
-    protected val arguments: Bundle = InstrumentationRegistry.getArguments()
     protected val appContext: Context = androidInstrumentation.targetContext.applicationContext
     protected val testContext: Context = androidInstrumentation.context
 
@@ -37,11 +35,19 @@ abstract class InHouseScenarioScreenRule<A : Activity>(activityClass: Class<A>) 
 
     class ChecksLibrary<A : Activity>(private val scenarioFunc: () -> ActivityScenario<A>) {
 
-        fun isFinishing() {
+        /**
+         * Asserts that activity has been closed and destroyed.
+         * For more information on lifecycle states, see [androidx.lifecycle.Lifecycle.State]
+         */
+        fun isDestroyed() {
             waitForAssertion { assertThat(scenarioFunc().state).isEqualTo(Lifecycle.State.DESTROYED) }
         }
 
-        fun isNotFinishing() {
+        /**
+         * Asserts that activity is currently alive.
+         * For more information on lifecycle states, see [androidx.lifecycle.Lifecycle.State]
+         */
+        fun isNotDestroyed() {
             waitForAssertion { assertThat(scenarioFunc().state).isNotEqualTo(Lifecycle.State.DESTROYED) }
         }
 
