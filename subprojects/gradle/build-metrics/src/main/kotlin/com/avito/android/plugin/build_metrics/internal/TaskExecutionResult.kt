@@ -1,10 +1,13 @@
-package com.avito.android.plugin.build_metrics.internal.cache
+package com.avito.android.plugin.build_metrics.internal
 
 import org.gradle.api.Task
+import org.gradle.util.Path
 
 internal class TaskExecutionResult(
-    val path: String,
+    val path: Path,
     val type: Class<out Task>,
+    val startMs: Long,
+    val endMs: Long,
     val cacheResult: TaskCacheResult,
 )
 
