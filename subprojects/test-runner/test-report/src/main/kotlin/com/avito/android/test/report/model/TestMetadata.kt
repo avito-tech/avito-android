@@ -10,6 +10,7 @@ data class TestMetadata(
     val caseId: Int?,
     val description: String?,
     val className: String,
+    // TODO why nullable
     val methodName: String?,
     val dataSetNumber: Int?,
     val kind: Kind,

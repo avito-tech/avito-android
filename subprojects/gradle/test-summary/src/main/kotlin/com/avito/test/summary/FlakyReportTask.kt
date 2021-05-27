@@ -47,7 +47,7 @@ abstract class FlakyReportTask : DefaultTask() {
     abstract val reportsApi: Property<ReportsApi>
 
     @get:Internal
-    abstract val reportViewer: Property<ReportViewer>
+    abstract val reportViewerUrl: Property<String>
 
     @TaskAction
     fun doWork() {
@@ -62,7 +62,7 @@ abstract class FlakyReportTask : DefaultTask() {
             summaryChannel = summaryChannel.get(),
             slackUsername = slackUsername.get(),
             reportCoordinates = reportCoordinates.get(),
-            reportViewer = reportViewer.get(),
+            reportViewerUrl = reportViewerUrl.get(),
             buildUrl = buildUrl.get(),
             currentBranch = currentBranch.get(),
             loggerFactory = loggerFactory,
@@ -74,12 +74,13 @@ abstract class FlakyReportTask : DefaultTask() {
         summaryChannel: SlackChannel,
         slackUsername: String,
         reportCoordinates: ReportCoordinates,
-        reportViewer: ReportViewer,
+        reportViewerUrl: String,
         buildUrl: String,
         currentBranch: String,
         loggerFactory: LoggerFactory,
         timeProvider: TimeProvider
     ): FlakyTestReporterImpl {
+        val reportViewer = ReportViewer.Impl(reportViewerUrl, reportCoordinates)
         return FlakyTestReporterImpl(
             slackClient = SlackConditionalSender(
                 slackClient = slackClient.get(),
