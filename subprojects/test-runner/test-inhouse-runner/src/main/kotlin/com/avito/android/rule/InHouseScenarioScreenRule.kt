@@ -36,19 +36,27 @@ abstract class InHouseScenarioScreenRule<A : Activity>(activityClass: Class<A>) 
     class ChecksLibrary<A : Activity>(private val scenarioFunc: () -> ActivityScenario<A>) {
 
         /**
-         * Asserts that activity has been closed and destroyed.
+         * Asserts that activity is in specific state.
          * For more information on lifecycle states, see [androidx.lifecycle.Lifecycle.State]
          */
-        fun isDestroyed() {
-            waitForAssertion { assertThat(scenarioFunc().state).isEqualTo(Lifecycle.State.DESTROYED) }
+        fun isInState(state: Lifecycle.State) {
+            waitForAssertion { assertThat(scenarioFunc().state).isEqualTo(state) }
         }
 
         /**
-         * Asserts that activity is currently alive.
+         * Asserts that activity is not in specific state.
          * For more information on lifecycle states, see [androidx.lifecycle.Lifecycle.State]
          */
-        fun isNotDestroyed() {
-            waitForAssertion { assertThat(scenarioFunc().state).isNotEqualTo(Lifecycle.State.DESTROYED) }
+        fun isNotInState(state: Lifecycle.State) {
+            waitForAssertion { assertThat(scenarioFunc().state).isNotEqualTo(state) }
+        }
+
+        /**
+         * Asserts that activity is in greater or equal state
+         * For more information, see [androidx.lifecycle.Lifecycle.State.isAtLeast]
+         */
+        fun isAtLeastInState(state: Lifecycle.State) {
+            waitForAssertion { assertThat(scenarioFunc().state.isAtLeast(state)).isTrue() }
         }
 
         fun activityResult(expectedResult: Int) {
