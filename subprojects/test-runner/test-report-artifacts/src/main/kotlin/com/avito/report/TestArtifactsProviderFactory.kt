@@ -9,9 +9,10 @@ public object TestArtifactsProviderFactory {
         testReportRootDir: Lazy<File>,
         testStaticData: TestStaticData
     ): TestArtifactsProvider {
-        return UniqueDirTestArtifactsProvider(
-            rootDir = testReportRootDir,
-            testDirGenerator = TestDirGenerator.StaticData(testStaticData)
+        return create(
+            testReportRootDir,
+            testStaticData.name.className,
+            testStaticData.name.methodName,
         )
     }
 
@@ -20,25 +21,36 @@ public object TestArtifactsProviderFactory {
         className: String,
         methodName: String
     ): TestArtifactsProvider {
-        return UniqueDirTestArtifactsProvider(
-            rootDir = testReportRootDir,
-            testDirGenerator = TestDirGenerator.Impl(className, methodName)
+        return DirectTestArtifactsProvider(
+            provider = ReportDirProviderWithCreation(
+                rootDir = testReportRootDir,
+                testDirGenerator = TestDirGenerator.Impl(className, methodName)
+            )
         )
     }
 
-    public fun createForTempDir(tempDir: File): TestArtifactsProvider {
-        return DirectTestArtifactsProvider(lazy { tempDir })
-    }
+    public fun createForTempDir(tempDir: File): TestArtifactsProvider =
+        create(SimpleDirProvider(tempDir))
 
+    private fun create(provider: ReportDirProvider) =
+        DirectTestArtifactsProvider(provider)
+
+    // android API's are unavailable here
     @Suppress("SdCardPath")
-    public // android API's are unavailable here
-    fun createForAdbAccess(appUnderTestPackage: String, className: String, methodName: String): TestArtifactsProvider {
+    public fun createForAdbAccess(
+        appUnderTestPackage: String,
+        className: String,
+        methodName: String
+    ): TestArtifactsProvider {
         val dataPath = "/sdcard/Android/data/$appUnderTestPackage/files"
-        return UniqueDirTestArtifactsProvider(
-            rootDir = lazy { File(dataPath) },
-            testDirGenerator = TestDirGenerator.Impl(
-                className = className,
-                methodName = methodName
+        return create(
+            ReportDirProviderForAdb(
+                rootDir = lazy { File(dataPath) },
+                testDirGenerator = TestDirGenerator.Impl(
+                    className = className,
+                    methodName = methodName
+                )
+
             )
         )
     }
