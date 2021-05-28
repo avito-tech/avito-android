@@ -10,9 +10,10 @@ internal class FakeKubernetesApi(
 
     var createDeployment: (Deployment) -> Unit = {}
     var getPods: (String) -> Result<List<Pod>> = { Result.Success(emptyList()) }
+    var deletePod: (String) -> Boolean = { true }
 
     override suspend fun deletePod(podName: String): Boolean {
-        return true
+        return deletePod.invoke(podName)
     }
 
     override suspend fun getPodLogs(podName: String): String {
