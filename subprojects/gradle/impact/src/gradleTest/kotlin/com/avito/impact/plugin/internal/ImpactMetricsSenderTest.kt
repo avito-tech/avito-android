@@ -1,5 +1,6 @@
 package com.avito.impact.plugin.internal
 
+import com.avito.android.plugin.build_metrics.BuildMetricTracker
 import com.avito.android.sentry.StubEnvironmentInfo
 import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.StatsMetric
@@ -9,6 +10,7 @@ import com.avito.module.configurations.ConfigurationType
 import com.avito.test.gradle.androidApp
 import com.avito.test.gradle.androidLib
 import com.avito.test.gradle.rootProject
+import com.avito.utils.gradle.Environment
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,9 +27,10 @@ class ImpactMetricsSenderTest {
         statsdSender = StubStatsdSender()
         projectsFinder = StubModifiedProjectsFinder()
         val environmentInfo = StubEnvironmentInfo(
-            teamcityBuildId = "1"
+            environment = Environment.CI
         )
-        sender = ImpactMetricsSender(projectsFinder, statsdSender, environmentInfo)
+        val metricsPrefix = BuildMetricTracker(environmentInfo, statsdSender)
+        sender = ImpactMetricsSender(projectsFinder, environmentInfo, metricsPrefix)
     }
 
     @Test

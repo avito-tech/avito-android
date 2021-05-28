@@ -21,6 +21,8 @@ dependencies {
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(testFixtures(project(":common:graphite")))
+    testImplementation(testFixtures(project(":common:statsd")))
+    testImplementation(testFixtures(project(":gradle:build-environment")))
 
     gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:test-project"))

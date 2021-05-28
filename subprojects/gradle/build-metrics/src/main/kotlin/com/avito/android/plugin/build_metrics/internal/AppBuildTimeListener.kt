@@ -4,7 +4,6 @@ import com.android.build.gradle.tasks.PackageApplication
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.plugin.build_metrics.BuildMetricTracker
-import com.avito.android.plugin.build_metrics.BuildMetricTracker.BuildStatus
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsMetric
 import com.avito.android.stats.TimeMetric

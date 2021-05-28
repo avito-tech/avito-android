@@ -1,5 +1,6 @@
 package com.avito.impact.plugin
 
+import com.avito.android.plugin.build_metrics.BuildMetricTracker
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
 import com.avito.impact.ModifiedProjectsFinder
@@ -15,7 +16,8 @@ abstract class ImpactMetricsTask : DefaultTask() {
         val environmentInfo = project.environmentInfo().get()
         val finder = ModifiedProjectsFinder.from(project)
 
-        val sender = ImpactMetricsSender(finder, statsd, environmentInfo)
+        val metricsTracker = BuildMetricTracker(environmentInfo, statsd)
+        val sender = ImpactMetricsSender(finder, environmentInfo, metricsTracker)
 
         sender.sendMetrics()
     }

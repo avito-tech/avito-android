@@ -50,6 +50,6 @@ internal class GradlePropertiesChecker(
     }
 
     private fun buildTracker(project: Project): BuildMetricTracker {
-        return BuildMetricTracker(project.environmentInfo(), project.statsd)
+        return BuildMetricTracker(project.environmentInfo().get(), project.statsd.get())
     }
 }

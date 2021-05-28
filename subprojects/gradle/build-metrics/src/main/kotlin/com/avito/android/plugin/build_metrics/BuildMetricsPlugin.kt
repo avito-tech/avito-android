@@ -39,8 +39,8 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         val buildOperationsListener = BuildOperationsResultProvider.register(project)
 
         val metricTracker = BuildMetricTracker(
-            project.environmentInfo(),
-            project.statsd
+            project.environmentInfo().get(),
+            project.statsd.get()
         )
         val buildListeners = listOf(
             ConfigurationTimeListener(metricTracker),

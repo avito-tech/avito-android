@@ -12,7 +12,7 @@ internal class SlowTasksListener(
     private val metricTracker: BuildMetricTracker
 ) : BuildResultListener {
 
-    override fun onBuildFinished(status: BuildMetricTracker.BuildStatus, profile: BuildProfile) {
+    override fun onBuildFinished(status: BuildStatus, profile: BuildProfile) {
         val tasks = profile.getProjects()
             .flatMap { it.getTasks() }
             .filter { it.internalState.isActionable }
