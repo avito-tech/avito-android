@@ -42,8 +42,31 @@ This is the same as **Performance** | **Build cache** | **Remote cache** | **Ope
 
 ### Tasks metrics
 
-- `<namespace>.<environment>.<node>.id.<build status>.tasks.executed.<module path>.<task name>.total` (time in ms): 
-  top slowest tasks execution time. It will be removed in MBS-11309.
+These metrics give different aggregates for tasks to highlight the slowest places.
+
+- `<namespace>.<environment>.<node>.build.tasks.cumulative.any` (time in ms):  
+  cumulative time of all tasks
+- `<namespace>.<environment>.<node>.build.tasks.slow.task.<module>.<task type>` (time in ms):  
+  top slowest tasks
+- `<namespace>.<environment>.<node>.build.tasks.slow.type.<task type>` (time in ms):  
+  cumulative time of top slowest task types
+- `<namespace>.<environment>.<node>.build.tasks.slow.module.<module>` (time in ms):  
+  cumulative time of tasks in top slowest modules
+
+Example:
+
+```mermaid
+graph LR
+    lib_KotlinCompile(:lib:compileKotlin - 2s) --> lib_bundleAar(:lib:bundleAar - 1s)
+    lib_KotlinCompile --> app_KotlinCompile(:app:compileKotlin - 3s)
+    app_KotlinCompile --> app_bundleAar(:app:bundleAar - 1s)
+    lib_bundleAar --> app_bundleAar
+```
+
+- `.tasks.cumulative.any`: 7s
+- `.tasks.slow.task.app.KotlinCompile`: 3s
+- `.tasks.slow.type.KotlinCompile`: 5s
+- `.tasks.slow.module.app`: 4s
 
 ### Specific build events
 

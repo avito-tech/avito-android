@@ -6,7 +6,6 @@ import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
-import com.avito.android.plugin.build_metrics.internal.SlowTasksListener
 import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
@@ -46,7 +45,6 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         val buildListeners = listOf(
             ConfigurationTimeListener(metricTracker),
             TotalBuildTimeListener(metricTracker),
-            SlowTasksListener(metricTracker),
             AppBuildTimeListener.from(project, metricTracker)
         )
 

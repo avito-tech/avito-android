@@ -4,6 +4,7 @@ import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.gradle.metric.BuildEventsListener
 import com.avito.android.plugin.build_metrics.BuildMetricsPlugin
 import com.avito.android.plugin.build_metrics.internal.cache.BuildCacheResultsListener
+import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksListener
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
 import com.avito.logger.GradleLoggerFactory
@@ -201,6 +202,11 @@ internal class BuildOperationsResultProvider(
                     )
                 )
             }
+            listeners.add(
+                SlowTasksListener(
+                    metricsTracker = metricsTracker,
+                )
+            )
 
             val resultListener = CompositeBuildOperationsResultListener(listeners)
             val buildOperationListener = BuildOperationsResultProvider(
