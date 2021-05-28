@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":gradle:gradle-extensions"))
 
     testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":gradle:process-test-fixtures"))
+    testImplementation(testFixtures(project(":gradle:process")))
 }
 
 /**

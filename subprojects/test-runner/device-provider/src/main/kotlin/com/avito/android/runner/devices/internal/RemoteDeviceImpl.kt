@@ -5,20 +5,28 @@ import com.avito.logger.LoggerFactory
 import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.Adb
 import com.avito.utils.ProcessRunner
+import java.time.Duration
 
 internal class RemoteDeviceImpl(
-    private val processRunner: ProcessRunner,
     override val serial: Serial.Remote,
     override val adb: Adb,
-    loggerFactory: LoggerFactory
-) : AbstractDevice(loggerFactory), RemoteDevice {
+    loggerFactory: LoggerFactory,
+    processRunner: ProcessRunner
+) : AbstractDevice(loggerFactory, processRunner), RemoteDevice {
 
-    override fun disconnect(): Result<String> = processRunner.run(command = "$adb disconnect $serial")
+    override fun disconnect(): Result<String> =
+        processRunner.run(
+            command = "$adb disconnect $serial",
+            timeout = Duration.ofSeconds(10)
+        )
 
     override fun connect(): Result<String> {
         disconnect()
 
-        return processRunner.run("$adb connect $serial")
+        return processRunner.run(
+            command = "$adb connect $serial",
+            timeout = Duration.ofSeconds(30)
+        )
     }
 
     override suspend fun waitForBoot() = waitForCommand(

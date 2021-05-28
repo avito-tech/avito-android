@@ -10,7 +10,7 @@ internal class AndroidDebugBridgeImpl(
     private val loggerFactory: LoggerFactory
 ) : AndroidDebugBridge {
 
-    private val processRunner = ProcessRunner.Real(null, loggerFactory)
+    private val processRunner = ProcessRunner.Real(null)
 
     override fun getRemoteDevice(serial: Serial.Remote): RemoteDeviceImpl {
         return RemoteDeviceImpl(
@@ -25,6 +25,7 @@ internal class AndroidDebugBridgeImpl(
         return LocalDevice(
             serial = serial,
             adb = adb,
+            processRunner = processRunner,
             loggerFactory = loggerFactory
         )
     }

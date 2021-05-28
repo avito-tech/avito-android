@@ -8,7 +8,7 @@ class ProcessKtTest {
     @Test
     fun `command split - works with spaces in argument`() {
         val s = "git commit --author='test <>' --all --message='xxx xxx'"
-        assertThat(splitCommand(s))
+        assertThat(ProcessRunner.Real(null).splitCommand(s))
             .asList()
             .containsExactly(
                 "git",

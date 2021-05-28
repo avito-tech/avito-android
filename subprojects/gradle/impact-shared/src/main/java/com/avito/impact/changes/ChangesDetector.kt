@@ -5,6 +5,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.utils.ProcessRunner
 import java.io.File
+import java.time.Duration
 
 interface ChangesDetector {
 
@@ -36,7 +37,7 @@ class GitChangesDetector(
     private val logger = loggerFactory.create<GitChangesDetector>()
     private val cache: MutableMap<Key, Result<List<ChangedFile>>> = mutableMapOf()
     private val gitDiffWithTargetBranch by lazy { gitDiffWith() }
-    private val processRunner = ProcessRunner.Real(gitRootDir, loggerFactory)
+    private val processRunner = ProcessRunner.Real(gitRootDir)
 
     init {
         require(gitRootDir.exists()) { "Directory ${gitRootDir.canonicalPath} doesn't exist" }
@@ -58,7 +59,10 @@ class GitChangesDetector(
      * Just a git diff between HEAD and [targetCommit]
      */
     private fun gitDiffWith(): Result<Sequence<ChangedFile>> {
-        return processRunner.run("git diff --name-status $targetCommit").map { output: String ->
+        return processRunner.run(
+            command = "git diff --name-status $targetCommit",
+            timeout = Duration.ofSeconds(10)
+        ).map { output: String ->
             output.lineSequence()
                 .filterNot { it.isBlank() }
                 .map { line ->
