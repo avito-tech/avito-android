@@ -181,6 +181,16 @@ internal class AdbDeviceEventsLogger(private val logger: Logger) : AdbDeviceEven
         logger.warn("Failed listing path $remotePath", throwable)
     }
 
+    override fun onLogcatSuccess(device: Device, durationMs: Long) {
+    }
+
+    override fun onLogcatError(device: Device, durationMs: Long, throwable: Throwable) {
+    }
+
+    override fun onLogcatFailure(device: Device, durationMs: Long, throwable: Throwable) {
+        logger.warn("Failed to execute logcat command", throwable)
+    }
+
     override fun onRunTestFailedOnStart(
         device: Device,
         message: String,

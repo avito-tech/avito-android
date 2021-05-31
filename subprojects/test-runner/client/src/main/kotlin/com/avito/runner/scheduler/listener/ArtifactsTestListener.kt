@@ -63,12 +63,20 @@ internal class ArtifactsTestListener(
                 }
                 TestResult.Complete(artifacts)
             }
+
             is InfrastructureError ->
-                TestResult.Incomplete(result)
+                TestResult.Incomplete(
+                    infraError = result,
+                    logcat = device.logcat(LOGCAT_LAST_LINES)
+                )
+
             Ignored ->
                 TestResult.Incomplete(
                     InfrastructureError.Unexpected(
                         IllegalStateException("Instrumentation executed Ignored test")
+                    ),
+                    logcat = Result.Failure(
+                        IllegalStateException("Logcat is not needed for ignored test case")
                     )
                 )
         }
@@ -84,3 +92,5 @@ internal class ArtifactsTestListener(
         }
     }
 }
+
+private const val LOGCAT_LAST_LINES = 300

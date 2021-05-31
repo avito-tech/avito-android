@@ -154,6 +154,10 @@ open class StubDevice(
         return result
     }
 
+    override fun logcat(lines: Int): Result<String> {
+        TODO("Not yet implemented")
+    }
+
     fun isDone(): Boolean {
         return installApplicationResultsQueue.isEmpty()
             && gettingDeviceStatusResultsQueue.isEmpty()

@@ -435,6 +435,28 @@ data class AdbDevice(
         }
     )
 
+    override fun logcat(lines: Int): Result<String> {
+        return retryAction.retry(
+            retriesCount = 3,
+            delaySeconds = 1,
+            action = {
+                executeBlockingShellCommand(
+                    command = listOf("logcat", "-t", "$lines"),
+                    timeoutSeconds = 10
+                ).output
+            },
+            onSuccess = { _, _, durationMs ->
+                eventsListener.onLogcatSuccess(this, durationMs)
+            },
+            onError = { _, throwable, durationMs ->
+                eventsListener.onLogcatError(this, durationMs, throwable)
+            },
+            onFailure = { throwable, durationMs ->
+                eventsListener.onLogcatFailure(this, durationMs, throwable)
+            }
+        )
+    }
+
     private fun runTest(
         test: TestCase,
         testPackageName: String,

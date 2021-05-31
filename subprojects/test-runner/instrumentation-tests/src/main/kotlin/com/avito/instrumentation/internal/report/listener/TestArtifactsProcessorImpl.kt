@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
+import com.avito.instrumentation.internal.logcat.LogcatAccessor
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestRuntimeDataPackage
@@ -23,7 +24,7 @@ internal class TestArtifactsProcessorImpl(
     override fun process(
         reportDir: File,
         testStaticData: TestStaticData,
-        logcatBuffer: LogcatBuffer?
+        logcatAccessor: LogcatAccessor
     ): Result<AndroidTest> {
 
         val reportFileProvider = TestArtifactsProviderFactory.createForTempDir(reportDir)
@@ -55,12 +56,8 @@ internal class TestArtifactsProcessorImpl(
 
                     val stepList = reportArtifactsUploader.processStepList(testRuntimeData.steps)
 
-                    val stdout = async {
-                        logcatProcessor.process(logcatBuffer?.getStdout(), isUploadNeeded = isTestFailed)
-                    }
-
-                    val stdErr = async {
-                        logcatProcessor.process(logcatBuffer?.getStderr(), isUploadNeeded = isTestFailed)
+                    val logcat = async {
+                        logcatProcessor.process(logcatAccessor, isUploadNeeded = isTestFailed)
                     }
 
                     AndroidTest.Completed.create(
@@ -74,8 +71,7 @@ internal class TestArtifactsProcessorImpl(
                             preconditions = preconditionList.map { it.await() },
                             steps = stepList.map { it.await() }
                         ),
-                        stdout = stdout.await(),
-                        stderr = stdErr.await()
+                        logcat = logcat.await(),
                     )
                 }
             }

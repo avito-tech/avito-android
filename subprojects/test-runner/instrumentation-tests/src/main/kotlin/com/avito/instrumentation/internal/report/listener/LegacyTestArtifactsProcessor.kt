@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.Result
+import com.avito.instrumentation.internal.logcat.LogcatAccessor
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
@@ -21,7 +22,7 @@ internal class LegacyTestArtifactsProcessor(
     override fun process(
         reportDir: File,
         testStaticData: TestStaticData,
-        logcatBuffer: LogcatBuffer?
+        logcatAccessor: LogcatAccessor
     ): Result<AndroidTest> {
 
         val scope = CoroutineScope(CoroutineName("test-artifacts-${testStaticData.name}") + dispatcher)
@@ -37,19 +38,14 @@ internal class LegacyTestArtifactsProcessor(
                 runBlocking {
                     withContext(scope.coroutineContext) {
 
-                        val stdout = async {
-                            logcatProcessor.process(logcatBuffer?.getStdout(), isUploadNeeded = isTestFailed)
-                        }
-
-                        val stderr = async {
-                            logcatProcessor.process(logcatBuffer?.getStderr(), isUploadNeeded = isTestFailed)
+                        val logcat = async {
+                            logcatProcessor.process(logcatAccessor, isUploadNeeded = isTestFailed)
                         }
 
                         AndroidTest.Completed.create(
                             testStaticData = testStaticData,
                             testRuntimeData = testRuntimeData,
-                            stdout = stdout.await(),
-                            stderr = stderr.await()
+                            logcat = logcat.await()
                         )
                     }
                 }
