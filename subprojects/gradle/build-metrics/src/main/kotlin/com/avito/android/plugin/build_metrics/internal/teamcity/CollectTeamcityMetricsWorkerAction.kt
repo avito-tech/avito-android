@@ -1,8 +1,8 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.plugin.build_metrics.internal.teamcity
 
 import com.avito.android.graphite.GraphiteConfig
 import com.avito.android.graphite.GraphiteSender
-import com.avito.android.plugin.build_metrics.CollectTeamcityMetricsWorkerAction.Parameters
+import com.avito.android.plugin.build_metrics.internal.teamcity.CollectTeamcityMetricsWorkerAction.Parameters
 import com.avito.logger.LoggerFactory
 import com.avito.teamcity.TeamcityApi
 import com.avito.teamcity.TeamcityCredentials

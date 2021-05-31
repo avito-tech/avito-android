@@ -72,7 +72,7 @@ class RunnerIntegrationTest {
 
     @Suppress("MaxLineLength")
     @Test
-    fun `all tests passed by first and second devices - for first device that complete half of tests and failed and second connected later device that complete all remaining tests`() =
+    fun `all tests passed by first and second devices - first device completes half of tests and fails, second connects later and completes all remaining tests`() =
         runBlockingTest {
             val runner = provideRunner(
                 devices = devices

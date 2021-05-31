@@ -5,14 +5,14 @@ import java.io.File
 import java.util.UUID
 
 internal class DirectTestArtifactsProvider(
-    override val rootDir: Lazy<File>,
+    private val provider: ReportDirProvider,
     private val uniqueFileNameGenerator: () -> String = { UUID.randomUUID().toString() }
 ) : TestArtifactsProvider {
 
     private val reportFileName = "report.json"
 
     override fun provideReportDir(): Result<File> {
-        return Result.Success(rootDir.value)
+        return provider.reportDir
     }
 
     override fun provideReportFile(): Result<File> {
@@ -29,7 +29,13 @@ internal class DirectTestArtifactsProvider(
 
     override fun generateFile(name: String, extension: String, create: Boolean): Result<File> {
         return provideReportDir().map { dir ->
-            File(dir, "$name.$extension")
+            val file = File(dir, "$name.$extension")
+            if (create && !file.exists()) {
+                require(file.createNewFile()) {
+                    "Can't generate file $file"
+                }
+            }
+            file
         }
     }
 

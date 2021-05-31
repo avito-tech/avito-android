@@ -16,8 +16,6 @@ import java.io.File
  */
 public interface TestArtifactsProvider {
 
-    public val rootDir: Lazy<File>
-
     public fun provideReportDir(): Result<File>
 
     public fun provideReportFile(): Result<File>
