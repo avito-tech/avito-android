@@ -55,11 +55,11 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.FROM_CACHE
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
             assertThat(it.delta).isEqualTo(0)
         }
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
             assertThat(it.delta).isEqualTo(0)
         }
     }
@@ -72,11 +72,11 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
             assertThat(it.delta).isEqualTo(0)
         }
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
             assertThat(it.delta).isEqualTo(1)
         }
     }
@@ -89,11 +89,11 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
             assertThat(it.delta).isEqualTo(0)
         }
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
             assertThat(it.delta).isEqualTo(0)
         }
     }
@@ -106,11 +106,11 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.FROM_CACHE
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
             assertThat(it.delta).isEqualTo(1)
         }
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
             assertThat(it.delta).isEqualTo(0)
         }
     }
@@ -123,11 +123,11 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
             assertThat(it.delta).isEqualTo(0)
         }
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
             assertThat(it.delta).isEqualTo(1)
         }
     }
@@ -140,11 +140,11 @@ internal class BuildCacheMetricsTest : BuildCacheTestFixture() {
             expectedOutcome = TaskOutcome.SUCCESS
         )
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.hit.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.hit").also {
             assertThat(it.delta).isEqualTo(0)
         }
 
-        result.assertHasMetric<CountMetric>(".build.cache.remote.miss.env.").also {
+        result.assertHasMetric<CountMetric>(".build.cache.remote.miss").also {
             assertThat(it.delta).isEqualTo(0)
         }
     }

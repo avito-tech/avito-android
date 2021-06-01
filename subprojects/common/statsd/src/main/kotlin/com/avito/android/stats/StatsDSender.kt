@@ -11,6 +11,7 @@ interface StatsDSender {
 
     fun send(metric: StatsMetric)
 
+    @Deprecated("Use send() without prefix. This will be deleted")
     fun send(prefix: SeriesName, metric: StatsMetric)
 
     class Impl(
@@ -59,6 +60,7 @@ interface StatsDSender {
             sendInternal(prefix = null, metric)
         }
 
+        @Suppress("OverridingDeprecatedMember")
         override fun send(prefix: SeriesName, metric: StatsMetric) {
             sendInternal(prefix, metric)
         }

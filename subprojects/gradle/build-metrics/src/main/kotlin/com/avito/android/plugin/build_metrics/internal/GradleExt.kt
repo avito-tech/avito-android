@@ -14,6 +14,9 @@ internal fun Path.toSeriesName(): SeriesName {
     )
 }
 
+internal val Path.module: Path
+    get() = parent ?: Path.ROOT
+
 internal val TaskExecution.internalState: TaskStateInternal
     get() = try {
         state as TaskStateInternal

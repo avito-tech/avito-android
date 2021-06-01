@@ -1,8 +1,8 @@
 package com.avito.android.plugin.build_metrics.internal
 
+import com.avito.android.build_metrics.BuildStatus
 import com.avito.android.gradle.metric.AbstractBuildEventsListener
 import com.avito.android.gradle.profile.BuildProfile
-import com.avito.android.plugin.build_metrics.BuildMetricTracker.BuildStatus
 import org.gradle.BuildResult
 
 internal class CompositeBuildMetricsListener(

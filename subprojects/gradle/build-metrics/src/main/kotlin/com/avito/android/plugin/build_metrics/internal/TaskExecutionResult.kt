@@ -9,7 +9,10 @@ internal class TaskExecutionResult(
     val startMs: Long,
     val endMs: Long,
     val cacheResult: TaskCacheResult,
-)
+) {
+    val elapsedMs: Long
+        get() = endMs - startMs
+}
 
 internal sealed class TaskCacheResult {
 

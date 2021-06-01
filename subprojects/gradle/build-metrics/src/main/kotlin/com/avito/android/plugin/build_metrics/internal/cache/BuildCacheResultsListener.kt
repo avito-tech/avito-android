@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal.cache
 
+import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.LOAD
 import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.STORE
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
@@ -7,16 +8,12 @@ import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultList
 import com.avito.android.plugin.build_metrics.internal.CacheOperations
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
-import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
-import com.avito.android.stats.StatsDSender
 import com.avito.logger.GradleLoggerFactory
-import org.gradle.api.provider.Provider
 
 internal class BuildCacheResultsListener(
-    private val statsd: Provider<StatsDSender>,
-    private val environmentInfo: Provider<EnvironmentInfo>,
+    private val metricsTracker: BuildMetricTracker,
     loggerFactory: GradleLoggerFactory
 ) : BuildOperationsResultListener {
 
@@ -43,28 +40,26 @@ internal class BuildCacheResultsListener(
                 SeriesName
                     .create("build", "cache", "errors", operationType, "unknown")
             }
-            statsd.get().send(CountMetric(metricName))
+            metricsTracker.track(CountMetric(metricName))
         }
     }
 
     private fun trackRemoteCacheStats(tasksExecutions: List<TaskExecutionResult>) {
-        val prefix = SeriesName.create("build.cache.remote", multipart = true)
-
         val remoteHits = tasksExecutions
             .count { it.cacheResult is TaskCacheResult.Hit.Remote }
 
         val remoteMisses = tasksExecutions
             .count { it.cacheResult is TaskCacheResult.Miss && it.cacheResult.remote }
 
-        statsd.get().send(
+        metricsTracker.track(
             CountMetric(
-                prefix.append("hit", "env", environmentInfo.get().environment.publicName),
+                SeriesName.create("build", "cache", "remote", "hit"),
                 remoteHits.toLong()
             )
         )
-        statsd.get().send(
+        metricsTracker.track(
             CountMetric(
-                prefix.append("miss", "env", environmentInfo.get().environment.publicName),
+                SeriesName.create("build", "cache", "remote", "miss"),
                 remoteMisses.toLong()
             )
         )
