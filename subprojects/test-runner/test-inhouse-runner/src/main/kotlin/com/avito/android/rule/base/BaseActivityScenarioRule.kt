@@ -14,6 +14,7 @@ open class BaseActivityScenarioRule<A : Activity>(
 ) : SimpleRule() {
 
     private var _scenario: ActivityScenario<A>? = null
+
     val scenario: ActivityScenario<A> get() = checkNotNull(_scenario) {
         buildString {
             append("Activity $activityClass has not been launched. ")
