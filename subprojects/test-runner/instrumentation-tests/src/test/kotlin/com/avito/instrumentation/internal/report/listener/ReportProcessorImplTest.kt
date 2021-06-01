@@ -129,7 +129,15 @@ internal class ReportProcessorImplTest {
 
         assertThat<AndroidTest.Completed>(testResult) {
             assertThat(incident).isNotNull()
-            assertThat(logcat).isEqualTo("logcat not available")
+            assertThat(logcat).isEqualTo(
+                """
+                    Logcat is not available:
+                    stub description
+                    Where : StubLogcatAccessor
+                    Why? : unknown
+                    
+                    """.trimIndent()
+            )
         }
     }
 

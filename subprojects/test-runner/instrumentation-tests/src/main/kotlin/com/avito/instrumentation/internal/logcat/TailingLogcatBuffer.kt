@@ -1,5 +1,6 @@
 package com.avito.instrumentation.internal.logcat
 
+import com.avito.android.Problem
 import org.apache.commons.io.input.Tailer
 import org.apache.commons.io.input.TailerListenerAdapter
 import java.io.File
@@ -33,9 +34,20 @@ internal class TailingLogcatBuffer(
         tailer.stop()
     }
 
-    override fun getLogs(): Logcat {
-        return Logcat(
-            output = buffer.joinToString(separator = "\n")
-        )
+    override fun getLogs(): LogcatResult {
+        return if (buffer.isNotEmpty()) {
+            LogcatResult.Success(
+                output = buffer.joinToString(separator = "\n")
+            )
+        } else {
+            LogcatResult.Unavailable(
+                reason = Problem(
+                    shortDescription = "No logs fetched during test execution",
+                    context = "TailingLogcatBuffer: getting logs for test report",
+                    because = "It's unexpected, probably a bug: " +
+                        "at least some log lines are printed during any test execution"
+                )
+            )
+        }
     }
 }

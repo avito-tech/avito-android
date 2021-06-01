@@ -213,7 +213,6 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
             // todo onlyIf present
             "console" to mapOf(
                 "stdout" to logcat,
-                // non empty value causes warning sign to appear in UI
                 "stderr" to ""
             ),
             "prepared_data" to preparedData,
