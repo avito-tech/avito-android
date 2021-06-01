@@ -36,16 +36,6 @@ internal class BuildMetricsPluginTest {
     }
 
     @Test
-    fun `send nothing - dry run build`() {
-        val result = build(":app:preBuild", dryRun = true)
-
-        result.assertThat().buildSuccessful()
-
-        val metrics = result.statsdMetrics()
-        assertThat(metrics).isEmpty()
-    }
-
-    @Test
     fun `send configuration time - build`() {
         val result = build(":app:preBuild")
 
