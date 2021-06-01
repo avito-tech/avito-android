@@ -67,7 +67,6 @@ internal class ReportProcessorImpl(
                             context = "ReportProcessor forms fallback Error status report",
                             because = "There is not enough context here about cause",
                             possibleSolutions = listOf(
-                                "MBS-11279 should help with correct error message from AdbDevice",
                                 "MBS-11281 to return tests with such errors back to retry queue"
                             ),
                             throwable = throwable

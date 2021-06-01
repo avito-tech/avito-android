@@ -13,9 +13,11 @@ dependencies {
     compileOnly(gradleApi())
     api(project(":test-runner:service"))
 
+    implementation(project(":test-runner:test-report-artifacts"))
     implementation(project(":gradle:trace-event"))
     implementation(project(":common:math"))
     implementation(project(":common:result"))
+    implementation(project(":common:problem"))
     implementation(project(":common:files"))
     implementation(libs.coroutinesCore)
     implementation(libs.gson)

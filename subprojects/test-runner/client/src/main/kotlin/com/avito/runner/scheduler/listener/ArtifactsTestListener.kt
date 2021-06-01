@@ -3,6 +3,7 @@ package com.avito.runner.scheduler.listener
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
@@ -64,9 +65,12 @@ internal class ArtifactsTestListener(
             Passed,
             is Failed.InRun -> {
                 val artifacts = testArtifactsDir.flatMap { dir ->
-                    device.pullDirRecursively(
+                    device.pullDir(
                         deviceDir = dir.toPath(),
-                        hostDir = tempDirectory
+                        hostDir = tempDirectory,
+                        validator = ReportAwarePullValidator(
+                            testArtifactsProviderFactory = TestArtifactsProviderFactory
+                        )
                     )
                 }
                 TestResult.Complete(artifacts)

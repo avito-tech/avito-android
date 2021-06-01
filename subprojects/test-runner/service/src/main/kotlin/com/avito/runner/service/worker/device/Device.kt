@@ -4,6 +4,7 @@ import com.avito.android.Result
 import com.avito.logger.Logger
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
+import com.avito.runner.service.worker.device.adb.PullValidator
 import com.avito.runner.service.worker.model.DeviceInstallation
 import java.io.File
 import java.nio.file.Path
@@ -36,14 +37,14 @@ interface Device {
     /**
      * @return `to` path
      *
-     * todo deprecate in favor of [pullDirRecursively]
+     * todo deprecate in favor of [pullDir]
      */
     fun pull(from: Path, to: Path): Result<File>
 
     /**
      * @return `hostDir` path
      */
-    fun pullDirRecursively(deviceDir: Path, hostDir: Path): Result<File>
+    fun pullDir(deviceDir: Path, hostDir: Path, validator: PullValidator): Result<File>
 
     fun clearDirectory(remotePath: Path): Result<Unit>
 

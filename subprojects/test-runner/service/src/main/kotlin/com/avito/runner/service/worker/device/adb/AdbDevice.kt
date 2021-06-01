@@ -4,6 +4,7 @@ import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.DdmPreferences
 import com.android.ddmlib.IDevice
 import com.avito.android.Result
+import com.avito.android.asRuntimeException
 import com.avito.android.stats.StatsDSender
 import com.avito.logger.Logger
 import com.avito.logger.LoggerFactory
@@ -308,66 +309,23 @@ data class AdbDevice(
         }
     )
 
-    override fun pull(from: Path, to: Path): Result<File> = retryAction.retry(
-        retriesCount = DEFAULT_RETRY_COUNT,
-        delaySeconds = DEFAULT_DELAY_SEC,
-        action = {
-            executeBlockingCommand(
-                command = listOf(
-                    "pull",
-                    from.toString(),
-                    to.toString()
-                )
-            )
-
-            val resultFile = File(
-                to.toFile(),
-                from.fileName.toString()
-            )
-
-            if (!resultFile.exists()) {
-                throw RuntimeException(
-                    "Failed to pull file from ${from.toAbsolutePath()} to ${to.toAbsolutePath()}. " +
-                        "Result file: ${resultFile.absolutePath} not found."
-                )
-            } else {
-                to.toFile()
-            }
-        },
-        onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
-            eventsListener.onPullError(
-                device = this,
-                attempt = attempt,
-                from = from,
-                throwable = throwable,
-                durationMs = durationMs
-            )
-        },
-        onFailure = { throwable: Throwable, durationMs: Long ->
-            eventsListener.onPullFailure(
-                device = this,
-                from = from,
-                throwable = throwable,
-                durationMs = durationMs
-            )
-        },
-        onSuccess = { _: Int, _: Any, durationMs: Long ->
-            eventsListener.onPullSuccess(
-                device = this,
-                from = from,
-                to = to,
-                durationMs = durationMs
-            )
-        }
+    override fun pull(from: Path, to: Path): Result<File> = pullInternal(
+        from = from,
+        to = to,
+        validator = AlwaysSuccessPullValidator
     )
 
     @ExperimentalPathApi
-    override fun pullDirRecursively(deviceDir: Path, hostDir: Path): Result<File> {
+    override fun pullDir(deviceDir: Path, hostDir: Path, validator: PullValidator): Result<File> {
         // last /. means to adb to copy recursively, and do not copy the last
         // example:
         //  - from: /sdcard/Android/someDir/ to: /xx ; will copy to /xx/someDir/ and not recursive
         //  - from: /sdcard/android/someDir/. to: /xx ; will copy to /xx and recursive
-        return pull(from = deviceDir / ".", to = hostDir)
+        return pullInternal(
+            from = deviceDir / ".",
+            to = hostDir,
+            validator = validator
+        )
     }
 
     override fun clearDirectory(remotePath: Path): Result<Unit> = retryAction.retry(
@@ -441,6 +399,56 @@ data class AdbDevice(
             eventsListener.onListSuccess(
                 device = this,
                 remotePath = remotePath,
+                durationMs = durationMs
+            )
+        }
+    )
+
+    private fun pullInternal(
+        from: Path,
+        to: Path,
+        validator: PullValidator
+    ): Result<File> = retryAction.retry(
+        retriesCount = DEFAULT_RETRY_COUNT,
+        delaySeconds = DEFAULT_DELAY_SEC,
+        action = {
+            executeBlockingCommand(
+                command = listOf(
+                    "pull",
+                    from.toString(),
+                    to.toString()
+                )
+            )
+
+            when (val pullResult = validator.isPulledCompletely(to)) {
+
+                is PullValidator.Result.Ok -> to.toFile()
+
+                is PullValidator.Result.Failure -> throw pullResult.problem.asRuntimeException()
+            }
+        },
+        onError = { attempt: Int, throwable: Throwable, durationMs: Long ->
+            eventsListener.onPullError(
+                device = this,
+                attempt = attempt,
+                from = from,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onFailure = { throwable: Throwable, durationMs: Long ->
+            eventsListener.onPullFailure(
+                device = this,
+                from = from,
+                throwable = throwable,
+                durationMs = durationMs
+            )
+        },
+        onSuccess = { _: Int, _: Any, durationMs: Long ->
+            eventsListener.onPullSuccess(
+                device = this,
+                from = from,
+                to = to,
                 durationMs = durationMs
             )
         }
