@@ -2,7 +2,7 @@ package com.avito.android.build_checks.internal.params
 
 import com.avito.android.build_checks.internal.BuildEnvironmentInfo
 import com.avito.android.build_checks.pluginId
-import com.avito.android.plugin.build_metrics.BuildMetricTracker
+import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.sentry.sentry
 import com.avito.android.stats.CountMetric

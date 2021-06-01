@@ -1,6 +1,6 @@
 package com.avito.android.plugin.build_metrics.internal.cache
 
-import com.avito.android.plugin.build_metrics.BuildMetricTracker
+import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.LOAD
 import com.avito.android.plugin.build_metrics.internal.BuildCacheOperationType.STORE
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult

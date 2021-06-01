@@ -1,6 +1,6 @@
 package com.avito.impact.plugin.internal
 
-import com.avito.android.plugin.build_metrics.BuildMetricTracker
+import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.sentry.StubEnvironmentInfo
 import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.StatsMetric

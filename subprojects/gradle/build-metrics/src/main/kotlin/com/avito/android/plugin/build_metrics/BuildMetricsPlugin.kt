@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics
 
+import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider

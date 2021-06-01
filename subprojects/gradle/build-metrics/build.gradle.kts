@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":gradle:build-environment"))
     implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-profile"))
+    implementation(project(":gradle:build-metrics-tracker"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:graphite-config"))
     implementation(project(":gradle:impact-shared"))

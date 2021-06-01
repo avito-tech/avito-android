@@ -1,7 +1,8 @@
 package com.avito.android.plugin.build_metrics.internal
 
+import com.avito.android.build_metrics.BuildMetricTracker
+import com.avito.android.build_metrics.BuildStatus
 import com.avito.android.gradle.profile.BuildProfile
-import com.avito.android.plugin.build_metrics.BuildMetricTracker
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
 

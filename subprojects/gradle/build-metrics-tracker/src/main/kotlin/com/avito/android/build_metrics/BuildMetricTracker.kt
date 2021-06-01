@@ -1,6 +1,5 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.build_metrics
 
-import com.avito.android.plugin.build_metrics.internal.BuildStatus
 import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.GaugeDoubleMetric
@@ -16,7 +15,7 @@ public class BuildMetricTracker(
     private val sender: StatsDSender
 ) {
 
-    internal fun track(status: BuildStatus, metric: StatsMetric) {
+    public fun track(status: BuildStatus, metric: StatsMetric) {
         val prefix = SeriesName.create(
             environment(),
             node(),

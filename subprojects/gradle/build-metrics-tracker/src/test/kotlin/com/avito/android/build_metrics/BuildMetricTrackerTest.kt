@@ -1,6 +1,5 @@
-package com.avito.android.plugin.build_metrics
+package com.avito.android.build_metrics
 
-import com.avito.android.plugin.build_metrics.internal.BuildStatus
 import com.avito.android.sentry.StubEnvironmentInfo
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StubStatsdSender
