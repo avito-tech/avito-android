@@ -33,6 +33,8 @@ import java.io.File
 import java.nio.file.Path
 import java.time.Duration
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.div
 
 data class AdbDevice(
     override val coordinate: DeviceCoordinate,
@@ -358,6 +360,15 @@ data class AdbDevice(
             )
         }
     )
+
+    @ExperimentalPathApi
+    override fun pullDirRecursively(deviceDir: Path, hostDir: Path): Result<File> {
+        // last /. means to adb to copy recursively, and do not copy the last
+        // example:
+        //  - from: /sdcard/Android/someDir/ to: /xx ; will copy to /xx/someDir/ and not recursive
+        //  - from: /sdcard/android/someDir/. to: /xx ; will copy to /xx and recursive
+        return pull(from = deviceDir / ".", to = hostDir)
+    }
 
     override fun clearDirectory(remotePath: Path): Result<Unit> = retryAction.retry(
         retriesCount = DEFAULT_RETRY_COUNT,

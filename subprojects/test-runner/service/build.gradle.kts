@@ -21,6 +21,7 @@ dependencies {
     }
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
+    implementation(libs.kotlinStdlibJdk7)
 
     testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:time")))

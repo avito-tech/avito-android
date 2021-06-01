@@ -35,8 +35,15 @@ interface Device {
 
     /**
      * @return `to` path
+     *
+     * todo deprecate in favor of [pullDirRecursively]
      */
     fun pull(from: Path, to: Path): Result<File>
+
+    /**
+     * @return `hostDir` path
+     */
+    fun pullDirRecursively(deviceDir: Path, hostDir: Path): Result<File>
 
     fun clearDirectory(remotePath: Path): Result<Unit>
 

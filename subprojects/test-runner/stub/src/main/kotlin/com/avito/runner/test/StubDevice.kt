@@ -136,6 +136,10 @@ open class StubDevice(
         }
     }
 
+    override fun pullDirRecursively(deviceDir: Path, hostDir: Path): Result<File> {
+        TODO("Not yet implemented")
+    }
+
     override fun clearDirectory(remotePath: Path): Result<Unit> = Result.tryCatch {}
 
     override fun list(remotePath: String): Result<List<String>> = Result.tryCatch { emptyList() }
