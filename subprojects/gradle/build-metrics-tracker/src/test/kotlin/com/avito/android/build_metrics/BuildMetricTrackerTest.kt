@@ -32,7 +32,7 @@ internal class BuildMetricTrackerTest {
     }
 
     @Test
-    fun `build - CI environment`() {
+    fun `build - omit volatile node - CI environment`() {
         val tracker = metricTracker(
             environment = Environment.CI,
             node = "agent-3c23034b"
