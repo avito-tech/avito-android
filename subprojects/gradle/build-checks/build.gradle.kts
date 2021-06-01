@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:impact-shared"))
-    implementation(project(":gradle:build-metrics"))
+    implementation(project(":gradle:build-metrics-tracker"))
     implementation(project(":gradle:sentry-config"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":common:files"))

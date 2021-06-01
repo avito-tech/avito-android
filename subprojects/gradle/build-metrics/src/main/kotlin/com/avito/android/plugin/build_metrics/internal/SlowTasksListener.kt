@@ -1,9 +1,10 @@
 package com.avito.android.plugin.build_metrics.internal
 
+import com.avito.android.build_metrics.BuildMetricTracker
+import com.avito.android.build_metrics.BuildStatus
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.Operation
 import com.avito.android.gradle.profile.TaskExecution
-import com.avito.android.plugin.build_metrics.BuildMetricTracker
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
 import org.gradle.api.internal.tasks.TaskExecutionOutcome
@@ -12,7 +13,7 @@ internal class SlowTasksListener(
     private val metricTracker: BuildMetricTracker
 ) : BuildResultListener {
 
-    override fun onBuildFinished(status: BuildMetricTracker.BuildStatus, profile: BuildProfile) {
+    override fun onBuildFinished(status: BuildStatus, profile: BuildProfile) {
         val tasks = profile.getProjects()
             .flatMap { it.getTasks() }
             .filter { it.internalState.isActionable }

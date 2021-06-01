@@ -27,31 +27,25 @@ They will be referred in docs as `<placeholder>`.
 
 [Http build cache](https://docs.gradle.org/current/userguide/build_cache.html#sec:build_cache_configure_remote) errors:
 
-- `<namespace>.build.cache.errors.[load|store].<http status code>`: errors counter
+- `<namespace>.<environment>.<node>.build.cache.errors.[load|store].<http status code>`: errors counter
   
 Remote cache statistics:
 
-- `<namespace>.build.cache.remote.[hit|miss].env.<environment>`: remote cache operations count by environments.
-Shows count of cacheable tasks that were requested from the remote cache.
+- `<namespace>.<environment>.<node>.build.cache.remote.[hit|miss]`: remote cache operations count by environments.  
+Shows count of cacheable tasks that were requested from the remote cache.  
 This is the same as **Performance** | **Build cache** | **Remote cache** | **Operations** | **Hit\Miss** in build scan.
 
 ### Common build metrics
 
-Prefix: `<namespace>.<environment>.<node>.id.<build status>`
-
-- `init_configuration.total` (time in ms): initialization with configuration time
-- `build-time.total` (time in ms): total build time
+- `<namespace>.<environment>.<node>.id.<build status>.init_configuration.total` (time in ms): initialization with configuration time
+- `<namespace>.<environment>.<node>.id.<build status>.build-time.total` (time in ms): total build time
 
 ### Tasks metrics
 
-Prefix: `<namespace>.<environment>.<node>.id.<build status>.tasks`
-
-- `executed.<module path>.<task name>.total` (time in ms): top slowest tasks execution time
-- `from_cache.miss` (gauge 0..100): executed tasks ratio.
-This is not a real cache misses. See a bug MBS-7244.
+- `<namespace>.<environment>.<node>.id.<build status>.tasks.executed.<module path>.<task name>.total` (time in ms): 
+  top slowest tasks execution time. It will be removed in MBS-11309.
 
 ### Specific build events
 
-Prefix: `<namespace>.<environment>.<node>.id.<build status>`
-
-- `app-build.<module path>.<task name>.finish` (time in ms): elapsed time from build start till Android app build task finished
+- `<namespace>.<environment>.<node>.id.<build status>.app-build.<module path>.<task name>.finish` (time in ms): 
+  elapsed time from build start till Android app build task finished

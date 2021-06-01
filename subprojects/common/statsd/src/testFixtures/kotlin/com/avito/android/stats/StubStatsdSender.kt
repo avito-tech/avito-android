@@ -9,7 +9,7 @@ class StubStatsdSender : StatsDSender {
     }
 
     override fun send(prefix: SeriesName, metric: StatsMetric) {
-        TODO("Not yet implemented")
+        TODO("Will be deleted")
     }
 
     fun getSentMetrics(): List<StatsMetric> = sentMetrics

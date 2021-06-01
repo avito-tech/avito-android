@@ -1,10 +1,10 @@
 package com.avito.impact.plugin.internal
 
+import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.isAndroidApp
 import com.avito.android.sentry.EnvironmentInfo
 import com.avito.android.stats.GaugeLongMetric
 import com.avito.android.stats.SeriesName
-import com.avito.android.stats.StatsDSender
 import com.avito.impact.ModifiedProject
 import com.avito.impact.ModifiedProjectsFinder
 import com.avito.math.percentOf
@@ -15,25 +15,14 @@ import java.util.Locale
 
 class ImpactMetricsSender(
     private val projectsFinder: ModifiedProjectsFinder,
-    private val statsDSender: StatsDSender,
-    private val environmentInfo: EnvironmentInfo
+    environmentInfo: EnvironmentInfo,
+    private val metricTracker: BuildMetricTracker
 ) {
 
     init {
         require(environmentInfo.environment is Environment.CI) {
             "ImpactMetricsSender should run only in CI environment"
         }
-    }
-
-    private val prefix by lazy {
-        val envName = environmentInfo.environment.publicName
-
-        // Don't need when we have build id. Empty value for backward compatibility in series name
-        val node = "_"
-        val buildId = requireNotNull(environmentInfo.teamcityBuildId()) {
-            "ImpactMetricsSender should run only if teamcityBuildInfo available"
-        }
-        SeriesName.create(envName, node, buildId, "impact")
     }
 
     private val ConfigurationType.name: String
@@ -62,10 +51,11 @@ class ImpactMetricsSender(
         projects: Set<Project>,
         modified: Set<ModifiedProject>
     ) {
-        sendMetric(
-            metric = SeriesName.create("modules", configurationType.name.toLowerCase(Locale.US), "modified"),
-            value = modified.size.percentOf(projects.size).toLong()
+        val metric = GaugeLongMetric(
+            name = SeriesName.create("impact", "modules", configurationType.name.toLowerCase(Locale.US), "modified"),
+            gauge = modified.size.percentOf(projects.size).toLong()
         )
+        metricTracker.track(metric)
     }
 
     private fun sendAppsMetrics(
@@ -75,16 +65,11 @@ class ImpactMetricsSender(
     ) {
         val apps = projects.count { it.isAndroidApp() }
         val modifiedApps = modified.count { it.project.isAndroidApp() }
-        sendMetric(
-            metric = SeriesName.create("apps", configurationType.name.toLowerCase(Locale.US), "modified"),
-            value = modifiedApps.percentOf(apps).toLong()
-        )
-    }
 
-    @Suppress("DefaultLocale")
-    private fun sendMetric(metric: SeriesName, value: Long) {
-        statsDSender.send(
-            GaugeLongMetric(prefix.append(metric), value)
+        val metric = GaugeLongMetric(
+            name = SeriesName.create("impact", "apps", configurationType.name.toLowerCase(Locale.US), "modified"),
+            gauge = modifiedApps.percentOf(apps).toLong()
         )
+        metricTracker.track(metric)
     }
 }

@@ -1,5 +1,6 @@
 package com.avito.android.plugin.build_metrics
 
+import com.avito.android.build_metrics.BuildMetricTracker
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
@@ -39,8 +40,8 @@ public open class BuildMetricsPlugin : Plugin<Project> {
         val buildOperationsListener = BuildOperationsResultProvider.register(project)
 
         val metricTracker = BuildMetricTracker(
-            project.environmentInfo(),
-            project.statsd
+            project.environmentInfo().get(),
+            project.statsd.get()
         )
         val buildListeners = listOf(
             ConfigurationTimeListener(metricTracker),

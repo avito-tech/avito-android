@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":gradle:build-environment"))
     implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-profile"))
+    implementation(project(":gradle:build-metrics-tracker"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:graphite-config"))
     implementation(project(":gradle:impact-shared"))
@@ -21,6 +22,8 @@ dependencies {
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(testFixtures(project(":common:graphite")))
+    testImplementation(testFixtures(project(":common:statsd")))
+    testImplementation(testFixtures(project(":gradle:build-environment")))
 
     gradleTestImplementation(project(":common:test-okhttp"))
     gradleTestImplementation(project(":gradle:test-project"))
