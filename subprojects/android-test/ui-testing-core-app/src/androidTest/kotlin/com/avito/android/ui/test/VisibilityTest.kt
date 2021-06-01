@@ -28,8 +28,8 @@ class VisibilityTest {
     fun isVisible_fail_forInVisibleElement() {
         rule.launchActivity(null)
 
-        rule.runOnUiThread {
-            rule.activity.findViewById<View>(R.id.text).visibility = View.INVISIBLE
+        rule.onActivity {
+            findViewById<View>(R.id.text).visibility = View.INVISIBLE
         }
         exception.expectMessage(
             "'view has effective visibility=VISIBLE' " +
