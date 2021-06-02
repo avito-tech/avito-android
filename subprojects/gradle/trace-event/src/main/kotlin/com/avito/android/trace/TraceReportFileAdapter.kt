@@ -10,7 +10,9 @@ import com.google.gson.JsonSerializer
 import java.io.File
 import java.lang.reflect.Type
 
-class TraceReportClient {
+class TraceReportFileAdapter(
+    private val file: File
+) {
 
     private val gson: Gson by lazy {
         GsonBuilder()
@@ -19,11 +21,11 @@ class TraceReportClient {
             .create()
     }
 
-    fun writeTo(file: File, report: TraceReport) {
+    fun write(report: TraceReport) {
         file.writeText(gson.toJson(report))
     }
 
-    fun readFrom(file: File): TraceReport {
+    fun read(): TraceReport {
         return gson.fromJson(file.bufferedReader(), TraceReport::class.java)
     }
 
@@ -32,8 +34,7 @@ class TraceReportClient {
         override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): TraceEvent {
             val jsonObject = json.asJsonObject
 
-            val phase = jsonObject.get("ph").asCharacter
-            return when (phase) {
+            return when (val phase = jsonObject.get("ph").asCharacter) {
                 DurationEvent.PHASE_BEGIN, DurationEvent.PHASE_END -> context.deserialize<DurationEvent>(
                     json,
                     DurationEvent::class.java

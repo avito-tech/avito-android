@@ -1,14 +1,14 @@
-package com.avito.android.build_trace.internal
+package com.avito.android.critical_path
 
 import com.avito.android.Result
 import org.gradle.api.Task
 import org.gradle.api.internal.TaskInternal
 import org.gradle.api.tasks.TaskDependency
 
-internal val Task.type: Class<out Task>
+public val Task.type: Class<out Task>
     get() = (this as TaskInternal).taskIdentity.type
 
-internal val Task.predecessors: TaskDependenciesResolutionResult
+public val Task.predecessors: TaskDependenciesResolutionResult
     get() {
         val dependenciesByInputs = project.gradle.taskGraph.getDependencies(this)
 

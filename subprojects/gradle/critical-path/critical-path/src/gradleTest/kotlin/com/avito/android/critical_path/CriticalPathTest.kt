@@ -1,6 +1,6 @@
-package com.avito.android.build_trace
+package com.avito.android.critical_path
 
-import com.avito.android.build_trace.internal.critical_path.CriticalPathSerialization
+import com.avito.android.critical_path.internal.CriticalPathReport
 import com.avito.test.gradle.TestResult
 import com.avito.test.gradle.gradlew
 import com.google.common.truth.Truth.assertThat
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
-class CriticalPathTest {
+internal class CriticalPathTest {
 
     private lateinit var projectDir: File
 
@@ -195,9 +195,9 @@ class CriticalPathTest {
         File(projectDir, "build.gradle.kts").writeText(
             """
             plugins {
-                id("com.avito.android.build-trace")
+                id("com.avito.android.critical-path")
             }
-            buildTrace {
+            criticalPath {
                 enabled.set($enabledPlugin)
                 output.set(project.layout.projectDirectory.dir("output"))
             }
@@ -235,10 +235,9 @@ class CriticalPathTest {
                 .taskWithOutcome(targetTask, TaskOutcome.SUCCESS)
         }
 
-        val reader = CriticalPathSerialization(reportFile())
+        val reader = CriticalPathReport(reportFile())
 
         return reader.read()
-            .operations
             .map { it.path }
             .toSet()
     }

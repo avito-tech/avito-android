@@ -83,6 +83,7 @@ nav:
             -   Internal:
                     - projects/internal/Internal.md
                     - projects/internal/BuildMetrics.md
+                    - projects/internal/CriticalPath.md
     -   CI:
             -   CI Gradle Plugin: projects/CiSteps.md
             -   Impact analysis: ci/ImpactAnalysis.md

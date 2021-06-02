@@ -8,13 +8,13 @@ plugins {
 dependencies {
     implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:gradle-extensions"))
+    implementation(project(":gradle:critical-path:api"))
     implementation(project(":gradle:trace-event"))
     implementation(project(":gradle:gradle-profile"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":common:composite-exception"))
-    implementation(project(":common:graph"))
+    implementation(project(":common:problem"))
     implementation(project(":common:result"))
-    implementation(libs.gson)
     implementation(gradleApi())
 
     gradleTestImplementation(project(":gradle:test-project"))

@@ -1,12 +1,14 @@
 package com.avito.android.build_trace.internal
 
-import com.avito.android.build_trace.internal.critical_path.CriticalPathProvider
+import com.avito.android.critical_path.CriticalPathListener
+import com.avito.android.critical_path.TaskOperation
 import com.avito.android.gradle.metric.AbstractBuildEventsListener
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
-import com.avito.android.trace.TraceReportClient
+import com.avito.android.trace.TraceReportFileAdapter
+import com.avito.graph.OperationsPath
 import com.avito.logger.GradleLoggerFactory
 import com.avito.logger.create
 import org.gradle.BuildResult
@@ -16,9 +18,8 @@ import java.util.Collections
 
 internal class BuildTraceListener(
     private val output: File,
-    private val criticalPathProvider: CriticalPathProvider,
     loggerFactory: GradleLoggerFactory
-) : AbstractBuildEventsListener() {
+) : AbstractBuildEventsListener(), CriticalPathListener {
 
     private val logger = loggerFactory.create<BuildTraceListener>()
     private val eventProvider = TraceEventProvider()
@@ -32,23 +33,26 @@ internal class BuildTraceListener(
         events.add(eventProvider.initWithConfigurationEvent(profile))
         events.add(eventProvider.executionStartEvent(profile))
         events.add(eventProvider.executionFinishEvent(profile))
-
-        writeReport()
     }
 
-    private fun writeReport() {
+    override fun onCriticalPathReady(path: OperationsPath<TaskOperation>) {
+        writeReport(path)
+    }
+
+    private fun writeReport(criticalPath: OperationsPath<TaskOperation>) {
         output.parentFile.mkdirs()
 
         val report = TraceReport(
-            traceEvents = enrichCriticalPath(events)
+            traceEvents = enrichCriticalPath(events, criticalPath)
         )
-        TraceReportClient().writeTo(output, report)
+        TraceReportFileAdapter(output).write(report)
         logger.info("Build trace: ${output.path}")
     }
 
-    private fun enrichCriticalPath(traceEvents: List<TraceEvent>): List<TraceEvent> {
-        val criticalPath = criticalPathProvider.path()
-
+    private fun enrichCriticalPath(
+        traceEvents: List<TraceEvent>,
+        criticalPath: OperationsPath<TaskOperation>
+    ): List<TraceEvent> {
         return traceEvents
             .map { event ->
                 eventProvider.criticalPathEvent(event, criticalPath)

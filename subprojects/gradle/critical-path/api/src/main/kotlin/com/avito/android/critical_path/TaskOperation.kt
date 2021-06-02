@@ -1,33 +1,19 @@
-package com.avito.android.build_trace.internal.critical_path
+package com.avito.android.critical_path
 
 import com.avito.graph.Operation
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
+import org.gradle.api.Task
+import org.gradle.util.Path
 
-internal data class TaskOperation(
-
-    @Expose
-    @SerializedName("path")
-    val path: String,
-
-    @Expose
-    @SerializedName("type")
-    val type: String,
-
-    @Expose
-    @SerializedName("start")
+public data class TaskOperation(
+    val path: Path,
+    val type: Class<out Task>,
     val startMs: Long,
-
-    @Expose
-    @SerializedName("finish")
     val finishMs: Long,
-
-    @Expose
     override val predecessors: Set<String>
 ) : Operation {
 
     override val id: String
-        get() = path
+        get() = path.toString()
 
     override val duration: Double
         get() = (finishMs - startMs).toDouble()

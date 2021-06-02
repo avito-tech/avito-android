@@ -58,8 +58,7 @@ ORDER BY slice.dur DESC
 
 ## Critical path
 
-[Critical path](https://en.wikipedia.org/wiki/Critical_path_method) is a set of tasks that define the build duration.  
-
+To understand the critical path better see [critical path](internal/CriticalPath.md).  
 Tasks on this path are [highlighted in a trace](#build-trace-gradle-plugin).  
 
 You can find them by query:
@@ -69,23 +68,6 @@ SELECT slice.name AS TASK_PATH, slice.ts / 1000000 AS START_MS, slice.dur / 1000
 FROM slice JOIN args ON slice.arg_set_id = args.arg_set_id
 WHERE args.flat_KEY = "args.CRITICAL_PATH"
 ORDER BY slice.ts ASC
-```
-
-Also there is raw data in `outputs/build-trace/critical_path.json`:
-
-???+ warning
-    This report is auxiliary and is a subject of change.
-
-```json
-[
-    {
-        "path": ":app:assembleAndroidTest",
-        "type": "org.gradle.api.Task",
-        "start": 1620217409525,
-        "finish": 1620217409525,
-        "predecessors": [":avito:assembleDebugAndroidTest"]
-    },
-    ...
 ```
 
 ## Known issues
