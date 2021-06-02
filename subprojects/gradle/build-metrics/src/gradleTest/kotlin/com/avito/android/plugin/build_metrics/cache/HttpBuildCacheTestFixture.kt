@@ -1,7 +1,6 @@
 package com.avito.android.plugin.build_metrics.cache
 
-import com.avito.test.gradle.TestResult
-import com.avito.test.gradle.gradlew
+import com.avito.android.plugin.build_metrics.BuildMetricsRunner
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -73,14 +72,9 @@ internal abstract class HttpBuildCacheTestFixture {
         }
     }
 
-    protected fun build(vararg tasks: String): TestResult {
-        return gradlew(
-            projectDir,
-            *tasks,
-            "-Pavito.build.metrics.enabled=true",
-            "-Pavito.stats.enabled=false",
-            "--build-cache",
-            "--debug", // to read statsd logs from stdout
-        )
-    }
+    protected fun build(vararg args: String) =
+        BuildMetricsRunner(projectDir)
+            .build(
+                args.toList().plus("--build-cache")
+            )
 }
