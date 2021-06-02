@@ -119,6 +119,18 @@ internal class CompositeAdbDeviceEventListener(
         listeners.forEach { it.onListFailure(device, remotePath, throwable, durationMs) }
     }
 
+    override fun onLogcatSuccess(device: Device, durationMs: Long) {
+        listeners.forEach { it.onLogcatSuccess(device, durationMs) }
+    }
+
+    override fun onLogcatError(device: Device, durationMs: Long, throwable: Throwable) {
+        listeners.forEach { it.onLogcatError(device, durationMs, throwable) }
+    }
+
+    override fun onLogcatFailure(device: Device, durationMs: Long, throwable: Throwable) {
+        listeners.forEach { it.onLogcatFailure(device, durationMs, throwable) }
+    }
+
     override fun onRunTestPassed(device: Device, testName: String, durationMs: Long) {
         listeners.forEach { it.onRunTestPassed(device, testName, durationMs) }
     }

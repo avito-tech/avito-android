@@ -40,8 +40,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
                         buildId = buildId,
                         test = test,
                         status = Status.Skipped(test.skipReason),
-                        stdout = "",
-                        stderr = "",
+                        logcat = "",
                         incident = null,
                         video = null,
                         startTime = null,
@@ -56,8 +55,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
                         test = test,
                         // if incident available let backend decide status based on incident type
                         status = if (test.incident == null) Status.Lost else null,
-                        stdout = test.stdout,
-                        stderr = test.stderr,
+                        logcat = test.logcat,
                         incident = test.incident?.toInternal(),
                         video = null,
                         startTime = test.startTime,
@@ -73,8 +71,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
                         // определяется на бэке для success/fail по наличию incident,
                         // отправляем остальные статусы самостоятельно
                         status = null,
-                        stdout = test.stdout,
-                        stderr = test.stderr,
+                        logcat = test.logcat,
                         incident = test.incident?.toInternal(),
                         video = test.video?.let { Video(it.fileAddress, it.format) },
                         startTime = test.startTime,
@@ -103,8 +100,7 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
         buildId: String?,
         test: AndroidTest,
         status: Status?,
-        stdout: String,
-        stderr: String,
+        logcat: String,
         incident: Incident?,
         video: Video?,
         startTime: Long?,
@@ -213,12 +209,11 @@ internal class ReportsAddApiImpl(private val client: JsonRpcClient) : ReportsAdd
             "environment" to test.device.name,
             "report" to report,
             // тут происходит магия "с помощью оператора добавляется в массив новое значение билда"
-            // todo узнать у Жени как можно это лучше сделать
             "report_data" to reportData,
             // todo onlyIf present
             "console" to mapOf(
-                "stdout" to stdout,
-                "stderr" to stderr
+                "stdout" to logcat,
+                "stderr" to ""
             ),
             "prepared_data" to preparedData,
             "kind" to kind.tmsId

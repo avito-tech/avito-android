@@ -25,8 +25,7 @@ public sealed class AndroidTest : TestStaticData {
         override val flakiness: Flakiness,
         public val startTime: Long,
         public val lastSignalTime: Long,
-        public val stdout: String,
-        public val stderr: String,
+        public val logcat: String,
         public val incident: Incident?
     ) : AndroidTest() {
 
@@ -63,8 +62,7 @@ public sealed class AndroidTest : TestStaticData {
                     testStaticData = testStaticData,
                     startTime = currentTimeSec,
                     lastSignalTime = currentTimeSec,
-                    stdout = "",
-                    stderr = "",
+                    logcat = "",
                     incident = null
                 )
             }
@@ -73,8 +71,7 @@ public sealed class AndroidTest : TestStaticData {
                 testStaticData: TestStaticData,
                 startTime: Long,
                 lastSignalTime: Long,
-                stdout: String,
-                stderr: String,
+                logcat: String,
                 incident: Incident?
             ): Lost = Lost(
                 name = testStaticData.name,
@@ -91,8 +88,7 @@ public sealed class AndroidTest : TestStaticData {
                 flakiness = testStaticData.flakiness,
                 startTime = startTime,
                 lastSignalTime = lastSignalTime,
-                stdout = stdout,
-                stderr = stderr,
+                logcat = logcat,
                 incident = incident
             )
         }
@@ -189,8 +185,7 @@ public sealed class AndroidTest : TestStaticData {
         override val startTime: Long,
         override val endTime: Long,
         override val flakiness: Flakiness,
-        public val stdout: String,
-        public val stderr: String
+        public val logcat: String,
     ) : AndroidTest(), TestRuntimeData {
 
         override fun equals(other: Any?): Boolean {
@@ -222,8 +217,7 @@ public sealed class AndroidTest : TestStaticData {
             public fun create(
                 testStaticData: TestStaticData,
                 testRuntimeData: TestRuntimeData,
-                stdout: String,
-                stderr: String
+                logcat: String
             ): Completed = Completed(
                 name = testStaticData.name,
                 device = testStaticData.device,
@@ -244,8 +238,7 @@ public sealed class AndroidTest : TestStaticData {
                 startTime = testRuntimeData.startTime,
                 endTime = testRuntimeData.endTime,
                 flakiness = testStaticData.flakiness,
-                stdout = stdout,
-                stderr = stderr
+                logcat = logcat,
             )
         }
     }

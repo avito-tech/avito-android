@@ -2,6 +2,10 @@ package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.TestAttempt
+import com.avito.instrumentation.internal.logcat.BufferLogcatAccessor
+import com.avito.instrumentation.internal.logcat.LogcatBuffers
+import com.avito.instrumentation.internal.logcat.ResultLogcatAccessor
+import com.avito.instrumentation.internal.logcat.TailingLogcatBuffer
 import com.avito.report.model.AndroidTest
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.listener.TestResult
@@ -25,7 +29,7 @@ internal class LogcatTestLifecycleListener(
         val logcatFile = File(logcatDir, "${device.coordinate.serial}.txt")
 
         val key = LogcatBuffers.Key(test, executionNumber)
-        logcatBuffers.create(key, LogcatBuffer.Impl(logcatFile = logcatFile))
+        logcatBuffers.create(key, TailingLogcatBuffer(logcatFile = logcatFile))
     }
 
     override fun finished(
@@ -39,7 +43,10 @@ internal class LogcatTestLifecycleListener(
             result = result,
             test = test,
             executionNumber = executionNumber,
-            logcatBuffer = logcatBuffers.get(key)
+            logcatAccessor = when (result) {
+                is TestResult.Complete -> BufferLogcatAccessor(logcatBuffers.get(key))
+                is TestResult.Incomplete -> ResultLogcatAccessor(result.logcat)
+            }
         )
 
         when (testReport) {

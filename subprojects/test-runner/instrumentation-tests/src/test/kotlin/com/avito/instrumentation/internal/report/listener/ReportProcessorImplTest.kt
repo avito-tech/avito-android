@@ -2,6 +2,7 @@ package com.avito.instrumentation.internal.report.listener
 
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StubStatsdSender
+import com.avito.instrumentation.internal.logcat.StubLogcatAccessor
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.TestArtifactsProviderFactory
@@ -51,7 +52,7 @@ internal class ReportProcessorImplTest {
             result = TestResult.timeout(exceptionMessage = "timeout happened"),
             test = testCase,
             executionNumber = 1,
-            logcatBuffer = null
+            logcatAccessor = StubLogcatAccessor
         )
 
         assertThat<AndroidTest.Lost>(testResult) {
@@ -87,13 +88,12 @@ internal class ReportProcessorImplTest {
             result = TestResult.success(tempDir),
             test = testCase,
             executionNumber = 1,
-            logcatBuffer = null
+            logcatAccessor = StubLogcatAccessor
         )
 
         assertThat<AndroidTest.Completed>(testResult) {
             assertThat(incident).isNull()
-            assertThat(stdout).isEqualTo("logcat not uploaded")
-            assertThat(stderr).isEqualTo("logcat not uploaded")
+            assertThat(logcat).isEqualTo("logcat not uploaded")
         }
     }
 
@@ -124,13 +124,20 @@ internal class ReportProcessorImplTest {
             result = TestResult.success(tempDir),
             test = testCase,
             executionNumber = 1,
-            logcatBuffer = null
+            logcatAccessor = StubLogcatAccessor
         )
 
         assertThat<AndroidTest.Completed>(testResult) {
             assertThat(incident).isNotNull()
-            assertThat(stdout).isEqualTo("logcat not available")
-            assertThat(stderr).isEqualTo("logcat not available")
+            assertThat(logcat).isEqualTo(
+                """
+                    Logcat is not available:
+                    stub description
+                    Where : StubLogcatAccessor
+                    Why? : unknown
+                    
+                    """.trimIndent()
+            )
         }
     }
 
