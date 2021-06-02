@@ -166,8 +166,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
                 "you need to provide kubernetesCredentials"
             },
             projectName = project.name,
-            suppressFailure = suppressFailure.getOrElse(false),
-            suppressFlaky = suppressFlaky.getOrElse(false),
+            suppressFailure = getSuppressFailure(configuration),
+            suppressFlaky = getSuppressFlaky(configuration),
             impactAnalysisResult = ImpactAnalysisResult.create(
                 runOnlyChangedTests = runOnlyChangedTests.get(),
                 changedTestsFile = changedTests.asFile.orNull
@@ -207,6 +207,24 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             workerExecutor.inMemoryWork {
                 InstrumentationTestsAction(testRunParams).run()
             }
+        }
+    }
+
+    private fun getSuppressFlaky(instrumentationConfiguration: InstrumentationConfiguration.Data): Boolean {
+        // means comes from CiSteps plugin
+        return if (suppressFlaky.get() == true) {
+            true
+        } else {
+            instrumentationConfiguration.suppressFlaky
+        }
+    }
+
+    private fun getSuppressFailure(instrumentationConfiguration: InstrumentationConfiguration.Data): Boolean {
+        // means comes from CiSteps plugin
+        return if (suppressFailure.get() == true) {
+            true
+        } else {
+            instrumentationConfiguration.suppressFailure
         }
     }
 

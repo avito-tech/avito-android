@@ -21,6 +21,10 @@ public abstract class InstrumentationConfiguration(public val name: String) {
 
     public var enableDeviceDebug: Boolean = false
 
+    public var suppressFailure: Boolean = false
+
+    public var suppressFlaky: Boolean = false
+
     public var filter: String = "default"
 
     public abstract val targetsContainer: NamedDomainObjectContainer<TargetConfiguration>
@@ -59,6 +63,8 @@ public abstract class InstrumentationConfiguration(public val name: String) {
             },
             enableDeviceDebug = enableDeviceDebug,
             timeoutInSeconds = timeoutInSeconds,
+            suppressFailure = suppressFailure,
+            suppressFlaky = suppressFlaky,
             filter = filters.singleOrNull { it.name == filter }
                 ?: throw IllegalStateException("Can't find filter=$filter")
         )
@@ -73,6 +79,8 @@ public abstract class InstrumentationConfiguration(public val name: String) {
         val targets: List<TargetConfiguration.Data>,
         val enableDeviceDebug: Boolean,
         val timeoutInSeconds: Long,
+        val suppressFailure: Boolean,
+        val suppressFlaky: Boolean,
         val filter: InstrumentationFilter.Data
     ) : Serializable {
 
