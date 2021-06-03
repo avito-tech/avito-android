@@ -7,7 +7,7 @@ plugins {
      */
     base
     id("io.gitlab.arturbosch.detekt")
-    id("com.autonomousapps.dependency-analysis") version "0.55.0" apply false
+    id("com.autonomousapps.dependency-analysis") version "0.73.0"
     id("convention.libraries")
 
     // workaround to load plugin classes once:
@@ -24,12 +24,6 @@ buildscript {
             force("com.squareup.okio:okio:2.7.0")
         }
     }
-}
-
-if (gradle.startParameter.taskNames.contains("buildHealth")) {
-    // Reasons to disabling by default:
-    // The plugin schedules heavy LocateDependenciesTask tasks even without analysis
-    apply(plugin = "com.autonomousapps.dependency-analysis")
 }
 
 dependencies {
