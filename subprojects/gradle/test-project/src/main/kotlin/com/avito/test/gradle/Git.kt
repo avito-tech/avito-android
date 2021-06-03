@@ -1,12 +1,16 @@
 package com.avito.test.gradle
 
-import com.avito.logger.StubLoggerFactory
 import com.avito.utils.ProcessRunner
 import java.io.File
 import java.security.MessageDigest
+import java.time.Duration
 import java.util.Random
 
-fun File.git(command: String): String = processRunner().run("git $command").getOrThrow()
+fun File.git(command: String): String =
+    processRunner().run(
+        command = "git $command",
+        timeout = Duration.ofSeconds(10)
+    ).getOrThrow()
 
 fun File.getCommitHash(): String = git("rev-parse HEAD")
 
@@ -17,8 +21,7 @@ fun File.commit(message: String = "changes") {
 
 private fun File.processRunner(): ProcessRunner {
     return ProcessRunner.Real(
-        workingDirectory = this,
-        loggerFactory = StubLoggerFactory
+        workingDirectory = this
     )
 }
 

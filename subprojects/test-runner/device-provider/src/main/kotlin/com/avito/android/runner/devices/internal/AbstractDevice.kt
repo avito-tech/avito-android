@@ -5,11 +5,14 @@ import com.avito.instrumentation.internal.reservation.adb.waitForCondition
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.adb.Adb
-import com.avito.utils.runCommand
-import com.avito.utils.spawnProcess
+import com.avito.utils.ProcessRunner
 import java.io.File
+import java.time.Duration
 
-internal abstract class AbstractDevice(protected val loggerFactory: LoggerFactory) : Device {
+internal abstract class AbstractDevice(
+    protected val loggerFactory: LoggerFactory,
+    protected val processRunner: ProcessRunner,
+) : Device {
 
     private val logger = loggerFactory.create<AbstractDevice>()
 
@@ -25,13 +28,18 @@ internal abstract class AbstractDevice(protected val loggerFactory: LoggerFactor
             " ${tags.joinToString(" ")}"
         }
 
-        executeNonBlockingCommand(
-            command = "logcat$tagsString",
-            redirectOutputTo = file
+        // TODO stop endless process
+        processRunner.spawn(
+            command = "$adb -s $serial logcat$tagsString",
+            outputTo = file
         )
     }
 
-    protected fun isBootCompleted() = executeCommand(CHECK_BOOT_COMPLETED_COMMAND)
+    protected fun isBootCompleted() =
+        processRunner.run(
+            command = CHECK_BOOT_COMPLETED_COMMAND,
+            timeout = Duration.ofSeconds(10)
+        )
 
     protected suspend fun <T> waitForCommand(
         runner: suspend () -> Result<T>,
@@ -41,20 +49,6 @@ internal abstract class AbstractDevice(protected val loggerFactory: LoggerFactor
         maxAttempts = 50,
         condition = runner
     )
-
-    private fun executeCommand(command: String): Result<String> = runCommand(
-        command = "$adb -s $serial $command",
-        loggerFactory = loggerFactory
-    )
-
-    private fun executeNonBlockingCommand(
-        command: String,
-        redirectOutputTo: File? = null
-    ): Process =
-        spawnProcess(
-            command = "$adb -s $serial $command",
-            outputTo = redirectOutputTo
-        )
 }
 
 private const val CHECK_BOOT_COMPLETED_COMMAND = "shell getprop sys.boot_completed"

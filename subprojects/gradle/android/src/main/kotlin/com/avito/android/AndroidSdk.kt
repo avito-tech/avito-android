@@ -49,8 +49,7 @@ class AndroidSdk(
             return AndroidSdk(
                 androidHome = androidHome(project.rootDir, loggerFactory.create<AndroidSdk>()),
                 processRunner = ProcessRunner.Real(
-                    workingDirectory = null,
-                    loggerFactory = loggerFactory
+                    workingDirectory = null
                 ),
                 buildToolsVersion = buildToolsVersion
             )
@@ -65,7 +64,6 @@ class AndroidSdk(
                 androidHome = androidHome(project.rootDir, loggerFactory.create<AndroidSdk>()),
                 processRunner = ProcessRunner.Real(
                     workingDirectory = null,
-                    loggerFactory = loggerFactory
                 )
             )
         }

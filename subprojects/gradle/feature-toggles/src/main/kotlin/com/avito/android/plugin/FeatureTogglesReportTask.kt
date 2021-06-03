@@ -14,6 +14,7 @@ import org.gradle.kotlin.dsl.property
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -41,8 +42,7 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
         val loggerFactory = GradleLoggerFactory.fromTask(this)
 
         val processRunner = ProcessRunner.Real(
-            workingDirectory = project.projectDir,
-            loggerFactory = loggerFactory
+            workingDirectory = project.projectDir
         )
         val blameCodeLines = readBlameCodeLines(processRunner)
         val suspiciousToggles: List<Toggle> = SuspiciousTogglesCollector(
@@ -149,7 +149,11 @@ abstract class FeatureTogglesReportTask : DefaultTask() {
     private fun readBlameCodeLines(processRunner: ProcessRunner) =
         BlameParser().parseBlameCodeLines(processRunner.getBlame())
 
-    private fun ProcessRunner.getBlame() = run(command = "git blame -w ${featureTogglesFile.path} -et").getOrThrow()
+    private fun ProcessRunner.getBlame() =
+        run(
+            command = "git blame -w ${featureTogglesFile.path} -et",
+            timeout = Duration.ofSeconds(10)
+        ).getOrThrow()
 }
 
 private const val newLineEscaped = "\\n"
