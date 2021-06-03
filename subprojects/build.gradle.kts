@@ -9,6 +9,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
     id("com.autonomousapps.dependency-analysis") version "0.73.0"
     id("convention.libraries")
+    id("convention.dependency-updates")
 
     // workaround to load plugin classes once:
     // https://youtrack.jetbrains.com/issue/KT-31643#focus=Comments-27-3510019.0-0
