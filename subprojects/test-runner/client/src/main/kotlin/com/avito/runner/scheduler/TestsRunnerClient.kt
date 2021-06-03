@@ -97,7 +97,8 @@ class TestsRunnerClient {
                 add(
                     ArtifactsTestListener(
                         lifecycleListener = arguments.listener,
-                        loggerFactory = arguments.loggerFactory
+                        loggerFactory = arguments.loggerFactory,
+                        fetchLogcatForIncompleteTests = arguments.fetchLogcatForIncompleteTests
                     )
                 )
             }

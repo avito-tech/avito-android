@@ -93,6 +93,7 @@ internal class TestExecutorIntegrationTest {
         testReporter = TestLifecycleListener.STUB,
         configurationName = configurationName,
         loggerFactory = loggerFactory,
-        metricsConfig = metricsConfig
+        metricsConfig = metricsConfig,
+        fetchLogcatForIncompleteTests = false,
     )
 }

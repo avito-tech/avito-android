@@ -21,7 +21,8 @@ internal interface TestExecutorFactory {
         metricsConfig: RunnerMetricsConfig,
         outputDir: File,
         projectName: String,
-        tempLogcatDir: File
+        tempLogcatDir: File,
+        fetchLogcatForIncompleteTests: Boolean,
     ): TestExecutor
 
     class Implementation : TestExecutorFactory {
@@ -35,7 +36,8 @@ internal interface TestExecutorFactory {
             metricsConfig: RunnerMetricsConfig,
             outputDir: File,
             projectName: String,
-            tempLogcatDir: File
+            tempLogcatDir: File,
+            fetchLogcatForIncompleteTests: Boolean,
         ): TestExecutor {
             return TestExecutorImpl(
                 devicesProvider = devicesProviderFactory.create(
@@ -51,7 +53,8 @@ internal interface TestExecutorFactory {
                 testReporter = testReporter,
                 configurationName = configuration.name,
                 loggerFactory = loggerFactory,
-                metricsConfig = metricsConfig
+                metricsConfig = metricsConfig,
+                fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests
             )
         }
     }

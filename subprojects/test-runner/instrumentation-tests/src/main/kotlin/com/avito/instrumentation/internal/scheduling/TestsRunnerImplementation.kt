@@ -23,7 +23,8 @@ internal class TestsRunnerImplementation(
     private val metricsConfig: RunnerMetricsConfig,
     private val devicesProviderFactory: DevicesProviderFactory,
     private val tempLogcatDir: File,
-    private val projectName: String
+    private val projectName: String,
+    private val fetchLogcatForIncompleteTests: Boolean,
 ) : TestsRunner {
 
     override fun runTests(
@@ -57,7 +58,8 @@ internal class TestsRunnerImplementation(
             metricsConfig = metricsConfig,
             outputDir = outputDir,
             projectName = projectName,
-            tempLogcatDir = tempLogcatDir
+            tempLogcatDir = tempLogcatDir,
+            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests
         )
 
         executor.execute(
