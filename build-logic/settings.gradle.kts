@@ -3,6 +3,7 @@ rootProject.name = "build-logic"
 include("kotlin-convention")
 include("android-convention")
 include("testing-convention")
+include("dependencies-convention")
 include("publication")
 
 pluginManagement {
@@ -76,6 +77,17 @@ dependencyResolutionManagement {
             }
             filter {
                 includeGroup("org.jetbrains.trove4j")
+            }
+        }
+
+        exclusiveContent {
+            forRepository {
+                maven {
+                    setUrlOrProxy("gradle-plugins", "https://plugins.gradle.org/m2/")
+                }
+            }
+            filter {
+                includeModule("com.github.ben-manes", "gradle-versions-plugin")
             }
         }
     }
