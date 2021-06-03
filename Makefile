@@ -135,7 +135,7 @@ stage_ui_tests:
 	./gradlew -p $(project) $(log_level) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
 
 test_runner_instrumentation:
-	./gradlew -p samples :test-runner:instrumentationUi --stacktrace
+	./gradlew -p samples $(log_level) $(params) :test-runner:instrumentationUi
 
 unit_tests:
 	$(docker_command) ./gradlew -p $(project) $(log_level) $(params) test

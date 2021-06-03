@@ -24,6 +24,7 @@ internal class TestsRunnerImplementation(
     private val devicesProviderFactory: DevicesProviderFactory,
     private val tempLogcatDir: File,
     private val projectName: String,
+    private val saveTestArtifactsToOutputs: Boolean,
     private val fetchLogcatForIncompleteTests: Boolean,
 ) : TestsRunner {
 
@@ -59,7 +60,8 @@ internal class TestsRunnerImplementation(
             outputDir = outputDir,
             projectName = projectName,
             tempLogcatDir = tempLogcatDir,
-            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests
+            saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
+            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
         )
 
         executor.execute(
