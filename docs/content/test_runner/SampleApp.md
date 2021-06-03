@@ -14,6 +14,8 @@ Setup kubernetes context `contextName` in `~/.kube/config`.
 
 To run tests use: `make test_runner_instrumentation kubernetesContext=<contextName>`
 
+Most likely you want to enable [verbose logging](../contributing/Logging.md#verbose-mode)
+
 ## Clean up
 
 If test run stuck, resources in k8s should be freed automatically by cron script (set up in Avito).

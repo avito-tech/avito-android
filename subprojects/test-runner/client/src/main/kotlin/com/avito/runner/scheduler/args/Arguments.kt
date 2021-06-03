@@ -18,7 +18,7 @@ class Arguments(
     val reservation: DeviceReservation,
     val metricsConfig: RunnerMetricsConfig,
     val fetchLogcatForIncompleteTests: Boolean,
-    val saveTestArtifactsInOutputs: Boolean,
+    val saveTestArtifactsToOutputs: Boolean,
 ) {
 
     override fun toString(): String {

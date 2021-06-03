@@ -31,7 +31,7 @@ internal class TestExecutorImpl(
     private val configurationName: String,
     private val loggerFactory: LoggerFactory,
     private val metricsConfig: RunnerMetricsConfig,
-    private val saveTestArtifactsInOutputs: Boolean,
+    private val saveTestArtifactsToOutputs: Boolean,
     private val fetchLogcatForIncompleteTests: Boolean,
 ) : TestExecutor {
 
@@ -74,7 +74,7 @@ internal class TestExecutorImpl(
                 listener = testReporter,
                 reservation = devicesProvider,
                 metricsConfig = metricsConfig,
-                saveTestArtifactsInOutputs = saveTestArtifactsInOutputs,
+                saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
                 fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
             )
 

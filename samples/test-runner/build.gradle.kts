@@ -51,7 +51,7 @@ instrumentation {
         useInMemoryReport.set(true)
         useService.set(false) // todo fix broken
         fetchLogcatForIncompleteTests.set(true)
-        saveTestArtifactsInOutputs.set(true)
+        saveTestArtifactsToOutputs.set(true)
     }
 
     val credentials = project.kubernetesCredentials

@@ -22,7 +22,7 @@ internal interface TestExecutorFactory {
         outputDir: File,
         projectName: String,
         tempLogcatDir: File,
-        saveTestArtifactsInOutputs: Boolean,
+        saveTestArtifactsToOutputs: Boolean,
         fetchLogcatForIncompleteTests: Boolean,
     ): TestExecutor
 
@@ -38,7 +38,7 @@ internal interface TestExecutorFactory {
             outputDir: File,
             projectName: String,
             tempLogcatDir: File,
-            saveTestArtifactsInOutputs: Boolean,
+            saveTestArtifactsToOutputs: Boolean,
             fetchLogcatForIncompleteTests: Boolean,
         ): TestExecutor {
             return TestExecutorImpl(
@@ -56,7 +56,7 @@ internal interface TestExecutorFactory {
                 configurationName = configuration.name,
                 loggerFactory = loggerFactory,
                 metricsConfig = metricsConfig,
-                saveTestArtifactsInOutputs = saveTestArtifactsInOutputs,
+                saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
                 fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
             )
         }

@@ -99,7 +99,7 @@ class TestsRunnerClient {
                         lifecycleListener = arguments.listener,
                         outputDirectory = arguments.outputDirectory,
                         loggerFactory = arguments.loggerFactory,
-                        saveTestArtifactsInOutputs = arguments.saveTestArtifactsInOutputs,
+                        saveTestArtifactsToOutputs = arguments.saveTestArtifactsToOutputs,
                         fetchLogcatForIncompleteTests = arguments.fetchLogcatForIncompleteTests,
                     )
                 )

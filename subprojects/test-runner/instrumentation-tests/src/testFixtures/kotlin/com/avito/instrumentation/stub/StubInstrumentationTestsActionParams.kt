@@ -35,7 +35,7 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     useInMemoryReport: Boolean = false,
     uploadTestArtifacts: Boolean = false,
     fetchLogcatForIncompleteTests: Boolean = false,
-    saveTestArtifactsInOutputs: Boolean = false,
+    saveTestArtifactsToOutputs: Boolean = false,
 ) = InstrumentationTestsAction.Params(
     mainApk = mainApk,
     testApk = testApk,
@@ -57,6 +57,6 @@ internal fun InstrumentationTestsAction.Params.Companion.createStubInstance(
     useInMemoryReport = useInMemoryReport,
     uploadTestArtifacts = uploadTestArtifacts,
     reportViewerConfig = null,
-    saveTestArtifactsInOutputs = saveTestArtifactsInOutputs,
+    saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
     fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
 )
