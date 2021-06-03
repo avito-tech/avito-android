@@ -172,6 +172,9 @@ clean_fast_check:
 detekt:
 	$(docker_command) ./gradlew $(project) $(log_level) $(params) detektAll
 
+build_health:
+	$(docker_command) ./gradlew $(project) $(log_level) $(params) buildHealth
+
 build_android_image:
 	cd ./ci/docker/android-builder && \
 	docker build -t android-builder .
