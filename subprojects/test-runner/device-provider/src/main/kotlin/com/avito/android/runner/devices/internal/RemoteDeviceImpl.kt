@@ -20,29 +20,32 @@ internal class RemoteDeviceImpl(
             timeout = Duration.ofSeconds(10)
         )
 
-    override fun connect(): Result<String> {
+    private suspend fun connect(): Result<String> {
         disconnect()
 
-        return processRunner.run(
-            command = "$adb connect $serial",
-            timeout = Duration.ofSeconds(30)
+        return waitForCommand(
+            command = {
+                processRunner.run(
+                    command = "$adb connect $serial",
+                    timeout = Duration.ofSeconds(30)
+                )
+            },
+            timeoutSec = 120,
+            attempts = 12,
+            frequencySec = 10
         )
     }
 
-    override suspend fun waitForBoot() = waitForCommand(
-        runner = {
-            connectAndCheck().flatMap { output ->
-                if (output == "1") {
-                    Result.Success(output)
-                } else {
-                    Result.Failure(RuntimeException("Failed to connect to $serial"))
+    override suspend fun waitForBoot(): Result<String> {
+        return connect().flatMap {
+            isBootCompleted()
+                .flatMap { bootResult ->
+                    if (bootResult == "1") {
+                        Result.Success(bootResult)
+                    } else {
+                        Result.Failure(RuntimeException("Failed to connect to $serial"))
+                    }
                 }
-            }
         }
-    )
-
-    private fun connectAndCheck(): Result<String> {
-        connect()
-        return isBootCompleted()
     }
 }
