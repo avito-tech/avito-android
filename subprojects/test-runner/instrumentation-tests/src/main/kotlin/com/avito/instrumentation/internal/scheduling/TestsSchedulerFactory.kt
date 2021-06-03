@@ -112,7 +112,8 @@ internal interface TestsSchedulerFactory {
                 metricsConfig = metricsConfig,
                 devicesProviderFactory = devicesProviderFactory,
                 tempLogcatDir = tempDir,
-                projectName = params.projectName
+                projectName = params.projectName,
+                fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests
             )
         }
 

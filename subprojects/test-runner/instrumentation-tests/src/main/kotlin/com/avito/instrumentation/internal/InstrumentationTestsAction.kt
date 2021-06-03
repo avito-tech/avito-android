@@ -83,7 +83,8 @@ internal class InstrumentationTestsAction(
         val reportViewerConfig: ReportViewerConfig?,
         val proguardMappings: List<File>,
         val useInMemoryReport: Boolean,
-        val uploadTestArtifacts: Boolean
+        val uploadTestArtifacts: Boolean,
+        val fetchLogcatForIncompleteTests: Boolean,
     ) : Serializable {
         companion object
     }

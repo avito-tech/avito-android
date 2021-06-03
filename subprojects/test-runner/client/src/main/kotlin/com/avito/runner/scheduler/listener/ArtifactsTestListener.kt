@@ -19,7 +19,8 @@ import kotlin.io.path.div
 
 internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
-    loggerFactory: LoggerFactory
+    loggerFactory: LoggerFactory,
+    private val fetchLogcatForIncompleteTests: Boolean,
 ) : TestListener {
 
     private val logger = loggerFactory.create<ArtifactsTestListener>()
@@ -67,7 +68,13 @@ internal class ArtifactsTestListener(
             is InfrastructureError ->
                 TestResult.Incomplete(
                     infraError = result,
-                    logcat = device.logcat(LOGCAT_LAST_LINES)
+                    logcat = if (fetchLogcatForIncompleteTests) {
+                        device.logcat(LOGCAT_LAST_LINES)
+                    } else {
+                        Result.Failure(
+                            RuntimeException("fetchLogcatForIncompleteTests is disabled in config")
+                        )
+                    }
                 )
 
             Ignored ->
@@ -76,7 +83,7 @@ internal class ArtifactsTestListener(
                         IllegalStateException("Instrumentation executed Ignored test")
                     ),
                     logcat = Result.Failure(
-                        IllegalStateException("Logcat is not needed for ignored test case")
+                        RuntimeException("Logcat is not needed for ignored test case")
                     )
                 )
         }
