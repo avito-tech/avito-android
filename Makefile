@@ -134,8 +134,9 @@ stage_ui_tests:
 	make publish_to_maven_local
 	./gradlew -p $(project) $(log_level) $(params) :android-test:ui-testing-core-app:instrumentationUi -DinfraVersion=local
 
+# todo remove --no-daemon MBS-11385
 test_runner_instrumentation:
-	./gradlew -p samples $(log_level) $(params) :test-runner:instrumentationUi
+	./gradlew -p samples $(log_level) $(params) :test-runner:instrumentationUi --no-daemon
 
 unit_tests:
 	$(docker_command) ./gradlew -p $(project) $(log_level) $(params) test
@@ -253,3 +254,6 @@ dynamic_properties:
 check_avito_configuration:
 	make publish_to_maven_local
 	cd ../avito-android && ./gradlew tasks -DinfraVersion=local
+
+dependency_updates:
+	$(docker_command) ./gradlew -p $(project) $(log_level) $(params) dependencyUpdates -Drevision=release

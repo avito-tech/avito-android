@@ -186,6 +186,7 @@ pluginManagement {
                 includeGroupByRegex("nebula\\..*")
                 includeGroup("io.gitlab.arturbosch.detekt")
                 includeGroup("com.autonomousapps.dependency-analysis")
+                includeGroup("com.github.ben-manes.versions")
             }
         }
     }
