@@ -10,7 +10,10 @@ sealed class TestResult {
         companion object
     }
 
-    class Incomplete(val infraError: TestCaseRun.Result.Failed.InfrastructureError) : TestResult() {
+    class Incomplete(
+        val infraError: TestCaseRun.Result.Failed.InfrastructureError,
+        val logcat: Result<String>
+    ) : TestResult() {
         companion object
     }
 

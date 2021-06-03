@@ -115,7 +115,8 @@ public object InstrumentationPluginConfiguration {
                 testProguardMapping = testProguardMapping,
                 experimental = Data.Experimental(
                     useService = experimental.useService.getOrElse(false),
-                    useInMemoryReport = experimental.useInMemoryReport.getOrElse(false)
+                    useInMemoryReport = experimental.useInMemoryReport.getOrElse(false),
+                    fetchLogcatForIncompleteTests = experimental.fetchLogcatForIncompleteTests.getOrElse(false)
                 )
             )
         }
@@ -135,7 +136,8 @@ public object InstrumentationPluginConfiguration {
 
             public data class Experimental(
                 val useService: Boolean,
-                val useInMemoryReport: Boolean
+                val useInMemoryReport: Boolean,
+                val fetchLogcatForIncompleteTests: Boolean
             ) : Serializable
 
             public data class ReportViewer(

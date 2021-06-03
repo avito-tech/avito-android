@@ -125,6 +125,18 @@ class AdbDeviceMetrics(
         statsDSender.send(TimeMetric(prefixWithDevice(device).append("list", "failure"), durationMs))
     }
 
+    override fun onLogcatSuccess(device: Device, durationMs: Long) {
+        statsDSender.send(TimeMetric(prefixWithDevice(device).append("logcat", "success"), durationMs))
+    }
+
+    override fun onLogcatError(device: Device, durationMs: Long, throwable: Throwable) {
+        statsDSender.send(TimeMetric(prefixWithDevice(device).append("logcat", "error"), durationMs))
+    }
+
+    override fun onLogcatFailure(device: Device, durationMs: Long, throwable: Throwable) {
+        statsDSender.send(TimeMetric(prefixWithDevice(device).append("logcat", "failure"), durationMs))
+    }
+
     override fun onRunTestPassed(device: Device, testName: String, durationMs: Long) {
         statsDSender.send(TimeMetric(prefixWithDevice(device).append("run-test", "passed"), durationMs))
     }

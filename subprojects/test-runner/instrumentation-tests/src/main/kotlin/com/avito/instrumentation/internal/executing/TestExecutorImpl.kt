@@ -30,7 +30,8 @@ internal class TestExecutorImpl(
     private val testReporter: TestLifecycleListener,
     private val configurationName: String,
     private val loggerFactory: LoggerFactory,
-    private val metricsConfig: RunnerMetricsConfig
+    private val metricsConfig: RunnerMetricsConfig,
+    private val fetchLogcatForIncompleteTests: Boolean,
 ) : TestExecutor {
 
     private val logger = loggerFactory.create<TestExecutor>()
@@ -71,7 +72,8 @@ internal class TestExecutorImpl(
                 loggerFactory = loggerFactory,
                 listener = testReporter,
                 reservation = devicesProvider,
-                metricsConfig = metricsConfig
+                metricsConfig = metricsConfig,
+                fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests
             )
 
             logger.debug("Arguments: $runnerArguments")

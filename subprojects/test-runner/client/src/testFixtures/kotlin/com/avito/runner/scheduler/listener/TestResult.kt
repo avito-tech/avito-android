@@ -12,5 +12,6 @@ fun TestResult.Companion.timeout(timeoutMin: Long = 5, exceptionMessage: String 
         TestCaseRun.Result.Failed.InfrastructureError.Timeout(
             timeoutMin = timeoutMin,
             error = RuntimeException(exceptionMessage)
-        )
+        ),
+        logcat = Result.Failure(IllegalStateException("stub"))
     )

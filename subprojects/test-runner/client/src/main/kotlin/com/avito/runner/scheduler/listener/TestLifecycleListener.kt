@@ -18,7 +18,9 @@ interface TestLifecycleListener {
     )
 
     companion object {
+
         val STUB = object : TestLifecycleListener {
+
             override fun started(test: TestCase, device: Device, executionNumber: Int) {
             }
 

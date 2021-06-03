@@ -4,6 +4,7 @@ import com.avito.android.Problem
 import com.avito.android.Result
 import com.avito.android.asPlainText
 import com.avito.android.asRuntimeException
+import com.avito.instrumentation.internal.logcat.LogcatAccessor
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -39,7 +40,7 @@ internal class ReportProcessorImpl(
         result: TestResult,
         test: TestCase,
         executionNumber: Int,
-        logcatBuffer: LogcatBuffer?
+        logcatAccessor: LogcatAccessor
     ): AndroidTest {
 
         val testFromSuite = requireNotNull(testSuite[test]) { "Can't find test in suite: ${test.testName}" }
@@ -51,7 +52,7 @@ internal class ReportProcessorImpl(
                         testArtifactsProcessor.process(
                             reportDir = reportDir,
                             testStaticData = testFromSuite,
-                            logcatBuffer = logcatBuffer
+                            logcatAccessor = logcatAccessor
                         )
                     }
                     .rescue { throwable ->
@@ -75,7 +76,7 @@ internal class ReportProcessorImpl(
                         processFailure(
                             problem = problem,
                             testStaticData = testFromSuite,
-                            logcatBuffer = logcatBuffer
+                            logcatAccessor = logcatAccessor
                         )
                     }.getOrThrow()
 
@@ -120,7 +121,7 @@ internal class ReportProcessorImpl(
                     processFailure(
                         problem = problem,
                         testStaticData = testFromSuite,
-                        logcatBuffer = logcatBuffer
+                        logcatAccessor = logcatAccessor
                     ).getOrThrow()
                 }
         }
@@ -129,19 +130,15 @@ internal class ReportProcessorImpl(
     private fun processFailure(
         problem: Problem,
         testStaticData: TestStaticData,
-        logcatBuffer: LogcatBuffer?
+        logcatAccessor: LogcatAccessor
     ): Result<AndroidTest> {
         val scope = CoroutineScope(CoroutineName("test-artifacts-failure-${testStaticData.name}") + dispatcher)
 
         return runBlocking {
             withContext(scope.coroutineContext) {
 
-                val stdout = async {
-                    logcatProcessor.process(logcatBuffer?.getStdout(), isUploadNeeded = true)
-                }
-
-                val stderr = async {
-                    logcatProcessor.process(logcatBuffer?.getStderr(), isUploadNeeded = true)
+                val logcat = async {
+                    logcatProcessor.process(logcatAccessor, isUploadNeeded = true)
                 }
 
                 val now = timeProvider.nowInSeconds()
@@ -151,8 +148,7 @@ internal class ReportProcessorImpl(
                         testStaticData,
                         startTime = now,
                         lastSignalTime = now,
-                        stdout = stdout.await(),
-                        stderr = stderr.await(),
+                        logcat = logcat.await(),
                         incident = Incident(
                             type = Incident.Type.INFRASTRUCTURE_ERROR,
                             timestamp = now,

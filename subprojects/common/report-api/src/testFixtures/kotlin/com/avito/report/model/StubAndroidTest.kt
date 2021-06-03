@@ -6,13 +6,11 @@ import com.avito.android.test.annotations.TestCasePriority
 public fun AndroidTest.Completed.Companion.createStubInstance(
     testStaticData: TestStaticData = TestStaticDataPackage.createStubInstance(),
     testRuntimeData: TestRuntimeData = TestRuntimeDataPackage.createStubInstance(),
-    stdout: String = "",
-    stderr: String = ""
+    logcat: String = ""
 ): AndroidTest.Completed = create(
     testStaticData = testStaticData,
     testRuntimeData = testRuntimeData,
-    stdout = stdout,
-    stderr = stderr
+    logcat = logcat
 )
 
 public fun AndroidTest.Lost.Companion.createStubInstance(
@@ -20,14 +18,12 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
     startTime: Long = 0,
     lastSignalTime: Long = 0,
     stdout: String = "",
-    stderr: String = "",
     incident: Incident? = null
 ): AndroidTest.Lost = fromTestStaticData(
-    testStaticData,
-    startTime,
-    lastSignalTime,
-    stdout,
-    stderr,
+    testStaticData = testStaticData,
+    startTime = startTime,
+    lastSignalTime = lastSignalTime,
+    logcat = stdout,
     incident = incident
 )
 
@@ -46,8 +42,7 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
     behavior: TestCaseBehavior? = null,
     kind: Kind = Kind.E2E,
     flakiness: Flakiness = Flakiness.Stable,
-    stdout: String = "",
-    stderr: String = "",
+    logcat: String = "",
     incident: Incident? = null
 ): AndroidTest.Lost = fromTestStaticData(
     TestStaticDataPackage(
@@ -66,8 +61,7 @@ public fun AndroidTest.Lost.Companion.createStubInstance(
     ),
     startTime = startTime,
     lastSignalTime = lastSignalTime,
-    stdout = stdout,
-    stderr = stderr,
+    logcat = logcat,
     incident = incident
 )
 

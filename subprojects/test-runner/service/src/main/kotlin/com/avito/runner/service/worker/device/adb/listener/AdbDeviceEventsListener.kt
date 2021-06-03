@@ -148,6 +148,23 @@ interface AdbDeviceEventsListener {
         durationMs: Long
     )
 
+    fun onLogcatSuccess(
+        device: Device,
+        durationMs: Long
+    )
+
+    fun onLogcatError(
+        device: Device,
+        durationMs: Long,
+        throwable: Throwable
+    )
+
+    fun onLogcatFailure(
+        device: Device,
+        durationMs: Long,
+        throwable: Throwable
+    )
+
     fun onRunTestPassed(
         device: Device,
         testName: String,

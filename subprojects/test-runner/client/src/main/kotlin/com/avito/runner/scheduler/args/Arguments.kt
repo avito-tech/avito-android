@@ -16,7 +16,8 @@ class Arguments(
     val loggerFactory: LoggerFactory,
     val listener: TestLifecycleListener,
     val reservation: DeviceReservation,
-    val metricsConfig: RunnerMetricsConfig
+    val metricsConfig: RunnerMetricsConfig,
+    val fetchLogcatForIncompleteTests: Boolean,
 ) {
 
     override fun toString(): String {

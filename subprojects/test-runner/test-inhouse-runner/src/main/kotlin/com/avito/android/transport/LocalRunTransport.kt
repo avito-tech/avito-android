@@ -82,8 +82,7 @@ internal class LocalRunTransport(
                         endTime = state.endTime
                     ),
                     // local runs already has logcat in place
-                    stdout = "",
-                    stderr = ""
+                    logcat = ""
                 )
             )
 

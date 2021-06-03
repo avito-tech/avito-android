@@ -1,4 +1,4 @@
-package com.avito.instrumentation.internal.report.listener
+package com.avito.instrumentation.internal.logcat
 
 import com.avito.runner.service.model.TestCase
 

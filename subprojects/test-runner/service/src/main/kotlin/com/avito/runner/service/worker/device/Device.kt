@@ -44,6 +44,11 @@ interface Device {
 
     fun deviceStatus(): DeviceStatus
 
+    /**
+     * Fetch logcat [lines] deep
+     */
+    fun logcat(lines: Int): Result<String>
+
     sealed class DeviceStatus {
 
         object Alive : DeviceStatus() {
