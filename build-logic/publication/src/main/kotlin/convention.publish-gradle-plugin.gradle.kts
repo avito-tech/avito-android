@@ -30,8 +30,10 @@ publishing {
                     val pluginName = pluginDeclaration.id.substringAfter("$pluginPrefix.")
 
                     require(project.name == pluginName) {
-                        // see isAutomatedPublishing note
-                        "Plugin name should be equal to gradle module name to simplify resolving"
+                        // See isAutomatedPublishing comments above
+                        "Gradle plugin '${pluginDeclaration.id}' (${pluginDeclaration.name}) " +
+                            "must have id '${pluginPrefix}.${project.name}'. " +
+                            "This is due to a publication issue: MBS-10660"
                     }
 
                     artifactId = pluginName

@@ -1,6 +1,11 @@
 package com.avito.android.build_trace.internal
 
-import com.avito.android.build_trace.internal.critical_path.TaskOperation
+import com.avito.android.Problem
+import com.avito.android.asRuntimeException
+import com.avito.android.critical_path.TaskDependenciesResolutionResult
+import com.avito.android.critical_path.TaskOperation
+import com.avito.android.critical_path.predecessors
+import com.avito.android.critical_path.type
 import com.avito.android.gradle.profile.BuildProfile
 import com.avito.android.gradle.profile.TaskExecution
 import com.avito.android.trace.CompleteEvent
@@ -15,11 +20,14 @@ import java.util.concurrent.TimeUnit
 internal class TraceEventProvider {
 
     fun taskExecutionEvent(task: Task, state: TaskExecution): TraceEvent {
-        val predecessorTasks = task.predecessors
-            .tasks
-            .map {
-                taskShortDescription(it, task.project)
-            }
+        val predecessorTasks = when (val resolutionResult = task.predecessors) {
+            is TaskDependenciesResolutionResult.Success -> resolutionResult.tasks
+                .map {
+                    taskShortDescription(it, task.project)
+                }
+            is TaskDependenciesResolutionResult.Failed -> throwDependencyResolutionProblem(task, resolutionResult)
+        }
+
         val finalizeTasks = task.finalizedBy
             .getDependencies(task)
             .map {
@@ -46,6 +54,24 @@ internal class TraceEventProvider {
             color = state.extractColor(),
             args = metadata
         )
+    }
+
+    private fun throwDependencyResolutionProblem(
+        task: Task,
+        result: TaskDependenciesResolutionResult.Failed
+    ): Nothing {
+        throw Problem.Builder(
+            shortDescription = "Can't find predecessors for task ${task.path}",
+            context = "Calculating build critical path"
+        )
+            .addSolution("Disable a plugin")
+            .addSolution(
+                "Suppress a specific error explicitly. " +
+                    "See TaskDependenciesResolutionResult implementation."
+            )
+            .throwable(result.problem)
+            .build()
+            .asRuntimeException()
     }
 
     fun initWithConfigurationEvent(profile: BuildProfile) = CompleteEvent(
@@ -80,7 +106,7 @@ internal class TraceEventProvider {
     fun criticalPathEvent(event: TraceEvent, path: OperationsPath<TaskOperation>): TraceEvent {
         if (event !is CompleteEvent) return event
 
-        val inPath = path.operations.firstOrNull { it.path == event.eventName } != null
+        val inPath = path.operations.firstOrNull { it.path.toString() == event.eventName } != null
         return if (inPath) {
             event.copy(
                 color = TraceEvent.COLOR_YELLOW,

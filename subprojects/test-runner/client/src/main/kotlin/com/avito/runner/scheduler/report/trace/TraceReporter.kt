@@ -3,7 +3,7 @@ package com.avito.runner.scheduler.report.trace
 import com.avito.android.trace.CompleteEvent
 import com.avito.android.trace.TraceEvent
 import com.avito.android.trace.TraceReport
-import com.avito.android.trace.TraceReportClient
+import com.avito.android.trace.TraceReportFileAdapter
 import com.avito.runner.scheduler.report.Reporter
 import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.service.model.TestCaseRun
@@ -20,7 +20,7 @@ internal class TraceReporter(
 
         outputDirectory.mkdirs()
         val outputFile = File(outputDirectory, "report.trace")
-        TraceReportClient().writeTo(outputFile, traceReport)
+        TraceReportFileAdapter(outputFile).write(traceReport)
     }
 
     private fun makeTraceReport(report: SummaryReport): TraceReport {

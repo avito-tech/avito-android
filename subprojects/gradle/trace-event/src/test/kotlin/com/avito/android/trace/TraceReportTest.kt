@@ -62,10 +62,9 @@ class TraceReportTest {
             traceEvents = events
         )
         val file = createTempFile(directory = tempDir).toFile()
-        val client = TraceReportClient()
+        TraceReportFileAdapter(file).write(report)
 
-        client.writeTo(file, report)
-        val deserialized = client.readFrom(file)
+        val deserialized = TraceReportFileAdapter(file).read()
 
         assertThat(deserialized).isEqualTo(report)
     }
