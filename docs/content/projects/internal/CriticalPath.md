@@ -15,7 +15,7 @@ plugins {
     id("com.avito.android.critical-path")
 }
 
-buildTrace {
+criticalPath {
     enabled.set(true)
 }
 ```
