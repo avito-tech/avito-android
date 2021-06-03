@@ -56,7 +56,8 @@ internal class InstrumentationTestsActionIntegrationTest {
             metricsConfig: RunnerMetricsConfig,
             outputDir: File,
             projectName: String,
-            tempLogcatDir: File
+            tempLogcatDir: File,
+            fetchLogcatForIncompleteTests: Boolean,
         ): TestExecutor {
             return testRunner
         }

@@ -11,4 +11,6 @@ public abstract class ExperimentalExtension {
     public abstract val useService: Property<Boolean>
 
     public abstract val useInMemoryReport: Property<Boolean>
+
+    public abstract val fetchLogcatForIncompleteTests: Property<Boolean>
 }
