@@ -94,6 +94,7 @@ internal class TestExecutorIntegrationTest {
         configurationName = configurationName,
         loggerFactory = loggerFactory,
         metricsConfig = metricsConfig,
+        saveTestArtifactsToOutputs = false,
         fetchLogcatForIncompleteTests = false,
     )
 }

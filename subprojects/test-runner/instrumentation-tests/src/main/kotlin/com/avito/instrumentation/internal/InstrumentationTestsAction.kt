@@ -85,6 +85,7 @@ internal class InstrumentationTestsAction(
         val useInMemoryReport: Boolean,
         val uploadTestArtifacts: Boolean,
         val fetchLogcatForIncompleteTests: Boolean,
+        val saveTestArtifactsToOutputs: Boolean,
     ) : Serializable {
         companion object
     }

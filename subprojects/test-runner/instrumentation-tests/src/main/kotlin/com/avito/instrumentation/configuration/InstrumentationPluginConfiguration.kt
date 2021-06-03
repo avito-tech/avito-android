@@ -116,6 +116,7 @@ public object InstrumentationPluginConfiguration {
                 experimental = Data.Experimental(
                     useService = experimental.useService.getOrElse(false),
                     useInMemoryReport = experimental.useInMemoryReport.getOrElse(false),
+                    saveTestArtifactsToOutputs = experimental.saveTestArtifactsToOutputs.getOrElse(false),
                     fetchLogcatForIncompleteTests = experimental.fetchLogcatForIncompleteTests.getOrElse(false)
                 )
             )
@@ -137,6 +138,7 @@ public object InstrumentationPluginConfiguration {
             public data class Experimental(
                 val useService: Boolean,
                 val useInMemoryReport: Boolean,
+                val saveTestArtifactsToOutputs: Boolean,
                 val fetchLogcatForIncompleteTests: Boolean
             ) : Serializable
 

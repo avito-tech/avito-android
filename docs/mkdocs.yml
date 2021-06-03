@@ -99,6 +99,7 @@ nav:
     -   Test runner:
             - test_runner/TestRunner.md
             -   Metrics: test_runner/Metrics.md
+            -   Sample app: test_runner/SampleApp.md
     -   Blog:
             -   2021:
                     -   01:
