@@ -5,11 +5,14 @@ import com.avito.instrumentation.internal.reservation.adb.waitForCondition
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.worker.device.adb.Adb
-import com.avito.utils.runCommand
-import com.avito.utils.spawnProcess
+import com.avito.utils.ProcessRunner
 import java.io.File
+import java.time.Duration
 
-internal abstract class AbstractDevice(protected val loggerFactory: LoggerFactory) : Device {
+internal abstract class AbstractDevice(
+    protected val loggerFactory: LoggerFactory,
+    protected val processRunner: ProcessRunner,
+) : Device {
 
     private val logger = loggerFactory.create<AbstractDevice>()
 
@@ -25,36 +28,36 @@ internal abstract class AbstractDevice(protected val loggerFactory: LoggerFactor
             " ${tags.joinToString(" ")}"
         }
 
-        executeNonBlockingCommand(
-            command = "logcat$tagsString",
-            redirectOutputTo = file
+        // TODO stop endless process
+        processRunner.spawn(
+            command = "$adb -s $serial logcat$tagsString",
+            outputTo = file
         )
     }
 
-    protected fun isBootCompleted() = executeCommand(CHECK_BOOT_COMPLETED_COMMAND)
+    protected suspend fun isBootCompleted() =
+        waitForCommand(
+            command = {
+                processRunner.run(
+                    command = "$adb -s $serial $CHECK_BOOT_COMPLETED_COMMAND",
+                    timeout = Duration.ofSeconds(10)
+                )
+            }
+        )
 
     protected suspend fun <T> waitForCommand(
-        runner: suspend () -> Result<T>,
+        command: suspend () -> Result<T>,
+        attempts: Int = 12,
+        frequencySec: Long = 5,
+        timeoutSec: Long = 60
     ) = waitForCondition(
         logger = logger,
         conditionName = "Wait device with serial: $serial",
-        maxAttempts = 50,
-        condition = runner
+        maxAttempts = attempts,
+        frequencySeconds = frequencySec,
+        timeoutSec = timeoutSec,
+        condition = command
     )
-
-    private fun executeCommand(command: String): Result<String> = runCommand(
-        command = "$adb -s $serial $command",
-        loggerFactory = loggerFactory
-    )
-
-    private fun executeNonBlockingCommand(
-        command: String,
-        redirectOutputTo: File? = null
-    ): Process =
-        spawnProcess(
-            command = "$adb -s $serial $command",
-            outputTo = redirectOutputTo
-        )
 }
 
 private const val CHECK_BOOT_COMPLETED_COMMAND = "shell getprop sys.boot_completed"

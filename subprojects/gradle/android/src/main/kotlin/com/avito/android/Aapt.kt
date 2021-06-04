@@ -4,6 +4,7 @@ import com.avito.utils.ExistingDirectory
 import com.avito.utils.ExistingFile
 import com.avito.utils.ProcessRunner
 import java.io.File
+import java.time.Duration
 
 interface Aapt {
 
@@ -16,7 +17,10 @@ interface Aapt {
         private val aaptPath: ExistingFile = buildToolsPath.file("/aapt")
 
         override fun getPackageName(apk: File): Result<String> {
-            return processRunner.run("$aaptPath dump badging $apk")
+            return processRunner.run(
+                command = "$aaptPath dump badging $apk",
+                timeout = Duration.ofSeconds(60)
+            )
                 .flatMap {
                     val result = signatureRegex.find(it)
                         ?.groupValues

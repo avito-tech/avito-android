@@ -2,6 +2,7 @@ package com.avito.android.runner.devices.internal.kubernetes
 
 import com.avito.android.Result
 import com.avito.android.runner.devices.internal.FakeAndroidDebugBridge
+import com.avito.android.runner.devices.internal.FakeRemoteDevice
 import com.avito.android.runner.devices.internal.StubEmulatorsLogsReporter
 import com.avito.android.runner.devices.model.ReservationData
 import com.avito.android.runner.devices.model.stub
@@ -26,14 +27,17 @@ import java.util.concurrent.TimeUnit
 internal class KubernetesReservationClientTest {
 
     private val kubernetesApi = FakeKubernetesApi()
+    private val androidDebugBridge = FakeAndroidDebugBridge()
     private val dispatcher = TestCoroutineDispatcher()
     private fun runBlockingTest(block: suspend TestCoroutineScope.() -> Unit) {
         dispatcher.runBlockingTest(block)
     }
 
-    private fun client(dispatcher: CoroutineDispatcher = this.dispatcher): KubernetesReservationClient {
+    private fun client(
+        dispatcher: CoroutineDispatcher = this.dispatcher,
+    ): KubernetesReservationClient {
         return KubernetesReservationClient(
-            androidDebugBridge = FakeAndroidDebugBridge(),
+            androidDebugBridge = androidDebugBridge,
             kubernetesApi = kubernetesApi,
             emulatorsLogsReporter = StubEmulatorsLogsReporter,
             loggerFactory = StubLoggerFactory,
@@ -155,5 +159,27 @@ internal class KubernetesReservationClientTest {
             delay(100) // wait inner parts of `claim` fun
             client.release()
         }
+    }
+
+    @Test
+    fun `can't boot device and then delete device fail - throws exception`() {
+        androidDebugBridge.remoteDeviceProvider = { serial ->
+            FakeRemoteDevice(serial).also {
+                it.waitForBoot = { Result.Failure(RuntimeException("Wait for boot failed")) }
+            }
+        }
+        kubernetesApi.getPods = { Result.Success(listOf(StubPod())) }
+        val expectedMessage = "Can't delete pod"
+        kubernetesApi.deletePod = {
+            throw RuntimeException(expectedMessage)
+        }
+        val client = client(dispatcher = Dispatchers.Default)
+        val exception = assertThrows<RuntimeException> {
+            runBlocking {
+                client.claim(listOf(ReservationData.stub()), this)
+            }
+        }
+        assertThat(exception.message)
+            .isEqualTo(expectedMessage)
     }
 }

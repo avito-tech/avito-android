@@ -5,6 +5,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.utils.ProcessRunner
 import java.io.File
+import java.time.Duration
 
 interface Git {
 
@@ -37,7 +38,7 @@ interface Git {
         loggerFactory: LoggerFactory
     ) : Git {
 
-        private val processRunner = ProcessRunner.Real(rootDir, loggerFactory)
+        private val processRunner = ProcessRunner.Real(rootDir)
 
         private val logger = loggerFactory.create<Git>()
 
@@ -72,10 +73,8 @@ interface Git {
         }
 
         private fun git(command: String): Result<String> =
-            processRunner.run(command = "git $command")
-                .apply {
-                    onFailure { error -> logger.warn("git error running: '$command'", error) }
-                }
+            processRunner.run(command = "git $command", timeout = Duration.ofSeconds(10))
+                .onFailure { error -> logger.warn("git error running: '$command'", error) }
 
         private fun escapeGitMessage(message: String) = message.replace("\\s+".toRegex()) { "_" }
     }

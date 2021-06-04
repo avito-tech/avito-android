@@ -52,7 +52,6 @@ include(":gradle:qapps")
 include(":gradle:tms")
 include(":gradle:trace-event")
 include(":gradle:process")
-include(":gradle:process-test-fixtures")
 include(":gradle:test-summary")
 include(":gradle:slack")
 include(":gradle:slack-test-fixtures")
@@ -187,6 +186,7 @@ pluginManagement {
                 includeGroupByRegex("nebula\\..*")
                 includeGroup("io.gitlab.arturbosch.detekt")
                 includeGroup("com.autonomousapps.dependency-analysis")
+                includeGroup("com.github.ben-manes.versions")
             }
         }
     }
