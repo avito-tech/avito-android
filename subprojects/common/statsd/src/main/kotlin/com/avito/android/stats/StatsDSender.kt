@@ -83,8 +83,6 @@ interface StatsDSender {
 
             if (config is StatsDConfig.Enabled) {
                 logger.debug("${metric.type}:${config.namespace}.$aspect:${metric.value}")
-            } else {
-                logger.debug("Skip sending event: ${metric.type}:<namespace>.$aspect:${metric.value}")
             }
         }
     }
