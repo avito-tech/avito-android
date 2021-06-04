@@ -16,11 +16,15 @@ dependencies {
     api(project(":test-runner:command-line-executor"))
 
     implementation(project(":common:result"))
+    implementation(project(":common:problem"))
     implementation(project(":test-runner:test-report-artifacts")) {
         because("DeviceWorker pulls test artifacts")
     }
     implementation(libs.ddmlib)
     implementation(libs.rxJava)
+    implementation(libs.kotlinStdlibJdk7) {
+        because("java.nio.file.Path extensions")
+    }
 
     testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:time")))

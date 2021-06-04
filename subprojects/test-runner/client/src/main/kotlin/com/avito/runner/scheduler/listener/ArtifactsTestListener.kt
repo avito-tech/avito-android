@@ -3,6 +3,7 @@ package com.avito.runner.scheduler.listener
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.report.TestArtifactsProviderFactory
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
@@ -15,7 +16,6 @@ import com.avito.utils.deleteRecursively
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createTempDirectory
-import kotlin.io.path.div
 
 internal class ArtifactsTestListener(
     private val lifecycleListener: TestLifecycleListener,
@@ -65,13 +65,13 @@ internal class ArtifactsTestListener(
             Passed,
             is Failed.InRun -> {
                 val artifacts = testArtifactsDir.flatMap { dir ->
-
-                    // last /. means to adb to copy recursively, and do not copy the last
-                    // example:
-                    //  - from: /sdcard/Android/someDir/ to: /xx ; will copy to /xx/someDir/ and not recursive
-                    //  - from: /sdcard/android/someDir/. to: /xx ; will copy to /xx and recursive
-                    // todo move this knowledge under adb layer
-                    device.pull(from = dir.toPath() / ".", to = tempDirectory)
+                    device.pullDir(
+                        deviceDir = dir.toPath(),
+                        hostDir = tempDirectory,
+                        validator = ReportAwarePullValidator(
+                            testArtifactsProviderFactory = TestArtifactsProviderFactory
+                        )
+                    )
                 }
                 TestResult.Complete(artifacts)
             }

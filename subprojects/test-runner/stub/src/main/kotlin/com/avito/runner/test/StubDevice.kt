@@ -10,6 +10,7 @@ import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
 import com.avito.runner.service.worker.device.Serial
+import com.avito.runner.service.worker.device.adb.PullValidator
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.DeviceData
 import com.avito.runner.service.worker.device.model.getData
@@ -134,6 +135,10 @@ open class StubDevice(
         } else {
             Result.Success(to.toFile())
         }
+    }
+
+    override fun pullDir(deviceDir: Path, hostDir: Path, validator: PullValidator): Result<File> {
+        TODO("Not yet implemented")
     }
 
     override fun clearDirectory(remotePath: Path): Result<Unit> = Result.tryCatch {}
