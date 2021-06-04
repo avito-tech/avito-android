@@ -12,12 +12,12 @@ import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
 import com.avito.logger.GradleLoggerFactory
 
-internal class BuildCacheResultsListener(
+internal class BuildCacheMetricsTracker(
     private val metricsTracker: BuildMetricTracker,
     loggerFactory: GradleLoggerFactory
 ) : BuildOperationsResultListener {
 
-    private val logger = loggerFactory.create(BuildCacheResultsListener::class.java.simpleName)
+    private val logger = loggerFactory.create(BuildCacheMetricsTracker::class.java.simpleName)
 
     override fun onBuildFinished(result: BuildOperationsResult) {
         trackCacheErrors(result.cacheOperations)

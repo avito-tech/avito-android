@@ -1,7 +1,6 @@
 package com.avito.android.plugin.build_metrics.cache
 
-import com.avito.test.gradle.TestResult
-import com.avito.test.gradle.gradlew
+import com.avito.android.plugin.build_metrics.BuildMetricsRunner
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -51,19 +50,14 @@ internal abstract class BuildCacheTestFixture {
     }
 
     protected fun build(
-        vararg tasks: String,
+        vararg args: String,
         useLocalCache: Boolean = true,
-        useRemoteCache: Boolean = true,
-    ): TestResult {
-        return gradlew(
-            projectDir,
-            *tasks,
-            "-Pavito.build.metrics.enabled=true",
-            "-Pavito.stats.enabled=false",
-            "-PlocalCacheEnabled=$useLocalCache",
-            "-PremoteCacheEnabled=$useRemoteCache",
-            "--build-cache",
-            "--debug", // to read statsd logs from stdout
+        useRemoteCache: Boolean = true
+    ) = BuildMetricsRunner(projectDir)
+        .build(
+            args.toList()
+                .plus("--build-cache")
+                .plus("-PlocalCacheEnabled=$useLocalCache")
+                .plus("-PremoteCacheEnabled=$useRemoteCache")
         )
-    }
 }

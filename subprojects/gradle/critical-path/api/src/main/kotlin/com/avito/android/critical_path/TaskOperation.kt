@@ -18,6 +18,9 @@ public data class TaskOperation(
     override val duration: Double
         get() = (finishMs - startMs).toDouble()
 
+    val durationMs: Long
+        get() = finishMs - startMs
+
     override fun toString(): String {
         return "TaskOperation($path)"
     }
