@@ -10,7 +10,7 @@ import com.avito.android.stats.SeriesName
 import com.avito.android.stats.TimeMetric
 import com.avito.math.sumByLong
 
-internal class SlowTasksListener(
+internal class SlowTasksMetricsTracker(
     private val metricsTracker: BuildMetricTracker,
 ) : BuildOperationsResultListener {
 
@@ -31,28 +31,33 @@ internal class SlowTasksListener(
     }
 
     private fun trackSlowTaskTypes(tasks: List<TaskExecutionResult>) {
-        trackCumulativeTimeByAttribute(
-            tasks,
-            groupPrefix = "type",
-            groupName = ::taskTypeName
-        )
+        trackCumulativeTimeByAttribute(tasks) { taskResult ->
+            SeriesName.create("type")
+                .append(taskResult.type.simpleName)
+        }
     }
 
     private fun trackSlowModules(tasks: List<TaskExecutionResult>) {
-        trackCumulativeTimeByAttribute(
-            tasks,
-            groupPrefix = "module",
-            groupName = ::taskModuleName
-        )
+        trackCumulativeTimeByAttribute(tasks) { taskResult ->
+            SeriesName.create("module")
+                .append(taskResult.path.module.toSeriesName())
+        }
+    }
+
+    private fun trackSlowTasks(tasks: List<TaskExecutionResult>) {
+        trackCumulativeTimeByAttribute(tasks) { taskResult ->
+            SeriesName.create("task")
+                .append(taskResult.path.module.toSeriesName())
+                .append(taskResult.type.simpleName)
+        }
     }
 
     private fun trackCumulativeTimeByAttribute(
         tasks: List<TaskExecutionResult>,
-        groupPrefix: String,
-        groupName: (TaskExecutionResult) -> SeriesName
+        groupBy: (TaskExecutionResult) -> SeriesName
     ) {
         tasks
-            .groupBy(groupName)
+            .groupBy(groupBy)
             .mapValues { (_, tasks) ->
                 tasks.sumByLong { it.elapsedMs }
             }
@@ -65,34 +70,12 @@ internal class SlowTasksListener(
             }
             .take(TOP_LIMIT)
             .forEach { (groupName, timeMs) ->
-                val name = SeriesName.create("tasks", "slow", groupPrefix).append(groupName)
+                val name = SeriesName.create("tasks", "slow").append(groupName)
                 metricsTracker.track(
                     TimeMetric(name, timeMs)
                 )
             }
     }
-
-    private fun trackSlowTasks(tasks: List<TaskExecutionResult>) {
-        tasks
-            .filter { it.elapsedMs > considerableTimeMs }
-            .sortedByDescending { it.elapsedMs }
-            .take(TOP_LIMIT)
-            .forEach { task ->
-                val name = SeriesName.create("tasks", "slow", "task")
-                    .append(taskModuleName(task))
-                    .append(taskTypeName(task))
-
-                metricsTracker.track(
-                    TimeMetric(name, task.elapsedMs)
-                )
-            }
-    }
-
-    private fun taskTypeName(task: TaskExecutionResult): SeriesName =
-        SeriesName.create(task.type.simpleName)
-
-    private fun taskModuleName(task: TaskExecutionResult): SeriesName =
-        task.path.module.toSeriesName()
 }
 
 /**

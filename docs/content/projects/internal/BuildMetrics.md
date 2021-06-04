@@ -42,10 +42,13 @@ This is the same as **Performance** | **Build cache** | **Remote cache** | **Ope
 
 ### Tasks metrics
 
-These metrics give different aggregates for tasks to highlight the slowest places.
-
 - `<namespace>.<environment>.<node>.build.tasks.cumulative.any` (time in ms):  
   cumulative time of all tasks
+  
+#### Slowest tasks
+
+These metrics give different aggregates for tasks to highlight the slowest ones.
+
 - `<namespace>.<environment>.<node>.build.tasks.slow.task.<module>.<task type>` (time in ms):  
   top slowest tasks
 - `<namespace>.<environment>.<node>.build.tasks.slow.type.<task type>` (time in ms):  
@@ -67,6 +70,14 @@ graph LR
 - `.tasks.slow.task.app.KotlinCompile`: 3s
 - `.tasks.slow.type.KotlinCompile`: 5s
 - `.tasks.slow.module.app`: 4s
+
+#### Critical path
+
+These metrics describe a critical path.
+To understand the critical path better see a visualization in a [build trace](../BuildTrace.md#critical-path).
+
+- `<namespace>.<environment>.<node>.build.tasks.critical.task.<module>.<task type>` (time in ms):  
+  tasks in the critical path
 
 ### Specific build events
 

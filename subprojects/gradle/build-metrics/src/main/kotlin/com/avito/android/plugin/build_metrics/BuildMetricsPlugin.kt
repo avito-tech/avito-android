@@ -1,12 +1,14 @@
 package com.avito.android.plugin.build_metrics
 
 import com.avito.android.build_metrics.BuildMetricTracker
+import com.avito.android.critical_path.CriticalPathRegistry
 import com.avito.android.gradle.metric.GradleCollector
 import com.avito.android.plugin.build_metrics.internal.AppBuildTimeListener
 import com.avito.android.plugin.build_metrics.internal.BuildOperationsResultProvider
 import com.avito.android.plugin.build_metrics.internal.CompositeBuildMetricsListener
 import com.avito.android.plugin.build_metrics.internal.ConfigurationTimeListener
 import com.avito.android.plugin.build_metrics.internal.TotalBuildTimeListener
+import com.avito.android.plugin.build_metrics.internal.tasks.CriticalPathMetricsTracker
 import com.avito.android.sentry.environmentInfo
 import com.avito.android.stats.statsd
 import com.avito.kotlin.dsl.getOptionalStringProperty
@@ -42,6 +44,9 @@ public open class BuildMetricsPlugin : Plugin<Project> {
             project.environmentInfo().get(),
             project.statsd.get()
         )
+        val criticalPathTracker = CriticalPathMetricsTracker(metricTracker)
+        CriticalPathRegistry.addListener(project, criticalPathTracker)
+
         val buildListeners = listOf(
             ConfigurationTimeListener(metricTracker),
             TotalBuildTimeListener(metricTracker),

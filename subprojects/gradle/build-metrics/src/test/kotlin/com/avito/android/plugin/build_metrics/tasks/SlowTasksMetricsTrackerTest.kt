@@ -5,7 +5,7 @@ import com.avito.android.plugin.build_metrics.internal.BuildOperationsResult
 import com.avito.android.plugin.build_metrics.internal.CacheOperations
 import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
-import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksListener
+import com.avito.android.plugin.build_metrics.internal.tasks.SlowTasksMetricsTracker
 import com.avito.android.sentry.StubEnvironmentInfo
 import com.avito.android.stats.SeriesName
 import com.avito.android.stats.StatsMetric
@@ -17,7 +17,7 @@ import org.gradle.api.Task
 import org.gradle.util.Path
 import org.junit.jupiter.api.Test
 
-internal class SlowTasksListenerTest {
+internal class SlowTasksMetricsTrackerTest {
 
     private val envInfo = StubEnvironmentInfo(
         node = "user",
@@ -109,10 +109,16 @@ internal class SlowTasksListenerTest {
     }
 
     @Test
-    fun `sends - slow tasks`() {
+    fun `sends - slow tasks types with modules`() {
         val metrics = processResults(
             taskExecution(
-                path = ":app:a",
+                path = ":app:a1",
+                type = CustomTaskA::class.java,
+                startMs = 0,
+                endMs = 1_000
+            ),
+            taskExecution(
+                path = ":app:a2",
                 type = CustomTaskA::class.java,
                 startMs = 0,
                 endMs = 1_000
@@ -127,7 +133,7 @@ internal class SlowTasksListenerTest {
         assertThat(metrics).contains(
             TimeMetric(
                 SeriesName.create("local", "user", "build", "tasks", "slow", "task", "app", "CustomTaskA"),
-                timeInMs = 1_000
+                timeInMs = 2_000
             )
         )
     }
@@ -150,7 +156,7 @@ internal class SlowTasksListenerTest {
         val statsd = StubStatsdSender()
         val metricsTracker = BuildMetricTracker(envInfo, statsd)
 
-        val listener = SlowTasksListener(metricsTracker)
+        val listener = SlowTasksMetricsTracker(metricsTracker)
         val result = BuildOperationsResult(
             tasksExecutions = tasks.toList(),
             cacheOperations = CacheOperations(

@@ -2,11 +2,8 @@ package com.avito.android.plugin.build_metrics
 
 import com.avito.android.stats.TimeMetric
 import com.avito.test.gradle.TestProjectGenerator
-import com.avito.test.gradle.TestResult
-import com.avito.test.gradle.gradlew
 import com.avito.test.gradle.module.AndroidAppModule
 import com.avito.test.gradle.plugin.plugins
-import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -86,14 +83,7 @@ internal class BuildMetricsPluginTest {
         }
     }
 
-    private fun build(vararg tasks: String, dryRun: Boolean = false): TestResult {
-        return gradlew(
-            projectDir,
-            *tasks,
-            "-Pavito.build.metrics.enabled=true",
-            "-Pavito.stats.enabled=false",
-            "--debug", // to read statsd logs from stdout
-            dryRun = dryRun
-        )
-    }
+    private fun build(vararg args: String) =
+        BuildMetricsRunner(projectDir)
+            .build(args.toList())
 }
