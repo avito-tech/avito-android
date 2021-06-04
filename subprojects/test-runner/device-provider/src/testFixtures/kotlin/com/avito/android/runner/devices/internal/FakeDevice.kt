@@ -24,6 +24,4 @@ internal class FakeRemoteDevice(
 ) : FakeDevice(serial), RemoteDevice {
 
     override fun disconnect() = Result.Success("stub-disconnect")
-
-    override fun connect() = Result.Success("stub-connect")
 }

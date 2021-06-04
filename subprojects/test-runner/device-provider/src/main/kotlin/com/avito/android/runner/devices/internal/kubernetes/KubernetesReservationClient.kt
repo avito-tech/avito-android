@@ -153,6 +153,7 @@ internal class KubernetesReservationClient(
         when (val result = device.waitForBoot()) {
             is Result.Success -> {
                 if (serialsChannel.isClosedForSend) {
+                    logger.debug("Pod $podName boot device but serials channel closed")
                     return
                 }
                 emulatorsLogsReporter.redirectLogcat(

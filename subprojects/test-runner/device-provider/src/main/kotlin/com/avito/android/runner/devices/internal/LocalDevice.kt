@@ -13,6 +13,6 @@ internal class LocalDevice(
 ) : AbstractDevice(loggerFactory, processRunner) {
 
     override suspend fun waitForBoot() = waitForCommand(
-        runner = { isBootCompleted() }
+        command = { isBootCompleted() }
     )
 }
