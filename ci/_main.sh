@@ -9,7 +9,9 @@ source "$DIR"/_environment.sh
 # shellcheck disable=SC2086
 USER_ID=$(id -u ${USER})
 GRADLE_HOME_DIR=$HOME/.gradle
-GRADLE_CACHE_DIR=$GRADLE_HOME_DIR/caches
+
+# only need dependencies: https://docs.gradle.org/current/userguide/dependency_resolution.html#sub:ephemeral-ci-cache
+GRADLE_CACHE_DIR=$GRADLE_HOME_DIR/caches/modules-2
 GRADLE_WRAPPER_DIR=$GRADLE_HOME_DIR/wrapper
 
 # Warning. Hack!
@@ -91,7 +93,7 @@ function runInBuilder() {
     docker run --rm \
         --volume "$(pwd)":/app \
         --volume /var/run/docker.sock:/var/run/docker.sock \
-        --volume "${GRADLE_CACHE_DIR}":/gradle/caches \
+        --volume "${GRADLE_CACHE_DIR}":/gradle/caches/modules-2 \
         --volume "${GRADLE_WRAPPER_DIR}":/gradle/wrapper \
         --workdir /app \
         --env TZ="Europe/Moscow" \

@@ -8,7 +8,9 @@ else
 endif
 IMAGE_DOCKER_IN_DOCKER=${DOCKER_REGISTRY}/android/docker-in-docker-image:c2ecce3a3e
 GRADLE_HOME_DIR=$(HOME)/.gradle
-GRADLE_CACHE_DIR=$(GRADLE_HOME_DIR)/caches
+
+# only need dependencies: https://docs.gradle.org/current/userguide/dependency_resolution.html#sub:ephemeral-ci-cache
+GRADLE_CACHE_DIR=$(GRADLE_HOME_DIR)/caches/modules-2
 GRADLE_WRAPPER_DIR=$(GRADLE_HOME_DIR)/wrapper
 USER_ID=$(shell id -u $(USER))
 
@@ -37,7 +39,7 @@ make clear_gradle_lock_files
 make clear_docker_containers
 docker run --rm \
 	--volume "$(shell pwd)":/app \
-	--volume "$(GRADLE_CACHE_DIR)":/gradle/caches \
+	--volume "$(GRADLE_CACHE_DIR)":/gradle/caches/modules-2 \
 	--volume "$(GRADLE_WRAPPER_DIR)":/gradle/wrapper \
 	--workdir /app \
 	--env TZ="Europe/Moscow" \
