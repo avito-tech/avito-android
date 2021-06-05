@@ -64,27 +64,31 @@ internal class DeviceWorker(
                 when (val status = device.deviceStatus()) {
 
                     is Freeze -> {
-                        onDeviceDieOnIntention(intention, status.reason)
+                        onDeviceDieWhenPrepareState(intention, status.reason)
                         return@launch
                     }
 
                     is Alive -> prepareDeviceState(
                         currentState = state,
                         intendedState = intention.state
-                    ).flatMap { newState ->
+                    ).onFailure { reason ->
+                        onDeviceDieWhenPrepareState(intention, reason)
+                        return@launch
+                    }.onSuccess { newState ->
                         state = newState
                         deviceListener.onStatePrepared(device, newState)
                         deviceListener.onTestStarted(device, intention)
                         executeAction(action = intention.action)
-                    }.onSuccess { result ->
-                        deviceListener.onTestCompleted(
-                            device = device,
-                            intention = intention,
-                            result = result
-                        )
-                    }.onFailure { failure ->
-                        onDeviceDieOnIntention(intention, failure)
-                        return@launch
+                            .onSuccess { result ->
+                                deviceListener.onTestCompleted(
+                                    device = device,
+                                    intention = intention,
+                                    result = result
+                                )
+                            }.onFailure { failure ->
+                                onDeviceDieWhenExecutingTest(intention, failure)
+                                return@launch
+                            }
                     }
                 }
             }
@@ -181,19 +185,45 @@ internal class DeviceWorker(
         }
     }
 
-    private suspend fun onDeviceDieOnIntention(
+    private suspend fun onDeviceDieWhenPrepareState(
         intention: Intention,
         reason: Throwable
     ) {
         deviceListener.onDeviceDied(
             device = device,
-            message = "DeviceWorker died. Can't process intention: $intention",
+            message = "DeviceWorker died when prepare device for test execution. Can't process intention: $intention",
             reason = reason
         )
         deviceListener.onIntentionFail(
             device = device,
             intention = intention,
             reason = reason
+        )
+    }
+
+    private suspend fun onDeviceDieWhenExecutingTest(
+        intention: Intention,
+        reason: Throwable
+    ) {
+        deviceListener.onDeviceDied(
+            device = device,
+            message = "DeviceWorker died when executed intention: $intention",
+            reason = reason
+        )
+        deviceListener.onTestCompleted(
+            device = device,
+            intention = intention,
+            result = DeviceTestCaseRun(
+                device = device.getData(),
+                testCaseRun = TestCaseRun(
+                    test = intention.action.test,
+                    result = Failed.InfrastructureError.Unexpected(
+                        error = reason
+                    ),
+                    timestampCompletedMilliseconds = timeProvider.nowInSeconds(),
+                    timestampStartedMilliseconds = timeProvider.nowInSeconds()
+                )
+            )
         )
     }
 
