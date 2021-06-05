@@ -51,7 +51,7 @@ instrumentation {
         useInMemoryReport.set(true)
         useService.set(false) // todo fix broken
         fetchLogcatForIncompleteTests.set(true)
-        saveTestArtifactsToOutputs.set(true)
+        saveTestArtifactsToOutputs.set(false)
     }
 
     val credentials = project.kubernetesCredentials
@@ -76,15 +76,15 @@ instrumentation {
 
                 scheduling {
                     quota {
-                        retryCount = 10
-                        minimumSuccessCount = 10
+                        retryCount = 1
+                        minimumSuccessCount = 1
                     }
 
                     testsCountBasedReservation {
                         device = emulator29
-                        maximum = 10
-                        minimum = 2
-                        testsPerEmulator = 3
+                        maximum = 1
+                        minimum = 1
+                        testsPerEmulator = 1
                     }
                 }
             }
