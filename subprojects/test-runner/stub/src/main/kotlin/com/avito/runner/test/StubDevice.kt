@@ -188,7 +188,7 @@ open class StubDevice(
 
     private fun verifyQueueHasNoExcessiveElements(queue: Queue<*>, functionName: String) {
         if (queue.isNotEmpty()) {
-            val errorMessage = "[TEST-ERROR] $functionName has excessive commands in queue"
+            val errorMessage = "[TEST-ERROR] $functionName has excessive commands in queue: ${queue.toList()}"
             val exception = IllegalStateException(errorMessage)
             logger.critical(errorMessage, exception)
             throw exception
