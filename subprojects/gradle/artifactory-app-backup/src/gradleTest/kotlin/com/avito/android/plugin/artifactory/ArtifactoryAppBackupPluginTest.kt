@@ -26,6 +26,54 @@ internal class ArtifactoryAppBackupPluginTest {
     private val mockWebServer = MockWebServerFactory.create()
 
     @Test
+    fun `artifactory plugin - failed to apply - without maven-publish plugin`(@TempDir projectDir: File) {
+        TestProjectGenerator(
+            modules = listOf(
+                AndroidAppModule(
+                    enableKotlinAndroidPlugin = false,
+                    versionCode = "90",
+                    versionName = "10",
+                    name = "app",
+                    plugins = plugins {
+                        id("com.avito.android.artifactory-app-backup")
+                    },
+                    customScript = """
+                        import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt.getArtifactoryAndroidArtifactsBuildVariants
+                        import com.avito.cd.BuildVariant
+                        
+                        $artifactoryBackupExtensionName {
+                            backup {
+                                name = "name"
+                                type = "type"
+                                version = "version"
+                                artifact {
+                                    id = "classifier"
+                                    path = "artifact"
+                                }
+                            }
+                        }
+                        
+                        getArtifactoryAndroidArtifactsBuildVariants(project).put("classifier", BuildVariant.STAGING)
+                    """.trimIndent()
+                )
+            )
+        ).generateIn(projectDir)
+
+        val result = ciRun(
+            projectDir,
+            ":app:$artifactoryAppBackupTaskName",
+            "-PartifactoryUrl=${mockWebServer.url("/")}",
+            "-Partifactory_deployer=xxx",
+            "-Partifactory_deployer_password=xxx",
+            expectFailure = true
+        )
+
+        result.assertThat()
+            .buildFailed()
+            .outputContains("artifactory-app-backup has precondition: maven-publish plugin should be applied")
+    }
+
+    @Test
     fun `artifactory plugin - captures app parameters`(@TempDir projectDir: File) {
         val moduleName = "app"
         val backupName = "backupName"
@@ -42,6 +90,7 @@ internal class ArtifactoryAppBackupPluginTest {
                     name = moduleName,
                     plugins = plugins {
                         id("com.avito.android.artifactory-app-backup")
+                        id("maven-publish")
                     },
                     customScript = """
                         import static com.avito.android.plugin.artifactory.ArtifactoryAppBackupInterfaceKt.getArtifactoryAndroidArtifactsBuildVariants
@@ -124,6 +173,7 @@ internal class ArtifactoryAppBackupPluginTest {
                     name = moduleName,
                     plugins = plugins {
                         id("com.avito.android.artifactory-app-backup")
+                        id("maven-publish")
                     },
                     buildGradleExtra = """
                     """.trimIndent(),

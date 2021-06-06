@@ -36,7 +36,7 @@ class UploadToArtifactory(
                 name = "${project.name}-android"
                 type = projectType
                 version = "${defaultConfig.versionName}-${defaultConfig.versionCode}-${project.envArgs.build.number}"
-                artifactsMap.forEach { key, output ->
+                artifactsMap.forEach { (key, output) ->
                     artifact(
                         noOwnerClosureOf {
                             id = key
