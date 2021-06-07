@@ -295,7 +295,7 @@ dependencyResolutionManagement {
         exclusiveContent {
             forRepository {
                 maven {
-                    setUrlOrProxy("r8-releases", "http://storage.googleapis.com/r8-releases/raw")
+                    setUrlOrProxy("r8-releases", "https://storage.googleapis.com/r8-releases/raw")
                 }
             }
             filter {
