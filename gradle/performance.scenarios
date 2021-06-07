@@ -1,0 +1,7 @@
+fastCheck {
+    title = "fastCheck"
+    tasks = ["compileAll", "detektAll", "test"]
+    cleanup-tasks = ["clean"]
+    gradle-args = ["--no-build-cache", "--parallel"]
+    daemon = warm
+}
