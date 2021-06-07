@@ -5,6 +5,7 @@ import com.avito.android.Problem
 import com.avito.android.asRuntimeException
 import com.avito.cd.buildOutput
 import com.avito.kotlin.dsl.getMandatoryStringProperty
+import com.avito.kotlin.dsl.withType
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
@@ -33,9 +34,24 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
                 it.backups.all { backup ->
                     project.createBackupPublication(backup)
                     val publishTask = project.findMavenPublishTask(backup)
-                    publishTask.addSetArtifactsBuildOutputAction()
-                    @Suppress("DEPRECATION")
-                    project.tasks.artifactoryAppBackupTask().dependsOn(publishTask)
+                    if (publishTask != null) {
+                        publishTask.addSetArtifactsBuildOutputAction()
+                        @Suppress("DEPRECATION")
+                        project.tasks.artifactoryAppBackupTask().dependsOn(publishTask)
+                    } else {
+                        throw Problem(
+                            shortDescription = "Can't apply `com.avito.android.artifactory-app-backup` plugin",
+                            context = "ArtifactoryAppBackupPlugin modifying publication task",
+                            because = "This could happen if `maven-publish` plugin has breaking API changes, " +
+                                "or because of an error in `artifactory-app-backup` plugin itself",
+                            possibleSolutions = listOf(
+                                "Check `maven-publish` incompatible API changes " +
+                                    "and apply needed changes in ArtifactoryAppBackupPlugin",
+                                "Check recent changes in `artifactory-app-backup`"
+                            ),
+                            documentedAt = "https://docs.gradle.org/current/userguide/publishing_maven.html"
+                        ).asRuntimeException()
+                    }
                 }
             }
         }
@@ -52,13 +68,12 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.findMavenPublishTask(
-        backup: Backup
-    ): PublishToMavenRepository {
-        return tasks.withType(PublishToMavenRepository::class.java).matching {
-            it.repository.name == artifactoryRepositoryName &&
-                it.publication.name == backup.name
-        }.first()
+    private fun Project.findMavenPublishTask(backup: Backup): PublishToMavenRepository? {
+        return tasks.withType<PublishToMavenRepository>()
+            .matching {
+                it.repository.name == artifactoryRepositoryName && it.publication.name == backup.name
+            }
+            .firstOrNull()
     }
 
     private fun Project.createBackupPublication(backup: Backup) {
