@@ -23,6 +23,7 @@ dependencies {
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)
     testImplementation(testFixtures(project(":common:graphite")))
+    testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:statsd")))
     testImplementation(testFixtures(project(":gradle:build-environment")))
 
