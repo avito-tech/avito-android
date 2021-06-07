@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.assertThrows
@@ -147,6 +148,7 @@ internal class KubernetesReservationClientTest {
         }
     }
 
+    @Disabled("Flaky")
     @Test
     @Timeout(1, unit = TimeUnit.SECONDS)
     fun `claim then release - success`() {
