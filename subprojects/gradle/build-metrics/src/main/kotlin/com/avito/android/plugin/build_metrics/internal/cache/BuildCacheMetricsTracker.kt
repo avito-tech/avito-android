@@ -10,11 +10,11 @@ import com.avito.android.plugin.build_metrics.internal.TaskCacheResult
 import com.avito.android.plugin.build_metrics.internal.TaskExecutionResult
 import com.avito.android.stats.CountMetric
 import com.avito.android.stats.SeriesName
-import com.avito.logger.GradleLoggerFactory
+import com.avito.logger.LoggerFactory
 
 internal class BuildCacheMetricsTracker(
     private val metricsTracker: BuildMetricTracker,
-    loggerFactory: GradleLoggerFactory
+    loggerFactory: LoggerFactory
 ) : BuildOperationsResultListener {
 
     private val logger = loggerFactory.create(BuildCacheMetricsTracker::class.java.simpleName)
@@ -35,10 +35,10 @@ internal class BuildCacheMetricsTracker(
             }
             val metricName = if (error.httpStatus != null) {
                 SeriesName
-                    .create("build", "cache", "errors", operationType, error.httpStatus.toString())
+                    .create("cache", "errors", operationType, error.httpStatus.toString())
             } else {
                 SeriesName
-                    .create("build", "cache", "errors", operationType, "unknown")
+                    .create("cache", "errors", operationType, "unknown")
             }
             metricsTracker.track(CountMetric(metricName))
         }
@@ -53,13 +53,13 @@ internal class BuildCacheMetricsTracker(
 
         metricsTracker.track(
             CountMetric(
-                SeriesName.create("build", "cache", "remote", "hit"),
+                SeriesName.create("cache", "remote", "hit"),
                 remoteHits.toLong()
             )
         )
         metricsTracker.track(
             CountMetric(
-                SeriesName.create("build", "cache", "remote", "miss"),
+                SeriesName.create("cache", "remote", "miss"),
                 remoteMisses.toLong()
             )
         )
