@@ -7,8 +7,8 @@ import com.avito.instrumentation.reservation.request.QuotaConfigurationData
 import com.avito.instrumentation.reservation.request.Reservation
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.runner.scheduler.TestsRunnerClient
-import com.avito.runner.scheduler.args.Arguments
+import com.avito.runner.scheduler.TestRunnerFactory
+import com.avito.runner.scheduler.args.TestRunnerFactoryConfig
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.TestCase
@@ -27,17 +27,26 @@ import java.io.File
 
 internal class TestExecutorImpl(
     private val devicesProvider: DevicesProvider,
-    private val testReporter: TestLifecycleListener,
     private val configurationName: String,
-    private val loggerFactory: LoggerFactory,
-    private val metricsConfig: RunnerMetricsConfig,
-    private val saveTestArtifactsToOutputs: Boolean,
-    private val fetchLogcatForIncompleteTests: Boolean,
+    testReporter: TestLifecycleListener,
+    loggerFactory: LoggerFactory,
+    metricsConfig: RunnerMetricsConfig,
+    saveTestArtifactsToOutputs: Boolean,
+    fetchLogcatForIncompleteTests: Boolean,
 ) : TestExecutor {
 
     private val logger = loggerFactory.create<TestExecutor>()
 
-    private val runner = TestsRunnerClient()
+    private val factory = TestRunnerFactory(
+        TestRunnerFactoryConfig(
+            loggerFactory = loggerFactory,
+            listener = testReporter,
+            reservation = devicesProvider,
+            metricsConfig = metricsConfig,
+            saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
+            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
+        )
+    )
 
     private val outputDirectoryName = "test-runner"
 
@@ -66,21 +75,14 @@ internal class TestExecutorImpl(
                 )
             }
 
-            val runnerArguments = Arguments(
-                outputDirectory = outputFolder(output),
-                requests = testRequests,
-                devices = devices,
-                loggerFactory = loggerFactory,
-                listener = testReporter,
-                reservation = devicesProvider,
-                metricsConfig = metricsConfig,
-                saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
-                fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
-            )
-
-            logger.debug("Arguments: $runnerArguments")
-
-            runner.run(arguments = runnerArguments, scope)
+            runBlocking {
+                withContext(scope.coroutineContext) {
+                    factory.createTestRunner(
+                        outputDirectory = outputFolder(output),
+                        devices = devices
+                    ).runTests(testRequests)
+                }
+            }
         }
 
         logger.debug("Worker completed")

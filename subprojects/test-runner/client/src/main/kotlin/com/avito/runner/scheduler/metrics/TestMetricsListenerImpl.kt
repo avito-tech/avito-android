@@ -12,6 +12,7 @@ import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.runner.service.worker.model.DeviceInstallation
 import com.avito.time.TimeProvider
 import java.util.concurrent.ConcurrentHashMap
@@ -20,7 +21,7 @@ internal class TestMetricsListenerImpl(
     private val testMetricsSender: TestMetricsSender,
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory
-) : TestMetricsListener {
+) : TestMetricsListener, DeviceListener {
 
     private val logger = loggerFactory.create<TestMetricsListener>()
 

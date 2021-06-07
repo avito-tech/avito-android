@@ -201,7 +201,7 @@ class ReportCreatorTest {
         runs: List<Pair<TestRunRequest, List<DeviceTestCaseRun>>> = listOf(),
         startTimeMilliseconds: Long = 0
     ): SummaryReport {
-        val reportCreator = SummaryReportMakerImplementation()
+        val reportCreator = SummaryReportMakerImpl()
         return reportCreator.make(
             runResult = TestRunnerResult(
                 runs = runs.toMap()

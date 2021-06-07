@@ -3,6 +3,9 @@ package com.avito.runner.scheduler.runner
 import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
 import com.avito.runner.reservation.DeviceReservationWatcher
+import com.avito.runner.scheduler.metrics.StubTestMetricsListener
+import com.avito.runner.scheduler.report.CompositeReporter
+import com.avito.runner.scheduler.report.SummaryReportMakerImpl
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.scheduler.util.generateTestRunRequest
@@ -613,7 +616,7 @@ class RunnerIntegrationTest {
             deviceSignals = state.deviceSignals
         )
 
-        return TestRunnerImplementation(
+        return TestRunnerImpl(
             scheduler = scheduler,
             deviceWorkerPool = deviceWorkerPool,
             loggerFactory = loggerFactory,
@@ -622,7 +625,10 @@ class RunnerIntegrationTest {
                 override fun watch(deviceSignals: ReceiveChannel<Signal>, scope: CoroutineScope) {
                     // empty
                 }
-            }
+            },
+            summaryReportMaker = SummaryReportMakerImpl(),
+            reporter = CompositeReporter(emptyList()),
+            testMetricsListener = StubTestMetricsListener
         )
     }
 
