@@ -41,7 +41,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
     ): PublishToMavenRepository {
         return tasks.withType(PublishToMavenRepository::class.java).matching {
             it.repository.name == artifactoryRepositoryName &&
-            it.publication.name == backup.name
+                it.publication.name == backup.name
         }.first()
     }
 
@@ -69,6 +69,7 @@ class ArtifactoryAppBackupPlugin : Plugin<Project> {
             repo.url = backupUrl
             repo.credentials.username = project.artifactoryUser
             repo.credentials.password = project.artifactoryPassword
+            repo.isAllowInsecureProtocol = true
         }
         project.tasks.register(artifactoryAppBackupTaskName)
     }
