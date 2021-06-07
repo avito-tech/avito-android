@@ -3,18 +3,17 @@ package com.avito.runner.scheduler.runner
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.reservation.DeviceReservationWatcher
-import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
-import com.avito.runner.service.IntentionExecutionService
+import com.avito.runner.service.DeviceWorkerPool
 import kotlinx.coroutines.coroutineScope
 
 class TestRunnerImplementation(
     private val scheduler: TestExecutionScheduler,
-    private val client: TestExecutionClient,
-    private val service: IntentionExecutionService,
+    private val deviceWorkerPool: DeviceWorkerPool,
     private val reservationWatcher: DeviceReservationWatcher,
+    private val state: TestRunnerExecutionState,
     loggerFactory: LoggerFactory
 ) : TestRunner {
 
@@ -22,43 +21,39 @@ class TestRunnerImplementation(
 
     override suspend fun runTests(tests: List<TestRunRequest>): TestRunnerResult {
         return coroutineScope {
-            val serviceCommunication = service.start(this)
-            reservationWatcher.watch(serviceCommunication.deviceSignals, this)
-            val clientCommunication = client.start(
-                executionServiceCommunication = serviceCommunication,
-                scope = this
-            )
-            val schedulerCommunication = scheduler.start(
+            deviceWorkerPool.start(this)
+            reservationWatcher.watch(state.deviceSignals, this)
+
+            scheduler.start(
                 requests = tests,
-                executionClient = clientCommunication,
                 scope = this
             )
 
             val expectedResultsCount = tests.count()
-            val results: MutableList<TestRunResult> = mutableListOf()
 
-            for (result in schedulerCommunication.result) {
-                results += result
+            val gottenResults = mutableListOf<TestRunResult>()
+            for (result in state.results) {
+                gottenResults.add(result)
+                val gottenCount = gottenResults.size
 
                 logger.debug(
                     "Result for test: %s received after %d tries. Progress (%s)".format(
                         result.request.testCase.testName,
                         result.result.size,
-                        "${results.count()}/$expectedResultsCount"
+                        "$gottenCount/$expectedResultsCount"
                     )
                 )
 
-                if (results.count() >= expectedResultsCount) {
+                if (gottenCount == expectedResultsCount) {
                     break
                 }
             }
 
-            scheduler.stop()
-            client.stop()
-            service.stop()
+            deviceWorkerPool.stop()
+            state.cancel()
 
             TestRunnerResult(
-                runs = results
+                runs = gottenResults
                     .map {
                         it.request to it.result
                     }

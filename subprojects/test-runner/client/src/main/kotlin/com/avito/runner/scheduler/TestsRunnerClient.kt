@@ -11,10 +11,10 @@ import com.avito.runner.scheduler.metrics.TestMetricsSender
 import com.avito.runner.scheduler.report.CompositeReporter
 import com.avito.runner.scheduler.report.SummaryReportMakerImplementation
 import com.avito.runner.scheduler.report.trace.TraceReporter
+import com.avito.runner.scheduler.runner.TestRunnerExecutionState
 import com.avito.runner.scheduler.runner.TestRunnerImplementation
-import com.avito.runner.scheduler.runner.client.TestExecutionClient
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
-import com.avito.runner.service.IntentionExecutionServiceImplementation
+import com.avito.runner.service.DeviceWorkerPoolImpl
 import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
 import com.avito.time.DefaultTimeProvider
@@ -44,15 +44,14 @@ class TestsRunnerClient {
         )
 
         testMetricsSender.onTestSuiteStarted()
-
+        val executionState = TestRunnerExecutionState()
         val testRunner = TestRunnerImplementation(
             scheduler = TestExecutionScheduler(
-                loggerFactory = loggerFactory
+                results = executionState.results,
+                intentions = executionState.intentions,
+                intentionResults = executionState.intentionResults
             ),
-            client = TestExecutionClient(
-                loggerFactory = loggerFactory
-            ),
-            service = IntentionExecutionServiceImplementation(
+            deviceWorkerPool = DeviceWorkerPoolImpl(
                 outputDirectory = arguments.outputDirectory,
                 devices = arguments.devices,
                 timeProvider = timeProvider,
@@ -60,12 +59,16 @@ class TestsRunnerClient {
                 testListener = setupListener(
                     arguments = arguments
                 ),
-                deviceMetricsListener = testMetricsSender
+                deviceMetricsListener = testMetricsSender,
+                intentions = executionState.intentions,
+                intentionResults = executionState.intentionResults,
+                deviceSignals = executionState.deviceSignals
             ),
             reservationWatcher = DeviceReservationWatcher.Impl(
                 reservation = arguments.reservation
             ),
-            loggerFactory = loggerFactory
+            loggerFactory = loggerFactory,
+            state = executionState
         )
 
         Entrypoint(

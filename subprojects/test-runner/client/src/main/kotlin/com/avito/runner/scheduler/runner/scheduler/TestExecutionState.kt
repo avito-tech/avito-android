@@ -10,7 +10,7 @@ import com.avito.runner.service.model.intention.State
 interface TestExecutionState {
     val request: TestRunRequest
 
-    fun verdict(incomingTestCaseRun: DeviceTestCaseRun? = null): Verdict
+    fun verdict(incomingTestCaseRun: DeviceTestCaseRun?): Verdict
 
     sealed class Verdict {
         data class Run(

@@ -18,10 +18,11 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import java.io.File
 
-class IntentionExecutionServiceImplementation(
+class DeviceWorkerPoolImpl(
     private val outputDirectory: File,
     private val loggerFactory: LoggerFactory,
     private val devices: ReceiveChannel<Device>,
@@ -29,22 +30,19 @@ class IntentionExecutionServiceImplementation(
     private val testListener: TestListener,
     private val deviceMetricsListener: DeviceListener,
     private val timeProvider: TimeProvider,
+    private val intentions: ReceiveChannel<Intention>,
+    private val intentionResults: SendChannel<IntentionResult>,
+    private val deviceSignals: SendChannel<Device.Signal>,
     private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread
-) : IntentionExecutionService {
+) : DeviceWorkerPool {
 
-    private val logger = loggerFactory.create<IntentionExecutionService>()
+    private val logger = loggerFactory.create<DeviceWorkerPool>()
 
-    private val intentions: Channel<Intention> =
-        Channel(Channel.UNLIMITED)
-    private val results: Channel<IntentionResult> =
-        Channel(Channel.UNLIMITED)
     private val messages: Channel<DeviceWorkerMessage> =
         Channel(Channel.UNLIMITED)
-    private val deviceSignals: Channel<Device.Signal> =
-        Channel(Channel.UNLIMITED)
 
-    override fun start(scope: CoroutineScope): IntentionExecutionService.Communication {
-        scope.launch(CoroutineName("intention-execution-service")) {
+    override fun start(scope: CoroutineScope) {
+        scope.launch(CoroutineName("device-workers-pool")) {
             launch(CoroutineName("device-workers")) {
                 for (device in devices) {
                     DeviceWorker(
@@ -90,7 +88,7 @@ class IntentionExecutionServiceImplementation(
                         }
 
                         is DeviceWorkerMessage.Result ->
-                            results.send(message.intentionResult)
+                            intentionResults.send(message.intentionResult)
 
                         is DeviceWorkerMessage.WorkerDied ->
                             deviceSignals.send(Device.Signal.Died(message.coordinate))
@@ -98,20 +96,11 @@ class IntentionExecutionServiceImplementation(
                 }
             }
         }
-
-        return IntentionExecutionService.Communication(
-            intentions = intentions,
-            results = results,
-            deviceSignals = deviceSignals
-        )
     }
 
     override fun stop() {
         intentionsRouter.cancel()
-        intentions.cancel()
-        results.cancel()
         messages.cancel()
         devices.cancel()
-        deviceSignals.cancel()
     }
 }
