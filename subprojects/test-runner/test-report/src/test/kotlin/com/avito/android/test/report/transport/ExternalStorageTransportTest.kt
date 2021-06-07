@@ -9,6 +9,7 @@ import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
+import com.avito.report.serialize.ReportSerializer
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
@@ -73,7 +74,8 @@ internal class ExternalStorageTransportTest {
         return ExternalStorageTransport(
             timeProvider = timeProvider,
             loggerFactory = loggerFactory,
-            testArtifactsProvider = testArtifactsProvider
+            testArtifactsProvider = testArtifactsProvider,
+            reportSerializer = ReportSerializer()
         )
     }
 

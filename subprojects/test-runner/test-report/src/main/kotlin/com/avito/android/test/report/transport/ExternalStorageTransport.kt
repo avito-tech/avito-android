@@ -5,13 +5,11 @@ import com.avito.android.test.report.model.TestMetadata
 import com.avito.filestorage.FutureValue
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
-import com.avito.report.EntryTypeAdapterFactory
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.Entry
 import com.avito.report.model.FileAddress
+import com.avito.report.serialize.ReportSerializer
 import com.avito.time.TimeProvider
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import java.io.File
 
 /**
@@ -21,35 +19,31 @@ import java.io.File
 class ExternalStorageTransport(
     private val timeProvider: TimeProvider,
     loggerFactory: LoggerFactory,
-    private val testArtifactsProvider: TestArtifactsProvider
+    private val testArtifactsProvider: TestArtifactsProvider,
+    private val reportSerializer: ReportSerializer,
 ) : Transport, TransportMappers {
-
-    private val gson: Gson = GsonBuilder()
-        .registerTypeAdapterFactory(EntryTypeAdapterFactory())
-        .create()
 
     private val logger = loggerFactory.create<ExternalStorageTransport>()
 
     private val testRuntimeDataBuilder = TestRuntimeDataBuilder(timeProvider)
 
     override fun sendReport(state: Started) {
-        testArtifactsProvider.provideReportFile().fold(
-            onSuccess = { file ->
-                try {
-                    val json = gson.toJson(testRuntimeDataBuilder.fromState(state))
-                    logger.debug("Write report to file: $file")
-                    file.writeText(json)
-                } catch (e: Throwable) {
-                    logger.critical("Can't write report runtime data; leads to LOST test", e)
-                }
-            },
-            onFailure = { throwable ->
-                logger.critical(
-                    "Can't create output file for test runtime data; leads to LOST test",
-                    throwable
-                )
+        testArtifactsProvider.provideReportFile()
+            .flatMap { file ->
+                val testRuntimeData = testRuntimeDataBuilder.fromState(state)
+                reportSerializer.serialize(testRuntimeData, file)
             }
-        )
+            .fold(
+                onSuccess = { file ->
+                    logger.debug("Write report to file: $file")
+                },
+                onFailure = { throwable ->
+                    logger.critical(
+                        "Can't create output file for test runtime data; leads to LOST test",
+                        throwable
+                    )
+                }
+            )
     }
 
     override fun sendContent(

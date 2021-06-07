@@ -18,6 +18,8 @@ dependencies {
     implementation(project(":common:okhttp")) {
         because("Result extension used")
     }
+
+    testImplementation(project(":common:truth-extensions"))
 }
 
 kotlin {
