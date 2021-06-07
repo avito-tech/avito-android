@@ -11,3 +11,6 @@ gh-pages-generated/
 *.iml
 .idea/*
 !.idea/dictionaries/
+# gradle-profiler
+gradle-user-home
+profile-out*

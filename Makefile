@@ -259,3 +259,6 @@ check_avito_configuration:
 
 dependency_updates:
 	$(docker_command) ./gradlew -p $(project) $(log_level) $(params) dependencyUpdates -Drevision=release
+
+benchmark_fast_check:
+	gradle-profiler --benchmark --project-dir subprojects --scenario-file gradle/performance.scenarios fastCheck
