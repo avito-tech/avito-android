@@ -10,7 +10,8 @@ We publish releases to Maven Central: [com.avito.android](https://search.maven.o
 
 ??? info "If you release for the first time"
 
-    - [Get an access to Sonatype](#getting-access-to-sonatype) 
+    - [Get an access to Sonatype](#getting-access-to-sonatype)
+    - Install [Github CLI](https://cli.github.com)
 
 1. Check if [diff against the last release](https://github.com/avito-tech/avito-android/compare/2021.%3CINSERT_HERE_THE_LAST_RELEASE%3E...develop) contains any changes for users.
 If not, then probably there are no reasons to make a release.
@@ -20,7 +21,8 @@ If it is `Failed` you could release from previous `Succeed` commits or fix probl
 This branch must be persistent. It is used for automation.
 1. Manually run [Integration build](http://links.k.avito.ru/ZA) on the `release branch`.
 1. Manually run [Github publish configuration](http://links.k.avito.ru/releaseAvitoTools) on the `release branch`. 
-It will upload artifacts to a staging repository in [Sonatype](https://oss.sonatype.org/#stagingRepositories)
+It will upload artifacts to a staging repository in [Sonatype](https://oss.sonatype.org/#stagingRepositories).
+So you can upload it in advance at any previous step and drop in case of problems.
 1. [Release staging repository](#making-a-release-in-sonatype)
 1. Make a PR to an internal avito repository with the new version of infrastructure.
 1. Checkout a new branch and make a PR to github repository:
@@ -38,7 +40,7 @@ It will upload artifacts to a staging repository in [Sonatype](https://oss.sonat
 1. [Create an account](https://issues.sonatype.org/secure/Signup!default.jspa)
 1. Create an issue referencing [original one](https://issues.sonatype.org/browse/OSSRH-64609), asking for `com.avito.android` access
 1. Wait for confirmation
-1. Login to [nexus](https://oss.sonatype.org/) to validate staging profile access
+1. Login to [nexus](https://oss.sonatype.org) to validate staging profile access
 
 Some additional info:
 
@@ -60,8 +62,8 @@ In an Activity tab you can track progress.
 1. Release the repository. It will publish the contents to Maven Central
 ![oss-release-confirm](https://user-images.githubusercontent.com/1104540/109543687-ac2b2c80-7ad7-11eb-8294-7d603c523156.png)
 1. Wait till new packages appear on Maven Central. It takes usually about 15-30 min.
-   You can check state manually in a [repository manager](https://oss.sonatype.org/#nexus-search;quick~com.avito.android) 
-   or in [public search](https://search.maven.org/search?q=com.avito.android). 
+   You can see them earlier in a [repository manager](https://oss.sonatype.org/#nexus-search;quick~com.avito.android) 
+   or in [public search](https://search.maven.org/search?q=com.avito.android) before all of them will be available for download.
 
 Some additional info:
 
