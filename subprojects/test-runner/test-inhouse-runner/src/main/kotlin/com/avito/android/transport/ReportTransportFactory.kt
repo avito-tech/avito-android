@@ -10,6 +10,7 @@ import com.avito.report.ReportsApiFactory
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.model.DeviceName
 import com.avito.report.model.ReportCoordinates
+import com.avito.report.serialize.ReportSerializer
 import com.avito.time.TimeProvider
 
 class ReportTransportFactory(
@@ -17,13 +18,15 @@ class ReportTransportFactory(
     private val loggerFactory: LoggerFactory,
     private val remoteStorage: RemoteStorage,
     private val httpClientProvider: HttpClientProvider,
+    reportSerializer: ReportSerializer,
     testArtifactsProvider: TestArtifactsProvider
 ) {
 
     private val externalStorageTransport = ExternalStorageTransport(
         timeProvider = timeProvider,
         loggerFactory = loggerFactory,
-        testArtifactsProvider = testArtifactsProvider
+        testArtifactsProvider = testArtifactsProvider,
+        reportSerializer = reportSerializer
     )
 
     fun create(

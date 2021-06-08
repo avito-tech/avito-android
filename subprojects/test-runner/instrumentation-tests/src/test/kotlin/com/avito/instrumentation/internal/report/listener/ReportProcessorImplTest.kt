@@ -13,6 +13,7 @@ import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.report.model.TestStaticData
 import com.avito.report.model.TestStaticDataPackage
 import com.avito.report.model.createStubInstance
+import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.scheduler.listener.TestResult
 import com.avito.runner.scheduler.listener.success
@@ -21,7 +22,6 @@ import com.avito.runner.service.model.TestCase
 import com.avito.time.StubTimeProvider
 import com.avito.truth.assertThat
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.junit.jupiter.api.Test
@@ -35,7 +35,7 @@ internal class ReportProcessorImplTest {
     private val artifactsUploader = StubTestArtifactsUploader()
     private val logcatProcessor = LogcatProcessor.Impl(artifactsUploader, ProguardRetracer.Stub)
     private val timeProvider = StubTimeProvider()
-    private val gson = GsonReportParser.reportGson
+    private val reportSerializer = ReportSerializer()
 
     @Test
     fun `process - returns test with no status and contains timeout message - on test run timeout`() {
@@ -67,7 +67,6 @@ internal class ReportProcessorImplTest {
 
         createReportJson(
             reportDir = tempDir,
-            gson = gson,
             testRuntimeData = TestRuntimeDataPackage.createStubInstance()
         )
 
@@ -103,7 +102,6 @@ internal class ReportProcessorImplTest {
 
         createReportJson(
             reportDir = tempDir,
-            gson = gson,
             testRuntimeData = TestRuntimeDataPackage.createStubInstance(incident = Incident.createStubInstance())
         )
 
@@ -165,7 +163,7 @@ internal class ReportProcessorImplTest {
         dispatcher: CoroutineDispatcher
     ): TestArtifactsProcessor {
         return LegacyTestArtifactsProcessor(
-            reportParser = GsonReportParser(gson),
+            reportSerializer = ReportSerializer(),
             logcatProcessor = logcatProcessor,
             dispatcher = dispatcher
         )
@@ -173,13 +171,12 @@ internal class ReportProcessorImplTest {
 
     private fun createReportJson(
         reportDir: File,
-        gson: Gson,
         testRuntimeData: TestRuntimeData
     ) {
         val reportFile = TestArtifactsProviderFactory.createForTempDir(reportDir)
             .provideReportFile()
             .getOrThrow()
 
-        reportFile.writeText(gson.toJson(testRuntimeData))
+        reportSerializer.serialize(testRuntimeData, reportFile)
     }
 }
