@@ -14,6 +14,7 @@ import com.avito.runner.scheduler.runner.TestRunner
 import com.avito.runner.scheduler.runner.TestRunnerExecutionState
 import com.avito.runner.scheduler.runner.TestRunnerImpl
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
+import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolImpl
 import com.avito.runner.service.listener.CompositeListener
 import com.avito.runner.service.listener.TestListener
@@ -54,14 +55,16 @@ class TestRunnerFactory(
             ),
             deviceWorkerPool = DeviceWorkerPoolImpl(
                 outputDirectory = outputDirectory,
-                devices = devices,
                 timeProvider = timeProvider,
                 loggerFactory = loggerFactory,
                 testListener = setupListener(outputDirectory),
                 deviceMetricsListener = testMetricsSender,
-                intentions = executionState.intentions,
-                intentionResults = executionState.intentionResults,
-                deviceSignals = executionState.deviceSignals
+                state = DeviceWorkerPool.State(
+                    devices = devices,
+                    intentions = executionState.intentions,
+                    intentionResults = executionState.intentionResults,
+                    deviceSignals = executionState.deviceSignals,
+                )
             ),
             reservationWatcher = DeviceReservationWatcher.Impl(
                 reservation = config.reservation

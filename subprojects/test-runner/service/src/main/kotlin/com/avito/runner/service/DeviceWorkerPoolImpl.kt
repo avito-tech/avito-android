@@ -4,8 +4,6 @@ import com.avito.coroutines.extensions.Dispatchers
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.service.listener.TestListener
-import com.avito.runner.service.model.intention.Intention
-import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.worker.DeviceWorker
 import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
@@ -17,24 +15,20 @@ import com.avito.time.TimeProvider
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import java.io.File
 
 class DeviceWorkerPoolImpl(
     private val outputDirectory: File,
-    private val loggerFactory: LoggerFactory,
-    private val devices: ReceiveChannel<Device>,
-    private val intentionsRouter: IntentionsRouter = IntentionsRouter(loggerFactory = loggerFactory),
     private val testListener: TestListener,
     private val deviceMetricsListener: DeviceListener,
     private val timeProvider: TimeProvider,
-    private val intentions: ReceiveChannel<Intention>,
-    private val intentionResults: SendChannel<IntentionResult>,
-    private val deviceSignals: SendChannel<Device.Signal>,
-    private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread
+    private val deviceWorkersDispatcher: Dispatchers = Dispatchers.SingleThread,
+    private val state: DeviceWorkerPool.State,
+    loggerFactory: LoggerFactory
 ) : DeviceWorkerPool {
+
+    private val intentionsRouter: IntentionsRouter = IntentionsRouter(loggerFactory = loggerFactory)
 
     private val logger = loggerFactory.create<DeviceWorkerPool>()
 
@@ -44,7 +38,7 @@ class DeviceWorkerPoolImpl(
     override fun start(scope: CoroutineScope) {
         scope.launch(CoroutineName("device-workers-pool")) {
             launch(CoroutineName("device-workers")) {
-                for (device in devices) {
+                for (device in state.devices) {
                     DeviceWorker(
                         intentionsRouter = intentionsRouter,
                         device = device,
@@ -65,7 +59,7 @@ class DeviceWorkerPoolImpl(
             }
 
             launch(CoroutineName("send-intentions")) {
-                for (intention in intentions) {
+                for (intention in state.intentions) {
                     logger.debug("received intention: $intention")
                     intentionsRouter.sendIntention(intention = intention)
                 }
@@ -88,10 +82,10 @@ class DeviceWorkerPoolImpl(
                         }
 
                         is DeviceWorkerMessage.Result ->
-                            intentionResults.send(message.intentionResult)
+                            state.intentionResults.send(message.intentionResult)
 
                         is DeviceWorkerMessage.WorkerDied ->
-                            deviceSignals.send(Device.Signal.Died(message.coordinate))
+                            state.deviceSignals.send(Device.Signal.Died(message.coordinate))
                     }
                 }
             }
@@ -101,6 +95,6 @@ class DeviceWorkerPoolImpl(
     override fun stop() {
         intentionsRouter.cancel()
         messages.cancel()
-        devices.cancel()
+        state.devices.cancel()
     }
 }

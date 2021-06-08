@@ -9,6 +9,7 @@ import com.avito.runner.scheduler.report.SummaryReportMakerImpl
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.scheduler.util.generateTestRunRequest
+import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolImpl
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
@@ -606,14 +607,16 @@ class RunnerIntegrationTest {
         val deviceWorkerPool = DeviceWorkerPoolImpl(
             outputDirectory = outputDirectory,
             loggerFactory = loggerFactory,
-            devices = devices,
             testListener = testListener,
             deviceMetricsListener = StubDeviceListener(),
             deviceWorkersDispatcher = TestDispatcher,
             timeProvider = StubTimeProvider(),
-            intentions = state.intentions,
-            intentionResults = state.intentionResults,
-            deviceSignals = state.deviceSignals
+            state = DeviceWorkerPool.State(
+                devices = devices,
+                intentions = state.intentions,
+                intentionResults = state.intentionResults,
+                deviceSignals = state.deviceSignals,
+            )
         )
 
         return TestRunnerImpl(

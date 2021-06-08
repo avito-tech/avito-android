@@ -42,11 +42,7 @@ class DeviceWorkerPoolTest {
     fun `schedule all tests to supported devices`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter(loggerFactory = loggerFactory)
-            val pool = provideDeviceWorkerPool(
-                devices = devices,
-                intentionsRouter = intentionsRouter
-            )
+            val pool = provideDeviceWorkerPool(devices = devices)
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
@@ -127,11 +123,7 @@ class DeviceWorkerPoolTest {
     fun `reschedule test to another device - when device is broken while processing intention`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter(loggerFactory = loggerFactory)
-            val pool = provideDeviceWorkerPool(
-                devices = devices,
-                intentionsRouter = intentionsRouter
-            )
+            val pool = provideDeviceWorkerPool(devices = devices)
             pool.start(this)
 
             val compatibleWithDeviceState = State(
@@ -209,18 +201,18 @@ class DeviceWorkerPoolTest {
 
     private fun provideDeviceWorkerPool(
         devices: ReceiveChannel<Device>,
-        intentionsRouter: IntentionsRouter
     ) = DeviceWorkerPoolImpl(
         outputDirectory = File(""),
         loggerFactory = loggerFactory,
-        devices = devices,
-        intentionsRouter = intentionsRouter,
         testListener = NoOpTestListener,
         deviceMetricsListener = StubDeviceListener(),
         deviceWorkersDispatcher = TestDispatcher,
         timeProvider = StubTimeProvider(),
-        intentions = intentionsChannel,
-        intentionResults = intentionResults,
-        deviceSignals = deviceSignals
+        state = DeviceWorkerPool.State(
+            devices = devices,
+            intentions = intentionsChannel,
+            intentionResults = intentionResults,
+            deviceSignals = deviceSignals,
+        )
     )
 }
