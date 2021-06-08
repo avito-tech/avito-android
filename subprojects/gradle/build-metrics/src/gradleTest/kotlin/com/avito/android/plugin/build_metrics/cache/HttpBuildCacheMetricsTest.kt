@@ -45,6 +45,7 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
 
     private class TestCase(
         val name: String,
+        val enabled: Boolean = true,
         val loadStatus: Int,
         val storeStatus: Int,
         val assertion: (result: TestResult) -> Unit
@@ -59,8 +60,11 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 result.assertNoMetric<StatsMetric>(".build.cache.errors.")
             }
         ),
+        // TODO: this case is flaky
+        //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "load error - 500 response",
+            enabled = false,
             loadStatus = 500,
             storeStatus = 200,
             assertion = { result ->
@@ -69,10 +73,11 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 }
             }
         ),
-        // TODO: this case is flaky but enabled to collect more info
+        // TODO: this case is flaky
         //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "store error - 500 response",
+            enabled = false,
             loadStatus = 404,
             storeStatus = 500,
             assertion = { result ->
@@ -105,7 +110,7 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
 
     @TestFactory
     fun `remote cache errors`(): List<DynamicTest> {
-        return cases.map { case ->
+        return cases.filter { it.enabled }.map { case ->
             DynamicTest.dynamicTest(case.name) {
                 setup()
 
