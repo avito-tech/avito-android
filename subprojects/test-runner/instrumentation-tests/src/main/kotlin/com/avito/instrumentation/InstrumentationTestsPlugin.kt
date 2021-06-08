@@ -21,13 +21,13 @@ import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
-import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.test.DumpConfigurationTask
 import com.avito.instrumentation.service.TestRunnerService
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerFactory
+import com.avito.runner.scheduler.runner.ExecutionParameters
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials

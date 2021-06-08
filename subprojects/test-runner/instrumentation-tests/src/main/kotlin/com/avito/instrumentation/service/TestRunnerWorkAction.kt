@@ -1,8 +1,8 @@
 package com.avito.instrumentation.service
 
 import com.avito.android.stats.StatsDConfig
-import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
+import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
@@ -20,7 +20,7 @@ public abstract class TestRunnerWorkAction : WorkAction<TestRunnerWorkAction.Par
         val testRunParams: Property<TestRunParams>
 
         // todo replace with testRunParams completely ; knows too much
-        val legacyTestRunParams: Property<InstrumentationTestsAction.Params>
+        val legacyTestRunParams: Property<InstrumentationTestsActionParams>
     }
 
     override fun execute() {
@@ -42,7 +42,7 @@ public abstract class TestRunnerWorkAction : WorkAction<TestRunnerWorkAction.Par
     }
 
     private fun createTestsActionFactory(
-        params: InstrumentationTestsAction.Params,
+        params: InstrumentationTestsActionParams,
         metricsConfig: RunnerMetricsConfig
     ): InstrumentationTestsActionFactory {
         return InstrumentationTestsActionFactory.Impl(params, metricsConfig)

@@ -14,7 +14,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 
-class TestExecutionScheduler(
+internal class TestExecutionScheduler(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val results: SendChannel<TestRunResult>,
     private val intentions: SendChannel<Intention>,

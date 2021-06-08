@@ -1,8 +1,8 @@
 package com.avito.instrumentation.configuration.target
 
-import com.avito.instrumentation.configuration.InstrumentationParameters
 import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
-import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.runner.config.InstrumentationParameters
+import com.avito.runner.config.TargetConfigurationData
 import groovy.lang.Closure
 import org.gradle.api.Action
 import java.io.Serializable
@@ -23,12 +23,10 @@ public open class TargetConfiguration(public val name: String) : Serializable {
     public var instrumentationParams: Map<String, String> = emptyMap()
 
     public fun scheduling(closure: Closure<SchedulingConfiguration>) {
-        scheduling(
-            Action {
-                closure.delegate = it
-                closure.call()
-            }
-        )
+        scheduling {
+            closure.delegate = it
+            closure.call()
+        }
     }
 
     public fun scheduling(action: Action<SchedulingConfiguration>) {
@@ -39,9 +37,9 @@ public open class TargetConfiguration(public val name: String) : Serializable {
             }
     }
 
-    public fun data(parentInstrumentationParameters: InstrumentationParameters): Data {
+    public fun data(parentInstrumentationParameters: InstrumentationParameters): TargetConfigurationData {
 
-        return Data(
+        return TargetConfigurationData(
             name = name,
             reservation = scheduling.data().reservation,
             deviceName = deviceName,
@@ -56,17 +54,5 @@ public open class TargetConfiguration(public val name: String) : Serializable {
     public fun validate() {
         scheduling.validate()
         require(deviceName.isNotBlank()) { "deviceName must be set" }
-    }
-
-    public data class Data(
-        val name: String,
-        val reservation: Reservation,
-        val deviceName: String,
-        val instrumentationParams: InstrumentationParameters
-    ) : Serializable {
-
-        override fun toString(): String = "$name with device name: $deviceName"
-
-        public companion object
     }
 }

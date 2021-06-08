@@ -4,18 +4,18 @@ import com.avito.android.Result
 import com.avito.runner.service.model.TestCaseRun
 import java.io.File
 
-sealed class TestResult {
+public sealed class TestResult {
 
-    class Complete(val artifacts: Result<File>) : TestResult() {
-        companion object
+    public class Complete(public val artifacts: Result<File>) : TestResult() {
+        internal companion object
     }
 
-    class Incomplete(
-        val infraError: TestCaseRun.Result.Failed.InfrastructureError,
-        val logcat: Result<String>
+    public class Incomplete(
+        public val infraError: TestCaseRun.Result.Failed.InfrastructureError,
+        public val logcat: Result<String>
     ) : TestResult() {
-        companion object
+        internal companion object
     }
 
-    companion object
+    public companion object
 }

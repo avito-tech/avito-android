@@ -6,28 +6,27 @@ import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.ReportFactoryImpl
 import com.avito.android.stats.StatsDSender
 import com.avito.http.HttpClientProvider
-import com.avito.instrumentation.internal.executing.TestExecutorFactory
-import com.avito.instrumentation.internal.finalizer.FinalizerFactory
-import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
-import com.avito.instrumentation.internal.scheduling.TestsScheduler
-import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
+import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.finalizer.Finalizer
+import com.avito.runner.finalizer.FinalizerFactory
+import com.avito.runner.finalizer.FinalizerFactoryImpl
+import com.avito.runner.scheduler.runner.TestExecutorFactory
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryImpl
+import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
+import com.avito.runner.scheduler.runner.scheduler.TestsSchedulerFactory
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 
 internal interface InstrumentationTestsActionFactory {
 
-    fun provideFinalizer(): InstrumentationTestActionFinalizer
+    fun provideFinalizer(): Finalizer
 
     fun provideScheduler(devicesProviderFactory: DevicesProviderFactory): TestsScheduler
 
     class Impl(
-        params: InstrumentationTestsAction.Params,
+        params: InstrumentationTestsActionParams,
         metricsConfig: RunnerMetricsConfig
     ) : InstrumentationTestsActionFactory {
-
-        private val gson: Gson = Companion.gson
 
         private val schedulerFactory: TestsSchedulerFactory
 
@@ -58,10 +57,9 @@ internal interface InstrumentationTestsActionFactory {
 
             val report = reportFactory.createReport()
 
-            this.schedulerFactory = TestsSchedulerFactory.Impl(
+            this.schedulerFactory = TestSchedulerFactoryImpl(
                 params = params,
                 report = report,
-                gson = gson,
                 metricsConfig = metricsConfig,
                 testExecutorFactory = TestExecutorFactory.Implementation(),
                 testSuiteLoader = TestSuiteLoaderImpl(),
@@ -70,12 +68,12 @@ internal interface InstrumentationTestsActionFactory {
                 reportFactory = reportFactory
             )
 
-            this.finalizerFactory = FinalizerFactory.Impl(
+            this.finalizerFactory = FinalizerFactoryImpl(
                 params = params,
-                gson = gson,
                 metricsConfig = metricsConfig,
                 reportFactory = reportFactory,
-                timeProvider = timeProvider
+                timeProvider = timeProvider,
+                loggerFactory = params.loggerFactory,
             )
         }
 
@@ -83,13 +81,5 @@ internal interface InstrumentationTestsActionFactory {
             schedulerFactory.create(devicesProviderFactory)
 
         override fun provideFinalizer() = finalizerFactory.create()
-    }
-
-    companion object {
-        val gson: Gson by lazy {
-            GsonBuilder()
-                .setPrettyPrinting()
-                .create()
-        }
     }
 }

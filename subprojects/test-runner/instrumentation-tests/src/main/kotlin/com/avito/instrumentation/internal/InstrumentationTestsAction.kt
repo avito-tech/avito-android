@@ -2,29 +2,24 @@ package com.avito.instrumentation.internal
 
 import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
-import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.SeriesName
-import com.avito.android.stats.StatsDConfig
-import com.avito.instrumentation.configuration.InstrumentationConfiguration
-import com.avito.instrumentation.internal.executing.ExecutionParameters
-import com.avito.instrumentation.internal.finalizer.InstrumentationTestActionFinalizer
-import com.avito.instrumentation.internal.scheduling.TestsScheduler
-import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.finalizer.Finalizer
+import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
-import com.avito.utils.gradle.KubernetesCredentials
-import java.io.File
-import java.io.Serializable
+import com.avito.utils.BuildFailer
 import javax.inject.Inject
 
 internal class InstrumentationTestsAction(
-    private val params: Params,
-    private val loggerFactory: LoggerFactory,
+    private val params: InstrumentationTestsActionParams,
+    loggerFactory: LoggerFactory,
     private val scheduler: TestsScheduler,
-    private val finalizer: InstrumentationTestActionFinalizer
+    private val finalizer: Finalizer,
+    private val buildFailer: BuildFailer,
 ) : Runnable {
 
     private val logger = loggerFactory.create<InstrumentationTestsAction>()
@@ -34,7 +29,7 @@ internal class InstrumentationTestsAction(
      */
     @Suppress("unused")
     @Inject
-    constructor(params: Params) : this(
+    constructor(params: InstrumentationTestsActionParams) : this(
         params = params,
         factory = InstrumentationTestsActionFactory.Impl(
             params,
@@ -42,8 +37,9 @@ internal class InstrumentationTestsAction(
         )
     )
 
-    constructor(params: Params, factory: InstrumentationTestsActionFactory) : this(
+    constructor(params: InstrumentationTestsActionParams, factory: InstrumentationTestsActionFactory) : this(
         params = params,
+        buildFailer = BuildFailer.RealFailer(),
         loggerFactory = params.loggerFactory,
         scheduler = factory.provideScheduler(
             devicesProviderFactory = createDevicesProviderFactory(
@@ -60,45 +56,22 @@ internal class InstrumentationTestsAction(
 
         val testSchedulerResults = scheduler.schedule()
 
-        finalizer.finalize(testSchedulerResults = testSchedulerResults)
-    }
-
-    data class Params(
-        val mainApk: File?,
-        val testApk: File,
-        val instrumentationConfiguration: InstrumentationConfiguration.Data,
-        val executionParameters: ExecutionParameters,
-        val buildId: String,
-        val buildType: String,
-        val kubernetesCredentials: KubernetesCredentials,
-        val projectName: String,
-        val suppressFailure: Boolean,
-        val suppressFlaky: Boolean,
-        val impactAnalysisResult: ImpactAnalysisResult,
-        val loggerFactory: LoggerFactory,
-        val outputDir: File,
-        val verdictFile: File,
-        val fileStorageUrl: String,
-        val statsDConfig: StatsDConfig,
-        val reportViewerConfig: ReportViewerConfig?,
-        val proguardMappings: List<File>,
-        val useInMemoryReport: Boolean,
-        val uploadTestArtifacts: Boolean,
-        val fetchLogcatForIncompleteTests: Boolean,
-        val saveTestArtifactsToOutputs: Boolean,
-    ) : Serializable {
-        companion object
+        when (val result = finalizer.finalize(testSchedulerResults = testSchedulerResults)) {
+            Finalizer.Result.Ok -> {
+            }
+            is Finalizer.Result.Failure -> buildFailer.failBuild(result.message)
+        }
     }
 }
 
-private fun runnerPrefix(params: InstrumentationTestsAction.Params) = SeriesName.create(
+private fun runnerPrefix(params: InstrumentationTestsActionParams) = SeriesName.create(
     "testrunner",
     params.projectName,
     params.instrumentationConfiguration.name
 )
 
 private fun createDevicesProviderFactory(
-    params: InstrumentationTestsAction.Params,
+    params: InstrumentationTestsActionParams,
     timeProvider: TimeProvider
 ): DevicesProviderFactory = DeviceProviderFactoryImpl(
     kubernetesCredentials = params.kubernetesCredentials,

@@ -7,7 +7,8 @@ import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
 
-interface TestExecutionState {
+internal interface TestExecutionState {
+
     val request: TestRunRequest
 
     fun verdict(incomingTestCaseRun: DeviceTestCaseRun?): Verdict
@@ -25,7 +26,7 @@ interface TestExecutionState {
     }
 }
 
-class TestExecutionStateImplementation(
+internal class TestExecutionStateImplementation(
     override val request: TestRunRequest,
     private val retryManager: RetryManager
 ) : TestExecutionState {

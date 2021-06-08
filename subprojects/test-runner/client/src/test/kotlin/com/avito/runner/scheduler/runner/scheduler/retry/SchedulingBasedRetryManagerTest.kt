@@ -8,7 +8,7 @@ import com.avito.runner.test.generateTestCaseRun
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 
-class SchedulingBasedRetryManagerTest {
+internal class SchedulingBasedRetryManagerTest {
 
     @Test
     fun `retry not required - run is failed and when retry quota is 0`() {

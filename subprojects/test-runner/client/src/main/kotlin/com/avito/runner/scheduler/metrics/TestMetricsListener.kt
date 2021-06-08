@@ -1,6 +1,6 @@
 package com.avito.runner.scheduler.metrics
 
-interface TestMetricsListener {
+internal interface TestMetricsListener {
 
     fun onTestSuiteStarted()
 

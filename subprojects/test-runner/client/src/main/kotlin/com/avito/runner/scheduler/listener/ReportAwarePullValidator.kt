@@ -6,7 +6,7 @@ import com.avito.runner.service.worker.device.adb.PullValidator
 import com.avito.utils.hasFileContent
 import java.nio.file.Path
 
-class ReportAwarePullValidator(
+internal class ReportAwarePullValidator(
     private val testArtifactsProviderFactory: TestArtifactsProviderFactory
 ) : PullValidator {
 
