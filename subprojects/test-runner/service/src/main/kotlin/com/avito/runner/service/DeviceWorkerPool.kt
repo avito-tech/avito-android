@@ -7,15 +7,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 
-interface IntentionExecutionService {
+interface DeviceWorkerPool {
 
-    fun start(scope: CoroutineScope): Communication
+    fun start(scope: CoroutineScope)
 
     fun stop()
 
-    class Communication(
-        val intentions: SendChannel<Intention>,
-        val results: ReceiveChannel<IntentionResult>,
-        val deviceSignals: ReceiveChannel<Device.Signal>
+    class State(
+        val intentions: ReceiveChannel<Intention>,
+        val intentionResults: SendChannel<IntentionResult>,
+        val deviceSignals: SendChannel<Device.Signal>,
+        val devices: ReceiveChannel<Device>,
     )
 }

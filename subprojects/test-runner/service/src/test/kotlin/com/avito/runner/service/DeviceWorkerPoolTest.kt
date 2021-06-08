@@ -3,6 +3,8 @@ package com.avito.runner.service
 import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.intention.Intention
+import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
@@ -28,19 +30,19 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 @ExperimentalCoroutinesApi
-class IntentionExecutionServiceTest {
+class DeviceWorkerPoolTest {
 
     private val loggerFactory = StubLoggerFactory
+
+    private val intentionsChannel = Channel<Intention>(Channel.UNLIMITED)
+    private val intentionResults = Channel<IntentionResult>(Channel.UNLIMITED)
+    private val deviceSignals = Channel<Device.Signal>(Channel.UNLIMITED)
 
     @Test
     fun `schedule all tests to supported devices`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter(loggerFactory = loggerFactory)
-            val executionService = provideIntentionExecutionService(
-                devices = devices,
-                intentionsRouter = intentionsRouter
-            )
+            val pool = provideDeviceWorkerPool(devices = devices)
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
@@ -94,13 +96,14 @@ class IntentionExecutionServiceTest {
             )
 
             devices.send(successfulDevice)
-            val communication = executionService.start(this)
+            pool.start(this)
             intentions.forEach {
-                communication.intentions.send(it)
+                intentionsChannel.send(it)
             }
 
-            val results = communication.results.receiveAvailable()
-            executionService.stop()
+            val results = intentionResults.receiveAvailable()
+            pool.stop()
+            intentionsChannel.close()
             successfulDevice.verify()
             assertWithMessage("Received results for all input intentions")
                 .that(results.map { it.intention })
@@ -120,12 +123,8 @@ class IntentionExecutionServiceTest {
     fun `reschedule test to another device - when device is broken while processing intention`() =
         runBlockingTest {
             val devices = Channel<Device>(Channel.UNLIMITED)
-            val intentionsRouter = IntentionsRouter(loggerFactory = loggerFactory)
-            val executionService = provideIntentionExecutionService(
-                devices = devices,
-                intentionsRouter = intentionsRouter
-            )
-            val communication = executionService.start(this)
+            val pool = provideDeviceWorkerPool(devices = devices)
+            pool.start(this)
 
             val compatibleWithDeviceState = State(
                 layers = listOf(
@@ -178,10 +177,11 @@ class IntentionExecutionServiceTest {
             )
 
             devices.send(freezeDevice)
-            intentions.forEach { communication.intentions.send(it) }
+            intentions.forEach { intentionsChannel.send(it) }
             devices.send(successfulDevice)
-            val results = communication.results.receiveAvailable()
-            executionService.stop()
+            val results = intentionResults.receiveAvailable()
+            pool.stop()
+            intentionsChannel.close()
             successfulDevice.verify()
 
             assertWithMessage("Received results for all input intentions")
@@ -199,17 +199,20 @@ class IntentionExecutionServiceTest {
                 .isEqualTo(intentions.map { TestCaseRun.Result.Passed })
         }
 
-    private fun provideIntentionExecutionService(
+    private fun provideDeviceWorkerPool(
         devices: ReceiveChannel<Device>,
-        intentionsRouter: IntentionsRouter
-    ) = IntentionExecutionServiceImplementation(
+    ) = DeviceWorkerPoolImpl(
         outputDirectory = File(""),
         loggerFactory = loggerFactory,
-        devices = devices,
-        intentionsRouter = intentionsRouter,
         testListener = NoOpTestListener,
         deviceMetricsListener = StubDeviceListener(),
         deviceWorkersDispatcher = TestDispatcher,
-        timeProvider = StubTimeProvider()
+        timeProvider = StubTimeProvider(),
+        state = DeviceWorkerPool.State(
+            devices = devices,
+            intentions = intentionsChannel,
+            intentionResults = intentionResults,
+            deviceSignals = deviceSignals,
+        )
     )
 }

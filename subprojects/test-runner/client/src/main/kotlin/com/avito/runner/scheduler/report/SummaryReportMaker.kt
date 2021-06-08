@@ -13,7 +13,7 @@ interface SummaryReportMaker {
     ): SummaryReport
 }
 
-class SummaryReportMakerImplementation : SummaryReportMaker {
+class SummaryReportMakerImpl : SummaryReportMaker {
 
     override fun make(
         runResult: TestRunnerResult,

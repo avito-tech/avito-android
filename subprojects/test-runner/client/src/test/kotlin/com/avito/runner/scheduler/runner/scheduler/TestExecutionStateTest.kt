@@ -51,7 +51,7 @@ class TestExecutionStateTest {
             createFailedTestCaseRun()
         )
 
-        state.verdict()
+        state.verdict(incomingTestCaseRun = null)
 
         val verdict = state.verdict(incomingTestCaseRun = runs[0])
 
@@ -73,7 +73,7 @@ class TestExecutionStateTest {
             )
         )
 
-        with(state.verdict()) {
+        with(state.verdict(incomingTestCaseRun = null)) {
             assertWithMessage("Verdict must be Run")
                 .that(this)
                 .isInstanceOf<TestExecutionState.Verdict.Run>()
@@ -94,7 +94,7 @@ class TestExecutionStateTest {
             )
         )
 
-        state.verdict()
+        state.verdict(incomingTestCaseRun = null)
 
         val failedRuns = listOf(
             createFailedTestCaseRun(),
@@ -124,7 +124,7 @@ class TestExecutionStateTest {
             )
         )
 
-        val initialVerdict = state.verdict()
+        val initialVerdict = state.verdict(incomingTestCaseRun = null)
 
         assertWithMessage("Initial verdict must has MultipleRun type")
             .that(initialVerdict)
@@ -161,7 +161,7 @@ class TestExecutionStateTest {
             )
         )
 
-        val initialVerdict = state.verdict()
+        val initialVerdict = state.verdict(incomingTestCaseRun = null)
 
         assertWithMessage("Initial verdict must has MultipleRun type")
             .that(initialVerdict)
@@ -198,7 +198,7 @@ class TestExecutionStateTest {
             )
         )
 
-        val initialVerdict = state.verdict()
+        val initialVerdict = state.verdict(incomingTestCaseRun = null)
 
         assertWithMessage("Initial verdict must has MultipleRun type")
             .that(initialVerdict)
@@ -260,7 +260,7 @@ class TestExecutionStateTest {
             )
         )
 
-        val verdict = state.verdict()
+        val verdict = state.verdict(incomingTestCaseRun = null)
 
         assertWithMessage("Verdict must be Run")
             .that(verdict)
@@ -289,7 +289,7 @@ class TestExecutionStateTest {
             createFailedTestCaseRun()
         )
 
-        state.verdict()
+        state.verdict(incomingTestCaseRun = null)
 
         val verdict = state.verdict(incomingTestCaseRun = runs[0])
 
@@ -317,7 +317,7 @@ class TestExecutionStateTest {
             )
         )
 
-        val verdict = state.verdict()
+        val verdict = state.verdict(incomingTestCaseRun = null)
 
         assertWithMessage("Verdict must be Run")
             .that(verdict)
@@ -352,7 +352,7 @@ class TestExecutionStateTest {
         val runs = listOf(
             createFailedTestCaseRun()
         )
-        state.verdict()
+        state.verdict(incomingTestCaseRun = null)
         state.verdict(incomingTestCaseRun = runs[0])
         state.verdict(incomingTestCaseRun = runs[0])
         state.verdict(incomingTestCaseRun = runs[0])
