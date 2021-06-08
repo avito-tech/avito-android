@@ -4,6 +4,7 @@ import com.avito.http.HttpCodes
 import com.avito.report.internal.model.RpcResult
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.ReportCoordinates
+import com.avito.report.serialize.EntryTypeAdapterFactory
 import com.avito.test.http.Mock
 import com.avito.test.http.MockDispatcher
 import com.avito.test.http.RequestCapturer

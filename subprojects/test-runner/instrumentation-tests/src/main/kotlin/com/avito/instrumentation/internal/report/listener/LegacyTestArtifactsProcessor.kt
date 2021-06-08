@@ -5,6 +5,7 @@ import com.avito.instrumentation.internal.logcat.LogcatAccessor
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.AndroidTest
 import com.avito.report.model.TestStaticData
+import com.avito.report.serialize.ReportSerializer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +15,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 internal class LegacyTestArtifactsProcessor(
-    private val reportParser: ReportParser,
+    private val reportSerializer: ReportSerializer,
     private val logcatProcessor: LogcatProcessor,
     private val dispatcher: CoroutineDispatcher
 ) : TestArtifactsProcessor {
@@ -30,7 +31,7 @@ internal class LegacyTestArtifactsProcessor(
         val reportFileProvider = TestArtifactsProviderFactory.createForTempDir(reportDir)
 
         return reportFileProvider.provideReportFile()
-            .flatMap { reportJson -> reportParser.parse(reportJson) }
+            .flatMap { reportJson -> reportSerializer.deserialize(reportJson) }
             .map { testRuntimeData ->
 
                 val isTestFailed = testRuntimeData.incident != null

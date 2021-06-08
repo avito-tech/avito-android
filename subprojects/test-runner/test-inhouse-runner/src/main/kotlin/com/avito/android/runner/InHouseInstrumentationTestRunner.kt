@@ -45,6 +45,7 @@ import com.avito.logger.create
 import com.avito.report.TestArtifactsProvider
 import com.avito.report.TestArtifactsProviderFactory
 import com.avito.report.model.Kind
+import com.avito.report.serialize.ReportSerializer
 import com.avito.test.http.MockDispatcher
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -97,7 +98,8 @@ abstract class InHouseInstrumentationTestRunner :
             loggerFactory = loggerFactory,
             remoteStorage = remoteStorage,
             httpClientProvider = httpClientProvider,
-            testArtifactsProvider = testArtifactsProvider
+            testArtifactsProvider = testArtifactsProvider,
+            reportSerializer = ReportSerializer()
         ).create(
             testRunCoordinates = runEnvironment.testRunCoordinates,
             reportDestination = runEnvironment.reportDestination

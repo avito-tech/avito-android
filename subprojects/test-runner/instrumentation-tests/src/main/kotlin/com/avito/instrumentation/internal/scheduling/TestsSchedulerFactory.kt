@@ -10,11 +10,9 @@ import com.avito.http.HttpClientProvider
 import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.executing.TestExecutorFactory
 import com.avito.instrumentation.internal.report.listener.AvitoFileStorageUploader
-import com.avito.instrumentation.internal.report.listener.GsonReportParser
 import com.avito.instrumentation.internal.report.listener.LegacyTestArtifactsProcessor
 import com.avito.instrumentation.internal.report.listener.LogcatProcessor
 import com.avito.instrumentation.internal.report.listener.LogcatTestLifecycleListener
-import com.avito.instrumentation.internal.report.listener.ReportParser
 import com.avito.instrumentation.internal.report.listener.ReportProcessor
 import com.avito.instrumentation.internal.report.listener.ReportProcessorImpl
 import com.avito.instrumentation.internal.report.listener.TestArtifactsProcessor
@@ -25,6 +23,7 @@ import com.avito.instrumentation.internal.suite.filter.FilterFactory
 import com.avito.instrumentation.internal.suite.filter.FilterInfoWriter
 import com.avito.instrumentation.metrics.InstrumentationMetricsSender
 import com.avito.report.model.TestStaticData
+import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
@@ -146,7 +145,7 @@ internal interface TestsSchedulerFactory {
                 metricsSender = metricsSender,
                 testArtifactsProcessor = createTestArtifactsProcessor(
                     uploadTestArtifacts = params.uploadTestArtifacts,
-                    reportParser = GsonReportParser(),
+                    reportSerializer = ReportSerializer(),
                     dispatcher = dispatcher,
                     logcatProcessor = logcatUploader,
                     testArtifactsUploader = artifactsUploader
@@ -159,7 +158,7 @@ internal interface TestsSchedulerFactory {
 
         private fun createTestArtifactsProcessor(
             uploadTestArtifacts: Boolean,
-            reportParser: ReportParser,
+            reportSerializer: ReportSerializer,
             dispatcher: CoroutineDispatcher,
             logcatProcessor: LogcatProcessor,
             testArtifactsUploader: TestArtifactsUploader
@@ -167,14 +166,14 @@ internal interface TestsSchedulerFactory {
 
             return if (uploadTestArtifacts) {
                 TestArtifactsProcessorImpl(
-                    reportParser = reportParser,
+                    reportSerializer = reportSerializer,
                     testArtifactsUploader = testArtifactsUploader,
                     dispatcher = dispatcher,
                     logcatProcessor = logcatProcessor
                 )
             } else {
                 LegacyTestArtifactsProcessor(
-                    reportParser = reportParser,
+                    reportSerializer = reportSerializer,
                     logcatProcessor = logcatProcessor,
                     dispatcher = dispatcher
                 )

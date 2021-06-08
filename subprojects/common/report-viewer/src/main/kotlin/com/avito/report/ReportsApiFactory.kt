@@ -5,6 +5,7 @@ import com.avito.http.RetryInterceptor
 import com.avito.logger.LoggerFactory
 import com.avito.report.internal.JsonRpcClient
 import com.avito.report.internal.ReportsApiImpl
+import com.avito.report.serialize.EntryTypeAdapterFactory
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.util.concurrent.TimeUnit
