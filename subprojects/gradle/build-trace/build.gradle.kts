@@ -11,7 +11,6 @@ dependencies {
     implementation(project(":gradle:critical-path:api"))
     implementation(project(":gradle:trace-event"))
     implementation(project(":gradle:gradle-profile"))
-    implementation(project(":gradle:build-environment"))
     implementation(project(":common:composite-exception"))
     implementation(project(":common:problem"))
     implementation(project(":common:result"))
@@ -29,4 +28,8 @@ gradlePlugin {
             displayName = "Build trace"
         }
     }
+}
+
+kotlin {
+    explicitApi()
 }

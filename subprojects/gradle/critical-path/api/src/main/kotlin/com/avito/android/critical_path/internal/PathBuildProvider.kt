@@ -16,6 +16,10 @@ import org.gradle.BuildResult
 import org.gradle.api.Task
 import org.gradle.util.Path
 
+/**
+ * Using an obsolete TaskExecutionListener instead of OperationCompletionListener
+ * due to https://github.com/gradle/gradle/issues/15824
+ */
 internal class PathBuildProvider : AbstractBuildEventsListener() {
 
     private val operations = mutableSetOf<TaskOperation>()
@@ -33,8 +37,6 @@ internal class PathBuildProvider : AbstractBuildEventsListener() {
         listeners.add(listener)
     }
 
-    // Using a TaskExecutionListener instead of OperationCompletionListener
-    //   due to https://github.com/gradle/gradle/issues/15824
     override fun afterExecute(task: Task, state: TaskExecution) {
         operations.add(
             taskOperation(task, state)
