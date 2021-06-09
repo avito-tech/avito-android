@@ -11,7 +11,6 @@ dependencies {
     implementation(project(":logger:gradle-logger"))
     implementation(libs.gson)
     implementation(project(":gradle:gradle-extensions"))
-    implementation(project(":gradle:gradle-profile"))
 
     gradleTestImplementation(project(":gradle:test-project"))
     gradleTestImplementation(testFixtures(project(":logger:logger")))

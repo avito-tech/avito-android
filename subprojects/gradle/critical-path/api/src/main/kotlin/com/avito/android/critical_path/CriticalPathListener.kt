@@ -7,5 +7,8 @@ import com.avito.graph.OperationsPath
  */
 public interface CriticalPathListener {
 
+    /**
+     * Will be invoked at the end of a build
+     */
     public fun onCriticalPathReady(path: OperationsPath<TaskOperation>)
 }

@@ -5,6 +5,14 @@ import com.avito.android.gradle.metric.GradleCollector
 import com.avito.kotlin.dsl.isRoot
 import org.gradle.api.Project
 
+/**
+ * This is a way to register [CriticalPathListener].
+ *
+ * It's needed to share the same critical path between plugins.
+ * The computation is heavy and relies on [org.gradle.BuildListener]
+ * (see [PathBuildProvider] implementation).
+ * This class hides such implementation details.
+ */
 public object CriticalPathRegistry {
 
     public fun addListener(project: Project, listener: CriticalPathListener) {

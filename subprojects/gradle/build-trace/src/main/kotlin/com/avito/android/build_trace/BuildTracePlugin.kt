@@ -8,7 +8,7 @@ import com.avito.logger.GradleLoggerFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-open class BuildTracePlugin : Plugin<Project> {
+public abstract class BuildTracePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         check(project.isRoot()) {
