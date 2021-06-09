@@ -1,14 +1,13 @@
 package com.avito.instrumentation
 
-import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
-import com.github.salomonbrys.kotson.fromJson
+import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
 import com.google.common.truth.Truth.assertThat
+import com.google.gson.GsonBuilder
 import org.junit.jupiter.api.Test
 
 public class InstrumentationTestsTaskVerdictSerializationTest {
 
-    private val gson = InstrumentationTestsActionFactory.gson
+    private val gson = GsonBuilder().setPrettyPrinting().create()
 
     @Test
     public fun `serialize verdict`() {
@@ -23,7 +22,10 @@ public class InstrumentationTestsTaskVerdictSerializationTest {
             )
         )
 
-        val actual = gson.fromJson<InstrumentationTestsTaskVerdict>(gson.toJson(expected))
+        val actual = gson.fromJson(
+            gson.toJson(expected),
+            InstrumentationTestsTaskVerdict::class.java
+        )
 
         assertThat(expected)
             .isEqualTo(actual)

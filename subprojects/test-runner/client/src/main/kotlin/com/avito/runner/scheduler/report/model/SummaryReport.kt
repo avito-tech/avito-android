@@ -2,7 +2,7 @@ package com.avito.runner.scheduler.report.model
 
 import com.avito.runner.service.model.TestCaseRun
 
-class SummaryReport(
+internal class SummaryReport(
     val reports: List<TestCaseRequestMatchingReport>,
     val durationMilliseconds: Long
 ) {

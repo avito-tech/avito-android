@@ -7,8 +7,8 @@ import com.avito.runner.scheduler.metrics.StubTestMetricsListener
 import com.avito.runner.scheduler.report.CompositeReporter
 import com.avito.runner.scheduler.report.SummaryReportMakerImpl
 import com.avito.runner.scheduler.runner.model.TestRunRequest
+import com.avito.runner.scheduler.runner.model.generateTestRunRequest
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
-import com.avito.runner.scheduler.util.generateTestRunRequest
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolImpl
 import com.avito.runner.service.listener.TestListener
@@ -46,7 +46,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 @ExperimentalCoroutinesApi
-class RunnerIntegrationTest {
+internal class RunnerIntegrationTest {
 
     private val devices = Channel<Device>(Channel.UNLIMITED)
 

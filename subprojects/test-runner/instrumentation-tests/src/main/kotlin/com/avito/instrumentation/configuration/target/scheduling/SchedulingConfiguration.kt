@@ -4,7 +4,7 @@ import com.avito.instrumentation.configuration.target.scheduling.quota.QuotaConf
 import com.avito.instrumentation.configuration.target.scheduling.reservation.DeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
 import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
-import com.avito.instrumentation.reservation.request.Reservation
+import com.avito.runner.config.Reservation
 import groovy.lang.Closure
 import org.gradle.api.Action
 import java.io.Serializable
@@ -15,21 +15,17 @@ public open class SchedulingConfiguration {
     public lateinit var quota: QuotaConfiguration
 
     public fun staticDevicesReservation(closure: Closure<StaticDeviceReservationConfiguration>) {
-        staticDevicesReservation(
-            Action {
-                closure.delegate = it
-                closure.call()
-            }
-        )
+        staticDevicesReservation {
+            closure.delegate = it
+            closure.call()
+        }
     }
 
     public fun testsCountBasedReservation(closure: Closure<TestsBasedDevicesReservationConfiguration>) {
-        testsCountBasedReservation(
-            Action {
-                closure.delegate = it
-                closure.call()
-            }
-        )
+        testsCountBasedReservation {
+            closure.delegate = it
+            closure.call()
+        }
     }
 
     public fun staticDevicesReservation(action: Action<StaticDeviceReservationConfiguration>) {
@@ -47,12 +43,10 @@ public open class SchedulingConfiguration {
     }
 
     public fun quota(closure: Closure<QuotaConfiguration>) {
-        quota(
-            Action {
-                closure.delegate = it
-                closure.call()
-            }
-        )
+        quota {
+            closure.delegate = it
+            closure.call()
+        }
     }
 
     public fun quota(action: Action<QuotaConfiguration>) {

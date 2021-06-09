@@ -10,20 +10,21 @@ import com.avito.android.runner.report.ReportViewerConfig
 import com.avito.android.stats.statsdConfig
 import com.avito.cd.buildOutput
 import com.avito.gradle.worker.inMemoryWork
-import com.avito.instrumentation.configuration.InstrumentationConfiguration
 import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration.Data
+import com.avito.instrumentation.internal.GetTestResultsAction
 import com.avito.instrumentation.internal.InstrumentationTestsAction
-import com.avito.instrumentation.internal.InstrumentationTestsActionFactory.Companion.gson
-import com.avito.instrumentation.internal.executing.ExecutionParameters
-import com.avito.instrumentation.internal.finalizer.GetTestResultsAction
-import com.avito.instrumentation.internal.finalizer.verdict.InstrumentationTestsTaskVerdict
-import com.avito.instrumentation.internal.suite.filter.ImpactAnalysisResult
 import com.avito.instrumentation.service.TestRunParams
 import com.avito.instrumentation.service.TestRunnerService
 import com.avito.instrumentation.service.TestRunnerWorkAction
 import com.avito.logger.GradleLoggerFactory
+import com.avito.runner.config.InstrumentationConfigurationData
+import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
+import com.avito.runner.scheduler.runner.ExecutionParameters
+import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.utils.gradle.KubernetesCredentials
-import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
@@ -45,6 +46,8 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     objects: ObjectFactory,
     private val workerExecutor: WorkerExecutor
 ) : DefaultTask(), BuildVerdictTask {
+
+    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
     @Optional
     @InputDirectory
@@ -96,7 +99,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     public val suppressFlaky: Property<Boolean> = objects.property<Boolean>().convention(false)
 
     @Input
-    public val instrumentationConfiguration: Property<InstrumentationConfiguration.Data> = objects.property()
+    public val instrumentationConfiguration: Property<InstrumentationConfigurationData> = objects.property()
 
     @Input
     public val parameters: Property<ExecutionParameters> = objects.property()
@@ -122,7 +125,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
     override val verdict: SpannedString
         get() {
             val verdictRaw = verdictFile.asFile.get().reader()
-            val verdict = gson.fromJson<InstrumentationTestsTaskVerdict>(verdictRaw)
+            val verdict = gson.fromJson(verdictRaw, InstrumentationTestsTaskVerdict::class.java)
             return multiline(
                 mutableListOf<SpannedString>()
                     .apply {
@@ -155,7 +158,7 @@ public abstract class InstrumentationTestsTask @Inject constructor(
             null
         }
 
-        val testRunParams = InstrumentationTestsAction.Params(
+        val testRunParams = InstrumentationTestsActionParams(
             mainApk = application.orNull?.getApk(),
             testApk = testApplication.get().getApkOrThrow(),
             instrumentationConfiguration = configuration,

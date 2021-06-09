@@ -118,7 +118,6 @@ include(":test-runner:k8s-deployments-cleaner")
 include(":test-runner:instrumentation-changed-tests-finder")
 include(":test-runner:instrumentation-tests")
 include(":test-runner:instrumentation-tests-dex-loader")
-include(":test-runner:instrumentation-tests-dex-loader-test-fixtures")
 
 include(":logger:gradle-logger")
 include(":logger:android-log")

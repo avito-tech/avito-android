@@ -1,7 +1,7 @@
 package com.avito.runner.scheduler.report
 
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
-import com.avito.runner.scheduler.util.generateTestRunRequest
+import com.avito.runner.scheduler.runner.model.generateTestRunRequest
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.test.Is
 import com.avito.runner.test.generateDeviceTestCaseRun

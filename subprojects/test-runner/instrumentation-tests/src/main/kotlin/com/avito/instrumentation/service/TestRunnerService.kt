@@ -3,10 +3,10 @@ package com.avito.instrumentation.service
 import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.stats.StatsDConfig
-import com.avito.instrumentation.internal.InstrumentationTestsAction
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.scheduling.TestsScheduler
 import com.avito.logger.LoggerFactory
+import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -44,7 +44,7 @@ public abstract class TestRunnerService : BuildService<TestRunnerService.Params>
 
     internal fun runTests(
         params: TestRunParams,
-        legacyParams: InstrumentationTestsAction.Params
+        legacyParams: InstrumentationTestsActionParams
     ): TestsScheduler.Result {
 
         val metricsConfig = RunnerMetricsConfig(
@@ -61,7 +61,7 @@ public abstract class TestRunnerService : BuildService<TestRunnerService.Params>
     }
 
     private fun createTestsActionFactory(
-        params: InstrumentationTestsAction.Params,
+        params: InstrumentationTestsActionParams,
         metricsConfig: RunnerMetricsConfig
     ): InstrumentationTestsActionFactory {
         return InstrumentationTestsActionFactory.Impl(params, metricsConfig)

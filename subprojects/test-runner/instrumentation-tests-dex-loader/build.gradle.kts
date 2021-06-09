@@ -2,6 +2,7 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     id("convention.libraries")
+    id("convention.test-fixtures")
 }
 
 dependencies {
@@ -17,7 +18,6 @@ dependencies {
     }
 
     testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":test-runner:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":common:resources"))
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)

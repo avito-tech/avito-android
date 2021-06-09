@@ -24,7 +24,7 @@ import com.avito.time.TimeProvider
 import kotlinx.coroutines.channels.ReceiveChannel
 import java.io.File
 
-class TestRunnerFactory(
+internal class TestRunnerFactory(
     private val config: TestRunnerFactoryConfig
 ) {
     private val loggerFactory = config.loggerFactory

@@ -6,7 +6,7 @@ import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.worker.device.Device
 import kotlinx.coroutines.channels.Channel
 
-class TestRunnerExecutionState(
+internal class TestRunnerExecutionState(
     val results: Channel<TestRunResult> = Channel(Channel.UNLIMITED),
     val intentions: Channel<Intention> = Channel(Channel.UNLIMITED),
     val intentionResults: Channel<IntentionResult> = Channel(Channel.UNLIMITED),

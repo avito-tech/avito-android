@@ -9,24 +9,24 @@ import com.avito.android.runner.report.StubReportFactory
 import com.avito.android.stats.SeriesName
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
-import com.avito.instrumentation.configuration.InstrumentationConfiguration
-import com.avito.instrumentation.configuration.target.TargetConfiguration
 import com.avito.instrumentation.internal.InstrumentationTestsAction
-import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
-import com.avito.instrumentation.internal.executing.ExecutionParameters
-import com.avito.instrumentation.internal.executing.TestExecutor
-import com.avito.instrumentation.internal.executing.TestExecutorFactory
-import com.avito.instrumentation.internal.finalizer.FinalizerFactory
-import com.avito.instrumentation.internal.scheduling.TestsSchedulerFactory
-import com.avito.instrumentation.stub.createStubInstance
-import com.avito.instrumentation.stub.executing.StubTestExecutor
 import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi
 import com.avito.report.model.Report
 import com.avito.report.model.ReportCoordinates
 import com.avito.report.model.createStubInstance
+import com.avito.runner.config.InstrumentationConfigurationData
+import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.config.TargetConfigurationData
+import com.avito.runner.config.createStubInstance
+import com.avito.runner.finalizer.FinalizerFactoryImpl
 import com.avito.runner.scheduler.listener.TestLifecycleListener
+import com.avito.runner.scheduler.runner.ExecutionParameters
+import com.avito.runner.scheduler.runner.StubTestExecutor
+import com.avito.runner.scheduler.runner.TestExecutor
+import com.avito.runner.scheduler.runner.TestExecutorFactory
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryImpl
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.StubTimeProvider
 import com.avito.utils.StubBuildFailer
@@ -50,7 +50,7 @@ internal class InstrumentationTestsActionIntegrationTest {
         override fun createExecutor(
             devicesProviderFactory: DevicesProviderFactory,
             testReporter: TestLifecycleListener,
-            configuration: InstrumentationConfiguration.Data,
+            configuration: InstrumentationConfigurationData,
             executionParameters: ExecutionParameters,
             loggerFactory: LoggerFactory,
             metricsConfig: RunnerMetricsConfig,
@@ -75,9 +75,9 @@ internal class InstrumentationTestsActionIntegrationTest {
 
     @Test
     fun `action - ok - 0 tests to run, no previous reports`() {
-        val configuration = InstrumentationConfiguration.Data.createStubInstance(
+        val configuration = InstrumentationConfigurationData.createStubInstance(
             name = "newUi",
-            targets = singletonList(TargetConfiguration.Data.createStubInstance())
+            targets = singletonList(TargetConfigurationData.createStubInstance())
         )
         reportsApi.getReportResult = Result.Success(
             Report(
@@ -97,17 +97,16 @@ internal class InstrumentationTestsActionIntegrationTest {
     }
 
     private fun createAction(
-        configuration: InstrumentationConfiguration.Data,
-        params: InstrumentationTestsAction.Params = params(configuration),
+        configuration: InstrumentationConfigurationData,
+        params: InstrumentationTestsActionParams = params(configuration),
         seriesName: SeriesName = SeriesName.create("test"),
         reportFactory: StubReportFactory = StubReportFactory(),
         timeProvider: StubTimeProvider = StubTimeProvider()
     ) = InstrumentationTestsAction(
         params = params,
         loggerFactory = params.loggerFactory,
-        scheduler = TestsSchedulerFactory.Impl(
+        scheduler = TestSchedulerFactoryImpl(
             params = params,
-            gson = InstrumentationTestsActionFactory.gson,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testExecutorFactory = testExecutorFactory,
             testSuiteLoader = testSuiteLoader,
@@ -116,19 +115,19 @@ internal class InstrumentationTestsActionIntegrationTest {
             report = StubReport(),
             reportFactory = reportFactory
         ).create(devicesProviderFactory = StubDeviceProviderFactory),
-        finalizer = FinalizerFactory.Impl(
+        finalizer = FinalizerFactoryImpl(
             params = params,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),
             reportFactory = StubReportFactory(),
-            buildFailer = buildFailer,
-            gson = InstrumentationTestsActionFactory.gson,
-            timeProvider = timeProvider
-        ).create()
+            timeProvider = timeProvider,
+            loggerFactory = loggerFactory,
+        ).create(),
+        buildFailer = buildFailer,
     )
 
     private fun params(
-        instrumentationConfiguration: InstrumentationConfiguration.Data
-    ) = InstrumentationTestsAction.Params.createStubInstance(
+        instrumentationConfiguration: InstrumentationConfigurationData
+    ) = InstrumentationTestsActionParams.createStubInstance(
         instrumentationConfiguration = instrumentationConfiguration,
         loggerFactory = loggerFactory,
         outputDir = outputDir

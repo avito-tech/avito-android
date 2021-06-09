@@ -4,9 +4,11 @@ import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
 import com.avito.runner.scheduler.runner.TestRunnerResult
 import com.avito.runner.scheduler.runner.model.TestRunRequest
-import com.avito.runner.scheduler.util.generateTestRunRequest
+import com.avito.runner.scheduler.runner.model.generateTestRunRequest
 import com.avito.runner.service.model.DeviceTestCaseRun
+import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.createStubInstance
 import com.avito.runner.test.generateDeviceTestCaseRun
 import com.avito.runner.test.generateTestCaseRun
 import com.avito.truth.isInstanceOf
@@ -16,15 +18,21 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
-class ReportCreatorTest {
+internal class ReportCreatorTest {
 
     @Test
     fun `create summary - creates test report for each test case`() {
         val summary = createSummary(
             runs = listOf(
-                generateTestRunRequest() to createTestSuiteRuns(),
-                generateTestRunRequest() to createTestSuiteRuns(),
-                generateTestRunRequest() to createTestSuiteRuns()
+                generateTestRunRequest(
+                    testCase = TestCase.createStubInstance(methodName = "test1")
+                ) to createTestSuiteRuns(),
+                generateTestRunRequest(
+                    testCase = TestCase.createStubInstance(methodName = "test2")
+                ) to createTestSuiteRuns(),
+                generateTestRunRequest(
+                    testCase = TestCase.createStubInstance(methodName = "test3")
+                ) to createTestSuiteRuns()
             )
         )
 

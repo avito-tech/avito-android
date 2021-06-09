@@ -1,5 +1,7 @@
 package com.avito.instrumentation.configuration
 
+import com.avito.runner.config.InstrumentationConfigurationData
+import com.avito.runner.config.InstrumentationParameters
 import com.google.common.annotations.VisibleForTesting
 import groovy.lang.Closure
 import org.gradle.api.Action
@@ -123,7 +125,7 @@ public object InstrumentationPluginConfiguration {
         }
 
         public data class Data(
-            val configurations: Collection<InstrumentationConfiguration.Data>,
+            val configurations: Collection<InstrumentationConfigurationData>,
             private val pluginInstrumentationParameters: InstrumentationParameters,
             val logcatTags: Collection<String>,
             val output: String,

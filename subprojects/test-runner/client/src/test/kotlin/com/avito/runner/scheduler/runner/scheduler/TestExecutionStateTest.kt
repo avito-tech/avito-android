@@ -1,9 +1,9 @@
 package com.avito.runner.scheduler.runner.scheduler
 
 import com.avito.runner.scheduler.runner.model.TestRunRequest
+import com.avito.runner.scheduler.runner.model.generateTestRunRequest
 import com.avito.runner.scheduler.runner.scheduler.retry.RetryManager
 import com.avito.runner.scheduler.runner.scheduler.retry.SchedulingBasedRetryManager
-import com.avito.runner.scheduler.util.generateTestRunRequest
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
@@ -13,7 +13,7 @@ import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
 
-class TestExecutionStateTest {
+internal class TestExecutionStateTest {
 
     @Test
     fun `verdict from state must be SendResult after 1 success run when minimal passed count is 1`() {
