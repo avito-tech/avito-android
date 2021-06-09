@@ -12,7 +12,6 @@ import com.avito.android.LoadTestsFromApkTask
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
 import com.avito.android.runner.devices.model.DeviceType.CLOUD
-import com.avito.android.stats.statsdConfig
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
@@ -75,14 +74,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                 project.gradle.sharedServices.registerIfAbsent(
                     "testRunnerService",
                     TestRunnerService::class.java
-                ) { spec ->
-                    with(spec.parameters) {
-                        kubernetesCredentials.set(project.kubernetesCredentials)
-                        statsDConfig.set(project.statsdConfig.get())
-                        buildId.set(env.build.id.toString())
-                        buildType.set(env.build.type)
-                    }
-                }
+                ) { /*empty*/ }
             } else {
                 Providers.notDefined()
             }

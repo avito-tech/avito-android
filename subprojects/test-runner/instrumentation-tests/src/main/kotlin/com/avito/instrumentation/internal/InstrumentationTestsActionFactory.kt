@@ -1,6 +1,7 @@
 package com.avito.instrumentation.internal
 
 import com.avito.android.TestSuiteLoaderImpl
+import com.avito.android.runner.devices.DeviceProviderFactoryImpl
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.ReportFactory
 import com.avito.android.runner.report.ReportFactoryImpl
@@ -20,12 +21,14 @@ internal interface InstrumentationTestsActionFactory {
 
     fun provideFinalizer(): Finalizer
 
-    fun provideScheduler(devicesProviderFactory: DevicesProviderFactory): TestScheduler
+    fun provideScheduler(): TestScheduler
 
     class Impl(
         params: InstrumentationTestsActionParams,
         metricsConfig: RunnerMetricsConfig
     ) : InstrumentationTestsActionFactory {
+
+        private val devicesProviderFactory: DevicesProviderFactory
 
         private val schedulerFactory: TestSchedulerFactory
 
@@ -56,6 +59,22 @@ internal interface InstrumentationTestsActionFactory {
 
             val report = reportFactory.createReport()
 
+            this.devicesProviderFactory = DeviceProviderFactoryImpl(
+                kubernetesCredentials = params.kubernetesCredentials,
+                buildId = params.buildId,
+                buildType = params.buildType,
+                loggerFactory = params.loggerFactory,
+                timeProvider = timeProvider,
+                statsDConfig = params.statsDConfig,
+                deviceType = params.instrumentationConfiguration.requestedDeviceType,
+                projectName = params.projectName,
+                configurationName = params.instrumentationConfiguration.name,
+                outputDir = params.outputDir,
+                logcatTags = params.executionParameters.logcatTags,
+                kubernetesNamespace = params.executionParameters.namespace,
+                runnerPrefix = metricsConfig.runnerPrefix,
+            )
+
             this.schedulerFactory = TestSchedulerFactoryImpl(
                 params = params,
                 report = report,
@@ -63,7 +82,8 @@ internal interface InstrumentationTestsActionFactory {
                 httpClientProvider = httpClientProvider,
                 metricsConfig = metricsConfig,
                 testSuiteLoader = TestSuiteLoaderImpl(),
-                reportFactory = reportFactory
+                reportFactory = reportFactory,
+                devicesProviderFactory = devicesProviderFactory
             )
 
             this.finalizerFactory = FinalizerFactoryImpl(
@@ -75,8 +95,7 @@ internal interface InstrumentationTestsActionFactory {
             )
         }
 
-        override fun provideScheduler(devicesProviderFactory: DevicesProviderFactory) =
-            schedulerFactory.create(devicesProviderFactory)
+        override fun provideScheduler() = schedulerFactory.create()
 
         override fun provideFinalizer() = finalizerFactory.create()
     }
