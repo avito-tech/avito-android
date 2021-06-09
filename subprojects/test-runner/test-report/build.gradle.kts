@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     api(project(":test-runner:test-report-dsl"))
-    api(project(":common:file-storage"))
+    api(project(":test-runner:file-storage"))
     api(libs.espressoCore)
     api(libs.appcompat)
 

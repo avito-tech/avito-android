@@ -26,7 +26,7 @@ dependencies {
     implementation(project(":common:problem"))
     implementation(project(":common:files"))
     implementation(project(":common:retrace"))
-    implementation(project(":common:file-storage"))
+    implementation(project(":test-runner:file-storage"))
     implementation(libs.coroutinesCore)
     implementation(libs.gson)
     implementation(libs.commonsText) {

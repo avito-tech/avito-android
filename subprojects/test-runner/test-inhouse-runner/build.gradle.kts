@@ -28,7 +28,7 @@ dependencies {
     implementation(project(":common:junit-utils"))
     implementation(project(":common:test-okhttp"))
     implementation(project(":test-runner:test-annotations"))
-    implementation(project(":common:file-storage"))
+    implementation(project(":test-runner:file-storage"))
     implementation(project(":common:time"))
     implementation(project(":logger:android-log"))
     implementation(project(":android-test:ui-testing-core"))
