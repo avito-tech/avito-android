@@ -3,7 +3,9 @@ package com.avito.instrumentation.service
 import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.finalizer.Finalizer
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
+import com.avito.utils.BuildFailer
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -38,7 +40,13 @@ public abstract class TestRunnerWorkAction : WorkAction<TestRunnerWorkAction.Par
 
         val testResults = parameters.service.get().runTests(params, legacyTestRunParams)
 
-        factory.provideFinalizer().finalize(testResults)
+        val buildFailer: BuildFailer = BuildFailer.RealFailer()
+
+        when (val result = factory.provideFinalizer().finalize(testResults)) {
+            Finalizer.Result.Ok -> {
+            }
+            is Finalizer.Result.Failure -> buildFailer.failBuild(result.message)
+        }
     }
 
     private fun createTestsActionFactory(
