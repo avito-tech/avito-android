@@ -27,7 +27,7 @@ import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerFactory
-import com.avito.runner.scheduler.runner.ExecutionParameters
+import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials

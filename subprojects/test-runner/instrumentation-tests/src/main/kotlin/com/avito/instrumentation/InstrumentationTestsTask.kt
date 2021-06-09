@@ -20,7 +20,7 @@ import com.avito.logger.GradleLoggerFactory
 import com.avito.runner.config.InstrumentationConfigurationData
 import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.verdict.InstrumentationTestsTaskVerdict
-import com.avito.runner.scheduler.runner.ExecutionParameters
+import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.utils.gradle.KubernetesCredentials
 import com.google.gson.Gson

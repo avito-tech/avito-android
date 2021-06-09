@@ -1,4 +1,4 @@
-package com.avito.runner.scheduler.runner
+package com.avito.runner.scheduler.runner.model
 
 import java.io.Serializable
 
@@ -10,5 +10,6 @@ public data class ExecutionParameters(
     val logcatTags: Collection<String>,
     val enableDeviceDebug: Boolean
 ) : Serializable {
+
     public companion object
 }

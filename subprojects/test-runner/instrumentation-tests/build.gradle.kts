@@ -1,9 +1,6 @@
-import com.avito.android.test.applyOptionalSystemProperty
-
 plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-gradle-plugin")
-    id("convention.integration-testing")
     id("convention.libraries")
     id("convention.gradle-testing")
 }
@@ -47,9 +44,6 @@ dependencies {
     testImplementation(testFixtures(project(":test-runner:report")))
 
     gradleTestImplementation(project(":gradle:test-project"))
-
-    integTestImplementation(project(":common:statsd"))
-    integTestImplementation(testFixtures(project(":test-runner:client")))
 }
 
 kotlin {
@@ -64,11 +58,4 @@ gradlePlugin {
             displayName = "Instrumentation tests"
         }
     }
-}
-
-tasks.named<Test>("integrationTest").configure {
-    applyOptionalSystemProperty("kubernetesUrl")
-    applyOptionalSystemProperty("kubernetesToken")
-    applyOptionalSystemProperty("kubernetesCaCertData")
-    applyOptionalSystemProperty("kubernetesNamespace")
 }

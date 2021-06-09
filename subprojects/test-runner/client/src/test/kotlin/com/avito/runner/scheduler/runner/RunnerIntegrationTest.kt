@@ -21,17 +21,16 @@ import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.device.Device.Signal
 import com.avito.runner.service.worker.device.DeviceCoordinate
-import com.avito.runner.service.worker.device.StubActionResult
-import com.avito.runner.service.worker.device.StubDevice
-import com.avito.runner.service.worker.device.StubDevice.Companion.installApplicationFailure
-import com.avito.runner.service.worker.device.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.device.createStubInstance
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.createStubInstance
 import com.avito.runner.service.worker.device.model.getData
+import com.avito.runner.service.worker.device.stub.StubActionResult
+import com.avito.runner.service.worker.device.stub.StubDevice
+import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationFailure
+import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.test.TestDispatcher
-import com.avito.test.listWithDefault
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
@@ -569,10 +568,7 @@ internal class RunnerIntegrationTest {
                     succeedClearPackage()
                 )
             },
-            gettingDeviceStatusResults = listWithDefault(
-                1 + requests.size,
-                DeviceStatus.Alive
-            ),
+            gettingDeviceStatusResults = List(requests.size + 1) { DeviceStatus.Alive },
             runTestsResults = requests.map {
                 testPassed()
             }

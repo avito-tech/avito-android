@@ -6,7 +6,7 @@ import com.avito.android.stats.StatsDConfig
 import com.avito.instrumentation.internal.InstrumentationTestsActionFactory
 import com.avito.logger.LoggerFactory
 import com.avito.runner.config.InstrumentationTestsActionParams
-import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
+import com.avito.runner.scheduler.runner.model.TestSchedulerResult
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -45,7 +45,7 @@ public abstract class TestRunnerService : BuildService<TestRunnerService.Params>
     internal fun runTests(
         params: TestRunParams,
         legacyParams: InstrumentationTestsActionParams
-    ): TestsScheduler.Result {
+    ): TestSchedulerResult {
 
         val metricsConfig = RunnerMetricsConfig(
             statsDConfig = parameters.statsDConfig.get(),

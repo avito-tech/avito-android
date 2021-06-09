@@ -10,7 +10,7 @@ import com.avito.runner.finalizer.verdict.HasFailedTestDeterminer
 import com.avito.runner.finalizer.verdict.HasNotReportedTestsDeterminer
 import com.avito.runner.finalizer.verdict.LegacyVerdict
 import com.avito.runner.finalizer.verdict.LegacyVerdictDeterminer
-import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
+import com.avito.runner.scheduler.runner.model.TestSchedulerResult
 
 internal class LegacyFinalizer(
     private val hasFailedTestDeterminer: HasFailedTestDeterminer,
@@ -24,7 +24,7 @@ internal class LegacyFinalizer(
 
     private val logger = loggerFactory.create<LegacyFinalizer>()
 
-    override fun finalize(testSchedulerResults: TestsScheduler.Result): Finalizer.Result {
+    override fun finalize(testSchedulerResults: TestSchedulerResult): Finalizer.Result {
 
         val testResults = report.getTests()
             .map { testsFromReport ->

@@ -1,4 +1,4 @@
-package com.avito.runner.service.worker.device
+package com.avito.runner.service.worker.device.stub
 
 import com.avito.android.Result
 import com.avito.logger.LoggerFactory
@@ -7,6 +7,9 @@ import com.avito.report.model.TestRuntimeDataPackage
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
+import com.avito.runner.service.worker.device.Device
+import com.avito.runner.service.worker.device.DeviceCoordinate
+import com.avito.runner.service.worker.device.Serial
 import com.avito.runner.service.worker.device.adb.PullValidator
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.DeviceData
@@ -28,7 +31,9 @@ open class StubDevice(
     gettingDeviceStatusResults: List<Device.DeviceStatus> = emptyList(),
     runTestsResults: List<StubActionResult<TestCaseRun.Result>> = emptyList(),
     clearPackageResults: List<StubActionResult<Result<Unit>>> = emptyList(),
-    private val apiResult: StubActionResult<Int> = StubActionResult.Success(22),
+    private val apiResult: StubActionResult<Int> = StubActionResult.Success(
+        22
+    ),
     override val online: Boolean = true,
     override val model: String = "model"
 ) : Device {
