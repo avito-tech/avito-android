@@ -96,8 +96,11 @@ internal class HttpBuildCacheMetricsTest : HttpBuildCacheTestFixture() {
                 }
             }
         ),
+        // TODO: this case is flaky
+        //  If it's failed, please add info to MBS-11302
         TestCase(
             name = "load error - unknown error",
+            enabled = false,
             loadStatus = invalidHttpStatus,
             storeStatus = 200,
             assertion = { result ->
