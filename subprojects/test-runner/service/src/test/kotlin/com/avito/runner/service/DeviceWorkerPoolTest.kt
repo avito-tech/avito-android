@@ -2,6 +2,7 @@ package com.avito.runner.service
 
 import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
+import com.avito.runner.service.listener.NoOpTestListener
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
@@ -9,7 +10,6 @@ import com.avito.runner.service.model.intention.State
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.listener.StubDeviceListener
-import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
 import com.avito.runner.test.StubDevice.Companion.installApplicationSuccess

@@ -11,6 +11,7 @@ import com.avito.runner.scheduler.runner.model.generateTestRunRequest
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolImpl
+import com.avito.runner.service.listener.NoOpTestListener
 import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
@@ -21,7 +22,6 @@ import com.avito.runner.service.worker.device.Device.Signal
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.listener.StubDeviceListener
-import com.avito.runner.test.NoOpTestListener
 import com.avito.runner.test.StubActionResult
 import com.avito.runner.test.StubDevice
 import com.avito.runner.test.StubDevice.Companion.installApplicationFailure
