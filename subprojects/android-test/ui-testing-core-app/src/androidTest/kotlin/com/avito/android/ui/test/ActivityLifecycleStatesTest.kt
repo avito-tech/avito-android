@@ -19,34 +19,35 @@ class ActivityLifecycleStatesTest {
     }
 
     @Test
-    fun finishedActivity_isInDestroyedState_succeed() {
+    fun isDestroyed_succeed_whenActivityFinished() {
         activityRule.scenario.onActivity { it.finish() }
         activityRule.checks.isInState(Lifecycle.State.DESTROYED)
     }
 
     @Test
-    fun finishedActivity_isNotInDestroyedState_throwsAssertionError() {
+    fun isDestroyed_throwsAssertionError_whenActivityFinished() {
         activityRule.scenario.onActivity { it.finish() }
         assertThrows<AssertionError> { activityRule.checks.isNotInState(Lifecycle.State.DESTROYED) }
     }
 
     @Test
-    fun launchedActivity_isNotInDestroyedState_succeed() {
+    fun isNotDestroyed_succeed_whenActivityLaunched() {
+        activityRule.launchActivity(null)
         activityRule.checks.isNotInState(Lifecycle.State.DESTROYED)
     }
 
     @Test
-    fun launchedActivity_isInDestroyedState_throwsAssertionError() {
+    fun isDestroyed_throwsAssertionError_whenActivityLaunched() {
         assertThrows<AssertionError> { activityRule.checks.isInState(Lifecycle.State.DESTROYED) }
     }
 
     @Test
-    fun launchedActivity_isAtLeastInCreatedState_succeed() {
+    fun stateIsGreaterThanCreated_succeed_whenActivityLaunched() {
         activityRule.checks.isAtLeastInState(Lifecycle.State.CREATED)
     }
 
     @Test
-    fun launchedActivity_isInResumedState_succeed() {
+    fun isResumed_succeed_whenActivityLaunched() {
         activityRule.checks.isInState(Lifecycle.State.RESUMED)
     }
 }
