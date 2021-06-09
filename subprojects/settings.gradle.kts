@@ -265,8 +265,6 @@ dependencyResolutionManagement {
                 includeModule("me.weishu", "free_reflection")
             }
         }
-
-        // for kotlinx-cli https://github.com/Kotlin/kotlinx-cli/issues/23
         exclusiveContent {
             forRepository {
                 maven {
@@ -274,7 +272,7 @@ dependencyResolutionManagement {
                 }
             }
             filter {
-                includeGroup("org.jetbrains.kotlinx")
+                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
             }
         }
         exclusiveContent {
