@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(project(":common:report-viewer"))
+    implementation(project(":test-runner:report-viewer"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:artifactory-app-backup"))
     implementation(project(":logger:gradle-logger"))

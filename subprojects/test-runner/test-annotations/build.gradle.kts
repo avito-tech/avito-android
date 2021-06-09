@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:report-viewer"))
+    implementation(project(":test-runner:report-viewer"))
 }
 
 kotlin {
