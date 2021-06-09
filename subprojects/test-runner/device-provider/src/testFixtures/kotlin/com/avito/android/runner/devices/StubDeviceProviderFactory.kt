@@ -1,10 +1,12 @@
 package com.avito.android.runner.devices
 
+import com.avito.android.runner.devices.internal.StubDevicesProvider
 import com.avito.android.runner.devices.model.DeviceType
 import com.avito.android.stats.SeriesName
+import com.avito.logger.LoggerFactory
 import java.io.File
 
-public object StubDeviceProviderFactory : DevicesProviderFactory {
+public class StubDeviceProviderFactory(private val loggerFactory: LoggerFactory) : DevicesProviderFactory {
 
     override fun create(
         deviceType: DeviceType,
@@ -16,6 +18,6 @@ public object StubDeviceProviderFactory : DevicesProviderFactory {
         kubernetesNamespace: String,
         runnerPrefix: SeriesName
     ): DevicesProvider {
-        TODO("Not yet implemented")
+        return StubDevicesProvider(loggerFactory = loggerFactory)
     }
 }

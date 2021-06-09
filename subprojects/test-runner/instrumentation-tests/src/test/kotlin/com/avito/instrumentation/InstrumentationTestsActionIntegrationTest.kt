@@ -2,7 +2,6 @@ package com.avito.instrumentation
 
 import com.avito.android.Result
 import com.avito.android.StubTestSuiteLoader
-import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.devices.StubDeviceProviderFactory
 import com.avito.android.runner.report.StubReport
 import com.avito.android.runner.report.StubReportFactory
@@ -10,7 +9,6 @@ import com.avito.android.stats.SeriesName
 import com.avito.http.HttpClientProvider
 import com.avito.http.createStubInstance
 import com.avito.instrumentation.internal.InstrumentationTestsAction
-import com.avito.logger.LoggerFactory
 import com.avito.logger.StubLoggerFactory
 import com.avito.report.StubReportsApi
 import com.avito.report.model.Report
@@ -21,11 +19,6 @@ import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.config.createStubInstance
 import com.avito.runner.finalizer.FinalizerFactoryImpl
-import com.avito.runner.scheduler.listener.TestLifecycleListener
-import com.avito.runner.scheduler.runner.ExecutionParameters
-import com.avito.runner.scheduler.runner.StubTestExecutor
-import com.avito.runner.scheduler.runner.TestExecutor
-import com.avito.runner.scheduler.runner.TestExecutorFactory
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryImpl
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.StubTimeProvider
@@ -45,24 +38,6 @@ internal class InstrumentationTestsActionIntegrationTest {
     private val reportsApi = StubReportsApi()
     private val testSuiteLoader = StubTestSuiteLoader()
     private val reportCoordinates = ReportCoordinates.createStubInstance()
-    private val testRunner = StubTestExecutor()
-    private val testExecutorFactory = object : TestExecutorFactory {
-        override fun createExecutor(
-            devicesProviderFactory: DevicesProviderFactory,
-            testReporter: TestLifecycleListener,
-            configuration: InstrumentationConfigurationData,
-            executionParameters: ExecutionParameters,
-            loggerFactory: LoggerFactory,
-            metricsConfig: RunnerMetricsConfig,
-            outputDir: File,
-            projectName: String,
-            tempLogcatDir: File,
-            saveTestArtifactsToOutputs: Boolean,
-            fetchLogcatForIncompleteTests: Boolean,
-        ): TestExecutor {
-            return testRunner
-        }
-    }
     private val buildFailer = StubBuildFailer()
     private val loggerFactory = StubLoggerFactory
 
@@ -107,14 +82,13 @@ internal class InstrumentationTestsActionIntegrationTest {
         loggerFactory = params.loggerFactory,
         scheduler = TestSchedulerFactoryImpl(
             params = params,
-            metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
-            testExecutorFactory = testExecutorFactory,
-            testSuiteLoader = testSuiteLoader,
+            report = StubReport(),
             timeProvider = timeProvider,
             httpClientProvider = HttpClientProvider.createStubInstance(),
-            report = StubReport(),
+            metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
+            testSuiteLoader = testSuiteLoader,
             reportFactory = reportFactory
-        ).create(devicesProviderFactory = StubDeviceProviderFactory),
+        ).create(devicesProviderFactory = StubDeviceProviderFactory(loggerFactory)),
         finalizer = FinalizerFactoryImpl(
             params = params,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),

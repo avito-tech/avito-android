@@ -1,6 +1,7 @@
 package com.avito.runner.scheduler.runner.scheduler
 
 import com.avito.android.TestSuiteLoader
+import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.runner.report.Report
 import com.avito.android.runner.report.ReportFactory
@@ -11,6 +12,8 @@ import com.avito.report.model.TestStaticData
 import com.avito.report.serialize.ReportSerializer
 import com.avito.retrace.ProguardRetracer
 import com.avito.runner.config.InstrumentationTestsActionParams
+import com.avito.runner.scheduler.TestRunnerFactory
+import com.avito.runner.scheduler.args.TestRunnerFactoryConfig
 import com.avito.runner.scheduler.listener.AvitoFileStorageUploader
 import com.avito.runner.scheduler.listener.LegacyTestArtifactsProcessor
 import com.avito.runner.scheduler.listener.LogcatProcessor
@@ -20,8 +23,9 @@ import com.avito.runner.scheduler.listener.ReportProcessorImpl
 import com.avito.runner.scheduler.listener.TestArtifactsProcessor
 import com.avito.runner.scheduler.listener.TestArtifactsProcessorImpl
 import com.avito.runner.scheduler.listener.TestArtifactsUploader
+import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.scheduler.metrics.InstrumentationMetricsSender
-import com.avito.runner.scheduler.runner.TestExecutorFactory
+import com.avito.runner.scheduler.runner.model.TestWithTarget
 import com.avito.runner.scheduler.suite.TestSuiteProvider
 import com.avito.runner.scheduler.suite.filter.FilterFactory
 import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
@@ -40,18 +44,27 @@ public class TestSchedulerFactoryImpl(
     private val timeProvider: TimeProvider,
     private val httpClientProvider: HttpClientProvider,
     private val metricsConfig: RunnerMetricsConfig,
-    private val testExecutorFactory: TestExecutorFactory,
     private val testSuiteLoader: TestSuiteLoader,
     private val reportFactory: ReportFactory
 ) : TestsSchedulerFactory {
 
     override fun create(devicesProviderFactory: DevicesProviderFactory): TestsScheduler {
         val tempDir = Files.createTempDirectory(null).toFile()
-        val testRunner: TestsRunner = createTestRunner(devicesProviderFactory, tempDir)
         val testSuiteProvider: TestSuiteProvider = createTestSuiteProvider()
 
-        return InstrumentationTestsScheduler(
-            testsRunner = testRunner,
+        val statsDSender: StatsDSender = StatsDSender.Impl(
+            config = metricsConfig.statsDConfig,
+            loggerFactory = params.loggerFactory
+        )
+
+        val metricsSender = InstrumentationMetricsSender(
+            statsDSender = statsDSender,
+            runnerPrefix = metricsConfig.runnerPrefix
+        )
+
+        val devicesProvider = devicesProviderFactory.createDeviceProvider(tempLogcatDir = tempDir)
+
+        return TestsSchedulerImpl(
             params = params,
             report = report,
             testSuiteProvider = testSuiteProvider,
@@ -59,7 +72,71 @@ public class TestSchedulerFactoryImpl(
             filterInfoWriter = FilterInfoWriter.Impl(
                 outputDir = params.outputDir,
             ),
-            loggerFactory = params.loggerFactory
+            loggerFactory = params.loggerFactory,
+            executionParameters = params.executionParameters,
+            outputDir = params.outputDir,
+            devicesProvider = devicesProvider,
+            testRunnerFactoryFactory = { testsToRun: List<TestWithTarget> ->
+                createTestRunnerFactory(
+                    testsToRun = testsToRun,
+                    devicesProvider = devicesProvider,
+                    tempLogcatDir = tempDir,
+                    metricsSender = metricsSender
+                )
+            },
+        )
+    }
+
+    private fun createTestRunnerFactory(
+        testsToRun: List<TestWithTarget>,
+        devicesProvider: DevicesProvider,
+        tempLogcatDir: File,
+        metricsSender: InstrumentationMetricsSender
+    ): TestRunnerFactory {
+        return TestRunnerFactory(
+            TestRunnerFactoryConfig(
+                loggerFactory = params.loggerFactory,
+                listener = createTestReporter(
+                    testsToRun = testsToRun,
+                    tempLogcatDir = tempLogcatDir,
+                    metricsSender = metricsSender
+                ),
+                reservation = devicesProvider,
+                metricsConfig = metricsConfig,
+                saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
+                fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
+            )
+        )
+    }
+
+    private fun createTestReporter(
+        testsToRun: List<TestWithTarget>,
+        tempLogcatDir: File,
+        metricsSender: InstrumentationMetricsSender
+    ): TestLifecycleListener {
+        return LogcatTestLifecycleListener(
+            logcatDir = tempLogcatDir,
+            reportProcessor = createReportProcessor(testsToRun.associate { testWithTarget ->
+                TestCase(
+                    className = testWithTarget.test.name.className,
+                    methodName = testWithTarget.test.name.methodName,
+                    deviceName = testWithTarget.target.deviceName
+                ) to testWithTarget.test
+            }, metricsSender),
+            report = report,
+        )
+    }
+
+    private fun DevicesProviderFactory.createDeviceProvider(tempLogcatDir: File): DevicesProvider {
+        return create(
+            deviceType = params.instrumentationConfiguration.requestedDeviceType,
+            projectName = params.projectName,
+            tempLogcatDir = tempLogcatDir,
+            outputDir = params.outputDir,
+            configurationName = params.instrumentationConfiguration.name,
+            logcatTags = params.executionParameters.logcatTags,
+            kubernetesNamespace = params.executionParameters.namespace,
+            runnerPrefix = metricsConfig.runnerPrefix
         )
     }
 
@@ -74,40 +151,6 @@ public class TestSchedulerFactoryImpl(
             loggerFactory = params.loggerFactory
         )
     )
-
-    private fun createTestRunner(devicesProviderFactory: DevicesProviderFactory, tempDir: File): TestsRunner {
-
-        val statsDSender: StatsDSender = StatsDSender.Impl(
-            config = metricsConfig.statsDConfig,
-            loggerFactory = params.loggerFactory
-        )
-
-        val metricsSender = InstrumentationMetricsSender(
-            statsDSender = statsDSender,
-            runnerPrefix = metricsConfig.runnerPrefix
-        )
-
-        return TestsRunnerImplementation(
-            testExecutorFactory = testExecutorFactory,
-            testReporterFactory = { testSuite, logcatDir, report ->
-                LogcatTestLifecycleListener(
-                    logcatDir = logcatDir,
-                    reportProcessor = createReportProcessor(testSuite, metricsSender),
-                    report = report,
-                )
-            },
-            loggerFactory = params.loggerFactory,
-            executionParameters = params.executionParameters,
-            outputDir = params.outputDir,
-            instrumentationConfiguration = params.instrumentationConfiguration,
-            metricsConfig = metricsConfig,
-            devicesProviderFactory = devicesProviderFactory,
-            tempLogcatDir = tempDir,
-            projectName = params.projectName,
-            saveTestArtifactsToOutputs = params.saveTestArtifactsToOutputs,
-            fetchLogcatForIncompleteTests = params.fetchLogcatForIncompleteTests,
-        )
-    }
 
     private fun createReportProcessor(
         testSuite: Map<TestCase, TestStaticData>,

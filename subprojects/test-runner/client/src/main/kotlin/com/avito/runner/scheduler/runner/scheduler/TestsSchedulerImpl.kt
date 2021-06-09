@@ -1,20 +1,30 @@
-package com.avito.runner.scheduler.runner
+package com.avito.runner.scheduler.runner.scheduler
 
+import com.avito.android.Result
+import com.avito.android.TestInApk
+import com.avito.android.TestSuiteLoader
+import com.avito.android.check.AllChecks
 import com.avito.android.runner.devices.DevicesProvider
 import com.avito.android.runner.devices.model.ReservationData
+import com.avito.android.runner.report.Report
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
+import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.config.QuotaConfigurationData
 import com.avito.runner.config.Reservation
 import com.avito.runner.scheduler.TestRunnerFactory
-import com.avito.runner.scheduler.args.TestRunnerFactoryConfig
-import com.avito.runner.scheduler.listener.TestLifecycleListener
+import com.avito.runner.scheduler.runner.model.ExecutionParameters
+import com.avito.runner.scheduler.runner.model.TargetGroup
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestWithTarget
+import com.avito.runner.scheduler.suite.TestSuite
+import com.avito.runner.scheduler.suite.TestSuiteProvider
+import com.avito.runner.scheduler.suite.filter.FilterInfoWriter
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.Device
-import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,34 +35,93 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 
-internal class TestExecutorImpl(
-    private val devicesProvider: DevicesProvider,
-    private val configurationName: String,
-    testReporter: TestLifecycleListener,
+internal class TestsSchedulerImpl(
+    private val params: InstrumentationTestsActionParams,
+    private val report: Report,
+    private val testSuiteProvider: TestSuiteProvider,
+    private val testSuiteLoader: TestSuiteLoader,
+    private val filterInfoWriter: FilterInfoWriter,
     loggerFactory: LoggerFactory,
-    metricsConfig: RunnerMetricsConfig,
-    saveTestArtifactsToOutputs: Boolean,
-    fetchLogcatForIncompleteTests: Boolean,
-) : TestExecutor {
+    private val executionParameters: ExecutionParameters,
+    private val outputDir: File,
+    private val devicesProvider: DevicesProvider,
+    private val testRunnerFactoryFactory: (List<TestWithTarget>) -> TestRunnerFactory,
+) : TestsScheduler {
 
-    private val logger = loggerFactory.create<TestExecutor>()
+    private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
-    private val factory = TestRunnerFactory(
-        TestRunnerFactoryConfig(
-            loggerFactory = loggerFactory,
-            listener = testReporter,
-            reservation = devicesProvider,
-            metricsConfig = metricsConfig,
-            saveTestArtifactsToOutputs = saveTestArtifactsToOutputs,
-            fetchLogcatForIncompleteTests = fetchLogcatForIncompleteTests,
-        )
-    )
+    private val logger = loggerFactory.create<TestsSchedulerImpl>()
+
+    private val scope = CoroutineScope(CoroutineName("test-scheduler") + Dispatchers.IO)
 
     private val outputDirectoryName = "test-runner"
 
-    private val scope = CoroutineScope(CoroutineName("test-executor") + Dispatchers.IO)
+    private val configurationName: String = params.instrumentationConfiguration.name
 
-    override fun execute(
+    override fun schedule(): TestsScheduler.Result {
+        logger.debug("Filter config: ${params.instrumentationConfiguration.filter}")
+        filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
+
+        val tests = testSuiteLoader.loadTestSuite(params.testApk, AllChecks())
+
+        tests.fold(
+            { result ->
+                logger.info("Tests parsed from apk: ${result.size}")
+                logger.debug("Tests parsed from apk: ${result.map { it.testName }}")
+            },
+            { error -> logger.critical("Can't parse tests from apk", error) }
+        )
+
+        writeParsedTests(tests)
+
+        val testSuite = testSuiteProvider.getTestSuite(
+            tests = tests.getOrThrow()
+        )
+
+        val skippedTests = testSuite.skippedTests.map {
+            "${it.first.test.name} on ${it.first.target.deviceName} because ${it.second.reason}"
+        }
+        logger.debug("Skipped tests: $skippedTests")
+
+        val testsToRun = testSuite.testsToRun.map { "${it.test.name} on ${it.target.deviceName}" }
+        logger.debug("Tests to run: $testsToRun")
+
+        filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
+        filterInfoWriter.writeFilterExcludes(testSuite.skippedTests)
+
+        writeTestSuite(testSuite)
+
+        runTests(
+            mainApk = params.mainApk,
+            testApk = params.testApk,
+            testsToRun = testSuite.testsToRun
+        )
+
+        return TestsScheduler.Result(
+            testSuite = testSuite,
+            testResults = report.getTestResults()
+        )
+    }
+
+    private fun runTests(
+        mainApk: File?,
+        testApk: File,
+        testsToRun: List<TestWithTarget>
+    ) {
+        if (testsToRun.isEmpty()) {
+            return
+        }
+
+        execute(
+            application = mainApk,
+            testApplication = testApk,
+            testsToRun = testsToRun,
+            executionParameters = executionParameters,
+            output = outputDir
+        )
+    }
+
+    private fun execute(
         application: File?,
         testApplication: File,
         testsToRun: List<TestWithTarget>,
@@ -77,7 +146,7 @@ internal class TestExecutorImpl(
 
             runBlocking {
                 withContext(scope.coroutineContext) {
-                    factory.createTestRunner(
+                    testRunnerFactoryFactory.invoke(testsToRun).createTestRunner(
                         outputDirectory = outputFolder(output),
                         devices = devices
                     ).runTests(testRequests)
@@ -176,7 +245,18 @@ internal class TestExecutorImpl(
         enableDeviceDebug = executionParameters.enableDeviceDebug
     )
 
-    data class TargetGroup(val name: String, val reservation: Reservation)
+    private fun writeParsedTests(parsedTests: Result<List<TestInApk>>) {
+        val file = File(params.outputDir, "parsed-tests.json")
+        parsedTests.fold(
+            { tests -> file.writeText(gson.toJson(tests)) },
+            { t -> file.writeText("There was an error while parsing tests:\n $t") }
+        )
+    }
+
+    private fun writeTestSuite(testSuite: TestSuite) {
+        File(params.outputDir, "test-suite.json")
+            .writeText(gson.toJson(testSuite.testsToRun.map { it.test }))
+    }
 }
 
 private const val TEST_TIMEOUT_MINUTES = 5L

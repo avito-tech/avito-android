@@ -10,7 +10,6 @@ import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.Finalizer
 import com.avito.runner.finalizer.FinalizerFactory
 import com.avito.runner.finalizer.FinalizerFactoryImpl
-import com.avito.runner.scheduler.runner.TestExecutorFactory
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryImpl
 import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
 import com.avito.runner.scheduler.runner.scheduler.TestsSchedulerFactory
@@ -60,11 +59,10 @@ internal interface InstrumentationTestsActionFactory {
             this.schedulerFactory = TestSchedulerFactoryImpl(
                 params = params,
                 report = report,
-                metricsConfig = metricsConfig,
-                testExecutorFactory = TestExecutorFactory.Implementation(),
-                testSuiteLoader = TestSuiteLoaderImpl(),
                 timeProvider = timeProvider,
                 httpClientProvider = httpClientProvider,
+                metricsConfig = metricsConfig,
+                testSuiteLoader = TestSuiteLoaderImpl(),
                 reportFactory = reportFactory
             )
 

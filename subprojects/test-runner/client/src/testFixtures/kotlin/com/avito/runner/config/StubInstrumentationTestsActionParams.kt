@@ -2,7 +2,7 @@ package com.avito.runner.config
 
 import com.avito.android.stats.StatsDConfig
 import com.avito.logger.LoggerFactory
-import com.avito.runner.scheduler.runner.ExecutionParameters
+import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.createStubInstance
 import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
 import com.avito.runner.scheduler.suite.filter.createStubInstance
