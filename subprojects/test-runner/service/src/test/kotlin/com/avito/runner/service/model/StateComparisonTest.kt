@@ -1,7 +1,7 @@
 package com.avito.runner.service.model
 
 import com.avito.runner.service.model.intention.State
-import com.avito.runner.test.generateInstalledApplicationLayer
+import com.avito.runner.service.model.intention.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -11,9 +11,9 @@ class StateComparisonTest {
     fun `states with same layers have same digests`() {
         val layers = listOf(
             State.Layer.ApiLevel(22),
-            generateInstalledApplicationLayer(),
-            generateInstalledApplicationLayer(),
-            generateInstalledApplicationLayer()
+            State.Layer.InstalledApplication.createStubInstance(),
+            State.Layer.InstalledApplication.createStubInstance(),
+            State.Layer.InstalledApplication.createStubInstance()
         )
         val state = State(
             layers = layers
@@ -28,17 +28,17 @@ class StateComparisonTest {
         val state = State(
             layers = listOf(
                 State.Layer.ApiLevel(22),
-                generateInstalledApplicationLayer(applicationPackage = "package 1"),
-                generateInstalledApplicationLayer(applicationPackage = "package 1"),
-                generateInstalledApplicationLayer(applicationPackage = "package 1")
+                State.Layer.InstalledApplication.createStubInstance(applicationPackage = "package 1"),
+                State.Layer.InstalledApplication.createStubInstance(applicationPackage = "package 1"),
+                State.Layer.InstalledApplication.createStubInstance(applicationPackage = "package 1")
             )
         )
         val stateWithAnotherApiLayer = State(
             layers = listOf(
                 State.Layer.ApiLevel(22),
-                generateInstalledApplicationLayer(applicationPackage = "package 2"),
-                generateInstalledApplicationLayer(applicationPackage = "package 2"),
-                generateInstalledApplicationLayer(applicationPackage = "package 2")
+                State.Layer.InstalledApplication.createStubInstance(applicationPackage = "package 2"),
+                State.Layer.InstalledApplication.createStubInstance(applicationPackage = "package 2"),
+                State.Layer.InstalledApplication.createStubInstance(applicationPackage = "package 2")
             )
         )
 
@@ -49,9 +49,9 @@ class StateComparisonTest {
     fun `states with same layers are equal`() {
         val layers = listOf(
             State.Layer.ApiLevel(22),
-            generateInstalledApplicationLayer(),
-            generateInstalledApplicationLayer(),
-            generateInstalledApplicationLayer()
+            State.Layer.InstalledApplication.createStubInstance(),
+            State.Layer.InstalledApplication.createStubInstance(),
+            State.Layer.InstalledApplication.createStubInstance()
         )
         val state = State(layers = layers)
         val theSameState = State(layers = layers)

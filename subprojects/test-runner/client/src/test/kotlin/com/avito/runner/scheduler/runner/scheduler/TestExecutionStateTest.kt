@@ -1,14 +1,13 @@
 package com.avito.runner.scheduler.runner.scheduler
 
 import com.avito.runner.scheduler.runner.model.TestRunRequest
-import com.avito.runner.scheduler.runner.model.generateTestRunRequest
+import com.avito.runner.scheduler.runner.model.createStubInstance
 import com.avito.runner.scheduler.runner.scheduler.retry.RetryManager
 import com.avito.runner.scheduler.runner.scheduler.retry.SchedulingBasedRetryManager
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.createStubInstance
 import com.avito.runner.service.model.intention.InstrumentationTestRunAction
-import com.avito.runner.test.generateDeviceTestCaseRun
-import com.avito.runner.test.generateTestCaseRun
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.jupiter.api.Test
@@ -373,16 +372,16 @@ internal class TestExecutionStateTest {
     }
 
     private fun createFailedTestCaseRun(): DeviceTestCaseRun {
-        return generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
+        return DeviceTestCaseRun.createStubInstance(
+            testCaseRun = TestCaseRun.createStubInstance(
                 result = TestCaseRun.Result.Failed.InRun("")
             )
         )
     }
 
     private fun createPassedTestCaseRun(): DeviceTestCaseRun {
-        return generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
+        return DeviceTestCaseRun.createStubInstance(
+            testCaseRun = TestCaseRun.createStubInstance(
                 result = TestCaseRun.Result.Passed
             )
         )
@@ -402,7 +401,7 @@ internal class TestExecutionStateTest {
         )
 
     private fun provideTestExecutionState(
-        request: TestRunRequest = generateTestRunRequest(),
+        request: TestRunRequest = TestRunRequest.Companion.createStubInstance(),
         retry: RetryManager
     ) =
         TestExecutionStateImplementation(

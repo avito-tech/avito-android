@@ -1,10 +1,10 @@
 package com.avito.runner.service
 
 import com.avito.logger.StubLoggerFactory
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
+import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
-import com.avito.runner.test.generateInstalledApplicationLayer
-import com.avito.runner.test.generateInstrumentationTestAction
-import com.avito.runner.test.generateIntention
+import com.avito.runner.service.model.intention.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -37,23 +37,23 @@ class IntentionsRouterTest {
         )
 
         val expected20Intentions = listOf(
-            generateIntention(
+            Intention.createStubInstance(
                 state = api20State,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             ),
-            generateIntention(
+            Intention.createStubInstance(
                 state = api20State,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             )
         )
         val expected21Intentions = listOf(
-            generateIntention(
+            Intention.createStubInstance(
                 state = api21State,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             ),
-            generateIntention(
+            Intention.createStubInstance(
                 state = api21State,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             )
         )
 
@@ -89,8 +89,8 @@ class IntentionsRouterTest {
         val api20StateWithInstalledApplications = State(
             layers = listOf(
                 State.Layer.ApiLevel(20),
-                generateInstalledApplicationLayer(),
-                generateInstalledApplicationLayer()
+                State.Layer.InstalledApplication.createStubInstance(),
+                State.Layer.InstalledApplication.createStubInstance()
             )
         )
         val api20StateWithoutInstalledApplications = State(
@@ -100,21 +100,21 @@ class IntentionsRouterTest {
         )
 
         val expectedIntentions = listOf(
-            generateIntention(
+            Intention.createStubInstance(
                 state = api20StateWithInstalledApplications,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             ),
-            generateIntention(
+            Intention.createStubInstance(
                 state = api20StateWithInstalledApplications,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             ),
-            generateIntention(
+            Intention.createStubInstance(
                 state = api20StateWithoutInstalledApplications,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             ),
-            generateIntention(
+            Intention.createStubInstance(
                 state = api20StateWithoutInstalledApplications,
-                action = generateInstrumentationTestAction()
+                action = InstrumentationTestRunAction.createStubInstance()
             )
         )
 

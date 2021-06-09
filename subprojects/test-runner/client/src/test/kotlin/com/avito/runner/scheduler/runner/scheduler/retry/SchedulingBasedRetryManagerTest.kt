@@ -1,9 +1,9 @@
 package com.avito.runner.scheduler.runner.scheduler.retry
 
 import com.avito.runner.scheduler.runner.model.TestRunRequest
+import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.test.generateDeviceTestCaseRun
-import com.avito.runner.test.generateTestCaseRun
+import com.avito.runner.service.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -185,14 +185,15 @@ internal class SchedulingBasedRetryManagerTest {
         )
 
     companion object {
-        private val FAILED_RUN = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
+
+        private val FAILED_RUN = DeviceTestCaseRun.createStubInstance(
+            testCaseRun = TestCaseRun.createStubInstance(
                 result = TestCaseRun.Result.Failed.InRun("failed")
             )
         )
 
-        private val SUCCESS_RUN = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
+        private val SUCCESS_RUN = DeviceTestCaseRun.createStubInstance(
+            testCaseRun = TestCaseRun.createStubInstance(
                 result = TestCaseRun.Result.Passed
             )
         )

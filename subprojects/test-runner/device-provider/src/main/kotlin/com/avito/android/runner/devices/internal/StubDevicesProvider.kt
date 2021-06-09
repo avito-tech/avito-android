@@ -7,8 +7,8 @@ import com.avito.logger.LoggerFactory
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.DeviceCoordinate
-import com.avito.runner.test.StubActionResult
-import com.avito.runner.test.StubDevice
+import com.avito.runner.service.worker.device.StubActionResult
+import com.avito.runner.service.worker.device.StubDevice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

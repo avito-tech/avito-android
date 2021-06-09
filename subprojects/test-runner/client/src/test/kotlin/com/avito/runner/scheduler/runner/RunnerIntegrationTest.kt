@@ -7,7 +7,7 @@ import com.avito.runner.scheduler.metrics.StubTestMetricsListener
 import com.avito.runner.scheduler.report.CompositeReporter
 import com.avito.runner.scheduler.report.SummaryReportMakerImpl
 import com.avito.runner.scheduler.runner.model.TestRunRequest
-import com.avito.runner.scheduler.runner.model.generateTestRunRequest
+import com.avito.runner.scheduler.runner.model.createStubInstance
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
 import com.avito.runner.service.DeviceWorkerPoolImpl
@@ -16,20 +16,22 @@ import com.avito.runner.service.listener.TestListener
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.createStubInstance
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.device.Device.Signal
+import com.avito.runner.service.worker.device.DeviceCoordinate
+import com.avito.runner.service.worker.device.StubActionResult
+import com.avito.runner.service.worker.device.StubDevice
+import com.avito.runner.service.worker.device.StubDevice.Companion.installApplicationFailure
+import com.avito.runner.service.worker.device.StubDevice.Companion.installApplicationSuccess
+import com.avito.runner.service.worker.device.createStubInstance
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
+import com.avito.runner.service.worker.device.model.createStubInstance
 import com.avito.runner.service.worker.device.model.getData
 import com.avito.runner.service.worker.listener.StubDeviceListener
-import com.avito.runner.test.StubActionResult
-import com.avito.runner.test.StubDevice
-import com.avito.runner.test.StubDevice.Companion.installApplicationFailure
-import com.avito.runner.test.StubDevice.Companion.installApplicationSuccess
-import com.avito.runner.test.TestDispatcher
-import com.avito.runner.test.listWithDefault
-import com.avito.runner.test.randomDeviceCoordinate
-import com.avito.runner.test.randomString
+import com.avito.test.TestDispatcher
+import com.avito.test.listWithDefault
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.CoroutineScope
@@ -87,7 +89,7 @@ internal class RunnerIntegrationTest {
 
             val firstFailedDevice = StubDevice(
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 installApplicationResults = mutableListOf(
                     installApplicationSuccess(), // Install application
                     installApplicationSuccess() // Install test application
@@ -114,7 +116,7 @@ internal class RunnerIntegrationTest {
             )
             val secondDevice = StubDevice(
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 installApplicationResults = mutableListOf(
                     installApplicationSuccess(), // Install application
                     installApplicationSuccess() // Install test application
@@ -151,9 +153,7 @@ internal class RunnerIntegrationTest {
             firstFailedDevice.verify()
             secondDevice.verify()
 
-            assertThat(
-                result.runs
-            ).isEqualTo(
+            assertThat(result.runs).isEqualTo(
                 resultsByFirstDevice + resultsBySecondDevice
             )
         }
@@ -184,9 +184,7 @@ internal class RunnerIntegrationTest {
             successfulDevice.verify()
             failedDevice.verify()
 
-            assertThat(
-                result.runs
-            ).isEqualTo(
+            assertThat(result.runs).isEqualTo(
                 requests.toPassedRuns(successfulDevice)
             )
         }
@@ -235,7 +233,7 @@ internal class RunnerIntegrationTest {
             val failedDevice = StubDevice(
                 tag = "StubDevice:installProblems",
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 gettingDeviceStatusResults = listOf(
                     DeviceStatus.Alive,
                     DeviceStatus.Alive
@@ -276,14 +274,11 @@ internal class RunnerIntegrationTest {
             minimumFailedCount = 0
         )
 
-        val requests = listOf(
-            testRunRequest(scheduling = scheduling),
-            testRunRequest(scheduling = scheduling)
-        )
+        val requests = createRunRequests(count = 2, scheduling = scheduling)
 
         val device = StubDevice(
             loggerFactory = loggerFactory,
-            coordinate = randomDeviceCoordinate(),
+            coordinate = DeviceCoordinate.Local.createStubInstance(),
             installApplicationResults = listOf(
                 installApplicationSuccess(), // Install application
                 installApplicationSuccess() // Install test application
@@ -339,14 +334,11 @@ internal class RunnerIntegrationTest {
                 minimumFailedCount = 0
             )
 
-            val requests = listOf(
-                testRunRequest(scheduling = scheduling),
-                testRunRequest(scheduling = scheduling)
-            )
+            val requests = createRunRequests(count = 2, scheduling = scheduling)
 
             val device = StubDevice(
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 installApplicationResults = listOf(
                     installApplicationSuccess(), // Install application
                     installApplicationSuccess() // Install test application
@@ -426,14 +418,11 @@ internal class RunnerIntegrationTest {
                 minimumFailedCount = 1
             )
 
-            val requests = listOf(
-                testRunRequest(scheduling = scheduling),
-                testRunRequest(scheduling = scheduling)
-            )
+            val requests = createRunRequests(count = 2, scheduling = scheduling)
 
             val device = StubDevice(
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 installApplicationResults = listOf(
                     installApplicationSuccess(), // Install application
                     installApplicationSuccess() // Install test application
@@ -496,10 +485,7 @@ internal class RunnerIntegrationTest {
                     minimumFailedCount = 1
                 )
 
-                val requests = listOf(
-                    testRunRequest(scheduling = scheduling),
-                    testRunRequest(scheduling = scheduling)
-                )
+                val requests = createRunRequests(count = 2, scheduling = scheduling)
 
                 runner.runTests(requests)
             }
@@ -513,15 +499,23 @@ internal class RunnerIntegrationTest {
         return StubDevice(
             tag = "StubDevice:broken",
             loggerFactory = loggerFactory,
-            coordinate = randomDeviceCoordinate(),
+            coordinate = DeviceCoordinate.Local.createStubInstance(),
             gettingDeviceStatusResults = listOf(
                 DeviceStatus.Freeze(failureReason)
             )
         )
     }
 
-    private fun createRunRequests(count: Int = 4): List<TestRunRequest> {
-        return (1..count).map { testRunRequest() }
+    private fun createRunRequests(
+        count: Int = 4,
+        scheduling: TestRunRequest.Scheduling = TestRunRequest.Scheduling.createStubInstance()
+    ): List<TestRunRequest> {
+        return (1..count).map { index ->
+            testRunRequest(
+                test = TestCase.createStubInstance(methodName = "test_$index"),
+                scheduling = scheduling
+            )
+        }
     }
 
     private fun List<TestRunRequest>.toPassedRuns(device: StubDevice): Map<TestRunRequest, List<DeviceTestCaseRun>> {
@@ -564,7 +558,7 @@ internal class RunnerIntegrationTest {
         return StubDevice(
             tag = "StubDevice:normal",
             loggerFactory = loggerFactory,
-            coordinate = randomDeviceCoordinate(),
+            coordinate = DeviceCoordinate.Local.createStubInstance(),
             installApplicationResults = mutableListOf(
                 installApplicationSuccess(), // Install application
                 installApplicationSuccess() // Install test application
@@ -635,47 +629,27 @@ internal class RunnerIntegrationTest {
         )
     }
 
-    private fun testCase(): TestCase =
-        TestCase(
-            className = "class",
-            methodName = randomString(),
-            deviceName = randomString()
-        )
-
     private fun testRunRequest(
-        test: TestCase = testCase(),
+        test: TestCase,
         apiLevel: Int = 22,
-        scheduling: TestRunRequest.Scheduling = TestRunRequest.Scheduling(
-            retryCount = 0,
-            minimumSuccessCount = 1,
-            minimumFailedCount = 0
-        )
-    ): TestRunRequest = generateTestRunRequest(
+        scheduling: TestRunRequest.Scheduling = TestRunRequest.Scheduling.createStubInstance()
+    ): TestRunRequest = TestRunRequest.Companion.createStubInstance(
         scheduling = scheduling,
         testCase = test,
-        timeoutMinutes = 5,
-        application = "/application/path",
-        applicationPackage = "com.avito.app",
-        testApplication = "/test-application/path",
-        testPackage = "com.avito.app.test",
-        deviceConfiguration = DeviceConfiguration(
-            api = apiLevel,
-            model = "model"
-        )
+        deviceConfiguration = DeviceConfiguration.createStubInstance(api = apiLevel)
     )
 
     private fun deviceTestCaseRun(
         device: Device,
         test: TestCase,
         result: TestCaseRun.Result
-    ): DeviceTestCaseRun =
-        DeviceTestCaseRun(
-            testCaseRun = TestCaseRun(
-                test = test,
-                result = result,
-                timestampStartedMilliseconds = 0,
-                timestampCompletedMilliseconds = 0
-            ),
-            device = device.getData()
-        )
+    ): DeviceTestCaseRun = DeviceTestCaseRun(
+        testCaseRun = TestCaseRun(
+            test = test,
+            result = result,
+            timestampStartedMilliseconds = 0,
+            timestampCompletedMilliseconds = 0
+        ),
+        device = device.getData()
+    )
 }

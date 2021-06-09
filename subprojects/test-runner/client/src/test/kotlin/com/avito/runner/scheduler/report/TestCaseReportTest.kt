@@ -1,10 +1,11 @@
 package com.avito.runner.scheduler.report
 
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
-import com.avito.runner.scheduler.runner.model.generateTestRunRequest
+import com.avito.runner.scheduler.runner.model.TestRunRequest
+import com.avito.runner.scheduler.runner.model.createStubInstance
+import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.test.generateDeviceTestCaseRun
-import com.avito.runner.test.generateTestCaseRun
+import com.avito.runner.service.model.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -59,10 +60,10 @@ internal class TestCaseReportTest {
 
     private fun createTestCaseReport(runResults: List<TestCaseRun.Result>): TestCaseRequestMatchingReport =
         TestCaseRequestMatchingReport(
-            request = generateTestRunRequest(),
+            request = TestRunRequest.Companion.createStubInstance(),
             runs = runResults.map {
-                generateDeviceTestCaseRun(
-                    testCaseRun = generateTestCaseRun(
+                DeviceTestCaseRun.createStubInstance(
+                    testCaseRun = TestCaseRun.createStubInstance(
                         result = it
                     )
                 )
@@ -72,10 +73,10 @@ internal class TestCaseReportTest {
 
     private fun createTestCaseReportWithDurations(durations: List<Long>): TestCaseRequestMatchingReport =
         TestCaseRequestMatchingReport(
-            request = generateTestRunRequest(),
+            request = TestRunRequest.Companion.createStubInstance(),
             runs = durations.map {
-                generateDeviceTestCaseRun(
-                    testCaseRun = generateTestCaseRun(
+                DeviceTestCaseRun.createStubInstance(
+                    testCaseRun = TestCaseRun.createStubInstance(
                         timestampStartedMilliseconds = 0,
                         timestampCompletedMilliseconds = it
                     )

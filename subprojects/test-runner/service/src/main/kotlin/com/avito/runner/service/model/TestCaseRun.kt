@@ -32,4 +32,6 @@ data class TestCaseRun(
             }
         }
     }
+
+    companion object
 }
