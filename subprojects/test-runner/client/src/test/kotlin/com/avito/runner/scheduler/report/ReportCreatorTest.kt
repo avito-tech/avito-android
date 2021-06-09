@@ -4,13 +4,11 @@ import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
 import com.avito.runner.scheduler.runner.TestRunnerResult
 import com.avito.runner.scheduler.runner.model.TestRunRequest
-import com.avito.runner.scheduler.runner.model.generateTestRunRequest
+import com.avito.runner.scheduler.runner.model.createStubInstance
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.model.TestCaseRun
 import com.avito.runner.service.model.createStubInstance
-import com.avito.runner.test.generateDeviceTestCaseRun
-import com.avito.runner.test.generateTestCaseRun
 import com.avito.truth.isInstanceOf
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
@@ -24,13 +22,13 @@ internal class ReportCreatorTest {
     fun `create summary - creates test report for each test case`() {
         val summary = createSummary(
             runs = listOf(
-                generateTestRunRequest(
+                TestRunRequest.Companion.createStubInstance(
                     testCase = TestCase.createStubInstance(methodName = "test1")
                 ) to createTestSuiteRuns(),
-                generateTestRunRequest(
+                TestRunRequest.Companion.createStubInstance(
                     testCase = TestCase.createStubInstance(methodName = "test2")
                 ) to createTestSuiteRuns(),
-                generateTestRunRequest(
+                TestRunRequest.Companion.createStubInstance(
                     testCase = TestCase.createStubInstance(methodName = "test3")
                 ) to createTestSuiteRuns()
             )
@@ -43,9 +41,9 @@ internal class ReportCreatorTest {
     fun `runs count - is empty`() {
         val summary = createSummary(
             runs = listOf(
-                generateTestRunRequest() to createTestSuiteRuns(),
-                generateTestRunRequest() to createTestSuiteRuns(),
-                generateTestRunRequest() to createTestSuiteRuns()
+                TestRunRequest.Companion.createStubInstance() to createTestSuiteRuns(),
+                TestRunRequest.Companion.createStubInstance() to createTestSuiteRuns(),
+                TestRunRequest.Companion.createStubInstance() to createTestSuiteRuns()
             )
         )
 
@@ -58,7 +56,7 @@ internal class ReportCreatorTest {
     fun `create summary - marks test as matched - all tests passed`() {
         val summary = createSummary(
             runs = listOf(
-                generateTestRunRequest() to createTestSuiteRuns(
+                TestRunRequest.Companion.createStubInstance() to createTestSuiteRuns(
                     TestCaseRun.Result.Passed,
                     TestCaseRun.Result.Passed,
                     TestCaseRun.Result.Passed
@@ -75,7 +73,7 @@ internal class ReportCreatorTest {
     fun `create summary - marks test as mismatched - all tests failed`() {
         val summary = createSummary(
             runs = listOf(
-                generateTestRunRequest() to createTestSuiteRuns(
+                TestRunRequest.Companion.createStubInstance() to createTestSuiteRuns(
                     TestCaseRun.Result.Failed.InRun(""),
                     TestCaseRun.Result.Failed.InRun(""),
                     TestCaseRun.Result.Failed.InRun("")
@@ -92,7 +90,7 @@ internal class ReportCreatorTest {
     fun `failed count - is not 0`() {
         val summary = createSummary(
             runs = listOf(
-                generateTestRunRequest() to createTestSuiteRuns(
+                TestRunRequest.Companion.createStubInstance() to createTestSuiteRuns(
                     TestCaseRun.Result.Failed.InRun(""),
                     TestCaseRun.Result.Failed.InRun(""),
                     TestCaseRun.Result.Failed.InRun("")
@@ -108,7 +106,7 @@ internal class ReportCreatorTest {
     @Test
     fun `create summary - marks test as mismatched - minimum success test count not reached`() {
         val runs = listOf(
-            generateTestRunRequest(
+            TestRunRequest.Companion.createStubInstance(
                 scheduling = TestRunRequest.Scheduling(
                     retryCount = 2,
                     minimumSuccessCount = 2,
@@ -131,7 +129,7 @@ internal class ReportCreatorTest {
     @Test
     fun `failed and passed count - is not 0`() {
         val runs = listOf(
-            generateTestRunRequest(
+            TestRunRequest.Companion.createStubInstance(
                 scheduling = TestRunRequest.Scheduling(
                     retryCount = 2,
                     minimumSuccessCount = 2,
@@ -154,7 +152,7 @@ internal class ReportCreatorTest {
     @Test
     fun `create summary - marks test as matched - minimum success test count reached`() {
         val runs = listOf(
-            generateTestRunRequest(
+            TestRunRequest.Companion.createStubInstance(
                 scheduling = TestRunRequest.Scheduling(
                     retryCount = 2,
                     minimumSuccessCount = 2,
@@ -177,7 +175,7 @@ internal class ReportCreatorTest {
     @Test
     fun `create summary - marks test as ignored - run contains ignored test`() {
         val runs = listOf(
-            generateTestRunRequest(
+            TestRunRequest.Companion.createStubInstance(
                 scheduling = TestRunRequest.Scheduling(
                     retryCount = 2,
                     minimumSuccessCount = 2,
@@ -198,8 +196,8 @@ internal class ReportCreatorTest {
     private fun createTestSuiteRuns(
         vararg results: TestCaseRun.Result
     ): List<DeviceTestCaseRun> = results.map {
-        generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
+        DeviceTestCaseRun.createStubInstance(
+            testCaseRun = TestCaseRun.createStubInstance(
                 result = it
             )
         )

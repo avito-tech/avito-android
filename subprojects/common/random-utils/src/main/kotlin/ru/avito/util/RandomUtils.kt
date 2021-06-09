@@ -7,9 +7,6 @@ import java.util.Date
 import java.util.Random
 import java.util.concurrent.ThreadLocalRandom
 
-// TODO: to consider using reflection for automation.
-// For example - https://github.com/mtedone/podam
-
 private val random: ThreadLocalRandom
     get() = ThreadLocalRandom.current()
 

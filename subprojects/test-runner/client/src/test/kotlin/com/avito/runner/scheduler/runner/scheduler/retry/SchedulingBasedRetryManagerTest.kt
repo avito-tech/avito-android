@@ -1,11 +1,10 @@
 package com.avito.runner.scheduler.runner.scheduler.retry
 
 import com.avito.runner.scheduler.runner.model.TestRunRequest
+import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.test.Is
-import com.avito.runner.test.generateDeviceTestCaseRun
-import com.avito.runner.test.generateTestCaseRun
-import org.hamcrest.MatcherAssert.assertThat
+import com.avito.runner.service.model.createStubInstance
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
 internal class SchedulingBasedRetryManagerTest {
@@ -19,9 +18,8 @@ internal class SchedulingBasedRetryManagerTest {
                 history = listOf(
                     FAILED_RUN
                 )
-            ),
-            Is(0)
-        )
+            )
+        ).isEqualTo(0)
     }
 
     @Test
@@ -33,9 +31,8 @@ internal class SchedulingBasedRetryManagerTest {
                 history = listOf(
                     SUCCESS_RUN
                 )
-            ),
-            Is(0)
-        )
+            )
+        ).isEqualTo(0)
     }
 
     @Test
@@ -47,9 +44,8 @@ internal class SchedulingBasedRetryManagerTest {
                 history = listOf(
                     FAILED_RUN
                 )
-            ),
-            Is(1)
-        )
+            )
+        ).isEqualTo(1)
     }
 
     @Test
@@ -61,9 +57,8 @@ internal class SchedulingBasedRetryManagerTest {
                 history = listOf(
                     SUCCESS_RUN
                 )
-            ),
-            Is(1)
-        )
+            )
+        ).isEqualTo(1)
     }
 
     @Test
@@ -77,9 +72,8 @@ internal class SchedulingBasedRetryManagerTest {
                     FAILED_RUN,
                     FAILED_RUN
                 )
-            ),
-            Is(0)
-        )
+            )
+        ).isEqualTo(0)
     }
 
     @Test
@@ -91,9 +85,8 @@ internal class SchedulingBasedRetryManagerTest {
                 history = listOf(
                     SUCCESS_RUN
                 )
-            ),
-            Is(2)
-        )
+            )
+        ).isEqualTo(2)
     }
 
     @Test
@@ -107,9 +100,8 @@ internal class SchedulingBasedRetryManagerTest {
                     FAILED_RUN,
                     FAILED_RUN
                 )
-            ),
-            Is(0)
-        )
+            )
+        ).isEqualTo(0)
     }
 
     @Test
@@ -123,9 +115,8 @@ internal class SchedulingBasedRetryManagerTest {
                     SUCCESS_RUN,
                     SUCCESS_RUN
                 )
-            ),
-            Is(0)
-        )
+            )
+        ).isEqualTo(0)
     }
 
     @Suppress("MaxLineLength")
@@ -140,9 +131,8 @@ internal class SchedulingBasedRetryManagerTest {
                     SUCCESS_RUN,
                     SUCCESS_RUN
                 )
-            ),
-            Is(0)
-        )
+            )
+        ).isEqualTo(0)
     }
 
     @Test
@@ -155,9 +145,8 @@ internal class SchedulingBasedRetryManagerTest {
                     SUCCESS_RUN,
                     FAILED_RUN
                 )
-            ),
-            Is(2)
-        )
+            )
+        ).isEqualTo(2)
     }
 
     @Test
@@ -167,9 +156,8 @@ internal class SchedulingBasedRetryManagerTest {
         assertThat(
             manager.retryCount(
                 history = listOf()
-            ),
-            Is(10)
-        )
+            )
+        ).isEqualTo(10)
     }
 
     @Test
@@ -179,9 +167,8 @@ internal class SchedulingBasedRetryManagerTest {
         assertThat(
             manager.retryCount(
                 history = listOf()
-            ),
-            Is(11)
-        )
+            )
+        ).isEqualTo(11)
     }
 
     private fun provideSchedulingBasedRetryManager(
@@ -198,14 +185,15 @@ internal class SchedulingBasedRetryManagerTest {
         )
 
     companion object {
-        private val FAILED_RUN = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
+
+        private val FAILED_RUN = DeviceTestCaseRun.createStubInstance(
+            testCaseRun = TestCaseRun.createStubInstance(
                 result = TestCaseRun.Result.Failed.InRun("failed")
             )
         )
 
-        private val SUCCESS_RUN = generateDeviceTestCaseRun(
-            testCaseRun = generateTestCaseRun(
+        private val SUCCESS_RUN = DeviceTestCaseRun.createStubInstance(
+            testCaseRun = TestCaseRun.createStubInstance(
                 result = TestCaseRun.Result.Passed
             )
         )

@@ -1,6 +1,5 @@
 package com.avito.runner.service.model.intention
 
-import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCase
 
 data class InstrumentationTestRunAction(
@@ -13,9 +12,8 @@ data class InstrumentationTestRunAction(
     val timeoutMinutes: Long,
     val enableDeviceDebug: Boolean
 ) {
-    override fun toString(): String = "Run ${test.testName} test"
-}
 
-data class InstrumentationTestRunActionResult(
-    val testCaseRun: DeviceTestCaseRun
-)
+    override fun toString(): String = "Run ${test.testName} test"
+
+    companion object
+}

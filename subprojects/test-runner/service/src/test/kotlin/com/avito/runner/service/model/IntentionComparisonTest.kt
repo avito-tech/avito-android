@@ -1,9 +1,9 @@
 package com.avito.runner.service.model
 
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
+import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.State
-import com.avito.runner.test.generateInstalledApplicationLayer
-import com.avito.runner.test.generateInstrumentationTestAction
-import com.avito.runner.test.generateIntention
+import com.avito.runner.service.model.intention.createStubInstance
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
@@ -11,20 +11,20 @@ class IntentionComparisonTest {
 
     @Test
     fun `intentions are equal when have the same state and action`() {
-        val sharedAction = generateInstrumentationTestAction()
+        val sharedAction = InstrumentationTestRunAction.createStubInstance()
 
         val layers = listOf(
             State.Layer.ApiLevel(22),
-            generateInstalledApplicationLayer(),
-            generateInstalledApplicationLayer(),
-            generateInstalledApplicationLayer()
+            State.Layer.InstalledApplication.createStubInstance(),
+            State.Layer.InstalledApplication.createStubInstance(),
+            State.Layer.InstalledApplication.createStubInstance()
         )
 
-        val firstIntention = generateIntention(
+        val firstIntention = Intention.createStubInstance(
             state = State(layers = layers),
             action = sharedAction.copy()
         )
-        val theSameIntention = generateIntention(
+        val theSameIntention = Intention.createStubInstance(
             state = State(layers = layers),
             action = sharedAction.copy()
         )
@@ -35,26 +35,26 @@ class IntentionComparisonTest {
 
     @Test
     fun `intentions are different when have different layers`() {
-        val sharedAction = generateInstrumentationTestAction()
+        val sharedAction = InstrumentationTestRunAction.createStubInstance()
 
-        val firstIntention = generateIntention(
+        val firstIntention = Intention.createStubInstance(
             state = State(
                 layers = listOf(
                     State.Layer.ApiLevel(22),
-                    generateInstalledApplicationLayer(),
-                    generateInstalledApplicationLayer(),
-                    generateInstalledApplicationLayer()
+                    State.Layer.InstalledApplication.createStubInstance(),
+                    State.Layer.InstalledApplication.createStubInstance(),
+                    State.Layer.InstalledApplication.createStubInstance()
                 )
             ),
             action = sharedAction
         )
-        val intentionWithAnotherLayer = generateIntention(
+        val intentionWithAnotherLayer = Intention.createStubInstance(
             state = State(
                 layers = listOf(
                     State.Layer.ApiLevel(23),
-                    generateInstalledApplicationLayer(),
-                    generateInstalledApplicationLayer(),
-                    generateInstalledApplicationLayer()
+                    State.Layer.InstalledApplication.createStubInstance(),
+                    State.Layer.InstalledApplication.createStubInstance(),
+                    State.Layer.InstalledApplication.createStubInstance()
                 )
             ),
             action = sharedAction

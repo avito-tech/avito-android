@@ -1,4 +1,4 @@
-package com.avito.runner.test
+package com.avito.runner.service.worker.device
 
 sealed class StubActionResult<T> {
 

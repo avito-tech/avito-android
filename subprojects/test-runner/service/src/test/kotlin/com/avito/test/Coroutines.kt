@@ -1,4 +1,4 @@
-package com.avito.runner.test
+package com.avito.test
 
 import kotlinx.coroutines.channels.ReceiveChannel
 

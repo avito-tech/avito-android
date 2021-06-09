@@ -37,7 +37,6 @@ dependencies {
     }
 
     testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":test-runner:shared-test"))
     testImplementation(project(":gradle:test-project"))
     testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:time")))
@@ -55,7 +54,6 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":test-runner:service")))
     testFixturesImplementation(testFixtures(project(":logger:logger")))
     testFixturesImplementation(testFixtures(project(":common:time")))
-    testFixturesImplementation(project(":test-runner:shared-test"))
 }
 
 kotlin {

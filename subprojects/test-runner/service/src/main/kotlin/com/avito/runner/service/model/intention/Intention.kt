@@ -5,4 +5,6 @@ data class Intention(
     val action: InstrumentationTestRunAction
 ) {
     override fun toString(): String = "Intention with action: $action, with state: $state"
+
+    companion object
 }

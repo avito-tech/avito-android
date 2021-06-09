@@ -21,5 +21,9 @@ internal data class TestRunRequest(
         val retryCount: Int,
         val minimumSuccessCount: Int,
         val minimumFailedCount: Int
-    )
+    ) {
+        companion object
+    }
+
+    companion object
 }
