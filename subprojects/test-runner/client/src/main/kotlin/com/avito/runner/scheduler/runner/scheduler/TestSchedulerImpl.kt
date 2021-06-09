@@ -16,6 +16,7 @@ import com.avito.runner.scheduler.TestRunnerFactory
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.runner.scheduler.runner.model.TargetGroup
 import com.avito.runner.scheduler.runner.model.TestRunRequest
+import com.avito.runner.scheduler.runner.model.TestSchedulerResult
 import com.avito.runner.scheduler.runner.model.TestWithTarget
 import com.avito.runner.scheduler.suite.TestSuite
 import com.avito.runner.scheduler.suite.TestSuiteProvider
@@ -35,7 +36,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
 
-internal class TestsSchedulerImpl(
+internal class TestSchedulerImpl(
     private val params: InstrumentationTestsActionParams,
     private val report: Report,
     private val testSuiteProvider: TestSuiteProvider,
@@ -46,11 +47,11 @@ internal class TestsSchedulerImpl(
     private val outputDir: File,
     private val devicesProvider: DevicesProvider,
     private val testRunnerFactoryFactory: (List<TestWithTarget>) -> TestRunnerFactory,
-) : TestsScheduler {
+) : TestScheduler {
 
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 
-    private val logger = loggerFactory.create<TestsSchedulerImpl>()
+    private val logger = loggerFactory.create<TestSchedulerImpl>()
 
     private val scope = CoroutineScope(CoroutineName("test-scheduler") + Dispatchers.IO)
 
@@ -58,7 +59,7 @@ internal class TestsSchedulerImpl(
 
     private val configurationName: String = params.instrumentationConfiguration.name
 
-    override fun schedule(): TestsScheduler.Result {
+    override fun schedule(): TestSchedulerResult {
         logger.debug("Filter config: ${params.instrumentationConfiguration.filter}")
         filterInfoWriter.writeFilterConfig(params.instrumentationConfiguration.filter)
 
@@ -83,78 +84,48 @@ internal class TestsSchedulerImpl(
         }
         logger.debug("Skipped tests: $skippedTests")
 
-        val testsToRun = testSuite.testsToRun.map { "${it.test.name} on ${it.target.deviceName}" }
-        logger.debug("Tests to run: $testsToRun")
+        val testsToRun = testSuite.testsToRun
+        logger.debug("Tests to run: ${testsToRun.map { "${it.test.name} on ${it.target.deviceName}" }}")
 
         filterInfoWriter.writeAppliedFilter(testSuite.appliedFilter)
         filterInfoWriter.writeFilterExcludes(testSuite.skippedTests)
 
         writeTestSuite(testSuite)
 
-        runTests(
-            mainApk = params.mainApk,
-            testApk = params.testApk,
-            testsToRun = testSuite.testsToRun
-        )
+        if (testsToRun.isNotEmpty()) {
+            withDevices(reservations = reservations(testsToRun)) { devices ->
 
-        return TestsScheduler.Result(
+                val testRequests = testsToRun.map { targetTestRun: TestWithTarget ->
+
+                    val reservation = targetTestRun.target.reservation
+
+                    createTestRunRequest(
+                        targetTestRun = targetTestRun,
+                        quota = reservation.quota,
+                        reservation = reservation,
+                        application = params.mainApk,
+                        testApplication = params.testApk,
+                        executionParameters = executionParameters
+                    )
+                }
+
+                runBlocking {
+                    withContext(scope.coroutineContext) {
+                        testRunnerFactoryFactory.invoke(testsToRun).createTestRunner(
+                            outputDirectory = outputFolder(outputDir),
+                            devices = devices
+                        ).runTests(testRequests)
+                    }
+                }
+            }
+
+            logger.debug("Worker completed")
+        }
+
+        return TestSchedulerResult(
             testSuite = testSuite,
             testResults = report.getTestResults()
         )
-    }
-
-    private fun runTests(
-        mainApk: File?,
-        testApk: File,
-        testsToRun: List<TestWithTarget>
-    ) {
-        if (testsToRun.isEmpty()) {
-            return
-        }
-
-        execute(
-            application = mainApk,
-            testApplication = testApk,
-            testsToRun = testsToRun,
-            executionParameters = executionParameters,
-            output = outputDir
-        )
-    }
-
-    private fun execute(
-        application: File?,
-        testApplication: File,
-        testsToRun: List<TestWithTarget>,
-        executionParameters: ExecutionParameters,
-        output: File
-    ) {
-        withDevices(reservations = reservations(testsToRun)) { devices ->
-
-            val testRequests = testsToRun.map { targetTestRun: TestWithTarget ->
-
-                val reservation = targetTestRun.target.reservation
-
-                createTestRunRequest(
-                    targetTestRun = targetTestRun,
-                    quota = reservation.quota,
-                    reservation = reservation,
-                    application = application,
-                    testApplication = testApplication,
-                    executionParameters = executionParameters
-                )
-            }
-
-            runBlocking {
-                withContext(scope.coroutineContext) {
-                    testRunnerFactoryFactory.invoke(testsToRun).createTestRunner(
-                        outputDirectory = outputFolder(output),
-                        devices = devices
-                    ).runTests(testRequests)
-                }
-            }
-        }
-
-        logger.debug("Worker completed")
     }
 
     private fun outputFolder(output: File): File = File(
@@ -189,7 +160,7 @@ internal class TestsSchedulerImpl(
     }
 
     // TODO: extract and delegate this channels orchestration.
-    // It's overcomplicated for local client
+    //  It's overcomplicated for local client
     private fun withDevices(
         reservations: Collection<ReservationData>,
         action: (devices: ReceiveChannel<Device>) -> Unit

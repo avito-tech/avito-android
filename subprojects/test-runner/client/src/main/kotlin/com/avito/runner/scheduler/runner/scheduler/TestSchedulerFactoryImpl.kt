@@ -46,9 +46,9 @@ public class TestSchedulerFactoryImpl(
     private val metricsConfig: RunnerMetricsConfig,
     private val testSuiteLoader: TestSuiteLoader,
     private val reportFactory: ReportFactory
-) : TestsSchedulerFactory {
+) : TestSchedulerFactory {
 
-    override fun create(devicesProviderFactory: DevicesProviderFactory): TestsScheduler {
+    override fun create(devicesProviderFactory: DevicesProviderFactory): TestScheduler {
         val tempDir = Files.createTempDirectory(null).toFile()
         val testSuiteProvider: TestSuiteProvider = createTestSuiteProvider()
 
@@ -64,7 +64,7 @@ public class TestSchedulerFactoryImpl(
 
         val devicesProvider = devicesProviderFactory.createDeviceProvider(tempLogcatDir = tempDir)
 
-        return TestsSchedulerImpl(
+        return TestSchedulerImpl(
             params = params,
             report = report,
             testSuiteProvider = testSuiteProvider,

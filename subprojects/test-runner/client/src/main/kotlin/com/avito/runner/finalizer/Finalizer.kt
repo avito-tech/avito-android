@@ -1,10 +1,10 @@
 package com.avito.runner.finalizer
 
-import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
+import com.avito.runner.scheduler.runner.model.TestSchedulerResult
 
 public interface Finalizer {
 
-    public fun finalize(testSchedulerResults: TestsScheduler.Result): Result
+    public fun finalize(testSchedulerResults: TestSchedulerResult): Result
 
     public sealed class Result {
 

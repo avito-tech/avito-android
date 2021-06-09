@@ -7,7 +7,7 @@ import com.avito.logger.LoggerFactory
 import com.avito.logger.create
 import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.Finalizer
-import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
+import com.avito.runner.scheduler.runner.scheduler.TestScheduler
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 import com.avito.time.TimeProvider
@@ -17,7 +17,7 @@ import javax.inject.Inject
 internal class InstrumentationTestsAction(
     private val params: InstrumentationTestsActionParams,
     loggerFactory: LoggerFactory,
-    private val scheduler: TestsScheduler,
+    private val scheduler: TestScheduler,
     private val finalizer: Finalizer,
     private val buildFailer: BuildFailer,
 ) : Runnable {

@@ -10,9 +10,9 @@ import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.Finalizer
 import com.avito.runner.finalizer.FinalizerFactory
 import com.avito.runner.finalizer.FinalizerFactoryImpl
+import com.avito.runner.scheduler.runner.scheduler.TestScheduler
+import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactory
 import com.avito.runner.scheduler.runner.scheduler.TestSchedulerFactoryImpl
-import com.avito.runner.scheduler.runner.scheduler.TestsScheduler
-import com.avito.runner.scheduler.runner.scheduler.TestsSchedulerFactory
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 import com.avito.time.DefaultTimeProvider
 
@@ -20,14 +20,14 @@ internal interface InstrumentationTestsActionFactory {
 
     fun provideFinalizer(): Finalizer
 
-    fun provideScheduler(devicesProviderFactory: DevicesProviderFactory): TestsScheduler
+    fun provideScheduler(devicesProviderFactory: DevicesProviderFactory): TestScheduler
 
     class Impl(
         params: InstrumentationTestsActionParams,
         metricsConfig: RunnerMetricsConfig
     ) : InstrumentationTestsActionFactory {
 
-        private val schedulerFactory: TestsSchedulerFactory
+        private val schedulerFactory: TestSchedulerFactory
 
         private val finalizerFactory: FinalizerFactory
 

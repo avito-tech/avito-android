@@ -1,6 +1,5 @@
-package com.avito.runner.scheduler.runner
+package com.avito.runner.scheduler.runner.model
 
-import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.DeviceTestCaseRun
 
 internal data class TestRunnerResult(
