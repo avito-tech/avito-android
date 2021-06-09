@@ -14,17 +14,16 @@ import com.avito.runner.service.worker.DeviceWorkerMessage
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
 import com.avito.runner.service.worker.device.DeviceCoordinate
-import com.avito.runner.service.worker.device.StubActionResult
-import com.avito.runner.service.worker.device.StubDevice
-import com.avito.runner.service.worker.device.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.device.createStubInstance
+import com.avito.runner.service.worker.device.stub.StubActionResult
+import com.avito.runner.service.worker.device.stub.StubDevice
+import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.listener.CompositeDeviceListener
 import com.avito.runner.service.worker.listener.DeviceListener
 import com.avito.runner.service.worker.listener.DeviceLogListener
 import com.avito.runner.service.worker.listener.MessagesDeviceListener
 import com.avito.runner.service.worker.listener.StubDeviceListener
 import com.avito.test.TestDispatcher
-import com.avito.test.listWithDefault
 import com.avito.test.receiveAvailable
 import com.avito.time.StubTimeProvider
 import com.avito.truth.isInstanceOf
@@ -86,10 +85,7 @@ class DeviceWorkerTest {
                         StubActionResult.Success(Result.Success(Unit))
                     )
                 },
-                gettingDeviceStatusResults = listWithDefault(
-                    1 + intentions.size,
-                    DeviceStatus.Alive
-                ),
+                gettingDeviceStatusResults = List(1 + intentions.size) { DeviceStatus.Alive },
                 runTestsResults = intentions.map {
                     StubActionResult.Success(
                         TestCaseRun.Result.Passed
@@ -174,10 +170,7 @@ class DeviceWorkerTest {
                         StubActionResult.Success(Result.Success(Unit))
                     )
                 },
-                gettingDeviceStatusResults = listWithDefault(
-                    1 + intentions.size,
-                    DeviceStatus.Alive
-                ),
+                gettingDeviceStatusResults = List(1 + intentions.size) { DeviceStatus.Alive },
                 runTestsResults = intentions.map {
                     StubActionResult.Success(
                         TestCaseRun.Result.Passed

@@ -58,6 +58,7 @@ internal class InstrumentationTestsAction(
 
         when (val result = finalizer.finalize(testSchedulerResults = testSchedulerResults)) {
             Finalizer.Result.Ok -> {
+                // no op
             }
             is Finalizer.Result.Failure -> buildFailer.failBuild(result.message)
         }

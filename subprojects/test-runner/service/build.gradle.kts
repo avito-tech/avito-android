@@ -32,7 +32,6 @@ dependencies {
     testImplementation(project(":common:truth-extensions"))
     testImplementation(project(":common:resources"))
     testImplementation(project(":gradle:test-project"))
-    testImplementation(project(":test-runner:stub"))
     testImplementation(libs.kotlinReflect)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)

@@ -44,6 +44,7 @@ public abstract class TestRunnerWorkAction : WorkAction<TestRunnerWorkAction.Par
 
         when (val result = factory.provideFinalizer().finalize(testResults)) {
             Finalizer.Result.Ok -> {
+                // no op
             }
             is Finalizer.Result.Failure -> buildFailer.failBuild(result.message)
         }
