@@ -6,11 +6,9 @@ import com.avito.runner.service.worker.device.adb.instrumentation.Instrumentatio
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationEntry.InstrumentationTestEntry
 import com.avito.runner.service.worker.device.adb.instrumentation.InstrumentationTestCaseRunParser
 import com.avito.runner.service.worker.model.InstrumentationTestCaseRun
-import com.avito.runner.test.Is
 import com.avito.truth.isInstanceOf
 import com.avito.utils.fileFromJarResources
 import com.google.common.truth.Truth.assertThat
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import rx.Observable
 import rx.observers.TestSubscriber
@@ -35,24 +33,23 @@ class InstrumentationTest {
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf(
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = "com.example.test.TestClass:",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = """Error in test1(com.example.test.TestClass):
+
+        assertThat(entries).containsExactlyElementsIn(
+            listOf(
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = "com.example.test.TestClass:",
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = """Error in test1(com.example.test.TestClass):
 java.net.UnknownHostException: Test Exception
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:245)
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:44)
@@ -91,11 +88,11 @@ at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
 at android.support.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
 at android.support.test.runner.JunoAndroidRunner.onStart(JunoAndroidRunner.kt:107)
 at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:1932)""",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = """java.net.UnknownHostException: Test Exception
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = """java.net.UnknownHostException: Test Exception
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:245)
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:44)
 at com.example.test.TestClass.test1(TestClass.kt:238)
@@ -133,79 +130,78 @@ at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
 at android.support.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
 at android.support.test.runner.JunoAndroidRunner.onStart(JunoAndroidRunner.kt:107)
 at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:1932)""",
-                        statusCode = InstrumentationTestEntry.StatusCode.Failure,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = "",
-                        id = "AndroidJUnitRunner",
-                        test = "test2",
-                        clazz = "com.example.test.TestClass",
-                        current = 2,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test2",
-                        clazz = "com.example.test.TestClass",
-                        current = 2,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = "com.example.test.TestClass:",
-                        id = "AndroidJUnitRunner",
-                        test = "test3",
-                        clazz = "com.example.test.TestClass",
-                        current = 3,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test3",
-                        clazz = "com.example.test.TestClass",
-                        current = 3,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = "",
-                        id = "AndroidJUnitRunner",
-                        test = "test4",
-                        clazz = "com.example.test.TestClass",
-                        current = 4,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 4,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test4",
-                        clazz = "com.example.test.TestClass",
-                        current = 4,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    )
+                    statusCode = InstrumentationTestEntry.StatusCode.Failure,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = "",
+                    id = "AndroidJUnitRunner",
+                    test = "test2",
+                    clazz = "com.example.test.TestClass",
+                    current = 2,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test2",
+                    clazz = "com.example.test.TestClass",
+                    current = 2,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = "com.example.test.TestClass:",
+                    id = "AndroidJUnitRunner",
+                    test = "test3",
+                    clazz = "com.example.test.TestClass",
+                    current = 3,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test3",
+                    clazz = "com.example.test.TestClass",
+                    current = 3,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = "",
+                    id = "AndroidJUnitRunner",
+                    test = "test4",
+                    clazz = "com.example.test.TestClass",
+                    current = 4,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 4,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test4",
+                    clazz = "com.example.test.TestClass",
+                    current = 4,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationEntry.InstrumentationResultEntry(
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
                 )
             )
         )
@@ -249,15 +245,13 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
 
         val tests: List<InstrumentationTestCaseRun> = subscriber.onNextEvents.eraseDuration()
 
-        assertThat(
-            tests,
-            Is(
-                listOf<InstrumentationTestCaseRun>(
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test1",
-                        result = TestCaseRun.Result.Failed.InRun(
-                            errorMessage = """java.net.UnknownHostException: Test Exception
+        assertThat(tests).containsExactlyElementsIn(
+            listOf<InstrumentationTestCaseRun>(
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test1",
+                    result = TestCaseRun.Result.Failed.InRun(
+                        errorMessage = """java.net.UnknownHostException: Test Exception
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:245)
 at com.example.test.TestClass.test1.1.invoke(TestClass.kt:44)
 at com.example.test.TestClass.test1(TestClass.kt:238)
@@ -295,31 +289,30 @@ at org.junit.runner.JUnitCore.run(JUnitCore.java:115)
 at android.support.test.internal.runner.TestExecutor.execute(TestExecutor.java:59)
 at android.support.test.runner.JunoAndroidRunner.onStart(JunoAndroidRunner.kt:107)
 at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:1932)"""
-                        ),
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
                     ),
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test2",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    ),
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test3",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    ),
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test4",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    )
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                ),
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test2",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                ),
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test3",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                ),
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test4",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
                 )
             )
         )
@@ -338,14 +331,11 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf<InstrumentationEntry>(
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf<InstrumentationEntry>(
+                InstrumentationEntry.InstrumentationResultEntry(
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
                 )
             )
         )
@@ -439,80 +429,77 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf(
-                    InstrumentationTestEntry(
-                        numTests = 3,
-                        stream = "com.example.test.TestClass:",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 3,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 3,
-                        stream = "com.example.test.TestClass:",
-                        id = "AndroidJUnitRunner",
-                        test = "test2",
-                        clazz = "com.example.test.TestClass",
-                        current = 2,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 3,
-                        stream = "",
-                        id = "AndroidJUnitRunner",
-                        test = "test3",
-                        clazz = "com.example.test.TestClass",
-                        current = 3,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 3,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test2",
-                        clazz = "com.example.test.TestClass",
-                        current = 2,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 3,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test3",
-                        clazz = "com.example.test.TestClass",
-                        current = 3,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf(
+                InstrumentationTestEntry(
+                    numTests = 3,
+                    stream = "com.example.test.TestClass:",
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 3,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 3,
+                    stream = "com.example.test.TestClass:",
+                    id = "AndroidJUnitRunner",
+                    test = "test2",
+                    clazz = "com.example.test.TestClass",
+                    current = 2,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 3,
+                    stream = "",
+                    id = "AndroidJUnitRunner",
+                    test = "test3",
+                    clazz = "com.example.test.TestClass",
+                    current = 3,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 3,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test2",
+                    clazz = "com.example.test.TestClass",
+                    current = 2,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 3,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test3",
+                    clazz = "com.example.test.TestClass",
+                    current = 3,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationEntry.InstrumentationResultEntry(
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
                 )
             )
         )
@@ -561,31 +548,28 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val tests = subscriber.onNextEvents.eraseDuration()
-        assertThat(
-            tests,
-            Is(
-                listOf<InstrumentationTestCaseRun>(
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test1",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    ),
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test2",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    ),
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test3",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    )
+        assertThat(tests).containsExactlyElementsIn(
+            listOf<InstrumentationTestCaseRun>(
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test1",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                ),
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test2",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                ),
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test3",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
                 )
             )
         )
@@ -634,58 +618,55 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf(
-                    InstrumentationTestEntry(
-                        numTests = 2,
-                        stream = "com.example.test.TestClass:",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 2,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 2,
-                        stream = "",
-                        id = "AndroidJUnitRunner",
-                        test = "test2",
-                        clazz = "com.example.test.TestClass",
-                        current = 2,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 2,
-                        stream = "",
-                        id = "AndroidJUnitRunner",
-                        test = "test2",
-                        clazz = "com.example.test.TestClass",
-                        current = 2,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ignored,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf(
+                InstrumentationTestEntry(
+                    numTests = 2,
+                    stream = "com.example.test.TestClass:",
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 2,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 2,
+                    stream = "",
+                    id = "AndroidJUnitRunner",
+                    test = "test2",
+                    clazz = "com.example.test.TestClass",
+                    current = 2,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 2,
+                    stream = "",
+                    id = "AndroidJUnitRunner",
+                    test = "test2",
+                    clazz = "com.example.test.TestClass",
+                    current = 2,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ignored,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationEntry.InstrumentationResultEntry(
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
                 )
             )
         )
@@ -734,24 +715,21 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
-        assertThat(
-            entries,
-            Is(
-                listOf<InstrumentationTestCaseRun>(
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test1",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    ),
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test2",
-                        result = TestCaseRun.Result.Ignored,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf<InstrumentationTestCaseRun>(
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test1",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                ),
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test2",
+                    result = TestCaseRun.Result.Ignored,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
                 )
             )
         )
@@ -769,26 +747,23 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf(
-                    InstrumentationTestEntry(
-                        numTests = 1,
-                        stream = "ru.test.testapplication.ExampleInstrumentedTest:",
-                        id = "AndroidJUnitRunner",
-                        test = "failedTestCrash",
-                        clazz = "ru.test.testapplication.ExampleInstrumentedTest",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        shortMessage = "Process crashed.",
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error,
-                        timestampMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf(
+                InstrumentationTestEntry(
+                    numTests = 1,
+                    stream = "ru.test.testapplication.ExampleInstrumentedTest:",
+                    id = "AndroidJUnitRunner",
+                    test = "failedTestCrash",
+                    clazz = "ru.test.testapplication.ExampleInstrumentedTest",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationEntry.InstrumentationResultEntry(
+                    shortMessage = "Process crashed.",
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error,
+                    timestampMilliseconds = 0
                 )
             )
         )
@@ -806,17 +781,14 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
-        assertThat(
-            entries,
-            Is(
-                listOf<InstrumentationTestCaseRun>(
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "ru.test.testapplication.ExampleInstrumentedTest",
-                        name = "failedTestCrash",
-                        result = TestCaseRun.Result.Failed.InRun("Process crashed."),
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf<InstrumentationTestCaseRun>(
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "ru.test.testapplication.ExampleInstrumentedTest",
+                    name = "failedTestCrash",
+                    result = TestCaseRun.Result.Failed.InRun("Process crashed."),
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
                 )
             )
         )
@@ -835,15 +807,12 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf<InstrumentationEntry>(
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        shortMessage = "Process crashed.",
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error,
-                        timestampMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf<InstrumentationEntry>(
+                InstrumentationEntry.InstrumentationResultEntry(
+                    shortMessage = "Process crashed.",
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error,
+                    timestampMilliseconds = 0
                 )
             )
         )
@@ -862,13 +831,10 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
-        assertThat(
-            entries,
-            Is(
-                listOf<InstrumentationTestCaseRun>(
-                    InstrumentationTestCaseRun.FailedOnStartTestCaseRun(
-                        message = "Process crashed."
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf<InstrumentationTestCaseRun>(
+                InstrumentationTestCaseRun.FailedOnStartTestCaseRun(
+                    message = "Process crashed."
                 )
             )
         )
@@ -888,37 +854,34 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf(
-                    InstrumentationTestEntry(
-                        numTests = 2,
-                        stream = "",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 2,
-                        stream = ".",
-                        id = "AndroidJUnitRunner",
-                        test = "test1",
-                        clazz = "com.example.test.TestClass",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Ok,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        shortMessage = "Process crashed.",
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error,
-                        timestampMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf(
+                InstrumentationTestEntry(
+                    numTests = 2,
+                    stream = "",
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 2,
+                    stream = ".",
+                    id = "AndroidJUnitRunner",
+                    test = "test1",
+                    clazz = "com.example.test.TestClass",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Ok,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationEntry.InstrumentationResultEntry(
+                    shortMessage = "Process crashed.",
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Error,
+                    timestampMilliseconds = 0
                 )
             )
         )
@@ -938,20 +901,17 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
-        assertThat(
-            entries,
-            Is(
-                listOf(
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.example.test.TestClass",
-                        name = "test1",
-                        result = TestCaseRun.Result.Passed,
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    ),
-                    InstrumentationTestCaseRun.FailedOnStartTestCaseRun(
-                        message = "Process crashed."
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf(
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.example.test.TestClass",
+                    name = "test1",
+                    result = TestCaseRun.Result.Passed,
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
+                ),
+                InstrumentationTestCaseRun.FailedOnStartTestCaseRun(
+                    message = "Process crashed."
                 )
             )
         )
@@ -970,47 +930,44 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseTime()
-        assertThat(
-            entries,
-            Is(
-                listOf(
-                    InstrumentationTestEntry(
-                        numTests = 1,
-                        stream = "com.avito.android.feature.advert.publish.verticals." +
-                            "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees:",
-                        id = "AndroidJUnitRunner",
-                        test = "dataSet5",
-                        clazz = "com.avito.android.feature.advert.publish.verticals." +
-                            "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Start,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationTestEntry(
-                        numTests = 1,
-                        stream = "Error in dataSet5(com.avito.android.feature.advert.publish.verticals." +
-                            "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees):\n" +
-                            "androidx.test.espresso.NoMatchingViewException: " +
-                            "No views in hierarchy found matching: (is descendant of a: " +
-                            "(with id: com.avito.android.dev:id/input_view and has child: " +
-                            "with string from resource id: <2131755562>[phone] value: Телефон) " +
-                            "and with id: 2131296759 and используйте контейнер InputView, в качестве матчера)",
-                        id = "AndroidJUnitRunner",
-                        test = "dataSet5",
-                        clazz = "com.avito.android.feature.advert.publish.verticals." +
-                            "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
-                        current = 1,
-                        stack = "",
-                        statusCode = InstrumentationTestEntry.StatusCode.Failure,
-                        timestampMilliseconds = 0
-                    ),
-                    InstrumentationEntry.InstrumentationResultEntry(
-                        shortMessage = "",
-                        longMessage = "",
-                        timestampMilliseconds = 0,
-                        statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf(
+                InstrumentationTestEntry(
+                    numTests = 1,
+                    stream = "com.avito.android.feature.advert.publish.verticals." +
+                        "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees:",
+                    id = "AndroidJUnitRunner",
+                    test = "dataSet5",
+                    clazz = "com.avito.android.feature.advert.publish.verticals." +
+                        "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Start,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationTestEntry(
+                    numTests = 1,
+                    stream = "Error in dataSet5(com.avito.android.feature.advert.publish.verticals." +
+                        "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees):\n" +
+                        "androidx.test.espresso.NoMatchingViewException: " +
+                        "No views in hierarchy found matching: (is descendant of a: " +
+                        "(with id: com.avito.android.dev:id/input_view and has child: " +
+                        "with string from resource id: <2131755562>[phone] value: Телефон) " +
+                        "and with id: 2131296759 and используйте контейнер InputView, в качестве матчера)",
+                    id = "AndroidJUnitRunner",
+                    test = "dataSet5",
+                    clazz = "com.avito.android.feature.advert.publish.verticals." +
+                        "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
+                    current = 1,
+                    stack = "",
+                    statusCode = InstrumentationTestEntry.StatusCode.Failure,
+                    timestampMilliseconds = 0
+                ),
+                InstrumentationEntry.InstrumentationResultEntry(
+                    shortMessage = "",
+                    longMessage = "",
+                    timestampMilliseconds = 0,
+                    statusCode = InstrumentationEntry.InstrumentationResultEntry.StatusCode.Ok
                 )
             )
         )
@@ -1029,20 +986,17 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
             .subscribeAndWait()
 
         val entries = subscriber.onNextEvents.eraseDuration()
-        assertThat(
-            entries,
-            Is(
-                listOf<InstrumentationTestCaseRun>(
-                    InstrumentationTestCaseRun.CompletedTestCaseRun(
-                        className = "com.avito.android.feature.advert.publish.verticals." +
-                            "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
-                        name = "dataSet5",
-                        result = TestCaseRun.Result.Failed.InRun(
-                            errorMessage = ""
-                        ),
-                        timestampStartedMilliseconds = 0,
-                        timestampCompletedMilliseconds = 0
-                    )
+        assertThat(entries).containsExactlyElementsIn(
+            listOf<InstrumentationTestCaseRun>(
+                InstrumentationTestCaseRun.CompletedTestCaseRun(
+                    className = "com.avito.android.feature.advert.publish.verticals." +
+                        "AutoUsedSubCategoryItem_IsPublishedWithGivenParams_WhenAddedByUserWithoutListingFees",
+                    name = "dataSet5",
+                    result = TestCaseRun.Result.Failed.InRun(
+                        errorMessage = ""
+                    ),
+                    timestampStartedMilliseconds = 0,
+                    timestampCompletedMilliseconds = 0
                 )
             )
         )
@@ -1098,7 +1052,7 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
     }
 
     private fun getInstrumentationOutput(output: File): Observable<ProcessNotification.Output> {
-        val readFile: Observable<ProcessNotification.Output> = Observable.unsafeCreate {
+        return Observable.unsafeCreate {
             val reader = BufferedReader(
                 FileReader(output)
             )
@@ -1113,7 +1067,5 @@ at android.app.Instrumentation.InstrumentationThread.run(Instrumentation.java:19
 
             it.onCompleted()
         }
-
-        return readFile
     }
 }

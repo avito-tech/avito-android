@@ -3,13 +3,12 @@ package com.avito.runner.scheduler.report
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
 import com.avito.runner.scheduler.runner.model.generateTestRunRequest
 import com.avito.runner.service.model.TestCaseRun
-import com.avito.runner.test.Is
 import com.avito.runner.test.generateDeviceTestCaseRun
 import com.avito.runner.test.generateTestCaseRun
-import org.hamcrest.MatcherAssert.assertThat
+import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Test
 
-class TestCaseReportTest {
+internal class TestCaseReportTest {
 
     @Test
     fun `success runs - returns number of passed test runs`() {
@@ -21,7 +20,7 @@ class TestCaseReportTest {
             )
         )
 
-        assertThat(report.successRuns, Is(2))
+        assertThat(report.successRuns).isEqualTo(2)
     }
 
     @Test
@@ -34,7 +33,7 @@ class TestCaseReportTest {
             )
         )
 
-        assertThat(report.failedRuns, Is(2))
+        assertThat(report.failedRuns).isEqualTo(2)
     }
 
     @Test
@@ -47,7 +46,7 @@ class TestCaseReportTest {
             )
         )
 
-        assertThat(report.totalRuns, Is(3))
+        assertThat(report.totalRuns).isEqualTo(3)
     }
 
     @Test
@@ -55,7 +54,7 @@ class TestCaseReportTest {
         val durations = listOf(100L, 200L, 300L)
         val report = createTestCaseReportWithDurations(durations)
 
-        assertThat(report.durationMilliseconds, Is(600L))
+        assertThat(report.durationMilliseconds).isEqualTo(600L)
     }
 
     private fun createTestCaseReport(runResults: List<TestCaseRun.Result>): TestCaseRequestMatchingReport =
