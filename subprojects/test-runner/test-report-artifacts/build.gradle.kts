@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:report-api"))
+    api(project(":test-runner:report-api"))
     api(project(":common:result"))
 }
 
