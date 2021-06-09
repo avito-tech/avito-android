@@ -37,3 +37,19 @@ fun <T> waitFor(
 
     throw caughtAllowedException
 }
+
+fun repeatFor(
+    frequencyMs: Long = 50L,
+    timeoutMs: Long = TimeUnit.SECONDS.toMillis(2),
+    sleepAction: (frequencyMs: Long) -> Unit = { Thread.sleep(it) },
+    action: () -> Unit
+) {
+    var timer = 0L
+    val startTime = System.currentTimeMillis()
+
+    do {
+        action.invoke()
+        sleepAction(frequencyMs)
+        timer += frequencyMs
+    } while (timer <= timeoutMs && System.currentTimeMillis() - startTime <= timeoutMs)
+}

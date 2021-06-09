@@ -8,6 +8,7 @@ import android.content.Intent
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
+import com.avito.android.util.continuousAssertion
 import com.avito.android.util.waitForAssertion
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -48,7 +49,7 @@ abstract class InHouseScenarioScreenRule<A : Activity>(activityClass: Class<A>) 
          * For more information on lifecycle states, see [androidx.lifecycle.Lifecycle.State]
          */
         fun isNotInState(state: Lifecycle.State) {
-            waitForAssertion { assertThat(scenarioFunc().state).isNotEqualTo(state) }
+            continuousAssertion { assertThat(scenarioFunc().state).isNotEqualTo(state) }
         }
 
         /**
