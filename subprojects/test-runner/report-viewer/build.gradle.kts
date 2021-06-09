@@ -22,7 +22,7 @@ dependencies {
     testImplementation(project(":common:resources"))
     testImplementation(project(":common:test-okhttp"))
     testImplementation(testFixtures(project(":logger:logger")))
-    testImplementation(testFixtures(project(":common:report-viewer")))
+    testImplementation(testFixtures(project(":test-runner:report-viewer")))
     testImplementation(testFixtures(project(":common:report-api")))
     testImplementation(libs.okhttpMockWebServer)
     testImplementation(libs.jsonPathAssert)

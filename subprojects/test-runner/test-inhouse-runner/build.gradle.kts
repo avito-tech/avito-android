@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:statsd"))
-    implementation(project(":common:report-viewer")) {
+    implementation(project(":test-runner:report-viewer")) {
         because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
     }
     implementation(project(":test-runner:test-report-artifacts")) {

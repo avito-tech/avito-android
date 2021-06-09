@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":logger:gradle-logger"))
     implementation(project(":gradle:statsd-config"))
 
-    implementation(project(":common:report-viewer"))
+    implementation(project(":test-runner:report-viewer"))
     implementation(project(":common:time"))
     implementation(project(":common:http-client"))
 

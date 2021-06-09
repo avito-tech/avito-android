@@ -11,6 +11,6 @@ dependencies {
     implementation(project(":android-test:ui-testing-core"))
     implementation(project(":logger:logger"))
     implementation(project(":test-runner:file-storage"))
-    implementation(project(":common:report-viewer"))
+    implementation(project(":test-runner:report-viewer"))
     implementation(project(":common:composite-exception"))
 }

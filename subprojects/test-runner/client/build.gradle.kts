@@ -41,7 +41,7 @@ dependencies {
     testImplementation(testFixtures(project(":logger:logger")))
     testImplementation(testFixtures(project(":common:time")))
     testImplementation(testFixtures(project(":common:report-api")))
-    testImplementation(testFixtures(project(":common:report-viewer")))
+    testImplementation(testFixtures(project(":test-runner:report-viewer")))
     testImplementation(testFixtures(project(":test-runner:service")))
     testImplementation(testFixtures(project(":test-runner:instrumentation-tests-dex-loader")))
     testImplementation(libs.kotlinReflect)

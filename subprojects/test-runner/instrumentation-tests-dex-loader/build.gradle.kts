@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":common:report-viewer")) {
+    api(project(":test-runner:report-viewer")) {
         because("TestName model") // todo test models should be separated from reports
     }
     implementation(gradleApi())
