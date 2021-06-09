@@ -29,19 +29,17 @@ public class DeviceProviderFactoryImpl(
     private val buildType: String,
     private val loggerFactory: LoggerFactory,
     private val timeProvider: TimeProvider,
-    private val statsDConfig: StatsDConfig
+    private val statsDConfig: StatsDConfig,
+    private val deviceType: DeviceType,
+    private val projectName: String,
+    private val configurationName: String,
+    private val outputDir: File,
+    private val logcatTags: Collection<String>,
+    private val kubernetesNamespace: String,
+    private val runnerPrefix: SeriesName,
 ) : DevicesProviderFactory {
 
-    override fun create(
-        deviceType: DeviceType,
-        projectName: String,
-        configurationName: String,
-        tempLogcatDir: File,
-        outputDir: File,
-        logcatTags: Collection<String>,
-        kubernetesNamespace: String,
-        runnerPrefix: SeriesName
-    ): DevicesProvider {
+    override fun create(tempLogcatDir: File): DevicesProvider {
         val adb = Adb()
         val androidDebugBridge = AndroidDebugBridgeImpl(
             adb = adb,

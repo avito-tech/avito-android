@@ -87,8 +87,9 @@ internal class InstrumentationTestsActionIntegrationTest {
             httpClientProvider = HttpClientProvider.createStubInstance(),
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, SeriesName.create("runner")),
             testSuiteLoader = testSuiteLoader,
-            reportFactory = reportFactory
-        ).create(devicesProviderFactory = StubDeviceProviderFactory(loggerFactory)),
+            reportFactory = reportFactory,
+            devicesProviderFactory = StubDeviceProviderFactory(loggerFactory)
+        ).create(),
         finalizer = FinalizerFactoryImpl(
             params = params,
             metricsConfig = RunnerMetricsConfig(params.statsDConfig, seriesName),

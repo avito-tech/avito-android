@@ -45,10 +45,11 @@ public class TestSchedulerFactoryImpl(
     private val httpClientProvider: HttpClientProvider,
     private val metricsConfig: RunnerMetricsConfig,
     private val testSuiteLoader: TestSuiteLoader,
-    private val reportFactory: ReportFactory
+    private val reportFactory: ReportFactory,
+    private val devicesProviderFactory: DevicesProviderFactory
 ) : TestSchedulerFactory {
 
-    override fun create(devicesProviderFactory: DevicesProviderFactory): TestScheduler {
+    override fun create(): TestScheduler {
         val tempDir = Files.createTempDirectory(null).toFile()
         val testSuiteProvider: TestSuiteProvider = createTestSuiteProvider()
 
@@ -62,7 +63,7 @@ public class TestSchedulerFactoryImpl(
             runnerPrefix = metricsConfig.runnerPrefix
         )
 
-        val devicesProvider = devicesProviderFactory.createDeviceProvider(tempLogcatDir = tempDir)
+        val devicesProvider = devicesProviderFactory.create(tempLogcatDir = tempDir)
 
         return TestSchedulerImpl(
             params = params,
@@ -124,19 +125,6 @@ public class TestSchedulerFactoryImpl(
                 ) to testWithTarget.test
             }, metricsSender),
             report = report,
-        )
-    }
-
-    private fun DevicesProviderFactory.createDeviceProvider(tempLogcatDir: File): DevicesProvider {
-        return create(
-            deviceType = params.instrumentationConfiguration.requestedDeviceType,
-            projectName = params.projectName,
-            tempLogcatDir = tempLogcatDir,
-            outputDir = params.outputDir,
-            configurationName = params.instrumentationConfiguration.name,
-            logcatTags = params.executionParameters.logcatTags,
-            kubernetesNamespace = params.executionParameters.namespace,
-            runnerPrefix = metricsConfig.runnerPrefix
         )
     }
 

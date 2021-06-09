@@ -1,7 +1,5 @@
 package com.avito.instrumentation.internal
 
-import com.avito.android.runner.devices.DeviceProviderFactoryImpl
-import com.avito.android.runner.devices.DevicesProviderFactory
 import com.avito.android.stats.SeriesName
 import com.avito.logger.LoggerFactory
 import com.avito.logger.create
@@ -9,8 +7,6 @@ import com.avito.runner.config.InstrumentationTestsActionParams
 import com.avito.runner.finalizer.Finalizer
 import com.avito.runner.scheduler.runner.scheduler.TestScheduler
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
-import com.avito.time.DefaultTimeProvider
-import com.avito.time.TimeProvider
 import com.avito.utils.BuildFailer
 import javax.inject.Inject
 
@@ -41,12 +37,7 @@ internal class InstrumentationTestsAction(
         params = params,
         buildFailer = BuildFailer.RealFailer(),
         loggerFactory = params.loggerFactory,
-        scheduler = factory.provideScheduler(
-            devicesProviderFactory = createDevicesProviderFactory(
-                params = params,
-                timeProvider = DefaultTimeProvider()
-            )
-        ),
+        scheduler = factory.provideScheduler(),
         finalizer = factory.provideFinalizer()
     )
 
@@ -69,16 +60,4 @@ private fun runnerPrefix(params: InstrumentationTestsActionParams) = SeriesName.
     "testrunner",
     params.projectName,
     params.instrumentationConfiguration.name
-)
-
-private fun createDevicesProviderFactory(
-    params: InstrumentationTestsActionParams,
-    timeProvider: TimeProvider
-): DevicesProviderFactory = DeviceProviderFactoryImpl(
-    kubernetesCredentials = params.kubernetesCredentials,
-    buildId = params.buildId,
-    buildType = params.buildType,
-    loggerFactory = params.loggerFactory,
-    timeProvider = timeProvider,
-    statsDConfig = params.statsDConfig
 )
