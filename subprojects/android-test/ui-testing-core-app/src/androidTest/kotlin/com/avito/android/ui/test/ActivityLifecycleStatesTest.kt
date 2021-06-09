@@ -32,7 +32,6 @@ class ActivityLifecycleStatesTest {
 
     @Test
     fun isNotDestroyed_succeed_whenActivityLaunched() {
-        activityRule.launchActivity(null)
         activityRule.checks.isNotInState(Lifecycle.State.DESTROYED)
     }
 
