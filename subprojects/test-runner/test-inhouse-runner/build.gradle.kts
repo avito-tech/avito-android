@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":common:http-client"))
     implementation(project(":common:okhttp"))
     implementation(project(":common:statsd"))
-    implementation(project(":common:report-viewer")) {
+    implementation(project(":test-runner:report-viewer")) {
         because("knows about avito report model: ReportCoordinates, RunId for LocalRunTrasport from test-report")
     }
     implementation(project(":test-runner:test-report-artifacts")) {
@@ -28,7 +28,7 @@ dependencies {
     implementation(project(":common:junit-utils"))
     implementation(project(":common:test-okhttp"))
     implementation(project(":test-runner:test-annotations"))
-    implementation(project(":common:file-storage"))
+    implementation(project(":test-runner:file-storage"))
     implementation(project(":common:time"))
     implementation(project(":logger:android-log"))
     implementation(project(":android-test:ui-testing-core"))

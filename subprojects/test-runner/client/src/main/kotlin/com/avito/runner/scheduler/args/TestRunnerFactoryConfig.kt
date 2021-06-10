@@ -5,7 +5,7 @@ import com.avito.runner.reservation.DeviceReservation
 import com.avito.runner.scheduler.listener.TestLifecycleListener
 import com.avito.runner.service.worker.device.adb.listener.RunnerMetricsConfig
 
-class TestRunnerFactoryConfig(
+internal class TestRunnerFactoryConfig(
     val loggerFactory: LoggerFactory,
     val listener: TestLifecycleListener,
     val reservation: DeviceReservation,

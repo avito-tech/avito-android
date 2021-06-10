@@ -2,24 +2,23 @@ package com.avito.runner.service
 
 import com.avito.android.Result
 import com.avito.logger.StubLoggerFactory
+import com.avito.runner.service.listener.NoOpTestListener
 import com.avito.runner.service.model.TestCaseRun
+import com.avito.runner.service.model.intention.InstrumentationTestRunAction
 import com.avito.runner.service.model.intention.Intention
 import com.avito.runner.service.model.intention.IntentionResult
 import com.avito.runner.service.model.intention.State
+import com.avito.runner.service.model.intention.createStubInstance
 import com.avito.runner.service.worker.device.Device
 import com.avito.runner.service.worker.device.Device.DeviceStatus
+import com.avito.runner.service.worker.device.DeviceCoordinate
+import com.avito.runner.service.worker.device.createStubInstance
+import com.avito.runner.service.worker.device.stub.StubActionResult
+import com.avito.runner.service.worker.device.stub.StubDevice
+import com.avito.runner.service.worker.device.stub.StubDevice.Companion.installApplicationSuccess
 import com.avito.runner.service.worker.listener.StubDeviceListener
-import com.avito.runner.test.NoOpTestListener
-import com.avito.runner.test.StubActionResult
-import com.avito.runner.test.StubDevice
-import com.avito.runner.test.StubDevice.Companion.installApplicationSuccess
-import com.avito.runner.test.TestDispatcher
-import com.avito.runner.test.generateInstalledApplicationLayer
-import com.avito.runner.test.generateInstrumentationTestAction
-import com.avito.runner.test.generateIntention
-import com.avito.runner.test.listWithDefault
-import com.avito.runner.test.randomDeviceCoordinate
-import com.avito.runner.test.receiveAvailable
+import com.avito.test.TestDispatcher
+import com.avito.test.receiveAvailable
 import com.avito.time.StubTimeProvider
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,40 +47,37 @@ class DeviceWorkerPoolTest {
                 layers = listOf(
                     State.Layer.Model(model = "model"),
                     State.Layer.ApiLevel(api = 22),
-                    generateInstalledApplicationLayer(),
-                    generateInstalledApplicationLayer()
+                    State.Layer.InstalledApplication.createStubInstance(),
+                    State.Layer.InstalledApplication.createStubInstance()
                 )
             )
             val intentions = listOf(
-                generateIntention(
+                Intention.createStubInstance(
                     state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
+                    action = InstrumentationTestRunAction.createStubInstance()
                 ),
-                generateIntention(
+                Intention.createStubInstance(
                     state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
+                    action = InstrumentationTestRunAction.createStubInstance()
                 ),
-                generateIntention(
+                Intention.createStubInstance(
                     state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
+                    action = InstrumentationTestRunAction.createStubInstance()
                 ),
-                generateIntention(
+                Intention.createStubInstance(
                     state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
+                    action = InstrumentationTestRunAction.createStubInstance()
                 )
             )
             val successfulDevice = StubDevice(
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
                     installApplicationSuccess(), // Install application
                     installApplicationSuccess() // Install test application
                 ),
-                gettingDeviceStatusResults = listWithDefault(
-                    1 + intentions.size,
-                    DeviceStatus.Alive
-                ),
+                gettingDeviceStatusResults = List(1 + intentions.size) { DeviceStatus.Alive },
                 clearPackageResults = (0 until intentions.size - 1).flatMap {
                     listOf(
                         StubActionResult.Success(Result.Success(Unit)),
@@ -130,19 +126,19 @@ class DeviceWorkerPoolTest {
                 layers = listOf(
                     State.Layer.Model(model = "model"),
                     State.Layer.ApiLevel(api = 22),
-                    generateInstalledApplicationLayer(),
-                    generateInstalledApplicationLayer()
+                    State.Layer.InstalledApplication.createStubInstance(),
+                    State.Layer.InstalledApplication.createStubInstance()
                 )
             )
             val intentions = listOf(
-                generateIntention(
+                Intention.createStubInstance(
                     state = compatibleWithDeviceState,
-                    action = generateInstrumentationTestAction()
+                    action = InstrumentationTestRunAction.createStubInstance()
                 )
             )
             val freezeDevice = StubDevice(
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = emptyList(),
                 gettingDeviceStatusResults = listOf(
@@ -153,7 +149,7 @@ class DeviceWorkerPoolTest {
             )
             val successfulDevice = StubDevice(
                 loggerFactory = loggerFactory,
-                coordinate = randomDeviceCoordinate(),
+                coordinate = DeviceCoordinate.Local.createStubInstance(),
                 apiResult = StubActionResult.Success(22),
                 installApplicationResults = mutableListOf(
                     installApplicationSuccess(), // Install application

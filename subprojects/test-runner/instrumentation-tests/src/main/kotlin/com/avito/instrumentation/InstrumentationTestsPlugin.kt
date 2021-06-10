@@ -12,7 +12,6 @@ import com.avito.android.LoadTestsFromApkTask
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
 import com.avito.android.runner.devices.model.DeviceType.CLOUD
-import com.avito.android.stats.statsdConfig
 import com.avito.android.withAndroidApp
 import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
@@ -21,13 +20,13 @@ import com.avito.git.GitState
 import com.avito.git.gitState
 import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
 import com.avito.instrumentation.configuration.withInstrumentationExtensionData
-import com.avito.instrumentation.internal.executing.ExecutionParameters
 import com.avito.instrumentation.internal.test.DumpConfigurationTask
 import com.avito.instrumentation.service.TestRunnerService
 import com.avito.kotlin.dsl.dependencyOn
 import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerFactory
+import com.avito.runner.scheduler.runner.model.ExecutionParameters
 import com.avito.utils.gradle.KubernetesCredentials
 import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
@@ -75,14 +74,7 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
                 project.gradle.sharedServices.registerIfAbsent(
                     "testRunnerService",
                     TestRunnerService::class.java
-                ) { spec ->
-                    with(spec.parameters) {
-                        kubernetesCredentials.set(project.kubernetesCredentials)
-                        statsDConfig.set(project.statsdConfig.get())
-                        buildId.set(env.build.id.toString())
-                        buildType.set(env.build.type)
-                    }
-                }
+                ) { /*empty*/ }
             } else {
                 Providers.notDefined()
             }

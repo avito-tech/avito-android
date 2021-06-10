@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common:report-viewer"))
+    implementation(project(":test-runner:report-viewer"))
     implementation(project(":common:time"))
     implementation(project(":common:math"))
     implementation(project(":common:http-client"))
@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.okhttp)
 
     testImplementation(project(":common:truth-extensions"))
-    testImplementation(testFixtures(project(":common:report-viewer")))
+    testImplementation(testFixtures(project(":test-runner:report-viewer")))
 
     gradleTestImplementation(project(":gradle:test-project"))
 }

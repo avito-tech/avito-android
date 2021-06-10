@@ -9,5 +9,8 @@ sealed class DeviceCoordinate {
         val podName: String
     ) : DeviceCoordinate()
 
-    data class Local(override val serial: Serial.Local) : DeviceCoordinate()
+    data class Local(override val serial: Serial.Local) : DeviceCoordinate() {
+
+        companion object
+    }
 }

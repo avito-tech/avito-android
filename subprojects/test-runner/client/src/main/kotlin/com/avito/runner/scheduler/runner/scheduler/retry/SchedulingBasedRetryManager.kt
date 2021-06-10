@@ -6,7 +6,7 @@ import com.avito.runner.service.model.TestCaseRun
 import kotlin.math.max
 import kotlin.math.min
 
-class SchedulingBasedRetryManager(
+internal class SchedulingBasedRetryManager(
     private val scheduling: TestRunRequest.Scheduling
 ) : RetryManager {
 

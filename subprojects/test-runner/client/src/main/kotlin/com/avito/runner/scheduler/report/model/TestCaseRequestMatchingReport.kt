@@ -4,7 +4,7 @@ import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.service.model.DeviceTestCaseRun
 import com.avito.runner.service.model.TestCaseRun
 
-class TestCaseRequestMatchingReport(
+internal class TestCaseRequestMatchingReport(
     val request: TestRunRequest,
     val runs: List<DeviceTestCaseRun>,
     val result: Result

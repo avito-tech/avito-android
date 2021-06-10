@@ -1,11 +1,11 @@
 package com.avito.instrumentation.configuration
 
-import com.avito.android.runner.devices.model.DeviceType
 import com.avito.instrumentation.configuration.target.TargetConfiguration
-import com.avito.instrumentation.reservation.request.Device
+import com.avito.runner.config.InstrumentationConfigurationData
+import com.avito.runner.config.InstrumentationFilterData
+import com.avito.runner.config.InstrumentationParameters
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
-import java.io.Serializable
 
 public abstract class InstrumentationConfiguration(public val name: String) {
 
@@ -41,14 +41,14 @@ public abstract class InstrumentationConfiguration(public val name: String) {
 
     public fun data(
         parentInstrumentationParameters: InstrumentationParameters,
-        filters: List<InstrumentationFilter.Data>
-    ): Data {
+        filters: List<InstrumentationFilterData>
+    ): InstrumentationConfigurationData {
 
         val mergedInstrumentationParameters: InstrumentationParameters =
             parentInstrumentationParameters
                 .applyParameters(instrumentationParams)
 
-        return Data(
+        return InstrumentationConfigurationData(
             name = name,
             instrumentationParams = mergedInstrumentationParameters,
             reportSkippedTests = reportSkippedTests,
@@ -62,40 +62,5 @@ public abstract class InstrumentationConfiguration(public val name: String) {
             filter = filters.singleOrNull { it.name == filter }
                 ?: throw IllegalStateException("Can't find filter=$filter")
         )
-    }
-
-    public data class Data(
-        val name: String,
-        val instrumentationParams: InstrumentationParameters,
-        val reportSkippedTests: Boolean,
-        val runOnlyChangedTests: Boolean,
-        val kubernetesNamespace: String,
-        val targets: List<TargetConfiguration.Data>,
-        val enableDeviceDebug: Boolean,
-        val timeoutInSeconds: Long,
-        val filter: InstrumentationFilter.Data
-    ) : Serializable {
-
-        val requestedDeviceType: DeviceType = determineRequestedDeviceType(targets.map { it.reservation.device })
-
-        override fun toString(): String = "$name, targets: $targets, filter: $filter "
-
-        private fun determineRequestedDeviceType(requestedDevices: List<Device>): DeviceType {
-            return when {
-                requestedDevices.all { it is Device.LocalEmulator } -> DeviceType.LOCAL
-                requestedDevices.all { it is Device.CloudEmulator } -> DeviceType.CLOUD
-                requestedDevices.all { it is Device.MockEmulator } -> DeviceType.MOCK
-                else -> {
-                    val deviceTypesNames = DeviceType.values().map { it.name }
-                    throw IllegalStateException(
-                        "Targeting different type of emulators($deviceTypesNames) " +
-                            "in the same configuration is not supported; " +
-                            "Affected configuration: $name"
-                    )
-                }
-            }
-        }
-
-        public companion object
     }
 }

@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(gradleApi())
-    implementation(project(":common:report-viewer"))
+    implementation(project(":test-runner:report-viewer"))
     implementation(project(":gradle:android"))
     implementation(project(":gradle:artifactory-app-backup"))
     implementation(project(":logger:gradle-logger"))
@@ -17,6 +17,9 @@ dependencies {
     implementation(project(":gradle:impact"))
     implementation(project(":gradle:impact-shared"))
     implementation(project(":test-runner:instrumentation-tests"))
+    implementation(project(":test-runner:client")) {
+        because("only to access InstrumentationParameters class for MarkReportAsSourceTask")
+    }
     implementation(project(":gradle:gradle-extensions"))
     implementation(project(":gradle:lint-report"))
     implementation(project(":gradle:prosector"))

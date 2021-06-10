@@ -46,7 +46,7 @@ dependencies {
     androidTestImplementation(project(":test-runner:test-inhouse-runner"))
     androidTestImplementation(project(":test-runner:test-report"))
     androidTestImplementation(project(":test-runner:test-annotations"))
-    androidTestImplementation(project(":common:report-viewer")) {
+    androidTestImplementation(project(":test-runner:report-viewer")) {
         because("Priority/Behavior test annotations still there")
     }
 

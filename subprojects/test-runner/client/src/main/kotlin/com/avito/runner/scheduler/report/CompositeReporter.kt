@@ -2,7 +2,7 @@ package com.avito.runner.scheduler.report
 
 import com.avito.runner.scheduler.report.model.SummaryReport
 
-class CompositeReporter(
+internal class CompositeReporter(
     private val reporters: Collection<Reporter>
 ) : Reporter {
 

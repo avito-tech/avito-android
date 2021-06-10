@@ -10,17 +10,17 @@ publish {
 }
 
 dependencies {
-    api(project(":common:report-viewer"))
-    api(project(":common:report-api"))
+    api(project(":test-runner:report-viewer"))
+    api(project(":test-runner:report-api"))
 
     implementation(project(":common:time"))
     implementation(project(":common:http-client"))
 
-    testImplementation(testFixtures(project(":common:report-api")))
+    testImplementation(testFixtures(project(":test-runner:report-api")))
 
     testFixturesImplementation(testFixtures(project(":logger:logger")))
     testFixturesImplementation(testFixtures(project(":common:time")))
-    testFixturesImplementation(testFixtures(project(":common:report-viewer")))
+    testFixturesImplementation(testFixtures(project(":test-runner:report-viewer")))
 }
 
 kotlin {

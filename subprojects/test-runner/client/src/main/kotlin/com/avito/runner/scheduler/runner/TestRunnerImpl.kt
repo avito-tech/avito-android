@@ -9,11 +9,12 @@ import com.avito.runner.scheduler.report.Reporter
 import com.avito.runner.scheduler.report.SummaryReportMaker
 import com.avito.runner.scheduler.runner.model.TestRunRequest
 import com.avito.runner.scheduler.runner.model.TestRunResult
+import com.avito.runner.scheduler.runner.model.TestRunnerResult
 import com.avito.runner.scheduler.runner.scheduler.TestExecutionScheduler
 import com.avito.runner.service.DeviceWorkerPool
 import kotlinx.coroutines.coroutineScope
 
-class TestRunnerImpl(
+internal class TestRunnerImpl(
     private val scheduler: TestExecutionScheduler,
     private val deviceWorkerPool: DeviceWorkerPool,
     private val reservationWatcher: DeviceReservationWatcher,

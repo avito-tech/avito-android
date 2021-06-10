@@ -2,10 +2,10 @@ package com.avito.runner.scheduler.report
 
 import com.avito.runner.scheduler.report.model.SummaryReport
 import com.avito.runner.scheduler.report.model.TestCaseRequestMatchingReport
-import com.avito.runner.scheduler.runner.TestRunnerResult
+import com.avito.runner.scheduler.runner.model.TestRunnerResult
 import com.avito.runner.service.model.TestCaseRun
 
-interface SummaryReportMaker {
+internal interface SummaryReportMaker {
 
     fun make(
         runResult: TestRunnerResult,
@@ -13,7 +13,7 @@ interface SummaryReportMaker {
     ): SummaryReport
 }
 
-class SummaryReportMakerImpl : SummaryReportMaker {
+internal class SummaryReportMakerImpl : SummaryReportMaker {
 
     override fun make(
         runResult: TestRunnerResult,

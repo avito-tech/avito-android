@@ -6,7 +6,10 @@ import com.avito.runner.service.worker.device.Serial
 data class DeviceData(
     val serial: Serial,
     val configuration: DeviceConfiguration
-)
+) {
+
+    companion object
+}
 
 fun Device.getData(): DeviceData = DeviceData(
     serial = coordinate.serial,

@@ -1,9 +1,9 @@
 package com.avito.instrumentation.configuration
 
-import com.avito.instrumentation.suite.filter.Filter
 import com.avito.report.model.Status
+import com.avito.runner.config.InstrumentationFilterData
+import com.avito.runner.scheduler.suite.filter.Filter
 import org.gradle.api.Action
-import java.io.Serializable
 
 public abstract class InstrumentationFilter(public val name: String) {
 
@@ -42,8 +42,8 @@ public abstract class InstrumentationFilter(public val name: String) {
             this.prefixes.exclude(prefixes)
         }
 
-        internal fun toData(): Data.FromSource {
-            return Data.FromSource(
+        internal fun toData(): InstrumentationFilterData.FromSource {
+            return InstrumentationFilterData.FromSource(
                 prefixes = prefixes.value,
                 annotations = annotations.value,
                 excludeFlaky = excludeFlaky
@@ -76,15 +76,31 @@ public abstract class InstrumentationFilter(public val name: String) {
             ).also { reportFilter -> filter.execute(reportFilter.statuses) }
         }
 
-        internal fun toData(): Data.FromRunHistory {
-            return Data.FromRunHistory(
-                previousStatuses = previous.value,
+        internal fun toData(): InstrumentationFilterData.FromRunHistory {
+            return InstrumentationFilterData.FromRunHistory(
+                previousStatuses = Filter.Value(
+                    included = previous.value.included.map { it.map() }.toSet(),
+                    excluded = previous.value.excluded.map { it.map() }.toSet()
+                ),
                 reportFilter = reportFilter?.let { filter ->
-                    Data.FromRunHistory.ReportFilter(
-                        statuses = filter.statuses.value
+                    InstrumentationFilterData.FromRunHistory.ReportFilter(
+                        statuses = Filter.Value(
+                            included = filter.statuses.value.included.map { it.map() }.toSet(),
+                            excluded = filter.statuses.value.excluded.map { it.map() }.toSet()
+                        )
                     )
                 }
             )
+        }
+
+        private fun RunStatus.map(): com.avito.runner.config.RunStatus {
+            return when (this) {
+                RunStatus.Failed -> com.avito.runner.config.RunStatus.Failed
+                RunStatus.Success -> com.avito.runner.config.RunStatus.Success
+                RunStatus.Lost -> com.avito.runner.config.RunStatus.Lost
+                RunStatus.Skipped -> com.avito.runner.config.RunStatus.Skipped
+                RunStatus.Manual -> com.avito.runner.config.RunStatus.Manual
+            }
         }
 
         public enum class RunStatus(public val statusClass: Class<out Status>) {
@@ -96,36 +112,11 @@ public abstract class InstrumentationFilter(public val name: String) {
         }
     }
 
-    internal fun toData(): Data {
-        return Data(
+    internal fun toData(): InstrumentationFilterData {
+        return InstrumentationFilterData(
             name = name,
             fromSource = fromSource.toData(),
             fromRunHistory = fromRunHistory.toData()
         )
-    }
-
-    public data class Data(
-        val name: String,
-        val fromSource: FromSource,
-        val fromRunHistory: FromRunHistory
-    ) : Serializable {
-
-        public data class FromSource(
-            val prefixes: Filter.Value<String>,
-            val annotations: Filter.Value<String>,
-            val excludeFlaky: Boolean
-        ) : Serializable
-
-        public data class FromRunHistory(
-            val previousStatuses: Filter.Value<InstrumentationFilter.FromRunHistory.RunStatus>,
-            val reportFilter: ReportFilter?
-        ) : Serializable {
-
-            public data class ReportFilter(
-                val statuses: Filter.Value<InstrumentationFilter.FromRunHistory.RunStatus>
-            ) : Serializable
-        }
-
-        public companion object
     }
 }

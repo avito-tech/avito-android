@@ -3,7 +3,7 @@ package com.avito.runner.scheduler.runner.model
 import com.avito.runner.service.model.TestCase
 import com.avito.runner.service.worker.device.model.DeviceConfiguration
 
-data class TestRunRequest(
+internal data class TestRunRequest(
     val testCase: TestCase,
     val configuration: DeviceConfiguration,
     val application: String?,
@@ -16,9 +16,14 @@ data class TestRunRequest(
     val instrumentationParameters: Map<String, String>,
     val enableDeviceDebug: Boolean
 ) {
+
     data class Scheduling(
         val retryCount: Int,
         val minimumSuccessCount: Int,
         val minimumFailedCount: Int
-    )
+    ) {
+        companion object
+    }
+
+    companion object
 }

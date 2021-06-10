@@ -2,10 +2,11 @@ plugins {
     id("convention.kotlin-jvm")
     id("convention.publish-kotlin-library")
     id("convention.libraries")
+    id("convention.test-fixtures")
 }
 
 dependencies {
-    api(project(":common:report-viewer")) {
+    api(project(":test-runner:report-viewer")) {
         because("TestName model") // todo test models should be separated from reports
     }
     implementation(gradleApi())
@@ -17,7 +18,6 @@ dependencies {
     }
 
     testImplementation(project(":common:truth-extensions"))
-    testImplementation(project(":test-runner:instrumentation-tests-dex-loader-test-fixtures"))
     testImplementation(project(":common:resources"))
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoJUnitJupiter)

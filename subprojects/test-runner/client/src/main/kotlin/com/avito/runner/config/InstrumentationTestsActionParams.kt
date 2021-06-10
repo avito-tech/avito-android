@@ -1,0 +1,38 @@
+package com.avito.runner.config
+
+import com.avito.android.runner.report.ReportViewerConfig
+import com.avito.android.stats.StatsDConfig
+import com.avito.logger.LoggerFactory
+import com.avito.runner.scheduler.runner.model.ExecutionParameters
+import com.avito.runner.scheduler.suite.filter.ImpactAnalysisResult
+import com.avito.utils.gradle.KubernetesCredentials
+import java.io.File
+import java.io.Serializable
+
+public data class InstrumentationTestsActionParams(
+    val mainApk: File?,
+    val testApk: File,
+    val instrumentationConfiguration: InstrumentationConfigurationData,
+    val executionParameters: ExecutionParameters,
+    val buildId: String,
+    val buildType: String,
+    val kubernetesCredentials: KubernetesCredentials,
+    val projectName: String,
+    val suppressFailure: Boolean,
+    val suppressFlaky: Boolean,
+    val impactAnalysisResult: ImpactAnalysisResult,
+    val loggerFactory: LoggerFactory,
+    val outputDir: File,
+    val verdictFile: File,
+    val fileStorageUrl: String,
+    val statsDConfig: StatsDConfig,
+    val reportViewerConfig: ReportViewerConfig?,
+    val proguardMappings: List<File>,
+    val useInMemoryReport: Boolean,
+    val uploadTestArtifacts: Boolean,
+    val fetchLogcatForIncompleteTests: Boolean,
+    val saveTestArtifactsToOutputs: Boolean,
+) : Serializable {
+
+    public companion object
+}

@@ -8,10 +8,12 @@ data class State(
     sealed class Layer {
 
         data class ApiLevel(val api: Int) : Layer() {
+
             override fun toString(): String = "Api level = $api"
         }
 
         data class Model(val model: String) : Layer() {
+
             override fun toString(): String = "Model = $model"
         }
 
@@ -19,8 +21,11 @@ data class State(
             val applicationPath: String,
             val applicationPackage: String
         ) : Layer() {
+
             override fun toString(): String =
                 "Application: $applicationPath, package: $applicationPackage"
+
+            companion object
         }
     }
 

@@ -33,10 +33,8 @@ include(":gradle:impact")
 include(":test-runner:client")
 include(":test-runner:device-provider")
 include(":test-runner:report")
-include(":test-runner:stub")
 include(":test-runner:service")
 include(":test-runner:command-line-executor")
-include(":test-runner:shared-test")
 include(":gradle:sentry-config")
 include(":gradle:graphite-config")
 include(":gradle:statsd-config")
@@ -66,10 +64,7 @@ include(":common:resources")
 include(":common:files")
 include(":common:time")
 include(":common:okhttp")
-include(":common:file-storage")
 include(":common:test-okhttp")
-include(":common:report-api")
-include(":common:report-viewer")
 include(":common:result")
 include(":common:elastic")
 include(":common:http-client")
@@ -118,7 +113,9 @@ include(":test-runner:k8s-deployments-cleaner")
 include(":test-runner:instrumentation-changed-tests-finder")
 include(":test-runner:instrumentation-tests")
 include(":test-runner:instrumentation-tests-dex-loader")
-include(":test-runner:instrumentation-tests-dex-loader-test-fixtures")
+include(":test-runner:file-storage")
+include(":test-runner:report-viewer")
+include(":test-runner:report-api")
 
 include(":logger:gradle-logger")
 include(":logger:android-log")
@@ -267,8 +264,6 @@ dependencyResolutionManagement {
                 includeModule("me.weishu", "free_reflection")
             }
         }
-
-        // for kotlinx-cli https://github.com/Kotlin/kotlinx-cli/issues/23
         exclusiveContent {
             forRepository {
                 maven {
@@ -276,7 +271,7 @@ dependencyResolutionManagement {
                 }
             }
             filter {
-                includeGroup("org.jetbrains.kotlinx")
+                includeModule("org.jetbrains.kotlinx", "kotlinx-html-jvm")
             }
         }
         exclusiveContent {
