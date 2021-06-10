@@ -1,249 +1,191 @@
-@file:Suppress("UnstableApiUsage")
-
 package com.avito.instrumentation
 
+import com.android.build.gradle.AppExtension
+import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.TestVariant
-import com.android.build.gradle.internal.dsl.DefaultConfig
 import com.android.build.gradle.internal.tasks.ProguardConfigurableTask
 import com.avito.android.InstrumentationChangedTestsFinderApi
-import com.avito.android.LoadTestsFromApkTask
 import com.avito.android.apkDirectory
 import com.avito.android.changedTestsFinderTaskProvider
 import com.avito.android.runner.devices.model.DeviceType.CLOUD
-import com.avito.android.withAndroidApp
-import com.avito.android.withAndroidLib
 import com.avito.android.withAndroidModule
-import com.avito.android.withArtifacts
-import com.avito.git.GitState
-import com.avito.git.gitState
-import com.avito.instrumentation.configuration.createInstrumentationPluginExtension
-import com.avito.instrumentation.configuration.withInstrumentationExtensionData
-import com.avito.instrumentation.internal.test.DumpConfigurationTask
-import com.avito.instrumentation.service.TestRunnerService
+import com.avito.instrumentation.configuration.InstrumentationConfiguration
+import com.avito.instrumentation.configuration.InstrumentationFilter
+import com.avito.instrumentation.configuration.InstrumentationPluginConfiguration.GradleInstrumentationPluginConfiguration
+import com.avito.instrumentation.configuration.target.TargetConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.SchedulingConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.reservation.StaticDeviceReservationConfiguration
+import com.avito.instrumentation.configuration.target.scheduling.reservation.TestsBasedDevicesReservationConfiguration
+import com.avito.instrumentation.internal.AnalyticsResolver
+import com.avito.instrumentation.internal.AndroidPluginInteractor
+import com.avito.instrumentation.internal.BuildEnvResolver
+import com.avito.instrumentation.internal.ExperimentsResolver
+import com.avito.instrumentation.internal.GitResolver
+import com.avito.instrumentation.internal.InstrumentationArgsResolver
+import com.avito.instrumentation.internal.PlanSlugResolver
+import com.avito.instrumentation.internal.ReportResolver
+import com.avito.instrumentation.internal.RunIdResolver
 import com.avito.kotlin.dsl.dependencyOn
-import com.avito.kotlin.dsl.getBooleanProperty
 import com.avito.kotlin.dsl.withType
 import com.avito.logger.GradleLoggerFactory
+import com.avito.runner.config.InstrumentationConfigurationData
+import com.avito.runner.config.InstrumentationFilterData
+import com.avito.runner.config.InstrumentationParameters
+import com.avito.runner.config.Reservation
+import com.avito.runner.config.SchedulingConfigurationData
+import com.avito.runner.config.TargetConfigurationData
 import com.avito.runner.scheduler.runner.model.ExecutionParameters
+import com.avito.runner.scheduler.suite.filter.Filter
+import com.avito.time.DefaultTimeProvider
+import com.avito.time.TimeProvider
 import com.avito.utils.gradle.KubernetesCredentials
-import com.avito.utils.gradle.envArgs
 import com.avito.utils.gradle.kubernetesCredentials
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.internal.provider.Providers
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
 import java.io.File
 import java.time.Duration
-import java.util.concurrent.TimeUnit
 
+@Suppress("UnstableApiUsage")
 public class InstrumentationTestsPlugin : Plugin<Project> {
 
-    private val ciTaskGroup = "ci"
-
     override fun apply(project: Project) {
-        val env = project.envArgs
-        val gitState = project.gitState()
-        project.createInstrumentationPluginExtension()
-        project.applyTestTasks()
+        val extension = project.createInstrumentationPluginExtension()
+        val loggerFactory = GradleLoggerFactory.fromPlugin(this, project)
+        val androidPluginInteractor = AndroidPluginInteractor(loggerFactory)
+        val timeProvider: TimeProvider = DefaultTimeProvider()
+        val runIdResolver = RunIdResolver(timeProvider, project)
+        val reportResolver = ReportResolver(runIdResolver)
+        val experimentsResolver = ExperimentsResolver(project)
+        val instrumentationArgsResolver = InstrumentationArgsResolver(
+            analyticsResolver = AnalyticsResolver,
+            buildEnvResolver = BuildEnvResolver,
+            reportResolver = reportResolver,
+            planSlugResolver = PlanSlugResolver,
+        )
 
-        val uploadAllTestArtifacts = project.getBooleanProperty("avito.report.fromRunner", default = false)
+        project.withAndroidModule { testedExtension ->
 
-        project.withAndroidModule { baseExtension ->
-            setupLocalInstrumentationArguments(
-                project = project,
-                gitState = gitState.orNull,
-                config = baseExtension.defaultConfig
-            )
-        }
+            var pluginLevelInstrumentationArgs: Map<String, String> = emptyMap()
 
-        val logger = GradleLoggerFactory.getLogger(this, project)
+            extension.configurationsContainer.all { configuration ->
 
-        project.withInstrumentationExtensionData { extensionData ->
+                // the only known place to resolve instrumentation args using extension values,
+                // and also early enough to set for local test run (from IDE)
+                if (pluginLevelInstrumentationArgs.isEmpty()) {
+                    pluginLevelInstrumentationArgs = instrumentationArgsResolver.resolvePluginLevelParams(
+                        argsFromScript = androidPluginInteractor.getInstrumentationArgs(testedExtension),
+                        project = project,
+                        extension = extension,
+                    )
 
-            if (extensionData.experimental.useInMemoryReport) {
-                logger.info("Experimental feature enabled: useInMemoryReport")
-            }
-
-            val testRunnerServiceProvider = if (extensionData.experimental.useService) {
-
-                logger.info("Experimental feature enabled: useService")
-
-                project.gradle.sharedServices.registerIfAbsent(
-                    "testRunnerService",
-                    TestRunnerService::class.java
-                ) { /*empty*/ }
-            } else {
-                Providers.notDefined()
-            }
-
-            val loadTestsTask = project.tasks.register<LoadTestsFromApkTask>("loadTestsFromApk") {
-                group = ciTaskGroup
-                description = "Parse tests and it's annotation data from test apk dex file"
-            }
-
-            extensionData.configurations.forEach { instrumentationConfiguration ->
-                if (instrumentationConfiguration.requestedDeviceType == CLOUD
-                    && project.kubernetesCredentials is KubernetesCredentials.Empty
-                ) {
-                    throw IllegalStateException(
-                        "Configuration ${instrumentationConfiguration.name} error: " +
-                            "has kubernetes device target without kubernetes credentials"
+                    androidPluginInteractor.addInstrumentationArgs(
+                        testedExtension = testedExtension,
+                        args = pluginLevelInstrumentationArgs
                     )
                 }
 
-                val configurationOutputFolder = File(extensionData.output, instrumentationConfiguration.name)
-
-                if (instrumentationConfiguration.runOnlyChangedTests) {
-                    if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
-                        project.tasks.changedTestsFinderTaskProvider().apply {
-                            configure {
-                                it.targetCommit.set(
-                                    gitState.map { git ->
-                                        requireNotNull(git.targetBranch?.commit) {
-                                            "Target commit is required to find modified tests"
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    }
+                if (configuration.runOnlyChangedTests) {
+                    setupChangedTests(project)
                 }
 
-                val instrumentationTaskProvider = project.tasks.register<InstrumentationTestsTask>(
-                    instrumentationTaskName(instrumentationConfiguration.name)
-                ) {
-                    timeout.set(Duration.ofSeconds(instrumentationConfiguration.timeoutInSeconds))
-                    group = ciTaskGroup
+                testedExtension.testVariants.all { testVariant: TestVariant ->
 
-                    this.instrumentationConfiguration.set(instrumentationConfiguration)
-                    this.buildId.set(env.build.id.toString())
-                    this.buildType.set(env.build.type)
-                    this.useInMemoryReport.set(extensionData.experimental.useInMemoryReport)
-                    this.saveTestArtifactsToOutputs.set(extensionData.experimental.saveTestArtifactsToOutputs)
-                    this.fetchLogcatForIncompleteTests.set(extensionData.experimental.fetchLogcatForIncompleteTests)
-                    this.gitBranch.set(gitState.map { it.currentBranch.name })
-                    this.gitCommit.set(gitState.map { it.currentBranch.commit })
-                    this.testRunnerService.set(testRunnerServiceProvider)
-                    this.output.set(configurationOutputFolder)
-                    if (extensionData.reportViewer != null) {
-                        this.reportViewerProperty.set(extensionData.reportViewer)
+                    val testedVariant = when (testedExtension) {
+                        is AppExtension -> testVariant.testedVariant as ApplicationVariant
+                        is LibraryExtension -> testVariant
+                        else -> throw RuntimeException(
+                            "${testedExtension::class.java} not supported in InstrumentationPlugin"
+                        )
                     }
-                    this.kubernetesCredentials.set(project.kubernetesCredentials)
 
-                    this.runOnlyChangedTests.set(instrumentationConfiguration.runOnlyChangedTests)
+                    project.tasks.register<InstrumentationTestsTask>(instrumentationTaskName(configuration.name)) {
+                        timeout.set(Duration.ofSeconds(configuration.timeoutInSeconds))
+                        group = CI_TASK_GROUP
 
-                    this.uploadAllTestArtifacts.set(uploadAllTestArtifacts)
-
-                    if (instrumentationConfiguration.runOnlyChangedTests) {
-                        if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
-                            val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
-
-                            this.dependencyOn(impactTaskProvider) {
-                                this.changedTests.set(it.changedTestsFile)
-                            }
-                        }
-                    }
-                }
-
-                project.withAndroidLib { libExtension ->
-
-                    val runner: String = libExtension.defaultConfig.getTestInstrumentationRunnerOrThrow()
-
-                    libExtension.testVariants.all { testVariant: TestVariant ->
-                        val testApkProvider = testVariant.packageApplicationProvider
-
-                        val runFunctionalTestsParameters = ExecutionParameters(
-                            applicationPackageName = testVariant.applicationId,
-                            applicationTestPackageName = testVariant.applicationId,
-                            testRunner = runner,
-                            namespace = instrumentationConfiguration.kubernetesNamespace,
-                            logcatTags = extensionData.logcatTags,
-                            enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
+                        this.parameters.set(
+                            getExecutionParameters(
+                                testedVariant = testedVariant,
+                                testVariant = testVariant,
+                                extension = extension,
+                                configuration = configuration,
+                                runner = androidPluginInteractor.getTestInstrumentationRunnerOrThrow(
+                                    testedExtension.defaultConfig
+                                ),
+                            )
                         )
 
-                        loadTestsTask.configure {
-                            if (extensionData.testApplicationApk == null) {
-                                it.testApk.set(testApkProvider.get().apkDirectory())
-                            } else {
-                                it.testApk.set(File(extensionData.testApplicationApk))
-                            }
-                        }
+                        val reportViewer = reportResolver.getReportViewer(extension)
 
-                        instrumentationTaskProvider.configure { instrumentationTask ->
-                            instrumentationTask.parameters.set(runFunctionalTestsParameters)
+                        val instrumentationParameters = instrumentationArgsResolver.getInstrumentationParams(
+                            extension = extension,
+                            pluginLevelInstrumentationArgs = pluginLevelInstrumentationArgs
+                        )
 
-                            if (extensionData.testApplicationApk == null) {
-                                instrumentationTask.dependencyOn(testApkProvider) { dependentTask ->
-                                    instrumentationTask.testApplication.set(dependentTask.apkDirectory())
-                                }
-                            } else {
-                                instrumentationTask.testApplication.set(File(extensionData.testApplicationApk))
-                            }
+                        val outputFolder = File(
+                            File(extension.output, reportResolver.getRunId(extension)),
+                            configuration.name
+                        )
 
-                            if (extensionData.testProguardMapping == null) {
-                                instrumentationTask.setupProguardMapping(
-                                    instrumentationTask.testProguardMapping,
-                                    testVariant
-                                )
-                            } else {
-                                instrumentationTask.testProguardMapping.set(extensionData.testProguardMapping)
-                            }
-                        }
-                    }
-                }
-
-                project.withAndroidApp { appExtension ->
-
-                    appExtension.testVariants.all { testVariant: TestVariant ->
-                        val testedVariant: ApplicationVariant = testVariant.testedVariant as ApplicationVariant
-
-                        testVariant.withArtifacts { testVariantPackageTask, testedVariantPackageTask ->
-
-                            val runner: String = appExtension.defaultConfig.getTestInstrumentationRunnerOrThrow()
-
-                            val runFunctionalTestsParameters = ExecutionParameters(
-                                applicationPackageName = testedVariant.applicationId,
-                                applicationTestPackageName = testVariant.applicationId,
-                                testRunner = runner,
-                                namespace = instrumentationConfiguration.kubernetesNamespace,
-                                logcatTags = extensionData.logcatTags,
-                                enableDeviceDebug = instrumentationConfiguration.enableDeviceDebug
+                        this.instrumentationConfiguration.set(
+                            getInstrumentationConfiguration(
+                                project = project,
+                                configuration = configuration,
+                                parentInstrumentationParameters = instrumentationParameters,
+                                filters = extension.filters.map { getInstrumentationFilter(it) },
+                                outputFolder = outputFolder,
                             )
+                        )
+                        this.buildId.set(BuildEnvResolver.getBuildId(project))
+                        this.buildType.set(BuildEnvResolver.getBuildType(project))
+                        this.experiments.set(experimentsResolver.getExperiments(extension))
+                        this.gitBranch.set(GitResolver.getGitBranch(project))
+                        this.gitCommit.set(GitResolver.getGitCommit(project))
+                        this.output.set(outputFolder)
 
-                            instrumentationTaskProvider.configure { task ->
-                                task.parameters.set(runFunctionalTestsParameters)
+                        if (reportViewer != null) {
+                            this.reportViewerProperty.set(reportViewer)
+                        }
+                        this.kubernetesCredentials.set(project.kubernetesCredentials)
 
-                                if (extensionData.applicationApk == null) {
-                                    task.dependencyOn(testedVariantPackageTask) { dependentTask ->
-                                        task.application.set(dependentTask.apkDirectory())
-                                    }
-                                } else {
-                                    task.application.set(File(extensionData.applicationApk))
-                                }
+                        val runOnlyChangedTests = configuration.runOnlyChangedTests
 
-                                if (extensionData.testApplicationApk == null) {
-                                    task.dependencyOn(testVariantPackageTask) { dependentTask ->
-                                        task.testApplication.set(dependentTask.apkDirectory())
-                                    }
-                                } else {
-                                    task.testApplication.set(File(extensionData.testApplicationApk))
-                                }
+                        this.runOnlyChangedTests.set(runOnlyChangedTests)
 
-                                if (extensionData.applicationProguardMapping == null) {
-                                    task.setupProguardMapping(task.applicationProguardMapping, testedVariant)
-                                } else {
-                                    task.applicationProguardMapping.set(extensionData.applicationProguardMapping)
-                                }
+                        if (runOnlyChangedTests) {
+                            if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
+                                val impactTaskProvider = project.tasks.changedTestsFinderTaskProvider()
 
-                                if (extensionData.testProguardMapping == null) {
-                                    task.setupProguardMapping(task.testProguardMapping, testVariant)
-                                } else {
-                                    task.testProguardMapping.set(extensionData.testProguardMapping)
+                                this.dependencyOn(impactTaskProvider) {
+                                    this.changedTests.set(it.changedTestsFile)
                                 }
                             }
+                        }
+
+                        this.dumpParams.set(extension.testDumpParams)
+
+                        dependencyOn(testVariant.packageApplicationProvider) { task ->
+                            testApplication.set(task.apkDirectory())
+                        }
+
+                        setupProguardMapping(
+                            testProguardMapping,
+                            testVariant
+                        )
+
+                        if (testedExtension is AppExtension) {
+                            dependencyOn(testedVariant.packageApplicationProvider) { task ->
+                                application.set(task.apkDirectory())
+                            }
+
+                            setupProguardMapping(
+                                applicationProguardMapping,
+                                testedVariant
+                            )
                         }
                     }
                 }
@@ -251,30 +193,31 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
         }
     }
 
-    // TODO: Make stronger contract: MBS-7890
-    /**
-     * NB: sync project in IDE after changes in InstrumentationRunnerArguments
-     */
-    private fun setupLocalInstrumentationArguments(
-        project: Project,
-        gitState: GitState?,
-        config: DefaultConfig
-    ) {
+    private fun getExecutionParameters(
+        testedVariant: ApkVariant,
+        testVariant: TestVariant,
+        extension: GradleInstrumentationPluginConfiguration,
+        configuration: InstrumentationConfiguration,
+        runner: String,
+    ): ExecutionParameters {
+        return ExecutionParameters(
+            applicationPackageName = testedVariant.applicationId,
+            applicationTestPackageName = testVariant.applicationId,
+            testRunner = runner,
+            namespace = configuration.kubernetesNamespace,
+            logcatTags = extension.logcatTags,
+            enableDeviceDebug = configuration.enableDeviceDebug
+        )
+    }
 
-        val args = mutableMapOf<String, String>()
-        args["jobSlug"] = "LocalTests"
-        args["runId"] = resolveLocalInstrumentationRunId()
-        args["deviceName"] = "local"
-        args["buildBranch"] = gitState?.currentBranch?.name ?: "local"
-        args["buildCommit"] = gitState?.currentBranch?.commit ?: "local"
-        args["sentryDsn"] = "http://stub-project@stub-host/0"
-        args["fileStorageUrl"] = "http://stub"
-        args["teamcityBuildId"] = "-1"
-        args["avito.report.enabled"] =
-            project.getBooleanProperty("avito.report.enabled", default = false).toString()
-
-        // TODO Need to be set before `afterEvaluate`
-        config.testInstrumentationRunnerArguments(filterNotBlankValues(args))
+    private fun setupChangedTests(project: Project) {
+        if (project.plugins.hasPlugin(InstrumentationChangedTestsFinderApi.pluginId)) {
+            project.tasks.changedTestsFinderTaskProvider().apply {
+                configure {
+                    it.targetCommit.set(GitResolver.getTargetCommit(project))
+                }
+            }
+        }
     }
 
     private fun InstrumentationTestsTask.setupProguardMapping(
@@ -291,41 +234,179 @@ public class InstrumentationTestsPlugin : Plugin<Project> {
             }
     }
 
-    /**
-     * Здесь будут сосредоточены таски, которые используются ТОЛЬКО для интеграционного
-     * тестирования плагина. Добавляем сюда их аккуратно только для критичных кейсов.
-     */
-    private fun Project.applyTestTasks() {
-        withInstrumentationExtensionData { extension ->
-            val configurationDumpFile =
-                rootProject.file(instrumentationDumpPath)
+    private fun Project.createInstrumentationPluginExtension(): GradleInstrumentationPluginConfiguration {
+        val extension =
+            extensions.create<GradleInstrumentationPluginConfiguration>(
+                "instrumentation",
+                this
+            )
+        extension.filters.register("default") {
+            it.fromRunHistory.excludePreviousStatuses(
+                setOf(
+                    InstrumentationFilter.FromRunHistory.RunStatus.Manual,
+                    InstrumentationFilter.FromRunHistory.RunStatus.Success
+                )
+            )
+        }
+        return extension
+    }
 
-            tasks.register<DumpConfigurationTask>("instrumentationDumpConfiguration") {
-                group = ciTaskGroup
-                description = "Dump instrumentation extension as json"
+    private fun getInstrumentationConfiguration(
+        project: Project,
+        configuration: InstrumentationConfiguration,
+        parentInstrumentationParameters: InstrumentationParameters,
+        filters: List<InstrumentationFilterData>,
+        outputFolder: File,
+    ): InstrumentationConfigurationData {
 
-                this.configuration.set(extension)
-                this.output.set(configurationDumpFile)
-            }
+        val mergedInstrumentationParameters: InstrumentationParameters =
+            parentInstrumentationParameters
+                .applyParameters(configuration.instrumentationParams)
+
+        val result = InstrumentationConfigurationData(
+            name = configuration.name,
+            instrumentationParams = mergedInstrumentationParameters,
+            reportSkippedTests = configuration.reportSkippedTests,
+            kubernetesNamespace = configuration.kubernetesNamespace,
+            targets = getTargets(configuration, mergedInstrumentationParameters),
+            enableDeviceDebug = configuration.enableDeviceDebug,
+            timeoutInSeconds = configuration.timeoutInSeconds,
+            filter = filters.singleOrNull { it.name == configuration.filter }
+                ?: throw IllegalStateException("Can't find filter=${configuration.filter}"),
+            outputFolder = outputFolder
+        )
+
+        validate(result, project)
+
+        return result
+    }
+
+    private fun validate(instrumentationConfigurationData: InstrumentationConfigurationData, project: Project) {
+        if (instrumentationConfigurationData.requestedDeviceType == CLOUD
+            && project.kubernetesCredentials is KubernetesCredentials.Empty
+        ) {
+            throw IllegalStateException(
+                "Configuration ${instrumentationConfigurationData.name} error: " +
+                    "has kubernetes device target without kubernetes credentials"
+            )
         }
     }
+
+    private fun getScheduling(schedulingConfiguration: SchedulingConfiguration): SchedulingConfigurationData {
+        val currentReservation = schedulingConfiguration.reservation
+
+        return SchedulingConfigurationData(
+            reservation = when (currentReservation) {
+                is StaticDeviceReservationConfiguration -> Reservation.StaticReservation(
+                    device = currentReservation.device,
+                    count = currentReservation.count,
+                    quota = schedulingConfiguration.quota.data()
+                )
+                is TestsBasedDevicesReservationConfiguration -> Reservation.TestsCountBasedReservation(
+                    device = currentReservation.device,
+                    quota = schedulingConfiguration.quota.data(),
+                    testsPerEmulator = currentReservation.testsPerEmulator!!,
+                    maximum = currentReservation.maximum!!,
+                    minimum = currentReservation.minimum
+                )
+                else -> throw RuntimeException("Unknown type of reservation")
+            }
+        )
+    }
+
+    private fun getTargetConfiguration(
+        targetConfiguration: TargetConfiguration,
+        parentInstrumentationParameters: InstrumentationParameters
+    ): TargetConfigurationData {
+
+        validate(targetConfiguration)
+
+        val deviceName = targetConfiguration.deviceName
+
+        require(deviceName.isNotBlank()) { "target.deviceName should be set" }
+
+        return TargetConfigurationData(
+            name = targetConfiguration.name,
+            reservation = getScheduling(targetConfiguration.scheduling).reservation,
+            deviceName = deviceName,
+            instrumentationParams = parentInstrumentationParameters
+                .applyParameters(targetConfiguration.instrumentationParams)
+                .applyParameters(
+                    mapOf("deviceName" to deviceName)
+                )
+        )
+    }
+
+    private fun validate(targetConfiguration: TargetConfiguration) {
+        validate(targetConfiguration.scheduling)
+    }
+
+    private fun validate(schedulingConfiguration: SchedulingConfiguration) {
+        schedulingConfiguration.reservation
+        schedulingConfiguration.reservation.validate()
+        schedulingConfiguration.quota
+        schedulingConfiguration.quota.validate()
+    }
+
+    private fun getInstrumentationFilter(instrumentationFilter: InstrumentationFilter): InstrumentationFilterData {
+        return InstrumentationFilterData(
+            name = instrumentationFilter.name,
+            fromSource = getFromSource(instrumentationFilter.fromSource),
+            fromRunHistory = getFromRunHistory(instrumentationFilter.fromRunHistory)
+        )
+    }
+
+    private fun getFromSource(fromSource: InstrumentationFilter.FromSource): InstrumentationFilterData.FromSource {
+        return InstrumentationFilterData.FromSource(
+            prefixes = fromSource.prefixes.value,
+            annotations = fromSource.annotations.value,
+            excludeFlaky = fromSource.excludeFlaky
+        )
+    }
+
+    private fun getFromRunHistory(
+        fromRunHistory: InstrumentationFilter.FromRunHistory
+    ): InstrumentationFilterData.FromRunHistory {
+        return InstrumentationFilterData.FromRunHistory(
+            previousStatuses = Filter.Value(
+                included = fromRunHistory.previous.value.included.map { it.map() }.toSet(),
+                excluded = fromRunHistory.previous.value.excluded.map { it.map() }.toSet()
+            ),
+            reportFilter = fromRunHistory.reportFilter?.let { filter ->
+                InstrumentationFilterData.FromRunHistory.ReportFilter(
+                    statuses = Filter.Value(
+                        included = filter.statuses.value.included.map { it.map() }.toSet(),
+                        excluded = filter.statuses.value.excluded.map { it.map() }.toSet()
+                    )
+                )
+            }
+        )
+    }
+
+    private fun InstrumentationFilter.FromRunHistory.RunStatus.map(): com.avito.runner.config.RunStatus {
+        return when (this) {
+            InstrumentationFilter.FromRunHistory.RunStatus.Failed -> com.avito.runner.config.RunStatus.Failed
+            InstrumentationFilter.FromRunHistory.RunStatus.Success -> com.avito.runner.config.RunStatus.Success
+            InstrumentationFilter.FromRunHistory.RunStatus.Lost -> com.avito.runner.config.RunStatus.Lost
+            InstrumentationFilter.FromRunHistory.RunStatus.Skipped -> com.avito.runner.config.RunStatus.Skipped
+            InstrumentationFilter.FromRunHistory.RunStatus.Manual -> com.avito.runner.config.RunStatus.Manual
+        }
+    }
+
+    private fun getTargets(
+        configuration: InstrumentationConfiguration,
+        parentInstrumentationParameters: InstrumentationParameters
+    ): List<TargetConfigurationData> {
+        val result = configuration.targetsContainer.toList()
+            .filter { it.enabled }
+            .map { getTargetConfiguration(it, parentInstrumentationParameters) }
+
+        require(result.isNotEmpty()) {
+            "configuration ${configuration.name} must have at least one target"
+        }
+
+        return result
+    }
 }
 
-@Suppress("UNCHECKED_CAST")
-private fun filterNotBlankValues(map: Map<String, Any?>) =
-    map.filterValues { value: Any? ->
-        value?.toString().isNullOrBlank().not()
-    } as Map<String, String>
-
-private fun resolveLocalInstrumentationRunId(): String =
-    "LOCAL-${TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis())}"
-
-private fun DefaultConfig.getTestInstrumentationRunnerOrThrow(): String {
-    val runner: String = requireNotNull(testInstrumentationRunner) {
-        "testInstrumentationRunner must be set"
-    }
-    require(runner.isNotBlank()) {
-        "testInstrumentationRunner must be set. Current value: $runner"
-    }
-    return runner
-}
+private const val CI_TASK_GROUP = "ci"

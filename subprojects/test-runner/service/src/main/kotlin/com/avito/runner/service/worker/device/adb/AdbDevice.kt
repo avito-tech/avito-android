@@ -454,13 +454,21 @@ data class AdbDevice(
         }
     )
 
-    override fun logcat(lines: Int): Result<String> {
+    override fun logcat(lines: Int?): Result<String> {
         return retryAction.retry(
             retriesCount = 3,
             delaySeconds = 1,
             action = {
+                val command = mutableListOf("logcat")
+                if (lines != null) {
+                    command += "-t"
+                    command += "$lines"
+                    listOf("-t", "$lines")
+                } else {
+                    command += "-d"
+                }
                 executeBlockingShellCommand(
-                    command = listOf("logcat", "-t", "$lines"),
+                    command = command,
                     timeoutSeconds = 10
                 ).output
             },

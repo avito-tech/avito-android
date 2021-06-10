@@ -1,13 +1,13 @@
 package com.avito.report.model
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 internal class RunIdTest {
 
     @Test
     fun `serialize - without prefix`() {
-        val actual = RunId(commitHash = COMMIT_HASH, buildTypeId = BUILD_TYPE_ID).toReportViewerFormat()
+        val actual = RunId(identifier = COMMIT_HASH, buildTypeId = BUILD_TYPE_ID).toReportViewerFormat()
         val expected = "$COMMIT_HASH${RunId.DELIMITER}$BUILD_TYPE_ID"
         assertThat(actual).isEqualTo(expected)
     }
@@ -16,7 +16,7 @@ internal class RunIdTest {
     fun `serialize - with prefix`() {
         val actual = RunId(
             prefix = PREFIX,
-            commitHash = COMMIT_HASH,
+            identifier = COMMIT_HASH,
             buildTypeId = BUILD_TYPE_ID
         ).toReportViewerFormat()
         val expected = "$PREFIX${RunId.DELIMITER}$COMMIT_HASH${RunId.DELIMITER}$BUILD_TYPE_ID"
@@ -25,7 +25,7 @@ internal class RunIdTest {
 
     @Test
     fun `serialize - blank prefix`() {
-        val actual = RunId(prefix = "   ", commitHash = COMMIT_HASH, buildTypeId = BUILD_TYPE_ID).toReportViewerFormat()
+        val actual = RunId(prefix = "   ", identifier = COMMIT_HASH, buildTypeId = BUILD_TYPE_ID).toReportViewerFormat()
         val expected = "$COMMIT_HASH${RunId.DELIMITER}$BUILD_TYPE_ID"
         assertThat(actual).isEqualTo(expected)
     }

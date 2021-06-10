@@ -18,9 +18,9 @@ sealed class Result<T> {
         is Failure -> throw throwable
     }
 
-    fun getOrElse(func: () -> T): T = when (this) {
+    fun getOrElse(func: (Throwable) -> T): T = when (this) {
         is Success -> value
-        is Failure -> func()
+        is Failure -> func(throwable)
     }
 
     inline fun <R> map(

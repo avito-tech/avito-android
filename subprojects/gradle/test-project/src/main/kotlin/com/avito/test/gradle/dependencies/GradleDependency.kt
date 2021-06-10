@@ -29,11 +29,11 @@ sealed class GradleDependency : GradleScriptCompatible {
         sealed class Coordinate : GradleScriptCompatible {
 
             data class External(val coordinates: String) : Coordinate() {
-                override fun getScriptRepresentation() = "'$coordinates'"
+                override fun getScriptRepresentation() = "\"$coordinates\""
             }
 
             data class Project(val path: Path) : Coordinate() {
-                override fun getScriptRepresentation() = "project('${path.path}')"
+                override fun getScriptRepresentation() = "project(\"${path.path}\")"
             }
 
             data class Platform(val coordinate: Coordinate) : Coordinate() {

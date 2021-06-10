@@ -31,7 +31,7 @@ internal class ArtifactoryAppBackupPluginTest {
             modules = listOf(
                 AndroidAppModule(
                     enableKotlinAndroidPlugin = false,
-                    versionCode = "90",
+                    versionCode = 90,
                     versionName = "10",
                     name = "app",
                     plugins = plugins {
@@ -85,7 +85,7 @@ internal class ArtifactoryAppBackupPluginTest {
             modules = listOf(
                 AndroidAppModule(
                     enableKotlinAndroidPlugin = false,
-                    versionCode = "90",
+                    versionCode = 90,
                     versionName = "10",
                     name = moduleName,
                     plugins = plugins {
@@ -168,7 +168,7 @@ internal class ArtifactoryAppBackupPluginTest {
             modules = listOf(
                 AndroidAppModule(
                     enableKotlinAndroidPlugin = false,
-                    versionCode = "90",
+                    versionCode = 90,
                     versionName = "10",
                     name = moduleName,
                     plugins = plugins {

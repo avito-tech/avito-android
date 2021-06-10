@@ -87,7 +87,7 @@ internal class QAppsPluginIntegrationTest {
                     plugins = plugins {
                         id("com.avito.android.qapps")
                     },
-                    versionCode = "111",
+                    versionCode = 111,
                     versionName = "12.3",
                     packageName = "com.qapps.app",
                     buildGradleExtra = """

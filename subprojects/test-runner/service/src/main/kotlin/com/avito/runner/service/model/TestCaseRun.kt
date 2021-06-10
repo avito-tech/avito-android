@@ -25,6 +25,8 @@ data class TestCaseRun(
 
                 class FailedOnParsing(override val error: Throwable) : InfrastructureError()
 
+                class FailOnPullingArtifacts(override val error: Throwable) : InfrastructureError()
+
                 class Timeout(
                     val timeoutMin: Long,
                     override val error: Throwable

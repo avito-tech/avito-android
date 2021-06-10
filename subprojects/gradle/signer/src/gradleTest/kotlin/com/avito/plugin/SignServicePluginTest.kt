@@ -169,7 +169,7 @@ class SignServicePluginTest {
                 AndroidAppModule(
                     "app",
                     enableKotlinAndroidPlugin = false,
-                    versionCode = "100",
+                    versionCode = 100,
                     versionName = "22.1",
                     plugins = plugins {
                         id("com.avito.android.signer")
