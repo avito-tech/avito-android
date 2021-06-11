@@ -190,6 +190,7 @@ build_health:
 # Builds dependencies graph
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin
 # Example: make project_graph_report id=:test-runner:client
+# TODO: remove --rerun-tasks after 0.74
 project_graph_report:
 	$(call check_defined, id)
 	$(docker_command) ./gradlew --project-dir $(project) $(log_level) $(params) projectGraphReport --id $(id) --rerun-tasks

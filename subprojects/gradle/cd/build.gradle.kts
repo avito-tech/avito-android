@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":gradle:artifactory-app-backup"))
     implementation(project(":logger:gradle-logger"))
     implementation(project(":common:files"))
+    implementation(project(":common:problem"))
     implementation(project(":gradle:build-environment"))
     implementation(project(":gradle:git"))
     implementation(project(":gradle:impact"))
