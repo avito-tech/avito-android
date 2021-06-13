@@ -22,7 +22,9 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = libs.javaVersion.toString()
         allWarningsAsErrors = true
-        freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs = freeCompilerArgs +
+            "-Xopt-in=kotlin.RequiresOptIn" +
+            "-progressive"
     }
 }
 
